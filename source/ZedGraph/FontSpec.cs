@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-11-03 04:17:45 $ </version>
+	/// <version> $Revision: 3.7.2.1 $ $Date: 2005-01-16 04:11:47 $ </version>
 	public class FontSpec : ICloneable
 	{
 	#region Fields
@@ -566,15 +566,6 @@ namespace ZedGraph
 			// make a solid brush for rendering the font itself
 			SolidBrush brush = new SolidBrush( this.fontColor );
 			
-			// make a center justified StringFormat alignment
-			// for drawing the text
-			StringFormat strFormat = new StringFormat();
-			strFormat.Alignment = this.stringAlignment;
-			if ( this.stringAlignment == StringAlignment.Far )
-				g.TranslateTransform( sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
-			else if ( this.stringAlignment == StringAlignment.Near )
-				g.TranslateTransform( -sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
-			
 			// Create a rectangle representing the border around the
 			// text.  Note that, while the text is drawn based on the
 			// TopCenter position, the rectangle is drawn based on
@@ -589,6 +580,15 @@ namespace ZedGraph
 			// Draw the border around the text if required
 			this.border.Draw( g, pane, scaleFactor, rectF );
 
+			// make a center justified StringFormat alignment
+			// for drawing the text
+			StringFormat strFormat = new StringFormat();
+			strFormat.Alignment = this.stringAlignment;
+			if ( this.stringAlignment == StringAlignment.Far )
+				g.TranslateTransform( sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
+			else if ( this.stringAlignment == StringAlignment.Near )
+				g.TranslateTransform( -sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
+			
 			// Draw the actual text.  Note that the coordinate system
 			// is set up such that 0,0 is at the location where the
 			// CenterTop of the text needs to be.

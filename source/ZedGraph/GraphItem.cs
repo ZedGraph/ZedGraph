@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-12-10 05:45:55 $ </version>
+	/// <version> $Revision: 3.6.2.1 $ $Date: 2005-01-16 04:11:47 $ </version>
 	abstract public class GraphItem
 	{
 	#region Fields
@@ -267,7 +267,7 @@ namespace ZedGraph
 		{
 			this.Tag = rhs.Tag;
 			this.zOrder = rhs.ZOrder;
-			this.location = rhs.Location;
+			this.location = (Location) rhs.Location.Clone();
 		}
 
 		/// <summary>

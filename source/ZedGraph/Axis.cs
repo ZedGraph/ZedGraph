@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.13 $ $Date: 2004-12-12 20:19:54 $ </version>
+	/// <version> $Revision: 3.13.2.1 $ $Date: 2005-01-16 04:11:46 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -3261,8 +3261,6 @@ namespace ZedGraph
 		
 			if ( this.stepAuto )
 			{
-				this.step = (int) ( ( this.max - this.min - 1.0 ) / Default.MaxTextLabels ) + 1.0;
-
 				if ( this.TextLabels != null )
 				{
 					// Calculate the maximum number of labels
@@ -3271,11 +3269,12 @@ namespace ZedGraph
 					// Calculate a step size based on the width of the labels
 					double tmpStep = Math.Ceiling( ( this.max - this.min ) / maxLabels );
 
-					// Use the greater of the two step sizes
-					if ( tmpStep > this.step )
+					// Use the lesser of the two step sizes
+					//if ( tmpStep < this.step )
 						this.step = tmpStep;
 				}
-				
+				else
+					this.step = (int) ( ( this.max - this.min - 1.0 ) / Default.MaxTextLabels ) + 1.0;
 			}
 			else
 			{
@@ -3319,13 +3318,20 @@ namespace ZedGraph
 			
 			// The font angles are already set such that the Width is parallel to the appropriate (X or Y)
 			// axis.  Therefore, we always use size.Width.
+			// use the minimum of 1/4 the max Width or 1 character space
+//			double allowance = this.ScaleFontSpec.GetWidth( g, scaleFactor );
+//			if ( allowance > size.Width / 4 )
+//				allowance = size.Width / 4;
+
+			maxWidth = size.Width;
+/*
 			if ( this is XAxis )
 				// Add an extra character width to leave a minimum of 1 character space between labels
 				maxWidth = size.Width + this.ScaleFontSpec.GetWidth( g, scaleFactor );
 			else
 				// For vertical spacing, we only need 1/2 character
 				maxWidth = size.Width + this.ScaleFontSpec.GetWidth( g, scaleFactor ) / 2.0;
-				
+*/
 			if ( maxWidth <= 0 )
 				maxWidth = 1;
 				

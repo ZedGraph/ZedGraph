@@ -44,7 +44,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.20 $ $Date: 2004-12-12 20:19:54 $ </version>
+	/// <version> $Revision: 3.20.2.1 $ $Date: 2005-01-16 04:11:47 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -561,7 +561,7 @@ namespace ZedGraph
 						(int) this.paneRect.Height+1 );
 				Graphics bitmapGraphics = Graphics.FromImage( bitmap );
 				bitmapGraphics.TranslateTransform( -this.PaneRect.Left,
-						-this.PaneRect.Top );
+								-this.PaneRect.Top );
 				this.Draw( bitmapGraphics );
 				bitmapGraphics.Dispose();
 
@@ -1292,12 +1292,20 @@ namespace ZedGraph
         /// </param>		
         public void DrawPaneFrame(Graphics g, GraphPane pane, double scaleFactor)
         {
-			// Erase the pane background
-			Brush brush = this.paneFill.MakeBrush( this.paneRect );
-			//SolidBrush brush = new SolidBrush( this.paneBackColor );
-			g.FillRectangle( brush, this.paneRect );
+			// The Destination image is one pixel larger than the paneRect, because DrawRectangle() draws one
+			// pixel beyond the specified rectangle.  We have to clear out the full destination rect, just
+			// in case the paneBorder is turned off.
+
+			RectangleF rect = this.paneRect;
+			rect.Width = rect.Width + 1;
+			rect.Height = rect.Height + 1;
+
+			// Erase the pane background, filling it with the specified brush
+			Brush brush = this.paneFill.MakeBrush( rect );
+			g.FillRectangle( brush, rect );
 			brush.Dispose();
 
+			// Draw a border around the pane
 			this.paneBorder.Draw( g, pane, scaleFactor, paneRect );
 		}
 

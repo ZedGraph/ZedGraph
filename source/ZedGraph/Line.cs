@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-11-03 04:17:45 $ </version>
+	/// <version> $Revision: 3.4.2.1 $ $Date: 2005-01-16 04:11:47 $ </version>
 	public class Line : ICloneable
 	{
 	#region Fields
@@ -524,11 +524,11 @@ namespace ZedGraph
 					{
 						// Transform the current point from user scale units to
 						// screen coordinates
-						tmpX = pane.XAxis.Transform( curX );
+						tmpX = pane.XAxis.Transform( i, curX );
 						if ( isY2Axis )
-							tmpY = pane.Y2Axis.Transform( curY );
+							tmpY = pane.Y2Axis.Transform( i, curY );
 						else
-							tmpY = pane.YAxis.Transform( curY );
+							tmpY = pane.YAxis.Transform( i, curY );
 						
 						// off-scale values "break" the line
 						if ( tmpX < -100000 || tmpX > 100000 ||
@@ -602,11 +602,11 @@ namespace ZedGraph
 				{
 					if ( !points[i].IsInvalid )
 					{
-						curX = pane.XAxis.Transform( points[i].X );
+						curX = pane.XAxis.Transform( i, points[i].X );
 						if ( isY2Axis )
-							curY = pane.Y2Axis.Transform( points[i].Y );
+							curY = pane.Y2Axis.Transform( i, points[i].Y );
 						else
-							curY = pane.YAxis.Transform( points[i].Y );
+							curY = pane.YAxis.Transform( i, points[i].Y );
 
 						// ignore step-type setting for smooth curves
 						if ( this.isSmooth || index == 0 || this.StepType == StepType.NonStep )

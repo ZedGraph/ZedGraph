@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-12-07 00:03:54 $ </version>
+	/// <version> $Revision: 3.2.2.1 $ $Date: 2005-01-16 04:11:47 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 	#region Fields
@@ -112,7 +112,7 @@ namespace ZedGraph
 			SetStyle( ControlStyles.Opaque, false );
 			SetStyle( ControlStyles.SupportsTransparentBackColor, true );
 
-			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
+			Rectangle rect = new Rectangle( 0, 0, this.Size.Width-1, this.Size.Height-1 );
 			graphPane = new GraphPane( rect, "Title", "X-Axis", "Y-Axis" );
 			graphPane.AxisChange( this.CreateGraphics() );
 
@@ -193,16 +193,18 @@ namespace ZedGraph
 			{
 				lock( this )
 				{
-					if ( BeenDisposed )
+					if ( BeenDisposed || this.graphPane == null )
 						throw new ZedGraphException( "The control has been disposed" );
-
+/*
 					Bitmap bitmap = new Bitmap( this.Width+1, this.Height+1 );
 					Graphics bitmapGraphics = Graphics.FromImage( bitmap );
 					this.graphPane.Draw( bitmapGraphics );
 					bitmapGraphics.Dispose();
 
 					return bitmap;
-				}
+*/
+                    return this.graphPane.Image;
+                }
 			}
 		}
 
@@ -258,7 +260,7 @@ namespace ZedGraph
 				if ( BeenDisposed )
 					return;
 
-				this.graphPane.PaneRect = new RectangleF( 0, 0, this.Size.Width, this.Size.Height );
+				this.graphPane.PaneRect = new RectangleF( 0, 0, this.Size.Width-1, this.Size.Height-1 );
 				this.Invalidate();
 			}
 		}

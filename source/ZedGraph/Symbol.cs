@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-12-10 17:54:50 $ </version>
+	/// <version> $Revision: 3.7.2.1 $ $Date: 2005-01-16 04:11:47 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -664,11 +664,11 @@ namespace ZedGraph
 						( isY2Axis || !pane.YAxis.IsLog || curY > 0.0 ) &&
 						( !isY2Axis || !pane.Y2Axis.IsLog || curY > 0.0 ) )
 					{
-						tmpX = pane.XAxis.Transform( curX );
+						tmpX = pane.XAxis.Transform( i, curX );
 						if ( isY2Axis )
-							tmpY = pane.Y2Axis.Transform( curY );
+							tmpY = pane.Y2Axis.Transform( i, curY );
 						else
-							tmpY = pane.YAxis.Transform( curY );
+							tmpY = pane.YAxis.Transform( i, curY );
 
 						if ( this.fill.IsGradientValueType )
 							brush = fill.MakeBrush( rect, points[i] );
