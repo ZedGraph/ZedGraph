@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15 $ $Date: 2005-03-05 07:24:10 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2005-03-25 16:19:57 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -273,6 +273,8 @@ namespace ZedGraph
 	#endregion
 
 	#region Rendering Methods
+
+/*
 		/// <summary>
 		/// Draw the <see cref="Symbol"/> to the specified <see cref="Graphics"/> device
 		/// at the specified location.  This routine draws a single symbol.
@@ -294,7 +296,8 @@ namespace ZedGraph
 		/// <param name="brush">A <see cref="Brush"/> class representing a default solid brush for this symbol
 		/// If this symbol uses a <see cref="LinearGradientBrush"/>, it will be created on the fly for
 		/// each point, since it has to be scaled to the individual point coordinates.</param>
-		public void DrawSymbol( Graphics g, float x, float y, float scaleFactor, Pen pen, Brush brush )
+		public void DrawSymbol( Graphics g, float x, float y, float scaleFactor,
+						Pen pen, Brush brush, int junk )
 		{
 			// Only draw if the symbol is visible
 			if (	this.isVisible &&
@@ -310,7 +313,7 @@ namespace ZedGraph
 					DrawPoint( g, x, y, scaleFactor, pen );
 			}
 		}
-
+*/
 		/// <summary>
 		/// Draw the <see cref="Symbol"/> to the specified <see cref="Graphics"/> device
 		/// at the specified location.  This routine draws a single symbol.
@@ -375,7 +378,11 @@ namespace ZedGraph
 		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>
-		public void DrawSymbol( Graphics g, GraphPane pane, float x, float y, float scaleFactor )
+		/// <param name="dataValue">The data value to be used for a value-based
+		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
+		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
+		public void DrawSymbol( Graphics g, GraphPane pane, float x, float y,
+							float scaleFactor, PointPair dataValue )
 		{
 			// Only draw if the symbol is visible
 			if (	this.isVisible &&
@@ -389,7 +396,7 @@ namespace ZedGraph
 
                 // Fill or draw the symbol as required
 				if ( this.fill.IsVisible )
-					FillPoint( g, x, y, scaleFactor, pen, brush );
+					FillPoint( g, x, y, scaleFactor, pen, brush, dataValue );
 				
 				if ( this.border.IsVisible )
 					DrawPoint( g, x, y, scaleFactor, pen );
@@ -565,8 +572,11 @@ namespace ZedGraph
 		/// <see cref="ZedGraph.Border.PenWidth"/> for this symbol</param>
 		/// <param name="brush">A brush with the <see cref="Color"/> attribute
 		/// for this symbol</param>
+		/// <param name="dataValue">The data value to be used for a value-based
+		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
+		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
 		public void FillPoint( Graphics g, float x, float y, float scaleFactor,
-			Pen pen, Brush brush )
+			Pen pen, Brush brush, PointPair dataValue )
 		{
 			float	scaledSize = (float) ( this.size * scaleFactor ),
 				hsize = scaledSize / 2,
@@ -577,7 +587,7 @@ namespace ZedGraph
 			PointF[]	polyPt = new PointF[5];
 			RectangleF	rect = new RectangleF( x-hsize, y-hsize, scaledSize, scaledSize );
 			if ( this.fill.Type == FillType.Brush )
-				brush = this.fill.MakeBrush( rect );
+				brush = this.fill.MakeBrush( rect, dataValue );
 			
 			switch( this.type == SymbolType.Default ? Default.Type : this.type )
 			{

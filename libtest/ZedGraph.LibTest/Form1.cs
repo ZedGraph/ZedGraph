@@ -127,6 +127,34 @@ namespace ZedGraph.LibTest
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
 #if true
+
+			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+				"Wacky Widget Company\nProduction Report",
+				"Time, Days\n(Since Plant Construction Startup)",
+				"Widget Production\n(units/hour)" );
+			SetSize();
+
+			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
+			double[] z = { 1, 2, 3, 4, 5, 5, 4, 3, 2, 1 };
+			PointPairList list = new PointPairList( x, y, z );
+
+			Color[] colors = { Color.Red, Color.Green, Color.Blue,
+								Color.Yellow, Color.Orange };
+			Fill fill = new Fill( colors );
+			fill.Type = FillType.GradientByZ;
+			fill.RangeMin = 1;
+			fill.RangeMax = 5;
+
+			BarItem myBar = myPane.AddBar( "My Bar", list, Color.Tomato );
+			myBar.Bar.Fill = fill;
+			myPane.ClusterScaleWidth = 75;
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+#endif
+
+#if false
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",

@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="GraphPane.BarType"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-02-11 05:20:42 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-03-25 16:19:57 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -176,7 +176,8 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
+		override public void Draw( Graphics g, GraphPane pane, int pos,
+									float scaleFactor  )
 		{
 			// Pass the drawing onto the bar class
 			if ( this.isVisible )
@@ -205,7 +206,7 @@ namespace ZedGraph
 		/// </param>
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor )
 		{
-			this.bar.Draw( g, pane, rect, scaleFactor, true );
+			this.bar.Draw( g, pane, rect, scaleFactor, true, null );
 		}
 
 	#endregion

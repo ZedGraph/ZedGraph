@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+25-Mar-2005 (by Champion) v4.0.3
+  Fix Gradient by Value for Bars
+  
 21-Mar-2005 (by Champion) v4.0.2
   Fix IsFontsScaled
   

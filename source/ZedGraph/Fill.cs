@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-02-12 23:22:51 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-03-25 16:19:57 $ </version>
 	[Serializable]
 	public class Fill : ISerializable
 	{
@@ -779,7 +779,8 @@ namespace ZedGraph
 		public Brush MakeBrush( RectangleF rect )
 		{
 			// just provide a default value for the valueFraction
-			return MakeBrush( rect, new PointPair( 0.5, 0.5, 0.5 ) );
+			// return MakeBrush( rect, new PointPair( 0.5, 0.5, 0.5 ) );
+			return MakeBrush( rect, null );
 		}
 
 		/// <summary>
@@ -802,19 +803,22 @@ namespace ZedGraph
 			// get a brush
 			if ( this.IsVisible && ( !this.color.IsEmpty || this.brush != null ) )
 			{
+				if ( rect.Height < 1.0F )
+					rect.Height = 1.0F;
+				if ( rect.Width < 1.0F )
+					rect.Width = 1.0F;
+					
 				//Brush	brush;
 				if ( this.type == FillType.Brush )
 				{
-					if ( rect.Height < 1.0F )
-						rect.Height = 1.0F;
-					if ( rect.Width < 1.0F )
-						rect.Width = 1.0F;
-					
 					return ScaleBrush( rect, this.brush, this.isScaled );
 				}
 				else if ( IsGradientValueType )
 				{
-					return new SolidBrush( GetGradientColor( dataValue ) );
+					if ( dataValue != null )
+						return new SolidBrush( GetGradientColor( dataValue ) );
+					else
+						return ScaleBrush( rect, this.brush, true );
 				}
 				else
 					return new SolidBrush( this.color );

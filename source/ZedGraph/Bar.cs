@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.17 $ $Date: 2005-03-05 07:24:09 $ </version>
+   /// <version> $Revision: 3.18 $ $Date: 2005-03-25 16:19:56 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -229,8 +229,12 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="fullFrame">true to draw the bottom portion of the border around the
 		/// bar (this is for legend entries)</param> 
+		/// <param name="dataValue">The data value to be used for a value-based
+		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
+		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
 		public void Draw( Graphics g, GraphPane pane, float left, float right, float top,
-							float bottom, float scaleFactor, bool fullFrame )
+							float bottom, float scaleFactor, bool fullFrame,
+							PointPair dataValue )
 		{
 			// Do a sanity check to make sure the top < bottom.  If not, reverse them
 			if ( top > bottom )
@@ -251,7 +255,7 @@ namespace ZedGraph
 			// Make a rectangle for the bar and draw it
 			RectangleF rect = new RectangleF( left, top, right - left, bottom - top );
 
-			Draw( g, pane, rect, scaleFactor, fullFrame );      
+			Draw( g, pane, rect, scaleFactor, fullFrame, dataValue );      
 		}
 
 		/// <summary>
@@ -274,14 +278,17 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="fullFrame">true to draw the bottom portion of the border around the
 		/// bar (this is for legend entries)</param> 
+		/// <param name="dataValue">The data value to be used for a value-based
+		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
+		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
 		public void Draw( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor,
-							bool fullFrame )
+							bool fullFrame, PointPair dataValue )
 		{
 			// Fill the Bar
 			if ( this.fill.IsVisible )
 			{
 				// just avoid height/width being less than 0.1 so GDI+ doesn't cry
-				Brush brush = this.fill.MakeBrush( rect );
+				Brush brush = this.fill.MakeBrush( rect, dataValue );
 				g.FillRectangle( brush, rect );
 				brush.Dispose();
 			}
@@ -464,10 +471,12 @@ namespace ZedGraph
 				// Draw the bar
 				if ( pane.BarBase == BarBase.X )
 					this.Draw( g, pane, pixSide, pixSide + barWidth, pixLowVal,
-							pixHiVal, scaleFactor, true );
+							pixHiVal, scaleFactor, true,
+							curve.Points[index] );
 				else
 					this.Draw( g, pane, pixLowVal, pixHiVal, pixSide, pixSide + barWidth,
-							scaleFactor, true );
+							scaleFactor, true,
+							curve.Points[index] );
 			}
 		}
 

@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-03-05 07:24:10 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-03-25 16:19:57 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -274,21 +274,29 @@ namespace ZedGraph
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.</param>
 		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
 		/// <see cref="PenWidth"/> for this <see cref="ErrorBar"/></param>
+		/// <param name="dataValue">The data value to be used for a value-based
+		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
+		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
 		public void Draw( Graphics g, GraphPane pane, bool isXBase,
 								float pixBase, float pixValue,
-								float pixLowValue, float scaleFactor, Pen pen )
+								float pixLowValue, float scaleFactor, Pen pen,
+								PointPair dataValue )
 		{
 			if ( isXBase )
 			{
 				g.DrawLine( pen, pixBase, pixValue, pixBase, pixLowValue );
-				this.symbol.DrawSymbol( g, pane, pixBase, pixValue, scaleFactor );
-				this.symbol.DrawSymbol( g, pane, pixBase, pixLowValue, scaleFactor );
+				this.symbol.DrawSymbol( g, pane, pixBase, pixValue,
+							scaleFactor, dataValue );
+				this.symbol.DrawSymbol( g, pane, pixBase, pixLowValue,
+							scaleFactor, dataValue );
 			}
 			else
 			{
 				g.DrawLine( pen, pixValue, pixBase, pixLowValue, pixBase );
-				this.symbol.DrawSymbol( g, pane, pixValue, pixBase, scaleFactor );
-				this.symbol.DrawSymbol( g, pane, pixLowValue, pixBase, scaleFactor );
+				this.symbol.DrawSymbol( g, pane, pixValue, pixBase,
+							scaleFactor, dataValue );
+				this.symbol.DrawSymbol( g, pane, pixLowValue, pixBase,
+							scaleFactor, dataValue );
 			}
 		}
 
@@ -352,7 +360,8 @@ namespace ZedGraph
 						//	brush = fill.MakeBrush( rect, points[i] );
 
 						this.Draw( g, pane, baseAxis is XAxis, pixBase, pixValue,
-										pixLowValue, scaleFactor, pen );		
+										pixLowValue, scaleFactor, pen,
+										curve.Points[i] );		
 					}
 				}
 			}
