@@ -9,9 +9,9 @@ namespace ZedGraph.Demo
 	/// <summary>
 	/// Summary description for BarGraphBandDemo.
 	/// </summary>
-	public class BarGraphBandDemo : DemoBase
+	public class TemplateDemo : DemoBase
 	{
-		public BarGraphBandDemo() : base( "Description", "Title", DemoType.Special )
+		public TemplateDemo() : base( "Description", "Title", DemoType.Special )
 		{
 			//
 			// TODO: Add constructor logic here
