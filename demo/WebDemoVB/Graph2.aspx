@@ -1,5 +1,5 @@
-<%@ Register TagPrefix="zgw" Namespace="ZedGraph" Assembly="ZedGraph" %>
 <%@ Page Language="vb" AutoEventWireup="false" Codebehind="Graph2.aspx.vb" Inherits="ZGBasic.Graph2"%>
+<%@ Register TagPrefix="zgw" Namespace="ZedGraph" Assembly="ZedGraph" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 	<HEAD>
@@ -10,7 +10,7 @@
 		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
 	</HEAD>
 	<body MS_POSITIONING="GridLayout">
-		<form id="Form1" method="post" runat="server">			
+		<form id="Form1" method="post" runat="server">
 			<zgw:ZedGraphWeb id="Zedgraphweb1" runat="server" Height="400" Width="600" BarType="Overlay" BarBase="X"
 				title="Sample Pie Chart">
 				<AxisFill RangeMax="0" Type="Brush" AlignH="Center" IsScaled="True" Color="Salmon" RangeMin="0"

@@ -1,4 +1,4 @@
-<%@ Page language="c#" Codebehind="graph.aspx.cs" AutoEventWireup="false" Inherits="ZG1.graph" %>
+<%@ Page language="c#" codebehind="graph.aspx.cs" AutoEventWireup="false" Inherits="ZG1.graph" %>
 <%@ Register TagPrefix="zgw" Namespace="ZedGraph" Assembly="ZedGraph" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <HTML>

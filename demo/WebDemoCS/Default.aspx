@@ -1,4 +1,4 @@
-<%@ Page language="c#" Codebehind="Default.aspx.cs" AutoEventWireup="false" Inherits="ZG1._Default" %>
+<%@ Page language="c#" codebehind="Default.aspx.cs" AutoEventWireup="false" Inherits="ZG1._Default" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <html>
 	<head>

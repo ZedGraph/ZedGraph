@@ -16,6 +16,7 @@
 'License along with this library; if not, write to the Free Software
 'Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 '=============================================================================
+
 Public Class Graph2
     Inherits System.Web.UI.Page
 
@@ -25,7 +26,7 @@ Public Class Graph2
     <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
 
     End Sub
-    Protected WithEvents ZedGraphWeb1 As ZedGraph.ZedGraphWeb
+    Protected WithEvents Zedgraphweb1 As ZedGraph.ZedGraphWeb
 
     'NOTE: The following placeholder declaration is required by the Web Form Designer.
     'Do not delete or move it.

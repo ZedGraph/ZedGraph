@@ -16,6 +16,7 @@
 //License along with this library; if not, write to the Free Software
 //Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //=============================================================================
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -27,7 +28,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 
-namespace ZG1
+namespace ZG1 
 {
 	/// <summary>
 	/// Summary description for _Default.
@@ -59,4 +60,5 @@ namespace ZG1
 		}
 		#endregion
 	}
+
 }
