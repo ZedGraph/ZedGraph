@@ -310,8 +310,194 @@ namespace ZedGraph.Demo
 			*/
 
 #endif
+#if true//Pie Chart Example   
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"2003 Regional Sales", "", "" );
 
-#if true	// Test Line Stacking
+			myPane.PaneFill = new Fill( Color.Cornsilk );
+			myPane.AxisFill = new Fill( Color.Cornsilk );
+			myPane.Legend.Position = LegendPos.Right ;
+			
+			double [] values =   { 25, 15, 40, 20 } ;
+			double [] values2 =   { 250, 50, 400, 200,50 } ;
+			Color [] colors = { Color.Red, Color.Blue, Color.Green, Color.Yellow } ;
+			double [] displacement = {	 .0,.10,.0,.20 } ;
+			string [] labels = { "East", "West", "Central", "Canada" } ;
+
+
+/*
+			PieItem myPie = myPane.AddPie ("2001",5) ;
+			myPie.ChangeSliceValues (values2) ;
+			((PieSlice)myPie.SliceList[4]).Displacement =2.1 ;							//wll be reset internally to 1.0
+			myPie.ChangeSliceValue (4, 200 );							
+*/
+
+
+			
+			//			myPie.PieType = PieType.Pie3D ;
+
+
+			PieItem myPie1 = myPane.AddPie ( "2002", values, colors, displacement, labels ) ;
+			myPie1.AddSlice	( values[0], Color.Coral, displacement[2], "SE" );
+			((PieSlice)myPie1.SliceList[3]).Border.Color = Color.Blue ;
+			((PieSlice)myPie1.SliceList[3]).Border.PenWidth = 2 ;
+
+//			((PieSlice)myPie1.SliceList[1]).Border.IsVisible = false ;
+//			((PieSlice)myPie1.SliceList[4]).IsVisible = false ;
+         
+													//generate defaults
+//				PieItem myPie3 = myPane.AddPie ( "2002", null, null, null, null) ;
+													//generate defaults except for values
+//				PieItem myPie2 = myPane.AddPie ( "2003", values) ;
+
+
+	//		myPane.IsAxisRectAuto = false ;
+																																						
+			 
+
+#endif
+#if false	// Test Line Stacking
+
+            myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+				"Wacky Widget Company\nProduction Report",
+				"Time, Days\n(Since Plant Construction Startup)",
+				"Widget Production\n(units/hour)" );
+			SetSize();
+
+			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
+			LineItem curve;
+			curve = myPane.AddCurve( "Larry", x, y, Color.Green, SymbolType.Circle );
+			curve.Line.Width = 1.5F;
+			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 60, 190, 50), 90F );
+			curve.Line.IsSmooth = true;
+			curve.Line.SmoothTension = 0.6F;
+			curve.Symbol.Fill = new Fill( Color.White );
+			curve.Symbol.Size = 10;
+			curve.Line.Fill.IsVisible = false;
+			
+			double[] y3 = { 5.2, 49.0, 33.8, 88.57, 99.9, 36.8, 22.1, 34.3, 10.4, 17.5 };
+			curve = myPane.AddCurve( "Moe", x, y3, Color.FromArgb( 200, 55, 135), SymbolType.Triangle );
+			curve.Line.Width = 1.5F;
+			//curve.Line.IsSmooth = true;
+			curve.Symbol.Fill = new Fill( Color.White );
+			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 160, 230, 145, 205), 90F );
+			curve.Symbol.Size = 10;
+			
+			myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			
+			myPane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
+						Color.FromArgb( 255, 255, 190), 90F );
+			
+			myPane.XAxis.IsShowGrid = true;
+
+			myPane.YAxis.IsShowGrid = true;
+			//myPane.YAxis.Max = 120;									
+			
+			myPane.LineType = LineType.Stack;
+#endif
+
+#if false	// The transparent example
+
+            myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+				"Desert Rainfall",
+				"Time, Years",
+				"Rainfall, mm/yr" );
+			SetSize();
+			
+			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y4 = { 30, 45, 53, 60, 75, 83, 84, 79, 71, 57 };
+			BarItem bar = myPane.AddBar( "Wheezy", x4, y4, Color.SteelBlue );
+			//bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown );
+			bar.Bar.Fill = new Fill( Color.FromArgb( 100, 130, 255, 130 ), Color.FromArgb( 100, 255, 255, 255 ),
+								Color.FromArgb( 100, 130, 255, 130 ) );
+			myPane.ClusterScaleWidth = 100;
+			myPane.BarType = BarType.Stack;
+			//myPane.PaneGap = 60F;
+			//curve.Bar.Fill = new Fill( Color.Blue );
+			//curve.Symbol.Size = 12;
+
+			double[] x2 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y2 = { 10, 15, 17, 20, 25, 27, 29, 26, 24, 18 };
+			bar = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
+			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
+			myPane.ClusterScaleWidth = 100;
+			//Brush brush = new HatchBrush( HatchStyle.Cross, Color.AliceBlue, Color.Red );
+			//GraphicsPath path = new GraphicsPath();
+			//path.AddLine( 10, 10, 20, 20 );
+			//path.AddLine( 20, 20, 30, 0 );
+			//path.AddLine( 30, 0, 10, 10 );
+			
+			//brush = new PathGradientBrush( path );
+			//bar.Bar.Fill = new Fill( brush );
+			
+			
+			//Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
+			Bitmap bm = new Bitmap( @"c:\mypic.jpg" );
+			//Image image = Image.FromHbitmap( bm.GetHbitmap() );
+			
+			TextureBrush texBrush = new TextureBrush( bm );
+			myPane.PaneFill = new Fill( texBrush );
+			//myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			
+			//myPane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
+			//			Color.FromArgb( 255, 255, 190), 90F );
+			myPane.AxisFill.IsVisible = false;
+			myPane.Legend.IsVisible = false;
+			
+			TextItem text = new TextItem( "Desert Rainfall", 0.5F, -0.05F, CoordType.AxisFraction,
+					AlignH.Center, AlignV.Bottom );
+			text.FontSpec.FontColor = Color.Black;
+			text.FontSpec.Size = 20F;
+			text.FontSpec.IsBold = true;
+			text.FontSpec.IsItalic = true;
+			text.FontSpec.Fill.IsVisible = false;
+			text.FontSpec.Border.IsVisible = false;
+			myPane.GraphItemList.Add( text );
+			myPane.IsShowTitle = false;
+			myPane.FontSpec.FontColor = Color.Black;
+			myPane.XAxis.Color = Color.White;
+			myPane.YAxis.Color = Color.White;
+			myPane.XAxis.ScaleFontSpec.FontColor = Color.White;
+			myPane.XAxis.TitleFontSpec.FontColor = Color.White;
+			myPane.YAxis.ScaleFontSpec.FontColor = Color.White;
+			myPane.YAxis.TitleFontSpec.FontColor = Color.White;
+			myPane.AxisBorder.Color = Color.White;
+			myPane.XAxis.GridColor = Color.White;
+			myPane.YAxis.GridColor = Color.White;
+			
+			myPane.XAxis.IsShowGrid = true;
+			//myPane.IsPenWidthScaled = false;
+			//myPane.XAxis.ScaleFontSpec.Angle = 90;
+			//myPane.XAxis.ScaleAlign = AlignP.Inside;
+			//myPane.XAxis.IsShowMinorGrid = true;
+			//myPane.XAxis.MinorGridColor = Color.Red;
+
+			myPane.YAxis.IsShowGrid = true;
+			//myPane.YAxis.ScaleFontSpec.Angle = 90;
+			myPane.YAxis.Max = 120;
+			//myPane.YAxis.ScaleAlign = AlignP.Center;
+			//myPane.YAxis.Type = AxisType.Log;
+			//myPane.YAxis.IsUseTenPower = false;
+			//myPane.YAxis.IsShowMinorGrid = true;
+			//myPane.YAxis.MinorGridColor = Color.Red;
+
+			//myPane.Y2Axis.IsVisible = true;
+			//myPane.Y2Axis.Max = 120;
+			//myPane.Y2Axis.ScaleAlign = AlignP.Outside;
+			
+			myPane.AxisChange( this.CreateGraphics() );
+			RectangleF axisRect = myPane.AxisRect;
+			//axisRect.X += axisRect.Width * 0.3F;
+			//axisRect.Width *= 0.7F;
+			axisRect.Y += axisRect.Height * 0.35F;
+			axisRect.Height *= 0.65F;
+			myPane.AxisRect = axisRect;
+
+#endif
+
+#if false	// Test Line Stacking
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -865,6 +1051,12 @@ namespace ZedGraph.Demo
 			LineItem myCurve = myPane.AddCurve( "My Curve",
 				x, y, Color.Red, SymbolType.Diamond );
 
+<<<<<<< Form1.cs
+			myCurve.IsVisible = false;
+			
+			//myPane.YAxis.Min = 100;
+			//myPane.YAxis.Max = 150;
+=======
 			myCurve.Line.IsSmooth = true;
 			myCurve.Line.SmoothTension = 0.5F;
 
@@ -874,6 +1066,7 @@ namespace ZedGraph.Demo
 			
 			//myPane.YAxis.Min = 100;
 			//myPane.YAxis.Max = 150;
+>>>>>>> 3.39
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
 			//myPane.AxisChange( CreateGraphics() );
@@ -2785,7 +2978,7 @@ namespace ZedGraph.Demo
 #if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			Serialize( myPane );
+//			Serialize( myPane );
 
 			//myPane.XAxis.PickScale( 250, 900, myPane, this.CreateGraphics(), myPane.CalcScaleFactor() );
 			//Invalidate();
