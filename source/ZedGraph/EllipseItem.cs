@@ -35,12 +35,32 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-01-27 05:50:34 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-02-13 17:31:41 $ </version>
 	[Serializable]
 	public class EllipseItem : BoxItem, ICloneable, ISerializable
 	{
 	#region Constructors
 		/// <overloads>Constructors for the <see cref="EllipseItem"/> object</overloads>
+		/// <summary>
+		/// A constructor that allows the position and size
+		/// of the <see cref="EllipseItem"/> to be pre-specified.  Other properties are defaulted.
+		/// </summary>
+		/// <param name="rect"/>The <see cref="RectangleF"/> struct that defines
+		/// the ellipse.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
+		public EllipseItem( RectangleF rect ) :
+			base( rect )
+		{
+		}
+		
+		/// <summary>
+		/// A default constructor that places the <see cref="EllipseItem"/> at the
+		/// default <see cref="RectangleF"/> of (0,0,1,1).  Other properties are defaulted.
+		/// </summary>
+		public EllipseItem() : base()
+		{
+		}
+		
 		/// <summary>
 		/// A constructor that allows the position, border color, and solid fill color
 		/// of the <see cref="EllipseItem"/> to be pre-specified.
@@ -53,7 +73,7 @@ namespace ZedGraph
 		/// the ellipse.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
 		public EllipseItem( RectangleF rect, Color borderColor, Color fillColor ) :
-				base( rect, borderColor, fillColor )
+			base( rect, borderColor, fillColor )
 		{
 		}
 

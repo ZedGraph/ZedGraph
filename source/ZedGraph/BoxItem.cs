@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-01-27 05:50:34 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-02-13 17:31:41 $ </version>
 	[Serializable]
 	public class BoxItem : GraphItem, ICloneable, ISerializable
 	{
@@ -117,6 +117,28 @@ namespace ZedGraph
 		{
 			this.Border = new Border( borderColor, Default.PenWidth );
 			this.Fill = new Fill( fillColor );
+		}
+
+		/// <summary>
+		/// A constructor that allows the position
+		/// of the <see cref="BoxItem"/> to be pre-specified.  Other properties are defaulted.
+		/// </summary>
+		/// <param name="rect"/>The <see cref="RectangleF"/> struct that defines
+		/// the box.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
+		public BoxItem( RectangleF rect ) :
+			base( rect.Left, rect.Top, rect.Width, rect.Height )
+		{
+			this.Border = new Border( Default.BorderColor, Default.PenWidth );
+			this.Fill = new Fill( Default.FillColor );
+		}
+
+		/// <summary>
+		/// A default constructor that creates a <see cref="BoxItem"/> from a
+		/// <see cref="RectangleF"/> of (0,0,1,1).  Other properties are defaulted.
+		/// </summary>
+		public BoxItem() : this( new RectangleF( 0, 0, 1, 1 ) )
+		{
 		}
 
 		/// <summary>

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-02-02 04:52:04 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-02-13 17:31:41 $ </version>
 	[Serializable]
 	public class ArrowItem : GraphItem, ICloneable, ISerializable
 	{
@@ -195,7 +195,16 @@ namespace ZedGraph
 		/// <see cref="ArrowItem"/>.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		public ArrowItem( float x1, float y1, float x2, float y2 ) :
-				this( Default.Color, Default.Size, x1, y1, x2, y2 )
+			this( Default.Color, Default.Size, x1, y1, x2, y2 )
+		{
+		}
+
+		/// <summary>
+		/// Default constructor -- places the <see cref="ArrowItem"/> at location
+		/// (0,0) to (1,1).  All other values are defaulted.
+		/// </summary>
+		public ArrowItem() :
+			this( Default.Color, Default.Size, 0, 0, 1, 1 )
 		{
 		}
 

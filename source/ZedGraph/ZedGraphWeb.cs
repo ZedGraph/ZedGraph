@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-02-13 08:26:02 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-02-13 17:31:41 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -216,7 +216,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Gets or sets the value of the <see cref="PaneBase.BaseDimension"/>.
+		/// Proxy property that gets or sets the value of the <see cref="PaneBase.BaseDimension"/>.
 		/// </summary>
 		[Bindable(true),Category("Layout"),NotifyParentProperty(true)]
 		public float BaseDimension
@@ -230,7 +230,7 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// Gets or sets the width of the <see cref="PaneBase.PaneRect"/>.
+		/// Proxy property that gets or sets the width of the <see cref="PaneBase.PaneRect"/>.
 		/// </summary>
 		/// <value>The width in output device pixels</value>
 		[Bindable(true),Category("Layout"),NotifyParentProperty(true),DefaultValue(400)]
@@ -245,7 +245,7 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// Gets or sets the Height of the <see cref="PaneBase.PaneRect"/>.
+		/// Proxy property that gets or sets the height of the <see cref="PaneBase.PaneRect"/>.
 		/// </summary>
 		/// <value>The height in output device pixels</value>
 		[Bindable(true),Category("Layout"),NotifyParentProperty(true),DefaultValue(250)]
@@ -260,7 +260,7 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// Gets or sets the Title of the <see cref="ZedGraph.GraphPane"/>.
+		/// Proxy property that gets or sets the Title of the <see cref="ZedGraph.GraphPane"/>.
 		/// </summary>
 		/// <value>A title <see cref="string"/></value>
 		[Bindable(true),Category("Appearance"),NotifyParentProperty(true),DefaultValue("")]
@@ -275,8 +275,8 @@ namespace ZedGraph
 		}		
 		
 		/// <summary>
-		/// Gets or sets the value that determines if the <see cref="ZedGraph.PaneBase.Title"/>
-		/// is visible.
+		/// Proxy property that gets or sets the value of <see cref="PaneBase.IsShowTitle"/>, which
+		/// determines if the <see cref="ZedGraph.PaneBase.Title"/> is visible.
 		/// </summary>
 		/// <value>true to show the pane title, false otherwise</value>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
@@ -291,7 +291,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.GraphPane.IsIgnoreInitial"/>
+		/// Proxy property that gets or sets the value of <see cref="GraphPane.IsIgnoreInitial"/>.
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public bool IsIgnoreInitial
@@ -305,7 +305,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.GraphPane.IsIgnoreMissing"/>
+		/// Proxy property that gets or sets the value of <see cref="GraphPane.IsIgnoreMissing"/>.
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public bool IsIgnoreMissing
@@ -319,7 +319,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.PaneBase.IsFontsScaled"/>
+		/// Proxy property that gets or sets the value of <see cref="PaneBase.IsFontsScaled"/>.
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public bool IsFontsScaled
@@ -333,7 +333,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.GraphPane.BarBase"/>
+		/// Proxy property that gets or sets the value of <see cref="GraphPane.BarBase"/>.
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public BarBase BarBase
@@ -347,7 +347,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.GraphPane.IsAxisRectAuto"/>
+		/// Proxy property that gets or sets the value of <see cref="GraphPane.IsAxisRectAuto"/>.
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public bool IsAxisRectAuto
@@ -361,7 +361,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.PaneBase.IsPenWidthScaled"/>
+		/// Proxy property that gets or sets the value of <see cref="PaneBase.IsPenWidthScaled"/>.
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public bool IsPenWidthScaled
@@ -374,10 +374,6 @@ namespace ZedGraph
 			set { ViewState["IsPenWidthScaled"] = value; }			
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <value></value>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true),DefaultValue("false")]
 		public bool AxisChanged
 		{
@@ -390,7 +386,7 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// Gets or sets the value that determines the output format for the control, in the
+		/// Proxy property that gets or sets the value that determines the output format for the control, in the
 		/// form of a <see cref="ZedGraphWebFormat"/> enumeration.  This is typically Gif, Jpeg,
 		/// Png, or Icon.
 		/// </summary>
@@ -407,7 +403,7 @@ namespace ZedGraph
 		}	
 	
 		/// <summary>
-		/// Gets or sets the value of the <see cref="GraphPane.ClusterScaleWidth"/>.
+		/// Proxy property that gets or sets the value of the <see cref="GraphPane.ClusterScaleWidth"/>.
 		/// </summary>
 		[NotifyParentProperty(true),Category("Behavior")]
 		public double ClusterScaleWidth
@@ -421,7 +417,7 @@ namespace ZedGraph
 		} 
 
 		/// <summary>
-		/// Gets or sets the value of the <see cref="GraphPane.BarType"/>.
+		/// Proxy property that gets or sets the value of the <see cref="GraphPane.BarType"/>.
 		/// </summary>
 		[NotifyParentProperty(true),Category("Appearance")]
 		public BarType BarType
@@ -434,6 +430,9 @@ namespace ZedGraph
 			set { ViewState["BarType"] = value; }
 		} 
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of the <see cref="GraphPane.LineType"/>.
+		/// </summary>
 		[NotifyParentProperty(true),Category("Appearance")]
 		public LineType LineType
 		{
@@ -445,6 +444,9 @@ namespace ZedGraph
 			set { ViewState["LineType"] = value; }
 		} 
 	
+		/// <summary>
+		/// Proxy property that gets or sets the value of the <see cref="GraphPane.MinClusterGap"/>.
+		/// </summary>
 		[NotifyParentProperty(true),Category("Appearance")]
 		public float MinClusterGap
 		{
@@ -456,6 +458,9 @@ namespace ZedGraph
 			set { ViewState["MinClusterGap"] = value; }
 		} 
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of the <see cref="GraphPane.MinBarGap"/>.
+		/// </summary>
 		[NotifyParentProperty(true),Category("Appearance")]
 		public float MinBarGap
 		{
@@ -467,6 +472,9 @@ namespace ZedGraph
 			set { ViewState["MinBarGap"] = value; }
 		} 
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of the <see cref="PaneBase.MarginLeft"/>.
+		/// </summary>
 		[NotifyParentProperty(true),Category("Appearance")]
 		public float MarginLeft
 		{
@@ -478,6 +486,9 @@ namespace ZedGraph
 			set { ViewState["MarginLeft"] = value; }
 		} 
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of the <see cref="PaneBase.MarginRight"/>.
+		/// </summary>
 		[NotifyParentProperty(true),Category("Appearance")]
 		public float MarginRight
 		{
@@ -489,6 +500,9 @@ namespace ZedGraph
 			set { ViewState["MarginRight"] = value; }
 		} 
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of the <see cref="PaneBase.MarginTop"/>.
+		/// </summary>
 		[NotifyParentProperty(true),Category("Appearance")]
 		public float MarginTop
 		{
@@ -500,6 +514,9 @@ namespace ZedGraph
 			set { ViewState["MarginTop"] = value; }
 		} 
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of the <see cref="PaneBase.MarginBottom"/>.
+		/// </summary>
 		[NotifyParentProperty(true),Category("Appearance")]
 		public float MarginBottom
 		{
@@ -512,9 +529,8 @@ namespace ZedGraph
 		} 
 	
 		/// <summary>
-		/// 
+		/// Proxy property that gets the value of the <see cref="GraphPane.CurveList"/>.
 		/// </summary>
-		/// <value></value>
 		[
 		Category("Data"),		
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -526,6 +542,9 @@ namespace ZedGraph
 			get { return (ZedGraphWebCurveCollection)vsassist.GetValue('c',this.IsTrackingViewState); }
 		}
 
+		/// <summary>
+		/// Proxy property that gets the value of the <see cref="PaneBase.GraphItemList"/>.
+		/// </summary>
 		[
 		Category("Data"),		
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -537,6 +556,9 @@ namespace ZedGraph
 			get {  return (ZedGraphWebGraphItemCollection)vsassist.GetValue('g',this.IsTrackingViewState); }				
 		}
 					
+		/// <summary>
+		/// Proxy property that gets the value of the <see cref="GraphPane.AxisRect"/>.
+		/// </summary>
 		[
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -548,6 +570,9 @@ namespace ZedGraph
 			get { return (ZedGraphWebRect)vsassist.GetValue('r',this.IsTrackingViewState); }
 		}
 		
+		/// <summary>
+		/// Proxy property that gets the value of the <see cref="GraphPane.PieRect"/>.
+		/// </summary>
 		[
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -559,6 +584,9 @@ namespace ZedGraph
 			get { return (ZedGraphWebRect)vsassist.GetValue('R',this.IsTrackingViewState); }
 		}
 
+		/// <summary>
+		/// Proxy property that gets the value of the <see cref="PaneBase.PaneRect"/>.
+		/// </summary>
 		[
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -571,7 +599,7 @@ namespace ZedGraph
 		}
 				
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebFontSpec"/>
+		/// Proxy property that gets the value of the <see cref="PaneBase.FontSpec"/>.
 		/// </summary>
 		[
 		Category("Appearance"),
@@ -585,7 +613,7 @@ namespace ZedGraph
 		}
 			
 		/// <summary>
-		/// <seealso cref="ZedGraphWebBorder"/>
+		/// Proxy property that gets the value of the <see cref="GraphPane.AxisBorder"/>.
 		/// </summary>
 		[		
 		Category("Appearance"),
@@ -599,7 +627,7 @@ namespace ZedGraph
 		}
 				
 		/// <summary>
-		/// <seealso cref="ZedGraphWebFill"/>
+		/// Proxy property that gets the value of the <see cref="GraphPane.AxisFill"/>.
 		/// </summary>
 		[
 		Category("Appearance"),
@@ -613,7 +641,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraphWebBorder"/>
+		/// Proxy property that gets the value of the <see cref="PaneBase.PaneBorder"/>.
 		/// </summary>
 		[		
 		Category("Appearance"),
@@ -627,7 +655,7 @@ namespace ZedGraph
 		}
 				
 		/// <summary>
-		/// <seealso cref="ZedGraphWebFill"/>
+		/// Proxy property that gets the value of the <see cref="PaneBase.PaneFill"/>.
 		/// </summary>
 		[
 		Category("Appearance"),
@@ -641,7 +669,7 @@ namespace ZedGraph
 		}
 	
 		/// <summary>
-		/// <seealso cref="ZedGraph.GraphPane.XAxis"/>
+		/// Proxy property that gets the value of the <see cref="GraphPane.XAxis"/>.
 		/// </summary>
 		[		
 		Category("Appearance"),
@@ -655,7 +683,7 @@ namespace ZedGraph
 		}
 			
 		/// <summary>
-		/// <seealso cref="ZedGraph.GraphPane.YAxis"/>
+		/// Proxy property that gets the value of the <see cref="GraphPane.YAxis"/>.
 		/// </summary>
 		[		
 		Category("Appearance"),
@@ -669,7 +697,7 @@ namespace ZedGraph
 		}
 			
 		/// <summary>
-		/// <seealso cref="ZedGraph.GraphPane.Y2Axis"/>
+		/// Proxy property that gets the value of the <see cref="GraphPane.Y2Axis"/>.
 		/// </summary>
 		[		
 		Category("Appearance"),
@@ -683,7 +711,7 @@ namespace ZedGraph
 		}
 			
 		/// <summary>
-		/// <seealso cref="ZedGraph.GraphPane.Legend"/>
+		/// Proxy property that gets the value of the <see cref="PaneBase.Legend"/>.
 		/// </summary>
 		[	
 		Category("Appearance"),

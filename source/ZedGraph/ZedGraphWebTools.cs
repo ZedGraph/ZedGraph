@@ -177,7 +177,14 @@ namespace ZedGraph
 			code = c;
 			type = t;
 		}
+		
+		/// <summary>
+		/// The state item datatype character code
+		/// </summary>
 		public char code;
+		/// <summary>
+		/// The state item datatype
+		/// </summary>
 		public Type type;
 	}
 	#endregion

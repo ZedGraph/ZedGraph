@@ -72,6 +72,11 @@ namespace ZedGraph
 			Label = label;
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebCurveItem"/> to the specified
+		/// <see cref="CurveItem"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="CurveItem"/> object</param>
 		public void CopyTo( CurveItem item )
 		{
 			item.Label = this.Label;
@@ -232,6 +237,11 @@ namespace ZedGraph
 			return "Border";
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebBorder"/> to the specified
+		/// <see cref="ZedGraph.Border"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.Border"/> object</param>
 		public void CopyTo( Border item )
 		{
 			item.Color = this.Color;
@@ -321,6 +331,11 @@ namespace ZedGraph
 			return "Fill";
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebFill"/> to the specified
+		/// <see cref="ZedGraph.Fill"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.Fill"/> object</param>
 		public void CopyTo( Fill item )
 		{
 			item.Color = this.Color;
@@ -531,6 +546,11 @@ namespace ZedGraph
 			Register('f',typeof(ZedGraphWebFill));
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebSymbol"/> to the specified
+		/// <see cref="Symbol"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="Symbol"/> object</param>
 		public void CopyTo( Symbol item )
 		{
 			item.IsVisible = this.IsVisible;
@@ -659,6 +679,11 @@ namespace ZedGraph
 			Register('f',typeof(ZedGraphWebFill));
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebBarItem"/> to the specified
+		/// <see cref="ZedGraph.BarItem"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.BarItem"/> object</param>
 		public void CopyTo( BarItem item )
 		{
 			base.CopyTo( item );
@@ -735,6 +760,11 @@ namespace ZedGraph
 			Register('s',typeof(ZedGraphWebSymbol));			
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebErrorBarItem"/> to the specified
+		/// <see cref="ZedGraph.ErrorBarItem"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.ErrorBarItem"/> object</param>
 		public void CopyTo( ErrorBarItem item )
 		{
 			base.CopyTo(item);
@@ -830,6 +860,11 @@ namespace ZedGraph
 			Register('f',typeof(ZedGraphWebFill));
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebHiLowBarItem"/> to the specified
+		/// <see cref="ZedGraph.HiLowBarItem"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.HiLowBarItem"/> object</param>
 		public void CopyTo( HiLowBarItem item )
 		{
 			base.CopyTo(item);
@@ -974,6 +1009,11 @@ namespace ZedGraph
 			Register('f',typeof(ZedGraphWebFill));
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebLineItem"/> to the specified
+		/// <see cref="ZedGraph.LineItem"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.LineItem"/> object</param>
 		public void CopyTo( LineItem item )
 		{
 			base.CopyTo(item);
@@ -1159,6 +1199,11 @@ namespace ZedGraph
 			Register('b',typeof(ZedGraphWebBorder));			
 		}	
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebPieItem"/> to the specified
+		/// <see cref="ZedGraph.PieItem"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.PieItem"/> object</param>
 		public void CopyTo( PieItem item )
 		{
 			base.CopyTo(item);
@@ -1275,6 +1320,11 @@ namespace ZedGraph
 			Register('l',typeof(ZedGraphWebLocation));
 		}
 	
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebGraphItem"/> to the specified
+		/// <see cref="ZedGraph.GraphItem"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.GraphItem"/> object</param>
 		public void CopyTo(GraphItem item)
 		{
 			item.ZOrder = this.ZOrder;
@@ -1284,6 +1334,9 @@ namespace ZedGraph
 
 		#region Properties
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.GraphItem.IsVisible"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public bool IsVisible
 		{
@@ -1295,6 +1348,9 @@ namespace ZedGraph
 			set { ViewState["IsVisible"] = value; }
 		} 
 		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.GraphItem.Location"/>
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -1306,6 +1362,9 @@ namespace ZedGraph
 			get { return (ZedGraphWebLocation)base.GetValue('l'); }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.GraphItem.ZOrder"/>
+		/// </summary>
 		public ZOrder ZOrder
 		{
 			get 
@@ -1476,6 +1535,11 @@ namespace ZedGraph
 		{
 		}	
 	
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebAxis"/> to the specified
+		/// <see cref="ZedGraph.Axis"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.Axis"/> object</param>
 		public void CopyTo(Axis item)
 		{
 		}
@@ -1569,6 +1633,11 @@ namespace ZedGraph
 			Register('l',typeof(ZedGraphWebLocation));
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebLegend"/> to the specified
+		/// <see cref="ZedGraph.Legend"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.Legend"/> object</param>
 		public void CopyTo( Legend item )
 		{
 			item.IsVisible = this.IsVisible;
@@ -1583,6 +1652,9 @@ namespace ZedGraph
 		
 		#region Properties
 
+		/// <summary>
+		/// Proxy property that gets the value of <see cref="ZedGraph.Legend.Location"/>
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -1594,6 +1666,9 @@ namespace ZedGraph
 			get { return (ZedGraphWebLocation)base.GetValue('l'); }
 		}
 
+		/// <summary>
+		/// Proxy property that gets the value of <see cref="ZedGraph.Legend.FontSpec"/>
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -1605,6 +1680,9 @@ namespace ZedGraph
 			get { return (ZedGraphWebFontSpec)base.GetValue('f'); }
 		}
 
+		/// <summary>
+		/// Proxy property that gets the value of <see cref="ZedGraph.Legend.Fill"/>
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -1616,6 +1694,9 @@ namespace ZedGraph
 			get { return (ZedGraphWebFill)base.GetValue('f'); }
 		}
 
+		/// <summary>
+		/// Proxy property that gets the value of <see cref="ZedGraph.Legend.Border"/>
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -1627,6 +1708,9 @@ namespace ZedGraph
 			get { return (ZedGraphWebBorder)base.GetValue('b'); }
 		}
 
+		/// <summary>
+		/// Proxy property that gets the value of <see cref="ZedGraph.Legend.Rect"/>
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -1655,6 +1739,9 @@ namespace ZedGraph
 			set { ViewState["IsVisible"] = value; }
 		}
 		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Legend.IsHStack"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public bool IsHStack
 		{
@@ -1712,6 +1799,11 @@ namespace ZedGraph
 			Register('f',typeof(ZedGraphWebFill));
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebFontSpec"/> to the specified
+		/// <see cref="ZedGraph.FontSpec"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.FontSpec"/> object</param>
 		public void CopyTo( FontSpec item )
 		{
 			this.Border.CopyTo(item.Border);
@@ -1941,6 +2033,11 @@ namespace ZedGraph
 		{				
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebRect"/> to the specified
+		/// <see cref="RectangleF"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="RectangleF"/> object</param>
 		public void CopyTo( RectangleF item )
 		{
 			item.X = this.X;
@@ -1951,6 +2048,9 @@ namespace ZedGraph
 		
 	#region Properties
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="RectangleF.Height"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float Height
 		{
@@ -1962,6 +2062,9 @@ namespace ZedGraph
 			set { ViewState["Height"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="RectangleF.Width"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float Width
 		{
@@ -1973,6 +2076,9 @@ namespace ZedGraph
 			set { ViewState["Width"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="RectangleF.Y"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float Y
 		{
@@ -1984,6 +2090,9 @@ namespace ZedGraph
 			set { ViewState["Y"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="RectangleF.X"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float X
 		{
@@ -2022,6 +2131,11 @@ namespace ZedGraph
 		{				
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebSize"/> to the specified
+		/// <see cref="SizeF"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="SizeF"/> object</param>
 		public void CopyTo( SizeF item )
 		{
 			item.Width = this.Width;
@@ -2030,6 +2144,9 @@ namespace ZedGraph
 		
 		#region Properties
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="SizeF.Height"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float Height
 		{
@@ -2041,6 +2158,9 @@ namespace ZedGraph
 			set { ViewState["Height"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="SizeF.Width"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float Width
 		{
@@ -2080,6 +2200,11 @@ namespace ZedGraph
 		{
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebPoint"/> to the specified
+		/// <see cref="PointF"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="PointF"/> object</param>
 		public void CopyTo( PointF item )
 		{
 			item.X = this.X;
@@ -2088,6 +2213,9 @@ namespace ZedGraph
 		
 		#region Properties
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="PointF.X"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float X
 		{
@@ -2099,6 +2227,9 @@ namespace ZedGraph
 			set { ViewState["X"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="PointF.Y"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float Y
 		{
@@ -2140,11 +2271,19 @@ namespace ZedGraph
 			Register('f',typeof(ZedGraphWebFontSpec));
 		}
 	
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebTextItem"/> to the specified
+		/// <see cref="ZedGraph.TextItem"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.TextItem"/> object</param>
 		public void CopyTo( TextItem item )
 		{
 			base.CopyTo(item);
 		}
 		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.TextItem.Text"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public string Text
 		{
@@ -2156,6 +2295,9 @@ namespace ZedGraph
 			set { ViewState["Text"] = value; }
 		} 
 
+		/// <summary>
+		/// Proxy property that gets the value of <see cref="ZedGraph.TextItem.LayoutArea"/>
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -2167,6 +2309,9 @@ namespace ZedGraph
 			get { return (ZedGraphWebSize)GetValue('a'); }			
 		} 
 
+		/// <summary>
+		/// Proxy property that gets the value of <see cref="ZedGraph.TextItem.FontSpec"/>
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -2204,6 +2349,11 @@ namespace ZedGraph
 		{
 		}	
 		
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebArrowItem"/> to the specified
+		/// <see cref="ZedGraph.ArrowItem"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.ArrowItem"/> object</param>
 		public void CopyTo( ArrowItem item )
 		{
 			base.CopyTo(item);
@@ -2235,6 +2385,11 @@ namespace ZedGraph
 		{
 		}
 		
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebImageItem"/> to the specified
+		/// <see cref="ZedGraph.ImageItem"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.ImageItem"/> object</param>
 		public void CopyTo( ArrowItem item )
 		{
 			base.CopyTo(item);
@@ -2266,6 +2421,11 @@ namespace ZedGraph
 		{
 		}			
 	
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebBoxItem"/> to the specified
+		/// <see cref="ZedGraph.BoxItem"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.BoxItem"/> object</param>
 		public void CopyTo( BoxItem item )
 		{
 			base.CopyTo(item);
@@ -2297,7 +2457,12 @@ namespace ZedGraph
 		{
 		}
 		
-		public void CopyTo( BoxItem item )
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebEllipseItem"/> to the specified
+		/// <see cref="ZedGraph.EllipseItem"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.EllipseItem"/> object</param>
+		public void CopyTo( EllipseItem item )
 		{
 			base.CopyTo(item);
 		}
@@ -2330,6 +2495,11 @@ namespace ZedGraph
 			Register('b',typeof(ZedGraphWebPoint));
 		}
 
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebLocation"/> to the specified
+		/// <see cref="ZedGraph.Location"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="ZedGraph.Location"/> object</param>
 		public void CopyTo( Location item )
 		{
 			item.X = this.X;
@@ -2342,12 +2512,15 @@ namespace ZedGraph
 			item.AlignV = this.AlignV;
 			item.CoordinateFrame = this.CoordinateFrame;
 			this.Rect.CopyTo(item.Rect);
-			this.Topleft.CopyTo(item.TopLeft);
+			this.TopLeft.CopyTo(item.TopLeft);
 			this.BottomRight.CopyTo(item.BottomRight);
 		}
 
 		#region Object Properties
 
+		/// <summary>
+		/// Proxy property that gets the value of <see cref="ZedGraph.Location.Rect"/>
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -2359,17 +2532,23 @@ namespace ZedGraph
 			get { return (ZedGraphWebRect)GetValue('r'); }
 		}
 
+		/// <summary>
+		/// Proxy property that gets the value of <see cref="ZedGraph.Location.TopLeft"/>
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
-		public ZedGraphWebPoint Topleft
+		public ZedGraphWebPoint TopLeft
 		{
 			get { return (ZedGraphWebPoint)GetValue('t'); }
 		}
 
+		/// <summary>
+		/// Proxy property that gets the value of <see cref="ZedGraph.Location.BottomRight"/>
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -2385,6 +2564,9 @@ namespace ZedGraph
 		
 		#region Properties
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.Height"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float Height
 		{
@@ -2396,6 +2578,9 @@ namespace ZedGraph
 			set { ViewState["Height"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.Width"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float Width
 		{
@@ -2407,6 +2592,9 @@ namespace ZedGraph
 			set { ViewState["Width"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.Y"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float Y
 		{
@@ -2418,6 +2606,9 @@ namespace ZedGraph
 			set { ViewState["Y"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.X"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float X
 		{
@@ -2429,6 +2620,9 @@ namespace ZedGraph
 			set { ViewState["X"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.Y1"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float Y1
 		{
@@ -2440,6 +2634,9 @@ namespace ZedGraph
 			set { ViewState["Y1"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.X1"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public float X1
 		{
@@ -2451,6 +2648,9 @@ namespace ZedGraph
 			set { ViewState["X1"] = value; }
 		}		
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.AlignH"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public AlignH AlignH
 		{
@@ -2462,6 +2662,9 @@ namespace ZedGraph
 			set { ViewState["AlignH"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.AlignV"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public AlignV AlignV
 		{
@@ -2473,6 +2676,9 @@ namespace ZedGraph
 			set { ViewState["AlignV"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.CoordinateFrame"/>
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public CoordType CoordinateFrame
 		{
