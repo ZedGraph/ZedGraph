@@ -205,7 +205,7 @@
                 />
                 <File
                     RelPath = "ZedGraph\ZedGraphControl.cs"
-                    SubType = "Code"
+                    SubType = "UserControl"
                     BuildAction = "Compile"
                 />
             </Include>
