@@ -59,7 +59,7 @@ namespace ZedGraph
 			list.Add( new AssistNode(code,type) );
 		}
 
-		public object GetValue(object host, char code)
+		public object GetValue(char code, bool IsTrackingViewState)
 		{
 			AssistNode test = null;
 			AssistNode node = null;
@@ -77,7 +77,7 @@ namespace ZedGraph
 			if ( node.Value == null )
 			{
 				node.Value = Activator.CreateInstance(node.Key);					
-				if (((IStateManager)host).IsTrackingViewState) 
+				if (IsTrackingViewState) 
 				{	
 					((IStateManager)node.Value).TrackViewState();						
 				}	
@@ -85,14 +85,14 @@ namespace ZedGraph
 			return node.Value;
 		}
 
-		protected object GetValue(object host, int index)
+		protected object GetValue(int index, bool IsTrackingViewState)
 		{			
 			AssistNode node = (AssistNode)list[index];
 			
 			if ( node.Value == null )
 			{
 				node.Value = Activator.CreateInstance(node.Key);					
-				if (((IStateManager)host).IsTrackingViewState) 
+				if (IsTrackingViewState) 
 				{	
 					((IStateManager)node.Value).TrackViewState();						
 				}	
@@ -118,7 +118,7 @@ namespace ZedGraph
 			return myState;
 		}
 
-		public object LoadViewState(object host, object savedState)
+		public object LoadViewState(object savedState, bool IsTrackingViewState)
 		{
 			if ( savedState == null ) return null;
 			object[] myState = (object[])savedState;
@@ -135,7 +135,7 @@ namespace ZedGraph
 			{	
 				if ( myState[i+1] != null )
 				{
-					state = (IStateManager)GetValue(host,i);					
+					state = (IStateManager)GetValue(i,IsTrackingViewState);					
 					state.LoadViewState(myState[i+1]);
 				}
 			}
@@ -217,19 +217,22 @@ namespace ZedGraph
 		/// </summary>
 		public GenericItem()
 		{			
+			_isTrackingViewState = false;
+			_viewState = null;
+			_subitemlist = new ArrayList();
 		}
 		
 		/// <summary>
 		/// Internal indicator of the current tracking state
 		/// </summary>
-		private bool _isTrackingViewState;
+		private bool _isTrackingViewState = false;
 
 		/// <summary>
 		/// Internal view state used by the asp.net infrastructure
 		/// </summary>
-		private StateBag _viewState;		
+		private StateBag _viewState = null;		
 
-		private ArrayList _subitemlist = new ArrayList();
+		private ArrayList _subitemlist = null;
 		private class AssistNode
 		{
 			public AssistNode(char code, Type type)
@@ -250,7 +253,7 @@ namespace ZedGraph
 		/// <param name="type"></param>
 		protected void Register(char code, Type type)
 		{
-			_subitemlist.Add( new AssistNode(code,type) );
+			_subitemlist.Add( new AssistNode(code,type) );			
 		}
 
 		/// <summary>
@@ -262,7 +265,7 @@ namespace ZedGraph
 		{
 			AssistNode test = null;
 			AssistNode node = null;
-			
+
 			for ( int i=0; i<_subitemlist.Count; i++ )
 			{
 				test = (AssistNode)_subitemlist[i];
@@ -280,12 +283,12 @@ namespace ZedGraph
 				{	
 					((IStateManager)node.Value).TrackViewState();						
 				}	
-			}
+			}			
 			return node.Value;
 		}
 
 		private object GetValue(int index)
-		{			
+		{					
 			AssistNode node = (AssistNode)_subitemlist[index];
 			
 			if ( node.Value == null )

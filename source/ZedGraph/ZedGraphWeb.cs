@@ -38,14 +38,14 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-02-12 23:22:51 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-02-13 08:26:02 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
 	//DefaultProperty("Title"),
 	ToolboxData("<{0}:ZedGraphWeb runat=server></{0}:ZedGraphWeb>")
 	]
-	public class ZedGraphWeb : Control
+	public class ZedGraphWeb : Control, INamingContainer
 	{
 		/// <summary>
 		/// Override the <see cref="ToString"/> method to do nothing.
@@ -56,7 +56,7 @@ namespace ZedGraph
 			return String.Empty;
 		}
 
-		#region Constructors
+	#region Constructors
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
@@ -69,9 +69,14 @@ namespace ZedGraph
 			vsassist.Register('l',typeof(ZedGraphWebLegend));
 			vsassist.Register('b',typeof(ZedGraphWebBorder));
 			vsassist.Register('f',typeof(ZedGraphWebFill));
+			vsassist.Register('B',typeof(ZedGraphWebBorder));
+			vsassist.Register('F',typeof(ZedGraphWebFill));
 			vsassist.Register('s',typeof(ZedGraphWebFontSpec));
 			vsassist.Register('c',typeof(ZedGraphWebCurveCollection));
 			vsassist.Register('g',typeof(ZedGraphWebGraphItemCollection));
+			vsassist.Register('r',typeof(ZedGraphWebRect));
+			vsassist.Register('R',typeof(ZedGraphWebRect));
+			vsassist.Register('P',typeof(ZedGraphWebRect));
 		}
 		#endregion
 
@@ -186,6 +191,29 @@ namespace ZedGraph
 		#endregion
 
 	#region Attributes
+
+		[Category("Data"),NotifyParentProperty(true),
+		Description("Optional binding member name for populating curve items with values")]
+		public string DataMember
+		{
+			get 
+			{ 
+				object x = ViewState["DataMember"]; 
+				return (null == x) ? String.Empty : (string)x;
+			}
+			set { ViewState["DataMember"] = value; }
+		}
+
+		[Bindable(true),Category("Data"),NotifyParentProperty(true)]
+		public object DataSource
+		{
+			get 
+			{ 
+				object x = ViewState["DataSource"]; 
+				return (null == x) ? null : (object)x;
+			}
+			set { ViewState["DataSource"] = value; }
+		}
 
 		/// <summary>
 		/// Gets or sets the value of the <see cref="PaneBase.BaseDimension"/>.
@@ -406,9 +434,82 @@ namespace ZedGraph
 			set { ViewState["BarType"] = value; }
 		} 
 
-	#endregion
+		[NotifyParentProperty(true),Category("Appearance")]
+		public LineType LineType
+		{
+			get 
+			{ 
+				object x = ViewState["LineType"]; 
+				return (null == x) ? GraphPane.Default.LineType : (LineType)x;
+			}
+			set { ViewState["LineType"] = value; }
+		} 
+	
+		[NotifyParentProperty(true),Category("Appearance")]
+		public float MinClusterGap
+		{
+			get 
+			{ 
+				object x = ViewState["MinClusterGap"]; 
+				return (null == x) ? GraphPane.Default.MinClusterGap : (float)x;
+			}
+			set { ViewState["MinClusterGap"] = value; }
+		} 
 
-	#region CurveList Property	
+		[NotifyParentProperty(true),Category("Appearance")]
+		public float MinBarGap
+		{
+			get 
+			{ 
+				object x = ViewState["MinBarGap"]; 
+				return (null == x) ? GraphPane.Default.MinBarGap : (float)x;
+			}
+			set { ViewState["MinBarGap"] = value; }
+		} 
+
+		[NotifyParentProperty(true),Category("Appearance")]
+		public float MarginLeft
+		{
+			get 
+			{ 
+				object x = ViewState["MarginLeft"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["MarginLeft"] = value; }
+		} 
+
+		[NotifyParentProperty(true),Category("Appearance")]
+		public float MarginRight
+		{
+			get 
+			{ 
+				object x = ViewState["MarginRight"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["MarginRight"] = value; }
+		} 
+
+		[NotifyParentProperty(true),Category("Appearance")]
+		public float MarginTop
+		{
+			get 
+			{ 
+				object x = ViewState["MarginTop"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["MarginTop"] = value; }
+		} 
+
+		[NotifyParentProperty(true),Category("Appearance")]
+		public float MarginBottom
+		{
+			get 
+			{ 
+				object x = ViewState["MarginBottom"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["MarginBottom"] = value; }
+		} 
 	
 		/// <summary>
 		/// 
@@ -422,13 +523,9 @@ namespace ZedGraph
 		]
 		public ZedGraphWebCurveCollection CurveList
 		{
-			get { return (ZedGraphWebCurveCollection)vsassist.GetValue(this,'c'); }
+			get { return (ZedGraphWebCurveCollection)vsassist.GetValue('c',this.IsTrackingViewState); }
 		}
-		#endregion
 
-#if NOTREADY_FOR_PRODUCTION
-
-	#region GraphItemList Property		
 		[
 		Category("Data"),		
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -437,11 +534,42 @@ namespace ZedGraph
 		]
 		public ZedGraphWebGraphItemCollection GraphItemList
 		{
-			get {  return (ZedGraphWebGraphItemCollection)vsassist.GetValue(this,'g'); }				
+			get {  return (ZedGraphWebGraphItemCollection)vsassist.GetValue('g',this.IsTrackingViewState); }				
 		}
-		#endregion		
+					
+		[
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebRect AxisRect
+		{
+			get { return (ZedGraphWebRect)vsassist.GetValue('r',this.IsTrackingViewState); }
+		}
+		
+		[
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebRect PieRect
+		{
+			get { return (ZedGraphWebRect)vsassist.GetValue('R',this.IsTrackingViewState); }
+		}
 
-	#region FontSpec Property		
+		[
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebRect PaneRect
+		{
+			get { return (ZedGraphWebRect)vsassist.GetValue('P',this.IsTrackingViewState); }
+		}
+				
 		/// <summary>
 		/// <seealso cref="ZedGraph.ZedGraphWebFontSpec"/>
 		/// </summary>
@@ -453,11 +581,9 @@ namespace ZedGraph
 		]
 		public ZedGraphWebFontSpec FontSpec
 		{
-			get { return (ZedGraphWebFontSpec)vsassist.GetValue(this,'s'); }
+			get { return (ZedGraphWebFontSpec)vsassist.GetValue('s',this.IsTrackingViewState); }
 		}
-		#endregion
-
-	#region AxisBorder Property		
+			
 		/// <summary>
 		/// <seealso cref="ZedGraphWebBorder"/>
 		/// </summary>
@@ -469,11 +595,9 @@ namespace ZedGraph
 		]
 		public ZedGraphWebBorder AxisBorder
 		{
-			get { return (ZedGraphWebBorder)vsassist.GetValue(this,'b'); }
+			get { return (ZedGraphWebBorder)vsassist.GetValue('b',this.IsTrackingViewState); }
 		}
-		#endregion
-
-	#region AxisFill Property		
+				
 		/// <summary>
 		/// <seealso cref="ZedGraphWebFill"/>
 		/// </summary>
@@ -485,11 +609,37 @@ namespace ZedGraph
 		]
 		public ZedGraphWebFill AxisFill
 		{
-			get { return (ZedGraphWebFill)vsassist.GetValue(this,'f'); }
+			get { return (ZedGraphWebFill)vsassist.GetValue('f',this.IsTrackingViewState); }
 		}
-		#endregion
 
-	#region XAxis Property		
+		/// <summary>
+		/// <seealso cref="ZedGraphWebBorder"/>
+		/// </summary>
+		[		
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebBorder PaneBorder
+		{
+			get { return (ZedGraphWebBorder)vsassist.GetValue('B',this.IsTrackingViewState); }
+		}
+				
+		/// <summary>
+		/// <seealso cref="ZedGraphWebFill"/>
+		/// </summary>
+		[
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebFill PaneFill
+		{
+			get { return (ZedGraphWebFill)vsassist.GetValue('F',this.IsTrackingViewState); }
+		}
+	
 		/// <summary>
 		/// <seealso cref="ZedGraph.GraphPane.XAxis"/>
 		/// </summary>
@@ -501,11 +651,9 @@ namespace ZedGraph
 		]
 		public ZedGraphWebAxis XAxis
 		{
-			get { return (ZedGraphWebAxis)vsassist.GetValue(this,'x'); }
+			get { return (ZedGraphWebAxis)vsassist.GetValue('x',this.IsTrackingViewState); }
 		}
-		#endregion
-
-	#region YAxis Property		
+			
 		/// <summary>
 		/// <seealso cref="ZedGraph.GraphPane.YAxis"/>
 		/// </summary>
@@ -517,11 +665,9 @@ namespace ZedGraph
 		]
 		public ZedGraphWebAxis YAxis
 		{
-			get { return (ZedGraphWebAxis)vsassist.GetValue(this,'y'); }
+			get { return (ZedGraphWebAxis)vsassist.GetValue('y',this.IsTrackingViewState); }
 		}
-		#endregion
-
-	#region Y2Axis Property		
+			
 		/// <summary>
 		/// <seealso cref="ZedGraph.GraphPane.Y2Axis"/>
 		/// </summary>
@@ -533,11 +679,9 @@ namespace ZedGraph
 		]
 		public ZedGraphWebAxis Y2Axis
 		{
-			get { return (ZedGraphWebAxis)vsassist.GetValue(this,'z'); }
+			get { return (ZedGraphWebAxis)vsassist.GetValue('z',this.IsTrackingViewState); }
 		}
-		#endregion
-
-	#region Legend Property		
+			
 		/// <summary>
 		/// <seealso cref="ZedGraph.GraphPane.Legend"/>
 		/// </summary>
@@ -549,10 +693,9 @@ namespace ZedGraph
 		]
 		public ZedGraphWebLegend Legend
 		{
-			get { return (ZedGraphWebLegend)vsassist.GetValue(this,'l'); }
+			get { return (ZedGraphWebLegend)vsassist.GetValue('l',this.IsTrackingViewState); }
 		}
-		#endregion
-#endif
+	#endregion
 
 	#region Event Handlers
 		/// <summary>
@@ -597,65 +740,6 @@ namespace ZedGraph
 	#region Map Embedded Content
 
 		/// <summary>
-		/// transfers values from a <see cref="ZedGraphWebCurveItem"/> instance to a <see cref="CurveItem"/> instance
-		/// </summary>
-		/// <param name="curve"><see cref="CurveItem"/></param>
-		/// <param name="web"><see cref="ZedGraphWebCurveItem"/></param>
-		protected void MapWeb2GraphItem( CurveItem curve, ZedGraphWebCurveItem web )
-		{
-			curve.Color = web.Color;
-			curve.IsLegendLabelVisible = web.IsLegendLabelVisible;
-			curve.IsVisible = web.IsVisible;
-			curve.IsY2Axis = web.IsY2Axis;
-			curve.Label = web.Label;
-		}
-
-		/// <summary>
-		/// Transfers values from a <see cref="ZedGraphWebBorder"/> instance to a <see cref="Border"/> instance.
-		/// </summary>
-		/// <param name="item"><see cref="Border"/></param>
-		/// <param name="web"><see cref="ZedGraphWebBorder"/></param>
-		protected void MapWeb2GraphItem( Border item, ZedGraphWebBorder web )
-		{
-			item.Color = web.Color;
-			item.IsVisible = web.IsVisible;
-			item.PenWidth = web.PenWidth;
-		}
-
-		/// <summary>
-		/// Transfers values from a <see cref="ZedGraphWebFill"/> instance to a <see cref="Fill"/> instance.
-		/// </summary>
-		/// <param name="item"><see cref="Fill"/></param>
-		/// <param name="web"><see cref="ZedGraphWebFill"/></param>
-		protected void MapWeb2GraphItem( Fill item, ZedGraphWebFill web )
-		{
-			item = new Fill();			
-			item.AlignH = web.AlignH;
-			item.AlignV = web.AlignV;			
-			//TODO: item.Brush = web.Brush
-			item.Color = web.Color;
-			item.IsScaled = web.IsScaled;
-			item.IsVisible = web.IsVisible;
-			item.RangeMax = web.RangeMax;
-			item.RangeMin = web.RangeMin;
-			item.Type = web.Type;
-		}
-
-		/// <summary>
-		/// Transfers values from a <see cref="ZedGraphWebSymbol"/> instance to a <see cref="Symbol"/> instance.
-		/// </summary>
-		/// <param name="item"><see cref="Symbol"/></param>
-		/// <param name="web"><see cref="ZedGraphWebSymbol"/></param>
-		protected void MapWeb2GraphItem( Symbol item, ZedGraphWebSymbol web )
-		{
-			MapWeb2GraphItem(item.Border,web.Border);
-			MapWeb2GraphItem(item.Fill,web.Fill);
-			item.IsVisible = web.IsVisible;
-			item.Size = web.Size;
-			item.Type = web.Type;
-		}
-
-		/// <summary>
 		/// Adds content to the <see cref="GraphPane"/> instance based on the web controls state elements.
 		/// This requires applying each <see cref="ZedGraphWebCurveItem"/> to the <see cref="GraphPane"/> 
 		/// including all the values and sub objects.
@@ -666,8 +750,35 @@ namespace ZedGraph
 		{
 			pane.IsShowTitle = this.IsShowTitle;
 			pane.BarType = this.BarType;
-			pane.ClusterScaleWidth = this.ClusterScaleWidth;
-			
+			pane.ClusterScaleWidth = this.ClusterScaleWidth;				
+			XAxis.CopyTo( pane.XAxis );
+			YAxis.CopyTo( pane.YAxis );
+			Y2Axis.CopyTo( pane.Y2Axis );
+			pane.IsIgnoreInitial = this.IsIgnoreInitial;
+			pane.IsIgnoreMissing = this.IsIgnoreMissing;
+			pane.LineType = this.LineType;
+			this.AxisRect.CopyTo(pane.AxisRect);
+			pane.IsAxisRectAuto = this.IsAxisRectAuto;
+			this.PieRect.CopyTo(pane.PieRect);
+			this.AxisBorder.CopyTo(pane.AxisBorder);
+			this.AxisFill.CopyTo(pane.AxisFill);
+			pane.MinClusterGap = this.MinClusterGap;
+			pane.MinBarGap = this.MinBarGap;
+			pane.BarBase = this.BarBase;
+			this.PaneRect.CopyTo(pane.PaneRect);
+			this.Legend.CopyTo(pane.Legend);
+			this.FontSpec.CopyTo(pane.FontSpec);
+			pane.Title = this.Title;
+			this.PaneBorder.CopyTo(pane.PaneBorder);
+			this.PaneFill.CopyTo(pane.PaneFill);
+			pane.MarginLeft = this.MarginLeft;
+			pane.MarginRight = this.MarginRight;
+			pane.MarginTop = this.MarginTop;
+			pane.MarginBottom = this.MarginBottom;
+			pane.BaseDimension = this.BaseDimension;
+			pane.IsFontsScaled = this.IsFontsScaled;
+			pane.IsPenWidthScaled = this.IsPenWidthScaled;
+
 			ZedGraphWebCurveItem curve;
 			for (int i=0; i<CurveList.Count; i++)
 			{
@@ -676,54 +787,110 @@ namespace ZedGraph
 				{
 					ZedGraphWebBarItem item = (ZedGraphWebBarItem)curve;
 					BarItem x = pane.AddBar(item.Label,new PointPairList(),item.Color);
-					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);
-					MapWeb2GraphItem(x.Bar.Border,item.Border);
-					MapWeb2GraphItem(x.Bar.Fill,item.Fill);
+					item.CopyTo(x);					
 				}
 				else if ( curve is ZedGraphWebLineItem )
 				{
 					ZedGraphWebLineItem item = (ZedGraphWebLineItem)curve;
 					LineItem x = pane.AddCurve(item.Label,new PointPairList(),item.Color);
-					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);
-					MapWeb2GraphItem(x.Symbol,item.Symbol);
-					x.Line.Style = item.Style;
-					x.Line.Width = item.Width;
-					x.Line.IsSmooth = item.IsSmooth;
-					x.Line.SmoothTension = item.SmoothTension;
-					x.Line.StepType = item.StepType;
-					MapWeb2GraphItem(x.Line.Fill,item.Fill);
+					item.CopyTo(x);
 				}
 				else if ( curve is ZedGraphWebErrorBarItem )
 				{
 					ZedGraphWebErrorBarItem item = (ZedGraphWebErrorBarItem)curve;
 					ErrorBarItem x = pane.AddErrorBar(item.Label,new PointPairList(),item.Color);
-					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);					
-					MapWeb2GraphItem(x.ErrorBar.Symbol,item.Symbol);
-					x.BarBase = item.BarBase;
-					x.ErrorBar.PenWidth = item.PenWidth;
+					item.CopyTo(x);
 				}
 				else if ( curve is ZedGraphWebHiLowBarItem )
 				{
 					ZedGraphWebHiLowBarItem item = (ZedGraphWebHiLowBarItem)curve;
 					HiLowBarItem x = pane.AddHiLowBar(item.Label,new PointPairList(),item.Color);
-					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);									
-					MapWeb2GraphItem(x.Bar.Border,item.Border);
-					MapWeb2GraphItem(x.Bar.Fill,item.Fill);					
-					x.BarBase = item.BarBase;
-					x.Bar.Size = item.Size;
-					x.Bar.IsMaximumWidth = item.IsMaximumWidth;
+					item.CopyTo(x);
 				}
 				else if ( curve is ZedGraphWebPieItem )
 				{
 					ZedGraphWebPieItem item = (ZedGraphWebPieItem)curve;
 					PieItem x = pane.AddPieSlice(item.Value, item.Color, item.Displacement, item.Label);					
-					MapWeb2GraphItem(x.Border,item.Border);					
-					x.LabelType = item.LabelType;
-					//x.PieType = item.PieType;
+					item.CopyTo(x);
+				}				
+			}
+			
+			ZedGraphWebGraphItem draw;
+			for (int i=0; i<GraphItemList.Count; i++)
+			{
+				draw = GraphItemList[i];
+				if ( draw is ZedGraphWebTextItem )
+				{
+					ZedGraphWebTextItem item = (ZedGraphWebTextItem)draw;
+					TextItem x = new TextItem();
+					item.CopyTo(x);
+					pane.GraphItemList.Add(x);
+				}
+				else if ( draw is ZedGraphWebArrowItem )
+				{
+					ZedGraphWebArrowItem item = (ZedGraphWebArrowItem)draw;
+					//TODO: deal with default values
+					ArrowItem x = new ArrowItem(item.Location.X,
+						item.Location.Y,item.Location.X1,item.Location.Y1);
+					item.CopyTo(x);
+					pane.GraphItemList.Add(x);
+				}
+				else if ( draw is ZedGraphWebImageItem )
+				{
+					ZedGraphWebImageItem item = (ZedGraphWebImageItem)draw;
+					//TODO: deal with default values
+					ImageItem x = new ImageItem(null,item.Location.X,item.Location.Y,
+						item.Location.Width,item.Location.Height);
+					item.CopyTo(x);
+					pane.GraphItemList.Add(x);
+				}
+				else if ( draw is ZedGraphWebBoxItem )
+				{
+					ZedGraphWebBoxItem item = (ZedGraphWebBoxItem)draw;
+					//TODO: deal with default values
+					BoxItem x = new BoxItem(RectangleF.Empty,Color.Empty,Color.Empty);
+					item.CopyTo(x);
+					pane.GraphItemList.Add(x);
+				}
+				else if ( draw is ZedGraphWebEllipseItem )
+				{
+					ZedGraphWebEllipseItem item = (ZedGraphWebEllipseItem)draw;
+					//TODO: deal with default values
+					EllipseItem x = new EllipseItem(RectangleF.Empty,Color.Empty,Color.Empty);
+					item.CopyTo(x);
+					pane.GraphItemList.Add(x);
 				}
 			}
 		}
 		#endregion
+
+	#region Process DataSource
+
+		protected void PopulateByDataSource( Graphics g, GraphPane pane )
+		{
+			if ( this.DataSource == null ) return;
+
+			//TODO: verify datasource type and count
+			//TODO: match column names to curveitems
+			//TODO: foreach row populate columns
+			
+			//NOTE: ZedGraphWeb.DataMember = X (or Y if reversed?)
+			//NOTE: ZedGraphCurveItem.DataMember = Y (or X if reversed?)
+			//NOTE: Z values are only supported via the callback
+
+			//TODO: cache the data-map table before processing rows
+
+			/*
+			while ( false == true )
+			{
+				double x,y,z = 0;
+				//TODO: match incoming datatype with expected datatype
+				pane.CurveList[0].Points.Add(x,y,z);
+			}
+			*/
+		}
+
+	#endregion
 
 	#region Render Methods
 
@@ -753,6 +920,9 @@ namespace ZedGraph
 
 			//add visual designer influences here - first!!
 			MapWebContent(g,pane);
+
+			// Add DataSource values if available before the callback
+			PopulateByDataSource(g,pane);
 
 			// Use callback to gather more settings and data values
 			OnDrawPane( g, pane );			
@@ -895,23 +1065,8 @@ namespace ZedGraph
 		/// <param name="savedState">portable view state object</param>
 		protected override void LoadViewState(object savedState) 
 		{
-			object state = vsassist.LoadViewState(this,savedState);
-			if ( state != null ) base.LoadViewState(state);											
-
-			/*
-			if ( savedState == null ) return;
-			object[] state = (object[])savedState;
-
-			if (state[0] != null) base.LoadViewState(state[0]);
-			if (state[1] != null) ((IStateManager)XAxis).LoadViewState(state[1]);
-			if (state[2] != null) ((IStateManager)YAxis).LoadViewState(state[2]);
-			if (state[3] != null) ((IStateManager)Y2Axis).LoadViewState(state[3]);
-			if (state[4] != null) ((IStateManager)Legend).LoadViewState(state[4]);
-			if (state[5] != null) ((IStateManager)AxisBorder).LoadViewState(state[5]);
-			if (state[6] != null) ((IStateManager)AxisFill).LoadViewState(state[6]);
-			if (state[7] != null) ((IStateManager)FontSpec).LoadViewState(state[7]);
-			if (state[8] != null) ((IStateManager)CurveList).LoadViewState(state[8]);
-			*/						
+			object state = vsassist.LoadViewState(savedState,this.IsTrackingViewState);
+			if ( state != null ) base.LoadViewState(state);																			
 		}
 
 		/// <summary>
@@ -921,19 +1076,6 @@ namespace ZedGraph
 		protected override object SaveViewState() 
 		{			
 			return vsassist.SaveViewState(base.SaveViewState());	
-			/*
-			object[] state = new object[9];
-			state[0] = base.SaveViewState();
-			state[1] = (xaxis==null) ? null : ((IStateManager)XAxis).SaveViewState();
-			state[2] = (yaxis==null) ? null : ((IStateManager)YAxis).SaveViewState();
-			state[3] = (y2axis==null) ? null : ((IStateManager)Y2Axis).SaveViewState();
-			state[4] = (legend==null) ? null : ((IStateManager)Legend).SaveViewState();
-			state[5] = (axisborder==null) ? null : ((IStateManager)AxisBorder).SaveViewState();
-			state[6] = (axisfill==null) ? null : ((IStateManager)AxisFill).SaveViewState();
-			state[7] = (fontspec==null) ? null : ((IStateManager)FontSpec).SaveViewState();
-			state[8] = (curvelist==null) ? null : ((IStateManager)CurveList).SaveViewState();			
-			return state;
-			*/
 		}
 
 		/// <summary>
@@ -942,17 +1084,7 @@ namespace ZedGraph
 		protected override void TrackViewState() 
 		{	
 			base.TrackViewState();
-			vsassist.TrackViewState();
-			/*
-			if (xaxis!=null)     ((IStateManager)xaxis).TrackViewState();
-			if (yaxis!=null)     ((IStateManager)yaxis).TrackViewState();
-			if (y2axis!=null)    ((IStateManager)y2axis).TrackViewState();
-			if (legend!=null)    ((IStateManager)legend).TrackViewState();
-			if (axisborder!=null)((IStateManager)axisborder).TrackViewState();
-			if (axisfill!=null)  ((IStateManager)axisfill).TrackViewState();
-			if (fontspec!=null)  ((IStateManager)fontspec).TrackViewState();
-			if (curvelist!=null) ((IStateManager)curvelist).TrackViewState();
-			*/
+			vsassist.TrackViewState();			
 		}
 		#endregion
 	}

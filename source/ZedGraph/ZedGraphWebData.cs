@@ -26,6 +26,14 @@ using System.Drawing.Design;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
+//
+// The following are PROXY classes to the real parts of ZedGraph. This was done
+// because of the generic nature of ZedGraph support WebForms, WinForms, and 
+// Console applications. The specific requirements for building the webcontrol are
+// unique enough to conflict the generic requirements of ZedGraph, so we have
+// proxy classes.
+//
+
 namespace ZedGraph
 {
 	#region ZedGraphWebCurveItem
@@ -64,8 +72,29 @@ namespace ZedGraph
 			Label = label;
 		}
 
+		public void CopyTo( CurveItem item )
+		{
+			item.Label = this.Label;
+			item.Color = this.Color;
+			item.IsLegendLabelVisible = this.IsLegendLabelVisible;
+			item.IsY2Axis = this.IsY2Axis;
+			item.IsVisible = this.IsVisible;
+		}
+
 		#region Properties
 		
+		[Category("Data"),NotifyParentProperty(true),
+		Description("Optional binding member name for populating this curve item with values")]
+		public string DataMember
+		{
+			get 
+			{ 
+				object x = ViewState["DataMember"]; 
+				return (null == x) ? String.Empty : (string)x;
+			}
+			set { ViewState["DataMember"] = value; }
+		}
+
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="CurveItem.Label"/>.
 		/// </summary>
@@ -203,6 +232,14 @@ namespace ZedGraph
 			return "Border";
 		}
 
+		public void CopyTo( Border item )
+		{
+			item.Color = this.Color;
+			item.IsVisible = this.IsVisible;
+			item.PenWidth = this.PenWidth;
+			item.InflateFactor = this.InflateFactor;
+		}
+
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="Border.Color"/>.
 		/// </summary>
@@ -215,7 +252,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["Color"]; 
-				return (null == x) ? Color.Empty : (Color)x;
+				return (null == x) ? Border.Default.Color : (Color)x;
 			}
 			set { ViewState["Color"] = value; }
 		} 
@@ -232,7 +269,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsVisible"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? Border.Default.IsVisible : (bool)x;
 			}
 			set { ViewState["IsVisible"] = value; }
 		}
@@ -249,9 +286,20 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["PenWidth"]; 
-				return (null == x) ? 1 : (float)x;
+				return (null == x) ? Border.Default.PenWidth : (float)x;
 			}
 			set { ViewState["PenWidth"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float InflateFactor
+		{
+			get 
+			{ 
+				object x = ViewState["InflateFactor"]; 
+				return (null == x) ? Border.Default.InflateFactor : (float)x;
+			}
+			set { ViewState["InflateFactor"] = value; }
 		}
 	}
 
@@ -273,6 +321,18 @@ namespace ZedGraph
 			return "Fill";
 		}
 
+		public void CopyTo( Fill item )
+		{
+			item.Color = this.Color;
+			item.IsVisible = this.IsVisible;
+			item.RangeMax = this.RangeMax;
+			item.RangeMin = this.RangeMin;
+			item.Type = this.Type;
+			item.AlignH = this.AlignH;
+			item.AlignV = this.AlignV;
+			item.IsScaled = this.IsScaled;
+			item.Brush = this.Brush;
+		}
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="Fill.Color"/>.
 		/// </summary>
@@ -397,7 +457,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["AlignH"]; 
-				return (null == x) ? AlignH.Left : (AlignH)x;
+				return (null == x) ? Fill.Default.AlignH : (AlignH)x;
 			}
 			set { ViewState["AlignH"] = value; }
 		}
@@ -416,7 +476,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["AlignV"]; 
-				return (null == x) ? AlignV.Center : (AlignV)x;
+				return (null == x) ? Fill.Default.AlignV : (AlignV)x;
 			}
 			set { ViewState["AlignV"] = value; }
 		}
@@ -435,23 +495,13 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsScaled"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? Fill.Default.IsScaled : (bool)x;
 			}
 			set { ViewState["IsScaled"] = value; }
 		}
-
-		/*
-		[NotifyParentProperty(true)]
-		public Brush Brush
-		{
-			get 
-			{ 
-				object x = ViewState["Brush"]; 
-				return (null == x) ? Brushes.Black : (Brush)x;
-			}
-			set { ViewState["Brush"] = value; }
-		}
-		*/	
+		
+		// not accessible via webcontrol properties
+		public Brush Brush = null;			
 	}
 
 	#endregion
@@ -481,6 +531,15 @@ namespace ZedGraph
 			Register('f',typeof(ZedGraphWebFill));
 		}
 
+		public void CopyTo( Symbol item )
+		{
+			item.IsVisible = this.IsVisible;
+			item.Size = this.Size;
+			item.Type = this.SymbolType;
+			this.Border.CopyTo(item.Border);
+			this.Fill.CopyTo(item.Fill);
+		}
+
 		#region Properties
 		
 		/// <summary>
@@ -494,7 +553,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsVisible"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? Symbol.Default.IsVisible : (bool)x;
 			}
 			set { ViewState["IsVisible"] = value; }
 		} 
@@ -510,7 +569,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["Size"]; 
-				return (null == x) ? 1 : (float)x;
+				return (null == x) ? Symbol.Default.Size : (float)x;
 			}
 			set { ViewState["Size"] = value; }
 		} 
@@ -522,12 +581,12 @@ namespace ZedGraph
 		/// a <see cref="SymbolType"/> enumeration.
 		/// </remarks>
 		[NotifyParentProperty(true)]
-		public SymbolType Type
+		public SymbolType SymbolType
 		{
 			get 
 			{ 
 				object x = ViewState["SymbolType"]; 
-				return (null == x) ? SymbolType.Default : (SymbolType)x;
+				return (null == x) ? Symbol.Default.Type : (SymbolType)x;
 			}
 			set { ViewState["SymbolType"] = value; }
 		} 
@@ -600,6 +659,13 @@ namespace ZedGraph
 			Register('f',typeof(ZedGraphWebFill));
 		}
 
+		public void CopyTo( BarItem item )
+		{
+			base.CopyTo( item );
+			this.Border.CopyTo( item.Bar.Border );
+			this.Fill.CopyTo( item.Bar.Fill );
+		}
+
 		#region Border
 		
 		/// <summary>
@@ -667,6 +733,11 @@ namespace ZedGraph
 		public ZedGraphWebErrorBarItem() : base()
 		{
 			Register('s',typeof(ZedGraphWebSymbol));			
+		}
+
+		public void CopyTo( ErrorBarItem item )
+		{
+			base.CopyTo(item);
 		}
 
 		#region Symbol
@@ -757,6 +828,11 @@ namespace ZedGraph
 		{
 			Register('b',typeof(ZedGraphWebBorder));
 			Register('f',typeof(ZedGraphWebFill));
+		}
+
+		public void CopyTo( HiLowBarItem item )
+		{
+			base.CopyTo(item);
 		}
 
 		#region Properties
@@ -897,6 +973,18 @@ namespace ZedGraph
 			Register('s',typeof(ZedGraphWebSymbol));
 			Register('f',typeof(ZedGraphWebFill));
 		}
+
+		public void CopyTo( LineItem item )
+		{
+			base.CopyTo(item);
+			this.Symbol.CopyTo(item.Symbol);
+			this.Fill.CopyTo(item.Line.Fill);
+			item.Line.IsSmooth = this.IsSmooth;
+			item.Line.Width = this.Width;
+			item.Line.SmoothTension = this.Width;
+			item.Line.Style = this.Style;
+			item.Line.StepType = this.StepType;
+		}
 	
 		#region Properties
 		
@@ -914,7 +1002,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsSmooth"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? Line.Default.IsSmooth : (bool)x;
 			}
 			set { ViewState["IsSmooth"] = value; }
 		}
@@ -931,7 +1019,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["Width"]; 
-				return (null == x) ? 1 : (float)x;
+				return (null == x) ? Line.Default.Width : (float)x;
 			}
 			set { ViewState["Width"] = value; }
 		}
@@ -956,7 +1044,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["SmoothTension"]; 
-				return (null == x) ? 1 : (float)x;
+				return (null == x) ? Line.Default.SmoothTension : (float)x;
 			}
 			set { ViewState["SmoothTension"] = value; }
 		}
@@ -974,7 +1062,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["DashStyle"]; 
-				return (null == x) ? DashStyle.Solid : (DashStyle)x;
+				return (null == x) ? Line.Default.Style : (DashStyle)x;
 			}
 			set { ViewState["DashStyle"] = value; }
 		}
@@ -1001,7 +1089,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["StepType"]; 
-				return (null == x) ? StepType.NonStep : (StepType)x;
+				return (null == x) ? Line.Default.StepType : (StepType)x;
 			}
 			set { ViewState["StepType"] = value; }
 		}
@@ -1070,6 +1158,11 @@ namespace ZedGraph
 		{
 			Register('b',typeof(ZedGraphWebBorder));			
 		}	
+
+		public void CopyTo( PieItem item )
+		{
+			base.CopyTo(item);
+		}
 
 		#region Properties
 		
@@ -1179,26 +1272,50 @@ namespace ZedGraph
 		/// </summary>
 		public ZedGraphWebGraphItem() : base()
 		{
-		}	
-		
-		/*
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.GraphItem.Label"/>.
-		/// </summary>
-		/// <remarks> Gets or sets the <see cref="PieLabelType"/> to be used in displaying 
-		/// <see cref="PieItem"/> labels.
-		/// </remarks>
+			Register('l',typeof(ZedGraphWebLocation));
+		}
+	
+		public void CopyTo(GraphItem item)
+		{
+			item.ZOrder = this.ZOrder;
+			item.IsVisible = this.IsVisible;
+			this.Location.CopyTo(item.Location);
+		}
+
+		#region Properties
+
 		[NotifyParentProperty(true)]
-		public string Label
+		public bool IsVisible
 		{
 			get 
 			{ 
-				object x = ViewState["Label"]; 
-				return (null == x) ? string.Empty : (string)x;
+				object x = ViewState["IsVisible"]; 
+				return (null == x) ? true : (bool)x;
 			}
-			set { ViewState["Label"] = value; }
+			set { ViewState["IsVisible"] = value; }
 		} 
-		*/
+		
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebLocation Location
+		{
+			get { return (ZedGraphWebLocation)base.GetValue('l'); }
+		}
+
+		public ZOrder ZOrder
+		{
+			get 
+			{ 
+				object x = ViewState["ZOrder"]; 
+				return (null == x) ? ZOrder.A_InFront : (ZOrder)x;
+			}
+			set { ViewState["ZOrder"] = value; }
+		} 
+		#endregion
 	}
 	#endregion
 
@@ -1284,9 +1401,17 @@ namespace ZedGraph
 		/// </summary>
 		public ZedGraphWebGraphItemCollection() : base()
 		{
-			Schema = new GenericCollectionItemSchema[1];
-			Schema[0].code = 'x';
-			Schema[0].type = typeof(ZedGraphWebGraphItem);			
+			Schema = new GenericCollectionItemSchema[5];
+			Schema[0].code = 't';
+			Schema[0].type = typeof(ZedGraphWebTextItem);			
+			Schema[1].code = 'a';
+			Schema[1].type = typeof(ZedGraphWebArrowItem);			
+			Schema[2].code = 'i';
+			Schema[2].type = typeof(ZedGraphWebImageItem);			
+			Schema[3].code = 'b';
+			Schema[3].type = typeof(ZedGraphWebBoxItem);			
+			Schema[4].code = 'e';
+			Schema[4].type = typeof(ZedGraphWebEllipseItem);			
 		}
 
 		/// <summary>
@@ -1349,7 +1474,11 @@ namespace ZedGraph
 		/// </summary>
 		public ZedGraphWebAxis() : base()
 		{
-		}		
+		}	
+	
+		public void CopyTo(Axis item)
+		{
+		}
 
 		#region Properties
 		
@@ -1433,9 +1562,81 @@ namespace ZedGraph
 		/// </summary>
 		public ZedGraphWebLegend() : base()
 		{
+			Register('r',typeof(ZedGraphWebRect));
+			Register('f',typeof(ZedGraphWebFontSpec));
+			Register('b',typeof(ZedGraphWebBorder));
+			Register('f',typeof(ZedGraphWebFill));
+			Register('l',typeof(ZedGraphWebLocation));
+		}
+
+		public void CopyTo( Legend item )
+		{
+			item.IsVisible = this.IsVisible;
+			item.Position = this.Position;
+			item.IsHStack = this.IsHStack;
+			this.Rect.CopyTo(item.Rect);
+			this.FontSpec.CopyTo(item.FontSpec);
+			this.Border.CopyTo(item.Border);
+			this.Fill.CopyTo(item.Fill);
+			this.Location.CopyTo(item.Location);
 		}
 		
 		#region Properties
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebLocation Location
+		{
+			get { return (ZedGraphWebLocation)base.GetValue('l'); }
+		}
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebFontSpec FontSpec
+		{
+			get { return (ZedGraphWebFontSpec)base.GetValue('f'); }
+		}
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebFill Fill
+		{
+			get { return (ZedGraphWebFill)base.GetValue('f'); }
+		}
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebBorder Border
+		{
+			get { return (ZedGraphWebBorder)base.GetValue('b'); }
+		}
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebRect Rect
+		{
+			get { return (ZedGraphWebRect)base.GetValue('r'); }
+		}
 	
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Legend.IsVisible"/>.
@@ -1449,26 +1650,21 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsVisible"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? Legend.Default.IsVisible : (bool)x;
 			}
 			set { ViewState["IsVisible"] = value; }
 		}
-
-		/*
-		/// <summary>
-		/// <seealso cref="ZedGraph.Legend.Rect"/>
-		/// </summary>
+		
 		[NotifyParentProperty(true)]
-		public RectangleF Rect
+		public bool IsHStack
 		{
 			get 
 			{ 
-				object x = ViewState["Rect"]; 
-				return (null == x) ? RectangleF.Empty : (RectangleF)x;
+				object x = ViewState["IsHStack"]; 
+				return (null == x) ? Legend.Default.IsHStack : (bool)x;
 			}
-			set { ViewState["Rect"] = value; }
+			set { ViewState["IsHStack"] = value; }
 		}
-		*/
 
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Legend.Position"/>.
@@ -1482,14 +1678,12 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["Position"]; 
-				return (null == x) ? LegendPos.Top : (LegendPos)x;
+				return (null == x) ? Legend.Default.Position : (LegendPos)x;
 			}
 			set { ViewState["Position"] = value; }
 		}
 
-		#endregion
-
-		//TODO: complete
+		#endregion		
 	}
 	#endregion
 
@@ -1505,7 +1699,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <returns>Always returns the string "FontSpec".</returns>
 		public override string ToString()
-		{
+		{			
 			return "FontSpec";
 		}
 
@@ -1516,6 +1710,20 @@ namespace ZedGraph
 		{
 			Register('b',typeof(ZedGraphWebBorder));
 			Register('f',typeof(ZedGraphWebFill));
+		}
+
+		public void CopyTo( FontSpec item )
+		{
+			this.Border.CopyTo(item.Border);
+			this.Fill.CopyTo(item.Fill);
+			item.Angle = this.Angle;
+			item.Size = this.Size;
+			item.Family = this.Family;
+			item.FontColor = this.FontColor;
+			item.StringAlignment = this.StringAlignment;
+			item.IsBold = this.IsBold;
+			item.IsItalic = this.IsItalic;
+			item.IsUnderline = this.IsUnderline;
 		}
 		
 		#region Properties
@@ -1570,7 +1778,7 @@ namespace ZedGraph
 				return (null == x) ? string.Empty : (string)x;
 			}
 			set { ViewState["Family"] = value; }
-		}
+		}		
 
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.FontSpec.FontColor"/>.
@@ -1706,6 +1914,577 @@ namespace ZedGraph
 		}
 		
 		#endregion		
+	}
+	#endregion
+
+	#region ZedGraphWebRect
+	/// <summary>
+	/// Rectangle class for a <see cref="ZedGraph.FontSpec"/> object
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebRect : GenericItem
+	{
+		/// <summary>
+		/// Identifies fontspec instance
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{						
+			return string.Format("Rect({0},{1},{2},{3})",
+				X,Y,Height,Width);
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebRect() : base()
+		{				
+		}
+
+		public void CopyTo( RectangleF item )
+		{
+			item.X = this.X;
+			item.Y = this.Y;
+			item.Width = this.Width;
+			item.Height = this.Height;
+		}
+		
+	#region Properties
+
+		[NotifyParentProperty(true)]
+		public float Height
+		{
+			get 
+			{ 
+				object x = ViewState["Height"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Height"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float Width
+		{
+			get 
+			{ 
+				object x = ViewState["Width"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Width"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float Y
+		{
+			get 
+			{ 
+				object x = ViewState["Y"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Y"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float X
+		{
+			get 
+			{ 
+				object x = ViewState["X"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["X"] = value; }
+		}
+		#endregion
+	}
+	#endregion
+
+	#region ZedGraphWebSize
+	/// <summary>
+	/// Size class for a <see cref="ZedGraph.FontSpec"/> object
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebSize : GenericItem
+	{
+		/// <summary>
+		/// Identifies fontspec instance
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{						
+			return string.Format("Size({0},{1})",
+				Height,Width);
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebSize() : base()
+		{				
+		}
+
+		public void CopyTo( SizeF item )
+		{
+			item.Width = this.Width;
+			item.Height = this.Height;
+		}
+		
+		#region Properties
+
+		[NotifyParentProperty(true)]
+		public float Height
+		{
+			get 
+			{ 
+				object x = ViewState["Height"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Height"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float Width
+		{
+			get 
+			{ 
+				object x = ViewState["Width"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Width"] = value; }
+		}
+		
+		#endregion
+	}
+	#endregion
+
+	#region ZedGraphWebPoint
+	/// <summary>
+	/// Point class for a <see cref="ZedGraph.FontSpec"/> object
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebPoint : GenericItem
+	{
+		/// <summary>
+		/// Identifies fontspec instance
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{						
+			return string.Format("Point({0},{1})",
+				X,Y);
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebPoint() : base()
+		{
+		}
+
+		public void CopyTo( PointF item )
+		{
+			item.X = this.X;
+			item.Y = this.Y;			
+		}
+		
+		#region Properties
+
+		[NotifyParentProperty(true)]
+		public float X
+		{
+			get 
+			{ 
+				object x = ViewState["X"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["X"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float Y
+		{
+			get 
+			{ 
+				object x = ViewState["Y"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Y"] = value; }
+		}
+		
+		#endregion
+	}
+	#endregion
+
+	#region ZedGraphWebTextItem
+	/// <summary>
+	/// Baseclass for graph items in the web control
+	/// <seealso cref="ZedGraph.GraphItem"/>
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebTextItem : ZedGraphWebGraphItem
+	{
+		/// <summary>
+		/// Identifies curve item by the labels value
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return "TextItem: " + this.Text;
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebTextItem() : base()
+		{
+			Register('a',typeof(ZedGraphWebSize));
+			Register('f',typeof(ZedGraphWebFontSpec));
+		}
+	
+		public void CopyTo( TextItem item )
+		{
+			base.CopyTo(item);
+		}
+		
+		[NotifyParentProperty(true)]
+		public string Text
+		{
+			get 
+			{ 
+				object x = ViewState["Text"]; 
+				return (null == x) ? string.Empty : (string)x;
+			}
+			set { ViewState["Text"] = value; }
+		} 
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.Attribute)
+		]
+		public ZedGraphWebSize LayoutArea
+		{
+			get { return (ZedGraphWebSize)GetValue('a'); }			
+		} 
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebFontSpec FontSpec
+		{
+			get { return (ZedGraphWebFontSpec)GetValue('f'); }			
+		} 
+	}
+	#endregion
+
+	#region ZedGraphWebArrowItem
+	/// <summary>
+	/// Baseclass for graph items in the web control
+	/// <seealso cref="ZedGraph.GraphItem"/>
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebArrowItem : ZedGraphWebGraphItem
+	{
+		/// <summary>
+		/// Identifies curve item by the labels value
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return "ArrowItem";
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebArrowItem() : base()
+		{
+		}	
+		
+		public void CopyTo( ArrowItem item )
+		{
+			base.CopyTo(item);
+		}
+	}
+	#endregion
+
+	#region ZedGraphWebImageItem
+	/// <summary>
+	/// Baseclass for graph items in the web control
+	/// <seealso cref="ZedGraph.GraphItem"/>
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebImageItem : ZedGraphWebGraphItem
+	{
+		/// <summary>
+		/// Identifies curve item by the labels value
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return "ImageItem";
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebImageItem() : base()
+		{
+		}
+		
+		public void CopyTo( ArrowItem item )
+		{
+			base.CopyTo(item);
+		}
+	}
+	#endregion
+
+	#region ZedGraphWebBoxItem
+	/// <summary>
+	/// Baseclass for graph items in the web control
+	/// <seealso cref="ZedGraph.GraphItem"/>
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebBoxItem : ZedGraphWebGraphItem
+	{
+		/// <summary>
+		/// Identifies curve item by the labels value
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return "BoxItem";
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebBoxItem() : base()
+		{
+		}			
+	
+		public void CopyTo( BoxItem item )
+		{
+			base.CopyTo(item);
+		}
+	}
+	#endregion
+
+	#region ZedGraphWebEllipseItem
+	/// <summary>
+	/// Baseclass for graph items in the web control
+	/// <seealso cref="ZedGraph.GraphItem"/>
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebEllipseItem : ZedGraphWebGraphItem
+	{
+		/// <summary>
+		/// Identifies curve item by the labels value
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return "EllipseItem";
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebEllipseItem() : base()
+		{
+		}
+		
+		public void CopyTo( BoxItem item )
+		{
+			base.CopyTo(item);
+		}
+	}
+	#endregion
+
+	#region ZedGraphWebLocation
+	/// <summary>
+	/// Location class for a <see cref="ZedGraph.FontSpec"/> object
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebLocation : GenericItem
+	{
+		/// <summary>
+		/// Identifies location instance
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{						
+			return "Location";
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebLocation() : base()
+		{	
+			Register('r',typeof(ZedGraphWebRect));
+			Register('t',typeof(ZedGraphWebPoint));
+			Register('b',typeof(ZedGraphWebPoint));
+		}
+
+		public void CopyTo( Location item )
+		{
+			item.X = this.X;
+			item.Y = this.Y;
+			item.X1 = this.X1;
+			item.Y1 = this.Y1;			
+			item.Width = this.Width;
+			item.Height = this.Height;
+			item.AlignH = this.AlignH;
+			item.AlignV = this.AlignV;
+			item.CoordinateFrame = this.CoordinateFrame;
+			this.Rect.CopyTo(item.Rect);
+			this.Topleft.CopyTo(item.TopLeft);
+			this.BottomRight.CopyTo(item.BottomRight);
+		}
+
+		#region Object Properties
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebRect Rect
+		{
+			get { return (ZedGraphWebRect)GetValue('r'); }
+		}
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebPoint Topleft
+		{
+			get { return (ZedGraphWebPoint)GetValue('t'); }
+		}
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebPoint BottomRight
+		{
+			get { return (ZedGraphWebPoint)GetValue('b'); }
+		}
+
+		#endregion
+		
+		#region Properties
+
+		[NotifyParentProperty(true)]
+		public float Height
+		{
+			get 
+			{ 
+				object x = ViewState["Height"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Height"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float Width
+		{
+			get 
+			{ 
+				object x = ViewState["Width"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Width"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float Y
+		{
+			get 
+			{ 
+				object x = ViewState["Y"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Y"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float X
+		{
+			get 
+			{ 
+				object x = ViewState["X"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["X"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float Y1
+		{
+			get 
+			{ 
+				object x = ViewState["Y1"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Y1"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float X1
+		{
+			get 
+			{ 
+				object x = ViewState["X1"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["X1"] = value; }
+		}		
+
+		[NotifyParentProperty(true)]
+		public AlignH AlignH
+		{
+			get 
+			{ 
+				object x = ViewState["AlignH"]; 
+				return (null == x) ? AlignH.Left : (AlignH)x;
+			}
+			set { ViewState["AlignH"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public AlignV AlignV
+		{
+			get 
+			{ 
+				object x = ViewState["AlignV"]; 
+				return (null == x) ? AlignV.Center : (AlignV)x;
+			}
+			set { ViewState["AlignV"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public CoordType CoordinateFrame
+		{
+			get 
+			{ 
+				object x = ViewState["CoordinateFrame"]; 
+				return (null == x) ? CoordType.AxisFraction : (CoordType)x;
+			}
+			set { ViewState["CoordinateFrame"] = value; }
+		}
+
+		#endregion
 	}
 	#endregion
 }
