@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.2 $ $Date: 2004-09-13 06:51:42 $ </version>
+	/// <version> $Revision: 2.3 $ $Date: 2004-09-14 05:33:06 $ </version>
 	public class Bar
 	{
 	#region Fields
@@ -239,34 +239,17 @@ namespace ZedGraph
 			}
 
 			// Fill the Bar
-			if ( this.fill.IsFilled && ( !this.fill.Color.IsEmpty || this.fill.Brush != null ) )
+			if ( this.fill.IsFilled )
 			{
-				Brush	brush;
-				if ( this.fill.Type == FillType.Brush )
-				{
-					// If they didn't provide a brush, make one using the fillcolor gradient to white
-					if ( this.fill.Brush == null )
-						brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
-							Color.White, this.fill.Color, 0F );
-					else
-						brush = this.fill.Brush;
-				}
-				else
-					brush = (Brush) new SolidBrush( this.fill.Color );
-
-				RectangleF rect = new RectangleF( left, top, right - left, bottom - top );
-				if ( brush is LinearGradientBrush || brush is TextureBrush )
-				{
-					LinearGradientBrush linBrush = (LinearGradientBrush) brush.Clone();
-					linBrush.ScaleTransform( rect.Width / linBrush.Rectangle.Width,
-						rect.Height / linBrush.Rectangle.Height, MatrixOrder.Append );
-					linBrush.TranslateTransform( rect.Left - linBrush.Rectangle.Left,
-						rect.Top - linBrush.Rectangle.Top, MatrixOrder.Append );
-					brush = (Brush) linBrush;
-				}
+				// just avoid height/width being less than 0.1 so GDI+ doesn't cry
+				RectangleF rect = new RectangleF( left, top, Math.Max( right - left, 0.1f ),
+													Math.Max( bottom - top, 0.1f ) );
+				Brush brush = this.fill.MakeBrush( rect );
 				g.FillRectangle( brush, rect );
+				brush.Dispose();
 			}
 
+			// Frame the Bar
 			if ( this.isFramed && !this.frameColor.IsEmpty  )
 			{
 				Pen pen = new Pen( this.frameColor, this.frameWidth );

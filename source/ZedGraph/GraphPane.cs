@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.1 $ $Date: 2004-09-13 06:51:42 $ </version>
+	/// <version> $Revision: 2.2 $ $Date: 2004-09-14 05:33:06 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1156,6 +1156,7 @@ namespace ZedGraph
 			Brush brush = this.paneFill.MakeBrush( this.paneRect );
 			//SolidBrush brush = new SolidBrush( this.paneBackColor );
 			g.FillRectangle( brush, this.paneRect );
+			brush.Dispose();
 
 			RectangleF tempRect = this.paneRect;
 			//tempRect.Width -= 1;
@@ -1192,6 +1193,7 @@ namespace ZedGraph
 			//SolidBrush brush = new SolidBrush( this.axisBackColor );
 			Brush brush = this.axisFill.MakeBrush( this.axisRect );
 			g.FillRectangle( brush, this.axisRect );
+			brush.Dispose();
 
 			if ( this.isAxisFramed )
 			{

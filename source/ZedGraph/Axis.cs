@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.1 $ $Date: 2004-09-12 05:09:30 $ </version>
+	/// <version> $Revision: 2.2 $ $Date: 2004-09-14 05:33:06 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -1731,7 +1731,7 @@ namespace ZedGraph
 			{
 				float tmpSpace =
 					pane.XAxis.GetScaleMaxSpace( g, pane, scaleFactor ).Width / 2.0F +
-					charHeight;
+						charHeight;
 				if ( tmpSpace > space )
 					space = tmpSpace;
 			}
@@ -2666,23 +2666,6 @@ namespace ZedGraph
 
 				if ( this.TextLabels != null )
 				{
-					/*
-					string	tmpStr;
-					float	maxWidth = 0F;
-
-					// First, calculate the widest label
-					for ( int i=0; i<this.TextLabels.Length; i++ )
-					{
-						// draw the label
-						MakeLabel( i, 0.0, out tmpStr );
-
-						SizeF size = this.scaleFontSpec.BoundingBox( g, tmpStr, scaleFactor );
-					
-						if ( size.Width > maxWidth )
-							maxWidth = size.Width;
-					}
-					*/
-
 					// Calculate the maximum number of labels
 					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
@@ -2730,12 +2713,20 @@ namespace ZedGraph
 		public int CalcMaxLabels( Graphics g, GraphPane pane, double scaleFactor )
 		{
 			SizeF size = this.GetScaleMaxSpace( g, pane, scaleFactor );
-
-			// Add an extra character width to leave a minimum of 1 character space between labels
-			double maxWidth = (this is XAxis) ? size.Width : size.Height;
-			maxWidth += this.ScaleFontSpec.GetWidth( g, scaleFactor );
+			double maxWidth;
+			
+			// The font angles are already set such that the Width is parallel to the appropriate (X or Y)
+			// axis.  Therefore, we always use size.Width.
+			if ( this is XAxis )
+				// Add an extra character width to leave a minimum of 1 character space between labels
+				maxWidth = size.Width + this.ScaleFontSpec.GetWidth( g, scaleFactor );
+			else
+				// For vertical spacing, we only need 1/2 character
+				maxWidth = size.Width + this.ScaleFontSpec.GetWidth( g, scaleFactor ) / 2.0;
+				
 			if ( maxWidth <= 0 )
-			maxWidth = 1;
+				maxWidth = 1;
+				
 
 			// Calculate the maximum number of labels
 			double width;

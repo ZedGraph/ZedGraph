@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+13-Sep-2004 (by Champion/Vos)
+    Fix problem with brushes scaled to zero width rect
+    Fix scale label width calc bug in CalcMaxLabels()
+    Add Brush.Dispose() calls after MakeBrush()
+
 12-Sep-2004 (by Champion)
     Add new Fill class to handle gradient fills
     Add "Area under curve" shading

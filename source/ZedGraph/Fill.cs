@@ -12,7 +12,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.1 $ $Date: 2004-09-13 06:51:43 $ </version>
+	/// <version> $Revision: 2.2 $ $Date: 2004-09-14 05:33:06 $ </version>
 	public class Fill
 	{
 	#region Fields
@@ -184,7 +184,8 @@ namespace ZedGraph
 				return brush;
 			}
 
-			return null;
+			// Return a suitable default
+			return new SolidBrush( Color.White );
 		}
 	#endregion
 	}

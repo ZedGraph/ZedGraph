@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.1 $ $Date: 2004-09-13 06:51:42 $ </version>
+	/// <version> $Revision: 2.2 $ $Date: 2004-09-14 05:33:06 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -391,6 +391,7 @@ namespace ZedGraph
 			{
 				Brush brush = this.fill.MakeBrush( this.Rect );
 				g.FillRectangle( brush, this.rect );
+				brush.Dispose();
 			}
 		
 			// Set up some scaled dimensions for calculating sizes and locations

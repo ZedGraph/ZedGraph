@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.1 $ $Date: 2004-09-13 06:51:43 $ </version>
+	/// <version> $Revision: 2.2 $ $Date: 2004-09-14 05:33:06 $ </version>
 	public class Line : ICloneable
 	{
 		#region Fields
@@ -398,6 +398,7 @@ namespace ZedGraph
 							g.FillClosedCurve( brush, arrPoints, FillMode.Winding, this.smoothTension );
 						else
 							g.FillClosedCurve( brush, arrPoints, FillMode.Winding, 0F );
+						brush.Dispose();
 					}
 
 					if ( this.isSmooth )
@@ -639,70 +640,6 @@ namespace ZedGraph
 			arrPoints[count].Y = arrPoints[0].Y;
 			count++;
 		}
-/*
-		/// <summary>
-		/// Create a fill brush for the current curve.  This method will construct a brush based on the
-		/// settings of <see cref="FillType"/>, <see cref="FillColor"/> and <see cref="FillBrush"/>.  If
-		/// <see cref="FillType"/> is set to <see cref="ZedGraph.FillType.Brush"/> and <see cref="FillBrush"/>
-		/// is null, then a <see cref="LinearGradientBrush"/> will be created between the colors of
-		/// <see cref="System.Drawing.Color.White"/> and <see cref="FillColor"/>.
-		/// </summary>
-		/// <param name="arrPoints">An array of <see cref="PointF"/> values in screen pixel
-		/// coordinates representing the current curve.</param>
-		/// <param name="count">The number of points contained in the "arrPoints"
-		/// parameter.</param>
-		/// <returns>A <see cref="System.Drawing.Brush"/> class representing the fill brush</returns>
-		public Brush MakeBrush( PointF[] arrPoints, int count )
-		{
-			// get a brush
-			if ( this.IsFilled && ( !this.fillColor.IsEmpty || this.fillBrush != null ) )
-			{
-				Brush	brush;
-				if ( this.fillType == FillType.Brush )
-				{
-					// If they didn't provide a brush, make one using the fillcolor gradient to white
-					if ( this.FillBrush == null )
-						brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
-													Color.White, this.fillColor, 0F );
-					else
-						brush = this.fillBrush;
-				}
-				else
-					brush = (Brush) new SolidBrush( this.fillColor );
-
-				float minX = System.Single.MaxValue;
-				float minY = System.Single.MaxValue;
-				float maxX = System.Single.MinValue;
-				float maxY = System.Single.MinValue;
-
-				for ( int i=0; i<count; i++ )
-				{
-					PointF pt = arrPoints[i];
-					if ( pt.X < minX )
-						minX = pt.X;
-					if ( pt.Y < minY )
-						minY = pt.Y;
-					if ( pt.X > maxX )
-						maxX = pt.X;
-					if ( pt.Y > maxY )
-						maxY = pt.Y;
-				}
-
-				RectangleF rect = new RectangleF( minX, minY, maxX, maxY );
-				if ( brush is LinearGradientBrush || brush is TextureBrush )
-				{
-					LinearGradientBrush linBrush = (LinearGradientBrush) brush.Clone();
-					linBrush.ScaleTransform( rect.Width / linBrush.Rectangle.Width,
-					rect.Height / linBrush.Rectangle.Height, MatrixOrder.Append );
-					linBrush.TranslateTransform( rect.Left - linBrush.Rectangle.Left,
-					rect.Top - linBrush.Rectangle.Top, MatrixOrder.Append );
-					brush = (Brush) linBrush;
-				}
-				return brush;
-			}
-			return null;
-		}
-*/
 
 	#endregion
 	}
