@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2005-03-05 07:24:10 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -689,7 +689,7 @@ namespace ZedGraph
 				GraphicsPath path = MakePath( g, scaleFactor );
 				RectangleF rect = path.GetBounds();
 				Brush brush = this.Fill.MakeBrush( rect );
-				BarValueHandler valueHandler = new BarValueHandler( pane );
+				ValueHandler valueHandler = new ValueHandler( pane, false );
 
 				// Loop over each defined point							
 				for ( int i=0; i<points.Count; i++ )
@@ -698,7 +698,7 @@ namespace ZedGraph
 					// use the valueHandler only for stacked types
 					if ( pane.LineType == LineType.Stack )
 					{
-						valueHandler.GetBarValues( curve, i, out curX, out lowVal, out curY );
+						valueHandler.GetValues( curve, i, out curX, out lowVal, out curY );
 					}
 					// otherwise, just access the values directly.  Avoiding the valueHandler for
 					// non-stacked types is an optimization to minimize overhead in case there are

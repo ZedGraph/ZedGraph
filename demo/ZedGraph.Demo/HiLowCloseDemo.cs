@@ -1,3 +1,21 @@
+//============================================================================
+//ZedGraph Class Library - A Flexible Charting Library for .Net
+//Copyright (C) 2005 John Champion and Jerry Vos
+//
+//This library is free software; you can redistribute it and/or
+//modify it under the terms of the GNU Lesser General Public
+//License as published by the Free Software Foundation; either
+//version 2.1 of the License, or (at your option) any later version.
+//
+//This library is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public
+//License along with this library; if not, write to the Free Software
+//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//=============================================================================
 using System;
 using System.Drawing;
 using System.Collections;
@@ -15,19 +33,15 @@ namespace ZedGraph.Demo
 		public HiLowCloseDemo() : base( "A demo demonstrating HiLowClose",
 										"Hi-Low-Close", DemoType.Bar, DemoType.Special )
 		{
-			base.GraphPane.Title = "ZedgroSoft, International\nHi-Low-Close Daily Stock Chart";
-			base.GraphPane.XAxis.Title = "";
-			base.GraphPane.YAxis.Title = "Trading Price, $US";
-			
-			// Create a new graph with topLeft at (40,40) and size 600x400
-			//myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
-			//	"ZedgroSoft, International\nHi-Low-Close Daily Stock Chart",
-			//	"",
-			//	"Trading Price, $US" );
+			GraphPane myPane = base.GraphPane;
 
-			base.GraphPane.FontSpec.Family = "Arial";
-			base.GraphPane.FontSpec.IsItalic = true;
-			base.GraphPane.FontSpec.Size = 18;
+			myPane.Title = "ZedgroSoft, International\nHi-Low-Close Daily Stock Chart";
+			myPane.XAxis.Title = "";
+			myPane.YAxis.Title = "Trading Price, $US";
+			
+			myPane.FontSpec.Family = "Arial";
+			myPane.FontSpec.IsItalic = true;
+			myPane.FontSpec.Size = 18;
 
 			double hi, low, close, x;
 			PointPairList hList = new PointPairList();
@@ -47,33 +61,33 @@ namespace ZedGraph.Demo
 
 
 			LineItem curve;
-			curve = base.GraphPane.AddCurve( "Closing Price", cList, Color.Black,
+			curve = myPane.AddCurve( "Closing Price", cList, Color.Black,
 				SymbolType.Diamond );
 			curve.Line.IsVisible = false ;
 			curve.Symbol.Fill = new Fill( Color.Red );
 			curve.Symbol.Size = 7;
 
-			ErrorBarItem myCurve = base.GraphPane.AddErrorBar(	"Price Range", hList,
+			ErrorBarItem myCurve = myPane.AddErrorBar(	"Price Range", hList,
 				Color.Blue );
 
 			//	Set the XAxis	to date type
-			base.GraphPane.XAxis.Type =	AxisType.Date;
-			base.GraphPane.XAxis.Step = 1 ;
-			base.GraphPane.XAxis.ScaleFontSpec.Size = 12 ;
-			base.GraphPane.XAxis.ScaleFontSpec.Angle = 65 ;
-			base.GraphPane.XAxis.MajorUnit = DateUnit.Day ;
-			base.GraphPane.XAxis.ScaleFontSpec.IsBold = true ;
-			base.GraphPane.XAxis.ScaleFormat = "d MMM" ;
-			base.GraphPane.XAxis.Min = hList[0].X - 1 ;
+			myPane.XAxis.Type =	AxisType.Date;
+			myPane.XAxis.Step = 1 ;
+			myPane.XAxis.ScaleFontSpec.Size = 12 ;
+			myPane.XAxis.ScaleFontSpec.Angle = 65 ;
+			myPane.XAxis.MajorUnit = DateUnit.Day ;
+			myPane.XAxis.ScaleFontSpec.IsBold = true ;
+			myPane.XAxis.ScaleFormat = "d MMM" ;
+			myPane.XAxis.Min = hList[0].X - 1 ;
 
 			myCurve.ErrorBar.PenWidth = 3;
 			myCurve.ErrorBar.Symbol.IsVisible = false;
 			
-			base.GraphPane.YAxis.IsShowGrid = true ;
+			myPane.YAxis.IsShowGrid = true ;
 			//myPane.YAxis.IsShowMinorGrid = true ;
-			base.GraphPane.YAxis.MinorStep = 0.5;
+			myPane.YAxis.MinorStep = 0.5;
 
-			base.GraphPane.AxisFill = new Fill( Color.White,
+			myPane.AxisFill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 90F );
 
 			base.ZedGraphControl.AxisChange();

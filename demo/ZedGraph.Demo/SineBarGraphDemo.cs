@@ -1,3 +1,21 @@
+//============================================================================
+//ZedGraph Class Library - A Flexible Charting Library for .Net
+//Copyright (C) 2005 John Champion and Jerry Vos
+//
+//This library is free software; you can redistribute it and/or
+//modify it under the terms of the GNU Lesser General Public
+//License as published by the Free Software Foundation; either
+//version 2.1 of the License, or (at your option) any later version.
+//
+//This library is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public
+//License along with this library; if not, write to the Free Software
+//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//=============================================================================
 using System;
 using System.Drawing;
 using System.Collections;
@@ -38,30 +56,21 @@ namespace ZedGraph.Demo
 
 			double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
 
-			// Generate a black line with "Curve 4" in the legend
-			LineItem myCurve = myPane.AddCurve( "Curve 4",
-				null, y4, Color.Black, SymbolType.Circle );
-			myCurve.Symbol.Size = 14.0F;
-			myCurve.Symbol.Fill = new Fill( Color.White );
-			myCurve.Line.Width = 2.0F;
-
 			// Generate a red bar with "Curve 1" in the legend
 			BarItem myBar = myPane.AddBar( "Curve 1", list, Color.Red );
 
 			// Generate a blue bar with "Curve 2" in the legend
 			myBar = myPane.AddBar( "Curve 2", list2, Color.Blue );
 
-
-			// Draw the X tics between the labels instead of at the labels
-			//myPane.XAxis.IsTicsBetweenLabels = true;
-
 			// Set the XAxis labels
 			myPane.XAxis.TextLabels = labels;
 			// Set the XAxis to Text type
 			myPane.XAxis.Type = AxisType.Ordinal;
 
-			myPane.XAxis.IsReverse = false;
-			myPane.ClusterScaleWidth = 1;
+			myPane.AxisFill = new Fill( Color.White,
+				Color.FromArgb( 255, 255, 166), 45.0F );
+
+			base.ZedGraphControl.AxisChange();
 		}
 
 	}

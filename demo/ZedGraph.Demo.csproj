@@ -109,10 +109,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ZedGraph.Demo\background.jpg"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
                     RelPath = "ZedGraph.Demo\BarChartSampleDemo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -131,6 +127,11 @@
                     RelPath = "ZedGraph.Demo\ChartTabForm.resx"
                     DependentUpon = "ChartTabForm.cs"
                     BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "ZedGraph.Demo\ComboDemo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "ZedGraph.Demo\CrossLineDemo.cs"
@@ -242,6 +243,14 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph.Demo\ngc4261.gif"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "ZedGraph.Demo\ngc4414.jpg"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "ZedGraph.Demo\OverlayBarDemo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -258,11 +267,6 @@
                 />
                 <File
                     RelPath = "ZedGraph.Demo\PieSampleDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\SimpleDemo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.MinorStepAuto"/>,
 	/// and <see cref="Axis.StepAuto"/>.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2005-03-02 06:23:27 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2005-03-05 07:24:10 $ </version>
 	public class ScaleState
 	{
 		/// <summary>
@@ -181,10 +181,24 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2005-03-02 06:23:27 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2005-03-05 07:24:10 $ </version>
 	public class ZoomState
 	{
-		public enum StateType { Zoom, Pan }
+		/// <summary>
+		/// An enumeration that describes whether a given state is the result of a Pan or Zoom
+		/// operation.
+		/// </summary>
+		public enum StateType
+		{
+			/// <summary>
+			/// Indicates the <see cref="ZoomState"/> object is from a Zoom operation
+			/// </summary>
+			Zoom,
+			/// <summary>
+			/// Indicates the <see cref="ZoomState"/> object is from a Pan operation
+			/// </summary>
+			Pan
+		}
 
 		/// <summary>
 		/// <see cref="ScaleState"/> objects to store the state data from the axes.
@@ -214,6 +228,8 @@ namespace ZedGraph
 		/// <param name="pane">The <see cref="GraphPane"/> from which to obtain the scale
 		/// range values.
 		/// </param>
+		/// <param name="type">A <see cref="StateType"/> enumeration that indicates whether
+		/// this saved state is from a pan or zoom.</param>
 		public ZoomState( GraphPane pane, StateType type )
 		{
 			this.xAxis = new ScaleState( pane.XAxis );
@@ -265,7 +281,7 @@ namespace ZedGraph
 	/// states (of scale range settings).
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2005-03-02 06:23:27 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2005-03-05 07:24:10 $ </version>
 	public class ZoomStateStack : CollectionBase
 	{
 		/// <summary>
@@ -302,6 +318,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="pane">The <see cref="GraphPane"/> object from which the scale range
 		/// information should be copied.</param>
+		/// <param name="type">A <see cref="ZoomState.StateType"/> enumeration that indicates whether this
+		/// state is the result of a zoom or pan operation.</param>
 		public void Push( GraphPane pane, ZoomState.StateType type )
 		{
 			ZoomState state = new ZoomState( pane, type );
@@ -312,7 +330,7 @@ namespace ZedGraph
 		/// Add the scale range information from the specified <see cref="ZoomState"/> object as a
 		/// new <see cref="ZoomState"/> entry on the stack.
 		/// </summary>
-		/// <param name="pane">The <see cref="ZoomState"/> object to be placed on the stack.</param>
+		/// <param name="state">The <see cref="ZoomState"/> object to be placed on the stack.</param>
 		public void Push( ZoomState state )
 		{
 			this.List.Add( state );

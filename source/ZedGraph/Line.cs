@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-03-05 07:24:10 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -544,7 +544,7 @@ namespace ZedGraph
 			double	curX, curY, lowVal;
 			bool	broke = true;
 			PointPairList points = curve.Points;
-			BarValueHandler valueHandler = new BarValueHandler( pane );
+			ValueHandler valueHandler = new ValueHandler( pane, false );
 
             Pen pen = new Pen(this.color, pane.ScaledPenWidth(width, scaleFactor));
             pen.DashStyle = this.Style;
@@ -556,7 +556,7 @@ namespace ZedGraph
 				{
 					if ( pane.LineType == LineType.Stack )
 					{
-						if ( !valueHandler.GetBarValues( curve, i, out curX, out lowVal, out curY ) )
+						if ( !valueHandler.GetValues( curve, i, out curX, out lowVal, out curY ) )
 						{
 							curX = PointPair.Missing;
 							curY = PointPair.Missing;
@@ -658,7 +658,7 @@ namespace ZedGraph
 					lastX = 0,
 					lastY = 0;
 				double	x, y, lowVal;
-				BarValueHandler valueHandler = new BarValueHandler( pane );
+				ValueHandler valueHandler = new ValueHandler( pane, false );
 
 				// Step type plots get twice as many points.  Always add three points so there is
 				// room to close out the curve for area fills.
@@ -675,7 +675,7 @@ namespace ZedGraph
 						// use the valueHandler only for stacked types
 						if ( pane.LineType == LineType.Stack )
 						{
-							valueHandler.GetBarValues( curve, i, out x, out lowVal, out y );
+							valueHandler.GetValues( curve, i, out x, out lowVal, out y );
 						}
 						// otherwise, just access the values directly.  Avoiding the valueHandler for
 						// non-stacked types is an optimization to minimize overhead in case there are
@@ -775,7 +775,7 @@ namespace ZedGraph
 						lastX = 0,
 						lastY = 0;
 				double	x, y, hiVal;
-				BarValueHandler valueHandler = new BarValueHandler( pane );
+				ValueHandler valueHandler = new ValueHandler( pane, false );
 
 				// Step type plots get twice as many points.  Always add three points so there is
 				// room to close out the curve for area fills.
@@ -792,7 +792,7 @@ namespace ZedGraph
 					if ( !points[i].IsInvalid )
 					{
 						// Get the user scale values for the current point
-						valueHandler.GetBarValues( curve, i, out x, out y, out hiVal );
+						valueHandler.GetValues( curve, i, out x, out y, out hiVal );
 						
 						// Transform the user scale values to pixel locations
 						curX = pane.XAxis.Transform( i, x );

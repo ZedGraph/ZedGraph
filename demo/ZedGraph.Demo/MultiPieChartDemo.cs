@@ -1,3 +1,21 @@
+//============================================================================
+//ZedGraph Class Library - A Flexible Charting Library for .Net
+//Copyright (C) 2005 John Champion, Jerry Vos and Bob Kaye
+//
+//This library is free software; you can redistribute it and/or
+//modify it under the terms of the GNU Lesser General Public
+//License as published by the Free Software Foundation; either
+//version 2.1 of the License, or (at your option) any later version.
+//
+//This library is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public
+//License along with this library; if not, write to the Free Software
+//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//=============================================================================
 using System;
 using System.Drawing;
 using System.Collections;
@@ -14,15 +32,16 @@ namespace ZedGraph.Demo
 		public MultiPieChartDemo() : base( "A Demo of the MasterPane with Pie Charts",
 			"Multi-Pie Chart Demo", DemoType.General, DemoType.Special )
 		{
-			base.MasterPane.Title = "Multiple Pie Charts on a MasterPane";
-			base.MasterPane.IsShowTitle = true ;
-			base.MasterPane.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
-			base.MasterPane.MarginAll = 10;
-			base.MasterPane.InnerPaneGap = 10;
-			base.MasterPane.Legend.Position = LegendPos.TopCenter ;
-			base.MasterPane.HasUniformLegendEntries = true ;
-			base.MasterPane.Legend.IsVisible = true ;
-			// Create a new graph with topLeft at (40,40) and size 600x400
+			MasterPane myMaster = base.MasterPane;
+
+			myMaster.Title = "Multiple Pie Charts on a MasterPane";
+			myMaster.IsShowTitle = true ;
+			myMaster.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+			myMaster.MarginAll = 10;
+			myMaster.InnerPaneGap = 10;
+			myMaster.Legend.Position = LegendPos.TopCenter ;
+			myMaster.HasUniformLegendEntries = true ;
+			myMaster.Legend.IsVisible = true ;
 
 			double [] values =   { 15, 15, 40, 20 } ;
 			double [] values2 =   { 250, 50, 400, 50 } ;
@@ -30,8 +49,7 @@ namespace ZedGraph.Demo
 			double [] displacement = {	.0,.0,.0,.0 } ;
 			string [] labels = { "East", "West", "Central", "Canada" } ;
 			
-			Graphics g = this.ZedGraphControl.CreateGraphics();
-			base.MasterPane.PaneList.Remove( 0 );
+			myMaster.PaneList.Remove( 0 );
 			
 			for (int x = 0 ; x < 3 ; x++ )
 			{
@@ -52,10 +70,11 @@ namespace ZedGraph.Demo
 				segment4.LabelType = PieLabelType.Name_Value ;
 				segment5.LabelType = PieLabelType.Name_Value ;
 
-				base.MasterPane.Add( myPane );
+				myMaster.Add( myPane );
 			}
 			
-			base.MasterPane.AutoPaneLayout( g, PaneLayout.ExplicitRow12 );
+			Graphics g = this.ZedGraphControl.CreateGraphics();
+			myMaster.AutoPaneLayout( g, PaneLayout.ExplicitRow12 );
 
 			base.ZedGraphControl.AxisChange();
 			

@@ -1,3 +1,21 @@
+//============================================================================
+//ZedGraph Class Library - A Flexible Charting Library for .Net
+//Copyright (C) 2005 John Champion and Jerry Vos
+//
+//This library is free software; you can redistribute it and/or
+//modify it under the terms of the GNU Lesser General Public
+//License as published by the Free Software Foundation; either
+//version 2.1 of the License, or (at your option) any later version.
+//
+//This library is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public
+//License along with this library; if not, write to the Free Software
+//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//=============================================================================
 using System;
 using System.Drawing;
 using System.Collections;
@@ -15,16 +33,12 @@ namespace ZedGraph.Demo
 		public ModInitialSampleDemo() : base( "Code Project Modified Initial Sample",
 			"Modified Initial Sample", DemoType.Tutorial )
 		{
-			base.GraphPane.Title = "My Test Graph\n(For CodeProject Sample)";
-			base.GraphPane.XAxis.Title = "My X Axis";
-			base.GraphPane.YAxis.Title = "My Y Axis";
-			
-			// Create a new graph with topLeft at (40,40) and size 600x400
-			//myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
-			//	"My Test Graph\n(For CodeProject Sample)",
-			//	"My X Axis",
-			//	"My Y Axis" );
+			GraphPane myPane = base.GraphPane;
 
+			myPane.Title = "My Test Graph\n(For CodeProject Sample)";
+			myPane.XAxis.Title = "My X Axis";
+			myPane.YAxis.Title = "My Y Axis";
+			
 			// Make up some data arrays based on the Sine function
 			double x, y1, y2;
 			PointPairList list1 = new PointPairList();
@@ -40,22 +54,22 @@ namespace ZedGraph.Demo
 
 			// Generate a red curve with diamond
 			// symbols, and "Porsche" in the legend
-			LineItem myCurve = base.GraphPane.AddCurve( "Porsche",
+			LineItem myCurve = myPane.AddCurve( "Porsche",
 				list1, Color.Red, SymbolType.Diamond );
 
 			// Generate a blue curve with circle
 			// symbols, and "Piper" in the legend
-			LineItem myCurve2 = base.GraphPane.AddCurve( "Piper",
+			LineItem myCurve2 = myPane.AddCurve( "Piper",
 				list2, Color.Blue, SymbolType.Circle );
 
 			// Change the color of the title
-			base.GraphPane.FontSpec.FontColor = Color.Green;
+			myPane.FontSpec.FontColor = Color.Green;
 
 			// Add gridlines to the plot, and make them gray
-			base.GraphPane.XAxis.IsShowGrid = true;
-			base.GraphPane.YAxis.IsShowGrid = true;
-			base.GraphPane.XAxis.GridColor = Color.LightGray;
-			base.GraphPane.YAxis.GridColor = Color.LightGray;
+			myPane.XAxis.IsShowGrid = true;
+			myPane.YAxis.IsShowGrid = true;
+			myPane.XAxis.GridColor = Color.LightGray;
+			myPane.YAxis.GridColor = Color.LightGray;
 
 			// Move the legend location
 			base.Pane.Legend.Position = ZedGraph.LegendPos.Bottom;
@@ -75,8 +89,7 @@ namespace ZedGraph.Demo
 			myCurve2.Symbol.Fill = new Fill( Color.White );
 
 			// Add a background gradient fill to the axis frame
-			//myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, -45F );
-			base.GraphPane.AxisFill = new Fill( Color.White,
+			myPane.AxisFill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 210), -45F );
 
 			// Add a caption and an arrow
@@ -84,12 +97,9 @@ namespace ZedGraph.Demo
 			myText.FontSpec.FontColor = Color.Red;
 			myText.Location.AlignH = AlignH.Center;
 			myText.Location.AlignV = AlignV.Top;
-			base.GraphPane.GraphItemList.Add( myText );
+			myPane.GraphItemList.Add( myText );
 			ArrowItem myArrow = new ArrowItem( Color.Red, 12F, 230F, 70F, 280F, 55F );
-			base.GraphPane.GraphItemList.Add( myArrow );
-
-			// Tell ZedGraph to refigure the
-			// axes since the data have changed
+			myPane.GraphItemList.Add( myArrow );
 
 			base.ZedGraphControl.AxisChange();
 		}

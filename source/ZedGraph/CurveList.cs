@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.21 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2005-03-05 07:24:09 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -496,12 +496,12 @@ namespace ZedGraph
 		private void GetStackRange( GraphPane pane, CurveItem curve, ref double tXMinVal,
 									ref double tYMinVal, ref double tXMaxVal, ref double tYMaxVal )
 		{
-			BarValueHandler valueHandler = new BarValueHandler( pane );
+			ValueHandler valueHandler = new ValueHandler( pane, false );
 			double x, y, lowVal;
 
 			for ( int i=0; i<curve.Points.Count; i++ )
 			{
-				valueHandler.GetBarValues( curve, i, out x, out lowVal, out y );
+				valueHandler.GetValues( curve, i, out x, out lowVal, out y );
 				if ( x < tXMinVal )
 					tXMinVal = x;
 				if ( x > tXMaxVal )

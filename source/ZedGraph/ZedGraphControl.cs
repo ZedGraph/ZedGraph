@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-03-01 06:41:32 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2005-03-05 07:24:10 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -109,11 +109,6 @@ namespace ZedGraph
 		/// </summary>
 		private bool isEnablePan = true;
 		
-		/// <summary>
-		/// Internal variable that indicates the user is currently dragging the mouse with the left button
-		/// down, associated with either a Zoom or Pan operation.
-		/// </summary>
-//		private bool		isDragging = false;
 		/// <summary>
 		/// Internal variable that stores the <see cref="GraphPane"/> reference for the Pane that is
 		/// currently being zoomed or panned.
@@ -278,7 +273,7 @@ namespace ZedGraph
 		/// Gets or sets a value that determines whether or not zooming is allowed for the control.
 		/// </summary>
 		/// <remarks>
-		/// Zooming is done by left-clicking inside the <see cref="GraphPane.AxisRect"/> to drag
+		/// Zooming is done by left-clicking inside the <see cref="ZedGraph.GraphPane.AxisRect"/> to drag
 		/// out a rectangle, indicating the new scale ranges that will be part of the graph.
 		/// </remarks>
 		public bool IsEnableZoom
@@ -291,7 +286,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// Panning is done by clicking the middle mouse button (or holding down the shift key
-		/// while clicking the left mouse button) inside the <see cref="GraphPane.AxisRect"/> and
+		/// while clicking the left mouse button) inside the <see cref="ZedGraph.GraphPane.AxisRect"/> and
 		/// dragging the mouse around to shift the scale ranges as desired.
 		/// </remarks>
 		public bool IsEnablePan
@@ -680,6 +675,11 @@ namespace ZedGraph
 
 	#region ContextMenu
 	
+		/// <summary>
+		/// private method to handle the popup context menu in the <see cref="ZedGraphControl"/>.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ContextMenu_Popup( object sender, System.EventArgs e )
 		{
 			contextMenu.MenuItems.Clear();
@@ -722,34 +722,39 @@ namespace ZedGraph
 				menuItem.Click += new EventHandler( this.MenuClick_RestoreScale );
 				if ( pane == null )
 					menuItem.Enabled = false;
-/*
-				menuItem = new MenuItem();
-				menuItem.Index = index++;
-				menuItem.Text = "Zoom";
-				this.contextMenu.MenuItems.Add( menuItem );
-				menuItem.Click += new System.EventHandler( this.MenuClick_Zoom );
-
-				menuItem = new MenuItem();
-				menuItem.Index = index++;
-				menuItem.Text = "Pan";
-				this.contextMenu.MenuItems.Add( menuItem );
-				menuItem.Click += new System.EventHandler( this.MenuClick_Pan );
-*/
 			}
 
 		}
 		
+		/// <summary>
+		/// Handler for the "Copy" context menu item.  Copies the current image to a bitmap on the
+		/// clipboard.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		protected void MenuClick_Copy( System.Object sender, System.EventArgs e )
 		{
 			Clipboard.SetDataObject( this.MasterPane.Image, true );
 			MessageBox.Show( "Image Copied to ClipBoard" );
 		}
 
+		/// <summary>
+		/// Handler for the "Show Values" context menu item.  Toggles the <see cref="IsShowPointValues"/>
+		/// property, which activates the point value tooltips.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		protected void MenuClick_ShowValues( System.Object sender, System.EventArgs e )
 		{
 			this.IsShowPointValues = ! ((MenuItem)sender).Checked;
 		}
 
+		/// <summary>
+		/// Handler for the "Set Scale to Default" context menu item.  Sets the scale ranging to
+		/// full auto mode for all axes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		protected void MenuClick_RestoreScale( System.Object sender, EventArgs e )
 		{
 			GraphPane pane = this.MasterPane.FindPane( this.PointToClient( Control.MousePosition ) );
@@ -766,6 +771,12 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Handler for the "UnZoom/UnPan" context menu item.  Restores the scale ranges to the values
+		/// before the last zoom or pan operation.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		protected void MenuClick_ZoomOut( System.Object sender, System.EventArgs e )
 		{
 			GraphPane pane = this.MasterPane.FindPane( this.PointToClient( Control.MousePosition ) );
@@ -775,30 +786,6 @@ namespace ZedGraph
 				Refresh();
 			}
 		}
-
-/*
-		protected void MenuClick_Zoom( System.Object sender, System.EventArgs e )
-		{
-			GraphPane pane = this.MasterPane.FindPane( this.mousePt );
-			if ( pane != null )
-			{
-				this.dragPane = null;
-				this.isZoomMode = true;
-				this.isDragging = false;
-			}
-		}
-
-		protected void MenuClick_Pan( System.Object sender, EventArgs e )
-		{
-			GraphPane pane = this.MasterPane.FindPane( this.mousePt );
-			if ( pane != null )
-			{
-				this.dragPane = null;
-				this.isPanMode = true;
-				this.isDragging = false;
-			}
-		}
-*/
 
 	#endregion
 

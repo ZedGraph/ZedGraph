@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+4-Mar-2005
+  Update Demos
+  Change BarValueHandler to ValueHandler
+
 28-Feb-2005 (by Champion)
   Fix ColorSymbolRotator to use symbolCount.  Add more symbols & colors
   Add gradient color overload for GraphPane.AddPieSlice

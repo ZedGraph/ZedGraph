@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-02-12 23:22:51 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-03-05 07:24:10 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -320,7 +320,7 @@ namespace ZedGraph
 		public void Draw( Graphics g, GraphPane pane, ErrorBarItem curve,
 							Axis baseAxis, Axis valueAxis, float scaleFactor )
 		{
-			BarValueHandler valueHandler = new BarValueHandler( pane );
+			ValueHandler valueHandler = new ValueHandler( pane, false );
 
 			float	pixBase, pixValue, pixLowValue;
 			double	scaleBase, scaleValue, scaleLowValue;
@@ -332,7 +332,7 @@ namespace ZedGraph
 				// Loop over each defined point							
 				for ( int i=0; i<curve.Points.Count; i++ )
 				{
-					valueHandler.GetBarValues( curve, i, out scaleBase,
+					valueHandler.GetValues( curve, i, out scaleBase,
 								out scaleLowValue, out scaleValue );
 
 					// Any value set to double max is invalid and should be skipped

@@ -133,11 +133,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ZedGraph\BarValueHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ZedGraph\Border.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -284,6 +279,11 @@
                 />
                 <File
                     RelPath = "ZedGraph\Types.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\ValueHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-03-05 07:24:10 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -261,8 +261,8 @@ namespace ZedGraph
 			// curValue = the scale value on the value axis of the current bar
 
 			double curBase, curLowVal, curHiVal;
-			BarValueHandler valueHandler = new BarValueHandler( pane );
-			valueHandler.GetBarValues( curve, index, out curBase,
+			ValueHandler valueHandler = new ValueHandler( pane, false );
+			valueHandler.GetValues( curve, index, out curBase,
 					out curLowVal, out curHiVal );
 
 

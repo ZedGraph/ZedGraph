@@ -1,3 +1,21 @@
+//============================================================================
+//ZedGraph Class Library - A Flexible Charting Library for .Net
+//Copyright (C) 2005 John Champion, Jerry Vos and Bob Kaye
+//
+//This library is free software; you can redistribute it and/or
+//modify it under the terms of the GNU Lesser General Public
+//License as published by the Free Software Foundation; either
+//version 2.1 of the License, or (at your option) any later version.
+//
+//This library is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public
+//License along with this library; if not, write to the Free Software
+//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//=============================================================================
 using System;
 using System.Collections;
 using System.Drawing;
@@ -14,7 +32,9 @@ namespace ZedGraph.Demo
 		public PieChartDemo() : base( "A demo showing some pie chart features of ZedGraph",
 										"Pie Chart Demo", DemoType.Pie )
 		{
-			base.GraphPane.Title = "2004 ZedGraph Sales by Region\n ($M)";
+			GraphPane myPane = base.GraphPane;
+
+			myPane.Title = "2004 ZedGraph Sales by Region\n ($M)";
 
 			double [] values =   { 15, 15, 40, 20 } ;
 			double [] values2 =   { 250, 50, 400, 50 } ;
@@ -22,18 +42,18 @@ namespace ZedGraph.Demo
 			double [] displacement = {	.0,.0,.0,.0 } ;
 			string [] labels = { "Europe", "Pac Rim", "South America", "Africa" } ;
 
-			base.GraphPane.PaneFill = new Fill( Color.Cornsilk );
-			base.GraphPane.AxisFill = new Fill( Color.Cornsilk );
-			base.GraphPane.Legend.Position = LegendPos.Right ;
+			myPane.PaneFill = new Fill( Color.Cornsilk );
+			myPane.AxisFill = new Fill( Color.Cornsilk );
+			myPane.Legend.Position = LegendPos.Right ;
 			
-			PieItem segment1 = base.GraphPane.AddPieSlice ( 20, Color.Navy, .20, "North") ;
-			PieItem segment2 = base.GraphPane.AddPieSlice ( 40, Color.Salmon, 0, "South") ;
-			PieItem segment3 = base.GraphPane.AddPieSlice ( 30, Color.Yellow,.0, "East") ;
-			PieItem segment4 = base.GraphPane.AddPieSlice ( 10.21, Color.LimeGreen, 0, "West") ;
-			PieItem segment5 = base.GraphPane.AddPieSlice ( 10.5, Color.Aquamarine, .3, "Canada") ;
+			PieItem segment1 = myPane.AddPieSlice ( 20, Color.Navy, .20, "North") ;
+			PieItem segment2 = myPane.AddPieSlice ( 40, Color.Salmon, 0, "South") ;
+			PieItem segment3 = myPane.AddPieSlice ( 30, Color.Yellow,.0, "East") ;
+			PieItem segment4 = myPane.AddPieSlice ( 10.21, Color.LimeGreen, 0, "West") ;
+			PieItem segment5 = myPane.AddPieSlice ( 10.5, Color.Aquamarine, .3, "Canada") ;
 			
 			PieItem [] slices = new PieItem[values2.Length] ;
-			slices = base.GraphPane.AddPieSlices ( values2, labels ) ;
+			slices = myPane.AddPieSlices ( values2, labels ) ;
 			((PieItem)slices[0]).LabelType = PieLabelType.Name_Value ;
 			((PieItem)slices[1]).LabelType = PieLabelType.Name_Value_Percent ;
 			((PieItem)slices[2]).LabelType = PieLabelType.Name_Value ;
@@ -48,7 +68,7 @@ namespace ZedGraph.Demo
 			segment5.LabelType = PieLabelType.Name_Value ;
 			segment2.LabelDetail.FontSpec.FontColor = Color.Red ;
 																																				
-			CurveList curves = base.GraphPane.CurveList ;
+			CurveList curves = myPane.CurveList ;
 			double total = 0 ;
 			for ( int x = 0 ; x <  curves.Count ; x++ )
 				total += ((PieItem)curves[x]).Value ;
@@ -59,7 +79,7 @@ namespace ZedGraph.Demo
 			text.FontSpec.Border.IsVisible = false ;
 			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
 			text.FontSpec.StringAlignment = StringAlignment.Center ;
-			base.GraphPane.GraphItemList.Add( text );
+			myPane.GraphItemList.Add( text );
 			 
 			BoxItem box = new BoxItem( new RectangleF( 0F, 0F, 1F, 1F ),
 				Color.Empty, Color.PeachPuff );
@@ -68,7 +88,9 @@ namespace ZedGraph.Demo
 			box.Location.AlignH = AlignH.Left;
 			box.Location.AlignV = AlignV.Top;
 			box.ZOrder = ZOrder.E_BehindAxis;
-			base.GraphPane.GraphItemList.Add( box );
+			myPane.GraphItemList.Add( box );
+
+			base.ZedGraphControl.AxisChange();
 		}
 	}
 }

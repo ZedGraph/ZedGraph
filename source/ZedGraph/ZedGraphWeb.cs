@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2005-02-20 02:33:12 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2005-03-05 07:24:10 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -217,6 +217,10 @@ namespace ZedGraph
 
 	#region Attributes
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <value></value>
 		[Category("Page Cache"),NotifyParentProperty(true),
 		Description("Optional output caching parameter in seconds. A zero value ignores cache settings. " +
 			"For more advanced caching see microsoft documentation")]

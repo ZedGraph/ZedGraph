@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-03-01 06:41:32 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2005-03-05 07:24:10 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -88,7 +88,7 @@ namespace ZedGraph
 		///<see cref="ZedGraph.GraphPane"/>s in the chart use the same entries in their 
 		///<see cref="Legend"/>  If set to true, only one set of entries will be displayed in 
 		///this <see cref="Legend"/> instance.  If set to false, this instance will display all 
-		///entries from all <see cref="ZedGraph.GraphPane/>s.
+		///entries from all <see cref="ZedGraph.GraphPane"/>s.
 		/// </summary>
 		private bool hasUniformLegendEntries;
 
@@ -747,7 +747,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Find the <see cref="GraphPane"/> within the <see cref="PaneList"/> that contains the
-		/// <see paramref="mousePt"/> within its <see cref="PaneRect"/>.
+		/// <see paramref="mousePt"/> within its <see cref="PaneBase.PaneRect"/>.
 		/// </summary>
 		/// <param name="mousePt">The mouse point location where you want to search</param>
 		/// <returns>A <see cref="GraphPane"/> object that contains the mouse point, or
@@ -765,7 +765,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Find the <see cref="GraphPane"/> within the <see cref="PaneList"/> that contains the
-		/// <see paramref="mousePt"/> within its <see cref="AxisRect"/>.
+		/// <see paramref="mousePt"/> within its <see cref="GraphPane.AxisRect"/>.
 		/// </summary>
 		/// <param name="mousePt">The mouse point location where you want to search</param>
 		/// <returns>A <see cref="GraphPane"/> object that contains the mouse point, or

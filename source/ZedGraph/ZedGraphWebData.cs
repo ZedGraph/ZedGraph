@@ -526,7 +526,10 @@ namespace ZedGraph
 			set { ViewState["IsScaled"] = value; }
 		}
 		
-		// not accessible via webcontrol properties
+		/// <summary>
+		/// The <see cref="Brush"/> object associated with this <see cref="Fill"/> object.
+		/// Not accessible via webcontrol properties.
+		/// </summary>
 		[Browsable(false)]
 		public Brush Brush = null;			
 	}
@@ -1655,7 +1658,7 @@ namespace ZedGraph
 
 	#region ZedGraphWebString
 	/// <summary>
-	/// String class for a <see cref="ZedGraph.String"/> object
+	/// A Web String class
 	/// </summary>
 	/// <author>Darren Martz</author>
 	[DefaultProperty("Value")]

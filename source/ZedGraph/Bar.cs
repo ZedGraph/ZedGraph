@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.16 $ $Date: 2005-01-22 06:20:49 $ </version>
+   /// <version> $Revision: 3.17 $ $Date: 2005-03-05 07:24:09 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -441,8 +441,8 @@ namespace ZedGraph
 			// curHiVal = the scale value on the value axis of the current bar
 			// curLowVal = the scale value of the bottom of the bar
 			double curBase, curLowVal, curHiVal;
-			BarValueHandler valueHandler = new BarValueHandler( pane );
-			valueHandler.GetBarValues( curve, index, out curBase, out curLowVal, out curHiVal );
+			ValueHandler valueHandler = new ValueHandler( pane, false );
+			valueHandler.GetValues( curve, index, out curBase, out curLowVal, out curHiVal );
 
 			// Any value set to double max is invalid and should be skipped
 			// This is used for calculated values that are out of range, divide

@@ -1,5 +1,5 @@
 //============================================================================
-//ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
+//ZedGraph Class Library - A Flexible Charting Library for .Net
 //Copyright (C) 2005 Jerry Vos
 //
 //This library is free software; you can redistribute it and/or
@@ -25,7 +25,7 @@ namespace ZedGraph.Demo
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos </author>
-	/// <version> $Revision: 1.4 $ $Date: 2005-03-03 06:13:59 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2005-03-05 07:24:09 $ </version>
 	public class DemoTabForm : ChartTabForm
 	{
 	#region Constructor
@@ -37,7 +37,7 @@ namespace ZedGraph.Demo
 	#region Methods
 		protected override void loadDemos()
 		{
-			loadDemo(new SimpleDemo());
+			loadDemo(new ComboDemo());
 			loadDemo(new PieChartDemo());
 			loadDemo(new LineStackingDemo());
 			loadDemo(new TransparentDemo1());

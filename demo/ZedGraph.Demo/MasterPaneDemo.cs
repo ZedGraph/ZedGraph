@@ -1,3 +1,21 @@
+//============================================================================
+//ZedGraph Class Library - A Flexible Charting Library for .Net
+//Copyright (C) 2005 John Champion and Jerry Vos
+//
+//This library is free software; you can redistribute it and/or
+//modify it under the terms of the GNU Lesser General Public
+//License as published by the Free Software Foundation; either
+//version 2.1 of the License, or (at your option) any later version.
+//
+//This library is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public
+//License along with this library; if not, write to the Free Software
+//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//=============================================================================
 using System;
 using System.Drawing;
 using System.Collections;
@@ -14,25 +32,17 @@ namespace ZedGraph.Demo
 		public MasterPaneDemo() : base( "A Demo of the MasterPane",
 									"MasterPane Demo", DemoType.General, DemoType.Special )
 		{
-			base.MasterPane.Title = "MasterPane Test";
-			base.MasterPane.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
-			base.MasterPane.IsShowTitle = true;
-			//base.MasterPane.HasMasterLegend = false ;
-			
-			base.MasterPane.Tag = "This is my tag";
-			base.MasterPane.MarginAll = 10;
-			base.MasterPane.InnerPaneGap = 10;
-			base.MasterPane.Legend.IsVisible = true;
-			base.MasterPane.Legend.Position = LegendPos.TopCenter;
+			MasterPane myMaster = base.MasterPane;
 
-			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
-			Image image = Image.FromHbitmap( bm.GetHbitmap() );
-			ImageItem imageItem = new ImageItem( image,
-				new RectangleF( 0.1F, 0.03F, 0.1F, 0.06F ),
-				CoordType.PaneFraction, AlignH.Left, AlignV.Top );
-			//imageItem.IsScaled = false;
-			imageItem.ZOrder = ZOrder.G_BehindAll;
-			base.MasterPane.GraphItemList.Add( imageItem );
+			myMaster.Title = "MasterPane Test";
+			myMaster.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+			myMaster.IsShowTitle = true;
+			
+			myMaster.Tag = "This is my tag";
+			myMaster.MarginAll = 10;
+			myMaster.InnerPaneGap = 10;
+			myMaster.Legend.IsVisible = true;
+			myMaster.Legend.Position = LegendPos.TopCenter;
 
 			TextItem text = new TextItem( "Confidential", 0.80F, 0.12F );
 			text.Location.CoordinateFrame = CoordType.PaneFraction;
@@ -47,7 +57,7 @@ namespace ZedGraph.Demo
 
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
-			base.MasterPane.GraphItemList.Add( text );
+			myMaster.GraphItemList.Add( text );
 
 			text = new TextItem("DRAFT", 0.5F, 0.5F );
 			text.Location.CoordinateFrame = CoordType.PaneFraction;
@@ -63,9 +73,8 @@ namespace ZedGraph.Demo
 			text.Location.AlignV = AlignV.Center;
 			text.ZOrder = ZOrder.A_InFront;
 			
-			base.MasterPane.GraphItemList.Add( text );
-			Graphics g = this.ZedGraphControl.CreateGraphics();
-			base.MasterPane.PaneList.Remove( 0 );
+			myMaster.GraphItemList.Add( text );
+			myMaster.PaneList.Remove( 0 );
 			
 			for ( int j=0; j<6; j++ )
 			{
@@ -94,17 +103,15 @@ namespace ZedGraph.Demo
 				LineItem myCurve = myPane.AddCurve( "label" + j.ToString(),
 					list, Color.Red, SymbolType.Diamond );
 
-				// Tell ZedGraph to refigure the
-				// axes since the data have changed
-				//myPane.AxisChange( this.CreateGraphics() );
-
-				base.MasterPane.Add( myPane );
+				myMaster.Add( myPane );
 			}
 
-			base.MasterPane.AutoPaneLayout( g, PaneLayout.SquareColPreferred );
+			Graphics g = base.ZedGraphControl.CreateGraphics();
+			myMaster.AutoPaneLayout( g, PaneLayout.SquareColPreferred );
+			g.Dispose();
 
 			base.ZedGraphControl.AxisChange();
-			g.Dispose();
+
 		}
 	}
 }

@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.37 $ $Date: 2005-03-01 06:41:32 $ </version>
+	/// <version> $Revision: 3.38 $ $Date: 2005-03-05 07:24:10 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -70,9 +70,9 @@ namespace ZedGraph
 		private CurveList	curveList;
 						
 		/// <summary>
-		/// private value that contains a <see cref="ZoomStateStack"/>, which stores prior <see cref="ZoomStates"/>
-		/// containing scale range information.  This enables zooming out functionality for the
-		/// <see cref="ZedGraphControl"/>.
+		/// private value that contains a <see cref="ZoomStateStack"/>, which stores prior
+		/// <see cref="ZoomState"/> objects containing scale range information.  This enables
+		/// zooming and panning functionality for the <see cref="ZedGraphControl"/>.
 		/// </summary>
 		internal ZoomStateStack zoomStack;
 		
@@ -483,9 +483,11 @@ namespace ZedGraph
 	#region Constructors
 
 		/// <summary>
-		/// Default Constructor
+		/// Default Constructor.  Sets the <see cref="PaneBase.PaneRect"/> to (0, 0, 500, 375), and
+		/// sets the <see cref="PaneBase.Title"/> and <see cref="Axis.Title"/> values to empty
+		/// strings.
 		/// </summary>
-		public GraphPane() : this( new RectangleF( 0, 0, 100, 100 ), "Title", "X Axis", "Y Axis" )
+		public GraphPane() : this( new RectangleF( 0, 0, 500, 375 ), "", "", "" )
 		{
 		}
 
@@ -498,7 +500,7 @@ namespace ZedGraph
 		/// This area can be any size, and can be resize at any time using the
 		/// <see cref="PaneBase.PaneRect"/> property.
 		/// </param>
-		/// <param name="paneTitle">The <see cref="Axis.Title"/> for this <see cref="GraphPane"/></param>
+		/// <param name="paneTitle">The <see cref="PaneBase.Title"/> for this <see cref="GraphPane"/></param>
 		/// <param name="xTitle">The <see cref="Axis.Title"/> for the <see cref="XAxis"/></param>
 		/// <param name="yTitle">The <see cref="Axis.Title"/> for the <see cref="YAxis"/></param>
 		public GraphPane( RectangleF paneRect, string paneTitle,
@@ -1553,7 +1555,7 @@ namespace ZedGraph
 				y2Axis.Min == y2Axis.Max )
 				return false;
 
-			BarValueHandler valueHandler = new BarValueHandler( this );
+			ValueHandler valueHandler = new ValueHandler( this, false );
 
 			double	xPixPerUnit = axisRect.Width / ( xAxis.Max - xAxis.Min );
 			double	yPixPerUnit = axisRect.Height / ( yAxis.Max - yAxis.Min );
@@ -1629,7 +1631,7 @@ namespace ZedGraph
 									curve is HiLowBarItem )
 								{
 									double baseVal, lowVal, hiVal;
-									valueHandler.GetBarValues( curve, iPt, out baseVal,
+									valueHandler.GetValues( curve, iPt, out baseVal,
 										out lowVal, out hiVal );
 
 									if ( lowVal > hiVal )

@@ -24,12 +24,12 @@ namespace ZedGraph
 {
 	/// <summary>
 	/// A class designed to simplify the process of getting the actual value for
-	/// the various bar types (BarType.Stacked, BarType.PercentStack, BarType.Cluster).
+	/// the various stacked and regular curve types
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-01-08 08:28:07 $ </version>
-	public class BarValueHandler
+	/// <version> $Revision: 3.1 $ $Date: 2005-03-05 07:24:10 $ </version>
+	public class ValueHandler
 	{
 		private GraphPane pane;
 
@@ -38,9 +38,20 @@ namespace ZedGraph
 		/// <see cref="GraphPane"/> object.
 		/// </summary>
 		/// <param name="pane">The parent <see cref="GraphPane"/> object.</param>
-		public BarValueHandler( GraphPane pane )
+		/// <param name="initialize">A <see cref="bool"/> flag to indicate whether or
+		/// not the drawing variables should be initialized.  Initialization is not
+		/// required if this is part of a ZedGraph internal draw operation (i.e., its in
+		/// the middle of a call to <see cref="GraphPane.Draw"/>).  Otherwise, you should
+		/// initialize to make sure the drawing variables are configured.  true to do
+		/// an initialization, false otherwise.</param>
+		public ValueHandler( GraphPane pane, bool initialize )
 		{
 			this.pane = pane;
+			if ( initialize )
+			{
+				// just create a dummy image, which results in a full draw operation
+				Image image = pane.Image;
+			}
 		}
 
 		/// <summary>
@@ -60,10 +71,10 @@ namespace ZedGraph
 		/// value for the dependent axis.</param>
 		/// <returns>true if the data point is value, false for
 		/// <see cref="PointPair.Missing"/>, invalid, etc. data.</returns>
-		public bool GetBarValues( CurveItem curve, int iPt, out double baseVal,
+		public bool GetValues( CurveItem curve, int iPt, out double baseVal,
 							out double lowVal, out double hiVal )
 		{
-			return GetBarValues( this.pane, curve, iPt, out baseVal,
+			return GetValues( this.pane, curve, iPt, out baseVal,
 									out lowVal, out hiVal );
 		}
 
@@ -86,7 +97,7 @@ namespace ZedGraph
 		/// value for the dependent axis.</param>
 		/// <returns>true if the data point is value, false for
 		/// <see cref="PointPair.Missing"/>, invalid, etc. data.</returns>
-		public static bool GetBarValues( GraphPane pane, CurveItem curve, int iPt,
+		public static bool GetValues( GraphPane pane, CurveItem curve, int iPt,
 							out double baseVal, out double lowVal, out double hiVal )
 		{
 			hiVal = PointPair.Missing;
@@ -246,7 +257,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Calculate the screen pixel position of the center of the specified bar, using the
+		/// Calculate the user scale position of the center of the specified bar, using the
 		/// <see cref="Axis"/> as specified by <see cref="GraphPane.BarBase"/>.  This method is
 		/// used primarily by the
 		/// <see cref="GraphPane.FindNearestPoint(PointF,out CurveItem,out int)"/> method in order to
@@ -263,7 +274,7 @@ namespace ZedGraph
 		/// <param name="iOrdinal">The ordinal position of the <see cref="CurveItem"/> of interest.
 		/// That is, the first bar series is 0, the second is 1, etc.  Note that this applies only
 		/// to the bars.  If a graph includes both bars and lines, then count only the bars.</param>
-		/// <returns>A screen pixel X position of the center of the bar of interest.</returns>
+		/// <returns>A user scale value position of the center of the bar of interest.</returns>
 		public double BarCenterValue( CurveItem curve, float barWidth, int iCluster,
 										  double val, int iOrdinal )
 		{
