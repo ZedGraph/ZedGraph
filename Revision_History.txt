@@ -1,5 +1,11 @@
 ZedGraph Class Library Revision History
 
+15-Jul-2004
+    Add Author/Revision XML tags
+    
+14-Jul-2004
+    Added LGPL
+
 13-Jul-2004 (Release 1.5)
     Added AxisType.Ordinal 
     Added Def.Ax.MaxTextLabels and made Text labels honor the Axis.Step setting 

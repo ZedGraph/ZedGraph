@@ -1,3 +1,22 @@
+//============================================================================
+//ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
+//Copyright (C) 2004  John Champion
+//
+//This library is free software; you can redistribute it and/or
+//modify it under the terms of the GNU Lesser General Public
+//License as published by the Free Software Foundation; either
+//version 2.1 of the License, or (at your option) any later version.
+//
+//This library is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public
+//License along with this library; if not, write to the Free Software
+//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//=============================================================================
+
 using System;
 
 namespace ZedGraph
@@ -6,6 +25,9 @@ namespace ZedGraph
 	/// Enumeration type for the various axis types that are available
 	/// </summary>
 	/// <seealso cref="ZedGraph.Axis.Type"/>
+	/// 
+	/// <author> John Champion </author>
+	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:22:26 $ </version>
 	public enum AxisType
 	{
 		/// <summary> An ordinary, cartesian axis </summary>
@@ -20,6 +42,7 @@ namespace ZedGraph
 		/// ordinal type, then all X values associated with the curves are ignored.</summary>
 		/// <seealso cref="AxisType.Ordinal"/>
 		/// <seealso cref="Axis.IsText"/>
+		/// <seealso cref="Def.Ax.MaxTextLabels"/>
 		Text,
 		/// <summary> An ordinal axis with regular numeric labels.  An ordinal axis means that
 		/// all data points are evenly spaced at integral values, and the actual coordinate values
