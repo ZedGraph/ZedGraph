@@ -27,8 +27,19 @@ using System.Drawing.Design;
 namespace ZedGraph
 {
 	#region Generic Data Schema
+	/// <summary>
+	/// Identifies state management items by a unique code and its datatype. The code is defined 
+	/// in the implementation of a GenericCollection class constructor.
+	/// </summary>
+	/// <author>Darren Martz</author>
+	/// <version> $ </version>
 	public struct GenericCollectionItemSchema
 	{
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		/// <param name="c">Single character code used to identify the state item datatype</param>
+		/// <param name="t">Item datatype</param>
 		public GenericCollectionItemSchema(char c, Type t)
 		{
 			code = c;
@@ -40,6 +51,28 @@ namespace ZedGraph
 	#endregion
 
 	#region Generic Data Item
+	/// <summary>
+	/// Generic state management item used in a state management aware collection.
+	/// This class is intended to be subclasses with public property values added.
+	/// Property values should be added in the full {get/set} format reading and writing
+	/// the current state from the ViewState array.
+	/// </summary>
+	/// <example>
+	/// public class MyItem : GenericItem
+	/// {
+	///		[NotifyParentProperty(true)]
+	///		public bool IsVisible
+	///		{
+	///			get 
+	///			{ 
+	///				object x = ViewState["IsVisible"]; 
+	///				return (null == x) ? true : (bool)x;
+	///			}
+	///			set { ViewState["IsLegendLabelVisible"] = value; }
+	///		}
+	///	}
+	/// </example>
+	/// <author>Darren Martz</author>
 	[	
 		Bindable(true), 
 		PersistenceMode(PersistenceMode.InnerProperty),
@@ -47,13 +80,31 @@ namespace ZedGraph
 	]
 	public class GenericItem : IStateManager
 	{		
+		/// <summary>
+		/// Default constructor that does nothing
+		/// </summary>
 		public GenericItem()
 		{			
 		}
-						
+		
+		/// <summary>
+		/// Internal indicator of the current tracking state
+		/// </summary>
 		private bool _isTrackingViewState;
+
+		/// <summary>
+		/// Internal view state used by the asp.net infrastructure
+		/// </summary>
 		private StateBag _viewState;		
 
+		/// <summary>
+		/// Internal access to the viewstate array. Subclassed objects can access this
+		/// to read/write changes to the objects view state.
+		/// </summary>
+		/// <example>
+		/// ViewState["myelement"] = "value";
+		/// string val = (string)ViewState["myelement"];
+		/// </example>
 		[
 		Browsable(false),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
@@ -74,6 +125,9 @@ namespace ZedGraph
 			}			
 		}
 
+		/// <summary>
+		/// Internal method to mark the statebag as dirty so it can be resaved if necessary
+		/// </summary>
 		internal void SetDirty()
 		{
 			if ( null != _viewState )
@@ -85,39 +139,64 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Implementation of the IStateManager.IsTrackingViewState property.
+		/// </summary>
 		bool IStateManager.IsTrackingViewState
 		{
 			get { return _isTrackingViewState; }
 		}
 
+		/// <summary>
+		/// Loads the viewstate into the local statebag given a viewstate collection object
+		/// </summary>
+		/// <param name="savedState">object containing asp.net page viewstate</param>
 		protected virtual void LoadViewState(object savedState)
 		{
 			if ( savedState == null ) return;
 			((IStateManager)ViewState).LoadViewState(savedState);
 		}
 
+		/// <summary>
+		/// Implementation of the IStateManager.LoadViewState method
+		/// </summary>
+		/// <param name="savedState">object containing asp.net page viewstate</param>
 		void IStateManager.LoadViewState(object savedState)
 		{
 			LoadViewState(savedState);
 		}
 
+		/// <summary>
+		/// Saves the current viewstate into a portable object
+		/// </summary>
+		/// <returns>object containing classes viewstate</returns>
 		protected virtual object SaveViewState()
 		{
 			if ( null == _viewState ) return null;
 			return ((IStateManager)_viewState).SaveViewState();
 		}
 
+		/// <summary>
+		/// Implementation of the IStateManager.SaveViewState method
+		/// </summary>
+		/// <returns>object containing classes viewstate</returns>
 		object IStateManager.SaveViewState()
 		{
 			return SaveViewState();
 		}
 
+		/// <summary>
+		/// Tells the statebag to begin tracking changes to state values
+		/// </summary>
 		protected virtual void TrackViewState()
 		{
 			_isTrackingViewState = true;
 			if ( null != _viewState ) ((IStateManager)_viewState).TrackViewState();
 		}
 
+		/// <summary>
+		/// Implementation of the IStateManager.TrackViewState method
+		/// </summary>
 		void IStateManager.TrackViewState()
 		{
 			TrackViewState();
@@ -127,13 +206,50 @@ namespace ZedGraph
 	#endregion
 
 	#region Generic Collection Editor
+	/// <summary>
+	/// Provides a few hints to the development editor on how to create
+	/// child items in the collection. This class uses the schema defined
+	/// inside the collection implementation.
+	/// </summary>
+	/// <example>
+	/// public class MyCollection : GenericCollection
+	/// {
+	///		public MyCollection() : base()
+	///		{
+	///			Schema = new GenericCollectionItemSchema[1];
+	///			Schema[0].code = 'b';
+	///			Schema[1].type = typeof(MyItem);
+	///		}
+	///		public void Add(MyItem item)
+	///		{
+	///			if ( null != item ) ListAdd( item );
+	///			else throw new ArgumentException("parameter cannot be null","item");
+	///		}	
+	///		
+	///		[NotifyParentProperty(true)]
+	///		public ZedGraphWebCurveItem this [int index]
+	///		{
+	///			get { return (MyItem)ListGet(index); }
+	///			set { ListInsert(index,value); }
+	///		}
+	///	}
+	/// </example>
+	/// <author>Darren Martz</author>
 	public class GenericCollectionEditor : CollectionEditor 
 	{
-
+		/// <summary>
+		/// Default constructor based on CollectionEditor contructor
+		/// </summary>
+		/// <param name="type">Datetype of the collection to manage</param>
 		public GenericCollectionEditor(Type type) : base(type) 
 		{			
 		}
 
+		/// <summary>
+		/// Informs the visual editor what kinds of classes are accepted as elements
+		/// within the collection.
+		/// </summary>
+		/// <returns>Array of datatypes supported as items within the collection</returns>
 		protected override Type[] CreateNewItemTypes() 
 		{
 			GenericCollection x = (GenericCollection)Activator.CreateInstance(CollectionType);
@@ -149,9 +265,12 @@ namespace ZedGraph
 	}
 	#endregion
 
+	#region Generic Collection
 	/// <summary>
-	/// Summary description for GenericCollection.
+	/// Provides array services in a web state engine environment. This collection can
+	/// support 1:N datatypes as items provided they are based on the GenericItem class.
 	/// </summary>
+	/// <author>Darren Martz</author>
 	[
 		DefaultProperty("Item"),				
 		ParseChildren(true, "Item"),				
@@ -159,6 +278,9 @@ namespace ZedGraph
 	]
 	public class GenericCollection : IStateManager, IList
 	{
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		protected GenericCollection()
 		{			
 			List = new ArrayList();			
@@ -166,10 +288,26 @@ namespace ZedGraph
 			_isTrackingViewState = false;
 		}		
 
+		#region Properties
+		/// <summary>
+		/// Internal collection item schema table. All supported data types must be
+		/// identified in this array. The default constructor should populate this
+		/// value.
+		/// </summary>
 		internal GenericCollectionItemSchema[] Schema = null;
+
+		/// <summary>
+		/// Internal array of items. Some public access to the array is provided by default.
+		/// Additional public access should be added when subclassing.
+		/// </summary>
 		private ArrayList List = null;
 
+		#endregion
+
 		#region Helper Methods
+		/// <summary>
+		/// Empty the array list and marks the viewstate.
+		/// </summary>
 		public void Clear()
 		{
 			List.Clear();
@@ -179,6 +317,11 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Verifies if the object is a supported datatype
+		/// </summary>
+		/// <param name="item">object to verify</param>
+		/// <returns>true if supported</returns>
 		protected bool SupportedType( object item )
 		{
 			if (item == null) return false;		
@@ -194,6 +337,13 @@ namespace ZedGraph
 			return false;
 		}
 
+		/// <summary>
+		/// Internal insert item method that also tracks the change in the viewstate
+		/// </summary>
+		/// <param name="index">location in the array to insert the object</param>
+		/// <param name="item">object to insert</param>
+		/// <exception cref="ArguementNullException"></exception>
+		/// <exception cref="ArguementException"></exception>
 		protected void ListInsert(int index, object item) 
 		{
 			if (item == null) 
@@ -216,11 +366,23 @@ namespace ZedGraph
 			throw new ArgumentException("item type not supported");			
 		}
 
+		/// <summary>
+		/// Retrieves an item by index
+		/// </summary>
+		/// <param name="index">array index</param>
+		/// <returns>array item</returns>
 		protected object ListGet(int index)
 		{
 			return List[index];
 		}
 
+		/// <summary>
+		/// Appends item to array and tracks the change in the viewstate
+		/// </summary>
+		/// <param name="item">Item to append</param>
+		/// <returns>new index of item</returns>
+		/// <exception cref="ArguementNullException"></exception>
+		/// <exception cref="ArguementException"></exception>
 		protected int ListAdd(object item)
 		{
 			if (item == null) 
@@ -243,6 +405,10 @@ namespace ZedGraph
 			throw new ArgumentException("item type not supported");		
 		}
 
+		/// <summary>
+		/// Removes the item from the array and tracks the change in the viewstate
+		/// </summary>
+		/// <param name="index">item index to remove</param>
 		protected void ListRemoveAt(int index)
 		{
 			List.RemoveAt(index);
@@ -252,6 +418,12 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Removes the item from the array and tracks the change in the viewstate
+		/// </summary>
+		/// <param name="item">object to remove</param>
+		/// <exception cref="ArguementNullException"></exception>
+		/// <exception cref="ArguementException"></exception>
 		protected void ListRemove(object item) 
 		{
 			if (item == null) 
@@ -271,6 +443,12 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Identifies the items index in the list given the item object
+		/// </summary>
+		/// <param name="item">item to locate in list</param>
+		/// <returns>index of item</returns>
+		/// <exception cref="ArguementNullException"></exception>		
 		protected int IndexOf(object item) 
 		{
 			if (item == null) 
@@ -282,6 +460,10 @@ namespace ZedGraph
 		#endregion
 				
 		#region IEnumerable Implementation
+		/// <summary>
+		/// <see cref="IEnumerator.GetEnumerator"/> 
+		/// </summary>
+		/// <returns></returns>
 		public IEnumerator GetEnumerator() 
 		{
 			return List.GetEnumerator();
@@ -289,6 +471,9 @@ namespace ZedGraph
         #endregion IEnumerable Implementation
 
         #region ICollection Implementation
+		/// <summary>
+		/// <see cref="ICollection.Count"/>
+		/// </summary>
 		[
 		Browsable(false),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
@@ -301,11 +486,19 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// <see cref="ICollection.CopyTo"/>
+		/// </summary>
+		/// <param name="array"></param>
+		/// <param name="index"></param>
 		public void CopyTo(Array array, int index) 
 		{
 			List.CopyTo(array,index);
 		}
 
+		/// <summary>
+		/// <see cref="ICollection.IsSynchronized"/>
+		/// </summary>
 		[
 		Browsable(false),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
@@ -318,6 +511,9 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// <see cref="ICollection.SyncRoot"/>		
+		/// </summary>
 		[
 		Browsable(false),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)
@@ -333,11 +529,13 @@ namespace ZedGraph
 
         #region IList Implementation
 
-		// Privately implement those members of IList that take or 
-		// return the object type and expose equivalent public members
-		// that take or return an item instance instead. Also
-		// implement privately those members of IList that are not meaninful
-		// to expose in the public object model of this Collection.
+		/// <summary>
+		/// Privately implement those members of IList that take or 
+		/// return the object type and expose equivalent public members
+		/// that take or return an item instance instead. Also
+		/// implement privately those members of IList that are not meaninful
+		/// to expose in the public object model of this Collection.		
+		/// </summary>
 		object IList.this[int index] 
 		{
 			get 
@@ -350,6 +548,9 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// <see cref="IList.IsFixedSize"/>
+		/// </summary>
 		bool IList.IsFixedSize 
 		{
 			get 
@@ -358,6 +559,9 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// <see cref="IList.IsReadOnly"/>
+		/// </summary>
 		bool IList.IsReadOnly 
 		{
 			get 
@@ -366,16 +570,31 @@ namespace ZedGraph
 			}
 		}		
 
+		/// <summary>
+		/// Adds item based on the rules of ListAdd
+		/// <see cref="IList.Add"/>
+		/// <seealso cref="GenericCollection.ListAdd"/>
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
 		int IList.Add(object item) 
 		{
 			return ListAdd(item);			
 		}
 
+		/// <summary>
+		/// <see cref="IList.Clear"/>
+		/// </summary>
 		void IList.Clear() 
 		{
 			Clear();
 		}
 
+		/// <summary>
+		/// <see cref="IList.Contains"/>
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
 		bool IList.Contains(object item) 
 		{
 			if ( SupportedType(item) )
@@ -385,6 +604,11 @@ namespace ZedGraph
 			return false;
 		}
 
+		/// <summary>
+		/// <see cref="IList.IndexOf"/>
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
 		int IList.IndexOf(object item) 
 		{
 			if (item == null) 
@@ -398,16 +622,35 @@ namespace ZedGraph
 			throw new ArgumentException("item type not supported");			
 		}
 
+		/// <summary>
+		/// Inserts item according to the rules of ListInsert
+		/// <see cref="IList.Insert"/>
+		/// <seealso cref="GenericCollection.ListInsert"/>
+		/// </summary>
+		/// <param name="index"></param>
+		/// <param name="item"></param>
 		void IList.Insert(int index, object item) 
 		{
 			ListInsert(index,item);			
 		}
 
+		/// <summary>
+		/// Removes item based on ListRemove
+		/// <see cref="IList.Remove"/>
+		/// <seealso cref="GenericCollection.ListRemove"/>
+		/// </summary>
+		/// <param name="item"></param>
 		void IList.Remove(object item) 
 		{						
 			ListRemove(item);			
 		}
 
+		/// <summary>
+		/// Removes item based on RemoveAt
+		/// <see cref="IList.RemoveAt"/>
+		/// <seealso cref="GenericCollection.RemoveAt"/>
+		/// </summary>
+		/// <param name="index"></param>
 		void IList.RemoveAt(int index) 
 		{
 			ListRemoveAt(index);
@@ -416,14 +659,27 @@ namespace ZedGraph
 		
 		#region IStateManager Implementation
 
+		/// <summary>
+		/// preserves internal tracking state
+		/// </summary>
 		private bool _isTrackingViewState;
+
+		/// <summary>
+		/// marks the entire statebag as dirty requiring the entire state to be saved
+		/// </summary>
 		private bool _saveAll;
 
+		/// <summary>
+		/// <see cref="IStateManager.IsTrackingViewState"/>
+		/// </summary>
 		bool IStateManager.IsTrackingViewState
 		{
 			get { return _isTrackingViewState; }
 		}
 
+		/// <summary>
+		/// <see cref="IStateManager.TrackViewState"/>
+		/// </summary>
 		void IStateManager.TrackViewState()
 		{
 			_isTrackingViewState = true;
@@ -433,6 +689,13 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Loads the view state. This involves reading each state item pair, verifying
+		/// schema support for each datatype, creating each item instance, and loading
+		/// the state into each newly created instance.
+		/// <seealso cref="IStateManager.LoadViewState"/>
+		/// </summary>
+		/// <param name="savedState">state management object</param>
 		void IStateManager.LoadViewState(object savedState)
 		{
 			GenericItem item;
@@ -504,6 +767,12 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Saves the viewstate into a portable object format. This involves
+		/// saving the state of each item in the list.
+		/// <seealso cref="IStateManager.SaveViewState"/>
+		/// </summary>
+		/// <returns>portable state object</returns>
 		object IStateManager.SaveViewState()
 		{
 			GenericItem item;
@@ -563,4 +832,5 @@ namespace ZedGraph
 		}
 		#endregion
 	}
+	#endregion
 }
