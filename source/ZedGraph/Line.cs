@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.9 $ $Date: 2004-09-01 05:14:54 $ </version>
+	/// <version> $Revision: 1.10 $ $Date: 2004-09-02 06:19:31 $ </version>
 	public class Line : ICloneable
 	{
 	#region Fields
@@ -312,57 +312,6 @@ namespace ZedGraph
 				g.DrawLine( pen, x1, y1, x2, y2 );
 			}
 		}
-
-/*
-		/// <summary>
-		/// Render a series of <see cref="Line"/> segments to the specified
-		/// <see cref="Graphics"/> device.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="x">The array of x position values that define the
-		/// line segments in screen pixel units</param>
-		/// <param name="y">The array of y position values that define the
-		/// line segments in screen pixel units</param>
-
-		public void DrawMany( Graphics g, float[] x, float[] y )
-		{
-			if ( this.isVisible )
-			{
-				Pen pen = new Pen( this.color, this.width );
-				pen.DashStyle = this.Style;
-				int nSeg = x.Length - 1;
-				int iPlus = 0;
-
-				for ( int i=0; i<nSeg; i++ )
-				{
-					iPlus++;
-					if ( x[i] != System.Single.MaxValue && 
-						x[iPlus] != System.Single.MaxValue && 
-						y[i] != System.Single.MaxValue && 
-						y[iPlus] != System.Single.MaxValue )
-					{
-						if ( this.StepType == StepType.NonStep )
-						{
-							g.DrawLine( pen, x[i], y[i], x[iPlus], y[iPlus] );
-						}
-						else if ( this.StepType == StepType.ForwardStep )
-						{
-							g.DrawLine( pen, x[i], y[i], x[iPlus], y[i] );
-							g.DrawLine( pen, x[iPlus], y[i], x[iPlus], y[iPlus] );
-						}
-						else if ( this.StepType == StepType.RearwardStep )
-						{
-							g.DrawLine( pen, x[i], y[i], x[i], y[iPlus] );
-							g.DrawLine( pen, x[i], y[iPlus], x[iPlus], y[iPlus] );
-						}
-					}
-				}
-			}
-		}
-*/
 	#endregion
 	}
 }

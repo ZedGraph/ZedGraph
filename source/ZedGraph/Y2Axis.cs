@@ -30,9 +30,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-26 05:49:11 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2004-09-02 06:19:31 $ </version>
 	public class Y2Axis : Axis, ICloneable
 	{
+	#region Defaults
 		/// <summary>
 		/// A simple subclass of the <see cref="Default"/> class that defines the
 		/// default property values for the <see cref="Y2Axis"/> class.
@@ -47,7 +48,9 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsVisible = false;
 		}
+	#endregion
 
+	#region Constructors
 		/// <summary>
 		/// Default constructor that sets all <see cref="Y2Axis"/> properties to
 		/// default values as defined in the <see cref="Default"/> class, except
@@ -77,7 +80,9 @@ namespace ZedGraph
 		{ 
 			return new Y2Axis( this ); 
 		}
+	#endregion
 		
+	#region Methods
 		/// <summary>
 		/// Setup the Transform Matrix to handle drawing of this <see cref="Y2Axis"/>
 		/// </summary>
@@ -103,6 +108,7 @@ namespace ZedGraph
 			// rotate so this axis is in the left-right direction
 			g.RotateTransform( -90 );
 		}
+	#endregion
 	}
 }
 

@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+1-Sep-2004 (by Champion)
+    Fix grace so that it won't extend across negative/positive boundary
+    Finish up #region's
+
 31-Aug-2004 (by Champion)
     Added Curve Smoothing (Line.IsSmooth, Line.SmoothTension)
     Added PointPair.IsInvalid

@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.15 $ $Date: 2004-08-31 15:16:00 $ </version>
+	/// <version> $Revision: 1.16 $ $Date: 2004-09-02 06:19:30 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -891,15 +891,6 @@ namespace ZedGraph
 			// Determine the scale factor
 			double	scaleFactor = this.CalcScaleFactor( g );
 
-/*
- * 			int		hStack;
-			float	legendWidth;
-			if ( this.isAxisRectAuto )
-				this.axisRect = CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth );
-			else
-				CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth );
-*/
-
 			// if the AxisRect is not yet determined, then pick a scale based on a default AxisRect
 			// size (using 75% of PaneRect -- code is in Axis.CalcMaxLabels() )
 			// With the scale picked, call CalcAxisRect() so calculate a real AxisRect
@@ -1128,18 +1119,18 @@ namespace ZedGraph
 			if ( this.isPaneFramed )
 			{
 				Pen pen = new Pen( this.paneFrameColor, this.paneFramePenWidth );
-				//g.DrawRectangle( pen, Rectangle.Round( tempRect ) );
+				g.DrawRectangle( pen, Rectangle.Round( tempRect ) );
 				
 				// FrameRect draws one pixel short of the bottom/right border, so
 				//  just draw it manually
-				g.DrawLine( pen, paneRect.Left, paneRect.Bottom,
-									paneRect.Left, paneRect.Top );
-				g.DrawLine( pen, paneRect.Left, paneRect.Top,
-									paneRect.Right, paneRect.Top );
-				g.DrawLine( pen, paneRect.Right, paneRect.Top,
-									paneRect.Right, paneRect.Bottom );
-				g.DrawLine( pen, paneRect.Right, paneRect.Bottom,
-									paneRect.Left, paneRect.Bottom );
+//				g.DrawLine( pen, paneRect.Left, paneRect.Bottom,
+//									paneRect.Left, paneRect.Top );
+//				g.DrawLine( pen, paneRect.Left, paneRect.Top,
+//									paneRect.Right, paneRect.Top );
+//				g.DrawLine( pen, paneRect.Right, paneRect.Top,
+//									paneRect.Right, paneRect.Bottom );
+//				g.DrawLine( pen, paneRect.Right, paneRect.Bottom,
+//									paneRect.Left, paneRect.Bottom );
 			}
 		}
 

@@ -30,9 +30,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-26 05:49:11 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2004-09-02 06:19:31 $ </version>
 	public class YAxis : Axis, ICloneable
 	{
+	#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
 		/// default property values for the <see cref="YAxis"/> class.
@@ -47,7 +48,9 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsVisible = true;
 		}
+	#endregion
 		
+	#region Constructors
 		/// <summary>
 		/// Default constructor that sets all <see cref="YAxis"/> properties to
 		/// default values as defined in the <see cref="Default"/> class, except
@@ -78,7 +81,9 @@ namespace ZedGraph
 		{ 
 			return new YAxis( this ); 
 		}
+	#endregion
 		
+	#region Methods
 		/// <summary>
 		/// Setup the Transform Matrix to handle drawing of this <see cref="YAxis"/>
 		/// </summary>
@@ -104,6 +109,7 @@ namespace ZedGraph
 			// rotate so this axis is in the left-right direction
 			g.RotateTransform( 90 );
 		}
+	#endregion
 	}
 }
 

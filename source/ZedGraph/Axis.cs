@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.15 $ $Date: 2004-08-31 15:16:00 $ </version>
+	/// <version> $Revision: 1.16 $ $Date: 2004-09-02 06:19:30 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -2542,9 +2542,9 @@ namespace ZedGraph
 		public void PickScale( double minVal, double maxVal, GraphPane pane, Graphics g, double scaleFactor )
 		{
 			// Make sure that minVal and maxVal are legitimate values
-			if ( Double.IsInfinity( minVal ) || Double.IsNaN( minVal ) )
+			if ( Double.IsInfinity( minVal ) || Double.IsNaN( minVal ) || minVal == Double.MaxValue )
 				minVal = 0.0;
-			if ( Double.IsInfinity( maxVal ) || Double.IsNaN( maxVal ) )
+			if ( Double.IsInfinity( maxVal ) || Double.IsNaN( maxVal ) || maxVal == Double.MaxValue )
 				maxVal = 0.0;
 
 			// if the scales are autoranged, use the actual data values for the range
@@ -2558,13 +2558,15 @@ namespace ZedGraph
 			if ( this.minAuto )
 			{
 				this.min = minVal;
-				if ( numType )
-					this.min = minVal - this.MinGrace * range;
+				// Do not let the grace value extend the axis below zero when all the values were positive
+				if ( numType && ( this.min < 0 || minVal - this.MinGrace * range >= 0.0 ) )
+						this.min = minVal - this.MinGrace * range;
 			}
 			if ( this.maxAuto )
 			{
 				this.max = maxVal;
-				if ( numType )
+				// Do not let the grace value extend the axis above zero when all the values were negative
+				if ( numType && ( this.max > 0 || maxVal + this.MaxGrace * range <= 0.0 ) )
 					this.max = maxVal + this.MaxGrace * range;
 			}
 				

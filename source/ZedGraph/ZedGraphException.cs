@@ -7,7 +7,7 @@ namespace ZedGraph
 	/// </summary>
 	///
 	/// <author> Jerry Vos modified by John Champion</author>
-	/// <version> $Revision: 1.2 $ $Date: 2004-08-31 05:26:20 $ </version>
+	/// <version> $Revision: 1.3 $ $Date: 2004-09-02 06:19:31 $ </version>
 	public class ZedGraphException : System.ApplicationException
 	{
 		/// <summary>
@@ -22,7 +22,6 @@ namespace ZedGraph
 										System.Runtime.Serialization.StreamingContext context )
 			: base ( info, context )
 		{
-
 		}
 		
 		/// <summary>

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.7 $ $Date: 2004-08-31 05:26:20 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2004-09-02 06:19:31 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -265,49 +265,7 @@ namespace ZedGraph
 					DrawPoint( g, x, y, scaleFactor, pen );
 			}
 		}
-/*
-		/// <summary>
-		/// Draw the <see cref="Symbol"/> to the specified <see cref="Graphics"/> device
-		/// at the specified list of locations.  This routine draws a series of symbols, and
-		/// is intended to provide a speed improvement over the single Draw() method.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="x">The x position of the center of the symbol in
-		/// screen pixel units</param>
-		/// <param name="y">The y position of the center of the symbol in
-		/// screen pixel units</param>
-		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
-		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-		/// </param>	
-			
-		public void DrawMany( Graphics g, float[] x, float[] y, double scaleFactor )
-		{
-			// Only draw if the symbol is visible
-			if ( this.isVisible )
-			{
-				SolidBrush	brush = new SolidBrush( this.color );
-				Pen pen = new Pen( this.color, this.penWidth );
-				int nPts = x.Length;
-				for ( int i=0; i<nPts; i++ )
-				{
-					if ( x[i] != System.Single.MaxValue && 
-						y[i] != System.Single.MaxValue )
-					{
-						// Fill or draw the symbol as required
-						if ( this.isFilled )
-							FillPoint( g, x[i], y[i], scaleFactor, pen, brush );
-						else
-							DrawPoint( g, x[i], y[i], scaleFactor, pen );
-					}
-				}
-			}
-		}
-*/
+
 		/// <summary>
 		/// Draw the <see cref="Symbol"/> (outline only) to the specified <see cref="Graphics"/>
 		/// device at the specified location.

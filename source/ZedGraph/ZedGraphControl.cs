@@ -32,9 +32,10 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 1.9 $ $Date: 2004-08-31 05:26:20 $ </version>
+	/// <version> $Revision: 1.10 $ $Date: 2004-09-02 06:19:31 $ </version>
 	public class ZedGraphControl : UserControl
 	{
+	#region Fields
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -47,7 +48,25 @@ namespace ZedGraph
 		/// disposed.
 		/// </summary>
 		private GraphPane graphPane;
+	#endregion
 
+	#region Component Designer generated code
+		/// <summary>
+		/// Required method for Designer support - do not modify 
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			// 
+			// GraphPane
+			// 
+			this.Name = "GraphPane";
+			this.Resize += new System.EventHandler(this.ChangeSize);
+
+		}
+	#endregion
+
+	#region Constructors
 		/// <summary>
 		/// Default Constructor
 		/// </summary>
@@ -63,22 +82,6 @@ namespace ZedGraph
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
 			graphPane = new GraphPane( rect, "Title", "X-Axis", "Y-Axis" );
 			graphPane.AxisChange( this.CreateGraphics() );
-		}
-
-		/// <summary>
-		/// Gets or sets the <see cref="ZedGraph.GraphPane"/> property for the control
-		/// </summary>
-		public GraphPane GraphPane
-		{
-			get
-			{ 
-				lock( this ) return graphPane;
-			}
-			
-			set
-			{ 
-				lock( this ) graphPane = value; 
-			}
 		}
 
 		/// <summary>
@@ -100,23 +103,66 @@ namespace ZedGraph
 				graphPane = null;
 			}
 		}
+	#endregion
 
-		#region Component Designer generated code
+	#region Properties
 		/// <summary>
-		/// Required method for Designer support - do not modify 
-		/// the contents of this method with the code editor.
+		/// Gets or sets the <see cref="ZedGraph.GraphPane"/> property for the control
 		/// </summary>
-		private void InitializeComponent()
+		public GraphPane GraphPane
 		{
-			// 
-			// GraphPane
-			// 
-			this.Name = "GraphPane";
-			this.Resize += new System.EventHandler(this.ChangeSize);
-
+			get
+			{ 
+				lock( this ) return graphPane;
+			}
+			
+			set
+			{ 
+				lock( this ) graphPane = value; 
+			}
 		}
-		#endregion
 
+		/// <summary>
+		/// Gets the graph pane's current image.
+		/// <seealso cref="Bitmap"/>
+		/// </summary>
+		/// <exception cref="ZedGraphException">
+		/// When the control has been disposed before this call.
+		/// </exception>
+		public Bitmap Image
+		{
+			get
+			{
+				lock( this )
+				{
+					if ( BeenDisposed )
+						throw new ZedGraphException( "The control has been disposed" );
+
+					Bitmap bitmap = new Bitmap( this.Width, this.Height );
+					Graphics bitmapGraphics = Graphics.FromImage( bitmap );
+					this.graphPane.Draw( bitmapGraphics );
+					bitmapGraphics.Dispose();
+
+					return bitmap;
+				}
+			}
+		}
+
+		/// <summary>
+		/// This checks if the control has been disposed.  This is synonymous with
+		/// the graph pane having been nulled or disposed.  Therefore this is the
+		/// same as <c>ZedGraphControl.GraphPane == null</c>.
+		/// </summary>
+		public bool BeenDisposed
+		{
+			get
+			{ 
+				lock( this ) return graphPane == null; 
+			}
+		}
+	#endregion
+
+	#region Methods
 		/// <summary>
 		/// Called by the system to update the control on-screen
 		/// </summary>
@@ -177,44 +223,6 @@ namespace ZedGraph
 				g.Dispose();
 			}
 		}
-
-		/// <summary>
-		/// Gets the graph pane's current image.
-		/// <seealso cref="Bitmap"/>
-		/// </summary>
-		/// <exception cref="ZedGraphException">
-		/// When the control has been disposed before this call.
-		/// </exception>
-		public Bitmap Image
-		{
-			get
-			{
-				lock( this )
-				{
-					if ( BeenDisposed )
-						throw new ZedGraphException( "The control has been disposed" );
-
-					Bitmap bitmap = new Bitmap( this.Width, this.Height );
-					Graphics bitmapGraphics = Graphics.FromImage( bitmap );
-					this.graphPane.Draw( bitmapGraphics );
-					bitmapGraphics.Dispose();
-
-					return bitmap;
-				}
-			}
-		}
-
-		/// <summary>
-		/// This checks if the control has been disposed.  This is synonymous with
-		/// the graph pane having been nulled or disposed.  Therefore this is the
-		/// same as <c>ZedGraphControl.GraphPane == null</c>.
-		/// </summary>
-		public bool BeenDisposed
-		{
-			get
-			{ 
-				lock( this ) return graphPane == null; 
-			}
-		}
+	#endregion
 	}
 }
