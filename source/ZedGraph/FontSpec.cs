@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-01 06:37:16 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-10-02 07:00:42 $ </version>
 	public class FontSpec : ICloneable
 	{
 	#region Fields
@@ -579,36 +579,37 @@ namespace ZedGraph
 			// Move the coordinate system to local coordinates
 			// of this text object (that is, at the specified
 			// x,y location)
-			g.TranslateTransform( x, y );
+			g.TranslateTransform( x, y, MatrixOrder.Prepend );
 			
+			// Rotate the coordinate system according to the 
+			// specified angle of the FontSpec
+			if ( angle != 0.0F )
+				g.RotateTransform( -angle, MatrixOrder.Prepend );
+
 			// Since the text will be drawn by g.DrawString()
 			// assuming the location is the TopCenter
 			// (the Font is aligned using StringFormat to the
 			// center so multi-line text is center justified),
 			// shift the coordinate system so that we are
 			// actually aligned per the caller specified position
+			float xa, ya;
 			if ( alignH == AlignH.Left )
-				x = sizeF.Width / 2.0F;
+				xa = sizeF.Width / 2.0F;
 			else if ( alignH == AlignH.Right )
-				x = -sizeF.Width / 2.0F;
+				xa = -sizeF.Width / 2.0F;
 			else
-				x = 0.0F;
+				xa = 0.0F;
 				
 			if ( alignV == AlignV.Center )
-				y = -sizeF.Height / 2.0F;
+				ya = -sizeF.Height / 2.0F;
 			else if ( alignV == AlignV.Bottom )
-				y = -sizeF.Height;
+				ya = -sizeF.Height;
 			else
-				y = 0.0F;
+				ya = 0.0F;
 			
-			// Rotate the coordinate system according to the 
-			// specified angle of the FontSpec
-			if ( angle != 0.0F )
-				g.RotateTransform( -angle );
-
 			// Shift the coordinates to accomodate the alignment
 			// parameters
-			g.TranslateTransform( x, y );
+			g.TranslateTransform( xa, ya, MatrixOrder.Prepend );
 
 			// make a solid brush for rendering the font itself
 			SolidBrush brush = new SolidBrush( this.fontColor );
@@ -618,9 +619,9 @@ namespace ZedGraph
 			StringFormat strFormat = new StringFormat();
 			strFormat.Alignment = this.stringAlignment;
 			if ( this.stringAlignment == StringAlignment.Far )
-				g.TranslateTransform( sizeF.Width / 2.0F, 0F );
+				g.TranslateTransform( sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
 			else if ( this.stringAlignment == StringAlignment.Near )
-				g.TranslateTransform( -sizeF.Width / 2.0F, 0F );
+				g.TranslateTransform( -sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
 			
 			// Create a rectangle representing the frame around the
 			// text.  Note that, while the text is drawn based on the
@@ -703,16 +704,6 @@ namespace ZedGraph
 			// RectangleF.Contains, since the rectangle won't be rotated.
 			Matrix matrix = new Matrix();
 			
-			// Move the coordinate system to local coordinates
-			// of this text object (that is, at the specified
-			// x,y location)
-			matrix.Translate( -x, -y );
-			
-			// Rotate the coordinate system according to the 
-			// specified angle of the FontSpec
-			if ( angle != 0.0F )
-				matrix.Rotate( angle );
-
 			// In this case, the bounding box is anchored to the
 			// top-left of the text box.  Handle the alignment
 			// as needed.
@@ -733,9 +724,18 @@ namespace ZedGraph
 
 			// Shift the coordinates to accomodate the alignment
 			// parameters
-			matrix.Translate( -xa, -ya );
+			matrix.Translate( -xa, -ya, MatrixOrder.Prepend );
 
-			//matrix.Invert();
+			// Rotate the coordinate system according to the 
+			// specified angle of the FontSpec
+			if ( angle != 0.0F )
+				matrix.Rotate( angle, MatrixOrder.Prepend );
+
+			// Move the coordinate system to local coordinates
+			// of this text object (that is, at the specified
+			// x,y location)
+			matrix.Translate( -x, -y, MatrixOrder.Prepend );
+			
 			PointF[] pts = new PointF[1];
 			pts[0] = pt;
 			matrix.TransformPoints( pts );
@@ -796,36 +796,37 @@ namespace ZedGraph
 			// Move the coordinate system to local coordinates
 			// of this text object (that is, at the specified
 			// x,y location)
-			g.TranslateTransform( x, y );
+			g.TranslateTransform( x, y, MatrixOrder.Prepend );
 			
+			// Rotate the coordinate system according to the 
+			// specified angle of the FontSpec
+			if ( angle != 0.0F )
+				g.RotateTransform( -angle, MatrixOrder.Prepend );
+
 			// Since the text will be drawn by g.DrawString()
 			// assuming the location is the TopCenter
 			// (the Font is aligned using StringFormat to the
 			// center so multi-line text is center justified),
 			// shift the coordinate system so that we are
 			// actually aligned per the caller specified position
+			float xa, ya;
 			if ( alignH == AlignH.Left )
-				x = totSize.Width / 2.0F;
+				xa = totSize.Width / 2.0F;
 			else if ( alignH == AlignH.Right )
-				x = -totSize.Width / 2.0F;
+				xa = -totSize.Width / 2.0F;
 			else
-				x = 0.0F;
+				xa = 0.0F;
 				
 			if ( alignV == AlignV.Center )
-				y = -totSize.Height / 2.0F;
+				ya = -totSize.Height / 2.0F;
 			else if ( alignV == AlignV.Bottom )
-				y = -totSize.Height;
+				ya = -totSize.Height;
 			else
-				y = 0.0F;
+				ya = 0.0F;
 			
-			// Rotate the coordinate system according to the 
-			// specified angle of the FontSpec
-			if ( angle != 0.0F )
-				g.RotateTransform( -angle );
-
 			// Shift the coordinates to accomodate the alignment
 			// parameters
-			g.TranslateTransform( x, y );
+			g.TranslateTransform( xa, ya, MatrixOrder.Prepend );
 
 			// make a solid brush for rendering the font itself
 			SolidBrush brush = new SolidBrush( this.fontColor );

@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+1-Oct-2004 (by Champion)
+  FindNearestObject works for TextItems and ArrowItems
+  Add SymbolType.Default and SymbolType.None
+  
 30-Sep-2004 (by Champion)
 	Add CurveItem.IsVisible and CurveItem.IsLegendLabelVisible logic
 	Fix the zero axis range bug

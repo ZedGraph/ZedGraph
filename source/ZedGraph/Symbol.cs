@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-02 07:00:42 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -217,7 +217,7 @@ namespace ZedGraph
 		/// Default constructor that sets all <see cref="Symbol"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		public Symbol() : this( SymbolType.Empty, Color.Empty )
+		public Symbol() : this( SymbolType.Default, Color.Empty )
 		{
 		}
 
@@ -235,7 +235,7 @@ namespace ZedGraph
 		public Symbol( SymbolType type, Color color )
 		{
 			this.size = Default.Size;
-			this.type = type == SymbolType.Empty ? Default.Type : type;
+			this.type = type;
 			this.penWidth = Default.PenWidth;
 			this.frameColor = color.IsEmpty ? Default.FrameColor : color;
 			this.isVisible = Default.IsVisible;
@@ -293,7 +293,7 @@ namespace ZedGraph
 		public void DrawSymbol( Graphics g, float x, float y, double scaleFactor, Pen pen, Brush brush )
 		{
 			// Only draw if the symbol is visible
-			if ( this.isVisible && this.Type != SymbolType.Empty )
+			if ( this.isVisible && this.Type != SymbolType.None )
 			{
 				// Fill or draw the symbol as required
 				if ( this.fill.IsFilled )
@@ -324,7 +324,7 @@ namespace ZedGraph
 		public void DrawSymbol( Graphics g, float x, float y, double scaleFactor )
 		{
 			// Only draw if the symbol is visible
-			if ( this.isVisible && this.Type != SymbolType.Empty )
+			if ( this.isVisible && this.Type != SymbolType.None )
 			{
 				SolidBrush	brush = new SolidBrush( this.fill.Color );
 				Pen pen = new Pen( this.frameColor, this.penWidth );
@@ -362,8 +362,8 @@ namespace ZedGraph
 			float	scaledSize = (float) ( this.size * scaleFactor );
 			float	hsize = scaledSize / 2,
 				hsize1 = hsize + 1;
-
-			switch( this.type )
+			
+			switch( this.type == SymbolType.Default ? Default.Type : this.type )
 			{
 				case SymbolType.Square:
 					g.DrawLine( pen, x-hsize, y-hsize, x+hsize, y-hsize );
@@ -442,7 +442,7 @@ namespace ZedGraph
 			if ( this.fill.Type == FillType.Brush )
 				brush = this.fill.MakeBrush( rect );
 			
-			switch( this.type )
+			switch( this.type == SymbolType.Default ? Default.Type : this.type )
 			{
 				case SymbolType.Square:
 					g.FillRectangle( brush, rect );

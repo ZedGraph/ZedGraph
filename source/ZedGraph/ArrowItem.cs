@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:07 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-02 07:00:42 $ </version>
 	public class ArrowItem : ICloneable
 	{
 	#region Fields
@@ -418,6 +418,33 @@ namespace ZedGraph
 				g.Transform = transform;
 			}
 		}
+		
+		/// <summary>
+		/// Determine if the specified screen point lies inside the bounding box of this
+		/// <see cref="ArrowItem"/>.  The bounding box is calculated assuming a distance
+		/// of <see cref="GraphPane.Default.NearestTol"/> pixels around the arrow segment.
+		/// </summary>
+		/// <param name="pt">The screen point, in pixels</param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
+		public bool PointInBox( PointF pt, GraphPane pane )
+		{
+			// transform the x,y location from the user-defined
+			// coordinate frame to the screen pixel location
+			PointF pix = pane.GeneralTransform( new PointF( this.x1, this.y1 ),
+				this.coordinateFrame );
+			PointF pix2 = pane.GeneralTransform( new PointF( this.x2, this.y2 ),
+				this.coordinateFrame );
+			
+			Pen pen = new Pen( Color.Black, (float) GraphPane.Default.NearestTol * 2.0F );
+			GraphicsPath path = new GraphicsPath();
+			path.AddLine( pix, pix2 );
+			return path.IsOutlineVisible( pt, pen );
+		}
+		
 	#endregion
 	
 	}

@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-01 06:37:16 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-02 07:00:42 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1418,7 +1418,7 @@ namespace ZedGraph
 		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
 		public CurveItem AddCurve( string label, double[] x, double[] y, Color color )
 		{
-			CurveItem curve = new CurveItem( label, x, y, false, color, SymbolType.Empty );
+			CurveItem curve = new CurveItem( label, x, y, false, color, SymbolType.Default );
 			this.curveList.Add( curve );
 			
 			return curve;
@@ -1442,7 +1442,7 @@ namespace ZedGraph
 		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
 		public CurveItem AddCurve( string label, PointPairList points, Color color )
 		{
-			CurveItem curve = new CurveItem( label, points, false, color, SymbolType.Empty );
+			CurveItem curve = new CurveItem( label, points, false, color, SymbolType.Default );
 			this.curveList.Add( curve );
 			
 			return curve;
@@ -1521,7 +1521,7 @@ namespace ZedGraph
 		/// are not defined as arguments to the <see cref="AddBar"/> method.</returns>
 		public CurveItem AddBar( string label, PointPairList points, Color color )
 		{
-			CurveItem curve = new CurveItem( label, points, true, color, SymbolType.Empty );
+			CurveItem curve = new CurveItem( label, points, true, color, SymbolType.Default );
 			this.curveList.Add( curve );
 			
 			return curve;
@@ -1546,7 +1546,7 @@ namespace ZedGraph
 		/// are not defined as arguments to the <see cref="AddBar"/> method.</returns>
 		public CurveItem AddBar( string label, double[] x, double[] y, Color color )
 		{
-			CurveItem curve = new CurveItem( label, x, y, true, color, SymbolType.Empty );
+			CurveItem curve = new CurveItem( label, x, y, true, color, SymbolType.Default );
 			this.curveList.Add( curve );
 			
 			return curve;
@@ -1673,11 +1673,11 @@ namespace ZedGraph
 				}
 				
 //				// See if the point is on an ArrowItem
-//				if ( this.ArrowList.FindPoint( mousePt, out index ) )
-//				{
-//					nearestObj = this.ArrowList[index];
-//					return true;
-//				}
+				if ( this.ArrowList.FindPoint( mousePt, this, out index ) )
+				{
+					nearestObj = this.ArrowList[index];
+					return true;
+				}
 				
 				// See if the point is in the legend
 				if ( this.Legend.FindPoint( mousePt, this, scaleFactor, hStack, legendWidth, out index ) )

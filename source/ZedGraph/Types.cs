@@ -113,8 +113,12 @@ namespace ZedGraph
 		/// <summary> Unilateral triangle <see cref="ZedGraph.Symbol"/>, pointing
 		/// down. </summary>
 		TriangleDown,
-		/// <summary> A Default symbol type </summary>
-		Empty
+		/// <summary> A Default symbol type (the symbol type will be obtained
+		/// from <see cref="Symbol.Default.Type"/>. </summary>
+		Default,
+		/// <summary> No symbol is shown (this is equivalent to using
+		/// <see cref="Symbol.IsVisible"/> = false.</summary>
+		None
 	};
 
 	/// <summary>

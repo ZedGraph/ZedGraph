@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:07 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-02 07:00:42 $ </version>
 	public class ArrowList : CollectionBase, ICloneable
 	{
 	#region Constructors
@@ -95,6 +95,39 @@ namespace ZedGraph
 		{
 			List.RemoveAt( index );
 		}
+		/// <summary>
+		/// Determine if a mouse point is within any <see cref="ArrowItem"/>, and if so, 
+		/// return the index number of the the <see cref="ArrowItem"/>.
+		/// </summary>
+		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="index">The index number of the <see cref="ArrowItem"/>
+		///  that is under the mouse point.  The <see cref="ArrowItem"/> object is
+		/// accessible via <see cref="GraphPane.ArrowList">ArrowList[index]</see>.
+		/// </param>
+		/// <returns>true if the mouse point is within a <see cref="ArrowItem"/> bounding
+		/// box, false otherwise.</returns>
+		/// <seealso cref="GraphPane.FindNearestObject"/>
+		public bool FindPoint( PointF mousePt, GraphPane pane, out int index )
+		{
+			index = -1;
+			
+			for ( int i=0; i<Count; i++ )
+			{
+				ArrowItem arrow = this[i];
+				if ( arrow.PointInBox( mousePt, pane ) )
+				{
+					index = i;
+					return true;
+				}
+			}
+
+			return false;
+		}
+		
 	#endregion
 
 	#region Rendering Method

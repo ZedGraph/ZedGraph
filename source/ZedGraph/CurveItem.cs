@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-01 06:37:16 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-02 07:00:42 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
@@ -118,7 +118,7 @@ namespace ZedGraph
 		/// <param name="y">An array of double precision values that define
 		/// the dependent (Y axis) values for this curve</param>
 		public CurveItem( string label, double[] x, double[] y )
-			: this( label, x, y, false, Color.Empty, SymbolType.Empty )
+			: this( label, x, y, false, Color.Empty, SymbolType.Default )
 		{
 		}
 								
@@ -131,7 +131,7 @@ namespace ZedGraph
 		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		public CurveItem( string label, PointPairList points )
-			: this( label, points, false, Color.Empty, SymbolType.Empty )
+			: this( label, points, false, Color.Empty, SymbolType.Default )
 		{
 		}
 								
