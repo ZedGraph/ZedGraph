@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-01-17 23:01:19 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-01-18 06:45:38 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -701,7 +701,7 @@ namespace ZedGraph
 					PieItem x = pane.AddPieSlice(item.Value, item.Color, item.Displacement, item.Label);					
 					MapWeb2GraphItem(x.Border,item.Border);					
 					x.LabelType = item.LabelType;
-					x.PieType = item.PieType;
+					//x.PieType = item.PieType;
 				}
 			}
 		}

@@ -191,7 +191,8 @@ namespace ZedGraph.ControlTest
 
 			for( int i = 0; i < 18; i++ )
 			{
-				x = i;
+				x = new XDate( 2005, i, i+5, i, i*2, i*3 );
+				
 				y1 = Math.Sin( i / 9.0 * Math.PI );
 				y2 = Math.Cos( i / 9.0 * Math.PI );
 				list1.Add(x, y1);
@@ -205,6 +206,10 @@ namespace ZedGraph.ControlTest
 			myCurve3.Line.StepType = StepType.ForwardStep;
 			myCurve4.Line.StepType = StepType.RearwardStep;
 			
+			zedGraphControl6.GraphPane.XAxis.Type = AxisType.Date;
+			zedGraphControl6.IsShowPointValues = true;
+			zedGraphControl6.PointDateFormat = "hh:MM";
+			zedGraphControl6.PointValueFormat = "f4";
 			zedGraphControl4.AxisChange();
 			zedGraphControl5.AxisChange();
 			zedGraphControl6.AxisChange();

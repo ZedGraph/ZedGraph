@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.16 $ $Date: 2005-01-17 12:47:34 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2005-01-18 06:45:28 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -109,12 +109,11 @@ namespace ZedGraph
 				this( label, new PointPairList( x, y ) )
 		{
 		}
-		
-		
+/*	
 		public CurveItem( string label, int  y ) : this(  label, new PointPairList( ) )
 		{
 		}
-
+*/
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label, the
 		/// x and y data values as a <see cref="PointPairList"/>, the curve

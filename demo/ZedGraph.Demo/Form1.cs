@@ -3118,15 +3118,15 @@ namespace ZedGraph.Demo
 
 		private void Serialize( GraphPane myPane )
 		{
-			XmlSerializer mySerializer = new XmlSerializer( typeof( GraphPane ) );
-			StreamWriter myWriter = new StreamWriter( @"myFileName.xml" );
+			//XmlSerializer mySerializer = new XmlSerializer( typeof( GraphPane ) );
+			//StreamWriter myWriter = new StreamWriter( @"myFileName.xml" );
 
 			//SoapFormatter mySerializer = new SoapFormatter();
 			//FileStream myWriter = new FileStream( @"myFileName.soap", FileMode.Create );
 
-			//BinaryFormatter mySerializer = new BinaryFormatter();
-			//Stream myWriter = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Create,
-			//			FileAccess.Write, FileShare.None );
+			BinaryFormatter mySerializer = new BinaryFormatter();
+			Stream myWriter = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Create,
+						FileAccess.Write, FileShare.None );
 
 			mySerializer.Serialize( myWriter, myPane );
 

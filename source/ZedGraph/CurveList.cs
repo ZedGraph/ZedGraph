@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.18 $ $Date: 2005-01-17 12:47:34 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2005-01-18 06:45:29 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -70,7 +70,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Read only property that returns the number of pie slices in the list (class type is
-		/// <see cref="Pie"/> ).
+		/// <see cref="PieItem"/> ).
 		/// </summary>
 		public int NumPies
 		{
@@ -93,15 +93,18 @@ namespace ZedGraph
 		/// </summary>
 		public bool IsPieOnly
 		{
-			get
-			{
-				foreach ( CurveItem curve in this )
-				{
-					if ( !curve.IsPie )
-						return false;
-				}
-				return true;
-			}
+ 			get
+ 			{
+				bool hasPie = false;
+ 				foreach ( CurveItem curve in this )
+ 				{
+ 					if ( !curve.IsPie )
+ 						return false;
+					else
+						hasPie = true;
+ 				}
+				return hasPie;
+ 			}
 		}
 
 		/// <summary>
@@ -577,8 +580,8 @@ namespace ZedGraph
 					
 				// Render the curve
 
-				//	if	it's a bar type or a sorted overlay or a percentstacked bar, it's already been	done above
-				if	( !(pane.BarType == BarType.SortedOverlay) || !curve.IsBar ||!curve.IsPie ) 
+				//	if it's a sorted overlay bar type, it's already been done above
+				if	( !( curve.IsBar && pane.BarType == BarType.SortedOverlay ) ) 
 					curve.Draw( g, pane, pos, scaleFactor );
 			}
 		}

@@ -766,6 +766,7 @@ namespace ZedGraph
 			set { ViewState["LabelType"] = value; }
 		}
 
+/*
 		public	PieType PieType
 		{
 			get 
@@ -775,10 +776,10 @@ namespace ZedGraph
 			}
 			set { ViewState["PieType"] = value; }
 		}
-		
-		#endregion
+*/
+	#endregion
 
-		#region Border
+	#region Border
 		/// <summary>
 		/// <seealso cref="ZedGraph.ZedGraphWebBorder"/>
 		/// </summary>

@@ -528,7 +528,10 @@ namespace ZedGraph
 	   /// </summary>
 	   A_InFront
 	};
-	
+/*
+	/// <summary>
+	/// Enumeration for the type of pie to be displayed
+	/// </summary>
 	public enum PieType
 	{
 		/// <summary>
@@ -541,7 +544,11 @@ namespace ZedGraph
 		/// </summary>
 		Pie3D
 	} ;
-
+*/
+	/// <summary>
+	/// Enumeration that determines the type of label that is displayed for each pie slice
+	/// (see <see cref="PieItem.LabelType"/>).
+	/// </summary>
 	public enum PieLabelType
 	{
 		/// <summary>

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.16 $ $Date: 2005-01-17 12:47:34 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2005-01-18 06:45:38 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -629,6 +629,7 @@ namespace ZedGraph
 		
 					// for the top & bottom, the axis border width is available
 					case LegendPos.Top:
+					case LegendPos.TopCenter:
 					case LegendPos.Bottom:
 						widthAvail = tAxisRect.Width;
 						break;

@@ -2,7 +2,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-
+using ZedGraph;
 using NUnit.Framework;
 
 namespace ZedGraph.UnitTest
@@ -93,13 +93,13 @@ namespace ZedGraph.UnitTest
 
 	#region ControlTest
 	/// <summary>
-	/// Basically the initial graph	given in	the ZedGraph example
+	/// Basically the initial graph	given in the ZedGraph example
 	/// <a href="http://www.codeproject.com/csharp/ZedGraph.asp">
 	/// http://www.codeproject.com/csharp/ZedGraph.asp</a>
 	/// </summary>
 	/// 
-	/// <author> Jerry Vos	revised by John Champion	</author>
-	/// <version>	$Revision: 3.10 $ $Date: 2004-12-10 05:45:55 $ </version>
+	/// <author> Jerry Vos revised by John Champion	</author>
+	/// <version> $Revision: 3.11 $ $Date: 2005-01-18 06:45:38 $ </version>
 	[TestFixture]
 	public	class ControlTest
 	{
@@ -234,7 +234,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.10 $ $Date: 2004-12-10 05:45:55 $ </version>
+	/// <version>	$Revision: 3.11 $ $Date: 2005-01-18 06:45:38 $ </version>
 	[TestFixture]
 	public	class LibraryTest
 	{
@@ -1379,7 +1379,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.10 $ $Date: 2004-12-10 05:45:55 $ </version>
+	/// <version>	$Revision: 3.11 $ $Date: 2005-01-18 06:45:38 $ </version>
 	[TestFixture]
 	public	class LongFeatureTest
 	{
@@ -2003,7 +2003,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.10 $ $Date: 2004-12-10 05:45:55 $ </version>
+	/// <version>	$Revision: 3.11 $ $Date: 2005-01-18 06:45:38 $ </version>
 	[TestFixture]
 	public	class FindNearestTest
 	{

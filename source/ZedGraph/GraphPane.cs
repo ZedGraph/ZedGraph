@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.26 $ $Date: 2005-01-17 12:47:34 $ </version>
+	/// <version> $Revision: 3.27 $ $Date: 2005-01-18 06:45:29 $ </version>
 	[Serializable]
 	public class GraphPane : ICloneable, ISerializable
 	{
@@ -227,12 +227,6 @@ namespace ZedGraph
 		/// </summary>
 		private RectangleF	pieRect;			
 		
-		/// <summary>
-		/// Array of RectangleFs to be used where more than one <see cref="PieItems"/>
-		/// is to be displayed.	 Use the public property <see cref="MiniPanes"/> to access this value.
-		/// </summary>
-		private RectangleF[]	miniPanes ;
-
 	#endregion
 
 	#region Defaults
@@ -468,16 +462,6 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Gets or sets the display rectangles for multiple <see cref="PieItem"/> items for this <see cref="GraphPane"/>
-		/// </summary>
-		/// <value>A reference to a RectangleF.</value>
-		public RectangleF[]  MiniPanes
-		{
-			get { return miniPanes; }
-			set { miniPanes = value; }
-		}
-
-		/// <summary>
 		/// Gets or sets the list of <see cref="CurveItem"/> items for this <see cref="GraphPane"/>
 		/// </summary>
 		/// <value>A reference to a <see cref="CurveList"/> collection object</value>
@@ -705,25 +689,40 @@ namespace ZedGraph
 		/// <summary>
 		/// IsAxisRectAuto is a boolean value that determines whether or not the 
 		/// <see cref="AxisRect"/> will be calculated automatically (almost always true).
+		/// </summary>
+		/// <remarks>
 		/// If you have a need to set the axisRect manually, such as you have multiple graphs
 		/// on a page and you want to line up the edges perfectly, you can set this value
 		/// to false.  If you set this value to false, you must also manually set
-		/// the <see cref="AxisRect"/> property.
+		/// the <see cref="AxisRect"/> property.  Note that the <see cref="PieRect"/> (for Pie
+		/// charts) is a function of the <see cref="AxisRect"/>.  Therefore, <see cref="PieRect"/>
+		/// will also have to be manually calculated if <see cref="IsAxisRectAuto"/> is false.
 		/// You can easily determine the axisRect that ZedGraph would have
 		/// calculated by calling the <see cref="CalcAxisRect(Graphics)"/> method, which returns
 		/// an axis rect sized for the current data range, scale sizes, etc.
-		/// </summary>
+		/// </remarks>
 		/// <value>true to have ZedGraph calculate the axisRect, false to do it yourself</value>
+		/// <seealso cref="PieItem.CalcPieRect"/>
 		public bool IsAxisRectAuto
 		{
 			get { return isAxisRectAuto; }
 			set { isAxisRectAuto = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a <see cref="RectangleF"/> that determines the size of the Pie.
+		/// </summary>
+		/// <remarks>This rectangle is normally square, and slightly smaller than the <see cref="AxisRect"/>.
+		/// If you want to set this rectangle manually, you will need to set <see cref="IsAxisRectAuto"/> to
+		/// false as well.
+		/// </remarks>
+		/// <value>The rectangle units are in screen pixels</value>
 		public RectangleF PieRect
 		{
 			get { return pieRect; }
+			set { pieRect = value; }
 		}
+
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Border"/> class for drawing the border
 		/// border around the <see cref="AxisRect"/>
@@ -1167,6 +1166,16 @@ namespace ZedGraph
 			// Determine the scale factor
 			double	scaleFactor = this.CalcScaleFactor();
 
+			// For pie charts, go ahead and turn off the axis displays if it's only pies
+			if ( this.CurveList.IsPieOnly )
+			{
+				//don't want to display axis or border if there's only pies
+				this.XAxis.IsVisible = false ;				
+				this.YAxis.IsVisible = false ;
+				this.axisBorder.IsVisible = false ;
+				//this.Legend.Position = LegendPos.TopCenter;
+			}
+
 			// if the AxisRect is not yet determined, then pick a scale based on a default AxisRect
 			// size (using 75% of PaneRect -- code is in Axis.CalcMaxLabels() )
 			// With the scale picked, call CalcAxisRect() so calculate a real AxisRect
@@ -1183,6 +1192,7 @@ namespace ZedGraph
 				}
 
 				this.axisRect = CalcAxisRect( g );
+				this.pieRect = PieItem.CalcPieRect( g, this, scaleFactor, this.axisRect );
 			}
  
 			// Pick new scales based on the range
@@ -1214,7 +1224,10 @@ namespace ZedGraph
 			// otherwise, calculate the legendrect, scalefactor, hstack, and legendwidth parameters
 			// but leave the axisRect alone
 			if ( this.isAxisRectAuto )
+			{
 				this.axisRect = CalcAxisRect(g, out scaleFactor, out hStack, out legendWidth, out legendHeight);
+				this.pieRect = PieItem.CalcPieRect( g, this, scaleFactor, this.axisRect );
+			}
 			else
 				CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth, out legendHeight );
 			// Border the whole pane			
@@ -1389,44 +1402,6 @@ namespace ZedGraph
 			this.legend.CalcRect( g, this, scaleFactor, ref tmpRect,
 				out hStack, out legendWidth, out legendHeight );
 
-			
-			if ( this.CurveList.IsPieOnly)
-			{
-				//don't want to display axis or border if there's only pies
-				this.XAxis.IsVisible = false ;				
-				this.YAxis.IsVisible = false ;
-				this.axisBorder.IsVisible = false ;
-
-				axisRect = tmpRect ;
-			
-
-				//want to draw the largest pie possible within axisRect
-				//but want to leave  10% slack around the pie so labels will not overrun clip area
-				//largest pie is limited by the smaller of axisRect.height or axisRect.width...
-				//this rect (nonExplRect)has to be re-positioned so that it's in the center of axisRect.
-				RectangleF nonExplRect = tmpRect ; 
-		
-				if ( nonExplRect.Width < nonExplRect.Height )
-				{
-					//create slack rect
-					nonExplRect.Inflate (  - (float)0.1F * nonExplRect.Height, - (float)0.1F * nonExplRect.Width);
-					//get the difference between dimensions
-					float delta =  (nonExplRect.Height - nonExplRect.Width ) / 2 ;
-					//make a square	so we end up with circular pie
-					nonExplRect.Height = nonExplRect.Width ;
-					//keep the center point  the same
-					nonExplRect.Y += delta ;
-					pieRect = nonExplRect ;
-				}
-				else
-				{
-					nonExplRect.Inflate (  - (float)0.1F * nonExplRect.Height, - (float)0.1F * nonExplRect.Width);
-					float delta =  (nonExplRect.Width - nonExplRect.Height ) / 2 ;
-					nonExplRect.Width = nonExplRect.Height ;
-					nonExplRect.X +=	delta ;
-					pieRect = nonExplRect ;
-				}
-			}
 			return tmpRect;
 		}
 		/// <summary>
@@ -2342,11 +2317,10 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Add a <see cref="PieItem"/> to the display/>
+		/// Add a <see cref="PieItem"/> to the display.
 		/// </summary>
-		/// <param name="value">The value associated with this <see cref="PieItem"/>item./param>
+		/// <param name="value">The value associated with this <see cref="PieItem"/>item.</param>
 		/// <param name="color">The display color for this <see cref="PieItem"/>item.</param>
-		/// <param name="displaced">The  associated with this <see cref="PieItem"/>item.</param>
 		/// <param name="displacement">The amount this <see cref="PieItem"/>item will be 
 		/// displaced from the center of the <see cref="PieItem"/>.</param>
 		/// <param name="label">Text label for this <see cref="PieItem"/></param>

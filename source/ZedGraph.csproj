@@ -248,6 +248,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\PieSlice.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\PointPair.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -1,5 +1,22 @@
 ZedGraph Class Library Revision History
 
+17-Jan-2005 Version (by Champion)
+  Add ZedGraphControl.PointDateFormat
+  Move Axis visibility setup for pies to AxisChange()
+  Move pie rect calcs out to static PieItem.CalcRect()
+  Fix LegendPos.TopCenter problem (missing switch)
+  Add Pie Serialization
+
+17-Jan-2005 (by Kaye)
+  Fix up PieItem; Remove PieSlice
+
+15-Jan-2005 (by Champion)
+  Fix GraphItem Copy Constructor
+  Fix +1 pixel error on ZedGraphControl bitmap
+  Fix StringAlignment bug for FontSpec
+  Fix maxlabels bug
+  Fix ordinal transform bug for lines/symbols
+
 8-Jan-2005 (by Champion)
   Fix CurveList.GetRange bug for stacked curves
   Some code cleanup
