@@ -30,7 +30,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 1.1 $ $Date: 2004-08-24 06:27:44 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2004-08-26 05:49:11 $ </version>
 	[TestFixture]
 	public class BaseZGTest
 	{
@@ -38,11 +38,13 @@ namespace ZedGraph.UnitTest
 		Form form2;
 		GraphPane testee;
 		ZedGraphControl control;
-        
+		static System.Windows.Forms.Timer myTimer;
+       
 		[SetUp]
 		public void SetUp()
 		{
 			form2	= new Form();
+			form2.Size = new Size( 500, 500 );
 			form2.Paint += new System.Windows.Forms.PaintEventHandler( this.Form2_Paint );
 			form2.Resize += new System.EventHandler( this.Form2_Resize );
 			form2.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form2_MouseDown );
@@ -62,6 +64,7 @@ namespace ZedGraph.UnitTest
 			testee	= control.GraphPane;
 
 			form.Controls.Add( control );
+
 		}
 
 		[TearDown] 
@@ -82,7 +85,7 @@ namespace ZedGraph.UnitTest
 		{
 			SetSize();
 			testee.AxisChange( form2.CreateGraphics() );
-			form2.Invalidate();
+			form2.Refresh();
 		}
 
 		private void SetSize()
@@ -277,13 +280,343 @@ namespace ZedGraph.UnitTest
 
 			DelaySeconds( 3000 );
 
-			Assertion.Assert( TestUtils.promptIfTestWorked(
-				"Did the graph resize ok?" ) );
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Did the graph resize ok?" ) );
 		}
+		#endregion
+		
+		#region Animated Date Graph
+		[Test]
+		public void AnimatedDateGraph()
+		{
+			// Create a new graph
+			testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+				"My Test Date Graph", "X AXIS", "Y Value" );
 
-		static System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
-		static int alarmCounter = 1;
-		static bool exitFlag = false;
+			// start with an empty list for testing
+			PointPairList pointList = new PointPairList();
+			
+			//MessageBox.Show( "Im here" );
+
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			CurveItem myCurve = testee.AddCurve( "My Curve",
+				pointList, Color.Red, SymbolType.Diamond );
+
+			// Set the XAxis to date type
+			testee.XAxis.Type = AxisType.Date;
+			
+			// make the symbols filled blue
+			myCurve.Symbol.IsFilled = true;
+			myCurve.Symbol.Color = Color.Blue;
+			
+			testee.AxisChange( form2.CreateGraphics() );
+			SetSize();
+			form2.Show();
+
+			// Draw a sinusoidal curve, adding one point at a time
+			// and refiguring/redrawing each time. (a stress test)
+			// redo creategraphics() each time to stress test
+			for ( int i=0; i<300; i++ )
+			{
+				double x = (double) new XDate( 1995, i+1, 1 );
+				double y = Math.Sin( (double) i * Math.PI / 30.0 );
+				
+				myCurve.AddPoint( x, y );
+				testee.AxisChange( form2.CreateGraphics() );
+				form2.Refresh();
+				
+				// delay for 10 ms
+				//DelaySeconds( 50 );
+			}
+			
+			while ( myCurve.Points.Count > 0 )
+			{
+				// remove the first point in the list
+				myCurve.Points.RemoveAt( 0 );
+				testee.AxisChange( form2.CreateGraphics() );
+				form2.Refresh();
+				
+				// delay for 10 ms
+				//DelaySeconds( 50 );
+			}
+			
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Did you see points added one by one, then deleted one by one?" ) );
+		}
+		#endregion
+		
+		#region Missing Values test
+		[Test]
+		public void MissingValues()
+		{
+			// Create a new graph
+			testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+				"Wacky Widget Company\nProduction Report",
+				"Time, Years\n(Since Plant Construction Startup)",
+				"Widget Production\n(units/hour)" );
+				
+			SetSize();
+			form2.Show();
+
+			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y = { 20, 10, PointPair.Missing, PointPair.Missing, 35, 60, 90, 25, 48, PointPair.Missing };
+			double[] x2 = { 300, 400, 500, 600, 700, 800, 900 };
+			double[] y2 = { PointPair.Missing, 43, 27, 62, 89, 73, 12 };
+			double[] x3 = { 150, 250, 400, 520, 780, 940 };
+			double[] y3 = { 5.2, 49.0, PointPair.Missing, 88.57, 99.9, 36.8 };
+
+			double[] x4 = { 150, 250, 400, 520, 780, 940 };
+			double[] y4 = { .03, .054, .011, .02, .14, .38 };
+			double[] x5 = { 1.5, 2.5, 4, 5.2, 7.8, 9.4 };
+			double[] y5 = { 157, 458, 1400, 100000, 10290, 3854 };
+
+			CurveItem curve;
+			curve = testee.AddCurve( "Larry", x, y, Color.Red, SymbolType.Circle );
+			curve.Line.Width = 2.0F;
+			curve.Symbol.IsFilled = true;
+			curve = testee.AddCurve( "Moe", x3, y3, Color.Green, SymbolType.Triangle );
+			curve.Symbol.IsFilled = true;
+			curve = testee.AddCurve( "Curly", x2, y2, Color.Blue, SymbolType.Diamond );
+			curve.Symbol.IsFilled = true;
+			curve.Symbol.Size = 12;
+
+			testee.PaneBackColor = Color.WhiteSmoke;
+			testee.AxisBackColor = Color.LightGoldenrodYellow;
+			testee.XAxis.IsShowGrid = true;
+			testee.XAxis.ScaleFontSpec.Angle = 0;
+
+			testee.YAxis.IsShowGrid = true;
+			testee.YAxis.ScaleFontSpec.Angle = 90;
+
+			TextItem text = new TextItem("First Prod\n21-Oct-93", 100F, 50.0F );
+			text.AlignH = FontAlignH.Center;
+			text.AlignV = FontAlignV.Bottom;
+			text.FontSpec.FillColor = Color.PowderBlue;
+			testee.TextList.Add( text );
+
+			ArrowItem arrow = new ArrowItem( Color.Black, 12F, 100F, 47F, 72F, 25F );
+			arrow.CoordinateFrame = CoordType.AxisXYScale;
+			testee.ArrowList.Add( arrow );
+
+			text = new TextItem("Upgrade", 700F, 50.0F );
+			text.FontSpec.Angle = 90;
+			text.FontSpec.FontColor = Color.Black;
+			text.AlignH = FontAlignH.Right;
+			text.AlignV = FontAlignV.Center;
+			text.FontSpec.IsFilled = true;
+			text.FontSpec.FillColor = Color.LightGoldenrodYellow;
+			text.FontSpec.IsFramed = false;
+			testee.TextList.Add( text );
+
+			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
+			arrow.CoordinateFrame = CoordType.AxisXYScale;
+			arrow.PenWidth = 2.0F;
+			testee.ArrowList.Add( arrow );
+
+			text = new TextItem("Confidential", 0.8F, -0.03F );
+			text.CoordinateFrame = CoordType.AxisFraction;
+
+			text.FontSpec.Angle = 15.0F;
+			text.FontSpec.FontColor = Color.Red;
+			text.FontSpec.IsBold = true;
+			text.FontSpec.Size = 16;
+			text.FontSpec.IsFramed = false;
+			text.FontSpec.FrameColor = Color.Red;
+			text.FontSpec.IsFilled = false;
+
+			text.AlignH = FontAlignH.Left;
+			text.AlignV = FontAlignV.Bottom;
+			testee.TextList.Add( text );
+			
+			for ( int i=0; i<curve.Points.Count; i++ )
+			{
+				PointPair point = curve.Points[i];
+				if ( i % 3 == 0 )
+					point.Y = PointPair.Missing;
+				else if ( i % 3 == 1 )
+					point.Y = System.Double.NaN;
+				else if ( i % 3 == 2 )
+					point.Y = System.Double.PositiveInfinity;
+
+				form2.Refresh();
+				
+				// delay for 10 ms
+				DelaySeconds( 100 );
+			}
+			
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Did you see an initial graph, with points disappearing one by one?" ) );
+			
+			// Go ahead and refigure the axes with the invalid data just to check
+			testee.AxisChange( form2.CreateGraphics() );
+		}
+		#endregion
+
+			
+		#region A dual Y test
+		[Test]
+		public void DualY()
+		{
+			// Create a new graph
+			testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+				"My Test Dual Y Graph", "Date", "My Y Axis" );
+				
+			// Make up some random data points
+			double[] x = new double[36];
+			double[] y = new double[36];
+			double[] y2 = new double[36];
+			for ( int i=0; i<36; i++ )
+			{
+				x[i] = (double) new XDate( 1995, i+1, 1 );
+				y[i] = Math.Sin( (double) i * Math.PI / 15.0 );
+				y2[i] = y[i] * 3.6178;
+			}
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			CurveItem myCurve = testee.AddCurve( "My Curve",
+				x, y, Color.Red, SymbolType.Diamond );
+			// Set the XAxis to date type
+			testee.XAxis.Type = AxisType.Date;
+
+			// Generate a blue curve with diamond
+			// symbols, and "My Curve" in the legend
+			myCurve = testee.AddCurve( "My Curve 1",
+				x, y2, Color.Blue, SymbolType.Circle );
+			myCurve.IsY2Axis = true;
+			testee.YAxis.IsVisible = true;
+			testee.Y2Axis.IsVisible = true;
+			testee.Y2Axis.IsShowGrid = true;
+			testee.XAxis.IsShowGrid = true;
+			testee.YAxis.IsOppositeTic = false;
+			testee.YAxis.IsMinorOppositeTic = false;
+			testee.YAxis.IsZeroLine = false;
+			
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			testee.AxisChange( form2.CreateGraphics() );
+			SetSize();
+			form2.Show();
+
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Do you see a dual Y graph?" ) );
+		}
+		#endregion
+		
+		#region Stress test with all NaN's
+		[Test]
+		public void AllNaN()
+		{
+			// Create a new graph
+			testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+				"My Test NaN Graph", "Date", "My Y Axis" );
+				
+			// Make up some random data points
+			double[] x = new double[36];
+			double[] y = new double[36];
+			for ( int i=0; i<36; i++ )
+			{
+				x[i] = (double) new XDate( 1995, i+1, 1 );
+				y[i] = System.Double.NaN;
+			}
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			CurveItem myCurve = testee.AddCurve( "My Curve",
+				x, y, Color.Red, SymbolType.Circle );
+			// Set the XAxis to date type
+			testee.XAxis.Type = AxisType.Date;
+
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			testee.AxisChange( form2.CreateGraphics() );
+			SetSize();
+			form2.Show();
+
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Do you see a graph with all values missing (NaN's)?" ) );
+		}
+		#endregion
+		
+		#region the date label-width test
+		[Test]
+		public void LabelWidth()
+		{
+			// Create a new graph
+			testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+				"My Test Label Width", "Date", "My Y Axis" );
+				
+			// Make up some random data points
+			double[] x = new double[36];
+			double[] y = new double[36];
+			for ( int i=0; i<36; i++ )
+			{
+				x[i] = (double) new XDate( 1995, 1, i+1 );
+				y[i] = Math.Sin( (double) i * Math.PI / 15.0 );
+			}
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			CurveItem myCurve = testee.AddCurve( "My Curve",
+				x, y, Color.Red, SymbolType.Diamond );
+			// Set the XAxis to date type
+			testee.XAxis.Type = AxisType.Date;
+			testee.XAxis.ScaleFormat = "&dd-&mmm-&yyyy";
+
+
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			testee.AxisChange( form2.CreateGraphics() );
+			SetSize();
+			form2.Show();
+
+			Assertion.Assert( TestUtils.promptIfTestWorked( "If you see a date graph, resize it and make" +
+									" sure the label count is reduced to avoid overlap" ) );
+
+			DelaySeconds( 3000 );
+			
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Did the anti-overlap work?" ) );
+		}
+		#endregion
+
+		#region text axis sample
+		[Test]
+		public void TextAxis()
+		{
+			// Create a new graph
+			testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+				"Text Graph", "Label", "Y Value" );
+				
+			// Make up some random data points
+			string[] labels = { "USA", "Spain", "Qatar", "Morocco", "UK", "Uganda",
+								  "Cambodia", "Malaysia", "Australia", "Ecuador" };
+								  
+			double[] y = new double[10];
+			for ( int i=0; i<10; i++ )
+				y[i] = Math.Sin( (double) i * Math.PI / 2.0 );
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			CurveItem myCurve = testee.AddCurve( "My Curve",
+				null, y, Color.Red, SymbolType.Diamond );
+			// Set the XAxis labels
+			testee.XAxis.TextLabels = labels;
+			// Set the XAxis to Text type
+			testee.XAxis.Type = AxisType.Text;
+			// Set the labels at an angle so they don't overlap
+			testee.XAxis.ScaleFontSpec.Angle = 0;
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			testee.AxisChange( form2.CreateGraphics() );
+			SetSize();
+			form2.Show();
+
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Did you get an X Text axis?" ) );
+			
+			myCurve.Points.Clear();
+			for ( double i=0; i<100; i++ )
+				myCurve.AddPoint( i / 10.0, Math.Sin( i * Math.PI / 20.0 ) );
+				
+			testee.AxisChange( form2.CreateGraphics() );
+			form2.Refresh();
+			
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Did the points fill in between the labels?" ) );
+		}
+		#endregion
+
+		static bool exitFlag;
 
 		// This is the method to run when the timer is raised.
 		private static void TimerEventProcessor( Object myObject,
@@ -295,22 +628,21 @@ namespace ZedGraph.UnitTest
 
 		public void DelaySeconds( int sec )
 		{
+			myTimer = new System.Windows.Forms.Timer();
 			/* Adds the event and the event handler for the method that will 
 				process the timer event to the timer. */
 			myTimer.Tick += new EventHandler( TimerEventProcessor );
-
 			// Sets the timer interval to 3 seconds.
 			myTimer.Interval = sec;
 			myTimer.Start();
 
 			// Runs the timer, and raises the event.
-			while( exitFlag == false ) 
+			exitFlag = false;
+			while( !exitFlag ) 
 			{
 				// Processes all the events in the queue.
 				Application.DoEvents();
 			}
 		}
-
-		#endregion
 	}
 }

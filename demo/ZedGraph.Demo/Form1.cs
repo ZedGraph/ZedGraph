@@ -106,6 +106,25 @@ namespace ZedGraphTest
 			//myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 			//	"My Test Text Graph", "Label", "My Y Axis" );
 
+#if false	// Empty PointPairList
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"My Test Graph\n(For CodeProject Sample)",
+				"My X Axis",
+				"My Y Axis" );
+			// Make up some random data points
+			PointPairList pointList = new PointPairList();
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			CurveItem myCurve = myPane.AddCurve( "My Curve",
+				pointList, Color.Red, SymbolType.Diamond );
+
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			myPane.AxisChange( this.CreateGraphics() );
+
+#endif
+
 #if false	// One Point Test
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
@@ -126,6 +145,7 @@ namespace ZedGraphTest
 
 			myPane.XAxis.Min -= 30.0 / 1440.0;
 #endif
+
 
 #if false	// The initial sample
 			// Create a new graph with topLeft at (40,40) and size 600x400

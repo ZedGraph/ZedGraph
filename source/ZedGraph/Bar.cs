@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.3 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.4 $ $Date: 2004-08-26 05:49:10 $ </version>
 	public class Bar
 	{
 		/// <summary>
@@ -67,17 +67,70 @@ namespace ZedGraph
 		/// </summary>
 		private float	frameWidth;
 
+	#region Defaults
+		/// <summary>
+		/// A simple struct that defines the
+		/// default property values for the <see cref="Bar"/> class.
+		/// </summary>
+		public struct Default
+		{
+			// Default Bar properties
+			/// <summary>
+			/// The default pen width to be used for drawing the frame around the bars
+			/// (<see cref="Bar.FrameWidth"/> property).  Units are points.
+			/// </summary>
+			public static float FrameWidth = 1.0F;
+			/// <summary>
+			/// The default fill mode for bars (<see cref="Bar.IsFilled"/> property).
+			/// true to have bars filled in with color, false to leave them as outlines.
+			/// </summary>
+			public static bool IsFilled = true;
+			/// <summary>
+			/// The default frame mode for bars (<see cref="Bar.IsFramed"/> property).
+			/// true to display frames around bars, false otherwise
+			/// </summary>
+			public static bool IsFramed = true;
+			/// <summary>
+			/// The default color for drawing frames around bars
+			/// (<see cref="Bar.FrameColor"/> property).
+			/// </summary>
+			public static Color FrameColor = Color.Black;
+			/// <summary>
+			/// The default color for filling in the bars
+			/// (<see cref="Bar.FillColor"/> property).
+			/// </summary>
+			public static Color FillColor = Color.Red;
+		}
+	#endregion
+
 		/// <summary>
 		/// Default constructor that sets all <see cref="Bar"/> properties to default
-		/// values as defined in the <see cref="Def"/> class.
+		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		public Bar()
+		public Bar() : this( Color.Empty )
 		{
-			this.frameColor = Def.Br.FrameColor;
-			this.fillColor = Def.Br.FillColor;
-			this.isFramed = Def.Br.IsFramed;
-			this.isFilled = Def.Br.IsFilled;
-			this.frameWidth = Def.Br.FrameWidth;
+		}
+
+		/// <summary>
+		/// Default constructor that sets the 
+		/// <see cref="Color"/> as specified, and the remaining
+		/// <see cref="Bar"/> properties to default
+		/// values as defined in the <see cref="Default"/> class.
+		/// The specified color is only applied to the
+		/// <see cref="FillColor"/>, and the <see cref="FrameColor"/>
+		/// will be defaulted.
+		/// </summary>
+		/// <param name="color">A <see cref="Color"/> value indicating
+		/// the <see cref="FillColor"/>
+		/// of the Bar.
+		/// </param>
+		public Bar( Color color )
+		{
+			this.frameColor = Default.FrameColor;
+			this.fillColor = color.IsEmpty ? Default.FillColor : color;
+			this.isFramed = Default.IsFramed;
+			this.isFilled = Default.IsFilled;
+			this.frameWidth = Default.FrameWidth;
 		}
 
 		/// <summary>
@@ -107,7 +160,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="IsFramed"/>
 		/// <seealso cref="FrameWidth"/>
-		/// <seealso cref="Def.Br.FrameColor"/>
+		/// <seealso cref="Default.Br.FrameColor"/>
 		public Color FrameColor
 		{
 			get { return frameColor; }
@@ -117,7 +170,7 @@ namespace ZedGraph
 		/// The fill color of the <see cref="Bar"/>.
 		/// </summary>
 		/// <seealso cref="IsFilled"/>
-		/// <seealso cref="Def.Br.FillColor"/>
+		/// <seealso cref="Default.Br.FillColor"/>
 		public Color FillColor
 		{
 			get { return fillColor; }
@@ -129,7 +182,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="FrameColor"/>
 		/// <seealso cref="FrameWidth"/>
-		/// <seealso cref="Def.Br.IsFramed"/>
+		/// <seealso cref="Default.Br.IsFramed"/>
 		public bool IsFramed
 		{
 			get { return isFramed; }
@@ -139,7 +192,7 @@ namespace ZedGraph
 		/// Determines if the <see cref="Bar"/> is filled with color.
 		/// </summary>
 		/// <seealso cref="FillColor"/>
-		/// <seealso cref="Def.Br.IsFilled"/>
+		/// <seealso cref="Default.Br.IsFilled"/>
 		public bool IsFilled
 		{
 			get { return isFilled; }
@@ -151,7 +204,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="IsFramed"/>
 		/// <seealso cref="FrameColor"/>
-		/// <seealso cref="Def.Br.FrameWidth"/>
+		/// <seealso cref="Default.Br.FrameWidth"/>
 		public float FrameWidth
 		{
 			get { return frameWidth; }
@@ -191,14 +244,14 @@ namespace ZedGraph
 				bottom = junk;
 			}
 
-			if ( this.isFilled )
+			if ( this.isFilled && !this.fillColor.IsEmpty )
 			{
 				SolidBrush	brush = new SolidBrush( this.fillColor );
 
 				g.FillRectangle( brush, left, top, right-left, bottom-top );
 			}
 
-			if ( this.isFramed )
+			if ( this.isFramed && !this.frameColor.IsEmpty  )
 			{
 				Pen pen = new Pen( this.frameColor, this.frameWidth );
 

@@ -1,5 +1,11 @@
 ZedGraph Class Library Revision History
 
+25-Aug-2004 (by Champion)
+    Make constructors handle null values better
+    Integrate multiple constructors so default usage is cleaner
+    Move Default struct into each class (get rid of Def.cs)
+    extensive additions to unittest
+
 23-Aug-2004 (by Champion)
     Fix NaN handling so it doesn't cause exceptions
 

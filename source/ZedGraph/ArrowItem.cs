@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2004-08-26 05:49:07 $ </version>
 	public class ArrowItem : ICloneable
 	{
 	#region Fields
@@ -97,7 +97,46 @@ namespace ZedGraph
 		/// enum</value>
 		private CoordType	coordinateFrame;
 	#endregion
-	
+
+	#region Defaults
+		/// <summary>
+		/// A simple struct that defines the
+		/// default property values for the <see cref="ArrowItem"/> class.
+		/// </summary>
+		public struct Default
+		{
+			/// <summary>
+			/// The default size for the <see cref="ArrowItem"/> item arrowhead
+			/// (<see cref="ArrowItem.Size"/> property).  Units are in pixels.
+			/// </summary>
+			public static float Size = 12.0F;
+			/// <summary>
+			/// The default coordinate system to be used for defining the
+			/// <see cref="ArrowItem"/> location coordinates
+			/// (<see cref="ArrowItem.CoordinateFrame"/> property).
+			/// </summary>
+			/// <value> The coordinate system is defined with the <see cref="CoordType"/>
+			/// enum</value>
+			public static CoordType CoordFrame = CoordType.AxisXYScale;
+			/// <summary>
+			/// The default display mode for the <see cref="ArrowItem"/> item arrowhead
+			/// (<see cref="ArrowItem.IsArrowHead"/> property).  true to show the
+			/// arrowhead, false to hide it.
+			/// </summary>
+			public static bool IsArrowHead = true;
+			/// <summary>
+			/// The default pen width used for the <see cref="ArrowItem"/> line segment
+			/// (<see cref="ArrowItem.PenWidth"/> property).  Units are pixels.
+			/// </summary>
+			public static float PenWidth = 1.0F;
+			/// <summary>
+			/// The default color used for the <see cref="ArrowItem"/> line segment
+			/// and arrowhead (<see cref="ArrowItem.Color"/> property).
+			/// </summary>
+			public static Color Color = Color.Red;
+		}
+	#endregion
+
 	#region Properties
 		/// <summary>
 		/// X1 is the X value of the starting point that defines the
@@ -144,7 +183,7 @@ namespace ZedGraph
 		/// enabled or disabled with the <see cref="IsArrowHead"/> property.
 		/// </summary>
 		/// <value> The size is defined in pixel units </value>
-		/// <seealso cref="Def.Arr.Size"/>
+		/// <seealso cref="Default.Size"/>
 		public float Size
 		{
 			get { return size; }
@@ -154,7 +193,7 @@ namespace ZedGraph
 		/// The width of the line segment for the <see cref="ArrowItem"/>
 		/// </summary>
 		/// <value> The width is defined in pixel units </value>
-		/// <seealso cref="Def.Arr.PenWidth"/>
+		/// <seealso cref="Default.PenWidth"/>
 		public float PenWidth
 		{
 			get { return penWidth; }
@@ -165,7 +204,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> The color is defined using the
 		/// <see cref="System.Drawing.Color"/> class </value>
-		/// <seealso cref="Def.Arr.Color"/>
+		/// <seealso cref="Default.Color"/>
 		public Color Color
 		{
 			get { return color; }
@@ -176,7 +215,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> The coordinate system is defined with the <see cref="CoordType"/>
 		/// enum</value>
-		/// <seealso cref="Def.Arr.CoordFrame"/>
+		/// <seealso cref="Default.CoordFrame"/>
 		public CoordType CoordinateFrame
 		{
 			get { return coordinateFrame; }
@@ -187,7 +226,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> true to show the arrowhead, false to show the line segment
 		/// only</value>
-		/// <seealso cref="Def.Arr.IsArrowHead"/>
+		/// <seealso cref="Default.IsArrowHead"/>
 		public bool IsArrowHead
 		{
 			get { return isArrowHead; }
@@ -256,19 +295,19 @@ namespace ZedGraph
 
 		/// <summary>
 		/// This method initializes the ArrowItem properties to default values
-		/// as defined in class <see cref="Def"/>
+		/// as defined in class <see cref="Default"/>
 		/// </summary>
 		protected void Init()
 		{
-			this.color = Def.Arr.Color;
-			this.size = Def.Arr.Size;
-			this.penWidth = Def.Arr.PenWidth;
+			this.color = Default.Color;
+			this.size = Default.Size;
+			this.penWidth = Default.PenWidth;
 			this.x1 = 0F;
 			this.y1 = 0F;
 			this.x2 = 0.2F;
 			this.y2 = 0.2F;
-			isArrowHead = Def.Arr.IsArrowHead;
-			coordinateFrame = Def.Arr.CoordFrame;
+			isArrowHead = Default.IsArrowHead;
+			coordinateFrame = Default.CoordFrame;
 		}
 
 		/// <summary>

@@ -101,6 +101,7 @@
             <Include>
                 <File
                     RelPath = "ZedGraph.Demo\AssemblyInfo.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

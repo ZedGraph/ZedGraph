@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.6 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2004-08-26 05:49:10 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -45,28 +45,28 @@ namespace ZedGraph
 		/// the graph where the legend will be positioned.  Use the public property
 		/// <see cref="LegendLoc"/> to access this value.
 		/// </summary>
-		/// <seealso cref="Def.Leg.Location"/>
+		/// <seealso cref="Default.Location"/>
 		private LegendLoc	location;
 		/// <summary>
 		/// Private field to enable/disable the drawing of the frame around the
 		/// legend bounding box.  Use the public property <see cref="IsFramed"/>
 		/// to access this value.
 		/// </summary>
-		/// <seealso cref="Def.Leg.IsFramed"/>
+		/// <seealso cref="Default.IsFramed"/>
 		private bool		isFramed;
 		/// <summary>
 		/// Private field to enable/disable filling of the background behind the legend
 		/// with color.  Use the public property <see cref="IsFilled"/>
 		/// to access this value.
 		/// </summary>
-		/// <seealso cref="Def.Leg.IsFilled"/>
+		/// <seealso cref="Default.IsFilled"/>
 		private bool		isFilled;
 		/// <summary>
 		/// Private field to enable/disable horizontal stacking of the legend entries.
 		/// If this value is false, then the legend entries will always be a single column.
 		/// Use the public property <see cref="IsHStack"/> to access this value.
 		/// </summary>
-		/// <seealso cref="Def.Leg.IsHStack"/>
+		/// <seealso cref="Default.IsHStack"/>
 		private bool		isHStack;
 		/// <summary>
 		/// Private field to enable/disable drawing of the entire legend.
@@ -102,7 +102,104 @@ namespace ZedGraph
 		/// </summary>
 		private FontSpec	fontSpec;
 	#endregion
-	
+
+	#region Defaults
+		/// <summary>
+		/// A simple struct that defines the
+		/// default property values for the <see cref="Legend"/> class.
+		/// </summary>
+		public struct Default
+		{
+			// Default Legend properties
+			/// <summary>
+			/// The default pen width for the <see cref="Legend"/> frame border.
+			/// (<see cref="Legend.FrameWidth"/> property).  Units are in pixels.
+			/// </summary>
+			public static float FrameWidth = 1;
+			/// <summary>
+			/// The default color for the <see cref="Legend"/> frame border.
+			/// (<see cref="Legend.FrameColor"/> property). 
+			/// </summary>
+			public static Color FrameColor = Color.Black;
+			/// <summary>
+			/// The default color for the <see cref="Legend"/> background.
+			/// (<see cref="Legend.FillColor"/> property).  Use of this
+			/// color depends on the status of the <see cref="Legend.IsFilled"/>
+			/// property.
+			/// </summary>
+			public static Color FillColor = Color.White;
+			/// <summary>
+			/// The default location for the <see cref="Legend"/> on the graph
+			/// (<see cref="Legend.Location"/> property).  This property is
+			/// defined as a <see cref="LegendLoc"/> enumeration.
+			/// </summary>
+			public static LegendLoc Location = LegendLoc.Top;
+			/// <summary>
+			/// The default frame mode for the <see cref="Legend"/>.
+			/// (<see cref="Legend.IsFramed"/> property). true
+			/// to draw a frame around the <see cref="Legend.Rect"/>,
+			/// false otherwise.
+			/// </summary>
+			public static bool IsFramed = true;
+			/// <summary>
+			/// The default display mode for the <see cref="Legend"/>.
+			/// (<see cref="Legend.IsVisible"/> property). true
+			/// to show the legend,
+			/// false to hide it.
+			/// </summary>
+			public static bool IsVisible = true;
+			/// <summary>
+			/// The default fill mode for the <see cref="Legend"/> background
+			/// (<see cref="Legend.IsFilled"/> property).
+			/// true to fill-in the background with color,
+			/// false to leave the background transparent.
+			/// </summary>
+			public static bool IsFilled = true;
+			/// <summary>
+			/// The default horizontal stacking mode for the <see cref="Legend"/>
+			/// (<see cref="Legend.IsHStack"/> property).
+			/// true to allow horizontal legend item stacking, false to allow
+			/// only vertical legend orientation.
+			/// </summary>
+			public static bool IsHStack = true;
+
+			/// <summary>
+			/// The default font family for the <see cref="Legend"/> entries
+			/// (<see cref="FontSpec.Family"/> property).
+			/// </summary>
+			public static string FontFamily = "Arial";
+			/// <summary>
+			/// The default font size for the <see cref="Legend"/> entries
+			/// (<see cref="FontSpec.Size"/> property).  Units are
+			/// in points (1/72 inch).
+			/// </summary>
+			public static float FontSize = 12;
+			/// <summary>
+			/// The default font color for the <see cref="Legend"/> entries
+			/// (<see cref="FontSpec.FontColor"/> property).
+			/// </summary>
+			public static Color FontColor = Color.Black;
+			/// <summary>
+			/// The default font bold mode for the <see cref="Legend"/> entries
+			/// (<see cref="FontSpec.IsBold"/> property). true
+			/// for a bold typeface, false otherwise.
+			/// </summary>
+			public static bool FontBold = false;
+			/// <summary>
+			/// The default font italic mode for the <see cref="Legend"/> entries
+			/// (<see cref="FontSpec.IsItalic"/> property). true
+			/// for an italic typeface, false otherwise.
+			/// </summary>
+			public static bool FontItalic = false;
+			/// <summary>
+			/// The default font underline mode for the <see cref="Legend"/> entries
+			/// (<see cref="FontSpec.IsUnderline"/> property). true
+			/// for an underlined typeface, false otherwise.
+			/// </summary>
+			public static bool FontUnderline = false;
+		}
+	#endregion
+
 	#region Properties
 		/// <summary>
 		/// Get the bounding rectangle for the <see cref="Legend"/> in screen coordinates
@@ -117,12 +214,12 @@ namespace ZedGraph
 		/// the <see cref="Legend"/> entries
 		/// </summary>
 		/// <value>A reference to a <see cref="Legend"/> object</value>
-		/// <seealso cref="Def.Leg.FontColor"/>
-		/// <seealso cref="Def.Leg.FontBold"/>
-		/// <seealso cref="Def.Leg.FontItalic"/>
-		/// <seealso cref="Def.Leg.FontUnderline"/>
-		/// <seealso cref="Def.Leg.FontFamily"/>
-		/// <seealso cref="Def.Leg.FontSize"/>
+		/// <seealso cref="Default.FontColor"/>
+		/// <seealso cref="Default.FontBold"/>
+		/// <seealso cref="Default.FontItalic"/>
+		/// <seealso cref="Default.FontUnderline"/>
+		/// <seealso cref="Default.FontFamily"/>
+		/// <seealso cref="Default.FontSize"/>
 		public FontSpec FontSpec
 		{
 			get { return fontSpec; }
@@ -131,7 +228,7 @@ namespace ZedGraph
 		/// Gets or sets a property that shows or hides the <see cref="Legend"/> entirely
 		/// </summary>
 		/// <value> true to show the <see cref="Legend"/>, false to hide it </value>
-		/// <seealso cref="Def.Leg.IsVisible"/>
+		/// <seealso cref="Default.IsVisible"/>
 		public bool IsVisible
 		{
 			get { return isVisible; }
@@ -144,7 +241,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> true to fill the <see cref="Legend"/> background with a color,
 		/// false to leave the background transparent</value>
-		/// <seealso cref="Def.Leg.IsFilled"/>
+		/// <seealso cref="Default.IsFilled"/>
 		public bool IsFilled
 		{
 			get { return isFilled; }
@@ -155,7 +252,7 @@ namespace ZedGraph
 		/// <see cref="FrameColor"/> color and <see cref="FrameWidth"/>
 		/// pen width, or false for no frame
 		/// </summary>
-		/// <seealso cref="Def.Leg.IsFramed"/>
+		/// <seealso cref="Default.IsFramed"/>
 		public bool IsFramed
 		{
 			get { return isFramed; }
@@ -165,7 +262,7 @@ namespace ZedGraph
 		/// The pen width used for drawing the frame around the text
 		/// </summary>
 		/// <value>A pen width in pixel units</value>
-		/// <seealso cref="Def.Leg.FrameWidth"/>
+		/// <seealso cref="Default.FrameWidth"/>
 		public float FrameWidth
 		{
 			get { return frameWidth; }
@@ -178,7 +275,7 @@ namespace ZedGraph
 		/// <see cref="FrameWidth"/> property
 		/// </summary>
 		/// <value>A system <see cref="System.Drawing.Color"/> specification.</value>
-		/// <seealso cref="Def.Leg.FrameColor"/>
+		/// <seealso cref="Default.FrameColor"/>
 		public Color FrameColor
 		{
 			get { return frameColor; }
@@ -190,7 +287,7 @@ namespace ZedGraph
 		/// <see cref="IsFilled"/> property.
 		/// </summary>
 		/// <value>A system <see cref="System.Drawing.Color"/> specification.</value>
-		/// <seealso cref="Def.Leg.FillColor"/>
+		/// <seealso cref="Default.FillColor"/>
 		public Color FillColor
 		{
 			get { return fillColor; }
@@ -202,7 +299,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>true to allow horizontal stacking, false otherwise
 		/// </value>
-		/// <seealso cref="Def.Leg.IsHStack"/>
+		/// <seealso cref="Default.IsHStack"/>
 		public bool IsHStack
 		{
 			get { return isHStack; }
@@ -212,7 +309,7 @@ namespace ZedGraph
 		/// Sets or gets the location of the <see cref="Legend"/> on the
 		/// <see cref="GraphPane"/> using the <see cref="LegendLoc"/> enum type
 		/// </summary>
-		/// <seealso cref="Def.Leg.Location"/>
+		/// <seealso cref="Default.Location"/>
 		public LegendLoc Location
 		{
 			get { return location; }
@@ -223,22 +320,22 @@ namespace ZedGraph
 	#region Constructors
 		/// <summary>
 		/// Default constructor that sets all <see cref="Legend"/> properties to default
-		/// values as defined in the <see cref="Def"/> class.
+		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
 		public Legend()
 		{
-			this.location = Def.Leg.Location;
-			this.isFramed = Def.Leg.IsFramed;
-			this.frameColor = Def.Leg.FrameColor;
-			this.frameWidth = Def.Leg.FrameWidth;
-			this.isFilled = Def.Leg.IsFilled;
-			this.fillColor = Def.Leg.FillColor;
-			this.isHStack = Def.Leg.IsHStack;
-			this.isVisible = Def.Leg.IsVisible;
+			this.location = Default.Location;
+			this.isFramed = Default.IsFramed;
+			this.frameColor = Default.FrameColor;
+			this.frameWidth = Default.FrameWidth;
+			this.isFilled = Default.IsFilled;
+			this.fillColor = Default.FillColor;
+			this.isHStack = Default.IsHStack;
+			this.isVisible = Default.IsVisible;
 			
-			this.fontSpec = new FontSpec( Def.Leg.FontFamily, Def.Leg.FontSize,
-									Def.Leg.FontColor, Def.Leg.FontBold,
-									Def.Leg.FontItalic, Def.Leg.FontUnderline );						
+			this.fontSpec = new FontSpec( Default.FontFamily, Default.FontSize,
+									Default.FontColor, Default.FontBold,
+									Default.FontItalic, Default.FontUnderline );						
 			this.fontSpec.IsFilled = false;
 			this.fontSpec.IsFramed = false;
 		}

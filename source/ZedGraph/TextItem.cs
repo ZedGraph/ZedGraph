@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2004-08-26 05:49:11 $ </version>
 	public class TextItem : ICloneable
 	{
 	#region Fields
@@ -63,7 +63,7 @@ namespace ZedGraph
 		/// <see cref="CoordinateFrame"/> to access this value. The coordinate system
 		/// is defined with the <see cref="CoordType"/> enum
 		/// </summary>
-		/// <seealso cref="Def.Text.CoordFrame"/>
+		/// <seealso cref="Default.CoordFrame"/>
 		private CoordType	coordinateFrame;
 		/// <summary>
 		/// Private field to store the <see cref="FontSpec"/> class used to render
@@ -72,7 +72,73 @@ namespace ZedGraph
 		/// </summary>
 		private FontSpec	fontSpec;
 	#endregion
-	
+	#region Defaults
+		/// <summary>
+		/// A simple struct that defines the
+		/// default property values for the <see cref="TextItem"/> class.
+		/// </summary>
+		public struct Default
+		{
+			// Default text item properties
+			/// <summary>
+			/// Default value for the vertical <see cref="TextItem"/>
+			/// text alignment (<see cref="TextItem.AlignV"/> property).
+			/// This is specified
+			/// using the <see cref="FontAlignV"/> enum type.
+			/// </summary>
+			public static FontAlignV AlignV = FontAlignV.Center;
+			/// <summary>
+			/// Default value for the horizontal <see cref="TextItem"/>
+			/// text alignment (<see cref="TextItem.AlignH"/> property).
+			/// This is specified
+			/// using the <see cref="FontAlignH"/> enum type.
+			/// </summary>
+			public static FontAlignH AlignH = FontAlignH.Center;
+			/// <summary>
+			/// The default coordinate system to be used for defining the
+			/// <see cref="TextItem"/> location coordinates
+			/// (<see cref="TextItem.CoordinateFrame"/> property).
+			/// </summary>
+			/// <value> The coordinate system is defined with the <see cref="CoordType"/>
+			/// enum</value>
+			public static CoordType CoordFrame = CoordType.AxisXYScale;
+			/// <summary>
+			/// The default font family for the <see cref="TextItem"/> text
+			/// (<see cref="FontSpec.Family"/> property).
+			/// </summary>
+			public static string FontFamily = "Arial";
+			/// <summary>
+			/// The default font size for the <see cref="TextItem"/> text
+			/// (<see cref="FontSpec.Size"/> property).  Units are
+			/// in points (1/72 inch).
+			/// </summary>
+			public static float FontSize = 14.0F;
+			/// <summary>
+			/// The default font color for the <see cref="TextItem"/> text
+			/// (<see cref="FontSpec.FontColor"/> property).
+			/// </summary>
+			public static Color FontColor = Color.Black;
+			/// <summary>
+			/// The default font bold mode for the <see cref="TextItem"/> text
+			/// (<see cref="FontSpec.IsBold"/> property). true
+			/// for a bold typeface, false otherwise.
+			/// </summary>
+			public static bool FontBold = true;
+			/// <summary>
+			/// The default font underline mode for the <see cref="TextItem"/> text
+			/// (<see cref="FontSpec.IsUnderline"/> property). true
+			/// for an underlined typeface, false otherwise.
+			/// </summary>
+			public static bool FontUnderline = false;
+			/// <summary>
+			/// The default font italic mode for the <see cref="TextItem"/> text
+			/// (<see cref="FontSpec.IsItalic"/> property). true
+			/// for an italic typeface, false otherwise.
+			/// </summary>
+			public static bool FontItalic = false;
+		}
+	#endregion
+
 	#region Properties
 		/// <summary>
 		/// The <see cref="TextItem"/> to be displayed.  This text can be multi-line by
@@ -87,12 +153,12 @@ namespace ZedGraph
 		/// Gets a reference to the <see cref="FontSpec"/> class used to render
 		/// this <see cref="TextItem"/>
 		/// </summary>
-		/// <seealso cref="Def.Text.FontColor"/>
-		/// <seealso cref="Def.Text.FontBold"/>
-		/// <seealso cref="Def.Text.FontItalic"/>
-		/// <seealso cref="Def.Text.FontUnderline"/>
-		/// <seealso cref="Def.Text.FontFamily"/>
-		/// <seealso cref="Def.Text.FontSize"/>
+		/// <seealso cref="Default.FontColor"/>
+		/// <seealso cref="Default.FontBold"/>
+		/// <seealso cref="Default.FontItalic"/>
+		/// <seealso cref="Default.FontUnderline"/>
+		/// <seealso cref="Default.FontFamily"/>
+		/// <seealso cref="Default.FontSize"/>
 		public FontSpec FontSpec
 		{
 			get { return fontSpec; }
@@ -101,7 +167,7 @@ namespace ZedGraph
 		/// A horizontal alignment parameter for this <see cref="TextItem"/> specified
 		/// using the <see cref="FontAlignH"/> enum type
 		/// </summary>
-		/// <seealso cref="Def.Text.AlignH"/>
+		/// <seealso cref="Default.AlignH"/>
 		public FontAlignH AlignH
 		{
 			get { return alignH; }
@@ -111,7 +177,7 @@ namespace ZedGraph
 		/// A vertical alignment parameter for this <see cref="TextItem"/> specified
 		/// using the <see cref="FontAlignV"/> enum type
 		/// </summary>
-		/// <seealso cref="Def.Text.AlignV"/>
+		/// <seealso cref="Default.AlignV"/>
 		public FontAlignV AlignV
 		{
 			get { return alignV; }
@@ -144,7 +210,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> The coordinate system is defined with the <see cref="CoordType"/>
 		/// enum</value>
-		/// <seealso cref="Def.Text.CoordFrame"/>
+		/// <seealso cref="Default.CoordFrame"/>
 		public CoordType CoordinateFrame
 		{
 			get { return coordinateFrame; }
@@ -158,7 +224,7 @@ namespace ZedGraph
 		/// </overloads>
 		/// <summary>
 		/// Default constructor that sets all <see cref="TextItem"/> properties to default
-		/// values as defined in the <see cref="Def"/> class.
+		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
 		public TextItem()
 		{
@@ -167,26 +233,26 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Initialization method that sets all <see cref="TextItem"/> properties to default
-		/// values as defined in the <see cref="Def"/> class.
+		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
 		protected void Init()
 		{
 			text = "Text";
-			alignV = Def.Text.AlignV;
-			alignH = Def.Text.AlignH;
+			alignV = Default.AlignV;
+			alignH = Default.AlignH;
 			x = 0;
 			y = 0;
-			coordinateFrame = Def.Text.CoordFrame;
+			coordinateFrame = Default.CoordFrame;
 
 			this.fontSpec = new FontSpec(
-				Def.Text.FontFamily, Def.Text.FontSize,
-				Def.Text.FontColor, Def.Text.FontBold,
-				Def.Text.FontItalic, Def.Text.FontUnderline );
+				Default.FontFamily, Default.FontSize,
+				Default.FontColor, Default.FontBold,
+				Default.FontItalic, Default.FontUnderline );
 		}
 
 		/// <summary>
 		/// Constructor that sets all <see cref="TextItem"/> properties to default
-		/// values as defined in the <see cref="Def"/> class.
+		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
 		/// <param name="text">The text to be displayed.</param>
 		/// <param name="x">The x position of the text.  The units
@@ -202,7 +268,8 @@ namespace ZedGraph
 		public TextItem( string text, float x, float y )
 		{
 			Init();
-			this.text = text;
+			if ( text != null )
+				this.text = text;
 			this.x = x;
 			this.y = y;
 		}
@@ -261,7 +328,7 @@ namespace ZedGraph
 			
 			// Draw the text on the screen, including any frame and background
 			// fill elements
-			if ( pix.X > -10000 && pix.X < 100000 && pix.Y > -100000 && pix.Y < 100000 )
+			if ( pix.X > -100000 && pix.X < 100000 && pix.Y > -100000 && pix.Y < 100000 )
 				this.FontSpec.Draw( g, this.text, pix.X, pix.Y,
 								this.alignH, this.alignV, scaleFactor );
 		}

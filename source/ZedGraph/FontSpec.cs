@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.4 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2004-08-26 05:49:10 $ </version>
 	public class FontSpec : ICloneable
 	{
 	#region Fields
@@ -141,7 +141,7 @@ namespace ZedGraph
 		/// Private field that stores a reference to the <see cref="Font"/>
 		/// object that will be used for superscripts.  This font object will be a
 		/// fraction of the <see cref="FontSpec"/> <see cref="scaledSize"/>,
-		/// based on the value of <see cref="Def.FontSpc.SuperSize"/>.  This
+		/// based on the value of <see cref="Default.SuperSize"/>.  This
 		/// property is internal, and has no public access.
 		/// </summary>
 		/// <value>A reference to a <see cref="Font"/> object</value>
@@ -155,6 +155,28 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>The size of the font, measured in points (1/72 inch).</value>
 		private float scaledSize;
+	#endregion
+
+	#region Defaults
+		/// <summary>
+		/// A simple struct that defines the
+		/// default property values for the <see cref="FontSpec"/> class.
+		/// </summary>
+		public struct Default
+		{
+			/// <summary>
+			/// The default size fraction of the superscript font, expressed as a fraction
+			/// of the size of the main font.
+			/// </summary>
+			public static float SuperSize = 0.85F;
+			/// <summary>
+			/// The default shift fraction of the superscript, expressed as a
+			/// fraction of the superscripted character height.  This is the height
+			/// above the main font (a zero shift means the main font and the superscript
+			/// font have the tops aligned).
+			/// </summary>
+			public static float SuperShift = 0.4F;
+		}
 	#endregion
 	
 	#region Properties
@@ -327,7 +349,7 @@ namespace ZedGraph
 	#region Constructors
 		/// <summary>
 		/// Construct a <see cref="FontSpec"/> object with the given properties.  All other properties
-		/// are defaulted according to the values specified in the <see cref="Def"/>
+		/// are defaulted according to the values specified in the <see cref="Default"/>
 		/// default class.
 		/// </summary>
 		/// <param name="family">A text string representing the font family
@@ -565,8 +587,8 @@ namespace ZedGraph
 		/// Render the specified <paramref name="text"/> to the specifed
 		/// <see cref="Graphics"/> device.  The text, frame, and fill options
 		/// will be rendered as required.  This special case method will show the
-		/// specified text as a power of 10, using the <see cref="Def.FontSpc.SuperSize"/>
-		/// and <see cref="Def.FontSpc.SuperShift"/>.
+		/// specified text as a power of 10, using the <see cref="Default.SuperSize"/>
+		/// and <see cref="Default.SuperShift"/>.
 		/// </summary>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -597,15 +619,15 @@ namespace ZedGraph
 		{
 			// make sure the font size is properly scaled
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
-			float scaledSuperSize = this.scaledSize * Def.FontSpc.SuperSize;
-			Remake( scaleFactor, this.Size * Def.FontSpc.SuperSize, ref scaledSuperSize,
+			float scaledSuperSize = this.scaledSize * Default.SuperSize;
+			Remake( scaleFactor, this.Size * Default.SuperSize, ref scaledSuperSize,
 				ref this.superScriptFont );
 			
 			// Get the width and height of the text
 			SizeF size10 = g.MeasureString( "10", this.font );
 			SizeF sizeText = g.MeasureString( text, this.superScriptFont );
 			SizeF totSize = new SizeF( size10.Width + sizeText.Width,
-									size10.Height + sizeText.Height * Def.FontSpc.SuperShift );
+									size10.Height + sizeText.Height * Default.SuperShift );
 			float charWidth = g.MeasureString( "x", this.superScriptFont ).Width;
 
 			// Save the old transform matrix for later restoration
@@ -680,7 +702,7 @@ namespace ZedGraph
 			// CenterTop of the text needs to be.
 			g.DrawString( "10", this.font, brush,
 							( -totSize.Width + size10.Width ) / 2.0F,
-							sizeText.Height * Def.FontSpc.SuperShift, strFormat );
+							sizeText.Height * Default.SuperShift, strFormat );
 			g.DrawString( text, this.superScriptFont, brush,
 							( totSize.Width - sizeText.Width - charWidth ) / 2.0F,
 							0.0F,
@@ -814,7 +836,7 @@ namespace ZedGraph
 		/// of the bounding box for the specified text string, based on the scaled font size.
 		/// This special case method will show the specified string as a power of 10,
 		/// superscripted and downsized according to the
-		/// <see cref="Def.FontSpc.SuperSize"/> and <see cref="Def.FontSpc.SuperShift"/>.
+		/// <see cref="Default.SuperSize"/> and <see cref="Default.SuperShift"/>.
 		/// This routine differs from <see cref="MeasureString"/> in that it takes into
 		/// account the rotation angle of the font, and gives the dimensions of the
 		/// bounding box that encloses the text at the specified angle.
@@ -836,15 +858,15 @@ namespace ZedGraph
 		public SizeF BoundingBoxTenPower( Graphics g, string text, double scaleFactor )
 		{
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
-			float scaledSuperSize = this.scaledSize * Def.FontSpc.SuperSize;
-			Remake( scaleFactor, this.Size * Def.FontSpc.SuperSize, ref scaledSuperSize,
+			float scaledSuperSize = this.scaledSize * Default.SuperSize;
+			Remake( scaleFactor, this.Size * Default.SuperSize, ref scaledSuperSize,
 				ref this.superScriptFont );
 
 			// Get the width and height of the text
 			SizeF size10 = g.MeasureString( "10", this.font );
 			SizeF sizeText = g.MeasureString( text, this.superScriptFont );
 			SizeF totSize = new SizeF( size10.Width + sizeText.Width,
-				size10.Height + sizeText.Height * Def.FontSpc.SuperShift );
+				size10.Height + sizeText.Height * Default.SuperShift );
 
 			
 			float cs = (float) Math.Abs( Math.Cos( this.angle * Math.PI / 180.0 ) );

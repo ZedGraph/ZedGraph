@@ -105,6 +105,7 @@
                 />
                 <File
                     RelPath = "ZedGraph\AssemblyInfo.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
@@ -129,11 +130,6 @@
                 />
                 <File
                     RelPath = "ZedGraph\CurveList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\Def.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

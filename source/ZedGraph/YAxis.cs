@@ -30,19 +30,34 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.4 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2004-08-26 05:49:11 $ </version>
 	public class YAxis : Axis, ICloneable
 	{
 		/// <summary>
+		/// A simple struct that defines the
+		/// default property values for the <see cref="YAxis"/> class.
+		/// </summary>
+		public new struct Default
+		{
+			// Default Y Axis properties
+			/// <summary>
+			/// The default display mode for the <see cref="YAxis"/>
+			/// (<see cref="Axis.IsVisible"/> property). true to display the scale
+			/// values, title, tic marks, false to hide the axis entirely.
+			/// </summary>
+			public static bool IsVisible = true;
+		}
+		
+		/// <summary>
 		/// Default constructor that sets all <see cref="YAxis"/> properties to
-		/// default values as defined in the <see cref="Def"/> class, except
+		/// default values as defined in the <see cref="Default"/> class, except
 		/// for the axis title
 		/// </summary>
 		/// <param name="title">The <see cref="Axis.Title"/> for this axis</param>
 		public YAxis( string title )
 		{
 			this.Title = title;
-			this.IsVisible = Def.YAx.IsVisible;
+			this.IsVisible = Default.IsVisible;
 			this.ScaleFontSpec.Angle = 90.0F;
 			this.TitleFontSpec.Angle = -180F;
 		}

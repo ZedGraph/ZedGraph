@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2004-08-26 05:49:10 $ </version>
 	public class Line : ICloneable
 	{
 	#region Fields
@@ -67,11 +67,57 @@ namespace ZedGraph
 		private StepType	stepType;
 	#endregion
 	
+	#region Defaults
+		/// <summary>
+		/// A simple struct that defines the
+		/// default property values for the <see cref="Line"/> class.
+		/// </summary>
+		public struct Default
+		{
+			// Default Line properties
+			/// <summary>
+			/// The default color for curves (line segments connecting the points).
+			/// This is the default value for the <see cref="Line.Color"/> property.
+			/// </summary>
+			public static Color Color = Color.Red;
+			/// <summary>
+			/// The default mode for displaying line segments (<see cref="Line.IsVisible"/>
+			/// property).  True to show the line segments, false to hide them.
+			/// </summary>
+			public static bool IsVisible = true;
+			/// <summary>
+			/// The default width for line segments (<see cref="Line.Width"/> property).
+			/// Units are pixels.
+			/// </summary>
+			public static float Width = 1;
+			/// <summary>
+			/// The default drawing style for line segments (<see cref="Line.Style"/> property).
+			/// This is defined with the <see cref="DashStyle"/> enumeration.
+			/// </summary>
+			public static DashStyle Style = DashStyle.Solid;
+			/// <summary>
+			/// Default value for the curve type property
+			/// (<see cref="Line.StepType"/>).  This determines if the curve
+			/// will be drawn by directly connecting the points from the
+			/// <see cref="CurveItem.Points"/> data collection,
+			/// or if the curve will be a "stair-step" in which the points are
+			/// connected by a series of horizontal and vertical lines that
+			/// represent discrete, staticant values.  Note that the values can
+			/// be forward oriented <code>ForwardStep</code> (<see cref="StepType"/>) or
+			/// rearward oriented <code>RearwardStep</code>.
+			/// That is, the points are defined at the beginning or end
+			/// of the staticant value for which they apply, respectively.
+			/// </summary>
+			/// <value><see cref="StepType"/> enum value</value>
+			public static StepType StepType = StepType.NonStep;
+		}
+	#endregion
+
 	#region Properties
 		/// <summary>
 		/// The color of the <see cref="Line"/>
 		/// </summary>
-		/// <seealso cref="Def.Lin.Color"/>
+		/// <seealso cref="Default.Lin.Color"/>
 		public Color Color
 		{
 			get { return color; }
@@ -81,7 +127,7 @@ namespace ZedGraph
 		/// The style of the <see cref="Line"/>, defined as a <see cref="DashStyle"/> enum.
 		/// This allows the line to be solid, dashed, or dotted.
 		/// </summary>
-		/// <seealso cref="Def.Lin.Style"/>
+		/// <seealso cref="Default.Lin.Style"/>
 		public DashStyle Style
 		{
 			get { return style; }
@@ -90,7 +136,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The pen width used to draw the <see cref="Line"/>, in pixel units
 		/// </summary>
-		/// <seealso cref="Def.Lin.Width"/>
+		/// <seealso cref="Default.Lin.Width"/>
 		public float Width
 		{
 			get { return width; }
@@ -100,7 +146,7 @@ namespace ZedGraph
 		/// Gets or sets a property that shows or hides the <see cref="Line"/>.
 		/// </summary>
 		/// <value>true to show the line, false to hide it</value>
-		/// <seealso cref="Def.Lin.IsVisible"/>
+		/// <seealso cref="Default.Lin.IsVisible"/>
 		public bool IsVisible
 		{
 			get { return isVisible; }
@@ -118,7 +164,7 @@ namespace ZedGraph
 		/// of the constant value for which they apply, respectively.
 		/// </summary>
 		/// <value><see cref="ZedGraph.StepType"/> enum value</value>
-		/// <seealso cref="Def.Lin.StepType"/>
+		/// <seealso cref="Default.Lin.StepType"/>
 		public StepType StepType
 		{
 			get { return stepType; }
@@ -129,15 +175,25 @@ namespace ZedGraph
 	#region Constructors
 		/// <summary>
 		/// Default constructor that sets all <see cref="Line"/> properties to default
-		/// values as defined in the <see cref="Def"/> class.
+		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		public Line()
+		public Line() : this( Color.Empty )
 		{
-			this.width = Def.Lin.Width;
-			this.style = Def.Lin.Style;
-			this.isVisible = Def.Lin.IsVisible;
-			this.color = Def.Lin.Color;
-			this.stepType = Def.Lin.StepType;
+		}
+
+		/// <summary>
+		/// Constructor that sets the color property to the specified value, and sets
+		/// the remaining <see cref="Line"/> properties to default
+		/// values as defined in the <see cref="Default"/> class.
+		/// </summary>
+		/// <param name="color">The color to assign to this new Line object</param>
+		public Line( Color color )
+		{
+			this.width = Default.Width;
+			this.style = Default.Style;
+			this.isVisible = Default.IsVisible;
+			this.color = color.IsEmpty ? Default.Color : color;
+			this.stepType = Default.StepType;
 		}
 
 		/// <summary>
@@ -182,7 +238,7 @@ namespace ZedGraph
 		/// line segment in screen pixel units</param>
 		public void Draw( Graphics g, float x1, float y1, float x2, float y2 )
 		{
-			if ( this.isVisible )
+			if ( this.isVisible && !this.Color.IsEmpty )
 			{
 				Pen pen = new Pen( this.color, this.width );
 				pen.DashStyle = this.Style;

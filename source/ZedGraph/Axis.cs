@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.9 $ $Date: 2004-08-23 20:28:49 $ </version>
+	/// <version> $Revision: 1.10 $ $Date: 2004-08-26 05:49:08 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -166,10 +166,370 @@ namespace ZedGraph
 							minorUnit;
 	#endregion
 
+	#region Defaults
+		/// <summary>
+		/// A simple struct that defines the
+		/// default property values for the <see cref="Axis"/> class.
+		/// </summary>
+		public struct Default
+		{
+			// Default Axis Properties
+			/// <summary>
+			/// The default size for the <see cref="Axis"/> tic marks.
+			/// (<see cref="Axis.TicSize"/> property). Units are pixels.
+			/// </summary>
+			public static float TicSize = 5;
+			/// <summary>
+			/// The default size for the <see cref="Axis"/> minor tic marks.
+			/// (<see cref="Axis.MinorTicSize"/> property). Units are pixels.
+			/// </summary>
+			public static float MinorTicSize = 2.5F;
+			/// <summary>
+			/// The default pen width for drawing the <see cref="Axis"/> tic marks.
+			/// (<see cref="Axis.TicPenWidth"/> property). Units are pixels.
+			/// </summary>
+			public static float TicPenWidth = 1.0F;
+			/// <summary>
+			/// The default "zero lever" for automatically selecting the axis
+			/// scale range (see <see cref="Axis.PickScale"/>). This number is
+			/// used to determine when an axis scale range should be extended to
+			/// include the zero value.  This value is maintained only in the
+			/// <see cref="Default"/> class, and cannot be changed after compilation.
+			/// </summary>
+			public static double ZeroLever = 0.25;
+			/// <summary>
+			/// The maximum number of text labels (major tics) that will be allowed on the plot by
+			/// the automatic scaling logic.  This value applies only to <see cref="AxisType.Text"/>
+			/// axes.  If there are more than MaxTextLabels on the plot, then
+			/// <see cref="Axis.Step"/> will be increased to reduce the number of labels.  That is,
+			/// the step size might be increased to 2.0 to show only every other label.
+			/// </summary>
+			public static double MaxTextLabels = 12.0;
+			/// <summary>
+			/// The default target number of steps for automatically selecting the X axis
+			/// scale step size (see <see cref="Axis.PickScale"/>).
+			/// This number is an initial target value for the number of major steps
+			/// on an axis.  This value is maintained only in the
+			/// <see cref="Default"/> class, and cannot be changed after compilation.
+			/// </summary>
+			public static double TargetXSteps = 7.0;
+			/// <summary>
+			/// The default target number of steps for automatically selecting the Y or Y2 axis
+			/// scale step size (see <see cref="Axis.PickScale"/>).
+			/// This number is an initial target value for the number of major steps
+			/// on an axis.  This value is maintained only in the
+			/// <see cref="Default"/> class, and cannot be changed after compilation.
+			/// </summary>
+			public static double TargetYSteps = 7.0;
+			/// <summary>
+			/// The default target number of minor steps for automatically selecting the X axis
+			/// scale minor step size (see <see cref="Axis.PickScale"/>).
+			/// This number is an initial target value for the number of minor steps
+			/// on an axis.  This value is maintained only in the
+			/// <see cref="Default"/> class, and cannot be changed after compilation.
+			/// </summary>
+			public static double TargetMinorXSteps = 5.0;
+			/// <summary>
+			/// The default target number of minor steps for automatically selecting the Y or Y2 axis
+			/// scale minor step size (see <see cref="Axis.PickScale"/>).
+			/// This number is an initial target value for the number of minor steps
+			/// on an axis.  This value is maintained only in the
+			/// <see cref="Default"/> class, and cannot be changed after compilation.
+			/// </summary>
+			public static double TargetMinorYSteps = 5.0;
+			/// <summary>
+			/// The default font family for the <see cref="Axis"/> scale values
+			/// font specification <see cref="Axis.ScaleFontSpec"/>
+			/// (<see cref="FontSpec.Family"/> property).
+			/// </summary>
+			public static string ScaleFontFamily = "Arial";
+			/// <summary>
+			/// The default font size for the <see cref="Axis"/> scale values
+			/// font specification <see cref="Axis.ScaleFontSpec"/>
+			/// (<see cref="FontSpec.Size"/> property).  Units are
+			/// in points (1/72 inch).
+			/// </summary>
+			public static float ScaleFontSize = 14;
+			/// <summary>
+			/// The default font color for the <see cref="Axis"/> scale values
+			/// font specification <see cref="Axis.ScaleFontSpec"/>
+			/// (<see cref="FontSpec.FontColor"/> property).
+			/// </summary>
+			public static Color ScaleFontColor = Color.Black;
+			/// <summary>
+			/// The default font bold mode for the <see cref="Axis"/> scale values
+			/// font specification <see cref="Axis.ScaleFontSpec"/>
+			/// (<see cref="FontSpec.IsBold"/> property). true
+			/// for a bold typeface, false otherwise.
+			/// </summary>
+			public static bool ScaleFontBold = false;
+			/// <summary>
+			/// The default font italic mode for the <see cref="Axis"/> scale values
+			/// font specification <see cref="Axis.ScaleFontSpec"/>
+			/// (<see cref="FontSpec.IsItalic"/> property). true
+			/// for an italic typeface, false otherwise.
+			/// </summary>
+			public static bool ScaleFontItalic = false;
+			/// <summary>
+			/// The default font underline mode for the <see cref="Axis"/> scale values
+			/// font specification <see cref="Axis.ScaleFontSpec"/>
+			/// (<see cref="FontSpec.IsUnderline"/> property). true
+			/// for an underlined typeface, false otherwise.
+			/// </summary>
+			public static bool ScaleFontUnderline = false;
+			
+			/// <summary>
+			/// The default font family for the <see cref="Axis"/> title text
+			/// font specification <see cref="Axis.TitleFontSpec"/>
+			/// (<see cref="FontSpec.Family"/> property).
+			/// </summary>
+			public static string TitleFontFamily = "Arial";
+			/// <summary>
+			/// The default font size for the <see cref="Axis"/> title text
+			/// font specification <see cref="Axis.TitleFontSpec"/>
+			/// (<see cref="FontSpec.Size"/> property).  Units are
+			/// in points (1/72 inch).
+			/// </summary>
+			public static float TitleFontSize = 14;
+			/// <summary>
+			/// The default font color for the <see cref="Axis"/> title text
+			/// font specification <see cref="Axis.TitleFontSpec"/>
+			/// (<see cref="FontSpec.FontColor"/> property).
+			/// </summary>
+			public static Color TitleFontColor = Color.Black;
+			/// <summary>
+			/// The default font bold mode for the <see cref="Axis"/> title text
+			/// font specification <see cref="Axis.TitleFontSpec"/>
+			/// (<see cref="FontSpec.IsBold"/> property). true
+			/// for a bold typeface, false otherwise.
+			/// </summary>
+			public static bool TitleFontBold = true;
+			/// <summary>
+			/// The default font italic mode for the <see cref="Axis"/> title text
+			/// font specification <see cref="Axis.TitleFontSpec"/>
+			/// (<see cref="FontSpec.IsItalic"/> property). true
+			/// for an italic typeface, false otherwise.
+			/// </summary>
+			public static bool TitleFontItalic = false;
+			/// <summary>
+			/// The default font underline mode for the <see cref="Axis"/> title text
+			/// font specification <see cref="Axis.TitleFontSpec"/>
+			/// (<see cref="FontSpec.IsUnderline"/> property). true
+			/// for an underlined typeface, false otherwise.
+			/// </summary>
+			public static bool TitleFontUnderline = false;
+
+			/// <summary>
+			/// The default "dash on" size for drawing the <see cref="Axis"/> grid
+			/// (<see cref="Axis.GridDashOn"/> property). Units are in pixels.
+			/// </summary>
+			public static float GridDashOn = 1.0F;
+			/// <summary>
+			/// The default "dash off" size for drawing the <see cref="Axis"/> grid
+			/// (<see cref="Axis.GridDashOff"/> property). Units are in pixels.
+			/// </summary>
+			public static float GridDashOff = 5.0F;
+			/// <summary>
+			/// The default pen width for drawing the <see cref="Axis"/> grid
+			/// (<see cref="Axis.GridPenWidth"/> property). Units are in pixels.
+			/// </summary>
+			public static float GridPenWidth = 1.0F;
+			/// <summary>
+			/// The default color for the <see cref="Axis"/> grid lines
+			/// (<see cref="Axis.GridColor"/> property).  This color only affects the
+			/// grid lines.
+			/// </summary>
+			public static Color GridColor = Color.Black;
+			/// <summary>
+			/// The default color for the <see cref="Axis"/> itself
+			/// (<see cref="Axis.Color"/> property).  This color only affects the
+			/// tic marks and the axis border.
+			/// </summary>
+			public static Color Color = Color.Black;
+			/// <summary>
+			/// The default display mode for the <see cref="Axis"/> grid lines
+			/// (<see cref="Axis.IsShowGrid"/> property). true
+			/// to show the grid lines, false to hide them.
+			/// </summary>
+			public static bool IsShowGrid = false;
+			/// <summary>
+			/// The display mode for the <see cref="Axis"/> major outside tic marks
+			/// (<see cref="Axis.IsTic"/> property).
+			/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
+			/// </summary>
+			/// <value>true to show the major tic marks (outside the axis),
+			/// false otherwise</value>
+			public static bool IsTic = true;
+			/// <summary>
+			/// Determines if a line will be drawn at the zero value for the 
+			/// <see cref="Axis"/>, that is, a line that
+			/// divides the negative values from positive values.
+			/// <seealso cref="Axis.IsZeroLine"/>.
+			/// </summary>
+			public static bool IsZeroLine = true;
+			/// <summary>
+			/// The display mode for the <see cref="Axis"/> minor outside tic marks
+			/// (<see cref="Axis.IsMinorTic"/> property).
+			/// The minor tic spacing is controlled by <see cref="Axis.MinorStep"/>.
+			/// </summary>
+			/// <value>true to show the minor tic marks (outside the axis),
+			/// false otherwise</value>
+			public static bool IsMinorTic = true;
+			/// <summary>
+			/// The display mode for the <see cref="Axis"/> major inside tic marks
+			/// (<see cref="Axis.IsInsideTic"/> property).
+			/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
+			/// </summary>
+			/// <value>true to show the major tic marks (inside the axis),
+			/// false otherwise</value>
+			public static bool IsInsideTic = true;
+			/// <summary>
+			/// The display mode for the <see cref="Axis"/> major opposite tic marks
+			/// (<see cref="Axis.IsOppositeTic"/> property).
+			/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
+			/// </summary>
+			/// <value>true to show the major tic marks
+			/// (inside the axis on the opposite side),
+			/// false otherwise</value>
+			public static bool IsOppositeTic = true;
+			/// <summary>
+			/// The display mode for the <see cref="Axis"/> minor inside tic marks
+			/// (<see cref="Axis.IsMinorTic"/> property).
+			/// The minor tic spacing is controlled by <see cref="Axis.MinorStep"/>.
+			/// </summary>
+			/// <value>true to show the minor tic marks (inside the axis),
+			/// false otherwise</value>
+			public static bool IsMinorInsideTic = true;
+			/// <summary>
+			/// The display mode for the <see cref="Axis"/> minor opposite tic marks
+			/// (<see cref="Axis.IsMinorOppositeTic"/> property).
+			/// The minor tic spacing is controlled by <see cref="Axis.MinorStep"/>.
+			/// </summary>
+			/// <value>true to show the minor tic marks
+			/// (inside the axis on the opposite side),
+			/// false otherwise</value>
+			public static bool IsMinorOppositeTic = true;
+			/// <summary>
+			/// The default logarithmic mode for the <see cref="Axis"/> scale
+			/// (<see cref="Axis.IsLog"/> property). true for a logarithmic scale,
+			/// false for a cartesian scale.
+			/// </summary>
+			public static bool IsLog = false;
+			/// <summary>
+			/// The default reverse mode for the <see cref="Axis"/> scale
+			/// (<see cref="Axis.IsReverse"/> property). true for a reversed scale
+			/// (X decreasing to the left, Y/Y2 decreasing upwards), false otherwise.
+			/// </summary>
+			public static bool IsReverse = false;
+			/// <summary>
+			/// The default setting for the <see cref="Axis"/> scale axis type
+			/// (<see cref="Axis.Type"/> property).  This value is set as per
+			/// the <see cref="AxisType"/> enumeration
+			/// </summary>
+			public static AxisType Type = AxisType.Linear;
+			/// <summary>
+			/// The default setting for the <see cref="Axis"/> scale date format string
+			/// (<see cref="Axis.ScaleFormat"/> property).  This value is set as per
+			/// the <see cref="XDate.ToString"/> function.
+			/// </summary>
+			public static string ScaleFormat = "&dd-&mmm-&yy &hh:&nn";
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Year"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Year"/>.
+			/// This value normally defaults to 1825 days (5 years).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeYearYear = 1825;  // 5 years
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Year"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Month"/>.
+			/// This value normally defaults to 365 days (1 year).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeYearMonth = 365;  // 1 year
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Month"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Month"/>.
+			/// This value normally defaults to 90 days (3 months).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeMonthMonth = 90;  // 3 months
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Day"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Day"/>.
+			/// This value normally defaults to 10 days.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeDayDay = 10;  // 10 days
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Day"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Hour"/>.
+			/// This value normally defaults to 3 days.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeDayHour = 3;  // 3 days
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Hour"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Hour"/>.
+			/// This value normally defaults to 0.4167 days (10 hours).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeHourHour = 0.4167;  // 10 hours
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Hour"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Minute"/>.
+			/// This value normally defaults to 0.125 days (3 hours).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeHourMinute = 0.125;  // 3 hours
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Minute"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Minute"/>.
+			/// This value normally defaults to 6.94e-3 days (10 minutes).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeMinuteMinute = 6.94e-3;  // 10 Minutes
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Minute"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Second"/>.
+			/// This value normally defaults to 2.083e-3 days (3 minutes).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeMinuteSecond = 2.083e-3;  // 3 Minutes
+		}
+	#endregion
+
 	#region Constructors
 		/// <summary>
 		/// Default constructor for <see cref="Axis"/> that sets all axis properties
-		/// to default values as defined in the <see cref="Def.Ax"/> class.
+		/// to default values as defined in the <see cref="Default"/> class.
 		/// </summary>
 		public Axis()
 		{
@@ -189,26 +549,26 @@ namespace ZedGraph
 			this.numDec = 0;
 			this.scaleMag = 0;
 
-			this.ticSize = Def.Ax.TicSize;
-			this.minorTicSize = Def.Ax.MinorTicSize;
-			this.gridDashOn = Def.Ax.GridDashOn;
-			this.gridDashOff = Def.Ax.GridDashOff;
-			this.gridPenWidth = Def.Ax.GridPenWidth;
+			this.ticSize = Default.TicSize;
+			this.minorTicSize = Default.MinorTicSize;
+			this.gridDashOn = Default.GridDashOn;
+			this.gridDashOff = Default.GridDashOff;
+			this.gridPenWidth = Default.GridPenWidth;
 		
 			this.isVisible = true;
-			this.isZeroLine = Def.Ax.IsZeroLine;
-			this.isShowGrid = Def.Ax.IsShowGrid;
-			this.isReverse = Def.Ax.IsReverse;
+			this.isZeroLine = Default.IsZeroLine;
+			this.isShowGrid = Default.IsShowGrid;
+			this.isReverse = Default.IsReverse;
 			this.isOmitMag = false;
-			this.isTic = Def.Ax.IsTic;
-			this.isInsideTic = Def.Ax.IsInsideTic;
-			this.isOppositeTic = Def.Ax.IsOppositeTic;
-			this.isMinorTic = Def.Ax.IsMinorTic;
-			this.isMinorInsideTic = Def.Ax.IsMinorInsideTic;
-			this.isMinorOppositeTic = Def.Ax.IsMinorOppositeTic;
+			this.isTic = Default.IsTic;
+			this.isInsideTic = Default.IsInsideTic;
+			this.isOppositeTic = Default.IsOppositeTic;
+			this.isMinorTic = Default.IsMinorTic;
+			this.isMinorInsideTic = Default.IsMinorInsideTic;
+			this.isMinorOppositeTic = Default.IsMinorOppositeTic;
 			this.isTicsBetweenLabels = false;
 		
-			this.type = Def.Ax.Type;
+			this.type = Default.Type;
 			this.title = "";
 			this.TextLabels = null;
 			this.scaleFormat = null;
@@ -216,21 +576,21 @@ namespace ZedGraph
 			this.majorUnit = DateUnit.Year;
 			this.minorUnit = DateUnit.Year;
 
-			this.ticPenWidth = Def.Ax.TicPenWidth;
-			this.color = Def.Ax.Color;
-			this.gridColor = Def.Ax.GridColor;
+			this.ticPenWidth = Default.TicPenWidth;
+			this.color = Default.Color;
+			this.gridColor = Default.GridColor;
 			
 			this.titleFontSpec = new FontSpec(
-					Def.Ax.TitleFontFamily, Def.Ax.TitleFontSize,
-					Def.Ax.TitleFontColor, Def.Ax.TitleFontBold,
-					Def.Ax.TitleFontUnderline, Def.Ax.TitleFontItalic );
+					Default.TitleFontFamily, Default.TitleFontSize,
+					Default.TitleFontColor, Default.TitleFontBold,
+					Default.TitleFontUnderline, Default.TitleFontItalic );
 			this.titleFontSpec.IsFilled = false;
 			this.titleFontSpec.IsFramed = false;
 
 			this.scaleFontSpec = new FontSpec(
-				Def.Ax.ScaleFontFamily, Def.Ax.ScaleFontSize,
-				Def.Ax.ScaleFontColor, Def.Ax.ScaleFontBold,
-				Def.Ax.ScaleFontUnderline, Def.Ax.ScaleFontItalic );
+				Default.ScaleFontFamily, Default.ScaleFontSize,
+				Default.ScaleFontColor, Default.ScaleFontBold,
+				Default.ScaleFontUnderline, Default.ScaleFontItalic );
 			this.scaleFontSpec.IsFilled = false;
 			this.scaleFontSpec.IsFramed = false;
 		}
@@ -354,10 +714,10 @@ namespace ZedGraph
 		/// <seealso cref="Max"/>
 		/// <seealso cref="MinorStep"/>
 		/// <seealso cref="StepAuto"/>
-		/// <seealso cref="Def.Ax.TargetXSteps"/>
-		/// <seealso cref="Def.Ax.TargetYSteps"/>
-		/// <seealso cref="Def.Ax.ZeroLever"/>
-		/// <seealso cref="Def.Ax.MaxTextLabels"/>
+		/// <seealso cref="Default.TargetXSteps"/>
+		/// <seealso cref="Default.TargetYSteps"/>
+		/// <seealso cref="Default.ZeroLever"/>
+		/// <seealso cref="Default.MaxTextLabels"/>
 		public double Step
 		{
 			get { return step; }
@@ -474,7 +834,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> The color is defined using the
 		/// <see cref="System.Drawing.Color"/> class</value>
-		/// <seealso cref="Def.Ax.Color"/>.
+		/// <seealso cref="Default.Color"/>.
 		/// <seealso cref="IsTic"/>
 		/// <seealso cref="IsVisible"/>
 		public Color Color
@@ -488,7 +848,7 @@ namespace ZedGraph
 		/// <see cref="GraphPane"/>
 		/// </summary>
 		/// <value>The tic size is measured in pixels</value>
-		/// <seealso cref="Def.Ax.TicSize"/>.
+		/// <seealso cref="Default.TicSize"/>.
 		/// <seealso cref="IsTic"/>
 		/// <seealso cref="IsVisible"/>
 		/// <seealso cref="Color"/>
@@ -503,7 +863,7 @@ namespace ZedGraph
 		/// <see cref="GraphPane"/>
 		/// </summary>
 		/// <value>The tic size is measured in pixels</value>
-		/// <seealso cref="Def.Ax.MinorTicSize"/>.
+		/// <seealso cref="Default.MinorTicSize"/>.
 		/// <seealso cref="IsMinorTic"/>
 		public float MinorTicSize
 		{
@@ -551,7 +911,7 @@ namespace ZedGraph
 		/// The major tic spacing is controlled by <see cref="Step"/>.
 		/// </summary>
 		/// <value>true to show the major outside tic marks, false otherwise</value>
-		/// <seealso cref="Def.Ax.IsTic"/>.
+		/// <seealso cref="Default.IsTic"/>.
 		/// <seealso cref="IsMinorTic"/>
 		/// <seealso cref="IsInsideTic"/>
 		/// <seealso cref="IsOppositeTic"/>
@@ -569,7 +929,7 @@ namespace ZedGraph
 		/// ignored (no minor tics are drawn) for text axes (see <see cref="IsText"/>).
 		/// </summary>
 		/// <value>true to show the minor outside tic marks, false otherwise</value>
-		/// <seealso cref="Def.Ax.IsMinorTic"/>.
+		/// <seealso cref="Default.IsMinorTic"/>.
 		/// <seealso cref="IsTic"/>
 		/// <seealso cref="IsInsideTic"/>
 		/// <seealso cref="IsOppositeTic"/>
@@ -586,7 +946,7 @@ namespace ZedGraph
 		/// The major tic spacing is controlled by <see cref="Step"/>.
 		/// </summary>
 		/// <value>true to show the major inside tic marks, false otherwise</value>
-		/// <seealso cref="Def.Ax.IsInsideTic"/>.
+		/// <seealso cref="Default.IsInsideTic"/>.
 		/// <seealso cref="IsTic"/>
 		/// <seealso cref="IsMinorTic"/>
 		/// <seealso cref="IsOppositeTic"/>
@@ -604,7 +964,7 @@ namespace ZedGraph
 		/// The major tic spacing is controlled by <see cref="Step"/>.
 		/// </summary>
 		/// <value>true to show the major opposite tic marks, false otherwise</value>
-		/// <seealso cref="Def.Ax.IsOppositeTic"/>.
+		/// <seealso cref="Default.IsOppositeTic"/>.
 		/// <seealso cref="IsTic"/>
 		/// <seealso cref="IsMinorTic"/>
 		/// <seealso cref="IsInsideTic"/>
@@ -621,7 +981,7 @@ namespace ZedGraph
 		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
 		/// </summary>
 		/// <value>true to show the minor inside tic marks, false otherwise</value>
-		/// <seealso cref="Def.Ax.IsMinorInsideTic"/>.
+		/// <seealso cref="Default.IsMinorInsideTic"/>.
 		/// <seealso cref="IsTic"/>
 		/// <seealso cref="IsMinorTic"/>
 		/// <seealso cref="IsInsideTic"/>
@@ -639,7 +999,7 @@ namespace ZedGraph
 		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
 		/// </summary>
 		/// <value>true to show the minor opposite tic marks, false otherwise</value>
-		/// <seealso cref="Def.Ax.IsMinorOppositeTic"/>.
+		/// <seealso cref="Default.IsMinorOppositeTic"/>.
 		/// <seealso cref="IsTic"/>
 		/// <seealso cref="IsMinorTic"/>
 		/// <seealso cref="IsInsideTic"/>
@@ -671,7 +1031,7 @@ namespace ZedGraph
 		/// The pen width to be used when drawing the tic marks for this <see cref="Axis"/>
 		/// </summary>
 		/// <value>The pen width is defined in pixels</value>
-		/// <seealso cref="Def.Ax.TicPenWidth"/>.
+		/// <seealso cref="Default.TicPenWidth"/>.
 		/// <seealso cref="IsTic"/>
 		/// <seealso cref="Color"/>
 		public float TicPenWidth
@@ -687,7 +1047,7 @@ namespace ZedGraph
 		/// Determines if the major <see cref="Axis"/> gridlines (at each labeled value) will be shown
 		/// </summary>
 		/// <value>true to show the gridlines, false otherwise</value>
-		/// <seealso cref="Def.Ax.IsShowGrid">Def.Ax.IsShowGrid</seealso>.
+		/// <seealso cref="Default.IsShowGrid">Default.IsShowGrid</seealso>.
 		/// <seealso cref="GridColor"/>
 		/// <seealso cref="GridPenWidth"/>
 		/// <seealso cref="GridDashOn"/>
@@ -702,10 +1062,10 @@ namespace ZedGraph
 		/// <summary>
 		/// Determines if a line will be drawn at the zero value for the axis.  That is, a line that
 		/// divides the negative values from the positive values.  The default is set according to
-		/// <see cref="Def.Ax.IsZeroLine"/>
+		/// <see cref="Default.IsZeroLine"/>
 		/// </summary>
 		/// <value>true to show the zero line, false otherwise</value>
-		/// <seealso cref="Def.Ax.IsZeroLine"/>.
+		/// <seealso cref="Default.IsZeroLine"/>.
 		public bool IsZeroLine
 		{
 			get { return isZeroLine; }
@@ -719,7 +1079,7 @@ namespace ZedGraph
 		/// <value>The dash on length is defined in pixel units</value>
 		/// <seealso cref="GridDashOff"/>
 		/// <seealso cref="IsShowGrid"/>
-		/// <seealso cref="Def.Ax.GridDashOn"/>.
+		/// <seealso cref="Default.GridDashOn"/>.
 		public float GridDashOn
 		{
 			get { return gridDashOn; }
@@ -733,7 +1093,7 @@ namespace ZedGraph
 		/// <value>The dash off length is defined in pixel units</value>
 		/// <seealso cref="GridDashOn"/>
 		/// <seealso cref="IsShowGrid"/>
-		/// <seealso cref="Def.Ax.GridDashOff"/>.
+		/// <seealso cref="Default.GridDashOff"/>.
 		public float GridDashOff
 		{
 			get { return gridDashOff; }
@@ -744,7 +1104,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>The grid pen width is defined in pixel units</value>
 		/// <seealso cref="IsShowGrid"/>
-		/// <seealso cref="Def.Ax.GridPenWidth"/>.
+		/// <seealso cref="Default.GridPenWidth"/>.
 		/// <seealso cref="GridColor"/>
 		public float GridPenWidth
 		{
@@ -758,7 +1118,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> The color is defined using the
 		/// <see cref="System.Drawing.Color"/> class</value>
-		/// <seealso cref="Def.Ax.GridColor"/>.
+		/// <seealso cref="Default.GridColor"/>.
 		/// <seealso cref="GridPenWidth"/>
 		public Color GridColor
 		{
@@ -775,9 +1135,9 @@ namespace ZedGraph
 		/// graph, it will just be invisible to the user
 		/// </summary>
 		/// <value>true to show the axis, false to disable all drawing of this axis</value>
-		/// <seealso cref="Def.XAx.IsVisible"/>.
-		/// <seealso cref="Def.YAx.IsVisible"/>.
-		/// <seealso cref="Def.Y2Ax.IsVisible"/>.
+		/// <seealso cref="Default.XAx.IsVisible"/>.
+		/// <seealso cref="Default.YAx.IsVisible"/>.
+		/// <seealso cref="Default.Y2Ax.IsVisible"/>.
 		public bool IsVisible
 		{
 			get { return isVisible; }
@@ -788,7 +1148,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>true for the X values to decrease to the right or the Y values to
 		/// decrease upwards, false otherwise</value>
-		/// <seealso cref="Def.Ax.IsReverse"/>.
+		/// <seealso cref="Default.IsReverse"/>.
 		public bool IsReverse
 		{
 			get { return isReverse; }
@@ -858,7 +1218,7 @@ namespace ZedGraph
 		/// <see cref="AxisType.Log"/>, <see cref="AxisType.Date"/>,
 		/// or <see cref="AxisType.Text"/>.
 		/// </summary>
-		/// <seealso cref="Def.Ax.Type"/>.
+		/// <seealso cref="Default.Type"/>.
 		/// <seealso cref="IsLog"/>
 		/// <seealso cref="IsText"/>
 		/// <seealso cref="IsOrdinal"/>
@@ -1020,12 +1380,12 @@ namespace ZedGraph
 		/// Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
 		/// the scale values
 		/// </summary>
-		/// <seealso cref="Def.Ax.ScaleFontFamily"/>
-		/// <seealso cref="Def.Ax.ScaleFontSize"/>
-		/// <seealso cref="Def.Ax.ScaleFontColor"/>
-		/// <seealso cref="Def.Ax.ScaleFontBold"/>
-		/// <seealso cref="Def.Ax.ScaleFontUnderline"/>
-		/// <seealso cref="Def.Ax.ScaleFontItalic"/>
+		/// <seealso cref="Default.ScaleFontFamily"/>
+		/// <seealso cref="Default.ScaleFontSize"/>
+		/// <seealso cref="Default.ScaleFontColor"/>
+		/// <seealso cref="Default.ScaleFontBold"/>
+		/// <seealso cref="Default.ScaleFontUnderline"/>
+		/// <seealso cref="Default.ScaleFontItalic"/>
 		public FontSpec ScaleFontSpec
 		{
 			get { return scaleFontSpec; }
@@ -1034,12 +1394,12 @@ namespace ZedGraph
 		/// Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
 		/// the <see cref="Axis"/> <see cref="Title"/>,
 		/// </summary>
-		/// <seealso cref="Def.Ax.TitleFontFamily"/>
-		/// <seealso cref="Def.Ax.TitleFontSize"/>
-		/// <seealso cref="Def.Ax.TitleFontColor"/>
-		/// <seealso cref="Def.Ax.TitleFontBold"/>
-		/// <seealso cref="Def.Ax.TitleFontUnderline"/>
-		/// <seealso cref="Def.Ax.TitleFontItalic"/>
+		/// <seealso cref="Default.TitleFontFamily"/>
+		/// <seealso cref="Default.TitleFontSize"/>
+		/// <seealso cref="Default.TitleFontColor"/>
+		/// <seealso cref="Default.TitleFontBold"/>
+		/// <seealso cref="Default.TitleFontUnderline"/>
+		/// <seealso cref="Default.TitleFontItalic"/>
 		public FontSpec TitleFontSpec
 		{
 			get { return titleFontSpec; }
@@ -1786,7 +2146,7 @@ namespace ZedGraph
 			else if ( this.IsDate )
 			{
 				if ( this.scaleFormat == null )
-					this.scaleFormat = Def.Ax.ScaleFormat;
+					this.scaleFormat = Default.ScaleFormat;
 				label = XDate.ToString( dVal, this.scaleFormat );
 			}
 			else if ( this.IsLog )
@@ -2061,9 +2421,9 @@ namespace ZedGraph
 		/// corresponding <see cref="Min"/>, <see cref="Max"/>, or <see cref="Step"/>
 		/// setting is explicitly honored, and the remaining autorange settings (if any) will
 		/// be calculated to accomodate the non-autoranged values.  The basic defaults for
-		/// scale selection are defined using <see cref="Def.Ax.ZeroLever"/>,
-		/// <see cref="Def.Ax.TargetXSteps"/>, and <see cref="Def.Ax.TargetYSteps"/>
-		/// from the <see cref="Def"/> default class.
+		/// scale selection are defined using <see cref="Default.ZeroLever"/>,
+		/// <see cref="Default.TargetXSteps"/>, and <see cref="Default.TargetYSteps"/>
+		/// from the <see cref="Default"/> default class.
 		/// <para>On Exit:</para>
 		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
 		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
@@ -2122,9 +2482,9 @@ namespace ZedGraph
 		/// is called by the general <see cref="PickScale"/> method.  This is an ordinal
 		/// type, such that the labeled values start at 1.0 and increment by 1.0 for
 		/// each successive label.  The maximum number of labels on the graph is
-		/// determined by <see cref="Def.Ax.MaxTextLabels"/>.  If necessary, this method will
+		/// determined by <see cref="Default.MaxTextLabels"/>.  If necessary, this method will
 		/// set the <see cref="Step"/> value to greater than 1.0 in order to keep the total
-		/// labels displayed below <see cref="Def.Ax.MaxTextLabels"/>.  For example, a
+		/// labels displayed below <see cref="Default.MaxTextLabels"/>.  For example, a
 		/// <see cref="Step"/> size of 2.0 would only display every other label on the
 		/// axis.  The <see cref="Step"/> value calculated by this routine is always
 		/// an integral value.  This
@@ -2184,7 +2544,7 @@ namespace ZedGraph
 		
 			if ( this.stepAuto )
 			{
-				this.step = (int) ( ( this.max - this.min - 1.0 ) / Def.Ax.MaxTextLabels ) + 1.0;
+				this.step = (int) ( ( this.max - this.min - 1.0 ) / Default.MaxTextLabels ) + 1.0;
 
 				if ( this.TextLabels != null )
 				{
@@ -2285,9 +2645,9 @@ namespace ZedGraph
 		/// corresponding <see cref="Min"/>, <see cref="Max"/>, or <see cref="Step"/>
 		/// setting is explicitly honored, and the remaining autorange settings (if any) will
 		/// be calculated to accomodate the non-autoranged values.  The basic defaults for
-		/// scale selection are defined using <see cref="Def.Ax.ZeroLever"/>,
-		/// <see cref="Def.Ax.TargetXSteps"/>, and <see cref="Def.Ax.TargetYSteps"/>
-		/// from the <see cref="Def"/> default class.
+		/// scale selection are defined using <see cref="Default.ZeroLever"/>,
+		/// <see cref="Default.TargetXSteps"/>, and <see cref="Default.TargetYSteps"/>
+		/// from the <see cref="Default"/> default class.
 		/// <para>On Exit:</para>
 		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
 		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
@@ -2327,7 +2687,7 @@ namespace ZedGraph
 				{
 					// Calculate the step size based on targetSteps
 					this.step = CalcStepSize( this.max - this.min,
-						(this is XAxis) ? Def.Ax.TargetXSteps : Def.Ax.TargetYSteps );
+						(this is XAxis) ? Default.TargetXSteps : Default.TargetYSteps );
 
 					// Calculate the maximum number of labels
 					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
@@ -2348,7 +2708,7 @@ namespace ZedGraph
 				// Calculate the new minor step size
 				if ( this.minorStepAuto )
 					this.minorStep = CalcStepSize( this.step, 
-						(this is XAxis) ? Def.Ax.TargetMinorXSteps : Def.Ax.TargetMinorYSteps );
+						(this is XAxis) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
 
 				if ( this.minAuto )
 					this.min -= 0.5;
@@ -2432,8 +2792,8 @@ namespace ZedGraph
 		/// setting is explicitly honored, and the remaining autorange settings (if any) will
 		/// be calculated to accomodate the non-autoranged values.  The basic default for
 		/// scale selection is defined with
-		/// <see cref="Def.Ax.TargetXSteps"/> and <see cref="Def.Ax.TargetYSteps"/>
-		/// from the <see cref="Def"/> default class.
+		/// <see cref="Default.TargetXSteps"/> and <see cref="Default.TargetYSteps"/>
+		/// from the <see cref="Default"/> default class.
 		/// <para>On Exit:</para>
 		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
 		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
@@ -2473,7 +2833,7 @@ namespace ZedGraph
 			// Calculate the new step size
 			if ( this.stepAuto )
 			{
-				double targetSteps = (this is XAxis) ? Def.Ax.TargetXSteps : Def.Ax.TargetYSteps;
+				double targetSteps = (this is XAxis) ? Default.TargetXSteps : Default.TargetYSteps;
 
 				// Calculate the step size based on target steps
 				this.step = CalcDateStepSize( this.max - this.min, targetSteps );
@@ -2509,9 +2869,9 @@ namespace ZedGraph
 		/// corresponding <see cref="Min"/>, <see cref="Max"/>, or <see cref="Step"/>
 		/// setting is explicitly honored, and the remaining autorange settings (if any) will
 		/// be calculated to accomodate the non-autoranged values.  The basic defaults for
-		/// scale selection are defined using <see cref="Def.Ax.ZeroLever"/>,
-		/// <see cref="Def.Ax.TargetXSteps"/>, and <see cref="Def.Ax.TargetYSteps"/>
-		/// from the <see cref="Def"/> default class.
+		/// scale selection are defined using <see cref="Default.ZeroLever"/>,
+		/// <see cref="Default.TargetXSteps"/>, and <see cref="Default.TargetYSteps"/>
+		/// from the <see cref="Default"/> default class.
 		/// <para>On Exit:</para>
 		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
 		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
@@ -2549,19 +2909,19 @@ namespace ZedGraph
 			// of the data range, then use zero.
 	
 			if ( this.minAuto && this.min > 0 &&
-				this.min / ( this.max - this.min ) < Def.Ax.ZeroLever )
+				this.min / ( this.max - this.min ) < Default.ZeroLever )
 				this.min = 0;
 	
 			// Repeat the zero-lever test for cases where the maxVal is less than zero
 			if ( this.maxAuto && this.max < 0 &&
 				Math.Abs( this.max / ( this.max - this.min )) <
-				Def.Ax.ZeroLever )
+				Default.ZeroLever )
 				this.max = 0;
 	
 			// Calculate the new step size
 			if ( this.stepAuto )
 			{
-				double targetSteps = (this is XAxis) ? Def.Ax.TargetXSteps : Def.Ax.TargetYSteps;
+				double targetSteps = (this is XAxis) ? Default.TargetXSteps : Default.TargetYSteps;
 
 				// Calculate the step size based on target steps
 				this.step = CalcStepSize( this.max - this.min, targetSteps );
@@ -2576,7 +2936,7 @@ namespace ZedGraph
 			// Calculate the new step size
 			if ( this.minorStepAuto )
 				this.minorStep = CalcStepSize( this.step, 
-					(this is XAxis) ? Def.Ax.TargetMinorXSteps : Def.Ax.TargetMinorYSteps );
+					(this is XAxis) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
 	
 			// Calculate the scale minimum
 			if ( this.minAuto )
@@ -2620,8 +2980,8 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Calculate a step size based on a data range.  This utility method
-		/// will try to honor the <see cref="Def.Ax.TargetXSteps"/> and
-		/// <see cref="Def.Ax.TargetYSteps"/> number of
+		/// will try to honor the <see cref="Default.TargetXSteps"/> and
+		/// <see cref="Default.TargetYSteps"/> number of
 		/// steps while using a rational increment (1, 2, or 5 -- which are
 		/// even divisors of 10).  This method is used by <see cref="PickScale"/>.
 		/// </summary>
@@ -2705,7 +3065,7 @@ namespace ZedGraph
 			// Calculate an initial guess at step size
 			double tempStep = range / targetSteps;
 
-			if ( range > Def.Ax.RangeYearYear )
+			if ( range > Default.RangeYearYear )
 			{
 				majorUnit = DateUnit.Year;
 				if ( this.scaleFormatAuto )
@@ -2723,7 +3083,7 @@ namespace ZedGraph
 						minorStep = CalcStepSize( tempStep, targetSteps );
 				}
 			}
-			else if ( range > Def.Ax.RangeYearMonth )
+			else if ( range > Default.RangeYearMonth )
 			{
 				majorUnit = DateUnit.Year;
 				if ( this.scaleFormatAuto )
@@ -2743,7 +3103,7 @@ namespace ZedGraph
 						minorStep = 6;
 				}
 			}
-			else if ( range > Def.Ax.RangeMonthMonth )
+			else if ( range > Default.RangeMonthMonth )
 			{
 				majorUnit = DateUnit.Month;
 				if ( this.scaleFormatAuto )
@@ -2757,7 +3117,7 @@ namespace ZedGraph
 					minorStep = 0.25;
 				}
 			}
-			else if ( range > Def.Ax.RangeDayDay )
+			else if ( range > Default.RangeDayDay )
 			{
 				majorUnit = DateUnit.Day;
 				if ( this.scaleFormatAuto )
@@ -2771,7 +3131,7 @@ namespace ZedGraph
 					minorStep = 1.0;
 				}
 			}
-			else if ( range > Def.Ax.RangeDayHour )
+			else if ( range > Default.RangeDayHour )
 			{
 				majorUnit = DateUnit.Day;
 				if ( this.scaleFormatAuto )
@@ -2793,7 +3153,7 @@ namespace ZedGraph
 						minorStep = 1;
 				}
 			}
-			else if ( range > Def.Ax.RangeHourHour )
+			else if ( range > Default.RangeHourHour )
 			{
 				majorUnit = DateUnit.Hour;
 				tempStep = Math.Floor( tempStep * XDate.HoursPerDay );
@@ -2815,7 +3175,7 @@ namespace ZedGraph
 					minorStep = 0.25;
 				}
 			}
-			else if ( range > Def.Ax.RangeHourMinute )
+			else if ( range > Default.RangeHourMinute )
 			{
 				majorUnit = DateUnit.Hour;
 				tempStep = 1.0;
@@ -2839,7 +3199,7 @@ namespace ZedGraph
 						minorStep = 1.0;
 				}
 			}
-			else if ( range > Def.Ax.RangeMinuteMinute )
+			else if ( range > Default.RangeMinuteMinute )
 			{
 				majorUnit = DateUnit.Minute;
 				if ( this.scaleFormatAuto )
@@ -2862,7 +3222,7 @@ namespace ZedGraph
 					minorStep = 0.25;
 				}
 			}
-			else if ( range > Def.Ax.RangeMinuteSecond )
+			else if ( range > Default.RangeMinuteSecond )
 			{
 				majorUnit = DateUnit.Minute;
 				tempStep = 1.0;

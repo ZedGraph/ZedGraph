@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 1.10 $ $Date: 2004-08-24 02:57:07 $ </version>
+	/// <version> $Revision: 1.11 $ $Date: 2004-08-26 05:49:10 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
@@ -92,7 +92,7 @@ namespace ZedGraph
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label and the
 		/// x and y data values as double arrays.  All other properties of the curve are
-		/// defaulted to the values in the <see cref="Def"/> class.
+		/// defaulted to the values in the <see cref="Default"/> class.
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
 		/// <param name="x">An array of double precision values that define
@@ -100,37 +100,111 @@ namespace ZedGraph
 		/// <param name="y">An array of double precision values that define
 		/// the dependent (Y axis) values for this curve</param>
 		public CurveItem( string label, double[] x, double[] y )
+			: this( label, x, y, false, Color.Empty, SymbolType.Empty )
 		{
-			this.line = new Line();
-			this.symbol = new Symbol();
-			this.bar = new Bar();
-			this.label = label;
-			this.isY2Axis = false;
-			this.isBar = false;
-			
-			this.points = new PointPairList( x, y );
 		}
 								
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label and the
 		/// x and y data values as a <see cref="PointPairList"/>.  All other properties of the curve are
-		/// defaulted to the values in the <see cref="Def"/> class.
+		/// defaulted to the values in the <see cref="Default"/> class.
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
 		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		public CurveItem( string label, PointPairList points )
+			: this( label, points, false, Color.Empty, SymbolType.Empty )
 		{
-			this.line = new Line();
-			this.symbol = new Symbol();
-			this.bar = new Bar();
-			this.label = label;
-			this.isY2Axis = false;
-			this.isBar = false;
-			
-			this.points = (PointPairList) points.Clone();
 		}
 								
+		/// <summary>
+		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label, the
+		/// x and y data values as a <see cref="PointPairList"/>, the curve
+		/// type (Bar or Line/Symbol), the <see cref="Color"/>, and the
+		/// <see cref="SymbolType"/>. Other properties of the curve are
+		/// defaulted to the values in the <see cref="Default"/> class.
+		/// </summary>
+		/// <param name="label">A string label (legend entry) for this curve</param>
+		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// the X and Y values for this curve</param>
+		/// <param name="isBar">A boolean value, true to indicate that this curve
+		/// is a bar type, false to indicate a line/symbol type.
+		/// </param>
+		/// <param name="color">A <see cref="Color"/> value that will be applied to
+		/// the <see cref="Line"/>, <see cref="Symbol"/>, and <see cref="Bar"/>
+		/// see cref="Bar.FillColor"/>.
+		/// </param>
+		/// <param name="symbol">
+		/// A <see cref="SymbolType"/> enum value indicating the symbol shape that
+		/// will be used for this <see cref="CurveItem"/>.
+		/// </param>
+		public CurveItem( string label, double[] x, double[] y, bool isBar,
+							Color color, SymbolType symbol )
+		{
+			Init( label, isBar, color, symbol );
+			
+			this.points = new PointPairList( x, y );
+		}
+		
+		/// <summary>
+		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label, the
+		/// x and y data values as a <see cref="PointPairList"/>, the curve
+		/// type (Bar or Line/Symbol), the <see cref="Color"/>, and the
+		/// <see cref="SymbolType"/>. Other properties of the curve are
+		/// defaulted to the values in the <see cref="Default"/> class.
+		/// </summary>
+		/// <param name="label">A string label (legend entry) for this curve</param>
+		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// the X and Y values for this curve</param>
+		/// <param name="isBar">A boolean value, true to indicate that this curve
+		/// is a bar type, false to indicate a line/symbol type.
+		/// </param>
+		/// <param name="color">A <see cref="Color"/> value that will be applied to
+		/// the <see cref="Line"/>, <see cref="Symbol"/>, and <see cref="Bar"/>
+		/// see cref="Bar.FillColor"/>.
+		/// </param>
+		/// <param name="symbol">
+		/// A <see cref="SymbolType"/> enum value indicating the symbol shape that
+		/// will be used for this <see cref="CurveItem"/>.
+		/// </param>
+		public CurveItem( string label, PointPairList points, bool isBar, Color color, SymbolType symbol )
+		{
+			Init( label, isBar, color, symbol );
+			
+			if ( points == null )
+				this.points = new PointPairList();
+			else
+				this.points = (PointPairList) points.Clone();
+		}
+		
+		/// <summary>
+		/// Initialization of various <see cref="CurveItem"/> properties.  This common routine
+		/// just avoid duplicate code in the various constructors.  The initialization of
+		/// <see cref="Points"/> is handled within the constructor to avoid problems with
+		/// multiple generation of the PointPairList.
+		/// </summary>
+		/// <param name="label">A string label (legend entry) for this curve</param>
+		/// <param name="isBar">A boolean value, true to indicate that this curve
+		/// is a bar type, false to indicate a line/symbol type.
+		/// </param>
+		/// <param name="color">A <see cref="Color"/> value that will be applied to
+		/// the <see cref="Line"/>, <see cref="Symbol"/>, and <see cref="Bar"/>
+		/// see cref="Bar.FillColor"/>.
+		/// </param>
+		/// <param name="symbol">
+		/// A <see cref="SymbolType"/> enum value indicating the symbol shape that
+		/// will be used for this <see cref="CurveItem"/>.
+		/// </param>
+		protected void Init( string label, bool isBar, Color color, SymbolType symbol )
+		{
+			this.line = new Line( color );
+			this.symbol = new Symbol( symbol, color );
+			this.bar = new Bar( color );
+			this.label = label == null ? "" : label;
+			this.isY2Axis = false;
+			this.isBar = isBar;
+		}
+			
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor that specifies the label of the CurveItem.
 		/// This is the same as <c>CurveItem(label, null, null)</c>.

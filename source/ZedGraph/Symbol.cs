@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2004-08-26 05:49:10 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -73,13 +73,53 @@ namespace ZedGraph
 		/// </summary>
 		private bool		isFilled;
 	#endregion
-	
+
+	#region Defaults
+		/// <summary>
+		/// A simple struct that defines the
+		/// default property values for the <see cref="ZedGraph.Symbol"/> class.
+		/// </summary>
+		public struct Default
+		{
+			// Default Symbol properties
+			/// <summary>
+			/// The default size for curve symbols (<see cref="Symbol.Size"/> property),
+			/// in units of points.
+			/// </summary>
+			public static float Size = 7;
+			/// <summary>
+			/// The default pen width to be used for drawing curve symbols
+			/// (<see cref="Symbol.PenWidth"/> property).  Units are points.
+			/// </summary>
+			public static float PenWidth = 1.0F;
+			/// <summary>
+			/// The default fill mode for symbols (<see cref="Symbol.IsFilled"/> property).
+			/// true to have symbols filled in with color, false to leave them as outlines.
+			/// </summary>
+			public static bool IsFilled = false;
+			/// <summary>
+			/// The default symbol type for curves (<see cref="Symbol.Type"/> property).
+			/// This is defined as a <see cref="ZedGraph.SymbolType"/> enumeration.
+			/// </summary>
+			public static SymbolType Type = SymbolType.Square;
+			/// <summary>
+			/// The default display mode for symbols (<see cref="Symbol.IsVisible"/> property).
+			/// true to display symbols, false to hide them.
+			/// </summary>
+			public static bool IsVisible = true;
+			/// <summary>
+			/// The default color for drawing symbols (<see cref="Symbol.Color"/> property).
+			/// </summary>
+			public static Color Color = Color.Red;
+		}
+	#endregion
+
 	#region Properties
 		/// <summary>
 		/// Gets or sets the size of the <see cref="Symbol"/>
 		/// </summary>
 		/// <value>Size in pixels</value>
-		/// <seealso cref="Def.Sym.Size"/>
+		/// <seealso cref="Default.Sym.Size"/>
 		public float Size
 		{
 			get { return size; }
@@ -89,7 +129,7 @@ namespace ZedGraph
 		/// Gets or sets the type (shape) of the <see cref="Symbol"/>
 		/// </summary>
 		/// <value>A <see cref="SymbolType"/> enum value indicating the shape</value>
-		/// <seealso cref="Def.Sym.Type"/>
+		/// <seealso cref="Default.Sym.Type"/>
 		public SymbolType Type
 		{
 			get { return type; }
@@ -101,7 +141,7 @@ namespace ZedGraph
 		/// <see cref="SymbolType.Plus"/> and <see cref="SymbolType.Star"/>
 		/// cannot be filled in since they are not a closed shape.
 		/// </summary>
-		/// <seealso cref="Def.Sym.IsFilled"/>
+		/// <seealso cref="Default.Sym.IsFilled"/>
 		public bool IsFilled
 		{
 			get { return isFilled; }
@@ -111,7 +151,7 @@ namespace ZedGraph
 		/// Gets or sets a property that shows or hides the <see cref="Symbol"/>.
 		/// </summary>
 		/// <value>true to show the symbol, false to hide it</value>
-		/// <seealso cref="Def.Sym.IsVisible"/>
+		/// <seealso cref="Default.Sym.IsVisible"/>
 		public bool IsVisible
 		{
 			get { return isVisible; }
@@ -121,7 +161,7 @@ namespace ZedGraph
 		/// Gets or sets the pen width used to draw the <see cref="Symbol"/> outline
 		/// </summary>
 		/// <value>Pen width in pixel units</value>
-		/// <seealso cref="Def.Sym.PenWidth"/>
+		/// <seealso cref="Default.Sym.PenWidth"/>
 		public float PenWidth
 		{
 			get { return penWidth; }
@@ -130,7 +170,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The color of the <see cref="Symbol"/>
 		/// </summary>
-		/// <seealso cref="Def.Sym.Color"/>
+		/// <seealso cref="Default.Sym.Color"/>
 		public Color Color
 		{
 			get { return color; }
@@ -141,11 +181,31 @@ namespace ZedGraph
 	#region Constructors
 		/// <summary>
 		/// Default constructor that sets all <see cref="Symbol"/> properties to default
-		/// values as defined in the <see cref="Def"/> class.
+		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		public Symbol()
+		public Symbol() : this( SymbolType.Empty, Color.Empty )
 		{
-			Init();
+		}
+
+		/// <summary>
+		/// Default constructor that sets the <see cref="SymbolType"/> and
+		/// <see cref="Color"/> as specified, and the remaining
+		/// <see cref="Symbol"/> properties to default
+		/// values as defined in the <see cref="Default"/> class.
+		/// </summary>
+		/// <param name="type">A <see cref="SymbolType"/> enum value
+		/// indicating the shape of the symbol</param>
+		/// <param name="color">A <see cref="Color"/> value indicating
+		/// the color of the symbol
+		/// </param>
+		public Symbol( SymbolType type, Color color )
+		{
+			this.size = Default.Size;
+			this.type = type == SymbolType.Empty ? Default.Type : type;
+			this.penWidth = Default.PenWidth;
+			this.color = color.IsEmpty ? Default.Color : color;
+			this.isVisible = Default.IsVisible;
+			this.isFilled = Default.IsFilled;
 		}
 
 		/// <summary>
@@ -170,20 +230,6 @@ namespace ZedGraph
 		{ 
 			return new Symbol( this ); 
 		}
-
-		/// <summary>
-		/// Initialize all <see cref="Symbol"/> properties to  default
-		/// values as defined in the <see cref="Def"/> class.
-		/// </summary>
-		protected void Init()
-		{
-			this.size = Def.Sym.Size;
-			this.type = Def.Sym.Type;
-			this.penWidth = Def.Sym.PenWidth;
-			this.color = Def.Sym.Color;
-			this.isVisible = Def.Sym.IsVisible;
-			this.isFilled = Def.Sym.IsFilled;
-		}
 	#endregion
 	
 	#region Rendering Methods
@@ -207,7 +253,7 @@ namespace ZedGraph
 		public void Draw( Graphics g, float x, float y, double scaleFactor )
 		{
 			// Only draw if the symbol is visible
-			if ( this.isVisible )
+			if ( this.isVisible && this.Type != SymbolType.Empty && !this.color.IsEmpty)
 			{
 				SolidBrush	brush = new SolidBrush( this.color );
 				Pen pen = new Pen( this.color, this.penWidth );

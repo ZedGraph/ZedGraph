@@ -30,19 +30,34 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.4 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2004-08-26 05:49:11 $ </version>
 	public class Y2Axis : Axis, ICloneable
 	{
 		/// <summary>
+		/// A simple subclass of the <see cref="Default"/> class that defines the
+		/// default property values for the <see cref="Y2Axis"/> class.
+		/// </summary>
+		public new struct Default
+		{
+			// Default Y2 Axis properties
+			/// <summary>
+			/// The default display mode for the <see cref="Y2Axis"/>
+			/// (<see cref="Axis.IsVisible"/> property). true to display the scale
+			/// values, title, tic marks, false to hide the axis entirely.
+			/// </summary>
+			public static bool IsVisible = false;
+		}
+
+		/// <summary>
 		/// Default constructor that sets all <see cref="Y2Axis"/> properties to
-		/// default values as defined in the <see cref="Def"/> class, except
+		/// default values as defined in the <see cref="Default"/> class, except
 		/// for the axis title
 		/// </summary>
 		/// <param name="title">The <see cref="Axis.Title"/> for this axis</param>
 		public Y2Axis( string title )
 		{
 			this.Title = title;
-			this.IsVisible = Def.Y2Ax.IsVisible;
+			this.IsVisible = Default.IsVisible;
 			this.ScaleFontSpec.Angle = -90.0F;
 		}
 

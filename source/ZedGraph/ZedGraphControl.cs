@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos</author>
-	/// <version> $Revision: 1.6 $ $Date: 2004-08-23 20:33:59 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2004-08-26 05:49:11 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		/// <summary>
@@ -62,7 +62,6 @@ namespace ZedGraph
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
 			graphPane = new GraphPane( rect, "Title", "X-Axis", "Y-Axis" );
 			graphPane.AxisChange( this.CreateGraphics() );
-
 		}
 
 		/// <summary>
@@ -129,7 +128,7 @@ namespace ZedGraph
 		/// A PaintEventArgs object containing the Graphics specifications
 		/// for this Paint event.
 		/// </param>
-		private void ChangeSize(object sender, System.EventArgs e)
+		private void ChangeSize( object sender, System.EventArgs e )
 		{
 			this.graphPane.PaneRect = new RectangleF( 0, 0, this.Size.Width, this.Size.Height );
 			this.Invalidate();
