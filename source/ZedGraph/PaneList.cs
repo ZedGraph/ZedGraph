@@ -1,4 +1,23 @@
-﻿#region Using directives
+﻿//============================================================================
+//ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
+//Copyright (C) 2004  John Champion
+//
+//This library is free software; you can redistribute it and/or
+//modify it under the terms of the GNU Lesser General Public
+//License as published by the Free Software Foundation; either
+//version 2.1 of the License, or (at your option) any later version.
+//
+//This library is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public
+//License along with this library; if not, write to the Free Software
+//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//=============================================================================
+
+#region Using directives
 
 using System;
 using System.Collections;
@@ -15,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.1 $ $Date: 2005-01-22 06:20:51 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2005-02-02 04:52:05 $ </version>
 	[Serializable]
 	public class PaneList : CollectionPlus, ICloneable
 	{
@@ -179,15 +198,15 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Return the zero-based position index of the
-		/// <see cref="GraphPane"/> with the specified <see cref="GraphPane.Tag"/>.
+		/// <see cref="GraphPane"/> with the specified <see cref="PaneBase.Tag"/>.
 		/// </summary>
-		/// <remarks>In order for this method to work, the <see cref="GraphPane.Tag"/>
+		/// <remarks>In order for this method to work, the <see cref="PaneBase.Tag"/>
 		/// property must be of type <see cref="String"/>.</remarks>
 		/// <param name="tagStr">The <see cref="String"/> tag that is in the
-		/// <see cref="GraphPane.Tag"/> attribute of the item to be found.
+		/// <see cref="PaneBase.Tag"/> attribute of the item to be found.
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="GraphPane"/>,
-		/// or -1 if the <see cref="GraphPane.Tag"/> string is not in the list</returns>
+		/// or -1 if the <see cref="PaneBase.Tag"/> string is not in the list</returns>
 		/// <seealso cref="IList.IndexOf"/>
 		/// <seealso cref="IndexOf"/>
 		public int IndexOfTag( string tagStr )

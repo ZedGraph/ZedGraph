@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.17 $ $Date: 2005-01-22 06:20:49 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2005-02-02 04:52:04 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -98,7 +98,8 @@ namespace ZedGraph
 							isTicsBetweenLabels,
 							isReverse,
 							isOmitMag,
-							isUseTenPower;
+							isUseTenPower,
+							isPreventLabelOverlap;
 		/// <summary> Private field for the <see cref="Axis"/> type.  This can be one of the
 		/// types as defined in the <see cref="AxisType"/> enumeration.
 		/// Use the public property <see cref="Type"/>
@@ -830,6 +831,7 @@ namespace ZedGraph
 			this.isMinorOppositeTic = Default.IsMinorOppositeTic;
 			this.isTicsBetweenLabels = false;
 			this.isUseTenPower = true;
+			this.isPreventLabelOverlap = true;
 		
 			this.type = Default.Type;
 			this.title = "";
@@ -899,6 +901,7 @@ namespace ZedGraph
 			isMinorOppositeTic = rhs.IsMinorOppositeTic;
 			isTicsBetweenLabels = rhs.IsTicsBetweenLabels;
 			isUseTenPower = rhs.IsUseTenPower;
+			isPreventLabelOverlap = rhs.isPreventLabelOverlap;
 
 			isReverse = rhs.IsReverse;
 			isOmitMag = rhs.IsOmitMag;
@@ -991,6 +994,7 @@ namespace ZedGraph
 			isReverse = info.GetBoolean( "isReverse" );
 			isOmitMag = info.GetBoolean( "isOmitMag" );
 			isUseTenPower = info.GetBoolean( "isUseTenPower" );
+			isPreventLabelOverlap = info.GetBoolean( "isPreventLabelOverlap" );
 
 			type = (AxisType) info.GetValue( "type", typeof(AxisType) );
 			title = info.GetString( "title" );
@@ -1063,6 +1067,7 @@ namespace ZedGraph
 			info.AddValue( "isReverse", isReverse );
 			info.AddValue( "isOmitMag", isOmitMag );
 			info.AddValue( "isUseTenPower", isUseTenPower );
+			info.AddValue( "isPreventLabelOverlap", isPreventLabelOverlap );
 
 			info.AddValue( "type", type );
 			info.AddValue( "title", title );
@@ -1956,6 +1961,22 @@ namespace ZedGraph
 		{
 			get { return isUseTenPower; }
 			set { isUseTenPower = value; }
+		}
+		
+		/// <summary>
+		/// Gets or sets a <see cref="bool"/> value that determines if ZedGraph will check to
+		/// see if the <see cref="Axis"/> scale labels are close enough to overlap.  If so,
+		/// ZedGraph will adjust the step size to prevent overlap.
+		/// </summary>
+		/// <remarks>
+		/// The process of checking for overlap is done during the <see cref="GraphPane.AxisChange"/>
+		/// method call, and affects the selection of the major step size (<see cref="Step"/>).
+		/// </remarks>
+		/// <value> boolean value; true to check for overlap, false otherwise</value>
+		public bool IsPreventLabelOverlap
+		{
+			get { return isPreventLabelOverlap; }
+			set { isPreventLabelOverlap = value; }
 		}
 		
 		/// <summary>
@@ -3428,7 +3449,11 @@ namespace ZedGraph
 		
 			if ( this.stepAuto )
 			{
-				if ( this.TextLabels != null )
+				if ( ! this.isPreventLabelOverlap )
+				{
+					this.step = 1;
+				}
+				else if ( this.TextLabels != null )
 				{
 					// Calculate the maximum number of labels
 					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
@@ -3438,7 +3463,7 @@ namespace ZedGraph
 
 					// Use the lesser of the two step sizes
 					//if ( tmpStep < this.step )
-						this.step = tmpStep;
+					this.step = tmpStep;
 				}
 				else
 					this.step = (int) ( ( this.max - this.min - 1.0 ) / Default.MaxTextLabels ) + 1.0;
@@ -3576,15 +3601,18 @@ namespace ZedGraph
 					this.step = CalcStepSize( this.max - this.min,
 						(this is XAxis) ? Default.TargetXSteps : Default.TargetYSteps );
 
-					// Calculate the maximum number of labels
-					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
+					if ( this.isPreventLabelOverlap )
+					{
+						// Calculate the maximum number of labels
+						double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
-					// Calculate a step size based on the width of the labels
-					double tmpStep = Math.Ceiling( ( this.max - this.min ) / maxLabels );
+						// Calculate a step size based on the width of the labels
+						double tmpStep = Math.Ceiling( ( this.max - this.min ) / maxLabels );
 
-					// Use the greater of the two step sizes
-					if ( tmpStep > this.step )
-						this.step = tmpStep;
+						// Use the greater of the two step sizes
+						if ( tmpStep > this.step )
+							this.step = tmpStep;
+					}
 
 				}
 	
@@ -3729,11 +3757,14 @@ namespace ZedGraph
 				// Calculate the step size based on target steps
 				this.step = CalcDateStepSize( this.max - this.min, targetSteps );
 
-				// Calculate the maximum number of labels
-				double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
+				if ( this.isPreventLabelOverlap )
+				{
+					// Calculate the maximum number of labels
+					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
-				if ( maxLabels < this.CalcNumTics() )
-					this.step = CalcDateStepSize( this.max - this.min, maxLabels );
+					if ( maxLabels < this.CalcNumTics() )
+						this.step = CalcDateStepSize( this.max - this.min, maxLabels );
+				}
 			}
 			
 			// Calculate the scale minimum
@@ -3819,11 +3850,14 @@ namespace ZedGraph
 				// Calculate the step size based on target steps
 				this.step = CalcStepSize( this.max - this.min, targetSteps );
 
-				// Calculate the maximum number of labels
-				double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
+				if ( this.isPreventLabelOverlap )
+				{
+					// Calculate the maximum number of labels
+					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
-				if ( maxLabels < ( this.max - this.min ) / this.step )
-					this.step = CalcBoundedStepSize( this.max - this.min, maxLabels );
+					if ( maxLabels < ( this.max - this.min ) / this.step )
+						this.step = CalcBoundedStepSize( this.max - this.min, maxLabels );
+				}
 			}
 	
 			// Calculate the new step size

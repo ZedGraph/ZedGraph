@@ -30,11 +30,11 @@ namespace ZedGraph
 	/// attributes, colors, border and fill modes, font size, and angle information.
 	/// This class can render text with a variety of alignment options using the
 	/// <see cref="AlignH"/> and <see cref="AlignV"/> parameters in the
-	/// <see cref="Draw"/> method.
+	/// <see cref="Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-02-01 06:03:07 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-02-02 04:52:04 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -621,18 +621,21 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
+		/// <param name="layoutArea">The limiting area (<see cref="SizeF"/>) into which the text
+		/// must fit.  The actual rectangle may be smaller than this, but the text will be wrapped
+		/// to accomodate the area.</param>
 		public void Draw( Graphics g, bool isPenWidthScaled, string text, float x,
 			float y, AlignH alignH, AlignV alignV,
-			float scaleFactor, SizeF layoutSize )
+			float scaleFactor, SizeF layoutArea )
 		{
 			// make sure the font size is properly scaled
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
 			
 			SizeF sizeF;
-			if ( layoutSize.IsEmpty )
+			if ( layoutArea.IsEmpty )
 				sizeF = g.MeasureString( text, this.font );
 			else
-				sizeF = g.MeasureString( text, this.font, layoutSize );
+				sizeF = g.MeasureString( text, this.font, layoutArea );
 
 			// Save the old transform matrix for later restoration
 			Matrix matrix = g.Transform;
@@ -888,6 +891,9 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
+		/// <param name="layoutArea">The limiting area (<see cref="SizeF"/>) into which the text
+		/// must fit.  The actual rectangle may be smaller than this, but the text will be wrapped
+		/// to accomodate the area.</param>
 		/// <returns>true if the point lies within the bounding box, false otherwise</returns>
 		public bool PointInBox( PointF pt, Graphics g, string text, float x,
 			float y, AlignH alignH, AlignV alignV,
@@ -1182,6 +1188,9 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
+		/// <param name="layoutArea">The limiting area (<see cref="SizeF"/>) into which the text
+		/// must fit.  The actual rectangle may be smaller than this, but the text will be wrapped
+		/// to accomodate the area.</param>
 		/// <returns>The scaled text dimensions, in pixels, in the form of
 		/// a <see cref="SizeF"/> struct</returns>
 		public SizeF MeasureString( Graphics g, string text, float scaleFactor, SizeF layoutArea )
@@ -1195,7 +1204,7 @@ namespace ZedGraph
 		/// of the bounding box for the specified text string, based on the scaled font size.
 		/// </summary>
 		/// <remarks>
-		/// This routine differs from <see cref="MeasureString"/> in that it takes into
+		/// This routine differs from <see cref="MeasureString(Graphics,string,float)"/> in that it takes into
 		/// account the rotation angle of the font, and gives the dimensions of the
 		/// bounding box that encloses the text at the specified angle.
 		/// </remarks>
@@ -1223,7 +1232,7 @@ namespace ZedGraph
 		/// of the bounding box for the specified text string, based on the scaled font size.
 		/// </summary>
 		/// <remarks>
-		/// This routine differs from <see cref="MeasureString"/> in that it takes into
+		/// This routine differs from <see cref="MeasureString(Graphics,string,float)"/> in that it takes into
 		/// account the rotation angle of the font, and gives the dimensions of the
 		/// bounding box that encloses the text at the specified angle.
 		/// </remarks>
@@ -1239,6 +1248,9 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
+		/// <param name="layoutArea">The limiting area (<see cref="SizeF"/>) into which the text
+		/// must fit.  The actual rectangle may be smaller than this, but the text will be wrapped
+		/// to accomodate the area.</param>
 		/// <returns>The scaled text dimensions, in pixels, in the form of
 		/// a <see cref="SizeF"/> struct</returns>
 		public SizeF BoundingBox( Graphics g, string text, float scaleFactor, SizeF layoutArea )
@@ -1267,7 +1279,7 @@ namespace ZedGraph
 		/// This special case method will show the specified string as a power of 10,
 		/// superscripted and downsized according to the
 		/// <see cref="Default.SuperSize"/> and <see cref="Default.SuperShift"/>.
-		/// This routine differs from <see cref="MeasureString"/> in that it takes into
+		/// This routine differs from <see cref="MeasureString(Graphics,string,float)"/> in that it takes into
 		/// account the rotation angle of the font, and gives the dimensions of the
 		/// bounding box that encloses the text at the specified angle.
 		/// </remarks>

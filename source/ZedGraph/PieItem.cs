@@ -1,6 +1,6 @@
 //============================================================================
-//ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//PieItem Class
+//Copyright (C) 2005  Bob Kaye
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,7 @@
 //License along with this library; if not, write to the Free Software
 //Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //=============================================================================
+
 using System;
 using System.Drawing;
 using System.Collections;
@@ -30,7 +31,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.11 $ $Date: 2005-02-01 06:03:07 $ </version>
+	/// <version> $Revision: 1.12 $ $Date: 2005-02-02 04:52:05 $ </version>
 	[Serializable]
 	public class PieItem : ZedGraph.CurveItem , ICloneable, ISerializable
 	{
@@ -97,7 +98,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// The formatted string for this <see cref="PieItem"/>'s label.  Formatting is
-		/// done based on  the <see cref="PieItemLabelType"/>.
+		/// done based on  the <see cref="PieLabelType"/>.
 		/// </summary>
 		private string labelStr ;
 		/// <summary>
@@ -677,8 +678,6 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="rect">The rectangle used for rendering this <see cref="PieItem"/>
 		/// </param>
-		/// <param name="slice">A reference to this <see cref="PieItem"/>
-		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
@@ -774,7 +773,7 @@ namespace ZedGraph
 		/// 
 		/// </summary>
 		/// <param name="rect"></param>
-		/// <param name="slice"></param>
+		/// <param name="midAngle"></param>
 		private void CalculateLinePoints( RectangleF rect, double midAngle )
 		{
 			//get the point where the explosion radius intersects the this arc

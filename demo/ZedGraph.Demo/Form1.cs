@@ -333,6 +333,15 @@ namespace ZedGraph.Demo
 			myPane.GraphItemList.Add( imageItem );
 			*/
 
+			float limit = 95F;
+			float arrowWidth = (float) myPane.XAxis.Max;
+			ArrowItem newArrow = new ZedGraph.ArrowItem( Color.Blue, 5.0F, 0F, limit, arrowWidth, limit );
+			//newArrow.Location.Width = arrowWidth;
+			newArrow.ZOrder = ZedGraph.ZOrder.E_BehindAxis;
+			//newArrow.IsArrowHead = false;
+			newArrow.Size = 10;
+			myPane.GraphItemList.Add( newArrow );
+
 #endif
 
 #if true	//Pie Chart Example   

@@ -1,6 +1,6 @@
 ﻿//============================================================================
-//PointPairList Class
-//Copyright (C) 2004  Jerry Vos
+//ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
+//Copyright (C) 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// Only Remove(), Move(), IndexOf(), etc. methods are included.</remarks>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.3 $ $Date: 2005-01-21 05:05:06 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2005-02-02 04:52:04 $ </version>
 	[Serializable]
 	public class CollectionPlus : CollectionBase
 	{

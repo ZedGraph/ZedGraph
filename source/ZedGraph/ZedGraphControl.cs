@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-01-27 05:50:34 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-02-02 04:52:05 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 	#region Fields
@@ -182,7 +182,7 @@ namespace ZedGraph
 		/// <see cref="ZedGraphControl"/> actually uses a <see cref="MasterPane"/> object
 		/// to hold a list of <see cref="GraphPane"/> objects.  This property really only
 		/// accesses the first <see cref="GraphPane"/> in the list.  If there is more
-		/// than one <see cref="GraphPane"/>, use the <see cref="MasterPane.this"/>
+		/// than one <see cref="GraphPane"/>, use the <see cref="MasterPane"/>
 		/// indexer property to access any of the <see cref="GraphPane"/> objects.</remarks>
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public GraphPane GraphPane

@@ -230,19 +230,19 @@ namespace ZedGraph
 		/// <summary>
 		/// Position the text so that its left edge is aligned with the
 		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw"/> method.
+		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Left,
 		/// <summary>
 		/// Position the text so that its center is aligned (horizontally) with the
 		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw"/> method.
+		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Center,
 		/// <summary>
 		/// Position the text so that its right edge is aligned with the
 		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw"/> method.
+		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Right
 	};
@@ -281,25 +281,25 @@ namespace ZedGraph
 	/// Enumeration type for the different vertical text alignment options
 	/// </summary>
 	/// specified X,Y location.  Used by the
-	/// <see cref="FontSpec.Draw"/> method.
+	/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
 	public enum AlignV
 	{
 		/// <summary>
 		/// Position the text so that its top edge is aligned with the
 		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw"/> method.
+		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Top,
 		/// <summary>
 		/// Position the text so that its center is aligned (vertically) with the
 		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw"/> method.
+		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Center,
 		/// <summary>
 		/// Position the text so that its bottom edge is aligned with the
 		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw"/> method.
+		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Bottom
 	};

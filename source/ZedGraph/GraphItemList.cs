@@ -29,9 +29,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-01-27 05:50:34 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-02-02 04:52:05 $ </version>
 	[Serializable]
-	public class GraphItemList : CollectionBase, ICloneable
+	public class GraphItemList : CollectionPlus, ICloneable
 	{
 	#region Constructors
 		/// <summary>
@@ -77,6 +77,25 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Indexer to access the specified <see cref="GraphItem"/> object by its <see cref="GraphItem.Tag"/>.
+		/// Note that the <see cref="GraphItem.Tag"/> must be a <see cref="String"/> type for this method
+		/// to work.
+		/// </summary>
+		/// <param name="tag">The <see cref="String"/> type tag to search for.</param>
+		/// <value>A <see cref="GraphItem"/> object reference.</value>
+		public GraphItem this[ string tag ]  
+		{
+			get
+			{
+				int index = IndexOfTag( tag );
+				if ( index >= 0 )
+					return( (GraphItem) List[index]  );
+				else
+					return null;
+			}
+		}
+
+		/// <summary>
 		/// Add a <see cref="GraphItem"/> object to the <see cref="GraphItemList"/>
 		/// collection at the end of the list.
 		/// </summary>
@@ -100,6 +119,32 @@ namespace ZedGraph
 		public void Insert( int index, GraphItem item )
 		{
 			List.Insert( index, item );
+		}
+
+		/// <summary>
+		/// Return the zero-based position index of the
+		/// <see cref="GraphItem"/> with the specified <see cref="GraphItem.Tag"/>.
+		/// </summary>
+		/// <remarks>In order for this method to work, the <see cref="GraphItem.Tag"/>
+		/// property must be of type <see cref="String"/>.</remarks>
+		/// <param name="label">The <see cref="String"/> label that is in the
+		/// <see cref="GraphItem.Tag"/> attribute of the item to be found.
+		/// </param>
+		/// <returns>The zero-based index of the specified <see cref="GraphItem"/>,
+		/// or -1 if the <see cref="GraphItem"/> is not in the list</returns>
+		/// <seealso cref="IList.IndexOf"/>
+		public int IndexOfTag( string label )
+		{
+			int index = 0;
+			foreach ( GraphItem p in this )
+			{
+				if ( p.Tag is string &&
+							String.Compare( (string) p.Tag, label, true ) == 0 )
+					return index;
+				index++;
+			}
+
+			return -1;
 		}
 
 		/// <summary>

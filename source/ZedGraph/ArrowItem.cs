@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-01-27 05:50:33 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-02-02 04:52:04 $ </version>
 	[Serializable]
 	public class ArrowItem : GraphItem, ICloneable, ISerializable
 	{
@@ -195,7 +195,7 @@ namespace ZedGraph
 		/// <see cref="ArrowItem"/>.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		public ArrowItem( float x1, float y1, float x2, float y2 ) :
-				this( Default.Color, Default.Size, x1, y1, x2-x1, y2-y1 )
+				this( Default.Color, Default.Size, x1, y1, x2, y2 )
 		{
 		}
 
@@ -315,12 +315,12 @@ namespace ZedGraph
 				// get a pen according to this arrow properties
 				Pen pen = new Pen( this.color, pane.ScaledPenWidth( penWidth,scaleFactor) );
 				
-				// Draw the line segment for this arrow
-				g.DrawLine( pen, 0, 0, length-scaledSize*0.75F, 0 );
-
 				// Only show the arrowhead if required
 				if ( this.isArrowHead )
 				{
+					// Draw the line segment for this arrow
+					g.DrawLine( pen, 0, 0, length-scaledSize+1, 0 );
+
 					SolidBrush brush = new SolidBrush( this.color );
 					
 					// Create a polygon representing the arrowhead based on the scaled
@@ -338,6 +338,8 @@ namespace ZedGraph
 					// render the arrowhead
 					g.FillPolygon( brush, polyPt );
 				}
+				else
+					g.DrawLine( pen, 0, 0, length, 0 );
 				
 				// Restore the transform matrix back to its original state
 				g.Transform = transform;

@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-01-27 05:50:34 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-02-02 04:52:05 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -303,7 +303,7 @@ namespace ZedGraph
 		/// the Julian Calendar was used.  However, Prior to March 1, 4 AD the treatment of leap years was
 		/// inconsistent, and prior to 45 BC the Julian Calendar did not exist.  The <see cref="XDate"/>
 		/// struct projects only Gregorian dates backwards and does not deal with Julian calendar dates at all.  The
-		/// <see cref="ToString"/> method will just append a "(BC)" notation to the end of any dates
+		/// <see cref="ToString(double,string)"/> method will just append a "(BC)" notation to the end of any dates
 		/// prior to 1 AD, since the <see cref="DateTime"/> struct throws an exception when formatting earlier dates.
 		/// </remarks>
 		/// <param name="year">
@@ -976,7 +976,7 @@ namespace ZedGraph
 		/// Format this XDate value using the default format string (see cref="DefaultFormatStr"/>).
 		/// </summary>
 		/// <remarks>
-		/// The formatting is done using the <see cref="DateTime"/> <see cref="DateTime.ToString"/>
+		/// The formatting is done using the <see cref="DateTime"/> <see cref="DateTime.ToString(string)"/>
 		/// method in order to provide full localization capability.  The DateTime struct is limited to
 		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate"/> and <see cref="DateTime"/>
 		/// are projected Gregorian calendar dates.  Since the Gregorian calendar was not implemented
@@ -999,7 +999,7 @@ namespace ZedGraph
 		/// Format this XDate value using the default format string (see cref="DefaultFormatStr"/>).
 		/// </summary>
 		/// <remarks>
-		/// The formatting is done using the <see cref="DateTime"/> <see cref="DateTime.ToString"/>
+		/// The formatting is done using the <see cref="DateTime"/> <see cref="DateTime.ToString(String)"/>
 		/// method in order to provide full localization capability.  The DateTime struct is limited to
 		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate"/> and <see cref="DateTime"/>
 		/// are projected Gregorian calendar dates.  Since the Gregorian calendar was not implemented
@@ -1020,7 +1020,7 @@ namespace ZedGraph
 		/// string is specified according to the <see cref="DateTime"/> class.
 		/// </summary>
 		/// <remarks>
-		/// The formatting is done using the <see cref="DateTime"/> <see cref="DateTime.ToString"/>
+		/// The formatting is done using the <see cref="DateTime"/> <see cref="DateTime.ToString(String)"/>
 		/// method in order to provide full localization capability.  The DateTime struct is limited to
 		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate"/> and <see cref="DateTime"/>
 		/// are projected Gregorian calendar dates.  Since the Gregorian calendar was not implemented
@@ -1045,7 +1045,7 @@ namespace ZedGraph
 		/// string is specified according to the <see cref="DateTime"/> class.
 		/// </summary>
 		/// <remarks>
-		/// The formatting is done using the <see cref="DateTime"/> <see cref="DateTime.ToString"/>
+		/// The formatting is done using the <see cref="DateTime"/> <see cref="DateTime.ToString(String)"/>
 		/// method in order to provide full localization capability.  The DateTime struct is limited to
 		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate"/> and <see cref="DateTime"/>
 		/// are projected Gregorian calendar dates.  Since the Gregorian calendar was not implemented
