@@ -31,8 +31,8 @@ namespace ZedGraph
 	/// attributes are accessible via the <see cref="ZedGraphControl.GraphPane"/>
 	/// property.
 	/// </summary>
-	/// <author> John Champion revised by Jerry Vos</author>
-	/// <version> $Revision: 1.7 $ $Date: 2004-08-26 05:49:11 $ </version>
+	/// <author> John Champion revised by Jerry Vos </author>
+	/// <version> $Revision: 1.8 $ $Date: 2004-08-30 17:39:02 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		/// <summary>
@@ -43,7 +43,8 @@ namespace ZedGraph
 		/// <summary>
 		/// This private field contains the instance for the GraphPane object of this control.
 		/// You can access the GraphPane object through the public property
-		/// <see cref="ZedGraphControl.GraphPane"/>.
+		/// <see cref="ZedGraphControl.GraphPane"/>. This is nulled when this Control is
+		/// disposed.
 		/// </summary>
 		private GraphPane graphPane;
 
@@ -69,8 +70,15 @@ namespace ZedGraph
 		/// </summary>
 		public GraphPane GraphPane
 		{
-			get { return graphPane; }
-			set { graphPane = value; }
+			get
+			{ 
+				lock( this ) return graphPane;
+			}
+			
+			set
+			{ 
+				lock( this ) graphPane = value; 
+			}
 		}
 
 		/// <summary>
@@ -80,12 +88,17 @@ namespace ZedGraph
 		/// disposed, false otherwise</param>
 		protected override void Dispose( bool disposing )
 		{
-			if( disposing )
+			lock( this )
 			{
-				if( components != null )
-					components.Dispose();
+				if( disposing )
+				{
+					if( components != null )
+						components.Dispose();
+				}
+				base.Dispose( disposing );
+
+				graphPane = null;
 			}
-			base.Dispose( disposing );
 		}
 
 		#region Component Designer generated code
@@ -113,9 +126,15 @@ namespace ZedGraph
 		/// </param>
 		protected override void OnPaint( PaintEventArgs e )
 		{
-			base.OnPaint( e );
+			lock( this )
+			{
+				if ( BeenDisposed )
+					return;
 
-			this.graphPane.Draw( e.Graphics );
+				base.OnPaint( e );
+
+				this.graphPane.Draw( e.Graphics );
+			}
 		}
 
 		/// <summary>
@@ -130,24 +149,72 @@ namespace ZedGraph
 		/// </param>
 		private void ChangeSize( object sender, System.EventArgs e )
 		{
-			this.graphPane.PaneRect = new RectangleF( 0, 0, this.Size.Width, this.Size.Height );
-			this.Invalidate();
+			lock( this )
+			{
+				if ( BeenDisposed )
+					return;
+
+				this.graphPane.PaneRect = new RectangleF( 0, 0, this.Size.Width, this.Size.Height );
+				this.Invalidate();
+			}
+		}
+
+		/// <summary>This performs an axis change command on the graphPane.  
+		/// This is the same as 
+		/// <c>ZedGraphControl.GraphPane.AxisChange( ZedGraphControl.CreateGraphics() )</c>.
+		/// <seealso cref="GraphPane.AxisChange( Graphics )"/>.
+		/// </summary>
+		public virtual void AxisChange()
+		{
+			lock( this )
+			{
+				if ( BeenDisposed )
+					return;
+
+				Graphics g = this.CreateGraphics();
+
+				graphPane.AxisChange( g );
+
+				g.Dispose();
+			}
 		}
 
 		/// <summary>
 		/// Gets the graph pane's current image.
 		/// <seealso cref="Bitmap"/>
 		/// </summary>
+		/// <exception cref="ZedGraphException">
+		/// When the control has been disposed before this call.
+		/// </exception>
 		public Bitmap Image
 		{
 			get
 			{
-				Bitmap bitmap = new Bitmap( this.Width, this.Height );
-				Graphics bitmapGraphics = Graphics.FromImage( bitmap );
-				this.graphPane.Draw( bitmapGraphics );
-				bitmapGraphics.Dispose();
+				lock( this )
+				{
+					if ( BeenDisposed )
+						throw new ZedGraphException( "The control has been disposed" );
 
-				return bitmap;
+					Bitmap bitmap = new Bitmap( this.Width, this.Height );
+					Graphics bitmapGraphics = Graphics.FromImage( bitmap );
+					this.graphPane.Draw( bitmapGraphics );
+					bitmapGraphics.Dispose();
+
+					return bitmap;
+				}
+			}
+		}
+
+		/// <summary>
+		/// This checks if the control has been disposed.  This is synonymous with
+		/// the graph pane having been nulled or disposed.  Therefore this is the
+		/// same as <c>ZedGraphControl.GraphPane == null</c>.
+		/// </summary>
+		public bool BeenDisposed
+		{
+			get
+			{ 
+				lock( this ) return graphPane == null; 
 			}
 		}
 	}
