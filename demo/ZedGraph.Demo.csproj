@@ -104,6 +104,11 @@
         <Files>
             <Include>
                 <File
+                    RelPath = "ZedGraph.Demo\AboutForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph.Demo\AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -211,6 +216,16 @@
                     RelPath = "ZedGraph.Demo\InitialSampleDemo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph.Demo\LicenseForm.cs"
+                    SubType = "Form"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph.Demo\LicenseForm.resx"
+                    DependentUpon = "LicenseForm.cs"
+                    BuildAction = "EmbeddedResource"
                 />
                 <File
                     RelPath = "ZedGraph.Demo\LineGraphBandDemo.cs"

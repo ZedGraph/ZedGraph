@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+7-March-2005 (by Vos)
+  Updated the demo tab forms and some minor updates to the other demo code (commenting and such)
+
 4-Mar-2005
   Update Demos
   Change BarValueHandler to ValueHandler

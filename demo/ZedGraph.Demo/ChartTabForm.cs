@@ -1,6 +1,6 @@
 //============================================================================
-//ZedGraph Class Library - A Flexible Charting Library for .Net
-//Copyright (C) 2005 John Champion and Jerry Vos
+//ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
+//Copyright (C) 2005 Jerry Vos
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -28,9 +28,14 @@ namespace ZedGraph.Demo
 	/// A form that displays a tree, a location for displaying charts, and
 	/// a text box for describing the currently showing chart.
 	/// </summary>
+	/// 
+	/// <author> Jerry Vos </author>
+	/// <version> $Revision: 1.6 $ $Date: 2005-03-08 05:48:09 $ </version>
 	public abstract class ChartTabForm : System.Windows.Forms.Form
 	{
 		private const string TitlePrefix = "ZedGraph Demos : ";
+
+		
 		private System.Windows.Forms.TreeView demoTree;
 
 		/// <summary>
@@ -45,16 +50,32 @@ namespace ZedGraph.Demo
 		private System.Windows.Forms.Splitter splitterVert;
 		private System.Windows.Forms.GroupBox chartDescGB;
 		private System.Windows.Forms.RichTextBox descriptionBox;
-		private System.Windows.Forms.TabPage tabAbout;
-		private System.Windows.Forms.TabPage tabLicense;
-		private System.Windows.Forms.RichTextBox richTextBox1;
-		private System.Windows.Forms.LinkLabel linkLabel1;
-		private System.Windows.Forms.LinkLabel linkLabel2;
-		private System.Windows.Forms.RichTextBox richTextBox2;
-		private System.Windows.Forms.RichTextBox richTextBox3;
+		private System.Windows.Forms.MainMenu mainMenu1;
+		private System.Windows.Forms.MenuItem mnuFile;
+		private System.Windows.Forms.MenuItem mnuFExit;
+		private System.Windows.Forms.MenuItem mnuHelp;
+		private System.Windows.Forms.MenuItem mnuHWeb;
+		private System.Windows.Forms.MenuItem mnuHAbout;
+		private System.Windows.Forms.MenuItem mnuHWSF;
+		private System.Windows.Forms.MenuItem mnuHWCP;
+		private System.Windows.Forms.MenuItem menuItem1;
 
 		private Hashtable demos;
 
+	#region Abstract methods
+		/// <summary>
+		/// Loads the demos into the form.<p/>
+		/// 
+		/// Is basically going to be
+		/// <code>
+		/// loadDemo(new XXXDemo());
+		/// loadDemo(new YYYDemo());
+		/// </code>
+		/// </summary>
+		protected abstract void loadDemos();
+	#endregion
+
+	#region Constructor
 		public ChartTabForm()
 		{
 			//
@@ -68,21 +89,10 @@ namespace ZedGraph.Demo
 			buildPrimaryTree();
 
 			loadDemos();
-
-			Init("Combo Demo");
 		}
+	#endregion
 
-		/// <summary>
-		/// Loads the demos into the form.<p/>
-		/// 
-		/// Is basically going to be
-		/// <code>
-		/// loadDemo(new XXXDemo());
-		/// loadDemo(new YYYDemo());
-		/// </code>
-		/// </summary>
-		protected abstract void loadDemos();
-
+	#region Tree building methods
 		/// <summary>
 		/// Builds the top level of the tree, one level for each
 		/// DemoType.
@@ -106,7 +116,9 @@ namespace ZedGraph.Demo
 
 			this.demoTree.Nodes.Add(currNode);
 		}
+	#endregion
 
+	#region Demo loading related methods
 		/// <summary>
 		/// Loads a demo into the correct place in the tree.
 		/// </summary>
@@ -130,6 +142,7 @@ namespace ZedGraph.Demo
 					typeNode.Nodes.Add(demosNode);
 				}
 			}
+			// store the demo based on it's title
 			demos[demo.Title] = demo;
 		}
 
@@ -170,7 +183,7 @@ namespace ZedGraph.Demo
 			this.tabDemo.Controls.Clear();
 			this.tabDemo.Controls.Add(demo.ZedGraphControl);
 
-			demo.ZedGraphControl.Width	= tabDemo.Width;
+			demo.ZedGraphControl.Width		= tabDemo.Width;
 			demo.ZedGraphControl.Height	= tabDemo.Height;
 
 			demo.ZedGraphControl.Anchor	= AnchorStyles.Left | AnchorStyles.Top  
@@ -180,11 +193,15 @@ namespace ZedGraph.Demo
 
 			descriptionBox.Text	= demo.Description;
 
+			// tell the control to rescale itself
 			demo.ZedGraphControl.AxisChange();
 
+			// redraw the entire form
 			this.Invalidate();
 		}
+	#endregion
 
+	#region General control methods
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
@@ -199,8 +216,9 @@ namespace ZedGraph.Demo
 			}
 			base.Dispose( disposing );
 		}
+	#endregion
 
-		#region Windows Form Designer generated code
+	#region Windows Form Designer generated code
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
@@ -214,17 +232,17 @@ namespace ZedGraph.Demo
 			this.splitterVert = new System.Windows.Forms.Splitter();
 			this.displayTC = new System.Windows.Forms.TabControl();
 			this.tabDemo = new System.Windows.Forms.TabPage();
-			this.tabAbout = new System.Windows.Forms.TabPage();
-			this.richTextBox2 = new System.Windows.Forms.RichTextBox();
-			this.linkLabel2 = new System.Windows.Forms.LinkLabel();
-			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
-			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-			this.tabLicense = new System.Windows.Forms.TabPage();
-			this.richTextBox3 = new System.Windows.Forms.RichTextBox();
+			this.mainMenu1 = new System.Windows.Forms.MainMenu();
+			this.mnuFile = new System.Windows.Forms.MenuItem();
+			this.mnuFExit = new System.Windows.Forms.MenuItem();
+			this.mnuHelp = new System.Windows.Forms.MenuItem();
+			this.mnuHWeb = new System.Windows.Forms.MenuItem();
+			this.mnuHWSF = new System.Windows.Forms.MenuItem();
+			this.mnuHWCP = new System.Windows.Forms.MenuItem();
+			this.mnuHAbout = new System.Windows.Forms.MenuItem();
+			this.menuItem1 = new System.Windows.Forms.MenuItem();
 			this.chartDescGB.SuspendLayout();
 			this.displayTC.SuspendLayout();
-			this.tabAbout.SuspendLayout();
-			this.tabLicense.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// demoTree
@@ -280,8 +298,6 @@ namespace ZedGraph.Demo
 			// displayTC
 			// 
 			this.displayTC.Controls.Add(this.tabDemo);
-			this.displayTC.Controls.Add(this.tabAbout);
-			this.displayTC.Controls.Add(this.tabLicense);
 			this.displayTC.Dock = System.Windows.Forms.DockStyle.Top;
 			this.displayTC.Location = new System.Drawing.Point(3, 16);
 			this.displayTC.Name = "displayTC";
@@ -298,83 +314,66 @@ namespace ZedGraph.Demo
 			this.tabDemo.TabIndex = 0;
 			this.tabDemo.Text = "Demo";
 			// 
-			// tabAbout
+			// mainMenu1
 			// 
-			this.tabAbout.Controls.Add(this.richTextBox2);
-			this.tabAbout.Controls.Add(this.linkLabel2);
-			this.tabAbout.Controls.Add(this.linkLabel1);
-			this.tabAbout.Controls.Add(this.richTextBox1);
-			this.tabAbout.Location = new System.Drawing.Point(4, 22);
-			this.tabAbout.Name = "tabAbout";
-			this.tabAbout.Size = new System.Drawing.Size(479, 318);
-			this.tabAbout.TabIndex = 1;
-			this.tabAbout.Text = "About";
+			this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																					  this.mnuFile,
+																					  this.mnuHelp});
 			// 
-			// richTextBox2
+			// mnuFile
 			// 
-			this.richTextBox2.Location = new System.Drawing.Point(56, 160);
-			this.richTextBox2.Name = "richTextBox2";
-			this.richTextBox2.ReadOnly = true;
-			this.richTextBox2.Size = new System.Drawing.Size(336, 112);
-			this.richTextBox2.TabIndex = 3;
-			this.richTextBox2.Text = "ZedGraph was written and is maintained by the following individuals:\n\nJohn Champi" +
-				"on\nJerry Vos\nBob Kaye\nDarren Martz\n\nZedGraph is Copyright © 2003-2005 by the aut" +
-				"hors.";
+			this.mnuFile.Index = 0;
+			this.mnuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																					this.mnuFExit});
+			this.mnuFile.Text = "&File";
 			// 
-			// linkLabel2
+			// mnuFExit
 			// 
-			this.linkLabel2.Location = new System.Drawing.Point(88, 128);
-			this.linkLabel2.Name = "linkLabel2";
-			this.linkLabel2.Size = new System.Drawing.Size(248, 23);
-			this.linkLabel2.TabIndex = 2;
-			this.linkLabel2.TabStop = true;
-			this.linkLabel2.Text = "http://codeproject.com/csharp/zedgraph.asp";
+			this.mnuFExit.Index = 0;
+			this.mnuFExit.Text = "E&xit";
+			this.mnuFExit.Click += new System.EventHandler(this.mnuFExit_Click);
 			// 
-			// linkLabel1
+			// mnuHelp
 			// 
-			this.linkLabel1.Location = new System.Drawing.Point(88, 104);
-			this.linkLabel1.Name = "linkLabel1";
-			this.linkLabel1.Size = new System.Drawing.Size(168, 23);
-			this.linkLabel1.TabIndex = 1;
-			this.linkLabel1.TabStop = true;
-			this.linkLabel1.Text = "http://zedgraph.sourceforge.net";
+			this.mnuHelp.Index = 1;
+			this.mnuHelp.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																					this.mnuHWeb,
+																					this.mnuHAbout,
+																					this.menuItem1});
+			this.mnuHelp.Text = "&Help";
 			// 
-			// richTextBox1
+			// mnuHWeb
 			// 
-			this.richTextBox1.Location = new System.Drawing.Point(56, 24);
-			this.richTextBox1.Name = "richTextBox1";
-			this.richTextBox1.ReadOnly = true;
-			this.richTextBox1.Size = new System.Drawing.Size(336, 72);
-			this.richTextBox1.TabIndex = 0;
-			this.richTextBox1.Text = "ZedGraph is an open-source charting library, released under the LGPL license (see" +
-				" the next tab).  Latest updates, samples, forums, and downloads are available on" +
-				" SourceForge.  An extensive tutorial article is available on CodeProject as well" +
-				".";
+			this.mnuHWeb.Index = 0;
+			this.mnuHWeb.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+																					this.mnuHWSF,
+																					this.mnuHWCP});
+			this.mnuHWeb.Text = "ZedGraph &Webpage";
+			this.mnuHWeb.Click += new System.EventHandler(this.mnuHWeb_Click);
 			// 
-			// tabLicense
+			// mnuHWSF
 			// 
-			this.tabLicense.Controls.Add(this.richTextBox3);
-			this.tabLicense.Location = new System.Drawing.Point(4, 22);
-			this.tabLicense.Name = "tabLicense";
-			this.tabLicense.Size = new System.Drawing.Size(479, 318);
-			this.tabLicense.TabIndex = 2;
-			this.tabLicense.Text = "License";
+			this.mnuHWSF.Index = 0;
+			this.mnuHWSF.Text = "SourceForge";
+			this.mnuHWSF.Click += new System.EventHandler(this.mnuHWSF_Click);
 			// 
-			// richTextBox3
+			// mnuHWCP
 			// 
-			this.richTextBox3.Location = new System.Drawing.Point(24, 16);
-			this.richTextBox3.Name = "richTextBox3";
-			this.richTextBox3.ReadOnly = true;
-			this.richTextBox3.Size = new System.Drawing.Size(424, 272);
-			this.richTextBox3.TabIndex = 0;
-			this.richTextBox3.Text = @"ZedGraph Class Library - A Flexible Charting Library for .net
-Copyright (C) 2003  John Champion, Jerry Vos, Bob Kaye, Darren Martz
-
-This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version. 
-
-This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
-
-You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA";
+			this.mnuHWCP.Index = 1;
+			this.mnuHWCP.Text = "CodeProject";
+			this.mnuHWCP.Click += new System.EventHandler(this.mnuHWCP_Click);
+			// 
+			// mnuHAbout
+			// 
+			this.mnuHAbout.Index = 1;
+			this.mnuHAbout.Text = "&About";
+			this.mnuHAbout.Click += new System.EventHandler(this.mnuHAbout_Click);
+			// 
+			// menuItem1
+			// 
+			this.menuItem1.Index = 2;
+			this.menuItem1.Text = "&License";
+			this.menuItem1.Click += new System.EventHandler(this.menuItem1_Click);
 			// 
 			// ChartTabForm
 			// 
@@ -383,17 +382,17 @@ You should have received a copy of the GNU Lesser General Public License along w
 			this.Controls.Add(this.chartDescGB);
 			this.Controls.Add(this.splitterHoriz);
 			this.Controls.Add(this.demoTree);
+			this.Menu = this.mainMenu1;
 			this.Name = "ChartTabForm";
 			this.Text = "DemoForm";
 			this.chartDescGB.ResumeLayout(false);
 			this.displayTC.ResumeLayout(false);
-			this.tabAbout.ResumeLayout(false);
-			this.tabLicense.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
-		#endregion
+	#endregion
 
+	#region Control related methods (event handlers and so forth)
 		/// <summary>
 		/// Loads a new demo up based on which demo's name was clicked on in the
 		/// tree.
@@ -408,5 +407,46 @@ You should have received a copy of the GNU Lesser General Public License along w
 			if (demos[e.Node.Text] != null)
 				Init(e.Node.Text);
 		}
+
+		/// <summary>
+		/// Ends the application.
+		/// </summary>
+		/// <param name="sender">Ignored.</param>
+		/// <param name="e">Ignored.</param>
+		private void mnuFExit_Click(object sender, System.EventArgs e)
+		{
+			System.Environment.Exit(0);
+		}
+
+		private void mnuHAbout_Click(object sender, System.EventArgs e)
+		{
+			Form frmAbout = new AboutForm();
+			
+			frmAbout.ShowDialog(this);
+		}
+
+		private void menuItem1_Click(object sender, System.EventArgs e)
+		{
+			Form frmLicense = new LicenseForm();
+
+			frmLicense.ShowDialog(this);
+		}
+
+		private void mnuHWeb_Click(object sender, System.EventArgs e)
+		{
+			// open up the sourceforge site
+			mnuHWSF_Click(sender, e);
+		}
+
+		private void mnuHWSF_Click(object sender, System.EventArgs e)
+		{
+			// TODO: open up the ZedGraph web page
+		}
+
+		private void mnuHWCP_Click(object sender, System.EventArgs e)
+		{
+			// TODO: open up the ZedGraph web page
+		}
+	#endregion
 	}
 }
