@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-03-08 07:28:43 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-03-08 07:33:28 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -692,13 +692,7 @@ namespace ZedGraph
 							curY = pane.Y2Axis.Transform( i, y );
 						else
 							curY = pane.YAxis.Transform( i, y );
-							
-						if ( curX < -10000 || curX > 10000 ||
-								curY < -10000 || curY > 10000 )
-						{
-							int j = 6;
-						}
-
+						
 						// Add the pixel value pair into the points array
 						// Two points are added for step type curves
 						// ignore step-type setting for smooth curves
