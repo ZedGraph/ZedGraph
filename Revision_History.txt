@@ -1,5 +1,12 @@
 ZedGraph Class Library Revision History
 
+15-Jan-2005 (by Champion)
+  Fix GraphItem Copy Constructor
+  Fix +1 pixel error on ZedGraphControl bitmap
+  Fix StringAlignment bug for FontSpec
+  Fix maxlabels bug
+  Fix ordinal transform bug for lines/symbols
+
 10-Dec-2004 (by Champion)
   Add Z-Order control to GraphItems
   Add CollectionPlus base class with Move(), etc. methods
