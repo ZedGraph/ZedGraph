@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.5 $ $Date: 2004-09-19 06:12:07 $ </version>
+	/// <version> $Revision: 2.6 $ $Date: 2004-09-20 05:10:22 $ </version>
 	public class Bar
 	{
 	#region Fields
@@ -386,11 +386,12 @@ namespace ZedGraph
 		/// <param name="iCluster">The cluster number for the bar of interest.  This is the ordinal
 		/// position of the current point.  That is, if a particular <see cref="CurveItem"/> has
 		/// 10 points, then a value of 3 would indicate the 4th point in the data array.</param>
+		/// <param name="val">The actual independent axis value for the bar of interest.</param>
 		/// <param name="iOrdinal">The ordinal position of the <see cref="CurveItem"/> of interest.
 		/// That is, the first bar series is 0, the second is 1, etc.  Note that this applies only
 		/// to the bars.  If a graph includes both bars and lines, then count only the bars.</param>
 		/// <returns>A screen pixel X position of the center of the bar of interest.</returns>
-		public static float CalcBarCenter( GraphPane pane, float barWidth, int iCluster, int iOrdinal )
+		public static float CalcBarCenter( GraphPane pane, float barWidth, int iCluster, double val, int iOrdinal )
 		{
 			float clusterWidth = pane.GetClusterWidth();
 			float clusterGap = pane.MinClusterGap * barWidth;
@@ -399,7 +400,7 @@ namespace ZedGraph
 			if ( pane.IsBarStacked )
 				iOrdinal = 0;
 
-			return pane.BarBaseAxis().Transform( iCluster, (double) iCluster + 1.0 )
+			return pane.BarBaseAxis().Transform( iCluster, val )
 						- clusterWidth / 2.0F + clusterGap / 2.0F +
 						iOrdinal * ( barWidth + barGap ) + 0.5F * barWidth;
 		}

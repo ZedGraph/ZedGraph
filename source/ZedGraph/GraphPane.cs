@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.5 $ $Date: 2004-09-19 06:12:07 $ </version>
+	/// <version> $Revision: 2.6 $ $Date: 2004-09-20 05:10:22 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1710,11 +1710,12 @@ namespace ZedGraph
 
 							if ( curve.IsBar )
 							{
-								float centerPix = Bar.CalcBarCenter( this, barWidth, iPt, iBar );
-								double centerVal = BarBaseAxis().ReverseTransform( centerPix );
 
 								if ( this.barBase == BarBase.X )
 								{
+									float centerPix = Bar.CalcBarCenter( this, barWidth, iPt, xVal, iBar );
+									double centerVal = BarBaseAxis().ReverseTransform( centerPix );
+									
 									if (	( x < centerVal - barWidthUserHalf ) ||
 											( x > centerVal + barWidthUserHalf ) ||
 											( yVal >=0 && ( y < 0 || y > yVal ) ) ||
@@ -1723,6 +1724,9 @@ namespace ZedGraph
 								}
 								else
 								{
+									float centerPix = Bar.CalcBarCenter( this, barWidth, iPt, yVal, iBar );
+									double centerVal = BarBaseAxis().ReverseTransform( centerPix );
+									
 									if (	( y < centerVal - barWidthUserHalf ) ||
 											( y > centerVal + barWidthUserHalf ) ||
 											( xVal >=0 && ( x < 0 || x > xVal ) ) ||
