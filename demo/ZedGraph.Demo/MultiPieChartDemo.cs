@@ -33,6 +33,8 @@ namespace ZedGraph.Demo
 			"Multi-Pie Chart Demo", DemoType.General, DemoType.Special )
 		{
 			MasterPane myMaster = base.MasterPane;
+			// Remove the default GraphPane that comes with ZedGraphControl
+			myMaster.PaneList.Clear();
 
 			// Set the master pane title
 			myMaster.Title = "Multiple Pie Charts on a MasterPane";
@@ -56,9 +58,6 @@ namespace ZedGraph.Demo
 			Color [] colors = { Color.Red, Color.Blue, Color.Green, Color.Yellow } ;
 			double [] displacement = { .0,.0,.0,.0 } ;
 			string [] labels = { "East", "West", "Central", "Canada" } ;
-			
-			// Remove the default GraphPane that comes with ZedGraphControl
-			myMaster.PaneList.Remove( 0 );
 			
 			// Create some GraphPanes
 			for ( int x=0; x<3; x++ )
@@ -93,10 +92,9 @@ namespace ZedGraph.Demo
 			
 			// Tell ZedGraph to auto layout the graphpanes
 			Graphics g = this.ZedGraphControl.CreateGraphics();
-			myMaster.AutoPaneLayout( g, PaneLayout.ExplicitRow12 );			
+			myMaster.AutoPaneLayout( g, PaneLayout.ExplicitRow12 );
+			myMaster.AxisChange( g );
 			g.Dispose();
-
-			base.ZedGraphControl.AxisChange();
 
 		}
 	}

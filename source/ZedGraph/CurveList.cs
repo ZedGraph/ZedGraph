@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.22 $ $Date: 2005-03-05 07:24:09 $ </version>
+	/// <version> $Revision: 3.23 $ $Date: 2005-03-11 17:24:37 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -324,6 +324,7 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
+		/// <seealso cref="GraphPane.IsBoundedRanges"/>
 		public void GetRange( 	out double xMinVal, out double xMaxVal,
 								out double yMinVal, out double yMaxVal,
 								out double y2MinVal, out double y2MaxVal,
@@ -337,8 +338,29 @@ namespace ZedGraph
 			// initialize the values to outrageous ones to start
 			xMinVal = yMinVal = y2MinVal = tXMinVal = tYMinVal = Double.MaxValue;
 			xMaxVal = yMaxVal = y2MaxVal = tXMaxVal = tYMaxVal = Double.MinValue;
-			maxPts = 1;			
-						
+			maxPts = 1;
+			
+			// The bounds provide a means to subset the data.  For example, if all the axes are set to
+			// autoscale, then the full range of data are used.  But, if the XAxis.Min and XAxis.Max values
+			// are manually set, then the Y data range will reflect the Y values within the bounds of
+			// XAxis.Min and XAxis.Max.
+			double	xLBound = System.Double.MinValue;
+			double	xUBound = System.Double.MaxValue;
+			double	yLBound = System.Double.MinValue;
+			double	yUBound = System.Double.MaxValue;
+			double	y2LBound = System.Double.MinValue;
+			double	y2UBound = System.Double.MaxValue;
+
+			if ( pane.IsBoundedRanges )
+			{
+				xLBound = pane.XAxis.MinAuto ? xLBound : pane.XAxis.Min;
+				xUBound = pane.XAxis.MaxAuto ? xUBound : pane.XAxis.Max;
+				yLBound = pane.YAxis.MinAuto ? yLBound : pane.YAxis.Min;
+				yUBound = pane.YAxis.MaxAuto ? yUBound : pane.YAxis.Max;
+				y2LBound = pane.Y2Axis.MinAuto ? y2LBound : pane.Y2Axis.Min;
+				y2UBound = pane.Y2Axis.MaxAuto ? y2UBound : pane.Y2Axis.Max;
+			}
+
 			// Loop over each curve in the collection and examine the data ranges
 			foreach( CurveItem curve in this )
 			{
@@ -347,14 +369,22 @@ namespace ZedGraph
 				if ( ( ( curve is BarItem ) && ( pane.BarType == BarType.Stack || pane.BarType == BarType.PercentStack ) ) ||
 					( ( curve is LineItem ) && pane.LineType == LineType.Stack ) )
 				{
-					GetStackRange( pane, curve, ref tXMinVal, ref tYMinVal, ref tXMaxVal, ref tYMaxVal );
+					GetStackRange( pane, curve, ref tXMinVal, ref tYMinVal,
+									ref tXMaxVal, ref tYMaxVal,
+									xLBound, xUBound,
+									curve.IsY2Axis ? y2LBound : yLBound,
+									curve.IsY2Axis ? y2UBound : yUBound );
 				}
 				else
 				{
 					// Call the GetRange() member function for the current
 					// curve to get the min and max values
 					curve.GetRange( ref tXMinVal, ref tXMaxVal,
-						ref tYMinVal, ref tYMaxVal, bIgnoreInitial, pane );
+									ref tYMinVal, ref tYMaxVal, bIgnoreInitial,
+									xLBound, xUBound,
+									curve.IsY2Axis ? y2LBound : yLBound,
+									curve.IsY2Axis ? y2UBound : yUBound,
+									pane );
 				}
    				
 				// isYOrd is true if the Y axis is an ordinal type
@@ -493,27 +523,62 @@ namespace ZedGraph
 		/// <param name="tYMinVal">The minimum Y value so far</param>
 		/// <param name="tXMaxVal">The maximum X value so far</param>
 		/// <param name="tYMaxVal">The maximum Y value so far</param>
+		/// <param name="xLBound">The lower bound of allowable data for the X values.  This
+		/// value allows you to subset the data values.  If the X range is bounded, then
+		/// the resulting range for Y will reflect the Y values for the points within the X
+		/// bounds.  Use <see cref="System.Double.MinValue"/> to have no bound.</param>
+		/// <param name="xUBound">The upper bound of allowable data for the X values.  This
+		/// value allows you to subset the data values.  If the X range is bounded, then
+		/// the resulting range for Y will reflect the Y values for the points within the X
+		/// bounds.  Use <see cref="System.Double.MaxValue"/> to have no bound.</param>
+		/// <param name="yLBound">The lower bound of allowable data for the Y values.  This
+		/// value allows you to subset the data values.  If the Y range is bounded, then
+		/// the resulting range for X will reflect the X values for the points within the Y
+		/// bounds.  Use <see cref="System.Double.MinValue"/> to have no bound.</param>
+		/// <param name="yUBound">The upper bound of allowable data for the Y values.  This
+		/// value allows you to subset the data values.  If the Y range is bounded, then
+		/// the resulting range for X will reflect the X values for the points within the Y
+		/// bounds.  Use <see cref="System.Double.MaxValue"/> to have no bound.</param>
+		/// <seealso cref="GraphPane.IsBoundedRanges"/>
 		private void GetStackRange( GraphPane pane, CurveItem curve, ref double tXMinVal,
-									ref double tYMinVal, ref double tXMaxVal, ref double tYMaxVal )
+									ref double tYMinVal, ref double tXMaxVal, ref double tYMaxVal,
+									double xLBound, double xUBound,
+									double yLBound, double yUBound )
 		{
 			ValueHandler valueHandler = new ValueHandler( pane, false );
-			double x, y, lowVal;
+			bool isXBase = curve.BaseAxis(pane) is XAxis;
+
+			double lowVal, baseVal, hiVal;
 
 			for ( int i=0; i<curve.Points.Count; i++ )
 			{
-				valueHandler.GetValues( curve, i, out x, out lowVal, out y );
+				valueHandler.GetValues( curve, i, out baseVal, out lowVal, out hiVal );
+				double x = isXBase ? baseVal : hiVal;
+				double y = isXBase ? hiVal : baseVal;
+
 				if ( x < tXMinVal )
 					tXMinVal = x;
 				if ( x > tXMaxVal )
 					tXMaxVal = x;
-				if ( lowVal < tYMinVal )
-					tYMinVal = lowVal;
 				if ( y < tYMinVal )
 					tYMinVal = y;
-				if ( lowVal > tYMaxVal )
-					tYMaxVal = lowVal;
 				if ( y > tYMaxVal )
 					tYMaxVal = y;
+
+				if ( !isXBase )
+				{
+					if ( lowVal < tXMinVal )
+						tXMinVal = lowVal;
+					if ( lowVal > tXMaxVal )
+						tXMaxVal = lowVal;
+				}
+				else
+				{
+					if ( lowVal < tYMinVal )
+						tYMinVal = lowVal;
+					if ( lowVal > tYMaxVal )
+						tYMaxVal = lowVal;
+				}
 			}
 		}
 

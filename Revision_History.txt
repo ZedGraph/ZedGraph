@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+10-Mar-2005 (by Champion)
+  Added horizontal stacked bar demo
+  Fix bug in CurveList.GetStackRange() (failed to account for BarBase)
+  Added GraphPane.IsBoundedRanges & modifed GetRange() cascade to include bounds
+  
 7-Mar-2005 (by Champion)
   Add comments to demo code, more cleanup
   

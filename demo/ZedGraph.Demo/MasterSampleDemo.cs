@@ -36,7 +36,7 @@ namespace ZedGraph.Demo
 			MasterPane myMaster = base.MasterPane;
 
 			// Remove the default GraphPane that comes with ZedGraphControl
-			myMaster.PaneList.Remove(0);
+			myMaster.PaneList.Clear();
 
 			// Set the masterpane title
 			myMaster.Title = "ZedGraph MasterPane Example";
@@ -120,7 +120,6 @@ namespace ZedGraph.Demo
 			// Tell ZedGraph to auto layout the new GraphPanes
 			myMaster.AutoPaneLayout( g, PaneLayout.ExplicitRow32 );
 			myMaster.AxisChange( g );
-
 			g.Dispose();
 		}
 	}

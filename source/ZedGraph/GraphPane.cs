@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.38 $ $Date: 2005-03-05 07:24:10 $ </version>
+	/// <version> $Revision: 3.39 $ $Date: 2005-03-11 17:24:38 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -108,6 +108,14 @@ namespace ZedGraph
 		/// Use the public property <see cref="IsIgnoreMissing"/> to access
 		/// this value. </summary>
 		private bool		isIgnoreMissing;
+		/// <summary> private field that determines if the auto-scaled axis ranges will subset the
+		/// data points based on any manually set scale range values.  Use the public property
+		/// <see cref="IsBoundedRanges"/> to access this value.</summary>
+		/// <remarks>The bounds provide a means to subset the data.  For example, if all the axes are set to
+		/// autoscale, then the full range of data are used.  But, if the XAxis.Min and XAxis.Max values
+		/// are manually set, then the Y data range will reflect the Y values within the bounds of
+		/// XAxis.Min and XAxis.Max.</remarks>
+		private bool		isBoundedRanges;
 		/// <summary>Private field that determines the size of the gap between bar clusters
 		/// for bar charts.  This gap is expressed as a fraction of the bar size (1.0 means
 		/// leave a 1-barwidth gap between clusters).
@@ -211,6 +219,13 @@ namespace ZedGraph
 			/// until the first non-zero Y value, false otherwise.
 			/// </summary>
 			public static bool IsIgnoreInitial = false;
+			/// <summary>
+			/// The default settings for the <see cref="Axis"/> scale bounded ranges option
+			/// (<see cref="GraphPane.IsBoundedRanges"/> property).
+			/// true to have the auto-scale-range code subset the data according to any
+			/// manually set scale values, false otherwise.
+			/// </summary>
+			public static bool IsBoundedRanges = true;
 
 			/// <summary>
 			/// The default dimension gap between clusters of bars on a
@@ -319,6 +334,18 @@ namespace ZedGraph
 		{
 			get { return isIgnoreInitial; }
 			set { isIgnoreInitial = value; }
+		}
+		/// <summary> Gets or sets a boolean value that determines if the auto-scaled axis ranges will
+		/// subset the data points based on any manually set scale range values.</summary>
+		/// <remarks>The bounds provide a means to subset the data.  For example, if all the axes are set to
+		/// autoscale, then the full range of data are used.  But, if the XAxis.Min and XAxis.Max values
+		/// are manually set, then the Y data range will reflect the Y values within the bounds of
+		/// XAxis.Min and XAxis.Max.  Set to true to subset the data, or false to always include
+		/// all data points when calculating scale ranges.</remarks>
+		public bool IsBoundedRanges
+		{
+			get { return isBoundedRanges; }
+			set { isBoundedRanges = value; }
 		}
 		/// <summary>Gets or sets a value that determines whether or not initial
 		/// <see cref="PointPair.Missing"/> values will cause the line segments of
@@ -513,6 +540,7 @@ namespace ZedGraph
 			zoomStack = new ZoomStateStack();
 								
 			this.isIgnoreInitial = Default.IsIgnoreInitial;
+			this.isBoundedRanges = Default.IsBoundedRanges;
 			
 			this.isAxisRectAuto = true;
 			this.axisBorder = new Border( Default.IsAxisBorderVisible, Default.AxisBorderColor, Default.AxisBorderPenWidth );
@@ -540,6 +568,7 @@ namespace ZedGraph
 			zoomStack = new ZoomStateStack( rhs.zoomStack );
 			
 			this.isIgnoreInitial = rhs.IsIgnoreInitial;
+			this.isBoundedRanges = rhs.isBoundedRanges;
 			
 			this.isAxisRectAuto = rhs.IsAxisRectAuto;
 			this.axisBorder = (Border) rhs.AxisBorder.Clone();
@@ -593,6 +622,7 @@ namespace ZedGraph
 			axisBorder = (Border) info.GetValue( "axisBorder", typeof(Border) );
 
 			isIgnoreInitial = info.GetBoolean( "isIgnoreInitial" );
+			isBoundedRanges = info.GetBoolean( "isBoundedRanges" );
 			isIgnoreMissing = info.GetBoolean( "isIgnoreMissing" );
 
 			minClusterGap = info.GetSingle( "minClusterGap" );
@@ -627,6 +657,7 @@ namespace ZedGraph
 			info.AddValue( "axisBorder", axisBorder );
 
 			info.AddValue( "isIgnoreInitial", isIgnoreInitial );
+			info.AddValue( "isBoundedRanges", isBoundedRanges );
 			info.AddValue( "isIgnoreMissing", isIgnoreMissing );
 
 			info.AddValue( "minClusterGap", minClusterGap );
@@ -669,6 +700,7 @@ namespace ZedGraph
 			this.curveList.GetRange( out xMin, out xMax, out yMin,
 				out yMax, out y2Min, out y2Max,
 				this.isIgnoreInitial, this );
+
 			// Determine the scale factor
 			float	scaleFactor = this.CalcScaleFactor();
 

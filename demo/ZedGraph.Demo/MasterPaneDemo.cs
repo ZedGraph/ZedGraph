@@ -34,6 +34,9 @@ namespace ZedGraph.Demo
 		{
 			MasterPane myMaster = base.MasterPane;
 
+			// Remove the default pane that comes with the ZedGraphControl.MasterPane
+			myMaster.PaneList.Clear();
+			
 			// Set the master pane title
 			myMaster.Title = "MasterPane Test";
 			myMaster.IsShowTitle = true;
@@ -80,9 +83,6 @@ namespace ZedGraph.Demo
 			text.ZOrder = ZOrder.A_InFront;
 			myMaster.GraphItemList.Add( text );
 
-			// Remove the default pane that comes with the ZedGraphControl.MasterPane
-			myMaster.PaneList.Remove( 0 );
-			
 			for ( int j=0; j<6; j++ )
 			{
 				// Create a new GraphPane
@@ -116,9 +116,8 @@ namespace ZedGraph.Demo
 			// Tell ZedGraph to auto layout all the panes
 			Graphics g = base.ZedGraphControl.CreateGraphics();
 			myMaster.AutoPaneLayout( g, PaneLayout.SquareColPreferred );
+			myMaster.AxisChange( g );
 			g.Dispose();
-
-			base.ZedGraphControl.AxisChange();
 
 		}
 	}

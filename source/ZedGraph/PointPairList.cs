@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.19 $ $Date: 2005-02-10 05:06:46 $ </version>
+	/// <version> $Revision: 3.20 $ $Date: 2005-03-11 17:24:38 $ </version>
 	[Serializable]
 	public class PointPairList : CollectionPlus, ICloneable
 	{
@@ -674,11 +674,30 @@ namespace ZedGraph
 		/// the dependent axis</param>
 		/// <param name="isXIndependent">true if X is the independent axis, false
 		/// if Y or Y2 is the independent axis.</param>
+		/// <param name="xLBound">The lower bound of allowable data for the X values.  This
+		/// value allows you to subset the data values.  If the X range is bounded, then
+		/// the resulting range for Y will reflect the Y values for the points within the X
+		/// bounds.  Use <see cref="System.Double.MinValue"/> to have no bound.</param>
+		/// <param name="xUBound">The upper bound of allowable data for the X values.  This
+		/// value allows you to subset the data values.  If the X range is bounded, then
+		/// the resulting range for Y will reflect the Y values for the points within the X
+		/// bounds.  Use <see cref="System.Double.MaxValue"/> to have no bound.</param>
+		/// <param name="yLBound">The lower bound of allowable data for the Y values.  This
+		/// value allows you to subset the data values.  If the Y range is bounded, then
+		/// the resulting range for X will reflect the X values for the points within the Y
+		/// bounds.  Use <see cref="System.Double.MinValue"/> to have no bound.</param>
+		/// <param name="yUBound">The upper bound of allowable data for the Y values.  This
+		/// value allows you to subset the data values.  If the Y range is bounded, then
+		/// the resulting range for X will reflect the X values for the points within the Y
+		/// bounds.  Use <see cref="System.Double.MaxValue"/> to have no bound.</param>
+		/// <seealso cref="GraphPane.IsBoundedRanges"/>
 		virtual public void GetRange(	ref double xMin, ref double xMax,
 										ref double yMin, ref double yMax,
 										bool ignoreInitial,
 										bool isZIncluded,
-										bool isXIndependent )
+										bool isXIndependent,
+										double xLBound, double xUBound,
+										double yLBound, double yUBound )
 		{
 			// initialize the values to outrageous ones to start
 			xMin = yMin = Double.MaxValue;
@@ -690,6 +709,11 @@ namespace ZedGraph
 				double curX = point.X;
 				double curY = point.Y;
 				double curZ = point.Z;
+
+				bool outOfBounds = curX < xLBound || curX > xUBound ||
+									curY < yLBound || curY > yUBound ||
+									( isZIncluded && isXIndependent && ( curZ < yLBound || curZ > yUBound ) ) ||
+									( isZIncluded && !isXIndependent && ( curZ < xLBound || curZ > xUBound ) );
 				
 				// ignoreInitial becomes false at the first non-zero
 				// Y value
@@ -697,7 +721,7 @@ namespace ZedGraph
 						curY != PointPair.Missing )
 					ignoreInitial = false;
 				
-				if ( 	!ignoreInitial &&
+				if ( 	!ignoreInitial && !outOfBounds &&
 						curX != PointPair.Missing &&
 						curY != PointPair.Missing )
 				{

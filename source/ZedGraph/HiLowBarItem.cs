@@ -54,7 +54,7 @@ namespace ZedGraph
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-03-11 17:24:38 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -273,13 +273,33 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
+		/// <param name="xLBound">The lower bound of allowable data for the X values.  This
+		/// value allows you to subset the data values.  If the X range is bounded, then
+		/// the resulting range for Y will reflect the Y values for the points within the X
+		/// bounds.  Use <see cref="System.Double.MinValue"/> to have no bound.</param>
+		/// <param name="xUBound">The upper bound of allowable data for the X values.  This
+		/// value allows you to subset the data values.  If the X range is bounded, then
+		/// the resulting range for Y will reflect the Y values for the points within the X
+		/// bounds.  Use <see cref="System.Double.MaxValue"/> to have no bound.</param>
+		/// <param name="yLBound">The lower bound of allowable data for the Y values.  This
+		/// value allows you to subset the data values.  If the Y range is bounded, then
+		/// the resulting range for X will reflect the X values for the points within the Y
+		/// bounds.  Use <see cref="System.Double.MinValue"/> to have no bound.</param>
+		/// <param name="yUBound">The upper bound of allowable data for the Y values.  This
+		/// value allows you to subset the data values.  If the Y range is bounded, then
+		/// the resulting range for X will reflect the X values for the points within the Y
+		/// bounds.  Use <see cref="System.Double.MaxValue"/> to have no bound.</param>
+		/// <seealso cref="GraphPane.IsBoundedRanges"/>
 		override public void GetRange( 	ref double xMin, ref double xMax,
 										ref double yMin, ref double yMax,
-										bool bIgnoreInitial, GraphPane pane )
+										bool bIgnoreInitial,
+										double xLBound, double xUBound,
+										double yLBound, double yUBound, GraphPane pane )
 		{
 			// Call a default GetRange() that does not include Z data points
 			this.points.GetRange( ref xMin, ref xMax, ref yMin, ref yMax, bIgnoreInitial,
-									true, barBase == BarBase.X );
+									true, barBase == BarBase.X,
+									xLBound, xUBound, yLBound, yUBound );
 		}
 
 	#endregion

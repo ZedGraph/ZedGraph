@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-03-05 07:24:10 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-03-11 17:24:38 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -169,9 +169,9 @@ namespace ZedGraph
 	#region Constructors
 
 		/// <summary>
-		/// Default constructor for the class.  Leaves the <see cref="PaneBase.PaneRect"/> empty.
+		/// Default constructor for the class.  Sets the <see cref="PaneBase.PaneRect"/> to (0, 0, 500, 375).
 		/// </summary>
-		public MasterPane() : this( "", new RectangleF( 0, 0, 0, 0 ) )
+		public MasterPane() : this( "", new RectangleF( 0, 0, 500, 375 ) )
 		{
 		}
 		
