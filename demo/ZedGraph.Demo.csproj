@@ -109,6 +109,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph.Demo\AboutForm.resx"
+                    DependentUpon = "AboutForm.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "ZedGraph.Demo\AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -30,7 +30,7 @@ namespace ZedGraph.Demo
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos </author>
-	/// <version> $Revision: 1.6 $ $Date: 2005-03-08 05:48:09 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2005-03-08 05:55:16 $ </version>
 	public abstract class ChartTabForm : System.Windows.Forms.Form
 	{
 		private const string TitlePrefix = "ZedGraph Demos : ";
@@ -440,12 +440,12 @@ namespace ZedGraph.Demo
 
 		private void mnuHWSF_Click(object sender, System.EventArgs e)
 		{
-			// TODO: open up the ZedGraph web page
+			Help.ShowHelp(this, "http://zedgraph.sourceforge.net");
 		}
 
 		private void mnuHWCP_Click(object sender, System.EventArgs e)
 		{
-			// TODO: open up the ZedGraph web page
+			Help.ShowHelp(this, "http://codeproject.com/csharp/zedgraph.asp");
 		}
 	#endregion
 	}
