@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.39 $ $Date: 2005-03-11 17:24:38 $ </version>
+	/// <version> $Revision: 3.40 $ $Date: 2005-03-21 06:15:46 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -721,14 +721,14 @@ namespace ZedGraph
 			// then let the scales re-calculate to make sure that the assumption was ok
 			if ( this.isAxisRectAuto )
 			{
-				if ( AxisRect.Width == 0 || AxisRect.Height == 0 )
-				{
+				//if ( AxisRect.Width == 0 || AxisRect.Height == 0 )
+				//{
 					// Pick new scales based on the range
 					this.xAxis.PickScale( xMin, xMax, this, g, scaleFactor );
 					this.yAxis.PickScale( yMin, yMax, this, g, scaleFactor );
 					this.y2Axis.PickScale( y2Min, y2Max, this, g, scaleFactor );
 	  
-				}
+				//}
 
 				this.axisRect = CalcAxisRect( g );
 				this.pieRect = PieItem.CalcPieRect( g, this, scaleFactor, this.axisRect );

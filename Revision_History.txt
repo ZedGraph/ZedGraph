@@ -1,5 +1,11 @@
 ZedGraph Class Library Revision History
 
+20-Mar-2005 (by Champion)
+  Add protection on CalcNumTics -- no more than 500 tics
+  AxisChange() -- Always call pickscale before CalcAxisRect() to make sure scales are reasonable
+
+19-Mar-2005 RELEASE VERSION 4.0
+
 17-Mar-2005 (by Champion)
   Added Save As... to context menu
   Fix up Web Demos

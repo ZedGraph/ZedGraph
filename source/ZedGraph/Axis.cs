@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.26 $ $Date: 2005-03-16 03:15:10 $ </version>
+	/// <version> $Revision: 3.27 $ $Date: 2005-03-21 06:15:45 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -2693,18 +2693,19 @@ namespace ZedGraph
 		/// </returns>
 		private int CalcNumTics()
 		{
+			int nTics = 1;
+			
 			if ( this.IsText ) // text labels (ordinal scale)
 			{
 				// If no array of labels is available, just assume 10 labels so we don't blow up.
 				if ( this.TextLabels == null )
-					return 10;
+					nTics = 10;
 				else
-					return this.TextLabels.Length;
+					nTics = this.TextLabels.Length;
 			}
 			else if ( this.IsDate )  // Date-Time scale
 			{
 				int year1, year2, month1, month2, day1, day2, hour1, hour2, minute1, minute2, second1, second2;
-				int nTics;
 
 				XDate.XLDateToCalendarDate( this.min, out year1, out month1, out day1,
 											out hour1, out minute1, out second1 );
@@ -2733,23 +2734,25 @@ namespace ZedGraph
 						nTics = (int) ( ( this.max - this.min ) * XDate.SecondsPerDay + 1.0 );
 						break;
 				}
-		
-				if ( nTics < 1 )
-					nTics = 1;
-
-				return nTics;
-			}
+					}
 			else if ( this.IsLog )  // log scale
 			{
 				//iStart = (int) ( Math.Ceiling( SafeLog( this.min ) - 1.0e-12 ) );
 				//iEnd = (int) ( Math.Floor( SafeLog( this.max ) + 1.0e-12 ) );
-				return  (int) ( Math.Floor( SafeLog( this.max ) + 1.0e-12 ) ) -
+				nTics = (int) ( Math.Floor( SafeLog( this.max ) + 1.0e-12 ) ) -
 						(int) ( Math.Ceiling( SafeLog( this.min ) - 1.0e-12 ) ) + 1;
 			}
 			else  // regular linear or ordinal scale
 			{
-				return (int) (( this.max - this.min ) / this.step + 0.01) + 1;
+				nTics = (int) (( this.max - this.min ) / this.step + 0.01) + 1;
 			}
+			
+			if ( nTics < 1 )
+				nTics = 1;
+			else if ( nTics > 500 )
+				nTics = 500;
+
+			return nTics;
 		}
 
 		/// <summary>
