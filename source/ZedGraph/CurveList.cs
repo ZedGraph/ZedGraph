@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-09 17:13:42 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-13 04:52:53 $ </version>
 	public class CurveList : CollectionBase, ICloneable
 	{
 	#region Properties
@@ -76,18 +76,6 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// The Copy Constructor
-		/// </summary>
-		/// <param name="rhs">The XAxis object from which to copy</param>
-		public CurveList( CurveList rhs )
-		{
-			this.maxPts = rhs.maxPts;
-
-			foreach ( CurveItem item in rhs )
-				this.Add( new CurveItem( item ) );
-		}
-		
-		/// <summary>
 		/// Determine if there is any data in any of the <see cref="CurveItem"/>
 		/// objects for this graph.  This method does not verify valid data, it
 		/// only checks to see if <see cref="CurveItem.NPts"/> > 0.
@@ -112,6 +100,28 @@ namespace ZedGraph
 		public object Clone()
 		{ 
 			return new CurveList( this ); 
+		}
+		
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The XAxis object from which to copy</param>
+		public CurveList( CurveList rhs )
+		{
+			this.maxPts = rhs.maxPts;
+
+			foreach ( CurveItem item in rhs )
+			{
+				this.Add( (CurveItem) item.Clone() );
+				/*
+				if ( item is LineItem )
+					this.Add( new LineItem( (LineItem) item ) );
+				else if ( item is BarItem )
+					this.Add( new BarItem( (BarItem) item ) );
+				else
+					throw new System.Exception( "Bad CurveItem child type" );
+				*/
+			}
 		}
 		
 		/// <summary>

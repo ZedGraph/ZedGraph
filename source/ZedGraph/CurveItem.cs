@@ -32,66 +32,41 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-02 07:00:42 $ </version>
-	public class CurveItem : ICloneable
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-13 04:52:53 $ </version>
+	abstract public class CurveItem
 	{
 	
-	#region Fields
+	#region Fields		
 		/// <summary>
-		/// Private field that stores a reference to the <see cref="ZedGraph.Symbol"/>
-		/// class defined for this <see cref="CurveItem"/>.  Use the public
-		/// property <see cref="Symbol"/> to access this value.
-		/// </summary>
-		private Symbol		symbol;
-		/// <summary>
-		/// Private field that stores a reference to the <see cref="ZedGraph.Line"/>
-		/// class defined for this <see cref="CurveItem"/>.  Use the public
-		/// property <see cref="Line"/> to access this value.
-		/// </summary>
-		private Line		line;
-		/// <summary>
-		/// Private field that stores a reference to the <see cref="ZedGraph.Bar"/>
-		/// class defined for this <see cref="CurveItem"/>.  Use the public
-		/// property <see cref="Bar"/> to access this value.
-		/// </summary>
-		private Bar			bar;
-		
-		/// <summary>
-		/// Private field that stores a legend label string for this
+		/// protected field that stores a legend label string for this
 		/// <see cref="CurveItem"/>.  Use the public
 		/// property <see cref="Label"/> to access this value.
 		/// </summary>
-		private string		label;
+		protected string	label;
 		/// <summary>
-		/// Private field that stores the boolean value that determines whether this
+		/// protected field that stores the boolean value that determines whether this
 		/// <see cref="CurveItem"/> is on the left Y axis or the right Y axis (Y2).
 		/// Use the public property <see cref="IsY2Axis"/> to access this value.
 		/// </summary>
-		private bool		isY2Axis;
+		protected bool		isY2Axis;
 		/// <summary>
-		/// Private field that stores the boolean value that determines whether this
+		/// protected field that stores the boolean value that determines whether this
 		/// <see cref="CurveItem"/> is visible on the graph.
 		/// Use the public property <see cref="IsVisible"/> to access this value.
 		/// Note that this value turns the curve display on or off, but it does not
 		/// affect the display of the legend entry.  To hide the legend entry, you
 		/// have to set <see cref="IsLegendLabelVisible"/> to false.
 		/// </summary>
-		private bool		isVisible;
+		protected bool		isVisible;
 		/// <summary>
-		/// Private field that stores the boolean value that determines whether the label
+		/// protected field that stores the boolean value that determines whether the label
 		/// for this <see cref="CurveItem"/> is visible in the legend.
 		/// Use the public property <see cref="IsLegendLabelVisible"/> to access this value.
 		/// Note that this value turns the legend entry display on or off, but it does not
 		/// affect the display of the curve on the graph.  To hide the curve, you
 		/// have to set <see cref="IsVisible"/> to false.
 		/// </summary>
-		private bool		isLegendLabelVisible;
-		/// <summary>
-		/// Private field that stores the boolean value that determines whether this
-		/// <see cref="CurveItem"/> is a bar chart or a line graph.
-		/// Use the public property <see cref="IsBar"/> to access this value.
-		/// </summary>
-		private bool		isBar;
+		protected bool		isLegendLabelVisible;
 		
 		/// <summary>
 		/// The <see cref="PointPairList"/> of independent value pairs that
@@ -103,13 +78,15 @@ namespace ZedGraph
 		/// and are not plotted.  The curve will have a break at these points
 		/// to indicate the values are missing.
 		/// </summary>
-		private PointPairList points;
+		protected PointPairList points;
 	#endregion
 	
 	#region Constructors
 		/// <summary>
-		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label and the
-		/// x and y data values as double arrays.  All other properties of the curve are
+		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label, the
+		/// x and y data values as a <see cref="PointPairList"/>, the curve
+		/// type (Bar or Line/Symbol), the <see cref="Color"/>, and the
+		/// <see cref="SymbolType"/>. Other properties of the curve are
 		/// defaulted to the values in the <see cref="GraphPane.Default"/> class.
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
@@ -117,114 +94,32 @@ namespace ZedGraph
 		/// the independent (X axis) values for this curve</param>
 		/// <param name="y">An array of double precision values that define
 		/// the dependent (Y axis) values for this curve</param>
-		public CurveItem( string label, double[] x, double[] y )
-			: this( label, x, y, false, Color.Empty, SymbolType.Default )
+		public CurveItem( string label, double[] x, double[] y ) :
+				this( label, new PointPairList( x, y ) )
 		{
 		}
-								
+		
 		/// <summary>
-		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label and the
-		/// x and y data values as a <see cref="PointPairList"/>.  All other properties of the curve are
+		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label, the
+		/// x and y data values as a <see cref="PointPairList"/>, the curve
+		/// type (Bar or Line/Symbol), the <see cref="Color"/>, and the
+		/// <see cref="SymbolType"/>. Other properties of the curve are
 		/// defaulted to the values in the <see cref="GraphPane.Default"/> class.
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
 		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		public CurveItem( string label, PointPairList points )
-			: this( label, points, false, Color.Empty, SymbolType.Default )
 		{
-		}
-								
-		/// <summary>
-		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label, the
-		/// x and y data values as a <see cref="PointPairList"/>, the curve
-		/// type (Bar or Line/Symbol), the <see cref="Color"/>, and the
-		/// <see cref="SymbolType"/>. Other properties of the curve are
-		/// defaulted to the values in the <see cref="GraphPane.Default"/> class.
-		/// </summary>
-		/// <param name="label">A string label (legend entry) for this curve</param>
-		/// <param name="x">An array of double precision values that define
-		/// the independent (X axis) values for this curve</param>
-		/// <param name="y">An array of double precision values that define
-		/// the dependent (Y axis) values for this curve</param>
-		/// <param name="isBar">A boolean value, true to indicate that this curve
-		/// is a bar type, false to indicate a line/symbol type.
-		/// </param>
-		/// <param name="color">A <see cref="Color"/> value that will be applied to
-		/// the <see cref="Line"/>, <see cref="Symbol"/>, and <see cref="Bar"/>
-		/// see cref="Bar.FillColor"/>.
-		/// </param>
-		/// <param name="symbol">
-		/// A <see cref="SymbolType"/> enum value indicating the symbol shape that
-		/// will be used for this <see cref="CurveItem"/>.
-		/// </param>
-		public CurveItem( string label, double[] x, double[] y, bool isBar,
-							Color color, SymbolType symbol )
-		{
-			Init( label, isBar, color, symbol );
-			
-			this.points = new PointPairList( x, y );
-		}
-		
-		/// <summary>
-		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label, the
-		/// x and y data values as a <see cref="PointPairList"/>, the curve
-		/// type (Bar or Line/Symbol), the <see cref="Color"/>, and the
-		/// <see cref="SymbolType"/>. Other properties of the curve are
-		/// defaulted to the values in the <see cref="GraphPane.Default"/> class.
-		/// </summary>
-		/// <param name="label">A string label (legend entry) for this curve</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
-		/// the X and Y values for this curve</param>
-		/// <param name="isBar">A boolean value, true to indicate that this curve
-		/// is a bar type, false to indicate a line/symbol type.
-		/// </param>
-		/// <param name="color">A <see cref="Color"/> value that will be applied to
-		/// the <see cref="Line"/>, <see cref="Symbol"/>, and <see cref="Bar"/>
-		/// see cref="Bar.FillColor"/>.
-		/// </param>
-		/// <param name="symbol">
-		/// A <see cref="SymbolType"/> enum value indicating the symbol shape that
-		/// will be used for this <see cref="CurveItem"/>.
-		/// </param>
-		public CurveItem( string label, PointPairList points, bool isBar, Color color, SymbolType symbol )
-		{
-			Init( label, isBar, color, symbol );
+			this.label = label == null ? "" : label;
+			this.isY2Axis = false;
+			this.isVisible = true;
+			this.isLegendLabelVisible = true;
 			
 			if ( points == null )
 				this.points = new PointPairList();
 			else
 				this.points = (PointPairList) points.Clone();
-		}
-		
-		/// <summary>
-		/// Initialization of various <see cref="CurveItem"/> properties.  This common routine
-		/// just avoid duplicate code in the various constructors.  The initialization of
-		/// <see cref="Points"/> is handled within the constructor to avoid problems with
-		/// multiple generation of the PointPairList.
-		/// </summary>
-		/// <param name="label">A string label (legend entry) for this curve</param>
-		/// <param name="isBar">A boolean value, true to indicate that this curve
-		/// is a bar type, false to indicate a line/symbol type.
-		/// </param>
-		/// <param name="color">A <see cref="Color"/> value that will be applied to
-		/// the <see cref="Line"/>, <see cref="Symbol"/>, and <see cref="Bar"/>
-		/// see cref="Bar.FillColor"/>.
-		/// </param>
-		/// <param name="symbol">
-		/// A <see cref="SymbolType"/> enum value indicating the symbol shape that
-		/// will be used for this <see cref="CurveItem"/>.
-		/// </param>
-		protected void Init( string label, bool isBar, Color color, SymbolType symbol )
-		{
-			this.line = new Line( color );
-			this.symbol = new Symbol( symbol, color );
-			this.bar = new Bar( color );
-			this.label = label == null ? "" : label;
-			this.isY2Axis = false;
-			this.isBar = isBar;
-			this.isVisible = true;
-			this.isLegendLabelVisible = true;
 		}
 			
 		/// <summary>
@@ -233,7 +128,7 @@ namespace ZedGraph
 		/// <seealso cref="CurveItem( string, double[], double[] )"/>
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
-		public CurveItem( string label ): this( label, null, null)
+		public CurveItem( string label ): this( label, null, null )
 		{
 		}
 
@@ -243,54 +138,23 @@ namespace ZedGraph
 		/// <param name="rhs">The CurveItem object from which to copy</param>
 		public CurveItem( CurveItem rhs )
 		{
-			symbol = new Symbol( rhs.Symbol );
-			line = new Line( rhs.Line );
-			bar = new Bar( rhs.Bar );
 			label = rhs.Label;
 			isY2Axis = rhs.IsY2Axis;
-			isBar = rhs.IsBar;
 			isVisible = rhs.IsVisible;
 			isLegendLabelVisible = rhs.IsLegendLabelVisible;
 			
 			this.points = (PointPairList) rhs.Points.Clone();
 		}
-
+		
 		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>
 		/// <returns>A new, independent copy of the CurveItem</returns>
-		public object Clone()
-		{ 
-			return new CurveItem( this ); 
-		}
-
+		public abstract object Clone();
+		
 	#endregion
 	
 	#region Properties
-		/// <summary>
-		/// Gets a reference to the <see cref="ZedGraph.Symbol"/> class defined
-		/// for this <see cref="CurveItem"/>.
-		/// </summary>
-		public Symbol Symbol
-		{
-			get { return symbol; }
-		}
-		/// <summary>
-		/// Gets a reference to the <see cref="ZedGraph.Line"/> class defined
-		/// for this <see cref="CurveItem"/>.
-		/// </summary>
-		public Line Line
-		{
-			get { return line; }
-		}
-		/// <summary>
-		/// Gets a reference to the <see cref="ZedGraph.Bar"/> class defined
-		/// for this <see cref="CurveItem"/>.
-		/// </summary>
-		public Bar Bar
-		{
-			get { return bar; }
-		}
 		/// <summary>
 		/// A text string that represents the <see cref="ZedGraph.Legend"/>
 		/// entry for the this
@@ -305,7 +169,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The <see cref="Line"/>/<see cref="Symbol"/>/<see cref="Bar"/> 
 		/// color (FillColor for the Bar).  This is a common access to
-		/// <see cref="ZedGraph.Line.Color"/>, <see cref="ZedGraph.Symbol.FrameColor"/>, and
+		/// <see cref="ZedGraph.Line.Color"/>, <see cref="ZedGraph.Frame.Color"/>, and
 		/// <see cref="ZedGraph.Fill.Color"/> properties for this curve.
 		/// </summary>
 		public Color Color
@@ -313,18 +177,24 @@ namespace ZedGraph
 			get
 			{
 				if ( this.IsBar )
-					return Bar.Fill.Color;
-				else if ( this.Line.IsVisible )
-					return this.Line.Color;
+					return ((BarItem) this).Bar.Fill.Color;
+				else if ( ((LineItem) this).Line.IsVisible )
+					return ((LineItem) this).Line.Color;
 				else
-					return this.Symbol.FrameColor;
+					return ((LineItem) this).Symbol.Frame.Color;
 			}
 			set 
-			{ 
-				Line.Color			= value;
-				Bar.Fill.Color		= value;
-				Symbol.FrameColor	= value;
-				Symbol.Fill.Color	= value;
+			{
+				if ( this.IsBar )
+				{
+					((BarItem) this).Bar.Fill.Color = value;
+				}
+				else
+				{
+					((LineItem) this).Line.Color		= value;
+					((LineItem) this).Symbol.Frame.Color	= value;
+					((LineItem) this).Symbol.Fill.Color	= value;
+				}
 			}
 		}
 
@@ -365,15 +235,25 @@ namespace ZedGraph
 			get { return isY2Axis; }
 			set { isY2Axis = value; }
 		}
+		
 		/// <summary>
 		/// Determines whether this <see cref="CurveItem"/>
-		/// is a bar chart or a line graph.
+		/// is a <see cref="BarItem"/>.
 		/// </summary>
 		/// <value>true for a bar chart, or false for a line graph</value>
 		public bool IsBar
 		{
-			get { return isBar; }
-			set { isBar = value; }
+			get { return this is BarItem; }
+		}
+		
+		/// <summary>
+		/// Determines whether this <see cref="CurveItem"/>
+		/// is a <see cref="LineItem"/>.
+		/// </summary>
+		/// <value>true for a bar chart, or false for a line graph</value>
+		public bool IsLine
+		{
+			get { return this is LineItem; }
 		}
 		
 		/// <summary>
@@ -441,29 +321,26 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  )
-		{
-			if ( this.isVisible )
-			{
-				if ( this.isBar )
-				{
-					Bar.DrawBars( g, pane, points, isY2Axis, pane.CalcBarWidth(), pos, scaleFactor );
-				}
-				else
-				{
-					// If the line is being shown, draw it
-					if ( this.Line.IsVisible )
-						if ( this.Line.IsSmooth || this.Line.Fill.IsFilled )
-							Line.DrawSmoothFilledCurve( g, pane, points, isY2Axis );
-						else
-							Line.DrawCurve( g, pane, points, isY2Axis );
-
-					// If symbols are being shown, then draw them
-					if ( this.Symbol.IsVisible )
-						Symbol.DrawSymbols( g, pane, points, isY2Axis, scaleFactor );
-				}
-			}
-		}		
+		abstract public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  );
+		
+		/// <summary>
+		/// Draw a legend key entry for this <see cref="CurveItem"/> at the specified location.
+		/// This abstract base method passes through to <see cref="BarItem.DrawLegendKey"/> or
+		/// <see cref="LineItem.DrawLegendKey"/> to do the rendering.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="rect">The <see cref="RectangleF"/> struct that specifies the
+		/// location for the legend key</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		abstract public void DrawLegendKey( Graphics g, RectangleF rect, double scaleFactor );
 		
 	#endregion
 
@@ -522,10 +399,9 @@ namespace ZedGraph
 		/// The <see cref="ColorSymbolRotator"/> that is used to pick the color
 		///  and symbol for this method call.
 		/// </param>
-		public void MakeUnique( ColorSymbolRotator rotator )
+		virtual public void MakeUnique( ColorSymbolRotator rotator )
 		{
 			this.Color			= rotator.NextColor;
-			this.Symbol.Type	= rotator.NextSymbol;
 		}
 	
 	#endregion

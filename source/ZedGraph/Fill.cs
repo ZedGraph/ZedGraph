@@ -12,7 +12,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:07 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-13 04:52:53 $ </version>
 	public class Fill
 	{
 	#region Fields
@@ -259,6 +259,8 @@ namespace ZedGraph
 			else
 				brush = null;
 			type = rhs.type;
+			alignH = rhs.AlignH;
+			alignV = rhs.AlignV;
 		}
 		
 		/// <summary>
@@ -326,7 +328,7 @@ namespace ZedGraph
 		/// <seealso cref="Color"/>
 		/// <seealso cref="Brush"/>
 		/// <seealso cref="Type"/>
-		public bool IsFilled
+		public bool IsVisible
 		{
 			get { return type != FillType.None; }
 			set { type = value ? FillType.Brush : FillType.None; }
@@ -389,7 +391,7 @@ namespace ZedGraph
 		public Brush MakeBrush( RectangleF rect )
 		{
 			// get a brush
-			if ( this.IsFilled && ( !this.color.IsEmpty || this.brush != null ) )
+			if ( this.IsVisible&& ( !this.color.IsEmpty || this.brush != null ) )
 			{
 				//Brush	brush;
 				if ( this.type == FillType.Brush )
@@ -508,6 +510,26 @@ namespace ZedGraph
 
 			// Always return a suitable default
 			return new SolidBrush( Color.White );
+		}
+
+		/// <summary>
+		/// Fill the background of the <see cref="RectangleF"/> area, using the
+		/// fill type from this <see cref="Fill"/>.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="rect">The <see cref="RectangleF"/> struct specifying the area
+		/// to be filled</param>
+		public void Draw( Graphics g, RectangleF rect )
+		{
+			if ( this.IsVisible )
+			{
+				Brush brush = this.MakeBrush( rect );
+				g.FillRectangle( brush, rect );
+				brush.Dispose();
+			}
 		}
 	#endregion
 	}

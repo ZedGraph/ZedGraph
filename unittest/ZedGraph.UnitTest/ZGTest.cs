@@ -71,7 +71,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-13 04:52:54 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -132,7 +132,7 @@ namespace ZedGraph.UnitTest
 			double[] x3 = { 150, 250, 400, 520, 780, 940 };
 			double[] y3 = { 5.2, 49.0, 33.8, 88.57, 99.9, 36.8 };
 			
-			CurveItem curve;
+			LineItem curve;
 			curve = testee.AddCurve( "Larry", x, y, Color.Red, SymbolType.Circle );
 			curve.Symbol.Size = 14;
 			curve.Line.Width = 2.0F;
@@ -169,7 +169,7 @@ namespace ZedGraph.UnitTest
 			text.AlignV = AlignV.Center;
 			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
 			text.FontSpec.Fill.Type = FillType.Brush;
-			text.FontSpec.IsFramed = false;
+			text.FontSpec.Frame.IsVisible = false;
 			testee.TextList.Add( text );
 			
 			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
@@ -182,8 +182,8 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.IsBold = true;
 			text.FontSpec.Size = 16;
-			text.FontSpec.IsFramed = true;
-			text.FontSpec.FrameColor = Color.Red;
+			text.FontSpec.Frame.IsVisible = true;
+			text.FontSpec.Frame.Color = Color.Red;
 			text.AlignH = AlignH.Left;
 			text.AlignV = AlignV.Bottom;
 			testee.TextList.Add( text );
@@ -206,7 +206,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-13 04:52:54 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
@@ -274,9 +274,7 @@ namespace ZedGraph.UnitTest
 			double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
 
 			// Generate a red bar with "Curve 1" in the legend
-			CurveItem myCurve = testee.AddCurve( "Curve 1", null, y, Color.Red );
-			// Make it a bar
-			myCurve.IsBar = true;
+			CurveItem myCurve = testee.AddBar( "Curve 1", null, y, Color.Red );
 
 			/*
 						// Generate a blue bar with "Curve 2" in the legend
@@ -330,7 +328,7 @@ namespace ZedGraph.UnitTest
 				// Align the left-center of the text to the specified point
 				text.AlignH = AlignH.Left;
 				text.AlignV = AlignV.Center;
-				text.FontSpec.IsFramed = false;
+				text.FontSpec.Frame.IsVisible = false;
 				// rotate the text 90 degrees
 				text.FontSpec.Angle = 90;
 				// add the TextItem to the list
@@ -369,7 +367,7 @@ namespace ZedGraph.UnitTest
 			
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend
-			CurveItem myCurve = testee.AddCurve( "My Curve",
+			LineItem myCurve = testee.AddCurve( "My Curve",
 				pointList, Color.Red, SymbolType.Diamond );
 
 			// Set the XAxis to date type
@@ -427,7 +425,7 @@ namespace ZedGraph.UnitTest
 			double[] x = { 0.4875 };
 			double[] y = { -123456 };
 
-			CurveItem curve;
+			LineItem curve;
 			curve = testee.AddCurve( "One Value", x, y, Color.Red, SymbolType.Diamond );
 			curve.Symbol.Fill.Type = FillType.Solid;
 
@@ -464,7 +462,7 @@ namespace ZedGraph.UnitTest
 			double[] x5 = { 1.5, 2.5, 4, 5.2, 7.8, 9.4 };
 			double[] y5 = { 157, 458, 1400, 100000, 10290, 3854 };
 
-			CurveItem curve;
+			LineItem curve;
 			curve = testee.AddCurve( "Larry", x, y, Color.Red, SymbolType.Circle );
 			curve.Line.Width = 2.0F;
 			curve.Symbol.Fill.Type = FillType.Solid;
@@ -500,7 +498,7 @@ namespace ZedGraph.UnitTest
 			text.AlignV = AlignV.Center;
 			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
 			text.FontSpec.Fill.Type = FillType.Brush;
-			text.FontSpec.IsFramed = false;
+			text.FontSpec.Frame.IsVisible = false;
 			testee.TextList.Add( text );
 
 			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
@@ -515,8 +513,8 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.IsBold = true;
 			text.FontSpec.Size = 16;
-			text.FontSpec.IsFramed = false;
-			text.FontSpec.FrameColor = Color.Red;
+			text.FontSpec.Frame.IsVisible = false;
+			text.FontSpec.Frame.Color = Color.Red;
 			text.FontSpec.Fill.Type = FillType.None;
 
 			text.AlignH = AlignH.Left;
@@ -697,7 +695,7 @@ namespace ZedGraph.UnitTest
 
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend
-			CurveItem myCurve = testee.AddCurve( "My Curve",
+			LineItem myCurve = testee.AddCurve( "My Curve",
 				points, Color.Red, SymbolType.Diamond );
 			// Set the XAxis labels
 			testee.XAxis.TextLabels = labels;
@@ -787,7 +785,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-13 04:52:54 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{
@@ -914,13 +912,13 @@ namespace ZedGraph.UnitTest
 			//testee.Y2Axis.IsLog = false;
 			testee.Y2Axis.Title = "";
 
-			testee.IsAxisFramed = false;
-			testee.IsPaneFramed = false;
+			testee.AxisFrame.IsVisible = false;
+			testee.PaneFrame.IsVisible = false;
 
 			testee.IsShowTitle = false;
 			testee.Legend.IsHStack = false;
 			testee.Legend.IsVisible = false;
-			testee.Legend.IsFramed = false;
+			testee.Legend.Frame.IsVisible = false;
 			testee.Legend.Fill.Type = FillType.None;
 			testee.Legend.Location = LegendLoc.Bottom;
 
@@ -932,25 +930,19 @@ namespace ZedGraph.UnitTest
 
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Do you see a dual Y graph with no axes?" ) );
 			
-			testee.IsPaneFramed = true;
-			testee.PaneFrameColor = Color.Red;
-			testee.PaneFramePenWidth = 3.0F;
+			testee.PaneFrame = new Frame( true, Color.Red, 3.0F );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Pane Frame Added?" ) );
 			
-			testee.PaneFrameColor = Color.Black;
-			testee.PaneFramePenWidth = 1.0F;
+			testee.PaneFrame = new Frame( Color.Black, 1.0F );
 
-			testee.IsAxisFramed = true;
-			testee.AxisFrameColor = Color.Red;
-			testee.AxisFramePenWidth = 3.0F;
+			testee.AxisFrame = new Frame( true, Color.Red, 3.0F );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Axis Frame Added?" ) );
 			
-			testee.AxisFrameColor = Color.Black;
-			testee.AxisFramePenWidth = 1.0F;
+			testee.AxisFrame = new Frame( Color.Black, 1.0F );
 
 			testee.PaneFill = new Fill( Color.White, Color.LightGoldenrodYellow );
 			testee.PaneGap = 50.0F;
@@ -959,13 +951,13 @@ namespace ZedGraph.UnitTest
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Pane Background Filled?" ) );
 			
 			testee.PaneGap = 20.0F;
-			testee.PaneFill.IsFilled = false;
+			testee.PaneFill.IsVisible = false;
 			testee.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Axis Background Filled?" ) );
 			
-			testee.AxisFill.IsFilled = false;
+			testee.AxisFill.IsVisible = false;
 			
 			testee.IsShowTitle = true;
 			testee.FontSpec.FontColor = Color.Red;
@@ -984,15 +976,12 @@ namespace ZedGraph.UnitTest
 			
 			testee.Legend.FontSpec.FontColor = Color.Black;
 
-			testee.Legend.IsFramed = true;
-			testee.Legend.FrameColor = Color.Red;
-			testee.Legend.FrameWidth = 3.0F;
+			testee.Legend.Frame = new Frame( true, Color.Red, 3.0F );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Frame Added?" ) );
 
-			testee.Legend.FrameColor = Color.Black;
-			testee.Legend.FrameWidth = 1.0F;
+			testee.Legend.Frame = new Frame( Color.Black, 1.0F );
 
 			testee.Legend.Fill.Type = FillType.Brush;
 			testee.Legend.Fill.Color = Color.LightGoldenrodYellow;
@@ -1314,7 +1303,7 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.IsItalic = false;
 			text.FontSpec.IsUnderline = false;
 			text.FontSpec.Angle = 0.0F;
-			text.FontSpec.IsFramed = false;
+			text.FontSpec.Frame.IsVisible = false;
 			text.FontSpec.Fill.Type = FillType.None;
 			text.FontSpec.FontColor = Color.Red;
 			
@@ -1323,16 +1312,13 @@ namespace ZedGraph.UnitTest
 				"Is TextItem Centered on Graph?" ) );
 			
 			text.FontSpec.FontColor = Color.Black;
-			text.FontSpec.IsFramed = true;
-			text.FontSpec.FrameWidth = 3.0F;
-			text.FontSpec.FrameColor = Color.Red;
+			text.FontSpec.Frame = new Frame( true, Color.Red, 3.0F );
 			
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
 				"Does TextItem have a Frame?" ) );
 			
-			text.FontSpec.FrameWidth = 1.0F;
-			text.FontSpec.FrameColor = Color.Black;
+			text.FontSpec.Frame = new Frame( Color.Black, 1.0F );
 			
 			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
 			text.FontSpec.Fill.Type = FillType.Brush;

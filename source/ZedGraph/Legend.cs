@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-01 06:37:16 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-10-13 04:52:53 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -47,13 +47,6 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="Default.Location"/>
 		private LegendLoc	location;
-		/// <summary>
-		/// Private field to enable/disable the drawing of the frame around the
-		/// legend bounding box.  Use the public property <see cref="IsFramed"/>
-		/// to access this value.
-		/// </summary>
-		/// <seealso cref="Default.IsFramed"/>
-		private bool		isFramed;
 		/// <summary>
 		/// Private field to enable/disable horizontal stacking of the legend entries.
 		/// If this value is false, then the legend entries will always be a single column.
@@ -74,20 +67,11 @@ namespace ZedGraph
 		/// </summary>
 		private Fill		fill;
 		/// <summary>
-		/// Private field to store the color of the frame around the legend bounding box.
-		/// This value only applies if <see cref="IsFramed"/> is true.
-		/// Use the public property <see cref="FrameColor"/> to access this value.
+		/// Private field that stores the <see cref="ZedGraph.Frame"/> data for this
+		/// <see cref="Legend"/>.  Use the public property <see cref="Frame"/> to
+		/// access this value.
 		/// </summary>
-		/// <seealso cref="frameWidth"/>
-		private Color		frameColor;
-		/// <summary>
-		/// Private field to store the width (pixels) of the frame around the legend bounding box.
-		/// This value only applies if <see cref="IsFramed"/> is true.
-		/// Use the public property <see cref="FrameWidth"/> to access this value.
-		/// </summary>
-		/// <seealso cref="frameColor"/>
-		private float		frameWidth;
-		
+		private Frame		frame;		
 		/// <summary>
 		/// Private field to maintain the <see cref="FontSpec"/> class that
 		/// maintains font attributes for the entries in this legend.  Use
@@ -106,12 +90,12 @@ namespace ZedGraph
 			// Default Legend properties
 			/// <summary>
 			/// The default pen width for the <see cref="Legend"/> frame border.
-			/// (<see cref="Legend.FrameWidth"/> property).  Units are in pixels.
+			/// (<see cref="ZedGraph.Frame.PenWidth"/> property).  Units are in pixels.
 			/// </summary>
 			public static float FrameWidth = 1;
 			/// <summary>
 			/// The default color for the <see cref="Legend"/> frame border.
-			/// (<see cref="Legend.FrameColor"/> property). 
+			/// (<see cref="ZedGraph.Frame.Color"/> property). 
 			/// </summary>
 			public static Color FrameColor = Color.Black;
 			/// <summary>
@@ -137,7 +121,7 @@ namespace ZedGraph
 			public static LegendLoc Location = LegendLoc.Top;
 			/// <summary>
 			/// The default frame mode for the <see cref="Legend"/>.
-			/// (<see cref="Legend.IsFramed"/> property). true
+			/// (<see cref="ZedGraph.Frame.IsVisible"/> property). true
 			/// to draw a frame around the <see cref="Legend.Rect"/>,
 			/// false otherwise.
 			/// </summary>
@@ -251,40 +235,13 @@ namespace ZedGraph
 			set { isVisible = value; }
 		}
 		/// <summary>
-		/// Set to true to display a frame around the text using the
-		/// <see cref="FrameColor"/> color and <see cref="FrameWidth"/>
-		/// pen width, or false for no frame
+		/// The <see cref="Frame"/> class used to draw the frame border around this <see cref="Legend"/>.
 		/// </summary>
-		/// <seealso cref="Default.IsFramed"/>
-		public bool IsFramed
+		public Frame Frame
 		{
-			get { return isFramed; }
-			set { isFramed = value; }
-		}
-		/// <summary>
-		/// The pen width used for drawing the frame around the text
-		/// </summary>
-		/// <value>A pen width in pixel units</value>
-		/// <seealso cref="Default.FrameWidth"/>
-		public float FrameWidth
-		{
-			get { return frameWidth; }
-			set { frameWidth = value; }
-		}
-		/// <summary>
-		/// Sets or gets the color of the frame around the <see cref="Legend"/>.  This
-		/// frame is turned on or off using the <see cref="IsFramed"/>
-		/// property and the pen width is specified with the
-		/// <see cref="FrameWidth"/> property
-		/// </summary>
-		/// <value>A system <see cref="System.Drawing.Color"/> specification.</value>
-		/// <seealso cref="Default.FrameColor"/>
-		public Color FrameColor
-		{
-			get { return frameColor; }
-			set { frameColor = value; }
-		}
-		
+			get { return frame; }
+			set { frame = value; }
+		}		
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="Legend"/> background.
@@ -327,9 +284,6 @@ namespace ZedGraph
 		public Legend()
 		{
 			this.location = Default.Location;
-			this.isFramed = Default.IsFramed;
-			this.frameColor = Default.FrameColor;
-			this.frameWidth = Default.FrameWidth;
 			this.isHStack = Default.IsHStack;
 			this.isVisible = Default.IsVisible;
 			
@@ -338,8 +292,9 @@ namespace ZedGraph
 									Default.FontItalic, Default.FontUnderline,
 									Default.FontFillColor, Default.FontFillBrush,
 									Default.FontFillType );						
-			this.fontSpec.IsFramed = false;
+			this.fontSpec.Frame.IsVisible = false;
 			
+			this.frame = new Frame( Default.IsFramed, Default.FrameColor, Default.FrameWidth );
 			this.fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
 		}
 
@@ -351,12 +306,10 @@ namespace ZedGraph
 		{
 			rect = rhs.Rect;
 			location = rhs.Location;
-			isFramed = rhs.isFramed;
 			isHStack = rhs.IsHStack;
 			isVisible = rhs.IsVisible;
-			frameColor = rhs.FrameColor;
-			frameWidth = rhs.FrameWidth;
 			
+			this.frame = (Frame) rhs.Frame.Clone();
 			this.fill = (Fill) rhs.Fill.Clone();
 			
 			fontSpec = (FontSpec) rhs.FontSpec.Clone();
@@ -403,12 +356,7 @@ namespace ZedGraph
 				return;
 								
 			// Fill the background with the specified color if required
-			if ( this.fill.IsFilled )
-			{
-				Brush brush = this.fill.MakeBrush( this.Rect );
-				g.FillRectangle( brush, this.rect );
-				brush.Dispose();
-			}
+			this.fill.Draw( g, this.rect );
 		
 			// Set up some scaled dimensions for calculating sizes and locations
 			float	charHeight = this.FontSpec.GetHeight( scaleFactor ),
@@ -440,6 +388,10 @@ namespace ZedGraph
 					this.FontSpec.Draw( g, curve.Label, x + 2.5F * charHeight, y,
 									AlignH.Left, AlignV.Top, scaleFactor );
 					
+					RectangleF rect = new RectangleF( x, y + charHeight / 4.0F,
+											2 * charHeight, charHeight / 2.0F );
+					curve.DrawLegendKey( g, rect, scaleFactor );
+					/*
 					if ( curve.IsBar )
 					{
 						curve.Bar.Draw( g, x, x + 2 * charHeight, y + charHeight / 4.0F,
@@ -454,7 +406,7 @@ namespace ZedGraph
 						curve.Symbol.DrawSymbol( g, x + charHeight, y + halfCharHeight,
 							scaleFactor );
 					}
-										
+					*/				
 					// maintain a curve count for positioning
 					iEntry++;
 				}
@@ -462,11 +414,8 @@ namespace ZedGraph
 		
 		
 			// Draw a frame around the legend if required
-			if ( iEntry > 0 && this.isFramed )
-			{
-				Pen pen = new Pen( this.frameColor, this.frameWidth );
-				g.DrawRectangle( pen, Rectangle.Round( this.rect ) );
-			}
+			if ( iEntry > 0 )
+				this.Frame.Draw( g, this.rect );
 		}
 
 		/// <summary>

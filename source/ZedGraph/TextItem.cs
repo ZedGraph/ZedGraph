@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-09-30 05:03:42 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-13 04:52:54 $ </version>
 	public class TextItem : ICloneable
 	{
 	#region Fields
@@ -38,7 +38,7 @@ namespace ZedGraph
 		/// <see cref="TextItem"/>.  Use the public property <see cref="TextItem.Text"/>
 		/// to access this value.
 		/// </summary>
-		private string		text;
+		private string text;
 		/// <summary> Private field to store the vertical Font alignment property for
 		/// this <see cref="TextItem"/>.  Use the public property <see cref="TextItem.AlignV"/>
 		/// to access this value.  The value of this field is a <see cref="AlignV"/> enum.

@@ -1,5 +1,12 @@
 ZedGraph Class Library Revision History
 
+12-Oct-2004 (by Champion)
+  Make CurveItem an abstract base class & add BarItem & LineItem
+  Fix BaseDPI problem, get rid of the BaseDPI property
+  Speed up Symbol draws using GraphicsPath & transform scaling
+  Add Frame and Fill Classes
+  Add DrawLegendKey() to BarItem & LineItem
+  
 7-Oct-2004 (by Champion)
   Add MinorGrids
   IsZeroLine defaults to false for X axis

@@ -24,22 +24,15 @@ using System.Drawing.Drawing2D;
 namespace ZedGraph
 {
 	/// <summary>
-	/// A class representing all the characteristics of the <see cref="Bar"/>
+	/// A class representing all the characteristics of the bar
 	/// segments that make up a curve on the graph.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:07 $ </version>
-	public class Bar
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-13 04:52:53 $ </version>
+	public class Bar : ICloneable
 	{
 	#region Fields
-		/// <summary>
-		/// Private field that stores the color of the frame around this
-		/// <see cref="Bar"/>.  Use the public
-		/// property <see cref="FrameColor"/> to access this value.  This property is
-		/// only applicable if the <see cref="IsFramed"/> property is true.
-		/// </summary>
-		private Color	frameColor;
 		/// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="Bar"/>.  Use the public property <see cref="Fill"/> to
@@ -47,18 +40,11 @@ namespace ZedGraph
 		/// </summary>
 		private Fill	fill;
 		/// <summary>
-		/// Private field that determines if a frame will be drawn around this
-		/// <see cref="Bar"/>.  Use the public
-		/// property <see cref="IsFramed"/> to access this value.  The pen width
-		/// for the frame is determined by the property <see cref="FrameWidth"/>.
+		/// Private field that stores the <see cref="Frame"/> class that defines the
+		/// properties of the frame around this <see cref="BarItem"/>.  Use the public
+		/// property <see cref="Frame"/> to access this value.
 		/// </summary>
-		private bool	isFramed;
-		/// <summary>
-		/// Private field that determines the pen width for the frame around this
-		/// <see cref="Bar"/>, in pixel units.  Use the public
-		/// property <see cref="FrameWidth"/> to access this value.
-		/// </summary>
-		private float	frameWidth;
+		private Frame	frame;
 	#endregion
 
 	#region Defaults
@@ -71,7 +57,7 @@ namespace ZedGraph
 			// Default Bar properties
 			/// <summary>
 			/// The default pen width to be used for drawing the frame around the bars
-			/// (<see cref="Bar.FrameWidth"/> property).  Units are points.
+			/// (<see cref="ZedGraph.Frame.PenWidth"/> property).  Units are points.
 			/// </summary>
 			public static float FrameWidth = 1.0F;
 			/// <summary>
@@ -79,13 +65,13 @@ namespace ZedGraph
 			/// </summary>
 			public static FillType FillType = FillType.Brush;
 			/// <summary>
-			/// The default frame mode for bars (<see cref="Bar.IsFramed"/> property).
+			/// The default frame mode for bars (<see cref="ZedGraph.Frame.IsVisible"/> property).
 			/// true to display frames around bars, false otherwise
 			/// </summary>
 			public static bool IsFramed = true;
 			/// <summary>
 			/// The default color for drawing frames around bars
-			/// (<see cref="Bar.FrameColor"/> property).
+			/// (<see cref="ZedGraph.Frame.Color"/> property).
 			/// </summary>
 			public static Color FrameColor = Color.Black;
 			/// <summary>
@@ -117,7 +103,7 @@ namespace ZedGraph
 		/// <see cref="Bar"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// The specified color is only applied to the
-		/// <see cref="ZedGraph.Fill.Color"/>, and the <see cref="FrameColor"/>
+		/// <see cref="ZedGraph.Fill.Color"/>, and the <see cref="ZedGraph.Frame.Color"/>
 		/// will be defaulted.
 		/// </summary>
 		/// <param name="color">A <see cref="Color"/> value indicating
@@ -126,9 +112,7 @@ namespace ZedGraph
 		/// </param>
 		public Bar( Color color )
 		{
-			this.frameColor = Default.FrameColor;
-			this.isFramed = Default.IsFramed;
-			this.frameWidth = Default.FrameWidth;
+			this.frame = new Frame( Default.IsFramed, Default.FrameColor, Default.FrameWidth );
 			this.fill = new Fill( color.IsEmpty ? Default.FillColor : color,
 						Default.FillBrush, Default.FillType );
 		}
@@ -139,9 +123,7 @@ namespace ZedGraph
 		/// <param name="rhs">The Bar object from which to copy</param>
 		public Bar( Bar rhs )
 		{
-			this.frameColor = rhs.FrameColor;
-			this.isFramed = rhs.IsFramed;
-			this.frameWidth = rhs.FrameWidth;
+			this.frame = (Frame) rhs.Frame.Clone();
 			this.fill = (Fill) rhs.Fill.Clone();
 		}
 
@@ -157,15 +139,15 @@ namespace ZedGraph
 
 	#region Properties
 		/// <summary>
-		/// The color of the frame around the <see cref="Bar"/>.
+		/// The <see cref="Frame"/> object used to draw the frame around the <see cref="Bar"/>.
 		/// </summary>
-		/// <seealso cref="IsFramed"/>
-		/// <seealso cref="FrameWidth"/>
+		/// <seealso cref="Default.IsFramed"/>
+		/// <seealso cref="Default.FrameWidth"/>
 		/// <seealso cref="Default.FrameColor"/>
-		public Color FrameColor
+		public Frame Frame
 		{
-			get { return frameColor; }
-			set { frameColor = value; }
+			get { return frame; }
+			set { frame = value; }
 		}
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
@@ -175,30 +157,6 @@ namespace ZedGraph
 		{
 			get { return fill; }
 			set { fill = value; }
-		}
-
-		/// <summary>
-		/// Determines if the <see cref="Bar"/> has a frame around it.
-		/// </summary>
-		/// <seealso cref="FrameColor"/>
-		/// <seealso cref="FrameWidth"/>
-		/// <seealso cref="Default.IsFramed"/>
-		public bool IsFramed
-		{
-			get { return isFramed; }
-			set { isFramed = value; }
-		}
-		/// <summary>
-		/// Determines the pen width for the frame around the <see cref="Bar"/>,
-		/// in pixel units.
-		/// </summary>
-		/// <seealso cref="IsFramed"/>
-		/// <seealso cref="FrameColor"/>
-		/// <seealso cref="Default.FrameWidth"/>
-		public float FrameWidth
-		{
-			get { return frameWidth; }
-			set { frameWidth = value; }
 		}
 	#endregion
 
@@ -243,18 +201,43 @@ namespace ZedGraph
 				left = junk;
 			}
 
+			RectangleF rect = new RectangleF( left, top, right - left, bottom - top );
+			
+			Draw( g, rect, scaleFactor, fullFrame );			
+		}
+
+		/// <summary>
+		/// Draw the <see cref="Bar"/> to the specified <see cref="Graphics"/> device
+		/// at the specified location.  This routine draws a single bar.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="rect">The rectangle (screen pixels) to contain the bar</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+		/// </param>
+		/// <param name="fullFrame">true to draw the bottom portion of the frame around the
+		/// bar (this is for legend entries)</param>	
+		public void Draw( Graphics g, RectangleF rect, double scaleFactor, bool fullFrame )
+		{
 			// Fill the Bar
-			if ( this.fill.IsFilled )
+			if ( this.fill.IsVisible )
 			{
 				// just avoid height/width being less than 0.1 so GDI+ doesn't cry
-				RectangleF rect = new RectangleF( left, top, right - left,
-													bottom - top );
 				Brush brush = this.fill.MakeBrush( rect );
 				g.FillRectangle( brush, rect );
 				brush.Dispose();
 			}
 
 			// Frame the Bar
+			if ( !this.frame.Color.IsEmpty )
+				this.frame.Draw( g, rect );
+				
+			/*
 			if ( this.isFramed && !this.frameColor.IsEmpty  )
 			{
 				Pen pen = new Pen( this.frameColor, this.frameWidth );
@@ -265,6 +248,8 @@ namespace ZedGraph
 				if ( fullFrame )
 					g.DrawLine( pen, right, bottom, left, bottom );
 			}
+			*/
+			
 		}
 
 		/// <summary>
@@ -310,7 +295,7 @@ namespace ZedGraph
 		
 			double	curX, curY;
 						
-			if ( pane.IsBarStacked )
+			if ( pane.BarType == BarType.Overlay )
 				pos = 0;
 				
 			// Determine which Axis is the bar base and which is the bar value
@@ -397,7 +382,7 @@ namespace ZedGraph
 			float clusterGap = pane.MinClusterGap * barWidth;
 			float barGap = barWidth * pane.MinBarGap;
 
-			if ( pane.IsBarStacked )
+			if ( pane.BarType == BarType.Overlay )
 				iOrdinal = 0;
 
 			return pane.BarBaseAxis().Transform( iCluster, val )

@@ -24,15 +24,15 @@ using System.Drawing.Drawing2D;
 namespace ZedGraph
 {
 	/// <summary>
-	/// A class representing all the characteristics of the <see cref="Line"/>
+	/// A class representing all the characteristics of the Line
 	/// segments that make up a curve on the graph.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-13 04:52:53 $ </version>
 	public class Line : ICloneable
 	{
-		#region Fields
+	#region Fields
 		/// <summary>
 		/// Private field that stores the pen width for this
 		/// <see cref="Line"/>.  Use the public
@@ -322,6 +322,36 @@ namespace ZedGraph
 	
 	#region Rendering Methods
 		/// <summary>
+		/// Do all rendering associated with this <see cref="Line"/> to the specified
+		/// <see cref="Graphics"/> device.  This method is normally only
+		/// called by the Draw method of the parent <see cref="LineItem"/> object.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
+		/// curve.</param>
+		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
+		/// true for the "Y2" axis, false for the "Y" axis.</param>
+		public void Draw( Graphics g, GraphPane pane, PointPairList points,
+						bool isY2Axis  )
+		{
+			// If the line is being shown, draw it
+			if ( this.IsVisible )
+			{
+				if ( this.IsSmooth || this.Fill.IsVisible )
+					DrawSmoothFilledCurve( g, pane, points, isY2Axis );
+				else
+					DrawCurve( g, pane, points, isY2Axis );
+			}
+		}		
+
+		/// <summary>
 		/// Render a single <see cref="Line"/> segment to the specified
 		/// <see cref="Graphics"/> device.
 		/// </summary>
@@ -351,8 +381,7 @@ namespace ZedGraph
 		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
 		/// device using the specified smoothing property (<see cref="ZedGraph.Line.SmoothTension"/>).
 		/// The routine draws the line segments and the area fill (if any, see <see cref="FillType"/>;
-		/// the symbols are drawn by the
-		/// <see cref="Symbol.DrawSymbols"/> method.  This method
+		/// the symbols are drawn by the <see cref="Symbol.Draw"/> method.  This method
 		/// is normally only called by the Draw method of the
 		/// <see cref="CurveItem"/> object.  Note that the <see cref="StepType"/> property
 		/// is ignored for smooth lines (e.g., when <see cref="ZedGraph.Line.IsSmooth"/> is true).
@@ -383,7 +412,7 @@ namespace ZedGraph
 				
 				if ( count > 1 )
 				{
-					if ( this.Fill.IsFilled )
+					if ( this.Fill.IsVisible )
 					{
 						GraphicsPath path = new GraphicsPath( FillMode.Winding );
 						path.AddCurve( arrPoints, 0, count-2, tension );
@@ -416,7 +445,7 @@ namespace ZedGraph
 		/// device.  The format (stair-step or line) of the curve is
 		/// defined by the <see cref="StepType"/> property.  The routine
 		/// only draws the line segments; the symbols are drawn by the
-		/// <see cref="Symbol.DrawSymbols"/> method.  This method
+		/// <see cref="Symbol.Draw"/> method.  This method
 		/// is normally only called by the Draw method of the
 		/// <see cref="CurveItem"/> object
 		/// </summary>
@@ -440,7 +469,10 @@ namespace ZedGraph
 			double	curX, curY;
 			bool	broke = true;
 			
-			if ( points != null && !this.color.IsEmpty )
+			Pen pen = new Pen( this.color, this.width );
+			pen.DashStyle = this.Style;
+
+			if ( points != null && !this.color.IsEmpty && this.IsVisible )
 			{
 				// Loop over each point in the curve
 				for ( int i=0; i<points.Count; i++ )
@@ -485,16 +517,16 @@ namespace ZedGraph
 							{
 								if ( this.StepType == StepType.ForwardStep )
 								{
-									this.DrawSegment( g, lastX, lastY, tmpX, lastY );
-									this.DrawSegment( g, tmpX, lastY, tmpX, tmpY );
+									g.DrawLine( pen, lastX, lastY, tmpX, lastY );
+									g.DrawLine( pen, tmpX, lastY, tmpX, tmpY );
 								}
 								else if ( this.StepType == StepType.RearwardStep )
 								{
-									this.DrawSegment( g, lastX, lastY, lastX, tmpY );
-									this.DrawSegment( g, lastX, tmpY, tmpX, tmpY );
+									g.DrawLine( pen, lastX, lastY, lastX, tmpY );
+									g.DrawLine( pen, lastX, tmpY, tmpX, tmpY );
 								}
 								else 		// non-step
-									this.DrawSegment( g, lastX, lastY, tmpX, tmpY );
+									g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
 
 							}
 

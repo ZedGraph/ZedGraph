@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-10-02 07:00:42 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-10-13 04:52:53 $ </version>
 	public class FontSpec : ICloneable
 	{
 	#region Fields
@@ -77,29 +77,10 @@ namespace ZedGraph
 		/// </summary>
 		private Fill		fill;
 		/// <summary>
-		/// Private field that determines whether this <see cref="FontSpec"/> is
-		/// drawn with a frame around it.
-		/// Use the public property <see cref="IsFramed"/> to access this value.
+		/// Private field that determines the properties of the frame around the text.
+		/// Use the public property <see cref="Frame"/> to access this value.
 		/// </summary>
-		/// <value>A boolean value, true for a frame,
-		/// false for no frame</value>
-		private bool isFramed;
-		/// <summary>
-		/// Private field that determines the frame color for this
-		/// <see cref="FontSpec"/>.  This color is only used if
-		/// <see cref="isFramed"/> is true.
-		/// Use the public property <see cref="FrameColor"/> to access this value.
-		/// </summary>
-		/// <value>A <see cref="System.Drawing.Color"/> value</value>
-		private Color frameColor;
-		/// <summary>
-		/// Private field that determines the width of the frame for this
-		/// <see cref="FontSpec"/>.  This width is only used if
-		/// <see cref="isFramed"/> is true.
-		/// Use the public property <see cref="FrameWidth"/> to access this value.
-		/// </summary>
-		/// <value>The width of the frame, in pixel units</value>
-		private float frameWidth;
+		private Frame frame;
 
 		/// <summary>
 		/// Private field that determines the angle at which this
@@ -206,7 +187,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The color of the font characters for this <see cref="FontSpec"/>.
 		/// Note that the frame and background
-		/// colors are set using the <see cref="FrameColor"/> and
+		/// colors are set using the <see cref="ZedGraph.Frame.Color"/> and
 		/// <see cref="ZedGraph.Fill.Color"/> properties, respectively.
 		/// </summary>
 		/// <value>A system <see cref="System.Drawing.Color"/> reference.</value>
@@ -323,42 +304,15 @@ namespace ZedGraph
 			}
 		}
 		/// <summary>
-		/// The pen width used for drawing the frame around this
-		/// <see cref="FontSpec"/>.  This width is only used if
-		/// <see cref="IsFramed"/> is true.
+		/// Gets or sets the <see cref="Frame"/> class used to draw the frame border
+		/// around this text.
 		/// </summary>
-		/// <value>The width of the frame, in pixel units</value>
-		public float FrameWidth
+		public Frame Frame
 		{
-			get { return frameWidth; }
-			set { frameWidth = value; }
+			get { return frame; }
+			set { frame = value; }
 		}
-		/// <summary>
-		/// Determines whether or not to display a frame around the text using the
-		/// <see cref="FrameColor"/> color and <see cref="FrameWidth"/>
-		/// pen width
-		/// </summary>
-		/// <value>A boolean value, true for a frame,
-		/// false for no frame</value>
-		public bool IsFramed
-		{
-			get { return isFramed; }
-			set { isFramed = value; }
-		}
-		
-		/// <summary>
-		/// Sets or gets the color of the frame around the text.  This
-		/// frame is turned on or off using the <see cref="IsFramed"/>
-		/// property and the pen width is specified with the
-		/// <see cref="FrameWidth"/> property
-		/// </summary>
-		/// <value>A system <see cref="System.Drawing.Color"/> reference.</value>
-		public Color FrameColor
-		{
-			get { return frameColor; }
-			set { frameColor = value; }
-		}
-		
+				
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="FontSpec"/>, which controls how the background
@@ -400,10 +354,8 @@ namespace ZedGraph
 			this.angle = 0F;
 			this.stringAlignment = Default.StringAlignment;
 
+			this.frame = new Frame( true, Color.Black, 1.0F );
 			this.fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
-			this.isFramed = true;
-			this.frameColor = Color.Black;
-			this.frameWidth = 1.0F;
 			
 			Remake( 1.0, this.Size, ref this.scaledSize, ref this.font );
 		}
@@ -440,10 +392,9 @@ namespace ZedGraph
 			this.angle = 0F;
 			this.stringAlignment = Default.StringAlignment;
 
+
 			this.fill = new Fill( fillColor, fillBrush, fillType );
-			this.isFramed = true;
-			this.frameColor = Color.Black;
-			this.frameWidth = 1.0F;
+			this.frame = new Frame( true, Color.Black, 1.0F );
 			
 			Remake( 1.0, this.Size, ref this.scaledSize, ref this.font );
 		}
@@ -460,10 +411,7 @@ namespace ZedGraph
 			isItalic = rhs.IsItalic;
 			isUnderline = rhs.IsUnderline;
 			fill = (Fill) rhs.Fill.Clone();
-
-			isFramed = rhs.IsFramed;
-			frameColor = rhs.FrameColor;
-			frameWidth = rhs.FrameWidth;
+			frame = (Frame) rhs.Frame.Clone();
 
 			stringAlignment = rhs.StringAlignment;
 			angle = rhs.Angle;
@@ -632,19 +580,10 @@ namespace ZedGraph
 								sizeF.Width, sizeF.Height );
 
 			// If the background is to be filled, fill it
-			if ( this.fill.IsFilled )
-			{
-				Brush fillBrush = this.fill.MakeBrush( rectF );
-				g.FillRectangle( fillBrush, rectF );
-				fillBrush.Dispose();
-			}
+			this.fill.Draw( g, rectF );
 			
 			// Draw the frame around the text if required
-			if ( isFramed )
-			{
-				Pen pen = new Pen( this.frameColor, this.frameWidth );
-				g.DrawRectangle( pen, Rectangle.Round( rectF ) );
-			}
+			this.frame.Draw( g, rectF );
 
 			// Draw the actual text.  Note that the coordinate system
 			// is set up such that 0,0 is at the location where the
@@ -845,19 +784,10 @@ namespace ZedGraph
 				totSize.Width, totSize.Height );
 
 			// If the background is to be filled, fill it
-			if ( this.fill.IsFilled )
-			{
-				Brush fillBrush = this.fill.MakeBrush( rectF );
-				g.FillRectangle( fillBrush, rectF );
-				fillBrush.Dispose();
-			}
+			this.fill.Draw( g, rectF );
 			
 			// Draw the frame around the text if required
-			if ( isFramed )
-			{
-				Pen pen = new Pen( this.frameColor, this.frameWidth );
-				g.DrawRectangle( pen, Rectangle.Round( rectF ) );
-			}
+			this.frame.Draw( g, rectF );
 
 			// Draw the actual text.  Note that the coordinate system
 			// is set up such that 0,0 is at the location where the

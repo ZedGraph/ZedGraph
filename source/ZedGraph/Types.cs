@@ -342,4 +342,33 @@ namespace ZedGraph
 		/// </summary>
 		Y2
 	};
+	
+	/// <summary>
+	/// Enumeration type that defines the available types of <see cref="BarItem"/> graphs.
+	/// </summary>
+	/// <seealso cref="GraphPane.BarType"/>
+	public enum BarType
+	{
+		/// <summary>
+		/// Draw each <see cref="BarItem"/> side by side in clusters.
+		/// </summary>
+		Cluster,
+		/// <summary>
+		/// Draw the <see cref="BarItem"/> bars one on top of the other.  The bars will
+		/// be drawn such that the last bar in the <see cref="CurveList"/> will be behind
+		/// all other bars.  Note that the bar values are not summed up for the overlay
+		/// mode.  The data values must be summed before being passed
+		/// to <see cref="GraphPane.AddCurve"/>.  For example, if the first bar of
+		/// the first <see cref="BarItem"/> has a value of 100, and the first bar of
+		/// the second <see cref="BarItem"/> has a value of 120, then that bar will
+		/// appear to be 20 units on top of the first bar.
+		/// </summary>
+		Overlay,
+		/// <summary>
+		/// Draw the <see cref="BarItem"/> bars in an additive format so that they stack on
+		/// top of one another.  The value of the last bar drawn will be the sum of the values
+		/// of all prior bars.
+		/// </summary>
+		Stack
+	};
 }

@@ -179,12 +179,37 @@ namespace ZedGraphTest
 			double[] x = { 0.4875 };
 			double[] y = { -123456 };
 
-			CurveItem curve;
+			LineItem curve;
 			curve = myPane.AddCurve( "One Value", x, y, Color.Red, SymbolType.Diamond );
-			curve.Symbol.IsFilled = true;
+			curve.Symbol.Fill.IsVisible = false;
 
-			myPane.XAxis.IsShowGrid = true;
-			myPane.YAxis.IsShowGrid = true;
+			//myPane.XAxis.IsShowGrid = true;
+			//myPane.YAxis.IsShowGrid = true;
+
+#endif
+
+#if false	// 1000 values test
+			// Create a new graph
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"My Test Graph\n(For CodeProject Sample)",
+				"My X Axis",
+				"My Y Axis" );
+				
+			double[] x = new double[1000];
+			double[] y = new double[1000];
+			for ( int i=0; i<1000; i++ )
+			{
+				x[i] = (double) i;
+				y[i] = (double) i * 100.0;
+			}
+
+			LineItem curve;
+			curve = myPane.AddCurve( "Many Values", x, y, Color.Red, SymbolType.Diamond );
+			curve.Symbol.Fill.IsVisible = false;
+			curve.Symbol.IsVisible = true;
+
+			//myPane.XAxis.IsShowGrid = true;
+			//myPane.YAxis.IsShowGrid = true;
 
 #endif
 
@@ -1171,7 +1196,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if false	// The main example
+#if true	// The main example
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -1180,7 +1205,7 @@ namespace ZedGraphTest
 
 			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
-			CurveItem curve;
+			LineItem curve;
 			curve = myPane.AddCurve( "Larry", x, y, Color.Green, SymbolType.Circle );
 			curve.Line.Width = 1.5F;
 			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 60, 190, 50), 90F );
@@ -1200,7 +1225,7 @@ namespace ZedGraphTest
 			
 			double[] x2 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y2 = { 40, 60, 70, 80, 100, 110, 113, 105, 95, 75 };
-			curve = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
+			BarItem bar = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
 			myPane.ClusterScaleWidth = 100;
 			//curve.Bar.Fill = new Fill( Color.Blue );
 			//curve.Symbol.Size = 12;
@@ -1243,9 +1268,9 @@ namespace ZedGraphTest
 			text.FontSpec.FontColor = Color.Black;
 			text.AlignH = AlignH.Right;
 			text.AlignV = AlignV.Center;
-			text.FontSpec.Fill.IsFilled = false;
+			text.FontSpec.Fill.IsVisible = false;
 			//text.FontSpec.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, -45F );
-			text.FontSpec.IsFramed = false;
+			text.FontSpec.Frame.IsVisible = false;
 			myPane.TextList.Add( text );
 
 			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
@@ -1260,9 +1285,9 @@ namespace ZedGraphTest
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.IsBold = true;
 			text.FontSpec.Size = 16;
-			text.FontSpec.IsFramed = false;
-			text.FontSpec.FrameColor = Color.Red;
-			text.FontSpec.Fill.IsFilled = false;
+			text.FontSpec.Frame.IsVisible = false;
+			text.FontSpec.Frame.Color = Color.Red;
+			text.FontSpec.Fill.IsVisible = false;
 
 			text.AlignH = AlignH.Left;
 			text.AlignV = AlignV.Bottom;
@@ -1435,7 +1460,7 @@ namespace ZedGraphTest
 			myPane.TextList.Add( text );
 #endif
 
-#if true	// zero value bug test
+#if false	// zero value bug test
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Years\n(Since Plant Construction Startup)",
@@ -1461,6 +1486,8 @@ namespace ZedGraphTest
 			//			myPane.AxisChange( this.CreateGraphics() );
 
 			myPane.AxisChange( this.CreateGraphics() );
+			
+
 		}
 
 		/// <summary>
@@ -1665,12 +1692,10 @@ namespace ZedGraphTest
 			// clone the pane so the paneRect can be changed for printing
 			GraphPane printPane = (GraphPane) myPane.Clone();
 
-			// duplicate the DPI value used for the screen
-			printPane.BaseDPI = this.CreateGraphics().DpiX;
-
 			//printPane.Legend.IsVisible = true;
-			printPane.PaneRect = new RectangleF( 50, 50,
-				this.Size.Width+300, this.Size.Height+300 );
+			//printPane.PaneRect = new RectangleF( 50, 50,
+			//	this.Size.Width+300, this.Size.Height+300 );
+				
 			//e.Graphics.PageScale = 1.0F;
 			//printPane.BaseDimension = 2.0F;
 			printPane.Draw( e.Graphics );
@@ -1689,6 +1714,18 @@ namespace ZedGraphTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+			DoPrint();
+			
+			/*
+			const int NUMITER = 100;
+			long junk = Environment.TickCount;
+			for ( int i=0; i<NUMITER; i++ )
+				this.Refresh();
+			junk = Environment.TickCount - junk;
+			
+			MessageBox.Show( "Time = " + (double) junk / (double) NUMITER + " ms/refresh" );
+			*/
+			
 			//myPane.XAxis.TitleFontSpec.Angle += 90;
 			//myPane.YAxis.TitleFontSpec.Angle += 90;
 			//myPane.Y2Axis.TitleFontSpec.Angle += 90;
@@ -1698,7 +1735,6 @@ namespace ZedGraphTest
 			//myPane.IsIgnoreMissing = !myPane.IsIgnoreMissing;
 			//			Invalidate();
 
-			//			DoPrint();
 
 			//myPane.Image.Save( @"c:\zedgraph.gif", ImageFormat.Gif );
 
@@ -1717,6 +1753,7 @@ namespace ZedGraphTest
 
 
 	
+			/*
 			object obj;
 			int index;
 			
@@ -1730,7 +1767,9 @@ namespace ZedGraphTest
 				myPane.CurveList[index].IsVisible = !myPane.CurveList[index].IsVisible;
 				Invalidate();
 			}
-
+			*/
+			
+			
 			/*
 									CurveItem curve;
 									int	iPt;

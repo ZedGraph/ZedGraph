@@ -123,6 +123,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\BarItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\ColorSymbolRotator.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -148,6 +153,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\Frame.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\GraphPane.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -159,6 +169,11 @@
                 />
                 <File
                     RelPath = "ZedGraph\Line.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\LineItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

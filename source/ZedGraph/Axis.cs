@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-09 17:13:42 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-10-13 04:52:53 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -721,7 +721,7 @@ namespace ZedGraph
 					Default.TitleFillColor, Default.TitleFillBrush,
 					Default.TitleFillType );
 
-			this.titleFontSpec.IsFramed = false;
+			this.titleFontSpec.Frame.IsVisible = false;
 
 			this.scaleFontSpec = new FontSpec(
 				Default.ScaleFontFamily, Default.ScaleFontSize,
@@ -729,7 +729,7 @@ namespace ZedGraph
 				Default.ScaleFontUnderline, Default.ScaleFontItalic,
 				Default.ScaleFillColor, Default.ScaleFillBrush,
 				Default.ScaleFillType );
-			this.scaleFontSpec.IsFramed = false;
+			this.scaleFontSpec.Frame.IsVisible = false;
 		}
 
 		/// <summary>

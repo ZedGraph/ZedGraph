@@ -19,6 +19,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -41,7 +42,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-02 07:00:42 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-10-13 04:52:53 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -88,53 +89,37 @@ namespace ZedGraph
 		
 		// Pane Frame Properties ///////////////////////////////////////////////////////////////
 		
-		/// <summary>Private field that determines whether the <see cref="PaneRect"/> has
-		/// a frame border.  Use the public property <see cref="IsPaneFramed"/> to access
-		/// this value. </summary>
-		private bool		isPaneFramed;
-		/// <summary>Private field that determines the color of the <see cref="PaneRect"/>
-		/// frame border.  Use the public property <see cref="PaneFrameColor"/> to access
-		/// this value. </summary>
-		/// <seealso cref="isPaneFramed"/>
-		private Color		paneFrameColor;
-		/// <summary>Private field that determines the width (pixels) of the <see cref="PaneRect"/>
-		/// frame border.  Use the public property <see cref="PaneFramePenWidth"/> to access
-		/// this value. </summary>
-		/// <seealso cref="isPaneFramed"/>
-		private float		paneFramePenWidth;
 		/// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="PaneRect"/>.  Use the public property <see cref="PaneFill"/> to
 		/// access this value.
 		/// </summary>
 		private Fill		paneFill;
+		/// <summary>
+		/// Private field that stores the <see cref="ZedGraph.Frame"/> data for this
+		/// <see cref="PaneRect"/>.  Use the public property <see cref="PaneFrame"/> to
+		/// access this value.
+		/// </summary>
+		private Frame		paneFrame;
 		
 		// Axis Frame Properties //////////////////////////////////////////////////////////////
 		
 		/// <summary>Private field that determines if the <see cref="AxisRect"/> will be
 		/// sized automatically.  Use the public property <see cref="IsAxisRectAuto"/> to access
 		/// this value. </summary>
-		private bool		isAxisRectAuto;
-		/// <summary>Private field that determines if the <see cref="AxisRect"/> will have a
-		/// frame border.  Use the public property <see cref="IsAxisFramed"/> to access
-		/// this value. </summary>
-		private bool		isAxisFramed;
-		/// <summary>Private field that determines the color of the <see cref="AxisRect"/>
-		/// frame border.  Use the public property <see cref="AxisFrameColor"/> to access
-		/// this value. </summary>
-		/// <seealso cref="isAxisFramed"/>
-		private Color		axisFrameColor;
-		/// <summary>Private field that determines the width of the <see cref="AxisRect"/>
-		/// frame border.  Use the public property <see cref="AxisFramePenWidth"/> to access
-		/// this value. </summary>
-		/// <seealso cref="isAxisFramed"/>
-		private float		axisFramePenWidth;
+		private bool isAxisRectAuto;
 		/// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="AxisRect"/>.  Use the public property <see cref="AxisFill"/> to
 		/// access this value.
 		/// </summary>
 		private Fill axisFill;
+		/// <summary>
+		/// Private field that stores the <see cref="ZedGraph.Frame"/> data for this
+		/// <see cref="AxisRect"/>.  Use the public property <see cref="AxisFrame"/> to
+		/// access this value.
+		/// </summary>
+		private Frame axisFrame;
 		
 		/// <summary>Private field that determines whether or not initial zero values will
 		/// be included or excluded when determining the Y or Y2 axis scale range.
@@ -161,14 +146,6 @@ namespace ZedGraph
 		/// <seealso cref="isFontsScaled"/>
 		/// <seealso cref="GraphPane.CalcScaleFactor"/>
 		private double		baseDimension;
-		/// <summary>Private field that determines the dots per inch basis for the
-		/// <see cref="PaneRect"/>.  This is typically used for printing opertions.
-		/// Leave the value set to zero for normal conditions (i.e., the output device
-		/// resolution matches the definition of the PaneRect).
-		/// Use the public property <see cref="BaseDPI"/> to access this value. </summary>
-		/// <seealso cref="isFontsScaled"/>
-		/// <seealso cref="GraphPane.CalcScaleFactor"/>
-		private double		baseDPI;
 		/// <summary>Private field that determines the size of the gap between bar clusters
 		/// for bar charts.  This gap is expressed as a fraction of the bar size (1.0 means
 		/// leave a 1-barwidth gap between clusters).
@@ -186,19 +163,13 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="Default.BarBase"/>
 		private BarBase		barBase;
-		/// <summary>Private field that determines the whether or not the <see cref="Bar"/>
-		/// graphs will be displayed in stacked format.  Note that the bar values are not summed up to
-		/// create the stacking, the data values must be summed before being passed
-		/// to <see cref="GraphPane.AddCurve"/>.  For example, if the first bar of
-		/// the first <see cref="CurveItem"/> has a value of 100, and the first bar of
-		/// the second <see cref="CurveItem"/> has a value of 120, then that bar will
-		/// appear to be 20 units on top of the first bar.
-		/// Set this value to true for stacked
-		/// bars, or false for clustered bars.
-		/// To access this value, use the public property <see cref="IsBarStacked"/>.
+		/// <summary>Private field that determines how the <see cref="BarItem"/>
+		/// graphs will be displayed. See the <see cref="ZedGraph.BarType"/> enum
+		/// for the individual types available.
+		/// To access this value, use the public property <see cref="BarType"/>.
 		/// </summary>
-		/// <seealso cref="Default.IsBarStacked"/>
-		private bool	isBarStacked;
+		/// <seealso cref="Default.BarType"/>
+		private BarType barType;
 		/// <summary>Private field that determines the width of a bar cluster (for bar charts)
 		/// in user scale units.  Normally, this value is 1.0 because bar charts are typically
 		/// <see cref="AxisType.Ordinal"/> or <see cref="AxisType.Text"/>, and the bars are
@@ -297,14 +268,14 @@ namespace ZedGraph
 			//		public static bool stepPlot = false;
 			/// <summary>
 			/// The default frame mode for the <see cref="GraphPane"/>.
-			/// (<see cref="GraphPane.IsPaneFramed"/> property). true
+			/// (<see cref="GraphPane.PaneFrame"/> property). true
 			/// to draw a frame around the <see cref="GraphPane.PaneRect"/>,
 			/// false otherwise.
 			/// </summary>
 			public static bool IsPaneFramed = true;
 			/// <summary>
 			/// The default color for the <see cref="GraphPane"/> frame border.
-			/// (<see cref="GraphPane.PaneFrameColor"/> property). 
+			/// (<see cref="GraphPane.PaneFrame"/> property). 
 			/// </summary>
 			public static Color PaneFrameColor = Color.Black;
 			/// <summary>
@@ -324,13 +295,13 @@ namespace ZedGraph
 			public static FillType PaneBackType = FillType.Brush;
 			/// <summary>
 			/// The default pen width for the <see cref="GraphPane"/> frame border.
-			/// (<see cref="GraphPane.PaneFramePenWidth"/> property).  Units are in pixels.
+			/// (<see cref="GraphPane.PaneFrame"/> property).  Units are in pixels.
 			/// </summary>
 			public static float PaneFramePenWidth = 1;
 
 			/// <summary>
 			/// The default color for the <see cref="Axis"/> frame border.
-			/// (<see cref="GraphPane.AxisFrameColor"/> property). 
+			/// (<see cref="GraphPane.AxisFrame"/> property). 
 			/// </summary>
 			public static Color AxisFrameColor = Color.Black;
 			/// <summary>
@@ -351,13 +322,13 @@ namespace ZedGraph
 			/// <summary>
 			/// The default pen width for drawing the 
 			/// <see cref="GraphPane.AxisRect"/> frame border
-			/// (<see cref="GraphPane.AxisFramePenWidth"/> property).
+			/// (<see cref="GraphPane.AxisFrame"/> property).
 			/// Units are in pixels.
 			/// </summary>
 			public static float AxisFramePenWidth = 1F;
 			/// <summary>
 			/// The default display mode for the <see cref="Axis"/> frame border
-			/// (<see cref="GraphPane.IsAxisFramed"/> property). true
+			/// (<see cref="GraphPane.AxisFrame"/> property). true
 			/// to show the frame border, false to omit the border
 			/// </summary>
 			public static bool IsAxisFramed = true;
@@ -405,13 +376,13 @@ namespace ZedGraph
 			/// </summary>
 			/// <seealso cref="GraphPane.BarBase"/>
 			public static BarBase BarBase = BarBase.X;
-			/// <summary>The default value for the <see cref="IsBarStacked"/> property, which
+			/// <summary>The default value for the <see cref="GraphPane.BarType"/> property, which
 			/// determines if the bars are drawn overlapping eachother in a "stacked" format,
-			/// or side-by-side in a "cluster" format.  The value is true for stacked format
-			/// or false for cluster format.
+			/// or side-by-side in a "cluster" format.  See the <see cref="ZedGraph.BarType"/>
+			/// for more information.
 			/// </summary>
-			/// <seealso cref="GraphPane.IsBarStacked"/>
-			public static bool IsBarStacked = false;
+			/// <seealso cref="GraphPane.BarType"/>
+			public static BarType BarType = BarType.Cluster;
 			/// <summary>
 			/// The default width of a bar cluster 
 			/// on a <see cref="Bar"/> graph.  This value only applies to
@@ -587,52 +558,18 @@ namespace ZedGraph
 			get { return paneRect; }
 			set { paneRect = value; }
 		}
-		/// <summary>
-		/// IsShowPaneFrame is a boolean value that determines whether or not a frame border is drawn
-		/// around the <see cref="GraphPane"/> area (<see cref="PaneRect"/>).
-		/// True to draw the frame, false otherwise.
-		/// </summary>
-		/// <seealso cref="Default.IsPaneFramed"/>
-		public bool IsPaneFramed
-		{
-			get { return isPaneFramed; }
-			set { isPaneFramed = value; }
-		}
 		
 		/// <summary>
-		/// Frame color is a <see cref="System.Drawing.Color"/> specification
-		/// for the <see cref="GraphPane"/> frame border.
+		/// Gets or sets the <see cref="ZedGraph.Frame"/> class for drawing the frame
+		/// border around the <see cref="PaneRect"/>
 		/// </summary>
 		/// <seealso cref="Default.PaneFrameColor"/>
-		public Color PaneFrameColor
-		{
-			get { return paneFrameColor; }
-			set { paneFrameColor = value; }
-		}
-		/*
-		/// <summary>
-		/// Gets or sets the <see cref="System.Drawing.Color"/> specification
-		/// for the <see cref="GraphPane"/> pane background, which is the
-		/// area behind the <see cref="GraphPane.PaneRect"/>.
-		/// </summary>
-		/// <seealso cref="Default.PaneBackColor"/>
-		public Color PaneBackColor
-		{
-			get { return paneFill.Color; }
-			set { paneFill.Color = value; }
-		}
-		*/
-		/// <summary>
-		/// FrameWidth is a float value indicating the width (thickness) of the
-		/// <see cref="GraphPane"/> frame border.
-		/// </summary>
 		/// <seealso cref="Default.PaneFramePenWidth"/>
-		public float PaneFramePenWidth
+		public Frame PaneFrame
 		{
-			get { return paneFramePenWidth; }
-			set { paneFramePenWidth = value; }
-		}
-		
+			get { return paneFrame; }
+			set { paneFrame = value; }
+		}		
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="PaneRect"/>.
@@ -675,50 +612,16 @@ namespace ZedGraph
 			set { isAxisRectAuto = value; }
 		}
 		/// <summary>
-		/// IsAxisFramed is a boolean value that determines whether or not a frame border is drawn
-		/// around the axis area (<see cref="AxisRect"/>).
-		/// </summary>
-		/// <value>true to draw the frame, false otherwise. </value>
-		/// <seealso cref="Default.IsAxisFramed"/>
-		public bool IsAxisFramed
-		{
-			get { return isAxisFramed; }
-			set { isAxisFramed = value; }
-		}
-		/// <summary>
-		/// Frame color is a <see cref="System.Drawing.Color"/> specification
-		/// for the axis frame border.
+		/// Gets or sets the <see cref="ZedGraph.Frame"/> class for drawing the frame
+		/// border around the <see cref="AxisRect"/>
 		/// </summary>
 		/// <seealso cref="Default.AxisFrameColor"/>
-		public Color AxisFrameColor
-		{
-			get { return axisFrameColor; }
-			set { axisFrameColor = value; }
-		}
-		/*
-		/// <summary>
-		/// Gets or sets the <see cref="System.Drawing.Color"/> specification
-		/// for the <see cref="Axis"/> background, which is the
-		/// area behind the <see cref="GraphPane.AxisRect"/>.
-		/// </summary>
-		/// <seealso cref="Default.AxisBackColor"/>
-		public Color AxisBackColor
-		{
-			get { return axisFill.Color; }
-			set { axisFill.Color = value; }
-		}
-		*/
-		/// <summary>
-		/// FrameWidth is a float value indicating the width (thickness) of the axis frame border.
-		/// </summary>
-		/// <value>A pen width dimension in pixel units</value>
 		/// <seealso cref="Default.AxisFramePenWidth"/>
-		public float AxisFramePenWidth
+		public Frame AxisFrame
 		{
-			get { return axisFramePenWidth; }
-			set { axisFramePenWidth = value; }
-		}
-		
+			get { return axisFrame; }
+			set { axisFrame = value; }
+		}				
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="AxisRect"/>.
@@ -777,23 +680,6 @@ namespace ZedGraph
 			set { isFontsScaled = value; }
 		}
 		/// <summary>
-		/// BaseDPI is a double precision value that overrides the default DPI setting for this
-		/// <see cref="GraphPane"/>.  Normally, you won't need to use this value for screen displays.
-		/// However, when printing, the print device often scales the output internally such that
-		/// the paneRect is the same size as the screen display, but the DPI goes up to 600.  Therefore,
-		/// in order to scale the output properly, you need to override the scale calculations
-		/// made by ZedGraph.  Leave this value at 0 to not override, (i.e., the output device
-		/// resolution matches the definition of the PaneRect).
-		/// </summary>
-		/// <seealso cref="Default.BaseDimension"/>
-		/// <seealso cref="GraphPane.CalcScaleFactor"/>
-		/// <seealso cref="IsFontsScaled"/>
-		public double BaseDPI
-		{
-			get { return baseDPI; }
-			set { baseDPI = value; }
-		}
-		/// <summary>
 		/// ScaledGap is a simple utility routine that calculates the <see cref="PaneGap"/> scaled
 		/// to the "scaleFactor" fraction.  That is, ScaledGap = PaneGap * scaleFactor
 		/// </summary>
@@ -846,21 +732,16 @@ namespace ZedGraph
 			get { return barBase; }
 			set { barBase = value; }
 		}
-		/// <summary>Determines whether or not the <see cref="Bar"/>
-		/// graphs will be displayed in stacked format.  Note that the bar values are not summed up to
-		/// create the stacking, the data values must be summed before being passed
-		/// to <see cref="GraphPane.AddCurve"/>.  For example, if the first bar of
-		/// the first <see cref="CurveItem"/> has a value of 100, and the first bar of
-		/// the second <see cref="CurveItem"/> has a value of 120, then that bar will
-		/// appear to be 20 units on top of the first bar.
-		/// Set this value to true for stacked
-		/// bars, or false for clustered bars.
+		/// <summary>Private field that determines how the <see cref="BarItem"/>
+		/// graphs will be displayed. See the <see cref="ZedGraph.BarType"/> enum
+		/// for the individual types available.
+		/// To access this value, use the public property <see cref="BarType"/>.
 		/// </summary>
-		/// <seealso cref="Default.IsBarStacked"/>
-		public bool	IsBarStacked
+		/// <seealso cref="Default.BarType"/>
+		public BarType BarType
 		{
-			get { return isBarStacked; }
-			set { isBarStacked = value; }
+			get { return barType; }
+			set { barType = value; }
 		}
 		/// <summary>
 		/// The width of an individual bar cluster on a <see cref="Bar"/> graph.
@@ -911,23 +792,18 @@ namespace ZedGraph
 				Default.FontItalic, Default.FontUnderline,
 				Default.FontFillColor, Default.FontFillBrush,
 				Default.FontFillType );
-			this.fontSpec.IsFramed = false;
+			this.fontSpec.Frame.IsVisible = false;
 					
 			this.isIgnoreInitial = Default.IsIgnoreInitial;
 			
-			this.isPaneFramed = Default.IsPaneFramed;
-			this.paneFrameColor = Default.PaneFrameColor;
-			this.paneFramePenWidth = Default.PaneFramePenWidth;
+			this.paneFrame = new Frame( Default.IsPaneFramed, Default.PaneFrameColor, Default.PaneFramePenWidth );
 			this.paneFill = new Fill( Default.PaneBackColor, Default.PaneBackBrush, Default.PaneBackType );
 
 			this.isAxisRectAuto = true;
-			this.isAxisFramed = Default.IsAxisFramed;
-			this.axisFrameColor = Default.AxisFrameColor;
-			this.axisFramePenWidth = Default.AxisFramePenWidth;
+			this.axisFrame = new Frame( Default.IsAxisFramed, Default.AxisFrameColor, Default.AxisFramePenWidth );
 			this.axisFill = new Fill( Default.AxisBackColor, Default.AxisBackBrush, Default.AxisBackType );
 
 			this.baseDimension = Default.BaseDimension;
-			this.baseDPI = 0;
 			this.paneGap = Default.PaneGap;
 			this.isFontsScaled = true;
 
@@ -935,7 +811,7 @@ namespace ZedGraph
 			this.minBarGap = Default.MinBarGap;
 			this.clusterScaleWidth = Default.ClusterScaleWidth;
 			this.barBase = Default.BarBase;
-			this.isBarStacked = Default.IsBarStacked;
+			this.barType = Default.BarType;
 		}
 
 		/// <summary>
@@ -959,26 +835,21 @@ namespace ZedGraph
 					
 			this.isIgnoreInitial = rhs.IsIgnoreInitial;
 			
-			this.isPaneFramed = rhs.IsPaneFramed;
-			this.paneFrameColor = rhs.PaneFrameColor;
-			this.paneFramePenWidth = rhs.PaneFramePenWidth;
+			this.paneFrame = (Frame) rhs.PaneFrame.Clone();
 			this.paneFill = (Fill) rhs.PaneFill.Clone();
 
 			this.isAxisRectAuto = rhs.IsAxisRectAuto;
-			this.isAxisFramed = rhs.IsAxisFramed;
-			this.axisFrameColor = rhs.AxisFrameColor;
-			this.axisFramePenWidth = rhs.AxisFramePenWidth;
+			this.axisFrame = (Frame) rhs.AxisFrame.Clone();
 			this.axisFill = (Fill) rhs.AxisFill.Clone();
 
 			this.baseDimension = rhs.BaseDimension;
 			this.isFontsScaled = rhs.isFontsScaled;
-			this.baseDPI = rhs.BaseDPI;
 			this.paneGap = rhs.PaneGap;
 			this.minClusterGap = rhs.MinClusterGap;
 			this.minBarGap = rhs.MinBarGap;
 			this.clusterScaleWidth = rhs.ClusterScaleWidth;
 			this.barBase = rhs.BarBase;
-			this.isBarStacked = rhs.IsBarStacked;
+			this.barType = rhs.BarType;
 		} 
 
 		/// <summary>
@@ -1073,7 +944,7 @@ namespace ZedGraph
 				return;
 			
 			// Fill the axis background
-			DrawAxisFill( g );
+			this.axisFill.Draw( g, this.axisRect );
 			
 			// Draw the graph features only if there is at least one curve with data
 			//			if (	this.curveList.HasData() &&
@@ -1118,7 +989,7 @@ namespace ZedGraph
 			}
 			
 			// Frame the axis itself
-			DrawAxisFrame( g );
+			this.axisFrame.Draw( g, this.axisRect );
 
 		}
 
@@ -1275,71 +1146,7 @@ namespace ZedGraph
 			g.FillRectangle( brush, this.paneRect );
 			brush.Dispose();
 
-			RectangleF tempRect = this.paneRect;
-			//tempRect.Width -= 1;
-			//tempRect.Height -= 1;
-
-			if ( this.isPaneFramed )
-			{
-				Pen pen = new Pen( this.paneFrameColor, this.paneFramePenWidth );
-				g.DrawRectangle( pen, Rectangle.Round( tempRect ) );
-				
-				// FrameRect draws one pixel short of the bottom/right border, so
-				//  just draw it manually
-//				g.DrawLine( pen, paneRect.Left, paneRect.Bottom,
-//									paneRect.Left, paneRect.Top );
-//				g.DrawLine( pen, paneRect.Left, paneRect.Top,
-//									paneRect.Right, paneRect.Top );
-//				g.DrawLine( pen, paneRect.Right, paneRect.Top,
-//									paneRect.Right, paneRect.Bottom );
-//				g.DrawLine( pen, paneRect.Right, paneRect.Bottom,
-//									paneRect.Left, paneRect.Bottom );
-			}
-		}
-
-		/// <summary>
-		/// Fill the background of the <see cref="AxisRect"/> area, using the
-		/// fill type from <see cref="AxisFill"/>.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		public void DrawAxisFill( Graphics g )
-		{
-			// Erase the axis background
-			if ( this.axisFill.IsFilled )
-			{
-				Brush brush = this.axisFill.MakeBrush( this.axisRect );
-				g.FillRectangle( brush, this.axisRect );
-				brush.Dispose();
-			}
-		}
-
-		/// <summary>
-		/// Draw the frame border around the <see cref="AxisRect"/> area.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		public void DrawAxisFrame( Graphics g )
-		{
-			if ( this.isAxisFramed )
-			{
-				Pen pen = new Pen( this.axisFrameColor, this.axisFramePenWidth );
-				//g.DrawRectangle( pen, Rectangle.Round( this.axisRect ) );
-				// FrameRect draws one pixel short of the bottom/right border, so
-				//  just draw it manually
-				g.DrawLine( pen, axisRect.Left, axisRect.Bottom,
-					axisRect.Left, axisRect.Top );
-				g.DrawLine( pen, axisRect.Left, axisRect.Top,
-					axisRect.Right, axisRect.Top );
-				g.DrawLine( pen, axisRect.Right, axisRect.Top,
-					axisRect.Right, axisRect.Bottom );
-				g.DrawLine( pen, axisRect.Right, axisRect.Bottom,
-					axisRect.Left, axisRect.Bottom );
-			}
+			this.paneFrame.Draw( g, paneRect );
 		}
 
 		/// <summary>
@@ -1368,7 +1175,23 @@ namespace ZedGraph
 			// if font scaling is turned off, then always return a 1.0 scale factor
 			if ( !this.isFontsScaled )
 				return 1.0;
-
+				
+			// Determine the scale factor by transforming two points and calculating the resulting distance
+			PointF[] pts = new PointF[2];
+			pts[0].X = 0;
+			pts[0].Y = 0;
+			pts[1].X = 100;
+			pts[1].Y = 100;
+			
+			g.TransformPoints( CoordinateSpace.Device, CoordinateSpace.World, pts );
+			
+			double scaleX = (double) ( pts[1].X - pts[0].X ) / 100.0;
+			double scaleY = (double) ( pts[1].Y - pts[0].Y ) / 100.0;
+			
+			xInch = (double) this.paneRect.Width * scaleX / (double) g.DpiX;
+			yInch = (double) this.paneRect.Height * scaleY / (double) g.DpiY;
+			
+			/*
 			// determine the size of the paneRect in inches
 			if ( this.baseDPI == 0 )
 			{
@@ -1380,7 +1203,8 @@ namespace ZedGraph
 				xInch = (double) this.paneRect.Width / this.baseDPI;
 				yInch = (double) this.paneRect.Height / this.baseDPI;
 			}
-					
+			*/
+				
 			// Limit the aspect ratio so long plots don't have outrageous font sizes
 			double aspect = (double) xInch / (double) yInch;
 			if ( aspect > ASPECTLIMIT )
@@ -1416,9 +1240,9 @@ namespace ZedGraph
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
-		public CurveItem AddCurve( string label, double[] x, double[] y, Color color )
+		public LineItem AddCurve( string label, double[] x, double[] y, Color color )
 		{
-			CurveItem curve = new CurveItem( label, x, y, false, color, SymbolType.Default );
+			LineItem curve = new LineItem( label, x, y, color, SymbolType.Default );
 			this.curveList.Add( curve );
 			
 			return curve;
@@ -1440,9 +1264,9 @@ namespace ZedGraph
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
-		public CurveItem AddCurve( string label, PointPairList points, Color color )
+		public LineItem AddCurve( string label, PointPairList points, Color color )
 		{
-			CurveItem curve = new CurveItem( label, points, false, color, SymbolType.Default );
+			LineItem curve = new LineItem( label, points, color, SymbolType.Default );
 			this.curveList.Add( curve );
 			
 			return curve;
@@ -1468,10 +1292,10 @@ namespace ZedGraph
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
-		public CurveItem AddCurve( string label, double[] x, double[] y,
+		public LineItem AddCurve( string label, double[] x, double[] y,
 			Color color, SymbolType symbolType )
 		{
-			CurveItem curve = new CurveItem( label, x, y, false, color, symbolType );
+			LineItem curve = new LineItem( label, x, y, color, symbolType );
 			this.curveList.Add( curve );
 			
 			return curve;
@@ -1495,10 +1319,10 @@ namespace ZedGraph
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
-		public CurveItem AddCurve( string label, PointPairList points,
+		public LineItem AddCurve( string label, PointPairList points,
 			Color color, SymbolType symbolType )
 		{
-			CurveItem curve = new CurveItem( label, points, false, color, symbolType );
+			LineItem curve = new LineItem( label, points, color, symbolType );
 			this.curveList.Add( curve );
 			
 			return curve;
@@ -1519,9 +1343,9 @@ namespace ZedGraph
 		/// <returns>A <see cref="CurveItem"/> class for the newly created bar curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the <see cref="AddBar"/> method.</returns>
-		public CurveItem AddBar( string label, PointPairList points, Color color )
+		public BarItem AddBar( string label, PointPairList points, Color color )
 		{
-			CurveItem curve = new CurveItem( label, points, true, color, SymbolType.Default );
+			BarItem curve = new BarItem( label, points, color );
 			this.curveList.Add( curve );
 			
 			return curve;
@@ -1544,9 +1368,9 @@ namespace ZedGraph
 		/// <returns>A <see cref="CurveItem"/> class for the newly created bar curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the <see cref="AddBar"/> method.</returns>
-		public CurveItem AddBar( string label, double[] x, double[] y, Color color )
+		public BarItem AddBar( string label, double[] x, double[] y, Color color )
 		{
-			CurveItem curve = new CurveItem( label, x, y, true, color, SymbolType.Default );
+			BarItem curve = new BarItem( label, x, y, color );
 			this.curveList.Add( curve );
 			
 			return curve;
@@ -1914,7 +1738,7 @@ namespace ZedGraph
 
 			// For stacked bar types, the bar width will be based on a single bar
 			float numBars = 1.0F;
-			if ( !this.isBarStacked )
+			if ( this.BarType == BarType.Cluster )
 				numBars = CurveList.NumBars;
 				
 			float denom = numBars * ( 1.0F + MinBarGap ) - MinBarGap + MinClusterGap;
@@ -1937,11 +1761,10 @@ namespace ZedGraph
 		/// <seealso cref="ZedGraph.BarBase"/>
 		/// <seealso cref="GraphPane.BarBase"/>
 		/// <seealso cref="Axis.GetClusterWidth"/>
-		/// <seealso cref="GraphPane.IsBarStacked"/>
+		/// <seealso cref="GraphPane.BarType"/>
 		/// <returns>The width of each bar cluster, in pixel units</returns>
 		public float GetClusterWidth()
 		{
-			
 			return BarBaseAxis().GetClusterWidth( this );
 		}
 		
