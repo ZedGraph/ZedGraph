@@ -10,7 +10,6 @@ using System.Drawing.Printing;
 using System.Drawing.Text;
 using System.Data;
 using System.Runtime.Serialization.Formatters.Binary;
-//using System.Runtime.Serialization.Formatters.Soap;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
@@ -345,26 +344,29 @@ namespace ZedGraph.Demo
 			double [] values2 =   { 250, 50, 400, 50 } ;
 			Color [] colors = { Color.Red, Color.Blue, Color.Green, Color.Yellow } ;
 			double [] displacement = {	.0,.0,.0,.0 } ;
-			string [] labels = { "East", "West", "Central", "Canada" } ;
+			string [] labels = { "East", "Western States", "Central", "Canada" } ;
 
 			myPane.PaneFill = new Fill( Color.Cornsilk );
 			myPane.AxisFill = new Fill( Color.Cornsilk );
+			myPane.Legend.FontSpec.Size = 8 ;
 			myPane.Legend.Position = LegendPos.Right ;
+	//		myPane.Legend.IsVisible = false ;
 			
-			PieItem segment1 = myPane.AddPieSlice ( 20, Color.Blue, .20, "North") ;
-			PieItem segment2 = myPane.AddPieSlice ( 40, Color.Red, 0, "South") ;
+			PieItem segment1 = myPane.AddPieSlice ( 20, Color.Blue, .0, "Northeast") ;
+			PieItem segment2 = myPane.AddPieSlice ( 40, Color.Red, .0, "South") ;
 			PieItem segment3 = myPane.AddPieSlice ( 30, Color.Yellow,.0, "East") ;
-			PieItem segment4 = myPane.AddPieSlice ( 10.21, Color.Green, 0, "West") ;
-			PieItem segment5 = myPane.AddPieSlice ( 10.5, Color.Aquamarine, .1, "Canada") ;
-//			 PieItem segment5 = new PieItem(myPane, 20, Color.Aquamarine, 0, "Canada" ) ;
-//			segment5.IsVisible = false ;
-					
+			PieItem segment4 = myPane.AddPieSlice ( 10.21, Color.Green, .0, "West") ;
+			PieItem segment5 = myPane.AddPieSlice ( 30.5, Color.Aquamarine, .0, "Canada") ;
+//			segment4.IsVisible = false ;
+//				Trace.WriteLine ("Initiating pie")			 ;
 			
 			PieItem [] slices = new PieItem[values2.Length] ;
 			slices = myPane.AddPieSlices ( values2, labels ) ;
 			((PieItem)slices[3]).LabelType = PieLabelType.None ;
-			((PieItem)slices[1]).Displacement = .1 ;
-			((PieItem)slices[1]).LabelType = PieLabelType.Name ;
+//			((PieItem)slices[2]).Displacement = .5 ;
+			((PieItem)slices[0]).Displacement = .0 ;
+			((PieItem)slices[1]).Displacement = .0 ;
+			((PieItem)slices[1]).LabelType = PieLabelType.Name_Percent;
 
 /*
 			foreach (PieItem segment in myPane.CurveList)
@@ -392,13 +394,14 @@ namespace ZedGraph.Demo
 			segment5.LabelType = PieLabelType.Name_Value ;
 			segment2.LabelDetail.FontSpec.FontColor = Color.Red ;
 																																				
-			TextItem text = new TextItem("First Prod 21-Oct-93", 0.85F, 0.80F,CoordType.PaneFraction );
-			text.Location.AlignH = AlignH.Center;
+			TextItem text = new TextItem("First Prod 21-Oct-93", 1F, 01.0F,CoordType.AxisFraction );
+			text.Location.AlignH = AlignH.Right;
 			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Border.IsVisible = false ;
 			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
 			text.FontSpec.StringAlignment = StringAlignment.Center ;
 			myPane.GraphItemList.Add( text );
+			
 
 
 /*
@@ -439,7 +442,7 @@ namespace ZedGraph.Demo
 			Color.Empty, Color.PeachPuff );
 			box.Location.CoordinateFrame = CoordType.AxisFraction;
 			box.Border.IsVisible = false;
-			box.Location.AlignH = AlignH.Left;
+			box.Location.AlignH = AlignH.Right;
 			box.Location.AlignV = AlignV.Top;
 			box.ZOrder = ZOrder.E_BehindAxis;
 			myPane.GraphItemList.Add( box );
@@ -447,7 +450,7 @@ namespace ZedGraph.Demo
 #endif
 
 			
-#if true	// MasterPane Test
+#if false	// MasterPane Test
 
 			master = new MasterPane( "MASTER PANE TEST", new RectangleF( 0, 0, 600, 400 ) );
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
@@ -531,6 +534,45 @@ namespace ZedGraph.Demo
 
 #endif	
 
+#if true   //multiple pie charts
+			master = new MasterPane( "MASTER PANE TEST", new RectangleF( 0, 0, 600, 400 ) );
+			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+
+			// Create a new graph with topLeft at (40,40) and size 600x400
+
+			double [] values =   { 15, 15, 40, 20 } ;
+			double [] values2 =   { 250, 50, 400, 50 } ;
+			Color [] colors = { Color.Red, Color.Blue, Color.Green, Color.Yellow } ;
+			double [] displacement = {	.0,.0,.0,.0 } ;
+			string [] labels = { "East", "West", "Central", "Canada" } ;
+
+			
+			for (int x = 0 ; x < 3 ; x++ )
+			{
+				myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+					"2003 Regional Sales", "", "" );
+				myPane.PaneFill = new Fill( Color.Cornsilk );
+				myPane.AxisFill = new Fill( Color.Cornsilk );
+				myPane.Legend.Position = LegendPos.Right ;
+				myPane.Legend.IsVisible = false	 ;
+				PieItem segment1 = myPane.AddPieSlice ( 20, Color.Blue, .10, "North") ;
+				PieItem segment2 = myPane.AddPieSlice ( 40, Color.Red, 0, "South") ;
+				PieItem segment3 = myPane.AddPieSlice ( 30, Color.Yellow,.0, "East") ;
+				PieItem segment4 = myPane.AddPieSlice ( 10.21, Color.Green, .20, "West") ;
+				PieItem segment5 = myPane.AddPieSlice ( 10.5, Color.Aquamarine, .0, "Canada") ;
+				segment1.LabelType = PieLabelType.Name_Value ;
+				segment2.LabelType = PieLabelType.Name_Value ;
+				segment3.LabelType = PieLabelType.Name_Value ;
+				segment4.LabelType = PieLabelType.Name_Value ;
+				segment5.LabelType = PieLabelType.Name_Value ;
+
+				myPane.AxisChange( this.CreateGraphics() );
+				master.Add( myPane );
+			}
+			
+			master.AutoPaneLayout( this.CreateGraphics(), paneLayout );
+#endif
+			
 #if false	// Test Line Stacking
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
@@ -1225,12 +1267,6 @@ namespace ZedGraph.Demo
 			LineItem myCurve = myPane.AddCurve( "My Curve",
 				x, y, Color.Red, SymbolType.Diamond );
 
-<<<<<<< Form1.cs
-			myCurve.IsVisible = false;
-			
-			//myPane.YAxis.Min = 100;
-			//myPane.YAxis.Max = 150;
-=======
 			myCurve.Line.IsSmooth = true;
 			myCurve.Line.SmoothTension = 0.5F;
 
@@ -1240,7 +1276,7 @@ namespace ZedGraph.Demo
 			
 			//myPane.YAxis.Min = 100;
 			//myPane.YAxis.Max = 150;
->>>>>>> 3.39
+
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
 			//myPane.AxisChange( CreateGraphics() );
@@ -2575,6 +2611,63 @@ namespace ZedGraph.Demo
 			
 #endif
 
+#if false   //multiple stack bars
+
+			master = new MasterPane( "MASTER PANE TEST", new RectangleF( 0, 0, 600, 400 ) );
+			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+
+         
+			
+         string [] quarters = {"Q1", "Q2", "Q3", "Q4", "Q5" } ;          
+         double[] y4 = { 30, -20, -15, 90, 70 };         //blue
+         double[] y3 = { 20, 0, -35, 40,-10 };             //green
+         double[] y2 = { -40, 60, -70, 20,-30 };               // red - three segments per bar
+ //        double[] y3 = { 2, 3, 3.5, 4 };
+
+
+			for (int x = 0 ; x < 1 ; x++ )
+			{
+
+				myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),"2003 Wacky Widget Sales\nBy Product",
+					"Quarter",
+					"Sales (KUSD)");
+				SetSize();
+				LineItem curve = myPane.AddCurve( "Larry", null, y4, Color.Black, SymbolType.Circle );
+			curve.Line.Width = 1.5F;
+			curve.Line.IsSmooth = true;
+			curve.Line.SmoothTension = 0.6F;
+			curve.Symbol.Fill = new Fill( Color.White );
+			curve.Symbol.Size = 12;
+
+			BarItem bar = myPane.AddBar( "Widget", null, y4, Color.RoyalBlue );
+			//Color[] colors = { Color.LimeGreen, Color.RoyalBlue, Color.Red };
+			//bar.Bar.Fill = new Fill( colors, 90F );
+			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
+			bar = myPane.AddBar( "Stridget",  null, y3, Color.LimeGreen );
+			bar.Bar.Fill = new Fill( Color.LimeGreen, Color.White, Color.LimeGreen );
+			bar = myPane.AddBar( "Bridget",null, y2, Color.Red );
+			bar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red );
+			myPane.XAxis.Type = AxisType.Text ;
+			myPane.XAxis.TextLabels=quarters ;         
+			myPane.BarBase=BarBase.X ;
+			myPane.BarType=BarType.Stack;
+			//myPane.BarType=BarType.Cluster ;
+			//myPane.BarType=BarType.Overlay ;
+			//myPane.BarType = BarType.SortedOverlay ;
+			//myPane.BarType = BarType.PercentStack ;
+				myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+				myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
+				myPane.XAxis.IsShowGrid = true;
+				myPane.YAxis.IsShowGrid = true;
+
+				myPane.AxisChange( this.CreateGraphics() );
+				master.Add( myPane );
+			}
+			master.AutoPaneLayout( this.CreateGraphics(), paneLayout );
+#endif
+			
+			
+
 #if false	// Missing Values test
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -3199,7 +3292,7 @@ namespace ZedGraph.Demo
 			images[1].Save( @"c:\zedgraph2.jpg", ImageFormat.Jpeg );
 		}
 		
-#if false
+#if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
 /*
@@ -3305,7 +3398,7 @@ namespace ZedGraph.Demo
 			myReader.Close();
 		}
 
-#if true
+#if false
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
 			Serialize( master );
