@@ -27,7 +27,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-12-10 08:33:14 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-12-10 17:54:50 $ </version>
 	public class Location : ICloneable
 	{
 	#region Private Fields
@@ -294,7 +294,7 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Constructor for the <see cref="Location"/> class that specifies the
-		/// (x, y) and (x2, y2) positions and the <see cref="CoordType"/>.
+		/// (x, y), (width, height), and the <see cref="CoordType"/>.
 		/// </summary>
 		/// <remarks>
 		/// The (x,y) position
@@ -305,9 +305,9 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="y">The y position, specified in units of <see paramref="coordType"/>.
 		/// </param>
-		/// <param name="x2">The x2 position, specified in units of <see paramref="coordType"/>.
+		/// <param name="width">The width, specified in units of <see paramref="coordType"/>.
 		/// </param>
-		/// <param name="y2">The y2 position, specified in units of <see paramref="coordType"/>.
+		/// <param name="height">The height, specified in units of <see paramref="coordType"/>.
 		/// </param>
 		/// <param name="coordType">The <see cref="CoordType"/> enum that specifies the
 		/// units for <see paramref="x"/> and <see paramref="y"/></param>

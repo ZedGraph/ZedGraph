@@ -29,20 +29,23 @@ using System.Text;
 namespace ZedGraph
 {
 	/// <summary>
-	/// Encapsulates an "Error Bar" curve type that displays an I-beam of data.
+	/// Encapsulates an "Error Bar" curve type that displays a vertical or horizontal
+	/// line with a symbol at each end.
 	/// </summary>
 	/// <remarks>The <see cref="ErrorBarItem"/> type is intended for displaying
 	/// confidence intervals, candlesticks, stock High-Low charts, etc.  It is
-	/// technically not a bar, since it is drawn as a vertical line with horizontal
-	/// segments at the top and bottom (like a capital "I" letter).  The width
-	/// of the horizontal segments is controlled by <see cref="ZedGraph.ErrorBar.Size"/>,
+	/// technically not a bar, since it is drawn as a vertical or horizontal line.
+	/// The default symbol at each end of the "bar" is <see cref="SymbolType.HDash"/>,
+	/// which creates an "I-Beam".  For horizontal bars
+	/// (<see cref="ZedGraph.BarBase.Y"/> or
+	/// <see cref="ZedGraph.BarBase.Y2"/>), you will need to change the symbol to
+	/// <see cref="SymbolType.VDash"/> to get horizontal "I-Beams".
+	/// Since the horizontal segments are actually symbols, their widths are
+	/// controlled by the symbol size in <see cref="ZedGraph.ErrorBar.Symbol"/>,
 	/// specified in points (1/72nd inch).  The position of each "I-Beam" is set
 	/// according to the <see cref="PointPair"/> values.  The independent axis
 	/// is assigned with <see cref="ErrorBarItem.BarBase"/>, and is a
-	/// <see cref="ZedGraph.BarBase"/> enum type.  If <see cref="ErrorBarItem.BarBase"/>
-	/// is set to <see cref="ZedGraph.BarBase.Y"/> or <see cref="ZedGraph.BarBase.Y2"/>, then
-	/// the I-Beams will actually be horizontal, since the X axis becomes the
-	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
+	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	public class ErrorBarItem : CurveItem, ICloneable
 	{
 	#region Fields
@@ -227,7 +230,7 @@ namespace ZedGraph
 			}
 
 			Pen pen = new Pen( errorBar.Color, errorBar.PenWidth );
-			this.ErrorBar.Draw( g, barBase == BarBase.X, pixBase, pixValue,
+			this.ErrorBar.Draw( g, pane, barBase == BarBase.X, pixBase, pixValue,
 								pixLowValue, scaleFactor, pen );
 		}
 

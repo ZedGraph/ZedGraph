@@ -1043,7 +1043,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if false	// The Error bar graph sample
+#if true	// The Error bar graph sample
 
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
@@ -1051,23 +1051,28 @@ namespace ZedGraphTest
 			
 			// Make up some random data points
 
-			double[] y = new double[44];
-			double[] yBase = new double[44];
-
+			double x, y, yBase;
+			PointPairList list = new PointPairList();
 			for ( int i=0; i<44; i++ )
 			{
-				y[i] = Math.Sin( (double) i * Math.PI / 15.0 );
-				yBase[i] = y[i] - 0.4;
+				x = i / 44.0;
+				y = Math.Sin( (double) i * Math.PI / 15.0 );
+				yBase = y - 0.4;
+				list.Add( y, x, yBase );
 			}
 
 			// Generate a red bar with "Curve 1" in the legend
-			ErrorBarItem myCurve = myPane.AddErrorBar( "Curve 1", null, y, yBase,
+			ErrorBarItem myCurve = myPane.AddErrorBar( "Curve 1", list,
 						Color.Red );
+			myCurve.BarBase = BarBase.Y;
 			//myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
 			
 			//myPane.BarType = BarType.HiLow;
-			myCurve.ErrorBar.Size = 0;
-			myCurve.ErrorBar.PenWidth = 4;
+			//myCurve.ErrorBar.Size = 0;
+			myCurve.ErrorBar.PenWidth = 1f;
+			myCurve.ErrorBar.Symbol.Type = SymbolType.VDash;
+			myCurve.ErrorBar.Symbol.Border.PenWidth = .1f;
+			myCurve.ErrorBar.Symbol.IsVisible = false;
 			
 			myPane.AxisChange( this.CreateGraphics() );
 
@@ -1578,7 +1583,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if true	// The main example
+#if false	// The main example
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",

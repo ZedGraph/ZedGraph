@@ -30,20 +30,19 @@ namespace ZedGraph
 {
 	/// <summary>
 	/// This class handles the drawing of the curve <see cref="ErrorBar"/> objects.
-	/// The Error Bars are the little I-Beam symbols that appear at each point.
+	/// The Error Bars are the vertical lines with a symbol at each end.
 	/// </summary>
+	/// <remarks>To draw "I-Beam" bars, the symbol type defaults to
+	/// <see cref="SymbolType.HDash"/>, which is just a horizontal line.
+	/// If <see cref="BarBase"/> is Y-oriented, then the symbol type should be
+	/// set to <see cref="SymbolType.VDash"/> to get the same effect.
+	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-12-10 17:54:50 $ </version>
 	public class ErrorBar : ICloneable
 	{
 	#region Fields
-		/// <summary>
-		/// Private field that stores the size of this
-        /// <see cref="ErrorBar"/> in points (1/72 inch).  Use the public
-        /// property <see cref="Size"/> to access this value.
-		/// </summary>
-		private float		size;
 		/// <summary>
 		/// Private field that stores the visibility of this
 		/// <see cref="ErrorBar"/>.  Use the public
@@ -61,6 +60,12 @@ namespace ZedGraph
 		/// property <see cref="PenWidth"/> to access this value.
 		/// </summary>
 		private float		penWidth;
+		/// <summary>
+		/// private field that contains the symbol element that will be drawn
+		/// at the top and bottom of the error bar.  Use the public property
+		/// <see cref="Symbol"/> to access this value.
+		/// </summary>
+		private Symbol		symbol;
 	#endregion
 
 	#region Defaults
@@ -72,7 +77,8 @@ namespace ZedGraph
 		{
 			// Default Symbol properties
 			/// <summary>
-			/// The default size for curve symbols (<see cref="ErrorBar.Size"/> property),
+			/// The default size for curve symbols
+			/// (<see cref="ZedGraph.Symbol.Size"/> property),
 			/// in units of points.
 			/// </summary>
 			public static float Size = 7;
@@ -90,23 +96,15 @@ namespace ZedGraph
 			/// The default color for drawing error bars (<see cref="ErrorBar.Color"/> property).
 			/// </summary>
 			public static Color Color = Color.Red;
+			/// <summary>
+			/// The default symbol for drawing at the top and bottom of the
+			/// error bar (see <see cref="ErrorBar.Symbol"/>).
+			/// </summary>
+			public static SymbolType Type = SymbolType.HDash;
 		}
 	#endregion
 
 	#region Properties
-		/// <summary>
-		/// Gets or sets the size of the <see cref="ErrorBar"/>.
-		/// </summary>
-		/// <remarks>Note that this controls the width of the I-Beam sections.
-		/// If this width is set to zero, then the bars will appear as simple
-		/// vertical lines.</remarks>
-        /// <value>Size in points (1/72 inch)</value>
-        /// <seealso cref="Default.Size"/>
-		public float Size
-		{
-			get { return size; }
-			set { size = value; }
-		}
 		/// <summary>
 		/// Gets or sets a property that shows or hides the <see cref="ErrorBar"/>.
 		/// </summary>
@@ -122,6 +120,10 @@ namespace ZedGraph
 		/// Gets or sets the <see cref="System.Drawing.Color"/> data for this
 		/// <see cref="ErrorBar"/>.
 		/// </summary>
+		/// <remarks>This property only controls the color of
+		/// the vertical line.  The symbol color is controlled separately in
+		/// the <see cref="Symbol"/> property.
+		/// </remarks>
 		public Color Color
 		{
 			get { return color; }
@@ -131,18 +133,31 @@ namespace ZedGraph
 		/// The default pen width to be used for drawing error bars
 		/// Units are points.
 		/// </summary>
+		/// <remarks>This property only controls the pen width for the
+		/// vertical line.  The pen width for the symbol outline is
+		/// controlled separately by the <see cref="Symbol"/> property.
+		/// </remarks>
 		public float PenWidth
 		{
 			get { return penWidth; }
 			set { penWidth = value; }
+		}
+		/// <summary>
+		/// Contains the symbol element that will be drawn
+		/// at the top and bottom of the error bar.
+		/// </summary>
+		public Symbol Symbol
+		{
+			get { return symbol; }
+			set { symbol = value; }
 		}
 
 	#endregion
 	
 	#region Constructors
 		/// <summary>
-		/// Default constructor that sets all <see cref="ErrorBar"/> properties to default
-		/// values as defined in the <see cref="Default"/> class.
+		/// Default constructor that sets all <see cref="ErrorBar"/> properties to
+		/// default values as defined in the <see cref="Default"/> class.
 		/// </summary>
 		public ErrorBar() : this( Default.Color )
 		{
@@ -159,7 +174,8 @@ namespace ZedGraph
 		/// </param>
 		public ErrorBar( Color color )
 		{
-			this.size = Default.Size;
+			this.symbol = new Symbol( Default.Type, color );
+			this.symbol.Size = Default.Size;
 			this.color = color;
 			this.penWidth = Default.PenWidth;
 			this.isVisible = Default.IsVisible;
@@ -171,10 +187,10 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="ErrorBar"/> object from which to copy</param>
 		public ErrorBar( ErrorBar rhs )
 		{
-			size = rhs.Size;
 			color = rhs.Color;
 			isVisible = rhs.IsVisible;
 			penWidth = rhs.PenWidth;
+			this.symbol = (Symbol) rhs.Symbol.Clone();
 		}
 
 		/// <summary>
@@ -196,6 +212,10 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
 		/// <param name="isXBase">boolean value that indicates if the "base" axis for this
 		/// <see cref="ErrorBar"/> is the X axis.  True for an <see cref="XAxis"/> base,
 		/// false for a <see cref="YAxis"/> or <see cref="Y2Axis"/> base.</param>
@@ -211,23 +231,21 @@ namespace ZedGraph
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.</param>
 		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
 		/// <see cref="PenWidth"/> for this <see cref="ErrorBar"/></param>
-		public void Draw( Graphics g, bool isXBase, float pixBase, float pixValue,
+		public void Draw( Graphics g, GraphPane pane, bool isXBase,
+								float pixBase, float pixValue,
 								float pixLowValue, double scaleFactor, Pen pen )
 		{
-			float	scaledSize = (float) ( this.size * scaleFactor );
-			float	hsize = scaledSize / 2;
-			
 			if ( isXBase )
 			{
-				g.DrawLine( pen, pixBase - hsize, pixValue, pixBase + hsize, pixValue );
 				g.DrawLine( pen, pixBase, pixValue, pixBase, pixLowValue );
-				g.DrawLine( pen, pixBase - hsize, pixLowValue, pixBase + hsize, pixLowValue );
+				this.symbol.DrawSymbol( g, pane, pixBase, pixValue, scaleFactor );
+				this.symbol.DrawSymbol( g, pane, pixBase, pixLowValue, scaleFactor );
 			}
 			else
 			{
-				g.DrawLine( pen, pixValue, pixBase - hsize, pixValue,  pixBase + hsize );
 				g.DrawLine( pen, pixValue, pixBase, pixLowValue, pixBase );
-				g.DrawLine( pen, pixLowValue, pixBase - hsize, pixLowValue, pixBase + hsize );
+				this.symbol.DrawSymbol( g, pane, pixValue, pixBase, scaleFactor );
+				this.symbol.DrawSymbol( g, pane, pixLowValue, pixBase, scaleFactor );
 			}
 		}
 
@@ -271,20 +289,6 @@ namespace ZedGraph
 				// Loop over each defined point							
 				for ( int i=0; i<curve.Points.Count; i++ )
 				{
-					/*
-					if ( baseAxis is XAxis )
-					{
-						scaleBase = points[i].X;
-						scaleValue = points[i].Y;
-					}
-					else
-					{
-						scaleBase = points[i].Y;
-						scaleValue = points[i].X;
-					}
-					scaleLowValue = points[i].LowValue;
-					*/
-
 					valueHandler.GetBarValues( curve, i, out scaleBase,
 								out scaleLowValue, out scaleValue );
 
@@ -304,8 +308,8 @@ namespace ZedGraph
 						//if ( this.fill.IsGradientValueType )
 						//	brush = fill.MakeBrush( rect, points[i] );
 
-						this.Draw( g, baseAxis is XAxis, pixBase, pixValue, pixLowValue,
-										scaleFactor, pen );		
+						this.Draw( g, pane, baseAxis is XAxis, pixBase, pixValue,
+										pixLowValue, scaleFactor, pen );		
 					}
 				}
 			}

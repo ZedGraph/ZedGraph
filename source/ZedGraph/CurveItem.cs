@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.10 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2004-12-10 17:54:50 $ </version>
 	abstract public class CurveItem
 	{
 	
@@ -544,7 +544,8 @@ namespace ZedGraph
 			float barWidth;
 
 			if ( this is ErrorBarItem )
-				barWidth = (float) ( ((ErrorBarItem)this).ErrorBar.Size * pane.CalcScaleFactor() );
+				barWidth = (float) ( ((ErrorBarItem)this).ErrorBar.Symbol.Size *
+						pane.CalcScaleFactor() );
 			else if ( this is HiLowBarItem )
 				barWidth = (float) ( ((HiLowBarItem)this).Bar.GetBarWidth( pane,
 						((HiLowBarItem)this).BaseAxis(pane), pane.CalcScaleFactor() ) );

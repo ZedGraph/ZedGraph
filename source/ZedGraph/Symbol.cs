@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-12-09 02:09:35 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2004-12-10 17:54:50 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -417,6 +417,12 @@ namespace ZedGraph
 					g.DrawLine( pen, x+hsize, y-hsize, x-hsize, y-hsize );
 					g.DrawLine( pen, x-hsize, y-hsize, x, y+hsize );
 					break;
+				case SymbolType.HDash:
+					g.DrawLine( pen, x-hsize, y, x+hsize1, y );
+					break;
+				case SymbolType.VDash:
+					g.DrawLine( pen, x, y-hsize, x, y+hsize1 );
+					break;
 			}
 		}
 		/// <summary>
@@ -480,6 +486,12 @@ namespace ZedGraph
 				path.AddLine( 0, hsize, hsize, -hsize );
 				path.AddLine( hsize, -hsize, -hsize, -hsize );
 				path.AddLine( -hsize, -hsize, 0, hsize );
+				break;
+			case SymbolType.HDash:
+				path.AddLine( -hsize, 0, hsize1, 0 );
+				break;
+			case SymbolType.VDash:
+				path.AddLine( 0, -hsize, 0, hsize1 );
 				break;
 			}
 			

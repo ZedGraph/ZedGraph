@@ -146,6 +146,16 @@ namespace ZedGraph
 		/// <summary> Unilateral triangle <see cref="ZedGraph.Symbol"/>, pointing
 		/// down. </summary>
 		TriangleDown,
+		/// <summary>
+		/// Horizontal dash <see cref="ZedGraph.Symbol"/>.  This symbol cannot be
+		/// filled since it has no outline.
+		/// </summary>
+		HDash,
+		/// <summary>
+		/// Vertical dash <see cref="ZedGraph.Symbol"/>.  This symbol cannot be
+		/// filled since it has no outline.
+		/// </summary>
+		VDash,
 		/// <summary> A Default symbol type (the symbol type will be obtained
 		/// from <see cref="Symbol.Default.Type"/>. </summary>
 		Default,
