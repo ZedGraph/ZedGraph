@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.4 $ $Date: 2005-01-18 06:45:38 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2005-01-18 15:59:02 $ </version>
 	[Serializable]
 	public class PieItem : ZedGraph.CurveItem , ICloneable, ISerializable
 	{
@@ -51,6 +51,12 @@ namespace ZedGraph
 		/// is 0.5.
 		/// </summary>
 		private double	displacement;
+
+		/// <summary>
+		/// Private field to hold the GraphicsPath of this <see cref="PieItem"/> to be
+		/// used for 'hit testing'.
+		/// </summary>
+		private GraphicsPath slicePath;
 
 		/// <summary>
 		/// Private field which holds the angle (in degrees) at which the display of this <see cref="PieItem"/>
@@ -102,6 +108,7 @@ namespace ZedGraph
 		/// Use enum <see cref="ZedGraph.PieLabelType"/>.
 		/// </summary>
 		private PieLabelType labelType ;
+
 
 		private static ColorSymbolRotator rotator = new ColorSymbolRotator () ;
 
@@ -167,7 +174,17 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// 
+		/// Gets or sets a path representing this <see cref="PieItem"/>
+		/// </summary>
+		public GraphicsPath SlicePath
+		{
+			get { return (this.slicePath); }
+			set { this.slicePath = value; } 
+		}
+
+		/// <summary>
+		/// Private field holding a <see cref="TextItem"/> to be used
+		/// for displaying this <see cref="PieItem"/>'s label.
 		/// </summary>
 		public TextItem LabelDetail
 		{
@@ -368,9 +385,13 @@ namespace ZedGraph
 
 			RectangleF nonExplRect ;
 			double maxDisplacement = 0 ;	
+			this.slicePath = new GraphicsPath() ;
 
 			if ( !this.isVisible )
 				return ;
+			
+			SmoothingMode sMode = g.SmoothingMode ;
+			g.SmoothingMode = SmoothingMode.AntiAlias ;	
 			
 			if ( pane.CurveList.IsPieOnly )						 //calc pierect here
 				nonExplRect = pane.PieRect ;
@@ -387,11 +408,15 @@ namespace ZedGraph
 			if ( this.displacement == 0 )                                                     //this slice not exploded
 			{
 				g.FillPie( brush,nonExplRect.X,nonExplRect.Y,nonExplRect.Width,nonExplRect.Height, this.StartAngle, this.SweepAngle );
+																			//add GraphicsPath for hit testing
+				this.slicePath.AddPie (nonExplRect.X,nonExplRect.Y,nonExplRect.Width,nonExplRect.Height, 
+																			this.StartAngle, this.SweepAngle) ;
 
 				if ( this.Border.IsVisible)
 				{
 					Pen borderPen = this.border.MakePen ( pane, scaleFactor ) ;
-					g.DrawPie (borderPen, nonExplRect.X,nonExplRect.Y,nonExplRect.Width,nonExplRect.Height, this.StartAngle, this.SweepAngle );
+					g.DrawPie (borderPen, nonExplRect.X,nonExplRect.Y,nonExplRect.Width,nonExplRect.Height, 
+																				this.StartAngle, this.SweepAngle );
 					borderPen.Dispose () ;
 				}
 
@@ -402,9 +427,11 @@ namespace ZedGraph
 			{
 				RectangleF explRect  =nonExplRect;
 
-				CalcExplodedRect (ref explRect ) ;							  //calculate the bounding rectanglefor exploded pie
+				CalcExplodedRect (ref explRect ) ;							  //calculate the bounding rectangle for exploded pie
 
 				g.FillPie( brush,explRect.X,explRect.Y,explRect.Width,explRect.Height, this.StartAngle, this.SweepAngle );
+																			//add GraphicsPath for hit testing
+				this.slicePath.AddPie (	explRect.X,explRect.Y,explRect.Width,explRect.Height, this.StartAngle, this.SweepAngle );
 
 				if ( this.Border.IsVisible )
 				{
@@ -415,7 +442,8 @@ namespace ZedGraph
 				if ( this.labelType != PieLabelType.None )
 					DrawLabel ( g, pane, explRect, scaleFactor  ) ;
 			}
-
+			brush.Dispose () ;
+			g.SmoothingMode = sMode ;	
 		}
 
 		/// <summary>
@@ -594,11 +622,11 @@ namespace ZedGraph
 					labelStr = pieValue.ToString ("#.000%") ;
 					break;
 				case PieLabelType.Name_Value :
-					labelStr = this.label + " - " + this.pieValue.ToString ("#.###") ;
+					labelStr = this.label + ": " + this.pieValue.ToString ("#.###") ;
 					break;
 				case PieLabelType.Name_Percent :
 					pieValue  = this.sweepAngle / 360 ;	
-					labelStr = this.label + " - " + pieValue.ToString ("#.###%") ;
+					labelStr = this.label + ": " + pieValue.ToString ("#.###%") ;
 					break;
 				case PieLabelType.Name :
 					labelStr = this.label ; 

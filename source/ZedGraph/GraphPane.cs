@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.28 $ $Date: 2005-01-18 07:16:40 $ </version>
+	/// <version> $Revision: 3.29 $ $Date: 2005-01-18 15:59:01 $ </version>
 	[Serializable]
 	public class GraphPane : ICloneable, ISerializable
 	{
@@ -708,7 +708,6 @@ namespace ZedGraph
 			get { return isAxisRectAuto; }
 			set { isAxisRectAuto = value; }
 		}
-
 		/// <summary>
 		/// Gets or sets a <see cref="RectangleF"/> that determines the size of the Pie.
 		/// </summary>
@@ -1486,7 +1485,7 @@ namespace ZedGraph
 			// in case the paneBorder is turned off.
 
 			RectangleF rect = this.paneRect;
-			rect.Width = rect.Width + 1;
+			rect.Width = rect.Width +1;
 			rect.Height = rect.Height + 1;
 
 			// Erase the pane background, filling it with the specified brush
@@ -1495,7 +1494,8 @@ namespace ZedGraph
 			brush.Dispose();
 
 			// Draw a border around the pane
-			this.paneBorder.Draw( g, pane, scaleFactor, paneRect );
+			rect.Inflate (-5, -5 ) ;
+			this.paneBorder.Draw( g, pane, scaleFactor, rect );
 		}
 
 		/// <summary>
@@ -2155,9 +2155,25 @@ namespace ZedGraph
 			double	tolSquared = Default.NearestTol * Default.NearestTol;
 
 			int		iBar = 0;
+			int iPie = 0 ;
 
 			foreach ( CurveItem curve in targetCurveList )
 			{
+				bool hit ;
+							//test for pie first...if it's a pie rest of method superfluous
+				if ( curve is PieItem )
+				{
+					hit = ((PieItem)curve).SlicePath.IsVisible (mousePt) ;
+					if ( hit )
+					{
+						nearestCurve = curve ;
+						iNearest = iPie ;
+						return true ;
+					}
+					iPie++ ;
+					continue ;
+				}
+
 				if ( curve.IsY2Axis )
 				{
 					yAct = y2;
@@ -2258,7 +2274,7 @@ namespace ZedGraph
 
 						}
 					}
-
+					
 					if ( curve.IsBar )
 						iBar++;
 				}
@@ -2337,6 +2353,7 @@ namespace ZedGraph
 		/// <param name="displacement">The amount this <see cref="PieItem"/>item will be 
 		/// displaced from the center of the <see cref="PieItem"/>.</param>
 		/// <param name="label">Text label for this <see cref="PieItem"/></param>
+		/// <returns>a reference to the <see cref="PieItem"/> constructed</returns>
 		public PieItem AddPieSlice (  double value, Color color,  double displacement, string label )
 		{
 			PieItem slice = new PieItem( value, color, displacement, label ) ;
@@ -2345,11 +2362,16 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// 
+		///Creates all the <see cref="PieItem"/>s for a single Pie Chart. 
 		/// </summary>
-		/// <param name="values"></param>
-		/// <param name="labels"></param>
-		/// <returns></returns>
+		/// <param name="values">double array containing all <see cref="PieItem.Value"/>s
+		/// for a single PieChart.
+		/// </param>
+		/// <param name="labels"> string array containing all <see cref="CurveItem.Label"/>s
+		/// for a single PieChart.
+		/// </param>
+		/// <returns>an array containing references to all <see cref="PieItem"/>s comprising
+		/// the Pie Chart.</returns>
 		public PieItem [] AddPieSlices ( double [] values, string [] labels )
 		{
 			PieItem [] slices = new PieItem[values.Length] ;
@@ -2357,9 +2379,7 @@ namespace ZedGraph
 			{
 				slices[x]= new PieItem(  values[x],  labels [x] ) ;
 				this.CurveList.Add (slices[x]) ;																			  
-
 			}
-			
 			return slices ;
 		}
 		#endregion

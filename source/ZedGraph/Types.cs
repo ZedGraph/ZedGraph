@@ -535,12 +535,12 @@ namespace ZedGraph
 	public enum PieType
 	{
 		/// <summary>
-		///	Specifies that the <see cref="Pie"/> chart will be displayed in two dimensions
+		///	Specifies that the <see cref="PieItem"/> chart will be displayed in two dimensions
 		/// </summary>
 		Pie2D,
 
 		/// <summary>
-		///	Specifies that the <see cref="Pie"/> chart will be displayed in three dimensions
+		///	Specifies that the <see cref="PieItem"/> chart will be displayed in three dimensions
 		/// </summary>
 		Pie3D
 	} ;
@@ -552,32 +552,37 @@ namespace ZedGraph
 	public enum PieLabelType
 	{
 		/// <summary>
-		/// 
+		/// Displays <see cref="CurveItem.Label"/> and <see cref="PieItem.Value"/> for
+		/// a slice in a Pie Chart.
 		/// </summary>
 		Name_Value,
 
 		/// <summary>
-		/// 
+		/// Displays <see cref="CurveItem.Label"/> and <see cref="PieItem.Value"/> (as % of total) for
+		/// a slice in a Pie Chart.
 		/// </summary>
 		Name_Percent,		
 
 		/// <summary>
-		/// 
+		/// Displays <see cref="PieItem.Value"/> for
+		/// a slice in a Pie Chart.
 		/// </summary>
 		Value,
 
 		/// <summary>
-		/// 
+		/// Displays <see cref="PieItem.Value"/> (as % of total) for
+		/// a slice in a Pie Chart.
 		/// </summary>
 		Percent,
 
 		/// <summary>
-		/// 
+		/// Displays <see cref="CurveItem.Label"/> for
+		/// a slice in a Pie Chart.
 		/// </summary>
 		Name,
 
 		/// <summary>
-		/// 
+		///No label displayed. 
 		/// </summary>
 		None
 	};
