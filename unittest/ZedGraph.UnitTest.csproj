@@ -96,8 +96,8 @@
                 />
                 <Reference
                     Name = "ZedGraph"
-                    AssemblyName = "ZedGraph"
-                    HintPath = "..\lib\ZedGraph.dll"
+                    Project = "{998CE547-E905-4931-91B6-5E0439177E7E}"
+                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
             </References>
         </Build>

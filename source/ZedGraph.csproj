@@ -36,7 +36,7 @@
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "false"
-                    OutputPath = "..\lib\"
+                    OutputPath = "bin\Debug\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -93,6 +93,10 @@
         </Build>
         <Files>
             <Include>
+                <File
+                    RelPath = "ModelSupport\ZedGraph\ZedGraph.txvpck"
+                    BuildAction = "None"
+                />
                 <File
                     RelPath = "ZedGraph\ArrowItem.cs"
                     SubType = "Code"
@@ -206,6 +210,16 @@
                 <File
                     RelPath = "ZedGraph\ZedGraphControl.cs"
                     SubType = "UserControl"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\ZedGraphControl.resx"
+                    DependentUpon = "ZedGraphControl.cs"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "ZedGraph\ZedGraphException.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
             </Include>
