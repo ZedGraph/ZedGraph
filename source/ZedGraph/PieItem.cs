@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.8 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 1.9 $ $Date: 2005-01-25 16:28:41 $ </version>
 	[Serializable]
 	public class PieItem : ZedGraph.CurveItem , ICloneable, ISerializable
 	{
@@ -495,6 +495,7 @@ namespace ZedGraph
 					nonExplRect.Width = nonExplRect.Height ;
 					nonExplRect.X += delta ;
 				}
+																											
 			}
 
 			return nonExplRect;
@@ -572,22 +573,22 @@ namespace ZedGraph
 			PointF intersectionPoint = new PointF ( (float)(rectCenter.X + ( rect.Width / 2 *  Math.Cos (  (this.midAngle ) * Math.PI /180 ))),
 				(float)(rectCenter.Y + ( rect.Height / 2 * Math.Sin (  (  this.midAngle )  * Math.PI / 180 )) )) ;
 			
-			//draw line from intersection point to pivot point - line to be 20 pixels long
-			PointF pivotPoint = new PointF ((float) (intersectionPoint.X + 20*  Math.Cos (  (this.midAngle ) * Math.PI /180 )), 
-				(float)(intersectionPoint.Y + 20 *Math.Sin (  (  this.midAngle )  * Math.PI / 180 )) )  ;
+			//draw line from intersection point to pivot point - line to be 30 pixels long
+			PointF pivotPoint = new PointF ((float) (intersectionPoint.X + 30 *  Math.Cos (  (this.midAngle ) * Math.PI /180 )), 
+				(float)(intersectionPoint.Y + 30 * Math.Sin (  (  this.midAngle )  * Math.PI / 180 )) )  ;
 			g.DrawLine ( labelPen, intersectionPoint, pivotPoint ) ;
 
-			//draw 20 pixel horizontal	 line to move label away from pie...
+			//draw 10 pixel horizontal	 line to move label away from pie...
 			PointF endPoint ;
 															 //does line go to left or right....label alignment is to the opposite
 			if ( pivotPoint.X >= rectCenter.X)							 //goes to right
 			{
-				endPoint = new PointF (  pivotPoint.X + 20, pivotPoint.Y)	;
+				endPoint = new PointF (  pivotPoint.X + 10, pivotPoint.Y)	;
 				this.labelDetail.Location.AlignH = AlignH.Left ;
 			}
 			else
 			{
-				endPoint = new PointF (  pivotPoint.X - 20, pivotPoint.Y)	;
+				endPoint = new PointF (  pivotPoint.X - 10, pivotPoint.Y)	;
 				this.labelDetail.Location.AlignH = AlignH.Right ;
 			}
 			g.DrawLine ( labelPen, pivotPoint, endPoint )	;
@@ -598,8 +599,8 @@ namespace ZedGraph
 										//configure the label (TextItem)
 			this.labelDetail.Location.AlignV = AlignV.Center ;
 			this.labelDetail.Location.CoordinateFrame = CoordType.PaneFraction ;
-			this.labelDetail.Location.X =	endPoint.X / pane.PaneRect.Width ;
-			this.labelDetail.Location.Y =	endPoint.Y / pane.PaneRect.Height ;
+			this.labelDetail.Location.X =(	endPoint.X - pane.PaneRect.X)/  (pane.PaneRect.Width )   ;
+			this.labelDetail.Location.Y =	(endPoint.Y - pane.PaneRect.Y) /( pane.PaneRect.Height   )  ;
 			this.labelDetail.Text = labelStr  ;
 			this.labelDetail.FontSpec.Size = 8 ;
 			this.labelDetail.Draw ( g, pane, scaleFactor ) ;
