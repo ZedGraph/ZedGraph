@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 2.1 $ $Date: 2004-09-13 06:51:42 $ </version>
+	/// <version> $Revision: 2.2 $ $Date: 2004-09-15 06:12:09 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
@@ -283,7 +283,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The <see cref="Line"/>/<see cref="Symbol"/>/<see cref="Bar"/> 
 		/// color (FillColor for the Bar).  This is a common access to
-		/// <see cref="ZedGraph.Line.Color"/>, <see cref="ZedGraph.Symbol.Color"/>, and
+		/// <see cref="ZedGraph.Line.Color"/>, <see cref="ZedGraph.Symbol.FrameColor"/>, and
 		/// <see cref="ZedGraph.Fill.Color"/> properties for this curve.
 		/// </summary>
 		public Color Color
@@ -295,13 +295,14 @@ namespace ZedGraph
 				else if ( this.Line.IsVisible )
 					return this.Line.Color;
 				else
-					return this.Symbol.Color;
+					return this.Symbol.FrameColor;
 			}
 			set 
 			{ 
-				Line.Color		= value;
-				Bar.Fill.Color	= value;
-				Symbol.Color	= value;
+				Line.Color			= value;
+				Bar.Fill.Color		= value;
+				Symbol.FrameColor	= value;
+				Symbol.Fill.Color	= value;
 			}
 		}
 

@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.2 $ $Date: 2004-09-14 05:33:06 $ </version>
+	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -989,9 +989,9 @@ namespace ZedGraph
 			if ( this.axisRect.Width < 1 || this.axisRect.Height < 1 )
 				return;
 			
-			// Frame the axis itself
-			DrawAxisFrame( g );
-
+			// Fill the axis background
+			DrawAxisFill( g );
+			
 			// Draw the graph features only if there is at least one curve with data
 			//			if (	this.curveList.HasData() &&
 			// Go ahead and draw the graph, even without data.  This makes the control
@@ -1007,14 +1007,19 @@ namespace ZedGraph
 				DrawTitle( g, scaleFactor );
 			
 				// Draw the Axes
-				this.xAxis.Draw( g, this, scaleFactor );
-				this.yAxis.Draw( g, this, scaleFactor );
-				this.y2Axis.Draw( g, this, scaleFactor );
-				
+				this.xAxis.SetupScaleData( this );
+				this.yAxis.SetupScaleData( this );
+				this.y2Axis.SetupScaleData( this );
+
 				// Clip the points to the actual plot area
 				g.SetClip( this.axisRect );
 				this.curveList.Draw( g, this, scaleFactor );
 				g.SetClip( this.paneRect );
+				
+				// Draw the Axes
+				this.xAxis.Draw( g, this, scaleFactor );
+				this.yAxis.Draw( g, this, scaleFactor );
+				this.y2Axis.Draw( g, this, scaleFactor );
 				
 				// Draw the Legend
 				this.legend.Draw( g, this, scaleFactor, hStack, legendWidth );
@@ -1028,6 +1033,10 @@ namespace ZedGraph
 				// Reset the clipping
 				g.ResetClip();
 			}
+			
+			// Frame the axis itself
+			DrawAxisFrame( g );
+
 		}
 
 		/// <summary>
@@ -1181,6 +1190,25 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Fill the background of the <see cref="AxisRect"/> area, using the
+		/// fill type from <see cref="AxisFill"/>.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		public void DrawAxisFill( Graphics g )
+		{
+			// Erase the axis background
+			if ( this.axisFill.IsFilled )
+			{
+				Brush brush = this.axisFill.MakeBrush( this.axisRect );
+				g.FillRectangle( brush, this.axisRect );
+				brush.Dispose();
+			}
+		}
+
+		/// <summary>
 		/// Draw the frame border around the <see cref="AxisRect"/> area.
 		/// </summary>
 		/// <param name="g">
@@ -1189,12 +1217,6 @@ namespace ZedGraph
 		/// </param>
 		public void DrawAxisFrame( Graphics g )
 		{
-			// Erase the axis background
-			//SolidBrush brush = new SolidBrush( this.axisBackColor );
-			Brush brush = this.axisFill.MakeBrush( this.axisRect );
-			g.FillRectangle( brush, this.axisRect );
-			brush.Dispose();
-
 			if ( this.isAxisFramed )
 			{
 				Pen pen = new Pen( this.axisFrameColor, this.axisFramePenWidth );

@@ -1,5 +1,12 @@
 ZedGraph Class Library Revision History
 
+14-Sep-2004 (by Champion)
+    Add gradient fills to symbol type
+    Symbol Frame can now have different color than fill
+    Fix problem with smoothed curve and fill
+    Draw Axes after curves so curve fill doesn't cover up axis line
+    Add Axis.MinSpace property
+
 13-Sep-2004 (by Champion/Vos)
     Fix problem with brushes scaled to zero width rect
     Fix scale label width calc bug in CalcMaxLabels()

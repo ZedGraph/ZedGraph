@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.2 $ $Date: 2004-09-14 05:33:06 $ </version>
+	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -126,6 +126,14 @@ namespace ZedGraph
 							gridDashOn,
 							gridDashOff,
 							gridPenWidth;
+		
+		/// <summary>
+		/// Private field for the <see cref="Axis"/> minimum allowable space allocation.
+		/// Use the public property <see cref="MinSpace"/> to access this value.
+		/// </summary>
+		/// <seealso cref="Default.MinSpace"/>
+		private float		minSpace;
+		
 		/// <summary> Private fields for the <see cref="Axis"/> colors.
 		/// Use the public properties <see cref="Color"/> and
 		/// <see cref="GridColor"/> for access to these values. </summary>
@@ -558,6 +566,16 @@ namespace ZedGraph
 			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
 			/// </summary>
 			public static double RangeMinuteSecond = 2.083e-3;  // 3 Minutes
+			
+			/// <summary>
+			/// The default setting for the axis space allocation.  This term, expressed in
+			/// pixels and scaled according to <see cref="GraphPane.CalcScaleFactor"/> for the
+			/// <see cref="GraphPane"/>, determines the minimum amount of space an axis must
+			/// have between the <see cref="GraphPane.AxisRect"/> and the
+			/// <see cref="GraphPane.PaneRect"/>.  This minimum space
+			/// applies whether <see cref="Axis.IsVisible"/> is true or false.
+			/// </summary>
+			public static float MinSpace = 0f;
 		}
 	#endregion
 
@@ -593,6 +611,7 @@ namespace ZedGraph
 			this.gridDashOff = Default.GridDashOff;
 			this.gridPenWidth = Default.GridPenWidth;
 		
+			this.minSpace = Default.MinSpace;
 			this.isVisible = true;
 			this.isShowTitle = Default.IsShowTitle;
 			this.isZeroLine = Default.IsZeroLine;
@@ -694,6 +713,8 @@ namespace ZedGraph
 			gridDashOn = rhs.GridDashOn;
 			gridDashOff = rhs.GridDashOff;
 			gridPenWidth = rhs.GridPenWidth;
+			
+			minSpace = rhs.MinSpace;
 
 			color = rhs.Color;
 			gridColor = rhs.GridColor;
@@ -897,6 +918,20 @@ namespace ZedGraph
 		{
 			get { return maxGrace; }
 			set { maxGrace = value; }
+		}
+		
+		/// <summary>
+		/// The minimum axis space allocation.  This term, expressed in
+		/// pixels and scaled according to <see cref="GraphPane.CalcScaleFactor"/>
+		/// for the <see cref="GraphPane"/>, determines the minimum amount of space
+		/// an axis must have between the <see cref="GraphPane.AxisRect"/> and the
+		/// <see cref="GraphPane.PaneRect"/>.  This minimum space
+		/// applies whether <see cref="IsVisible"/> is true or false.
+		/// </summary>
+		public float MinSpace
+		{
+			get { return minSpace; }
+			set { minSpace = value; }
 		}
 
 		#endregion
@@ -1735,6 +1770,9 @@ namespace ZedGraph
 				if ( tmpSpace > space )
 					space = tmpSpace;
 			}
+			
+			// Verify that the minSpace property was satisfied
+			space = Math.Max( space, this.minSpace * (float) scaleFactor );
 
 			return space;
 		}

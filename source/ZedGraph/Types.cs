@@ -90,7 +90,7 @@ namespace ZedGraph
 	/// <summary>
 	/// Enumeration type for the various symbol shapes that are available
 	/// </summary>
-	/// <seealso cref="ZedGraph.Symbol.IsFilled"/>
+	/// <seealso cref="ZedGraph.Symbol.Fill"/>
 	public enum SymbolType 
 	{
 		/// <summary> Square-shaped <see cref="ZedGraph.Symbol"/> </summary>

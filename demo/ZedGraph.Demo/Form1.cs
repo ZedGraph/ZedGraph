@@ -316,17 +316,26 @@ namespace ZedGraphTest
 				x, y2, Color.Blue, SymbolType.Circle );
 			myCurve2.Line.Fill.Type = FillType.Brush;
 			myCurve2.Line.Fill.Color = Color.Red;
+			myCurve2.Symbol.Fill.Type = FillType.Solid;
+			myCurve2.Symbol.Fill.Color = Color.White;
+			//myCurve2.Line.IsSmooth = true;
 
 			CurveItem myCurve = myPane.AddCurve( "My Curve",
 				x, y, Color.MediumVioletRed, SymbolType.Diamond );
 			myCurve.Line.Fill.Type = FillType.Brush;
 			myCurve.Line.Fill.Color = Color.Green;
+			myCurve.Symbol.Fill.Type = FillType.Solid;
+			myCurve.Symbol.Fill.Color = Color.White;
+			//myCurve.Line.IsSmooth = true;
+			
 			// Set the XAxis to date type
 			myPane.XAxis.Type = AxisType.Date;
 
 			myPane.AxisFill.Color = Color.LightGoldenrodYellow;
 			myPane.AxisFill.Type = FillType.Brush;
 
+			myPane.Y2Axis.MinSpace = 100;
+			
 			//myPane.PaneFill.Color = Color.MediumTurquoise;
 			//myPane.PaneFill.Type = FillType.Brush;
 

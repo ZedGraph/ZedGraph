@@ -71,7 +71,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 2.2 $ $Date: 2004-09-13 06:51:43 $ </version>
+	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -139,10 +139,10 @@ namespace ZedGraph.UnitTest
 			curve = testee.AddCurve( "Curly", x2, y2, Color.Green, SymbolType.Triangle );
 			curve.Symbol.Size = 14;
 			curve.Line.Width = 2.0F;
-			curve.Symbol.IsFilled = true;
+			curve.Symbol.Fill.Type = FillType.Solid;
 			curve = testee.AddCurve( "Moe", x3, y3, Color.Blue, SymbolType.Diamond );
 			curve.Line.IsVisible = false;
-			curve.Symbol.IsFilled = true;
+			curve.Symbol.Fill.Type = FillType.Solid;
 			curve.Symbol.Size = 14;
 			
 			testee.XAxis.IsShowGrid = true;
@@ -205,7 +205,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.2 $ $Date: 2004-09-13 06:51:43 $ </version>
+	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
@@ -375,8 +375,8 @@ namespace ZedGraph.UnitTest
 			testee.XAxis.Type = AxisType.Date;
 			
 			// make the symbols filled blue
-			myCurve.Symbol.IsFilled = true;
-			myCurve.Symbol.Color = Color.Blue;
+			myCurve.Symbol.Fill.Type = FillType.Solid;
+			myCurve.Symbol.Fill.Color = Color.Blue;
 			
 			testee.AxisChange( form2.CreateGraphics() );
 			SetSize();
@@ -428,7 +428,7 @@ namespace ZedGraph.UnitTest
 
 			CurveItem curve;
 			curve = testee.AddCurve( "One Value", x, y, Color.Red, SymbolType.Diamond );
-			curve.Symbol.IsFilled = true;
+			curve.Symbol.Fill.Type = FillType.Solid;
 
 			testee.XAxis.IsShowGrid = true;
 			testee.YAxis.IsShowGrid = true;
@@ -466,11 +466,11 @@ namespace ZedGraph.UnitTest
 			CurveItem curve;
 			curve = testee.AddCurve( "Larry", x, y, Color.Red, SymbolType.Circle );
 			curve.Line.Width = 2.0F;
-			curve.Symbol.IsFilled = true;
+			curve.Symbol.Fill.Type = FillType.Solid;
 			curve = testee.AddCurve( "Moe", x3, y3, Color.Green, SymbolType.Triangle );
-			curve.Symbol.IsFilled = true;
+			curve.Symbol.Fill.Type = FillType.Solid;
 			curve = testee.AddCurve( "Curly", x2, y2, Color.Blue, SymbolType.Diamond );
-			curve.Symbol.IsFilled = true;
+			curve.Symbol.Fill.Type = FillType.Solid;
 			curve.Symbol.Size = 12;
 
 			testee.PaneBackColor = Color.WhiteSmoke;
@@ -785,7 +785,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.2 $ $Date: 2004-09-13 06:51:43 $ </version>
+	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{

@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.2 $ $Date: 2004-09-14 05:33:06 $ </version>
+	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -433,7 +433,7 @@ namespace ZedGraph
 					curve.Line.DrawSegment( g, x, y + charHeight / 2,
 						x + 2 * charHeight, y + halfCharHeight );
 					// Draw a sample symbol to the left of the label text				
-					curve.Symbol.Draw( g, x + charHeight, y + halfCharHeight,
+					curve.Symbol.DrawSymbol( g, x + charHeight, y + halfCharHeight,
 						scaleFactor );
 				}
 									

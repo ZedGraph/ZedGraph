@@ -19,6 +19,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace ZedGraph
 {
@@ -29,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.1 $ $Date: 2004-09-13 06:51:43 $ </version>
+	/// <version> $Revision: 2.2 $ $Date: 2004-09-15 06:12:09 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -54,9 +55,9 @@ namespace ZedGraph
 		/// <summary>
 		/// Private field that stores the color of this
 		/// <see cref="Symbol"/>.  Use the public
-		/// property <see cref="Color"/> to access this value.
+		/// property <see cref="FrameColor"/> to access this value.
 		/// </summary>
-		private Color		color;
+		private Color		frameColor;
 		/// <summary>
 		/// Private field that stores the visibility of this
 		/// <see cref="Symbol"/>.  Use the public
@@ -66,12 +67,19 @@ namespace ZedGraph
 		/// </summary>
 		private bool		isVisible;
 		/// <summary>
-		/// Private field that determines if the shape is filled with color for this
-		/// <see cref="Symbol"/>.  Use the public
-		/// property <see cref="IsFilled"/> to access this value.  If this value is
-		/// false, the symbols will be drawn in outline.
+		/// Private field that determines if the <see cref="Symbol"/> will have an outline
+		/// frame.  Use the public
+		/// property <see cref="IsFramed"/> to access this value.  If this value is
+		/// false, the symbols will not have outlines, but they may still be filled
+		/// (see <see cref="Symbol.Fill"/>).
 		/// </summary>
-		private bool		isFilled;
+		private bool		isFramed;
+		/// <summary>
+		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="Symbol"/>.  Use the public property <see cref="Fill"/> to
+		/// access this value.
+		/// </summary>
+		private Fill		fill;
 	#endregion
 
 	#region Defaults
@@ -93,10 +101,19 @@ namespace ZedGraph
 			/// </summary>
 			public static float PenWidth = 1.0F;
 			/// <summary>
-			/// The default fill mode for symbols (<see cref="Symbol.IsFilled"/> property).
-			/// true to have symbols filled in with color, false to leave them as outlines.
+			/// The default color for filling in this <see cref="Symbol"/>
+			/// (<see cref="ZedGraph.Fill.Color"/> property).
 			/// </summary>
-			public static bool IsFilled = false;
+			public static Color FillColor = Color.Red;
+			/// <summary>
+			/// The default custom brush for filling in this <see cref="Symbol"/>
+			/// (<see cref="ZedGraph.Fill.Brush"/> property).
+			/// </summary>
+			public static Brush FillBrush = null;
+			/// <summary>
+			/// The default fill mode for the curve (<see cref="ZedGraph.Fill.Type"/> property).
+			/// </summary>
+			public static FillType FillType = FillType.None;
 			/// <summary>
 			/// The default symbol type for curves (<see cref="Symbol.Type"/> property).
 			/// This is defined as a <see cref="ZedGraph.SymbolType"/> enumeration.
@@ -108,9 +125,14 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsVisible = true;
 			/// <summary>
-			/// The default color for drawing symbols (<see cref="Symbol.Color"/> property).
+			/// The default for drawing frames around symbols (<see cref="Symbol.IsFramed"/> property).
+			/// true to display symbol frames, false to hide them.
 			/// </summary>
-			public static Color Color = Color.Red;
+			public static bool IsFramed = true;
+			/// <summary>
+			/// The default color for drawing symbols (<see cref="Symbol.FrameColor"/> property).
+			/// </summary>
+			public static Color FrameColor = Color.Red;
 		}
 	#endregion
 
@@ -136,18 +158,6 @@ namespace ZedGraph
 			set { type = value; }
 		}
 		/// <summary>
-		/// Set to true to fill in the <see cref="Symbol"/> with color, or false for
-		/// a simple outline symbol.  Note that some symbols, such as
-		/// <see cref="SymbolType.Plus"/> and <see cref="SymbolType.Star"/>
-		/// cannot be filled in since they are not a closed shape.
-		/// </summary>
-		/// <seealso cref="Default.IsFilled"/>
-		public bool IsFilled
-		{
-			get { return isFilled; }
-			set { isFilled = value;}
-		}
-		/// <summary>
 		/// Gets or sets a property that shows or hides the <see cref="Symbol"/>.
 		/// </summary>
 		/// <value>true to show the symbol, false to hide it</value>
@@ -156,6 +166,19 @@ namespace ZedGraph
 		{
 			get { return isVisible; }
 			set { isVisible = value; }
+		}
+		/// <summary>
+		/// Gets or sets a property that shows or hides the <see cref="Symbol"/> frame (the
+		/// outline around the outside of the symbol).
+		/// </summary>
+		/// <value>true to show the symbol, false to hide it</value>
+		/// <seealso cref="Default.IsFramed"/>
+		/// <seealso cref="Fill"/>
+		/// <seealso cref="FrameColor"/>
+		public bool IsFramed
+		{
+			get { return isFramed; }
+			set { isFramed = value; }
 		}
 		/// <summary>
 		/// Gets or sets the pen width used to draw the <see cref="Symbol"/> outline
@@ -168,15 +191,26 @@ namespace ZedGraph
 			set { penWidth = value; }
 		}
 		/// <summary>
-		/// The color of the <see cref="Symbol"/>
+		/// The color of the <see cref="Symbol"/> frame.
 		/// </summary>
-		/// <seealso cref="Default.Color"/>
-		public Color Color
+		/// <seealso cref="Default.FrameColor"/>
+		public Color FrameColor
 		{
-			get { return color; }
-			set { color = value; }
+			get { return frameColor; }
+			set { frameColor = value; }
 		}
-	#endregion
+		
+		/// <summary>
+		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="Symbol"/>.
+		/// </summary>
+		public Fill	Fill
+		{
+			get { return fill; }
+			set { fill = value; }
+		}
+
+		#endregion
 	
 	#region Constructors
 		/// <summary>
@@ -203,9 +237,10 @@ namespace ZedGraph
 			this.size = Default.Size;
 			this.type = type == SymbolType.Empty ? Default.Type : type;
 			this.penWidth = Default.PenWidth;
-			this.color = color.IsEmpty ? Default.Color : color;
+			this.frameColor = color.IsEmpty ? Default.FrameColor : color;
 			this.isVisible = Default.IsVisible;
-			this.isFilled = Default.IsFilled;
+			this.isFramed = Default.IsFramed;
+			this.fill = new Fill( this.frameColor, Default.FillBrush, Default.FillType );
 		}
 
 		/// <summary>
@@ -217,9 +252,10 @@ namespace ZedGraph
 			size = rhs.Size;
 			type = rhs.Type;
 			penWidth = rhs.PenWidth;
-			color = rhs.Color;
+			frameColor = rhs.FrameColor;
 			isVisible = rhs.IsVisible;
-			isFilled = rhs.IsFilled;
+			isFramed = rhs.IsFramed;
+			fill = rhs.Fill;
 		}
 
 		/// <summary>
@@ -249,19 +285,55 @@ namespace ZedGraph
 		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-		/// </param>		
-		public void Draw( Graphics g, float x, float y, double scaleFactor )
+		/// </param>
+		/// <param name="pen">A <see cref="Pen"/> class representing the standard pen for this symbol</param>
+		/// <param name="brush">A <see cref="Brush"/> class representing a default solid brush for this symbol
+		/// If this symbol uses a <see cref="LinearGradientBrush"/>, it will be created on the fly for
+		/// each point, since it has to be scaled to the individual point coordinates.</param>
+		public void DrawSymbol( Graphics g, float x, float y, double scaleFactor, Pen pen, Brush brush )
 		{
 			// Only draw if the symbol is visible
-			if ( this.isVisible && this.Type != SymbolType.Empty && !this.color.IsEmpty)
+			if ( this.isVisible && this.Type != SymbolType.Empty )
 			{
-				SolidBrush	brush = new SolidBrush( this.color );
-				Pen pen = new Pen( this.color, this.penWidth );
+				// Fill or draw the symbol as required
+				if ( this.fill.IsFilled )
+					FillPoint( g, x, y, scaleFactor, pen, brush );
+				
+				if ( this.isFramed )
+					DrawPoint( g, x, y, scaleFactor, pen );
+			}
+		}
+
+		/// <summary>
+		/// Draw the <see cref="Symbol"/> to the specified <see cref="Graphics"/> device
+		/// at the specified location.  This routine draws a single symbol.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="x">The x position of the center of the symbol in
+		/// screen pixel units</param>
+		/// <param name="y">The y position of the center of the symbol in
+		/// screen pixel units</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+		/// </param>
+		public void DrawSymbol( Graphics g, float x, float y, double scaleFactor )
+		{
+			// Only draw if the symbol is visible
+			if ( this.isVisible && this.Type != SymbolType.Empty )
+			{
+				SolidBrush	brush = new SolidBrush( this.fill.Color );
+				Pen pen = new Pen( this.frameColor, this.penWidth );
 
 				// Fill or draw the symbol as required
-				if ( this.isFilled )
+				if ( this.fill.IsFilled )
 					FillPoint( g, x, y, scaleFactor, pen, brush );
-				else
+				
+				if ( this.isFramed )
 					DrawPoint( g, x, y, scaleFactor, pen );
 			}
 		}
@@ -366,11 +438,14 @@ namespace ZedGraph
 				hsize1 = hsize + 1;
 
 			PointF[]	polyPt = new PointF[5];
+			RectangleF	rect = new RectangleF( x-hsize, y-hsize, scaledSize, scaledSize );
+			if ( this.fill.Type == FillType.Brush )
+				brush = this.fill.MakeBrush( rect );
 			
 			switch( this.type )
 			{
 				case SymbolType.Square:
-					g.FillRectangle( brush, x-hsize, y-hsize, scaledSize, scaledSize );
+					g.FillRectangle( brush, rect );
 					break;
 				case SymbolType.Diamond:
 					polyPt[0].X = x;
@@ -395,7 +470,7 @@ namespace ZedGraph
 					g.FillPolygon( brush, polyPt );
 					break;
 				case SymbolType.Circle:
-					g.FillEllipse( brush, x-hsize, y-hsize, scaledSize, scaledSize );
+					g.FillEllipse( brush, rect );
 					break;
 				case SymbolType.XCross:
 					g.FillRectangle( brush, x-hsize4, y-hsize4,
@@ -428,6 +503,9 @@ namespace ZedGraph
 					g.FillPolygon( brush, polyPt );
 					break;
 			}
+			
+			if ( this.fill.Type == FillType.Brush )
+				brush.Dispose();
 		}
 
 		/// <summary>
@@ -464,6 +542,11 @@ namespace ZedGraph
 		
 			if ( points != null )
 			{
+				// For the sake of speed, go ahead and create a solid brush and a pen
+				// If it's a gradient fill, it will be created on the fly for each symbol
+				SolidBrush	brush = new SolidBrush( this.fill.Color );
+				Pen pen = new Pen( this.frameColor, this.penWidth );
+
 				// Loop over each defined point							
 				for ( int i=0; i<points.Count; i++ )
 				{
@@ -491,7 +574,7 @@ namespace ZedGraph
 						else
 							tmpY = pane.YAxis.Transform( curY );
 
-						this.Draw( g, tmpX, tmpY, scaleFactor );		
+						this.DrawSymbol( g, tmpX, tmpY, scaleFactor, pen, brush );		
 					}
 				}
 			}

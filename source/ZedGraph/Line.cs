@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.2 $ $Date: 2004-09-14 05:33:06 $ </version>
+	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
 	public class Line : ICloneable
 	{
 		#region Fields
@@ -90,9 +90,9 @@ namespace ZedGraph
 		/// </summary>
 		private Fill		fill;
 
-		#endregion
+	#endregion
 	
-		#region Defaults
+	#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
 		/// default property values for the <see cref="Line"/> class.
@@ -159,9 +159,9 @@ namespace ZedGraph
 			/// <value><see cref="StepType"/> enum value</value>
 			public static StepType StepType = StepType.NonStep;
 		}
-		#endregion
+	#endregion
 
-		#region Properties
+	#region Properties
 		/// <summary>
 		/// The color of the <see cref="Line"/>
 		/// </summary>
@@ -380,31 +380,33 @@ namespace ZedGraph
 			{
 				Pen pen = new Pen( this.Color, this.Width );
 				pen.DashStyle = this.Style;
+				float tension = this.isSmooth ? this.smoothTension : 0f;
+				
 				if ( count > 1 )
 				{
 					if ( this.Fill.IsFilled )
 					{
-						int closedCount = count;
+						GraphicsPath path = new GraphicsPath( FillMode.Winding );
+						path.AddCurve( arrPoints, 0, count-2, tension );
+
 						double yMin = pane.YAxis.Min < 0 ? 0.0 : pane.YAxis.Min;
 
-						CloseCurve( pane, arrPoints, isY2Axis, ref closedCount, yMin );
-						int len = arrPoints.GetLength(0);
-						PointF lastPt = arrPoints[closedCount-1];
-						for ( int i=closedCount; i<len; i++ )
-							arrPoints[i] = lastPt;
-
+						CloseCurve( pane, arrPoints, isY2Axis, count, yMin, path );
+						
 						Brush brush = this.fill.MakeBrush( boundingBox );
-						if ( this.isSmooth )
-							g.FillClosedCurve( brush, arrPoints, FillMode.Winding, this.smoothTension );
-						else
-							g.FillClosedCurve( brush, arrPoints, FillMode.Winding, 0F );
+						g.FillPath( brush, path );
+
 						brush.Dispose();
 					}
 
-					if ( this.isSmooth )
-						g.DrawCurve( pen, arrPoints, 0, count-1, this.SmoothTension );
-					else
-						g.DrawCurve( pen, arrPoints, 0, count-1, 0F );
+					// Draw the curve
+					
+					//GraphicsPath path2 = new GraphicsPath( FillMode.Winding );								
+					//path2.AddCurve( arrPoints, 0, count-2, tension );
+					//path2.StartFigure();
+					//g.DrawPath( pen, path2 );
+
+					g.DrawCurve( pen, arrPoints, 0, count-2, tension );
 				}
 
 			}
@@ -546,7 +548,7 @@ namespace ZedGraph
 				// Step type plots get twice as many points.  Always add three points so there is
 				// room to close out the curve for area fills.
 				arrPoints = new PointF[ ( this.stepType == ZedGraph.StepType.NonStep ? 1 : 2 )
-											* points.Count + 3 ];
+											* points.Count + 1 ];
 
 				for ( int i=0; i<points.Count; i++ )
 				{
@@ -597,6 +599,10 @@ namespace ZedGraph
 
 				}
 
+				// Add an extra point at the end, since the smoothing algorithm requires it
+				arrPoints[index] = arrPoints[index-1];
+				index++;
+				
 				boundingBox = new RectangleF( minX, minY, maxX, maxY );
 
 				count = index;
@@ -621,24 +627,20 @@ namespace ZedGraph
 		/// <param name="count">The number of points contained in the "arrPoints"
 		/// parameter.</param>
 		/// <param name="yMin">The Y axis value location where the X axis crosses.</param>
+		/// <param name="path">The <see cref="GraphicsPath"/> class that represents the curve.</param>
 		public void CloseCurve( GraphPane pane, PointF[] arrPoints, bool isY2Axis,
-									ref int count, double yMin )
+									int count, double yMin, GraphicsPath path )
 		{
 			float yBase;
 			if ( isY2Axis )
 				yBase = pane.Y2Axis.Transform( yMin );
 			else
 				yBase = pane.YAxis.Transform( yMin );
-
-			arrPoints[count].X = arrPoints[count-1].X;
-			arrPoints[count].Y = yBase;
-			count++;
-			arrPoints[count].X = arrPoints[0].X;
-			arrPoints[count].Y = yBase;
-			count++;
-			arrPoints[count].X = arrPoints[0].X;
-			arrPoints[count].Y = arrPoints[0].Y;
-			count++;
+			
+			path.AddLine( arrPoints[count-1].X, arrPoints[count-1].Y, arrPoints[count-1].X, yBase );
+			path.AddLine( arrPoints[count-1].X, yBase, arrPoints[0].X, yBase );
+			path.AddLine( arrPoints[0].X, yBase, arrPoints[0].X, arrPoints[0].Y );
+			
 		}
 
 	#endregion
