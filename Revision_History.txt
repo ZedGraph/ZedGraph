@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+15-Mar-2005 (by Martz)
+  Added C# and VB web demo for visual designed graphs
+  Added C# and VB web demo for multi-graph per webform
+
 10-Mar-2005 (by Champion)
   Added horizontal stacked bar demo
   Fix bug in CurveList.GetStackRange() (failed to account for BarBase)
