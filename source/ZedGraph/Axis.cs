@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.9 $ $Date: 2004-11-19 06:41:05 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2004-11-22 21:33:17 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -2546,6 +2546,14 @@ namespace ZedGraph
 				{
 					// draw the label
 					MakeLabel( i, dVal, out tmpStr );
+					
+					if ( pane.BarType == BarType.PercentStack )															//rpk
+					{
+						if( this is YAxis && pane.BarBase == BarBase.X  )
+							tmpStr = tmpStr + "%" ;
+						if( this is XAxis && pane.BarBase == BarBase.Y )
+							tmpStr = tmpStr + "%" ;
+					}
 					
 					float height = ScaleFontSpec.BoundingBox( g, tmpStr, scaleFactor ).Height;
 					if ( this.ScaleAlign == AlignP.Center )

@@ -420,7 +420,13 @@ namespace ZedGraph
 		/// top of one another.  The value of the last bar drawn will be the sum of the values
 		/// of all prior bars.
 		/// </summary>
-		Stack
+		Stack,
+		/// <summary>
+		/// Draw the <see cref="BarItem"/> bars in a format whereby the height of each
+		/// represents the percentage of the total each one represents.  Negative values
+		///are displayed below the zero line as percentages of the absolute total of all values. 
+		/// </summary>
+		PercentStack 
 	};
 	
 	/// <summary>

@@ -30,7 +30,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.10 $ $Date: 2004-11-17 03:35:39 $ </version>
+   /// <version> $Revision: 3.11 $ $Date: 2004-11-22 21:34:09 $ </version>
    public class Bar : ICloneable
    {
    #region Fields
@@ -312,7 +312,7 @@ namespace ZedGraph
 
 			// For Overlay and Stack bars, the position is always zero since the bars are on top
 			// of eachother
-			if ( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack)
+			if	( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack|| pane.BarType == BarType.PercentStack)
 				pos = 0;
 
 			// Loop over each defined point                   
@@ -390,7 +390,7 @@ namespace ZedGraph
 
 			// For Overlay and Stack bars, the position is always zero since the bars are on top
 			// of eachother
-			if ( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack)
+			if	( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack|| pane.BarType == BarType.PercentStack )
 				pos = 0;
 
 			DrawSingleBar( g, pane, points, index, pos, baseAxis, valueAxis,
@@ -463,7 +463,7 @@ namespace ZedGraph
 				pixBase = baseAxis.Transform( index, curBase );
 
 				// calculate a pixel value for the bottom of the bar
-				if ( pane.BarType == BarType.Stack )
+				if	( pane.BarType == BarType.Stack|| pane.BarType == BarType.PercentStack )
 				{
 					if ( curValue > 0 )
 						pixLow = (float) priorTop[index];
@@ -489,7 +489,7 @@ namespace ZedGraph
 								scaleFactor, true );
 
 				// Save the old bar top for stacked bar accumulations
-				if ( curValue >= 0 )
+				if	( curValue > 0 )																													//rpk
 					priorTop[index] = pixValue;
 				else
 					priorBottom[index] = pixValue;
