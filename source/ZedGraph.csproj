@@ -18,7 +18,7 @@
                 OutputType = "Library"
                 PreBuildEvent = ""
                 PostBuildEvent = ""
-                RootNamespace = ""
+                RootNamespace = "ZedGraph"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
             >
@@ -96,7 +96,7 @@
                 />
                 <Reference
                     Name = "system.design"
-                    AssemblyName = "system.design"
+                    AssemblyName = "System.Design"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\system.design.dll"
                 />
             </References>

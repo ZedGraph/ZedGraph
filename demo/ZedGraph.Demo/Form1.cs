@@ -16,7 +16,7 @@ using System.IO;
 using GDIDB;
 using ZedGraph;
 
-namespace ZedGraphTest
+namespace ZedGraph.Demo
 {
 	/// <summary>
 	/// Summary description for Form1.
@@ -119,7 +119,6 @@ namespace ZedGraphTest
 		private bool isResizable = true;
 		double[] gx = new double[20];
 		double[] gy = new double[20];
-		TextItem	myText;
 
 		private void Form1_Load(object sender, System.EventArgs e)
 		{			

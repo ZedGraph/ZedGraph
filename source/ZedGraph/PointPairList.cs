@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2005-01-08 09:23:52 $ </version>
 	[Serializable]
 	public class PointPairList : CollectionPlus, ICloneable
 	{
@@ -478,6 +478,10 @@ namespace ZedGraph
 		/// to see if other solutions are possible.
 		/// </remarks>
 		/// <param name="xTarget">The target X value on which to interpolate</param>
+		/// <param name="tension">The tension setting that controls the curvature of the spline fit.
+		/// Typical values are between 0 and 1, where 0 is a linear fit, and 1 is lots of "roundness".
+		/// Values greater than 1 may give odd results.
+		/// </param>
 		/// <returns>The Y value that corresponds to the <see paramref="xTarget"/> value.</returns>
 		public double SplineInterpolateX( double xTarget, double tension )
 		{

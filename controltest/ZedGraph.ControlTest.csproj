@@ -3,13 +3,13 @@
         ProjectType = "Local"
         ProductVersion = "7.10.3077"
         SchemaVersion = "2.0"
-        ProjectGuid = "{ABA28191-9B11-40D2-A51B-21293FE84365}"
+        ProjectGuid = "{47287BC7-EBDB-4911-8F16-0D01D117E459}"
     >
         <Build>
             <Settings
                 ApplicationIcon = ""
                 AssemblyKeyContainerName = ""
-                AssemblyName = "ZedGraph.Demo"
+                AssemblyName = "ZedGraph.ControlTest"
                 AssemblyOriginatorKeyFile = ""
                 DefaultClientScript = "JScript"
                 DefaultHTMLPageLayout = "Grid"
@@ -18,9 +18,9 @@
                 OutputType = "WinExe"
                 PreBuildEvent = ""
                 PostBuildEvent = ""
-                RootNamespace = "ZedGraph.Demo"
+                RootNamespace = "ZedGraph.ControlTest"
                 RunPostBuildEvent = "OnBuildSuccess"
-                StartupObject = "ZedGraph.Demo.Form1"
+                StartupObject = "ZedGraph.ControlTest.Form1"
             >
                 <Config
                     Name = "Debug"
@@ -99,22 +99,17 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "ZedGraph.Demo\AssemblyInfo.cs"
+                    RelPath = "ZedGraph.ControlTest\AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ZedGraph.Demo\DBGraphics.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\Form1.cs"
+                    RelPath = "ZedGraph.ControlTest\Form1.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ZedGraph.Demo\Form1.resx"
+                    RelPath = "ZedGraph.ControlTest\Form1.resx"
                     DependentUpon = "Form1.cs"
                     BuildAction = "EmbeddedResource"
                 />
