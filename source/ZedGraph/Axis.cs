@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.11 $ $Date: 2004-08-27 04:35:16 $ </version>
+	/// <version> $Revision: 1.12 $ $Date: 2004-08-27 06:50:10 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -2648,9 +2648,9 @@ namespace ZedGraph
 			// Calculate the maximum number of labels
 			double width;
 			if ( this is XAxis )
-				width = ( pane.AxisRect.Width == 0 ) ? pane.PaneRect.Width * 0.7 : pane.AxisRect.Width;
+				width = ( pane.AxisRect.Width == 0 ) ? pane.PaneRect.Width * 0.75 : pane.AxisRect.Width;
 			else
-				width = ( pane.AxisRect.Height == 0 ) ? pane.PaneRect.Height * 0.7 : pane.AxisRect.Height;
+				width = ( pane.AxisRect.Height == 0 ) ? pane.PaneRect.Height * 0.75 : pane.AxisRect.Height;
 
 			int maxLabels = (int) ( width / maxWidth );
 			if ( maxLabels <= 0 )
@@ -3096,7 +3096,7 @@ namespace ZedGraph
 				majorUnit = DateUnit.Year;
 				if ( this.scaleFormatAuto )
 					this.scaleFormat = "&yyyy";
-				tempStep = Math.Floor( tempStep/365.0 );
+				tempStep = Math.Ceiling( tempStep / 365.0 );
 				if ( tempStep < 1.0 )
 					tempStep = 1.0;
 
@@ -3134,7 +3134,7 @@ namespace ZedGraph
 				majorUnit = DateUnit.Month;
 				if ( this.scaleFormatAuto )
 					this.scaleFormat = "&mmm-&yy";
-				tempStep = Math.Floor( tempStep / 30.0 );
+				tempStep = Math.Ceiling( tempStep / 30.0 );
 				if ( tempStep < 1.0 )
 					tempStep = 1.0;
 				if ( minorStepAuto )
@@ -3148,7 +3148,7 @@ namespace ZedGraph
 				majorUnit = DateUnit.Day;
 				if ( this.scaleFormatAuto )
 					scaleFormat = "&d-&mmm";
-				tempStep = Math.Floor( tempStep );
+				tempStep = Math.Ceiling( tempStep );
 				if ( tempStep < 1.0 )
 					tempStep = 1.0;
 				if ( minorStepAuto )
@@ -3182,7 +3182,7 @@ namespace ZedGraph
 			else if ( range > Default.RangeHourHour )
 			{
 				majorUnit = DateUnit.Hour;
-				tempStep = Math.Floor( tempStep * XDate.HoursPerDay );
+				tempStep = Math.Ceiling( tempStep * XDate.HoursPerDay );
 				if ( this.scaleFormatAuto )
 					scaleFormat = "&hh:&nn";
 
@@ -3231,7 +3231,7 @@ namespace ZedGraph
 				if ( this.scaleFormatAuto )
 					scaleFormat = "&hh:&nn";
 
-				tempStep = Math.Floor( tempStep * XDate.MinutesPerDay );
+				tempStep = Math.Ceiling( tempStep * XDate.MinutesPerDay );
 				// make sure the minute step size is 1, 5, 15, or 30 minutes
 				if ( tempStep > 15.0 )
 					tempStep = 30.0;
@@ -3278,7 +3278,7 @@ namespace ZedGraph
 				if ( this.scaleFormatAuto )
 					scaleFormat = "&nn:&ss";
 
-				tempStep = Math.Floor( tempStep * XDate.SecondsPerDay );
+				tempStep = Math.Ceiling( tempStep * XDate.SecondsPerDay );
 				// make sure the second step size is 1, 5, 15, or 30 seconds
 				if ( tempStep > 15.0 )
 					tempStep = 30.0;

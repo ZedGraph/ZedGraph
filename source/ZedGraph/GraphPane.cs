@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.12 $ $Date: 2004-08-27 04:35:17 $ </version>
+	/// <version> $Revision: 1.13 $ $Date: 2004-08-27 06:50:10 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -888,9 +888,9 @@ namespace ZedGraph
 				out yMax, out y2Min, out y2Max,
 				this.isIgnoreInitial, this );
 
-		
 			// Determine the scale factor
 			double	scaleFactor = this.CalcScaleFactor( g );
+
 /*
  * 			int		hStack;
 			float	legendWidth;
@@ -900,6 +900,24 @@ namespace ZedGraph
 				CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth );
 */
 
+			// if the AxisRect is not yet determined, then pick a scale based on a default AxisRect
+			// size (using 75% of PaneRect -- code is in Axis.CalcMaxLabels() )
+			// With the scale picked, call CalcAxisRect() so calculate a real AxisRect
+			// then let the scales re-calculate to make sure that the assumption was ok
+			if ( this.isAxisRectAuto )
+			{
+				if ( AxisRect.Width == 0 || AxisRect.Height == 0 )
+				{
+					// Pick new scales based on the range
+					this.xAxis.PickScale( xMin, xMax, this, g, scaleFactor );
+					this.yAxis.PickScale( yMin, yMax, this, g, scaleFactor );
+					this.y2Axis.PickScale( y2Min, y2Max, this, g, scaleFactor );
+	  
+				}
+
+				this.axisRect = CalcAxisRect( g );
+			}
+ 
 			// Pick new scales based on the range
 			this.xAxis.PickScale( xMin, xMax, this, g, scaleFactor );
 			this.yAxis.PickScale( yMin, yMax, this, g, scaleFactor );

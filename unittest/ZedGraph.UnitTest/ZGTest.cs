@@ -70,7 +70,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 1.3 $ $Date: 2004-08-27 04:35:17 $ </version>
+	/// <version> $Revision: 1.4 $ $Date: 2004-08-27 06:50:10 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -78,7 +78,7 @@ namespace ZedGraph.UnitTest
 		GraphPane testee;
 		ZedGraphControl control;
        
-		[TestFixtureSetUp]
+		[SetUp]
 		public void SetUp()
 		{
 			TestUtils.SetUp();
@@ -204,14 +204,14 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.3 $ $Date: 2004-08-27 04:35:17 $ </version>
+	/// <version> $Revision: 1.4 $ $Date: 2004-08-27 06:50:10 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
 		Form form2;
 		GraphPane testee;
        
-		[TestFixtureSetUp]
+		[SetUp]
 		public void SetUp()
 		{
 			TestUtils.SetUp();
@@ -221,6 +221,7 @@ namespace ZedGraph.UnitTest
 			form2.Paint += new System.Windows.Forms.PaintEventHandler( this.Form2_Paint );
 			form2.Resize += new System.EventHandler( this.Form2_Resize );
 			form2.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form2_MouseDown );
+			form2.Show();
 		}
 
 		[TearDown] 
@@ -363,8 +364,6 @@ namespace ZedGraph.UnitTest
 			// start with an empty list for testing
 			PointPairList pointList = new PointPairList();
 			
-			//MessageBox.Show( "Im here" );
-
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend
 			CurveItem myCurve = testee.AddCurve( "My Curve",
@@ -697,7 +696,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.3 $ $Date: 2004-08-27 04:35:17 $ </version>
+	/// <version> $Revision: 1.4 $ $Date: 2004-08-27 06:50:10 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{
@@ -957,14 +956,14 @@ namespace ZedGraph.UnitTest
 			form2.Refresh();
 			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis Title Visible?" ) );
 
-			testee.XAxis.TicPenWidth = 3.0F;
+			//testee.XAxis.TicPenWidth = 3.0F;
 			testee.XAxis.IsZeroLine = true;
 
 			form2.Refresh();
 			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis ZeroLine Visible?" ) );
 
 			testee.XAxis.IsZeroLine = false;
-			testee.XAxis.TicPenWidth = 1.0F;
+			//testee.XAxis.TicPenWidth = 1.0F;
 			testee.XAxis.IsTic = true;
 
 			form2.Refresh();
@@ -1032,14 +1031,14 @@ namespace ZedGraph.UnitTest
 			form2.Refresh();
 			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis Title Visible?" ) );
 
-			testee.YAxis.TicPenWidth = 3.0F;
+			//testee.YAxis.TicPenWidth = 3.0F;
 			testee.YAxis.IsZeroLine = true;
 
 			form2.Refresh();
 			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis ZeroLine Visible?" ) );
 
 			testee.YAxis.IsZeroLine = false;
-			testee.YAxis.TicPenWidth = 1.0F;
+			//testee.YAxis.TicPenWidth = 1.0F;
 			testee.YAxis.IsTic = true;
 
 			form2.Refresh();
@@ -1107,14 +1106,14 @@ namespace ZedGraph.UnitTest
 			form2.Refresh();
 			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis Title Visible?" ) );
 
-			testee.Y2Axis.TicPenWidth = 3.0F;
+			//testee.Y2Axis.TicPenWidth = 3.0F;
 			testee.Y2Axis.IsZeroLine = true;
 
 			form2.Refresh();
 			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis ZeroLine Visible?" ) );
 
 			testee.Y2Axis.IsZeroLine = false;
-			testee.Y2Axis.TicPenWidth = 1.0F;
+			//testee.Y2Axis.TicPenWidth = 1.0F;
 			testee.Y2Axis.IsTic = true;
 
 			form2.Refresh();
@@ -1174,11 +1173,11 @@ namespace ZedGraph.UnitTest
 				testee.XAxis.ScaleFontSpec.Angle = angle;
 				testee.YAxis.ScaleFontSpec.Angle = -angle + 90.0F;
 				testee.Y2Axis.ScaleFontSpec.Angle = -angle - 90.0F;
-				testee.XAxis.TitleFontSpec.Angle = -angle;
-				testee.YAxis.TitleFontSpec.Angle = angle + 180.0F;
-				testee.Y2Axis.TitleFontSpec.Angle = angle;
-				testee.Legend.FontSpec.Angle = angle;
-				testee.FontSpec.Angle = angle;
+				//testee.XAxis.TitleFontSpec.Angle = -angle;
+				//testee.YAxis.TitleFontSpec.Angle = angle + 180.0F;
+				//testee.Y2Axis.TitleFontSpec.Angle = angle;
+				//testee.Legend.FontSpec.Angle = angle;
+				//testee.FontSpec.Angle = angle;
 				
 				form2.Refresh();
 				TestUtils.DelaySeconds( 50 );
@@ -1190,11 +1189,11 @@ namespace ZedGraph.UnitTest
 			testee.XAxis.ScaleFontSpec.Angle = 0;
 			testee.YAxis.ScaleFontSpec.Angle = 90.0F;
 			testee.Y2Axis.ScaleFontSpec.Angle = -90.0F;
-			testee.XAxis.TitleFontSpec.Angle = 0;
-			testee.YAxis.TitleFontSpec.Angle = 180.0F;
-			testee.Y2Axis.TitleFontSpec.Angle = 0;
-			testee.Legend.FontSpec.Angle = 0;
-			testee.FontSpec.Angle = 0;
+			//testee.XAxis.TitleFontSpec.Angle = 0;
+			//testee.YAxis.TitleFontSpec.Angle = 180.0F;
+			//testee.Y2Axis.TitleFontSpec.Angle = 0;
+			//testee.Legend.FontSpec.Angle = 0;
+			//testee.FontSpec.Angle = 0;
 			
 			///////////////////////////////////////////////////////////////////////////////
 

@@ -301,7 +301,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if false	// the date label-width test
+#if true	// the date label-width test
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Date Graph", "Date", "My Y Axis" );
@@ -354,7 +354,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if true	// The bar graph sample
+#if false	// The bar graph sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Bar Graph", "Label", "My Y Axis" );
@@ -853,6 +853,8 @@ namespace ZedGraphTest
 //			myRect.Height -= 100;
 //			myPane.AxisRect = myRect;
 			myPane.AxisChange( this.CreateGraphics() );
+
+			myPane.AxisChange( this.CreateGraphics() );
 		}
 
 		/// <summary>
@@ -1012,8 +1014,8 @@ namespace ZedGraphTest
 
 		private void Form1_Resize(object sender, System.EventArgs e)
 		{
-			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
-					this.ClientRectangle.Width, this.ClientRectangle.Height);
+			memGraphics.CreateDoubleBuffer( this.CreateGraphics(),
+					this.ClientRectangle.Width, this.ClientRectangle.Height );
 			SetSize();
 			myPane.AxisChange( this.CreateGraphics() );
 			Invalidate();
