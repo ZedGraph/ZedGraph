@@ -1,5 +1,13 @@
 ZedGraph Class Library Revision History
 
+10-Jun-2004 (Release 1.4)
+    Added Bar Charts 
+    Added FindNearestPoint() method 
+    Minor Bug Fixes 
+    Added zero-line when axis ranges from negative to positive 
+    Added ScaleFormatAuto property so the ScaleFormat can be manual even when the scale range is auto 
+    Added IsAxisRectAuto property so the AxisRect can be set manually 
+
 1-Mar-2004 (Release 1.3)
     Added Date-Time Axis capability 
     Added Text Axis capability 

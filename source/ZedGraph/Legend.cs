@@ -33,7 +33,7 @@ namespace ZedGraph
 			this.frameWidth = Def.Leg.FrameWidth;
 			this.isFilled = Def.Leg.IsFilled;
 			this.fillColor = Def.Leg.FillColor;
-			this.isHStack = Def.Leg.HStack;
+			this.isHStack = Def.Leg.IsHStack;
 			this.isVisible = Def.Leg.IsVisible;
 			
 			this.fontSpec = new FontSpec( Def.Leg.FontFamily, Def.Leg.FontSize,
@@ -84,6 +84,12 @@ namespace ZedGraph
 		/// the <see cref="Legend"/> entries
 		/// </summary>
 		/// <value>A reference to a <see cref="Legend"/> object</value>
+		/// <seealso cref="Def.Leg.FontColor"/>
+		/// <seealso cref="Def.Leg.FontBold"/>
+		/// <seealso cref="Def.Leg.FontItalic"/>
+		/// <seealso cref="Def.Leg.FontUnderline"/>
+		/// <seealso cref="Def.Leg.FontFamily"/>
+		/// <seealso cref="Def.Leg.FontSize"/>
 		public FontSpec FontSpec
 		{
 			get { return fontSpec; }
@@ -92,6 +98,7 @@ namespace ZedGraph
 		/// Gets or sets a property that shows or hides the <see cref="Legend"/> entirely
 		/// </summary>
 		/// <value> true to show the <see cref="Legend"/>, false to hide it </value>
+		/// <seealso cref="Def.Leg.IsVisible"/>
 		public bool IsVisible
 		{
 			get { return isVisible; }
@@ -104,6 +111,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> true to fill the <see cref="Legend"/> background with a color,
 		/// false to leave the background transparent</value>
+		/// <seealso cref="Def.Leg.IsFilled"/>
 		public bool IsFilled
 		{
 			get { return isFilled; }
@@ -114,6 +122,7 @@ namespace ZedGraph
 		/// <see cref="FrameColor"/> color and <see cref="FrameWidth"/>
 		/// pen width, or false for no frame
 		/// </summary>
+		/// <seealso cref="Def.Leg.IsFramed"/>
 		public bool IsFramed
 		{
 			get { return isFramed; }
@@ -123,6 +132,7 @@ namespace ZedGraph
 		/// The pen width used for drawing the frame around the text
 		/// </summary>
 		/// <value>A pen width in pixel units</value>
+		/// <seealso cref="Def.Leg.FrameWidth"/>
 		public float FrameWidth
 		{
 			get { return frameWidth; }
@@ -135,6 +145,7 @@ namespace ZedGraph
 		/// <see cref="FrameWidth"/> property
 		/// </summary>
 		/// <value>A system <see cref="System.Drawing.Color"/> specification.</value>
+		/// <seealso cref="Def.Leg.FrameColor"/>
 		public Color FrameColor
 		{
 			get { return frameColor; }
@@ -146,6 +157,7 @@ namespace ZedGraph
 		/// <see cref="IsFilled"/> property.
 		/// </summary>
 		/// <value>A system <see cref="System.Drawing.Color"/> specification.</value>
+		/// <seealso cref="Def.Leg.FillColor"/>
 		public Color FillColor
 		{
 			get { return fillColor; }
@@ -157,6 +169,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>true to allow horizontal stacking, false otherwise
 		/// </value>
+		/// <seealso cref="Def.Leg.IsHStack"/>
 		public bool IsHStack
 		{
 			get { return isHStack; }
@@ -166,6 +179,7 @@ namespace ZedGraph
 		/// Sets or gets the location of the <see cref="Legend"/> on the
 		/// <see cref="GraphPane"/> using the <see cref="LegendLoc"/> enum type
 		/// </summary>
+		/// <seealso cref="Def.Leg.Location"/>
 		public LegendLoc Location
 		{
 			get { return location; }
@@ -235,13 +249,26 @@ namespace ZedGraph
 				// Draw the legend label for the current curve
 				this.FontSpec.Draw( g, curve.Label, x + 2.5F * charHeight, y,
 								FontAlignH.Left, FontAlignV.Top, scaleFactor );
-					
-				// Draw a sample curve to the left of the label text
-				curve.Line.Draw( g, x, y + charHeight / 2,
-									x + 2 * charHeight, y + halfCharHeight );
-				// Draw a sample symbol to the left of the label text				
-				curve.Symbol.Draw( g, x + charHeight, y + halfCharHeight,
-					scaleFactor );
+				
+				if ( curve.IsBar )
+				{
+//					Pen pen = new Pen( curve.Bar.FrameColor, curve.Bar.FrameWidth );
+//					SolidBrush	brush = new SolidBrush( curve.Bar.FillColor );
+
+//					g.FillRectangle( brush, x, y, x + 2 * charHeight, y + charHeight );
+//					g.FrameRectangle(
+					curve.Bar.Draw( g, x, x + 2 * charHeight, y + charHeight / 4.0F,
+								y + 3.0F * charHeight / 4.0F, scaleFactor, true );
+				}
+				else
+				{
+					// Draw a sample curve to the left of the label text
+					curve.Line.Draw( g, x, y + charHeight / 2,
+						x + 2 * charHeight, y + halfCharHeight );
+					// Draw a sample symbol to the left of the label text				
+					curve.Symbol.Draw( g, x + charHeight, y + halfCharHeight,
+						scaleFactor );
+				}
 									
 				// maintain a curve count for positioning
 				iEntry++;
@@ -257,7 +284,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Calculate the <see cref="Legend"/> rectangle (see cref="Rect"/>),
+		/// Calculate the <see cref="Legend"/> rectangle (<see cref="Rect"/>),
 		/// taking into account the number of required legend
 		/// entries, and the legend drawing preferences.  Adjust the size of the
 		/// <see cref="GraphPane.AxisRect"/> for the parent <see cref="GraphPane"/> to accomodate the
@@ -336,7 +363,7 @@ namespace ZedGraph
 					// for the top & bottom, the axis frame width is available
 					case LegendLoc.Top:
 					case LegendLoc.Bottom:
-						widthAvail = pane.AxisRect.Width;
+						widthAvail = axisRect.Width;
 						break;
 		
 					// for inside the axis area, use 1/2 of the axis frame width
@@ -344,7 +371,7 @@ namespace ZedGraph
 					case LegendLoc.InsideTopLeft:
 					case LegendLoc.InsideBotRight:
 					case LegendLoc.InsideBotLeft:
-						widthAvail = pane.AxisRect.Width / 2;
+						widthAvail = axisRect.Width / 2;
 						break;
 		
 					// shouldn't ever happen

@@ -995,7 +995,7 @@ namespace ZedGraph
 			resultStr = resultStr.Replace( "&mm", month.ToString( "d2" ) );
 			resultStr = resultStr.Replace( "&m", month.ToString( "d" ) );
 			resultStr = resultStr.Replace( "&yyyy", year.ToString( "d" ) );
-			resultStr = resultStr.Replace( "&yy", (year%100).ToString( "d" ) );
+			resultStr = resultStr.Replace( "&yy", (year%100).ToString( "d2" ) );
 			resultStr = resultStr.Replace( "&dd", day.ToString( "d2" ) );
 			resultStr = resultStr.Replace( "&d", day.ToString( "d" ) );
 			resultStr = resultStr.Replace( "&hh", hour.ToString( "d2" ) );

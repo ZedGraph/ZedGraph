@@ -313,6 +313,7 @@ namespace ZedGraph
 		/// enabled or disabled with the <see cref="IsArrowHead"/> property.
 		/// </summary>
 		/// <value> The size is defined in pixel units </value>
+		/// <seealso cref="Def.Arr.Size"/>
 		public float Size
 		{
 			get { return size; }
@@ -322,6 +323,7 @@ namespace ZedGraph
 		/// The width of the line segment for the <see cref="ArrowItem"/>
 		/// </summary>
 		/// <value> The width is defined in pixel units </value>
+		/// <seealso cref="Def.Arr.PenWidth"/>
 		public float PenWidth
 		{
 			get { return penWidth; }
@@ -332,6 +334,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> The color is defined using the
 		/// <see cref="System.Drawing.Color"/> class </value>
+		/// <seealso cref="Def.Arr.Color"/>
 		public Color Color
 		{
 			get { return color; }
@@ -342,6 +345,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> The coordinate system is defined with the <see cref="CoordType"/>
 		/// enum</value>
+		/// <seealso cref="Def.Arr.CoordFrame"/>
 		public CoordType CoordinateFrame
 		{
 			get { return coordinateFrame; }
@@ -352,6 +356,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> true to show the arrowhead, false to show the line segment
 		/// only</value>
+		/// <seealso cref="Def.Arr.IsArrowHead"/>
 		public bool IsArrowHead
 		{
 			get { return isArrowHead; }

@@ -24,14 +24,16 @@ namespace ZedGraph
 		/// <summary> Private fields for the <see cref="Axis"/> automatic scaling modes.
 		/// Use the public properties <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
 		/// <see cref="StepAuto"/>, <see cref="MinorStepAuto"/>, <see cref="MinorStepAuto"/>,
-		/// <see cref="NumDecAuto"/>, and <see cref="ScaleMagAuto"/> for access to these values.
+		/// <see cref="NumDecAuto"/>, <see cref="ScaleMagAuto"/>, , <see cref="ScaleFormatAuto"/>
+		/// for access to these values.
 		/// </summary>
 		private	 bool		minAuto,
 							maxAuto,
 							stepAuto,
 							minorStepAuto,
 							numDecAuto,
-							scaleMagAuto;
+							scaleMagAuto,
+							scaleFormatAuto;
 		/// <summary> Private fields for the <see cref="Axis"/> scale value display.
 		/// Use the public properties <see cref="NumDec"/> and <see cref="ScaleMag"/>
 		/// for access to these values. </summary>
@@ -39,20 +41,24 @@ namespace ZedGraph
 							scaleMag;
 		/// <summary> Private fields for the <see cref="Axis"/> attributes.
 		/// Use the public properties <see cref="IsVisible"/>, <see cref="IsShowGrid"/>,
+		/// <see cref="IsZeroLine"/>, 
 		/// <see cref="IsTic"/>, <see cref="IsInsideTic"/>, <see cref="IsOppositeTic"/>,
 		/// <see cref="IsMinorTic"/>, <see cref="IsMinorInsideTic"/>,
-		/// <see cref="IsMinorOppositeTic"/>, <see cref="IsLog"/>, <see cref="IsReverse"/>,
+		/// <see cref="IsMinorOppositeTic"/>, <see cref="IsTicsBetweenLabels"/>,
+		/// <see cref="IsLog"/>, <see cref="IsReverse"/>,
 		/// <see cref="IsOmitMag"/>, <see cref="IsText"/>,
 		/// and <see cref="IsDate"/> for access to these values.
 		/// </summary>
 		private bool		isVisible,
 							isShowGrid,
+							isZeroLine,
 							isTic,
 							isInsideTic,
 							isOppositeTic,
 							isMinorTic,
 							isMinorInsideTic,
 							isMinorOppositeTic,
+							isTicsBetweenLabels,
 							isReverse,
 							isOmitMag;
 		/// <summary> Private field for the <see cref="Axis"/> type.  This can be one of the
@@ -68,6 +74,7 @@ namespace ZedGraph
 		/// This field is only used if the <see cref="Type"/> is set to <see cref="AxisType.Date"/>.
 		/// Use the public property <see cref="ScaleFormat"/>
 		/// for access to this value. </summary>
+		/// <seealso cref="ScaleFormatAuto"/>
 		private		 string	scaleFormat;
 		/// <summary> Public field for the <see cref="Axis"/> array of text labels.
 		/// This property is only used if <see cref="Type"/> is set to
@@ -101,6 +108,25 @@ namespace ZedGraph
 		/// </summary>
 		private float	minPix,
 						maxPix;
+
+		/// <summary>
+		/// The pixel position at the minimum value for this axis.  This read-only
+		/// value is used/valid only during the Draw process.
+		/// </summary>
+		public float	MinPix
+		{
+			get { return minPix; }
+		}
+		/// <summary>
+		/// The pixel position at the maximum value for this axis.  This read-only
+		/// value is used/valid only during the Draw process.
+		/// </summary>
+		public float	MaxPix
+		{
+			get { return maxPix; }
+		}
+
+
 		/// <summary>
 		/// Scale values for calculating transforms.  These are temporary values
 		/// used only during the Draw process.
@@ -138,6 +164,7 @@ namespace ZedGraph
 			this.minorStepAuto = true;
 			this.numDecAuto = true;
 			this.scaleMagAuto = true;
+			this.scaleFormatAuto = true;
 		
 			this.numDec = 0;
 			this.scaleMag = 0;
@@ -149,6 +176,7 @@ namespace ZedGraph
 			this.gridPenWidth = Def.Ax.GridPenWidth;
 		
 			this.isVisible = true;
+			this.isZeroLine = Def.Ax.IsZeroLine;
 			this.isShowGrid = Def.Ax.IsShowGrid;
 			this.isReverse = Def.Ax.IsReverse;
 			this.isOmitMag = false;
@@ -202,11 +230,13 @@ namespace ZedGraph
 			minorStepAuto = rhs.MinorStepAuto;
 			numDecAuto = rhs.NumDecAuto;
 			scaleMagAuto = rhs.ScaleMagAuto;
+			scaleFormatAuto = rhs.ScaleFormatAuto;
 
 			numDec = rhs.numDec;
 			scaleMag = rhs.scaleMag;
 			isVisible = rhs.IsVisible;
 			isShowGrid = rhs.IsShowGrid;
+			isZeroLine = rhs.IsZeroLine;
 			isTic = rhs.IsTic;
 			isInsideTic = rhs.IsInsideTic;
 			isOppositeTic = rhs.IsOppositeTic;
@@ -383,6 +413,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> The color is defined using the
 		/// <see cref="System.Drawing.Color"/> class</value>
+		/// <seealso cref="Def.Ax.Color"/>.
 		public Color Color
 		{
 			get { return color; }
@@ -394,6 +425,7 @@ namespace ZedGraph
 		/// <see cref="GraphPane"/>
 		/// </summary>
 		/// <value>The tic size is measured in pixels</value>
+		/// <seealso cref="Def.Ax.TicSize"/>.
 		public float TicSize
 		{
 			get { return ticSize; }
@@ -405,6 +437,7 @@ namespace ZedGraph
 		/// <see cref="GraphPane"/>
 		/// </summary>
 		/// <value>The tic size is measured in pixels</value>
+		/// <seealso cref="Def.Ax.MinorTicSize"/>.
 		public float MinorTicSize
 		{
 			get { return minorTicSize; }
@@ -444,6 +477,7 @@ namespace ZedGraph
 		/// The major tic spacing is controlled by <see cref="Step"/>.
 		/// </summary>
 		/// <value>true to show the major outside tic marks, false otherwise</value>
+		/// <seealso cref="Def.Ax.IsTic"/>.
 		public bool IsTic
 		{
 			get { return isTic; }
@@ -456,6 +490,7 @@ namespace ZedGraph
 		/// ignored (no minor tics are drawn) for text axes (see <see cref="IsText"/>).
 		/// </summary>
 		/// <value>true to show the minor outside tic marks, false otherwise</value>
+		/// <seealso cref="Def.Ax.IsMinorTic"/>.
 		public bool IsMinorTic
 		{
 			get { return isMinorTic; }
@@ -467,6 +502,7 @@ namespace ZedGraph
 		/// The major tic spacing is controlled by <see cref="Step"/>.
 		/// </summary>
 		/// <value>true to show the major inside tic marks, false otherwise</value>
+		/// <seealso cref="Def.Ax.IsInsideTic"/>.
 		public bool IsInsideTic
 		{
 			get { return isInsideTic; }
@@ -479,6 +515,7 @@ namespace ZedGraph
 		/// The major tic spacing is controlled by <see cref="Step"/>.
 		/// </summary>
 		/// <value>true to show the major opposite tic marks, false otherwise</value>
+		/// <seealso cref="Def.Ax.IsOppositeTic"/>.
 		public bool IsOppositeTic
 		{
 			get { return isOppositeTic; }
@@ -490,6 +527,7 @@ namespace ZedGraph
 		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
 		/// </summary>
 		/// <value>true to show the minor inside tic marks, false otherwise</value>
+		/// <seealso cref="Def.Ax.IsMinorInsideTic"/>.
 		public bool IsMinorInsideTic
 		{
 			get { return isMinorInsideTic; }
@@ -502,15 +540,28 @@ namespace ZedGraph
 		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
 		/// </summary>
 		/// <value>true to show the minor opposite tic marks, false otherwise</value>
+		/// <seealso cref="Def.Ax.IsMinorOppositeTic"/>.
 		public bool IsMinorOppositeTic
 		{
 			get { return isMinorOppositeTic; }
 			set { isMinorOppositeTic = value; }
 		}
 		/// <summary>
+		/// This property determines whether or not the major tics will be drawn inbetween the
+		/// labels, rather than right at the labels.  Note that this setting is only
+		/// applicable if <see cref="Axis.Type"/> = <see cref="AxisType.Text"/>.
+		/// </summary>
+		/// <value>true to place the text between the labels for text axes, false otherwise</value>
+		public bool IsTicsBetweenLabels
+		{
+			get { return isTicsBetweenLabels; }
+			set { isTicsBetweenLabels = value; }
+		}
+		/// <summary>
 		/// The pen width to be used when drawing the tic marks for this <see cref="Axis"/>
 		/// </summary>
 		/// <value>The pen width is defined in pixels</value>
+		/// <seealso cref="Def.Ax.TicPenWidth"/>.
 		public float TicPenWidth
 		{
 			get { return ticPenWidth; }
@@ -519,15 +570,31 @@ namespace ZedGraph
 		#endregion
 
 		#region Grid Properties
+
 		/// <summary>
 		/// Determines if the major <see cref="Axis"/> gridlines (at each labeled value) will be shown
 		/// </summary>
 		/// <value>true to show the gridlines, false otherwise</value>
+		/// <seealso cref="Def.Ax.IsShowGrid">Def.Ax.IsShowGrid</seealso>.
 		public bool IsShowGrid
 		{
 			get { return isShowGrid; }
 			set { isShowGrid = value; }
 		}
+
+		/// <summary>
+		/// Determines if a line will be drawn at the zero value for the axis.  That is, a line that
+		/// divides the negative values from the positive values.  The default is set according to
+		/// <see cref="Def.Ax.IsZeroLine"/>
+		/// </summary>
+		/// <value>true to show the zero line, false otherwise</value>
+		/// <seealso cref="Def.Ax.IsZeroLine"/>.
+		public bool IsZeroLine
+		{
+			get { return isZeroLine; }
+			set { isZeroLine = value; }
+		}
+
 		/// <summary>
 		/// The "Dash On" mode for drawing the grid.  This is the distance,
 		/// in pixels, of the dash segments that make up the dashed grid lines.
@@ -535,6 +602,7 @@ namespace ZedGraph
 		/// <value>The dash on length is defined in pixel units</value>
 		/// <seealso cref="GridDashOff"/>
 		/// <seealso cref="IsShowGrid"/>
+		/// <seealso cref="Def.Ax.GridDashOn"/>.
 		public float GridDashOn
 		{
 			get { return gridDashOn; }
@@ -548,6 +616,7 @@ namespace ZedGraph
 		/// <value>The dash off length is defined in pixel units</value>
 		/// <seealso cref="GridDashOn"/>
 		/// <seealso cref="IsShowGrid"/>
+		/// <seealso cref="Def.Ax.GridDashOff"/>.
 		public float GridDashOff
 		{
 			get { return gridDashOff; }
@@ -558,6 +627,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>The grid pen width is defined in pixel units</value>
 		/// <seealso cref="IsShowGrid"/>
+		/// <seealso cref="Def.Ax.GridPenWidth"/>.
 		public float GridPenWidth
 		{
 			get { return gridPenWidth; }
@@ -570,6 +640,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> The color is defined using the
 		/// <see cref="System.Drawing.Color"/> class</value>
+		/// <seealso cref="Def.Ax.GridColor"/>.
 		public Color GridColor
 		{
 			get { return gridColor; }
@@ -585,6 +656,9 @@ namespace ZedGraph
 		/// graph, it will just be invisible to the user
 		/// </summary>
 		/// <value>true to show the axis, false to disable all drawing of this axis</value>
+		/// <seealso cref="Def.XAx.IsVisible"/>.
+		/// <seealso cref="Def.YAx.IsVisible"/>.
+		/// <seealso cref="Def.Y2Ax.IsVisible"/>.
 		public bool IsVisible
 		{
 			get { return isVisible; }
@@ -595,6 +669,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>true for the X values to decrease to the right or the Y values to
 		/// decrease upwards, false otherwise</value>
+		/// <seealso cref="Def.Ax.IsReverse"/>.
 		public bool IsReverse
 		{
 			get { return isReverse; }
@@ -640,6 +715,7 @@ namespace ZedGraph
 		/// <see cref="AxisType.Log"/>, <see cref="AxisType.Date"/>,
 		/// or <see cref="AxisType.Text"/>.
 		/// </summary>
+		/// <seealso cref="Def.Ax.Type"/>.
 		public AxisType Type
 		{
 			get { return type; }
@@ -673,14 +749,29 @@ namespace ZedGraph
 			set { title = value; }
 		}
 		/// <summary>
+		/// Determines whether or not the scale label format <see cref="ScaleFormat"/>
+		/// is determined automatically based on the range of data values.
+		/// This value will be set to false if
+		/// <see cref="ScaleFormat"/> is manually changed.
+		/// </summary>
+		/// <value>true if <see cref="ScaleFormat"/> will be set automatically, false
+		/// if it is to be set manually by the user</value>
+		public bool ScaleFormatAuto
+		{
+			get { return ScaleFormatAuto; }
+			set { ScaleFormatAuto = value; }
+		}
+		/// <summary>
 		/// The format of the <see cref="Axis"/> tic labels.
-		/// This field is only used if the <see cref="Type"/> is set to <see cref="AxisType.Date"/>.
+		/// This property is only used if the <see cref="Type"/> is set to <see cref="AxisType.Date"/>.
+		/// This property may be set automatically by ZedGraph, depending on the state of
+		/// <see cref="ScaleFormatAuto"/>.
 		/// </summary>
 		/// <value>This format string is as defined for the <see cref="XDate.ToString"/> function</value>
 		public string ScaleFormat
 		{
 			get { return scaleFormat; }
-			set { scaleFormat = value; }
+			set { scaleFormat = value; this.ScaleFormatAuto = false; }
 		}
 		/// <summary>
 		/// Determines whether or not the number of decimal places for value
@@ -741,6 +832,12 @@ namespace ZedGraph
 		/// Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
 		/// the scale values
 		/// </summary>
+		/// <seealso cref="Def.Ax.ScaleFontFamily"/>
+		/// <seealso cref="Def.Ax.ScaleFontSize"/>
+		/// <seealso cref="Def.Ax.ScaleFontColor"/>
+		/// <seealso cref="Def.Ax.ScaleFontBold"/>
+		/// <seealso cref="Def.Ax.ScaleFontUnderline"/>
+		/// <seealso cref="Def.Ax.ScaleFontItalic"/>
 		public FontSpec ScaleFontSpec
 		{
 			get { return scaleFontSpec; }
@@ -749,6 +846,12 @@ namespace ZedGraph
 		/// Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
 		/// the <see cref="Axis"/> <see cref="Title"/>,
 		/// </summary>
+		/// <seealso cref="Def.Ax.TitleFontFamily"/>
+		/// <seealso cref="Def.Ax.TitleFontSize"/>
+		/// <seealso cref="Def.Ax.TitleFontColor"/>
+		/// <seealso cref="Def.Ax.TitleFontBold"/>
+		/// <seealso cref="Def.Ax.TitleFontUnderline"/>
+		/// <seealso cref="Def.Ax.TitleFontItalic"/>
 		public FontSpec TitleFontSpec
 		{
 			get { return titleFontSpec; }
@@ -1044,15 +1147,25 @@ namespace ZedGraph
 			// get the first major tic value
 			double baseVal = CalcBaseTic();
 
-			Pen pen = new Pen( this.color, this.ticPenWidth  );
-			
-			// redraw the axis border
-			g.DrawLine( pen, 0.0F, 0.0F, rightPix, 0.0F );
+			if ( this.IsVisible )
+			{
+				Pen pen = new Pen( this.color, this.ticPenWidth  );
+				
+				// redraw the axis border
+				g.DrawLine( pen, 0.0F, 0.0F, rightPix, 0.0F );
 
-			// draw the major tics and labels
-			DrawLabels( g, pane, baseVal, nTics, topPix, scaleFactor );
-		
-			DrawMinorTics( g, baseVal, scaleFactor, topPix );
+				// Draw a zero-value line if needed
+				if ( this.min < 0.0 && this.max > 0.0 )
+				{
+					float zeroPix = LocalTransform( 0.0 );
+					g.DrawLine( pen, zeroPix, 0.0F, zeroPix, topPix );
+				}
+
+				// draw the major tics and labels
+				DrawLabels( g, pane, baseVal, nTics, topPix, scaleFactor );
+			
+				DrawMinorTics( g, baseVal, scaleFactor, topPix );
+			}
 		}
 	
 		/// <summary>
@@ -1182,8 +1295,8 @@ namespace ZedGraph
 		public void DrawLabels( Graphics g, GraphPane pane, double baseVal, int nTics,
 						float topPix, double scaleFactor )
 		{
-			double	dVal;
-			float	pixVal;
+			double	dVal, dVal2;
+			float	pixVal, pixVal2;
 			string	tmpStr;
 			float	scaledTic = this.ScaledTic( scaleFactor );
 			double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
@@ -1215,21 +1328,35 @@ namespace ZedGraph
 
 				// convert the value to a pixel position
 				pixVal = this.LocalTransform( dVal );
-		
+
+				// see if the tic marks will be draw between the labels instead of at the labels
+				// (this applies only to AxisType.Text
+				if ( this.isTicsBetweenLabels && this.type == AxisType.Text )
+				{
+					// We need one extra tic in order to draw the tics between labels
+					// so provide an exception here
+					if ( i == 0 )
+					{
+						dVal2 = CalcMajorTicValue( baseVal, -0.5 );
+						if ( dVal2 >= this.minScale )
+						{
+							pixVal2 = this.LocalTransform( dVal2 );
+							DrawATic( g, pen, pixVal2, topPix, scaledTic );
+						}
+					}
+
+					dVal2 = CalcMajorTicValue( baseVal, (double) i + 0.5 );
+					if ( dVal2 > this.maxScale )
+						break;
+					pixVal2 = this.LocalTransform( dVal2 );
+				}
+				else
+					pixVal2 = pixVal;
+
+				DrawATic( g, pen, pixVal2, topPix, scaledTic );
+
 				if ( this.isVisible )
 				{
-					// draw the outside tic
-					if ( this.isTic )
-						g.DrawLine( pen, pixVal, 0.0F, pixVal, 0.0F + scaledTic );
-
-					// draw the inside tic
-					if ( this.isInsideTic )
-						g.DrawLine( pen, pixVal, 0.0F, pixVal, 0.0F - scaledTic );
-
-					// draw the opposite tic
-					if ( this.isOppositeTic )
-						g.DrawLine( pen, pixVal, topPix, pixVal, topPix + scaledTic );
-
 					// draw the label
 					MakeLabel( i, dVal, out tmpStr );
 					
@@ -1242,6 +1369,37 @@ namespace ZedGraph
 				// draw the grid
 				if ( this.isVisible && this.isShowGrid )
 					g.DrawLine( dottedPen, pixVal, 0.0F, pixVal, topPix );
+			}
+		}
+
+		/// <summary>
+		/// Draw a tic mark at the specified single position.  This includes the inner, outer
+		/// and opposite tic marks as required.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="pen">Graphic <see cref="Pen"/> with which to draw the tic mark.</param>
+		/// <param name="pixVal">The pixel location of the tic mark on this
+		/// <see cref="Axis"/></param>
+		/// <param name="topPix">The pixel value of the top of the axis frame</param>
+		/// <param name="scaledTic">The length of the tic mark, in pixels</param>
+		void DrawATic( Graphics g, Pen pen, float pixVal, float topPix, float scaledTic )
+		{
+			if ( this.isVisible )
+			{
+				// draw the outside tic
+				if ( this.isTic )
+					g.DrawLine( pen, pixVal, 0.0F, pixVal, 0.0F + scaledTic );
+
+				// draw the inside tic
+				if ( this.isInsideTic )
+					g.DrawLine( pen, pixVal, 0.0F, pixVal, 0.0F - scaledTic );
+
+				// draw the opposite tic
+				if ( this.isOppositeTic )
+					g.DrawLine( pen, pixVal, topPix, pixVal, topPix + scaledTic );
 			}
 		}
 
@@ -1342,13 +1500,13 @@ namespace ZedGraph
 		/// <param name="baseVal">
 		/// The value of the first major tic (floating point double)
 		/// </param>
-		/// <param name="iTic">
+		/// <param name="tic">
 		/// The major tic number (0 = first major tic).  For log scales, this is the actual power of 10.
 		/// </param>
 		/// <returns>
 		/// The specified major tic value (floating point double).
 		/// </returns>
-		private double CalcMajorTicValue( double baseVal, int iTic )
+		private double CalcMajorTicValue( double baseVal, double tic )
 		{
 			if ( this.IsDate ) // date scale
 			{
@@ -1358,22 +1516,22 @@ namespace ZedGraph
 				{
 					case DateUnit.Year:
 					default:
-						xDate.AddYears( (double) iTic * this.step );
+						xDate.AddYears( tic * this.step );
 						break;
 					case DateUnit.Month:
-						xDate.AddMonths( (double) iTic * this.step );
+						xDate.AddMonths( tic * this.step );
 						break;
 					case DateUnit.Day:
-						xDate.AddDays( (double) iTic * this.step );
+						xDate.AddDays( tic * this.step );
 						break;
 					case DateUnit.Hour:
-						xDate.AddHours( (double) iTic * this.step );
+						xDate.AddHours( tic * this.step );
 						break;
 					case DateUnit.Minute:
-						xDate.AddMinutes( (double) iTic * this.step );
+						xDate.AddMinutes( tic * this.step );
 						break;
 					case DateUnit.Second:
-						xDate.AddSeconds( (double) iTic * this.step );
+						xDate.AddSeconds( tic * this.step );
 						break;	
 				}
 				
@@ -1381,11 +1539,11 @@ namespace ZedGraph
 			}
 			else if ( this.IsLog ) // log scale
 			{
-				return baseVal * Math.Pow( 10.0, (double) iTic );
+				return baseVal * Math.Pow( 10.0, tic );
 			}
 			else // regular linear scale
 			{
-				return baseVal + (double) this.step * (double) iTic;
+				return baseVal + (double) this.step * tic;
 			}
 		}
 		
@@ -1694,9 +1852,9 @@ namespace ZedGraph
 				if ( this.TextLabels != null )
 				{
 					if ( this.minAuto )
-						this.min = 0;
+						this.min = 0.5;
 					if ( this.maxAuto )
-						this.max = this.TextLabels.Length + 1;
+						this.max = this.TextLabels.Length + 0.5;
 				}
 
 				// Test for trivial condition of range = 0 and pick a suitable default
@@ -1910,7 +2068,8 @@ namespace ZedGraph
 			if ( range > Def.Ax.RangeYearYear )
 			{
 				majorUnit = DateUnit.Year;
-				this.scaleFormat = "&yyyy";
+				if ( this.scaleFormatAuto )
+					this.scaleFormat = "&yyyy";
 				tempStep = Math.Floor( tempStep/365.0 );
 				if ( tempStep < 1.0 )
 					tempStep = 1.0;
@@ -1927,7 +2086,8 @@ namespace ZedGraph
 			else if ( range > Def.Ax.RangeYearMonth )
 			{
 				majorUnit = DateUnit.Year;
-				this.scaleFormat = "&mmm-&yy";
+				if ( this.scaleFormatAuto )
+					this.scaleFormat = "&mmm-&yy";
 				tempStep = 1.0;
 
 				if ( minorStepAuto )
@@ -1946,7 +2106,8 @@ namespace ZedGraph
 			else if ( range > Def.Ax.RangeMonthMonth )
 			{
 				majorUnit = DateUnit.Month;
-				this.scaleFormat = "&mmm-&yy";
+				if ( this.scaleFormatAuto )
+					this.scaleFormat = "&mmm-&yy";
 				tempStep = Math.Floor( tempStep / 30.0 );
 				if ( tempStep < 1.0 )
 					tempStep = 1.0;
@@ -1959,7 +2120,8 @@ namespace ZedGraph
 			else if ( range > Def.Ax.RangeDayDay )
 			{
 				majorUnit = DateUnit.Day;
-				scaleFormat = "&d-&mmm";
+				if ( this.scaleFormatAuto )
+					scaleFormat = "&d-&mmm";
 				tempStep = Math.Floor( tempStep );
 				if ( tempStep < 1.0 )
 					tempStep = 1.0;
@@ -1972,7 +2134,8 @@ namespace ZedGraph
 			else if ( range > Def.Ax.RangeDayHour )
 			{
 				majorUnit = DateUnit.Day;
-				this.scaleFormat = "&d-&mmm &hh:&nn";
+				if ( this.scaleFormatAuto )
+					this.scaleFormat = "&d-&mmm &hh:&nn";
 				tempStep = 1.0;
 
 				if ( minorStepAuto )
@@ -1994,7 +2157,8 @@ namespace ZedGraph
 			{
 				majorUnit = DateUnit.Hour;
 				tempStep = Math.Floor( tempStep * XDate.HoursPerDay );
-				scaleFormat = "&hh:&nn";
+				if ( this.scaleFormatAuto )
+					scaleFormat = "&hh:&nn";
 
 				if ( tempStep > 12.0 )
 					tempStep = 24.0;
@@ -2015,7 +2179,8 @@ namespace ZedGraph
 			{
 				majorUnit = DateUnit.Hour;
 				tempStep = 1.0;
-				scaleFormat = "&hh:&nn";
+				if ( this.scaleFormatAuto )
+					scaleFormat = "&hh:&nn";
 
 				if ( minorStepAuto )
 				{
@@ -2037,7 +2202,8 @@ namespace ZedGraph
 			else if ( range > Def.Ax.RangeMinuteMinute )
 			{
 				majorUnit = DateUnit.Minute;
-				scaleFormat = "&hh:&nn";
+				if ( this.scaleFormatAuto )
+					scaleFormat = "&hh:&nn";
 
 				tempStep = Math.Floor( tempStep * XDate.MinutesPerDay );
 				// make sure the minute step size is 1, 5, 15, or 30 minutes
@@ -2060,7 +2226,8 @@ namespace ZedGraph
 			{
 				majorUnit = DateUnit.Minute;
 				tempStep = 1.0;
-				scaleFormat = "&nn:&ss";
+				if ( this.scaleFormatAuto )
+					scaleFormat = "&nn:&ss";
 
 				if ( minorStepAuto )
 				{
@@ -2082,7 +2249,8 @@ namespace ZedGraph
 			else // SecondSecond
 			{
 				majorUnit = DateUnit.Second;
-				scaleFormat = "&nn:&ss";
+				if ( this.scaleFormatAuto )
+					scaleFormat = "&nn:&ss";
 
 				tempStep = Math.Floor( tempStep * XDate.SecondsPerDay );
 				// make sure the second step size is 1, 5, 15, or 30 seconds
@@ -2293,12 +2461,24 @@ namespace ZedGraph
 				ratio = ( x - this.minScale ) / ( this.maxScale - this.minScale );
 			
 			if ( ( this.isReverse && !(this is YAxis) ) ||
-					( !this.isReverse && (this is YAxis ) ) )
+				( !this.isReverse && (this is YAxis ) ) )
 				rv = (float) ( ( this.maxPix - this.minPix ) * ( 1.0F - ratio ) );
 			else
 				rv = (float) ( ( this.maxPix - this.minPix ) * ratio );
 
 			return rv;
+		}
+
+		/// <summary>
+		/// Determine the width, in screen pixel units, of each bar cluster including
+		/// the cluster gaps and bar gaps.
+		/// </summary>
+		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
+		/// associated with this <see cref="Axis"/></param>
+		/// <returns>The width of each bar cluster, in pixel units</returns>
+		public float GetClusterWidth( GraphPane pane )
+		{
+			return this.Transform( 2.0 ) - this.Transform( 1.0 );
 		}
 
 		/// <summary>

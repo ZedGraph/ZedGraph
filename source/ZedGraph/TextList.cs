@@ -149,7 +149,7 @@ namespace ZedGraph
 		/// Constructor that sets all <see cref="TextItem"/> properties to default
 		/// values as defined in the <see cref="Def"/> class.
 		/// </summary>
-		/// <param name="text">T</param>
+		/// <param name="text">The text to be displayed.</param>
 		/// <param name="x">The x position of the text.  The units
 		/// of this position are specified by the
 		/// <see cref="CoordinateFrame"/> property.  The text will be
@@ -205,6 +205,12 @@ namespace ZedGraph
 		/// Gets a reference to the <see cref="FontSpec"/> class used to render
 		/// this <see cref="TextItem"/>
 		/// </summary>
+		/// <seealso cref="Def.Text.FontColor"/>
+		/// <seealso cref="Def.Text.FontBold"/>
+		/// <seealso cref="Def.Text.FontItalic"/>
+		/// <seealso cref="Def.Text.FontUnderline"/>
+		/// <seealso cref="Def.Text.FontFamily"/>
+		/// <seealso cref="Def.Text.FontSize"/>
 		public FontSpec FontSpec
 		{
 			get { return fontSpec; }
@@ -213,6 +219,7 @@ namespace ZedGraph
 		/// A horizontal alignment parameter for this <see cref="TextItem"/> specified
 		/// using the <see cref="FontAlignH"/> enum type
 		/// </summary>
+		/// <seealso cref="Def.Text.AlignH"/>
 		public FontAlignH AlignH
 		{
 			get { return alignH; }
@@ -222,6 +229,7 @@ namespace ZedGraph
 		/// A vertical alignment parameter for this <see cref="TextItem"/> specified
 		/// using the <see cref="FontAlignV"/> enum type
 		/// </summary>
+		/// <seealso cref="Def.Text.AlignV"/>
 		public FontAlignV AlignV
 		{
 			get { return alignV; }
@@ -254,6 +262,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> The coordinate system is defined with the <see cref="CoordType"/>
 		/// enum</value>
+		/// <seealso cref="Def.Text.CoordFrame"/>
 		public CoordType CoordinateFrame
 		{
 			get { return coordinateFrame; }

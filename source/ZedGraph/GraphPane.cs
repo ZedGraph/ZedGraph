@@ -39,8 +39,10 @@ namespace ZedGraph
 		private float		paneFramePenWidth;		// Width of the pane frame border
 		private Color		paneBackColor;			// Color of the background behind paneRect
 		
-		// Pane Frame Properties
-		private bool		isAxisFramed;	// True if the GraphPane has a frame border
+		// Axis Frame Properties
+		private bool		isAxisRectAuto;		// True if the size of the axisRect will be calculated
+												//    automatically
+		private bool		isAxisFramed;		// True if the GraphPane has a frame border
 		private Color		axisFrameColor;		// Color of the axis frame border
 		private float		axisFramePenWidth;		// Width of the axis frame border
 		private Color		axisBackColor;			// Color of the background behind axisRect
@@ -48,17 +50,21 @@ namespace ZedGraph
 		private bool		isIgnoreInitial;	// true to ignore initial zero values for auto scale selection
 		private float		paneGap;			// Size of the gap (margin) around the edges of the pane
 		private double		baseDimension;		// Basic length scale (inches) of the plot for scaling features
-
+		private float		minClusterGap;		// The minimum space between bar clusters,
+		// expressed as a fraction of the bar size
+		private float		minBarGap;			// The minimum space between individual bars
+		// within a cluster, expressed as a fraction
+		// of the bar size
 		/// <summary>
 		/// The rectangle that defines the full area into which the
 		/// graph can be rendered.  Units are pixels.
 		/// </summary>
-		public RectangleF	paneRect;			// The full area of the graph pane
+		private RectangleF	paneRect;			// The full area of the graph pane
 		/// <summary>
 		/// The rectangle that contains the area bounded by the axes, in
 		/// pixel units
 		/// </summary>
-		public RectangleF	axisRect;			// The area of the pane defined by the axes
+		private RectangleF	axisRect;			// The area of the pane defined by the axes
 		
 		/// <summary>
 		/// Constructor for the <see cref="GraphPane"/> object.  This routine will
@@ -86,27 +92,31 @@ namespace ZedGraph
 			arrowList = new ArrowList();
 			
 			this.title = paneTitle;
-			this.isShowTitle = Def.Pane.ShowTitle;
+			this.isShowTitle = Def.Pane.IsShowTitle;
 			this.fontSpec = new FontSpec( Def.Pane.FontFamily,
 				Def.Pane.FontSize, Def.Pane.FontColor, Def.Pane.FontBold,
 				Def.Pane.FontItalic, Def.Pane.FontUnderline );
 			this.fontSpec.IsFilled = false;
 			this.fontSpec.IsFramed = false;
 					
-			this.isIgnoreInitial = Def.Ax.IgnoreInitial;
+			this.isIgnoreInitial = Def.Pane.IsIgnoreInitial;
 			
-			this.isPaneFramed = Def.Pane.IsFramed;
-			this.paneFrameColor = Def.Pane.FrameColor;
-			this.paneFramePenWidth = Def.Pane.FramePenWidth;
-			this.paneBackColor = Def.Pane.BackColor;
+			this.isPaneFramed = Def.Pane.IsPaneFramed;
+			this.paneFrameColor = Def.Pane.PaneFrameColor;
+			this.paneFramePenWidth = Def.Pane.PaneFramePenWidth;
+			this.paneBackColor = Def.Pane.PaneBackColor;
 
-			this.isAxisFramed = Def.Ax.IsFramed;
-			this.axisFrameColor = Def.Ax.FrameColor;
-			this.axisFramePenWidth = Def.Ax.FramePenWidth;
-			this.axisBackColor = Def.Ax.BackColor;
+			this.isAxisRectAuto = true;
+			this.isAxisFramed = Def.Pane.IsAxisFramed;
+			this.axisFrameColor = Def.Pane.AxisFrameColor;
+			this.axisFramePenWidth = Def.Pane.AxisFramePenWidth;
+			this.axisBackColor = Def.Pane.AxisBackColor;
 
 			this.baseDimension = Def.Pane.BaseDimension;
-			this.paneGap = Def.Pane.Gap;
+			this.paneGap = Def.Pane.PaneGap;
+
+			this.MinClusterGap = Def.Pane.MinClusterGap;
+			this.MinBarGap = Def.Pane.MinBarGap;
 		}
 
 		/// <summary>
@@ -135,6 +145,7 @@ namespace ZedGraph
 			this.paneFramePenWidth = rhs.PaneFramePenWidth;
 			this.paneBackColor = rhs.PaneBackColor;
 
+			this.isAxisRectAuto = rhs.IsAxisRectAuto;
 			this.isAxisFramed = rhs.IsAxisFramed;
 			this.axisFrameColor = rhs.AxisFrameColor;
 			this.axisFramePenWidth = rhs.AxisFramePenWidth;
@@ -142,6 +153,8 @@ namespace ZedGraph
 
 			this.baseDimension = rhs.BaseDimension;
 			this.paneGap = rhs.PaneGap;
+			this.MinClusterGap = rhs.MinClusterGap;
+			this.MinBarGap = rhs.MinBarGap;
 		} 
 
 		/// <summary>
@@ -164,13 +177,16 @@ namespace ZedGraph
 			set { paneRect = value; }
 		}
 		/// <summary>
-		/// Gets the rectangle that contains the area bounded by the axes
-		/// (<see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>)
+		/// Gets or sets the rectangle that contains the area bounded by the axes
+		/// (<see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
+		/// If you set this value manually, then the <see cref="IsAxisRectAuto"/>
+		/// value will automatically be set to false.
 		/// </summary>
 		/// <value>The rectangle units are in screen pixels</value>
 		public RectangleF AxisRect
 		{
 			get { return axisRect; }
+			set { axisRect = value; this.isAxisRectAuto = false; }
 		}
 		/// <summary>
 		/// Gets or sets the list of <see cref="ArrowItem"/> items for this <see cref="GraphPane"/>
@@ -239,6 +255,7 @@ namespace ZedGraph
 		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.
 		/// All data after the first non-zero Y value are included.
 		/// </summary>
+		/// <seealso cref="Def.Pane.IsIgnoreInitial"/>
 		public bool IsIgnoreInitial
 		{
 			get { return isIgnoreInitial; }
@@ -249,6 +266,7 @@ namespace ZedGraph
 		/// on the graph.  If true, the title is displayed.  If false, the title is omitted, and the
 		/// screen space that would be occupied by the title is added to the axis area.
 		/// </summary>
+		/// <seealso cref="Def.Pane.IsShowTitle"/>
 		public bool IsShowTitle
 		{
 			get { return isShowTitle; }
@@ -258,6 +276,12 @@ namespace ZedGraph
 		/// Gets a reference to the <see cref="FontSpec"/> class used to render
 		/// the <see cref="GraphPane"/> <see cref="Title"/>
 		/// </summary>
+		/// <seealso cref="Def.Pane.FontColor"/>
+		/// <seealso cref="Def.Pane.FontBold"/>
+		/// <seealso cref="Def.Pane.FontItalic"/>
+		/// <seealso cref="Def.Pane.FontUnderline"/>
+		/// <seealso cref="Def.Pane.FontFamily"/>
+		/// <seealso cref="Def.Pane.FontSize"/>
 		public FontSpec FontSpec
 		{
 			get { return fontSpec; }
@@ -277,6 +301,7 @@ namespace ZedGraph
 		/// around the <see cref="GraphPane"/> area (<see cref="PaneRect"/>).
 		/// True to draw the frame, false otherwise.
 		/// </summary>
+		/// <seealso cref="Def.Pane.IsPaneFramed"/>
 		public bool IsPaneFramed
 		{
 			get { return isPaneFramed; }
@@ -286,6 +311,7 @@ namespace ZedGraph
 		/// Frame color is a <see cref="System.Drawing.Color"/> specification
 		/// for the <see cref="GraphPane"/> frame border.
 		/// </summary>
+		/// <seealso cref="Def.Pane.PaneFrameColor"/>
 		public Color PaneFrameColor
 		{
 			get { return paneFrameColor; }
@@ -296,6 +322,7 @@ namespace ZedGraph
 		/// for the <see cref="GraphPane"/> pane background, which is the
 		/// area behind the <see cref="GraphPane.PaneRect"/>.
 		/// </summary>
+		/// <seealso cref="Def.Pane.PaneBackColor"/>
 		public Color PaneBackColor
 		{
 			get { return paneBackColor; }
@@ -305,16 +332,35 @@ namespace ZedGraph
 		/// FrameWidth is a float value indicating the width (thickness) of the
 		/// <see cref="GraphPane"/> frame border.
 		/// </summary>
+		/// <seealso cref="Def.Pane.PaneFramePenWidth"/>
 		public float PaneFramePenWidth
 		{
 			get { return paneFramePenWidth; }
 			set { paneFramePenWidth = value; }
 		}
 		/// <summary>
+		/// IsAxisRectAuto is a boolean value that determines whether or not the 
+		/// <see cref="AxisRect"/> will be calculated automatically (almost always true).
+		/// If you have a need to set the axisRect manually, such as you have multiple graphs
+		/// on a page and you want to line up the edges perfectly, you can set this value
+		/// to false.  If you set this value to false, you must also manually set
+		/// the <see cref="AxisRect"/> property.
+		/// You can easily determine the axisRect that ZedGraph would have
+		/// calculated by calling the <see cref="CalcAxisRect"/> method, which returns
+		/// an axis rect sized for the current data range, scale sizes, etc.
+		/// </summary>
+		/// <value>true to have ZedGraph calculate the axisRect, false to do it yourself</value>
+		public bool IsAxisRectAuto
+		{
+			get { return isAxisRectAuto; }
+			set { isAxisRectAuto = value; }
+		}
+		/// <summary>
 		/// IsAxisFramed is a boolean value that determines whether or not a frame border is drawn
 		/// around the axis area (<see cref="AxisRect"/>).
 		/// </summary>
 		/// <value>true to draw the frame, false otherwise. </value>
+		/// <seealso cref="Def.Pane.IsAxisFramed"/>
 		public bool IsAxisFramed
 		{
 			get { return isAxisFramed; }
@@ -324,6 +370,7 @@ namespace ZedGraph
 		/// Frame color is a <see cref="System.Drawing.Color"/> specification
 		/// for the axis frame border.
 		/// </summary>
+		/// <seealso cref="Def.Pane.AxisFrameColor"/>
 		public Color AxisFrameColor
 		{
 			get { return axisFrameColor; }
@@ -334,6 +381,7 @@ namespace ZedGraph
 		/// for the <see cref="Axis"/> background, which is the
 		/// area behind the <see cref="GraphPane.AxisRect"/>.
 		/// </summary>
+		/// <seealso cref="Def.Pane.AxisBackColor"/>
 		public Color AxisBackColor
 		{
 			get { return axisBackColor; }
@@ -343,6 +391,7 @@ namespace ZedGraph
 		/// FrameWidth is a float value indicating the width (thickness) of the axis frame border.
 		/// </summary>
 		/// <value>A pen width dimension in pixel units</value>
+		/// <seealso cref="Def.Pane.AxisFramePenWidth"/>
 		public float AxisFramePenWidth
 		{
 			get { return axisFramePenWidth; }
@@ -355,6 +404,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>This value is in units of pixels, and is scaled
 		/// linearly with the graph size.</value>
+		/// <seealso cref="Def.Pane.PaneGap"/>
 		public float PaneGap
 		{
 			get { return paneGap; }
@@ -370,11 +420,35 @@ namespace ZedGraph
 		/// 7 points high.  Most features of the graph are scaled in this manner.
 		/// </summary>
 		/// <value>The base dimension reference for the <see cref="GraphPane"/>, in inches</value>
+		/// <seealso cref="Def.Pane.BaseDimension"/>
 		public double BaseDimension
 		{
 			get { return baseDimension; }
 			set { baseDimension = value; }
 		}
+
+		/// <summary>
+		/// The minimum space between <see cref="Bar"/> clusters, expressed as a
+		/// fraction of the bar size.
+		/// </summary>
+		/// <seealso cref="Def.Pane.MinClusterGap"/>
+		public float MinClusterGap
+		{
+			get { return minClusterGap; }
+			set { minClusterGap = value; }
+		}
+		/// <summary>
+		/// The minimum space between individual <see cref="Bar">Bars</see>
+		/// within a cluster, expressed as a
+		/// fraction of the bar size.
+		/// </summary>
+		/// <seealso cref="Def.Pane.MinBarGap"/>
+		public float MinBarGap
+		{
+			get { return minBarGap; }
+			set { minBarGap = value; }
+		}
+
 		/// <summary>
 		/// ScaledGap is a simple utility routine that calculates the <see cref="PaneGap"/> scaled
 		/// to the "scaleFactor" fraction.  That is, ScaledGap = PaneGap * scaleFactor
@@ -405,8 +479,8 @@ namespace ZedGraph
 		
 			// Get the scale range of the data (all curves)
 			this.curveList.GetRange( out xMin, out xMax, out yMin,
-									out yMax, out y2Min, out y2Max,
-									this.isIgnoreInitial, this );
+				out yMax, out y2Min, out y2Max,
+				this.isIgnoreInitial, this );
 		
 			// Pick new scales based on the range
 			this.xAxis.PickScale( xMin, xMax );
@@ -425,29 +499,37 @@ namespace ZedGraph
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		public void Draw( Graphics g )
-		{
-			// calculate scaleFactor on "normal" pane size (BaseDimension)
-			double scaleFactor = this.CalcScaleFactor( g );
-			
+		{			
 			// Calculate the axis rect, deducting the area for the scales, titles, legend, etc.
+			double	scaleFactor;
 			int		hStack;
 			float	legendWidth;
 
-			this.CalcAxisRect( g, scaleFactor, out hStack, out legendWidth );
-			
+			// if the size of the axisRect is determined automatically, then do so
+			// otherwise, calculate the legendrect, scalefactor, hstack, and legendwidth parameters
+			// but leave the axisRect alone
+			if ( this.isAxisRectAuto )
+				this.axisRect = CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth );
+			else
+				CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth );
+
 			// Frame the whole pane
 			DrawPaneFrame( g );
 
+			// do a sanity check on the axisRect
+			if ( this.axisRect.Width < 1 || this.axisRect.Height < 1 )
+				return;
+			
 			// Frame the axis itself
 			DrawAxisFrame( g );
 
 			// Draw the graph features only if there is at least one curve with data
-//			if (	this.curveList.HasData() &&
+			//			if (	this.curveList.HasData() &&
 			// Go ahead and draw the graph, even without data.  This makes the control
 			// version still look like a graph before it is fully set up
 			if ( 	this.xAxis.Min < this.xAxis.Max &&
-					this.yAxis.Min < this.yAxis.Max &&
-					this.y2Axis.Min < this.y2Axis.Max )
+				this.yAxis.Min < this.yAxis.Max &&
+				this.y2Axis.Min < this.y2Axis.Max )
 			{
 				// Clip everything to the paneRect
 				g.SetClip( this.paneRect );
@@ -488,6 +570,26 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
+		/// <returns>The calculated axis rect, in pixel coordinates.</returns>
+		public RectangleF CalcAxisRect( Graphics g )
+		{
+			// Calculate the axis rect, deducting the area for the scales, titles, legend, etc.
+			double	scaleFactor;
+			int		hStack;
+			float	legendWidth;
+			
+			return CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth );
+		}
+
+		/// <summary>
+		/// Calculate the <see cref="AxisRect"/> based on the <see cref="PaneRect"/>.  The axisRect
+		/// is the plot area bounded by the axes, and the paneRect is the total area as
+		/// specified by the client application.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor for the features of the graph based on the <see cref="BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="CalcScaleFactor"/> method.  The scale factor
@@ -501,47 +603,47 @@ namespace ZedGraph
 		/// The wide of a single legend entry, in pixel units.  This is a temporary
 		/// variable calculated by the routine for use in the Legend.Draw method.
 		/// </param>
-		public void CalcAxisRect( Graphics g, double scaleFactor,
+		/// <returns>The calculated axis rect, in pixel coordinates.</returns>
+		public RectangleF CalcAxisRect( Graphics g, out double scaleFactor,
 									out int hStack, out float legendWidth )
 		{
+			// calculate scaleFactor on "normal" pane size (BaseDimension)
+			scaleFactor = this.CalcScaleFactor( g );
+
 			// get scaled values for the paneGap and character height
 			float gap = this.ScaledGap( scaleFactor );
 			float charHeight = this.FontSpec.GetHeight( scaleFactor );
 				
 			// Axis rect starts out at the full pane rect.  It gets reduced to make room for the legend,
 			// scales, titles, etc.
-			this.axisRect = this.paneRect;
-
-			// Calculate the areas required for the X, Y, and Y2 axes, and reduce the AxisRect by
-			// these amounts.
-//			this.xAxis.CalcRect( g, this, scaleFactor );
-//			this.yAxis.CalcRect( g, this, scaleFactor );
-//			this.y2Axis.CalcRect( g, this, scaleFactor );
+			RectangleF tmpRect = this.paneRect;
 
 			float space = this.xAxis.CalcSpace( g, this, scaleFactor );
-			this.axisRect.Height -= space;
+			tmpRect.Height -= space;
 			space = this.yAxis.CalcSpace( g, this, scaleFactor );
-			this.axisRect.X += space;
-			this.axisRect.Width -= space;
+			tmpRect.X += space;
+			tmpRect.Width -= space;
 			space = this.y2Axis.CalcSpace( g, this, scaleFactor );
-			this.axisRect.Width -= space;
+			tmpRect.Width -= space;
 	
 			// Always leave a gap on top, even with no title
-			this.axisRect.Y += gap;
-			this.axisRect.Height -= gap;
+			tmpRect.Y += gap;
+			tmpRect.Height -= gap;
 
 			// Leave room for the pane title
 			if ( this.isShowTitle )
 			{
 				SizeF titleSize = this.FontSpec.MeasureString( g, this.title, scaleFactor );
 				// Leave room for the title height, plus a line spacing of charHeight/2
-				this.axisRect.Y += titleSize.Height + charHeight / 2.0F;
-				this.axisRect.Height -= titleSize.Height + charHeight / 2.0F;
+				tmpRect.Y += titleSize.Height + charHeight / 2.0F;
+				tmpRect.Height -= titleSize.Height + charHeight / 2.0F;
 			}
 			
 			// Calculate the legend rect, and back it out of the current axisRect
-			this.legend.CalcRect( g, this, scaleFactor, ref this.axisRect,
+			this.legend.CalcRect( g, this, scaleFactor, ref tmpRect,
 								out hStack, out legendWidth );
+
+			return tmpRect;
 		}
 
 		/// <summary>
@@ -682,6 +784,36 @@ namespace ZedGraph
 		/// dependent values) that define the curve.</param>
 		/// <param name="color">The color to used for the curve line,
 		/// symbols, etc.</param>
+		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
+		/// This can then be used to access all of the curve properties that
+		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
+		public CurveItem AddCurve( string label, double[] x, double[] y,
+								Color color )
+		{
+			CurveItem curve = new CurveItem( label, x, y );
+			curve.Line.Color = color;
+			curve.Symbol.Color = color;
+			curve.Bar.FillColor = color;
+			this.curveList.Add( curve );
+			
+			return curve;
+		}
+
+		/// <summary>
+		/// Add a curve (<see cref="CurveItem"/> object) to the plot with
+		/// the given data points and properties.
+		/// This is simplified way to add curves without knowledge of the
+		/// <see cref="CurveList"/> class.  An alternative is to use
+		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// </summary>
+		/// <param name="label">The text label (string) for the curve that will be
+		/// used as a <see cref="Legend"/> entry.</param>
+		/// <param name="x">An array of double precision X values (the
+		/// independent values) that define the curve.</param>
+		/// <param name="y">An array of double precision Y values (the
+		/// dependent values) that define the curve.</param>
+		/// <param name="color">The color to used for the curve line,
+		/// symbols, etc.</param>
 		/// <param name="symbolType">A symbol type (<see cref="SymbolType"/>)
 		/// that will be used for this curve.</param>
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
@@ -693,6 +825,7 @@ namespace ZedGraph
 			CurveItem curve = new CurveItem( label, x, y );
 			curve.Line.Color = color;
 			curve.Symbol.Color = color;
+			curve.Bar.FillColor = color;
 			curve.Symbol.Type = symbolType;
 			this.curveList.Add( curve );
 			
@@ -755,6 +888,135 @@ namespace ZedGraph
 			x = this.XAxis.ReverseTransform( ptF.X );
 			y = this.YAxis.ReverseTransform( ptF.Y );
 			y2 = this.Y2Axis.ReverseTransform( ptF.Y );
+		}
+
+		/// <summary>
+		/// Find the data point that lies closest to the specified mouse (screen) point.
+		/// This method will search through the list of curves to find which point is
+		/// nearest.  It will only consider points that are within
+		/// <see cref="Def.Pane.NearestTol"/> pixels of the screen point.
+		/// </summary>
+		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
+		/// <param name="nearestCurve">A reference to the <see cref="CurveItem"/>
+		/// instance that contains the closest point.  nearestCurve will be null if
+		/// no data points are available.</param>
+		/// <param name="iNearest">The index number of the closest point.  The
+		/// actual data values will then be <see cref="CurveItem.X">CurveItem.X[iNearest]</see>
+		/// and <see cref="CurveItem.Y">CurveItem.Y[iNearest]</see>.  iNearest will
+		/// be -1 if no data points are available.</param>
+		/// <returns>true if a point was found and that point lies within
+		/// <see cref="Def.Pane.NearestTol"/> pixels
+		/// of the screen point, false otherwise.</returns>
+		public bool FindNearestPoint( PointF mousePt,
+								  out CurveItem nearestCurve, out int iNearest )
+		{
+			nearestCurve = null;
+			iNearest = -1;
+
+			double x, y, y2;
+			ReverseTransform( mousePt, out x, out y, out y2 );
+
+			if ( xAxis.Min == xAxis.Max || yAxis.Min == yAxis.Max ||
+						y2Axis.Min == y2Axis.Max )
+				return false;
+
+			double xPixPerUnit = axisRect.Width / ( xAxis.Max - xAxis.Min );
+			double yPixPerUnit = axisRect.Height / ( yAxis.Max - yAxis.Min );
+			double y2PixPerUnit = axisRect.Height / ( y2Axis.Max - y2Axis.Min );
+
+			double		yPixPerUnitAct, yAct, yMinAct, yMaxAct;
+			double		minDist = 1e20;
+			double		xVal, yVal, dist, distX, distY;
+			double		tolSquared = Def.Pane.NearestTol * Def.Pane.NearestTol;
+
+			foreach ( CurveItem curve in curveList )
+			{
+				if ( curve.IsY2Axis )
+				{
+					yAct = y2;
+					yMinAct = y2Axis.Min;
+					yMaxAct = y2Axis.Max;
+					yPixPerUnitAct = y2PixPerUnit;
+				}
+				else
+				{
+					yAct = y;
+					yMinAct = yAxis.Min;
+					yMaxAct = yAxis.Max;
+					yPixPerUnitAct = yPixPerUnit;
+				}
+
+				if ( curve.X != null && curve.Y != null )
+				{
+					for ( int iPt=0; iPt<curve.NPts; iPt++ )
+					{
+						xVal = curve.X[iPt];
+						yVal = curve.Y[iPt];
+
+						if (	xVal != System.Double.MaxValue &&
+								xVal >= xAxis.Min && xVal <= xAxis.Max &&
+								yVal != System.Double.MaxValue &&
+								yVal >= yMinAct && yVal <= yMaxAct )
+						{
+							distX = (xVal - x) * xPixPerUnit;
+							distY = (yVal - yAct) * yPixPerUnitAct;
+							dist = distX * distX + distY * distY;
+
+							if ( dist < minDist )
+							{
+								minDist = dist;
+								iNearest = iPt;
+								nearestCurve = curve;
+							}
+						}
+					}
+				}
+			}
+
+			// Did we find a close point, and is it within the tolerance?
+			// (minDist is the square of the distance in pixel units)
+			if ( minDist < tolSquared )
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Calculate the width of each bar
+		/// </summary>
+		/// <returns>The width for an individual bar, in pixel units</returns>
+		public float CalcBarWidth()
+		{
+			// Total axis width = 
+			// npts * ( nbars * ( bar + bargap ) - bargap + clustgap )
+			// cg * bar = cluster gap
+			// npts = max number of points in any curve
+			// nbars = total number of curves that are of type IsBar
+			// bar = bar width
+			// bg * bar = bar gap
+			// therefore:
+			// totwidth = npts * ( nbars * (bar + bg*bar) - bg*bar + cg*bar )
+			// totwidth = bar * ( npts * ( nbars * ( 1 + bg ) - bg + cg ) )
+			// solve for bar
+
+			float totWidth = XAxis.MaxPix - XAxis.MinPix;
+			if ( totWidth <= 0 )
+				return 1.0F;
+
+			float denom = CurveList.MaxPts * ( CurveList.NumBars *
+					( 1.0F + MinBarGap ) - MinBarGap + MinClusterGap );
+
+			if ( denom < 1e-10 )
+				return 1.0F;
+
+			float barWidth = totWidth / denom;
+
+			if ( barWidth <= 0 )
+				return 1;
+
+			return barWidth;
 		}
 	}
 }

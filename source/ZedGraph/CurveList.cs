@@ -10,11 +10,45 @@ namespace ZedGraph
 	/// </summary>
 	public class CurveList : CollectionBase, ICloneable
 	{
+		// internal temporary value that keeps
+		// the max number of points for any curve
+		// associated with this curveList
+		private int	maxPts;
+
+		/// <summary>
+		/// Read only value for the maximum number of points in any of the curves
+		/// in the list.
+		/// </summary>
+		public int MaxPts
+		{
+			get { return maxPts; }
+		}
+
+		/// <summary>
+		/// Read only property that returns the number of curves in the list that are of
+		/// type <see cref="Bar"/>.
+		/// </summary>
+		public int NumBars
+		{
+			get
+			{
+				int count = 0;
+				foreach ( CurveItem curve in this )
+				{
+					if ( curve.IsBar )
+						count++;
+				}
+
+				return count;
+			}
+		}
+
 		/// <summary>
 		/// Default constructor for the collection class
 		/// </summary>
 		public CurveList()
 		{
+			maxPts = 1;
 		}
 
 		/// <summary>
@@ -23,6 +57,8 @@ namespace ZedGraph
 		/// <param name="rhs">The XAxis object from which to copy</param>
 		public CurveList( CurveList rhs )
 		{
+			this.maxPts = rhs.maxPts;
+
 			foreach ( CurveItem item in rhs )
 				this.Add( new CurveItem( item ) );
 		}
@@ -117,6 +153,7 @@ namespace ZedGraph
 			// initialize the values to outrageous ones to start
 			xMinVal = yMinVal = y2MinVal = tXMinVal = tYMinVal = 1e20;
 			xMaxVal = yMaxVal = y2MaxVal = tXMaxVal = tYMaxVal = -1e20;
+			maxPts = 1;
 		
 			// Loop over each curve in the collection
 			foreach( CurveItem curve in this )
@@ -129,6 +166,10 @@ namespace ZedGraph
 				curve.GetRange( ref tXMinVal, ref tXMaxVal,
 								ref tYMinVal, ref tYMaxVal, bIgnoreInitial );
 				
+				// determine which curve has the maximum number of points
+				if ( curve.NPts > maxPts )
+					maxPts = curve.NPts;
+
 				// If the min and/or max values from the current curve
 				// are the absolute min and/or max, then save the values
 				// Also, differentiate between Y and Y2 values		
@@ -213,11 +254,17 @@ namespace ZedGraph
 		/// </param>
 		public void Draw( Graphics g, GraphPane pane, double scaleFactor )
 		{
+			// keep track of the ordinal position for bar curves only
+			int pos = 0;
+
 			// Loop for each curve
 			foreach( CurveItem curve in this )
 			{
 				// Render the curve
-				curve.Draw( g, pane, scaleFactor );
+				curve.Draw( g, pane, pos, scaleFactor );
+
+				if ( curve.IsBar )
+					pos++;
 			}
 		}
 	}

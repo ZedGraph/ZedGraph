@@ -102,7 +102,7 @@ namespace ZedGraph
 			/// of the staticant value for which they apply, respectively.
 			/// </summary>
 			/// <value><see cref="StepType"/> enum value</value>
-			public static StepType Type = StepType.NonStep;
+			public static StepType StepType = StepType.NonStep;
 		}
 		
 		/// <summary>
@@ -145,6 +145,40 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// A simple subclass of the <see cref="Def"/> class that defines the
+		/// default property values for the <see cref="ZedGraph.Bar"/> class.
+		/// </summary>
+		public struct Br
+		{
+			// Default Bar properties
+			/// <summary>
+			/// The default pen width to be used for drawing the frame around the bars
+			/// (<see cref="Bar.FrameWidth"/> property).  Units are points.
+			/// </summary>
+			public static float FrameWidth = 1.0F;
+			/// <summary>
+			/// The default fill mode for bars (<see cref="Bar.IsFilled"/> property).
+			/// true to have bars filled in with color, false to leave them as outlines.
+			/// </summary>
+			public static bool IsFilled = true;
+			/// <summary>
+			/// The default frame mode for bars (<see cref="Bar.IsFramed"/> property).
+			/// true to display frames around bars, false otherwise
+			/// </summary>
+			public static bool IsFramed = true;
+			/// <summary>
+			/// The default color for drawing frames around bars
+			/// (<see cref="Bar.FrameColor"/> property).
+			/// </summary>
+			public static Color FrameColor = Color.Black;
+			/// <summary>
+			/// The default color for filling in the bars
+			/// (<see cref="Bar.FillColor"/> property).
+			/// </summary>
+			public static Color FillColor = Color.Red;
+		}
+		
+		/// <summary>
+		/// A simple subclass of the <see cref="Def"/> class that defines the
 		/// default property values for the <see cref="GraphPane"/> class.
 		/// </summary>
 		public struct Pane
@@ -155,7 +189,7 @@ namespace ZedGraph
 			/// (<see cref="GraphPane.IsShowTitle"/> property).  true to
 			/// display a title, false otherwise.
 			/// </summary>
-			public static bool ShowTitle = true;
+			public static bool IsShowTitle = true;
 			/// <summary>
 			/// The default font family for the pane title
 			/// (<see cref="GraphPane.Title"/> property).
@@ -202,29 +236,61 @@ namespace ZedGraph
 			/// to draw a frame around the <see cref="GraphPane.PaneRect"/>,
 			/// false otherwise.
 			/// </summary>
-			public static bool IsFramed = true;
+			public static bool IsPaneFramed = true;
 			/// <summary>
 			/// The default color for the <see cref="GraphPane"/> frame border.
 			/// (<see cref="GraphPane.PaneFrameColor"/> property). 
 			/// </summary>
-			public static Color FrameColor = Color.Black;
+			public static Color PaneFrameColor = Color.Black;
 			/// <summary>
 			/// The default color for the <see cref="GraphPane.PaneRect"/> background.
 			/// (<see cref="GraphPane.PaneBackColor"/> property). 
 			/// </summary>
-			public static Color BackColor = Color.White;
+			public static Color PaneBackColor = Color.White;
 			/// <summary>
 			/// The default pen width for the <see cref="GraphPane"/> frame border.
 			/// (<see cref="GraphPane.PaneFramePenWidth"/> property).  Units are in pixels.
 			/// </summary>
-			public static float FramePenWidth = 1;
+			public static float PaneFramePenWidth = 1;
+
+			/// <summary>
+			/// The default color for the <see cref="Axis"/> frame border.
+			/// (<see cref="GraphPane.AxisFrameColor"/> property). 
+			/// </summary>
+			public static Color AxisFrameColor = Color.Black;
+			/// <summary>
+			/// The default color for the <see cref="GraphPane.AxisRect"/> background.
+			/// (<see cref="GraphPane.AxisBackColor"/> property). 
+			/// </summary>
+			public static Color AxisBackColor = Color.White;
+			/// <summary>
+			/// The default pen width for drawing the 
+			/// <see cref="GraphPane.AxisRect"/> frame border
+			/// (<see cref="GraphPane.AxisFramePenWidth"/> property).
+			/// Units are in pixels.
+			/// </summary>
+			public static float AxisFramePenWidth = 1F;
+			/// <summary>
+			/// The default display mode for the <see cref="Axis"/> frame border
+			/// (<see cref="GraphPane.IsAxisFramed"/> property). true
+			/// to show the frame border, false to omit the border
+			/// </summary>
+			public static bool IsAxisFramed = true;
+
+			/// <summary>
+			/// The default settings for the <see cref="Axis"/> scale ignore initial
+			/// zero values option (<see cref="GraphPane.IsIgnoreInitial"/> property).
+			/// true to have the auto-scale-range code ignore the initial data points
+			/// until the first non-zero Y value, false otherwise.
+			/// </summary>
+			public static bool IsIgnoreInitial = false;
 
 			/// <summary>
 			/// The default value for the <see cref="GraphPane.PaneGap"/> property.
 			/// This is the size of the margin around the edge of the
 			/// <see cref="GraphPane.PaneRect"/>, in units of pixels.
 			/// </summary>
-			public static float Gap = 20;
+			public static float PaneGap = 20;
 			/// <summary>
 			/// The default dimension of the <see cref="GraphPane.PaneRect"/>, which
 			/// defines a normal sized plot.  This dimension is used to scale the
@@ -233,6 +299,29 @@ namespace ZedGraph
 			/// </summary>
 			/// <seealso cref="GraphPane.CalcScaleFactor"/>
 			public static double BaseDimension = 8.0;
+			/// <summary>
+			/// The default dimension gap between clusters of bars on a
+			/// <see cref="Bar"/> graph.
+			/// This dimension is expressed in terms of the normal bar width.
+			/// </summary>
+			/// <seealso cref="Def.Pane.MinBarGap"/>
+			/// <seealso cref="GraphPane.MinClusterGap"/>
+			public static float MinClusterGap = 1.0F;
+			/// <summary>
+			/// The default dimension gap between each individual bar within a bar cluster
+			/// on a <see cref="Bar"/> graph.
+			/// This dimension is expressed in terms of the normal bar width.
+			/// </summary>
+			/// <seealso cref="Def.Pane.MinClusterGap"/>
+			/// <seealso cref="GraphPane.MinBarGap"/>
+			public static float MinBarGap = 0.2F;
+			/// <summary>
+			/// The tolerance that is applied to the <see cref="GraphPane.FindNearestPoint"/> routine.
+			/// If a given curve point is within this many pixels of the mousePt, the curve
+			/// point is considered to be close enough for selection as a nearest point
+			/// candidate.
+			/// </summary>
+			public static double NearestTol = 7.0;
 		}
 		
 		/// <summary>
@@ -292,7 +381,7 @@ namespace ZedGraph
 			/// true to allow horizontal legend item stacking, false to allow
 			/// only vertical legend orientation.
 			/// </summary>
-			public static bool HStack = true;
+			public static bool IsHStack = true;
 
 			/// <summary>
 			/// The default font family for the <see cref="Legend"/> entries
@@ -486,29 +575,6 @@ namespace ZedGraph
 			/// </summary>
 			public static Color Color = Color.Black;
 			/// <summary>
-			/// The default color for the <see cref="Axis"/> frame border.
-			/// (<see cref="GraphPane.AxisFrameColor"/> property). 
-			/// </summary>
-			public static Color FrameColor = Color.Black;
-			/// <summary>
-			/// The default color for the <see cref="GraphPane.AxisRect"/> background.
-			/// (<see cref="GraphPane.AxisBackColor"/> property). 
-			/// </summary>
-			public static Color BackColor = Color.White;
-			/// <summary>
-			/// The default pen width for drawing the 
-			/// <see cref="GraphPane.AxisRect"/> frame border
-			/// (<see cref="GraphPane.AxisFramePenWidth"/> property).
-			/// Units are in pixels.
-			/// </summary>
-			public static float FramePenWidth = 1F;
-			/// <summary>
-			/// The default display mode for the <see cref="Axis"/> frame border
-			/// (<see cref="GraphPane.IsAxisFramed"/> property). true
-			/// to show the frame border, false to omit the border
-			/// </summary>
-			public static bool IsFramed = true;
-			/// <summary>
 			/// The default display mode for the <see cref="Axis"/> grid lines
 			/// (<see cref="Axis.IsShowGrid"/> property). true
 			/// to show the grid lines, false to hide them.
@@ -522,6 +588,13 @@ namespace ZedGraph
 			/// <value>true to show the major tic marks (outside the axis),
 			/// false otherwise</value>
 			public static bool IsTic = true;
+			/// <summary>
+			/// Determines if a line will be drawn at the zero value for the 
+			/// <see cref="Axis"/>, that is, a line that
+			/// divides the negative values from positive values.
+			/// <seealso cref="Axis.IsZeroLine"/>.
+			/// </summary>
+			public static bool IsZeroLine = true;
 			/// <summary>
 			/// The display mode for the <see cref="Axis"/> minor outside tic marks
 			/// (<see cref="Axis.IsMinorTic"/> property).
@@ -576,13 +649,6 @@ namespace ZedGraph
 			/// (X decreasing to the left, Y/Y2 decreasing upwards), false otherwise.
 			/// </summary>
 			public static bool IsReverse = false;
-			/// <summary>
-			/// The default settings for the <see cref="Axis"/> scale ignore initial
-			/// zero values option (<see cref="GraphPane.IsIgnoreInitial"/> property).
-			/// true to have the auto-scale-range code ignore the initial data points
-			/// until the first non-zero Y value, false otherwise.
-			/// </summary>
-			public static bool IgnoreInitial = false;
 			/// <summary>
 			/// The default setting for the <see cref="Axis"/> scale axis type
 			/// (<see cref="Axis.Type"/> property).  This value is set as per

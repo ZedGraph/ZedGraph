@@ -53,7 +53,7 @@ namespace ZedGraph
 			this.style = Def.Lin.Style;
 			this.isVisible = Def.Lin.IsVisible;
 			this.color = Def.Lin.Color;
-			this.stepType = Def.Lin.Type;
+			this.stepType = Def.Lin.StepType;
 		}
 
 		/// <summary>
@@ -81,6 +81,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The color of the <see cref="Line"/>
 		/// </summary>
+		/// <seealso cref="Def.Lin.Color"/>
 		public Color Color
 		{
 			get { return color; }
@@ -90,6 +91,7 @@ namespace ZedGraph
 		/// The style of the <see cref="Line"/>, defined as a <see cref="DashStyle"/> enum.
 		/// This allows the line to be solid, dashed, or dotted.
 		/// </summary>
+		/// <seealso cref="Def.Lin.Style"/>
 		public DashStyle Style
 		{
 			get { return style; }
@@ -98,6 +100,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The pen width used to draw the <see cref="Line"/>, in pixel units
 		/// </summary>
+		/// <seealso cref="Def.Lin.Width"/>
 		public float Width
 		{
 			get { return width; }
@@ -107,6 +110,7 @@ namespace ZedGraph
 		/// Gets or sets a property that shows or hides the <see cref="Line"/>.
 		/// </summary>
 		/// <value>true to show the line, false to hide it</value>
+		/// <seealso cref="Def.Lin.IsVisible"/>
 		public bool IsVisible
 		{
 			get { return isVisible; }
@@ -124,6 +128,7 @@ namespace ZedGraph
 		/// of the constant value for which they apply, respectively.
 		/// </summary>
 		/// <value><see cref="ZedGraph.StepType"/> enum value</value>
+		/// <seealso cref="Def.Lin.StepType"/>
 		public StepType StepType
 		{
 			get { return stepType; }

@@ -34,6 +34,10 @@ namespace ZedGraph
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
+			// Use double-buffering for flicker-free updating:
+			SetStyle( ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint
+				| ControlStyles.DoubleBuffer | ControlStyles.ResizeRedraw, true);
+
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
 			graphPane = new GraphPane( rect, "Title", "X-Axis", "Y-Axis" );
 			graphPane.AxisChange();
@@ -106,7 +110,7 @@ namespace ZedGraph
 		/// </param>
 		private void ChangeSize(object sender, System.EventArgs e)
 		{
-			this.graphPane.paneRect = new RectangleF( 0, 0, this.Size.Width, this.Size.Height );
+			this.graphPane.PaneRect = new RectangleF( 0, 0, this.Size.Width, this.Size.Height );
 			this.Invalidate();
 		}
 	}

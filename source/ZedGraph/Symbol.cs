@@ -100,6 +100,7 @@ namespace ZedGraph
 		/// Gets or sets the size of the <see cref="Symbol"/>
 		/// </summary>
 		/// <value>Size in pixels</value>
+		/// <seealso cref="Def.Sym.Size"/>
 		public float Size
 		{
 			get { return size; }
@@ -109,6 +110,7 @@ namespace ZedGraph
 		/// Gets or sets the type (shape) of the <see cref="Symbol"/>
 		/// </summary>
 		/// <value>A <see cref="SymbolType"/> enum value indicating the shape</value>
+		/// <seealso cref="Def.Sym.Type"/>
 		public SymbolType Type
 		{
 			get { return type; }
@@ -120,6 +122,7 @@ namespace ZedGraph
 		/// <see cref="SymbolType.Plus"/> and <see cref="SymbolType.Star"/>
 		/// cannot be filled in since they are not a closed shape.
 		/// </summary>
+		/// <seealso cref="Def.Sym.IsFilled"/>
 		public bool IsFilled
 		{
 			get { return isFilled; }
@@ -129,6 +132,7 @@ namespace ZedGraph
 		/// Gets or sets a property that shows or hides the <see cref="Symbol"/>.
 		/// </summary>
 		/// <value>true to show the symbol, false to hide it</value>
+		/// <seealso cref="Def.Sym.IsVisible"/>
 		public bool IsVisible
 		{
 			get { return isVisible; }
@@ -138,6 +142,7 @@ namespace ZedGraph
 		/// Gets or sets the pen width used to draw the <see cref="Symbol"/> outline
 		/// </summary>
 		/// <value>Pen width in pixel units</value>
+		/// <seealso cref="Def.Sym.PenWidth"/>
 		public float PenWidth
 		{
 			get { return penWidth; }
@@ -146,6 +151,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The color of the <see cref="Symbol"/>
 		/// </summary>
+		/// <seealso cref="Def.Sym.Color"/>
 		public Color Color
 		{
 			get { return color; }
@@ -242,10 +248,9 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
-		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.</param>
 		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
 		/// <see cref="PenWidth"/> for this symbol</param>
-		/// </param>
 		
 		public void DrawPoint( Graphics g, float x, float y, double scaleFactor, Pen pen )
 		{
