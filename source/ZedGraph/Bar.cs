@@ -9,7 +9,7 @@
 //
 //This library is distributed in the hope that it will be useful,
 //but WITHOUT ANY WARRANTY; without even the implied warranty of
-//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 //Lesser General Public License for more details.
 //
 //You should have received a copy of the GNU Lesser General Public
@@ -24,567 +24,603 @@ using System.Collections;
 
 namespace ZedGraph
 {
-	/// <summary>
-	/// A class representing all the characteristics of the bar
-	/// segments that make up a curve on the graph.
-	/// </summary>
-	/// 
-	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-11-06 02:16:51 $ </version>
-	public class Bar : ICloneable
-	{
-	#region Fields
-		/// <summary>
-		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
-		/// <see cref="Bar"/>.  Use the public property <see cref="Fill"/> to
-		/// access this value.
-		/// </summary>
-		private Fill	fill;
-		/// <summary>
-		/// Private field that stores the <see cref="Border"/> class that defines the
-		/// properties of the border around this <see cref="BarItem"/>.  Use the public
-		/// property <see cref="Border"/> to access this value.
-		/// </summary>
-		private Border	border;
-		/// <summary>
-		///  A private Array used in the rendering of a  <see cref="Bar"/> whose 
-		///<see cref="BarType"/> is <see cref="Stack"/>.  The stored 
-		///values will represent the bottom value of the next segment to
-		///be drawn.
-		/// </summary>
-		private static ArrayList priorTop = new ArrayList () ;
-	#endregion
+   /// <summary>
+   /// A class representing all the characteristics of the bar
+   /// segments that make up a curve on the graph.
+   /// </summary>
+   /// 
+   /// <author> John Champion </author>
+   /// <version> $Revision: 3.8 $ $Date: 2004-11-07 12:16:12 $ </version>
+   public class Bar : ICloneable
+   {
+   #region Fields
+      /// <summary>
+      /// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
+      /// <see cref="Bar"/>.  Use the public property <see cref="Fill"/> to
+      /// access this value.
+      /// </summary>
+      private Fill  fill;
+      /// <summary>
+      /// Private field that stores the <see cref="Border"/> class that defines the
+      /// properties of the border around this <see cref="BarItem"/>. Use the public
+      /// property <see cref="Border"/> to access this value.
+      /// </summary>
+      private Border border;
+      /// <summary>
+      /// A private Array used in the rendering of a  <see cref="Bar"/> whose 
+      ///<see cref="BarType"/> is <see cref="Stack"/>.  The stored 
+      ///values will represent the bottom value of the next segment to
+      ///be drawn.
+      /// </summary>
+      private static ArrayList priorTop = new ArrayList () ;
+      private static ArrayList priorBottom = new ArrayList () ;
+      #endregion
 
-	#region Defaults
-		/// <summary>
-		/// A simple struct that defines the
-		/// default property values for the <see cref="Bar"/> class.
-		/// </summary>
-		public struct Default
-		{
-			// Default Bar properties
-			/// <summary>
-			/// The default pen width to be used for drawing the border around the bars
-			/// (<see cref="ZedGraph.Border.PenWidth"/> property).  Units are points.
-			/// </summary>
-			public static float BorderWidth = 1.0F;
-			/// <summary>
-			/// The default fill mode for bars (<see cref="ZedGraph.Fill.Type"/> property).
-			/// </summary>
-			public static FillType FillType = FillType.Brush;
-			/// <summary>
-			/// The default border mode for bars (<see cref="ZedGraph.Border.IsVisible"/> property).
-			/// true to display frames around bars, false otherwise
-			/// </summary>
-			public static bool IsBorderVisible = true;
-			/// <summary>
-			/// The default color for drawing frames around bars
-			/// (<see cref="ZedGraph.Border.Color"/> property).
-			/// </summary>
-			public static Color BorderColor = Color.Black;
-			/// <summary>
-			/// The default color for filling in the bars
-			/// (<see cref="ZedGraph.Fill.Color"/> property).
-			/// </summary>
-			public static Color FillColor = Color.Red;
-			/// <summary>
-			/// The default custom brush for filling in the bars
-			/// (<see cref="ZedGraph.Fill.Brush"/> property).
-			/// </summary>
-			public static Brush FillBrush = null; //new LinearGradientBrush( new Rectangle(0,0,100,100),
-				// Color.White, Color.Red, 0F );
-		}
-	#endregion
+   #region Defaults
+      /// <summary>
+      /// A simple struct that defines the
+      /// default property values for the <see cref="Bar"/> class.
+      /// </summary>
+      public struct Default
+      {
+         // Default Bar properties
+         /// <summary>
+         /// The default pen width to be used for drawing the border around the bars
+         /// (<see cref="ZedGraph.Border.PenWidth"/> property).  Units are points.
+         /// </summary>
+         public static float BorderWidth = 1.0F;
+         /// <summary>
+         /// The default fill mode for bars (<see cref="ZedGraph.Fill.Type"/> property).
+         /// </summary>
+         public static FillType FillType = FillType.Brush;
+         /// <summary>
+         /// The default border mode for bars (<see cref="ZedGraph.Border.IsVisible"/> property).
+         /// true to display frames around bars, false otherwise
+         /// </summary>
+         public static bool IsBorderVisible = true;
+         /// <summary>
+         /// The default color for drawing frames around bars
+         /// (<see cref="ZedGraph.Border.Color"/> property).
+         /// </summary>
+         public static Color BorderColor = Color.Black;
+         /// <summary>
+         /// The default color for filling in the bars
+         /// (<see cref="ZedGraph.Fill.Color"/> property).
+         /// </summary>
+         public static Color FillColor = Color.Red;
+         /// <summary>
+         /// The default custom brush for filling in the bars
+         /// (<see cref="ZedGraph.Fill.Brush"/> property).
+         /// </summary>
+         public static Brush FillBrush = null; //new LinearGradientBrush( new Rectangle(0,0,100,100),
+            // Color.White, Color.Red, 0F );
+      }
+   #endregion
 
-	#region Constructors
-		/// <summary>
-		/// Default constructor that sets all <see cref="Bar"/> properties to default
-		/// values as defined in the <see cref="Default"/> class.
-		/// </summary>
-		public Bar() : this( Color.Empty )
-		{
-		}
+   #region Constructors
+      /// <summary>
+      /// Default constructor that sets all <see cref="Bar"/> properties to default
+      /// values as defined in the <see cref="Default"/> class.
+      /// </summary>
+      public Bar() : this( Color.Empty )
+      {
+      }
 
-		/// <summary>
-		/// Default constructor that sets the 
-		/// <see cref="Color"/> as specified, and the remaining
-		/// <see cref="Bar"/> properties to default
-		/// values as defined in the <see cref="Default"/> class.
-		/// The specified color is only applied to the
-		/// <see cref="ZedGraph.Fill.Color"/>, and the <see cref="ZedGraph.Border.Color"/>
-		/// will be defaulted.
-		/// </summary>
-		/// <param name="color">A <see cref="Color"/> value indicating
-		/// the <see cref="ZedGraph.Fill.Color"/>
-		/// of the Bar.
-		/// </param>
-		public Bar( Color color )
-		{
-			this.border = new Border( Default.IsBorderVisible, Default.BorderColor, Default.BorderWidth );
-			this.fill = new Fill( color.IsEmpty ? Default.FillColor : color,
-						Default.FillBrush, Default.FillType );
-		}
+      /// <summary>
+      /// Default constructor that sets the 
+      /// <see cref="Color"/> as specified, and the remaining
+      /// <see cref="Bar"/> properties to default
+      /// values as defined in the <see cref="Default"/> class.
+      /// The specified color is only applied to the
+      /// <see cref="ZedGraph.Fill.Color"/>, and the <see cref="ZedGraph.Border.Color"/>
+      /// will be defaulted.
+      /// </summary>
+      /// <param name="color">A <see cref="Color"/> value indicating
+      /// the <see cref="ZedGraph.Fill.Color"/>
+      /// of the Bar.
+      /// </param>
+      public Bar( Color color )
+      {
+         this.border = new Border( Default.IsBorderVisible, Default.BorderColor, Default.BorderWidth );
+         this.fill = new Fill( color.IsEmpty ? Default.FillColor : color,
+                  Default.FillBrush, Default.FillType );
+      }
 
-		/// <summary>
-		/// The Copy Constructor
-		/// </summary>
-		/// <param name="rhs">The Bar object from which to copy</param>
-		public Bar( Bar rhs )
-		{
-			this.border = (Border) rhs.Border.Clone();
-			this.fill = (Fill) rhs.Fill.Clone();
-		}
+      /// <summary>
+      /// The Copy Constructor
+      /// </summary>
+      /// <param name="rhs">The Bar object from which to copy</param>
+      public Bar( Bar rhs )
+      {
+         this.border = (Border) rhs.Border.Clone();
+         this.fill = (Fill) rhs.Fill.Clone();
+      }
 
-		/// <summary>
-		/// Deep-copy clone routine
-		/// </summary>
-		/// <returns>A new, independent copy of the Bar</returns>
-		public object Clone()
-		{ 
-			return new Bar( this ); 
-		}
-	#endregion
+      /// <summary>
+      /// Deep-copy clone routine
+      /// </summary>
+      /// <returns>A new, independent copy of the Bar</returns>
+      public object Clone()
+      { 
+         return new Bar( this ); 
+      }
+   #endregion
 
-	#region Properties
-		/// <summary>
-		/// The <see cref="Border"/> object used to draw the border around the <see cref="Bar"/>.
-		/// </summary>
-		/// <seealso cref="Default.IsBorderVisible"/>
-		/// <seealso cref="Default.BorderWidth"/>
-		/// <seealso cref="Default.BorderColor"/>
-		public Border Border
-		{
-			get { return border; }
-			set { border = value; }
-		}
-		/// <summary>
-		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
-		/// <see cref="Bar"/>.
-		/// </summary>
-		public Fill	Fill
-		{
-			get { return fill; }
-			set { fill = value; }
-		}
+   #region Properties
+      /// <summary>
+      /// The <see cref="Border"/> object used to draw the border around the <see cref="Bar"/>.
+      /// </summary>
+      /// <seealso cref="Default.IsBorderVisible"/>
+      /// <seealso cref="Default.BorderWidth"/>
+      /// <seealso cref="Default.BorderColor"/>
+      public Border Border
+      {
+         get { return border; }
+         set { border = value; }
+      }
+      /// <summary>
+      /// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
+      /// <see cref="Bar"/>.
+      /// </summary>
+      public Fill Fill
+      {
+         get { return fill; }
+         set { fill = value; }
+      }
 
-		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "base"
-		/// (independent axis) from which the <see cref="Bar"/>'s are drawn.
-		/// The base axis is the axis from which the bars grow with increasing value.  This
-		/// property is determined by the value of <see cref="GraphPane.BarBase"/>.
-		/// </summary>
-		/// <seealso cref="GraphPane.Default.BarBase"/>
-		/// <seealso cref="ZedGraph.BarBase"/>
-		/// <seealso cref="BarValueAxis"/>
-		public Axis BarBaseAxis( GraphPane pane )
-		{
-			if ( pane.BarBase == BarBase.X )
-				return pane.XAxis;
-			else if ( pane.BarBase == BarBase.Y )
-				return pane.YAxis;
-			else
-				return pane.Y2Axis;
-		}
-		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "value"
-		/// (dependent axis) for the <see cref="Bar"/>'s.
-		/// The value axis determines the height of the bars.  This
-		/// property is determined by the value of <see cref="GraphPane.BarBase"/>.
-		/// </summary>
-		/// <seealso cref="GraphPane.Default.BarBase"/>
-		/// <seealso cref="ZedGraph.BarBase"/>
-		/// <seealso cref="BarBaseAxis"/>
-		public Axis BarValueAxis( GraphPane pane, bool isY2Axis )
-		{
-			if ( pane.BarBase == BarBase.X )
-			{
-				if ( isY2Axis )
-					return pane.Y2Axis;
-				else
-					return pane.YAxis;
-			}
-			else
-				return pane.XAxis;
-		}
+      /// <summary>Returns a reference to the <see cref="Axis"/> object that is the "base"
+      /// (independent axis) from which the <see cref="Bar"/>'s are drawn.
+      /// The base axis is the axis from which the bars grow with increasing value.  This
+      /// property is determined by the value of <see cref="GraphPane.BarBase"/>.
+      /// </summary>
+      /// <seealso cref="GraphPane.Default.BarBase"/>
+      /// <seealso cref="ZedGraph.BarBase"/>
+      /// <seealso cref="BarValueAxis"/>
+      public Axis BarBaseAxis( GraphPane pane )
+      {
+         if ( pane.BarBase == BarBase.X )
+            return pane.XAxis;
+         else if ( pane.BarBase == BarBase.Y )
+            return pane.YAxis;
+         else
+            return pane.Y2Axis;
+      }
+      /// <summary>Returns a reference to the <see cref="Axis"/> object that is the "value"
+      /// (dependent axis) for the <see cref="Bar"/>'s.
+      /// The value axis determines the height of the bars.  This
+      /// property is determined by the value of <see cref="GraphPane.BarBase"/>.
+      /// </summary>
+      /// <seealso cref="GraphPane.Default.BarBase"/>
+      /// <seealso cref="ZedGraph.BarBase"/>
+      /// <seealso cref="BarBaseAxis"/>
+      public Axis BarValueAxis( GraphPane pane, bool isY2Axis )
+      {
+         if ( pane.BarBase == BarBase.X )
+         {
+            if ( isY2Axis )
+               return pane.Y2Axis;
+            else
+               return pane.YAxis;
+         }
+         else
+            return pane.XAxis;
+      }
 
-	#endregion
+   #endregion
 
-	#region Rendering Methods
+   #region Rendering Methods
 
-		/// <summary>
-		/// Draw the <see cref="Bar"/> to the specified <see cref="Graphics"/> device
-		/// at the specified location.  This routine draws a single bar.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
+      /// <summary>
+      /// Draw the <see cref="Bar"/> to the specified <see cref="Graphics"/> device
+      /// at the specified location.  This routine draws a single bar.
+      /// </summary>
+      /// <param name="g">
+      /// A graphic device object to be drawn into.  This is normally e.Graphics from the
+      /// PaintEventArgs argument to the Paint() method.
+      /// </param>
         /// <param name="pane">
         /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
         /// owner of this object.
         /// </param>
         /// <param name="left">The x position of the left side of the bar in
         /// pixel units</param>
-		/// <param name="right">The x position of the right side of the bar in
-		/// pixel units</param>
-		/// <param name="top">The y position of the top of the bar in
-		/// pixel units</param>
-		/// <param name="bottom">The y position of the bottom of the bar in
-		/// pixel units</param>
-		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
-		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-		/// </param>
-		/// <param name="fullFrame">true to draw the bottom portion of the border around the
-		/// bar (this is for legend entries)</param>	
-		public void Draw( Graphics g, GraphPane pane, float left, float right, float top,
-						float bottom, double scaleFactor, bool fullFrame )
-		{
-			// Do a sanity check to make sure the top < bottom.  If not, reverse them
-			if ( top > bottom )
-			{
-				float junk = top;
-				top = bottom;
-				bottom = junk;
-			}
+      /// <param name="right">The x position of the right side of the bar in
+      /// pixel units</param>
+      /// <param name="top">The y position of the top of the bar in
+      /// pixel units</param>
+      /// <param name="bottom">The y position of the bottom of the bar in
+      /// pixel units</param>
+      /// <param name="scaleFactor">
+      /// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
+      /// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+      /// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+      /// </param>
+      /// <param name="fullFrame">true to draw the bottom portion of the border around the
+      /// bar (this is for legend entries)</param> 
+      public void Draw( Graphics g, GraphPane pane, float left, float right, float top,
+                  float bottom, double scaleFactor, bool fullFrame )
+      {
+         // Do a sanity check to make sure the top < bottom.  If not, reverse them
+         if ( top > bottom )
+         {
+            float junk = top;
+            top = bottom;
+            bottom = junk;
+         }
 
-			// Do a sanity check to make sure the left < right.  If not, reverse them
-			if ( left > right )
-			{
-				float junk = right;
-				right = left;
-				left = junk;
-			}
+         // Do a sanity check to make sure the left < right.  If not, reverse them
+         if ( left > right )
+         {
+            float junk = right;
+            right = left;
+            left = junk;
+         }
 
-			// Make a rectangle for the bar and draw it
-			RectangleF rect = new RectangleF( left, top, right - left, bottom - top );
-			
-			Draw( g, pane, rect, scaleFactor, fullFrame );			
-		}
+         // Make a rectangle for the bar and draw it
+         RectangleF rect = new RectangleF( left, top, right - left, bottom - top );
+         
+         Draw( g, pane, rect, scaleFactor, fullFrame );      
+      }
 
-		/// <summary>
-		/// Draw the <see cref="Bar"/> to the specified <see cref="Graphics"/> device
-		/// at the specified location.  This routine draws a single bar.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
+      /// <summary>
+      /// Draw the <see cref="Bar"/> to the specified <see cref="Graphics"/> device
+      /// at the specified location.  This routine draws a single bar.
+      /// </summary>
+      /// <param name="g">
+      /// A graphic device object to be drawn into.  This is normally e.Graphics from the
+      /// PaintEventArgs argument to the Paint() method.
+      /// </param>
         /// <param name="pane">
         /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
         /// owner of this object.
         /// </param>
         /// <param name="rect">The rectangle (pixels) to contain the bar</param>
         /// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
-		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-		/// </param>
-		/// <param name="fullFrame">true to draw the bottom portion of the border around the
-		/// bar (this is for legend entries)</param>	
-		public void Draw( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor, bool fullFrame )
-		{
-			// Fill the Bar
-			if ( this.fill.IsVisible )
-			{
-				// just avoid height/width being less than 0.1 so GDI+ doesn't cry
-				Brush brush = this.fill.MakeBrush( rect );
-				g.FillRectangle( brush, rect );
-				brush.Dispose();
-			}
+      /// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
+      /// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+      /// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+      /// </param>
+      /// <param name="fullFrame">true to draw the bottom portion of the border around the
+      /// bar (this is for legend entries)</param> 
+      public void Draw( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor, bool fullFrame )
+      {
+         // Fill the Bar
+         if ( this.fill.IsVisible )
+         {
+            // just avoid height/width being less than 0.1 so GDI+ doesn't cry
+            Brush brush = this.fill.MakeBrush( rect );
+            g.FillRectangle( brush, rect );
+            brush.Dispose();
+         }
 
-			// Border the Bar
-			if ( !this.border.Color.IsEmpty )
-				this.border.Draw( g, pane, scaleFactor, rect );
-							
-		}
+         // Border the Bar
+         if ( !this.border.Color.IsEmpty )
+            this.border.Draw( g, pane, scaleFactor, rect );
+                     
+      }
 
-		/// <summary>
-		/// Draw the this <see cref="Bar"/> to the specified <see cref="Graphics"/>
-		/// device as a bar at each defined point.  This method
-		/// is normally only called by the <see cref="BarItem.Draw"/> method of the
-		/// <see cref="BarItem"/> object
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
-		/// <see cref="Bar"/>.</param>
-		/// <param name="isY2Axis">A value indicating to which Y axis this <see cref="Bar"/> is assigned.
-		/// true for the "Y2" axis, false for the "Y" axis.</param>
-		/// <param name="barWidth">
-		/// The width of each bar, in pixels.
-		/// </param>
-		/// <param name="pos">
-		/// The ordinal position of the this bar series (0=first bar, 1=second bar, etc.)
-		/// in the cluster of bars.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		public void DrawBars( Graphics g, GraphPane pane, PointPairList points, bool isY2Axis,
-							float barWidth, int pos, double scaleFactor )
-		{
-			float	zeroPix;
-						
-			// Determine which Axis is the bar base and which is the bar value
-			Axis valueAxis = BarValueAxis( pane, isY2Axis );
+      /// <summary>
+      /// Draw the this <see cref="Bar"/> to the specified <see cref="Graphics"/>
+      /// device as a bar at each defined point. This method
+      /// is normally only called by the <see cref="BarItem.Draw"/> method of the
+      /// <see cref="BarItem"/> object
+      /// </summary>
+      /// <param name="g">
+      /// A graphic device object to be drawn into.  This is normally e.Graphics from the
+      /// PaintEventArgs argument to the Paint() method.
+      /// </param>
+      /// <param name="pane">
+      /// A reference to the <see cref="GraphPane"/> object that is the parent or
+      /// owner of this object.
+      /// </param>
+      /// <param name="points">A <see cref="PointPairList"/> of point values representing this
+      /// <see cref="Bar"/>.</param>
+      /// <param name="isY2Axis">A value indicating to which Y axis this <see cref="Bar"/> is assigned.
+      /// true for the "Y2" axis, false for the "Y" axis.</param>
+      /// <param name="barWidth">
+      /// The width of each bar, in pixels.
+      /// </param>
+      /// <param name="pos">
+      /// The ordinal position of the this bar series (0=first bar, 1=second bar, etc.)
+      /// in the cluster of bars.
+      /// </param>
+      /// <param name="scaleFactor">
+      /// The scaling factor to be used for rendering objects.  This is calculated and
+      /// passed down by the parent <see cref="GraphPane"/> object using the
+      /// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+      /// font sizes, etc. according to the actual size of the graph.
+      /// </param>
+      public void DrawBars( Graphics g, GraphPane pane, PointPairList points, bool isY2Axis,
+                     float barWidth, int pos, double scaleFactor )
+      {
+         float zeroPix;
+                  
+         // Determine which Axis is the bar base and which is the bar value
+         Axis valueAxis = BarValueAxis( pane, isY2Axis );
 
-			// Determine the pixel value where the "base" of the bar lies
-			if ( valueAxis.Min < 0.0 && valueAxis.Max > 0.0 )
-				zeroPix = valueAxis.Transform( 0.0 );
-			else if ( valueAxis.Min < 0.0 && valueAxis.Max <= 0.0 )
-				zeroPix = ( pane.BarBase == BarBase.Y ) ? valueAxis.MaxPix : valueAxis.MinPix;
-			else
-				zeroPix = ( pane.BarBase == BarBase.Y ) ? valueAxis.MinPix : valueAxis.MaxPix;
-			
-			// initialize priorTop if this is the first bar series
+         // Determine the pixel value where the "base" of the bar lies
+         if ( valueAxis.Min < 0.0 && valueAxis.Max > 0.0 )
+            zeroPix = valueAxis.Transform( 0.0 );
+         else if ( valueAxis.Min < 0.0 && valueAxis.Max <= 0.0 )
+            zeroPix = ( pane.BarBase == BarBase.Y ) ? valueAxis.MaxPix : valueAxis.MinPix;
+         else
+            zeroPix = ( pane.BarBase == BarBase.Y ) ? valueAxis.MinPix : valueAxis.MaxPix;
+         
+         // initialize priorTop if this is the first bar series
             // PriorTop is the value accumulator for stacked bars
-			if ( priorTop.Count == 0 )
-			{
-				for ( int x = 0 ; x < points.Count ; x++)
-					priorTop.Add( zeroPix );
-			}
+         if ( priorTop.Count == 0 )
+            for ( int x = 0 ; x < points.Count ; x++)
+            {
+               priorTop.Add( zeroPix );
+               priorBottom.Add( zeroPix );
+            }
 
-			// For Overlay and Stack bars, the position is always zero since the bars are on top
-			// of eachother
-			if ( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack)
-				pos = 0;
-   				
-			// Loop over each defined point							
-			for ( int i=0; i<points.Count; i++ )
-				DrawSingleBar( g, pane, points, i, pos, zeroPix, isY2Axis, barWidth, scaleFactor );
-		}
+         // For Overlay and Stack bars, the position is always zero since the bars are on top
+         // of eachother
+         if ( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack)
+            pos = 0;
+               
+         // Loop over each defined point                   
+         for ( int i=0; i<points.Count; i++ )
+            DrawSingleBar( g, pane, points, i, pos, zeroPix, isY2Axis, barWidth, scaleFactor );
+      }
 
-		/// <summary>
-		/// Draw the specified single bar (an individual "point") of this series to the specified
-		/// <see cref="Graphics"/> device.  This method is not as efficient as
-		/// <see cref="DrawBars"/>, which draws the bars for all points.  It is intended to be used
-		/// only for <see cref="BarType.SortedOverlay"/>, which requires special handling of each bar.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
-		/// <see cref="Bar"/>.</param>
-		/// <param name="isY2Axis">A value indicating to which Y axis this <see cref="Bar"/> is assigned.
-		/// true for the "Y2" axis, false for the "Y" axis.</param>
-		/// <param name="barWidth">
-		/// The width of each bar, in pixels.
-		/// </param>
-		/// <param name="pos">
-		/// The ordinal position of the this bar series (0=first bar, 1=second bar, etc.)
-		/// in the cluster of bars.
-		/// </param>
-		/// <param name="index">
-		/// The zero-based index number for the single bar to be drawn.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		public void DrawSingleBar( Graphics g, GraphPane pane, PointPairList points, bool isY2Axis,
-							float barWidth, int pos, int index, double scaleFactor )
-		{
-			float	zeroPix;
-		
-			if ( index >= points.Count )
-				return;
+      /// <summary>
+      /// Draw the specified single bar (an individual "point") of this series to the specified
+      /// <see cref="Graphics"/> device.  This method is not as efficient as
+      /// <see cref="DrawBars"/>, which draws the bars for all points.  It is intended to be used
+      /// only for <see cref="BarType.SortedOverlay"/>, which requires special handling of each bar.
+      /// </summary>
+      /// <param name="g">
+      /// A graphic device object to be drawn into.  This is normally e.Graphics from the
+      /// PaintEventArgs argument to the Paint() method.
+      /// </param>
+      /// <param name="pane">
+      /// A reference to the <see cref="GraphPane"/> object that is the parent or
+      /// owner of this object.
+      /// </param>
+      /// <param name="points">A <see cref="PointPairList"/> of point values representing this
+      /// <see cref="Bar"/>.</param>
+      /// <param name="isY2Axis">A value indicating to which Y axis this <see cref="Bar"/> is assigned.
+      /// true for the "Y2" axis, false for the "Y" axis.</param>
+      /// <param name="barWidth">
+      /// The width of each bar, in pixels.
+      /// </param>
+      /// <param name="pos">
+      /// The ordinal position of the this bar series (0=first bar, 1=second bar, etc.)
+      /// in the cluster of bars.
+      /// </param>
+      /// <param name="index">
+      /// The zero-based index number for the single bar to be drawn.
+      /// </param>
+      /// <param name="scaleFactor">
+      /// The scaling factor to be used for rendering objects.  This is calculated and
+      /// passed down by the parent <see cref="GraphPane"/> object using the
+      /// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+      /// font sizes, etc. according to the actual size of the graph.
+      /// </param>
+      public void DrawSingleBar( Graphics g, GraphPane pane, PointPairList points, bool isY2Axis,
+                     float barWidth, int pos, int index, double scaleFactor )
+      {
+         float zeroPix;
+      
+         if ( index >= points.Count )
+            return;
 
-			// Determine which Axis is the bar base and which is the bar value
-			Axis valueAxis = BarValueAxis( pane, isY2Axis );
+         // Determine which Axis is the bar base and which is the bar value
+         Axis valueAxis = BarValueAxis( pane, isY2Axis );
 
-			// Determine the pixel value where the "base" of the bar lies
-			if ( valueAxis.Min < 0.0 && valueAxis.Max > 0.0 )
-				zeroPix = valueAxis.Transform( 0.0 );
-			else if ( valueAxis.Min < 0.0 && valueAxis.Max <= 0.0 )
-				zeroPix = ( pane.BarBase == BarBase.Y ) ? valueAxis.MaxPix : valueAxis.MinPix;
-			else
-				zeroPix = ( pane.BarBase == BarBase.Y ) ? valueAxis.MinPix : valueAxis.MaxPix;
-			
-			// initialize priorTop if this is the first bar series
+         // Determine the pixel value where the "base" of the bar lies
+         if ( valueAxis.Min < 0.0 && valueAxis.Max > 0.0 )
+            zeroPix = valueAxis.Transform( 0.0 );
+         else if ( valueAxis.Min < 0.0 && valueAxis.Max <= 0.0 )
+            zeroPix = ( pane.BarBase == BarBase.Y ) ? valueAxis.MaxPix : valueAxis.MinPix;
+         else
+            zeroPix = ( pane.BarBase == BarBase.Y ) ? valueAxis.MinPix : valueAxis.MaxPix;
+         
+         // initialize priorTop if this is the first bar series
             // PriorTop is the value accumulator for stacked bars
-			if ( priorTop.Count == 0 )
-			{
-				for ( int x = 0 ; x < points.Count ; x++)
-					priorTop.Add( zeroPix );
-			}
+         if ( priorTop.Count == 0 )
+         {
+            for ( int x = 0 ; x < points.Count ; x++)
+            {
+               priorTop.Add( zeroPix );
+               priorBottom.Add (zeroPix) ;
+            }
+         }
 
-			// For Overlay and Stack bars, the position is always zero since the bars are on top
-			// of eachother
-			if ( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack)
-				pos = 0;
-   			
-			DrawSingleBar( g, pane, points, index, pos, zeroPix, isY2Axis, barWidth, scaleFactor );
-		}
+         // For Overlay and Stack bars, the position is always zero since the bars are on top
+         // of eachother
+         if ( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack)
+            pos = 0;
+            
+         DrawSingleBar( g, pane, points, index, pos, zeroPix, isY2Axis, barWidth, scaleFactor );
+      }
 
-		/// <summary>
-		/// Private internal routine that draws the specified single bar (an individual "point")
-		/// of this series to the specified <see cref="Graphics"/> device.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
-		/// <see cref="Bar"/>.</param>
-		/// <param name="index">
-		/// The zero-based index number for the single bar to be drawn.
-		/// </param>
-		/// <param name="pos">
-		/// The ordinal position of the this bar series (0=first bar, 1=second bar, etc.)
-		/// in the cluster of bars.
-		/// </param>
-		/// <param name="zeroPix">The pixel value corresponding to zero on the value axis.</param>
-		/// <param name="isY2Axis">A value indicating to which Y axis this <see cref="Bar"/> is assigned.
-		/// true for the "Y2" axis, false for the "Y" axis.</param>
-		/// <param name="barWidth">
-		/// The width of each bar, in pixels.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		private void DrawSingleBar( Graphics g, GraphPane pane, PointPairList points, int index,
-									int pos, float zeroPix, bool isY2Axis, float barWidth,
-									double scaleFactor )
-		{
-			float tmpX, tmpY, basePix;
+      /// <summary>
+      /// Private internal routine that draws the specified single bar (an individual "point")
+      /// of this series to the specified <see cref="Graphics"/> device.
+      /// </summary>
+      /// <param name="g">
+      /// A graphic device object to be drawn into.  This is normally e.Graphics from the
+      /// PaintEventArgs argument to the Paint() method.
+      /// </param>
+      /// <param name="pane">
+      /// A reference to the <see cref="GraphPane"/> object that is the parent or
+      /// owner of this object.
+      /// </param>
+      /// <param name="points">A <see cref="PointPairList"/> of point values representing this
+      /// <see cref="Bar"/>.</param>
+      /// <param name="index">
+      /// The zero-based index number for the single bar to be drawn.
+      /// </param>
+      /// <param name="pos">
+      /// The ordinal position of the this bar series (0=first bar, 1=second bar, etc.)
+      /// in the cluster of bars.
+      /// </param>
+      /// <param name="zeroPix">The pixel value corresponding to zero on the value axis.</param>
+      /// <param name="isY2Axis">A value indicating to which Y axis this <see cref="Bar"/> is assigned.
+      /// true for the "Y2" axis, false for the "Y" axis.</param>
+      /// <param name="barWidth">
+      /// The width of each bar, in pixels.
+      /// </param>
+      /// <param name="scaleFactor">
+      /// The scaling factor to be used for rendering objects.  This is calculated and
+      /// passed down by the parent <see cref="GraphPane"/> object using the
+      /// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+      /// font sizes, etc. according to the actual size of the graph.
+      /// </param>
+      private void DrawSingleBar( Graphics g, GraphPane pane, PointPairList points, int index,
+                           int pos, float zeroPix, bool isY2Axis, float barWidth,
+                           double scaleFactor )
+      {
+         float tmpX, tmpY, basePix;
 
-			double curX = points[index].X;
-			double curY = points[index].Y;
-			
-			float 	clusterWidth = pane.GetClusterWidth();
-			float 	clusterGap = pane.MinClusterGap * barWidth;
-			float 	barGap = barWidth * pane.MinBarGap;
+         double curX = points[index].X;
+         double curY = points[index].Y;
+         
+         float    clusterWidth = pane.GetClusterWidth();
+         float    clusterGap = pane.MinClusterGap * barWidth;
+         float    barGap = barWidth * pane.MinBarGap;
 
-			// Get a base value for the bottom of the bar and verify validity
-			double curBase = 0;
+         // Get a base value for the bottom of the bar and verify validity
+         double curBase = 0;
             // Is this a high-low type bar, with a valid PointTrio set?
-			if ( pane.BarType == BarType.HiLow )
-				curBase = points[index].BaseVal;
-				
-			if ( curBase == PointPair.Missing ||
-					System.Double.IsNaN( curBase ) ||
-					System.Double.IsInfinity( curBase ) )
-				curBase = 0;
-			
-			// Any value set to double max is invalid and should be skipped
-			// This is used for calculated values that are out of range, divide
-			//   by zero, etc.
-			// Also, any value <= zero on a log scale is invalid
-			
-			if (	curY != PointPair.Missing &&
-					!System.Double.IsNaN( curY ) &&
-					!System.Double.IsInfinity( curY ) &&
-					( curY > 0 || pane.BarType != BarType.Stack ) )
-			{
-				// Calculate a pixel value for the X scale value
-				tmpX = pane.XAxis.Transform( index, curX );
-				
-				// calculate a pixel value for the Y scale value
-				if ( isY2Axis )
-					tmpY = pane.Y2Axis.Transform( index, curY );
-				else
-					tmpY = pane.YAxis.Transform( index, curY );
-				
-				// calculate a pixel value for the bottom of the bar
-				if ( pane.BarType == BarType.Stack )
-					basePix = (float) priorTop[index];
-				else if ( curBase == 0 )
-					basePix = zeroPix;
-				else
-					basePix = BarValueAxis( pane, isY2Axis ).Transform( index, curBase );
+         if ( pane.BarType == BarType.HiLow )
+            curBase = points[index].BaseVal;
+            
+         if ( curBase == PointPair.Missing ||
+               System.Double.IsNaN( curBase ) ||
+               System.Double.IsInfinity( curBase ) )
+            curBase = 0;
+         
+         // Any value set to double max is invalid and should be skipped
+         // This is used for calculated values that are out of range, divide
+         //   by zero, etc.
+         // Also, any value <= zero on a log scale is invalid
+         
+         if ( curY != PointPair.Missing &&   curX != PointPair.Missing &&
+            !System.Double.IsNaN( curY ) && !System.Double.IsNaN( curX ) &&
+            !System.Double.IsInfinity( curY )  && !System.Double.IsInfinity( curX )  &&
+                  curY != 0 && curX != 0 || pane.BarType != BarType.Stack  )
+         {
+            // Calculate a pixel value for the X scale value
+            tmpX = pane.XAxis.Transform( index, curX );
+            
+            // calculate a pixel value for the Y scale value
+            if ( isY2Axis )
+               tmpY = pane.Y2Axis.Transform( index, curY );
+            else
+               tmpY = pane.YAxis.Transform( index, curY );
+            
+            // calculate a pixel value for the bottom of the bar
+            if ( pane.BarType == BarType.Stack )
+            {
+               if ( pane.BarBase == BarBase.X )
+                  if ( tmpY < zeroPix)                     //positive value
+                     basePix = (float) priorTop[index];
+                  else                                               //negative value
+                     basePix = (float)priorBottom[index] ;
+              else                                                                    
+                  if ( tmpX > zeroPix)                      //positive value
+                     basePix = (float) priorTop[index];
+               else                                               //negative value
+                  basePix = (float)priorBottom[index] ;
+           
+            }
+            else if ( curBase == 0 )
+               basePix = zeroPix;
+            else
+               basePix = BarValueAxis( pane, isY2Axis ).Transform( index, curBase );
 
-				// Depending on horizontal or vertical bar setting, calculate the bar rectangle and draw it.
-				if ( pane.BarBase == BarBase.X )
-				{
-					float left = tmpX - clusterWidth / 2.0F + clusterGap / 2.0F +
-							pos * ( barWidth + barGap );
+            // Depending on horizontal or vertical bar setting, calculate the bar rectangle and draw it.
+            float top ;
+            if ( pane.BarBase == BarBase.X )                                            //vertical
+            {
+               float left = tmpX - clusterWidth / 2.0F + clusterGap / 2.0F +
+                     pos * ( barWidth + barGap );
 
-					float top = ( pane.BarType == BarType.Stack ) ?
-									(float) priorTop[index] - ( zeroPix - tmpY ) : tmpY;
-									
-					this.Draw( g, pane, left, left + barWidth, basePix,
-						top, scaleFactor, true );
-						
-					priorTop[index] = top;
-				}
-				else
-				{
-					float top = tmpY - clusterWidth / 2.0F + clusterGap / 2.0F +
-							pos * ( barWidth + barGap );
+               if ( tmpY <= zeroPix)                                          //if positive value
+                  top = ( pane.BarType == BarType.Stack ) ?
+                           (float) priorTop[index] - ( zeroPix - tmpY ) : tmpY;
+               else
+                  top = ( pane.BarType == BarType.Stack ) ?       //negative value
+                     (float) priorBottom[index] - ( zeroPix - tmpY ) : tmpY;
+                              
+               this.Draw( g, pane, left, left + barWidth, basePix,
+                  top, scaleFactor, true );
+                  
+               if ( curY >= 0) 
+                  priorTop[index] = top;
+               else
+                  priorBottom[index] = top ;               
+            }
+            else                                                                  //horizontal
+            {
+               float right ;
+               top = tmpY - clusterWidth / 2.0F + clusterGap / 2.0F +
+                     pos * ( barWidth + barGap );
 
-					float right = ( pane.BarType == BarType.Stack ) ?
-						(float) priorTop[index] - ( zeroPix - tmpX ) : tmpX;
-					
-					this.Draw( g, pane, basePix, right, top, top + barWidth,
-							scaleFactor, true );
+               if ( tmpX >= zeroPix )                                       //positive
+                  right = ( pane.BarType == BarType.Stack ) ?
+                     (float) priorTop[index] - ( zeroPix - tmpX ) : tmpX;
+               else
+                  right = ( pane.BarType == BarType.Stack ) ?
+                     (float) priorBottom[index] - ( zeroPix - tmpX ) : tmpX;
+                     
+               
+               this.Draw( g, pane, basePix, right, top, top + barWidth,
+                     scaleFactor, true );
 
-					priorTop[index] = right;
-				}
-			}
-		}
+               if ( curX >= 0 )
+                  priorTop[index] = right;
+               else
+                  priorBottom[index] = right;
+                  
+            }
+         }
+      }
 
-		/// <summary>
-		/// Calculate the screen pixel position of the center of the specified bar, using the
-		/// <see cref="Axis"/> as specified by <see cref="GraphPane.BarBase"/>.  This method is
-		/// used primarily by the <see cref="GraphPane.FindNearestPoint"/> method in order to
-		/// determine the bar "location," which is defined as the center of the top of the individual bar.
-		/// </summary>
-		/// <param name="pane">The active GraphPane object</param>
-		/// <param name="barWidth">The width of each individual bar.  This can be calculated using
-		/// the <see cref="GraphPane.CalcBarWidth"/> method.</param>
-		/// <param name="iCluster">The cluster number for the bar of interest.  This is the ordinal
-		/// position of the current point.  That is, if a particular <see cref="CurveItem"/> has
-		/// 10 points, then a value of 3 would indicate the 4th point in the data array.</param>
-		/// <param name="val">The actual independent axis value for the bar of interest.</param>
-		/// <param name="iOrdinal">The ordinal position of the <see cref="CurveItem"/> of interest.
-		/// That is, the first bar series is 0, the second is 1, etc.  Note that this applies only
-		/// to the bars.  If a graph includes both bars and lines, then count only the bars.</param>
-		/// <returns>A screen pixel X position of the center of the bar of interest.</returns>
-		public static float CalcBarCenter( GraphPane pane, float barWidth, int iCluster, double val, int iOrdinal )
-		{
-			float clusterWidth = pane.GetClusterWidth();
-			float clusterGap = pane.MinClusterGap * barWidth;
-			float barGap = barWidth * pane.MinBarGap;
+      /// <summary>
+      /// Calculate the screen pixel position of the center of the specified bar, using the
+      /// <see cref="Axis"/> as specified by <see cref="GraphPane.BarBase"/>.  This method is
+      /// used primarily by the <see cref="GraphPane.FindNearestPoint"/> method in order to
+      /// determine the bar "location," which is defined as the center of the top of the individual bar.
+      /// </summary>
+      /// <param name="pane">The active GraphPane object</param>
+      /// <param name="barWidth">The width of each individual bar. This can be calculated using
+      /// the <see cref="GraphPane.CalcBarWidth"/> method.</param>
+      /// <param name="iCluster">The cluster number for the bar of interest.  This is the ordinal
+      /// position of the current point.  That is, if a particular <see cref="CurveItem"/> has
+      /// 10 points, then a value of 3 would indicate the 4th point in the data array.</param>
+      /// <param name="val">The actual independent axis value for the bar of interest.</param>
+      /// <param name="iOrdinal">The ordinal position of the <see cref="CurveItem"/> of interest.
+      /// That is, the first bar series is 0, the second is 1, etc.  Note that this applies only
+      /// to the bars.  If a graph includes both bars and lines, then count only the bars.</param>
+      /// <returns>A screen pixel X position of the center of the bar of interest.</returns>
+      public static float CalcBarCenter( GraphPane pane, float barWidth, int iCluster, double val, int iOrdinal )
+      {
+         float clusterWidth = pane.GetClusterWidth();
+         float clusterGap = pane.MinClusterGap * barWidth;
+         float barGap = barWidth * pane.MinBarGap;
 
-			if ( pane.BarType == BarType.Overlay )
-				iOrdinal = 0;
+         if ( pane.BarType == BarType.Overlay )
+            iOrdinal = 0;
 
-			return pane.BarBaseAxis().Transform( iCluster, val )
-						- clusterWidth / 2.0F + clusterGap / 2.0F +
-						iOrdinal * ( barWidth + barGap ) + 0.5F * barWidth;
-		}
+         return pane.BarBaseAxis().Transform( iCluster, val )
+                  - clusterWidth / 2.0F + clusterGap / 2.0F +
+                  iOrdinal * ( barWidth + barGap ) + 0.5F * barWidth;
+      }
 
-		/// <summary>
-		/// Setup the accumulator array for stacked bars.  This method is called by <see cref="CurveList.Draw"/>
-		/// at the beginning of a draw cycle.
-		/// </summary>
-		public static void ResetBarStack()
-		{
-			priorTop.Clear();
-		}
-	#endregion
-	}
+      /// <summary>
+      /// Setup the accumulator array for stacked bars.  This method is called by <see cref="CurveList.Draw"/>
+      /// at the beginning of a draw cycle.
+      /// </summary>
+      public static void ResetBarStack()
+      {
+         priorTop.Clear();
+         priorBottom.Clear () ;
+      }
+   #endregion
+   }
 }
