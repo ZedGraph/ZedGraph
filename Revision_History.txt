@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+30-Oct-2004 (by Champion)
+  Fix array ref problem when index=0 in BuildPointsArray()
+  CVS was wacky, corrected a few files
+
 29-Oct-2004 (by Kaye)
   Add BarType.Stack
 

@@ -109,7 +109,7 @@ namespace ZedGraphTest
 		/// <summary>
 		/// 
 		/// </summary>
-		protected GraphPane myPane;
+		protected GraphPane myPane, myPane2;
 
 		double[] gx = new double[20];
 		double[] gy = new double[20];
@@ -828,7 +828,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if true	// The HiLow bar graph sample
+#if false	// The HiLow bar graph sample
 
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
@@ -925,10 +925,10 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if false	// The stacked bar graph sample
+#if false	// The overlaid bar graph sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
-				"My Test Bar Graph", "Label", "My Y Axis" );
+				"My Test Overlay Bar Graph", "Label", "My Y Axis" );
 			// Make up some random data points
 
 			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty" };
@@ -944,22 +944,19 @@ namespace ZedGraphTest
 			//double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
 
 			// Generate a red bar with "Curve 1" in the legend
-			CurveItem myCurve = myPane.AddCurve( "Curve 1",
+			CurveItem myCurve = myPane.AddBar( "Curve 1",
 				null, y, Color.Red );
 			// Make it a bar
-			myCurve.IsBar = true;
 
 			// Generate a blue bar with "Curve 2" in the legend
-			myCurve = myPane.AddCurve( "Curve 2",
+			myCurve = myPane.AddBar( "Curve 2",
 				null, y2, Color.Blue );
 			// Make it a bar
-			myCurve.IsBar = true;
 
 			// Generate a green bar with "Curve 3" in the legend
-			myCurve = myPane.AddCurve( "Curve 3",
+			myCurve = myPane.AddBar( "Curve 3",
 				null, y3, Color.Green );
 			// Make it a bar
-			myCurve.IsBar = true;
 
 			// Draw the X tics between the labels instead of at the labels
 			myPane.XAxis.IsTicsBetweenLabels = true;
@@ -985,11 +982,11 @@ namespace ZedGraphTest
 				// for negative bars, the label appears just above the zero value
 				TextItem text = new TextItem( lab, (float) (i+1), (float) (y3[i] < 0 ? 0.0 : y3[i]) + shift );
 				// tell Zedgraph to use user scale units for locating the TextItem
-				text.CoordinateFrame = CoordType.AxisXYScale;
+				text.Location.CoordinateFrame = CoordType.AxisXYScale;
 				// AlignH the left-center of the text to the specified point
-				text.AlignH = AlignH.Left;
-				text.AlignV = AlignV.Center;
-				text.FontSpec.IsFramed = false;
+				text.Location.AlignH = AlignH.Left;
+				text.Location.AlignV = AlignV.Center;
+				text.FontSpec.Border.IsVisible = false;
 				// rotate the text 90 degrees
 				text.FontSpec.Angle = 90;
 				// add the TextItem to the list
@@ -997,7 +994,7 @@ namespace ZedGraphTest
 			}
 			
 			myPane.BarBase = BarBase.X;
-			myPane.IsBarStacked = true;
+			myPane.BarType = BarType.Overlay;
 			
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
@@ -1217,7 +1214,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if false	// The main example
+#if true	// The main example
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -1245,9 +1242,16 @@ namespace ZedGraphTest
 			curve.Symbol.Size = 12;
 			
 			double[] x2 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
-			double[] y2 = { 40, 60, 70, 80, 100, 110, 113, 105, 95, 75 };
+			double[] y2 = { 10, 15, 17, 20, 25, 27, 29, 26, 24, 18 };
 			BarItem bar = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
 			myPane.ClusterScaleWidth = 100;
+			
+			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y4 = { 30, 45, 53, 60, 75, 83, 84, 79, 71, 57 };
+			bar = myPane.AddBar( "Curly", x4, y4, Color.SteelBlue );
+			myPane.ClusterScaleWidth = 100;
+			myPane.BarType = BarType.Stack;
+			
 			//curve.Bar.Fill = new Fill( Color.Blue );
 			//curve.Symbol.Size = 12;
 			
@@ -1313,6 +1317,89 @@ namespace ZedGraphTest
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
 			myPane.TextList.Add( text );
+#endif
+
+#if false	// second graph test
+			// Create a new graph
+			myPane2 = new GraphPane( new Rectangle( 0, 0, 300, 200 ),
+				"My Pane 2",
+				"My X Axis 2",
+				"My Y Axis 2" );
+				
+			double[] xx = { 0.4875 };
+			double[] yy = { -123456 };
+
+			LineItem curve2;
+			curve2 = myPane2.AddCurve( "One Value", xx, yy, Color.Red, SymbolType.Diamond );
+			curve2.Symbol.Fill.IsVisible = false;
+
+			//myPane.XAxis.IsShowGrid = true;
+			//myPane.YAxis.IsShowGrid = true;
+			
+			myPane2.AxisChange( this.CreateGraphics() );
+
+#endif
+
+#if false	// Stacked Bar Example - RPK
+         myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),"2003 Wacky Widget Sales\nBy Product",
+            "Quarter",
+            "Sales (KUSD)");
+         SetSize();
+         
+			
+         string [] quarters = {"Q1", "Q2", "Q3", "Q4" } ;          
+         double[] y2 = { 40, 60, 70, 20 };               // red - three segments per bar
+         double[] y3 = { 20, 0, 35, 40 };             //green
+ //        double[] y3 = { 2, 3, 3.5, 4 };
+         double[] y4 = { 30, 15, 15, 90 };         //blue
+
+#if true                                 //           vertical stacked bars
+         LineItem curve;
+         curve = myPane.AddCurve( "Larry", null, y4, Color.Black, SymbolType.Circle );
+         curve.Line.Width = 1.5F;
+         curve.Line.IsSmooth = true;
+         curve.Line.SmoothTension = 0.6F;
+         curve.Symbol.Fill = new Fill( Color.White );
+         curve.Symbol.Size = 12;
+        
+         BarItem bar = myPane.AddBar( "Widget", null, y4, Color.RoyalBlue );
+         bar = myPane.AddBar( "Stridget",  null, y3, Color.LimeGreen );
+         bar = myPane.AddBar( "Bridget",null, y2, Color.Red );
+         myPane.XAxis.Type = AxisType.Text ;
+         myPane.XAxis.TextLabels=quarters ;         
+         myPane.BarBase=BarBase.X ;
+         myPane.BarType=BarType.Stack;
+ //        myPane.BarType=BarType.Cluster ;
+//         myPane.BarType=BarType.Overlay ;
+#endif
+
+#if false                                       //horizontal stacked bars
+/*
+         LineItem curve;
+         curve = myPane.AddCurve( "Larry", null, y4, Color.Black, SymbolType.Circle );
+         curve.Line.Width = 1.5F;
+         curve.Line.IsSmooth = true;
+         curve.Line.SmoothTension = 0.6F;
+         curve.Symbol.Fill = new Fill( Color.White );
+         curve.Symbol.Size = 12;
+*/
+         
+         
+         BarItem bar = myPane.AddBar( "Widget", y4,null, Color.RoyalBlue );
+         bar = myPane.AddBar( "Stridget",  y3,null, Color.LimeGreen );
+         bar = myPane.AddBar( "Bridget",y2,null, Color.Red );
+         myPane.BarBase=BarBase.Y ;
+         myPane.YAxis.Type = AxisType.Text ;
+         myPane.YAxis.TextLabels=quarters ;         
+         myPane.BarType=BarType.Stack ;
+ //         myPane.BarType=BarType.Cluster ;
+//         myPane.BarType=BarType.Overlay ;
+  #endif
+         myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+         myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
+         myPane.XAxis.IsShowGrid = true;
+         myPane.YAxis.IsShowGrid = true;
+			
 #endif
 
 #if false	// Missing Values test
@@ -1732,8 +1819,22 @@ namespace ZedGraphTest
 			ppd.Show();
 		}
 
+		private void MultiImage( GraphPane myPane, GraphPane myPane2 )
+		{
+			System.Drawing.Bitmap[] images;
+			images = new Bitmap[2];
+			images[0] = myPane.Image;
+			images[1] = myPane2.Image;
+
+			images[0].Save( @"c:\zedgraph1.jpg", ImageFormat.Jpeg );
+			images[1].Save( @"c:\zedgraph2.jpg", ImageFormat.Jpeg );
+		}
+
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+			// MultiImage( myPane, myPane2 );
+			
+			/*
 			myPane.Legend.Position = LegendPos.Float;
 			myPane.Legend.Location.CoordinateFrame = CoordType.PaneFraction;
 			myPane.Legend.Location.AlignH = AlignH.Right;
@@ -1748,7 +1849,8 @@ namespace ZedGraphTest
 				myPane.Legend.Location.Y = j / 100F;
 				this.Refresh();
 			}
-
+			*/
+			
 			//DoPrint();
 			
 			/*

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-13 04:52:53 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-31 06:05:41 $ </version>
 	public class Line : ICloneable
 	{
 	#region Fields
@@ -615,6 +615,10 @@ namespace ZedGraph
 
 				}
 
+				// Make sure there is at least one valid point
+				if ( index == 0 )
+					return false;
+					
 				// Add an extra point at the end, since the smoothing algorithm requires it
 				arrPoints[index] = arrPoints[index-1];
 				index++;

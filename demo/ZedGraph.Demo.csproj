@@ -4,7 +4,7 @@
         ProductVersion = "7.10.3077"
         SchemaVersion = "2.0"
         ProjectGuid = "{ABA28191-9B11-40D2-A51B-21293FE84365}"
-    >
+     >
         <Build>
             <Settings
                 ApplicationIcon = ""
