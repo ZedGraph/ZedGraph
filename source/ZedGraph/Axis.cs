@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.13.2.1 $ $Date: 2005-01-16 04:11:46 $ </version>
+	/// <version> $Revision: 3.13.2.2 $ $Date: 2005-02-25 07:32:20 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -44,7 +44,8 @@ namespace ZedGraph
 		private	double		min,
 							max,
 							step,
-							minorStep;
+							minorStep,
+							baseTic;
 		/// <summary> Private fields for the <see cref="Axis"/> automatic scaling modes.
 		/// Use the public properties <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
 		/// <see cref="StepAuto"/>, <see cref="MinorStepAuto"/>, <see cref="MinorStepAuto"/>,
@@ -787,6 +788,7 @@ namespace ZedGraph
 			this.max = 1.0;
 			this.step = 0.1;
 			this.minorStep = 0.1;
+			this.baseTic = PointPair.Missing;
 
 			this.minGrace = Default.MinGrace;
 			this.maxGrace = Default.MaxGrace;
@@ -869,6 +871,8 @@ namespace ZedGraph
 			max = rhs.Max;
 			step = rhs.Step;
 			minorStep = rhs.MinorStep;
+			baseTic = rhs.baseTic;
+
 			minAuto = rhs.MinAuto;
 			maxAuto = rhs.MaxAuto;
 			stepAuto = rhs.StepAuto;
@@ -1067,6 +1071,35 @@ namespace ZedGraph
 			get { return minorStep; }
 			set { minorStep = value; this.minorStepAuto = false; }
 		}
+
+		/// <summary>
+		/// Gets or sets the scale value at which the first major tic label will appear.
+		/// </summary>
+		/// <remarks>This property allows the scale labels to start at an irregular value.
+		/// For example, on a scale range with <see cref="Min"/> = 0, <see cref="Max"/> = 1000,
+		/// and <see cref="Step"/> = 200, a <see cref="BaseTic"/> value of 50 would cause
+		/// the scale labels to appear at values 50, 250, 450, 650, and 850.  Note that the
+		/// default value for this property is <see cref="PointPair.Missing"/>, which means the
+		/// value is not used.  Setting this property to any value other than
+		/// <see cref="PointPair.Missing"/> will activate the effect.  The value specified must
+		/// coincide with the first major tic.  That is, if <see cref="BaseTic"/> were set to
+		/// 650 in the example above, then the major tics would only occur at 650 and 850.  This
+		/// setting may affect the minor tics, since the minor tics are always referenced to the
+		/// <see cref="BaseTic"/>.  That is, in the example above, if the <see cref="MinorStep"/>
+		/// were set to 30 (making it a non-multiple of the major step), then the minor tics would
+		/// occur at 20, 50 (so it lines up with the BaseTic), 80, 110, 140, etc.
+		/// </remarks>
+		/// <value> The value is defined in user scale units </value>
+		/// <seealso cref="Min"/>
+		/// <seealso cref="Max"/>
+		/// <seealso cref="Step"/>
+		/// <seealso cref="MinorStep"/>
+		public double BaseTic
+		{
+			get { return baseTic; }
+			set { baseTic = value; }
+		}
+
 		/// <summary>
 		/// Gets or sets a value that determines whether or not the minimum scale value <see cref="Min"/>
 		/// is set automatically.
@@ -2624,7 +2657,9 @@ namespace ZedGraph
 		/// </returns>
 		private double CalcBaseTic()
 		{
-			if ( this.IsDate )
+			if ( this.baseTic != PointPair.Missing )
+				return this.baseTic;
+			else if ( this.IsDate )
 			{
 				int year, month, day, hour, minute, second;
 				XDate.XLDateToCalendarDate( this.min, out year, out month, out day, out hour, out minute,

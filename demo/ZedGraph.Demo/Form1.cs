@@ -190,6 +190,7 @@ namespace ZedGraphTest
 						Color.FromArgb( 255, 255, 190), 90F );
 			
 			myPane.XAxis.IsShowGrid = true;
+			myPane.XAxis.BaseTic = 50;
 			//myPane.IsPenWidthScaled = false;
 			//myPane.XAxis.ScaleFontSpec.Angle = 90;
 			//myPane.XAxis.ScaleAlign = AlignP.Inside;

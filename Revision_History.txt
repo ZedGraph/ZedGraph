@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+24-Jan-2005 (by Champion)
+  Add BaseTic property
+  
 16-Jan-2005 Version 3.5.3 (by Champion)
   Add ZedGraphControl.PointDateFormat
 
