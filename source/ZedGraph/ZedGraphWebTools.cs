@@ -31,34 +31,82 @@ namespace ZedGraph
 	#region Generic View State Assistant
 
 	/// <summary>
+	/// Assists in managing viewstate sub-objects. The host of the assistant is
+	/// responsible for managing an array within the statebag. This assistant
+	/// helps deal with that by simply registering each hosted object with a
+	/// unique code value. It also simplies the on demand creation of the sub object
+	/// by creating the instance only when the getobject method is called.
 	/// </summary>
 	/// <author>Darren Martz</author>
 	public class GenericViewStateAssistant
 	{
+		/// <summary>
+		/// Array of child class instances managed in the viewstate
+		/// </summary>
 		private ArrayList list = new ArrayList();
 
+		/// <summary>
+		/// Internal child class instance node, identified by a code,
+		/// its datatype, and the class instance.
+		/// </summary>
 		protected class AssistNode
 		{
+			/// <summary>
+			/// Creates an assistant node given a character key and
+			/// the hosted class type.
+			/// </summary>
+			/// <param name="code">Identifier code</param>
+			/// <param name="type">Class data type hosted by the node</param>
 			public AssistNode(char code, Type type)
 			{
 				Code = code;
 				Key = type;
 				Value = null;
 			}
+
+			/// <summary>
+			/// Code to uniquely identify this node entry
+			/// </summary>
 			public char	  Code;
+
+			/// <summary>
+			/// Object type identifying hosted value type.
+			/// </summary>
 			public Type   Key;
+
+			/// <summary>
+			/// Object instance based on Key definition. May be null
+			/// </summary>
 			public object Value;
 		}
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public GenericViewStateAssistant()
 		{
 		}
 
+		/// <summary>
+		/// Registers a code with a datatype in the assistance. Once registered
+		/// the datatype will be available for retrievable using the same code value.
+		/// </summary>
+		/// <param name="code">Type identifier</param>
+		/// <param name="type">Object type being hosted</param>
 		public void Register(char code, Type type)
 		{
 			list.Add( new AssistNode(code,type) );
 		}
 
+		/// <summary>
+		/// Retrieves instance based on the registered code and datatype.
+		/// If the value is null, the datatype is used to create a new instance
+		/// that is cached in the assistant node.
+		/// </summary>
+		/// <param name="code">code to search on</param>
+		/// <param name="IsTrackingViewState">Indicates if the parent is currently
+		/// tracking viewstate</param>
+		/// <returns>class instance</returns>
 		public object GetValue(char code, bool IsTrackingViewState)
 		{
 			AssistNode test = null;
@@ -85,6 +133,14 @@ namespace ZedGraph
 			return node.Value;
 		}
 
+		/// <summary>
+		/// Retrieves the object instance for an assistant node given an
+		/// index value.
+		/// </summary>
+		/// <param name="index">Index value in the assistants node collection</param>
+		/// <param name="IsTrackingViewState">Indicates if the parent is currently
+		/// tracking viewstate changes</param>
+		/// <returns>Object instance based on the node found in the collection</returns>
 		protected object GetValue(int index, bool IsTrackingViewState)
 		{			
 			AssistNode node = (AssistNode)list[index];
@@ -100,6 +156,13 @@ namespace ZedGraph
 			return node.Value;
 		}
 		
+		/// <summary>
+		/// Returns the current viewstate of every object hosted in
+		/// the assistants collection.
+		/// </summary>
+		/// <param name="BaseState">parents viewstate bag</param>
+		/// <returns>Combined saved viewstate for the parent and all hosted
+		/// objects in the assistant collection</returns>
 		public object SaveViewState(object BaseState)
 		{			
 			object[] myState = new object[list.Count+1];			
@@ -118,6 +181,14 @@ namespace ZedGraph
 			return myState;
 		}
 
+		/// <summary>
+		/// Loads the viewstate from the provided statebag into each of the
+		/// registered objects hosted in the assistants collection.
+		/// </summary>
+		/// <param name="savedState">statebag provided by parent</param>
+		/// <param name="IsTrackingViewState">indicates if the parent is currently
+		/// tracking viewstate changes</param>
+		/// <returns>The parents individual statebag</returns>
 		public object LoadViewState(object savedState, bool IsTrackingViewState)
 		{
 			if ( savedState == null ) return null;
@@ -143,6 +214,9 @@ namespace ZedGraph
 			return myState[0];
 		}
 
+		/// <summary>
+		/// Triggers the assistant to begin tracking viewstate changes
+		/// </summary>
 		public void TrackViewState()
 		{			
 			AssistNode node;

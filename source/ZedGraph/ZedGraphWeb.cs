@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.16 $ $Date: 2005-02-18 17:31:17 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2005-02-20 02:33:12 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -54,7 +54,7 @@ namespace ZedGraph
 		public override string ToString()
 		{
 			return String.Empty;
-		}
+		}		
 
 	#region Constructors
 		/// <summary>
@@ -75,7 +75,33 @@ namespace ZedGraph
 			vsassist.Register('c',typeof(ZedGraphWebCurveCollection));
 			vsassist.Register('g',typeof(ZedGraphWebGraphItemCollection));
 			vsassist.Register('r',typeof(ZedGraphWebRect));
-			vsassist.Register('R',typeof(ZedGraphWebRect));			
+			vsassist.Register('R',typeof(ZedGraphWebRect));	
+
+			this.AxisBorder.Color = ZedGraph.GraphPane.Default.AxisBorderColor;
+			this.AxisBorder.PenWidth = ZedGraph.GraphPane.Default.AxisBorderPenWidth;
+			this.AxisFill.Brush = ZedGraph.GraphPane.Default.AxisBackBrush;
+			this.AxisFill.Color = ZedGraph.GraphPane.Default.AxisBackColor;
+			this.AxisFill.Type  = ZedGraph.GraphPane.Default.AxisBackType;			
+		
+			this.PaneBorder.Color = ZedGraph.PaneBase.Default.BorderColor;
+			this.PaneBorder.PenWidth = ZedGraph.PaneBase.Default.BorderPenWidth;
+			this.PaneFill.Color = ZedGraph.PaneBase.Default.FillColor;
+
+			this.FontSpec.IsBold = ZedGraph.PaneBase.Default.FontBold;
+			this.FontSpec.FontColor = ZedGraph.PaneBase.Default.FontColor;
+			this.FontSpec.Family = ZedGraph.PaneBase.Default.FontFamily;
+			this.FontSpec.IsItalic = ZedGraph.PaneBase.Default.FontItalic;
+			this.FontSpec.Size = ZedGraph.PaneBase.Default.FontSize;
+			this.FontSpec.IsUnderline = ZedGraph.PaneBase.Default.FontUnderline;
+			
+			this.XAxis.IsVisible = ZedGraph.XAxis.Default.IsVisible;
+			this.XAxis.IsZeroLine = ZedGraph.XAxis.Default.IsZeroLine;
+
+			this.YAxis.IsVisible = ZedGraph.YAxis.Default.IsVisible;
+			this.YAxis.IsZeroLine = ZedGraph.YAxis.Default.IsZeroLine;
+
+			this.Y2Axis.IsVisible = ZedGraph.Y2Axis.Default.IsVisible;
+			this.Y2Axis.IsZeroLine = ZedGraph.Y2Axis.Default.IsZeroLine;
 		}
 		#endregion
 
@@ -500,13 +526,13 @@ namespace ZedGraph
 		/// <summary>
 		/// Proxy property that gets or sets the value of the <see cref="PaneBase.MarginLeft"/>.
 		/// </summary>
-		[NotifyParentProperty(true),Category("Appearance")]
+		[NotifyParentProperty(true),Category("Pane")]
 		public float MarginLeft
 		{
 			get 
 			{ 
 				object x = ViewState["MarginLeft"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.PaneBase.Default.MarginLeft : (float)x;
 			}
 			set { ViewState["MarginLeft"] = value; }
 		} 
@@ -514,13 +540,13 @@ namespace ZedGraph
 		/// <summary>
 		/// Proxy property that gets or sets the value of the <see cref="PaneBase.MarginRight"/>.
 		/// </summary>
-		[NotifyParentProperty(true),Category("Appearance")]
+		[NotifyParentProperty(true),Category("Pane")]
 		public float MarginRight
 		{
 			get 
 			{ 
 				object x = ViewState["MarginRight"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.PaneBase.Default.MarginRight : (float)x;
 			}
 			set { ViewState["MarginRight"] = value; }
 		} 
@@ -528,13 +554,13 @@ namespace ZedGraph
 		/// <summary>
 		/// Proxy property that gets or sets the value of the <see cref="PaneBase.MarginTop"/>.
 		/// </summary>
-		[NotifyParentProperty(true),Category("Appearance")]
+		[NotifyParentProperty(true),Category("Pane")]
 		public float MarginTop
 		{
 			get 
 			{ 
 				object x = ViewState["MarginTop"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.PaneBase.Default.MarginTop : (float)x;
 			}
 			set { ViewState["MarginTop"] = value; }
 		} 
@@ -542,13 +568,13 @@ namespace ZedGraph
 		/// <summary>
 		/// Proxy property that gets or sets the value of the <see cref="PaneBase.MarginBottom"/>.
 		/// </summary>
-		[NotifyParentProperty(true),Category("Appearance")]
+		[NotifyParentProperty(true),Category("Pane")]
 		public float MarginBottom
 		{
 			get 
 			{ 
 				object x = ViewState["MarginBottom"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.PaneBase.Default.MarginBottom : (float)x;
 			}
 			set { ViewState["MarginBottom"] = value; }
 		} 
@@ -585,7 +611,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="GraphPane.AxisRect"/>.
 		/// </summary>
 		[
-		Category("Appearance"),
+		Category("Axis"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -613,7 +639,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="PaneBase.FontSpec"/>.
 		/// </summary>
 		[
-		Category("Appearance"),
+		Category("Pane"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -627,7 +653,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="GraphPane.AxisBorder"/>.
 		/// </summary>
 		[		
-		Category("Appearance"),
+		Category("Axis"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -641,7 +667,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="GraphPane.AxisFill"/>.
 		/// </summary>
 		[
-		Category("Appearance"),
+		Category("Axis"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -655,7 +681,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="PaneBase.PaneBorder"/>.
 		/// </summary>
 		[		
-		Category("Appearance"),
+		Category("Pane"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -669,7 +695,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="PaneBase.PaneFill"/>.
 		/// </summary>
 		[
-		Category("Appearance"),
+		Category("Pane"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -683,7 +709,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="GraphPane.XAxis"/>.
 		/// </summary>
 		[		
-		Category("Appearance"),
+		Category("Axis"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -697,7 +723,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="GraphPane.YAxis"/>.
 		/// </summary>
 		[		
-		Category("Appearance"),
+		Category("Axis"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -711,7 +737,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="GraphPane.Y2Axis"/>.
 		/// </summary>
 		[		
-		Category("Appearance"),
+		Category("Axis"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -976,8 +1002,8 @@ namespace ZedGraph
 		/// <param name="e">An <see cref="EventArgs"/> reference for the event.</param>
 		protected override void OnPreRender( EventArgs e )
 		{
-			base.OnPreRender( e );		
-
+			base.OnPreRender( e );
+				
 			if ( this.CacheDuration > 0 )
 			{
 				System.Web.HttpContext context = System.Web.HttpContext.Current;

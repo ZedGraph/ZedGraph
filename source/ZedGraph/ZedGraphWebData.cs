@@ -527,7 +527,8 @@ namespace ZedGraph
 		}
 		
 		// not accessible via webcontrol properties
-		private Brush Brush = null;			
+		[Browsable(false)]
+		public Brush Brush = null;			
 	}
 
 	#endregion
@@ -555,6 +556,13 @@ namespace ZedGraph
 		{
 			Register('b',typeof(ZedGraphWebBorder));
 			Register('f',typeof(ZedGraphWebFill));
+
+			this.Fill.Color = ZedGraph.Symbol.Default.FillColor;
+			this.Fill.Brush = ZedGraph.Symbol.Default.FillBrush;
+			this.Fill.Type  = ZedGraph.Symbol.Default.FillType;
+
+			this.Border.IsVisible = ZedGraph.Symbol.Default.IsBorderVisible;
+			this.Border.Color = ZedGraph.Symbol.Default.BorderColor;
 		}
 
 		/// <summary>
@@ -688,6 +696,12 @@ namespace ZedGraph
 		{
 			Register('b',typeof(ZedGraphWebBorder));
 			Register('f',typeof(ZedGraphWebFill));
+
+			this.Border.PenWidth = ZedGraph.Bar.Default.BorderWidth;
+			this.Border.Color = ZedGraph.Bar.Default.BorderColor;
+			this.Fill.Color = ZedGraph.Bar.Default.FillColor;
+			this.Fill.Type = ZedGraph.Bar.Default.FillType;
+			this.Fill.Brush = ZedGraph.Bar.Default.FillBrush;
 		}
 
 		/// <summary>
@@ -768,7 +782,9 @@ namespace ZedGraph
 		/// </summary>
 		public ZedGraphWebErrorBarItem() : base()
 		{
-			Register('s',typeof(ZedGraphWebSymbol));			
+			Register('s',typeof(ZedGraphWebSymbol));
+			
+			this.Symbol.SymbolType = ZedGraph.ErrorBar.Default.Type;
 		}
 
 		/// <summary>
@@ -947,7 +963,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["Size"]; 
-				return (null == x) ? 1 : (float)x;
+				return (null == x) ? ZedGraph.HiLowBar.Default.Size : (float)x;
 			}
 			set { ViewState["Size"] = value; }
 		} 		
@@ -1021,6 +1037,10 @@ namespace ZedGraph
 		{
 			Register('s',typeof(ZedGraphWebSymbol));
 			Register('f',typeof(ZedGraphWebFill));
+
+			this.Fill.Color = Line.Default.FillColor;
+			this.Fill.Brush = Line.Default.FillBrush;
+			this.Fill.Type  = Line.Default.FillType;			
 		}
 
 		/// <summary>
@@ -1212,6 +1232,11 @@ namespace ZedGraph
 		{
 			Register('b',typeof(ZedGraphWebBorder));			
 			Register('t',typeof(ZedGraphWebTextItem));
+
+			this.Border.IsVisible = ZedGraph.PieItem.Default.IsBorderVisible;
+			this.Border.PenWidth = ZedGraph.PieItem.Default.BorderWidth;
+			this.Border.Color = ZedGraph.PieItem.Default.BorderColor;
+			this.LabelDetail.FontSpec.Size = ZedGraph.PieItem.Default.FontSize;
 		}	
 
 		/// <summary>
@@ -1245,7 +1270,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["Value"]; 
-				return (null == x) ? PointPair.Missing : (double)x;
+				return (null == x) ? 0 : (double)x;
 			}
 			set { ViewState["Value"] = value; }
 		}
@@ -1687,6 +1712,7 @@ namespace ZedGraph
 		/// </returns>
 		public override string ToString()
 		{
+			if (Title == string.Empty) return string.Empty;
 			return "Axis: " + Title;
 		}
 
@@ -1696,7 +1722,25 @@ namespace ZedGraph
 		public ZedGraphWebAxis() : base()
 		{
 			Register('s',typeof(ZedGraphWebFontSpec));
-			Register('t',typeof(ZedGraphWebFontSpec));			
+			Register('t',typeof(ZedGraphWebFontSpec));	
+		
+			this.ScaleFontSpec.Family = ZedGraph.Axis.Default.ScaleFontFamily;
+			this.ScaleFontSpec.Size = ZedGraph.Axis.Default.ScaleFontSize;
+			this.ScaleFontSpec.IsBold = ZedGraph.Axis.Default.ScaleFontBold;
+			this.ScaleFontSpec.FontColor = ZedGraph.Axis.Default.ScaleFontColor;
+			this.ScaleFontSpec.IsItalic = ZedGraph.Axis.Default.ScaleFontItalic;
+			this.ScaleFontSpec.IsUnderline = ZedGraph.Axis.Default.ScaleFontUnderline;
+			this.ScaleFontSpec.Fill.Color = ZedGraph.Axis.Default.ScaleFillColor;
+			this.ScaleFontSpec.Fill.Type = ZedGraph.Axis.Default.ScaleFillType;
+
+			this.TitleFontSpec.Family = ZedGraph.Axis.Default.TitleFontFamily;
+			this.TitleFontSpec.Size = ZedGraph.Axis.Default.TitleFontSize;
+			this.TitleFontSpec.IsBold = ZedGraph.Axis.Default.TitleFontBold;
+			this.TitleFontSpec.FontColor = ZedGraph.Axis.Default.TitleFontColor;
+			this.TitleFontSpec.IsItalic = ZedGraph.Axis.Default.TitleFontItalic;
+			this.TitleFontSpec.IsUnderline = ZedGraph.Axis.Default.TitleFontUnderline;
+			this.TitleFontSpec.Fill.Color = ZedGraph.Axis.Default.TitleFillColor;
+			this.TitleFontSpec.Fill.Type = ZedGraph.Axis.Default.TitleFillType;
 		}	
 	
 		/// <summary>
@@ -2650,6 +2694,19 @@ namespace ZedGraph
 			Register('b',typeof(ZedGraphWebBorder));
 			Register('f',typeof(ZedGraphWebFill));
 			Register('l',typeof(ZedGraphWebLocation));
+
+			this.Border.Color = Legend.Default.BorderColor;
+			this.Border.PenWidth = Legend.Default.BorderWidth;
+			this.Fill.Brush = Legend.Default.FillBrush;
+			this.Fill.Color = Legend.Default.FillColor;
+			this.Fill.Type = Legend.Default.FillType;
+			this.FontSpec.IsBold = Legend.Default.FontBold;
+			this.FontSpec.FontColor = Legend.Default.FontColor;
+			this.FontSpec.Family = Legend.Default.FontFamily;
+			this.FontSpec.Fill.Brush = Legend.Default.FontFillBrush;
+			this.FontSpec.Fill.Color = Legend.Default.FontFillColor;
+			this.FontSpec.IsItalic = Legend.Default.FontItalic;
+			this.FontSpec.Size = Legend.Default.FontSize;					
 		}
 
 		/// <summary>
@@ -2815,7 +2872,11 @@ namespace ZedGraph
 		public ZedGraphWebFontSpec() : base()
 		{
 			Register('b',typeof(ZedGraphWebBorder));
-			Register('f',typeof(ZedGraphWebFill));
+			Register('f',typeof(ZedGraphWebFill));	
+		
+			this.Fill.Color = ZedGraph.FontSpec.Default.FillColor;
+			this.Fill.Brush = ZedGraph.FontSpec.Default.FillBrush;
+			this.Fill.Type  = ZedGraph.FontSpec.Default.FillType;
 		}
 
 		/// <summary>
@@ -3040,7 +3101,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString()
-		{						
+		{		
+			if ( X==0 && Y==0 && Height==0 && Width==0 ) return string.Empty;
 			return string.Format("Rect({0},{1},{2},{3})",
 				X,Y,Height,Width);
 		}
@@ -3138,7 +3200,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString()
-		{						
+		{				
+			if ( Height==0 && Width==0 ) return string.Empty;			
 			return string.Format("Size({0},{1})",
 				Height,Width);
 		}
@@ -3207,7 +3270,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString()
-		{						
+		{			
+			if ( X==0 && Y==0 ) return string.Empty;
 			return string.Format("Point({0},{1})",
 				X,Y);
 		}
@@ -3288,6 +3352,13 @@ namespace ZedGraph
 		{
 			Register('a',typeof(ZedGraphWebSize));
 			Register('f',typeof(ZedGraphWebFontSpec));
+
+			this.FontSpec.Family = ZedGraph.TextItem.Default.FontFamily;
+			this.FontSpec.Size = ZedGraph.TextItem.Default.FontSize;
+			this.FontSpec.FontColor = ZedGraph.TextItem.Default.FontColor;
+			this.FontSpec.IsBold = ZedGraph.TextItem.Default.FontBold;
+			this.FontSpec.IsUnderline = ZedGraph.TextItem.Default.FontUnderline;
+			this.FontSpec.IsItalic = ZedGraph.TextItem.Default.FontItalic;			
 		}
 	
 		/// <summary>
@@ -3571,6 +3642,9 @@ namespace ZedGraph
 		{
 			Register('b',typeof(ZedGraphWebBorder));
 			Register('f',typeof(ZedGraphWebFill));
+
+			this.Border.Color = ZedGraph.BoxItem.Default.BorderColor;
+			this.Fill.Color = ZedGraph.BoxItem.Default.FillColor;
 		}			
 	
 		/// <summary>
