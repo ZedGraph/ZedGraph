@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph", "src\ZedGraph.csproj", "{998CE547-E905-4931-91B6-5E0439177E7E}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{998CE547-E905-4931-91B6-5E0439177E7E}.Debug.ActiveCfg = Debug|.NET
+		{998CE547-E905-4931-91B6-5E0439177E7E}.Debug.Build.0 = Debug|.NET
+		{998CE547-E905-4931-91B6-5E0439177E7E}.Release.ActiveCfg = Release|.NET
+		{998CE547-E905-4931-91B6-5E0439177E7E}.Release.Build.0 = Release|.NET
+		{0A743A11-DD8D-4A4D-88B9-A802AEC0A634}.Debug.ActiveCfg = Debug|.NET
+		{0A743A11-DD8D-4A4D-88B9-A802AEC0A634}.Debug.Build.0 = Debug|.NET
+		{0A743A11-DD8D-4A4D-88B9-A802AEC0A634}.Release.ActiveCfg = Release|.NET
+		{0A743A11-DD8D-4A4D-88B9-A802AEC0A634}.Release.Build.0 = Release|.NET
+		{A32A338F-0004-40DC-A561-CC69436DA7C2}.Debug.ActiveCfg = Debug|.NET
+		{A32A338F-0004-40DC-A561-CC69436DA7C2}.Debug.Build.0 = Debug|.NET
+		{A32A338F-0004-40DC-A561-CC69436DA7C2}.Release.ActiveCfg = Release|.NET
+		{A32A338F-0004-40DC-A561-CC69436DA7C2}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
