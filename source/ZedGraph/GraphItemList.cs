@@ -29,66 +29,66 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-15 05:11:30 $ </version>
-	public class TextList : CollectionBase, ICloneable
+	/// <version> $Revision: 3.1 $ $Date: 2004-11-17 04:38:08 $ </version>
+	public class GraphItemList : CollectionBase, ICloneable
 	{
 	#region Constructors
 		/// <summary>
-		/// Default constructor for the <see cref="TextList"/> collection class
+		/// Default constructor for the <see cref="GraphItemList"/> collection class
 		/// </summary>
-		public TextList()
+		public GraphItemList()
 		{
 		}
 
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The TextList object from which to copy</param>
-		public TextList( TextList rhs )
+		/// <param name="rhs">The <see cref="GraphItemList"/> object from which to copy</param>
+		public GraphItemList( GraphItemList rhs )
 		{
-			foreach ( TextItem item in rhs )
-				this.Add( new TextItem( item ) );
+			foreach ( GraphItemList item in rhs )
+				this.Add( (GraphItem) item.Clone() );
 		}
 
 		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>
-		/// <returns>A new, independent copy of the TextList</returns>
+		/// <returns>A new, independent copy of the <see cref="GraphItemList"/></returns>
 		public object Clone()
 		{ 
-			return new TextList( this ); 
+			return new GraphItemList( this ); 
 		}
 		
 	#endregion
 
 	#region Methods
 		/// <summary>
-		/// Indexer to access the specified <see cref="TextItem"/> object by its ordinal
+		/// Indexer to access the specified <see cref="GraphItem"/> object by its ordinal
 		/// position in the list.
 		/// </summary>
 		/// <param name="index">The ordinal position (zero-based) of the
-		/// <see cref="TextItem"/> object to be accessed.</param>
-		/// <value>A <see cref="TextItem"/> object reference.</value>
-		public TextItem this[ int index ]  
+		/// <see cref="GraphItem"/> object to be accessed.</param>
+		/// <value>A <see cref="GraphItem"/> object reference.</value>
+		public GraphItem this[ int index ]  
 		{
-			get { return( (TextItem) List[index] ); }
+			get { return( (GraphItem) List[index] ); }
 			set { List[index] = value; }
 		}
 
 		/// <summary>
-		/// Add a <see cref="TextItem"/> object to the <see cref="TextList"/>
+		/// Add a <see cref="GraphItem"/> object to the <see cref="GraphItemList"/>
 		/// collection at the end of the list.
 		/// </summary>
-		/// <param name="text">A reference to the <see cref="TextItem"/> object to
+		/// <param name="item">A reference to the <see cref="GraphItem"/> object to
 		/// be added</param>
 		/// <seealso cref="IList.Add"/>
-		public void Add( TextItem text )
+		public void Add( GraphItem item )
 		{
-			List.Add( text );
+			List.Add( item );
 		}
 
 		/// <summary>
-		/// Remove a <see cref="TextItem"/> object from the <see cref="TextList"/>
+		/// Remove a <see cref="GraphItem"/> object from the <see cref="GraphItemList"/>
 		/// collection at the specified ordinal location.
 		/// </summary>
 		/// <param name="index">An ordinal position in the list at which
@@ -100,45 +100,45 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Remove a <see cref="TextItem"/> object from the collection based on an object reference.
+		/// Remove a <see cref="GraphItem"/> object from the collection based on an object reference.
 		/// </summary>
-		/// <param name="text">A reference to the <see cref="TextItem"/> object that is to be
+		/// <param name="item">A reference to the <see cref="GraphItem"/> object that is to be
 		/// removed.</param>
 		/// <seealso cref="IList.Remove"/>
-		public void Remove( TextItem text )
+		public void Remove( GraphItem item )
 		{
-			List.Remove( text );
+			List.Remove( item );
 		}
 
 		/// <summary>
-		/// Insert a <see cref="TextItem"/> object into the collection at the specified
+		/// Insert a <see cref="GraphItem"/> object into the collection at the specified
 		/// zero-based index location.
 		/// </summary>
 		/// <param name="index">The zero-based index location for insertion.</param>
-		/// <param name="text">A reference to the <see cref="TextItem"/> object that is to be
+		/// <param name="item">A reference to the <see cref="GraphItem"/> object that is to be
 		/// inserted.</param>
 		/// <seealso cref="IList.Insert"/>
-		public void Insert( int index, TextItem text )
+		public void Insert( int index, GraphItem item )
 		{
-			List.Insert( index, text );
+			List.Insert( index, item );
 		}
 
 		/// <summary>
-		/// Return the zero-based position index of the specified <see cref="TextItem"/> in the collection.
+		/// Return the zero-based position index of the specified <see cref="GraphItem"/> in the collection.
 		/// </summary>
-		/// <param name="text">A reference to the <see cref="TextItem"/> object that is to be found.
+		/// <param name="item">A reference to the <see cref="GraphItem"/> object that is to be found.
 		/// </param>
-		/// <returns>The zero-based index of the specified <see cref="TextItem"/>, or -1 if the <see cref="TextItem"/>
-		/// is not in the list</returns>
+		/// <returns>The zero-based index of the specified <see cref="GraphItem"/>, or -1 if the
+		/// <see cref="GraphItem"/> is not in the list</returns>
 		/// <seealso cref="IList.IndexOf"/>
-		public int IndexOf( TextItem text )
+		public int IndexOf( GraphItem item )
 		{
-			return List.IndexOf( text );
+			return List.IndexOf( item );
 		}
 
 		/// <summary>
 		/// Render text to the specified <see cref="Graphics"/> device
-		/// by calling the Draw method of each <see cref="TextItem"/> object in
+		/// by calling the Draw method of each <see cref="GraphItem"/> object in
 		/// the collection.  This method is normally only called by the Draw method
 		/// of the parent <see cref="GraphPane"/> object.
 		/// </summary>
@@ -158,13 +158,13 @@ namespace ZedGraph
 		/// </param>
 		public void Draw( Graphics g, GraphPane pane, double scaleFactor )
 		{
-			foreach ( TextItem item in this )
+			foreach ( GraphItem item in this )
 				item.Draw( g, pane, scaleFactor );
 		}
 
 		/// <summary>
-		/// Determine if a mouse point is within any <see cref="TextItem"/>, and if so, 
-		/// return the index number of the the <see cref="TextItem"/>.
+		/// Determine if a mouse point is within any <see cref="GraphItem"/>, and if so, 
+		/// return the index number of the the <see cref="GraphItem"/>.
 		/// </summary>
 		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
 		/// <param name="pane">
@@ -183,9 +183,9 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="index">The index number of the <see cref="TextItem"/>
 		///  that is under the mouse point.  The <see cref="TextItem"/> object is
-		/// accessible via <see cref="GraphPane.TextList">TextList[index]</see>.
+		/// accessible via <see cref="GraphPane.GraphItemList">GraphItemList[index]</see>.
 		/// </param>
-		/// <returns>true if the mouse point is within a <see cref="TextItem"/> bounding
+		/// <returns>true if the mouse point is within a <see cref="GraphItem"/> bounding
 		/// box, false otherwise.</returns>
 		/// <seealso cref="GraphPane.FindNearestObject"/>
 		public bool FindPoint( PointF mousePt, GraphPane pane, Graphics g, double scaleFactor, out int index )
@@ -194,8 +194,7 @@ namespace ZedGraph
 			
 			for ( int i=0; i<Count; i++ )
 			{
-				TextItem text = this[i];
-				if ( text.PointInBox( mousePt, pane, g, scaleFactor ) )
+				if ( this[i].PointInBox( mousePt, pane, g, scaleFactor ) )
 				{
 					index = i;
 					return true;

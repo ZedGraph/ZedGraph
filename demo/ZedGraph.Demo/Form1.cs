@@ -1492,11 +1492,11 @@ namespace ZedGraphTest
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
-			myPane.TextList.Add( text );
+			myPane.GraphItemList.Add( text );
 
 			ArrowItem arrow = new ArrowItem( Color.Black, 12F, 175F, 77F, 100F, 45F );
-			arrow.CoordinateFrame = CoordType.AxisXYScale;
-			myPane.ArrowList.Add( arrow );
+			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
+			myPane.GraphItemList.Add( arrow );
 
 			text = new TextItem("Upgrade", 700F, 50.0F );
 			text.FontSpec.Angle = 90;
@@ -1506,12 +1506,12 @@ namespace ZedGraphTest
 			text.FontSpec.Fill.IsVisible = false;
 			//text.FontSpec.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, -45F );
 			text.FontSpec.Border.IsVisible = false;
-			myPane.TextList.Add( text );
+			myPane.GraphItemList.Add( text );
 
 			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
-			arrow.CoordinateFrame = CoordType.AxisXYScale;
+			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
 			arrow.PenWidth = 2.0F;
-			myPane.ArrowList.Add( arrow );
+			myPane.GraphItemList.Add( arrow );
 
 			text = new TextItem("Confidential", 0.8F, -0.03F );
 			text.Location.CoordinateFrame = CoordType.AxisFraction;
@@ -1526,7 +1526,7 @@ namespace ZedGraphTest
 
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
-			myPane.TextList.Add( text );
+			myPane.GraphItemList.Add( text );
 			
 			myPane.IsPenWidthScaled = false ;
 #endif

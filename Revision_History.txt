@@ -1,6 +1,10 @@
 ZedGraph Class Library Revision History
 
 16-Oct-2004 (by Champion)
+  Convert ArrowItem & TextItem to children of GraphItem
+  Delete TextList & ArrowList, make new GraphItemList
+  
+16-Oct-2004 (by Champion)
   Add ErrorBar (I-beam) graph type
   Convert HiLowBar type to a separate HiLowBarItem class
   Fix Hatch and PathGradient brush problem

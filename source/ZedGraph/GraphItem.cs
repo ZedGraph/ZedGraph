@@ -24,105 +24,85 @@ using System.Collections;
 namespace ZedGraph
 {
 	/// <summary>
-	/// A class that represents a text object on the graph.  A list of
+	/// An abstract base class that represents a text object on the graph.  A list of
 	/// <see cref="GraphItem"/> objects is maintained by the
 	/// <see cref="GraphItemList"/> collection class.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-11-17 04:38:08 $ </version>
-	public class TextItem : GraphItem, ICloneable
+	/// <version> $Revision: 3.1 $ $Date: 2004-11-17 04:38:08 $ </version>
+	abstract public class GraphItem
 	{
 	#region Fields
-		/// <summary> Private field to store the actual text string for this
-		/// <see cref="TextItem"/>.  Use the public property <see cref="TextItem.Text"/>
-		/// to access this value.
-		/// </summary>
-		private string text;
 		/// <summary>
-		/// Private field to store the <see cref="FontSpec"/> class used to render
-		/// this <see cref="TextItem"/>.  Use the public property <see cref="FontSpec"/>
-		/// to access this class.
+		/// Protected field that stores the location of this <see cref="GraphItem"/>.
+		/// Use the public property <see cref="Location"/> to access this value.
 		/// </summary>
-		private FontSpec	fontSpec;
+		protected Location location;
 	#endregion
 
 	#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
-		/// default property values for the <see cref="TextItem"/> class.
+		/// default property values for the <see cref="GraphItem"/> class.
 		/// </summary>
-		new public struct Default
+		public struct Default
 		{
+			// Default text item properties
 			/// <summary>
-			/// The default font family for the <see cref="TextItem"/> text
-			/// (<see cref="ZedGraph.FontSpec.Family"/> property).
+			/// Default value for the vertical <see cref="GraphItem"/>
+			/// text alignment (<see cref="GraphItem.Location"/> property).
+			/// This is specified
+			/// using the <see cref="AlignV"/> enum type.
 			/// </summary>
-			public static string FontFamily = "Arial";
+			public static AlignV AlignV = AlignV.Center;
 			/// <summary>
-			/// The default font size for the <see cref="TextItem"/> text
-			/// (<see cref="ZedGraph.FontSpec.Size"/> property).  Units are
-			/// in points (1/72 inch).
+			/// Default value for the horizontal <see cref="GraphItem"/>
+			/// text alignment (<see cref="GraphItem.Location"/> property).
+			/// This is specified
+			/// using the <see cref="AlignH"/> enum type.
 			/// </summary>
-			public static float FontSize = 14.0F;
+			public static AlignH AlignH = AlignH.Center;
 			/// <summary>
-			/// The default font color for the <see cref="TextItem"/> text
-			/// (<see cref="ZedGraph.FontSpec.FontColor"/> property).
+			/// The default coordinate system to be used for defining the
+			/// <see cref="GraphItem"/> location coordinates
+			/// (<see cref="GraphItem.Location"/> property).
 			/// </summary>
-			public static Color FontColor = Color.Black;
-			/// <summary>
-			/// The default font bold mode for the <see cref="TextItem"/> text
-			/// (<see cref="ZedGraph.FontSpec.IsBold"/> property). true
-			/// for a bold typeface, false otherwise.
-			/// </summary>
-			public static bool FontBold = true;
-			/// <summary>
-			/// The default font underline mode for the <see cref="TextItem"/> text
-			/// (<see cref="ZedGraph.FontSpec.IsUnderline"/> property). true
-			/// for an underlined typeface, false otherwise.
-			/// </summary>
-			public static bool FontUnderline = false;
-			/// <summary>
-			/// The default font italic mode for the <see cref="TextItem"/> text
-			/// (<see cref="ZedGraph.FontSpec.IsItalic"/> property). true
-			/// for an italic typeface, false otherwise.
-			/// </summary>
-			public static bool FontItalic = false;
+			/// <value> The coordinate system is defined with the <see cref="CoordType"/>
+			/// enum</value>
+			public static CoordType CoordFrame = CoordType.AxisXYScale;
 		}
 	#endregion
 
-	#region Properties
+	#region Properties		
 		/// <summary>
-		/// The <see cref="TextItem"/> to be displayed.  This text can be multi-line by
-		/// including newline ('\n') characters between the lines.
+		/// The <see cref="ZedGraph.Location"/> struct that describes the location
+		/// for this <see cref="GraphItem"/>.
 		/// </summary>
-		public string Text
+		public Location Location
 		{
-			get { return text; }
-			set { text = value; }
-		}
-		/// <summary>
-		/// Gets a reference to the <see cref="FontSpec"/> class used to render
-		/// this <see cref="TextItem"/>
-		/// </summary>
-		/// <seealso cref="Default.FontColor"/>
-		/// <seealso cref="Default.FontBold"/>
-		/// <seealso cref="Default.FontItalic"/>
-		/// <seealso cref="Default.FontUnderline"/>
-		/// <seealso cref="Default.FontFamily"/>
-		/// <seealso cref="Default.FontSize"/>
-		public FontSpec FontSpec
-		{
-			get { return fontSpec; }
+			get { return location; }
+			set { location = value; }
 		}
 	#endregion
 	
 	#region Constructors
+		/// <overloads>
+		/// Constructors for the <see cref="GraphItem"/> class.
+		/// </overloads>
 		/// <summary>
-		/// Constructor that sets all <see cref="TextItem"/> properties to default
+		/// Default constructor that sets all <see cref="GraphItem"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		/// <param name="text">The text to be displayed.</param>
+		public GraphItem() :
+			this( 0, 0, Default.CoordFrame, Default.AlignH, Default.AlignV )
+		{
+		}
+
+		/// <summary>
+		/// Constructor that sets all <see cref="GraphItem"/> properties to default
+		/// values as defined in the <see cref="Default"/> class.
+		/// </summary>
 		/// <param name="x">The x position of the text.  The units
 		/// of this position are specified by the
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
@@ -133,30 +113,15 @@ namespace ZedGraph
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
 		/// aligned to this position based on the
 		/// <see cref="AlignV"/> property.</param>
-		public TextItem( string text, float x, float y ) :
-			base( x, y )
+		public GraphItem( float x, float y ) :
+				this( x, y, Default.CoordFrame, Default.AlignH, Default.AlignV )
 		{
-			Init( text );
 		}
 
-		private void Init( string text )
-		{
-			if ( text != null )
-				this.text = text;
-			else
-				text = "Text";
-			
-			this.fontSpec = new FontSpec(
-				Default.FontFamily, Default.FontSize,
-				Default.FontColor, Default.FontBold,
-				Default.FontItalic, Default.FontUnderline );
-		}
-		
 		/// <summary>
-		/// Constructor that sets all <see cref="TextItem"/> properties to default
+		/// Constructor that sets all <see cref="GraphItem"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		/// <param name="text">The text to be displayed.</param>
 		/// <param name="x">The x position of the text.  The units
 		/// of this position are specified by the
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
@@ -170,17 +135,15 @@ namespace ZedGraph
 		/// <param name="coordType">The <see cref="CoordType"/> enum value that
 		/// indicates what type of coordinate system the x and y parameters are
 		/// referenced to.</param>
-		public TextItem( string text, float x, float y, CoordType coordType ) :
-			base( x, y, coordType )
+		public GraphItem( float x, float y, CoordType coordType ) :
+			this( x, y, coordType, Default.AlignH, Default.AlignV )
 		{
-			Init( text );
 		}
-
+		
 		/// <summary>
-		/// Constructor that sets all <see cref="TextItem"/> properties to default
+		/// Constructor that sets all <see cref="GraphItem"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		/// <param name="text">The text to be displayed.</param>
 		/// <param name="x">The x position of the text.  The units
 		/// of this position are specified by the
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
@@ -198,36 +161,24 @@ namespace ZedGraph
 		/// the horizontal alignment of the object with respect to the (x,y) location</param>
 		/// <param name="alignV">The <see cref="ZedGraph.AlignV"/> enum that specifies
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
-		public TextItem( string text, float x, float y, CoordType coordType, AlignH alignH, AlignV alignV ) :
-			base( x, y, coordType, alignH, alignV )
+		public GraphItem( float x, float y, CoordType coordType, AlignH alignH, AlignV alignV )
 		{
-			Init( text );
+			this.location = new Location( x, y, coordType, alignH, alignV );
 		}
 
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The <see cref="TextItem"/> object from which to copy</param>
-		public TextItem( TextItem rhs )
+		/// <param name="rhs">The <see cref="GraphItem"/> object from which to copy</param>
+		public GraphItem( GraphItem rhs )
 		{
-			text = rhs.Text;
 			this.location = rhs.Location;
-			fontSpec = new FontSpec( rhs.FontSpec );
-		}
-
-		/// <summary>
-		/// Deep-copy clone routine
-		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="TextItem"/></returns>
-		public object Clone()
-		{ 
-			return new TextItem( this ); 
 		}
 	#endregion
 	
 	#region Rendering Methods
 		/// <summary>
-		/// Render this <see cref="TextItem"/> object to the specified <see cref="Graphics"/> device
+		/// Render this <see cref="GraphItem"/> object to the specified <see cref="Graphics"/> device
 		/// This method is normally only called by the Draw method
 		/// of the parent <see cref="GraphItemList"/> collection object.
 		/// </summary>
@@ -245,23 +196,11 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		override public void Draw( Graphics g, GraphPane pane, double scaleFactor )
-		{
-			// transform the x,y location from the user-defined
-			// coordinate frame to the screen pixel location
-			PointF pix = this.location.Transform( pane );
-			
-			// Draw the text on the screen, including any frame and background
-			// fill elements
-			if ( pix.X > -100000 && pix.X < 100000 && pix.Y > -100000 && pix.Y < 100000 )
-				this.FontSpec.Draw( g, pane, this.text, pix.X, pix.Y,
-								this.location.AlignH, this.location.AlignV, scaleFactor );
-		}
+		abstract public void Draw( Graphics g, GraphPane pane, double scaleFactor );
 		
 		/// <summary>
 		/// Determine if the specified screen point lies inside the bounding box of this
-		/// <see cref="TextItem"/>.  This method takes into account rotation and alignment
-		/// parameters of the text, as specified in the <see cref="FontSpec"/>.
+		/// <see cref="GraphItem"/>.
 		/// </summary>
 		/// <param name="pt">The screen point, in pixels</param>
 		/// <param name="pane">
@@ -279,16 +218,7 @@ namespace ZedGraph
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
-		override public bool PointInBox( PointF pt, GraphPane pane, Graphics g, double scaleFactor )
-		{
-			// transform the x,y location from the user-defined
-			// coordinate frame to the screen pixel location
-			PointF pix = this.location.Transform( pane );
-			
-			return this.fontSpec.PointInBox( pt, g, this.text, pix.X, pix.Y,
-								this.location.AlignH, this.location.AlignV, scaleFactor );
-		}
-		
+		abstract public bool PointInBox( PointF pt, GraphPane pane, Graphics g, double scaleFactor );		
 	#endregion
 	
 	}

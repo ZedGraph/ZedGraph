@@ -26,41 +26,27 @@ namespace ZedGraph
 {
 	/// <summary>
 	/// A class that represents a graphic arrow or line object on the graph.  A list of
-	/// ArrowItem objects is maintained by the <see cref="ArrowList"/> collection class.
+	/// ArrowItem objects is maintained by the <see cref="GraphItemList"/> collection class.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-11-03 04:17:44 $ </version>
-	public class ArrowItem : ICloneable
+	/// <version> $Revision: 3.3 $ $Date: 2004-11-17 04:38:08 $ </version>
+	public class ArrowItem : GraphItem, ICloneable
 	{
 	#region Fields
-		/// <summary>
-		/// Private field that stores the X location of the starting point
-		/// that defines the arrow segment.  Use the public property
-		/// <see cref="X1"/> to access this value.
-		/// </summary>
-		/// <value>The units are defined as per the <see cref="coordinateFrame"/> setting</value>
-		private float x1;
-		/// <summary>
-		/// Private field that stores the Y location of the starting point
-		/// that defines the arrow segment.  Use the public property
-		/// <see cref="Y1"/> to access this value.
-		/// </summary>
-		/// <value>The units are defined as per the <see cref="coordinateFrame"/> setting</value>
-		private float y1;
 		/// <summary>
 		/// Private field that stores the X location of the ending point
 		/// that defines the arrow segment.  Use the public property
 		/// <see cref="X2"/> to access this value.
 		/// </summary>
-		/// <value>The units are defined as per the <see cref="coordinateFrame"/> setting</value>
+		/// <value>The units are defined as per the <see cref="Location.CoordinateFrame"/> setting</value>
 		private float x2;
 		/// <summary>
 		/// Private field that stores the Y location of the ending point
 		/// that defines the arrow segment.  Use the public property
 		/// <see cref="Y2"/> to access this value.
 		/// </summary>
-		/// <value>The units are defined as per the <see cref="coordinateFrame"/> setting</value>
+		/// <value>The units are defined as per the <see cref="Location.CoordinateFrame"/> setting</value>
 		private float y2;
 
 		/// <summary>
@@ -88,14 +74,6 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> true if an arrowhead is to be drawn, false otherwise </value>
 		private bool		isArrowHead;
-		/// <summary>
-		/// Private field that stores the coordinate system to be used for
-		/// defining the <see cref="ArrowItem"/> position.  Use the public
-		/// property <see cref="CoordinateFrame"/> to access this value.
-		/// </summary>
-		/// <value> The coordinate system is defined with the <see cref="CoordType"/>
-		/// enum</value>
-		private CoordType	coordinateFrame;
 	#endregion
 
 	#region Defaults
@@ -103,21 +81,13 @@ namespace ZedGraph
 		/// A simple struct that defines the
 		/// default property values for the <see cref="ArrowItem"/> class.
 		/// </summary>
-		public struct Default
+		new public struct Default
 		{
 			/// <summary>
 			/// The default size for the <see cref="ArrowItem"/> item arrowhead
             /// (<see cref="ArrowItem.Size"/> property).  Units are in points (1/72 inch).
             /// </summary>
 			public static float Size = 12.0F;
-			/// <summary>
-			/// The default coordinate system to be used for defining the
-			/// <see cref="ArrowItem"/> location coordinates
-			/// (<see cref="ArrowItem.CoordinateFrame"/> property).
-			/// </summary>
-			/// <value> The coordinate system is defined with the <see cref="CoordType"/>
-			/// enum</value>
-			public static CoordType CoordFrame = CoordType.AxisXYScale;
 			/// <summary>
 			/// The default display mode for the <see cref="ArrowItem"/> item arrowhead
 			/// (<see cref="ArrowItem.IsArrowHead"/> property).  true to show the
@@ -141,17 +111,17 @@ namespace ZedGraph
 		/// <summary>
 		/// X1 is the X value of the starting point that defines the
 		/// <see cref="ArrowItem"/> segment </summary>
-		/// <value> The units are defined by the <see cref="CoordinateFrame"/>
+		/// <value> The units are defined by the <see cref="Location.CoordinateFrame"/>
 		/// property </value>
 		public float X1
 		{
-			get { return x1; }
-			set { x1 = value; }
+			get { return this.Location.X; }
+			set { this.Location.X = value; }
 		}
 		/// <summary>
 		/// X2 is the X value of the ending point that defines the
 		/// <see cref="ArrowItem"/> segment </summary>
-		/// <value> The units are defined by the <see cref="CoordinateFrame"/>
+		/// <value> The units are defined by the <see cref="Location.CoordinateFrame"/>
 		/// property </value>
 		public float X2
 		{
@@ -161,17 +131,17 @@ namespace ZedGraph
 		/// <summary>
 		/// Y1 is the Y value of the starting point that defines the
 		/// <see cref="ArrowItem"/> segment </summary>
-		/// <value> The units are defined by the <see cref="CoordinateFrame"/>
+		/// <value> The units are defined by the <see cref="Location.CoordinateFrame"/>
 		/// property </value>
 		public float Y1
 		{
-			get { return y1; }
-			set { y1 = value; }
+			get { return this.Location.Y; }
+			set { this.Location.Y = value; }
 		}
 		/// <summary>
 		/// Y2 is the Y value of the ending point that defines the
 		/// <see cref="ArrowItem"/> segment </summary>
-		/// <value> The units are defined by the <see cref="CoordinateFrame"/>
+		/// <value> The units are defined by the <see cref="Location.CoordinateFrame"/>
 		/// property </value>
 		public float Y2
 		{
@@ -211,17 +181,6 @@ namespace ZedGraph
 			set { color = value; }
 		}
 		/// <summary>
-		/// The coordinate system to be used for defining the <see cref="ArrowItem"/> position
-		/// </summary>
-		/// <value> The coordinate system is defined with the <see cref="CoordType"/>
-		/// enum</value>
-		/// <seealso cref="Default.CoordFrame"/>
-		public CoordType CoordinateFrame
-		{
-			get { return coordinateFrame; }
-			set { coordinateFrame = value; }
-		}
-		/// <summary>
 		/// Determines whether or not to draw an arrowhead
 		/// </summary>
 		/// <value> true to show the arrowhead, false to show the line segment
@@ -245,24 +204,24 @@ namespace ZedGraph
 		/// <param name="size">The size of the arrowhead, measured in points.</param>
 		/// <param name="x1">The x position of the starting point that defines the
 		/// arrow.  The units of this position are specified by the
-		/// <see cref="CoordinateFrame"/> property.</param>
+		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		/// <param name="y1">The y position of the starting point that defines the
 		/// arrow.  The units of this position are specified by the
-		/// <see cref="CoordinateFrame"/> property.</param>
+		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		/// <param name="x2">The x position of the ending point that defines the
 		/// arrow.  The units of this position are specified by the
-		/// <see cref="CoordinateFrame"/> property.</param>
+		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		/// <param name="y2">The y position of the ending point that defines the
 		/// arrow.  The units of this position are specified by the
-		/// <see cref="CoordinateFrame"/> property.</param>
-		public ArrowItem( Color color, float size, float x1, float y1,
-			float x2, float y2 )
+		/// <see cref="Location.CoordinateFrame"/> property.</param>
+		public ArrowItem( Color color, float size, float x1, float y1, float x2, float y2 ) :
+				base( x1, y1 )
 		{
-			Init();
+			this.penWidth = Default.PenWidth;
+			isArrowHead = Default.IsArrowHead;
+
 			this.color = color;
 			this.size = size;
-			this.x1 = x1;
-			this.y1 = y1;
 			this.x2 = x2;
 			this.y2 = y2;
 		}
@@ -274,63 +233,39 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="x1">The x position of the starting point that defines the
 		/// <see cref="ArrowItem"/>.  The units of this position are specified by the
-		/// <see cref="CoordinateFrame"/> property.</param>
+		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		/// <param name="y1">The y position of the starting point that defines the
 		/// <see cref="ArrowItem"/>.  The units of this position are specified by the
-		/// <see cref="CoordinateFrame"/> property.</param>
+		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		/// <param name="x2">The x position of the ending point that defines the
 		/// <see cref="ArrowItem"/>.  The units of this position are specified by the
-		/// <see cref="CoordinateFrame"/> property.</param>
+		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		/// <param name="y2">The y position of the ending point that defines the
 		/// <see cref="ArrowItem"/>.  The units of this position are specified by the
-		/// <see cref="CoordinateFrame"/> property.</param>
-		public ArrowItem( float x1, float y1, float x2, float y2 )
+		/// <see cref="Location.CoordinateFrame"/> property.</param>
+		public ArrowItem( float x1, float y1, float x2, float y2 ) :
+				this( Default.Color, Default.Size, x1, y1, x2, y2 )
 		{
-			Init();
-			this.x1 = x1;
-			this.y1 = y1;
-			this.x2 = x2;
-			this.y2 = y2;
-		}
-
-		/// <summary>
-		/// This method initializes the ArrowItem properties to default values
-		/// as defined in class <see cref="Default"/>
-		/// </summary>
-		protected void Init()
-		{
-			this.color = Default.Color;
-			this.size = Default.Size;
-			this.penWidth = Default.PenWidth;
-			this.x1 = 0F;
-			this.y1 = 0F;
-			this.x2 = 0.2F;
-			this.y2 = 0.2F;
-			isArrowHead = Default.IsArrowHead;
-			coordinateFrame = Default.CoordFrame;
 		}
 
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The ArrowItem object from which to copy</param>
-		public ArrowItem( ArrowItem rhs )
+		/// <param name="rhs">The <see cref="ArrowItem"/> object from which to copy</param>
+		public ArrowItem( ArrowItem rhs ) : base( rhs )
 		{
-			x1 = rhs.X1;
-			y1 = rhs.Y1;
 			x2 = rhs.X2;
 			y2 = rhs.Y2;
 			size = rhs.Size;
 			color = rhs.Color;
 			penWidth = rhs.PenWidth;
 			isArrowHead = rhs.IsArrowHead;
-			coordinateFrame = rhs.CoordinateFrame;
 		}
 
 		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>
-		/// <returns>A new, independent copy of the ArrowItem</returns>
+		/// <returns>A new, independent copy of the <see cref="ArrowItem"/></returns>
 		public object Clone()
 		{ 
 			return new ArrowItem( this ); 
@@ -341,7 +276,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Render this object to the specified <see cref="Graphics"/> device
 		/// This method is normally only called by the Draw method
-		/// of the parent <see cref="ArrowList"/> collection object.
+		/// of the parent <see cref="GraphItemList"/> collection object.
 		/// </summary>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -357,14 +292,14 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void Draw( Graphics g, GraphPane pane, double scaleFactor )
+		override public void Draw( Graphics g, GraphPane pane, double scaleFactor )
 		{
 			// Convert the arrow coordinates from the user coordinate system
 			// to the screen coordinate system
-			PointF pix1 = pane.GeneralTransform( new PointF(this.x1, this.y1),
-				this.coordinateFrame );
+			PointF pix1 = pane.GeneralTransform( new PointF(this.X1, this.Y1),
+				this.location.CoordinateFrame );
 			PointF pix2 = pane.GeneralTransform( new PointF(this.x2, this.y2),
-				this.coordinateFrame );
+				this.location.CoordinateFrame );
 
 			if ( pix1.X > -10000 && pix1.X < 100000 && pix1.Y > -100000 && pix1.Y < 100000 &&
 				pix2.X > -10000 && pix2.X < 100000 && pix2.Y > -100000 && pix2.Y < 100000 )
@@ -429,15 +364,25 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
-		public bool PointInBox( PointF pt, GraphPane pane )
+		override public bool PointInBox( PointF pt, GraphPane pane, Graphics g, double scaleFactor )
 		{
 			// transform the x,y location from the user-defined
 			// coordinate frame to the screen pixel location
-			PointF pix = pane.GeneralTransform( new PointF( this.x1, this.y1 ),
-				this.coordinateFrame );
+			PointF pix = pane.GeneralTransform( new PointF( this.X1, this.Y1 ),
+				this.location.CoordinateFrame );
 			PointF pix2 = pane.GeneralTransform( new PointF( this.x2, this.y2 ),
-				this.coordinateFrame );
+				this.location.CoordinateFrame );
 			
 			Pen pen = new Pen( Color.Black, (float) GraphPane.Default.NearestTol * 2.0F );
 			GraphicsPath path = new GraphicsPath();

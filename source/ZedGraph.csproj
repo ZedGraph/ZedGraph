@@ -103,11 +103,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ZedGraph\ArrowList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ZedGraph\AssemblyInfo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -168,6 +163,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\GraphItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\GraphItemList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\GraphPane.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -219,11 +224,6 @@
                 />
                 <File
                     RelPath = "ZedGraph\TextItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\TextList.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

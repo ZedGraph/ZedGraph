@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.12 $ $Date: 2004-11-17 03:35:39 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2004-11-17 04:38:08 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -64,12 +64,9 @@ namespace ZedGraph
 		/// <summary>Private field instance of the <see cref="ZedGraph.CurveList"/> class.  Use the
 		/// public property <see cref="GraphPane.CurveList"/> to access this class.</summary>
 		private CurveList	curveList;
-		/// <summary>Private field instance of the <see cref="ZedGraph.TextList"/>t class.  Use the
-		/// public property <see cref="GraphPane.TextList"/> to access this class.</summary>
-		private TextList	textList;
-		/// <summary>Private field instance of the <see cref="ZedGraph.ArrowList"/> class.  Use the
-		/// public property <see cref="GraphPane.ArrowList"/> to access this class.</summary>
-		private ArrowList	arrowList;
+		/// <summary>Private field instance of the <see cref="ZedGraph.GraphItemList"/> class.  Use the
+		/// public property <see cref="GraphPane.GraphItemList"/> to access this class.</summary>
+		private GraphItemList	graphItemList;
 		
 		// Pane Title Properties /////////////////////////////////////////////////////////////
 		
@@ -425,22 +422,13 @@ namespace ZedGraph
 
 	#region public Class Instance Properties
 		/// <summary>
-		/// Gets or sets the list of <see cref="ArrowItem"/> items for this <see cref="GraphPane"/>
+		/// Gets or sets the list of <see cref="GraphItem"/> items for this <see cref="GraphPane"/>
 		/// </summary>
-		/// <value>A reference to an <see cref="ArrowList"/> collection object</value>
-		public ArrowList ArrowList
+		/// <value>A reference to a <see cref="GraphItemList"/> collection object</value>
+		public GraphItemList GraphItemList
 		{
-			get { return arrowList; }
-			set { arrowList = value; }
-		}
-		/// <summary>
-		/// Gets or sets the list of <see cref="TextItem"/> items for this <see cref="GraphPane"/>
-		/// </summary>
-		/// <value>A reference to a <see cref="TextList"/> collection object</value>
-		public TextList TextList
-		{
-			get { return textList; }
-			set { textList = value; }
+			get { return graphItemList; }
+			set { graphItemList = value; }
 		}
 		/// <summary>
 		/// Gets or sets the list of <see cref="CurveItem"/> items for this <see cref="GraphPane"/>
@@ -874,8 +862,7 @@ namespace ZedGraph
 			y2Axis = new Y2Axis( "" );
 			legend = new Legend();
 			curveList = new CurveList();
-			textList = new TextList();
-			arrowList = new ArrowList();
+			graphItemList = new GraphItemList();
 			
 			this.title = paneTitle;
 			this.isShowTitle = Default.IsShowTitle;
@@ -919,8 +906,7 @@ namespace ZedGraph
 			y2Axis = new Y2Axis( rhs.Y2Axis );
 			legend = new Legend( rhs.Legend);
 			curveList = new CurveList( rhs.CurveList );
-			textList = new TextList( rhs.TextList );
-			arrowList = new ArrowList(rhs.ArrowList );
+			graphItemList = new GraphItemList( rhs.GraphItemList );
 			
 			this.title = rhs.Title;
 			this.isShowTitle = rhs.IsShowTitle;
@@ -1079,12 +1065,9 @@ namespace ZedGraph
 				// Draw the Legend
 				this.legend.Draw( g, this, scaleFactor, hStack, legendWidth, legendHeight );
 				
-				// Draw the Text Items
-				this.textList.Draw( g, this, scaleFactor );
+				// Draw the Text and Arrow Items
+				this.graphItemList.Draw( g, this, scaleFactor );
 				
-				// Draw the Arrows
-				this.arrowList.Draw( g, this, scaleFactor );
-
 				// Reset the clipping
 				g.ResetClip();
 			}
@@ -1711,20 +1694,13 @@ namespace ZedGraph
 				RectangleF tmpAxisRect = CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth,
                                             out legendHeight );
 	
-				// See if the point is in a TextItem
-				if ( this.TextList.FindPoint( mousePt, this, g, scaleFactor, out index ) )
+				// See if the point is in a GraphItem
+				if ( this.GraphItemList.FindPoint( mousePt, this, g, scaleFactor, out index ) )
 				{
-					nearestObj = this.TextList[index];
+					nearestObj = this.GraphItemList[index];
 					return true;
 				}
-				
-//				// See if the point is on an ArrowItem
-				if ( this.ArrowList.FindPoint( mousePt, this, out index ) )
-				{
-					nearestObj = this.ArrowList[index];
-					return true;
-				}
-				
+								
 				// See if the point is in the legend
 				if ( this.Legend.FindPoint( mousePt, this, scaleFactor, hStack, legendWidth, out index ) )
 				{

@@ -71,7 +71,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-11-04 16:28:30 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-11-17 04:38:08 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -156,11 +156,11 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.Fill.Color = Color.LightBlue;
 			text.FontSpec.Fill.Type = FillType.Brush;
 			text.FontSpec.IsItalic = true;
-			testee.TextList.Add( text );
+			testee.GraphItemList.Add( text );
 			
 			ArrowItem arrow = new ArrowItem( Color.Black, 12F, 100F, 47F, 72F, 25F );
-			arrow.CoordinateFrame = CoordType.AxisXYScale;
-			testee.ArrowList.Add( arrow );
+			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
+			testee.GraphItemList.Add( arrow );
 			
 			text = new TextItem("Upgrade", 700F, 50.0F );
 			text.FontSpec.Angle = 90;
@@ -170,12 +170,12 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
 			text.FontSpec.Fill.Type = FillType.Brush;
 			text.FontSpec.Border.IsVisible = false;
-			testee.TextList.Add( text );
+			testee.GraphItemList.Add( text );
 			
 			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
-			arrow.CoordinateFrame = CoordType.AxisXYScale;
+			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
 			arrow.PenWidth = 2.0F;
-			testee.ArrowList.Add( arrow );
+			testee.GraphItemList.Add( arrow );
 			text = new TextItem("Confidential", 0.8F, -0.03F );
 			text.Location.CoordinateFrame = CoordType.AxisFraction;
 			text.FontSpec.Angle = 15.0F;
@@ -186,7 +186,7 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.Border.Color = Color.Red;
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
-			testee.TextList.Add( text );
+			testee.GraphItemList.Add( text );
 			
 			testee.AxisChange( control.CreateGraphics() );
 
@@ -206,7 +206,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-11-04 16:28:30 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-11-17 04:38:08 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
@@ -332,7 +332,7 @@ namespace ZedGraph.UnitTest
 				// rotate the text 90 degrees
 				text.FontSpec.Angle = 90;
 				// add the TextItem to the list
-				testee.TextList.Add( text );
+				testee.GraphItemList.Add( text );
 			}
 
 			// Tell ZedGraph to refigure the
@@ -407,7 +407,7 @@ namespace ZedGraph.UnitTest
             // rotate the text 90 degrees
             text.FontSpec.Angle = 90;
             // add the TextItem to the list
-            testee.TextList.Add( text );
+            testee.GraphItemList.Add( text );
          }
 
          // Tell ZedGraph to refigure the
@@ -791,11 +791,11 @@ namespace ZedGraph.UnitTest
 			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Fill.Color = Color.PowderBlue;
 			text.FontSpec.Fill.Type = FillType.Brush;
-			testee.TextList.Add( text );
+			testee.GraphItemList.Add( text );
 
 			ArrowItem arrow = new ArrowItem( Color.Black, 12F, 100F, 47F, 72F, 25F );
-			arrow.CoordinateFrame = CoordType.AxisXYScale;
-			testee.ArrowList.Add( arrow );
+			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
+			testee.GraphItemList.Add( arrow );
 
 			text = new TextItem("Upgrade", 700F, 50.0F );
 			text.FontSpec.Angle = 90;
@@ -805,12 +805,12 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
 			text.FontSpec.Fill.Type = FillType.Brush;
 			text.FontSpec.Border.IsVisible = false;
-			testee.TextList.Add( text );
+			testee.GraphItemList.Add( text );
 
 			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
-			arrow.CoordinateFrame = CoordType.AxisXYScale;
+			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
 			arrow.PenWidth = 2.0F;
-			testee.ArrowList.Add( arrow );
+			testee.GraphItemList.Add( arrow );
 
 			text = new TextItem("Confidential", 0.8F, -0.03F );
 			text.Location.CoordinateFrame = CoordType.AxisFraction;
@@ -825,7 +825,7 @@ namespace ZedGraph.UnitTest
 
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
-			testee.TextList.Add( text );
+			testee.GraphItemList.Add( text );
 			
 			testee.AxisChange( form2.CreateGraphics() );
 			SetSize();
@@ -1091,7 +1091,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-11-04 16:28:30 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-11-17 04:38:08 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{
@@ -1603,7 +1603,7 @@ namespace ZedGraph.UnitTest
 			///////////////////////////////////////////////////////////////////////////////
 
 			TextItem text = new TextItem( "ZedGraph TextItem", 0.5F, 0.5F );
-			testee.TextList.Add( text );
+			testee.GraphItemList.Add( text );
 			
 			text.Location.CoordinateFrame = CoordType.AxisFraction;
 			text.FontSpec.IsItalic = false;

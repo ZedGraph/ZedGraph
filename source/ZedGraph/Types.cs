@@ -292,7 +292,6 @@ namespace ZedGraph
 	/// and <see cref="TextItem"/> objects only.
 	/// </summary>
 	/// <seealso cref="ZedGraph.Location.CoordinateFrame"/>
-	/// <seealso cref="ArrowItem.CoordinateFrame"/>
 	public enum CoordType
 	{
 		/// <summary>
