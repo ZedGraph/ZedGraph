@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-13 04:52:53 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-14 04:06:01 $ </version>
 	public class CurveList : CollectionBase, ICloneable
 	{
 	#region Properties
@@ -158,6 +158,16 @@ namespace ZedGraph
 		public void Remove( int index )
 		{
 			List.RemoveAt( index );
+		}
+
+		/// <summary>
+		/// Remove a <see cref="CurveItem"/> object from the collection based on an object reference.
+		/// </summary>
+		/// <param name="curve">A reference to the <see cref="CurveItem"/> object that is to be
+		/// removed.</param>
+		public void Remove( CurveItem curve )
+		{
+			List.Remove( curve );
 		}
 
 		/// <summary>

@@ -1,0 +1,141 @@
+using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+
+namespace ZedGraph
+{
+	/// <summary>
+	/// Summary description for BarItem.
+	/// </summary>
+	public class BarItem : CurveItem, ICloneable
+	{
+	#region Fields
+		/// <summary>
+		/// Private field that stores a reference to the <see cref="ZedGraph.Bar"/>
+		/// class defined for this <see cref="BarItem"/>.  Use the public
+		/// property <see cref="Bar"/> to access this value.
+		/// </summary>
+		private Bar			bar;
+	#endregion
+	
+	#region Properties
+		/// <summary>
+		/// Gets a reference to the <see cref="ZedGraph.Bar"/> class defined
+		/// for this <see cref="BarItem"/>.
+		/// </summary>
+		public Bar Bar
+		{
+			get { return bar; }
+		}
+	#endregion
+	
+	#region Constructors
+		/// <summary>
+		/// Create a new <see cref="BarItem"/>, specifying only the legend label for the bar.
+		/// </summary>
+		/// <param name="label">The label that will appear in the legend.</param>
+		public BarItem( string label ) : base( label )
+		{
+			this.bar = new Bar();
+		}
+		/// <summary>
+		/// Create a new <see cref="BarItem"/> using the specified properties.
+		/// </summary>
+		/// <param name="label">The label that will appear in the legend.</param>
+		/// <param name="x">An array of double precision values that define
+		/// the independent (X axis) values for this curve</param>
+		/// <param name="y">An array of double precision values that define
+		/// the dependent (Y axis) values for this curve</param>
+		/// <param name="color">A <see cref="Color"/> value that will be applied to
+		/// the <see cref="ZedGraph.Bar.Fill"/> and <see cref="ZedGraph.Bar.Border"/> properties.
+		/// </param>
+		public BarItem( string label, double[] x, double[] y, Color color )
+			: this( label, new PointPairList( x, y ), color )
+		{
+		}
+		/// <summary>
+		/// Create a new <see cref="BarItem"/> using the specified properties.
+		/// </summary>
+		/// <param name="label">The label that will appear in the legend.</param>
+		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// the X and Y values for this curve</param>
+		/// <param name="color">A <see cref="Color"/> value that will be applied to
+		/// the <see cref="ZedGraph.Bar.Fill"/> and <see cref="ZedGraph.Bar.Border"/> properties.
+		/// </param>
+		public BarItem( string label, PointPairList points, Color color )
+			: base( label, points )
+		{
+			bar = new Bar( color );
+		}
+		
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The <see cref="BarItem"/> object from which to copy</param>
+		public BarItem( BarItem rhs ) : base( rhs )
+		{
+			bar = new Bar( rhs.Bar );
+		}
+		
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the BarItem</returns>
+		override public object Clone()
+		{ 
+			return new BarItem( this ); 
+		}
+	#endregion
+	
+	#region Methods
+		/// <summary>
+		/// Do all rendering associated with this <see cref="BarItem"/> to the specified
+		/// <see cref="Graphics"/> device.  This method is normally only
+		/// called by the Draw method of the parent <see cref="ZedGraph.CurveList"/>
+		/// collection object.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="pos">The ordinal position of the current <see cref="Bar"/>
+		/// curve.</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		override public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  )
+		{
+			if ( this.isVisible )
+				Bar.DrawBars( g, pane, points, isY2Axis, pane.CalcBarWidth(), pos, scaleFactor );
+		}
+		
+		/// <summary>
+		/// Draw a legend key entry for this <see cref="BarItem"/> at the specified location
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="rect">The <see cref="RectangleF"/> struct that specifies the
+		/// location for the legend key</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		override public void DrawLegendKey( Graphics g, RectangleF rect, double scaleFactor )
+		{
+			this.Bar.Draw( g, rect, scaleFactor, true );
+		}
+
+	#endregion
+	}
+}

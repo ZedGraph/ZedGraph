@@ -188,7 +188,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if false	// 1000 values test
+#if true	// 1000 values test
 			// Create a new graph
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Graph\n(For CodeProject Sample)",
@@ -197,16 +197,23 @@ namespace ZedGraphTest
 				
 			double[] x = new double[1000];
 			double[] y = new double[1000];
+			Random rand = new Random();
+			
 			for ( int i=0; i<1000; i++ )
 			{
 				x[i] = (double) i;
-				y[i] = (double) i * 100.0;
+				y[i] = rand.NextDouble() * 100.0;
 			}
 
 			LineItem curve;
 			curve = myPane.AddCurve( "Many Values", x, y, Color.Red, SymbolType.Diamond );
 			curve.Symbol.Fill.IsVisible = false;
 			curve.Symbol.IsVisible = true;
+			curve.Symbol.Type = SymbolType.Square;
+			curve.Symbol.Border.IsVisible = false;
+			curve.Symbol.Fill = new Fill( Color.Red );
+			curve.Symbol.Size = 2.0F;
+			curve.Line.IsVisible = false;
 
 			//myPane.XAxis.IsShowGrid = true;
 			//myPane.YAxis.IsShowGrid = true;
@@ -1196,7 +1203,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if true	// The main example
+#if false	// The main example
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -1270,7 +1277,7 @@ namespace ZedGraphTest
 			text.AlignV = AlignV.Center;
 			text.FontSpec.Fill.IsVisible = false;
 			//text.FontSpec.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, -45F );
-			text.FontSpec.Frame.IsVisible = false;
+			text.FontSpec.Border.IsVisible = false;
 			myPane.TextList.Add( text );
 
 			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
@@ -1285,8 +1292,8 @@ namespace ZedGraphTest
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.IsBold = true;
 			text.FontSpec.Size = 16;
-			text.FontSpec.Frame.IsVisible = false;
-			text.FontSpec.Frame.Color = Color.Red;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Border.Color = Color.Red;
 			text.FontSpec.Fill.IsVisible = false;
 
 			text.AlignH = AlignH.Left;

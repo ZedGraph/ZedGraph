@@ -71,7 +71,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-13 04:52:54 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-14 04:06:01 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -169,7 +169,7 @@ namespace ZedGraph.UnitTest
 			text.AlignV = AlignV.Center;
 			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
 			text.FontSpec.Fill.Type = FillType.Brush;
-			text.FontSpec.Frame.IsVisible = false;
+			text.FontSpec.Border.IsVisible = false;
 			testee.TextList.Add( text );
 			
 			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
@@ -182,8 +182,8 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.IsBold = true;
 			text.FontSpec.Size = 16;
-			text.FontSpec.Frame.IsVisible = true;
-			text.FontSpec.Frame.Color = Color.Red;
+			text.FontSpec.Border.IsVisible = true;
+			text.FontSpec.Border.Color = Color.Red;
 			text.AlignH = AlignH.Left;
 			text.AlignV = AlignV.Bottom;
 			testee.TextList.Add( text );
@@ -206,7 +206,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-13 04:52:54 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-14 04:06:01 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
@@ -328,7 +328,7 @@ namespace ZedGraph.UnitTest
 				// Align the left-center of the text to the specified point
 				text.AlignH = AlignH.Left;
 				text.AlignV = AlignV.Center;
-				text.FontSpec.Frame.IsVisible = false;
+				text.FontSpec.Border.IsVisible = false;
 				// rotate the text 90 degrees
 				text.FontSpec.Angle = 90;
 				// add the TextItem to the list
@@ -498,7 +498,7 @@ namespace ZedGraph.UnitTest
 			text.AlignV = AlignV.Center;
 			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
 			text.FontSpec.Fill.Type = FillType.Brush;
-			text.FontSpec.Frame.IsVisible = false;
+			text.FontSpec.Border.IsVisible = false;
 			testee.TextList.Add( text );
 
 			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
@@ -513,8 +513,8 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.IsBold = true;
 			text.FontSpec.Size = 16;
-			text.FontSpec.Frame.IsVisible = false;
-			text.FontSpec.Frame.Color = Color.Red;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Border.Color = Color.Red;
 			text.FontSpec.Fill.Type = FillType.None;
 
 			text.AlignH = AlignH.Left;
@@ -785,7 +785,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-13 04:52:54 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-14 04:06:01 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{
@@ -918,7 +918,7 @@ namespace ZedGraph.UnitTest
 			testee.IsShowTitle = false;
 			testee.Legend.IsHStack = false;
 			testee.Legend.IsVisible = false;
-			testee.Legend.Frame.IsVisible = false;
+			testee.Legend.Border.IsVisible = false;
 			testee.Legend.Fill.Type = FillType.None;
 			testee.Legend.Location = LegendLoc.Bottom;
 
@@ -930,19 +930,19 @@ namespace ZedGraph.UnitTest
 
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Do you see a dual Y graph with no axes?" ) );
 			
-			testee.PaneFrame = new Frame( true, Color.Red, 3.0F );
+			testee.PaneFrame = new Border( true, Color.Red, 3.0F );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Pane Frame Added?" ) );
 			
-			testee.PaneFrame = new Frame( Color.Black, 1.0F );
+			testee.PaneFrame = new Border( Color.Black, 1.0F );
 
-			testee.AxisFrame = new Frame( true, Color.Red, 3.0F );
+			testee.AxisFrame = new Border( true, Color.Red, 3.0F );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Axis Frame Added?" ) );
 			
-			testee.AxisFrame = new Frame( Color.Black, 1.0F );
+			testee.AxisFrame = new Border( Color.Black, 1.0F );
 
 			testee.PaneFill = new Fill( Color.White, Color.LightGoldenrodYellow );
 			testee.PaneGap = 50.0F;
@@ -976,12 +976,12 @@ namespace ZedGraph.UnitTest
 			
 			testee.Legend.FontSpec.FontColor = Color.Black;
 
-			testee.Legend.Frame = new Frame( true, Color.Red, 3.0F );
+			testee.Legend.Border = new Border( true, Color.Red, 3.0F );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Frame Added?" ) );
 
-			testee.Legend.Frame = new Frame( Color.Black, 1.0F );
+			testee.Legend.Border = new Border( Color.Black, 1.0F );
 
 			testee.Legend.Fill.Type = FillType.Brush;
 			testee.Legend.Fill.Color = Color.LightGoldenrodYellow;
@@ -1303,7 +1303,7 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.IsItalic = false;
 			text.FontSpec.IsUnderline = false;
 			text.FontSpec.Angle = 0.0F;
-			text.FontSpec.Frame.IsVisible = false;
+			text.FontSpec.Border.IsVisible = false;
 			text.FontSpec.Fill.Type = FillType.None;
 			text.FontSpec.FontColor = Color.Red;
 			
@@ -1312,13 +1312,13 @@ namespace ZedGraph.UnitTest
 				"Is TextItem Centered on Graph?" ) );
 			
 			text.FontSpec.FontColor = Color.Black;
-			text.FontSpec.Frame = new Frame( true, Color.Red, 3.0F );
+			text.FontSpec.Border = new Border( true, Color.Red, 3.0F );
 			
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
-				"Does TextItem have a Frame?" ) );
+				"Does TextItem have a Border?" ) );
 			
-			text.FontSpec.Frame = new Frame( Color.Black, 1.0F );
+			text.FontSpec.Border = new Border( Color.Black, 1.0F );
 			
 			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
 			text.FontSpec.Fill.Type = FillType.Brush;

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-13 04:52:53 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-10-14 04:06:01 $ </version>
 	abstract public class CurveItem
 	{
 	
@@ -169,7 +169,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The <see cref="Line"/>/<see cref="Symbol"/>/<see cref="Bar"/> 
 		/// color (FillColor for the Bar).  This is a common access to
-		/// <see cref="ZedGraph.Line.Color"/>, <see cref="ZedGraph.Frame.Color"/>, and
+		/// <see cref="ZedGraph.Line.Color"/>, <see cref="ZedGraph.Border.Color"/>, and
 		/// <see cref="ZedGraph.Fill.Color"/> properties for this curve.
 		/// </summary>
 		public Color Color
@@ -181,7 +181,7 @@ namespace ZedGraph
 				else if ( ((LineItem) this).Line.IsVisible )
 					return ((LineItem) this).Line.Color;
 				else
-					return ((LineItem) this).Symbol.Frame.Color;
+					return ((LineItem) this).Symbol.Border.Color;
 			}
 			set 
 			{
@@ -191,9 +191,9 @@ namespace ZedGraph
 				}
 				else
 				{
-					((LineItem) this).Line.Color		= value;
-					((LineItem) this).Symbol.Frame.Color	= value;
-					((LineItem) this).Symbol.Fill.Color	= value;
+					((LineItem) this).Line.Color			= value;
+					((LineItem) this).Symbol.Border.Color	= value;
+					((LineItem) this).Symbol.Fill.Color		= value;
 				}
 			}
 		}

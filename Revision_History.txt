@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+13-Oct-2004 (by Champion)
+  Change Frame class to Border
+  Add CurveList.Remove( curve )
+  Add TextItem( string, float, float, CoordType )
+  
 12-Oct-2004 (by Champion)
   Make CurveItem an abstract base class & add BarItem & LineItem
   Fix BaseDPI problem, get rid of the BaseDPI property

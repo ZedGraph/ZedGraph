@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-10-13 04:52:53 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-10-14 04:06:01 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -67,11 +67,11 @@ namespace ZedGraph
 		/// </summary>
 		private Fill		fill;
 		/// <summary>
-		/// Private field that stores the <see cref="ZedGraph.Frame"/> data for this
-		/// <see cref="Legend"/>.  Use the public property <see cref="Frame"/> to
+		/// Private field that stores the <see cref="ZedGraph.Border"/> data for this
+		/// <see cref="Legend"/>.  Use the public property <see cref="Border"/> to
 		/// access this value.
 		/// </summary>
-		private Frame		frame;		
+		private Border		border;		
 		/// <summary>
 		/// Private field to maintain the <see cref="FontSpec"/> class that
 		/// maintains font attributes for the entries in this legend.  Use
@@ -89,15 +89,15 @@ namespace ZedGraph
 		{
 			// Default Legend properties
 			/// <summary>
-			/// The default pen width for the <see cref="Legend"/> frame border.
-			/// (<see cref="ZedGraph.Frame.PenWidth"/> property).  Units are in pixels.
+			/// The default pen width for the <see cref="Legend"/> border border.
+			/// (<see cref="ZedGraph.Border.PenWidth"/> property).  Units are in pixels.
 			/// </summary>
-			public static float FrameWidth = 1;
+			public static float BorderWidth = 1;
 			/// <summary>
-			/// The default color for the <see cref="Legend"/> frame border.
-			/// (<see cref="ZedGraph.Frame.Color"/> property). 
+			/// The default color for the <see cref="Legend"/> border border.
+			/// (<see cref="ZedGraph.Border.Color"/> property). 
 			/// </summary>
-			public static Color FrameColor = Color.Black;
+			public static Color BorderColor = Color.Black;
 			/// <summary>
 			/// The default color for the <see cref="Legend"/> background.
 			/// (<see cref="ZedGraph.Fill.Color"/> property).  Use of this
@@ -120,12 +120,12 @@ namespace ZedGraph
 			/// </summary>
 			public static LegendLoc Location = LegendLoc.Top;
 			/// <summary>
-			/// The default frame mode for the <see cref="Legend"/>.
-			/// (<see cref="ZedGraph.Frame.IsVisible"/> property). true
-			/// to draw a frame around the <see cref="Legend.Rect"/>,
+			/// The default border mode for the <see cref="Legend"/>.
+			/// (<see cref="ZedGraph.Border.IsVisible"/> property). true
+			/// to draw a border around the <see cref="Legend.Rect"/>,
 			/// false otherwise.
 			/// </summary>
-			public static bool IsFramed = true;
+			public static bool IsBorderVisible = true;
 			/// <summary>
 			/// The default display mode for the <see cref="Legend"/>.
 			/// (<see cref="Legend.IsVisible"/> property). true
@@ -235,12 +235,12 @@ namespace ZedGraph
 			set { isVisible = value; }
 		}
 		/// <summary>
-		/// The <see cref="Frame"/> class used to draw the frame border around this <see cref="Legend"/>.
+		/// The <see cref="Border"/> class used to draw the border border around this <see cref="Legend"/>.
 		/// </summary>
-		public Frame Frame
+		public Border Border
 		{
-			get { return frame; }
-			set { frame = value; }
+			get { return border; }
+			set { border = value; }
 		}		
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
@@ -292,9 +292,9 @@ namespace ZedGraph
 									Default.FontItalic, Default.FontUnderline,
 									Default.FontFillColor, Default.FontFillBrush,
 									Default.FontFillType );						
-			this.fontSpec.Frame.IsVisible = false;
+			this.fontSpec.Border.IsVisible = false;
 			
-			this.frame = new Frame( Default.IsFramed, Default.FrameColor, Default.FrameWidth );
+			this.border = new Border( Default.IsBorderVisible, Default.BorderColor, Default.BorderWidth );
 			this.fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
 		}
 
@@ -309,7 +309,7 @@ namespace ZedGraph
 			isHStack = rhs.IsHStack;
 			isVisible = rhs.IsVisible;
 			
-			this.frame = (Frame) rhs.Frame.Clone();
+			this.border = (Border) rhs.Border.Clone();
 			this.fill = (Fill) rhs.Fill.Clone();
 			
 			fontSpec = (FontSpec) rhs.FontSpec.Clone();
@@ -413,9 +413,9 @@ namespace ZedGraph
 			}
 		
 		
-			// Draw a frame around the legend if required
+			// Draw a border around the legend if required
 			if ( iEntry > 0 )
-				this.Frame.Draw( g, this.rect );
+				this.Border.Draw( g, this.rect );
 		}
 
 		/// <summary>
@@ -558,13 +558,13 @@ namespace ZedGraph
 						widthAvail = 0;
 						break;
 		
-					// for the top & bottom, the axis frame width is available
+					// for the top & bottom, the axis border width is available
 					case LegendLoc.Top:
 					case LegendLoc.Bottom:
 						widthAvail = tAxisRect.Width;
 						break;
 		
-					// for inside the axis area, use 1/2 of the axis frame width
+					// for inside the axis area, use 1/2 of the axis border width
 					case LegendLoc.InsideTopRight:
 					case LegendLoc.InsideTopLeft:
 					case LegendLoc.InsideBotRight:

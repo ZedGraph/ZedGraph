@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-13 04:52:54 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-14 04:06:01 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -61,11 +61,11 @@ namespace ZedGraph
 		/// </summary>
 		private Fill		fill;
 		/// <summary>
-		/// Private field that stores the <see cref="ZedGraph.Frame"/> data for this
-		/// <see cref="Symbol"/>.  Use the public property <see cref="Frame"/> to
+		/// Private field that stores the <see cref="ZedGraph.Border"/> data for this
+		/// <see cref="Symbol"/>.  Use the public property <see cref="Border"/> to
 		/// access this value.
 		/// </summary>
-		private Frame		frame;
+		private Border		border;
 	#endregion
 
 	#region Defaults
@@ -83,7 +83,7 @@ namespace ZedGraph
 			public static float Size = 7;
 			/// <summary>
 			/// The default pen width to be used for drawing curve symbols
-			/// (<see cref="ZedGraph.Frame.PenWidth"/> property).  Units are points.
+			/// (<see cref="ZedGraph.Border.PenWidth"/> property).  Units are points.
 			/// </summary>
 			public static float PenWidth = 1.0F;
 			/// <summary>
@@ -111,14 +111,14 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsVisible = true;
 			/// <summary>
-			/// The default for drawing frames around symbols (<see cref="ZedGraph.Frame.IsVisible"/> property).
+			/// The default for drawing frames around symbols (<see cref="ZedGraph.Border.IsVisible"/> property).
 			/// true to display symbol frames, false to hide them.
 			/// </summary>
-			public static bool IsFramed = true;
+			public static bool IsBorderVisible = true;
 			/// <summary>
-			/// The default color for drawing symbols (<see cref="ZedGraph.Frame.Color"/> property).
+			/// The default color for drawing symbols (<see cref="ZedGraph.Border.Color"/> property).
 			/// </summary>
-			public static Color FrameColor = Color.Red;
+			public static Color BorderColor = Color.Red;
 		}
 	#endregion
 
@@ -164,13 +164,13 @@ namespace ZedGraph
 			set { fill = value; }
 		}
 		/// <summary>
-		/// Gets or sets the <see cref="ZedGraph.Frame"/> data for this
+		/// Gets or sets the <see cref="ZedGraph.Border"/> data for this
 		/// <see cref="Symbol"/>, which controls the border outline of the symbol.
 		/// </summary>
-		public Frame Frame
+		public Border Border
 		{
-			get { return frame; }
-			set { frame = value; }
+			get { return border; }
+			set { border = value; }
 		}
 
 		#endregion
@@ -200,7 +200,7 @@ namespace ZedGraph
 			this.size = Default.Size;
 			this.type = type;
 			this.isVisible = Default.IsVisible;
-			this.frame = new Frame( Default.IsFramed, color, Default.PenWidth );
+			this.border = new Border( Default.IsBorderVisible, color, Default.PenWidth );
 			this.fill = new Fill( color, Default.FillBrush, Default.FillType );
 		}
 
@@ -214,7 +214,7 @@ namespace ZedGraph
 			type = rhs.Type;
 			isVisible = rhs.IsVisible;
 			fill = (Fill) rhs.Fill.Clone();
-			frame = (Frame) rhs.Frame.Clone();
+			border = (Border) rhs.Border.Clone();
 		}
 
 		/// <summary>
@@ -258,7 +258,7 @@ namespace ZedGraph
 				if ( this.fill.IsVisible)
 					FillPoint( g, x, y, scaleFactor, pen, brush );
 				
-				if ( this.Frame.IsVisible )
+				if ( this.border.IsVisible )
 					DrawPoint( g, x, y, scaleFactor, pen );
 			}
 		}
@@ -295,7 +295,7 @@ namespace ZedGraph
 					g.FillPath( brush, path );
 					//FillPoint( g, x, y, scaleFactor, pen, brush );
 				
-				if ( this.Frame.IsVisible )
+				if ( this.border.IsVisible )
 					g.DrawPath( pen, path );
 					//DrawPoint( g, x, y, scaleFactor, pen );
 				
@@ -326,13 +326,13 @@ namespace ZedGraph
 			if ( this.isVisible && this.Type != SymbolType.None )
 			{
 				SolidBrush	brush = new SolidBrush( this.fill.Color );
-				Pen pen = new Pen( this.frame.Color, this.frame.PenWidth );
+				Pen pen = new Pen( this.border.Color, this.border.PenWidth );
 
 				// Fill or draw the symbol as required
 				if ( this.fill.IsVisible)
 					FillPoint( g, x, y, scaleFactor, pen, brush );
 				
-				if ( this.frame.IsVisible )
+				if ( this.border.IsVisible )
 					DrawPoint( g, x, y, scaleFactor, pen );
 			}
 		}
@@ -354,7 +354,7 @@ namespace ZedGraph
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.</param>
 		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
-		/// <see cref="ZedGraph.Frame.PenWidth"/> for this symbol</param>
+		/// <see cref="ZedGraph.Border.PenWidth"/> for this symbol</param>
 		
 		public void DrawPoint( Graphics g, float x, float y, double scaleFactor, Pen pen )
 		{
@@ -490,7 +490,7 @@ namespace ZedGraph
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>		
 		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
-		/// <see cref="ZedGraph.Frame.PenWidth"/> for this symbol</param>
+		/// <see cref="ZedGraph.Border.PenWidth"/> for this symbol</param>
 		/// <param name="brush">A brush with the <see cref="Color"/> attribute
 		/// for this symbol</param>
 		public void FillPoint( Graphics g, float x, float y, double scaleFactor,
@@ -605,12 +605,12 @@ namespace ZedGraph
 			float	tmpX, tmpY;
 			double	curX, curY;
 		
-			if ( points != null && ( this.frame.IsVisible || this.fill.IsVisible ) )
+			if ( points != null && ( this.border.IsVisible || this.fill.IsVisible ) )
 			{
 				// For the sake of speed, go ahead and create a solid brush and a pen
 				// If it's a gradient fill, it will be created on the fly for each symbol
 				SolidBrush	brush = new SolidBrush( this.fill.Color );
-				Pen pen = new Pen( this.frame.Color, this.frame.PenWidth );
+				Pen pen = new Pen( this.border.Color, this.border.PenWidth );
 				
 				GraphicsPath path = MakePath( g, scaleFactor );
 

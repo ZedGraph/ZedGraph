@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-10-13 04:52:53 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-10-14 04:06:00 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -721,7 +721,7 @@ namespace ZedGraph
 					Default.TitleFillColor, Default.TitleFillBrush,
 					Default.TitleFillType );
 
-			this.titleFontSpec.Frame.IsVisible = false;
+			this.titleFontSpec.Border.IsVisible = false;
 
 			this.scaleFontSpec = new FontSpec(
 				Default.ScaleFontFamily, Default.ScaleFontSize,
@@ -729,7 +729,7 @@ namespace ZedGraph
 				Default.ScaleFontUnderline, Default.ScaleFontItalic,
 				Default.ScaleFillColor, Default.ScaleFillBrush,
 				Default.ScaleFillType );
-			this.scaleFontSpec.Frame.IsVisible = false;
+			this.scaleFontSpec.Border.IsVisible = false;
 		}
 
 		/// <summary>
@@ -1103,7 +1103,7 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// This property determines whether or not the major outside tic marks
-		/// are shown.  These are the tic marks on the outside of the <see cref="Axis"/> frame.
+		/// are shown.  These are the tic marks on the outside of the <see cref="Axis"/> border.
 		/// The major tic spacing is controlled by <see cref="Step"/>.
 		/// </summary>
 		/// <value>true to show the major outside tic marks, false otherwise</value>
@@ -1120,7 +1120,7 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// This property determines whether or not the minor outside tic marks
-		/// are shown.  These are the tic marks on the outside of the <see cref="Axis"/> frame.
+		/// are shown.  These are the tic marks on the outside of the <see cref="Axis"/> border.
 		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.  This setting is
 		/// ignored (no minor tics are drawn) for text axes (see <see cref="IsText"/>).
 		/// </summary>
@@ -1138,7 +1138,7 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// This property determines whether or not the major inside tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> frame.
+		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> border.
 		/// The major tic spacing is controlled by <see cref="Step"/>.
 		/// </summary>
 		/// <value>true to show the major inside tic marks, false otherwise</value>
@@ -1155,7 +1155,7 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// This property determines whether or not the major opposite tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> frame on
+		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> border on
 		/// the opposite side from the axis.
 		/// The major tic spacing is controlled by <see cref="Step"/>.
 		/// </summary>
@@ -1173,7 +1173,7 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// This property determines whether or not the minor inside tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> frame.
+		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> border.
 		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
 		/// </summary>
 		/// <value>true to show the minor inside tic marks, false otherwise</value>
@@ -1190,7 +1190,7 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// This property determines whether or not the minor opposite tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> frame on
+		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> border on
 		/// the opposite side from the axis.
 		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
 		/// </summary>
@@ -2311,7 +2311,7 @@ namespace ZedGraph
 		/// <param name="pen">Graphic <see cref="Pen"/> with which to draw the tic mark.</param>
 		/// <param name="pixVal">The pixel location of the tic mark on this
 		/// <see cref="Axis"/></param>
-		/// <param name="topPix">The pixel value of the top of the axis frame</param>
+		/// <param name="topPix">The pixel value of the top of the axis border</param>
 		/// <param name="scaledTic">The length of the tic mark, in pixels</param>
 		void DrawATic( Graphics g, Pen pen, float pixVal, float topPix, float scaledTic )
 		{

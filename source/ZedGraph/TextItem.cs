@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-13 04:52:54 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-14 04:06:01 $ </version>
 	public class TextItem : ICloneable
 	{
 	#region Fields
@@ -273,6 +273,34 @@ namespace ZedGraph
 				this.text = text;
 			this.x = x;
 			this.y = y;
+		}
+
+		/// <summary>
+		/// Constructor that sets all <see cref="TextItem"/> properties to default
+		/// values as defined in the <see cref="Default"/> class.
+		/// </summary>
+		/// <param name="text">The text to be displayed.</param>
+		/// <param name="x">The x position of the text.  The units
+		/// of this position are specified by the
+		/// <see cref="CoordinateFrame"/> property.  The text will be
+		/// aligned to this position based on the <see cref="AlignH"/>
+		/// property.</param>
+		/// <param name="y">The y position of the text.  The units
+		/// of this position are specified by the
+		/// <see cref="CoordinateFrame"/> property.  The text will be
+		/// aligned to this position based on the
+		/// <see cref="AlignV"/> property.</param>
+		/// <param name="coordType">The <see cref="CoordType"/> enum value that
+		/// indicates what type of coordinate system the x and y parameters are
+		/// referenced to.</param>
+		public TextItem( string text, float x, float y, CoordType coordType )
+		{
+			Init();
+			if ( text != null )
+				this.text = text;
+			this.x = x;
+			this.y = y;
+			this.coordinateFrame = coordType;
 		}
 
 		/// <summary>

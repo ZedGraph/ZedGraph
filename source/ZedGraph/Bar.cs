@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-13 04:52:53 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-14 04:06:01 $ </version>
 	public class Bar : ICloneable
 	{
 	#region Fields
@@ -40,11 +40,11 @@ namespace ZedGraph
 		/// </summary>
 		private Fill	fill;
 		/// <summary>
-		/// Private field that stores the <see cref="Frame"/> class that defines the
-		/// properties of the frame around this <see cref="BarItem"/>.  Use the public
-		/// property <see cref="Frame"/> to access this value.
+		/// Private field that stores the <see cref="Border"/> class that defines the
+		/// properties of the border around this <see cref="BarItem"/>.  Use the public
+		/// property <see cref="Border"/> to access this value.
 		/// </summary>
-		private Frame	frame;
+		private Border	border;
 	#endregion
 
 	#region Defaults
@@ -56,24 +56,24 @@ namespace ZedGraph
 		{
 			// Default Bar properties
 			/// <summary>
-			/// The default pen width to be used for drawing the frame around the bars
-			/// (<see cref="ZedGraph.Frame.PenWidth"/> property).  Units are points.
+			/// The default pen width to be used for drawing the border around the bars
+			/// (<see cref="ZedGraph.Border.PenWidth"/> property).  Units are points.
 			/// </summary>
-			public static float FrameWidth = 1.0F;
+			public static float BorderWidth = 1.0F;
 			/// <summary>
 			/// The default fill mode for bars (<see cref="ZedGraph.Fill.Type"/> property).
 			/// </summary>
 			public static FillType FillType = FillType.Brush;
 			/// <summary>
-			/// The default frame mode for bars (<see cref="ZedGraph.Frame.IsVisible"/> property).
+			/// The default border mode for bars (<see cref="ZedGraph.Border.IsVisible"/> property).
 			/// true to display frames around bars, false otherwise
 			/// </summary>
-			public static bool IsFramed = true;
+			public static bool IsBorderVisible = true;
 			/// <summary>
 			/// The default color for drawing frames around bars
-			/// (<see cref="ZedGraph.Frame.Color"/> property).
+			/// (<see cref="ZedGraph.Border.Color"/> property).
 			/// </summary>
-			public static Color FrameColor = Color.Black;
+			public static Color BorderColor = Color.Black;
 			/// <summary>
 			/// The default color for filling in the bars
 			/// (<see cref="ZedGraph.Fill.Color"/> property).
@@ -103,7 +103,7 @@ namespace ZedGraph
 		/// <see cref="Bar"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// The specified color is only applied to the
-		/// <see cref="ZedGraph.Fill.Color"/>, and the <see cref="ZedGraph.Frame.Color"/>
+		/// <see cref="ZedGraph.Fill.Color"/>, and the <see cref="ZedGraph.Border.Color"/>
 		/// will be defaulted.
 		/// </summary>
 		/// <param name="color">A <see cref="Color"/> value indicating
@@ -112,7 +112,7 @@ namespace ZedGraph
 		/// </param>
 		public Bar( Color color )
 		{
-			this.frame = new Frame( Default.IsFramed, Default.FrameColor, Default.FrameWidth );
+			this.border = new Border( Default.IsBorderVisible, Default.BorderColor, Default.BorderWidth );
 			this.fill = new Fill( color.IsEmpty ? Default.FillColor : color,
 						Default.FillBrush, Default.FillType );
 		}
@@ -123,7 +123,7 @@ namespace ZedGraph
 		/// <param name="rhs">The Bar object from which to copy</param>
 		public Bar( Bar rhs )
 		{
-			this.frame = (Frame) rhs.Frame.Clone();
+			this.border = (Border) rhs.Border.Clone();
 			this.fill = (Fill) rhs.Fill.Clone();
 		}
 
@@ -139,15 +139,15 @@ namespace ZedGraph
 
 	#region Properties
 		/// <summary>
-		/// The <see cref="Frame"/> object used to draw the frame around the <see cref="Bar"/>.
+		/// The <see cref="Border"/> object used to draw the border around the <see cref="Bar"/>.
 		/// </summary>
-		/// <seealso cref="Default.IsFramed"/>
-		/// <seealso cref="Default.FrameWidth"/>
-		/// <seealso cref="Default.FrameColor"/>
-		public Frame Frame
+		/// <seealso cref="Default.IsBorderVisible"/>
+		/// <seealso cref="Default.BorderWidth"/>
+		/// <seealso cref="Default.BorderColor"/>
+		public Border Border
 		{
-			get { return frame; }
-			set { frame = value; }
+			get { return border; }
+			set { border = value; }
 		}
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
@@ -182,7 +182,7 @@ namespace ZedGraph
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>
-		/// <param name="fullFrame">true to draw the bottom portion of the frame around the
+		/// <param name="fullFrame">true to draw the bottom portion of the border around the
 		/// bar (this is for legend entries)</param>	
 		public void Draw( Graphics g, float left, float right, float top,
 						float bottom, double scaleFactor, bool fullFrame )
@@ -220,7 +220,7 @@ namespace ZedGraph
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>
-		/// <param name="fullFrame">true to draw the bottom portion of the frame around the
+		/// <param name="fullFrame">true to draw the bottom portion of the border around the
 		/// bar (this is for legend entries)</param>	
 		public void Draw( Graphics g, RectangleF rect, double scaleFactor, bool fullFrame )
 		{
@@ -233,9 +233,9 @@ namespace ZedGraph
 				brush.Dispose();
 			}
 
-			// Frame the Bar
-			if ( !this.frame.Color.IsEmpty )
-				this.frame.Draw( g, rect );
+			// Border the Bar
+			if ( !this.border.Color.IsEmpty )
+				this.border.Draw( g, rect );
 				
 			/*
 			if ( this.isFramed && !this.frameColor.IsEmpty  )

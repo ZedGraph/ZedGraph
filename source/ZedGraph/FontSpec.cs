@@ -25,14 +25,14 @@ namespace ZedGraph
 {
 	/// <summary>
 	/// The <see cref="FontSpec"/> class is a generic font class that maintains the font family,
-	/// attributes, colors, frame and fill modes, font size, and angle information.
+	/// attributes, colors, border and fill modes, font size, and angle information.
 	/// This class can render text with a variety of alignment options using the
 	/// <see cref="AlignH"/> and <see cref="AlignV"/> parameters in the
 	/// <see cref="Draw"/> method.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-10-13 04:52:53 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-10-14 04:06:01 $ </version>
 	public class FontSpec : ICloneable
 	{
 	#region Fields
@@ -77,10 +77,10 @@ namespace ZedGraph
 		/// </summary>
 		private Fill		fill;
 		/// <summary>
-		/// Private field that determines the properties of the frame around the text.
-		/// Use the public property <see cref="Frame"/> to access this value.
+		/// Private field that determines the properties of the border around the text.
+		/// Use the public property <see cref="Border"/> to access this value.
 		/// </summary>
-		private Frame frame;
+		private Border border;
 
 		/// <summary>
 		/// Private field that determines the angle at which this
@@ -186,8 +186,8 @@ namespace ZedGraph
 	#region Properties
 		/// <summary>
 		/// The color of the font characters for this <see cref="FontSpec"/>.
-		/// Note that the frame and background
-		/// colors are set using the <see cref="ZedGraph.Frame.Color"/> and
+		/// Note that the border and background
+		/// colors are set using the <see cref="ZedGraph.Border.Color"/> and
 		/// <see cref="ZedGraph.Fill.Color"/> properties, respectively.
 		/// </summary>
 		/// <value>A system <see cref="System.Drawing.Color"/> reference.</value>
@@ -304,13 +304,13 @@ namespace ZedGraph
 			}
 		}
 		/// <summary>
-		/// Gets or sets the <see cref="Frame"/> class used to draw the frame border
+		/// Gets or sets the <see cref="Border"/> class used to draw the border border
 		/// around this text.
 		/// </summary>
-		public Frame Frame
+		public Border Border
 		{
-			get { return frame; }
-			set { frame = value; }
+			get { return border; }
+			set { border = value; }
 		}
 				
 		/// <summary>
@@ -354,7 +354,7 @@ namespace ZedGraph
 			this.angle = 0F;
 			this.stringAlignment = Default.StringAlignment;
 
-			this.frame = new Frame( true, Color.Black, 1.0F );
+			this.border = new Border( true, Color.Black, 1.0F );
 			this.fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
 			
 			Remake( 1.0, this.Size, ref this.scaledSize, ref this.font );
@@ -394,7 +394,7 @@ namespace ZedGraph
 
 
 			this.fill = new Fill( fillColor, fillBrush, fillType );
-			this.frame = new Frame( true, Color.Black, 1.0F );
+			this.border = new Border( true, Color.Black, 1.0F );
 			
 			Remake( 1.0, this.Size, ref this.scaledSize, ref this.font );
 		}
@@ -411,7 +411,7 @@ namespace ZedGraph
 			isItalic = rhs.IsItalic;
 			isUnderline = rhs.IsUnderline;
 			fill = (Fill) rhs.Fill.Clone();
-			frame = (Frame) rhs.Frame.Clone();
+			border = (Border) rhs.Border.Clone();
 
 			stringAlignment = rhs.StringAlignment;
 			angle = rhs.Angle;
@@ -485,7 +485,7 @@ namespace ZedGraph
 	#region Rendering Methods
 		/// <summary>
 		/// Render the specified <paramref name="text"/> to the specifed
-		/// <see cref="Graphics"/> device.  The text, frame, and fill options
+		/// <see cref="Graphics"/> device.  The text, border, and fill options
 		/// will be rendered as required.
 		/// </summary>
 		/// <param name="g">
@@ -571,7 +571,7 @@ namespace ZedGraph
 			else if ( this.stringAlignment == StringAlignment.Near )
 				g.TranslateTransform( -sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
 			
-			// Create a rectangle representing the frame around the
+			// Create a rectangle representing the border around the
 			// text.  Note that, while the text is drawn based on the
 			// TopCenter position, the rectangle is drawn based on
 			// the TopLeft position.  Therefore, move the rectangle
@@ -582,8 +582,8 @@ namespace ZedGraph
 			// If the background is to be filled, fill it
 			this.fill.Draw( g, rectF );
 			
-			// Draw the frame around the text if required
-			this.frame.Draw( g, rectF );
+			// Draw the border around the text if required
+			this.border.Draw( g, rectF );
 
 			// Draw the actual text.  Note that the coordinate system
 			// is set up such that 0,0 is at the location where the
@@ -684,7 +684,7 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Render the specified <paramref name="text"/> to the specifed
-		/// <see cref="Graphics"/> device.  The text, frame, and fill options
+		/// <see cref="Graphics"/> device.  The text, border, and fill options
 		/// will be rendered as required.  This special case method will show the
 		/// specified text as a power of 10, using the <see cref="Default.SuperSize"/>
 		/// and <see cref="Default.SuperShift"/>.
@@ -775,7 +775,7 @@ namespace ZedGraph
 			StringFormat strFormat = new StringFormat();
 			strFormat.Alignment = this.stringAlignment;
 			
-			// Create a rectangle representing the frame around the
+			// Create a rectangle representing the border around the
 			// text.  Note that, while the text is drawn based on the
 			// TopCenter position, the rectangle is drawn based on
 			// the TopLeft position.  Therefore, move the rectangle
@@ -786,8 +786,8 @@ namespace ZedGraph
 			// If the background is to be filled, fill it
 			this.fill.Draw( g, rectF );
 			
-			// Draw the frame around the text if required
-			this.frame.Draw( g, rectF );
+			// Draw the border around the text if required
+			this.border.Draw( g, rectF );
 
 			// Draw the actual text.  Note that the coordinate system
 			// is set up such that 0,0 is at the location where the
