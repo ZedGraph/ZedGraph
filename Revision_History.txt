@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+18-Aug-2004 (by Vos)
+    Add Image property
+    Add ColorSymbolRotator
+    
 17-Aug-2004 (by Champion)
     Fix overlapping labels logic for X vs Y axes
     Fix scaleFormat in copy constuctor

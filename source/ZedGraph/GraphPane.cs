@@ -19,6 +19,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace ZedGraph
@@ -38,7 +39,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.9 $ $Date: 2004-08-23 20:28:49 $ </version>
+	/// <version> $Revision: 1.10 $ $Date: 2004-08-23 20:33:59 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -324,6 +325,24 @@ namespace ZedGraph
 			get { return title; }
 			set { title = value; }
 		}
+
+		/// <summary>
+		/// Gets the graph pane's current image.
+		/// <seealso cref="Bitmap"/>
+		/// </summary>
+		public Bitmap Image
+		{
+			get
+			{
+				Bitmap bitmap = new Bitmap( (int) this.paneRect.Width, (int) this.paneRect.Height );
+				Graphics bitmapGraphics = Graphics.FromImage( bitmap );
+				this.Draw( bitmapGraphics );
+				bitmapGraphics.Dispose();
+
+				return bitmap;
+			}
+		}
+
 	#endregion
 	
 	#region PaneRect Properties

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.8 $ $Date: 2004-08-23 20:28:49 $ </version>
+	/// <version> $Revision: 1.9 $ $Date: 2004-08-23 20:33:59 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
@@ -131,6 +131,16 @@ namespace ZedGraph
 		}
 								
 		/// <summary>
+		/// <see cref="CurveItem"/> constructor that specifies the label of the CurveItem.
+		/// This is the same as <c>CurveItem(label, null, null)</c>.
+		/// <seealso cref="CurveItem(string, double, double)"/>
+		/// </summary>
+		/// <param name="label">A string label (legend entry) for this curve</param>
+		public CurveItem( string label ): this( label, null, null)
+		{
+		}
+
+		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The CurveItem object from which to copy</param>
@@ -153,28 +163,6 @@ namespace ZedGraph
 		public object Clone()
 		{ 
 			return new CurveItem( this ); 
-		}
-
-		/// <summary>
-		/// Add a single x,y coordinate point to the end of the points collection for this curve.
-		/// </summary>
-		/// <param name="x">The X coordinate value</param>
-		/// <param name="y">The Y coordinate value</param>
-		public void AddPoint( double x, double y )
-		{
-			this.AddPoint( new PointPair( x, y ) );
-		}
-
-		/// <summary>
-		/// Add a <see cref="PointPair"/> object to the end of the points collection for this curve.
-		/// </summary>
-		/// <param name="point">A reference to the <see cref="PointPair"/> object to
-		/// be added</param>
-		public void AddPoint( PointPair point )
-		{
-			if ( this.points == null )
-				this.Points = new PointPairList();
-			this.points.Add( point );
 		}
 
 		#endregion
@@ -214,6 +202,32 @@ namespace ZedGraph
 			get { return label; }
 			set { label = value;}
 		}
+
+		/// <summary>
+		/// The <see cref="Line"/>/<see cref="Symbol"/>/<see cref="Bar"/> 
+		/// color (FillColor for the Bar).  This is a common access to
+		/// <see cref="Line.Color"/>, <see cref="Symbol.Color"/>, and
+		/// <see cref="Bar.FillColor"/> properties for this curve.
+		/// </summary>
+		public Color Color
+		{
+			get
+			{
+				if ( this.IsBar )
+					return Bar.FillColor;
+				else if ( this.Line.IsVisible )
+					return this.Line.Color;
+				else
+					return this.Symbol.Color;
+			}
+			set 
+			{ 
+				Line.Color		= value;
+				Bar.FillColor	= value;
+				Symbol.Color	= value;
+			}
+		}
+
 		/// <summary>
 		/// Determines which Y axis this <see cref="CurveItem"/>
 		/// is assigned to.  The
@@ -572,6 +586,69 @@ namespace ZedGraph
 						- clusterWidth / 2.0F + clusterGap / 2.0F +
 						iOrdinal * ( barWidth + barGap ) + 0.5F * barWidth;
 		}
+	#endregion
+
+	#region Utility Methods
+
+		/// <summary>
+		/// Add a single x,y coordinate point to the end of the points collection for this curve.
+		/// </summary>
+		/// <param name="x">The X coordinate value</param>
+		/// <param name="y">The Y coordinate value</param>
+		public void AddPoint( double x, double y )
+		{
+			this.AddPoint( new PointPair( x, y ) );
+		}
+
+		/// <summary>
+		/// Add a <see cref="PointPair"/> object to the end of the points collection for this curve.
+		/// </summary>
+		/// <param name="point">A reference to the <see cref="PointPair"/> object to
+		/// be added</param>
+		public void AddPoint( PointPair point )
+		{
+			if ( this.points == null )
+				this.Points = new PointPairList();
+			this.points.Add( point );
+		}
+
+		/// <summary>
+		/// Clears the points from this <see cref="CurveItem"/>.  This is the same
+		/// as <c>CurveItem.Points.Clear()</c>.
+		/// </summary>
+		public void Clear()
+		{
+			points.Clear();
+		}
+
+		/// <summary>
+		/// Loads some pseudo unique colors/symbols into this CurveItem.  This
+		/// is the same as <c>MakeUnique(ColorSymbolRotator.StaticInstance)</c>.
+		/// <seealso cref="ColorSymbolRotator.StaticInstance"/>
+		/// <seealso cref="ColorSymbolRotator"/>
+		/// <seealso cref="MakeUnique(ColorSymbolRotator)"/>
+		/// </summary>
+		public void MakeUnique()
+		{
+			this.MakeUnique( ColorSymbolRotator.StaticInstance );
+		}
+
+		/// <summary>
+		/// Loads some pseudo unique colors/symbols into this CurveItem.  This
+		/// is mainly useful for differentiating a set of new CurveItems without
+		/// having to pick your own colors/symbols.
+		/// <seealso cref="MakeUnique(ColorSymbolRotator)"/>
+		/// </summary>
+		/// <param name="rotator">
+		/// The <see cref="ColorSymbolRotator"/> that is used to pick the color
+		///  and symbol for this method call.
+		/// </param>
+		public void MakeUnique( ColorSymbolRotator rotator )
+		{
+			this.Color			= rotator.NextColor;
+			this.Symbol.Type	= rotator.NextSymbol;
+		}
+	
 	#endregion
 	}
 }

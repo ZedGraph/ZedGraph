@@ -31,9 +31,8 @@ namespace ZedGraph
 	/// attributes are accessible via the <see cref="ZedGraphControl.GraphPane"/>
 	/// property.
 	/// </summary>
-	/// 
-	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <author> John Champion revised by Jerry Vos</author>
+	/// <version> $Revision: 1.6 $ $Date: 2004-08-23 20:33:59 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		/// <summary>
@@ -134,6 +133,23 @@ namespace ZedGraph
 		{
 			this.graphPane.PaneRect = new RectangleF( 0, 0, this.Size.Width, this.Size.Height );
 			this.Invalidate();
+		}
+
+		/// <summary>
+		/// Gets the graph pane's current image.
+		/// <seealso cref="Bitmap"/>
+		/// </summary>
+		public Bitmap Image
+		{
+			get
+			{
+				Bitmap bitmap = new Bitmap( this.Width, this.Height );
+				Graphics bitmapGraphics = Graphics.FromImage( bitmap );
+				this.graphPane.Draw( bitmapGraphics );
+				bitmapGraphics.Dispose();
+
+				return bitmap;
+			}
 		}
 	}
 }
