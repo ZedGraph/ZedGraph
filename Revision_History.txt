@@ -1,27 +1,30 @@
 ZedGraph Class Library Revision History
 
-16-Oct-2004 (by Champion)
+17-Nov-2004 (by Champion)
+  Add ImageItem
+  
+16-Nov-2004 (by Champion)
   Convert ArrowItem & TextItem to children of GraphItem
   Delete TextList & ArrowList, make new GraphItemList
   
-16-Oct-2004 (by Champion)
+16-Nov-2004 (by Champion)
   Add ErrorBar (I-beam) graph type
   Convert HiLowBar type to a separate HiLowBarItem class
   Fix Hatch and PathGradient brush problem
   
-9-Oct-2004 (by Champion)
+9-Nov-2004 (by Champion)
   Add FillType.GradientByX, Y, Z
   Fix & Consolidate DrawSingleBar() code
   Add UserControl transparency
   Add new Fill constructors for ColorBlend, color array, etc.
 
-5-Oct-2004 (by Champion)
+5-Nov-2004 (by Champion)
   Add BaseVal to PointPair
   Remove PointTrio and PointTrioList entirely
   Add BarType.SortedOverlay
   Add DrawSingleBar code
   
-2-Oct-2004 (by Champion)
+2-Nov-2004 (by Champion)
   Fix scaling logic throughout - all sizes now in points
   Fix CalcScaleFactor so scale factor is world pixels/standard point
   Legend Height calculation now accounts for big symbols

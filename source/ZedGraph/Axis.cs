@@ -25,13 +25,15 @@ namespace ZedGraph
 {
 	/// <summary>
 	/// The Axis class is an abstract base class that encompasses all properties
-	/// and methods required to define a graph Axis.  This class is inherited by the
+	/// and methods required to define a graph Axis.
+	/// </summary>
+	/// <remarks>This class is inherited by the
 	/// <see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/> classes
 	/// to define specific characteristics for those types.
-	/// </summary>
+	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.8 $ $Date: 2004-11-10 04:58:30 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2004-11-19 06:41:05 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -934,11 +936,13 @@ namespace ZedGraph
 
 	#region Scale Properties
 		/// <summary>
-		/// The minimum scale value for this axis.  This value can be set
+		/// Gets or sets the minimum scale value for this axis.
+		/// </summary>
+		/// <remarks>This value can be set
 		/// automatically based on the state of <see cref="MinAuto"/>.  If
 		/// this value is set manually, then <see cref="MinAuto"/> will
 		/// also be set to false.
-		/// </summary>
+		/// </remarks>
 		/// <value> The value is defined in user scale units for <see cref="AxisType.Log"/>
 		/// and <see cref="AxisType.Linear"/> axes. For <see cref="AxisType.Text"/>
 		/// and <see cref="AxisType.Ordinal"/> axes,
@@ -955,11 +959,14 @@ namespace ZedGraph
 			set { min = value; this.minAuto = false; }
 		}
 		/// <summary>
-		/// The maximum scale value for this axis.  This value can be set
+		/// Gets or sets the maximum scale value for this axis.
+		/// </summary>
+		/// <remarks>
+		/// This value can be set
 		/// automatically based on the state of <see cref="MaxAuto"/>.  If
 		/// this value is set manually, then <see cref="MaxAuto"/> will
 		/// also be set to false.
-		/// </summary>
+		/// </remarks>
 		/// <value> The value is defined in user scale units for <see cref="AxisType.Log"/>
 		/// and <see cref="AxisType.Linear"/> axes. For <see cref="AxisType.Text"/>
 		/// and <see cref="AxisType.Ordinal"/> axes,
@@ -976,14 +983,17 @@ namespace ZedGraph
 			set { max = value; this.maxAuto = false; }
 		}
 		/// <summary>
-		/// The scale step size for this axis (the increment between
-		/// labeled axis values).  This value can be set
+		/// Gets or sets the scale step size for this axis (the increment between
+		/// labeled axis values).
+		/// </summary>
+		/// <remarks>
+		/// This value can be set
 		/// automatically based on the state of <see cref="StepAuto"/>.  If
 		/// this value is set manually, then <see cref="StepAuto"/> will
 		/// also be set to false.  This value is ignored for <see cref="AxisType.Log"/>
 		/// axes.  For <see cref="AxisType.Date"/> axes, this
 		/// value is defined in units of <see cref="MajorUnit"/>.
-		/// </summary>
+		/// </remarks>
 		/// <value> The value is defined in user scale units </value>
 		/// <seealso cref="Min"/>
 		/// <seealso cref="Max"/>
@@ -999,11 +1009,13 @@ namespace ZedGraph
 			set { step = value; this.stepAuto = false; }
 		}
 		/// <summary>
-		/// The type of units used for the major step size (<see cref="Step"/>).
+		/// Gets or sets the type of units used for the major step size (<see cref="Step"/>).
+		/// </summary>
+		/// <remarks>
 		/// This unit type only applies to Date-Time axes (<see cref="AxisType.Date"/> = true).
 		/// The axis is set to date type with the <see cref="Type"/> property.
 		/// The unit types are defined as <see cref="DateUnit"/>.
-		/// </summary>
+		/// </remarks>
 		/// <value> The value is a <see cref="DateUnit"/> enum type </value>
 		/// <seealso cref="Min"/>
 		/// <seealso cref="Max"/>
@@ -1016,11 +1028,13 @@ namespace ZedGraph
 			set { majorUnit = value; }
 		}
 		/// <summary>
-		/// The type of units used for the minor step size (<see cref="MinorStep"/>).
+		/// Gets or sets the type of units used for the minor step size (<see cref="MinorStep"/>).
+		/// </summary>
+		/// <remarks>
 		/// This unit type only applies to Date-Time axes (<see cref="AxisType.Date"/> = true).
 		/// The axis is set to date type with the <see cref="Type"/> property.
 		/// The unit types are defined as <see cref="DateUnit"/>.
-		/// </summary>
+		/// </remarks>
 		/// <value> The value is a <see cref="DateUnit"/> enum type </value>
 		/// <seealso cref="Min"/>
 		/// <seealso cref="Max"/>
@@ -1033,14 +1047,16 @@ namespace ZedGraph
 			set { minorUnit = value; }
 		}
 		/// <summary>
-		/// The scale minor step size for this axis (the spacing between
-		/// minor tics).  This value can be set
+		/// Gets or sets the scale minor step size for this axis (the spacing between
+		/// minor tics).
+		/// </summary>
+		/// <remarks>This value can be set
 		/// automatically based on the state of <see cref="MinorStepAuto"/>.  If
 		/// this value is set manually, then <see cref="MinorStepAuto"/> will
 		/// also be set to false.  This value is ignored for <see cref="AxisType.Log"/> and
 		/// <see cref="AxisType.Text"/> axes.  For <see cref="AxisType.Date"/> axes, this
 		/// value is defined in units of <see cref="MinorUnit"/>.
-		/// </summary>
+		/// </remarks>
 		/// <value> The value is defined in user scale units </value>
 		/// <seealso cref="Min"/>
 		/// <seealso cref="Max"/>
@@ -1052,10 +1068,13 @@ namespace ZedGraph
 			set { minorStep = value; this.minorStepAuto = false; }
 		}
 		/// <summary>
-		/// Determines whether or not the minimum scale value <see cref="Min"/>
-		/// is set automatically.  This value will be set to false if
-		/// <see cref="Min"/> is manually changed.
+		/// Gets or sets a value that determines whether or not the minimum scale value <see cref="Min"/>
+		/// is set automatically.
 		/// </summary>
+		/// <remarks>
+		/// This value will be set to false if
+		/// <see cref="Min"/> is manually changed.
+		/// </remarks>
 		/// <value>true for automatic mode, false for manual mode</value>
 		/// <seealso cref="Min"/>
 		public bool MinAuto
@@ -1064,10 +1083,13 @@ namespace ZedGraph
 			set { minAuto = value; }
 		}
 		/// <summary>
-		/// Determines whether or not the maximum scale value <see cref="Max"/>
-		/// is set automatically.  This value will be set to false if
-		/// <see cref="Max"/> is manually changed.
+		/// Gets or sets a value that determines whether or not the maximum scale value <see cref="Max"/>
+		/// is set automatically.
 		/// </summary>
+		/// <remarks>
+		/// This value will be set to false if
+		/// <see cref="Max"/> is manually changed.
+		/// </remarks>
 		/// <value>true for automatic mode, false for manual mode</value>
 		/// <seealso cref="Max"/>
 		public bool MaxAuto
@@ -1076,10 +1098,13 @@ namespace ZedGraph
 			set { maxAuto = value; }
 		}
 		/// <summary>
-		/// Determines whether or not the scale step size <see cref="Step"/>
-		/// is set automatically.  This value will be set to false if
-		/// <see cref="Step"/> is manually changed.
+		/// Gets or sets a value that determines whether or not the scale step size <see cref="Step"/>
+		/// is set automatically.
 		/// </summary>
+		/// <remarks>
+		/// This value will be set to false if
+		/// <see cref="Step"/> is manually changed.
+		/// </remarks>
 		/// <value>true for automatic mode, false for manual mode</value>
 		/// <seealso cref="Step"/>
 		public bool StepAuto
@@ -1088,10 +1113,13 @@ namespace ZedGraph
 			set { stepAuto = value; }
 		}
 		/// <summary>
-		/// Determines whether or not the minor scale step size <see cref="MinorStep"/>
-		/// is set automatically.  This value will be set to false if
-		/// <see cref="MinorStep"/> is manually changed.
+		/// Gets or sets a value that determines whether or not the minor scale step size <see cref="MinorStep"/>
+		/// is set automatically.
 		/// </summary>
+		/// <remarks>
+		/// This value will be set to false if
+		/// <see cref="MinorStep"/> is manually changed.
+		/// </remarks>
 		/// <value>true for automatic mode, false for manual mode</value>
 		/// <seealso cref="MinorStep"/>
 		public bool MinorStepAuto
@@ -1099,13 +1127,15 @@ namespace ZedGraph
 			get { return minorStepAuto; }
 			set { minorStepAuto = value; }
 		}
-		/// <summary> The "grace" value applied to the minimum data range.
+		/// <summary> Gets or sets the "grace" value applied to the minimum data range.
+		/// </summary>
+		/// <remarks>
 		/// This value is
 		/// expressed as a fraction of the total data range.  For example, assume the data
 		/// range is from 4.0 to 16.0, leaving a range of 12.0.  If MinGrace is set to
 		/// 0.1, then 10% of the range, or 1.2 will be subtracted from the minimum data value.
 		/// The scale will then be ranged to cover at least 2.8 to 16.0.
-		/// </summary>
+		/// </remarks>
 		/// <seealso cref="Min"/>
 		/// <seealso cref="Default.MinGrace"/>
 		/// <seealso cref="MaxGrace"/>
@@ -1114,14 +1144,16 @@ namespace ZedGraph
 			get { return minGrace; }
 			set { minGrace = value; }
 		}
-		/// <summary> The "grace" value applied to the maximum data range.
+		/// <summary> Gets or sets the "grace" value applied to the maximum data range.
+		/// </summary>
+		/// <remarks>
 		/// This values determines how much extra space is left after the last data value.
 		/// This value is
 		/// expressed as a fraction of the total data range.  For example, assume the data
 		/// range is from 4.0 to 16.0, leaving a range of 12.0.  If MaxGrace is set to
 		/// 0.1, then 10% of the range, or 1.2 will be added to the maximum data value.
 		/// The scale will then be ranged to cover at least 4.0 to 17.2.
-		/// </summary>
+		/// </remarks>
 		/// <seealso cref="Max"/>
 		/// <seealso cref="Default.MaxGrace"/>
 		/// <seealso cref="MinGrace"/>
@@ -1132,27 +1164,33 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// The minimum axis space allocation.  This term, expressed in
+		/// Gets or sets the minimum axis space allocation.
+		/// </summary>
+		/// <remarks>
+		/// This term, expressed in
         /// points (1/72 inch) and scaled according to <see cref="GraphPane.CalcScaleFactor"/>
         /// for the <see cref="GraphPane"/>, determines the minimum amount of space
 		/// an axis must have between the <see cref="GraphPane.AxisRect"/> and the
 		/// <see cref="GraphPane.PaneRect"/>.  This minimum space
 		/// applies whether <see cref="IsVisible"/> is true or false.
-		/// </summary>
+		/// </remarks>
 		public float MinSpace
 		{
 			get { return minSpace; }
 			set { minSpace = value; }
 		}
 
-		#endregion
+	#endregion
 
 	#region Tic Properties
 		/// <summary>
-		/// The color to use for drawing this <see cref="Axis"/>.  This affects only the tic
+		/// The color to use for drawing this <see cref="Axis"/>.
+		/// </summary>
+		/// <remarks>
+		/// This affects only the tic
 		/// marks, since the <see cref="TitleFontSpec"/> and
 		/// <see cref="ScaleFontSpec"/> both have their own color specification.
-		/// </summary>
+		/// </remarks>
 		/// <value> The color is defined using the
 		/// <see cref="System.Drawing.Color"/> class</value>
 		/// <seealso cref="Default.Color"/>.
@@ -1164,10 +1202,13 @@ namespace ZedGraph
 			set { color = value; }
 		}
 		/// <summary>
-		/// The length of the <see cref="Axis"/> tic marks.  This length will be scaled
+		/// The length of the <see cref="Axis"/> tic marks.
+		/// </summary>
+		/// <remarks>
+		/// This length will be scaled
 		/// according to the <see cref="GraphPane.CalcScaleFactor"/> for the
 		/// <see cref="GraphPane"/>
-		/// </summary>
+		/// </remarks>
         /// <value>The tic size is measured in points (1/72 inch)</value>
         /// <seealso cref="Default.TicSize"/>.
 		/// <seealso cref="IsTic"/>
@@ -1179,10 +1220,13 @@ namespace ZedGraph
 			set { ticSize = value; }
 		}
 		/// <summary>
-		/// The length of the <see cref="Axis"/> minor tic marks.  This length will be scaled
+		/// The length of the <see cref="Axis"/> minor tic marks.
+		/// </summary>
+		/// <remarks>
+		/// This length will be scaled
 		/// according to the <see cref="GraphPane.CalcScaleFactor"/> for the
 		/// <see cref="GraphPane"/>
-		/// </summary>
+		/// </remarks>
         /// <value>The tic size is measured in points (1/72 inch)</value>
         /// <seealso cref="Default.MinorTicSize"/>.
 		/// <seealso cref="IsMinorTic"/>
@@ -1227,10 +1271,13 @@ namespace ZedGraph
 			return (float) ( this.minorTicSize * scaleFactor + 0.5 );
 		}
 		/// <summary>
-		/// This property determines whether or not the major outside tic marks
-		/// are shown.  These are the tic marks on the outside of the <see cref="Axis"/> border.
-		/// The major tic spacing is controlled by <see cref="Step"/>.
+		/// Gets or sets a property that determines whether or not the major outside tic marks
+		/// are shown.
 		/// </summary>
+		/// <remarks>
+		/// These are the tic marks on the outside of the <see cref="Axis"/> border.
+		/// The major tic spacing is controlled by <see cref="Step"/>.
+		/// </remarks>
 		/// <value>true to show the major outside tic marks, false otherwise</value>
 		/// <seealso cref="Default.IsTic"/>.
 		/// <seealso cref="IsMinorTic"/>
@@ -1244,11 +1291,14 @@ namespace ZedGraph
 			set { isTic = value; }
 		}
 		/// <summary>
-		/// This property determines whether or not the minor outside tic marks
-		/// are shown.  These are the tic marks on the outside of the <see cref="Axis"/> border.
+		/// Gets or sets a property that determines whether or not the minor outside tic marks
+		/// are shown.
+		/// </summary>
+		/// <remarks>
+		/// These are the tic marks on the outside of the <see cref="Axis"/> border.
 		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.  This setting is
 		/// ignored (no minor tics are drawn) for text axes (see <see cref="IsText"/>).
-		/// </summary>
+		/// </remarks>
 		/// <value>true to show the minor outside tic marks, false otherwise</value>
 		/// <seealso cref="Default.IsMinorTic"/>.
 		/// <seealso cref="IsTic"/>
@@ -1262,10 +1312,13 @@ namespace ZedGraph
 			set { isMinorTic = value; }
 		}
 		/// <summary>
-		/// This property determines whether or not the major inside tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> border.
-		/// The major tic spacing is controlled by <see cref="Step"/>.
+		/// Gets or sets a property that determines whether or not the major inside tic marks
+		/// are shown.
 		/// </summary>
+		/// <remarks>
+		/// These are the tic marks on the inside of the <see cref="Axis"/> border.
+		/// The major tic spacing is controlled by <see cref="Step"/>.
+		/// </remarks>
 		/// <value>true to show the major inside tic marks, false otherwise</value>
 		/// <seealso cref="Default.IsInsideTic"/>.
 		/// <seealso cref="IsTic"/>
@@ -1279,11 +1332,14 @@ namespace ZedGraph
 			set { isInsideTic = value; }
 		}
 		/// <summary>
-		/// This property determines whether or not the major opposite tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> border on
+		/// Gets or sets a property that determines whether or not the major opposite tic marks
+		/// are shown.
+		/// </summary>
+		/// <remarks>
+		/// These are the tic marks on the inside of the <see cref="Axis"/> border on
 		/// the opposite side from the axis.
 		/// The major tic spacing is controlled by <see cref="Step"/>.
-		/// </summary>
+		/// </remarks>
 		/// <value>true to show the major opposite tic marks, false otherwise</value>
 		/// <seealso cref="Default.IsOppositeTic"/>.
 		/// <seealso cref="IsTic"/>
@@ -1297,10 +1353,13 @@ namespace ZedGraph
 			set { isOppositeTic = value; }
 		}
 		/// <summary>
-		/// This property determines whether or not the minor inside tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> border.
-		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
+		/// Gets or sets a property that determines whether or not the minor inside tic marks
+		/// are shown.
 		/// </summary>
+		/// <remarks>
+		/// These are the tic marks on the inside of the <see cref="Axis"/> border.
+		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
+		/// </remarks>
 		/// <value>true to show the minor inside tic marks, false otherwise</value>
 		/// <seealso cref="Default.IsMinorInsideTic"/>.
 		/// <seealso cref="IsTic"/>
@@ -1314,11 +1373,14 @@ namespace ZedGraph
 			set { isMinorInsideTic = value; }
 		}
 		/// <summary>
-		/// This property determines whether or not the minor opposite tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> border on
+		/// Gets or sets a property that determines whether or not the minor opposite tic marks
+		/// are shown.
+		/// </summary>
+		/// <remarks>
+		/// These are the tic marks on the inside of the <see cref="Axis"/> border on
 		/// the opposite side from the axis.
 		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
-		/// </summary>
+		/// </remarks>
 		/// <value>true to show the minor opposite tic marks, false otherwise</value>
 		/// <seealso cref="Default.IsMinorOppositeTic"/>.
 		/// <seealso cref="IsTic"/>
@@ -1332,10 +1394,13 @@ namespace ZedGraph
 			set { isMinorOppositeTic = value; }
 		}
 		/// <summary>
-		/// This property determines whether or not the major tics will be drawn inbetween the
-		/// labels, rather than right at the labels.  Note that this setting is only
-		/// applicable if <see cref="Axis.Type"/> = <see cref="AxisType.Text"/>.
+		/// Gets or sets a property that determines whether or not the major tics will be drawn
+		/// inbetween the labels, rather than right at the labels.
 		/// </summary>
+		/// <remarks>
+		/// Note that this setting is only
+		/// applicable if <see cref="Axis.Type"/> = <see cref="AxisType.Text"/>.
+		/// </remarks>
 		/// <value>true to place the text between the labels for text axes, false otherwise</value>
 		/// <seealso cref="IsTic"/>
 		/// <seealso cref="IsMinorTic"/>
@@ -1349,7 +1414,8 @@ namespace ZedGraph
 			set { isTicsBetweenLabels = value; }
 		}
 		/// <summary>
-		/// The pen width to be used when drawing the tic marks for this <see cref="Axis"/>
+		/// Gets or sets the pen width to be used when drawing the tic marks for
+		/// this <see cref="Axis"/>
 		/// </summary>
         /// <value>The pen width is defined in points (1/72 inch)</value>
         /// <seealso cref="Default.TicPenWidth"/>.
@@ -1365,7 +1431,8 @@ namespace ZedGraph
 	#region Grid Properties
 
 		/// <summary>
-		/// Determines if the major <see cref="Axis"/> gridlines (at each labeled value) will be shown
+		/// Gets or sets a value that determines if the major <see cref="Axis"/> gridlines
+		/// (at each labeled value) will be visible
 		/// </summary>
 		/// <value>true to show the gridlines, false otherwise</value>
 		/// <seealso cref="Default.IsShowGrid">Default.IsShowGrid</seealso>.
@@ -1381,11 +1448,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Determines if a line will be drawn at the zero value for the axis.  That is, a line that
-		/// divides the negative values from the positive values.  The default is set according to
+		/// Gets or sets a boolean value that determines if a line will be drawn at the
+		/// zero value for the axis.
+		/// </summary>
+		/// <remarks>
+		/// The zero line is a line that divides the negative values from the positive values.
+		/// The default is set according to
 		/// <see cref="XAxis.Default.IsZeroLine"/>, <see cref="YAxis.Default.IsZeroLine"/>,
 		/// <see cref="Y2Axis.Default.IsZeroLine"/>,
-		/// </summary>
+		/// </remarks>
 		/// <value>true to show the zero line, false otherwise</value>
 		public bool IsZeroLine
 		{
@@ -1394,9 +1465,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// The "Dash On" mode for drawing the grid.  This is the distance,
+		/// The "Dash On" mode for drawing the grid.
+		/// </summary>
+		/// <remarks>
+		/// This is the distance,
         /// in points (1/72 inch), of the dash segments that make up the dashed grid lines.
-        /// </summary>
+        /// </remarks>
         /// <value>The dash on length is defined in points (1/72 inch)</value>
         /// <seealso cref="GridDashOff"/>
 		/// <seealso cref="IsShowGrid"/>
@@ -1407,10 +1481,13 @@ namespace ZedGraph
 			set { gridDashOn = value; }
 		}
 		/// <summary>
-		/// The "Dash Off" mode for drawing the grid.  This is the distance,
+		/// The "Dash Off" mode for drawing the grid.
+		/// </summary>
+		/// <remarks>
+		/// This is the distance,
         /// in points (1/72 inch), of the spaces between the dash segments that make up
         /// the dashed grid lines.
-		/// </summary>
+		/// </remarks>
         /// <value>The dash off length is defined in points (1/72 inch)</value>
         /// <seealso cref="GridDashOn"/>
 		/// <seealso cref="IsShowGrid"/>
@@ -1433,10 +1510,13 @@ namespace ZedGraph
 			set { gridPenWidth = value; }
 		}
 		/// <summary>
-		/// The color to use for drawing this <see cref="Axis"/> grid.  This affects only the grid
+		/// The color to use for drawing this <see cref="Axis"/> grid.
+		/// </summary>
+		/// <remarks>
+		/// This affects only the grid
 		/// lines, since the <see cref="TitleFontSpec"/> and
 		/// <see cref="ScaleFontSpec"/> both have their own color specification.
-		/// </summary>
+		/// </remarks>
 		/// <value> The color is defined using the
 		/// <see cref="System.Drawing.Color"/> class</value>
 		/// <seealso cref="Default.GridColor"/>.
@@ -1451,7 +1531,8 @@ namespace ZedGraph
 	#region Minor Grid Properties
 
 		/// <summary>
-		/// Determines if the minor <see cref="Axis"/> gridlines (in between each labeled value) will be shown
+		/// Gets or sets a value that determines if the minor <see cref="Axis"/> gridlines
+		/// (in between each labeled value) will be visible
 		/// </summary>
 		/// <value>true to show the minor gridlines, false otherwise</value>
 		/// <seealso cref="Default.IsShowMinorGrid">Default.IsShowMinorGrid</seealso>.
@@ -1467,9 +1548,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// The "Dash On" mode for drawing the minor grid.  This is the distance,
+		/// Gets or sets the "Dash On" mode for drawing the minor grid.
+		/// </summary>
+		/// <remarks>
+		/// This is the distance,
         /// in points (1/72 inch), of the dash segments that make up the dashed grid lines.
-        /// </summary>
+        /// </remarks>
         /// <value>The dash on length is defined in points (1/72 inch)</value>
         /// <seealso cref="MinorGridDashOff"/>
 		/// <seealso cref="IsShowMinorGrid"/>
@@ -1480,10 +1564,13 @@ namespace ZedGraph
 			set { minorGridDashOn = value; }
 		}
 		/// <summary>
-		/// The "Dash Off" mode for drawing the minor grid.  This is the distance,
+		/// Gets or sets the "Dash Off" mode for drawing the minor grid.
+		/// </summary>
+		/// <remarks>
+		/// This is the distance,
         /// in points (1/72 inch), of the spaces between the dash segments that make up
         /// the dashed grid lines.
-		/// </summary>
+		/// </remarks>
         /// <value>The dash off length is defined in points (1/72 inch)</value>
         /// <seealso cref="MinorGridDashOn"/>
 		/// <seealso cref="IsShowMinorGrid"/>
@@ -1494,7 +1581,7 @@ namespace ZedGraph
 			set { minorGridDashOff = value; }
 		}
 		/// <summary>
-		/// The default pen width used for drawing the minor grid lines.
+		/// Gets or sets the default pen width used for drawing the minor grid lines.
 		/// </summary>
         /// <value>The grid pen width is defined in points (1/72 inch)</value>
         /// <seealso cref="IsShowMinorGrid"/>
@@ -1506,10 +1593,13 @@ namespace ZedGraph
 			set { minorGridPenWidth = value; }
 		}
 		/// <summary>
-		/// The color to use for drawing this <see cref="Axis"/> minor grid.  This affects only the minor grid
+		/// Gets or sets the color to use for drawing this <see cref="Axis"/> minor grid.
+		/// </summary>
+		/// <remarks>
+		/// This affects only the minor grid
 		/// lines, since the <see cref="TitleFontSpec"/> and
 		/// <see cref="ScaleFontSpec"/> both have their own color specification.
-		/// </summary>
+		/// </remarks>
 		/// <value> The color is defined using the
 		/// <see cref="System.Drawing.Color"/> class</value>
 		/// <seealso cref="Default.MinorGridColor"/>.
@@ -1524,10 +1614,12 @@ namespace ZedGraph
 	#region Type Properties
 		/// <summary>
 		/// This property determines whether or not the <see cref="Axis"/> is shown.
+		/// </summary>
+		/// <remarks>
 		/// Note that even if
 		/// the axis is not visible, it can still be actively used to draw curves on a
 		/// graph, it will just be invisible to the user
-		/// </summary>
+		/// </remarks>
 		/// <value>true to show the axis, false to disable all drawing of this axis</value>
 		/// <seealso cref="XAxis.Default.IsVisible"/>.
 		/// <seealso cref="YAxis.Default.IsVisible"/>.
@@ -1549,9 +1641,12 @@ namespace ZedGraph
 			set { isReverse = value; }
 		}
 		/// <summary>
-		/// Determines if this <see cref="Axis"/> is logarithmic (base 10).  To make this property
-		/// true, set <see cref="Type"/> to <see cref="AxisType.Log"/>.
+		/// Gets a property that indicates if this <see cref="Axis"/> is logarithmic (base 10).
 		/// </summary>
+		/// <remarks>
+		/// To make this property
+		/// true, set <see cref="Type"/> to <see cref="AxisType.Log"/>.
+		/// </remarks>
 		/// <value>true for a logarithmic axis, false for a linear, date, or text axis</value>
 		/// <seealso cref="Type"/>
 		/// <seealso cref="AxisType"/>
@@ -1560,9 +1655,12 @@ namespace ZedGraph
 			get { return type == AxisType.Log; }
 		}
 		/// <summary>
-		/// Determines if this <see cref="Axis"/> is of the date-time type.  To make this property
-		/// true, set <see cref="Type"/> to <see cref="AxisType.Date"/>.
+		/// Determines if this <see cref="Axis"/> is of the date-time type.
 		/// </summary>
+		/// <remarks>
+		/// To make this property
+		/// true, set <see cref="Type"/> to <see cref="AxisType.Date"/>.
+		/// </remarks>
 		/// <value>true for a date axis, false for a linear, log, or text axis</value>
 		/// <seealso cref="Type"/>
 		/// <seealso cref="AxisType"/>
@@ -1572,12 +1670,15 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// Tests if this <see cref="Axis"/> is labeled with user provided text
-		/// labels rather than calculated numeric values.  The text labels are provided via the
+		/// labels rather than calculated numeric values.
+		/// </summary>
+		/// <remarks>
+		/// The text labels are provided via the
 		/// <see cref="TextLabels"/> property.  Internally, the axis is still handled with ordinal values
 		/// such that the axis <see cref="Min"/> is set to 1.0, and the axis <see cref="Max"/> is set
 		/// to the number of labels.  To make this property true, set <see cref="Type"/> to
 		/// <see cref="AxisType.Text"/>.
-		/// </summary>
+		/// </remarks>
 		/// <value>true for a text-based axis, false for a linear, log, or date axes.
 		/// If this property is true, then you should also provide
 		/// an array of labels via <see cref="TextLabels"/>.
@@ -1589,7 +1690,10 @@ namespace ZedGraph
 			get { return type == AxisType.Text; }
 		}
 		/// <summary>
-		/// Tests if this <see cref="Axis"/> is an <see cref="AxisType.Ordinal"/> type axis with numeric labels.
+		/// Tests if this <see cref="Axis"/> is an <see cref="AxisType.Ordinal"/> type axis
+		/// with numeric labels.
+		/// </summary>
+		/// <remarks>
 		/// This is similar to a <see cref="AxisType.Text"/> axis, but the labels are numeric
 		/// rather than user-defined text.  An ordinal axis will cause the associated values for the
 		/// curves to be ignored, and replaced by sequential integer values.
@@ -1597,7 +1701,7 @@ namespace ZedGraph
 		/// first point will be plotted at an ordinal value of 1.0, the second value at 2.0, etc.
 		/// To make this property true, set <see cref="Type"/> to
 		/// <see cref="AxisType.Ordinal"/>.
-		/// </summary>
+		/// </remarks>
 		/// <value>true for an ordinal axis, false for a linear, log, text, or date axes.
 		/// </value>
 		/// <seealso cref="Type"/>
@@ -1608,10 +1712,12 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// Gets or sets the <see cref="AxisType"/> for this <see cref="Axis"/>.
+		/// </summary>
+		/// <remarks>
 		/// The type can be either <see cref="AxisType.Linear"/>,
 		/// <see cref="AxisType.Log"/>, <see cref="AxisType.Date"/>,
 		/// or <see cref="AxisType.Text"/>.
-		/// </summary>
+		/// </remarks>
 		/// <seealso cref="Default.Type"/>.
 		/// <seealso cref="IsLog"/>
 		/// <seealso cref="IsText"/>
@@ -1627,13 +1733,17 @@ namespace ZedGraph
 
 	#region Label Properties
 		/// <summary>
+		/// Gets or sets the property that controls the magnitude factor (power of 10) for
+		/// this scale.
+		/// </summary>
+		/// <remarks>
 		/// For large scale values, a "magnitude" value (power of 10) is automatically
 		/// used for scaling the graph.  This magnitude value is automatically appended
 		/// to the end of the Axis <see cref="Title"/> (e.g., "(10^4)") to indicate
 		/// that a magnitude is in use.  This property controls whether or not the
 		/// magnitude is included in the title.  Note that it only affects the axis
 		/// title; a magnitude value may still be used even if it is not shown in the title.
-		/// </summary>
+		/// </remarks>
 		/// <value>true to show the magnitude value, false to hide it</value>
 		/// <seealso cref="Title"/>
 		/// <seealso cref="ScaleMag"/>
@@ -1645,11 +1755,13 @@ namespace ZedGraph
 			set { isOmitMag = value; }
 		}
 		/// <summary>
-		/// The text title of this <see cref="Axis"/>.  This normally shows the basis and dimensions of
+		/// Gets or sets the text title of this <see cref="Axis"/>.
+		/// </summary>
+		/// <remarks>The title normally shows the basis and dimensions of
 		/// the scale range, such as "Time (Years)".  The title is only shown if the
 		/// <see cref="IsShowTitle"/> property is set to true.  If the Title text is empty,
 		/// then no title is shown, and no space is "reserved" for the title on the graph.
-		/// </summary>
+		/// </remarks>
 		/// <value>the title is a string value</value>
 		/// <seealso cref="IsOmitMag"/>
 		/// <seealso cref="IsShowTitle"/>
@@ -1674,10 +1786,12 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Determines if powers-of-ten notation will be used for the numeric value labels.
+		/// </summary>
+		/// <remarks>
 		/// The powers-of-ten notation is just the text "10" followed by a superscripted value
 		/// indicating the magnitude.  This mode is only valid for log scales (see
 		/// <see cref="IsLog"/> and <see cref="Type"/>).
-		/// </summary>
+		/// </remarks>
 		/// <value> boolean value; true to show the title as a power of ten, false to
 		/// show a regular numeric value (e.g., "0.01", "10", "1000")</value>
 		public bool IsUseTenPower
@@ -1687,9 +1801,12 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// The text labels for this <see cref="Axis"/>.  This property is only
-		/// applicable if <see cref="Type"/> is set to <see cref="AxisType.Text"/>.
+		/// The text labels for this <see cref="Axis"/>.
 		/// </summary>
+		/// <remarks>
+		/// This property is only
+		/// applicable if <see cref="Type"/> is set to <see cref="AxisType.Text"/>.
+		/// </remarks>
 		public string[] TextLabels
 		{
 			get { return textLabels; }
@@ -1699,9 +1816,11 @@ namespace ZedGraph
 		/// <summary>
 		/// Determines whether or not the scale label format <see cref="ScaleFormat"/>
 		/// is determined automatically based on the range of data values.
+		/// </summary>
+		/// <remarks>
 		/// This value will be set to false if
 		/// <see cref="ScaleFormat"/> is manually changed.
-		/// </summary>
+		/// </remarks>
 		/// <value>true if <see cref="ScaleFormat"/> will be set automatically, false
 		/// if it is to be set manually by the user</value>
 		/// <seealso cref="ScaleMag"/>
@@ -1715,10 +1834,12 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// The format of the <see cref="Axis"/> tic labels.
+		/// </summary>
+		/// <remarks>
 		/// This property is only used if the <see cref="Type"/> is set to <see cref="AxisType.Date"/>.
 		/// This property may be set automatically by ZedGraph, depending on the state of
 		/// <see cref="ScaleFormatAuto"/>.
-		/// </summary>
+		/// </remarks>
 		/// <value>This format string is as defined for the <see cref="XDate.ToString()"/> function</value>
 		/// <seealso cref="ScaleMag"/>
 		/// <seealso cref="ScaleFormatAuto"/>
@@ -1730,8 +1851,11 @@ namespace ZedGraph
 			set { scaleFormat = value; this.ScaleFormatAuto = false; }
 		}
 		/// <summary> Controls the alignment of the <see cref="Axis"/> tic labels.
-		/// This property controls whether the inside, center, or outside edges of the text labels are aligned.
 		/// </summary>
+		/// <remarks>
+		/// This property controls whether the inside, center, or outside edges of the
+		/// text labels are aligned.
+		/// </remarks>
 		public AlignP ScaleAlign
 		{
 			get { return scaleAlign; }
@@ -1740,9 +1864,11 @@ namespace ZedGraph
 		/// <summary>
 		/// Determines whether or not the number of decimal places for value
 		/// labels <see cref="NumDec"/> is determined automatically based
-		/// on the magnitudes of the scale values.  This value will be set to false if
-		/// <see cref="NumDec"/> is manually changed.
+		/// on the magnitudes of the scale values.
 		/// </summary>
+		/// <remarks>This value will be set to false if
+		/// <see cref="NumDec"/> is manually changed.
+		/// </remarks>
 		/// <value>true if <see cref="NumDec"/> will be set automatically, false
 		/// if it is to be set manually by the user</value>
 		/// <seealso cref="ScaleMag"/>
@@ -1755,11 +1881,13 @@ namespace ZedGraph
 			set { numDecAuto = value; }
 		}
 		/// <summary>
-		/// The number of decimal places displayed for axis value labels.  This
-		/// value can be determined automatically depending on the state of
+		/// The number of decimal places displayed for axis value labels.
+		/// </summary>
+		/// <remarks>
+		/// This value can be determined automatically depending on the state of
 		/// <see cref="NumDecAuto"/>.  If this value is set manually by the user,
 		/// then <see cref="NumDecAuto"/> will also be set to false.
-		/// </summary>
+		/// </remarks>
 		/// <value>the number of decimal places to be displayed for the axis
 		/// scale labels</value>
 		/// <seealso cref="ScaleMag"/>
@@ -1772,14 +1900,17 @@ namespace ZedGraph
 			set { numDec = value; this.numDecAuto = false; }
 		}
 		/// <summary>
-		/// The magnitude multiplier for scale values.  This is used to limit
+		/// The magnitude multiplier for scale values.
+		/// </summary>
+		/// <remarks>
+		/// This is used to limit
 		/// the size of the displayed value labels.  For example, if the value
 		/// is really 2000000, then the graph will display 2000 with a 10^3
 		/// magnitude multiplier.  This value can be determined automatically
 		/// depending on the state of <see cref="ScaleMagAuto"/>.
 		/// If this value is set manually by the user,
 		/// then <see cref="ScaleMagAuto"/> will also be set to false.
-		/// </summary>
+		/// </remarks>
 		/// <value>The magnitude multiplier (power of 10) for the scale
 		/// value labels</value>
 		/// <seealso cref="IsOmitMag"/>
@@ -1794,10 +1925,12 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// Determines whether the <see cref="ScaleMag"/> value will be set
-		/// automatically based on the data, or manually by the user.  If the
-		/// user manually sets the <see cref="ScaleMag"/> value, then this
-		/// flag will be set to false.
+		/// automatically based on the data, or manually by the user.
 		/// </summary>
+		/// <remarks>
+		/// If the user manually sets the <see cref="ScaleMag"/> value, then this
+		/// flag will be set to false.
+		/// </remarks>
 		/// <value>true to have <see cref="ScaleMag"/> set automatically,
 		/// false otherwise</value>
 		/// <seealso cref="IsOmitMag"/>
@@ -1870,9 +2003,12 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Do all rendering associated with this <see cref="Axis"/> to the specified
-		/// <see cref="Graphics"/> device.  This method is normally only
-		/// called by the Draw method of the parent <see cref="GraphPane"/> object.
+		/// <see cref="Graphics"/> device.
 		/// </summary>
+		/// <remarks>
+		/// This method is normally only
+		/// called by the Draw method of the parent <see cref="GraphPane"/> object.
+		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
@@ -1904,10 +2040,15 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Setup some temporary transform values in preparation for rendering the
-		/// <see cref="Axis"/>.  This method is only called by the parent
-		/// <see cref="GraphPane"/>
-		/// object as part of the Draw method.
+		/// <see cref="Axis"/>.
 		/// </summary>
+		/// <remarks>
+		/// This method is typically called by the parent <see cref="GraphPane"/>
+		/// object as part of the <see cref="GraphPane.Draw"/> method.  It is also
+		/// called by <see cref="GraphPane.GeneralTransform"/> and
+		/// <see cref="GraphPane.ReverseTransform"/> methods to setup for
+		/// coordinate transformations.
+		/// </remarks>
 		/// <param name="pane">
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
@@ -1941,10 +2082,12 @@ namespace ZedGraph
 		/// <summary>
 		/// This method will set the <see cref="MinSpace"/> property for this <see cref="Axis"/>
 		/// using the currently required space multiplied by a fraction (<paramref>bufferFraction</paramref>).
+		/// </summary>
+		/// <remarks>
 		/// The currently required space is calculated using <see cref="CalcSpace"/>, and is
 		/// based on current data ranges, font sizes, etc.  The "space" is actually the amount of space
 		/// required to fit the tic marks, scale labels, and axis title.
-		/// </summary>
+		/// </remarks>
 		/// <param name="g">A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.</param>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object that is the parent or
@@ -2460,12 +2603,14 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Determine the value for the first major tic.  This is done by finding the first possible
-		/// value that is an integral multiple of the step size, taking into account the date/time units
-		/// if appropriate.
-		/// This routine properly
-		/// accounts for <see cref="IsLog"/>, <see cref="IsText"/>, and other axis format settings.
+		/// Determine the value for the first major tic.
 		/// </summary>
+		/// <remarks>
+		/// This is done by finding the first possible value that is an integral multiple of
+		/// the step size, taking into account the date/time units if appropriate.
+		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
+		/// and other axis format settings.
+		/// </remarks>
 		/// <returns>
 		/// First major tic value (floating point double).
 		/// </returns>
@@ -2550,9 +2695,12 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// Determine the value for any major tic.  This routine properly
-		/// accounts for <see cref="IsLog"/>, <see cref="IsText"/>, and other axis format settings.
+		/// Determine the value for any major tic.
 		/// </summary>
+		/// <remarks>
+		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
+		/// and other axis format settings.
+		/// </remarks>
 		/// <param name="baseVal">
 		/// The value of the first major tic (floating point double)
 		/// </param>
@@ -2604,9 +2752,12 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// Make a value label for the axis at the specified ordinal position.  This routine properly
-		/// accounts for <see cref="IsLog"/>, <see cref="IsText"/>, and other axis format settings.
+		/// Make a value label for the axis at the specified ordinal position.
 		/// </summary>
+		/// <remarks>
+		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
+		/// and other axis format settings.
+		/// </remarks>
 		/// <param name="index">
 		/// The zero-based, ordinal index of the label to be generated.  For example, a value of 2 would
 		/// cause the third value label on the axis to be generated.
@@ -2662,8 +2813,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Draw the minor tic marks as
-		/// required for this <see cref="Axis"/>.
+		/// Draw the minor tic marks as required for this <see cref="Axis"/>.
 		/// </summary>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -2768,9 +2918,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Determine the value for any minor tic.  This routine properly
-		/// accounts for <see cref="IsLog"/>, <see cref="IsText"/>, and other axis format settings.
+		/// Determine the value for any minor tic.
 		/// </summary>
+		/// <remarks>
+		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
+		/// and other axis format settings.
+		/// </remarks>
 		/// <param name="baseVal">
 		/// The value of the first major tic (floating point double).  This tic value is the base
 		/// reference for all tics (including minor ones).
@@ -2875,10 +3028,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Draw the title for this <see cref="Axis"/>.  On entry, it is assumed that the
+		/// Draw the title for this <see cref="Axis"/>.
+		/// </summary>
+		/// <remarks>On entry, it is assumed that the
 		/// graphics transform has been configured so that the origin is at the left side
 		/// of this axis, and the axis is aligned along the X coordinate direction.
-		/// </summary>
+		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
@@ -2939,7 +3094,10 @@ namespace ZedGraph
 	
 	#region Scale Picker Methods
 		/// <summary>
-		/// Select a reasonable scale given a range of data values.  The scale range is chosen
+		/// Select a reasonable scale given a range of data values.
+		/// </summary>
+		/// <remarks>
+		/// The scale range is chosen
 		/// based on increments of 1, 2, or 5 (because they are even divisors of 10).  This
 		/// routine honors the <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
 		/// and <see cref="StepAuto"/> autorange settings as well as the <see cref="IsLog"/>
@@ -2957,7 +3115,7 @@ namespace ZedGraph
 		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
 		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
 		/// <para><see cref="NumDec"/> is set to the number of decimal places to display (if <see cref="NumDecAuto"/> = true)</para>
-		/// </summary>
+		/// </remarks>
 		/// <param name="minVal">The minimum value of the data range for setting this
 		/// <see cref="Axis"/> scale range</param>
 		/// <param name="maxVal">The maximum value of the data range for setting this
@@ -3027,6 +3185,8 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Select a reasonable text axis scale given a range of data values.
+		/// </summary>
+		/// <remarks>
 		/// This method only applies to <see cref="AxisType.Text"/> type axes, and it
 		/// is called by the general <see cref="PickScale"/> method.  This is an ordinal
 		/// type, such that the labeled values start at 1.0 and increment by 1.0 for
@@ -3050,7 +3210,7 @@ namespace ZedGraph
 		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
 		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
 		/// <para><see cref="NumDec"/> is set to the number of decimal places to display (if <see cref="NumDecAuto"/> = true)</para>
-		/// </summary>
+		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
 		/// associated with this <see cref="Axis"/></param>
 		/// <param name="g">
@@ -3123,12 +3283,15 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// Calculate the maximum number of labels that will fit on this axis.  This method works for
+		/// Calculate the maximum number of labels that will fit on this axis.
+		/// </summary>
+		/// <remarks>
+		/// This method works for
 		/// both X and Y direction axes, and it works for angled text (assuming that a bounding box
 		/// is an appropriate measure).  Technically, labels at 45 degree angles could fit better than
 		/// the return value of this method since the bounding boxes can overlap without the labels actually
 		/// overlapping.
-		/// </summary>
+		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
 		/// associated with this <see cref="Axis"/></param>
 		/// <param name="g">
@@ -3175,6 +3338,8 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Select a reasonable ordinal axis scale given a range of data values.
+		/// </summary>
+		/// <remarks>
 		/// This method only applies to <see cref="AxisType.Ordinal"/> type axes, and it
 		/// is called by the general <see cref="PickScale"/> method.  The scale range is chosen
 		/// based on increments of 1, 2, or 5 (because they are even divisors of 10).
@@ -3195,7 +3360,7 @@ namespace ZedGraph
 		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
 		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
 		/// <para><see cref="NumDec"/> is set to the number of decimal places to display (if <see cref="NumDecAuto"/> = true)</para>
-		/// </summary>
+		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
 		/// associated with this <see cref="Axis"/></param>
 		/// <param name="g">
@@ -3259,6 +3424,8 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Select a reasonable base 10 logarithmic axis scale given a range of data values.
+		/// </summary>
+		/// <remarks>
 		/// This method only applies to <see cref="AxisType.Log"/> type axes, and it
 		/// is called by the general <see cref="PickScale"/> method.  The scale range is chosen
 		/// based always on powers of 10 (full log cycles).  This
@@ -3275,7 +3442,7 @@ namespace ZedGraph
 		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
 		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
 		/// <para><see cref="NumDec"/> is set to the number of decimal places to display (if <see cref="NumDecAuto"/> = true)</para>
-		/// </summary>
+		/// </remarks>
 		/// <seealso cref="PickScale"/>
 		/// <seealso cref="AxisType.Log"/>
 		public void PickLogScale()
@@ -3319,6 +3486,8 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Select a reasonable date-time axis scale given a range of data values.
+		/// </summary>
+		/// <remarks>
 		/// This method only applies to <see cref="AxisType.Date"/> type axes, and it
 		/// is called by the general <see cref="PickScale"/> method.  The scale range is chosen
 		/// based on increments of 1, 2, or 5 (because they are even divisors of 10).
@@ -3341,7 +3510,7 @@ namespace ZedGraph
 		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
 		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
 		/// <para><see cref="NumDec"/> is set to the number of decimal places to display (if <see cref="NumDecAuto"/> = true)</para>
-		/// </summary>
+		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
 		/// associated with this <see cref="Axis"/></param>
 		/// <param name="g">
@@ -3400,6 +3569,8 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Select a reasonable linear axis scale given a range of data values.
+		/// </summary>
+		/// <remarks>
 		/// This method only applies to <see cref="AxisType.Linear"/> type axes, and it
 		/// is called by the general <see cref="PickScale"/> method.  The scale range is chosen
 		/// based on increments of 1, 2, or 5 (because they are even divisors of 10).  This
@@ -3419,7 +3590,7 @@ namespace ZedGraph
 		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
 		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
 		/// <para><see cref="NumDec"/> is set to the number of decimal places to display (if <see cref="NumDecAuto"/> = true)</para>
-		/// </summary>
+		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
 		/// associated with this <see cref="Axis"/></param>
 		/// <param name="g">
@@ -3519,12 +3690,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Calculate a step size based on a data range.  This utility method
+		/// Calculate a step size based on a data range.
+		/// </summary>
+		/// <remarks>
+		/// This utility method
 		/// will try to honor the <see cref="Default.TargetXSteps"/> and
 		/// <see cref="Default.TargetYSteps"/> number of
 		/// steps while using a rational increment (1, 2, or 5 -- which are
 		/// even divisors of 10).  This method is used by <see cref="PickScale"/>.
-		/// </summary>
+		/// </remarks>
 		/// <param name="range">The range of data in user scale units.  This can
 		/// be a full range of the data for the major step size, or just the
 		/// value of the major step size to calculate the minor step size</param>
@@ -3555,11 +3729,14 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Calculate a step size based on a data range.  This utility method
+		/// Calculate a step size based on a data range, limited to a maximum number of steps.
+		/// </summary>
+		/// <remarks>
+		/// This utility method
 		/// will calculate a step size, of no more than maxSteps,
 		/// using a rational increment (1, 2, or 5 -- which are
 		/// even divisors of 10).  This method is used by <see cref="PickScale"/>.
-		/// </summary>
+		/// </remarks>
 		/// <param name="range">The range of data in user scale units.  This can
 		/// be a full range of the data for the major step size, or just the
 		/// value of the major step size to calculate the minor step size</param>
@@ -3908,14 +4085,18 @@ namespace ZedGraph
 	#region Coordinate Transform Methods
 		/// <summary>
 		/// Transform the coordinate value from user coordinates (scale value)
-		/// to graphics device coordinates (pixels).  This method takes into
+		/// to graphics device coordinates (pixels).
+		/// </summary>
+		/// <remarks>This method takes into
 		/// account the scale range (<see cref="Min"/> and <see cref="Max"/>),
 		/// logarithmic state (<see cref="IsLog"/>), scale reverse state
 		/// (<see cref="IsReverse"/>) and axis type (<see cref="XAxis"/>,
-		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).  Note that
+		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).
+		/// Note that the <see cref="GraphPane.AxisRect"/> must be valid, and
 		/// <see cref="SetupScaleData"/> must be called for the
-		/// current configuration before using this method.
-		/// </summary>
+		/// current configuration before using this method (this is called everytime
+		/// the graph is drawn (i.e., <see cref="GraphPane.Draw"/> is called).
+		/// </remarks>
 		/// <param name="x">The coordinate value, in user scale units, to
 		/// be transformed</param>
 		/// <returns>the coordinate value transformed to screen coordinates
@@ -3941,14 +4122,19 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Transform the coordinate value from user coordinates (scale value)
-		/// to graphics device coordinates (pixels).  This method takes into
+		/// to graphics device coordinates (pixels).
+		/// </summary>
+		/// <remarks>
+		/// This method takes into
 		/// account the scale range (<see cref="Min"/> and <see cref="Max"/>),
 		/// logarithmic state (<see cref="IsLog"/>), scale reverse state
 		/// (<see cref="IsReverse"/>) and axis type (<see cref="XAxis"/>,
-		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).  Note that
+		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).
+		/// Note that the <see cref="GraphPane.AxisRect"/> must be valid, and
 		/// <see cref="SetupScaleData"/> must be called for the
-		/// current configuration before using this method.
-		/// </summary>
+		/// current configuration before using this method (this is called everytime
+		/// the graph is drawn (i.e., <see cref="GraphPane.Draw"/> is called).
+		/// </remarks>
 		/// <param name="i">The ordinal value of this point, just in case
 		/// this is an <see cref="AxisType.Ordinal"/> axis</param>
 		/// <param name="x">The coordinate value, in user scale units, to
@@ -3966,15 +4152,19 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Reverse transform the user coordinates (scale value)
-		/// given a graphics device coordinate (pixels).  This method takes into
+		/// given a graphics device coordinate (pixels).
+		/// </summary>
+		/// <remarks>
+		/// This method takes into
 		/// account the scale range (<see cref="Min"/> and <see cref="Max"/>),
 		/// logarithmic state (<see cref="IsLog"/>), scale reverse state
 		/// (<see cref="IsReverse"/>) and axis type (<see cref="XAxis"/>,
-		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).  Note that
+		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).
+		/// Note that the <see cref="GraphPane.AxisRect"/> must be valid, and
 		/// <see cref="SetupScaleData"/> must be called for the
 		/// current configuration before using this method (this is called everytime
 		/// the graph is drawn (i.e., <see cref="GraphPane.Draw"/> is called).
-		/// </summary>
+		/// </remarks>
 		/// <param name="pixVal">The screen pixel value, in graphics device coordinates to
 		/// be transformed</param>
 		/// <returns>The user scale value that corresponds to the screen pixel location</returns>
@@ -4001,7 +4191,9 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Transform the coordinate value from user coordinates (scale value)
-		/// to graphics device coordinates (pixels), assuming that the origin
+		/// to graphics device coordinates (pixels).
+		/// </summary>
+		/// <remarks>Assumes that the origin
 		/// has been set to the "left" of this axis, facing from the label side.
 		/// Note that the left side corresponds to the scale minimum for the X and
 		/// Y2 axes, but it is the scale maximum for the Y axis.
@@ -4010,9 +4202,10 @@ namespace ZedGraph
 		/// logarithmic state (<see cref="IsLog"/>), scale reverse state
 		/// (<see cref="IsReverse"/>) and axis type (<see cref="XAxis"/>,
 		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).  Note that
+		/// the <see cref="GraphPane.AxisRect"/> must be valid, and
 		/// <see cref="SetupScaleData"/> must be called for the
 		/// current configuration before using this method.
-		/// </summary>
+		/// </remarks>
 		/// <param name="x">The coordinate value, in user scale units, to
 		/// be transformed</param>
 		/// <returns>the coordinate value transformed to screen coordinates

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-11-17 05:19:54 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-11-19 06:41:05 $ </version>
 	public class ArrowItem : GraphItem, ICloneable
 	{
 	#region Fields
@@ -94,9 +94,11 @@ namespace ZedGraph
 
 	#region Properties
 		/// <summary>
-		/// The size of the arrowhead.  The display of the arrowhead can be
-		/// enabled or disabled with the <see cref="IsArrowHead"/> property.
+		/// The size of the arrowhead.
 		/// </summary>
+		/// <remarks>The display of the arrowhead can be
+		/// enabled or disabled with the <see cref="IsArrowHead"/> property.
+		/// </remarks>
         /// <value> The size is defined in points (1/72 inch) </value>
         /// <seealso cref="Default.Size"/>
 		public float Size
@@ -215,10 +217,12 @@ namespace ZedGraph
 	
 	#region Rendering Methods
 		/// <summary>
-		/// Render this object to the specified <see cref="Graphics"/> device
+		/// Render this object to the specified <see cref="Graphics"/> device.
+		/// </summary>
+		/// <remarks>
 		/// This method is normally only called by the Draw method
 		/// of the parent <see cref="GraphItemList"/> collection object.
-		/// </summary>
+		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
@@ -237,12 +241,8 @@ namespace ZedGraph
 		{
 			// Convert the arrow coordinates from the user coordinate system
 			// to the screen coordinate system
-			PointF pix1 = pane.GeneralTransform(
-				new PointF( this.location.X1, this.location.Y1 ),
-				this.location.CoordinateFrame );
-			PointF pix2 = pane.GeneralTransform(
-				new PointF( this.location.X2, this.location.Y2 ),
-				this.location.CoordinateFrame );
+			PointF pix1 = this.Location.TransformTopLeft( pane );
+			PointF pix2 = this.Location.TransformBottomRight( pane );
 
 			if ( pix1.X > -10000 && pix1.X < 100000 && pix1.Y > -100000 && pix1.Y < 100000 &&
 				pix2.X > -10000 && pix2.X < 100000 && pix2.Y > -100000 && pix2.Y < 100000 )
@@ -299,9 +299,11 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Determine if the specified screen point lies inside the bounding box of this
-		/// <see cref="ArrowItem"/>.  The bounding box is calculated assuming a distance
-		/// of <see cref="GraphPane.Default.NearestTol"/> pixels around the arrow segment.
+		/// <see cref="ArrowItem"/>.
 		/// </summary>
+		/// <remarks>The bounding box is calculated assuming a distance
+		/// of <see cref="GraphPane.Default.NearestTol"/> pixels around the arrow segment.
+		/// </remarks>
 		/// <param name="pt">The screen point, in pixels</param>
 		/// <param name="pane">
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
@@ -322,12 +324,8 @@ namespace ZedGraph
 		{
 			// transform the x,y location from the user-defined
 			// coordinate frame to the screen pixel location
-			PointF pix = pane.GeneralTransform(
-				new PointF( this.location.X1, this.location.Y1 ),
-				this.location.CoordinateFrame );
-			PointF pix2 = pane.GeneralTransform(
-				new PointF( this.location.Y2, this.location.Y2 ),
-				this.location.CoordinateFrame );
+			PointF pix = this.location.TransformTopLeft( pane );
+			PointF pix2 = this.location.TransformBottomRight( pane );
 			
 			Pen pen = new Pen( Color.Black, (float) GraphPane.Default.NearestTol * 2.0F );
 			GraphicsPath path = new GraphicsPath();

@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2004-11-17 03:35:39 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2004-11-19 06:41:05 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -346,10 +346,12 @@ namespace ZedGraph
 	
 	#region Rendering Methods
 		/// <summary>
-		/// Render the <see cref="Legend"/> to the specified <see cref="Graphics"/> device
+		/// Render the <see cref="Legend"/> to the specified <see cref="Graphics"/> device.
+		/// </summary>
+		/// <remarks>
 		/// This method is normally only called by the Draw method
 		/// of the parent <see cref="GraphPane"/> object.
-		/// </summary>
+		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
@@ -488,10 +490,12 @@ namespace ZedGraph
 		/// <summary>
 		/// Calculate the <see cref="Legend"/> rectangle (<see cref="Rect"/>),
 		/// taking into account the number of required legend
-		/// entries, and the legend drawing preferences.  Adjust the size of the
+		/// entries, and the legend drawing preferences.
+		/// </summary>
+		/// <remarks>Adjust the size of the
 		/// <see cref="GraphPane.AxisRect"/> for the parent <see cref="GraphPane"/> to accomodate the
 		/// space required by the legend.
-		/// </summary>
+		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.

@@ -35,14 +35,16 @@ namespace ZedGraph
 	
 	/// <summary>
 	/// Class <see cref="GraphPane"/> encapsulates the graph pane, which is all display elements
-	/// associated with an individual graph.  This class is the outside "wrapper"
+	/// associated with an individual graph.
+	/// </summary>
+	/// <remarks>This class is the outside "wrapper"
 	/// for the ZedGraph classes, and provides the interface to access the attributes
 	/// of the graph.  You can have multiple graphs in the same document or form,
 	/// just instantiate multiple GraphPane's.
-	/// </summary>
+	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.13 $ $Date: 2004-11-17 04:38:08 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2004-11-19 06:41:05 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -475,25 +477,28 @@ namespace ZedGraph
 	
 	#region General Properties
 		/// <summary>
-		/// A boolean value that affects the data range that is considered
-		/// for the automatic scale ranging.  If true, then initial data points where the Y value
+		/// Gets or sets a boolean value that affects the data range that is considered
+		/// for the automatic scale ranging.
+		/// </summary>
+		/// <remarks>If true, then initial data points where the Y value
 		/// is zero are not included when automatically determining the scale <see cref="Axis.Min"/>,
 		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.
 		/// All data after the first non-zero Y value are included.
-		/// </summary>
+		/// </remarks>
 		/// <seealso cref="Default.IsIgnoreInitial"/>
 		public bool IsIgnoreInitial
 		{
 			get { return isIgnoreInitial; }
 			set { isIgnoreInitial = value; }
 		}
-		/// <summary>Private field that determines whether or not initial
+		/// <summary>Gets or sets a value that determines whether or not initial
 		/// <see cref="PointPair.Missing"/> values will cause the line segments of
-		/// a curve to be discontinuous.  If this field is true, then the curves
-		/// will be plotted as continuous lines as if the Missing values did not
-		/// exist.
+		/// a curve to be discontinuous.
+		/// </summary>
+		/// <remarks>If this field is true, then the curves
+		/// will be plotted as continuous lines as if the Missing values did not exist.
 		/// Use the public property <see cref="IsIgnoreMissing"/> to access
-		/// this value. </summary>
+		/// this value. </remarks>
 		public bool IsIgnoreMissing
 		{
 			get { return isIgnoreMissing; }
@@ -501,9 +506,11 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// IsShowTitle is a boolean value that determines whether or not the pane title is displayed
-		/// on the graph.  If true, the title is displayed.  If false, the title is omitted, and the
-		/// screen space that would be occupied by the title is added to the axis area.
+		/// on the graph.
 		/// </summary>
+		/// <remarks>If true, the title is displayed.  If false, the title is omitted, and the
+		/// screen space that would be occupied by the title is added to the axis area.
+		/// </remarks>
 		/// <seealso cref="Default.IsShowTitle"/>
 		public bool IsShowTitle
 		{
@@ -570,6 +577,8 @@ namespace ZedGraph
 			//bitmapGraphics.TranslateTransform( -this.PaneRect.Left, -this.PaneRect.Top );
 			//bitmapGraphics.ScaleTransform( width/this.PaneRect.Width, width/this.PaneRect.Width );
 			
+			// Clone the GraphPane so we don't mess up the minPix and maxPix values or
+			// the paneRect/axisRect calculations of the original
 			GraphPane tempPane = (GraphPane) this.Clone();
 			tempPane.PaneRect = new RectangleF( 0, 0, width, height );
 			//tempPane.AxisChange( bitmapGraphics );
@@ -945,12 +954,14 @@ namespace ZedGraph
 	#region Rendering Methods
 		/// <summary>
 		/// AxisChange causes the axes scale ranges to be recalculated based on the current data range.
+		/// </summary>
+		/// <remarks>
 		/// Call this function anytime you change, add, or remove curve data.  This routine calculates
 		/// a scale minimum, maximum, and step size for each axis based on the current curve data.
 		/// Only the axis attributes (min, max, step) that are set to auto-range (<see cref="Axis.MinAuto"/>,
 		/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.StepAuto"/>) will be modified.  You must call
 		/// Invalidate() after calling AxisChange to make sure the display gets updated.
-		/// </summary>
+		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
@@ -992,11 +1003,13 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// Draw all elements in the <see cref="GraphPane"/> to the specified graphics device.  This routine
+		/// Draw all elements in the <see cref="GraphPane"/> to the specified graphics device.
+		/// </summary>
+		/// <remarks>This method
 		/// should be part of the Paint() update process.  Calling this routine will redraw all
 		/// features of the graph.  No preparation is required other than an instantiated
 		/// <see cref="GraphPane"/> object.
-		/// </summary>
+		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
@@ -1076,10 +1089,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Calculate the <see cref="AxisRect"/> based on the <see cref="PaneRect"/>.  The axisRect
+		/// Calculate the <see cref="AxisRect"/> based on the <see cref="PaneRect"/>.
+		/// </summary>
+		/// <remarks>The axisRect
 		/// is the plot area bounded by the axes, and the paneRect is the total area as
 		/// specified by the client application.
-		/// </summary>
+		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
@@ -1096,10 +1111,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Calculate the <see cref="AxisRect"/> based on the <see cref="PaneRect"/>.  The axisRect
+		/// Calculate the <see cref="AxisRect"/> based on the <see cref="PaneRect"/>.
+		/// </summary>
+		/// <remarks>The axisRect
 		/// is the plot area bounded by the axes, and the paneRect is the total area as
 		/// specified by the client application.
-		/// </summary>
+		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
@@ -1166,7 +1183,9 @@ namespace ZedGraph
 
 		/// <summary>
 		/// This method will set the <see cref="Axis.MinSpace"/> property for all three axes;
-		/// <see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>.  The <see cref="Axis.MinSpace"/>
+		/// <see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>.
+		/// </summary>
+		/// <remarks>The <see cref="Axis.MinSpace"/>
 		/// is calculated using the currently required space multiplied by a fraction
 		/// (<paramref>bufferFraction</paramref>).
 		/// The currently required space is calculated using <see cref="Axis.CalcSpace"/>, and is
@@ -1174,7 +1193,7 @@ namespace ZedGraph
 		/// required to fit the tic marks, scale labels, and axis title.
 		/// The calculation is done by calling the <see cref="Axis.SetMinSpaceBuffer"/> method for
 		/// each <see cref="Axis"/>.
-		/// </summary>
+		/// </remarks>
 		/// <param name="g">A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.</param>
 		/// <param name="bufferFraction">The amount of space to allocate for the axis, expressed
@@ -1587,6 +1606,10 @@ namespace ZedGraph
 		/// Transform a data point from the specified coordinate type
 		/// (<see cref="CoordType"/>) to screen coordinates (pixels).
 		/// </summary>
+		/// <remarks>This method implicitly assumes that <see cref="AxisRect"/>
+		/// has already been calculated via <see cref="AxisChange"/> or
+		/// <see cref="Draw"/> methods, or the <see cref="AxisRect"/> is
+		/// set manually (see <see cref="IsAxisRectAuto"/>).</remarks>
 		/// <param name="ptF">The X,Y pair that defines the point in user
 		/// coordinates.</param>
 		/// <param name="coord">A <see cref="CoordType"/> type that defines the
@@ -1595,6 +1618,11 @@ namespace ZedGraph
 		/// specified user point.</returns>
 		public PointF GeneralTransform( PointF ptF, CoordType coord )
 		{
+			// Setup the scaling data based on the axis rect
+			this.xAxis.SetupScaleData( this );
+			this.yAxis.SetupScaleData( this );
+			this.y2Axis.SetupScaleData( this );
+
 			PointF ptPix = new PointF();
 
 			if ( coord == CoordType.AxisFraction )
@@ -1625,6 +1653,10 @@ namespace ZedGraph
 		/// Return the user scale values that correspond to the specified screen
 		/// coordinate position (pixels).
 		/// </summary>
+		/// <remarks>This method implicitly assumes that <see cref="AxisRect"/>
+		/// has already been calculated via <see cref="AxisChange"/> or
+		/// <see cref="Draw"/> methods, or the <see cref="AxisRect"/> is
+		/// set manually (see <see cref="IsAxisRectAuto"/>).</remarks>
 		/// <param name="ptF">The X,Y pair that defines the screen coordinate
 		/// point of interest</param>
 		/// <param name="x">The resultant value in user coordinates from the
@@ -1636,6 +1668,11 @@ namespace ZedGraph
 		public void ReverseTransform( PointF ptF, out double x, out double y,
 			out double y2 )
 		{
+			// Setup the scaling data based on the axis rect
+			this.xAxis.SetupScaleData( this );
+			this.yAxis.SetupScaleData( this );
+			this.y2Axis.SetupScaleData( this );
+
 			x = this.XAxis.ReverseTransform( ptF.X );
 			y = this.YAxis.ReverseTransform( ptF.Y );
 			y2 = this.Y2Axis.ReverseTransform( ptF.Y );
@@ -1643,18 +1680,20 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Find the object that lies closest to the specified mouse (screen) point.
+		/// </summary>
+		/// <remarks>
 		/// This method will search through all of the graph objects, such as
 		/// <see cref="Axis"/>, <see cref="Legend"/>, <see cref="GraphPane.Title"/>,
-		/// <see cref="TextItem"/>, <see cref="ArrowItem"/>, and <see cref="CurveItem"/>.
+		/// <see cref="GraphItem"/>, and <see cref="CurveItem"/>.
 		/// If the mouse point is within the bounding box of the items (or in the case
 		/// of <see cref="ArrowItem"/> and <see cref="CurveItem"/>, within
-		/// <see cref="Default.NearestTol"/> pixels), then object will be returned.
+		/// <see cref="Default.NearestTol"/> pixels), then the object will be returned.
 		/// You must check the type of the object to determine what object was
 		/// selected (for example, "if ( object is Legend ) ...").  The
 		/// <see paramref="index"/> parameter returns the index number of the item
 		/// within the selected object (such as the point number within a
 		/// <see cref="CurveItem"/> object.
-		/// </summary>
+		/// </remarks>
 		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -1763,10 +1802,12 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Find the data point that lies closest to the specified mouse (screen) point.
+		/// </summary>
+		/// <remarks>
 		/// This method will search through the list of curves to find which point is
 		/// nearest.  It will only consider points that are within
 		/// <see cref="Default.NearestTol"/> pixels of the screen point.
-		/// </summary>
+		/// </remarks>
 		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
 		/// <param name="nearestCurve">A reference to the <see cref="CurveItem"/>
 		/// instance that contains the closest point.  nearestCurve will be null if
@@ -1951,11 +1992,13 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Determine the width, in screen pixel units, of each bar cluster including
-		/// the cluster gaps and bar gaps.  This method calls the <see cref="Axis.GetClusterWidth"/>
+		/// the cluster gaps and bar gaps.
+		/// </summary>
+		/// <remarks>This method calls the <see cref="Axis.GetClusterWidth"/>
 		/// method for the base <see cref="Axis"/> for <see cref="Bar"/> graphs
 		/// (the base <see cref="Axis"/> is assigned by the <see cref="GraphPane.BarBase"/>
 		/// property).
-		/// </summary>
+		/// </remarks>
 		/// <seealso cref="ZedGraph.BarBase"/>
 		/// <seealso cref="GraphPane.BarBase"/>
 		/// <seealso cref="Axis.GetClusterWidth"/>

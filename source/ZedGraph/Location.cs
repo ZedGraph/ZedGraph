@@ -25,6 +25,9 @@ namespace ZedGraph
 	/// <summary>
 	/// A class than contains information about the position of an object on the graph.
 	/// </summary>
+	/// 
+	/// <author> John Champion </author>
+	/// <version> $Revision: 3.4 $ $Date: 2004-11-19 06:41:05 $ </version>
 	public class Location : ICloneable
 	{
 	#region Private Fields
@@ -78,76 +81,6 @@ namespace ZedGraph
 			set { alignV = value; }
 		}
 		/// <summary>
-		/// The x position of the object.  The units of this position
-		/// are specified by the <see cref="CoordinateFrame"/> property.
-		/// The object will be aligned to this position based on the
-		/// <see cref="AlignH"/> property.
-		/// </summary>
-		public float X
-		{
-			get { return x; }
-			set { x = value; }
-		}
-		/// <summary>
-		/// The y position of the object.  The units of this position
-		/// are specified by the <see cref="CoordinateFrame"/> property.
-		/// The object will be aligned to this position based on the
-		/// <see cref="AlignV"/> property.
-		/// </summary>
-		public float Y
-		{
-			get { return y; }
-			set { y = value; }
-		}
-		/// <summary>
-		/// The x1 position of the object (an alias for the x position).  The units of this position
-		/// are specified by the <see cref="CoordinateFrame"/> property.
-		/// The object will be aligned to this position based on the
-		/// <see cref="AlignH"/> property.
-		/// </summary>
-		public float X1
-		{
-			get { return x; }
-			set { x = value; }
-		}
-		/// <summary>
-		/// The y1 position of the object (an alias for the y position).  The units of this position
-		/// are specified by the <see cref="CoordinateFrame"/> property.
-		/// The object will be aligned to this position based on the
-		/// <see cref="AlignV"/> property.
-		/// </summary>
-		public float Y1
-		{
-			get { return y; }
-			set { y = value; }
-		}
-		/// <summary>
-		/// The x2 position of the object.  The units of this position
-		/// are specified by the <see cref="CoordinateFrame"/> property.
-		/// The object will be aligned to this position based on the
-		/// <see cref="AlignH"/> property.  This position is only used for
-		/// objects such as <see cref="ArrowItem"/>, where it makes sense
-		/// to have a second coordinate.
-		/// </summary>
-		public float X2
-		{
-			get { return x2; }
-			set { x2 = value; }
-		}
-		/// <summary>
-		/// The x position of the object.  The units of this position
-		/// are specified by the <see cref="CoordinateFrame"/> property.
-		/// The object will be aligned to this position based on the
-		/// <see cref="AlignV"/> property.  This position is only used for
-		/// objects such as <see cref="ArrowItem"/>, where it makes sense
-		/// to have a second coordinate.
-		/// </summary>
-		public float Y2
-		{
-			get { return y2; }
-			set { y2 = value; }
-		}
-		/// <summary>
 		/// The coordinate system to be used for defining the object position
 		/// </summary>
 		/// <value> The coordinate system is defined with the <see cref="CoordType"/>
@@ -157,14 +90,142 @@ namespace ZedGraph
 			get { return coordinateFrame; }
 			set { coordinateFrame = value; }
 		}
+		/// <summary>
+		/// The x position of the object.
+		/// </summary>
+		/// <remarks>
+		/// The units of this position
+		/// are specified by the <see cref="CoordinateFrame"/> property.
+		/// The object will be aligned to this position based on the
+		/// <see cref="AlignH"/> property.
+		/// </remarks>
+		public float X
+		{
+			get { return x; }
+			set { x = value; }
+		}
+		/// <summary>
+		/// The y position of the object.
+		/// </summary>
+		/// <remarks>
+		/// The units of this position
+		/// are specified by the <see cref="CoordinateFrame"/> property.
+		/// The object will be aligned to this position based on the
+		/// <see cref="AlignV"/> property.
+		/// </remarks>
+		public float Y
+		{
+			get { return y; }
+			set { y = value; }
+		}
+		/// <summary>
+		/// The x1 position of the object (an alias for the x position).
+		/// </summary>
+		/// <remarks>
+		/// The units of this position
+		/// are specified by the <see cref="CoordinateFrame"/> property.
+		/// The object will be aligned to this position based on the
+		/// <see cref="AlignH"/> property.
+		/// </remarks>
+		public float X1
+		{
+			get { return x; }
+			set { x = value; }
+		}
+		/// <summary>
+		/// The y1 position of the object (an alias for the y position).
+		/// </summary>
+		/// <remarks>
+		/// The units of this position
+		/// are specified by the <see cref="CoordinateFrame"/> property.
+		/// The object will be aligned to this position based on the
+		/// <see cref="AlignV"/> property.
+		/// </remarks>
+		public float Y1
+		{
+			get { return y; }
+			set { y = value; }
+		}
+		/// <summary>
+		/// The x2 position of the object.
+		/// </summary>
+		/// <remarks>
+		/// The units of this position
+		/// are specified by the <see cref="CoordinateFrame"/> property.
+		/// The object will be aligned to this position based on the
+		/// <see cref="AlignH"/> property.  This position is only used for
+		/// objects such as <see cref="ArrowItem"/>, where it makes sense
+		/// to have a second coordinate.
+		/// </remarks>
+		public float X2
+		{
+			get { return x2; }
+			set { x2 = value; }
+		}
+		/// <summary>
+		/// The x position of the object.
+		/// </summary>
+		/// <remarks>
+		/// The units of this position
+		/// are specified by the <see cref="CoordinateFrame"/> property.
+		/// The object will be aligned to this position based on the
+		/// <see cref="AlignV"/> property.  This position is only used for
+		/// objects such as <see cref="ArrowItem"/>, where it makes sense
+		/// to have a second coordinate.
+		/// </remarks>
+		public float Y2
+		{
+			get { return y2; }
+			set { y2 = value; }
+		}
+
+		/// <summary>
+		/// The <see cref="RectangleF"/> for this object as defined by the
+		/// <see cref="X"/>, <see cref="Y"/>, <see cref="X2"/>, and <see cref="Y2"/>
+		/// properties.
+		/// </summary>
+		/// <value>A <see cref="RectangleF"/> in <see cref="CoordinateFrame"/> units.</value>
+		public RectangleF Rect
+		{
+			get { return new RectangleF( this.x, this.y, this.x2 - this.x, this.y2 - this.y ); }
+			set
+			{
+				this.x = value.X;
+				this.y = value.Y;
+				this.x2 = value.X + value.Width;
+				this.y2 = value.Y + value.Height;
+			}
+		}
+
+		/// <summary>
+		/// The top-left <see cref="PointF"/> for this <see cref="Location"/>.
+		/// </summary>
+		/// <value>A <see cref="PointF"/> in <see cref="CoordinateFrame"/> units.</value>
+		public PointF TopLeft
+		{
+			get { return new PointF( this.x, this.y ); }
+			set { this.x = value.X; this.y = value.Y; }
+		}
+
+		/// <summary>
+		/// The bottom-right <see cref="PointF"/> for this <see cref="Location"/>.
+		/// </summary>
+		/// <value>A <see cref="PointF"/> in <see cref="CoordinateFrame"/> units.</value>
+		public PointF BottomRight
+		{
+			get { return new PointF( this.X2, this.Y2 ); }
+			set { this.X2 = value.X; this.Y2 = value.Y; }
+		}
 	#endregion
 	
 	#region Constructors
 		/// <summary>
 		/// Constructor for the <see cref="Location"/> class that specifies the
-		/// x, y position and the <see cref="CoordType"/>.  The (x,y) position
-		/// corresponds to the top-left corner;
+		/// x, y position and the <see cref="CoordType"/>.
 		/// </summary>
+		/// <remarks>
+		/// The (x,y) position corresponds to the top-left corner;
+		/// </remarks>
 		/// <param name="x">The x position, specified in units of <see paramref="coordType"/>.
 		/// </param>
 		/// <param name="y">The y position, specified in units of <see paramref="coordType"/>.
@@ -178,9 +239,11 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Constructor for the <see cref="Location"/> class that specifies the
-		/// x, y position and the <see cref="CoordType"/>.  The (x,y) position
-		/// corresponds to the top-left corner;
+		/// x, y position and the <see cref="CoordType"/>.
 		/// </summary>
+		/// <remarks>
+		/// The (x,y) position corresponds to the top-left corner;
+		/// </remarks>
 		/// <param name="x">The x position, specified in units of <see paramref="coordType"/>.
 		/// </param>
 		/// <param name="y">The y position, specified in units of <see paramref="coordType"/>.
@@ -204,10 +267,13 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Constructor for the <see cref="Location"/> class that specifies the
-		/// (x, y) and (x2, y2) positions and the <see cref="CoordType"/>.  The (x,y) position
+		/// (x, y) and (x2, y2) positions and the <see cref="CoordType"/>.
+		/// </summary>
+		/// <remarks>
+		/// The (x,y) position
 		/// corresponds to the starting position, the (x2, y2) coorresponds to the ending position
 		/// (typically used for <see cref="ArrowItem"/>'s).
-		/// </summary>
+		/// </remarks>
 		/// <param name="x">The x position, specified in units of <see paramref="coordType"/>.
 		/// </param>
 		/// <param name="y">The y position, specified in units of <see paramref="coordType"/>.
@@ -315,10 +381,15 @@ namespace ZedGraph
 		/// <summary>
 		/// Transform this <see cref="Location"/> from the coordinate system
 		/// as specified by <see cref="CoordinateFrame"/> to the device coordinates
-		/// of the specified <see cref="GraphPane"/> object.  The returned
+		/// of the specified <see cref="GraphPane"/> object.
+		/// </summary>
+		/// <remarks>
+		/// The returned
 		/// <see cref="PointF"/> struct represents the top-left corner of the
 		/// object that honors the <see cref="Location"/> properties.
-		/// </summary>
+		/// The <see cref="AlignH"/> and <see cref="AlignV"/> properties are honored in 
+		/// this transformation.
+		/// </remarks>
 		/// <param name="pane">
 		/// A reference to the <see cref="GraphPane"/> object that contains
 		/// the <see cref="Axis"/> classes which will be used for the transform.
@@ -341,6 +412,59 @@ namespace ZedGraph
 				pt.Y -= height / 2.0F;
 			
 			return pt;
+		}
+
+		/// <summary>
+		/// The <see cref="PointF"/> for this object as defined by the
+		/// <see cref="X"/> and <see cref="Y"/>
+		/// properties.
+		/// </summary>
+		/// <remarks>
+		/// This method transforms the location to output device pixel units.
+		/// The <see cref="AlignH"/> and <see cref="AlignV"/> properties are ignored for
+		/// this transformation (see <see cref="TransformTopLeft(GraphPane,float,float)"/>).
+		/// </remarks>
+		/// <value>A <see cref="PointF"/> in pixel units.</value>
+		public PointF TransformTopLeft( GraphPane pane )
+		{
+			return Transform( pane );
+		}
+
+		/// <summary>
+		/// The <see cref="PointF"/> for this object as defined by the
+		/// <see cref="X2"/> and <see cref="Y2"/>
+		/// properties.
+		/// </summary>
+		/// <remarks>
+		/// This method transforms the location to output device pixel units.
+		/// The <see cref="AlignH"/> and <see cref="AlignV"/> properties are ignored for
+		/// this transformation (see <see cref="TransformTopLeft(GraphPane,float,float)"/>).
+		/// </remarks>
+		/// <value>A <see cref="PointF"/> in pixel units.</value>
+		public PointF TransformBottomRight( GraphPane pane )
+		{
+			return Transform( pane, new PointF( this.x2, this.y2 ),
+				this.coordinateFrame );
+		}
+
+		/// <summary>
+		/// Transform the <see cref="RectangleF"/> for this object as defined by the
+		/// <see cref="X"/>, <see cref="Y"/>, <see cref="X2"/>, and <see cref="Y2"/>
+		/// properties.
+		/// </summary>
+		/// <remarks>
+		/// This method transforms the location to output device pixel units.
+		/// The <see cref="AlignH"/> and <see cref="AlignV"/> properties are honored in 
+		/// this transformation.
+		/// </remarks>
+		/// <value>A <see cref="RectangleF"/> in pixel units.</value>
+		public RectangleF TransformRect( GraphPane pane )
+		{
+			PointF pix1 = TransformTopLeft( pane );
+			PointF pix2 = TransformBottomRight( pane );
+			PointF pix3 = TransformTopLeft( pane, pix2.X - pix1.X, pix2.Y - pix1.Y );
+
+			return new RectangleF( pix3.X, pix3.Y, pix2.X - pix1.X, pix2.Y - pix1.Y );
 		}
 
 	#endregion

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-11-17 05:19:54 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-11-19 06:41:05 $ </version>
 	abstract public class GraphItem
 	{
 	#region Fields
@@ -74,7 +74,7 @@ namespace ZedGraph
 		}
 	#endregion
 
-	#region Properties		
+	#region Properties
 		/// <summary>
 		/// The <see cref="ZedGraph.Location"/> struct that describes the location
 		/// for this <see cref="GraphItem"/>.
@@ -119,36 +119,41 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Constructor that sets all <see cref="GraphItem"/> properties to default
-		/// values as defined in the <see cref="Default"/> class.
+		/// Constructor that creates a <see cref="GraphItem"/> with the specified
+		/// coordinates and all other properties to defaults as specified
+		/// in the <see cref="Default"/> class..
 		/// </summary>
-		/// <param name="x">The x position of the text.  The units
-		/// of this position are specified by the
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
-		/// aligned to this position based on the <see cref="AlignH"/>
-		/// property.</param>
-		/// <param name="y">The y position of the text.  The units
-		/// of this position are specified by the
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
-		/// aligned to this position based on the
-		/// <see cref="AlignV"/> property.</param>
-		public GraphItem( float x, float y, float x2, float y2 )
+		/// <remarks>
+		/// The four coordinates define the starting point and ending point for
+		/// <see cref="ArrowItem"/>'s, or the topleft and bottomright points for
+		/// <see cref="ImageItem"/>'s.  For <see cref="GraphItem"/>'s that only require
+		/// one point, the <see paramref="x2"/> and <see paramref="y2"/> values
+		/// will be ignored.  The units of the coordinates are specified by the
+		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.
+		/// </remarks>
+		/// <param name="x">The x position of the item.</param>
+		/// <param name="y">The y position of the item.</param>
+		/// <param name="x2">The x2 position of the item.</param>
+		/// <param name="y2">The x2 position of the item.</param>
+		public GraphItem( float x, float y, float x2, float y2 ) :
+			this( x, y, x2, y2, Default.CoordFrame, Default.AlignH, Default.AlignV )
 		{
-			this.location = new Location( x, y, x2, y2, Default.CoordFrame, Default.AlignH, Default.AlignV );
 		}
 
 		/// <summary>
-		/// Constructor that sets all <see cref="GraphItem"/> properties to default
+		/// Constructor that creates a <see cref="GraphItem"/> with the specified
+		/// position and <see cref="CoordType"/>.  Other properties are set to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		/// <param name="x">The x position of the text.  The units
-		/// of this position are specified by the
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
+		/// <remarks>
+		/// The two coordinates define the location point for the object.
+		/// The units of the coordinates are specified by the
+		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.
+		/// </remarks>
+		/// <param name="x">The x position of the item.  The item will be
 		/// aligned to this position based on the <see cref="AlignH"/>
 		/// property.</param>
-		/// <param name="y">The y position of the text.  The units
-		/// of this position are specified by the
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
+		/// <param name="y">The y position of the item.  The item will be
 		/// aligned to this position based on the
 		/// <see cref="AlignV"/> property.</param>
 		/// <param name="coordType">The <see cref="CoordType"/> enum value that
@@ -160,12 +165,16 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// Constructor that sets all <see cref="GraphItem"/> properties to default
-		/// values as defined in the <see cref="Default"/> class.
+		/// Constructor that creates a <see cref="GraphItem"/> with the specified
+		/// position, <see cref="CoordType"/>, <see cref="AlignH"/>, and <see cref="AlignV"/>.
+		/// Other properties are set to default values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		/// <param name="x">The x position of the text.  The units
-		/// of this position are specified by the
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
+		/// <remarks>
+		/// The two coordinates define the location point for the object.
+		/// The units of the coordinates are specified by the
+		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.
+		/// </remarks>
+		/// <param name="x">The x position of the item.  The item will be
 		/// aligned to this position based on the <see cref="AlignH"/>
 		/// property.</param>
 		/// <param name="y">The y position of the text.  The units
@@ -186,6 +195,36 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Constructor that creates a <see cref="GraphItem"/> with the specified
+		/// position, <see cref="CoordType"/>, <see cref="AlignH"/>, and <see cref="AlignV"/>.
+		/// Other properties are set to default values as defined in the <see cref="Default"/> class.
+		/// </summary>
+		/// <remarks>
+		/// The four coordinates define the starting point and ending point for
+		/// <see cref="ArrowItem"/>'s, or the topleft and bottomright points for
+		/// <see cref="ImageItem"/>'s.  For <see cref="GraphItem"/>'s that only require
+		/// one point, the <see paramref="x2"/> and <see paramref="y2"/> values
+		/// will be ignored.  The units of the coordinates are specified by the
+		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.
+		/// </remarks>
+		/// <param name="x">The x position of the item.</param>
+		/// <param name="y">The y position of the item.</param>
+		/// <param name="x2">The x2 position of the item.</param>
+		/// <param name="y2">The x2 position of the item.</param>
+		/// <param name="coordType">The <see cref="CoordType"/> enum value that
+		/// indicates what type of coordinate system the x and y parameters are
+		/// referenced to.</param>
+		/// <param name="alignH">The <see cref="ZedGraph.AlignH"/> enum that specifies
+		/// the horizontal alignment of the object with respect to the (x,y) location</param>
+		/// <param name="alignV">The <see cref="ZedGraph.AlignV"/> enum that specifies
+		/// the vertical alignment of the object with respect to the (x,y) location</param>
+		public GraphItem( float x, float y, float x2, float y2, CoordType coordType,
+					AlignH alignH, AlignV alignV )
+		{
+			this.location = new Location( x, y, x2, y2, coordType, alignH, alignV );
+		}
+
+		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The <see cref="GraphItem"/> object from which to copy</param>
@@ -197,10 +236,12 @@ namespace ZedGraph
 	
 	#region Rendering Methods
 		/// <summary>
-		/// Render this <see cref="GraphItem"/> object to the specified <see cref="Graphics"/> device
+		/// Render this <see cref="GraphItem"/> object to the specified <see cref="Graphics"/> device.
+		/// </summary>
+		/// <remarks>
 		/// This method is normally only called by the Draw method
 		/// of the parent <see cref="GraphItemList"/> collection object.
-		/// </summary>
+		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.

@@ -1529,6 +1529,15 @@ namespace ZedGraphTest
 			myPane.GraphItemList.Add( text );
 			
 			myPane.IsPenWidthScaled = false ;
+
+//			Bitmap bm = new Bitmap( @"c:\temp\sunspot.jpg" );
+			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
+			Image image = Image.FromHbitmap( bm.GetHbitmap() );
+			ImageItem imageItem = new ImageItem( image, new RectangleF( 0.8F, 0.8F, 0.2F, 0.2F ),
+				CoordType.AxisFraction, AlignH.Left, AlignV.Top );
+			//imageItem.IsScaled = false;
+			myPane.GraphItemList.Add( imageItem );
+
 #endif
 
 #if false	// second graph test
@@ -2245,7 +2254,7 @@ namespace ZedGraphTest
 			//CopyToGif( myPane );
 			//CopyToEMF( myPane );
 		}
-		#endif
+	#endif
 
 	}
 }

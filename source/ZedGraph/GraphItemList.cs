@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-11-17 04:38:08 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-11-19 06:41:05 $ </version>
 	public class GraphItemList : CollectionBase, ICloneable
 	{
 	#region Constructors
@@ -82,9 +82,10 @@ namespace ZedGraph
 		/// <param name="item">A reference to the <see cref="GraphItem"/> object to
 		/// be added</param>
 		/// <seealso cref="IList.Add"/>
-		public void Add( GraphItem item )
+		public GraphItem Add( GraphItem item )
 		{
 			List.Add( item );
+			return item;
 		}
 
 		/// <summary>
@@ -139,9 +140,11 @@ namespace ZedGraph
 		/// <summary>
 		/// Render text to the specified <see cref="Graphics"/> device
 		/// by calling the Draw method of each <see cref="GraphItem"/> object in
-		/// the collection.  This method is normally only called by the Draw method
-		/// of the parent <see cref="GraphPane"/> object.
+		/// the collection.
 		/// </summary>
+		/// <remarks>This method is normally only called by the Draw method
+		/// of the parent <see cref="GraphPane"/> object.
+		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
@@ -192,7 +195,8 @@ namespace ZedGraph
 		{
 			index = -1;
 			
-			for ( int i=0; i<Count; i++ )
+			// Search in reverse direction to honor the Z-order
+			for ( int i=Count-1; i>=0; i-- )
 			{
 				if ( this[i].PointInBox( mousePt, pane, g, scaleFactor ) )
 				{
