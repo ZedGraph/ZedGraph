@@ -44,7 +44,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.15 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2004-12-05 04:07:48 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1941,7 +1941,8 @@ namespace ZedGraph
 				PointPairList points = curve.Points;
 				float barWidth = curve.GetBarWidth( this );
 				double barWidthUserHalf;
-				if ( curve.BaseAxis(this) == XAxis )
+				bool isXBaseAxis = ( curve.BaseAxis( this ) == XAxis );
+				if ( isXBaseAxis )
 					barWidthUserHalf = barWidth / xPixPerUnit / 2.0;
 				else
 					barWidthUserHalf = barWidth / yPixPerUnit / 2.0;
@@ -1972,7 +1973,15 @@ namespace ZedGraph
 								double baseVal, lowVal, hiVal;
 								valueHandler.GetBarValues( curve, iPt, out baseVal,
 										out lowVal, out hiVal );
-								if ( curve.BaseAxis( this ) is XAxis )
+
+								if ( lowVal > hiVal )
+								{
+									double tmpVal = lowVal;
+									lowVal = hiVal;
+									hiVal = tmpVal;
+								}
+
+								if ( isXBaseAxis )
 								{
 									
 									double centerVal = valueHandler.BarCenterValue( curve, barWidth, iPt, xVal, iBar );

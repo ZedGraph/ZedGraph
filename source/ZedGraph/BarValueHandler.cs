@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-12-03 16:27:05 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-12-05 04:07:48 $ </version>
 	public class BarValueHandler
 	{
 		private GraphPane pane;
@@ -120,8 +120,7 @@ namespace ZedGraph
 
 				if ( pane.BarType == BarType.PercentStack )
 				{
-					if ( Math.Abs( negativeStack ) > positiveStack )
-						positiveStack = Math.Abs( negativeStack );
+					positiveStack += Math.Abs( negativeStack );
 
 					if ( positiveStack != 0 )
 					{

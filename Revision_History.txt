@@ -1,5 +1,17 @@
 ZedGraph Class Library Revision History
 
+5-Dec-2004 (by Champion)
+  Fix FindNearestPoint for negative bars
+  Add Tag to GraphItem
+
+3-Dec-2004 (by Champion)
+  Add BoxItem, EllipseItem types
+  Add BarValueHandler to handle stacking calcs
+  Add ZedGraphWeb asp control stuff
+  Fix FindNearestPoint for stacked bars
+  Add FindNearestPoint overloads
+  Add Tag to CurveItem & Pointpair
+
 17-Nov-2004 (by Champion)
   Add ImageItem
   

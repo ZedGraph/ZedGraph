@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-12-05 04:07:48 $ </version>
 	abstract public class GraphItem
 	{
 	#region Fields
@@ -39,6 +39,13 @@ namespace ZedGraph
 		/// Use the public property <see cref="Location"/> to access this value.
 		/// </summary>
 		protected Location location;
+
+		/// <summary>
+		/// A tag object for use by the user.  This can be used to store additional
+		/// information associated with the <see cref="GraphItem"/>.  ZedGraph does
+		/// not use this value for any purpose.
+		/// </summary>
+		public object Tag;
 	#endregion
 
 	#region Defaults
