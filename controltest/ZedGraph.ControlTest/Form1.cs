@@ -196,7 +196,7 @@ namespace ZedGraph.ControlTest
 			//junk.GetDate( out year, out month, out day );
 			//MessageBox.Show( year + "/" + month + "/" + day );
 			//MessageBox.Show( junk.JulianDay + " " + junk.XLDate );
-
+			
 			zedGraphControl4.GraphPane.Title = "Test Graph for Tab 2";
 			zedGraphControl5.GraphPane.Title = "Test Graph for Tab 3";
 			zedGraphControl6.GraphPane.Title = "Test Graph for Tab 1";
