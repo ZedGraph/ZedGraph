@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-09-23 02:31:06 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-09-30 05:03:42 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -425,39 +425,36 @@ namespace ZedGraph
 			// Loop for each curve in the CurveList collection
 			foreach( CurveItem curve in pane.CurveList )
 			{	
-				if ( curve.Label != "" )
+				// Calculate the x,y (TopLeft) location of the current
+				// curve legend label
+				// assuming:
+				//  charHeight/2 for the left margin, plus legendWidth for each
+				//    horizontal column
+				//  charHeight is the line spacing, with no extra margin above
+				x = this.rect.Left + halfCharHeight +
+							( iEntry % hStack ) * legendWidth;
+				y = this.rect.Top + (int)( iEntry / hStack ) * charHeight;
+				// Draw the legend label for the current curve
+				this.FontSpec.Draw( g, curve.Label, x + 2.5F * charHeight, y,
+								AlignH.Left, AlignV.Top, scaleFactor );
+				
+				if ( curve.IsBar )
 				{
-					// Calculate the x,y (TopLeft) location of the current
-					// curve legend label
-					// assuming:
-					//  charHeight/2 for the left margin, plus legendWidth for each
-					//    horizontal column
-					//  charHeight is the line spacing, with no extra margin above
-					x = this.rect.Left + halfCharHeight +
-								( iEntry % hStack ) * legendWidth;
-					y = this.rect.Top + (int)( iEntry / hStack ) * charHeight;
-					// Draw the legend label for the current curve
-					this.FontSpec.Draw( g, curve.Label, x + 2.5F * charHeight, y,
-									AlignH.Left, AlignV.Top, scaleFactor );
-					
-					if ( curve.IsBar )
-					{
-						curve.Bar.Draw( g, x, x + 2 * charHeight, y + charHeight / 4.0F,
-									y + 3.0F * charHeight / 4.0F, scaleFactor, true );
-					}
-					else
-					{
-						// Draw a sample curve to the left of the label text
-						curve.Line.DrawSegment( g, x, y + charHeight / 2,
-							x + 2 * charHeight, y + halfCharHeight );
-						// Draw a sample symbol to the left of the label text				
-						curve.Symbol.DrawSymbol( g, x + charHeight, y + halfCharHeight,
-							scaleFactor );
-					}
-										
-					// maintain a curve count for positioning
-					iEntry++;
+					curve.Bar.Draw( g, x, x + 2 * charHeight, y + charHeight / 4.0F,
+								y + 3.0F * charHeight / 4.0F, scaleFactor, true );
 				}
+				else
+				{
+					// Draw a sample curve to the left of the label text
+					curve.Line.DrawSegment( g, x, y + charHeight / 2,
+						x + 2 * charHeight, y + halfCharHeight );
+					// Draw a sample symbol to the left of the label text				
+					curve.Symbol.DrawSymbol( g, x + charHeight, y + halfCharHeight,
+						scaleFactor );
+				}
+									
+				// maintain a curve count for positioning
+				iEntry++;
 			}
 		
 		
@@ -469,6 +466,50 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Determine if a mouse point is within the legend, and if so, which legend
+		/// entry (<see cref="CurveItem"/>) is nearest.
+		/// </summary>
+		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <param name="hStack">The number of columns (horizontal stacking) to be used
+		/// for drawing the legend</param>
+		/// <param name="legendWidth">The width of each column in the legend</param>
+		/// <param name="index">The index number of the <see cref="CurveItem"/> legend
+		/// entry that is under the mouse point.  The <see cref="CurveItem"/> object is
+		/// accessible via <see cref="GraphPane.CurveList">CurveList[index]</see>.
+		/// </param>
+		/// <returns>true if the mouse point is within the <see cref="Legend"/> bounding
+		/// box, false otherwise.</returns>
+		/// <seealso cref="GraphPane.FindNearestObject"/>
+		public bool FindPoint( PointF mousePt, double scaleFactor, int hStack,
+							float legendWidth, out int index )
+		{
+			index = -1;
+			
+			if ( this.rect.Contains( mousePt ) )
+			{
+				float	charHeight = this.FontSpec.GetHeight( scaleFactor ),
+						halfCharHeight = charHeight / 2.0F;
+				int j = (int) ( ( mousePt.Y - this.rect.Top ) / charHeight );
+				int i = (int) ( ( mousePt.X - this.rect.Left - halfCharHeight ) / legendWidth );
+				if ( i < 0 )
+					i = 0;
+				if ( i >= hStack )
+					i = hStack - 1;
+					
+				index = i + j * hStack;
+				return true;				
+			}
+			else
+				return false;
+		}
+		
 		/// <summary>
 		/// Calculate the <see cref="Legend"/> rectangle (<see cref="Rect"/>),
 		/// taking into account the number of required legend
@@ -522,17 +563,14 @@ namespace ZedGraph
 			// Find the maximum width of the legend labels
 			foreach( CurveItem curve in pane.CurveList )
 			{
-				if ( curve.Label != "" )
-				{
-					// Calculate the width of the label save the max width
+				// Calculate the width of the label save the max width
 
-					tmpWidth = this.FontSpec.GetWidth( g, curve.Label, scaleFactor );
+				tmpWidth = this.FontSpec.GetWidth( g, curve.Label, scaleFactor );
 
-					if ( tmpWidth > maxWidth )
-						maxWidth = tmpWidth;
-		
-					nCurve++;
-				}
+				if ( tmpWidth > maxWidth )
+					maxWidth = tmpWidth;
+	
+				nCurve++;
 			}
 		
 			float widthAvail;

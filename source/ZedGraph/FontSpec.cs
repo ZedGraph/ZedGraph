@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-09-25 00:24:06 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-09-30 05:03:42 $ </version>
 	public class FontSpec : ICloneable
 	{
 	#region Fields
@@ -575,7 +575,7 @@ namespace ZedGraph
 
 			// Save the old transform matrix for later restoration
 			Matrix matrix = g.Transform;
-			
+		
 			// Move the coordinate system to local coordinates
 			// of this text object (that is, at the specified
 			// x,y location)
@@ -655,6 +655,90 @@ namespace ZedGraph
 
 		}
 
+		/// <summary>
+		/// Determines if the specified screen point lies within the bounding box of
+		/// the text, taking into account alignment and rotation parameters.
+		/// </summary>
+		/// <param name="pt">The screen point, in pixel units</param>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="text">A string value containing the text to be
+		/// displayed.  This can be multiple lines, separated by newline ('\n')
+		/// characters</param>
+		/// <param name="x">The X location to display the text, in screen
+		/// coordinates, relative to the horizontal (<see cref="AlignH"/>)
+		/// alignment parameter <paramref name="alignH"/></param>
+		/// <param name="y">The Y location to display the text, in screen
+		/// coordinates, relative to the vertical (<see cref="AlignV"/>
+		/// alignment parameter <paramref name="alignV"/></param>
+		/// <param name="alignH">A horizontal alignment parameter specified
+		/// using the <see cref="AlignH"/> enum type</param>
+		/// <param name="alignV">A vertical alignment parameter specified
+		/// using the <see cref="AlignV"/> enum type</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <returns>true if the point lies within the bounding box, false otherwise</returns>
+		public bool PointInBox( PointF pt, Graphics g, string text, float x,
+			float y, AlignH alignH, AlignV alignV,
+			double scaleFactor )
+		{
+			// make sure the font size is properly scaled
+			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
+			
+			// Get the width and height of the text
+			SizeF sizeF = g.MeasureString( text, this.font );
+
+			// Save the old transform matrix for later restoration
+			GraphicsPath path = new GraphicsPath();
+			path.AddRectangle( new RectangleF( new PointF(0,0), sizeF ) );
+			float	xa, ya;
+			
+			// Since the text will be drawn by g.DrawString()
+			// assuming the location is the TopCenter
+			// (the Font is aligned using StringFormat to the
+			// center so multi-line text is center justified),
+			// shift the coordinate system so that we are
+			// actually aligned per the caller specified position
+			if ( alignH == AlignH.Left )
+				xa = 0.0F;
+			else if ( alignH == AlignH.Right )
+				xa = -sizeF.Width;
+			else
+				xa = -sizeF.Width / 2.0F;
+				
+			if ( alignV == AlignV.Center )
+				ya = -sizeF.Height / 2.0F;
+			else if ( alignV == AlignV.Bottom )
+				ya = -sizeF.Height;
+			else
+				ya = 0.0F;
+
+			Matrix matrix = new Matrix();
+
+			// Shift the coordinates to accomodate the alignment
+			// parameters
+			matrix.Translate( xa, ya );
+
+			// Rotate the coordinate system according to the 
+			// specified angle of the FontSpec
+			if ( angle != 0.0F )
+				matrix.Rotate( -angle );
+
+			// Move the coordinate system to local coordinates
+			// of this text object (that is, at the specified
+			// x,y location)
+			matrix.Translate( x, y );
+			
+			path.Transform( matrix );
+			return path.IsVisible( pt );
+		}
+		
 		/// <summary>
 		/// Render the specified <paramref name="text"/> to the specifed
 		/// <see cref="Graphics"/> device.  The text, frame, and fill options

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-09-30 05:03:42 $ </version>
 	public class TextItem : ICloneable
 	{
 	#region Fields
@@ -333,6 +333,39 @@ namespace ZedGraph
 				this.FontSpec.Draw( g, this.text, pix.X, pix.Y,
 								this.alignH, this.alignV, scaleFactor );
 		}
+		
+		/// <summary>
+		/// Determine if the specified screen point lies inside the bounding box of this
+		/// <see cref="TextItem"/>.  This method takes into account rotation and alignment
+		/// parameters of the text, as specified in the <see cref="FontSpec"/>.
+		/// </summary>
+		/// <param name="pt">The screen point, in pixels</param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
+		public bool PointInBox( PointF pt, GraphPane pane, Graphics g, double scaleFactor )
+		{
+			// transform the x,y location from the user-defined
+			// coordinate frame to the screen pixel location
+			PointF pix = pane.GeneralTransform( new PointF(this.x, this.y),
+				this.coordinateFrame );
+			
+			return this.fontSpec.PointInBox( pt, g, this.text, pix.X, pix.Y, this.alignH,
+									this.alignV, scaleFactor );
+		}
+		
 	#endregion
 	
 	}

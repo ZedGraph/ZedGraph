@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-09-30 05:03:42 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1611,6 +1611,132 @@ namespace ZedGraph
 			x = this.XAxis.ReverseTransform( ptF.X );
 			y = this.YAxis.ReverseTransform( ptF.Y );
 			y2 = this.Y2Axis.ReverseTransform( ptF.Y );
+		}
+
+		/// <summary>
+		/// Find the object that lies closest to the specified mouse (screen) point.
+		/// This method will search through all of the graph objects, such as
+		/// <see cref="Axis"/>, <see cref="Legend"/>, <see cref="GraphPane.Title"/>,
+		/// <see cref="TextItem"/>, <see cref="ArrowItem"/>, and <see cref="CurveItem"/>.
+		/// If the mouse point is within the bounding box of the items (or in the case
+		/// of <see cref="ArrowItem"/> and <see cref="CurveItem"/>, within
+		/// <see cref="Default.NearestTol"/> pixels), then object will be returned.
+		/// You must check the type of the object to determine what object was
+		/// selected (for example, "if ( object is Legend ) ...").  The
+		/// <see paramref="index"/> parameter returns the index number of the item
+		/// within the selected object (such as the point number within a
+		/// <see cref="CurveItem"/> object.
+		/// </summary>
+		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="nearestObj">A reference to the nearest object to the
+		/// specified screen point.  This can be any of <see cref="Axis"/>,
+		/// <see cref="Legend"/>, <see cref="GraphPane.Title"/>,
+		/// <see cref="TextItem"/>, <see cref="ArrowItem"/>, or <see cref="CurveItem"/>.
+		/// Note: If the pane title is selected, then the <see cref="GraphPane"/> object
+		/// will be returned.
+		/// </param>
+		/// <param name="index">The index number of the item within the selected object
+		/// (where applicable).  For example, for a <see cref="CurveItem"/> object,
+		/// <see paramref="index"/> will be the index number of the nearest data point,
+		/// accessible via <see cref="CurveItem.Points">CurveItem.Points[index]</see>.
+		/// index will be -1 if no data points are available.</param>
+		/// <returns>true if an object was found, false otherwise.</returns>
+		/// <seealso cref="FindNearestObject"/>
+		public bool FindNearestObject( PointF mousePt, Graphics g, 
+										out object nearestObj, out int index )
+		{
+			nearestObj = null;
+			index = -1;
+
+			// Make sure that the axes & data are being drawn
+			if ( 	this.xAxis.Min < this.xAxis.Max &&
+					this.yAxis.Min < this.yAxis.Max &&
+					this.y2Axis.Min < this.y2Axis.Max )
+			{
+				double		scaleFactor;
+				int			hStack;
+				float		legendWidth;
+				RectangleF	tmpRect;
+	
+				// Calculate the axis rect, deducting the area for the scales, titles, legend, etc.
+				RectangleF tmpAxisRect = CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth );
+	
+				// See if the point is in a TextItem
+				if ( this.TextList.FindPoint( mousePt, this, g, scaleFactor, out index ) )
+				{
+					nearestObj = this.TextList[index];
+					return true;
+				}
+				
+//				// See if the point is on an ArrowItem
+//				if ( this.ArrowList.FindPoint( mousePt, out index ) )
+//				{
+//					nearestObj = this.ArrowList[index];
+//					return true;
+//				}
+				
+				// See if the point is in the legend
+				if ( this.Legend.FindPoint( mousePt, scaleFactor, hStack, legendWidth, out index ) )
+				{
+					nearestObj = this.Legend;
+					return true;
+				}
+				
+				// See if the point is in the Pane Title
+				if ( this.isShowTitle )
+				{
+					SizeF size = this.FontSpec.BoundingBox( g, this.title, scaleFactor );
+					tmpRect = new RectangleF( ( this.paneRect.Left + this.paneRect.Right - size.Width ) / 2,
+												this.paneRect.Top + this.ScaledGap( scaleFactor ),
+												size.Width, size.Height );
+					if ( tmpRect.Contains( mousePt ) )
+					{
+						nearestObj = this;
+						return true;
+					}
+				}
+
+				// See if the point is in the Y Axis
+				tmpRect = new RectangleF( this.paneRect.Left, tmpAxisRect.Top,
+										tmpAxisRect.Left - this.paneRect.Left, tmpAxisRect.Height );
+				if ( tmpRect.Contains( mousePt ) )
+				{
+					nearestObj = this.YAxis;
+					return true;
+				}
+				
+				// See if the point is in the Y2 Axis
+				tmpRect = new RectangleF( tmpAxisRect.Right, tmpAxisRect.Top,
+										this.paneRect.Right - tmpAxisRect.Right, tmpAxisRect.Height );
+				if ( tmpRect.Contains( mousePt ) )
+				{
+					nearestObj = this.Y2Axis;
+					return true;
+				}
+				
+				// See if the point is in the X Axis
+				tmpRect = new RectangleF( tmpAxisRect.Left, tmpAxisRect.Bottom,
+										tmpAxisRect.Width, this.paneRect.Bottom - tmpAxisRect.Bottom );
+				if ( tmpRect.Contains( mousePt ) )
+				{
+					nearestObj = this.XAxis;
+					return true;
+				}
+				
+				CurveItem curve;
+				// See if it's a data point
+				if ( FindNearestPoint( mousePt, out curve, out index ) )
+				{
+					nearestObj = curve;
+					return true;
+				}
+			}
+			
+			return false;
 		}
 
 		/// <summary>

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-09-30 05:03:42 $ </version>
 	public class TextList : CollectionBase, ICloneable
 	{
 	#region Constructors
@@ -121,6 +121,51 @@ namespace ZedGraph
 			foreach ( TextItem item in this )
 				item.Draw( g, pane, scaleFactor );
 		}
+
+		/// <summary>
+		/// Determine if a mouse point is within any <see cref="TextItem"/>, and if so, 
+		/// return the index number of the the <see cref="TextItem"/>.
+		/// </summary>
+		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <param name="index">The index number of the <see cref="TextItem"/>
+		///  that is under the mouse point.  The <see cref="TextItem"/> object is
+		/// accessible via <see cref="GraphPane.TextList">TextList[index]</see>.
+		/// </param>
+		/// <returns>true if the mouse point is within a <see cref="TextItem"/> bounding
+		/// box, false otherwise.</returns>
+		/// <seealso cref="GraphPane.FindNearestObject"/>
+		public bool FindPoint( PointF mousePt, GraphPane pane, Graphics g, double scaleFactor, out int index )
+		{
+			index = -1;
+			
+			for ( int i=0; i<Count; i++ )
+			{
+				TextItem text = this[i];
+				if ( text.PointInBox( mousePt, pane, g, scaleFactor ) )
+				{
+					index = i;
+					return true;
+				}
+			}
+
+			return false;
+		}
+		
+
 	#endregion
 	}
 }

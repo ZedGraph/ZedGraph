@@ -1660,7 +1660,16 @@ namespace ZedGraphTest
 			*/
 
 
+	
+			object obj;
+			int index;
 			
+			if ( myPane.FindNearestObject( new PointF( e.X, e.Y ), this.CreateGraphics(), out obj, out index ) )
+				MessageBox.Show( obj.ToString() + " index=" + index );
+			else
+				MessageBox.Show( "No Object Found" );
+
+/*
 						CurveItem curve;
 						int	iPt;
 
@@ -1669,7 +1678,7 @@ namespace ZedGraphTest
 								curve.Label, curve.Points[iPt].ToString("e2") ) );
 						else
 							MessageBox.Show( "No Point Found" );
-			
+*/
 			
 			/*
 						double x, y, y2;
