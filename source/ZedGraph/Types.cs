@@ -417,12 +417,6 @@ namespace ZedGraph
 		/// </summary>
 		SortedOverlay,
 		/// <summary>
-		/// Draw the <see cref="BarItem"/> bars in the same format as a <see cref="BarType.Cluster"/>,
-		/// except that the bottom of the bars is defined by the <see cref="PointPair.LowValue"/>
-		/// from the <see cref="PointPair"/> struct.
-		/// </summary>
-		HiLow,
-		/// <summary>
 		/// Draw the <see cref="BarItem"/> bars in an additive format so that they stack on
 		/// top of one another.  The value of the last bar drawn will be the sum of the values
 		/// of all prior bars.

@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-11-03 04:17:45 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2004-11-17 03:35:39 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -382,7 +382,7 @@ namespace ZedGraph
 			float	charHeight = this.FontSpec.GetHeight( scaleFactor ),
 					halfCharHeight = charHeight / 2.0F;
 			float charWidth = this.FontSpec.GetWidth( g, scaleFactor );
-			float gap = pane.ScaledGap( scaleFactor );
+			//float gap = pane.ScaledGap( scaleFactor );
 
 			int		iEntry = 0;
 			float	x, y;

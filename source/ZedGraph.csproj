@@ -148,6 +148,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\ErrorBar.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\ErrorBarItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\Fill.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -159,6 +169,16 @@
                 />
                 <File
                     RelPath = "ZedGraph\GraphPane.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\HiLowBar.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\HiLowBarItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

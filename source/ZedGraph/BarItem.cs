@@ -34,7 +34,7 @@ namespace ZedGraph
 		/// class defined for this <see cref="BarItem"/>.  Use the public
 		/// property <see cref="Bar"/> to access this value.
 		/// </summary>
-		private Bar			bar;
+		protected Bar			bar;
 	#endregion
 	
 	#region Properties
@@ -46,6 +46,45 @@ namespace ZedGraph
 		{
 			get { return bar; }
 		}
+
+		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "base"
+		/// (independent axis) from which the <see cref="Bar"/>'s are drawn.
+		/// The base axis is the axis from which the bars grow with increasing value.  This
+		/// property is determined by the value of <see cref="GraphPane.BarBase"/>.
+		/// </summary>
+		/// <seealso cref="GraphPane.Default.BarBase"/>
+		/// <seealso cref="ZedGraph.BarBase"/>
+		/// <seealso cref="ValueAxis"/>
+		virtual public Axis BaseAxis( GraphPane pane )
+		{
+			if ( pane.BarBase == BarBase.X )
+				return pane.XAxis;
+			else if ( pane.BarBase == BarBase.Y )
+				return pane.YAxis;
+			else
+				return pane.Y2Axis;
+		}
+		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "value"
+		/// (dependent axis) for the <see cref="Bar"/>'s.
+		/// The value axis determines the height of the bars.  This
+		/// property is determined by the value of <see cref="GraphPane.BarBase"/>.
+		/// </summary>
+		/// <seealso cref="GraphPane.Default.BarBase"/>
+		/// <seealso cref="ZedGraph.BarBase"/>
+		/// <seealso cref="BaseAxis"/>
+		virtual public Axis ValueAxis( GraphPane pane, bool isY2Axis )
+		{
+			if ( pane.BarBase == BarBase.X )
+			{
+				if ( isY2Axis )
+					return pane.Y2Axis;
+				else
+					return pane.YAxis;
+			}
+			else
+				return pane.XAxis;
+		}
+
 	#endregion
 	
 	#region Constructors
@@ -72,27 +111,7 @@ namespace ZedGraph
 			: this( label, new PointPairList( x, y ), color )
 		{
 		}
-		/// <summary>
-		/// Create a new <see cref="BarItem"/> using the specified properties.  This method
-		/// creates a <see cref="PointPairList"/> with three values, intended for
-		/// <see cref="BarType.HiLow"/> Bars.
-		/// </summary>
-		/// <param name="label">The label that will appear in the legend.</param>
-		/// <param name="x">An array of double precision values that define
-		/// the independent (X axis) values for this curve</param>
-		/// <param name="y">An array of double precision values that define
-		/// the dependent (Y axis) values for this curve</param>
-		/// <param name="color">A <see cref="Color"/> value that will be applied to
-		/// the <see cref="ZedGraph.Bar.Fill"/> and <see cref="ZedGraph.Bar.Border"/> properties.
-		/// </param>
-		/// <param name="baseVal">An array of double precision values that define the
-		/// base value (the bottom) of the bars for this curve.
-		/// </param>
-		public BarItem( string label, double[] x, double[] y, double[] baseVal, Color color )
-			: this( label, new PointPairList( x, y, baseVal ), color )
-		{
-		}
-		
+
 		/// <summary>
 		/// Create a new <see cref="BarItem"/> using the specified properties.
 		/// </summary>
@@ -153,7 +172,8 @@ namespace ZedGraph
 		override public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  )
 		{
 			if ( this.isVisible )
-				Bar.DrawBars( g, pane, points, isY2Axis, pane.CalcBarWidth(), pos, scaleFactor );
+				Bar.DrawBars( g, pane, points, BaseAxis(pane), ValueAxis(pane,isY2Axis),
+								pane.CalcBarWidth(), pos, scaleFactor );
 		}
 		
 		/// <summary>

@@ -823,7 +823,7 @@ namespace ZedGraphTest
 #endif
 
 
-#if true	// The gradient by value test - big data
+#if false	// The gradient by value test - big data
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"PVT Properties", "Pressure (atm)", "Temperature (C)" );
@@ -950,7 +950,6 @@ namespace ZedGraphTest
 
 #endif
 
-
 #if false	// the text axis sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
@@ -1002,10 +1001,10 @@ namespace ZedGraphTest
 			}
 
 			// Generate a red bar with "Curve 1" in the legend
-			BarItem myCurve = myPane.AddBar( "Curve 1", null, y, yBase, Color.Red );
+			BarItem myCurve = myPane.AddHiLowBar( "Curve 1", null, y, yBase, Color.Red );
 			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
 			
-			myPane.BarType = BarType.HiLow;
+			//myPane.BarType = BarType.HiLow;
 			
 			myPane.AxisChange( this.CreateGraphics() );
 
@@ -1308,7 +1307,7 @@ namespace ZedGraphTest
 			//double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
 
 			// Generate a red bar with "Curve 1" in the legend
-			CurveItem myCurve = myPane.AddBar( "Curve 1", null, y, Color.Red );
+			BarItem myCurve = myPane.AddBar( "Curve 1", null, y, Color.Red );
 			//LinearGradientBrush brush = new LinearGradientBrush( new Rectangle( 0, 0, 150, 150 ),
 			//	Color.White, Color.Red, 90F, true );
 
@@ -1321,7 +1320,7 @@ namespace ZedGraphTest
 			//brush.WrapMode = WrapMode.Clamp;
 			
 			myCurve.Bar.Fill = new Fill( brush );
-			myCurve.Bar.IsFramed = false;
+			myCurve.Bar.Border.IsVisible = false;
 
  			// Generate a blue bar with "Curve 2" in the legend
 			myCurve = myPane.AddBar( "Curve 2", null, y2, Color.Blue );
@@ -1331,7 +1330,7 @@ namespace ZedGraphTest
 			TextureBrush brush2 = new TextureBrush( bm2 );			
 			myCurve.Bar.Fill = new Fill( brush2 );
 			//myCurve.Bar.Fill = new Fill( image2, WrapMode.Tile );
-			myCurve.Bar.IsFramed = false;
+			myCurve.Bar.Border.IsVisible = false;
 			
 			// Generate a green bar with "Curve 3" in the legend
 			//myCurve = myPane.AddBar( "Curve 3", null, y3, Color.Green );
@@ -1414,7 +1413,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if false	// The main example
+#if true	// The main example
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -1447,6 +1446,14 @@ namespace ZedGraphTest
 			BarItem bar = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
 			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
 			myPane.ClusterScaleWidth = 100;
+			//Brush brush = new HatchBrush( HatchStyle.Cross, Color.AliceBlue, Color.Red );
+			//GraphicsPath path = new GraphicsPath();
+			//path.AddLine( 10, 10, 20, 20 );
+			//path.AddLine( 20, 20, 30, 0 );
+			//path.AddLine( 30, 0, 10, 10 );
+			
+			//brush = new PathGradientBrush( path );
+			//bar.Bar.Fill = new Fill( brush );
 			
 			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y4 = { 30, 45, 53, 60, 75, 83, 84, 79, 71, 57 };
@@ -2114,6 +2121,19 @@ namespace ZedGraphTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+			CurveItem curve;
+			int	iPt;
+
+			if ( myPane.FindNearestPoint( new PointF( e.X, e.Y ), out curve, out iPt ) )
+				MessageBox.Show( String.Format( "label = {0}  X = {1}",
+						curve.Label, curve.Points[iPt].ToString("e2") ) );
+			else
+				MessageBox.Show( "No Point Found" );
+		}
+		
+#if false
+		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
+		{
 			//DoPrint();
 			CopyToGif( myPane );
 			
@@ -2225,6 +2245,7 @@ namespace ZedGraphTest
 			//CopyToGif( myPane );
 			//CopyToEMF( myPane );
 		}
+		#endif
 
 	}
 }

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.8 $ $Date: 2004-11-10 04:36:52 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2004-11-17 03:35:39 $ </version>
 	public class PointPairList : CollectionBase, ICloneable
 	{
 	#region Fields
@@ -429,9 +429,15 @@ namespace ZedGraph
 		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.  All data after
 		/// the first non-zero Y value are included.
 		/// </param>
+		/// <param name="isZIncluded">true to include the Z data in the data range for
+		/// the dependent axis</param>
+		/// <param name="isXIndependent">true if X is the independent axis, false
+		/// if Y or Y2 is the independent axis.</param>
 		virtual public void GetRange(	ref double xMin, ref double xMax,
 										ref double yMin, ref double yMax,
-										bool ignoreInitial )
+										bool ignoreInitial,
+										bool isZIncluded,
+										bool isXIndependent )
 		{
 			// initialize the values to outrageous ones to start
 			xMin = yMin = Double.MaxValue;
@@ -442,6 +448,7 @@ namespace ZedGraph
 			{
 				double curX = point.X;
 				double curY = point.Y;
+				double curZ = point.Z;
 				
 				// ignoreInitial becomes false at the first non-zero
 				// Y value
@@ -461,6 +468,21 @@ namespace ZedGraph
 						yMin = curY;
 					if ( curY > yMax )
 						yMax = curY;
+
+					if ( isZIncluded && isXIndependent && curZ != PointPair.Missing )
+					{
+						if ( curZ < yMin )
+							yMin = curZ;
+						if ( curZ > yMax )
+							yMax = curZ;
+					}
+					else if ( isZIncluded && curZ != PointPair.Missing )
+					{
+						if ( curZ < xMin )
+							xMin = curZ;
+						if ( curZ > xMax )
+							xMax = curZ;
+					}
 				}
 			}	
 		}

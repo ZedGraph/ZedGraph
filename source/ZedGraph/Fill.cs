@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-11-10 04:36:52 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-11-17 03:35:39 $ </version>
 	public class Fill
 	{
 	#region Fields
@@ -651,7 +651,7 @@ namespace ZedGraph
 		public Brush MakeBrush( RectangleF rect, PointPair dataValue )
 		{
 			// get a brush
-			if ( this.IsVisible&& ( !this.color.IsEmpty || this.brush != null ) )
+			if ( this.IsVisible && ( !this.color.IsEmpty || this.brush != null ) )
 			{
 				//Brush	brush;
 				if ( this.type == FillType.Brush )
@@ -765,7 +765,7 @@ namespace ZedGraph
 					return linBrush;
 					
 				} // LinearGradientBrush
-				else // TextureBrush
+				else if ( brush is TextureBrush )
 				{
 					TextureBrush texBrush = (TextureBrush) brush.Clone();
 					
@@ -809,6 +809,10 @@ namespace ZedGraph
 					}
 					
 					return texBrush;
+				}
+				else // other brush type
+				{
+					return (Brush) brush.Clone();
 				}
 			}
 			else

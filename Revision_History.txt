@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+16-Oct-2004 (by Champion)
+  Add ErrorBar (I-beam) graph type
+  Convert HiLowBar type to a separate HiLowBarItem class
+  Fix Hatch and PathGradient brush problem
+  
 9-Oct-2004 (by Champion)
   Add FillType.GradientByX, Y, Z
   Fix & Consolidate DrawSingleBar() code

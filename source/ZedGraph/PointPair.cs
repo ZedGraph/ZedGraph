@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-11-10 04:36:52 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-11-17 03:35:39 $ </version>
 	public struct PointPair
 	{
 	#region Member variables
@@ -50,7 +50,7 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// This PointPair's Z coordinate.  Also used for the lower value (dependent axis)
-		/// for <see cref="BarType.HiLow"/> charts.
+		/// for <see cref="HiLowBarItem"/> charts.
 		/// </summary>
 		public double Z;
 	#endregion
@@ -131,6 +131,27 @@ namespace ZedGraph
 							Double.IsInfinity( this.Y ) ||
 							Double.IsNaN( this.X ) ||
 							Double.IsNaN( this.Y );
+				}
+		}
+
+		/// <summary>
+		/// Readonly value that determines if either the X, Y, or Z
+		/// coordinate in this PointPair is an invalid (not plotable) value.
+		/// It is considered invalid if it is missing (equal to System.Double.Max),
+		/// Infinity, or NaN.
+		/// </summary>
+		/// <returns>true if any value is invalid</returns>
+		public bool IsInvalid3D
+		{
+			get { return	this.X == PointPair.Missing ||
+							this.Y == PointPair.Missing ||
+							this.Z == PointPair.Missing ||
+							Double.IsInfinity( this.X ) ||
+							Double.IsInfinity( this.Y ) ||
+							Double.IsInfinity( this.Z ) ||
+							Double.IsNaN( this.X ) ||
+							Double.IsNaN( this.Y ) ||
+							Double.IsNaN( this.Z );
 				}
 		}
 

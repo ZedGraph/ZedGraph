@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.8 $ $Date: 2004-11-06 02:16:51 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2004-11-17 03:35:39 $ </version>
 	public class CurveList : CollectionBase, ICloneable
 	{
 	#region Properties
@@ -266,13 +266,14 @@ namespace ZedGraph
 						sumList.SumX( curve.Points );
 					
 					sumList.GetRange( ref tXMinVal, ref tXMaxVal,
-						ref tYMinVal, ref tYMaxVal, bIgnoreInitial );
+						ref tYMinVal, ref tYMaxVal, bIgnoreInitial,
+						false, true );
 				}
 				else
 					// Call the GetRange() member function for the current
 					// curve to get the min and max values
-					curve.Points.GetRange( ref tXMinVal, ref tXMaxVal,
-						ref tYMinVal, ref tYMaxVal, bIgnoreInitial );
+					curve.GetRange( ref tXMinVal, ref tXMaxVal,
+						ref tYMinVal, ref tYMaxVal, bIgnoreInitial, pane );
    			
 				bool isYOrd = ( ( pane.Y2Axis.IsOrdinal || pane.Y2Axis.IsText ) && curve.IsY2Axis ) ||
 								( ( pane.YAxis.IsOrdinal || pane.YAxis.IsText ) && ! curve.IsY2Axis );
@@ -427,9 +428,11 @@ namespace ZedGraph
 				for ( int i=0; i<this.maxPts; i++ )
 				{
 					tempList.Sort( pane.BarBase == BarBase.X ? SortType.YValues : SortType.XValues, i );
-					foreach ( BarItem curve in tempList )
-						curve.Bar.DrawSingleBar( g, pane, curve.Points, curve.IsY2Axis, barWidth,
-							0, i, scaleFactor );
+					foreach ( BarItem barItem in tempList )
+						barItem.Bar.DrawSingleBar( g, pane, barItem.Points,
+							((BarItem)barItem).BaseAxis(pane),
+							((BarItem)barItem).ValueAxis(pane, barItem.IsY2Axis),
+							barWidth, 0, i, scaleFactor );
 				}
 			}
 

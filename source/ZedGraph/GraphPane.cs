@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.11 $ $Date: 2004-11-10 04:36:52 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2004-11-17 03:35:39 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1438,6 +1438,62 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Add an error bar set (<see cref="ErrorBarItem"/> object) to the plot with
+		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// This is simplified way to add curves without knowledge of the
+		/// <see cref="CurveList"/> class.  An alternative is to use
+		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// </summary>
+		/// <param name="label">The text label (string) for the curve that will be
+		/// used as a <see cref="Legend"/> entry.</param>
+		/// <param name="x">An array of double precision X values (the
+		/// independent values) that define the curve.</param>
+		/// <param name="y">An array of double precision Y values (the
+		/// dependent values) that define the curve.</param>
+		/// <param name="baseValue">An array of double precision values that define the
+		/// base value (the bottom) of the bars for this curve.
+		/// </param>
+		/// <param name="color">The color to used for the curve line,
+		/// symbols, etc.</param>
+		/// <returns>An <see cref="ErrorBarItem"/> class for the newly created curve.
+		/// This can then be used to access all of the curve properties that
+		/// are not defined as arguments to the
+		/// <see cref="AddErrorBar(string,PointPairList,Color)"/> method.</returns>
+		public ErrorBarItem AddErrorBar( string label, double[] x, double[] y,
+										double[] baseValue, Color color )
+		{
+			ErrorBarItem curve = new ErrorBarItem( label, new PointPairList( x, y, baseValue),
+													color );
+			this.curveList.Add( curve );
+			
+			return curve;
+		}
+		/// <summary>
+		/// Add an error bar set (<see cref="ErrorBarItem"/> object) to the plot with
+		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// This is simplified way to add curves without knowledge of the
+		/// <see cref="CurveList"/> class.  An alternative is to use
+		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// </summary>
+		/// <param name="label">The text label (string) for the curve that will be
+		/// used as a <see cref="Legend"/> entry.</param>
+		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// the X and Y values for this curve</param>
+		/// <param name="color">The color to used for the curve line,
+		/// symbols, etc.</param>
+		/// <returns>An <see cref="ErrorBarItem"/> class for the newly created curve.
+		/// This can then be used to access all of the curve properties that
+		/// are not defined as arguments to the
+		/// <see cref="AddErrorBar(string,PointPairList,Color)"/> method.</returns>
+		public ErrorBarItem AddErrorBar( string label, PointPairList points, Color color )
+		{
+			ErrorBarItem curve = new ErrorBarItem( label, points, color );
+			this.curveList.Add( curve );
+			
+			return curve;
+		}
+
+		/// <summary>
 		/// Add a bar type curve (<see cref="CurveItem"/> object) to the plot with
 		/// the given data points (<see cref="PointPairList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
@@ -1488,7 +1544,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Add a bar type curve (<see cref="CurveItem"/> object) to the plot with
+		/// Add a "High-Low" bar type curve (<see cref="HiLowBarItem"/> object) to the plot with
 		/// the given data points (double arrays) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
@@ -1504,18 +1560,43 @@ namespace ZedGraph
 		/// base value (the bottom) of the bars for this curve.
 		/// </param>
 		/// <param name="color">The color to used for the bars</param>
-		/// <returns>A <see cref="CurveItem"/> class for the newly created bar curve.
+		/// <returns>A <see cref="HiLowBarItem"/> class for the newly created bar curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the
-		/// <see cref="AddBar(string,double[],double[],double[],Color)"/> method.</returns>
-		public BarItem AddBar( string label, double[] x, double[] y, double[] baseVal, Color color )
+		/// <see cref="AddHiLowBar(string,double[],double[],double[],Color)"/> method.</returns>
+		public HiLowBarItem AddHiLowBar( string label, double[] x, double[] y,
+											double[] baseVal, Color color )
 		{
-			BarItem curve = new BarItem( label, x, y, baseVal, color );
+			HiLowBarItem curve = new HiLowBarItem( label, x, y, baseVal, color );
 			this.curveList.Add( curve );
 			
 			return curve;
 		}
 
+		/// <summary>
+		/// Add a hi-low bar type curve (<see cref="CurveItem"/> object) to the plot with
+		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// This is simplified way to add curves without knowledge of the
+		/// <see cref="CurveList"/> class.  An alternative is to use
+		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// </summary>
+		/// <param name="label">The text label (string) for the curve that will be
+		/// used as a <see cref="Legend"/> entry.</param>
+		/// <param name="points">A <see cref="PointPairList"/> of double precision value Trio's that define
+		/// the X, Y, and lower dependent values for this curve</param>
+		/// <param name="color">The color to used to fill the bars</param>
+		/// <returns>A <see cref="HiLowBarItem"/> class for the newly created bar curve.
+		/// This can then be used to access all of the curve properties that
+		/// are not defined as arguments to the
+		/// <see cref="AddHiLowBar(string,PointPairList,Color)"/> method.</returns>
+		public HiLowBarItem AddHiLowBar( string label, PointPairList points, Color color )
+		{
+			HiLowBarItem curve = new HiLowBarItem( label, points, color );
+			this.curveList.Add( curve );
+			
+			return curve;
+		}
+		
 		#endregion
 
 	#region General Utility Methods

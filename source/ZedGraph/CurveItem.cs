@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.8 $ $Date: 2004-11-06 02:16:51 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2004-11-17 03:35:39 $ </version>
 	abstract public class CurveItem
 	{
 	
@@ -418,6 +418,34 @@ namespace ZedGraph
 			this.Color			= rotator.NextColor;
 		}
 	
+		/// <summary>
+		/// Go through the list of <see cref="PointPair"/> data values for this <see cref="CurveItem"/>
+		/// and determine the minimum and maximum values in the data.
+		/// </summary>
+		/// <param name="xMin">The minimum X value in the range of data</param>
+		/// <param name="xMax">The maximum X value in the range of data</param>
+		/// <param name="yMin">The minimum Y value in the range of data</param>
+		/// <param name="yMax">The maximum Y value in the range of data</param>
+		/// <param name="bIgnoreInitial">ignoreInitial is a boolean value that
+		/// affects the data range that is considered for the automatic scale
+		/// ranging (see <see cref="GraphPane.IsIgnoreInitial"/>).  If true, then initial
+		/// data points where the Y value is zero are not included when
+		/// automatically determining the scale <see cref="Axis.Min"/>,
+		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.  All data after
+		/// the first non-zero Y value are included.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		virtual public void GetRange( 	ref double xMin, ref double xMax,
+										ref double yMin, ref double yMax,
+										bool bIgnoreInitial, GraphPane pane )
+		{
+			// Call a default GetRange() that does not include Z data points
+			this.points.GetRange( ref xMin, ref xMax, ref yMin, ref yMax, bIgnoreInitial, false, true );
+		}
+
 	#endregion
 	
 	#region Inner classes	
