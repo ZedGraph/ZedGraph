@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-02-02 04:52:05 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-02-10 05:06:45 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -57,6 +57,12 @@ namespace ZedGraph
 		/// was never called.
 		/// </summary>
 		private PaneLayout paneLayout;
+
+		/// <summary>
+		/// Private field that sets the amount of space between the GraphPanes.  Use the public property
+		/// <see cref="InnerPaneGap"/> to access this value;
+		/// </summary>
+		private float innerPaneGap;
 
 		/// <summary>
 		/// private fields that store the number of rows and columns that were specified to the
@@ -94,11 +100,17 @@ namespace ZedGraph
 
 			/// <summary>
 			/// The default value for the <see cref="Default.InnerPaneGap"/> property.
-			/// This is the size of the margin inbetween adjacent <see cref="GraphPane"/>
+			/// This is the size of the margin between adjacent <see cref="GraphPane"/>
 			/// objects, in units of points (1/72 inch).
 			/// </summary>
+			/// <seealso cref="MasterPane.InnerPaneGap"/>
 			public static float InnerPaneGap = 20;
 			
+			/// <summary>
+			/// The default value for the <see cref="Legend.IsVisible"/> property for
+			/// the <see cref="MasterPane"/> class.
+			/// </summary>
+			public static bool IsShowLegend = false;
 		}
 	#endregion
 
@@ -114,6 +126,21 @@ namespace ZedGraph
 		{
 			get { return paneList; }
 			set { paneList = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the size of the margin between adjacent <see cref="GraphPane"/>
+		/// objects.
+		/// </summary>
+		/// <remarks>This property is scaled according to <see cref="PaneBase.CalcScaleFactor"/>,
+		/// based on <see cref="PaneBase.BaseDimension"/>.  The default value comes from
+		/// <see cref="Default.InnerPaneGap"/>.
+		/// </remarks>
+		/// <value>The value is in points (1/72nd inch).</value>
+		public float InnerPaneGap
+		{
+			get { return innerPaneGap; }
+			set { innerPaneGap = value; }
 		}
 
 	#endregion
@@ -134,12 +161,15 @@ namespace ZedGraph
 		public MasterPane( string title, RectangleF paneRect ) : base( title, paneRect )
 		{
 			this.paneLayout = Default.PaneLayout;
+			this.innerPaneGap = Default.InnerPaneGap;
 			this.rows = -1;
 			this.columns = -1;
 			this.isColumnSpecified = false;
 			this.countList = null;
 
 			this.paneList = new PaneList();
+
+			this.legend.IsVisible = Default.IsShowLegend;
 		}
 
 		/// <summary>
@@ -149,6 +179,7 @@ namespace ZedGraph
 		public MasterPane( MasterPane rhs ) : base( rhs )
 		{
 			this.paneLayout = rhs.paneLayout;
+			this.innerPaneGap = rhs.innerPaneGap;
 			this.rows = rhs.rows;
 			this.columns = rhs.rows;
 			this.isColumnSpecified = rhs.isColumnSpecified;
@@ -189,6 +220,7 @@ namespace ZedGraph
 
 			this.paneList = (PaneList) info.GetValue( "paneList", typeof(PaneList) );
 			this.paneLayout = (PaneLayout) info.GetValue( "paneLayout", typeof(PaneLayout) );
+			this.innerPaneGap = info.GetSingle( "innerPaneGap" );
 
 			this.rows = info.GetInt32( "rows" );
 			this.columns = info.GetInt32( "columns" );
@@ -209,6 +241,7 @@ namespace ZedGraph
 
 			info.AddValue( "paneList", paneList );
 			info.AddValue( "paneLayout", paneLayout );
+			info.AddValue( "innerPaneGap", innerPaneGap );
 
 			info.AddValue( "rows", rows );
 			info.AddValue( "columns", columns );
@@ -337,7 +370,6 @@ namespace ZedGraph
 			graphItemList.Draw( g, this, scaleFactor, ZOrder.E_BehindAxis );
 			graphItemList.Draw( g, this, scaleFactor, ZOrder.D_BehindCurves );
 			graphItemList.Draw( g, this, scaleFactor, ZOrder.C_BehindAxisBorder );
-			graphItemList.Draw( g, this, scaleFactor, ZOrder.B_BehindLegend );
 
 			// Reset the clipping
 			g.ResetClip();
@@ -348,56 +380,16 @@ namespace ZedGraph
 			// Clip everything to the paneRect
 			g.SetClip( this.paneRect );
 
+			graphItemList.Draw( g, this, scaleFactor, ZOrder.B_BehindLegend );
+			
+			this.legend.Draw( g, this, scaleFactor );
+
 			graphItemList.Draw( g, this, scaleFactor, ZOrder.A_InFront );
 			
 			// Reset the clipping
 			g.ResetClip();
 		}
 		
-		/// <summary>
-		/// Calculate the innerRect rectangle based on the <see cref="PaneBase.PaneRect"/>.
-		/// </summary>
-		/// <remarks>The innerRect is the actual area available for <see cref="GraphPane"/>
-		/// items after taking out space for the margins and the title.
-		/// </remarks>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.Default.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
-		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-		/// </param>
-		/// <returns>The calculated axis rect, in pixel coordinates.</returns>
-		private RectangleF CalcInnerRect( Graphics g, float scaleFactor )
-		{
-			// get scaled values for the paneGap and character height
-			//float scaledOuterGap = (float) ( Default.OuterPaneGap * scaleFactor );
-			float charHeight = this.FontSpec.GetHeight( scaleFactor );
-				
-			// Axis rect starts out at the full pane rect.  It gets reduced to make room for the legend,
-			// scales, titles, etc.
-			RectangleF innerRect = new RectangleF(
-							this.paneRect.Left + this.marginLeft * (float) scaleFactor,
-							this.paneRect.Top + this.marginTop * (float) scaleFactor,
-							this.paneRect.Width - (float) scaleFactor * ( this.marginLeft + this.marginRight ),
-							this.paneRect.Height - (float) scaleFactor * ( this.marginTop + this.marginBottom ) );
-
-			//innerRect.Inflate( -scaledOuterGap, -scaledOuterGap );
-
-			// Leave room for the title
-			if ( this.isShowTitle )
-			{
-				SizeF titleSize = this.fontSpec.BoundingBox( g, this.title, scaleFactor );
-				// Leave room for the title height, plus a line spacing of charHeight/2
-				innerRect.Y += titleSize.Height + charHeight / 2.0F;
-				innerRect.Height -= titleSize.Height + charHeight / 2.0F;
-			}
-			
-			return innerRect;
-		}
-
 		/// <summary>
 		/// Automatically set all of the <see cref="GraphPane"/> <see cref="PaneBase.PaneRect"/>'s in
 		/// the list to a reasonable configuration.
@@ -518,10 +510,11 @@ namespace ZedGraph
 			float scaleFactor = this.CalcScaleFactor();
 
 			// innerRect is the area for the GraphPane's
-			RectangleF innerRect = CalcInnerRect( g, scaleFactor );			
+			RectangleF innerRect = CalcClientRect( g, scaleFactor );			
+			this.legend.CalcRect( g, this, scaleFactor, ref innerRect );
 
 			// scaled InnerGap is the area between the GraphPane.PaneRect's
-			float scaledInnerGap = (float) ( Default.InnerPaneGap * scaleFactor );
+			float scaledInnerGap = (float) ( this.innerPaneGap * scaleFactor );
 
 			int iPane = 0;
 
@@ -604,10 +597,11 @@ namespace ZedGraph
 			float scaleFactor = this.CalcScaleFactor();
 
 			// innerRect is the area for the GraphPane's
-			RectangleF innerRect = CalcInnerRect( g, scaleFactor );			
+			RectangleF innerRect = CalcClientRect( g, scaleFactor );			
+			this.legend.CalcRect( g, this, scaleFactor, ref innerRect );
 
 			// scaled InnerGap is the area between the GraphPane.PaneRect's
-			float scaledInnerGap = (float) ( Default.InnerPaneGap * scaleFactor );
+			float scaledInnerGap = (float) ( this.innerPaneGap * scaleFactor );
 
 			float width = ( innerRect.Width - (float)(columns - 1) * scaledInnerGap ) / (float) columns;
 			float height = ( innerRect.Height - (float)(rows - 1) * scaledInnerGap ) / (float) rows;

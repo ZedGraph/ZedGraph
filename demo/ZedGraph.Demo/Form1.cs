@@ -225,6 +225,7 @@ namespace ZedGraph.Demo
 
 			myPane.XAxis.IsShowGrid = true;
 			myPane.XAxis.Max = 1200;
+			myPane.XAxis.Cross = 80;
 			//myPane.IsPenWidthScaled = false;
 			//myPane.XAxis.ScaleFontSpec.Angle = 90;
 			//myPane.XAxis.ScaleAlign = AlignP.Inside;
@@ -234,6 +235,7 @@ namespace ZedGraph.Demo
 			myPane.YAxis.IsShowGrid = true;
 			//myPane.YAxis.ScaleFontSpec.Angle = 90;
 			myPane.YAxis.Max = 120;
+			myPane.YAxis.Cross = 1150;
 			//myPane.YAxis.ScaleAlign = AlignP.Inside;
 			//myPane.YAxis.ScaleFontSpec.Border.IsVisible = true;
 			//myPane.YAxis.Type = AxisType.Log;
@@ -241,7 +243,8 @@ namespace ZedGraph.Demo
 			//myPane.YAxis.IsShowMinorGrid = true;
 			//myPane.YAxis.MinorGridColor = Color.Red;
 
-			//myPane.Y2Axis.IsVisible = true;
+			myPane.Y2Axis.IsVisible = true;
+			myPane.Y2Axis.Cross = 50;
 			//myPane.Y2Axis.Max = 120;
 			//myPane.Y2Axis.ScaleAlign = AlignP.Outside;
 			
@@ -344,7 +347,7 @@ namespace ZedGraph.Demo
 
 #endif
 
-#if true	//Pie Chart Example   
+#if false	//Pie Chart Example   
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"2003 Regional Sales", "", "" );
@@ -467,15 +470,18 @@ namespace ZedGraph.Demo
 			myPane.GraphItemList.Add( box );
 
 #endif
-
-			
-#if false	// MasterPane Test
+		
+#if true	// MasterPane Test
 
 			master = new MasterPane( "MASTER PANE TEST", new RectangleF( 0, 0, 600, 400 ) );
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
-			master.HasMasterLegend = false ;
+			//master.HasMasterLegend = false ;
 			
 			master.Tag = "This is my tag";
+			master.MarginAll = 10;
+			master.InnerPaneGap = 10;
+			master.Legend.IsVisible = true;
+			master.Legend.Position = LegendPos.TopCenter;
 
 			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
 			Image image = Image.FromHbitmap( bm.GetHbitmap() );
@@ -540,7 +546,7 @@ namespace ZedGraph.Demo
 
 				// Generate a red curve with diamond
 				// symbols, and "Porsche" in the legend
-				LineItem myCurve = myPane.AddCurve( "label",
+				LineItem myCurve = myPane.AddCurve( "label" + j.ToString(),
 					list, Color.Red, SymbolType.Diamond );
 
 				// Tell ZedGraph to refigure the
@@ -1108,14 +1114,12 @@ namespace ZedGraph.Demo
 #endif
 
 #if false	// The Dec-2004 Text axis sample
-			ErrorBarItem bar;
-			bar.ErrorBar.Si
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 							"My Test Text Graph", "Label", "My Y Axis" );
 
 			// Make up some random data points
-			string[] labels = { "USA", "Spain", "Qatar", "Morocco", "UK", "Uganda",
+			string[] labels = { "USA", "Spain\nMadrid", "Qatar", "Morocco", "UK", "Uganda",
 						"Cambodia", "Malaysia", "Australia", "Ecuador" };
 			double[] y = new double[10];
 			for ( int i=0; i<10; i++ )
@@ -2686,8 +2690,6 @@ namespace ZedGraph.Demo
 			master.AutoPaneLayout( this.CreateGraphics(), paneLayout );					 //this is where the paneRect is allocated out*****
 #endif
 			
-			
-
 #if false	// Missing Values test
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -3247,7 +3249,7 @@ namespace ZedGraph.Demo
 					this.ClientRectangle.Width, this.ClientRectangle.Height );
 
 				SetSize();
-				master.AxisChange( this.CreateGraphics() );													 //returns with panes allocated
+				master.AxisChange( this.CreateGraphics() );		//returns with panes allocated
 				master.AutoPaneLayout( this.CreateGraphics(), this.paneLayout );
 				Invalidate();
 			}

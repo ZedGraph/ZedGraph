@@ -33,6 +33,9 @@ namespace ZedGraph
 	/// An abstract base class that defines basic functionality for handling a pane.  This class is the
 	/// parent class for <see cref="MasterPane"/> and <see cref="GraphPane"/>.
 	/// </summary>
+	/// 
+	/// <author>John Champion</author>
+	/// <version> $Revision: 3.3 $ $Date: 2005-02-10 05:06:46 $ </version>
 	public class PaneBase : ICloneable
 	{
 
@@ -49,6 +52,10 @@ namespace ZedGraph
 		/// </summary>
 		protected string		title;
 		
+		/// <summary>Private field instance of the <see cref="ZedGraph.Legend"/> class.  Use the
+		/// public property <see cref="PaneBase.Legend"/> to access this class.</summary>
+		protected Legend		legend;
+
 		/// <summary>
 		/// Private field that stores the user-defined tag for this <see cref="PaneBase"/>.  This tag
 		/// can be any user-defined value.  If it is a <see cref="String"/> type, it can be used as
@@ -270,6 +277,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Accesses the <see cref="Legend"/> for this <see cref="PaneBase"/>
+		/// </summary>
+		/// <value>A reference to a <see cref="Legend"/> object</value>
+		public Legend Legend
+		{
+			get { return legend; }
+		}
+
+		/// <summary>
 		/// IsShowTitle is a boolean value that determines whether or not the
 		/// <see cref="Title"/> is displayed on the graph.
 		/// </summary>
@@ -412,6 +428,27 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Concurrently sets all outer margin values to a single value.
+		/// </summary>
+		/// <value>This value is in units of points (1/72 inch), and is scaled
+		/// linearly with the graph size.</value>
+		/// <seealso cref="IsFontsScaled"/>
+		/// <seealso cref="MarginBottom"/>
+		/// <seealso cref="MarginLeft"/>
+		/// <seealso cref="MarginRight"/>
+		/// <seealso cref="MarginTop"/>
+		public float MarginAll
+		{
+			set
+			{
+				marginBottom = value;
+				marginTop = value;
+				marginLeft = value;
+				marginRight = value;
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets the list of <see cref="GraphItem"/> items for this <see cref="GraphPane"/>
 		/// </summary>
 		/// <value>A reference to a <see cref="GraphItemList"/> collection object</value>
@@ -520,6 +557,9 @@ namespace ZedGraph
 		public PaneBase( string title, RectangleF paneRect )
 		{
 			this.paneRect = paneRect;
+
+			legend = new Legend();
+
 			if ( title == null )
 				this.title = "";
 			else
@@ -571,6 +611,7 @@ namespace ZedGraph
 			this.marginBottom = rhs.marginBottom;
 
 			this.paneRect = rhs.paneRect;
+			legend = new Legend( rhs.Legend );
 			this.fontSpec = (FontSpec) rhs.fontSpec.Clone();
 			this.graphItemList = (GraphItemList) rhs.graphItemList.Clone();
 			
@@ -612,6 +653,7 @@ namespace ZedGraph
 			int sch = info.GetInt32( "schema" );
 
 			this.paneRect = (RectangleF) info.GetValue( "paneRect", typeof(RectangleF) );
+			this.legend = (Legend) info.GetValue( "legend", typeof(Legend) );
 			this.title = info.GetString( "title" );
 			this.isShowTitle = info.GetBoolean( "isShowTitle" );
 			this.isFontsScaled = info.GetBoolean( "isFontsScaled" );
@@ -641,6 +683,7 @@ namespace ZedGraph
 			info.AddValue( "schema", schema );
 
 			info.AddValue( "paneRect", paneRect );
+			info.AddValue( "legend", legend );
 			info.AddValue( "title", title );
 			info.AddValue( "isShowTitle", isShowTitle );
 			info.AddValue( "isFontsScaled", isFontsScaled );
@@ -688,8 +731,58 @@ namespace ZedGraph
 			// Draw the Pane Title
 			DrawTitle( g, scaleFactor );
 
+			// Draw the Legend
+			//this.Legend.Draw( g, this, scaleFactor );
+
 			// Reset the clipping
 			g.ResetClip();
+		}
+
+		/// <summary>
+		/// Calculate the client area rectangle based on the <see cref="PaneBase.PaneRect"/>.
+		/// </summary>
+		/// <remarks>The client rectangle is the actual area available for <see cref="GraphPane"/>
+		/// or <see cref="MasterPane"/> items after taking out space for the margins and the title.
+		/// This method does not take out the area required for the <see cref="PaneBase.Legend"/>.
+		/// To do so, you must separately call <see cref="Legend.CalcRect"/>.
+		/// </remarks>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.Default.BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
+		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+		/// </param>
+		/// <returns>The calculated axis rect, in pixel coordinates.</returns>
+		public RectangleF CalcClientRect( Graphics g, float scaleFactor )
+		{
+			// get scaled values for the paneGap and character height
+			//float scaledOuterGap = (float) ( Default.OuterPaneGap * scaleFactor );
+			float charHeight = this.FontSpec.GetHeight( scaleFactor );
+				
+			// Axis rect starts out at the full pane rect.  It gets reduced to make room for the legend,
+			// scales, titles, etc.
+			RectangleF innerRect = new RectangleF(
+							this.paneRect.Left + this.marginLeft * (float) scaleFactor,
+							this.paneRect.Top + this.marginTop * (float) scaleFactor,
+							this.paneRect.Width - (float) scaleFactor * ( this.marginLeft + this.marginRight ),
+							this.paneRect.Height - (float) scaleFactor * ( this.marginTop + this.marginBottom ) );
+
+			// Leave room for the title
+			if ( this.isShowTitle )
+			{
+				SizeF titleSize = this.fontSpec.BoundingBox( g, this.title, scaleFactor );
+				// Leave room for the title height, plus a line spacing of charHeight/2
+				innerRect.Y += titleSize.Height + charHeight / 2.0F;
+				innerRect.Height -= titleSize.Height + charHeight / 2.0F;
+			}
+
+			// Calculate the legend rect, and back it out of the current axisRect
+			//this.legend.CalcRect( g, this, scaleFactor, ref innerRect );
+
+			return innerRect;
 		}
 
 		/// <summary>

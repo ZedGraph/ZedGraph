@@ -1,4 +1,10 @@
 ZedGraph Class Library Revision History
+
+9-Feb-2005 (Champion)
+  Make ZGControl tooltips display text for AxisType.Text
+  Push Legend functionality up to PaneBase so MasterPane has a legend
+  Add Axis.Cross to allow axes at non-default locations
+  
 21-Jan-2005 (by Champion)
   Replace GraphPaneList with MasterPane
   Add PaneList as GraphPane collection class

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.18 $ $Date: 2005-01-21 05:05:07 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2005-02-10 05:06:46 $ </version>
 	[Serializable]
 	public class PointPairList : CollectionPlus, ICloneable
 	{
@@ -152,8 +152,6 @@ namespace ZedGraph
 			return rv;
 		}
 
-
-		
 		/// <summary>
 		/// Add a set of points to the PointPairList from two arrays of type double.
 		/// If either array is null, then a set of ordinal values is automatically
@@ -271,7 +269,7 @@ namespace ZedGraph
 			PointPair	point = new PointPair( x, y );
 			return List.Add( point );
 		}
-
+/*
 		/// <summary>
 		/// Add a single point to the <see cref="PointPairList"/> from a single value of type double.
 		/// The value will be stored in <see cref="PointPair.X"/>, while <see cref="PointPair.Y"/>
@@ -287,7 +285,7 @@ namespace ZedGraph
 			PointPair	point = new PointPair( x, PointPair.Missing );
 			return List.Add( point );
 		}
-
+*/
 		/// <summary>
 		/// Add a single point to the <see cref="PointPairList"/> from values of type double.
 		/// </summary>

@@ -34,25 +34,23 @@ namespace GDIDB
 		/// <returns>true/false if double buffer is created</returns>
 		public bool CreateDoubleBuffer(Graphics g, int width, int height)
 		{
-
-			if (memoryBitmap != null)
-			{
-				memoryBitmap.Dispose();
-				memoryBitmap = null;
-			}
-
-			if (graphics != null)
-			{
-				graphics.Dispose();
-				graphics = null;
-			}
-
 			if (width <= 0 || height <= 0)
 				return false;
 
-
-			if ((width != this.width) || (height != this.height))
+			if ( width != this.width || height != this.height || memoryBitmap == null || graphics == null )
 			{
+				if ( memoryBitmap != null )
+				{
+					memoryBitmap.Dispose();
+					memoryBitmap = null;
+				}
+
+				if ( graphics != null )
+				{
+					graphics.Dispose();
+					graphics = null;
+				}
+
 				this.width = width;
 				this.height = height;
 

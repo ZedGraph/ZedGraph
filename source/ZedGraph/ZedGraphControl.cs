@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-02-02 04:52:05 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-02-10 05:06:47 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 	#region Fields
@@ -365,15 +365,26 @@ namespace ZedGraph
 							this.pointToolTip.SetToolTip( this, (string) pt.Tag );
 						else
 						{
-							string xStr = this.GraphPane.XAxis.IsDate ? XDate.ToString( pt.X, this.pointDateFormat ) :
-								pt.X.ToString( this.pointValueFormat );
+							string xStr, yStr;
+
+							if ( pane.XAxis.IsDate )
+								xStr = XDate.ToString( pt.X, this.pointDateFormat );
+							else if ( pane.XAxis.IsText && pane.XAxis.TextLabels != null &&
+											iPt >= 0 && iPt < pane.XAxis.TextLabels.Length )
+								xStr = pane.XAxis.TextLabels[iPt];
+							else
+								xStr = pt.X.ToString( this.pointValueFormat );
+
+							Axis yAxis = curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis;
 								
-							bool yIsDate = ( curve.IsY2Axis && this.GraphPane.Y2Axis.IsDate ) ||
-										( !curve.IsY2Axis && this.GraphPane.YAxis.IsDate );
-										
-							string yStr = yIsDate ? XDate.ToString( pt.Y, this.pointDateFormat ) :
-									pt.Y.ToString( this.pointValueFormat );
-								
+							if ( yAxis.IsDate )
+								yStr = XDate.ToString( pt.Y, this.pointDateFormat );
+							else if ( yAxis.IsText && yAxis.TextLabels != null &&
+											iPt >= 0 && iPt < yAxis.TextLabels.Length )
+								yStr = yAxis.TextLabels[iPt];
+							else
+								yStr = pt.Y.ToString( this.pointValueFormat );
+
 							this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
 
 							//this.pointToolTip.SetToolTip( this,

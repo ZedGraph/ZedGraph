@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-02-10 05:06:46 $ </version>
 	[Serializable]
 	public class XAxis : Axis, ICloneable, ISerializable
 	{
@@ -159,6 +159,30 @@ namespace ZedGraph
 			// side of the X axis (facing from the label side)
 			g.TranslateTransform( pane.AxisRect.Left, pane.AxisRect.Bottom );
 		}
+
+
+		/// <summary>
+		/// Calculate the "shift" size, in pixels, in order to shift the axis from its default
+		/// location to the value specified by <see cref="Cross"/>.
+		/// </summary>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <returns>The shift amount measured in pixels</returns>
+		internal override float CalcCrossShift( GraphPane pane )
+		{
+			if ( IsCrossed( pane ) )
+				return pane.YAxis.Transform( this.cross ) - pane.YAxis.MaxPix;
+			else
+				return 0;
+		}
+
+		override internal bool IsCrossed( GraphPane pane )
+		{
+			return !this.crossAuto && this.cross > pane.YAxis.Min && this.cross < pane.YAxis.Max;
+		}
+
 	#endregion
 	}
 }

@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.32 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.33 $ $Date: 2005-02-10 05:06:43 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -65,9 +65,6 @@ namespace ZedGraph
 		/// <summary>Private field instance of the <see cref="ZedGraph.Y2Axis"/> class.  Use the
 		/// public property <see cref="GraphPane.Y2Axis"/> to access this class.</summary>
 		private Y2Axis		y2Axis;
-		/// <summary>Private field instance of the <see cref="ZedGraph.Legend"/> class.  Use the
-		/// public property <see cref="GraphPane.Legend"/> to access this class.</summary>
-		private Legend		legend;
 		/// <summary>Private field instance of the <see cref="ZedGraph.CurveList"/> class.  Use the
 		/// public property <see cref="GraphPane.CurveList"/> to access this class.</summary>
 		private CurveList	curveList;
@@ -273,14 +270,6 @@ namespace ZedGraph
 		{
 			get { return curveList; }
 			set { curveList = value; }
-		}
-		/// <summary>
-		/// Accesses the <see cref="Legend"/> for this <see cref="GraphPane"/>
-		/// </summary>
-		/// <value>A reference to a <see cref="Legend"/> object</value>
-		public Legend Legend
-		{
-			get { return legend; }
 		}
 		/// <summary>
 		/// Accesses the <see cref="XAxis"/> for this graph
@@ -511,7 +500,6 @@ namespace ZedGraph
 			xAxis = new XAxis( xTitle );
 			yAxis = new YAxis( yTitle );
 			y2Axis = new Y2Axis( "" );
-			legend = new Legend();
 			curveList = new CurveList();
 								
 			this.isIgnoreInitial = Default.IsIgnoreInitial;
@@ -538,7 +526,6 @@ namespace ZedGraph
 			xAxis = new XAxis( rhs.XAxis );
 			yAxis = new YAxis( rhs.YAxis );
 			y2Axis = new Y2Axis( rhs.Y2Axis );
-			legend = new Legend( rhs.Legend);
 			curveList = new CurveList( rhs.CurveList );
 			
 			this.isIgnoreInitial = rhs.IsIgnoreInitial;
@@ -588,7 +575,6 @@ namespace ZedGraph
 			xAxis = (XAxis) info.GetValue( "xAxis", typeof(XAxis) );
 			yAxis = (YAxis) info.GetValue( "yAxis", typeof(YAxis) );
 			y2Axis = (Y2Axis) info.GetValue( "y2Axis", typeof(Y2Axis) );
-			legend = (Legend) info.GetValue( "legend", typeof(Legend) );
 			curveList = (CurveList) info.GetValue( "curveList", typeof(CurveList) );
 
 			isAxisRectAuto = info.GetBoolean( "isAxisRectAuto" );
@@ -623,7 +609,6 @@ namespace ZedGraph
 			info.AddValue( "xAxis", xAxis );
 			info.AddValue( "yAxis", yAxis );
 			info.AddValue( "y2Axis", y2Axis );
-			info.AddValue( "legend", legend );
 			info.AddValue( "curveList", curveList );
 
 			info.AddValue( "isAxisRectAuto", isAxisRectAuto );
@@ -726,8 +711,8 @@ namespace ZedGraph
 		public override void Draw( Graphics g )
 		{			
 			// Calculate the axis rect, deducting the area for the scales, titles, legend, etc.
-			int		hStack;
-			float	legendWidth, legendHeight;
+			//int		hStack;
+			//float	legendWidth, legendHeight;
 
 			// Draw the pane border & background fill, the title, and the GraphItem objects that lie at
 			// ZOrder.G_BehindAll
@@ -739,24 +724,24 @@ namespace ZedGraph
 			// calculate scaleFactor on "normal" pane size (BaseDimension)
 			float scaleFactor = this.CalcScaleFactor();
 
+
 			// if the size of the axisRect is determined automatically, then do so
 			// otherwise, calculate the legendrect, scalefactor, hstack, and legendwidth parameters
 			// but leave the axisRect alone
 			if ( this.isAxisRectAuto )
 			{
-				this.axisRect = CalcAxisRect(g, scaleFactor, out hStack, out legendWidth, out legendHeight);
+				this.axisRect = CalcAxisRect( g, scaleFactor );
 				this.pieRect = PieItem.CalcPieRect( g, this, scaleFactor, this.axisRect );
 			}
 			else
-				CalcAxisRect( g, scaleFactor, out hStack, out legendWidth, out legendHeight );
-
+				CalcAxisRect( g, scaleFactor  );
 
 			// do a sanity check on the axisRect
 			if ( this.axisRect.Width < 1 || this.axisRect.Height < 1 )
 				return;
 			
 			// Draw the graph features only if there is at least one curve with data
-			//			if (	this.curveList.HasData() &&
+			// if ( this.curveList.HasData() &&
 			// Go ahead and draw the graph, even without data.  This makes the control
 			// version still look like a graph before it is fully set up
 			bool showGraf = this.xAxis.Min < this.xAxis.Max &&
@@ -765,7 +750,8 @@ namespace ZedGraph
 
 			// Setup the axes from graphing - This setup must be done before
 			// the GraphItem's are drawn so that the Transform functions are
-			// ready.
+			// ready.  Also, this should be done before CalcAxisRect so that the
+			// Axis.Cross - shift parameter can be calculated.
 			this.xAxis.SetupScaleData( this );
 			this.yAxis.SetupScaleData( this );
 			this.y2Axis.SetupScaleData( this );
@@ -802,18 +788,15 @@ namespace ZedGraph
 			// Border the axis itself
 			this.axisBorder.Draw( g, this.IsPenWidthScaled, scaleFactor, this.axisRect );
 			
-				
 			if ( showGraf )
 			{
 				// Draw the GraphItems that are behind the Legend object
 				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.B_BehindLegend );
 
-					this.legend.Draw( g, this, scaleFactor, hStack, legendWidth,
-						legendHeight );
-				
-					// Draw the GraphItems that are in front of all other items
-					this.graphItemList.Draw( g, this, scaleFactor, ZOrder.A_InFront );
-				
+				this.legend.Draw( g, this, scaleFactor );
+			
+				// Draw the GraphItems that are in front of all other items
+				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.A_InFront );
 			}
 
 			// Reset the clipping
@@ -835,10 +818,10 @@ namespace ZedGraph
 		public RectangleF CalcAxisRect( Graphics g )
 		{
 			// Calculate the axis rect, deducting the area for the scales, titles, legend, etc.
-			int		hStack;
-			float	legendWidth, legendHeight;
+			//int		hStack;
+			//float	legendWidth, legendHeight;
 			
-			return CalcAxisRect( g, CalcScaleFactor(), out hStack, out legendWidth, out legendHeight );
+			return CalcAxisRect( g, CalcScaleFactor() );
 		}
 
 		/// <summary>
@@ -870,17 +853,14 @@ namespace ZedGraph
 		/// variable calculated by the routine for use in the Legend.Draw method.
 		/// </param>
 		/// <returns>The calculated axis rect, in pixel coordinates.</returns>
-		public RectangleF CalcAxisRect( Graphics g, float scaleFactor,
-			out int hStack, out float legendWidth, out float legendHeight )
+		public RectangleF CalcAxisRect( Graphics g, float scaleFactor )
 		{
-
 			// get scaled values for the paneGap and character height
-			float topGap = this.marginTop * (float) scaleFactor;
-			float charHeight = this.FontSpec.GetHeight( scaleFactor );
+			//float topGap = this.marginTop * (float) scaleFactor;
+			//float charHeight = this.FontSpec.GetHeight( scaleFactor );
 				
-			// Axis rect starts out at the full pane rect.  It gets reduced to make room for the legend,
-			// scales, titles, etc.
-			RectangleF tmpRect = this.paneRect;
+			// Axis rect starts out at the full pane rect less the margins
+			RectangleF tmpRect = this.CalcClientRect( g, scaleFactor );
 
 			float space = this.xAxis.CalcSpace( g, this, scaleFactor );
 			tmpRect.Height -= space;
@@ -891,21 +871,10 @@ namespace ZedGraph
 			tmpRect.Width -= space;
 	
 			// Always leave a gap on top, even with no title
-			tmpRect.Y += topGap;
-			tmpRect.Height -= topGap;
+			//tmpRect.Y += topGap;
+			//tmpRect.Height -= topGap;
 
-			// Leave room for the pane title
-			if ( this.isShowTitle )
-			{
-				SizeF titleSize = this.FontSpec.BoundingBox( g, this.title, scaleFactor );
-				// Leave room for the title height, plus a line spacing of charHeight/2
-				tmpRect.Y += titleSize.Height + charHeight / 2.0F;
-				tmpRect.Height -= titleSize.Height + charHeight / 2.0F;
-			}
-			
-			// Calculate the legend rect, and back it out of the current axisRect
-			this.legend.CalcRect( g, this, scaleFactor, ref tmpRect,
-				out hStack, out legendWidth, out legendHeight );
+			this.legend.CalcRect( g, this, scaleFactor, ref tmpRect );
 
 			return tmpRect;
 		}
@@ -1208,7 +1177,45 @@ namespace ZedGraph
 			
 			return curve;
 		}
-		
+
+		/// <summary>
+		/// Add a <see cref="PieItem"/> to the display.
+		/// </summary>
+		/// <param name="value">The value associated with this <see cref="PieItem"/>item.</param>
+		/// <param name="color">The display color for this <see cref="PieItem"/>item.</param>
+		/// <param name="displacement">The amount this <see cref="PieItem"/>item will be 
+		/// displaced from the center of the <see cref="PieItem"/>.</param>
+		/// <param name="label">Text label for this <see cref="PieItem"/></param>
+		/// <returns>a reference to the <see cref="PieItem"/> constructed</returns>
+		public PieItem AddPieSlice (  double value, Color color,  double displacement, string label )
+		{
+			PieItem slice = new PieItem( value, color, displacement, label ) ;
+			this.CurveList.Add (slice) ;
+			return slice ;
+		}
+
+		/// <summary>
+		///Creates all the <see cref="PieItem"/>s for a single Pie Chart. 
+		/// </summary>
+		/// <param name="values">double array containing all <see cref="PieItem.Value"/>s
+		/// for a single PieChart.
+		/// </param>
+		/// <param name="labels"> string array containing all <see cref="CurveItem.Label"/>s
+		/// for a single PieChart.
+		/// </param>
+		/// <returns>an array containing references to all <see cref="PieItem"/>s comprising
+		/// the Pie Chart.</returns>
+		public PieItem [] AddPieSlices ( double [] values, string [] labels )
+		{
+			PieItem [] slices = new PieItem[values.Length] ;
+			for ( int x = 0 ; x < values.Length ; x++ )
+			{
+				slices[x]= new PieItem(  values[x],  labels [x] ) ;
+				this.CurveList.Add (slices[x]) ;																			  
+			}
+			return slices ;
+		}
+
 	#endregion
 
 	#region General Utility Methods
@@ -1335,16 +1342,15 @@ namespace ZedGraph
 				this.y2Axis.Min < this.y2Axis.Max )
 			{
 				float		scaleFactor = CalcScaleFactor();
-				int			hStack;
-				float		legendWidth, legendHeight;
+				//int			hStack;
+				//float		legendWidth, legendHeight;
 				RectangleF	tmpRect;
 				GraphItem	saveGraphItem = null;
 				int			saveIndex = -1;
 				ZOrder		saveZOrder = ZOrder.G_BehindAll;
 	
 				// Calculate the axis rect, deducting the area for the scales, titles, legend, etc.
-				RectangleF tmpAxisRect = CalcAxisRect( g, scaleFactor, out hStack, out legendWidth,
-					out legendHeight );
+				RectangleF tmpAxisRect = CalcAxisRect( g, scaleFactor );
 	
 				// See if the point is in a GraphItem
 				// If so, just save the object and index so we can see if other overlying objects were
@@ -1357,7 +1363,7 @@ namespace ZedGraph
 				}
 				// See if the point is in the legend
 				if ( saveZOrder <= ZOrder.B_BehindLegend &&
-					this.Legend.FindPoint( mousePt, this, scaleFactor, hStack, legendWidth, out index ) )
+					this.Legend.FindPoint( mousePt, this, scaleFactor, out index ) )
 				{
 					nearestObj = this.Legend;
 					return true;
@@ -1728,43 +1734,6 @@ namespace ZedGraph
 			return barAxis;
 		}
 
-		/// <summary>
-		/// Add a <see cref="PieItem"/> to the display.
-		/// </summary>
-		/// <param name="value">The value associated with this <see cref="PieItem"/>item.</param>
-		/// <param name="color">The display color for this <see cref="PieItem"/>item.</param>
-		/// <param name="displacement">The amount this <see cref="PieItem"/>item will be 
-		/// displaced from the center of the <see cref="PieItem"/>.</param>
-		/// <param name="label">Text label for this <see cref="PieItem"/></param>
-		/// <returns>a reference to the <see cref="PieItem"/> constructed</returns>
-		public PieItem AddPieSlice (  double value, Color color,  double displacement, string label )
-		{
-			PieItem slice = new PieItem( value, color, displacement, label ) ;
-			this.CurveList.Add (slice) ;
-			return slice ;
-		}
-
-		/// <summary>
-		///Creates all the <see cref="PieItem"/>s for a single Pie Chart. 
-		/// </summary>
-		/// <param name="values">double array containing all <see cref="PieItem.Value"/>s
-		/// for a single PieChart.
-		/// </param>
-		/// <param name="labels"> string array containing all <see cref="CurveItem.Label"/>s
-		/// for a single PieChart.
-		/// </param>
-		/// <returns>an array containing references to all <see cref="PieItem"/>s comprising
-		/// the Pie Chart.</returns>
-		public PieItem [] AddPieSlices ( double [] values, string [] labels )
-		{
-			PieItem [] slices = new PieItem[values.Length] ;
-			for ( int x = 0 ; x < values.Length ; x++ )
-			{
-				slices[x]= new PieItem(  values[x],  labels [x] ) ;
-				this.CurveList.Add (slices[x]) ;																			  
-			}
-			return slices ;
-		}
 		#endregion
 
 	}

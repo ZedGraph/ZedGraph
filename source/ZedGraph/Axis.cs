@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.18 $ $Date: 2005-02-02 04:52:04 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2005-02-10 05:06:40 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -44,23 +44,25 @@ namespace ZedGraph
 		/// Use the public properties <see cref="Min"/>, <see cref="Max"/>,
 		/// <see cref="Step"/>, and <see cref="MinorStep"/> for access to these values.
 		/// </summary>
-		private	double		min,
+		protected double	min,
 							max,
 							step,
-							minorStep;
+							minorStep,
+							cross;
 		/// <summary> Private fields for the <see cref="Axis"/> automatic scaling modes.
 		/// Use the public properties <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
 		/// <see cref="StepAuto"/>, <see cref="MinorStepAuto"/>, <see cref="MinorStepAuto"/>,
 		/// <see cref="NumDecAuto"/>, <see cref="ScaleMagAuto"/>, , <see cref="ScaleFormatAuto"/>
 		/// for access to these values.
 		/// </summary>
-		private	 bool		minAuto,
+		protected bool		minAuto,
 							maxAuto,
 							stepAuto,
 							minorStepAuto,
 							numDecAuto,
 							scaleMagAuto,
-							scaleFormatAuto;
+							scaleFormatAuto,
+							crossAuto;
 		/// <summary> Private fields for the <see cref="Axis"/> "grace" settings.
 		/// These values determine how much extra space is left before the first data value
 		/// and after the last data value.
@@ -792,6 +794,7 @@ namespace ZedGraph
 			this.max = 1.0;
 			this.step = 0.1;
 			this.minorStep = 0.1;
+			this.cross = 0.0;
 
 			this.minGrace = Default.MinGrace;
 			this.maxGrace = Default.MaxGrace;
@@ -800,6 +803,7 @@ namespace ZedGraph
 			this.maxAuto = true;
 			this.stepAuto = true;
 			this.minorStepAuto = true;
+			this.crossAuto = true;
 			this.numDecAuto = true;
 			this.scaleMagAuto = true;
 			this.scaleFormatAuto = true;
@@ -875,10 +879,12 @@ namespace ZedGraph
 			max = rhs.Max;
 			step = rhs.Step;
 			minorStep = rhs.MinorStep;
+			cross = rhs.cross;
 			minAuto = rhs.MinAuto;
 			maxAuto = rhs.MaxAuto;
 			stepAuto = rhs.StepAuto;
 			minorStepAuto = rhs.MinorStepAuto;
+			crossAuto = rhs.crossAuto;
 			numDecAuto = rhs.NumDecAuto;
 			scaleMagAuto = rhs.ScaleMagAuto;
 			scaleFormatAuto = rhs.ScaleFormatAuto;
@@ -964,11 +970,14 @@ namespace ZedGraph
 			max = info.GetDouble( "max" );
 			step = info.GetDouble( "step" );
 			minorStep = info.GetDouble( "minorStep" );
+			cross = info.GetDouble( "cross" );
 
 			minAuto = info.GetBoolean( "minAuto" );
 			maxAuto = info.GetBoolean( "maxAuto" );
 			stepAuto = info.GetBoolean( "stepAuto" );
 			minorStepAuto = info.GetBoolean( "minorStepAuto" );
+			crossAuto = info.GetBoolean( "crossAuto" );
+
 			numDecAuto = info.GetBoolean( "numDecAuto" );
 			scaleMagAuto = info.GetBoolean( "scaleMagAuto" );
 			scaleFormatAuto = info.GetBoolean( "scaleFormatAuto" );
@@ -1037,11 +1046,14 @@ namespace ZedGraph
 			info.AddValue( "max", max );
 			info.AddValue( "step", step );
 			info.AddValue( "minorStep", minorStep );
+			info.AddValue( "cross", cross );
 
 			info.AddValue( "minAuto", minAuto );
 			info.AddValue( "maxAuto", maxAuto );
 			info.AddValue( "stepAuto", stepAuto );
 			info.AddValue( "minorStepAuto", minorStepAuto );
+			info.AddValue( "crossAuto", crossAuto );
+
 			info.AddValue( "numDecAuto", numDecAuto );
 			info.AddValue( "scaleMagAuto", scaleMagAuto );
 			info.AddValue( "scaleFormatAuto", scaleFormatAuto );
@@ -1231,6 +1243,31 @@ namespace ZedGraph
 			set { minorStep = value; this.minorStepAuto = false; }
 		}
 		/// <summary>
+		/// Gets or sets the scale value at which this axis should cross the "other" axis.
+		/// </summary>
+		/// <remarks>This property allows the axis to be shifted away from its default location.
+		/// For example, for a graph with an X range from -100 to +100, the Y Axis can be located
+		/// at the X=0 value rather than the left edge of the axisRect.  This value can be set
+		/// automatically based on the state of <see cref="CrossAuto"/>.  If
+		/// this value is set manually, then <see cref="CrossAuto"/> will
+		/// also be set to false.  The "other" axis is the axis the handles the second dimension
+		/// for the graph.  For the XAxis, the "other" axis is the YAxis.  For the YAxis or
+		/// Y2Axis, the "other" axis is the XAxis.
+		/// </remarks>
+		/// <value> The value is defined in user scale units </value>
+		/// <seealso cref="Min"/>
+		/// <seealso cref="Max"/>
+		/// <seealso cref="Step"/>
+		/// <seealso cref="CrossAuto"/>
+		public double Cross
+		{
+			get { return cross; }
+			set { cross = value; this.crossAuto = false; }
+		}
+
+		abstract internal bool IsCrossed( GraphPane pane );
+
+		/// <summary>
 		/// Gets or sets a value that determines whether or not the minimum scale value <see cref="Min"/>
 		/// is set automatically.
 		/// </summary>
@@ -1290,6 +1327,22 @@ namespace ZedGraph
 			get { return minorStepAuto; }
 			set { minorStepAuto = value; }
 		}
+		/// <summary>
+		/// Gets or sets a value that determines whether or not the <see cref="Cross"/> value
+		/// is set automatically.
+		/// </summary>
+		/// <value>Set to true to have ZedGraph put the axis in the default location, or false
+		/// to specify the axis location manually with a <see cref="Cross"/> value.</value>
+		/// <seealso cref="Min"/>
+		/// <seealso cref="Max"/>
+		/// <seealso cref="Step"/>
+		/// <seealso cref="Cross"/>
+		public bool CrossAuto
+		{
+			get { return crossAuto; }
+			set { crossAuto = value; }
+		}
+
 		/// <summary> Gets or sets the "grace" value applied to the minimum data range.
 		/// </summary>
 		/// <remarks>
@@ -2174,6 +2227,8 @@ namespace ZedGraph
 			this.minAuto = true;
 			this.maxAuto = true;
 			this.stepAuto = true;
+			this.minorStepAuto = true;
+			this.crossAuto = true;
 			this.scaleMagAuto = true;
 			this.numDecAuto = true;
 			this.scaleFormatAuto = true;
@@ -2314,6 +2369,17 @@ namespace ZedGraph
 
 
 		/// <summary>
+		/// Calculate the "shift" size, in pixels, in order to shift the axis from its default
+		/// location to the value specified by <see cref="Cross"/>.
+		/// </summary>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <returns>The shift amount measured in pixels</returns>
+		abstract internal float CalcCrossShift( GraphPane pane );
+
+		/// <summary>
 		/// Get the maximum width of the scale value text that is required to label this
 		/// <see cref="Axis"/>.
 		/// The results of this method are used to determine how much space is required for
@@ -2369,6 +2435,7 @@ namespace ZedGraph
 					maxSpace.Width = sizeF.Width;
 			}
 
+
 			return maxSpace;
 		}
 
@@ -2402,13 +2469,13 @@ namespace ZedGraph
 			// axisRect is the actual area of the plot as bounded by the axes
 			
 			// Always leave 1xgap space, even if no axis is displayed
-			float space;
-			if ( this is XAxis )
-				space = pane.MarginBottom * scaleFactor;
-			else if ( this is YAxis )
-				space = pane.MarginLeft * scaleFactor;
-			else
-				space = pane.MarginRight * scaleFactor;
+			float space = 0;
+			//if ( this is XAxis )
+			//	space = pane.MarginBottom * scaleFactor;
+			//else if ( this is YAxis )
+			//	space = pane.MarginLeft * scaleFactor;
+			//else
+			//	space = pane.MarginRight * scaleFactor;
 
 			// Account for the Axis
 			if ( this.isVisible )
@@ -2417,7 +2484,15 @@ namespace ZedGraph
 				// space between tic and scale label is 0.5 tic
 				// scale label is GetScaleMaxSpace()
 				// space between scale label and axis label is 0.5 tic
-				space += this.GetScaleMaxSpace( g, pane, scaleFactor ).Height +
+
+				// The space for the scale labels is only reserved if the axis is not shifted due to the
+				// cross value.  Note that this could be a problem if the axis is only shifted slightly,
+				// since the scale value labels may overlap the axis title.  However, it's not possible to
+				// calculate that actual shift amount at this point, because the AxisRect rect has not yet been
+				// calculated, and the cross value is determined using a transform of scale values (which
+				// rely on AxisRect).
+				if ( !IsCrossed( pane ) )
+					space += this.GetScaleMaxSpace( g, pane, scaleFactor ).Height +
 							ticSize * 2.0F;
 		
 				// Only add space for the label if there is one
@@ -2510,10 +2585,12 @@ namespace ZedGraph
 
 			if ( this.IsVisible )
 			{
+				float shift = this.CalcCrossShift( pane );
+
                 Pen pen = new Pen(this.color, pane.ScaledPenWidth(ticPenWidth, scaleFactor));
 
                 // redraw the axis border
-				g.DrawLine( pen, 0.0F, 0.0F, rightPix, 0.0F );
+				g.DrawLine( pen, 0.0F, shift, rightPix, shift );
 
 				// Draw a zero-value line if needed
 				if ( this.isZeroLine && this.min < 0.0 && this.max > 0.0 )
@@ -2523,9 +2600,9 @@ namespace ZedGraph
 				}
 
 				// draw the major tics and labels
-				DrawLabels( g, pane, baseVal, nTics, topPix, scaleFactor );
+				DrawLabels( g, pane, baseVal, nTics, topPix, shift, scaleFactor );
 			
-				DrawMinorTics( g, pane, baseVal, scaleFactor, topPix );
+				DrawMinorTics( g, pane, baseVal, shift, scaleFactor, topPix );
 			}
 		}
 	
@@ -2654,7 +2731,7 @@ namespace ZedGraph
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		public void DrawLabels( Graphics g, GraphPane pane, double baseVal, int nTics,
-						float topPix, float scaleFactor )
+						float topPix, float shift, float scaleFactor )
 		{
 			double	dVal, dVal2;
 			float	pixVal, pixVal2;
@@ -2706,7 +2783,7 @@ namespace ZedGraph
 						if ( dVal2 >= this.minScale )
 						{
 							pixVal2 = this.LocalTransform( dVal2 );
-							DrawATic( g, pen, pixVal2, topPix, scaledTic );
+							DrawATic( g, pen, pixVal2, topPix, shift, scaledTic );
 							// draw the grid
 							if ( this.isVisible && this.isShowGrid )
 								g.DrawLine( dottedPen, pixVal2, 0.0F, pixVal2, topPix );
@@ -2721,7 +2798,7 @@ namespace ZedGraph
 				else
 					pixVal2 = pixVal;
 
-				DrawATic( g, pen, pixVal2, topPix, scaledTic );
+				DrawATic( g, pen, pixVal2, topPix, shift, scaledTic );
 				
 				// draw the grid
 				if ( this.isVisible && this.isShowGrid )
@@ -2734,11 +2811,11 @@ namespace ZedGraph
 					
 					float height = ScaleFontSpec.BoundingBox( g, tmpStr, scaleFactor ).Height;
 					if ( this.ScaleAlign == AlignP.Center )
-						textCenter = textTop + maxSpace / 2.0F;
+						textCenter = textTop + maxSpace / 2.0F + shift;
 					else if ( this.ScaleAlign == AlignP.Outside )
-						textCenter = textTop + maxSpace - height / 2.0F;
+						textCenter = textTop + maxSpace - height / 2.0F + shift;
 					else	// inside
-						textCenter = textTop + height / 2.0F;
+						textCenter = textTop + height / 2.0F + shift;
 					
 					
 					if ( this.IsLog && this.isUseTenPower )
@@ -2769,17 +2846,17 @@ namespace ZedGraph
 		/// <see cref="Axis"/></param>
 		/// <param name="topPix">The pixel value of the top of the axis border</param>
         /// <param name="scaledTic">The length of the tic mark, in points (1/72 inch)</param>
-        void DrawATic( Graphics g, Pen pen, float pixVal, float topPix, float scaledTic )
+        void DrawATic( Graphics g, Pen pen, float pixVal, float topPix, float shift, float scaledTic )
 		{
 			if ( this.isVisible )
 			{
 				// draw the outside tic
 				if ( this.isTic )
-					g.DrawLine( pen, pixVal, 0.0F, pixVal, 0.0F + scaledTic );
+					g.DrawLine( pen, pixVal, shift, pixVal, shift + scaledTic );
 
 				// draw the inside tic
 				if ( this.isInsideTic )
-					g.DrawLine( pen, pixVal, 0.0F, pixVal, 0.0F - scaledTic );
+					g.DrawLine( pen, pixVal, shift, pixVal, shift - scaledTic );
 
 				// draw the opposite tic
 				if ( this.isOppositeTic )
@@ -3034,7 +3111,8 @@ namespace ZedGraph
 		/// This value is the axisRect.Height for the XAxis, or the axisRect.Width
 		/// for the YAxis and Y2Axis.
 		/// </param>
-		public void DrawMinorTics( Graphics g, GraphPane pane, double baseVal, float scaleFactor, float topPix )
+		public void DrawMinorTics( Graphics g, GraphPane pane, double baseVal, float shift,
+								float scaleFactor, float topPix )
 		{
 			if ( this.isMinorTic && this.isVisible )
 			{
@@ -3096,11 +3174,11 @@ namespace ZedGraph
 								
 							// draw the outside tic
 							if ( this.isMinorTic )
-								g.DrawLine( pen, pixVal, 0.0F, pixVal, 0.0F + minorScaledTic );
+								g.DrawLine( pen, pixVal, shift, pixVal, shift + minorScaledTic );
 
 							// draw the inside tic
 							if ( this.isMinorInsideTic )
-								g.DrawLine( pen, pixVal, 0.0F, pixVal, 0.0F - minorScaledTic );
+								g.DrawLine( pen, pixVal, shift, pixVal, shift - minorScaledTic );
 
 							// draw the opposite tic
 							if ( this.isMinorOppositeTic )
@@ -3258,8 +3336,15 @@ namespace ZedGraph
 			{		
 				// Calculate the title position in screen coordinates
 				float x = ( this.maxPix - this.minPix ) / 2;
+
+				// The space for the scale labels is only reserved if the axis is not shifted due to the
+				// cross value.  Note that this could be a problem if the axis is only shifted slightly,
+				// since the scale value labels may overlap the axis title.  However, it's not possible to
+				// calculate that actual shift amount at this point, because the AxisRect rect has not yet been
+				// calculated, and the cross value is determined using a transform of scale values (which
+				// rely on AxisRect).
 				float y = ScaledTic( scaleFactor ) * 2.0F +
-							GetScaleMaxSpace( g, pane, scaleFactor ).Height
+							( IsCrossed( pane ) ? 0 : GetScaleMaxSpace( g, pane, scaleFactor ).Height )
 							+ this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
 
 				AlignV alignV = AlignV.Center;
