@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Collections;
 using System.ComponentModel.Design;
 using System.Drawing.Design;
+using System.Drawing;
 
 namespace ZedGraph
 {
@@ -52,10 +53,25 @@ namespace ZedGraph
 			}
 			set { ViewState["Label"] = value; }
 		}
+
+		[NotifyParentProperty(true)]
+		public Color Color
+		{
+			get 
+			{ 
+				object x = ViewState["Color"]; 
+				return (null == x) ? Color.Empty : (Color)x;
+			}
+			set { ViewState["Color"] = value; }
+		}
 	}
 
 	public class ZedGraphWebBar : ZedGraphWebCurveItem
 	{
+		public override string ToString()
+		{
+			return "Bar: " + Label;
+		}
 	}
 
 	public class ZedGraphWebErrorBar : ZedGraphWebCurveItem
