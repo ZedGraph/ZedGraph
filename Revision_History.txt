@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+15-Mar-2005 (by Champion)
+  Fixed a bug that caused missing tics at the beginning of the axis for date type axes
+
 15-Mar-2005 (by Martz)
   Added C# and VB web demo for visual designed graphs
   Added C# and VB web demo for multi-graph per webform

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.25 $ $Date: 2005-03-09 06:42:36 $ </version>
+	/// <version> $Revision: 3.26 $ $Date: 2005-03-16 03:15:10 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -2811,9 +2811,13 @@ namespace ZedGraph
 			float textCenter;
 
 			double rangeTol = ( this.maxScale - this.minScale ) * 0.00001;
+
+			int firstTic = (int) ( ( this.minScale - baseVal ) / this.step + 0.99 );
+			if ( firstTic < 0 )
+				firstTic = 0;
 			
 			// loop for each major tic
-			for ( int i=0; i<nTics; i++ )
+			for ( int i=firstTic; i<nTics+firstTic; i++ )
 			{
 				dVal = CalcMajorTicValue( baseVal, i );
 				
@@ -3346,21 +3350,21 @@ namespace ZedGraph
 			}
 			else if ( this.IsDate )  // Date-Time scale
 			{
-				switch ( this.majorUnit )
+				switch ( this.minorUnit )
 				{
 					case DateUnit.Year:
 					default:
-						return (int) ( ( this.min - baseVal ) / 365.0 );
+						return (int) ( ( this.min - baseVal ) / ( 365.0 * this.minorStep ) );
 					case DateUnit.Month:
-						return (int) ( ( this.min - baseVal ) / 28.0 );
+						return (int) ( ( this.min - baseVal ) / ( 28.0 * this.minorStep ) );
 					case DateUnit.Day:
-						return (int) ( this.min - baseVal );
+						return (int) ( ( this.min - baseVal ) / this.minorStep );
 					case DateUnit.Hour:
-						return (int) ( ( this.min - baseVal ) * XDate.HoursPerDay );
+						return (int) ( ( this.min - baseVal ) * XDate.HoursPerDay / this.minorStep );
 					case DateUnit.Minute:
-						return (int) ( ( this.min - baseVal ) * XDate.MinutesPerDay );
+						return (int) ( ( this.min - baseVal ) * XDate.MinutesPerDay / this.minorStep );
 					case DateUnit.Second:
-						return (int) ( ( this.min - baseVal ) * XDate.SecondsPerDay );
+						return (int) ( ( this.min - baseVal ) * XDate.SecondsPerDay / this.minorStep );
 				}				
 			}
 			else if ( this.IsLog )  // log scale
