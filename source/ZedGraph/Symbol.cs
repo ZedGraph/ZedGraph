@@ -29,9 +29,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.4 $ $Date: 2004-08-23 20:22:26 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:27:45 $ </version>
 	public class Symbol : ICloneable
 	{
+	#region Fields
 		/// <summary>
 		/// Private field that stores the size of this
 		/// <see cref="Symbol"/> in pixels.  Use the public
@@ -71,53 +72,9 @@ namespace ZedGraph
 		/// false, the symbols will be drawn in outline.
 		/// </summary>
 		private bool		isFilled;
-
-		/// <summary>
-		/// Default constructor that sets all <see cref="Symbol"/> properties to default
-		/// values as defined in the <see cref="Def"/> class.
-		/// </summary>
-		public Symbol()
-		{
-			Init();
-		}
-
-		/// <summary>
-		/// The Copy Constructor
-		/// </summary>
-		/// <param name="rhs">The Symbol object from which to copy</param>
-		public Symbol( Symbol rhs )
-		{
-			size = rhs.Size;
-			type = rhs.Type;
-			penWidth = rhs.PenWidth;
-			color = rhs.Color;
-			isVisible = rhs.IsVisible;
-			isFilled = rhs.IsFilled;
-		}
-
-		/// <summary>
-		/// Deep-copy clone routine
-		/// </summary>
-		/// <returns>A new, independent copy of the Symbol</returns>
-		public object Clone()
-		{ 
-			return new Symbol( this ); 
-		}
-
-		/// <summary>
-		/// Initialize all <see cref="Symbol"/> properties to  default
-		/// values as defined in the <see cref="Def"/> class.
-		/// </summary>
-		protected void Init()
-		{
-			this.size = Def.Sym.Size;
-			this.type = Def.Sym.Type;
-			this.penWidth = Def.Sym.PenWidth;
-			this.color = Def.Sym.Color;
-			this.isVisible = Def.Sym.IsVisible;
-			this.isFilled = Def.Sym.IsFilled;
-		}
-
+	#endregion
+	
+	#region Properties
 		/// <summary>
 		/// Gets or sets the size of the <see cref="Symbol"/>
 		/// </summary>
@@ -179,7 +136,57 @@ namespace ZedGraph
 			get { return color; }
 			set { color = value; }
 		}
+	#endregion
+	
+	#region Constructors
+		/// <summary>
+		/// Default constructor that sets all <see cref="Symbol"/> properties to default
+		/// values as defined in the <see cref="Def"/> class.
+		/// </summary>
+		public Symbol()
+		{
+			Init();
+		}
 
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The Symbol object from which to copy</param>
+		public Symbol( Symbol rhs )
+		{
+			size = rhs.Size;
+			type = rhs.Type;
+			penWidth = rhs.PenWidth;
+			color = rhs.Color;
+			isVisible = rhs.IsVisible;
+			isFilled = rhs.IsFilled;
+		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the Symbol</returns>
+		public object Clone()
+		{ 
+			return new Symbol( this ); 
+		}
+
+		/// <summary>
+		/// Initialize all <see cref="Symbol"/> properties to  default
+		/// values as defined in the <see cref="Def"/> class.
+		/// </summary>
+		protected void Init()
+		{
+			this.size = Def.Sym.Size;
+			this.type = Def.Sym.Type;
+			this.penWidth = Def.Sym.PenWidth;
+			this.color = Def.Sym.Color;
+			this.isVisible = Def.Sym.IsVisible;
+			this.isFilled = Def.Sym.IsFilled;
+		}
+	#endregion
+	
+	#region Rendering Methods
 		/// <summary>
 		/// Draw the <see cref="Symbol"/> to the specified <see cref="Graphics"/> device
 		/// at the specified location.  This routine draws a single symbol.
@@ -212,7 +219,7 @@ namespace ZedGraph
 					DrawPoint( g, x, y, scaleFactor, pen );
 			}
 		}
-
+/*
 		/// <summary>
 		/// Draw the <see cref="Symbol"/> to the specified <see cref="Graphics"/> device
 		/// at the specified list of locations.  This routine draws a series of symbols, and
@@ -254,7 +261,7 @@ namespace ZedGraph
 				}
 			}
 		}
-		
+*/
 		/// <summary>
 		/// Draw the <see cref="Symbol"/> (outline only) to the specified <see cref="Graphics"/>
 		/// device at the specified location.
@@ -418,6 +425,8 @@ namespace ZedGraph
 					break;
 			}
 		}
+	#endregion
+	
 	}
 }
 

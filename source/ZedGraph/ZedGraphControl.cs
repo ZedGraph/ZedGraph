@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.4 $ $Date: 2004-08-23 20:22:26 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:27:45 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		/// <summary>
@@ -62,7 +62,7 @@ namespace ZedGraph
 
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
 			graphPane = new GraphPane( rect, "Title", "X-Axis", "Y-Axis" );
-			graphPane.AxisChange();
+			graphPane.AxisChange( this.CreateGraphics() );
 
 		}
 

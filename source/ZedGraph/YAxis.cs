@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.3 $ $Date: 2004-08-23 20:22:26 $ </version>
+	/// <version> $Revision: 1.4 $ $Date: 2004-08-23 20:27:45 $ </version>
 	public class YAxis : Axis, ICloneable
 	{
 		/// <summary>

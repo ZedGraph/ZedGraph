@@ -28,71 +28,82 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:22:26 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2004-08-23 20:27:45 $ </version>
 	public class Legend : ICloneable
 	{
-		private RectangleF rect;
-		private LegendLoc location;
+	#region private Fields
+	
+		/// <summary> Private field to hold the bounding rectangle around the legend.
+		/// This bounding rectangle varies with the number of legend entries, font sizes,
+		/// etc., and is re-calculated by <see cref="Legend.CalcRect"/> at each redraw.
+		/// Use the public readonly property <see cref="Legend.Rect"/> to access this
+		/// rectangle.
+		/// </summary>
+		private RectangleF	rect;
+		/// <summary>Private field to hold the legend location setting.  This field
+		/// contains the <see cref="LegendLoc"/> enum type to specify the area of
+		/// the graph where the legend will be positioned.  Use the public property
+		/// <see cref="LegendLoc"/> to access this value.
+		/// </summary>
+		/// <seealso cref="Def.Leg.Location"/>
+		private LegendLoc	location;
+		/// <summary>
+		/// Private field to enable/disable the drawing of the frame around the
+		/// legend bounding box.  Use the public property <see cref="IsFramed"/>
+		/// to access this value.
+		/// </summary>
+		/// <seealso cref="Def.Leg.IsFramed"/>
 		private bool		isFramed;
+		/// <summary>
+		/// Private field to enable/disable filling of the background behind the legend
+		/// with color.  Use the public property <see cref="IsFilled"/>
+		/// to access this value.
+		/// </summary>
+		/// <seealso cref="Def.Leg.IsFilled"/>
 		private bool		isFilled;
+		/// <summary>
+		/// Private field to enable/disable horizontal stacking of the legend entries.
+		/// If this value is false, then the legend entries will always be a single column.
+		/// Use the public property <see cref="IsHStack"/> to access this value.
+		/// </summary>
+		/// <seealso cref="Def.Leg.IsHStack"/>
 		private bool		isHStack;
+		/// <summary>
+		/// Private field to enable/disable drawing of the entire legend.
+		/// If this value is false, then the legend will not be drawn.
+		/// Use the public property <see cref="IsVisible"/> to access this value.
+		/// </summary>
 		private bool		isVisible;
+		/// <summary>
+		/// Private field to store the color of any filling of the background behind the legend.
+		/// This value only applies if <see cref="IsFilled"/> is true.
+		/// Use the public property <see cref="FillColor"/> to access this value.
+		/// </summary>
 		private Color		fillColor;
+		/// <summary>
+		/// Private field to store the color of the frame around the legend bounding box.
+		/// This value only applies if <see cref="IsFramed"/> is true.
+		/// Use the public property <see cref="FrameColor"/> to access this value.
+		/// </summary>
+		/// <seealso cref="frameWidth"/>
 		private Color		frameColor;
+		/// <summary>
+		/// Private field to store the width (pixels) of the frame around the legend bounding box.
+		/// This value only applies if <see cref="IsFramed"/> is true.
+		/// Use the public property <see cref="FrameWidth"/> to access this value.
+		/// </summary>
+		/// <seealso cref="frameColor"/>
 		private float		frameWidth;
 		
+		/// <summary>
+		/// Private field to maintain the <see cref="FontSpec"/> class that
+		/// maintains font attributes for the entries in this legend.  Use
+		/// the <see cref="FontSpec"/> property to access this class.
+		/// </summary>
 		private FontSpec	fontSpec;
-
-		/// <summary>
-		/// Default constructor that sets all <see cref="Legend"/> properties to default
-		/// values as defined in the <see cref="Def"/> class.
-		/// </summary>
-		public Legend()
-		{
-			this.location = Def.Leg.Location;
-			this.isFramed = Def.Leg.IsFramed;
-			this.frameColor = Def.Leg.FrameColor;
-			this.frameWidth = Def.Leg.FrameWidth;
-			this.isFilled = Def.Leg.IsFilled;
-			this.fillColor = Def.Leg.FillColor;
-			this.isHStack = Def.Leg.IsHStack;
-			this.isVisible = Def.Leg.IsVisible;
-			
-			this.fontSpec = new FontSpec( Def.Leg.FontFamily, Def.Leg.FontSize,
-									Def.Leg.FontColor, Def.Leg.FontBold,
-									Def.Leg.FontItalic, Def.Leg.FontUnderline );						
-			this.fontSpec.IsFilled = false;
-			this.fontSpec.IsFramed = false;
-		}
-
-		/// <summary>
-		/// The Copy Constructor
-		/// </summary>
-		/// <param name="rhs">The XAxis object from which to copy</param>
-		public Legend( Legend rhs )
-		{
-			rect = rhs.Rect;
-			location = rhs.Location;
-			isFramed = rhs.isFramed;
-			isFilled = rhs.isFilled;
-			isHStack = rhs.IsHStack;
-			isVisible = rhs.IsVisible;
-			fillColor = rhs.FillColor;
-			frameColor = rhs.FrameColor;
-			frameWidth = rhs.FrameWidth;
-			
-			fontSpec = new FontSpec( rhs.FontSpec );
-		}
-
-		/// <summary>
-		/// Deep-copy clone routine
-		/// </summary>
-		/// <returns>A new, independent copy of the Legend</returns>
-		public object Clone()
-		{ 
-			return new Legend( this ); 
-		}
-
+	#endregion
+	
+	#region Properties
 		/// <summary>
 		/// Get the bounding rectangle for the <see cref="Legend"/> in screen coordinates
 		/// </summary>
@@ -102,7 +113,7 @@ namespace ZedGraph
 			get { return rect; }
 		}
 		/// <summary>
-		/// Access the <see cref="ZedGraph.FontSpec"/> class used to render
+		/// Access to the <see cref="ZedGraph.FontSpec"/> class used to render
 		/// the <see cref="Legend"/> entries
 		/// </summary>
 		/// <value>A reference to a <see cref="Legend"/> object</value>
@@ -207,7 +218,61 @@ namespace ZedGraph
 			get { return location; }
 			set { location = value; }
 		}
+	#endregion
+	
+	#region Constructors
+		/// <summary>
+		/// Default constructor that sets all <see cref="Legend"/> properties to default
+		/// values as defined in the <see cref="Def"/> class.
+		/// </summary>
+		public Legend()
+		{
+			this.location = Def.Leg.Location;
+			this.isFramed = Def.Leg.IsFramed;
+			this.frameColor = Def.Leg.FrameColor;
+			this.frameWidth = Def.Leg.FrameWidth;
+			this.isFilled = Def.Leg.IsFilled;
+			this.fillColor = Def.Leg.FillColor;
+			this.isHStack = Def.Leg.IsHStack;
+			this.isVisible = Def.Leg.IsVisible;
+			
+			this.fontSpec = new FontSpec( Def.Leg.FontFamily, Def.Leg.FontSize,
+									Def.Leg.FontColor, Def.Leg.FontBold,
+									Def.Leg.FontItalic, Def.Leg.FontUnderline );						
+			this.fontSpec.IsFilled = false;
+			this.fontSpec.IsFramed = false;
+		}
 
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The XAxis object from which to copy</param>
+		public Legend( Legend rhs )
+		{
+			rect = rhs.Rect;
+			location = rhs.Location;
+			isFramed = rhs.isFramed;
+			isFilled = rhs.isFilled;
+			isHStack = rhs.IsHStack;
+			isVisible = rhs.IsVisible;
+			fillColor = rhs.FillColor;
+			frameColor = rhs.FrameColor;
+			frameWidth = rhs.FrameWidth;
+			
+			fontSpec = new FontSpec( rhs.FontSpec );
+		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the Legend</returns>
+		public object Clone()
+		{ 
+			return new Legend( this ); 
+		}
+	#endregion
+	
+	#region Rendering Methods
 		/// <summary>
 		/// Render the <see cref="Legend"/> to the specified <see cref="Graphics"/> device
 		/// This method is normally only called by the Draw method
@@ -274,11 +339,6 @@ namespace ZedGraph
 				
 				if ( curve.IsBar )
 				{
-//					Pen pen = new Pen( curve.Bar.FrameColor, curve.Bar.FrameWidth );
-//					SolidBrush	brush = new SolidBrush( curve.Bar.FillColor );
-
-//					g.FillRectangle( brush, x, y, x + 2 * charHeight, y + charHeight );
-//					g.FrameRectangle(
 					curve.Bar.Draw( g, x, x + 2 * charHeight, y + charHeight / 4.0F,
 								y + 3.0F * charHeight / 4.0F, scaleFactor, true );
 				}
@@ -326,7 +386,7 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		/// <param name="axisRect">
+		/// <param name="tAxisRect">
 		/// The rectangle that contains the area bounded by the axes, in pixel units.
 		/// <seealso cref="GraphPane.AxisRect">AxisRect</seealso>
 		/// </param>
@@ -334,7 +394,7 @@ namespace ZedGraph
 		/// for drawing the legend</param>
 		/// <param name="legendWidth">The width of each column in the legend (pixels)</param>
 		public void CalcRect( Graphics g, GraphPane pane, double scaleFactor,
-								ref RectangleF axisRect, out int hStack,
+								ref RectangleF tAxisRect, out int hStack,
 								out float legendWidth )
 		{
 			// Start with an empty rectangle
@@ -385,7 +445,7 @@ namespace ZedGraph
 					// for the top & bottom, the axis frame width is available
 					case LegendLoc.Top:
 					case LegendLoc.Bottom:
-						widthAvail = axisRect.Width;
+						widthAvail = tAxisRect.Width;
 						break;
 		
 					// for inside the axis area, use 1/2 of the axis frame width
@@ -393,7 +453,7 @@ namespace ZedGraph
 					case LegendLoc.InsideTopLeft:
 					case LegendLoc.InsideBotRight:
 					case LegendLoc.InsideBotLeft:
-						widthAvail = axisRect.Width / 2;
+						widthAvail = tAxisRect.Width / 2;
 						break;
 		
 					// shouldn't ever happen
@@ -438,9 +498,11 @@ namespace ZedGraph
 			// The total legend height
 			float legHeight = (float) Math.Ceiling( (double) nCurve / (double) hStack )
 									* charHeight;
-					
+			
+			RectangleF newRect = new RectangleF();
+			
 			// Now calculate the legend rect based on the above determined parameters
-			// Also, adjust the plotArea and axisRect to reflect the space for the legend
+			// Also, adjust the axisRect to reflect the space for the legend
 			if ( nCurve > 0 )
 			{
 				// The switch statement assigns the left and top edges, and adjusts the axisRect
@@ -448,54 +510,58 @@ namespace ZedGraph
 				switch( this.location )
 				{
 					case LegendLoc.Right:
-						this.rect.X = pane.PaneRect.Right - totLegWidth - gap;
-						this.rect.Y = axisRect.Top;
+						newRect.X = pane.PaneRect.Right - totLegWidth - gap;
+						newRect.Y = tAxisRect.Top;
 		
-						axisRect.Width -= totLegWidth + halfCharHeight;
+						tAxisRect.Width -= totLegWidth + halfCharHeight;
 						break;
 					case LegendLoc.Top:
-						this.rect.X = axisRect.Left;
-						this.rect.Y = axisRect.Top;
+						newRect.X = tAxisRect.Left;
+						newRect.Y = tAxisRect.Top;
 						
-						axisRect.Y += legHeight + halfCharHeight;
-						axisRect.Height -= legHeight + halfCharHeight;
+						tAxisRect.Y += legHeight + halfCharHeight;
+						tAxisRect.Height -= legHeight + halfCharHeight;
 						break;
 					case LegendLoc.Bottom:
-						this.rect.X = axisRect.Left;
-						this.rect.Y = pane.PaneRect.Bottom - legHeight - gap;
+						newRect.X = tAxisRect.Left;
+						newRect.Y = pane.PaneRect.Bottom - legHeight - gap;
 						
-						axisRect.Height -= legHeight + halfCharHeight;
+						tAxisRect.Height -= legHeight + halfCharHeight;
 						break;
 					case LegendLoc.Left:
-						this.rect.X = pane.PaneRect.Left + gap;
-						this.rect.Y = axisRect.Top;
+						newRect.X = pane.PaneRect.Left + gap;
+						newRect.Y = tAxisRect.Top;
 						
-						axisRect.X += totLegWidth + halfCharHeight;
-						axisRect.Width -= totLegWidth + halfCharHeight;
+						tAxisRect.X += totLegWidth + halfCharHeight;
+						tAxisRect.Width -= totLegWidth + halfCharHeight;
 						break;
 					case LegendLoc.InsideTopRight:
-						this.rect.X = axisRect.Right - totLegWidth;
-						this.rect.Y = axisRect.Top;
+						newRect.X = tAxisRect.Right - totLegWidth;
+						newRect.Y = tAxisRect.Top;
 						break;
 					case LegendLoc.InsideTopLeft:
-						this.rect.X = axisRect.Left;
-						this.rect.Y = axisRect.Top;
+						newRect.X = tAxisRect.Left;
+						newRect.Y = tAxisRect.Top;
 						break;
 					case LegendLoc.InsideBotRight:
-						this.rect.X = axisRect.Right - totLegWidth;
-						this.rect.Y = axisRect.Bottom - legHeight;
+						newRect.X = tAxisRect.Right - totLegWidth;
+						newRect.Y = tAxisRect.Bottom - legHeight;
 						break;
 					case LegendLoc.InsideBotLeft:
-						this.rect.X = axisRect.Left;
-						this.rect.Y = axisRect.Bottom - legHeight;
+						newRect.X = tAxisRect.Left;
+						newRect.Y = tAxisRect.Bottom - legHeight;
 						break;
 				}
 				
 				// Calculate the Right and Bottom edges of the rect
-				this.rect.Width = totLegWidth;
-				this.rect.Height = legHeight;
+				newRect.Width = totLegWidth;
+				newRect.Height = legHeight;
 			}
+			
+			this.rect = newRect;
 		}
+	#endregion
+	
 	}
 }
 

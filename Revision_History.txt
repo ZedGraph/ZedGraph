@@ -1,5 +1,15 @@
 ZedGraph Class Library Revision History
 
+25-Jul-2004 (by Champion)
+    Add XTargetSteps, YTargetSteps
+    New Format for 10 power log scale labels
+    Fixed drawing of log scales
+    Improved logic for scale picking
+    Add logic to reduce text labels if they are overlapping
+    Added IsIgnoreMissing
+    Added IsFontsScaled
+    Fixed FindNearestPoint() for bars
+    
 16-Jul-2004 (by Vos)
     Add PointPair, PointPairList storage for data points
 

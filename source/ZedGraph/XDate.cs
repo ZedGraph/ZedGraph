@@ -28,9 +28,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.3 $ $Date: 2004-08-23 20:22:26 $ </version>
+	/// <version> $Revision: 1.4 $ $Date: 2004-08-23 20:27:45 $ </version>
 	public struct XDate : ICloneable
 	{
+	#region Fields & Constants
 		// =========================================================================
 		// Internal Variables
 		// =========================================================================
@@ -80,7 +81,9 @@ namespace ZedGraph
 		/// no format is provided
 		/// </summary>
 		public const string DefaultFormatStr = "&d-&mmm-&yy &hh:&nn";
-		
+	#endregion
+	
+	#region Construtors
 		// =========================================================================
 		// Construtors
 		// =========================================================================
@@ -154,7 +157,9 @@ namespace ZedGraph
 		{ 
 			return new XDate( this ); 
 		}
-		
+	#endregion
+	
+	#region Properties
 		// =========================================================================
 		// Properties
 		// =========================================================================
@@ -197,7 +202,9 @@ namespace ZedGraph
 			get { return XLDateToDecimalYear( xlDate ); }
 			set { xlDate = DecimalYearToXLDate( value ); }
 		}
-		
+	#endregion
+	
+	#region Get/Set Date Methods
 		/// <summary>
 		/// Get the calendar date (year, month, day) corresponding to this instance.
 		/// </summary>
@@ -265,7 +272,9 @@ namespace ZedGraph
 		{
 			return XLDateToDayOfYear( xlDate );
 		}
-
+	#endregion
+	
+	#region Date Conversion Methods
 		// =========================================================================
 		// Conversion Routines
 		// =========================================================================
@@ -680,7 +689,9 @@ namespace ZedGraph
 		{
 			return CalendarDateToXLDate( dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second );
 		}
-		
+	#endregion
+	
+	#region Date Math Methods
 		// =========================================================================
 		// Math Routines
 		// =========================================================================
@@ -784,7 +795,9 @@ namespace ZedGraph
 				this.xlDate += (xlDate2 - this.xlDate) * yearFrac;
 			}
 		}
-		
+	#endregion
+	
+	#region Operator Overload Methods
 		// =========================================================================
 		// Operator Overloads
 		// =========================================================================
@@ -858,7 +871,9 @@ namespace ZedGraph
 		{
 			return xDate.xlDate;
 		}
+	#endregion
 		
+	#region General Overrides
 		// =========================================================================
 		// System Stuff
 		// =========================================================================
@@ -895,7 +910,9 @@ namespace ZedGraph
 		{
 			return this.xlDate.GetHashCode();
 		}
-		
+	#endregion
+	
+	#region String Format Conversion Methods
 		// =========================================================================
 		// String Formatting Routines
 		// =========================================================================
@@ -1033,5 +1050,7 @@ namespace ZedGraph
 			
 			return resultStr;
 		}
+	#endregion
+	
 	}
 }

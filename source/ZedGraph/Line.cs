@@ -29,9 +29,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.4 $ $Date: 2004-08-23 20:22:26 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:27:45 $ </version>
 	public class Line : ICloneable
 	{
+	#region Fields
 		/// <summary>
 		/// Private field that stores the pen width for this
 		/// <see cref="Line"/>.  Use the public
@@ -64,42 +65,9 @@ namespace ZedGraph
 		/// property <see cref="StepType"/> to access this value.
 		/// </summary>
 		private StepType	stepType;
-		
-		/// <summary>
-		/// Default constructor that sets all <see cref="Line"/> properties to default
-		/// values as defined in the <see cref="Def"/> class.
-		/// </summary>
-		public Line()
-		{
-			this.width = Def.Lin.Width;
-			this.style = Def.Lin.Style;
-			this.isVisible = Def.Lin.IsVisible;
-			this.color = Def.Lin.Color;
-			this.stepType = Def.Lin.StepType;
-		}
-
-		/// <summary>
-		/// The Copy Constructor
-		/// </summary>
-		/// <param name="rhs">The Line object from which to copy</param>
-		public Line( Line rhs )
-		{
-			width = rhs.Width;
-			style = rhs.Style;
-			isVisible = rhs.IsVisible;
-			color = rhs.Color;
-			stepType = rhs.StepType;
-		}
-
-		/// <summary>
-		/// Deep-copy clone routine
-		/// </summary>
-		/// <returns>A new, independent copy of the Line</returns>
-		public object Clone()
-		{ 
-			return new Line( this ); 
-		}
-
+	#endregion
+	
+	#region Properties
 		/// <summary>
 		/// The color of the <see cref="Line"/>
 		/// </summary>
@@ -140,7 +108,7 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// Determines if the <see cref="CurveItem"/> will be drawn by directly connecting the
-		/// points from the <see cref="CurveItem.X"/> and <see cref="CurveItem.Y"/> data arrays,
+		/// points from the <see cref="CurveItem.Points"/> data collection,
 		/// or if the curve will be a "stair-step" in which the points are
 		/// connected by a series of horizontal and vertical lines that
 		/// represent discrete, constant values.  Note that the values can
@@ -156,7 +124,46 @@ namespace ZedGraph
 			get { return stepType; }
 			set { stepType = value;}
 		}		
+	#endregion
+	
+	#region Constructors
+		/// <summary>
+		/// Default constructor that sets all <see cref="Line"/> properties to default
+		/// values as defined in the <see cref="Def"/> class.
+		/// </summary>
+		public Line()
+		{
+			this.width = Def.Lin.Width;
+			this.style = Def.Lin.Style;
+			this.isVisible = Def.Lin.IsVisible;
+			this.color = Def.Lin.Color;
+			this.stepType = Def.Lin.StepType;
+		}
 
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The Line object from which to copy</param>
+		public Line( Line rhs )
+		{
+			width = rhs.Width;
+			style = rhs.Style;
+			isVisible = rhs.IsVisible;
+			color = rhs.Color;
+			stepType = rhs.StepType;
+		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the Line</returns>
+		public object Clone()
+		{ 
+			return new Line( this ); 
+		}
+	#endregion
+	
+	#region Rendering Methods
 		/// <summary>
 		/// Render a single <see cref="Line"/> segment to the specified
 		/// <see cref="Graphics"/> device.
@@ -183,6 +190,7 @@ namespace ZedGraph
 			}
 		}
 
+/*
 		/// <summary>
 		/// Render a series of <see cref="Line"/> segments to the specified
 		/// <see cref="Graphics"/> device.
@@ -231,5 +239,8 @@ namespace ZedGraph
 				}
 			}
 		}
+*/
+	#endregion
+	
 	}
 }

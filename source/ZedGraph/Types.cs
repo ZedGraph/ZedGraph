@@ -20,14 +20,11 @@
 using System;
 
 namespace ZedGraph
-{
+{	
 	/// <summary>
 	/// Enumeration type for the various axis types that are available
 	/// </summary>
 	/// <seealso cref="ZedGraph.Axis.Type"/>
-	/// 
-	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:22:26 $ </version>
 	public enum AxisType
 	{
 		/// <summary> An ordinary, cartesian axis </summary>
@@ -51,7 +48,7 @@ namespace ZedGraph
 		/// <seealso cref="AxisType.Text"/>
 		/// <seealso cref="Axis.IsOrdinal"/>
 		Ordinal
-};
+	};
 
 	/// <summary>
 	/// Enumeration type for the various axis date and time unit types that are available
@@ -241,7 +238,7 @@ namespace ZedGraph
 	};
 	
 	/// <summary>
-	/// Enumeration type that defines how a curve is draw.  Curves can be drawn
+	/// Enumeration type that defines how a curve is drawn.  Curves can be drawn
 	/// as ordinary lines by connecting the points directly, or in a stair-step
 	/// fashion as a series of discrete, constant values.  In a stair step plot,
 	/// all lines segments are either horizontal or vertical.  In a non-step (line)

@@ -38,48 +38,157 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.7 $ $Date: 2004-08-23 20:24:17 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2004-08-23 20:27:45 $ </version>
 	public class GraphPane : ICloneable
 	{
-		// Item subclasses
-		private XAxis		xAxis;			// A class representing the X axis
-		private YAxis		yAxis;			// A class for the left Y axis
-		private Y2Axis		y2Axis;			// A class for the right Y axis
-		private Legend		legend;			// A class for the graph legend
-		private CurveList	curveList;		// A collection class for the curves on the graph
-		private TextList	textList;		// A collection class for user text items on the graph
-		private ArrowList	arrowList;		// A collection class for lines/arrows on the graph
+	#region Private Fields
+	
+		// Item subclasses ////////////////////////////////////////////////////////////////////
 		
-		// Pane Title Properties
-		private string		title;			// The main title of the graph
-		private bool		isShowTitle;	// true to show the title
-		private FontSpec	fontSpec;		// Describes the title font characteristics
+		/// <summary>Private field instance of the <see cref="ZedGraph.XAxis"/> class.  Use the
+		/// public property <see cref="GraphPane.XAxis"/> to access this class.</summary>
+		private XAxis		xAxis;
+		/// <summary>Private field instance of the <see cref="ZedGraph.YAxis"/> class.  Use the
+		/// public property <see cref="GraphPane.YAxis"/> to access this class.</summary>
+		private YAxis		yAxis;
+		/// <summary>Private field instance of the <see cref="ZedGraph.Y2Axis"/> class.  Use the
+		/// public property <see cref="GraphPane.Y2Axis"/> to access this class.</summary>
+		private Y2Axis		y2Axis;
+		/// <summary>Private field instance of the <see cref="ZedGraph.Legend"/> class.  Use the
+		/// public property <see cref="GraphPane.Legend"/> to access this class.</summary>
+		private Legend		legend;
+		/// <summary>Private field instance of the <see cref="ZedGraph.CurveList"/> class.  Use the
+		/// public property <see cref="GraphPane.CurveList"/> to access this class.</summary>
+		private CurveList	curveList;
+		/// <summary>Private field instance of the <see cref="ZedGraph.TextList"/>t class.  Use the
+		/// public property <see cref="GraphPane.TextList"/> to access this class.</summary>
+		private TextList	textList;
+		/// <summary>Private field instance of the <see cref="ZedGraph.ArrowList"/> class.  Use the
+		/// public property <see cref="GraphPane.ArrowList"/> to access this class.</summary>
+		private ArrowList	arrowList;
 		
-		// Pane Frame Properties
-		private bool		isPaneFramed;	// True if the GraphPane has a frame border
-		private Color		paneFrameColor;		// Color of the pane frame border
-		private float		paneFramePenWidth;		// Width of the pane frame border
-		private Color		paneBackColor;			// Color of the background behind paneRect
+		// Pane Title Properties /////////////////////////////////////////////////////////////
 		
-		// Axis Frame Properties
-		private bool		isAxisRectAuto;		// True if the size of the axisRect will be calculated
-												//    automatically
-		private bool		isAxisFramed;		// True if the GraphPane has a frame border
-		private Color		axisFrameColor;		// Color of the axis frame border
-		private float		axisFramePenWidth;		// Width of the axis frame border
-		private Color		axisBackColor;			// Color of the background behind axisRect
+		/// <summary>Private field that holds the main title of the graph.  Use the
+		/// public property <see cref="GraphPane.Title"/> to access this value.</summary>
+		private string		title;
+		/// <summary>Private field that determines whether or not the graph main title
+		/// will be drawn.  Use the
+		/// public property <see cref="GraphPane.IsShowTitle"/> to access this value.</summary>
+		private bool		isShowTitle;
+		/// <summary>
+		/// Private field instance of the <see cref="FontSpec"/> class, which maintains the font attributes
+		/// for the main graph <see cref="Title"/>. Use the public property
+		/// <see cref="FontSpec"/> to access this class.
+		/// </summary>
+		private FontSpec	fontSpec;
 		
-		private bool		isIgnoreInitial;	// true to ignore initial zero values for auto scale selection
-		private float		paneGap;			// Size of the gap (margin) around the edges of the pane
-		private double		baseDimension;		// Basic length scale (inches) of the plot for scaling features
-		private double		baseDPI;			// dots per inch for "normal" device, zero to use default
-		private float		minClusterGap;		// The minimum space between bar clusters,
-												// expressed as a fraction of the bar size
-		private float		minBarGap;			// The minimum space between individual bars
-												// within a cluster, expressed as a fraction
-												// of the bar size
-		private bool		isFontsScaled;		// true for font and feature scaling with graph size
-												// false for fixed font sizes (scaleFactor = 1.0)
+		// Pane Frame Properties ///////////////////////////////////////////////////////////////
+		
+		/// <summary>Private field that determines whether the <see cref="PaneRect"/> has
+		/// a frame border.  Use the public property <see cref="IsPaneFramed"/> to access
+		/// this value. </summary>
+		private bool		isPaneFramed;
+		/// <summary>Private field that determines the color of the <see cref="PaneRect"/>
+		/// frame border.  Use the public property <see cref="PaneFrameColor"/> to access
+		/// this value. </summary>
+		/// <seealso cref="isPaneFramed"/>
+		private Color		paneFrameColor;
+		/// <summary>Private field that determines the width (pixels) of the <see cref="PaneRect"/>
+		/// frame border.  Use the public property <see cref="PaneFramePenWidth"/> to access
+		/// this value. </summary>
+		/// <seealso cref="isPaneFramed"/>
+		private float		paneFramePenWidth;
+		/// <summary>Private field that determines the color of the <see cref="PaneRect"/>
+		/// background fill.  Use the public property <see cref="PaneBackColor"/> to access
+		/// this value. </summary>
+		/// <seealso cref="isPaneFramed"/>
+		private Color		paneBackColor;
+		
+		// Axis Frame Properties //////////////////////////////////////////////////////////////
+		
+		/// <summary>Private field that determines if the <see cref="AxisRect"/> will be
+		/// sized automatically.  Use the public property <see cref="IsAxisRectAuto"/> to access
+		/// this value. </summary>
+		private bool		isAxisRectAuto;
+		/// <summary>Private field that determines if the <see cref="AxisRect"/> will have a
+		/// frame border.  Use the public property <see cref="IsAxisFramed"/> to access
+		/// this value. </summary>
+		private bool		isAxisFramed;
+		/// <summary>Private field that determines the color of the <see cref="AxisRect"/>
+		/// frame border.  Use the public property <see cref="AxisFrameColor"/> to access
+		/// this value. </summary>
+		/// <seealso cref="isAxisFramed"/>
+		private Color		axisFrameColor;
+		/// <summary>Private field that determines the width of the <see cref="AxisRect"/>
+		/// frame border.  Use the public property <see cref="AxisFramePenWidth"/> to access
+		/// this value. </summary>
+		/// <seealso cref="isAxisFramed"/>
+		private float		axisFramePenWidth;
+		/// <summary>Private field that determines the color of the <see cref="AxisRect"/>
+		/// background fill.  Use the public property <see cref="AxisBackColor"/> to access
+		/// this value. </summary>
+		/// <seealso cref="isAxisFramed"/>
+		private Color		axisBackColor;
+		
+		/// <summary>Private field that determines whether or not initial zero values will
+		/// be included or excluded when determining the Y or Y2 axis scale range.
+		/// Use the public property <see cref="IsIgnoreInitial"/> to access
+		/// this value. </summary>
+		private bool		isIgnoreInitial;
+		/// <summary>Private field that determines whether or not initial
+		/// <see cref="PointPair.Missing"/> values will cause the line segments of
+		/// a curve to be discontinuous.  If this field is true, then the curves
+		/// will be plotted as continuous lines as if the Missing values did not
+		/// exist.
+		/// Use the public property <see cref="IsIgnoreMissing"/> to access
+		/// this value. </summary>
+		private bool		isIgnoreMissing;
+		/// <summary>Private field that determines the size of the gap (margin) around the
+		/// edges of the pane, in pixel units.  This value is scaled according to the graph size.
+		/// Use the public property <see cref="PaneGap"/> to access this value. </summary>
+		/// <seealso cref="isFontsScaled"/>
+		/// <seealso cref="GraphPane.CalcScaleFactor"/>
+		private float		paneGap;
+		/// <summary>Private field that determines the base size of the graph, in inches.
+		/// Fonts, tics, gaps, etc. are scaled according to this base size.
+		/// Use the public property <see cref="BaseDimension"/> to access this value. </summary>
+		/// <seealso cref="isFontsScaled"/>
+		/// <seealso cref="GraphPane.CalcScaleFactor"/>
+		private double		baseDimension;
+		/// <summary>Private field that determines the dots per inch basis for the
+		/// <see cref="PaneRect"/>.  This is typically used for printing opertions.
+		/// Leave the value set to zero for normal conditions (i.e., the output device
+		/// resolution matches the definition of the PaneRect).
+		/// Use the public property <see cref="BaseDPI"/> to access this value. </summary>
+		/// <seealso cref="isFontsScaled"/>
+		/// <seealso cref="GraphPane.CalcScaleFactor"/>
+		private double		baseDPI;
+		/// <summary>Private field that determines the size of the gap between bar clusters
+		/// for bar charts.  This gap is expressed as a fraction of the bar size (1.0 means
+		/// leave a 1-barwidth gap between clusters).
+		/// Use the public property <see cref="MinClusterGap"/> to access this value. </summary>
+		private float		minClusterGap;
+		/// <summary>Private field that determines the size of the gap between individual bars
+		/// within a bar cluster for bar charts.  This gap is expressed as a fraction of the
+		/// bar size (1.0 means leave a 1-barwidth gap between each bar).
+		/// Use the public property <see cref="MinBarGap"/> to access this value. </summary>
+		private float		minBarGap;
+		/// <summary>Private field that determines the width of a bar cluster (for bar charts)
+		/// in user scale units.  Normally, this value is 1.0 because bar charts are typically
+		/// <see cref="AxisType.Ordinal"/> or <see cref="AxisType.Text"/>, and the bars are
+		/// defined at ordinal values (1.0 scale units apart).  For <see cref="AxisType.Linear"/>
+		/// or other scale types, you can use this value to scale the bars to an arbitrary
+		/// user scale. Use the public property <see cref="ClusterScaleWidth"/> to access this
+		/// value. </summary>
+		private double		clusterScaleWidth;
+		/// <summary>Private field that determines whether or not the fonts, tics, gaps, etc.
+		/// will be scaled according to the actual graph size.  true for font and feature scaling
+		/// with graph size, false for fixed font sizes (scaleFactor = 1.0 constant).
+		/// Use the public property <see cref="IsFontsScaled"/> to access this value. </summary>
+		/// <seealso cref="CalcScaleFactor"/>
+		private bool		isFontsScaled;
+		
 		/// <summary>
 		/// The rectangle that defines the full area into which the
 		/// graph can be rendered.  Units are pixels.
@@ -90,134 +199,9 @@ namespace ZedGraph
 		/// pixel units
 		/// </summary>
 		private RectangleF	axisRect;			// The area of the pane defined by the axes
-		
-		/// <summary>
-		/// Constructor for the <see cref="GraphPane"/> object.  This routine will
-		/// initialize all member variables and classes, setting appropriate default
-		/// values as defined in the <see cref="Def"/> class.
-		/// </summary>
-		/// <param name="paneRect"> A rectangular screen area where the graph is to be displayed.
-		/// This area can be any size, and can be resize at any time using the
-		/// <see cref="PaneRect"/> property.
-		/// </param>
-		/// <param name="paneTitle">The <see cref="Axis.Title"/> for this <see cref="GraphPane"/></param>
-		/// <param name="xTitle">The <see cref="Axis.Title"/> for the <see cref="XAxis"/></param>
-		/// <param name="yTitle">The <see cref="Axis.Title"/> for the <see cref="YAxis"/></param>
-		public GraphPane( RectangleF paneRect, string paneTitle,
-			string xTitle, string yTitle )
-		{
-			this.paneRect = paneRect;
-			
-			xAxis = new XAxis( xTitle );
-			yAxis = new YAxis( yTitle );
-			y2Axis = new Y2Axis( "" );
-			legend = new Legend();
-			curveList = new CurveList();
-			textList = new TextList();
-			arrowList = new ArrowList();
-			
-			this.title = paneTitle;
-			this.isShowTitle = Def.Pane.IsShowTitle;
-			this.fontSpec = new FontSpec( Def.Pane.FontFamily,
-				Def.Pane.FontSize, Def.Pane.FontColor, Def.Pane.FontBold,
-				Def.Pane.FontItalic, Def.Pane.FontUnderline );
-			this.fontSpec.IsFilled = false;
-			this.fontSpec.IsFramed = false;
-					
-			this.isIgnoreInitial = Def.Pane.IsIgnoreInitial;
-			
-			this.isPaneFramed = Def.Pane.IsPaneFramed;
-			this.paneFrameColor = Def.Pane.PaneFrameColor;
-			this.paneFramePenWidth = Def.Pane.PaneFramePenWidth;
-			this.paneBackColor = Def.Pane.PaneBackColor;
-
-			this.isAxisRectAuto = true;
-			this.isAxisFramed = Def.Pane.IsAxisFramed;
-			this.axisFrameColor = Def.Pane.AxisFrameColor;
-			this.axisFramePenWidth = Def.Pane.AxisFramePenWidth;
-			this.axisBackColor = Def.Pane.AxisBackColor;
-
-			this.baseDimension = Def.Pane.BaseDimension;
-			this.baseDPI = 0;
-			this.paneGap = Def.Pane.PaneGap;
-			this.isFontsScaled = true;
-
-			this.minClusterGap = Def.Pane.MinClusterGap;
-			this.minBarGap = Def.Pane.MinBarGap;
-
-		}
-
-		/// <summary>
-		/// The Copy Constructor
-		/// </summary>
-		/// <param name="rhs">The GraphPane object from which to copy</param>
-		public GraphPane( GraphPane rhs )
-		{
-			paneRect = rhs.PaneRect;
-			xAxis = new XAxis( rhs.XAxis );
-			yAxis = new YAxis( rhs.YAxis );
-			y2Axis = new Y2Axis( rhs.Y2Axis );
-			legend = new Legend( rhs.Legend);
-			curveList = new CurveList( rhs.CurveList );
-			textList = new TextList( rhs.TextList );
-			arrowList = new ArrowList(rhs.ArrowList );
-			
-			this.title = rhs.Title;
-			this.isShowTitle = rhs.IsShowTitle;
-			this.fontSpec = new FontSpec( rhs.FontSpec );
-					
-			this.isIgnoreInitial = rhs.IsIgnoreInitial;
-			
-			this.isPaneFramed = rhs.IsPaneFramed;
-			this.paneFrameColor = rhs.PaneFrameColor;
-			this.paneFramePenWidth = rhs.PaneFramePenWidth;
-			this.paneBackColor = rhs.PaneBackColor;
-
-			this.isAxisRectAuto = rhs.IsAxisRectAuto;
-			this.isAxisFramed = rhs.IsAxisFramed;
-			this.axisFrameColor = rhs.AxisFrameColor;
-			this.axisFramePenWidth = rhs.AxisFramePenWidth;
-			this.axisBackColor = rhs.AxisBackColor;
-
-			this.baseDimension = rhs.BaseDimension;
-			this.isFontsScaled = rhs.isFontsScaled;
-			this.baseDPI = rhs.BaseDPI;
-			this.paneGap = rhs.PaneGap;
-			this.minClusterGap = rhs.MinClusterGap;
-			this.minBarGap = rhs.MinBarGap;
-		} 
-
-		/// <summary>
-		/// Deep-copy clone routine
-		/// </summary>
-		/// <returns>A new, independent copy of the GraphPane</returns>
-		public object Clone()
-		{ 
-			return new GraphPane( this ); 
-		}
-		
-		/// <summary>
-		/// Gets or sets the rectangle that defines the full area into which the
-		/// <see cref="GraphPane"/> can be rendered.
-		/// </summary>
-		/// <value>The rectangle units are in screen pixels</value>
-		public RectangleF PaneRect
-		{
-			get { return paneRect; }
-			set { paneRect = value; }
-		}
-		/// <summary>
-		/// Gets or sets the rectangle that contains the area bounded by the axes
-		/// (<see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
-		/// If you set this value manually, then the <see cref="IsAxisRectAuto"/>
-		/// value will automatically be set to false.
-		/// </summary>
-		/// <value>The rectangle units are in screen pixels</value>
-		public RectangleF AxisRect
-		{
-			get { return axisRect; }
-			set { axisRect = value; this.isAxisRectAuto = false; }
-		}
+	#endregion
+	
+	#region public Class Instance Properties
 		/// <summary>
 		/// Gets or sets the list of <see cref="ArrowItem"/> items for this <see cref="GraphPane"/>
 		/// </summary>
@@ -277,7 +261,9 @@ namespace ZedGraph
 		{
 			get { return y2Axis; }
 		}
-
+	#endregion
+	
+	#region General Properties
 		/// <summary>
 		/// A boolean value that affects the data range that is considered
 		/// for the automatic scale ranging.  If true, then initial data points where the Y value
@@ -290,6 +276,18 @@ namespace ZedGraph
 		{
 			get { return isIgnoreInitial; }
 			set { isIgnoreInitial = value; }
+		}
+		/// <summary>Private field that determines whether or not initial
+		/// <see cref="PointPair.Missing"/> values will cause the line segments of
+		/// a curve to be discontinuous.  If this field is true, then the curves
+		/// will be plotted as continuous lines as if the Missing values did not
+		/// exist.
+		/// Use the public property <see cref="IsIgnoreMissing"/> to access
+		/// this value. </summary>
+		public bool IsIgnoreMissing
+		{
+			get { return isIgnoreMissing; }
+			set { isIgnoreMissing = value; }
 		}
 		/// <summary>
 		/// IsShowTitle is a boolean value that determines whether or not the pane title is displayed
@@ -325,6 +323,19 @@ namespace ZedGraph
 		{
 			get { return title; }
 			set { title = value; }
+		}
+	#endregion
+	
+	#region PaneRect Properties
+		/// <summary>
+		/// Gets or sets the rectangle that defines the full area into which the
+		/// <see cref="GraphPane"/> can be rendered.
+		/// </summary>
+		/// <value>The rectangle units are in screen pixels</value>
+		public RectangleF PaneRect
+		{
+			get { return paneRect; }
+			set { paneRect = value; }
 		}
 		/// <summary>
 		/// IsShowPaneFrame is a boolean value that determines whether or not a frame border is drawn
@@ -367,6 +378,21 @@ namespace ZedGraph
 		{
 			get { return paneFramePenWidth; }
 			set { paneFramePenWidth = value; }
+		}
+	#endregion
+	
+	#region AxisRect Properties
+		/// <summary>
+		/// Gets or sets the rectangle that contains the area bounded by the axes
+		/// (<see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
+		/// If you set this value manually, then the <see cref="IsAxisRectAuto"/>
+		/// value will automatically be set to false.
+		/// </summary>
+		/// <value>The rectangle units are in screen pixels</value>
+		public RectangleF AxisRect
+		{
+			get { return axisRect; }
+			set { axisRect = value; this.isAxisRectAuto = false; }
 		}
 		/// <summary>
 		/// IsAxisRectAuto is a boolean value that determines whether or not the 
@@ -427,6 +453,9 @@ namespace ZedGraph
 			get { return axisFramePenWidth; }
 			set { axisFramePenWidth = value; }
 		}
+	#endregion
+	
+	#region Pane Scaling Properties
 		/// <summary>
 		/// PaneGap is a float value that sets the margin area between the edge of the
 		/// <see cref="GraphPane"/> rectangle (<see cref="PaneRect"/>)
@@ -435,6 +464,7 @@ namespace ZedGraph
 		/// <value>This value is in units of pixels, and is scaled
 		/// linearly with the graph size.</value>
 		/// <seealso cref="Def.Pane.PaneGap"/>
+		/// <seealso cref="IsFontsScaled"/>
 		public float PaneGap
 		{
 			get { return paneGap; }
@@ -451,6 +481,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>The base dimension reference for the <see cref="GraphPane"/>, in inches</value>
 		/// <seealso cref="Def.Pane.BaseDimension"/>
+		/// <seealso cref="IsFontsScaled"/>
+		/// <seealso cref="GraphPane.CalcScaleFactor"/>
 		public double BaseDimension
 		{
 			get { return baseDimension; }
@@ -475,37 +507,17 @@ namespace ZedGraph
 		/// However, when printing, the print device often scales the output internally such that
 		/// the paneRect is the same size as the screen display, but the DPI goes up to 600.  Therefore,
 		/// in order to scale the output properly, you need to override the scale calculations
-		/// made by ZedGraph.  Leave this value at 0 to not override.
+		/// made by ZedGraph.  Leave this value at 0 to not override, (i.e., the output device
+		/// resolution matches the definition of the PaneRect).
 		/// </summary>
 		/// <seealso cref="Def.Pane.BaseDimension"/>
+		/// <seealso cref="GraphPane.CalcScaleFactor"/>
+		/// <seealso cref="IsFontsScaled"/>
 		public double BaseDPI
 		{
 			get { return baseDPI; }
 			set { baseDPI = value; }
 		}
-
-		/// <summary>
-		/// The minimum space between <see cref="Bar"/> clusters, expressed as a
-		/// fraction of the bar size.
-		/// </summary>
-		/// <seealso cref="Def.Pane.MinClusterGap"/>
-		public float MinClusterGap
-		{
-			get { return minClusterGap; }
-			set { minClusterGap = value; }
-		}
-		/// <summary>
-		/// The minimum space between individual <see cref="Bar">Bars</see>
-		/// within a cluster, expressed as a
-		/// fraction of the bar size.
-		/// </summary>
-		/// <seealso cref="Def.Pane.MinBarGap"/>
-		public float MinBarGap
-		{
-			get { return minBarGap; }
-			set { minBarGap = value; }
-		}
-
 		/// <summary>
 		/// ScaledGap is a simple utility routine that calculates the <see cref="PaneGap"/> scaled
 		/// to the "scaleFactor" fraction.  That is, ScaledGap = PaneGap * scaleFactor
@@ -521,7 +533,160 @@ namespace ZedGraph
 		{
 			return (float) ( this.paneGap * scaleFactor );
 		}
-		
+	#endregion
+	
+	#region Bar Properties
+		/// <summary>
+		/// The minimum space between <see cref="Bar"/> clusters, expressed as a
+		/// fraction of the bar size.
+		/// </summary>
+		/// <seealso cref="Def.Pane.MinClusterGap"/>
+		/// <seealso cref="MinBarGap"/>
+		/// <seealso cref="ClusterScaleWidth"/>
+		public float MinClusterGap
+		{
+			get { return minClusterGap; }
+			set { minClusterGap = value; }
+		}
+		/// <summary>
+		/// The minimum space between individual <see cref="Bar">Bars</see>
+		/// within a cluster, expressed as a
+		/// fraction of the bar size.
+		/// </summary>
+		/// <seealso cref="Def.Pane.MinBarGap"/>
+		/// <seealso cref="MinClusterGap"/>
+		/// <seealso cref="ClusterScaleWidth"/>
+		public float MinBarGap
+		{
+			get { return minBarGap; }
+			set { minBarGap = value; }
+		}
+		/// <summary>
+		/// The width of an individual bar cluster on a <see cref="Bar"/> graph.
+		/// This value only applies to bar graphs plotted on non-ordinal X axis
+		/// types (<see cref="AxisType.Linear"/>, <see cref="AxisType.Log"/>, and
+		/// <see cref="AxisType.Date"/>.
+		/// </summary>
+		/// <seealso cref="Def.Pane.ClusterScaleWidth"/>
+		/// <seealso cref="MinBarGap"/>
+		/// <seealso cref="MinClusterGap"/>
+		public double ClusterScaleWidth
+		{
+			get { return clusterScaleWidth; }
+			set { clusterScaleWidth = value; }
+		}
+	#endregion
+	
+	#region Constructors
+		/// <summary>
+		/// Constructor for the <see cref="GraphPane"/> object.  This routine will
+		/// initialize all member variables and classes, setting appropriate default
+		/// values as defined in the <see cref="Def"/> class.
+		/// </summary>
+		/// <param name="paneRect"> A rectangular screen area where the graph is to be displayed.
+		/// This area can be any size, and can be resize at any time using the
+		/// <see cref="PaneRect"/> property.
+		/// </param>
+		/// <param name="paneTitle">The <see cref="Axis.Title"/> for this <see cref="GraphPane"/></param>
+		/// <param name="xTitle">The <see cref="Axis.Title"/> for the <see cref="XAxis"/></param>
+		/// <param name="yTitle">The <see cref="Axis.Title"/> for the <see cref="YAxis"/></param>
+		public GraphPane( RectangleF paneRect, string paneTitle,
+			string xTitle, string yTitle )
+		{
+			this.paneRect = paneRect;
+			
+			xAxis = new XAxis( xTitle );
+			yAxis = new YAxis( yTitle );
+			y2Axis = new Y2Axis( "" );
+			legend = new Legend();
+			curveList = new CurveList();
+			textList = new TextList();
+			arrowList = new ArrowList();
+			
+			this.title = paneTitle;
+			this.isShowTitle = Def.Pane.IsShowTitle;
+			this.fontSpec = new FontSpec( Def.Pane.FontFamily,
+				Def.Pane.FontSize, Def.Pane.FontColor, Def.Pane.FontBold,
+				Def.Pane.FontItalic, Def.Pane.FontUnderline );
+			this.fontSpec.IsFilled = false;
+			this.fontSpec.IsFramed = false;
+					
+			this.isIgnoreInitial = Def.Pane.IsIgnoreInitial;
+			
+			this.isPaneFramed = Def.Pane.IsPaneFramed;
+			this.paneFrameColor = Def.Pane.PaneFrameColor;
+			this.paneFramePenWidth = Def.Pane.PaneFramePenWidth;
+			this.paneBackColor = Def.Pane.PaneBackColor;
+
+			this.isAxisRectAuto = true;
+			this.isAxisFramed = Def.Pane.IsAxisFramed;
+			this.axisFrameColor = Def.Pane.AxisFrameColor;
+			this.axisFramePenWidth = Def.Pane.AxisFramePenWidth;
+			this.axisBackColor = Def.Pane.AxisBackColor;
+
+			this.baseDimension = Def.Pane.BaseDimension;
+			this.baseDPI = 0;
+			this.paneGap = Def.Pane.PaneGap;
+			this.isFontsScaled = true;
+
+			this.minClusterGap = Def.Pane.MinClusterGap;
+			this.minBarGap = Def.Pane.MinBarGap;
+			this.clusterScaleWidth = Def.Pane.ClusterScaleWidth;
+
+		}
+
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The GraphPane object from which to copy</param>
+		public GraphPane( GraphPane rhs )
+		{
+			paneRect = rhs.PaneRect;
+			xAxis = new XAxis( rhs.XAxis );
+			yAxis = new YAxis( rhs.YAxis );
+			y2Axis = new Y2Axis( rhs.Y2Axis );
+			legend = new Legend( rhs.Legend);
+			curveList = new CurveList( rhs.CurveList );
+			textList = new TextList( rhs.TextList );
+			arrowList = new ArrowList(rhs.ArrowList );
+			
+			this.title = rhs.Title;
+			this.isShowTitle = rhs.IsShowTitle;
+			this.fontSpec = new FontSpec( rhs.FontSpec );
+					
+			this.isIgnoreInitial = rhs.IsIgnoreInitial;
+			
+			this.isPaneFramed = rhs.IsPaneFramed;
+			this.paneFrameColor = rhs.PaneFrameColor;
+			this.paneFramePenWidth = rhs.PaneFramePenWidth;
+			this.paneBackColor = rhs.PaneBackColor;
+
+			this.isAxisRectAuto = rhs.IsAxisRectAuto;
+			this.isAxisFramed = rhs.IsAxisFramed;
+			this.axisFrameColor = rhs.AxisFrameColor;
+			this.axisFramePenWidth = rhs.AxisFramePenWidth;
+			this.axisBackColor = rhs.AxisBackColor;
+
+			this.baseDimension = rhs.BaseDimension;
+			this.isFontsScaled = rhs.isFontsScaled;
+			this.baseDPI = rhs.BaseDPI;
+			this.paneGap = rhs.PaneGap;
+			this.minClusterGap = rhs.MinClusterGap;
+			this.minBarGap = rhs.MinBarGap;
+			this.clusterScaleWidth = rhs.ClusterScaleWidth;
+		} 
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the GraphPane</returns>
+		public object Clone()
+		{ 
+			return new GraphPane( this ); 
+		}
+	#endregion
+	
+	#region Rendering Methods
 		/// <summary>
 		/// AxisChange causes the axes scale ranges to be recalculated based on the current data range.
 		/// Call this function anytime you change, add, or remove curve data.  This routine calculates
@@ -530,7 +695,11 @@ namespace ZedGraph
 		/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.StepAuto"/>) will be modified.  You must call
 		/// Invalidate() after calling AxisChange to make sure the display gets updated.
 		/// </summary>
-		public void AxisChange()
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		public void AxisChange( Graphics g )
 		{
 			double	xMin, xMax, yMin, yMax, y2Min, y2Max;
 
@@ -539,12 +708,21 @@ namespace ZedGraph
 				out yMax, out y2Min, out y2Max,
 				this.isIgnoreInitial, this );
 		
-			// Pick new scales based on the range
-			this.xAxis.PickScale( xMin, xMax );
-			this.yAxis.PickScale( yMin, yMax );
-			this.y2Axis.PickScale( y2Min, y2Max );
-		}
+			// Determine the scale factor
+			double	scaleFactor;
+			int		hStack;
+			float	legendWidth;
+			if ( this.isAxisRectAuto )
+				this.axisRect = CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth );
+			else
+				CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth );
 
+			// Pick new scales based on the range
+			this.xAxis.PickScale( xMin, xMax, this, g, scaleFactor );
+			this.yAxis.PickScale( yMin, yMax, this, g, scaleFactor );
+			this.y2Axis.PickScale( y2Min, y2Max, this, g, scaleFactor );
+		}
+		
 		/// <summary>
 		/// Draw all elements in the <see cref="GraphPane"/> to the specified graphics device.  This routine
 		/// should be part of the Paint() update process.  Calling this routine will redraw all
@@ -847,10 +1025,12 @@ namespace ZedGraph
 						
 			return scaleFactor;
 		}
-
+	#endregion
+	
+	#region General Utility Methods
 		/// <summary>
 		/// Add a curve (<see cref="CurveItem"/> object) to the plot with
-		/// the given data points and properties.
+		/// the given data points (double arrays) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
 		/// the <see cref="ZedGraph.CurveList.Add"/> method.
@@ -867,7 +1047,7 @@ namespace ZedGraph
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
 		public CurveItem AddCurve( string label, double[] x, double[] y,
-								Color color )
+			Color color )
 		{
 			CurveItem curve = new CurveItem( label, x, y );
 			curve.Line.Color = color;
@@ -880,7 +1060,35 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Add a curve (<see cref="CurveItem"/> object) to the plot with
-		/// the given data points and properties.
+		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// This is simplified way to add curves without knowledge of the
+		/// <see cref="CurveList"/> class.  An alternative is to use
+		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// </summary>
+		/// <param name="label">The text label (string) for the curve that will be
+		/// used as a <see cref="Legend"/> entry.</param>
+		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// the X and Y values for this curve</param>
+		/// <param name="color">The color to used for the curve line,
+		/// symbols, etc.</param>
+		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
+		/// This can then be used to access all of the curve properties that
+		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
+		public CurveItem AddCurve( string label, PointPairList points,
+			Color color )
+		{
+			CurveItem curve = new CurveItem( label, points );
+			curve.Line.Color = color;
+			curve.Symbol.Color = color;
+			curve.Bar.FillColor = color;
+			this.curveList.Add( curve );
+			
+			return curve;
+		}
+
+		/// <summary>
+		/// Add a curve (<see cref="CurveItem"/> object) to the plot with
+		/// the given data points (double arrays) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
 		/// the <see cref="ZedGraph.CurveList.Add"/> method.
@@ -899,9 +1107,40 @@ namespace ZedGraph
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
 		public CurveItem AddCurve( string label, double[] x, double[] y,
-								Color color, SymbolType symbolType )
+			Color color, SymbolType symbolType )
 		{
 			CurveItem curve = new CurveItem( label, x, y );
+			curve.Line.Color = color;
+			curve.Symbol.Color = color;
+			curve.Bar.FillColor = color;
+			curve.Symbol.Type = symbolType;
+			this.curveList.Add( curve );
+			
+			return curve;
+		}
+
+		/// <summary>
+		/// Add a curve (<see cref="CurveItem"/> object) to the plot with
+		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// This is simplified way to add curves without knowledge of the
+		/// <see cref="CurveList"/> class.  An alternative is to use
+		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// </summary>
+		/// <param name="label">The text label (string) for the curve that will be
+		/// used as a <see cref="Legend"/> entry.</param>
+		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// the X and Y values for this curve</param>
+		/// <param name="color">The color to used for the curve line,
+		/// symbols, etc.</param>
+		/// <param name="symbolType">A symbol type (<see cref="SymbolType"/>)
+		/// that will be used for this curve.</param>
+		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
+		/// This can then be used to access all of the curve properties that
+		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
+		public CurveItem AddCurve( string label, PointPairList points,
+			Color color, SymbolType symbolType )
+		{
+			CurveItem curve = new CurveItem( label, points );
 			curve.Line.Color = color;
 			curve.Symbol.Color = color;
 			curve.Bar.FillColor = color;
@@ -980,12 +1219,127 @@ namespace ZedGraph
 		/// instance that contains the closest point.  nearestCurve will be null if
 		/// no data points are available.</param>
 		/// <param name="iNearest">The index number of the closest point.  The
-		/// actual data values will then be <see cref="CurveItem.X">CurveItem.X[iNearest]</see>
-		/// and <see cref="CurveItem.Y">CurveItem.Y[iNearest]</see>.  iNearest will
+		/// actual data vpoint will then be <see cref="CurveItem.Points">CurveItem.Points[iNearest]</see>
+		/// .  iNearest will
 		/// be -1 if no data points are available.</param>
 		/// <returns>true if a point was found and that point lies within
 		/// <see cref="Def.Pane.NearestTol"/> pixels
 		/// of the screen point, false otherwise.</returns>
+		public bool FindNearestPoint( PointF mousePt,
+			out CurveItem nearestCurve, out int iNearest )
+		{
+			nearestCurve = null;
+			iNearest = -1;
+
+			// If the point is outside the axisRect, always return false
+			if ( ! axisRect.Contains( mousePt ) )
+				return false;
+
+			double	x, y, y2;
+			ReverseTransform( mousePt, out x, out y, out y2 );
+
+			if ( xAxis.Min == xAxis.Max || yAxis.Min == yAxis.Max ||
+				y2Axis.Min == y2Axis.Max )
+				return false;
+
+			float	barWidth = CalcBarWidth();
+
+			double	xPixPerUnit = axisRect.Width / ( xAxis.Max - xAxis.Min );
+			double	yPixPerUnit = axisRect.Height / ( yAxis.Max - yAxis.Min );
+			double	y2PixPerUnit = axisRect.Height / ( y2Axis.Max - y2Axis.Min );
+
+			double	yPixPerUnitAct, yAct, yMinAct, yMaxAct;
+			double	minDist = 1e20;
+			double	xVal, yVal, dist, distX, distY;
+			double	tolSquared = Def.Pane.NearestTol * Def.Pane.NearestTol;
+
+			double	barWidthUserHalf = barWidth / xPixPerUnit / 2.0;
+
+			int		iBar = 0;
+
+			foreach ( CurveItem curve in curveList )
+			{
+				if ( curve.IsY2Axis )
+				{
+					yAct = y2;
+					yMinAct = y2Axis.Min;
+					yMaxAct = y2Axis.Max;
+					yPixPerUnitAct = y2PixPerUnit;
+				}
+				else
+				{
+					yAct = y;
+					yMinAct = yAxis.Min;
+					yMaxAct = yAxis.Max;
+					yPixPerUnitAct = yPixPerUnit;
+				}
+
+				PointPairList points = curve.Points;
+				
+				if ( points != null )
+				{
+					for ( int iPt=0; iPt<curve.NPts; iPt++ )
+					{
+						if ( xAxis.IsOrdinal )
+							xVal = (double) iPt + 1.0;
+						else
+							xVal = points[iPt].X;
+
+						if ( yAxis.IsOrdinal )
+							yVal = (double) iPt + 1.0;
+						else
+							yVal = points[iPt].Y;
+
+						if (	xVal != PointPair.Missing &&
+								xVal >= xAxis.Min && xVal <= xAxis.Max &&
+								yVal != PointPair.Missing &&
+								yVal >= yMinAct && yVal <= yMaxAct )
+						{
+
+							if ( curve.IsBar )
+							{
+								float xPix = curve.CalcBarCenter( this, barWidth, iPt, iBar );
+								xVal = this.xAxis.ReverseTransform( xPix );
+
+								if (	( x < xVal - barWidthUserHalf ) ||
+										( x > xVal + barWidthUserHalf ) ||
+										( yVal >=0 && ( y < 0 || y > yVal ) ) ||
+										( yVal < 0 && ( y >= 0 || y < yVal ) ) )
+									continue;
+
+								dist = 0;
+							}
+							else
+							{
+								distX = (xVal - x) * xPixPerUnit;
+								distY = (yVal - yAct) * yPixPerUnitAct;
+								dist = distX * distX + distY * distY;
+
+								if ( dist > minDist )
+									continue;
+							}
+
+							minDist = dist;
+							iNearest = iPt;
+							nearestCurve = curve;
+						}
+					}
+
+					if ( curve.IsBar )
+						iBar++;
+				}
+			}
+
+			// Did we find a close point, and is it within the tolerance?
+			// (minDist is the square of the distance in pixel units)
+			if ( minDist < tolSquared )
+			{
+				return true;
+			}
+
+			return false;
+		}
+/*
 		public bool FindNearestPoint( PointF mousePt,
 								  out CurveItem nearestCurve, out int iNearest )
 		{
@@ -1033,10 +1387,10 @@ namespace ZedGraph
 					yPixPerUnitAct = yPixPerUnit;
 				}
 
-				if ( curve.Points != null )
+				PointPairList points = curve.Points;
+				
+				if ( points != null )
 				{
-					PointPairList points = curve.Points;
-
 					for ( int iPt=0; iPt<curve.NPts; iPt++ )
 					{
 						if ( curve.IsBar )
@@ -1049,9 +1403,9 @@ namespace ZedGraph
 
 						yVal = points[iPt].Y;
 
-						if (	xVal != System.Double.MaxValue &&
+						if (	xVal != PointPair.Missing &&
 								xVal >= xAxis.Min && xVal <= xAxis.Max &&
-								yVal != System.Double.MaxValue &&
+								yVal != PointPair.Missing &&
 								yVal >= yMinAct && yVal <= yMaxAct )
 						{
 							distX = (xVal - x) * xPixPerUnit;
@@ -1081,7 +1435,7 @@ namespace ZedGraph
 
 			return false;
 		}
-
+*/
 		/// <summary>
 		/// Calculate the width of each bar
 		/// </summary>
@@ -1100,23 +1454,18 @@ namespace ZedGraph
 			// totwidth = bar * ( npts * ( nbars * ( 1 + bg ) - bg + cg ) )
 			// solve for bar
 
-			float totWidth = XAxis.MaxPix - XAxis.MinPix;
-			if ( totWidth <= 0 )
-				return 1.0F;
+			float denom = CurveList.NumBars * ( 1.0F + MinBarGap ) -
+							MinBarGap + MinClusterGap;
 
-			float denom = CurveList.MaxPts * ( CurveList.NumBars *
-					( 1.0F + MinBarGap ) - MinBarGap + MinClusterGap );
-
-			if ( denom < 1e-10 )
-				return 1.0F;
-
-			float barWidth = totWidth / denom;
+			float barWidth = this.XAxis.GetClusterWidth( this ) / denom;
 
 			if ( barWidth <= 0 )
 				return 1;
 
 			return barWidth;
 		}
+	#endregion
+	
 	}
 }
 

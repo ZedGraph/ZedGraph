@@ -28,10 +28,12 @@ namespace ZedGraph
 	/// that define the set of curves to be displayed on the graph.
 	/// </summary>
 	/// 
-	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:22:26 $ </version>
+	/// <author> John Champion
+	/// modified by Jerry Vos</author>
+	/// <version> $Revision: 1.6 $ $Date: 2004-08-23 20:27:45 $ </version>
 	public class CurveList : CollectionBase, ICloneable
 	{
+	#region Properties
 		// internal temporary value that keeps
 		// the max number of points for any curve
 		// associated with this curveList
@@ -84,7 +86,25 @@ namespace ZedGraph
 			foreach ( CurveItem item in rhs )
 				this.Add( new CurveItem( item ) );
 		}
-
+		
+		/// <summary>
+		/// Determine if there is any data in any of the <see cref="CurveItem"/>
+		/// objects for this graph.  This method does not verify valid data, it
+		/// only checks to see if <see cref="CurveItem.NPts"/> > 0.
+		/// </summary>
+		/// <returns>true if there is any data, false otherwise</returns>
+		public bool HasData()
+		{
+			foreach( CurveItem curve in this )
+			{
+				if ( curve.Points.Count > 0 )
+					return true;
+			}
+			return false;
+		}
+	#endregion
+	
+	#region Constructors
 		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>
@@ -106,7 +126,9 @@ namespace ZedGraph
 			get { return( (CurveItem) List[index] ); }
 			set { List[index] = value; }
 		}
-
+	#endregion
+	
+	#region List Methods
 		/// <summary>
 		/// Add a <see cref="CurveItem"/> object to the collection at the end of the list.
 		/// </summary>
@@ -130,13 +152,15 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Go through each <see cref="CurveItem"/> object in the collection,
-		/// calling the <see cref="CurveItem.GetRange"/> member to 
+		/// calling the <see cref="PointPairList.GetRange"/> member to 
 		/// determine the minimum and maximum values in the
-		/// <see cref="CurveItem.X"/> and <see cref="CurveItem.Y"/> data arrays.  In the event that no
+		/// <see cref="CurveItem.Points"/> list of data value pairs.  In the event that no
 		/// data are available, a default range of min=0.0 and max=1.0 are returned.
+		/// If the Y axis has a valid data range and the Y2 axis not, then the Y2
+		/// range will be a duplicate of the Y range.  Vice-versa for the Y2 axis
+		/// having valid data when the Y axis does not.
 		/// If any <see cref="CurveItem"/> in the list has a missing
-		/// <see cref="CurveItem.X"/> or <see cref="CurveItem.Y"/> data array, and suitable
-		/// default array will be created with ordinal values.
+		/// <see cref="PointPairList"/>, a new empty one will be generated.
 		/// </summary>
 		/// <param name="xMinVal">The minimun X value in the data range for all curves
 		/// in this collection</param>
@@ -173,20 +197,17 @@ namespace ZedGraph
 					tYMaxVal;
 						
 			// initialize the values to outrageous ones to start
-			xMinVal = yMinVal = y2MinVal = tXMinVal = tYMinVal = 1e20;
-			xMaxVal = yMaxVal = y2MaxVal = tXMaxVal = tYMaxVal = -1e20;
+			xMinVal = yMinVal = y2MinVal = tXMinVal = tYMinVal = Double.MaxValue;
+			xMaxVal = yMaxVal = y2MaxVal = tXMaxVal = tYMaxVal = Double.MinValue;
 			maxPts = 1;
 
 			// Loop over each curve in the collection
 			foreach( CurveItem curve in this )
 			{
-				// Generate default arrays of ordinal values if any data arrays are missing
-				curve.DataCheck( pane );
-			
 				// Call the GetRange() member function for the current
 				// curve to get the min and max values
-				curve.GetRange( ref tXMinVal, ref tXMaxVal,
-								ref tYMinVal, ref tYMaxVal, bIgnoreInitial );
+				curve.Points.GetRange( ref tXMinVal, ref tXMaxVal,
+										ref tYMinVal, ref tYMaxVal, bIgnoreInitial );
 				
 				// For ordinal Axes, the data range is just 1 to Npts
 				if ( ( ( pane.Y2Axis.IsOrdinal || pane.Y2Axis.IsText ) && curve.IsY2Axis ) ||
@@ -201,6 +222,15 @@ namespace ZedGraph
 					tXMaxVal = curve.NPts;
 				}
 
+				// Bar types always include the Y=0 value
+				if ( curve.IsBar )
+				{
+					if ( tYMinVal > 0 )
+						tYMinVal = 0;
+					else if ( tYMaxVal < 0 )
+						tYMaxVal = 0;
+				}
+
 				// determine which curve has the maximum number of points
 				if ( curve.NPts > maxPts )
 					maxPts = curve.NPts;
@@ -210,10 +240,10 @@ namespace ZedGraph
 				// Also, differentiate between Y and Y2 values		
 				if ( curve.IsY2Axis )
 				{
-						if ( tYMinVal < y2MinVal )
-							y2MinVal = tYMinVal;
-						if ( tYMaxVal > y2MaxVal )
-							y2MaxVal = tYMaxVal;
+					if ( tYMinVal < y2MinVal )
+						y2MinVal = tYMinVal;
+					if ( tYMaxVal > y2MaxVal )
+						y2MaxVal = tYMaxVal;
 				}
 				else
 				{
@@ -232,41 +262,41 @@ namespace ZedGraph
 		
 			// Define suitable default ranges in the event that
 			// no data were available
-			if ( xMinVal >= 1e20 || xMaxVal <= -1e20 )
+			if ( xMinVal >= Double.MaxValue || xMaxVal <= Double.MinValue )
 			{
 				xMinVal = 0;
 				xMaxVal = 1;
 			}
 		
-			if ( yMinVal >= 1e20 || yMaxVal <= -1e20 )
+			if ( yMinVal >= Double.MaxValue || yMaxVal <= Double.MinValue )
 			{
-				yMinVal = 0;
-				yMaxVal = 1;
+				if ( y2MinVal < Double.MaxValue && y2MaxVal > Double.MinValue )
+				{
+					yMinVal = y2MinVal;
+					yMaxVal = y2MaxVal;
+				}
+				else
+				{
+					yMinVal = 0;
+					yMaxVal = 1;
+				}
 			}
 		
-			if ( y2MinVal >= 1e20 || y2MaxVal <= -1e20 )
+			if ( y2MinVal >= Double.MaxValue || y2MaxVal <= Double.MinValue )
 			{
-				y2MinVal = 0;
-				y2MaxVal = 1;
+				if ( yMinVal < Double.MaxValue && yMaxVal > Double.MinValue )
+				{
+					y2MinVal = yMinVal;
+					y2MaxVal = yMaxVal;
+				}
+				else
+				{
+					y2MinVal = 0;
+					y2MaxVal = 1;
+				}
 			}
 		}
 		
-		/// <summary>
-		/// Determine if there is any data in any of the <see cref="CurveItem"/>
-		/// objects for this graph.  This method does not verify valid data, it
-		/// only checks to see if <see cref="CurveItem.NPts"/> > 0.
-		/// </summary>
-		/// <returns>true if there is any data, false otherwise</returns>
-		public bool HasData()
-		{
-			foreach( CurveItem curve in this )
-			{
-				if ( curve.NPts > 0 )
-					return true;
-			}
-			return false;
-		}
-
 		/// <summary>
 		/// Render all the <see cref="CurveItem"/> objects in the list to the
 		/// specified <see cref="Graphics"/>
@@ -302,6 +332,7 @@ namespace ZedGraph
 					pos++;
 			}
 		}
+	#endregion
 	}
 }
 

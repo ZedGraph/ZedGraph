@@ -19,7 +19,7 @@
 
 using System;
 using System.Drawing;
-using ArrayList	= System.Collections.ArrayList;
+using System.Collections;
 
 namespace ZedGraph
 {
@@ -31,9 +31,11 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.6 $ $Date: 2004-08-23 20:24:17 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2004-08-23 20:27:45 $ </version>
 	public class CurveItem : ICloneable
 	{
+	
+	#region Fields
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="ZedGraph.Symbol"/>
 		/// class defined for this <see cref="CurveItem"/>.  Use the public
@@ -73,54 +75,75 @@ namespace ZedGraph
 		private bool		isBar;
 		
 		/// <summary>
-		/// The PointPairList of independent pairs that represent this
-		/// <see cref="CurveItem"/>.
-		/// The size of this array determines the number of points that are
+		/// The <see cref="PointPairList"/> of independent value pairs that
+		/// represent this <see cref="CurveItem"/>.
+		/// The size of this list determines the number of points that are
 		/// plotted.  Note that values defined as
-		/// System.Double.MaxValue are considered "missing" values,
+		/// System.Double.MaxValue are considered "missing" values
+		/// (see <see cref="PointPair.Missing"/>),
 		/// and are not plotted.  The curve will have a break at these points
-		/// to indicate values are missing.
+		/// to indicate the values are missing.
 		/// </summary>
 		private PointPairList points;
-		
+	#endregion
+	
+	#region Constructors
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label and the
-		/// x and y data arrays.  All other properties of the curve are
+		/// x and y data values as double arrays.  All other properties of the curve are
 		/// defaulted to the values in the <see cref="Def"/> class.
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
-		/// <param name="xs">A array of double precision values that define
+		/// <param name="x">An array of double precision values that define
 		/// the independent (X axis) values for this curve</param>
-		/// <param name="ys">A array of double precision values that define
+		/// <param name="y">An array of double precision values that define
 		/// the dependent (Y axis) values for this curve</param>
-		public CurveItem( string label, double[] xs, double[] ys )
+		public CurveItem( string label, double[] x, double[] y )
 		{
-			this.line	= new Line();
-			this.symbol	= new Symbol();
-			this.bar	= new Bar();
-			this.label	= label;
+			this.line = new Line();
+			this.symbol = new Symbol();
+			this.bar = new Bar();
+			this.label = label;
 			this.isY2Axis = false;
-			this.isBar	= false;
-
-			this.points	= new PointPairList();
-
-			this.AddPoints( xs, ys );
+			this.isBar = false;
+			
+			this.points = new PointPairList( x, y );
 		}
-
+								
+		/// <summary>
+		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label and the
+		/// x and y data values as a <see cref="PointPairList"/>.  All other properties of the curve are
+		/// defaulted to the values in the <see cref="Def"/> class.
+		/// </summary>
+		/// <param name="label">A string label (legend entry) for this curve</param>
+		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// the X and Y values for this curve</param>
+		public CurveItem( string label, PointPairList points )
+		{
+			this.line = new Line();
+			this.symbol = new Symbol();
+			this.bar = new Bar();
+			this.label = label;
+			this.isY2Axis = false;
+			this.isBar = false;
+			
+			this.points = (PointPairList) points.Clone();
+		}
+								
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The CurveItem object from which to copy</param>
 		public CurveItem( CurveItem rhs )
 		{
-			symbol	= new Symbol( rhs.Symbol );
-			line	= new Line( rhs.Line );
-			bar		= new Bar( rhs.Bar );
-			label	= rhs.Label;
+			symbol = new Symbol( rhs.Symbol );
+			line = new Line( rhs.Line );
+			bar = new Bar( rhs.Bar );
+			label = rhs.Label;
 			isY2Axis = rhs.IsY2Axis;
-			isBar	= rhs.IsBar;
-
-			this.points	= (PointPairList) rhs.points.Clone();
+			isBar = rhs.IsBar;
+			
+			this.points = (PointPairList) rhs.Points.Clone();
 		}
 
 		/// <summary>
@@ -139,37 +162,24 @@ namespace ZedGraph
 		/// <param name="y">The Y coordinate value</param>
 		public void AddPoint( double x, double y )
 		{
-			this.Points.Add( new PointPair( x, y ) );
+			this.AddPoint( new PointPair( x, y ) );
 		}
 
 		/// <summary>
-		/// Adds a set of points to Points.  If neither xs or ys are null and
-		/// <c>xs.Length != ys.Length</c> the behavior is undefined.<br/>
-		/// If xs is null then this will add PointPairs of the form (0, ys[i]);
-		/// if ys is null then this will add PointPairs of the form (xs[i], 0);
-		/// if both are null there is no effect.
+		/// Add a <see cref="PointPair"/> object to the end of the points collection for this curve.
 		/// </summary>
-		/// <param name="xs">The x coordinates of the new points.</param>
-		/// <param name="ys">The y coordinates of the new points.</param>
-		public void AddPoints(double[] xs, double[] ys)
+		/// <param name="point">A reference to the <see cref="PointPair"/> object to
+		/// be added</param>
+		public void AddPoint( PointPair point )
 		{
-			if (xs != null && ys != null)
-				for (int i = 0; i < xs.Length; i++)
-				{
-					points.Add(new PointPair(xs[i], ys[i]));
-				}
-			else if (xs == null && ys != null)
-				for (int i = 0; i < ys.Length; i++)
-				{
-					points.Add(new PointPair(0, ys[i]));
-				}
-			else if (xs != null && ys == null)
-				for (int i = 0; i < xs.Length; i++)
-				{
-					points.Add(new PointPair(xs[i], 0));
-				}
+			if ( this.points == null )
+				this.Points = new PointPairList();
+			this.points.Add( point );
 		}
 
+	#endregion
+	
+	#region Properties
 		/// <summary>
 		/// Gets a reference to the <see cref="ZedGraph.Symbol"/> class defined
 		/// for this <see cref="CurveItem"/>.
@@ -231,8 +241,8 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Readonly property that gives the number of points that define this
-		/// <see cref="CurveItem"/> object, which is the number of points in 
-		/// <see cref="Points"/>.
+		/// <see cref="CurveItem"/> object, which is the number of points in the
+		/// <see cref="Points"/> data collection.
 		/// </summary>
 		public int NPts
 		{
@@ -242,17 +252,19 @@ namespace ZedGraph
 					  return this.points.Count;
 				}
 		}
-
+		
 		/// <summary>
-		/// The <see cref="PointPairList"/> of points that represent this 
+		/// The <see cref="PointPairList"/> of X,Y point pairs that represent this
 		/// <see cref="CurveItem"/>.
 		/// </summary>
 		public PointPairList Points
 		{
-			get { return points;	}
-			set { points = value;	}
+			get { return points; }
+			set { points = value; }
 		}
-		
+	#endregion
+	
+	#region Rendering Methods
 		/// <summary>
 		/// Do all rendering associated with this <see cref="CurveItem"/> to the specified
 		/// <see cref="Graphics"/> device.  This method is normally only
@@ -313,30 +325,26 @@ namespace ZedGraph
 		protected void DrawCurve( Graphics g, GraphPane pane )
 		{
 			float	tmpX, tmpY,
-				lastX = 0,
-				lastY = 0;
+					lastX = 0,
+					lastY = 0;
+			double	curX, curY;
 			bool	broke = true;
 			
 			// Loop over each point in the curve
 			for ( int i=0; i<this.NPts; i++ )
 			{
-				PointPair currPair = (PointPair) points[i];
-
-				Double currX	= (Double) currPair.X;
-				double currXVal	= (double) currX;
-
-				Double currY	= (Double) currPair.Y;
-				double currYVal	= (double) currY;
-
+				curX = this.points[i].X;
+				curY = this.points[i].Y;
+				
 				// Any value set to double max is invalid and should be skipped
 				// This is used for calculated values that are out of range, divide
 				//   by zero, etc.
 				// Also, any value <= zero on a log scale is invalid
-				if ( 	currX == System.Double.MaxValue ||
-					currY == System.Double.MaxValue ||
-					( pane.XAxis.IsLog && currXVal <= 0.0 ) ||
-					( this.isY2Axis && pane.Y2Axis.IsLog && currYVal <= 0.0 ) ||
-					( !this.isY2Axis && pane.YAxis.IsLog && currYVal <= 0.0 ) )
+				if ( 	curX == PointPair.Missing ||
+						curY == PointPair.Missing ||
+					( pane.XAxis.IsLog && curX <= 0.0 ) ||
+					( this.isY2Axis && pane.Y2Axis.IsLog && curY <= 0.0 ) ||
+					( !this.isY2Axis && pane.YAxis.IsLog && curY <= 0.0 ) )
 				{
 					broke = true;
 				}
@@ -344,11 +352,11 @@ namespace ZedGraph
 				{
 					// Transform the current point from user scale units to
 					// screen coordinates
-					tmpX = pane.XAxis.Transform( i, currXVal );
+					tmpX = pane.XAxis.Transform( i, curX );
 					if ( this.isY2Axis )
-						tmpY = pane.Y2Axis.Transform( i, currYVal );
+						tmpY = pane.Y2Axis.Transform( i, curY );
 					else
-						tmpY = pane.YAxis.Transform( i, currYVal );
+						tmpY = pane.YAxis.Transform( i, curY );
 					
 					// off-scale values "break" the line
 					if ( tmpX < -100000 || tmpX > 100000 ||
@@ -357,7 +365,7 @@ namespace ZedGraph
 					else
 					{
 						// If the last two points are valid, draw a line segment
-						if ( !broke )
+						if ( !broke || ( pane.IsIgnoreMissing && lastX != 0 ) )
 						{
 							if ( this.Line.StepType == StepType.ForwardStep )
 							{
@@ -407,36 +415,32 @@ namespace ZedGraph
 		/// </param>
 		public void DrawSymbols( Graphics g, GraphPane pane, double scaleFactor )
 		{
-			float tmpX, tmpY;
+			float	tmpX, tmpY;
+			double	curX, curY;
 			
 			// Loop over each defined point							
 			for ( int i=0; i<this.NPts; i++ )
 			{
-				PointPair currPair = (PointPair) points[i];
-
-				Double currX	= (Double) currPair.X;
-				double currXVal	= (double) currX;
-
-				Double currY	= (Double) currPair.Y;
-				double currYVal	= (double) currY;
-
+				curX = this.points[i].X;
+				curY = this.points[i].Y;
+				
 				// Any value set to double max is invalid and should be skipped
 				// This is used for calculated values that are out of range, divide
 				//   by zero, etc.
 				// Also, any value <= zero on a log scale is invalid
 				
-				if (	currX != System.Double.MaxValue &&
-					currY != System.Double.MaxValue &&
-					( currXVal > 0 || !pane.XAxis.IsLog ) &&
-					( currYVal > 0 ||
-					(this.isY2Axis && !pane.Y2Axis.IsLog ) ||
-					(!this.isY2Axis && !pane.YAxis.IsLog ) ) )
+				if (	curX != PointPair.Missing &&
+						curY != PointPair.Missing &&
+					( curX > 0 || !pane.XAxis.IsLog ) &&
+					( curY > 0 ||
+					( this.isY2Axis && !pane.Y2Axis.IsLog ) ||
+					( !this.isY2Axis && !pane.YAxis.IsLog ) ) )
 				{
-					tmpX = pane.XAxis.Transform( i, currXVal );
+					tmpX = pane.XAxis.Transform( i, curX );
 					if ( this.isY2Axis )
-						tmpY = pane.Y2Axis.Transform( i, currXVal );
+						tmpY = pane.Y2Axis.Transform( i, curY );
 					else
-						tmpY = pane.YAxis.Transform( i, currYVal );
+						tmpY = pane.YAxis.Transform( i, curY );
 
 					this.Symbol.Draw( g, tmpX, tmpY, scaleFactor );		
 				}
@@ -473,13 +477,15 @@ namespace ZedGraph
 		public void DrawBars( Graphics g, GraphPane pane, float barWidth,
 							int pos, double scaleFactor )
 		{
-			float tmpX, tmpY;
-			float clusterWidth	= pane.XAxis.GetClusterWidth( pane );
-			float clusterGap	= pane.MinClusterGap * barWidth;
-			float barGap		= barWidth * pane.MinBarGap;
-//			float numBars = (float) pane.CurveList.NumBars;
+			float 	tmpX, tmpY;
+			float 	clusterWidth = pane.XAxis.GetClusterWidth( pane );
+			float 	clusterGap = pane.MinClusterGap * barWidth;
+			float 	barGap = barWidth * pane.MinBarGap;
 			
-			float basePix;
+			float	basePix;
+		
+			double	curX, curY;
+			
 			Axis yAxis;
 			if ( this.IsY2Axis )
 				yAxis = pane.Y2Axis;
@@ -496,39 +502,25 @@ namespace ZedGraph
 			// Loop over each defined point							
 			for ( int i=0; i<this.NPts; i++ )
 			{
-				PointPair currPair = (PointPair) points[i];
-
-				Double currX	= (Double) currPair.X;
-				double currXVal	= (double) currX;
-
-				Double currY	= (Double) currPair.Y;
-				double currYVal	= (double) currY;
-
+				curX = this.points[i].X;
+				curY = this.points[i].Y;
+				
 				// Any value set to double max is invalid and should be skipped
 				// This is used for calculated values that are out of range, divide
 				//   by zero, etc.
 				// Also, any value <= zero on a log scale is invalid
 				
-				if ( currY != System.Double.MaxValue )
+				if ( curY != PointPair.Missing )
 				{
 					//tmpX = pane.XAxis.GetOrdinalPosition( pane, i );
-//					if (currX != Double.NaN)
-//						tmpX = pane.XAxis.Transform( i, i + 1.0 );
-//					else
-						tmpX = pane.XAxis.Transform( i, i + 1.0 );
-
+					tmpX = pane.XAxis.Transform( i, curX );
 					if ( this.isY2Axis )
-						tmpY = pane.Y2Axis.Transform( i, currYVal );
+						tmpY = pane.Y2Axis.Transform( i, curY );
 					else
-						tmpY = pane.YAxis.Transform( i, currYVal );
+						tmpY = pane.YAxis.Transform( i, curY );
 
 					float left = tmpX - clusterWidth / 2.0F + clusterGap / 2.0F +
 								pos * ( barWidth + barGap );
-
-//					float left = tmpX - ( pos * ( barWidth + barGap ) - barGap )
-//					float left = tmpX - ( clusterWidth -
-//								( pos * barWidth * ( 1.0F + pane.MinBarGap )
-//									- barWidth * pane.MinBarGap ) )/ 2.0F;
 
 					Bar.Draw( g, left, left + barWidth, basePix,
 						tmpY, scaleFactor, true );
@@ -559,90 +551,11 @@ namespace ZedGraph
 			float clusterGap = pane.MinClusterGap * barWidth;
 			float barGap = barWidth * pane.MinBarGap;
 
-			return pane.XAxis.Transform( iCluster, iCluster + 1.0 )
+			return pane.XAxis.Transform( iCluster, (double) iCluster + 1.0 )
 						- clusterWidth / 2.0F + clusterGap / 2.0F +
 						iOrdinal * ( barWidth + barGap ) + 0.5F * barWidth;
 		}
-
-		/// <summary>
-		/// Go through <see cref="Points"/> for this <see cref="CurveItem"/>
-		/// and determine the minimum and maximum values in the data.
-		/// </summary>
-		/// <param name="xMin">The minimum X value in the range of data</param>
-		/// <param name="xMax">The maximum X value in the range of data</param>
-		/// <param name="yMin">The minimum Y value in the range of data</param>
-		/// <param name="yMax">The maximum Y value in the range of data</param>
-		/// <param name="ignoreInitial">ignoreInitial is a boolean value that
-		/// affects the data range that is considered for the automatic scale
-		/// ranging (see <see cref="GraphPane.IsIgnoreInitial"/>).  If true, then initial
-		/// data points where the Y value is zero are not included when
-		/// automatically determining the scale <see cref="Axis.Min"/>,
-		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.  All data after
-		/// the first non-zero Y value are included.
-		/// </param>
-		public void GetRange( ref double xMin, ref double xMax,
-							ref double yMin, ref double yMax,
-							bool ignoreInitial )
-		{
-			// initialize the values to outrageous ones to start
-			xMin = yMin = 1.0e20;
-			xMax = yMax = -1.0e20;
-			
-			// Loop over each point in the arrays
-			for ( int i=0; i<this.NPts; i++ )
-			{
-				PointPair currPair = (PointPair) points[i];
-
-				Double currX	= (Double) currPair.X;
-				double currXVal	= (double) currX;
-
-				Double currY	= (Double) currPair.Y;
-				double currYVal	= (double) currY;
-
-				// ignoreInitial becomes false at the first non-zero
-				// Y value
-				if ( ignoreInitial && currYVal != 0 &&
-							currY != System.Double.MaxValue )
-					ignoreInitial = false;
-				
-				if ( !ignoreInitial && currX != System.Double.MaxValue &&
-					currY != System.Double.MaxValue )
-				{
-					if ( currXVal < xMin )
-						xMin = currXVal;
-					if ( currXVal > xMax )
-						xMax = currXVal;
-					if ( currYVal < yMin )
-						yMin = currYVal;
-					if ( currYVal > yMax )
-						yMax = currYVal;
-				}
-			}	
-
-			if (isBar)
-			{
-				xMin = 0;
-				xMax = this.NPts + 1;
-				yMin = 0;
-			}
-		}
-
-		/// <summary>
-		/// See if the <see cref="Points"/> data array is missing
-		/// for this <see cref="CurveItem"/>.  If so, provide a suitable default.
-		/// </summary>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		public void DataCheck( GraphPane pane )
-		{
-			// See if a default points array is required
-			if ( this.points == null )
-			{
-				this.points = new PointPairList();
-			}
-		}
+	#endregion
 	}
 }
 

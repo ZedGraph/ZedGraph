@@ -23,10 +23,6 @@ using System.Drawing.Drawing2D;
 
 namespace ZedGraph
 {
-	/// 
-	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:22:26 $ </version>
-	///
 	/// <summary>
 	/// A simple struct of static values that define the default property
 	/// values for all aspects of the <see cref="GraphPane"/> class.  The
@@ -82,8 +78,12 @@ namespace ZedGraph
 	/// Any of these static values can be changed at runtime, which will cause
 	/// all subsequently instantiated Graphs to use the next defaults.
 	/// </summary>
+	/// 
+	/// <author> John Champion </author>
+	/// <version> $Revision: 1.6 $ $Date: 2004-08-23 20:27:45 $ </version>
 	public struct Def
 	{
+	#region Default values for Line
 		/// <summary>
 		/// A simple subclass of the <see cref="Def"/> class that defines the
 		/// default property values for the <see cref="ZedGraph.Line"/> class.
@@ -115,7 +115,7 @@ namespace ZedGraph
 			/// Default value for the curve type property
 			/// (<see cref="Line.StepType"/>).  This determines if the curve
 			/// will be drawn by directly connecting the points from the
-			/// <see cref="CurveItem.X"/> and <see cref="CurveItem.Y"/> data arrays,
+			/// <see cref="CurveItem.Points"/> data collection,
 			/// or if the curve will be a "stair-step" in which the points are
 			/// connected by a series of horizontal and vertical lines that
 			/// represent discrete, staticant values.  Note that the values can
@@ -127,7 +127,9 @@ namespace ZedGraph
 			/// <value><see cref="StepType"/> enum value</value>
 			public static StepType StepType = StepType.NonStep;
 		}
-		
+	#endregion
+	
+	#region Default values for Symbol
 		/// <summary>
 		/// A simple subclass of the <see cref="Def"/> class that defines the
 		/// default property values for the <see cref="ZedGraph.Symbol"/> class.
@@ -165,7 +167,9 @@ namespace ZedGraph
 			/// </summary>
 			public static Color Color = Color.Red;
 		}
+	#endregion
 		
+	#region Default values for Bar
 		/// <summary>
 		/// A simple subclass of the <see cref="Def"/> class that defines the
 		/// default property values for the <see cref="ZedGraph.Bar"/> class.
@@ -199,7 +203,9 @@ namespace ZedGraph
 			/// </summary>
 			public static Color FillColor = Color.Red;
 		}
-		
+	#endregion
+	
+	#region Default values for GraphPane		
 		/// <summary>
 		/// A simple subclass of the <see cref="Def"/> class that defines the
 		/// default property values for the <see cref="GraphPane"/> class.
@@ -339,6 +345,17 @@ namespace ZedGraph
 			/// <seealso cref="GraphPane.MinBarGap"/>
 			public static float MinBarGap = 0.2F;
 			/// <summary>
+			/// The default width of a bar cluster 
+			/// on a <see cref="Bar"/> graph.  This value only applies to
+			/// <see cref="Bar"/> graphs, and only when the
+			/// <see cref="Axis.Type"/> is <see cref="AxisType.Linear"/>,
+			/// <see cref="AxisType.Log"/> or <see cref="AxisType.Date"/>.
+			/// This dimension is expressed in terms of X scale user units.
+			/// </summary>
+			/// <seealso cref="Def.Pane.MinClusterGap"/>
+			/// <seealso cref="GraphPane.MinBarGap"/>
+			public static double ClusterScaleWidth = 1.0;
+			/// <summary>
 			/// The tolerance that is applied to the <see cref="GraphPane.FindNearestPoint"/> routine.
 			/// If a given curve point is within this many pixels of the mousePt, the curve
 			/// point is considered to be close enough for selection as a nearest point
@@ -346,7 +363,9 @@ namespace ZedGraph
 			/// </summary>
 			public static double NearestTol = 7.0;
 		}
-		
+	#endregion
+
+	#region Default values for Legend		
 		/// <summary>
 		/// A simple subclass of the <see cref="Def"/> class that defines the
 		/// default property values for the <see cref="ZedGraph.Legend"/> class.
@@ -441,7 +460,9 @@ namespace ZedGraph
 			/// </summary>
 			public static bool FontUnderline = false;
 		}
-		
+	#endregion
+
+	#region Default values for Axis	
 		/// <summary>
 		/// A simple subclass of the <see cref="Def"/> class that defines the
 		/// default property values for the <see cref="Axis"/> class.
@@ -481,21 +502,37 @@ namespace ZedGraph
 			/// </summary>
 			public static double MaxTextLabels = 12.0;
 			/// <summary>
-			/// The default target number of steps for automatically selecting the axis
+			/// The default target number of steps for automatically selecting the X axis
 			/// scale step size (see <see cref="Axis.PickScale"/>).
 			/// This number is an initial target value for the number of major steps
 			/// on an axis.  This value is maintained only in the
 			/// <see cref="Def"/> class, and cannot be changed after compilation.
 			/// </summary>
-			public static double TargetSteps = 7.0;
+			public static double TargetXSteps = 7.0;
 			/// <summary>
-			/// The default target number of minor steps for automatically selecting the axis
+			/// The default target number of steps for automatically selecting the Y or Y2 axis
+			/// scale step size (see <see cref="Axis.PickScale"/>).
+			/// This number is an initial target value for the number of major steps
+			/// on an axis.  This value is maintained only in the
+			/// <see cref="Def"/> class, and cannot be changed after compilation.
+			/// </summary>
+			public static double TargetYSteps = 7.0;
+			/// <summary>
+			/// The default target number of minor steps for automatically selecting the X axis
 			/// scale minor step size (see <see cref="Axis.PickScale"/>).
 			/// This number is an initial target value for the number of minor steps
 			/// on an axis.  This value is maintained only in the
 			/// <see cref="Def"/> class, and cannot be changed after compilation.
 			/// </summary>
-			public static double TargetMinorSteps = 5.0;
+			public static double TargetMinorXSteps = 5.0;
+			/// <summary>
+			/// The default target number of minor steps for automatically selecting the Y or Y2 axis
+			/// scale minor step size (see <see cref="Axis.PickScale"/>).
+			/// This number is an initial target value for the number of minor steps
+			/// on an axis.  This value is maintained only in the
+			/// <see cref="Def"/> class, and cannot be changed after compilation.
+			/// </summary>
+			public static double TargetMinorYSteps = 5.0;
 			/// <summary>
 			/// The default font family for the <see cref="Axis"/> scale values
 			/// font specification <see cref="Axis.ScaleFontSpec"/>
@@ -828,7 +865,9 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsVisible = false;
 		}
+	#endregion
 
+	#region Default values for Curves, Text & Arrows	
 		/// <summary>
 		/// A simple subclass of the <see cref="Def"/> class that defines the
 		/// default property values for the <see cref="CurveItem"/> class.
@@ -940,5 +979,27 @@ namespace ZedGraph
 			/// </summary>
 			public static Color Color = Color.Red;
 		}
+
+		/// <summary>
+		/// A simple subclass of the <see cref="Def"/> class that defines the
+		/// default property values for the <see cref="FontSpec"/> class.
+		/// </summary>
+		public struct FontSpc
+		{
+			/// <summary>
+			/// The default size fraction of the superscript font, expressed as a fraction
+			/// of the size of the main font.
+			/// </summary>
+			public static float SuperSize = 0.85F;
+			/// <summary>
+			/// The default shift fraction of the superscript, expressed as a
+			/// fraction of the superscripted character height.  This is the height
+			/// above the main font (a zero shift means the main font and the superscript
+			/// font have the tops aligned).
+			/// </summary>
+			public static float SuperShift = 0.4F;
+		}
+	#endregion
+	
 	}
 }

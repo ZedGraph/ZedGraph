@@ -28,20 +28,25 @@ namespace ZedGraph
 	/// that define the set of points to be displayed on the curve.
 	/// </summary>
 	/// 
-	/// <author> Jerry Vos based on code by John Champion </author>
-	/// <version> $Revision: 1.1 $ $Date: 2004-08-23 20:24:17 $ </version>
+	/// <author> Jerry Vos based on code by John Champion
+	/// modified by John Champion</author>
+	/// <version> $Revision: 1.2 $ $Date: 2004-08-23 20:27:45 $ </version>
 	public class PointPairList : CollectionBase, ICloneable
 	{
+		/// <summary>Private field to maintain the sort status of this
+		/// <see cref="PointPairList"/>.  Use the public property
+		/// <see cref="Sorted"/> to access this value.
+		/// </summary>
 		private bool sorted = true;
 
 		/// <summary>
-		/// If the list is currently sorted.  <seealso cref="Sort"/>
+		/// true if the list is currently sorted.
 		/// </summary>
+		/// <seealso cref="Sort"/>
 		public bool Sorted
 		{
 			get { return sorted; }
 		}
-
 
 		/// <summary>
 		/// Default constructor for the collection class
@@ -51,13 +56,23 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Constructor to initialize the PointPairList from two arrays of
+		/// type double.
+		/// </summary>
+		public PointPairList( double[] x, double[] y )
+		{
+			AddPoints( x, y );
+			
+			sorted = false;
+		}
+
+		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The PointPairList from which to copy</param>
 		public PointPairList( PointPairList rhs )
 		{
-			foreach ( PointPair item in rhs )
-				this.Add( new PointPair( item ) );
+			AddPoints( rhs );
 
 			sorted = false;
 		}
@@ -96,6 +111,60 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Add a <see cref="PointPairList"/> object to the collection at the end of the list.
+		/// </summary>
+		/// <param name="pointList">A reference to the <see cref="PointPairList"/> object to
+		/// be added</param>
+		public void AddPoints( PointPairList pointList )
+		{
+			foreach ( PointPair point in pointList )
+				this.Add( point );
+				
+			sorted = false;
+		}
+
+		/// <summary>
+		/// Add a set of points to the PointPairList from two arrays of type double.
+		/// If either array is null, then a set of ordinal values is automatically
+		/// generated in its place (see <see cref="AxisType.Ordinal"/>.
+		/// If the arrays are of different size, then the larger array prevails and the
+		/// smaller array is padded with <see cref="PointPair.Missing"/> values.
+		/// </summary>
+		/// <param name="x">A double[] array of X values</param>
+		/// <param name="y">A double[] array of Y values</param>
+		public void AddPoints( double[] x, double[] y )
+		{
+			PointPair	point;
+			int 		len = 0;
+			
+			if ( x != null )
+				len = x.Length;
+			if ( y != null && y.Length > len )
+				len = y.Length;
+			
+			for ( int i=0; i<len; i++ )
+			{
+				if ( x == null )
+					point.X = (double) i + 1.0;
+				else if ( i < x.Length )
+					point.X = x[i];
+				else
+					point.X = PointPair.Missing;
+					
+				if ( y == null )
+					point.Y = (double) i + 1.0;
+				else if ( i < y.Length )
+					point.Y = y[i];
+				else
+					point.Y = PointPair.Missing;
+					
+				List.Add( point );
+			}
+			
+			sorted = false;
+		}
+
+		/// <summary>
 		/// Remove a <see cref="PointPair"/> object from the collection at the
 		/// specified ordinal location.
 		/// </summary>
@@ -116,12 +185,65 @@ namespace ZedGraph
 		public bool Sort()
 		{
 			// if it is already sorted we don't have to sort again
-			if (sorted)
+			if ( sorted )
 				return true;
 
-			InnerList.Sort(new PointPair.PointPairComparer());
+			InnerList.Sort( new PointPair.PointPairComparer() );
 			return false;
 		}
+		
+		/// <summary>
+		/// Go through the list of <see cref="PointPair"/> data values
+		/// and determine the minimum and maximum values in the data.
+		/// </summary>
+		/// <param name="xMin">The minimum X value in the range of data</param>
+		/// <param name="xMax">The maximum X value in the range of data</param>
+		/// <param name="yMin">The minimum Y value in the range of data</param>
+		/// <param name="yMax">The maximum Y value in the range of data</param>
+		/// <param name="ignoreInitial">ignoreInitial is a boolean value that
+		/// affects the data range that is considered for the automatic scale
+		/// ranging (see <see cref="GraphPane.IsIgnoreInitial"/>).  If true, then initial
+		/// data points where the Y value is zero are not included when
+		/// automatically determining the scale <see cref="Axis.Min"/>,
+		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.  All data after
+		/// the first non-zero Y value are included.
+		/// </param>
+		public void GetRange(	ref double xMin, ref double xMax,
+								ref double yMin, ref double yMax,
+								bool ignoreInitial )
+		{
+			// initialize the values to outrageous ones to start
+			xMin = yMin = Double.MaxValue;
+			xMax = yMax = Double.MinValue;
+			
+			// Loop over each point in the arrays
+			foreach ( PointPair point in this )
+			{
+				double curX = point.X;
+				double curY = point.Y;
+				
+				// ignoreInitial becomes false at the first non-zero
+				// Y value
+				if (	ignoreInitial && curY != 0 &&
+						curY != PointPair.Missing )
+					ignoreInitial = false;
+				
+				if ( 	!ignoreInitial &&
+						curX != PointPair.Missing &&
+						curY != PointPair.Missing )
+				{
+					if ( curX < xMin )
+						xMin = curX;
+					if ( curX > xMax )
+						xMax = curX;
+					if ( curY < yMin )
+						yMin = curY;
+					if ( curY > yMax )
+						yMax = curY;
+				}
+			}	
+		}
+
 	}
 }
 
