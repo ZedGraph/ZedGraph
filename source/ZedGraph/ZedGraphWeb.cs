@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.15 $ $Date: 2005-02-18 06:30:16 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2005-02-18 17:31:17 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -1098,8 +1098,8 @@ namespace ZedGraph
 				throw new Exception( "missing context object" );
 			CreateGraph( ctx.Response.OutputStream, this.ImageFormat );
 			ctx.Response.ContentType = this.ContentType;
-			if ( end )
-				ctx.Response.End();
+			if ( end ) ctx.ApplicationInstance.CompleteRequest();
+				
 		}
 
 		/// <summary>
