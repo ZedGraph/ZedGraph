@@ -34,6 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="CurveItem"/>
 	/// </summary>
 	/// <author>Darren Martz</author>
+	[DefaultProperty("Label")]
 	public class ZedGraphWebCurveItem : GenericItem
 	{
 		/// <summary>
@@ -60,6 +61,8 @@ namespace ZedGraph
 		{
 			Label = label;
 		}
+
+		#region Properties
 		
 		/// <summary>
 		/// <seealso cref="CurveItem.Label"/>
@@ -146,6 +149,7 @@ namespace ZedGraph
 			}
 			set { ViewState["IsY2Axis"] = value; }
 		}
+		#endregion
 	}
 	#endregion
 
@@ -326,6 +330,12 @@ namespace ZedGraph
 			return "Symbol";
 		}
 
+		public ZedGraphWebSymbol() : base()
+		{
+			Register('b',typeof(ZedGraphWebBorder));
+			Register('f',typeof(ZedGraphWebFill));
+		}
+
 		#region Properties
 		[NotifyParentProperty(true)]
 		public bool IsVisible
@@ -354,130 +364,44 @@ namespace ZedGraph
 		{
 			get 
 			{ 
-				object x = ViewState["Type"]; 
+				object x = ViewState["SymbolType"]; 
 				return (null == x) ? SymbolType.Default : (SymbolType)x;
 			}
-			set { ViewState["Type"] = value; }
+			set { ViewState["SymbolType"] = value; }
 		} 
 		#endregion	
 	
 		#region Border
-		public ZedGraphWebBorder _border;
 		/// <summary>
-		/// <seealso cref="ZedGraphWebBorder"/>
+		/// <seealso cref="ZedGraph.ZedGraphWebBorder"/>
 		/// </summary>
-		[		
+		[	
+		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
 		public ZedGraphWebBorder Border
 		{
-			get
-			{
-				if ( null == _border )
-				{
-					_border = new ZedGraphWebBorder();
-					if (((IStateManager)this).IsTrackingViewState) 
-					{	
-						((IStateManager)_border).TrackViewState();						
-					}	
-				}
-				return _border;				
-			}
+			get { return (ZedGraphWebBorder)base.GetValue('b'); }
 		}
 		#endregion
 
 		#region Fill
-		public ZedGraphWebFill _fill;
 		/// <summary>
-		/// <seealso cref="ZedGraphWebFill"/>
+		/// <seealso cref="ZedGraph.ZedGraphWebFill"/>
 		/// </summary>
 		[
+		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
 		public ZedGraphWebFill Fill
 		{
-			get
-			{
-				if ( null == _fill )
-				{
-					_fill = new ZedGraphWebFill();
-					if (((IStateManager)this).IsTrackingViewState) 
-					{	
-						((IStateManager)_fill).TrackViewState();						
-					}	
-				}
-				return _fill;				
-			}
+			get { return (ZedGraphWebFill)base.GetValue('f'); }
 		}
-		#endregion
-
-		#region State Management
-
-		protected override void LoadViewState(object savedState) 
-		{
-			object baseState = null;
-			object[] myState = null;
-
-			if (savedState != null) 
-			{
-				myState = (object[])savedState;
-				baseState = myState[0];
-			}
-
-			// Always call the base class, even if the saved state is null, so
-			// that the base class gets a chance implement its LoadViewState
-			// functionality.
-			base.LoadViewState(baseState);
-            
-			if (myState == null) 
-			{
-				return;
-			}
-
-			// NOTE: Accessing a style causes the style to be created if it
-			//       is null. For perf reasons, a style should be created 
-			//       only if there is saved state for that style.           
-
-			if (myState[1] != null)
-				((IStateManager)Border).LoadViewState(myState[1]);
-			if (myState[2] != null)
-				((IStateManager)Fill).LoadViewState(myState[2]);
-		}
-
-		protected override object SaveViewState() 
-		{
-			object[] myState = new object[3];
-
-			// NOTE: Styles are only saved only if they have been created.
-
-			myState[0] = base.SaveViewState();
-			myState[1] = (_border != null) ? ((IStateManager)_border).SaveViewState() : null;
-			myState[2] = (_fill != null) ? ((IStateManager)_fill).SaveViewState() : null;
-
-			// NOTE: We don't check for all nulls, because the control is almost certain to
-			//       have some view state. Most data-bound controls save state information 
-			//       to recreate themselves without a live data source on postback.
-			return myState;
-		}
-
-		protected override void TrackViewState() 
-		{
-			base.TrackViewState();
-
-			// NOTE: Start tracking state on styles that have been created.
-			//       New styles created hereafter will start
-			//       tracking view state when they are demand created.
-
-			if (_border != null)
-				((IStateManager)_border).TrackViewState();
-			if (_fill != null)
-				((IStateManager)_fill).TrackViewState();
-		}
-		#endregion
+		#endregion		
 	}
 	#endregion
 
@@ -493,119 +417,43 @@ namespace ZedGraph
 			return "Bar: " + Label;
 		}	
 
+		public ZedGraphWebBar() : base()
+		{
+			Register('b',typeof(ZedGraphWebBorder));
+			Register('f',typeof(ZedGraphWebFill));
+		}
+
 		#region Border
-		public ZedGraphWebBorder _border;
-		[
-		Category("Bar Details"),
+		/// <summary>
+		/// <seealso cref="ZedGraph.ZedGraphWebBorder"/>
+		/// </summary>
+		[	
+		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
 		public ZedGraphWebBorder Border
 		{
-			get
-			{
-				if ( null == _border )
-				{
-					_border = new ZedGraphWebBorder();
-					if (((IStateManager)this).IsTrackingViewState) 
-					{	
-						((IStateManager)_border).TrackViewState();						
-					}	
-				}
-				return _border;				
-			}
+			get { return (ZedGraphWebBorder)base.GetValue('b'); }
 		}
 		#endregion
 
 		#region Fill
-		public ZedGraphWebFill _fill;
+		/// <summary>
+		/// <seealso cref="ZedGraph.ZedGraphWebFill"/>
+		/// </summary>
 		[
-		Category("Bar Details"),
+		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
 		public ZedGraphWebFill Fill
 		{
-			get
-			{
-				if ( null == _fill )
-				{
-					_fill = new ZedGraphWebFill();
-					if (((IStateManager)this).IsTrackingViewState) 
-					{	
-						((IStateManager)_fill).TrackViewState();						
-					}	
-				}
-				return _fill;				
-			}
+			get { return (ZedGraphWebFill)base.GetValue('f'); }
 		}
-		#endregion
-
-		#region State Management
-
-		protected override void LoadViewState(object savedState) 
-		{
-			object baseState = null;
-			object[] myState = null;
-
-			if (savedState != null) 
-			{
-				myState = (object[])savedState;
-				baseState = myState[0];
-			}
-
-			// Always call the base class, even if the saved state is null, so
-			// that the base class gets a chance implement its LoadViewState
-			// functionality.
-			base.LoadViewState(baseState);
-            
-			if (myState == null) 
-			{
-				return;
-			}
-
-			// NOTE: Accessing a style causes the style to be created if it
-			//       is null. For perf reasons, a style should be created 
-			//       only if there is saved state for that style.           
-
-			if (myState[1] != null)
-				((IStateManager)Border).LoadViewState(myState[1]);
-			if (myState[2] != null)
-				((IStateManager)Fill).LoadViewState(myState[2]);
-		}
-
-		protected override object SaveViewState() 
-		{
-			object[] myState = new object[3];
-
-			// NOTE: Styles are only saved only if they have been created.
-
-			myState[0] = base.SaveViewState();
-			myState[1] = (_border != null) ? ((IStateManager)_border).SaveViewState() : null;
-			myState[2] = (_fill != null) ? ((IStateManager)_fill).SaveViewState() : null;
-
-			// NOTE: We don't check for all nulls, because the control is almost certain to
-			//       have some view state. Most data-bound controls save state information 
-			//       to recreate themselves without a live data source on postback.
-			return myState;
-		}
-
-		protected override void TrackViewState() 
-		{
-			base.TrackViewState();
-
-			// NOTE: Start tracking state on styles that have been created.
-			//       New styles created hereafter will start
-			//       tracking view state when they are demand created.
-
-			if (_border != null)
-				((IStateManager)_border).TrackViewState();
-			if (_fill != null)
-				((IStateManager)_fill).TrackViewState();
-		}
-		#endregion
+		#endregion		
 	}
 	
 	#endregion
@@ -621,6 +469,27 @@ namespace ZedGraph
 		{
 			return "ErrorBar: " + Label;
 		}	
+
+		public ZedGraphWebErrorBar() : base()
+		{
+			Register('s',typeof(ZedGraphWebSymbol));			
+		}
+
+		#region Symbol
+		/// <summary>
+		/// <seealso cref="ZedGraph.ZedGraphWebSymbol"/>
+		/// </summary>
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebSymbol Symbol
+		{
+			get { return (ZedGraphWebSymbol)base.GetValue('s'); }
+		}
+		#endregion
 
 		#region Properties
 		[NotifyParentProperty(true)]
@@ -645,89 +514,6 @@ namespace ZedGraph
 			set { ViewState["PenWidth"] = value; }
 		}
 		#endregion
-
-		#region Symbol
-		public ZedGraphWebSymbol _symbol;
-		[
-		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
-		NotifyParentProperty(true),
-		PersistenceMode(PersistenceMode.InnerProperty)
-		]
-		public ZedGraphWebSymbol Symbol
-		{
-			get
-			{
-				if ( null == _symbol )
-				{
-					_symbol = new ZedGraphWebSymbol();
-					if (((IStateManager)this).IsTrackingViewState) 
-					{	
-						((IStateManager)_symbol).TrackViewState();						
-					}	
-				}
-				return _symbol;				
-			}
-		}
-		#endregion
-
-		#region State Management
-
-		protected override void LoadViewState(object savedState) 
-		{
-			object baseState = null;
-			object[] myState = null;
-
-			if (savedState != null) 
-			{
-				myState = (object[])savedState;
-				baseState = myState[0];
-			}
-
-			// Always call the base class, even if the saved state is null, so
-			// that the base class gets a chance implement its LoadViewState
-			// functionality.
-			base.LoadViewState(baseState);
-            
-			if (myState == null) 
-			{
-				return;
-			}
-
-			// NOTE: Accessing a style causes the style to be created if it
-			//       is null. For perf reasons, a style should be created 
-			//       only if there is saved state for that style.           
-
-			if (myState[1] != null)
-				((IStateManager)Symbol).LoadViewState(myState[1]);			
-		}
-
-		protected override object SaveViewState() 
-		{
-			object[] myState = new object[2];
-
-			// NOTE: Styles are only saved only if they have been created.
-
-			myState[0] = base.SaveViewState();
-			myState[1] = (_symbol != null) ? ((IStateManager)_symbol).SaveViewState() : null;			
-
-			// NOTE: We don't check for all nulls, because the control is almost certain to
-			//       have some view state. Most data-bound controls save state information 
-			//       to recreate themselves without a live data source on postback.
-			return myState;
-		}
-
-		protected override void TrackViewState() 
-		{
-			base.TrackViewState();
-
-			// NOTE: Start tracking state on styles that have been created.
-			//       New styles created hereafter will start
-			//       tracking view state when they are demand created.
-
-			if (_symbol != null)
-				((IStateManager)_symbol).TrackViewState();			
-		}
-		#endregion
 	}
 
 	#endregion
@@ -742,6 +528,12 @@ namespace ZedGraph
 		public override string ToString()
 		{
 			return "HiLowBar: " + Label;
+		}
+
+		public ZedGraphWebHiLowBar() : base()
+		{
+			Register('b',typeof(ZedGraphWebBorder));
+			Register('f',typeof(ZedGraphWebFill));
 		}
 
 		#region Properties
@@ -780,118 +572,38 @@ namespace ZedGraph
 		#endregion
 
 		#region Border
-		public ZedGraphWebBorder _border;
-		[
-		Category("Bar Details"),
+		/// <summary>
+		/// <seealso cref="ZedGraph.ZedGraphWebBorder"/>
+		/// </summary>
+		[	
+		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
 		public ZedGraphWebBorder Border
 		{
-			get
-			{
-				if ( null == _border )
-				{
-					_border = new ZedGraphWebBorder();
-					if (((IStateManager)this).IsTrackingViewState) 
-					{	
-						((IStateManager)_border).TrackViewState();						
-					}	
-				}
-				return _border;				
-			}
+			get { return (ZedGraphWebBorder)base.GetValue('b'); }
 		}
 		#endregion
 
 		#region Fill
-		public ZedGraphWebFill _fill;
+		/// <summary>
+		/// <seealso cref="ZedGraph.ZedGraphWebFill"/>
+		/// </summary>
 		[
-		Category("Bar Details"),
+		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
 		public ZedGraphWebFill Fill
 		{
-			get
-			{
-				if ( null == _fill )
-				{
-					_fill = new ZedGraphWebFill();
-					if (((IStateManager)this).IsTrackingViewState) 
-					{	
-						((IStateManager)_fill).TrackViewState();						
-					}	
-				}
-				return _fill;				
-			}
+			get { return (ZedGraphWebFill)base.GetValue('f'); }
 		}
-		#endregion
+		#endregion		
 
-		#region State Management
-
-		protected override void LoadViewState(object savedState) 
-		{
-			object baseState = null;
-			object[] myState = null;
-
-			if (savedState != null) 
-			{
-				myState = (object[])savedState;
-				baseState = myState[0];
-			}
-
-			// Always call the base class, even if the saved state is null, so
-			// that the base class gets a chance implement its LoadViewState
-			// functionality.
-			base.LoadViewState(baseState);
-            
-			if (myState == null) 
-			{
-				return;
-			}
-
-			// NOTE: Accessing a style causes the style to be created if it
-			//       is null. For perf reasons, a style should be created 
-			//       only if there is saved state for that style.           
-
-			if (myState[1] != null)
-				((IStateManager)Border).LoadViewState(myState[1]);
-			if (myState[2] != null)
-				((IStateManager)Fill).LoadViewState(myState[2]);
-		}
-
-		protected override object SaveViewState() 
-		{
-			object[] myState = new object[3];
-
-			// NOTE: Styles are only saved only if they have been created.
-
-			myState[0] = base.SaveViewState();
-			myState[1] = (_border != null) ? ((IStateManager)_border).SaveViewState() : null;
-			myState[2] = (_fill != null) ? ((IStateManager)_fill).SaveViewState() : null;
-
-			// NOTE: We don't check for all nulls, because the control is almost certain to
-			//       have some view state. Most data-bound controls save state information 
-			//       to recreate themselves without a live data source on postback.
-			return myState;
-		}
-
-		protected override void TrackViewState() 
-		{
-			base.TrackViewState();
-
-			// NOTE: Start tracking state on styles that have been created.
-			//       New styles created hereafter will start
-			//       tracking view state when they are demand created.
-
-			if (_border != null)
-				((IStateManager)_border).TrackViewState();
-			if (_fill != null)
-				((IStateManager)_fill).TrackViewState();
-		}
-		#endregion
+		
 	}	
 
 	#endregion
@@ -906,7 +618,13 @@ namespace ZedGraph
 		public override string ToString()
 		{
 			return "Line: " + Label;
-		}	
+		}
+	
+		public ZedGraphWebLine() : base()
+		{
+			Register('s',typeof(ZedGraphWebSymbol));
+			Register('f',typeof(ZedGraphWebFill));
+		}
 	
 		#region Properties
 		[NotifyParentProperty(true)]
@@ -965,301 +683,37 @@ namespace ZedGraph
 		}
 		#endregion
 
-		#region Fill
-		public ZedGraphWebFill _fill;
-		[
-		Category("Bar Details"),
-		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
-		NotifyParentProperty(true),
-		PersistenceMode(PersistenceMode.InnerProperty)
-		]
-		public ZedGraphWebFill Fill
-		{
-			get
-			{
-				if ( null == _fill )
-				{
-					_fill = new ZedGraphWebFill();
-					if (((IStateManager)this).IsTrackingViewState) 
-					{	
-						((IStateManager)_fill).TrackViewState();						
-					}	
-				}
-				return _fill;				
-			}
-		}
-		#endregion
-		
 		#region Symbol
-		public ZedGraphWebSymbol _symbol;
-		[
+		/// <summary>
+		/// <seealso cref="ZedGraph.ZedGraphWebSymbol"/>
+		/// </summary>
+		[	
+		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
 		public ZedGraphWebSymbol Symbol
 		{
-			get
-			{
-				if ( null == _symbol )
-				{
-					_symbol = new ZedGraphWebSymbol();
-					if (((IStateManager)this).IsTrackingViewState) 
-					{	
-						((IStateManager)_symbol).TrackViewState();						
-					}	
-				}
-				return _symbol;				
-			}
-		}
-		#endregion
-
-		#region State Management
-
-		protected override void LoadViewState(object savedState) 
-		{
-			object baseState = null;
-			object[] myState = null;
-
-			if (savedState != null) 
-			{
-				myState = (object[])savedState;
-				baseState = myState[0];
-			}
-
-			// Always call the base class, even if the saved state is null, so
-			// that the base class gets a chance implement its LoadViewState
-			// functionality.
-			base.LoadViewState(baseState);
-            
-			if (myState == null) 
-			{
-				return;
-			}
-
-			// NOTE: Accessing a style causes the style to be created if it
-			//       is null. For perf reasons, a style should be created 
-			//       only if there is saved state for that style.           
-
-			if (myState[1] != null)
-				((IStateManager)Symbol).LoadViewState(myState[1]);			
-			if (myState[2] != null)
-				((IStateManager)Fill).LoadViewState(myState[2]);			
-		}
-
-		protected override object SaveViewState() 
-		{
-			object[] myState = new object[3];
-
-			// NOTE: Styles are only saved only if they have been created.
-
-			myState[0] = base.SaveViewState();
-			myState[1] = (_symbol != null) ? ((IStateManager)_symbol).SaveViewState() : null;			
-			myState[2] = (_fill != null) ? ((IStateManager)_fill).SaveViewState() : null;			
-
-			// NOTE: We don't check for all nulls, because the control is almost certain to
-			//       have some view state. Most data-bound controls save state information 
-			//       to recreate themselves without a live data source on postback.
-			return myState;
-		}
-
-		protected override void TrackViewState() 
-		{
-			base.TrackViewState();
-
-			// NOTE: Start tracking state on styles that have been created.
-			//       New styles created hereafter will start
-			//       tracking view state when they are demand created.
-
-			if (_symbol != null)
-				((IStateManager)_symbol).TrackViewState();			
-			if (_fill != null)
-				((IStateManager)_fill).TrackViewState();			
-		}
-		#endregion
-	}
-	#endregion
-
-	#region ZedGraphWebPieSlice
-	/// <summary>
-	/// Web control state management class for a <see cref="PieSlice"/> class
-	/// </summary>
-	/// <author>Darren Martz</author>
-	public class ZedGraphWebPieSlice : GenericItem
-	{
-		public override string ToString()
-		{
-			return "PieItem: " + Label;
-		}
-
-		public ZedGraphWebPieSlice() : base()
-		{
-		}
-
-		public ZedGraphWebPieSlice(string label) : base()
-		{
-			Label = label;
-		}
-
-		#region Properties
-		[NotifyParentProperty(true)]
-		public bool IsVisible
-		{
-			get 
-			{ 
-				object x = ViewState["IsVisible"]; 
-				return (null == x) ? true : (bool)x;
-			}
-			set { ViewState["IsVisible"] = value; }
-		}
-		
-		[NotifyParentProperty(true)]
-		public string Label
-		{
-			get 
-			{ 
-				object x = ViewState["Label"]; 
-				return (null == x) ? String.Empty : (string)x;
-			}
-			set { ViewState["Label"] = value; }
-		}
-
-		[NotifyParentProperty(true)]
-		public double Displacement
-		{
-			get 
-			{ 
-				object x = ViewState["Displacement"]; 
-				return (null == x) ? 0 : (double)x;
-			}
-			set { ViewState["Displacement"] = value; }
-		}
-
-		[NotifyParentProperty(true)]
-		public double Value
-		{
-			get 
-			{ 
-				object x = ViewState["Value"]; 
-				return (null == x) ? 0 : (double)x;
-			}
-			set { ViewState["Value"] = value; }
-		}
-		#endregion
-
-		#region Border
-		public ZedGraphWebBorder _border;
-		[
-		Category("Bar Details"),
-		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
-		NotifyParentProperty(true),
-		PersistenceMode(PersistenceMode.InnerProperty)
-		]
-		public ZedGraphWebBorder Border
-		{
-			get
-			{
-				if ( null == _border )
-				{
-					_border = new ZedGraphWebBorder();
-					if (((IStateManager)this).IsTrackingViewState) 
-					{	
-						((IStateManager)_border).TrackViewState();						
-					}	
-				}
-				return _border;				
-			}
+			get { return (ZedGraphWebSymbol)GetValue('s'); }
 		}
 		#endregion
 
 		#region Fill
-		public ZedGraphWebFill _fill;
+		/// <summary>
+		/// <seealso cref="ZedGraph.ZedGraphWebFill"/>
+		/// </summary>
 		[
-		Category("Bar Details"),
+		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
 		public ZedGraphWebFill Fill
 		{
-			get
-			{
-				if ( null == _fill )
-				{
-					_fill = new ZedGraphWebFill();
-					if (((IStateManager)this).IsTrackingViewState) 
-					{	
-						((IStateManager)_fill).TrackViewState();						
-					}	
-				}
-				return _fill;				
-			}
+			get { return (ZedGraphWebFill)GetValue('f'); }
 		}
-		#endregion
-
-		#region State Management
-
-		protected override void LoadViewState(object savedState) 
-		{
-			object baseState = null;
-			object[] myState = null;
-
-			if (savedState != null) 
-			{
-				myState = (object[])savedState;
-				baseState = myState[0];
-			}
-
-			// Always call the base class, even if the saved state is null, so
-			// that the base class gets a chance implement its LoadViewState
-			// functionality.
-			base.LoadViewState(baseState);
-            
-			if (myState == null) 
-			{
-				return;
-			}
-
-			// NOTE: Accessing a style causes the style to be created if it
-			//       is null. For perf reasons, a style should be created 
-			//       only if there is saved state for that style.           
-
-			if (myState[1] != null)
-				((IStateManager)Border).LoadViewState(myState[1]);
-			if (myState[2] != null)
-				((IStateManager)Fill).LoadViewState(myState[2]);
-		}
-
-		protected override object SaveViewState() 
-		{
-			object[] myState = new object[3];
-
-			// NOTE: Styles are only saved only if they have been created.
-
-			myState[0] = base.SaveViewState();
-			myState[1] = (_border != null) ? ((IStateManager)_border).SaveViewState() : null;
-			myState[2] = (_fill != null) ? ((IStateManager)_fill).SaveViewState() : null;
-
-			// NOTE: We don't check for all nulls, because the control is almost certain to
-			//       have some view state. Most data-bound controls save state information 
-			//       to recreate themselves without a live data source on postback.
-			return myState;
-		}
-
-		protected override void TrackViewState() 
-		{
-			base.TrackViewState();
-
-			// NOTE: Start tracking state on styles that have been created.
-			//       New styles created hereafter will start
-			//       tracking view state when they are demand created.
-
-			if (_border != null)
-				((IStateManager)_border).TrackViewState();
-			if (_fill != null)
-				((IStateManager)_fill).TrackViewState();
-		}
-		#endregion
+		#endregion		
 	}
 	#endregion
 
@@ -1274,21 +728,45 @@ namespace ZedGraph
 		{
 			return "Pie: " + Label;
 		}
-		
+
+		public ZedGraphWebPie() : base()
+		{
+			Register('b',typeof(ZedGraphWebBorder));			
+		}	
+
 		#region Properties
 		[NotifyParentProperty(true)]
-		public PieLabelType LabelType
+		public double Value
+		{
+			get 
+			{ 
+				object x = ViewState["Value"]; 
+				return (null == x) ? PieSlice.Default.value : (double)x;
+			}
+			set { ViewState["Value"] = value; }
+		}
+
+		public	double Displacement
+		{
+			get 
+			{ 
+				object x = ViewState["Displacement"]; 
+				return (null == x) ? PieSlice.Default.displacement : (double)x;
+			}
+			set { ViewState["Displacement"] = value; }
+		}
+
+		public	PieLabelType LabelType
 		{
 			get 
 			{ 
 				object x = ViewState["LabelType"]; 
-				return (null == x) ? PieLabelType.Name_Percent : (PieLabelType)x;
+				return (null == x) ? PieLabelType.None : (PieLabelType)x;
 			}
 			set { ViewState["LabelType"] = value; }
-		} 
+		}
 
-		[NotifyParentProperty(true)]
-		public PieType PieType
+		public	PieType PieType
 		{
 			get 
 			{ 
@@ -1296,145 +774,63 @@ namespace ZedGraph
 				return (null == x) ? PieType.Pie2D : (PieType)x;
 			}
 			set { ViewState["PieType"] = value; }
-		} 
-
-		[NotifyParentProperty(true)]
-		public string PieTitle
-		{
-			get 
-			{ 
-				object x = ViewState["PieTitle"]; 
-				return (null == x) ? string.Empty : (string)x;
-			}
-			set { ViewState["PieTitle"] = value; }
-		} 
+		}
+		
 		#endregion
 
-		#region Pie Slice Collection
-		protected ZedGraphWebSliceCollection _slicelist = null;
-		[
-		Category("Data"),		
+		#region Border
+		/// <summary>
+		/// <seealso cref="ZedGraph.ZedGraphWebBorder"/>
+		/// </summary>
+		[	
+		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
-		public ZedGraphWebSliceCollection SliceList
+		public ZedGraphWebBorder Border
 		{
-			get 
-			{				
-				if ( null == _slicelist )
-				{
-					_slicelist = new ZedGraphWebSliceCollection();
-					if (((IStateManager)this).IsTrackingViewState)  
-					{
-						((IStateManager)_slicelist).TrackViewState();
-					}					
-				}
-				return _slicelist;
-			}			
+			get { return (ZedGraphWebBorder)base.GetValue('b'); }
 		}
-		#endregion
-
-		#region State Management
-		protected override void LoadViewState(object savedState) 
-		{
-			object baseState = null;
-			object[] myState = null;
-
-			if (savedState != null) 
-			{
-				myState = (object[])savedState;
-
-				baseState = myState[0];
-			}
-
-			// Always call the base class, even if the saved state is null, so
-			// that the base class gets a chance implement its LoadViewState
-			// functionality.
-			base.LoadViewState(baseState);
-            
-			if (myState == null) 
-			{
-				return;
-			}
-
-			// NOTE: Accessing a style causes the style to be created if it
-			//       is null. For perf reasons, a style should be created 
-			//       only if there is saved state for that style.           
-
-			if (myState[1] != null)
-				((IStateManager)SliceList).LoadViewState(myState[1]);			
-		}
-
-		protected override object SaveViewState() 
-		{
-			object[] myState = new object[2];
-
-			// NOTE: Styles are only saved only if they have been created.
-
-			myState[0] = base.SaveViewState();
-			myState[1] = (_slicelist != null) ? ((IStateManager)_slicelist).SaveViewState() : null;			
-
-			// NOTE: We don't check for all nulls, because the control is almost certain to
-			//       have some view state. Most data-bound controls save state information 
-			//       to recreate themselves without a live data source on postback.
-			return myState;
-		}
-
-		protected override void TrackViewState() 
-		{
-			base.TrackViewState();
-
-			// NOTE: Start tracking state on styles that have been created.
-			//       New styles created hereafter will start
-			//       tracking view state when they are demand created.
-
-			if (_slicelist != null)
-				((IStateManager)_slicelist).TrackViewState();			
-		}
-		#endregion
+		#endregion		
 	}
 	#endregion
 
-	#region ZedGraphWebSliceCollection
+	#region ZedGraphWebGraphItem
 	/// <summary>
-	/// Manages a collection of <see cref="ZedGraphWebPieSlice"/> objects that are 
-	/// state management aware.
+	/// Baseclass for graph items in the web control
+	/// <seealso cref="ZedGraph.GraphItem"/>
 	/// </summary>
 	/// <author>Darren Martz</author>
-	public class ZedGraphWebSliceCollection : GenericCollection
-	{	
-		public override string ToString(){return String.Empty;}		
-
-		public ZedGraphWebSliceCollection() : base()
+	public class ZedGraphWebGraphItem : GenericItem
+	{
+		/// <summary>
+		/// Identifies curve item by the labels value
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
 		{
-			Schema = new GenericCollectionItemSchema[1];
-			Schema[0].code = 'p';
-			Schema[0].type = typeof(ZedGraphWebPieSlice);			
+			return "GraphItem";
 		}
 
-		public void Add(ZedGraphWebPieSlice item)
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebGraphItem() : base()
 		{
-			if ( null != item )
-				ListAdd( item );
-			else
-				throw new ArgumentException("parameter cannot be null","item");
 		}	
-
+		
 		[NotifyParentProperty(true)]
-		public ZedGraphWebPieSlice this [int index]
+		public string Label
 		{
 			get 
-			{
-				return (ZedGraphWebPieSlice)ListGet(index);
+			{ 
+				object x = ViewState["Label"]; 
+				return (null == x) ? string.Empty : (string)x;
 			}
-			set
-			{
-				ListInsert(index,value);
-			}
-		}			
+			set { ViewState["Label"] = value; }
+		} 
 	}
-
 	#endregion
 
 	#region ZedGraphWebCurveCollection
@@ -1484,5 +880,366 @@ namespace ZedGraph
 		}			
 	}
 
+	#endregion
+
+	#region ZedGraphWebGraphItemCollection
+	/// <summary>
+	/// Manages a collection of <see cref="ZedGraphWebGraphItem"/> objects that are 
+	/// state management aware.
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebGraphItemCollection : GenericCollection
+	{	
+		public override string ToString(){return String.Empty;}		
+
+		public ZedGraphWebGraphItemCollection() : base()
+		{
+			Schema = new GenericCollectionItemSchema[1];
+			Schema[0].code = 'x';
+			Schema[0].type = typeof(ZedGraphWebGraphItem);			
+		}
+
+		public void Add(ZedGraphWebGraphItem item)
+		{
+			if ( null != item )
+				ListAdd( item );
+			else
+				throw new ArgumentException("parameter cannot be null","item");
+		}	
+
+		[NotifyParentProperty(true)]
+		public ZedGraphWebGraphItem this [int index]
+		{
+			get 
+			{
+				return (ZedGraphWebGraphItem)ListGet(index);
+			}
+			set
+			{
+				ListInsert(index,value);
+			}
+		}			
+	}
+
+	#endregion
+
+	#region ZedGraphWebAxis
+	/// <summary>
+	/// Web control state management class for a <see cref="ZedGraph.Axis"/> object
+	/// </summary>
+	/// <author>Darren Martz</author>	
+	public class ZedGraphWebAxis : GenericItem
+	{
+		/// <summary>
+		/// Identifies axis by the title value
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return "Axis: " + Title;
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebAxis() : base()
+		{
+		}		
+
+		#region Properties
+		/// <summary>
+		/// <seealso cref="ZedGraph.Axis.Title"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public string Title
+		{
+			get 
+			{ 
+				object x = ViewState["Title"]; 
+				return (null == x) ? String.Empty : (string)x;
+			}
+			set { ViewState["Title"] = value; }
+		}
+
+		/// <summary>
+		/// <seealso cref="ZedGraph.Axis.Color"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public Color Color
+		{
+			get 
+			{ 
+				object x = ViewState["Color"]; 
+				return (null == x) ? Color.Empty : (Color)x;
+			}
+			set { ViewState["Color"] = value; }
+		}
+
+		/// <summary>
+		/// <seealso cref="ZedGraph.Axis.GridColor"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public Color GridColor
+		{
+			get 
+			{ 
+				object x = ViewState["GridColor"]; 
+				return (null == x) ? Color.Empty : (Color)x;
+			}
+			set { ViewState["GridColor"] = value; }
+		}
+		#endregion
+		//TODO: complete
+	}
+	#endregion
+
+	#region ZedGraphWebLegend
+	/// <summary>
+	/// Web control state management class for a <see cref="ZedGraph.Legend"/> object
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebLegend : GenericItem
+	{
+		/// <summary>
+		/// Identifies legend instance
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return "Legend";
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebLegend() : base()
+		{
+		}
+		
+		#region Properties
+	
+		/// <summary>
+		/// <seealso cref="ZedGraph.Legend.IsVisible"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public bool IsVisible
+		{
+			get 
+			{ 
+				object x = ViewState["IsVisible"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsVisible"] = value; }
+		}
+
+		/*
+		/// <summary>
+		/// <seealso cref="ZedGraph.Legend.Rect"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public RectangleF Rect
+		{
+			get 
+			{ 
+				object x = ViewState["Rect"]; 
+				return (null == x) ? RectangleF.Empty : (RectangleF)x;
+			}
+			set { ViewState["Rect"] = value; }
+		}
+		*/
+
+		/// <summary>
+		/// <seealso cref="ZedGraph.Legend.Position"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public LegendPos Position
+		{
+			get 
+			{ 
+				object x = ViewState["Position"]; 
+				return (null == x) ? LegendPos.Top : (LegendPos)x;
+			}
+			set { ViewState["Position"] = value; }
+		}
+
+		#endregion
+
+		//TODO: complete
+	}
+	#endregion
+
+	#region ZedGraphWebFontSpec
+	/// <summary>
+	/// Web control state management class for a <see cref="ZedGraph.FontSpec"/> object
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebFontSpec : GenericItem
+	{
+		/// <summary>
+		/// Identifies fontspec instance
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return "FontSpec";
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebFontSpec() : base()
+		{
+			Register('b',typeof(ZedGraphWebBorder));
+			Register('f',typeof(ZedGraphWebFill));
+		}
+		
+		#region Properties
+
+		/// <summary>
+		/// <seealso cref="ZedGraph.FontSpec.Angle"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public float Angle
+		{
+			get 
+			{ 
+				object x = ViewState["Angle"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Angle"] = value; }
+		}
+
+		/// <summary>
+		/// <seealso cref="ZedGraph.FontSpec.Size"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public float Size
+		{
+			get 
+			{ 
+				object x = ViewState["Size"]; 
+				return (null == x) ? 10 : (float)x;
+			}
+			set { ViewState["Size"] = value; }
+		}
+		
+		/// <summary>
+		/// <seealso cref="ZedGraph.FontSpec.Family"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public string Family
+		{
+			get 
+			{ 
+				object x = ViewState["Family"]; 
+				return (null == x) ? string.Empty : (string)x;
+			}
+			set { ViewState["Family"] = value; }
+		}
+
+		/// <summary>
+		/// <seealso cref="ZedGraph.FontSpec.FontColor"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public Color FontColor
+		{
+			get 
+			{ 
+				object x = ViewState["FontColor"]; 
+				return (null == x) ? Color.Empty : (Color)x;
+			}
+			set { ViewState["FontColor"] = value; }
+		}
+
+		/// <summary>
+		/// <seealso cref="ZedGraph.FontSpec.StringAlignment"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public StringAlignment StringAlignment
+		{
+			get 
+			{ 
+				object x = ViewState["StringAlignment"]; 
+				return (null == x) ? FontSpec.Default.StringAlignment : (StringAlignment)x;
+			}
+			set { ViewState["StringAlignment"] = value; }
+		}
+
+		/// <summary>
+		/// <seealso cref="ZedGraph.FontSpec.IsBold"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public bool IsBold
+		{
+			get 
+			{ 
+				object x = ViewState["IsBold"]; 
+				return (null == x) ? false : (bool)x;
+			}
+			set { ViewState["IsBold"] = value; }
+		}
+
+		/// <summary>
+		/// <seealso cref="ZedGraph.FontSpec.IsItalic"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public bool IsItalic
+		{
+			get 
+			{ 
+				object x = ViewState["IsItalic"]; 
+				return (null == x) ? false : (bool)x;
+			}
+			set { ViewState["IsItalic"] = value; }
+		}
+
+		/// <summary>
+		/// <seealso cref="ZedGraph.FontSpec.IsUnderline"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public bool IsUnderline
+		{
+			get 
+			{ 
+				object x = ViewState["IsUnderline"]; 
+				return (null == x) ? false : (bool)x;
+			}
+			set { ViewState["IsUnderline"] = value; }
+		}
+
+		#endregion
+
+		#region Border
+		/// <summary>
+		/// <seealso cref="ZedGraph.ZedGraphWebBorder"/>
+		/// </summary>
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebBorder Border
+		{
+			get { return (ZedGraphWebBorder)GetValue('b'); }
+		}
+		#endregion
+
+		#region Fill
+		/// <summary>
+		/// <seealso cref="ZedGraph.ZedGraphWebFill"/>
+		/// </summary>
+		[
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebFill Fill
+		{
+			get { return (ZedGraphWebFill)GetValue('f'); }
+		}
+		#endregion		
+	}
 	#endregion
 }
