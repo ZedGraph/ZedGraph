@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+14-Feb-2005 (by Martz)
+  Fix subitem persistance bug
+  Add designtime graph display
+  Add remaining proxy class members
+
 12-Feb-2005 (by Martz)
   Fix control parsing error
   Add full support for graphpane and a variety of additional objects
