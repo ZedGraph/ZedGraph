@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-01-22 06:20:51 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-01-27 05:50:34 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 	#region Fields
@@ -50,12 +50,12 @@ namespace ZedGraph
 		private System.Windows.Forms.ToolTip pointToolTip;
 
 		/// <summary>
-		/// This private field contains the instance for the GraphPane object of this control.
-		/// You can access the GraphPane object through the public property
-		/// <see cref="ZedGraphControl.GraphPane"/>. This is nulled when this Control is
+		/// This private field contains the instance for the MasterPane object of this control.
+		/// You can access the MasterPane object through the public property
+		/// <see cref="ZedGraphControl.MasterPane"/>. This is nulled when this Control is
 		/// disposed.
 		/// </summary>
-		private GraphPane graphPane;
+		private MasterPane masterPane;
 
 		/// <summary>
 		/// private field that determines whether or not tooltips will be display
@@ -122,8 +122,15 @@ namespace ZedGraph
 			SetStyle( ControlStyles.SupportsTransparentBackColor, true );
 
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
-			graphPane = new GraphPane( rect, "Title", "X-Axis", "Y-Axis" );
+			masterPane = new MasterPane( "", rect );
+			masterPane.MarginLeft = 0;
+			masterPane.MarginRight = 0;
+			masterPane.MarginTop = 0;
+			masterPane.MarginBottom = 0;
+
+			GraphPane graphPane = new GraphPane( rect, "Title", "X-Axis", "Y-Axis" );
 			graphPane.AxisChange( this.CreateGraphics() );
+			masterPane.Add( graphPane );
 
 			this.isShowPointValues = false;
 			this.pointValueFormat = PointPair.DefaultFormat;
@@ -146,26 +153,54 @@ namespace ZedGraph
 				}
 				base.Dispose( disposing );
 
-				graphPane = null;
+				masterPane = null;
 			}
 		}
 	#endregion
 
 	#region Properties
 		/// <summary>
-		/// Gets or sets the <see cref="ZedGraph.GraphPane"/> property for the control
+		/// Gets or sets the <see cref="ZedGraph.MasterPane"/> property for the control
 		/// </summary>
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public GraphPane GraphPane
+		public MasterPane MasterPane
 		{
 			get
-			{ 
-				lock( this ) return graphPane;
+			{
+				lock( this ) return masterPane;
 			}
 			
 			set
 			{ 
-				lock( this ) graphPane = value; 
+				lock( this ) masterPane = value;
+			}
+		}
+		/// <summary>
+		/// Gets or sets the <see cref="ZedGraph.GraphPane"/> property for the control
+		/// </summary>
+		/// <remarks>
+		/// <see cref="ZedGraphControl"/> actually uses a <see cref="MasterPane"/> object
+		/// to hold a list of <see cref="GraphPane"/> objects.  This property really only
+		/// accesses the first <see cref="GraphPane"/> in the list.  If there is more
+		/// than one <see cref="GraphPane"/>, use the <see cref="MasterPane.this"/>
+		/// indexer property to access any of the <see cref="GraphPane"/> objects.</remarks>
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public GraphPane GraphPane
+		{
+			get
+			{
+				// Just return the first GraphPane in the list
+				lock( this ) return masterPane[0];
+			}
+			
+			set
+			{ 
+				lock( this )
+				{
+					//Clear the list, and replace it with the specified Graphpane
+					masterPane.PaneList.Clear();
+					masterPane.Add( value );
+				}
 			}
 		}
 
@@ -214,10 +249,10 @@ namespace ZedGraph
 			{
 				lock( this )
 				{
-					if ( BeenDisposed || this.graphPane == null )
+					if ( BeenDisposed || this.masterPane == null || this.masterPane[0] == null )
 						throw new ZedGraphException( "The control has been disposed" );
 
-					return this.graphPane.Image;
+					return this.masterPane.Image;
 				}
 			}
 		}
@@ -231,7 +266,7 @@ namespace ZedGraph
 		{
 			get
 			{ 
-				lock( this ) return graphPane == null; 
+				lock( this ) return masterPane == null; 
 			}
 		}
 	#endregion
@@ -253,7 +288,7 @@ namespace ZedGraph
 
 				base.OnPaint( e );
 
-				this.graphPane.Draw( e.Graphics );
+				this.masterPane.Draw( e.Graphics );
 			}
 		}
 
@@ -274,7 +309,7 @@ namespace ZedGraph
 				if ( BeenDisposed )
 					return;
 
-				this.graphPane.PaneRect = new RectangleF( 0, 0, this.Size.Width, this.Size.Height );
+				this.masterPane.ReSize( this.CreateGraphics(), new RectangleF( 0, 0, this.Size.Width, this.Size.Height ) );
 				this.Invalidate();
 			}
 		}
@@ -292,7 +327,7 @@ namespace ZedGraph
 
 				Graphics g = this.CreateGraphics();
 
-				graphPane.AxisChange( g );
+				masterPane.AxisChange( g );
 
 				g.Dispose();
 			}
@@ -313,36 +348,42 @@ namespace ZedGraph
 		{
 			if ( isShowPointValues )
 			{
-				CurveItem curve; 
-				int iPt; 
+				int			iPt;
+				GraphPane	pane;
+				object		nearestObj;
 	 
-				if ( graphPane.FindNearestPoint( new PointF( e.X, e.Y ),
-							out curve, out iPt ) )
+				if ( masterPane.FindNearestPaneObject( new PointF( e.X, e.Y ),
+							this.CreateGraphics(),
+							out pane, out nearestObj, out iPt ) )
 				{
-					PointPair pt = curve.Points[iPt];
-					
-					if ( pt.Tag is string )
-						this.pointToolTip.SetToolTip( this, (string) pt.Tag );
-					else
+					if ( nearestObj is CurveItem && iPt >= 0 )
 					{
-						string xStr = this.GraphPane.XAxis.IsDate ? XDate.ToString( pt.X, this.pointDateFormat ) :
-							pt.X.ToString( this.pointValueFormat );
-							
-						bool yIsDate = ( curve.IsY2Axis && this.GraphPane.Y2Axis.IsDate ) ||
-									( !curve.IsY2Axis && this.GraphPane.YAxis.IsDate );
-									
-						string yStr = yIsDate ? XDate.ToString( pt.Y, this.pointDateFormat ) :
-								pt.Y.ToString( this.pointValueFormat );
-							
-						this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
+						CurveItem curve = (CurveItem) nearestObj;
+						PointPair pt = curve.Points[iPt];
+						
+						if ( pt.Tag is string )
+							this.pointToolTip.SetToolTip( this, (string) pt.Tag );
+						else
+						{
+							string xStr = this.GraphPane.XAxis.IsDate ? XDate.ToString( pt.X, this.pointDateFormat ) :
+								pt.X.ToString( this.pointValueFormat );
+								
+							bool yIsDate = ( curve.IsY2Axis && this.GraphPane.Y2Axis.IsDate ) ||
+										( !curve.IsY2Axis && this.GraphPane.YAxis.IsDate );
+										
+							string yStr = yIsDate ? XDate.ToString( pt.Y, this.pointDateFormat ) :
+									pt.Y.ToString( this.pointValueFormat );
+								
+							this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
 
-						//this.pointToolTip.SetToolTip( this,
-						//	curve.Points[iPt].ToString( this.pointValueFormat ) );
+							//this.pointToolTip.SetToolTip( this,
+							//	curve.Points[iPt].ToString( this.pointValueFormat ) );
+						}
+						this.pointToolTip.Active = true;
 					}
-					this.pointToolTip.Active = true;
+					else
+						this.pointToolTip.Active = false;
 				}
-				else
-					this.pointToolTip.Active = false;
 			}
 		}
 	#endregion

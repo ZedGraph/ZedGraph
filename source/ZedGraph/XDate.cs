@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-11-05 19:11:17 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2005-01-27 05:50:34 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -294,8 +294,18 @@ namespace ZedGraph
 	
 		/// <summary>
 		/// Calculate an XL Date from the specified Calendar date (year, month, day, hour, minute, second),
-		/// first normalizing all input data values
+		/// first normalizing all input data values.
 		/// </summary>
+		/// <remarks>
+		/// The Calendar date is always based on the Gregorian Calendar.  Note that the Gregorian calendar is really
+		/// only valid from October 15, 1582 forward.  The countries that adopted the Gregorian calendar
+		/// first did so on October 4, 1582, so that the next day was October 15, 1582.  Prior to that time
+		/// the Julian Calendar was used.  However, Prior to March 1, 4 AD the treatment of leap years was
+		/// inconsistent, and prior to 45 BC the Julian Calendar did not exist.  The <see cref="XDate"/>
+		/// struct projects only Gregorian dates backwards and does not deal with Julian calendar dates at all.  The
+		/// <see cref="ToString"/> method will just append a "(BC)" notation to the end of any dates
+		/// prior to 1 AD, since the <see cref="DateTime"/> struct throws an exception when formatting earlier dates.
+		/// </remarks>
 		/// <param name="year">
 		/// The integer year value (e.g., 1994).
 		/// </param>
@@ -965,6 +975,17 @@ namespace ZedGraph
 		/// <summary>
 		/// Format this XDate value using the default format string (see cref="DefaultFormatStr"/>).
 		/// </summary>
+		/// <remarks>
+		/// The formatting is done using the <see cref="DateTime"/> <see cref="DateTime.ToString"/>
+		/// method in order to provide full localization capability.  The DateTime struct is limited to
+		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate"/> and <see cref="DateTime"/>
+		/// are projected Gregorian calendar dates.  Since the Gregorian calendar was not implemented
+		/// until October 4, 1582 (or later in some countries), Gregorian dates prior to that time are
+		/// really dates that would have been, had the Gregorian calendar existed.  In order to avoid
+		/// throwing an exception, for dates prior to 1 AD, the year will be converted to a positive
+		/// year and the text "(BC)" is appended to the end of the formatted string.  Under this mode, the
+		/// year sequence is 2BC, 1BC, 1AD, 2AD, etc.  There is no year zero.
+		/// </remarks>
 		/// <param name="xlDate">
 		/// The XL date value to be formatted in floating point double format.
 		/// </param>
@@ -977,12 +998,85 @@ namespace ZedGraph
 		/// <summary>
 		/// Format this XDate value using the default format string (see cref="DefaultFormatStr"/>).
 		/// </summary>
+		/// <remarks>
+		/// The formatting is done using the <see cref="DateTime"/> <see cref="DateTime.ToString"/>
+		/// method in order to provide full localization capability.  The DateTime struct is limited to
+		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate"/> and <see cref="DateTime"/>
+		/// are projected Gregorian calendar dates.  Since the Gregorian calendar was not implemented
+		/// until October 4, 1582 (or later in some countries), Gregorian dates prior to that time are
+		/// really dates that would have been, had the Gregorian calendar existed.  In order to avoid
+		/// throwing an exception, for dates prior to 1 AD, the year will be converted to a positive
+		/// year and the text "(BC)" is appended to the end of the formatted string.  Under this mode, the
+		/// year sequence is 2BC, 1BC, 1AD, 2AD, etc.  There is no year zero.
+		/// </remarks>
 		/// <returns>A string representation of the date</returns>
 		public override string ToString()
 		{
 			return ToString( this.xlDate, DefaultFormatStr );
 		}
 		
+		/// <summary>
+		/// Format this XL Date value using the specified format string.  The format
+		/// string is specified according to the <see cref="DateTime"/> class.
+		/// </summary>
+		/// <remarks>
+		/// The formatting is done using the <see cref="DateTime"/> <see cref="DateTime.ToString"/>
+		/// method in order to provide full localization capability.  The DateTime struct is limited to
+		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate"/> and <see cref="DateTime"/>
+		/// are projected Gregorian calendar dates.  Since the Gregorian calendar was not implemented
+		/// until October 4, 1582 (or later in some countries), Gregorian dates prior to that time are
+		/// really dates that would have been, had the Gregorian calendar existed.  In order to avoid
+		/// throwing an exception, for dates prior to 1 AD, the year will be converted to a positive
+		/// year and the text "(BC)" is appended to the end of the formatted string.  Under this mode, the
+		/// year sequence is 2BC, 1BC, 1AD, 2AD, etc.  There is no year zero.
+		/// </remarks>
+		/// <param name="fmtStr">
+		/// The formatting string to be used for the date.  See
+		/// <see cref="System.Globalization.DateTimeFormatInfo"/>
+		/// class for a list of the format types available.</param>
+		/// <returns>A string representation of the date</returns>
+		public string ToString( string fmtStr )
+		{
+			return ToString( this.XLDate, fmtStr );
+		}
+
+		/// <summary>
+		/// Format the specified XL Date value using the specified format string.  The format
+		/// string is specified according to the <see cref="DateTime"/> class.
+		/// </summary>
+		/// <remarks>
+		/// The formatting is done using the <see cref="DateTime"/> <see cref="DateTime.ToString"/>
+		/// method in order to provide full localization capability.  The DateTime struct is limited to
+		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate"/> and <see cref="DateTime"/>
+		/// are projected Gregorian calendar dates.  Since the Gregorian calendar was not implemented
+		/// until October 4, 1582 (or later in some countries), Gregorian dates prior to that time are
+		/// really dates that would have been, had the Gregorian calendar existed.  In order to avoid
+		/// throwing an exception, for dates prior to 1 AD, the year will be converted to a positive
+		/// year and the text "(BC)" is appended to the end of the formatted string.  Under this mode, the
+		/// year sequence is 2BC, 1BC, 1AD, 2AD, etc.  There is no year zero.
+		/// </remarks>
+		/// <param name="xlDate">
+		/// The XL date value to be formatted in floating point double format.
+		/// </param>
+		/// <param name="fmtStr">
+		/// The formatting string to be used for the date.  See
+		/// <see cref="System.Globalization.DateTimeFormatInfo"/>
+		/// for a list of the format types available.</param>
+		/// <returns>A string representation of the date</returns>
+		public static string ToString( double xlDate, string fmtStr )
+		{
+			int year, month, day, hour, minute, second;
+			XLDateToCalendarDate( xlDate, out year, out month, out day, out hour, out minute, out second );
+			if ( year <= 0 )
+			{
+				year = 1 - year;
+				fmtStr = fmtStr + " (BC)";
+			}
+			//DateTime dt = XLDateToDateTime( xlDate );
+			DateTime dt = new DateTime( year, month, day, hour, minute, second );
+			return dt.ToString( fmtStr );
+		}
+
 /*
 		/// <summary>
 		/// Format this XDate value using the specified format string
@@ -1097,37 +1191,7 @@ namespace ZedGraph
 			return resultStr;
 		}
 */		
-		/// <summary>
-		/// Format this XL Date value using the specified format string.  The format
-		/// string is specified according to the <see cref="DateTime"/> class.
-		/// </summary>
-		/// <param name="fmtStr">
-		/// The formatting string to be used for the date.  See
-		/// <see cref="System.Globalization.DateTimeFormatInfo"/>
-		/// class for a list of the format types available.</param>
-		/// <returns>A string representation of the date</returns>
-		public string ToString( string fmtStr )
-		{
-			return ToString( this.XLDate, fmtStr );
-		}
 
-		/// <summary>
-		/// Format the specified XL Date value using the specified format string.  The format
-		/// string is specified according to the <see cref="DateTime"/> class.
-		/// </summary>
-		/// <param name="xlDate">
-		/// The XL date value to be formatted in floating point double format.
-		/// </param>
-		/// <param name="fmtStr">
-		/// The formatting string to be used for the date.  See
-		/// <see cref="System.Globalization.DateTimeFormatInfo"/>
-		/// for a list of the format types available.</param>
-		/// <returns>A string representation of the date</returns>
-		public static string ToString( double xlDate, string fmtStr )
-		{
-			DateTime dt = XLDateToDateTime( xlDate );
-			return dt.ToString( fmtStr );
-		}
 	#endregion
 	}
 }

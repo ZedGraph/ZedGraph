@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-01-27 05:50:34 $ </version>
 	[Serializable]
 	abstract public class GraphItem : ISerializable
 	{
@@ -382,7 +382,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="pt">The screen point, in pixels</param>
 		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// A reference to the <see cref="PaneBase"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
 		/// <param name="g">
@@ -396,7 +396,7 @@ namespace ZedGraph
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
-		abstract public bool PointInBox( PointF pt, GraphPane pane, Graphics g, float scaleFactor );		
+		abstract public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor );		
 	#endregion
 	
 	}

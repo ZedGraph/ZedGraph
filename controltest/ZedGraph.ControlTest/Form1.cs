@@ -59,13 +59,13 @@ namespace ZedGraph.ControlTest
 		{
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.zedGraphControl6 = new ZedGraph.ZedGraphControl();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.tabPage3 = new System.Windows.Forms.TabPage();
-			this.tabPage4 = new System.Windows.Forms.TabPage();
-			this.zedGraphControl6 = new ZedGraph.ZedGraphControl();
 			this.zedGraphControl4 = new ZedGraph.ZedGraphControl();
+			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.zedGraphControl5 = new ZedGraph.ZedGraphControl();
+			this.tabPage4 = new System.Windows.Forms.TabPage();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -95,6 +95,17 @@ namespace ZedGraph.ControlTest
 			this.tabPage1.Text = "tabPage1";
 			this.tabPage1.Paint += new System.Windows.Forms.PaintEventHandler( this.tabPage1_Paint );
 // 
+// zedGraphControl6
+// 
+			this.zedGraphControl6.IsShowPointValues = false;
+			this.zedGraphControl6.Location = new System.Drawing.Point( 24, 63 );
+			this.zedGraphControl6.Name = "zedGraphControl6";
+			this.zedGraphControl6.PointDateFormat = "g";
+			this.zedGraphControl6.PointValueFormat = "G";
+			this.zedGraphControl6.Size = new System.Drawing.Size( 461, 209 );
+			this.zedGraphControl6.TabIndex = 1;
+			this.zedGraphControl6.Paint += new System.Windows.Forms.PaintEventHandler( this.zedGraphControl6_Paint );
+// 
 // label1
 // 
 			this.label1.Location = new System.Drawing.Point( 152, 16 );
@@ -111,34 +122,6 @@ namespace ZedGraph.ControlTest
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "tabPage2";
 // 
-// tabPage3
-// 
-			this.tabPage3.Controls.Add( this.zedGraphControl5 );
-			this.tabPage3.Location = new System.Drawing.Point( 4, 22 );
-			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Size = new System.Drawing.Size( 528, 310 );
-			this.tabPage3.TabIndex = 2;
-			this.tabPage3.Text = "tabPage3";
-// 
-// tabPage4
-// 
-			this.tabPage4.Location = new System.Drawing.Point( 4, 22 );
-			this.tabPage4.Name = "tabPage4";
-			this.tabPage4.Size = new System.Drawing.Size( 528, 310 );
-			this.tabPage4.TabIndex = 3;
-			this.tabPage4.Text = "tabPage4";
-// 
-// zedGraphControl6
-// 
-			this.zedGraphControl6.IsShowPointValues = false;
-			this.zedGraphControl6.Location = new System.Drawing.Point( 24, 63 );
-			this.zedGraphControl6.Name = "zedGraphControl6";
-			this.zedGraphControl6.PointDateFormat = "g";
-			this.zedGraphControl6.PointValueFormat = "G";
-			this.zedGraphControl6.Size = new System.Drawing.Size( 461, 209 );
-			this.zedGraphControl6.TabIndex = 1;
-			this.zedGraphControl6.Paint += new System.Windows.Forms.PaintEventHandler( this.zedGraphControl6_Paint );
-// 
 // zedGraphControl4
 // 
 			this.zedGraphControl4.IsShowPointValues = false;
@@ -148,6 +131,15 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl4.PointValueFormat = "G";
 			this.zedGraphControl4.Size = new System.Drawing.Size( 474, 247 );
 			this.zedGraphControl4.TabIndex = 0;
+// 
+// tabPage3
+// 
+			this.tabPage3.Controls.Add( this.zedGraphControl5 );
+			this.tabPage3.Location = new System.Drawing.Point( 4, 22 );
+			this.tabPage3.Name = "tabPage3";
+			this.tabPage3.Size = new System.Drawing.Size( 528, 310 );
+			this.tabPage3.TabIndex = 2;
+			this.tabPage3.Text = "tabPage3";
 // 
 // zedGraphControl5
 // 
@@ -159,6 +151,14 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl5.Size = new System.Drawing.Size( 328, 224 );
 			this.zedGraphControl5.TabIndex = 0;
 // 
+// tabPage4
+// 
+			this.tabPage4.Location = new System.Drawing.Point( 4, 22 );
+			this.tabPage4.Name = "tabPage4";
+			this.tabPage4.Size = new System.Drawing.Size( 528, 310 );
+			this.tabPage4.TabIndex = 3;
+			this.tabPage4.Text = "tabPage4";
+// 
 // Form1
 // 
 			this.AutoScaleBaseSize = new System.Drawing.Size( 5, 13 );
@@ -166,6 +166,7 @@ namespace ZedGraph.ControlTest
 			this.Controls.Add( this.tabControl1 );
 			this.Name = "Form1";
 			this.Text = "Form1";
+			this.Resize += new System.EventHandler( this.Form1_Resize );
 			this.Load += new System.EventHandler( this.Form1_Load );
 			this.tabControl1.ResumeLayout( false );
 			this.tabPage1.ResumeLayout( false );
@@ -187,6 +188,13 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_Load( object sender, System.EventArgs e )
 		{
+			//XDate junk = new XDate( 1, 1, 1 );
+			//junk.AddDays( -1 );
+			//int year, month, day;
+			//junk.GetDate( out year, out month, out day );
+			//MessageBox.Show( year + "/" + month + "/" + day );
+			//MessageBox.Show( junk.JulianDay + " " + junk.XLDate );
+
 			zedGraphControl4.GraphPane.Title = "Test Graph for Tab 2";
 			zedGraphControl5.GraphPane.Title = "Test Graph for Tab 3";
 			zedGraphControl6.GraphPane.Title = "Test Graph for Tab 1";
@@ -196,7 +204,7 @@ namespace ZedGraph.ControlTest
 
 			for( int i = 0; i < 18; i++ )
 			{
-				x = new XDate( 2005, i, i+5, i, i*2, i*3 );
+				x = new XDate( -325, i, i+5, i, i*2, i*3 );
 				
 				y1 = Math.Sin( i / 9.0 * Math.PI );
 				y2 = Math.Cos( i / 9.0 * Math.PI );
@@ -204,13 +212,19 @@ namespace ZedGraph.ControlTest
 				list2.Add(x, y2);
 			}
 
+			GraphPane testPane = new GraphPane( new RectangleF( 0, 0, 100, 100 ), "Second Test Pane", "X", "Y" );
+			testPane.AddCurve( "Another", list1, Color.Green, SymbolType.Diamond );
+			zedGraphControl6.MasterPane.Add( testPane );
+			zedGraphControl6.MasterPane.Add( (GraphPane) testPane.Clone() );
+			zedGraphControl6.MasterPane.Add( (GraphPane) testPane.Clone() );
+
 			LineItem myCurve = zedGraphControl4.GraphPane.AddCurve("Sine", list1, Color.Red, SymbolType.Circle);
 			LineItem myCurve2 = zedGraphControl5.GraphPane.AddCurve("Cosine", list2, Color.Blue, SymbolType.Circle);
 			LineItem myCurve3 = zedGraphControl6.GraphPane.AddCurve("Sine", list1, Color.Blue, SymbolType.Circle);
 			LineItem myCurve4 = zedGraphControl6.GraphPane.AddCurve("Cosine", list2, Color.Red, SymbolType.Circle);
 			myCurve3.Line.StepType = StepType.ForwardStep;
 			myCurve4.Line.StepType = StepType.RearwardStep;
-			
+			zedGraphControl6.GraphPane.AxisBorder.IsVisible = false;
 			zedGraphControl6.GraphPane.XAxis.Type = AxisType.Date;
 			zedGraphControl6.IsShowPointValues = true;
 			zedGraphControl6.PointDateFormat = "hh:MM";
@@ -218,6 +232,8 @@ namespace ZedGraph.ControlTest
 			zedGraphControl4.AxisChange();
 			zedGraphControl5.AxisChange();
 			zedGraphControl6.AxisChange();
+
+			SetSize();
 		}
 
 		private void tabPage1_Paint(object sender, PaintEventArgs e)
@@ -226,6 +242,20 @@ namespace ZedGraph.ControlTest
 
 		private void zedGraphControl6_Paint(object sender, PaintEventArgs e)
 		{
+		}
+
+		private void Form1_Resize(object sender, EventArgs e)
+		{
+			SetSize();
+		}
+
+		private void SetSize()
+		{
+			Size size = new Size( this.Size.Width - tabControl1.Left - 10,
+									this.Size.Height - tabControl1.Top - 40 );
+			tabControl1.Size = size;
+			zedGraphControl6.Size = new Size( size.Width - zedGraphControl6.Left - 20,
+												size.Height - zedGraphControl6.Top - 30 );
 		}
 	}
 }

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-01-27 05:50:34 $ </version>
 	[Serializable]
 	public class GraphItemList : CollectionBase, ICloneable
 	{
@@ -149,7 +149,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
 		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// A reference to the <see cref="PaneBase"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
 		/// <param name="g">
@@ -169,7 +169,7 @@ namespace ZedGraph
 		/// <returns>true if the mouse point is within a <see cref="GraphItem"/> bounding
 		/// box, false otherwise.</returns>
 		/// <seealso cref="GraphPane.FindNearestObject"/>
-		public bool FindPoint( PointF mousePt, GraphPane pane, Graphics g, float scaleFactor, out int index )
+		public bool FindPoint( PointF mousePt, PaneBase pane, Graphics g, float scaleFactor, out int index )
 		{
 			index = -1;
 			

@@ -17,7 +17,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2005-01-27 05:50:34 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -654,6 +654,27 @@ namespace ZedGraph
 			nearestObj = null;
 			index = -1;
 
+			GraphItem	saveGraphItem = null;
+			int			saveIndex = -1;
+			float		scaleFactor = CalcScaleFactor();
+
+			// See if the point is in a GraphItem
+			// If so, just save the object and index so we can see if other overlying objects were
+			// intersected as well.
+			if ( this.GraphItemList.FindPoint( mousePt, this, g, scaleFactor, out index ) )
+			{
+				saveGraphItem = this.GraphItemList[index];
+				saveIndex = index;
+
+				// If it's an "In-Front" item, then just return it
+				if ( saveGraphItem.ZOrder == ZOrder.A_InFront )
+				{
+					nearestObj = saveGraphItem;
+					index = saveIndex;
+					return true;
+				}
+			}
+
 			foreach ( GraphPane tPane in this.paneList )
 			{
 				if ( tPane.PaneRect.Contains( mousePt ) )
@@ -661,6 +682,14 @@ namespace ZedGraph
 					pane = tPane;
 					return tPane.FindNearestObject( mousePt, g, out nearestObj, out index );
 				}
+			}
+
+			// If no items were found in the GraphPanes, then return the item found on the MasterPane (if any)
+			if ( saveGraphItem != null )
+			{
+				nearestObj = saveGraphItem;
+				index = saveIndex;
+				return true;
 			}
 
 			return false;
