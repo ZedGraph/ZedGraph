@@ -237,6 +237,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph.Demo\PercentStkBarDemo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph.Demo\PieChartDemo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
