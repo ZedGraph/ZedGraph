@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.21 $ $Date: 2005-03-17 04:32:12 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2005-03-18 00:19:16 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -63,9 +63,9 @@ namespace ZedGraph
 		public ZedGraphWeb()
 		{				
 			vsassist = new GenericViewStateAssistant();									
-			vsassist.Register('x',typeof(ZedGraphWebAxis));
-			vsassist.Register('y',typeof(ZedGraphWebAxis));
-			vsassist.Register('z',typeof(ZedGraphWebAxis));
+			vsassist.Register('x',typeof(ZedGraphWebXAxis));
+			vsassist.Register('y',typeof(ZedGraphWebYAxis));
+			vsassist.Register('z',typeof(ZedGraphWebY2Axis));
 			vsassist.Register('l',typeof(ZedGraphWebLegend));
 			vsassist.Register('b',typeof(ZedGraphWebBorder));
 			vsassist.Register('f',typeof(ZedGraphWebFill));
@@ -764,9 +764,9 @@ namespace ZedGraph
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
-		public ZedGraphWebAxis XAxis
+		public ZedGraphWebXAxis XAxis
 		{
-			get { return (ZedGraphWebAxis)vsassist.GetValue('x',this.IsTrackingViewState); }
+			get { return (ZedGraphWebXAxis)vsassist.GetValue('x',this.IsTrackingViewState); }
 		}
 			
 		/// <summary>
@@ -778,9 +778,9 @@ namespace ZedGraph
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
-		public ZedGraphWebAxis YAxis
+		public ZedGraphWebYAxis YAxis
 		{
-			get { return (ZedGraphWebAxis)vsassist.GetValue('y',this.IsTrackingViewState); }
+			get { return (ZedGraphWebYAxis)vsassist.GetValue('y',this.IsTrackingViewState); }
 		}
 			
 		/// <summary>
@@ -792,9 +792,9 @@ namespace ZedGraph
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
-		public ZedGraphWebAxis Y2Axis
+		public ZedGraphWebY2Axis Y2Axis
 		{
-			get { return (ZedGraphWebAxis)vsassist.GetValue('z',this.IsTrackingViewState); }
+			get { return (ZedGraphWebY2Axis)vsassist.GetValue('z',this.IsTrackingViewState); }
 		}
 					
 		/// <summary>

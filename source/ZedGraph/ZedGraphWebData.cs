@@ -1700,6 +1700,81 @@ namespace ZedGraph
 	}
 	#endregion
 
+	#region ZedGraphWebXAxis
+	/// <summary>
+	/// Web control state management class for a <see cref="ZedGraph.XAxis"/> object
+	/// </summary>
+	/// <author>Darren Martz</author>	
+	public class ZedGraphWebXAxis : ZedGraphWebAxis
+	{
+		/// <summary>
+		/// Identifies <see cref="XAxis"/> by the <see cref="XAxis.Title"/> value
+		/// </summary>
+		/// <returns>A string containing "XAxis: title", where 'title' is the
+		/// <see cref="XAxis.Title"/> property of the <see cref="XAxis"/>
+		/// </returns>
+		public override string ToString()
+		{
+			if (Title == string.Empty) return string.Empty;
+			return "XAxis: " + Title;
+		}
+
+		public ZedGraphWebXAxis() : base()
+		{
+		}
+	}
+	#endregion
+
+	#region ZedGraphWebYAxis
+	/// <summary>
+	/// Web control state management class for a <see cref="ZedGraph.YAxis"/> object
+	/// </summary>
+	/// <author>Darren Martz</author>	
+	public class ZedGraphWebYAxis : ZedGraphWebAxis
+	{
+		/// <summary>
+		/// Identifies <see cref="YAxis"/> by the <see cref="YAxis.Title"/> value
+		/// </summary>
+		/// <returns>A string containing "YAxis: title", where 'title' is the
+		/// <see cref="YAxis.Title"/> property of the <see cref="YAxis"/>
+		/// </returns>
+		public override string ToString()
+		{
+			if (Title == string.Empty) return string.Empty;
+			return "YAxis: " + Title;
+		}
+
+		public ZedGraphWebYAxis() : base()
+		{
+		}
+	}
+	#endregion
+
+	#region ZedGraphWebY2Axis
+	/// <summary>
+	/// Web control state management class for a <see cref="ZedGraph.Y2Axis"/> object
+	/// </summary>
+	/// <author>Darren Martz</author>	
+	public class ZedGraphWebY2Axis : ZedGraphWebAxis
+	{
+		/// <summary>
+		/// Identifies <see cref="Y2Axis"/> by the <see cref="Y2Axis.Title"/> value
+		/// </summary>
+		/// <returns>A string containing "Y2Axis: title", where 'title' is the
+		/// <see cref="Y2Axis.Title"/> property of the <see cref="Y2Axis"/>
+		/// </returns>
+		public override string ToString()
+		{
+			if (Title == string.Empty) return string.Empty;
+			return "Y2Axis: " + Title;
+		}
+
+		public ZedGraphWebY2Axis() : base()
+		{
+		}
+	}
+	#endregion
+
 	#region ZedGraphWebAxis
 	/// <summary>
 	/// Web control state management class for a <see cref="ZedGraph.Axis"/> object
