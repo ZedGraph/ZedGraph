@@ -37,8 +37,8 @@ namespace ZedGraph
 	/// just instantiate multiple GraphPane's.
 	/// </summary>
 	/// 
-	/// <author> John Champion </author>
-	/// <version> $Revision: 1.6 $ $Date: 2004-08-23 20:22:26 $ </version>
+	/// <author> John Champion modified by Jerry Vos </author>
+	/// <version> $Revision: 1.7 $ $Date: 2004-08-23 20:24:17 $ </version>
 	public class GraphPane : ICloneable
 	{
 		// Item subclasses
@@ -544,7 +544,7 @@ namespace ZedGraph
 			this.yAxis.PickScale( yMin, yMax );
 			this.y2Axis.PickScale( y2Min, y2Max );
 		}
-		
+
 		/// <summary>
 		/// Draw all elements in the <see cref="GraphPane"/> to the specified graphics device.  This routine
 		/// should be part of the Paint() update process.  Calling this routine will redraw all
@@ -1033,8 +1033,10 @@ namespace ZedGraph
 					yPixPerUnitAct = yPixPerUnit;
 				}
 
-				if ( curve.X != null && curve.Y != null )
+				if ( curve.Points != null )
 				{
+					PointPairList points = curve.Points;
+
 					for ( int iPt=0; iPt<curve.NPts; iPt++ )
 					{
 						if ( curve.IsBar )
@@ -1043,9 +1045,9 @@ namespace ZedGraph
 							xVal = this.xAxis.ReverseTransform( xPix );
 						}
 						else
-							xVal = curve.X[iPt];
+							xVal = points[iPt].X;
 
-						yVal = curve.Y[iPt];
+						yVal = points[iPt].Y;
 
 						if (	xVal != System.Double.MaxValue &&
 								xVal >= xAxis.Min && xVal <= xAxis.Max &&

@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+16-Jul-2004 (by Vos)
+    Add PointPair, PointPairList storage for data points
+
 15-Jul-2004
     Add Author/Revision XML tags
     

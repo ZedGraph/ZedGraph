@@ -20,6 +20,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using ArrayList = System.Collections.ArrayList;
 
 namespace ZedGraph
 {
@@ -29,8 +30,8 @@ namespace ZedGraph
 	/// <see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/> classes
 	/// to define specific characteristics for those types.
 	/// </summary>
-	/// <author> John Champion </author>
-	/// <version> $Revision: 1.6 $ $Date: 2004-08-23 20:22:25 $ </version>
+	/// <author> John Champion modified by Jerry Vos</author>
+	/// <version> $Revision: 1.7 $ $Date: 2004-08-23 20:24:17 $ </version>
 	abstract public class Axis
 	{
 		#region Class Fields
@@ -97,11 +98,11 @@ namespace ZedGraph
 		/// for access to this value. </summary>
 		/// <seealso cref="ScaleFormatAuto"/>
 		private		 string	scaleFormat;
-		/// <summary> Public field for the <see cref="Axis"/> array of text labels.
+		/// <summary> Private field for the <see cref="Axis"/> array of text labels.
 		/// This property is only used if <see cref="Type"/> is set to
 		/// <see cref="AxisType.Text"/>.
 		/// is set to true. </summary>
-		public		 string[]	TextLabels = null;
+		private		 string[]	textLabels = null;
 		/// <summary> Private fields for the <see cref="Axis"/> font specificatios.
 		/// Use the public properties <see cref="TitleFontSpec"/> and
 		/// <see cref="ScaleFontSpec"/> for access to these values. </summary>
@@ -147,7 +148,17 @@ namespace ZedGraph
 			get { return maxPix; }
 		}
 
-
+		/// <summary>
+		/// The text labels for this axis.
+		/// This property is only used if <see cref="Type"/> is set to
+		/// <see cref="AxisType.Text"/>.
+		/// </summary>
+		public string[] TextLabels
+		{
+			get { return textLabels;	}
+			set { textLabels = value;	}
+		}
+		
 		/// <summary>
 		/// Scale values for calculating transforms.  These are temporary values
 		/// used only during the Draw process.
@@ -2613,16 +2624,16 @@ namespace ZedGraph
 		/// values are simple ordinals based on the number of axis labels.
 		/// </summary>
 		/// <returns>an ordinal array of floating point double values</returns>
-		public double[] MakeDefaultArray()
+		public ArrayList MakeDefaultArray()
 		{
 			int length = 10;
 			if ( this.IsText && this.TextLabels != null )
 				length = this.TextLabels.Length;
 
-			double[] dArray = new double[length];
+			ArrayList dArray = new ArrayList(length);
 			
-			for ( int i=0; i<length; i++ )
-				dArray[i] = (double) i;
+			for ( double i=0.0; i<length; i++ )
+				dArray[i].Add(i);
 			
 			return dArray;
 		}
