@@ -23,6 +23,9 @@ namespace ZedGraphTest
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 		private DBGraphics memGraphics;
+		private System.Windows.Forms.MainMenu mainMenu1;
+		private System.Windows.Forms.MenuItem menuFile;
+		private System.Windows.Forms.MenuItem menuItemHowdy;
 		private bool sideWays = false;
 
 		/// <summary>
@@ -59,11 +62,30 @@ namespace ZedGraphTest
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.mainMenu1 = new System.Windows.Forms.MainMenu();
+			this.menuFile = new System.Windows.Forms.MenuItem();
+			this.menuItemHowdy = new System.Windows.Forms.MenuItem();
+			// 
+			// mainMenu1
+			// 
+			this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] { this.menuFile } );
+			// 
+			// menuFile
+			// 
+			this.menuFile.Index = 0;
+			this.menuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] { this.menuItemHowdy } );
+			this.menuFile.Text = "File";
+			// 
+			// menuItemHowdy
+			// 
+			this.menuItemHowdy.Index = 0;
+			this.menuItemHowdy.Text = "Howdy";
 			// 
 			// Form1
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(500, 329);
+			this.Menu = this.mainMenu1;
 			this.Name = "Form1";
 			this.Text = "Form1";
 			this.Resize += new System.EventHandler(this.Form1_Resize);
@@ -1149,7 +1171,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if true	// The main example
+#if false	// The main example
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -1190,11 +1212,17 @@ namespace ZedGraphTest
 			myPane.XAxis.IsShowGrid = true;
 			//myPane.XAxis.ScaleFontSpec.Angle = 90;
 			//myPane.XAxis.ScaleAlign = AlignP.Inside;
+			//myPane.XAxis.IsShowMinorGrid = true;
+			//myPane.XAxis.MinorGridColor = Color.Red;
 
 			myPane.YAxis.IsShowGrid = true;
 			//myPane.YAxis.ScaleFontSpec.Angle = 90;
 			myPane.YAxis.Max = 120;
 			//myPane.YAxis.ScaleAlign = AlignP.Center;
+			//myPane.YAxis.Type = AxisType.Log;
+			//myPane.YAxis.IsUseTenPower = false;
+			//myPane.YAxis.IsShowMinorGrid = true;
+			//myPane.YAxis.MinorGridColor = Color.Red;
 
 			//myPane.Y2Axis.IsVisible = true;
 			//myPane.Y2Axis.Max = 120;
@@ -1406,6 +1434,25 @@ namespace ZedGraphTest
 			//			text.BackgroundColor = Color.White;
 			myPane.TextList.Add( text );
 #endif
+
+#if true	// zero value bug test
+			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+				"Wacky Widget Company\nProduction Report",
+				"Time, Years\n(Since Plant Construction Startup)",
+				"Widget Production\n(units/hour)" );
+			double[] x = { 0, 1, 2, 3};
+			double[] y = { 3, 4, -9, 10};
+			double[] y1 = { 1, 2, -7, 8};
+
+
+			myPane.AddBar( "tango mango" , x, y, Color.Blue );
+
+			myPane.AddBar( "oggo boggo" , x, y1, Color.Red );
+			
+			//myPane.XAxis.Type = AxisType.Ordinal;
+
+#endif
+
 			SetSize();
 
 			//			RectangleF myRect = myPane.CalcAxisRect( memGraphics.g );
@@ -1587,27 +1634,30 @@ namespace ZedGraphTest
 
 		private void Form1_Resize(object sender, System.EventArgs e)
 		{
-//			if ( !sideWays )
+			if ( this.myPane != null )
+			{
 				memGraphics.CreateDoubleBuffer( this.CreateGraphics(),
 					this.ClientRectangle.Width, this.ClientRectangle.Height );
-//			else
-//				memGraphics.CreateDoubleBuffer( this.CreateGraphics(),
-//					this.ClientRectangle.Height, this.ClientRectangle.Width );
-			SetSize();
-			myPane.AxisChange( this.CreateGraphics() );
-			Invalidate();
+
+				SetSize();
+				myPane.AxisChange( this.CreateGraphics() );
+				Invalidate();
+			}
 		}
 
 		private void SetSize()
 		{
-			Rectangle paneRect;
-			if ( sideWays )
-				paneRect = new Rectangle( 0, 0, this.ClientRectangle.Height, this.ClientRectangle.Width );
-			else
-				paneRect = this.ClientRectangle;
+			if ( this.myPane != null )
+			{
+				Rectangle paneRect;
+				if ( sideWays )
+					paneRect = new Rectangle( 0, 0, this.ClientRectangle.Height, this.ClientRectangle.Width );
+				else
+					paneRect = this.ClientRectangle;
 
-			//paneRect.Inflate( -10, -10 );
-			this.myPane.PaneRect = paneRect;
+				//paneRect.Inflate( -10, -10 );
+				this.myPane.PaneRect = paneRect;
+			}
 		}
 
 		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
@@ -1681,16 +1731,16 @@ namespace ZedGraphTest
 				Invalidate();
 			}
 
-/*
-						CurveItem curve;
-						int	iPt;
+			/*
+									CurveItem curve;
+									int	iPt;
 
-						if ( myPane.FindNearestPoint( new PointF( e.X, e.Y ), out curve, out iPt ) )
-							MessageBox.Show( String.Format( "label = {0}  X = {1}",
-								curve.Label, curve.Points[iPt].ToString("e2") ) );
-						else
-							MessageBox.Show( "No Point Found" );
-*/
+									if ( myPane.FindNearestPoint( new PointF( e.X, e.Y ), out curve, out iPt ) )
+										MessageBox.Show( String.Format( "label = {0}  X = {1}",
+											curve.Label, curve.Points[iPt].ToString("e2") ) );
+									else
+										MessageBox.Show( "No Point Found" );
+			*/
 			
 			/*
 						double x, y, y2;

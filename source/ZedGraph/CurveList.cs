@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:07 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-09 17:13:42 $ </version>
 	public class CurveList : CollectionBase, ICloneable
 	{
 	#region Properties
@@ -200,7 +200,7 @@ namespace ZedGraph
 			xMinVal = yMinVal = y2MinVal = tXMinVal = tYMinVal = Double.MaxValue;
 			xMaxVal = yMaxVal = y2MaxVal = tXMaxVal = tYMaxVal = Double.MinValue;
 			maxPts = 1;
-
+			
 			// Loop over each curve in the collection
 			foreach( CurveItem curve in this )
 			{
@@ -209,14 +209,17 @@ namespace ZedGraph
 				curve.Points.GetRange( ref tXMinVal, ref tXMaxVal,
 										ref tYMinVal, ref tYMaxVal, bIgnoreInitial );
 				
+				bool isYOrd = ( ( pane.Y2Axis.IsOrdinal || pane.Y2Axis.IsText ) && curve.IsY2Axis ) ||
+								( ( pane.YAxis.IsOrdinal || pane.YAxis.IsText ) && ! curve.IsY2Axis );
+				bool isXOrd = pane.XAxis.IsOrdinal || pane.XAxis.IsText;
+								
 				// For ordinal Axes, the data range is just 1 to Npts
-				if ( ( ( pane.Y2Axis.IsOrdinal || pane.Y2Axis.IsText ) && curve.IsY2Axis ) ||
-					( ( pane.YAxis.IsOrdinal || pane.YAxis.IsText ) && ! curve.IsY2Axis ) )
+				if ( isYOrd )
 				{
 					tYMinVal = 1.0;
 					tYMaxVal = curve.NPts;
 				}
-				if ( pane.XAxis.IsOrdinal || pane.XAxis.IsText )
+				if ( isXOrd )
 				{
 					tXMinVal = 1.0;
 					tXMaxVal = curve.NPts;
@@ -231,6 +234,12 @@ namespace ZedGraph
 							tYMinVal = 0;
 						else if ( tYMaxVal < 0 )
 							tYMaxVal = 0;
+						
+						if ( !isXOrd )
+						{
+							tXMinVal -= pane.ClusterScaleWidth / 2.0;
+							tXMaxVal += pane.ClusterScaleWidth / 2.0;
+						}
 					}
 					else
 					{
@@ -238,6 +247,12 @@ namespace ZedGraph
 							tXMinVal = 0;
 						else if ( tXMaxVal < 0 )
 							tXMaxVal = 0;
+							
+						if ( !isYOrd )
+						{
+							tYMinVal -= pane.ClusterScaleWidth / 2.0;
+							tYMaxVal += pane.ClusterScaleWidth / 2.0;
+						}
 					}
 				}
 

@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+7-Oct-2004 (by Champion)
+  Add MinorGrids
+  IsZeroLine defaults to false for X axis
+  GetRange widens range by ClusterScaleWidth/2 for non-ordinal bars
+  
 1-Oct-2004 (by Champion)
   FindNearestObject works for TextItems and ArrowItems
   Add SymbolType.Default and SymbolType.None

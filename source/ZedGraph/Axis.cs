@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-01 06:37:16 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-09 17:13:42 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -71,15 +71,15 @@ namespace ZedGraph
 							scaleMag;
 		/// <summary> Private fields for the <see cref="Axis"/> attributes.
 		/// Use the public properties <see cref="IsVisible"/>, <see cref="IsShowGrid"/>,
-		/// <see cref="IsZeroLine"/>,  <see cref="IsShowTitle"/>,
+		/// <see cref="IsShowMinorGrid"/>, <see cref="IsZeroLine"/>,  <see cref="IsShowTitle"/>,
 		/// <see cref="IsTic"/>, <see cref="IsInsideTic"/>, <see cref="IsOppositeTic"/>,
 		/// <see cref="IsMinorTic"/>, <see cref="IsMinorInsideTic"/>,
 		/// <see cref="IsMinorOppositeTic"/>, <see cref="IsTicsBetweenLabels"/>,
 		/// <see cref="IsLog"/>, <see cref="IsReverse"/>,
-		/// <see cref="IsOmitMag"/>, <see cref="IsText"/>,
+		/// <see cref="IsOmitMag"/>, <see cref="IsText"/>, <see cref="IsUseTenPower"/>,
 		/// and <see cref="IsDate"/> for access to these values.
 		/// </summary>
-		private bool		isVisible,
+		protected bool		isVisible,
 							isShowGrid,
 							isShowTitle,
 							isZeroLine,
@@ -87,11 +87,13 @@ namespace ZedGraph
 							isInsideTic,
 							isOppositeTic,
 							isMinorTic,
+							isShowMinorGrid,
 							isMinorInsideTic,
 							isMinorOppositeTic,
 							isTicsBetweenLabels,
 							isReverse,
-							isOmitMag;
+							isOmitMag,
+							isUseTenPower;
 		/// <summary> Private field for the <see cref="Axis"/> type.  This can be one of the
 		/// types as defined in the <see cref="AxisType"/> enumeration.
 		/// Use the public property <see cref="Type"/>
@@ -100,7 +102,7 @@ namespace ZedGraph
 		/// <summary> Private field for the <see cref="Axis"/> title string.
 		/// Use the public property <see cref="Title"/>
 		/// for access to this value. </summary>
-		private		 string	title;
+		protected	string	title;
 		/// <summary> Private field for the format of the <see cref="Axis"/> tic labels.
 		/// This field is only used if the <see cref="Type"/> is set to <see cref="AxisType.Date"/>.
 		/// Use the public property <see cref="ScaleFormat"/>
@@ -120,18 +122,24 @@ namespace ZedGraph
 		/// <summary> Private fields for the <see cref="Axis"/> font specificatios.
 		/// Use the public properties <see cref="TitleFontSpec"/> and
 		/// <see cref="ScaleFontSpec"/> for access to these values. </summary>
-		private FontSpec	titleFontSpec,
+		protected FontSpec	titleFontSpec,
 							scaleFontSpec;
 		/// <summary> Private fields for the <see cref="Axis"/> drawing dimensions.
 		/// Use the public properties <see cref="TicPenWidth"/>, <see cref="TicSize"/>,
-		/// <see cref="MinorTicSize"/>, <see cref="GridDashOn"/>, <see cref="GridDashOff"/>,
-		/// and <see cref="GridPenWidth"/> for access to these values. </summary>
+		/// <see cref="MinorTicSize"/>,
+		/// <see cref="GridDashOn"/>, <see cref="GridDashOff"/>,
+		/// <see cref="GridPenWidth"/>,
+		/// <see cref="MinorGridDashOn"/>, <see cref="MinorGridDashOff"/>,
+		/// and <see cref="MinorGridPenWidth"/> for access to these values. </summary>
 		private float		ticPenWidth,
 							ticSize,
 							minorTicSize,
 							gridDashOn,
 							gridDashOff,
-							gridPenWidth;
+							gridPenWidth,
+							minorGridDashOn,
+							minorGridDashOff,
+							minorGridPenWidth;
 		
 		/// <summary>
 		/// Private field for the <see cref="Axis"/> minimum allowable space allocation.
@@ -144,7 +152,8 @@ namespace ZedGraph
 		/// Use the public properties <see cref="Color"/> and
 		/// <see cref="GridColor"/> for access to these values. </summary>
 		private Color	color,
-						gridColor;
+						gridColor,
+						minorGridColor;
 		
 		/// <summary>
 		/// Scale values for calculating transforms.  These are temporary values
@@ -425,6 +434,27 @@ namespace ZedGraph
 			/// </summary>
 			public static Color GridColor = Color.Black;
 			/// <summary>
+			/// The default "dash on" size for drawing the <see cref="Axis"/> minor grid
+			/// (<see cref="Axis.MinorGridDashOn"/> property). Units are in pixels.
+			/// </summary>
+			public static float MinorGridDashOn = 1.0F;
+			/// <summary>
+			/// The default "dash off" size for drawing the <see cref="Axis"/> minor grid
+			/// (<see cref="Axis.MinorGridDashOff"/> property). Units are in pixels.
+			/// </summary>
+			public static float MinorGridDashOff = 10.0F;
+			/// <summary>
+			/// The default pen width for drawing the <see cref="Axis"/> minor grid
+			/// (<see cref="Axis.MinorGridPenWidth"/> property). Units are in pixels.
+			/// </summary>
+			public static float MinorGridPenWidth = 1.0F;
+			/// <summary>
+			/// The default color for the <see cref="Axis"/> minor grid lines
+			/// (<see cref="Axis.MinorGridColor"/> property).  This color only affects the
+			/// minor grid lines.
+			/// </summary>
+			public static Color MinorGridColor = Color.Gray;
+			/// <summary>
 			/// The default color for the <see cref="Axis"/> itself
 			/// (<see cref="Axis.Color"/> property).  This color only affects the
 			/// tic marks and the axis border.
@@ -437,6 +467,12 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsShowGrid = false;
 			/// <summary>
+			/// The default display mode for the <see cref="Axis"/> minor grid lines
+			/// (<see cref="Axis.IsShowMinorGrid"/> property). true
+			/// to show the minor grid lines, false to hide them.
+			/// </summary>
+			public static bool IsShowMinorGrid = false;
+			/// <summary>
 			/// The display mode for the <see cref="Axis"/> major outside tic marks
 			/// (<see cref="Axis.IsTic"/> property).
 			/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
@@ -444,13 +480,6 @@ namespace ZedGraph
 			/// <value>true to show the major tic marks (outside the axis),
 			/// false otherwise</value>
 			public static bool IsTic = true;
-			/// <summary>
-			/// Determines if a line will be drawn at the zero value for the 
-			/// <see cref="Axis"/>, that is, a line that
-			/// divides the negative values from positive values.
-			/// <seealso cref="Axis.IsZeroLine"/>.
-			/// </summary>
-			public static bool IsZeroLine = true;
 			/// <summary>
 			/// The display mode for the <see cref="Axis"/> minor outside tic marks
 			/// (<see cref="Axis.IsMinorTic"/> property).
@@ -651,12 +680,15 @@ namespace ZedGraph
 			this.gridDashOn = Default.GridDashOn;
 			this.gridDashOff = Default.GridDashOff;
 			this.gridPenWidth = Default.GridPenWidth;
+			this.minorGridDashOn = Default.MinorGridDashOn;
+			this.minorGridDashOff = Default.MinorGridDashOff;
+			this.minorGridPenWidth = Default.MinorGridPenWidth;
 		
 			this.minSpace = Default.MinSpace;
 			this.isVisible = true;
 			this.isShowTitle = Default.IsShowTitle;
-			this.isZeroLine = Default.IsZeroLine;
 			this.isShowGrid = Default.IsShowGrid;
+			this.isShowMinorGrid = Default.IsShowMinorGrid;
 			this.isReverse = Default.IsReverse;
 			this.isOmitMag = false;
 			this.isTic = Default.IsTic;
@@ -666,6 +698,7 @@ namespace ZedGraph
 			this.isMinorInsideTic = Default.IsMinorInsideTic;
 			this.isMinorOppositeTic = Default.IsMinorOppositeTic;
 			this.isTicsBetweenLabels = false;
+			this.isUseTenPower = true;
 		
 			this.type = Default.Type;
 			this.title = "";
@@ -679,6 +712,7 @@ namespace ZedGraph
 			this.ticPenWidth = Default.TicPenWidth;
 			this.color = Default.Color;
 			this.gridColor = Default.GridColor;
+			this.minorGridColor = Default.MinorGridColor;
 			
 			this.titleFontSpec = new FontSpec(
 					Default.TitleFontFamily, Default.TitleFontSize,
@@ -724,6 +758,7 @@ namespace ZedGraph
 			isVisible = rhs.IsVisible;
 			isShowTitle = rhs.IsShowTitle;
 			isShowGrid = rhs.IsShowGrid;
+			isShowMinorGrid = rhs.IsShowMinorGrid;
 			isZeroLine = rhs.IsZeroLine;
 			isTic = rhs.IsTic;
 			isInsideTic = rhs.IsInsideTic;
@@ -732,6 +767,7 @@ namespace ZedGraph
 			isMinorInsideTic = rhs.IsMinorInsideTic;
 			isMinorOppositeTic = rhs.IsMinorOppositeTic;
 			isTicsBetweenLabels = rhs.IsTicsBetweenLabels;
+			isUseTenPower = rhs.IsUseTenPower;
 
 			isReverse = rhs.IsReverse;
 			isOmitMag = rhs.IsOmitMag;
@@ -759,11 +795,15 @@ namespace ZedGraph
 			gridDashOn = rhs.GridDashOn;
 			gridDashOff = rhs.GridDashOff;
 			gridPenWidth = rhs.GridPenWidth;
+			minorGridDashOn = rhs.MinorGridDashOn;
+			minorGridDashOff = rhs.MinorGridDashOff;
+			minorGridPenWidth = rhs.MinorGridPenWidth;
 			
 			minSpace = rhs.MinSpace;
 
 			color = rhs.Color;
 			gridColor = rhs.GridColor;
+			minorGridColor = rhs.MinorGridColor;
 		} 
 	#endregion
 
@@ -1218,10 +1258,10 @@ namespace ZedGraph
 		/// <summary>
 		/// Determines if a line will be drawn at the zero value for the axis.  That is, a line that
 		/// divides the negative values from the positive values.  The default is set according to
-		/// <see cref="Default.IsZeroLine"/>
+		/// <see cref="XAxis.Default.IsZeroLine"/>, <see cref="YAxis.Default.IsZeroLine"/>,
+		/// <see cref="Y2Axis.Default.IsZeroLine"/>,
 		/// </summary>
 		/// <value>true to show the zero line, false otherwise</value>
-		/// <seealso cref="Default.IsZeroLine"/>.
 		public bool IsZeroLine
 		{
 			get { return isZeroLine; }
@@ -1280,6 +1320,79 @@ namespace ZedGraph
 		{
 			get { return gridColor; }
 			set { gridColor = value; }
+		}
+	#endregion
+
+	#region Minor Grid Properties
+
+		/// <summary>
+		/// Determines if the minor <see cref="Axis"/> gridlines (in between each labeled value) will be shown
+		/// </summary>
+		/// <value>true to show the minor gridlines, false otherwise</value>
+		/// <seealso cref="Default.IsShowMinorGrid">Default.IsShowMinorGrid</seealso>.
+		/// <seealso cref="MinorGridColor"/>
+		/// <seealso cref="MinorGridPenWidth"/>
+		/// <seealso cref="MinorGridDashOn"/>
+		/// <seealso cref="MinorGridDashOff"/>
+		/// <seealso cref="IsVisible"/>
+		public bool IsShowMinorGrid
+		{
+			get { return isShowMinorGrid; }
+			set { isShowMinorGrid = value; }
+		}
+
+		/// <summary>
+		/// The "Dash On" mode for drawing the minor grid.  This is the distance,
+		/// in pixels, of the dash segments that make up the dashed grid lines.
+		/// </summary>
+		/// <value>The dash on length is defined in pixel units</value>
+		/// <seealso cref="MinorGridDashOff"/>
+		/// <seealso cref="IsShowMinorGrid"/>
+		/// <seealso cref="Default.MinorGridDashOn"/>.
+		public float MinorGridDashOn
+		{
+			get { return minorGridDashOn; }
+			set { minorGridDashOn = value; }
+		}
+		/// <summary>
+		/// The "Dash Off" mode for drawing the minor grid.  This is the distance,
+		/// in pixels, of the spaces between the dash segments that make up
+		/// the dashed grid lines.
+		/// </summary>
+		/// <value>The dash off length is defined in pixel units</value>
+		/// <seealso cref="MinorGridDashOn"/>
+		/// <seealso cref="IsShowMinorGrid"/>
+		/// <seealso cref="Default.MinorGridDashOff"/>.
+		public float MinorGridDashOff
+		{
+			get { return minorGridDashOff; }
+			set { minorGridDashOff = value; }
+		}
+		/// <summary>
+		/// The default pen width used for drawing the minor grid lines.
+		/// </summary>
+		/// <value>The grid pen width is defined in pixel units</value>
+		/// <seealso cref="IsShowMinorGrid"/>
+		/// <seealso cref="Default.MinorGridPenWidth"/>.
+		/// <seealso cref="MinorGridColor"/>
+		public float MinorGridPenWidth
+		{
+			get { return minorGridPenWidth; }
+			set { minorGridPenWidth = value; }
+		}
+		/// <summary>
+		/// The color to use for drawing this <see cref="Axis"/> minor grid.  This affects only the minor grid
+		/// lines, since the <see cref="TitleFontSpec"/> and
+		/// <see cref="ScaleFontSpec"/> both have their own color specification.
+		/// </summary>
+		/// <value> The color is defined using the
+		/// <see cref="System.Drawing.Color"/> class</value>
+		/// <seealso cref="Default.MinorGridColor"/>.
+		/// <seealso cref="MinorGridPenWidth"/>
+		public Color MinorGridColor
+		{
+			get { return minorGridColor; }
+			set { minorGridColor = value; }
 		}
 	#endregion
 
@@ -1432,6 +1545,20 @@ namespace ZedGraph
 		{
 			get { return isShowTitle; }
 			set { isShowTitle = value; }
+		}
+		
+		/// <summary>
+		/// Determines if powers-of-ten notation will be used for the numeric value labels.
+		/// The powers-of-ten notation is just the text "10" followed by a superscripted value
+		/// indicating the magnitude.  This mode is only valid for log scales (see
+		/// <see cref="IsLog"/> and <see cref="Type"/>).
+		/// </summary>
+		/// <value> boolean value; true to show the title as a power of ten, false to
+		/// show a regular numeric value (e.g., "0.01", "10", "1000")</value>
+		public bool IsUseTenPower
+		{
+			get { return isUseTenPower; }
+			set { isUseTenPower = value; }
 		}
 		
 		/// <summary>
@@ -1782,7 +1909,7 @@ namespace ZedGraph
 				MakeLabel( i, dVal, out tmpStr );
 
 				SizeF sizeF;
-				if ( this.IsLog )
+				if ( this.IsLog && this.isUseTenPower )
 					sizeF = this.ScaleFontSpec.BoundingBoxTenPower( g, tmpStr,
 						scaleFactor );
 				else
@@ -2154,7 +2281,7 @@ namespace ZedGraph
 						textCenter = textTop + height / 2.0F;
 					
 					
-					if ( this.IsLog )
+					if ( this.IsLog && this.isUseTenPower )
 						this.ScaleFontSpec.DrawTenPower( g, tmpStr,
 							pixVal, textCenter,
 							AlignH.Center, AlignV.Center,
@@ -2380,11 +2507,23 @@ namespace ZedGraph
 					this.scaleFormat = Default.ScaleFormat;
 				label = XDate.ToString( dVal, this.scaleFormat );
 			}
-			else if ( this.IsLog )
+			else if ( this.IsLog && this.isUseTenPower )
 			{
 				label = string.Format( "{0:F0}", dVal );
 			}
-			else // linear or ordinal
+			else if ( this.IsLog )
+			{
+				int tmpNum = 0;
+				if ( dVal < 0 )
+					tmpNum = (int) Math.Abs( dVal );
+					
+				string tmpStr = "{0:F*}";
+				
+				tmpStr = tmpStr.Replace("*", tmpNum.ToString("D") );
+								
+				label = String.Format( tmpStr, Math.Pow( 10.0, dVal ) );
+			}
+			else // linear or ordinal or (log && ! isUseTenPower)
 			{
 				double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
 
@@ -2444,18 +2583,38 @@ namespace ZedGraph
 					double	dVal = first;
 					float	pixVal;
 					Pen		pen = new Pen( this.color, this.ticPenWidth  );
+					Pen		minorGridPen = new Pen( this.minorGridColor, this.minorGridPenWidth  );
+
+					minorGridPen.DashStyle = DashStyle.Custom;
+					float[] pattern = new float[2];
+					pattern[0] = this.minorGridDashOn;
+					pattern[1] = this.minorGridDashOff;
+					minorGridPen.DashPattern = pattern;
 					
 					int iTic = CalcMinorStart( baseVal );
+					int majorTic = 0;
+					double majorVal = CalcMajorTicValue( baseVal, majorTic );
 
 					// Draw the minor tic marks
 					while ( dVal < last && iTic < 5000 )
 					{
+						// Calculate the scale value for the current tic
 						dVal = CalcMinorTicValue( baseVal, iTic );
-
-						if ( dVal >= first && dVal <= last )
+						// Maintain a value for the current major tic
+						if ( dVal > majorVal )
+							majorVal = CalcMajorTicValue( baseVal, ++majorTic );
+						
+						// Make sure that the current value does not match up with a major tic
+						if ( ( Math.Abs(dVal) < 1e-20 && Math.Abs( dVal - majorVal ) > 1e-20 ) ||
+							( Math.Abs(dVal) > 1e-20 && Math.Abs( (dVal - majorVal) / dVal ) > 1e-10 ) &&
+							( dVal >= first && dVal <= last ) )
 						{
 							pixVal = this.LocalTransform( dVal );
 
+							// draw the minor grid
+							if ( this.isShowMinorGrid )
+								g.DrawLine( minorGridPen, pixVal, 0.0F, pixVal, topPix );
+								
 							// draw the outside tic
 							if ( this.isMinorTic )
 								g.DrawLine( pen, pixVal, 0.0F, pixVal, 0.0F + minorScaledTic );
@@ -3759,3 +3918,4 @@ namespace ZedGraph
 	#endregion
 	}
 }
+

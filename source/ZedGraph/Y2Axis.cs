@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-09 17:13:42 $ </version>
 	public class Y2Axis : Axis, ICloneable
 	{
 	#region Defaults
@@ -47,6 +47,13 @@ namespace ZedGraph
 			/// values, title, tic marks, false to hide the axis entirely.
 			/// </summary>
 			public static bool IsVisible = false;
+			/// <summary>
+			/// Determines if a line will be drawn at the zero value for the 
+			/// <see cref="Y2Axis"/>, that is, a line that
+			/// divides the negative values from positive values.
+			/// <seealso cref="Axis.IsZeroLine"/>.
+			/// </summary>
+			public static bool IsZeroLine = true;
 		}
 	#endregion
 
@@ -59,9 +66,10 @@ namespace ZedGraph
 		/// <param name="title">The <see cref="Axis.Title"/> for this axis</param>
 		public Y2Axis( string title )
 		{
-			this.Title = title;
-			this.IsVisible = Default.IsVisible;
-			this.ScaleFontSpec.Angle = -90.0F;
+			this.title = title;
+			this.isVisible = Default.IsVisible;
+			this.isZeroLine = Default.IsZeroLine;
+			this.scaleFontSpec.Angle = -90.0F;
 		}
 
 		/// <summary>
