@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.24 $ $Date: 2005-03-01 06:41:32 $ </version>
+	/// <version> $Revision: 3.25 $ $Date: 2005-03-09 06:42:36 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -2558,7 +2558,7 @@ namespace ZedGraph
 			{
 				float tmpSpace =
 					pane.XAxis.GetScaleMaxSpace( g, pane, scaleFactor ).Width / 2.0F +
-						charHeight;
+							charHeight / 2.0F;
 				if ( tmpSpace > space )
 					space = tmpSpace;
 			}

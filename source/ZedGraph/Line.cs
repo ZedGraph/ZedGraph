@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-03-08 07:33:28 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-03-09 06:42:36 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -595,8 +595,8 @@ namespace ZedGraph
 							tmpY = pane.YAxis.Transform( i, curY );
 						
 						// off-scale values "break" the line
-						if ( tmpX < -100000 || tmpX > 100000 ||
-							tmpY < -100000 || tmpY > 100000 )
+						if ( tmpX < -1000000 || tmpX > 1000000 ||
+							tmpY < -1000000 || tmpY > 1000000 )
 							broke = true;
 						else
 						{
@@ -692,6 +692,9 @@ namespace ZedGraph
 							curY = pane.Y2Axis.Transform( i, y );
 						else
 							curY = pane.YAxis.Transform( i, y );
+
+						if ( curX < -1000000 || curY < -1000000 || curX > 1000000 || curY > 1000000 )
+							continue;
 						
 						// Add the pixel value pair into the points array
 						// Two points are added for step type curves
