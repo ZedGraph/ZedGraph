@@ -156,9 +156,9 @@ namespace ZedGraph
 		{
 			if ( this.isVisible )
 			{
-				Line.Draw( g, pane, (PointPairList) points, isY2Axis, scaleFactor );
+				Line.Draw( g, pane, this, isY2Axis, scaleFactor );
 				
-				Symbol.Draw( g, pane, (PointPairList) points, isY2Axis, scaleFactor );
+				Symbol.Draw( g, pane, this, isY2Axis, scaleFactor );
 			}
 		}		
 

@@ -44,7 +44,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.20 $ $Date: 2004-12-12 20:19:54 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2005-01-05 15:55:50 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -196,7 +196,15 @@ namespace ZedGraph
         /// <seealso cref="CalcScaleFactor"/>
         private bool isPenWidthScaled;
 
-        /// <summary>
+		/// <summary>Private field that determines how the <see cref="LineItem"/>
+		/// graphs will be displayed. See the <see cref="ZedGraph.LineType"/> enum
+		/// for the individual types available.
+		/// To access this value, use the public property <see cref="LineType"/>.
+		/// </summary>
+		/// <seealso cref="Default.LineType"/>
+		private LineType lineType;
+		
+		/// <summary>
 		/// The rectangle that defines the full area into which the
 		/// graph can be rendered.  Units are pixels.
 		/// </summary>
@@ -401,6 +409,12 @@ namespace ZedGraph
 			/// </summary>
 			/// <seealso cref="GraphPane.BarType"/>
 			public static BarType BarType = BarType.Cluster;
+			/// <summary>The default value for the <see cref="GraphPane.LineType"/> property, which
+			/// determines if the lines are drawn in normal or "stacked" mode.  See the
+			/// <see cref="ZedGraph.LineType"/> for more information.
+			/// </summary>
+			/// <seealso cref="GraphPane.LineType"/>
+			public static LineType LineType = LineType.Normal;
 			/// <summary>
 			/// The default width of a bar cluster 
 			/// on a <see cref="Bar"/> graph.  This value only applies to
@@ -598,6 +612,17 @@ namespace ZedGraph
 			return bitmap;
 		}
 
+		/// <summary>Determines how the <see cref="LineItem"/>
+		/// graphs will be displayed. See the <see cref="ZedGraph.LineType"/> enum
+		/// for the individual types available.
+		/// </summary>
+		/// <seealso cref="Default.LineType"/>
+		public LineType LineType
+		{
+			get { return lineType; }
+			set { lineType = value; }
+		}
+		
 	#endregion
 	
 	#region PaneRect Properties
@@ -830,10 +855,9 @@ namespace ZedGraph
 			get { return barBase; }
 			set { barBase = value; }
 		}
-		/// <summary>Private field that determines how the <see cref="BarItem"/>
+		/// <summary>Determines how the <see cref="BarItem"/>
 		/// graphs will be displayed. See the <see cref="ZedGraph.BarType"/> enum
 		/// for the individual types available.
-		/// To access this value, use the public property <see cref="BarType"/>.
 		/// </summary>
 		/// <seealso cref="Default.BarType"/>
 		public BarType BarType
@@ -910,6 +934,8 @@ namespace ZedGraph
 			this.clusterScaleWidth = Default.ClusterScaleWidth;
 			this.barBase = Default.BarBase;
 			this.barType = Default.BarType;
+			
+			this.lineType = Default.LineType;
 		}
 
 		/// <summary>
@@ -948,6 +974,8 @@ namespace ZedGraph
 			this.clusterScaleWidth = rhs.ClusterScaleWidth;
 			this.barBase = rhs.BarBase;
 			this.barType = rhs.BarType;
+			
+			this.lineType = rhs.LineType;
 		} 
 
 		/// <summary>

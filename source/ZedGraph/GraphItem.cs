@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-12-10 05:45:55 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-01-05 15:55:50 $ </version>
 	abstract public class GraphItem
 	{
 	#region Fields
@@ -40,6 +40,13 @@ namespace ZedGraph
 		/// </summary>
 		protected Location location;
 
+		/// <summary>
+		/// Protected field that determines whether or not this <see cref="GraphItem"/>
+		/// is visible in the graph.  Use the public property <see cref="IsVisible"/> to
+		/// access this value.
+		/// </summary>
+		protected bool isVisible;
+		
 		/// <summary>
 		/// A tag object for use by the user.  This can be used to store additional
 		/// information associated with the <see cref="GraphItem"/>.  ZedGraph does
@@ -115,6 +122,17 @@ namespace ZedGraph
 			get { return zOrder; }
 			set { zOrder = value; }
 		}
+		
+		/// <summary>
+		/// Gets or sets a value that determines if this <see cref="GraphItem"/> will be
+		/// visible in the graph.  true displays the item, false hides it.
+		/// </summary>
+		public bool IsVisible
+		{
+			get { return isVisible; }
+			set { isVisible = value; }
+		}
+		
 	#endregion
 	
 	#region Constructors
@@ -222,6 +240,7 @@ namespace ZedGraph
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
 		public GraphItem( float x, float y, CoordType coordType, AlignH alignH, AlignV alignV )
 		{
+			this.isVisible = true;
 			this.Tag = null;
 			this.zOrder = ZOrder.A_InFront;
 			this.location = new Location( x, y, coordType, alignH, alignV );
@@ -254,6 +273,7 @@ namespace ZedGraph
 		public GraphItem( float x, float y, float x2, float y2, CoordType coordType,
 					AlignH alignH, AlignV alignV )
 		{
+			this.isVisible = true;
 			this.Tag = null;
 			this.zOrder = ZOrder.A_InFront;
 			this.location = new Location( x, y, x2, y2, coordType, alignH, alignV );
@@ -265,6 +285,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="GraphItem"/> object from which to copy</param>
 		public GraphItem( GraphItem rhs )
 		{
+			this.isVisible = rhs.IsVisible;
 			this.Tag = rhs.Tag;
 			this.zOrder = rhs.ZOrder;
 			this.location = rhs.Location;

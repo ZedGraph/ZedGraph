@@ -19,6 +19,8 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 using IComparer	= System.Collections.IComparer;
 
 namespace ZedGraph
@@ -29,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2004-12-07 00:03:54 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-01-05 15:55:51 $ </version>
 	public struct PointPair
 	{
 	#region Member variables

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.12 $ $Date: 2004-12-10 05:45:55 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-01-05 15:55:50 $ </version>
 	public class CurveList : CollectionPlus, ICloneable
 	{
 	#region Properties
@@ -299,15 +299,20 @@ namespace ZedGraph
 			maxPts = 1;			
 			
 			PointPairList sumList = null;
-
+			
 			// Loop over each curve in the collection and examine any that are not a stack bar
 			foreach( CurveItem curve in this )
 			{
-				if ( curve.IsBar && pane.BarType == BarType.Stack )
+				bool isBaseX = true;
+				if ( curve.IsBar )
+					isBaseX = ( pane.BarBase == BarBase.X );
+
+				if ( ( ( curve is BarItem ) && pane.BarType == BarType.Stack ) ||
+					( ( curve is LineItem ) && pane.LineType == LineType.Stack ) )
 				{
 					if ( sumList == null )
 						sumList = (PointPairList) curve.Points.Clone();
-					else if ( pane.BarBase == BarBase.X )
+					else if ( isBaseX )
 						sumList.SumY( curve.Points );
 					else
 						sumList.SumX( curve.Points );
@@ -433,12 +438,13 @@ namespace ZedGraph
 					y2MaxVal = 1;
 				}
 			}
-			//check for single values which may	be	larger than the	totals,	because totals have been        
-			// reduced by	negative values.  If any	are found, adjust max/min values accordingly		   rpk
+			// check for single values which may be larger than the	totals,	because totals have been        
+			// reduced by negative values.  If any are found, adjust max/min values accordingly  rpk
 			if	( pane.BarType == BarType.Stack)
-				foreach(	CurveItem curve	in this	)
+			{
+				foreach( CurveItem curve in this )
 				{	  
-					if	( curve.IsBar 	)
+					if	( curve.IsBar )
 					{
 						curve.Points.GetRange( ref tXMinVal, ref tXMaxVal,
 										ref tYMinVal, ref tYMaxVal, bIgnoreInitial, false, true);
@@ -446,24 +452,25 @@ namespace ZedGraph
 						if	( curve.IsY2Axis )
 						{
 							if	( tYMinVal < y2MinVal )
-								y2MinVal =	tYMinVal;
+								y2MinVal = tYMinVal;
 							if	( tYMaxVal > y2MaxVal )
-								y2MaxVal	=	tYMaxVal;
+								y2MaxVal = tYMaxVal;
 						}
 						else
 						{
 							if	( tYMinVal < yMinVal )
-								yMinVal	=	tYMinVal;
-							if	( tYMaxVal > yMaxVal	)
+								yMinVal	= tYMinVal;
+							if	( tYMaxVal > yMaxVal )
 								yMaxVal	= tYMaxVal;
 						}
 						
 						if	( tXMinVal < xMinVal )
-							xMinVal	=	tXMinVal;
-						if	( tXMaxVal > xMaxVal	)
+							xMinVal	= tXMinVal;
+						if	( tXMaxVal > xMaxVal )
 							xMaxVal	= tXMaxVal;
 					}
-				}		
+				}
+			}
 			
 			//create reasonable min/max values for bartype = percentStack 
 			bool hasNegative = false ;
@@ -562,7 +569,7 @@ namespace ZedGraph
 					pos--;
 					
 				// Render the curve
-				//	if	it's a bar type or a sorted overlay or a percentstacked bar, it's already been	done above
+				//	if it's a sorted overlay bar, it's already been	done above
 				if	( !(pane.BarType == BarType.SortedOverlay) || !curve.IsBar  ) 
 					curve.Draw( g, pane, pos, scaleFactor );
 			}

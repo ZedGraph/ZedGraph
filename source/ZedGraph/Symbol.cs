@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-12-10 17:54:50 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-01-05 15:55:51 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -615,7 +615,7 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
+		/// <param name="curve">A <see cref="LineItem"/> representing this
 		/// curve.</param>
 		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
 		/// true for the "Y2" axis, false for the "Y" axis.</param>
@@ -625,11 +625,12 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void Draw( Graphics g, GraphPane pane, PointPairList points,
+		public void Draw( Graphics g, GraphPane pane, LineItem curve,
 			bool isY2Axis, double scaleFactor )
 		{
 			float	tmpX, tmpY;
-			double	curX, curY;
+			double	curX, curY, lowVal;
+			PointPairList points = curve.Points;
 		
 			if ( points != null && ( this.border.IsVisible || this.fill.IsVisible ) )
 			{
@@ -642,12 +643,20 @@ namespace ZedGraph
 				GraphicsPath path = MakePath( g, scaleFactor );
 				RectangleF rect = path.GetBounds();
 				Brush brush = this.Fill.MakeBrush( rect );
+				BarValueHandler valueHandler = new BarValueHandler( pane );
 
 				// Loop over each defined point							
 				for ( int i=0; i<points.Count; i++ )
 				{
-					curX = points[i].X;
-					curY = points[i].Y;
+					if ( pane.LineType == LineType.Stack )
+					{
+						valueHandler.GetBarValues( curve, i, out curX, out lowVal, out curY );
+					}
+					else
+					{
+						curX = points[i].X;
+						curY = points[i].Y;
+					}
 				
 					// Any value set to double max is invalid and should be skipped
 					// This is used for calculated values that are out of range, divide

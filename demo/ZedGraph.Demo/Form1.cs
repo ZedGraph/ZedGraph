@@ -115,24 +115,14 @@ namespace ZedGraphTest
 		private bool isResizable = true;
 		double[] gx = new double[20];
 		double[] gy = new double[20];
-		//		int	nPts = 20;
+		TextItem	myText;
 
 		private void Form1_Load(object sender, System.EventArgs e)
 		{			
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
-			//myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
-			//	"Wacky Widget Company\nProduction Report",
-			//	"Time, Days\n(Since Plant Construction Startup)",
-			//	"Widget Production\n(units/hour)" );
-			//myPane.AxisBackColor = Color.LightGoldenrodYellow;
-
-			// Create a new graph with topLeft at (40,40) and size 600x400
-			//myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
-			//	"My Test Text Graph", "Label", "My Y Axis" );
-
-#if true	// The main example
+#if false	// The main example
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -183,6 +173,8 @@ namespace ZedGraphTest
 			//brush = new PathGradientBrush( path );
 			//bar.Bar.Fill = new Fill( brush );
 			
+			//PointPairList junk = new PointPairList();
+			//myPane.AddCurve( "Hi There", junk, Color.Blue, SymbolType.None );
 			
 			myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
 			
@@ -213,6 +205,7 @@ namespace ZedGraphTest
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
+			text.FontSpec.StringAlignment = StringAlignment.Near;
 			myPane.GraphItemList.Add( text );
 
 			ArrowItem arrow = new ArrowItem( Color.Black, 12F, 175F, 77F, 100F, 45F );
@@ -262,15 +255,18 @@ namespace ZedGraphTest
 			box.ZOrder = ZOrder.E_BehindAxis;
 			myPane.GraphItemList.Add( box );
 			
-			text = new TextItem( "Peak Range", 1170, 105 );
-			text.Location.CoordinateFrame = CoordType.AxisXYScale;
-			text.Location.AlignH = AlignH.Right;
-			text.Location.AlignV = AlignV.Center;
-			text.FontSpec.IsItalic = true;
-			text.FontSpec.IsBold = false;
-			text.FontSpec.Fill.IsVisible = false;
-			text.FontSpec.Border.IsVisible = false;
-			myPane.GraphItemList.Add( text );
+			myText = new TextItem( "Peak Range", 1170, 105 );
+			myText.Location.CoordinateFrame = CoordType.AxisXYScale;
+			myText.Location.AlignH = AlignH.Right;
+			myText.Location.AlignV = AlignV.Center;
+			myText.FontSpec.IsItalic = true;
+			myText.FontSpec.IsBold = false;
+			myText.FontSpec.Fill.IsVisible = false;
+			myText.FontSpec.Border.IsVisible = false;
+			myPane.GraphItemList.Add( myText );
+			
+			
+			//myPane.LineType = LineType.Stack;
 			//myPane.PaneBorder.IsVisible= false;
 
 //			RectangleF rect = new RectangleF( .5F, .2F, .2F, .2F );
@@ -293,6 +289,47 @@ namespace ZedGraphTest
 			myPane.GraphItemList.Add( imageItem );
 			*/
 
+#endif
+
+#if true	// Test Line Stacking
+
+            myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+				"Wacky Widget Company\nProduction Report",
+				"Time, Days\n(Since Plant Construction Startup)",
+				"Widget Production\n(units/hour)" );
+			SetSize();
+
+			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
+			LineItem curve;
+			curve = myPane.AddCurve( "Larry", x, y, Color.Green, SymbolType.Circle );
+			curve.Line.Width = 1.5F;
+			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 60, 190, 50), 90F );
+			curve.Line.IsSmooth = true;
+			curve.Line.SmoothTension = 0.6F;
+			curve.Symbol.Fill = new Fill( Color.White );
+			curve.Symbol.Size = 10;
+			curve.Line.Fill.IsVisible = false;
+			
+			double[] y3 = { 5.2, 49.0, 33.8, 88.57, 99.9, 36.8, 22.1, 34.3, 10.4, 17.5 };
+			curve = myPane.AddCurve( "Moe", x, y3, Color.FromArgb( 200, 55, 135), SymbolType.Triangle );
+			curve.Line.Width = 1.5F;
+			//curve.Line.IsSmooth = true;
+			curve.Symbol.Fill = new Fill( Color.White );
+			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 160, 230, 145, 205), 90F );
+			curve.Symbol.Size = 10;
+			
+			myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			
+			myPane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
+						Color.FromArgb( 255, 255, 190), 90F );
+			
+			myPane.XAxis.IsShowGrid = true;
+
+			myPane.YAxis.IsShowGrid = true;
+			//myPane.YAxis.Max = 120;									
+			
+			myPane.LineType = LineType.Stack;
 #endif
 
 #if false	// The transparent example
@@ -800,11 +837,13 @@ namespace ZedGraphTest
 			string[] labels = { "point\none", "two", "point\nthree", "four", "5", "6", "Point\n7", "8", "9", "Point\nten" };
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend
-			CurveItem myCurve = myPane.AddCurve( "My Curve",
+			LineItem myCurve = myPane.AddCurve( "My Curve",
 				x, y, Color.Red, SymbolType.Diamond );
 
-			myPane.YAxis.Min = 100;
-			myPane.YAxis.Max = 150;
+			myCurve.IsVisible = false;
+			
+			//myPane.YAxis.Min = 100;
+			//myPane.YAxis.Max = 150;
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
 			//myPane.AxisChange( CreateGraphics() );
@@ -2687,11 +2726,29 @@ namespace ZedGraphTest
 #if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+			//myPane.XAxis.PickScale( 250, 900, myPane, this.CreateGraphics(), myPane.CalcScaleFactor() );
+			//Invalidate();
+			
 			//showTicks = true;
 			//Invalidate();
+			
+			if ( myText != null )
+			{
+				CurveItem curve;
+				int		iPt;
+				if ( myPane.FindNearestPoint( new PointF( e.X, e.Y ), out curve, out iPt ) )
+					myText.Text = String.Format( "label = {0}  X = {1}",
+						curve.Label, curve.Points[iPt].ToString("e2") );
+				else
+					myText.Text = "none";
+				
+				if ( curve is LineItem )
+					((LineItem) curve).Line.IsVisible = false;
+				Invalidate();
+			}
 
 			//DoPrint();
-			CopyToPNG( myPane );
+			//CopyToPNG( myPane );
 			
 			//Bitmap image = myPane.ScaledImage( 3000, 2400, 600 );
 			//image.Save( @"c:\zedgraph.jpg", ImageFormat.Jpeg );

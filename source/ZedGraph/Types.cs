@@ -391,6 +391,22 @@ namespace ZedGraph
 	};
 	
 	/// <summary>
+	/// Enumeration type that defines the available types of <see cref="LineItem"/> graphs.
+	/// </summary>
+	/// <seealso cref="GraphPane.LineType"/>
+	public enum LineType
+	{
+		/// <summary>
+		/// Draw the lines as normal.  Any fill area goes from each line down to the X Axis.
+		/// </summary>
+		Normal,
+		/// <summary>
+		/// Draw the lines stacked on top of each other, accumulating values to a total value.
+		/// </summary>
+		Stack
+	}
+	
+	/// <summary>
 	/// Enumeration type that defines the available types of <see cref="BarItem"/> graphs.
 	/// </summary>
 	/// <seealso cref="GraphPane.BarType"/>

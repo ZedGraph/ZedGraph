@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-12-07 00:03:53 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-01-05 15:55:50 $ </version>
 	public class BarValueHandler
 	{
 		private GraphPane pane;
@@ -161,6 +161,35 @@ namespace ZedGraph
 
 				if ( baseVal == PointPair.Missing || lowVal == PointPair.Missing ||
 						hiVal == PointPair.Missing )
+					return false;
+				else
+					return true;
+			}
+			else if ( curve is LineItem && pane.LineType == LineType.Stack )
+			{
+				double stack = 0;
+				double curVal;
+				foreach ( CurveItem tmpCurve in pane.CurveList )
+				{
+					if ( tmpCurve is LineItem && iPt < tmpCurve.Points.Count )
+					{
+						curVal = tmpCurve.Points[iPt].Y;
+
+						if ( curVal == PointPair.Missing )
+							continue;
+
+						if ( tmpCurve == curve )
+						{
+							lowVal = stack;
+							hiVal = stack + curVal;
+						}
+
+						stack += curVal;
+					}
+				}
+				
+				if ( baseVal == PointPair.Missing || lowVal == PointPair.Missing ||
+					hiVal == PointPair.Missing )
 					return false;
 				else
 					return true;
