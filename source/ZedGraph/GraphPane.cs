@@ -44,7 +44,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.18 $ $Date: 2004-12-10 08:33:14 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2004-12-11 04:37:41 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -232,7 +232,7 @@ namespace ZedGraph
 			/// <see cref="GraphPane"/> pane title
 			/// (<see cref="ZedGraph.FontSpec.Size"/> property).
 			/// </summary>
-			public static float FontSize = 16;
+			public static float FontSize = 14;
 			/// <summary>
 			/// The default font color for the
 			/// <see cref="GraphPane"/> pane title

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2004-12-11 04:37:41 $ </version>
 	public class TextItem : GraphItem, ICloneable
 	{
 	#region Fields
@@ -64,7 +64,7 @@ namespace ZedGraph
 			/// (<see cref="ZedGraph.FontSpec.Size"/> property).  Units are
 			/// in points (1/72 inch).
 			/// </summary>
-			public static float FontSize = 14.0F;
+			public static float FontSize = 12.0F;
 			/// <summary>
 			/// The default font color for the <see cref="TextItem"/> text
 			/// (<see cref="ZedGraph.FontSpec.FontColor"/> property).

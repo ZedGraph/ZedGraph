@@ -1043,7 +1043,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if true	// The Error bar graph sample
+#if false	// The Error bar graph sample
 
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
@@ -1076,6 +1076,121 @@ namespace ZedGraphTest
 			
 			myPane.AxisChange( this.CreateGraphics() );
 
+#endif
+
+#if false	//HiLoClose Example
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"Hi-Low-Close Chart",
+				"Date",
+				"Price" );
+
+			double [] hi = new double[20] ;
+			double [] low = new double[20] ;
+			double [] closing = new double[20] ;
+			double [] x = new double[20] ;
+
+			for ( int i=45;	i<65; i++	)
+			{
+				x[i-45] = (double)	new XDate(	2004,	12, i-30,0,0,0);
+				if (  i % 2 == 1)
+					hi[i-45] = (double)	i *	1.03 ;
+				else
+					hi[i-45] = (double)	i *	.99 ;
+
+				low[i-45] = .97 * hi[i-45] ;					
+
+				closing[i-45] = low[i-45] +  ( hi[i-45] - low[i-45] ) / 2 ;
+			}
+
+
+			LineItem curve;
+			curve = myPane.AddCurve( "Closing Price", x, closing, Color.Black,
+				SymbolType.Diamond );
+			curve.Line.IsVisible = false ;
+			curve.Symbol.Fill = new Fill( Color.Red );
+			curve.Symbol.Size = 5;
+
+			ErrorBarItem myCurve = myPane.AddErrorBar(	"Price Range",x,hi,low,
+				Color.Blue );
+
+			//	Set the XAxis	to date type
+			myPane.XAxis.Type =	AxisType.Date;
+			myPane.XAxis.Step = 1 ;
+			myPane.XAxis.ScaleFontSpec.Size = 7 ;
+			myPane.XAxis.ScaleFontSpec.Angle = 65 ;
+			myPane.XAxis.MajorUnit = DateUnit.Day ;
+			myPane.XAxis.ScaleFontSpec.IsBold = true ;
+			myPane.XAxis.ScaleFormat = "MM/dd/yy" ;
+			myPane.XAxis.Min = x[0] - 1 ;
+
+			myCurve.ErrorBar.PenWidth = 3;
+			myCurve.ErrorBar.Symbol.IsVisible = false;
+			
+			myPane.YAxis.IsShowGrid = true ;
+			myPane.YAxis.IsShowMinorGrid = true ;
+
+			myPane.AxisFill = new Fill( Color.White,
+					Color.FromArgb( 255, 255, 166), 90F );
+#endif
+
+#if false	// Random HiLoClose Example
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"ZedgroSoft, International\nHi-Low-Close Daily Stock Chart",
+				"",
+				"Trading Price, $US" );
+
+			myPane.FontSpec.Family = "Times";
+			myPane.FontSpec.IsItalic = true;
+			myPane.FontSpec.Size = 16;
+
+			double hi, low, close, x;
+			PointPairList hList = new PointPairList();
+			PointPairList cList = new PointPairList();
+			Random rand = new Random();
+			close = 45;
+
+			for ( int i=45;	i<65; i++	)
+			{
+				x = (double) new XDate( 2004, 12, i-30 );
+				close = close + 2.0 * rand.NextDouble() - 0.5;
+				hi = close + 2.0 * rand.NextDouble();
+				low = close - 2.0 * rand.NextDouble();
+				hList.Add( x, hi, low );
+				cList.Add( x, close );
+			}
+
+
+			LineItem curve;
+			curve = myPane.AddCurve( "Closing Price", cList, Color.Black,
+				SymbolType.Diamond );
+			curve.Line.IsVisible = false ;
+			curve.Symbol.Fill = new Fill( Color.Red );
+			curve.Symbol.Size = 5;
+
+			ErrorBarItem myCurve = myPane.AddErrorBar(	"Price Range", hList,
+				Color.Blue );
+
+			//	Set the XAxis	to date type
+			myPane.XAxis.Type =	AxisType.Date;
+			myPane.XAxis.Step = 1 ;
+			myPane.XAxis.ScaleFontSpec.Size = 10 ;
+			myPane.XAxis.ScaleFontSpec.Angle = 65 ;
+			myPane.XAxis.MajorUnit = DateUnit.Day ;
+			myPane.XAxis.ScaleFontSpec.IsBold = true ;
+			myPane.XAxis.ScaleFormat = "d MMM" ;
+			myPane.XAxis.Min = hList[0].X - 1 ;
+
+			myCurve.ErrorBar.PenWidth = 3;
+			myCurve.ErrorBar.Symbol.IsVisible = false;
+			
+			myPane.YAxis.IsShowGrid = true ;
+			myPane.YAxis.IsShowMinorGrid = true ;
+			myPane.YAxis.MinorStep = 0.5;
+
+			myPane.AxisFill = new Fill( Color.White,
+					Color.FromArgb( 255, 255, 166), 90F );
 #endif
 
 #if false	// The sideways bar graph sample
@@ -1583,7 +1698,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if false	// The main example
+#if true	// The main example
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -1731,6 +1846,7 @@ namespace ZedGraphTest
 			//myPane.CurveList.Remove( myPane.CurveList.IndexOf( bar ) );
 
 //			Bitmap bm = new Bitmap( @"c:\temp\sunspot.jpg" );
+			/*
 			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
 			Image image = Image.FromHbitmap( bm.GetHbitmap() );
 			ImageItem imageItem = new ImageItem( image,
@@ -1739,6 +1855,7 @@ namespace ZedGraphTest
 			//imageItem.IsScaled = false;
 			imageItem.ZOrder = ZOrder.C_BehindAxisBorder;
 			myPane.GraphItemList.Add( imageItem );
+			*/
 
 #endif
 
