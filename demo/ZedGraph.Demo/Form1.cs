@@ -146,7 +146,7 @@ namespace ZedGraph.Demo
 
 #endif
 
-#if false	// The main example
+#if true	// The main example
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -328,7 +328,7 @@ namespace ZedGraph.Demo
 
 #endif
 
-#if true	//Pie Chart Example   
+#if false	//Pie Chart Example   
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"2003 Regional Sales", "", "" );
@@ -3151,7 +3151,14 @@ namespace ZedGraph.Demo
 #if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			Serialize( myPane );
+			object obj;
+			int index;
+			if ( myPane.FindNearestObject( new PointF( e.X, e.Y ), this.CreateGraphics(), out obj, out index ) )
+				MessageBox.Show( obj.ToString() + " index=" + index );
+			//else
+			//	MessageBox.Show( "No Object Found" );
+
+			//Serialize( myPane );
 			//DeSerialize( out myPane );
 
 			//myPane.XAxis.PickScale( 250, 900, myPane, this.CreateGraphics(), myPane.CalcScaleFactor() );
@@ -3236,23 +3243,6 @@ namespace ZedGraph.Demo
 						Invalidate();
 			*/
 
-
-	
-			/*
-			object obj;
-			int index;
-			
-			if ( myPane.FindNearestObject( new PointF( e.X, e.Y ), this.CreateGraphics(), out obj, out index ) )
-				MessageBox.Show( obj.ToString() + " index=" + index );
-			//else
-			//	MessageBox.Show( "No Object Found" );
-			
-			if ( obj is Legend )
-			{
-				myPane.CurveList[index].IsVisible = !myPane.CurveList[index].IsVisible;
-				Invalidate();
-			}
-			*/
 			
 			
 			/*

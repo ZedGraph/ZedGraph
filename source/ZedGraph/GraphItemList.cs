@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-01-06 02:46:27 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-01-18 07:16:40 $ </version>
 	[Serializable]
 	public class GraphItemList : CollectionBase, ICloneable
 	{
@@ -178,12 +178,15 @@ namespace ZedGraph
 			{
 				if ( this[i].PointInBox( mousePt, pane, g, scaleFactor ) )
 				{
-					index = i;
-					return true;
+					if ( ( index >= 0 && this[i].ZOrder > this[index].ZOrder ) || index < 0 )
+						index = i;
 				}
 			}
 
-			return false;
+			if ( index >= 0 )
+				return true;
+			else
+				return false;
 		}
 		
 

@@ -6,6 +6,7 @@ ZedGraph Class Library Revision History
   Move pie rect calcs out to static PieItem.CalcRect()
   Fix LegendPos.TopCenter problem (missing switch)
   Add Pie Serialization
+  Fix Z-Order treatment of GraphItems in FindNearestObject
 
 17-Jan-2005 (by Kaye)
   Fix up PieItem; Remove PieSlice

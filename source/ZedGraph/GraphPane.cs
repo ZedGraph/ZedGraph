@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.27 $ $Date: 2005-01-18 06:45:29 $ </version>
+	/// <version> $Revision: 3.28 $ $Date: 2005-01-18 07:16:40 $ </version>
 	[Serializable]
 	public class GraphPane : ICloneable, ISerializable
 	{
@@ -1955,27 +1955,33 @@ namespace ZedGraph
 				int			hStack;
 				float		legendWidth, legendHeight;
 				RectangleF	tmpRect;
+				GraphItem	saveGraphItem = null;
+				int			saveIndex = -1;
+				ZOrder		saveZOrder = ZOrder.G_BehindAll;
 	
 				// Calculate the axis rect, deducting the area for the scales, titles, legend, etc.
 				RectangleF tmpAxisRect = CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth,
 					out legendHeight );
 	
 				// See if the point is in a GraphItem
+				// If so, just save the object and index so we can see if other overlying objects were
+				// intersected as well.
 				if ( this.GraphItemList.FindPoint( mousePt, this, g, scaleFactor, out index ) )
 				{
-					nearestObj = this.GraphItemList[index];
-					return true;
+					saveGraphItem = this.GraphItemList[index];
+					saveIndex = index;
+					saveZOrder = saveGraphItem.ZOrder;
 				}
-								
 				// See if the point is in the legend
-				if ( this.Legend.FindPoint( mousePt, this, scaleFactor, hStack, legendWidth, out index ) )
+				if ( saveZOrder <= ZOrder.B_BehindLegend &&
+					this.Legend.FindPoint( mousePt, this, scaleFactor, hStack, legendWidth, out index ) )
 				{
 					nearestObj = this.Legend;
 					return true;
 				}
 				
 				// See if the point is in the Pane Title
-				if ( this.isShowTitle )
+				if ( saveZOrder <= ZOrder.F_BehindTitle && this.isShowTitle )
 				{
 					SizeF size = this.FontSpec.BoundingBox( g, this.title, scaleFactor );
 					tmpRect = new RectangleF( ( this.paneRect.Left + this.paneRect.Right - size.Width ) / 2,
@@ -1991,7 +1997,7 @@ namespace ZedGraph
 				// See if the point is in the Y Axis
 				tmpRect = new RectangleF( this.paneRect.Left, tmpAxisRect.Top,
 					tmpAxisRect.Left - this.paneRect.Left, tmpAxisRect.Height );
-				if ( tmpRect.Contains( mousePt ) )
+				if ( saveZOrder <= ZOrder.E_BehindAxis && tmpRect.Contains( mousePt ) )
 				{
 					nearestObj = this.YAxis;
 					return true;
@@ -2000,7 +2006,7 @@ namespace ZedGraph
 				// See if the point is in the Y2 Axis
 				tmpRect = new RectangleF( tmpAxisRect.Right, tmpAxisRect.Top,
 					this.paneRect.Right - tmpAxisRect.Right, tmpAxisRect.Height );
-				if ( tmpRect.Contains( mousePt ) )
+				if ( saveZOrder <= ZOrder.E_BehindAxis && tmpRect.Contains( mousePt ) )
 				{
 					nearestObj = this.Y2Axis;
 					return true;
@@ -2009,7 +2015,7 @@ namespace ZedGraph
 				// See if the point is in the X Axis
 				tmpRect = new RectangleF( tmpAxisRect.Left, tmpAxisRect.Bottom,
 					tmpAxisRect.Width, this.paneRect.Bottom - tmpAxisRect.Bottom );
-				if ( tmpRect.Contains( mousePt ) )
+				if ( saveZOrder <= ZOrder.E_BehindAxis && tmpRect.Contains( mousePt ) )
 				{
 					nearestObj = this.XAxis;
 					return true;
@@ -2017,9 +2023,16 @@ namespace ZedGraph
 				
 				CurveItem curve;
 				// See if it's a data point
-				if ( FindNearestPoint( mousePt, out curve, out index ) )
+				if ( saveZOrder <= ZOrder.D_BehindCurves && FindNearestPoint( mousePt, out curve, out index ) )
 				{
 					nearestObj = curve;
+					return true;
+				}
+				
+				if ( saveGraphItem != null )
+				{
+					index = saveIndex;
+					nearestObj = saveGraphItem;
 					return true;
 				}
 			}
