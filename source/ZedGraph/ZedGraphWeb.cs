@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2005-01-07 20:21:39 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2005-01-11 11:18:26 $ </version>
 	[
 	ParseChildren(true),
 	PersistChildren(false),
@@ -61,7 +61,7 @@ namespace ZedGraph
 		{
 		}
 
-		#region Chart Item Collection
+		#region Curves
 		protected ZedGraphWebCurveCollection _curves = null;
 		[
 		Category("Data"),		
@@ -86,7 +86,12 @@ namespace ZedGraph
 		}
 		#endregion
 
-	#region Built in demo code
+		#region RenderDemo
+		/// <summary>
+		/// Renders the demo graph with one call.
+		/// </summary>
+		/// <param name="g">A <see cref="Graphics"/> object for which the drawing will be done.</param>
+		/// <param name="pane">A reference to the <see cref="GraphPane"/>
 		static public void RenderDemo( Graphics g, ZedGraph.GraphPane pane )
 		{
 			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
@@ -191,12 +196,8 @@ namespace ZedGraph
 		}
 		#endregion
 	
-	#region Attributes
-		/// <summary>
-		/// private field to store the control width.  Use the public property
-		/// <see cref="Width"/> to access this value.
-		/// </summary>
-		private int width = 400;
+		#region Attributes
+		
 		/// <summary>
 		/// Gets or sets the width of the <see cref="ZedGraph.GraphPane.PaneRect"/>.
 		/// </summary>
@@ -204,15 +205,14 @@ namespace ZedGraph
 		[Bindable(true),Category("Layout"),NotifyParentProperty(true),DefaultValue(400)]
 		public int Width
 		{
-			get { return width; }
-			set { width = value; }
+			get 
+			{ 
+				object x = ViewState["Width"]; 
+				return (null == x) ? 400 : (int)x;
+			}
+			set { ViewState["Width"] = value; }
 		}
-
-		/// <summary>
-		/// private field to store the control height.  Use the public property
-		/// <see cref="Height"/> to access this value.
-		/// </summary>
-		private int height = 250;
+		
 		/// <summary>
 		/// Gets or sets the Height of the <see cref="ZedGraph.GraphPane.PaneRect"/>.
 		/// </summary>
@@ -220,15 +220,14 @@ namespace ZedGraph
 		[Bindable(true),Category("Layout"),NotifyParentProperty(true),DefaultValue(250)]
 		public int Height
 		{
-			get { return height; }
-			set { height = value; }
+			get 
+			{ 
+				object x = ViewState["Height"]; 
+				return (null == x) ? 250 : (int)x;
+			}
+			set { ViewState["Height"] = value; }
 		}
-
-		/// <summary>
-		/// private field to store the graph title.  Use the public property
-		/// <see cref="Title"/> to access this value.
-		/// </summary>
-		private string title = string.Empty;
+		
 		/// <summary>
 		/// Gets or sets the Title of the <see cref="ZedGraph.GraphPane"/>.
 		/// </summary>
@@ -236,8 +235,12 @@ namespace ZedGraph
 		[Bindable(true),Category("Appearance"),NotifyParentProperty(true),DefaultValue("")]
 		public string Title
 		{
-			get { return title; }
-			set { title = value; }			
+			get 
+			{ 
+				object x = ViewState["Title"]; 
+				return (null == x) ? string.Empty : (string)x;
+			}
+			set { ViewState["Title"] = value; }			
 		}
 
 		/// <summary>
@@ -271,12 +274,7 @@ namespace ZedGraph
 			get { return ylabel; }
 			set { ylabel = value; }			
 		}
-
-		/// <summary>
-		/// private field that determines if the pane title is visible.  Use the public property
-		/// <see cref="IsShowTitle"/> to access this value.
-		/// </summary>
-		private bool isshowtitle = true;
+		
 		/// <summary>
 		/// Gets or sets the value that determines if the <see cref="ZedGraph.GraphPane.Title"/>
 		/// is visible.
@@ -285,8 +283,23 @@ namespace ZedGraph
 		[Bindable(true),Category("Appearance"),NotifyParentProperty(true),DefaultValue("true")]
 		public bool IsShowTitle
 		{
-			get { return isshowtitle; }
-			set { isshowtitle = value; }			
+			get 
+			{ 
+				object x = ViewState["IsShowTitle"]; 
+				return (null == x) ? GraphPane.Default.IsShowTitle : (bool)x;
+			}
+			set { ViewState["IsShowTitle"] = value; }			
+		}
+
+		[Bindable(true),Category("Appearance"),NotifyParentProperty(true),DefaultValue("false")]
+		public bool AxisChanged
+		{
+			get 
+			{ 
+				object x = ViewState["AxisChanged"]; 
+				return (null == x) ? false : (bool)x;
+			}
+			set { ViewState["AxisChanged"] = value; }			
 		}
 
 		/// <summary>
@@ -305,11 +318,33 @@ namespace ZedGraph
 		{
 			get { return outputformat; }
 			set { outputformat = value; }			
-		}		
+		}	
+	
+		[NotifyParentProperty(true),Category("Appearance")]
+		public double ClusterScaleWidth
+		{
+			get 
+			{ 
+				object x = ViewState["ClusterScaleWidth"]; 
+				return (null == x) ? GraphPane.Default.ClusterScaleWidth : (double)x;
+			}
+			set { ViewState["ClusterScaleWidth"] = value; }
+		} 
+
+		[NotifyParentProperty(true),Category("Appearance")]
+		public BarType BarType
+		{
+			get 
+			{ 
+				object x = ViewState["BarType"]; 
+				return (null == x) ? GraphPane.Default.BarType : (BarType)x;
+			}
+			set { ViewState["BarType"] = value; }
+		} 
 
 	#endregion
 
-	#region Event Handlers
+		#region Event Handlers
 		/// <summary>
 		/// Sets the rendering event handler.
 		/// </summary>
@@ -342,32 +377,147 @@ namespace ZedGraph
 		}		
 	#endregion
 
-	#region Render Methods
+		#region Map Embedded Content
 
-		protected void AddDynamicContent( Graphics g, GraphPane pane )
+		/// <summary>
+		/// transfers values from a <see cref="ZedGraphWebCurveItem"/> instance to a <see cref="CurveItem"/> instance
+		/// </summary>
+		/// <param name="curve"><see cref="CurveItem"/></param>
+		/// <param name="web"><see cref="ZedGraphWebCurveItem"/></param>
+		protected void MapWeb2GraphItem( CurveItem curve, ZedGraphWebCurveItem web )
 		{
-			ZedGraphWebCurveItem item;
+			curve.Color = web.Color;
+			curve.IsLegendLabelVisible = web.IsLegendLabelVisible;
+			curve.IsVisible = web.IsVisible;
+			curve.IsY2Axis = web.IsY2Axis;
+			curve.Label = web.Label;
+		}
+
+		/// <summary>
+		/// Transfers values from a <see cref="ZedGraphWebBorder"/> instance to a <see cref="Border"/> instance.
+		/// </summary>
+		/// <param name="item"><see cref="Border"/></param>
+		/// <param name="web"><see cref="ZedGraphWebBorder"/></param>
+		protected void MapWeb2GraphItem( Border item, ZedGraphWebBorder web )
+		{
+			item.Color = web.Color;
+			item.IsVisible = web.IsVisible;
+			item.PenWidth = web.PenWidth;
+		}
+
+		/// <summary>
+		/// Transfers values from a <see cref="ZedGraphWebFill"/> instance to a <see cref="Fill"/> instance.
+		/// </summary>
+		/// <param name="item"><see cref="Fill"/></param>
+		/// <param name="web"><see cref="ZedGraphWebFill"/></param>
+		protected void MapWeb2GraphItem( Fill item, ZedGraphWebFill web )
+		{
+			item = new Fill();			
+			item.AlignH = web.AlignH;
+			item.AlignV = web.AlignV;			
+			//TODO: item.Brush = web.Brush
+			item.Color = web.Color;
+			item.IsScaled = web.IsScaled;
+			item.IsVisible = web.IsVisible;
+			item.RangeMax = web.RangeMax;
+			item.RangeMin = web.RangeMin;
+			item.Type = web.FillType;
+		}
+
+		/// <summary>
+		/// Transfers values from a <see cref="ZedGraphWebSymbol"/> instance to a <see cref="Symbol"/> instance.
+		/// </summary>
+		/// <param name="item"><see cref="Symbol"/></param>
+		/// <param name="web"><see cref="ZedGraphWebSymbol"/></param>
+		protected void MapWeb2GraphItem( Symbol item, ZedGraphWebSymbol web )
+		{
+			MapWeb2GraphItem(item.Border,web.Border);
+			MapWeb2GraphItem(item.Fill,web.Fill);
+			item.IsVisible = web.IsVisible;
+			item.Size = web.Size;
+			item.Type = web.Type;
+		}
+
+		/// <summary>
+		/// Adds content to the <see cref="GraphPane"/> instance based on the web controls state elements.
+		/// This requires applying each <see cref="ZedGraphWebCurveItem"/> to the <see cref="GraphPane"/> 
+		/// including all the values and sub objects.
+		/// </summary>
+		/// <param name="g"><see cref="Graphics"/></param>
+		/// <param name="pane"><see cref="GraphPane"/></param>
+		protected void MapWebContent( Graphics g, GraphPane pane )
+		{
+			pane.IsShowTitle = this.IsShowTitle;
+			pane.BarType = this.BarType;
+			pane.ClusterScaleWidth = this.ClusterScaleWidth;
+			
+			ZedGraphWebCurveItem curve;
 			for (int i=0; i<Curves.Count; i++)
 			{
-				item = Curves[i];
-				if ( item is ZedGraphWebBar )
+				curve = Curves[i];
+				if ( curve is ZedGraphWebBar )
 				{
-					pane.AddBar(item.Label,new PointPairList(),item.Color);
+					ZedGraphWebBar item = (ZedGraphWebBar)curve;
+					BarItem x = pane.AddBar(item.Label,new PointPairList(),item.Color);
+					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);
+					MapWeb2GraphItem(x.Bar.Border,item.Border);
+					MapWeb2GraphItem(x.Bar.Fill,item.Fill);
 				}
-				else if ( item is ZedGraphWebLine )
+				else if ( curve is ZedGraphWebLine )
 				{
-					pane.AddCurve(item.Label,new PointPairList(),item.Color);
+					ZedGraphWebLine item = (ZedGraphWebLine)curve;
+					LineItem x = pane.AddCurve(item.Label,new PointPairList(),item.Color);
+					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);
+					MapWeb2GraphItem(x.Symbol,item.Symbol);
+					x.Line.Style = item.DashStyle;
+					x.Line.Width = item.Width;
+					x.Line.IsSmooth = item.IsSmooth;
+					x.Line.SmoothTension = item.SmoothTension;
+					x.Line.StepType = item.StepType;
+					MapWeb2GraphItem(x.Line.Fill,item.Fill);
 				}
-				else if ( item is ZedGraphWebErrorBar )
+				else if ( curve is ZedGraphWebErrorBar )
 				{
-					pane.AddErrorBar(item.Label,new PointPairList(),item.Color);
+					ZedGraphWebErrorBar item = (ZedGraphWebErrorBar)curve;
+					ErrorBarItem x = pane.AddErrorBar(item.Label,new PointPairList(),item.Color);
+					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);					
+					MapWeb2GraphItem(x.ErrorBar.Symbol,item.Symbol);
+					x.BarBase = item.BarBase;
+					x.ErrorBar.PenWidth = item.PenWidth;
 				}
-				else if ( item is ZedGraphWebHiLowBar )
+				else if ( curve is ZedGraphWebHiLowBar )
 				{
-					pane.AddHiLowBar(item.Label,new PointPairList(),item.Color);
+					ZedGraphWebHiLowBar item = (ZedGraphWebHiLowBar)curve;
+					HiLowBarItem x = pane.AddHiLowBar(item.Label,new PointPairList(),item.Color);
+					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);									
+					MapWeb2GraphItem(x.Bar.Border,item.Border);
+					MapWeb2GraphItem(x.Bar.Fill,item.Fill);					
+					x.BarBase = item.BarBase;
+					x.Bar.Size = item.Size;
+					x.Bar.IsMaximumWidth = item.IsMaximumWidth;
+				}
+				else if ( curve is ZedGraphWebPie )
+				{
+					ZedGraphWebPie item = (ZedGraphWebPie)curve;
+					ZedGraphWebPieSlice slice;
+					PieItem x = pane.AddPie(item.Label,0);
+					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);
+					
+					x.LabelType = item.LabelType;
+					x.PieTitle = item.PieTitle;
+					x.PieType = item.PieType;
+					
+					for ( int j=0; j<item.SliceList.Count; j++ )
+					{
+						slice = item.SliceList[j];
+						x.AddSlice(slice.Value,Color.Red,slice.Displacement,slice.Label);						
+					}
 				}
 			}
 		}
+		#endregion
+
+		#region Render Methods
 
 		/// <summary>
 		/// Calls the Draw() method for the control.
@@ -388,19 +538,19 @@ namespace ZedGraph
 		{
 			//TODO: fix/verify the height/width values are okay like this
 			RectangleF rect = new RectangleF( 0, 0, this.Width-1, this.Height-1 );
-			GraphPane pane = new GraphPane( rect, title, xlabel, ylabel );
-						
-			//TODO: add all the goodies from visual mode
-			pane.IsShowTitle = this.IsShowTitle;
-
+			GraphPane pane = new GraphPane( rect, Title, xlabel, ylabel );
+												
 			Bitmap image = new Bitmap( this.Width, this.Height ); 			
-			Graphics g = Graphics.FromImage( image );
+			Graphics g = Graphics.FromImage( image );		
 
 			//add visual designer influences here - first!!
-			AddDynamicContent(g,pane);
+			MapWebContent(g,pane);
 
 			// Use callback to gather more settings
 			OnDrawPane( g, pane );			
+
+			// Allow designer control of axischange
+			if ( this.AxisChanged ) pane.AxisChange(g);
 			
 			// Render the graph to a bitmap
 			g.Clear(Color.FromArgb(255, 255, 255, 255)); 
@@ -451,7 +601,7 @@ namespace ZedGraph
 
 	#endregion
 
-	#region Internal Output Type Helpers
+		#region Internal Output Type Helpers
 
 		/// <summary>
 		/// An enumeration type that defines the output image types supported by
@@ -527,7 +677,11 @@ namespace ZedGraph
 		}
 	#endregion
 
-	#region Custom state management
+		#region State Management
+		/// <summary>
+		/// Used by asp.net to load the viewstate values into the web control
+		/// </summary>
+		/// <param name="savedState">portable view state object</param>
 		protected override void LoadViewState(object savedState) 
 		{
 			object baseState = null;
@@ -558,6 +712,10 @@ namespace ZedGraph
 				((IStateManager)Curves).LoadViewState(myState[1]);			
 		}
 
+		/// <summary>
+		/// Used by asp.net to save the viewstate to the class instance given a portable state object.
+		/// </summary>
+		/// <returns>portable state object</returns>
 		protected override object SaveViewState() 
 		{
 			object[] myState = new object[2];
@@ -573,6 +731,9 @@ namespace ZedGraph
 			return myState;
 		}
 
+		/// <summary>
+		/// Used by asp.net to inform the viewstate to start tracking changes.
+		/// </summary>
 		protected override void TrackViewState() 
 		{
 			base.TrackViewState();
@@ -584,7 +745,7 @@ namespace ZedGraph
 			if (_curves != null)
 				((IStateManager)_curves).TrackViewState();			
 		}
-		#endregion Custom state management
+		#endregion
 	}
 
 
