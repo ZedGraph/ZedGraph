@@ -18,6 +18,7 @@
 //=============================================================================
 
 using System;
+using System.Drawing;
 using IComparer	= System.Collections.IComparer;
 
 namespace ZedGraph
@@ -28,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 1.3 $ $Date: 2004-08-31 15:16:00 $ </version>
+	/// <version> $Revision: 1.4 $ $Date: 2004-09-01 05:14:54 $ </version>
 	public struct PointPair
 	{
 	#region Member variables
@@ -81,6 +82,39 @@ namespace ZedGraph
 		{
 			get { return this.X == PointPair.Missing || this.Y == PointPair.Missing; }
 		}
+
+		/// <summary>
+		/// Readonly value that determines if either the X or the Y
+		/// coordinate in this PointPair is an invalid (not plotable) value.
+		/// It is considered invalid if it is missing (equal to System.Double.Max),
+		/// Infinity, or NaN.
+		/// </summary>
+		/// <returns>true if either value is invalid</returns>
+		public bool IsInvalid
+		{
+			get { return	this.X == PointPair.Missing ||
+							this.Y == PointPair.Missing ||
+							Double.IsInfinity( this.X ) ||
+							Double.IsInfinity( this.Y ) ||
+							Double.IsNaN( this.X ) ||
+							Double.IsNaN( this.Y );
+				}
+		}
+		#endregion
+
+	#region Operator Overloads
+		/// <summary>
+		/// Implicit conversion from PointPair to PointF.  Note that this conversion
+		/// can result in data loss, since the data are being cast from a type
+		/// double (64 bit) to a float (32 bit).
+		/// </summary>
+		/// <param name="pair">The PointPair struct on which to operate</param>
+		/// <returns>A PointF struct equivalent to the PointPair</returns>
+		public static implicit operator PointF( PointPair pair )
+		{
+			return new PointF( (float) pair.X, (float) pair.Y );
+		}
+
 	#endregion
 
 	#region Inner classes

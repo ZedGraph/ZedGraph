@@ -358,8 +358,9 @@ namespace ZedGraphTest
 //				y[i] = Math.Sin( (double) i * Math.PI / 2.0 );
 
 			PointPairList points = new PointPairList();
-			for ( double i=0; i<100; i++ )
-				points.Add( i / 10.0, Math.Sin( i / 10.0 * Math.PI / 2.0 ) );
+			double numPoints = 10.0;
+			for ( double i=0; i<numPoints; i++ )
+				points.Add( i / (numPoints / 10.0) + 1.0, Math.Sin( i / (numPoints / 10.0) * Math.PI / 2.0 ) );
 
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend

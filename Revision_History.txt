@@ -1,6 +1,11 @@
 ZedGraph Class Library Revision History
 
-31-Aug-2000 (by Vos)
+31-Aug-2004 (by Champion)
+    Added Curve Smoothing (Line.IsSmooth, Line.SmoothTension)
+    Added PointPair.IsInvalid
+    Added PointPair implicit cast to PointF
+	
+31-Aug-2004 (by Vos)
     Cleaned up some of the files, making the #region'ing more consistent (some files still need to be done)
 
 30-Aug-2004 (by Champion)

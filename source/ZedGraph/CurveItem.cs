@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 1.14 $ $Date: 2004-08-31 15:16:00 $ </version>
+	/// <version> $Revision: 1.15 $ $Date: 2004-09-01 05:14:54 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
@@ -405,7 +405,10 @@ namespace ZedGraph
 			{
 				// If the line is being shown, draw it
 				if ( this.Line.IsVisible )
-					DrawCurve( g, pane );
+					if ( this.Line.IsSmooth )
+						DrawSmoothCurve( g, pane );
+					else
+						DrawCurve( g, pane );
 
 				// If symbols are being shown, then draw them
 				if ( this.Symbol.IsVisible )
@@ -413,6 +416,52 @@ namespace ZedGraph
 			}
 		}		
 		
+		/// <summary>
+		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
+		/// device using the specified smoothing property (<see cref="ZedGraph.Line.SmoothTension"/>).
+		/// The routine only draws the line segments; the symbols are drawn by the
+		/// <see cref="DrawSymbols"/> method.  This method
+		/// is normally only called by the Draw method of the
+		/// <see cref="CurveItem"/> object.  Note that the <see cref="StepType"/> property
+		/// is ignored for smooth lines (e.g., when <see cref="ZedGraph.Line.IsSmooth"/> is true).
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		public void DrawSmoothCurve( Graphics g, GraphPane pane )
+		{
+			if ( this.Line.IsVisible && !this.Line.Color.IsEmpty )
+			{
+				int index = 0;
+
+				PointF[] arrPoints = new PointF[this.Points.Count];
+
+				for ( int i=0; i<this.Points.Count; i++ )
+				{
+					if ( !this.Points[i].IsInvalid )
+					{
+						arrPoints[index].X = pane.XAxis.Transform( this.Points[i].X );
+						if ( this.isY2Axis )
+							arrPoints[index].Y = pane.Y2Axis.Transform( this.Points[i].Y );
+						else
+							arrPoints[index].Y = pane.YAxis.Transform( this.Points[i].Y );
+
+						index++;
+					}
+				}
+
+				Pen pen = new Pen( this.Line.Color, this.Line.Width );
+				pen.DashStyle = this.Line.Style;
+				if ( index > 1 )
+					g.DrawCurve( pen, arrPoints, 0, index-1, this.Line.SmoothTension );
+			}
+		}
+
 		/// <summary>
 		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
 		/// device.  The format (stair-step or line) of the curve is

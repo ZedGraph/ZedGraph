@@ -1,6 +1,8 @@
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using GDIDB;
 
 using NUnit.Framework;
 
@@ -70,7 +72,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-31 05:26:20 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2004-09-01 05:14:54 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -204,16 +206,19 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-31 05:26:20 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2004-09-01 05:14:54 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
 		Form form2;
 		GraphPane testee;
-       
+		private DBGraphics memGraphics;
+      
 		[SetUp]
 		public void SetUp()
 		{
+			memGraphics = new  DBGraphics();
+
 			TestUtils.SetUp();
 
 			form2	= new Form();
@@ -222,6 +227,7 @@ namespace ZedGraph.UnitTest
 			form2.Resize += new System.EventHandler( this.Form2_Resize );
 			form2.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form2_MouseDown );
 			form2.Show();
+
 		}
 
 		[TearDown] 
@@ -233,8 +239,28 @@ namespace ZedGraph.UnitTest
 		private void Form2_Paint( object sender, System.Windows.Forms.PaintEventArgs e )
 		{
 			SolidBrush brush = new SolidBrush( Color.Gray );
-			e.Graphics.FillRectangle( brush, form2.ClientRectangle );
-			testee.Draw( e.Graphics );
+			if ( memGraphics.CanDoubleBuffer() )
+			{
+				memGraphics.g.SmoothingMode = SmoothingMode.AntiAlias;
+
+				// Fill in Background (for effieciency only the area that has been clipped)
+				memGraphics.g.FillRectangle( new SolidBrush(SystemColors.Window),
+					e.ClipRectangle.X, e.ClipRectangle.Y,
+					e.ClipRectangle.Width, e.ClipRectangle.Height);
+
+				// Do our drawing using memGraphics.g instead e.Graphics
+		     
+				memGraphics.g.FillRectangle( brush, form2.ClientRectangle );
+				testee.Draw( memGraphics.g );
+		   
+				// Render to the form
+				memGraphics.Render( e.Graphics );
+			}
+			else
+			{
+				e.Graphics.FillRectangle( brush, form2.ClientRectangle );
+				testee.Draw( e.Graphics );
+			}
 		}
 
 		private void Form2_Resize(object sender, System.EventArgs e)
@@ -438,7 +464,6 @@ namespace ZedGraph.UnitTest
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Do you see a single value in the middle of the scale ranges?" ) );
 		}
 		#endregion
-		
 		
 		#region Missing Values test
 		[Test]
@@ -672,6 +697,61 @@ namespace ZedGraph.UnitTest
 		}
 		#endregion
 
+		#region Smooth Curve Sample
+		[Test]
+		public void SmoothCurve()
+		{
+//			memGraphics.CreateDoubleBuffer( form2.CreateGraphics(),
+//				form2.ClientRectangle.Width, form2.ClientRectangle.Height );
+
+			// Create a new graph
+			testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+				"Text Graph", "Label", "Y Value" );
+				
+			// Make up some random data points
+			string[] labels = { "USA", "Spain", "Qatar", "Morocco", "UK", "Uganda",
+								  "Cambodia", "Malaysia", "Australia", "Ecuador" };
+								  
+			PointPairList points = new PointPairList();
+			double numPoints = 10.0;
+			for ( double i=0; i<numPoints; i++ )
+				points.Add( i / (numPoints / 10.0) + 1.0, Math.Sin( i / (numPoints / 10.0) * Math.PI / 2.0 ) );
+
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			CurveItem myCurve = testee.AddCurve( "My Curve",
+				points, Color.Red, SymbolType.Diamond );
+			// Set the XAxis labels
+			testee.XAxis.TextLabels = labels;
+			// Set the XAxis to Text type
+			testee.XAxis.Type = AxisType.Text;
+			// Set the labels at an angle so they don't overlap
+			testee.XAxis.ScaleFontSpec.Angle = 0;
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			testee.AxisChange( form2.CreateGraphics() );
+			SetSize();
+			myCurve.Line.IsSmooth = true;
+
+			for ( float tension=0.0F; tension<3.0F; tension+=0.1F )
+			{
+				myCurve.Line.SmoothTension = tension;
+				form2.Refresh();
+
+				TestUtils.DelaySeconds( 50 );
+			}
+			for ( float tension=3.0F; tension>=0F; tension-=0.1F )
+			{
+				myCurve.Line.SmoothTension = tension;
+				form2.Refresh();
+
+				TestUtils.DelaySeconds( 50 );
+			}
+
+			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did you see varying levels of smoothing?" ) );
+		}
+		#endregion
+
 		#region text axis sample
 		[Test]
 		public void TextAxis()
@@ -729,7 +809,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-31 05:26:20 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2004-09-01 05:14:54 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.8 $ $Date: 2004-08-31 15:16:00 $ </version>
+	/// <version> $Revision: 1.9 $ $Date: 2004-09-01 05:14:54 $ </version>
 	public class Line : ICloneable
 	{
 	#region Fields
@@ -51,6 +51,24 @@ namespace ZedGraph
 		/// property <see cref="IsVisible"/> to access this value.
 		/// </summary>
 		private bool isVisible;
+		/// <summary>
+		/// Private field that stores the smoothing flag for this
+		/// <see cref="Line"/>.  Use the public
+		/// property <see cref="IsSmooth"/> to access this value.
+		/// </summary>
+		private bool isSmooth;
+		/// <summary>
+		/// Private field that stores the smoothing tension
+		/// for this <see cref="Line"/>.  Use the public property
+		/// <see cref="SmoothTension"/> to access this value.
+		/// </summary>
+		/// <value>A floating point value indicating the level of smoothing.
+		/// 0.0F for no smoothing, 1.0F for lots of smoothing, >1.0 for odd
+		/// smoothing.</value>
+		/// <seealso cref="IsSmooth"/>
+		/// <seealso cref="Default.IsSmooth"/>
+		/// <seealso cref="Default.SmoothTension"/>
+		private float smoothTension;
 		/// <summary>
 		/// Private field that stores the color of this
 		/// <see cref="Line"/>.  Use the public
@@ -90,6 +108,15 @@ namespace ZedGraph
 			/// Units are pixels.
 			/// </summary>
 			public static float Width = 1;
+			/// <summary>
+			/// The default value for the <see cref="Line.IsSmooth"/>
+			/// property.
+			/// </summary>
+			public static bool IsSmooth = false;
+			/// <summary>
+			/// The default value for the <see cref="Line.SmoothTension"/> property.
+			/// </summary>
+			public static float SmoothTension = 0.5F;
 			/// <summary>
 			/// The default drawing style for line segments (<see cref="Line.Style"/> property).
 			/// This is defined with the <see cref="DashStyle"/> enumeration.
@@ -153,6 +180,40 @@ namespace ZedGraph
 			set { isVisible = value; }
 		}
 		/// <summary>
+		/// Gets or sets a property that determines if this <see cref="Line"/>
+		/// will be drawn smooth.  The "smoothness" is controlled by
+		/// the <see cref="SmoothTension"/> property.
+		/// </summary>
+		/// <value>true to smooth the line, false to just connect the dots
+		/// with linear segments</value>
+		/// <seealso cref="SmoothTension"/>
+		/// <seealso cref="Default.IsSmooth"/>
+		/// <seealso cref="Default.SmoothTension"/>
+		public bool IsSmooth
+		{
+			get { return isSmooth; }
+			set { isSmooth = value; }
+		}
+		/// <summary>
+		/// Gets or sets a property that determines the smoothing tension
+		/// for this <see cref="Line"/>.  This property is only used if
+		/// <see cref="IsSmooth"/> is true.  A tension value 0.0 will just
+		/// draw ordinary line segments like an unsmoothed line.  A tension
+		/// value of 1.0 will be smooth.  Values greater than 1.0 will generally
+		/// give odd results.
+		/// </summary>
+		/// <value>A floating point value indicating the level of smoothing.
+		/// 0.0F for no smoothing, 1.0F for lots of smoothing, >1.0 for odd
+		/// smoothing.</value>
+		/// <seealso cref="IsSmooth"/>
+		/// <seealso cref="Default.IsSmooth"/>
+		/// <seealso cref="Default.SmoothTension"/>
+		public float SmoothTension
+		{
+			get { return smoothTension; }
+			set { smoothTension = value; }
+		}
+		/// <summary>
 		/// Determines if the <see cref="CurveItem"/> will be drawn by directly connecting the
 		/// points from the <see cref="CurveItem.Points"/> data collection,
 		/// or if the curve will be a "stair-step" in which the points are
@@ -162,6 +223,8 @@ namespace ZedGraph
 		/// rearward oriented <c>RearwardStep</c>.
 		/// That is, the points are defined at the beginning or end
 		/// of the constant value for which they apply, respectively.
+		/// The <see cref="StepType"/> property is ignored for lines
+		/// that have <see cref="IsSmooth"/> set to true.
 		/// </summary>
 		/// <value><see cref="ZedGraph.StepType"/> enum value</value>
 		/// <seealso cref="Default.StepType"/>
@@ -194,6 +257,8 @@ namespace ZedGraph
 			this.isVisible = Default.IsVisible;
 			this.color = color.IsEmpty ? Default.Color : color;
 			this.stepType = Default.StepType;
+			this.isSmooth = Default.IsSmooth;
+			this.smoothTension = Default.SmoothTension;
 		}
 
 		/// <summary>
@@ -207,6 +272,8 @@ namespace ZedGraph
 			isVisible = rhs.IsVisible;
 			color = rhs.Color;
 			stepType = rhs.StepType;
+			isSmooth = rhs.IsSmooth;
+			smoothTension = rhs.SmoothTension;
 		}
 
 		/// <summary>
