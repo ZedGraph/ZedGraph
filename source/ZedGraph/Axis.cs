@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-09-24 04:51:19 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-01 06:37:16 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -3073,9 +3073,9 @@ namespace ZedGraph
 			if ( this.max - this.min < 1.0e-20 )
 			{
 				if ( this.maxAuto )
-					this.max = this.max + 0.2 * Math.Abs( this.max );
+					this.max = this.max + 0.2 * ( this.max == 0 ? 1.0 : Math.Abs( this.max ) );
 				if ( this.minAuto )
-					this.min = this.min - 0.2 * Math.Abs( this.min );
+					this.min = this.min - 0.2 * ( this.min == 0 ? 1.0 : Math.Abs( this.min ) );
 			}
 	
 			// Calculate the new step size
@@ -3148,9 +3148,9 @@ namespace ZedGraph
 			if ( this.max - this.min < 1.0e-20 )
 			{
 				if ( this.maxAuto )
-					this.max = this.max + 0.2 * Math.Abs( this.max );
+					this.max = this.max + 0.2 * ( this.max == 0 ? 1.0 : Math.Abs( this.max ) );
 				if ( this.minAuto )
-					this.min = this.min - 0.2 * Math.Abs( this.min );
+					this.min = this.min - 0.2 * ( this.min == 0 ? 1.0 : Math.Abs( this.min ) );
 			}
 	
 			// This is the zero-lever test.  If minVal is within the zero lever fraction

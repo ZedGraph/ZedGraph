@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-09-30 05:03:42 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-01 06:37:16 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1680,7 +1680,7 @@ namespace ZedGraph
 //				}
 				
 				// See if the point is in the legend
-				if ( this.Legend.FindPoint( mousePt, scaleFactor, hStack, legendWidth, out index ) )
+				if ( this.Legend.FindPoint( mousePt, this, scaleFactor, hStack, legendWidth, out index ) )
 				{
 					nearestObj = this.Legend;
 					return true;

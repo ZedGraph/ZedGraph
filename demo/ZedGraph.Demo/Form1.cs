@@ -947,9 +947,15 @@ namespace ZedGraphTest
 				"My Test Bar Graph", "Label", "My Y Axis" );
 			// Make up some random data points
 			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty" };
+			
 			double[] y = { 100, 115, 75, -22, 98, 40, -10 };
 			double[] y2 = { 90, 100, 95, -35, 80, 35, 35 };
 			double[] y3 = { 80, 110, 65, -15, 54, 67, 18 };
+			/*
+			double[] y = { 0, 0, 0, 0, 0, 0 };
+			double[] y2 = { 0, 0, 0, 0, 0, 0 };
+			double[] y3 = { 0, 0, 0, 0, 0, 0 };
+			*/
 
 			//double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
 
@@ -1666,8 +1672,14 @@ namespace ZedGraphTest
 			
 			if ( myPane.FindNearestObject( new PointF( e.X, e.Y ), this.CreateGraphics(), out obj, out index ) )
 				MessageBox.Show( obj.ToString() + " index=" + index );
-			else
-				MessageBox.Show( "No Object Found" );
+			//else
+			//	MessageBox.Show( "No Object Found" );
+			
+			if ( obj is Legend )
+			{
+				myPane.CurveList[index].IsVisible = !myPane.CurveList[index].IsVisible;
+				Invalidate();
+			}
 
 /*
 						CurveItem curve;

@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+30-Sep-2004 (by Champion)
+	Add CurveItem.IsVisible and CurveItem.IsLegendLabelVisible logic
+	Fix the zero axis range bug
+	
 29-Sep-2004 (by Champion)
 	Add FindNearestObject() method to GraphPane (still working on TextItem & ArrowItem)
 	

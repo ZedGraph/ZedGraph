@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:07 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-01 06:37:16 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
@@ -68,6 +68,24 @@ namespace ZedGraph
 		/// Use the public property <see cref="IsY2Axis"/> to access this value.
 		/// </summary>
 		private bool		isY2Axis;
+		/// <summary>
+		/// Private field that stores the boolean value that determines whether this
+		/// <see cref="CurveItem"/> is visible on the graph.
+		/// Use the public property <see cref="IsVisible"/> to access this value.
+		/// Note that this value turns the curve display on or off, but it does not
+		/// affect the display of the legend entry.  To hide the legend entry, you
+		/// have to set <see cref="IsLegendLabelVisible"/> to false.
+		/// </summary>
+		private bool		isVisible;
+		/// <summary>
+		/// Private field that stores the boolean value that determines whether the label
+		/// for this <see cref="CurveItem"/> is visible in the legend.
+		/// Use the public property <see cref="IsLegendLabelVisible"/> to access this value.
+		/// Note that this value turns the legend entry display on or off, but it does not
+		/// affect the display of the curve on the graph.  To hide the curve, you
+		/// have to set <see cref="IsVisible"/> to false.
+		/// </summary>
+		private bool		isLegendLabelVisible;
 		/// <summary>
 		/// Private field that stores the boolean value that determines whether this
 		/// <see cref="CurveItem"/> is a bar chart or a line graph.
@@ -205,6 +223,8 @@ namespace ZedGraph
 			this.label = label == null ? "" : label;
 			this.isY2Axis = false;
 			this.isBar = isBar;
+			this.isVisible = true;
+			this.isLegendLabelVisible = true;
 		}
 			
 		/// <summary>
@@ -229,6 +249,8 @@ namespace ZedGraph
 			label = rhs.Label;
 			isY2Axis = rhs.IsY2Axis;
 			isBar = rhs.IsBar;
+			isVisible = rhs.IsVisible;
+			isLegendLabelVisible = rhs.IsLegendLabelVisible;
 			
 			this.points = (PointPairList) rhs.Points.Clone();
 		}
@@ -304,6 +326,29 @@ namespace ZedGraph
 				Symbol.FrameColor	= value;
 				Symbol.Fill.Color	= value;
 			}
+		}
+
+		/// <summary>
+		/// Determines whether this <see cref="CurveItem"/> is visible on the graph.
+		/// Note that this value turns the curve display on or off, but it does not
+		/// affect the display of the legend entry.  To hide the legend entry, you
+		/// have to set <see cref="IsLegendLabelVisible"/> to false.
+		/// </summary>
+		public bool IsVisible
+		{
+			get { return isVisible; }
+			set { isVisible = value; }
+		}
+		/// <summary>
+		/// Determines whether the label for this <see cref="CurveItem"/> is visible in the legend.
+		/// Note that this value turns the legend entry display on or off, but it does not
+		/// affect the display of the curve on the graph.  To hide the curve, you
+		/// have to set <see cref="IsVisible"/> to false.
+		/// </summary>
+		public bool IsLegendLabelVisible
+		{
+			get { return isLegendLabelVisible; }
+			set { isLegendLabelVisible = value; }
 		}
 
 		/// <summary>
@@ -398,22 +443,25 @@ namespace ZedGraph
 		/// </param>
 		public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  )
 		{
-			if ( this.isBar )
+			if ( this.isVisible )
 			{
-				Bar.DrawBars( g, pane, points, isY2Axis, pane.CalcBarWidth(), pos, scaleFactor );
-			}
-			else
-			{
-				// If the line is being shown, draw it
-				if ( this.Line.IsVisible )
-					if ( this.Line.IsSmooth || this.Line.Fill.IsFilled )
-						Line.DrawSmoothFilledCurve( g, pane, points, isY2Axis );
-					else
-						Line.DrawCurve( g, pane, points, isY2Axis );
+				if ( this.isBar )
+				{
+					Bar.DrawBars( g, pane, points, isY2Axis, pane.CalcBarWidth(), pos, scaleFactor );
+				}
+				else
+				{
+					// If the line is being shown, draw it
+					if ( this.Line.IsVisible )
+						if ( this.Line.IsSmooth || this.Line.Fill.IsFilled )
+							Line.DrawSmoothFilledCurve( g, pane, points, isY2Axis );
+						else
+							Line.DrawCurve( g, pane, points, isY2Axis );
 
-				// If symbols are being shown, then draw them
-				if ( this.Symbol.IsVisible )
-					Symbol.DrawSymbols( g, pane, points, isY2Axis, scaleFactor );
+					// If symbols are being shown, then draw them
+					if ( this.Symbol.IsVisible )
+						Symbol.DrawSymbols( g, pane, points, isY2Axis, scaleFactor );
+				}
 			}
 		}		
 		

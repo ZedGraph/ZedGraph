@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-09-30 05:03:42 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-01 06:37:16 $ </version>
 	public class FontSpec : ICloneable
 	{
 	#region Fields
@@ -694,23 +694,35 @@ namespace ZedGraph
 			// Get the width and height of the text
 			SizeF sizeF = g.MeasureString( text, this.font );
 
-			// Save the old transform matrix for later restoration
-			GraphicsPath path = new GraphicsPath();
-			path.AddRectangle( new RectangleF( new PointF(0,0), sizeF ) );
-			float	xa, ya;
+			// Create a bounding box rectangle for the text
+			RectangleF rect = new RectangleF( new PointF( -sizeF.Width / 2.0F, 0.0F), sizeF );
 			
-			// Since the text will be drawn by g.DrawString()
-			// assuming the location is the TopCenter
-			// (the Font is aligned using StringFormat to the
-			// center so multi-line text is center justified),
-			// shift the coordinate system so that we are
-			// actually aligned per the caller specified position
+			// Build a transform matrix that inverts that drawing transform
+			// in this manner, the point is brought back to the box, rather
+			// than vice-versa.  This allows the container check to be a simple
+			// RectangleF.Contains, since the rectangle won't be rotated.
+			Matrix matrix = new Matrix();
+			
+			// Move the coordinate system to local coordinates
+			// of this text object (that is, at the specified
+			// x,y location)
+			matrix.Translate( -x, -y );
+			
+			// Rotate the coordinate system according to the 
+			// specified angle of the FontSpec
+			if ( angle != 0.0F )
+				matrix.Rotate( angle );
+
+			// In this case, the bounding box is anchored to the
+			// top-left of the text box.  Handle the alignment
+			// as needed.
+			float	xa, ya;
 			if ( alignH == AlignH.Left )
-				xa = 0.0F;
+				xa = sizeF.Width / 2.0F;
 			else if ( alignH == AlignH.Right )
-				xa = -sizeF.Width;
-			else
 				xa = -sizeF.Width / 2.0F;
+			else
+				xa = 0.0F;
 				
 			if ( alignV == AlignV.Center )
 				ya = -sizeF.Height / 2.0F;
@@ -719,24 +731,16 @@ namespace ZedGraph
 			else
 				ya = 0.0F;
 
-			Matrix matrix = new Matrix();
-
 			// Shift the coordinates to accomodate the alignment
 			// parameters
-			matrix.Translate( xa, ya );
+			matrix.Translate( -xa, -ya );
 
-			// Rotate the coordinate system according to the 
-			// specified angle of the FontSpec
-			if ( angle != 0.0F )
-				matrix.Rotate( -angle );
-
-			// Move the coordinate system to local coordinates
-			// of this text object (that is, at the specified
-			// x,y location)
-			matrix.Translate( x, y );
+			//matrix.Invert();
+			PointF[] pts = new PointF[1];
+			pts[0] = pt;
+			matrix.TransformPoints( pts );
 			
-			path.Transform( matrix );
-			return path.IsVisible( pt );
+			return rect.Contains( pts[0] );
 		}
 		
 		/// <summary>
