@@ -27,104 +27,206 @@ namespace ZedGraph
 {
 	/// <summary>
 	/// A class representing a pie chart object comprised of one or more
-	/// <see cref="PieSlice"/>s.
+	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.2 $ $Date: 2005-01-16 03:46:12 $ </version>
+	/// <version> $Revision: 1.3 $ $Date: 2005-01-17 12:47:34 $ </version>
 	public class PieItem : ZedGraph.CurveItem , ICloneable	
 	{
 		
-	#region Fields
-		/// <summary>  Private field instance of the <see cref="ZedGraph.PieItem"/> class 
-		/// representing the number of <see cref="PieSlice"/> items in this pie.  Use the
-		/// public property <see cref="PieItem.NumbSlices"/> to access this data.
-		 /// </summary>
-		private int numbSlices;
+		#region Fields
 		/// <summary>
 		/// Private field instance of the <see cref="PieItem"/> class indicating whether
-		/// the instance is displayed in 2D or 3D.(see <see cref="PieSlice.PieType"/>)
-		///   Use the public property <see cref="PieItem.PieType"/> to access this data
+		/// the instance is displayed in 2D or 3D.(see <see cref="PieItem.PieType"/>)
 		/// </summary>
 		private PieType pieType;
 
-		/// <summary>Private field instance of the <see cref="ZedGraph.PieItem"/> class 
-		/// representing the Title of this <see cref="PieItem"/>.  This data would be used
-		/// where more than one <see cref="PieItem"/> will be displayed.  Use the
-		/// public property <see cref="PieItem.PieTitle"/> to access this data.
+		/// <summary>
+		/// Percentage (expressed as #.##) of <see cref="PieItem"/>	diameter  to
+		/// which this <see cref="PieItem"/> is to be displaced from the center.
+		///   Displacement is done outward  along the radius
+		/// bisecting the chord of this <see cref="PieItem"/>.  Maximum allowable value
+		/// is 0.5.
 		/// </summary>
-		private string pieTitle;
+		private double	displacement;
 
+		/// <summary>
+		/// Private field which holds the angle (in degrees) at which the display of this <see cref="PieItem"/>
+		/// object will begin.
+		/// </summary>
+		private float startAngle;
 
-		/// <summary>Private field instance of the <see cref="ZedGraph.PieItem"/> class 
-		/// representing the <see cref="PieSlice"/>items which make up this <see cref="PieItem"/>.  Use the
-		/// public property <see cref="PieItem.SliceList"/> to access this data.</summary>
-		 private ArrayList sliceList;
+		/// <summary>
+		///Private field which holds the length (in degrees) of the arc representing this <see cref="PieItem"/> 
+		///object.
+		/// </summary>
+		private float sweepAngle;
+
+		/// <summary>
+		///Private field which represents the angle (in degrees) of the radius along which this <see cref="PieItem"/>
+		///object will be displaced, if desired.
+		/// </summary>
+		private float midAngle;
+
+		/// <summary>
+		/// A <see cref="ZedGraph.TextItem"/>	 which will customize the label display of this <see cref="PieItem"/>
+		/// </summary>
+		private TextItem labelDetail;
 	
 		/// <summary>
-		///An enum that specifies how each <see cref="PieSlice.label"/> for this <see cref="Pie"/> object 
+		/// Private	field	that stores the	<see cref="ZedGraph.Fill"/> data for this
+		/// <see	cref="PieItem"/>.	 Use	the public property <see	cref="Fill"/> to
+		/// access this value.
+		/// </summary>
+		private Fill  fill;
+		
+		/// <summary>
+		/// Private	field	that stores the	<see cref="Border"/> class that defines	the
+		/// properties of the	border around	this <see cref="PieItem"/>. Use the public
+		/// property	<see cref="Border"/> to access this value.
+		/// </summary>
+		private Border border;
+		
+		/// <summary>
+		///Private field that stores the absolute value of this <see cref="PieItem"/> instance.
+		///Value will be set to zero is submitted value is less than zero. 
+		/// </summary>
+		private double	value;
+
+	
+		/// <summary>
+		///An enum that specifies how each <see cref="PieItem.label"/> for this <see cref="Pie"/> object 
 		///will be displayed.  Use the public property <see cref="Pie.LabelType"/> to access this data.  
 		/// Use enum <see cref="PieLabelType"/>.
 		/// </summary>
 		private PieLabelType labelType ;
-	#endregion
+		#endregion
 
-		private ColorSymbolRotator rotator = new ColorSymbolRotator () ;
-
-	#region PieItem Properties
-		/// <summary>
-		/// Internal property returning a reference to the <see cref="PieSlice"/> with
-		/// the largest displacement.
-		/// </summary>
-		internal PieSlice MaxDisplacedSlice
+		#region Defaults
+		public	struct Default
 		{
-			get
-			{
-				double max = 0 ;
-				PieSlice maxSlice = null ;
-				foreach (PieSlice slice in sliceList)
-				{
-					if (slice.Displacement > max)
-					{			
-						max = slice.Displacement  ;
-						maxSlice = slice ;
-					}
-				}
-				return (maxSlice);
-			}
+			/// <summary>
+			///Default <see cref="PieItem "/> displacement.
+			/// </summary>
+			public	static double	Displacement =	0	;
+
+			/// <summary>
+			/// The default pen width	to be used for drawing the	border around	the PieItem
+			/// (<see cref="ZedGraph.Border.PenWidth"/>	property).	 Units	are	points.
+			/// </summary>
+			public	static float BorderWidth = 1.0F;
+			/// <summary>
+			/// The default fill mode for this PieItem (<see	cref="ZedGraph.Fill.Type"/> property).
+			/// </summary>
+			public	static FillType FillType = FillType.Brush ;
+			/// <summary>
+			/// The default border	mode	for	PieItem	(<see cref="ZedGraph.Border.IsVisible"/> property).
+			/// true to	display frame	around PieItem,	false otherwise
+			/// </summary>
+			public	static bool IsBorderVisible	= true;
+			/// <summary>
+			/// The default color	for	drawing	frames around	PieItem
+			/// (<see cref="ZedGraph.Border.Color"/> property).
+			/// </summary>
+			public	static Color	BorderColor = Color.Black;
+			/// <summary>
+			/// The default color	for	filling in	the PieItem
+			/// (<see cref="ZedGraph.Fill.Color"/>	property).
+			/// </summary>
+			public	static Color	FillColor = Color.Red;
+			/// <summary>
+			/// The default custom brush for filling in the PieItem.
+			/// (<see cref="ZedGraph.Fill.Brush"/> property).
+			/// </summary>
+			public	static Brush FillBrush	=	null;	
+		
+			/// <summary>
+			///Default value for controlling <see cref="PieItem"/> display.
+			/// </summary>
+			public static bool isVisible = true ;
 		}
+		#endregion	 Defaults
+
+		private static ColorSymbolRotator rotator = new ColorSymbolRotator () ;
+
+		#region PieItem Properties
 		/// <summary>
-		/// Gets or sets the list of <see cref="PieSlice"/> items for this <see cref="PieItem"/>
+		///Gets or sets the a value which determines the amount, if any, of this <see cref="PieItem"/>  
+		///displacement.
 		/// </summary>
-		/// <value>A reference to a <see cref="PieSlice"/> collection object</value>
-		public ArrayList SliceList
+		public	double Displacement
 		{
-			get	  { return (this.sliceList); }
-			set { this.sliceList = value; }
+			get { return (this.displacement); }
+			set { this.displacement = value > 1 ? .5 : value ; }
 		}
 
-	/// <summary>
-	///Gets or sets the <see cref="PieLabelType"/> to be used in display.
-	/// </summary>
+		/// <summary>
+		/// 
+		/// </summary>
+		public TextItem LabelDetail
+		{
+			get { return (this.labelDetail); }
+			set { this.labelDetail = value; } 
+		}
+
+		/// <summary>
+		///Gets or sets the <see cref="Border"/> object so as to be able to modify
+		///its properties.
+		/// </summary>
+		public	Border Border
+		{
+			get { return (this.border); }
+			set { this.border =	value; }
+		}
+				
+		/// <summary>
+		///Internal property to get or set the arc length (in degrees) of this <see cref="PieItem"/>.
+		/// </summary>
+		internal float SweepAngle
+		{
+			get { return (this.sweepAngle); }
+			set { this.sweepAngle = value; }
+		}
+
+		/// <summary>
+		///Gets or sets the starting angle (in degrees) of this <see cref="PieItem"/>.
+		/// </summary>
+		internal float StartAngle
+		{
+			get { return (this.startAngle); }
+			set { this.startAngle = value; }
+		}
+
+		/// <summary>
+		///Internal property to get or set the angle (in degrees) of the radius along which 
+		///this <see cref="PieItem"/> will be displaced.
+		/// </summary>
+		internal float MidAngle
+		{
+			get { return (this.midAngle); }
+			set { this.midAngle = value; }
+		}
+
+		/// <summary>
+		///   Internal property for getting and setting the value of this <see cref="PieItem"/>.  
+		///   Minimum value is 0. 
+		/// </summary>
+		public	double Value
+		{
+			get { return (this.value); }
+			set { this.value	=	value > 0 ? value : 0 ; }
+		}
+				
+		/// <summary>
+		///Gets or sets the <see cref="PieLabelType"/> to be used in displaying 
+		///<see cref="PieItem"/> labels.
+		/// </summary>
 		public	PieLabelType LabelType
 		{
 			get { return (this.labelType); }
 			set { this.labelType = value; }
 		}
 		
-	/// <summary>
-		///Internal property for getting the total value of all <see cref="PieSlices"/> in 
-		///this <see cref="PieItem"/> .
-		/// </summary>
-		internal double PieTotalValue
-		{
-			get 
-			{ 
-				double total = 0 ; 
-				foreach (PieSlice slice in sliceList) total += slice.Value ;				  
-				return (total);
-			}
-		}
-
 		/// <summary>
 		/// Getsor sets enum <see cref="PieType"/> to be used	for drawing this <see cref="PieItem"/>.
 		/// </summary>
@@ -133,164 +235,53 @@ namespace ZedGraph
 			get { return (this.pieType); }
 			set { this.pieType = value; }
 		}
-		/// <summary>
-		/// Gets or sets a string  representing the  <see cref="PieTitle"/> item for this <see cref="PieItem"/>.
-		/// </summary>
-		/// <value>A string containing the <see cref="PieTitle"/></value>
-		public string PieTitle
-		{
-			get { return (this.pieTitle); }
-			set { this.pieTitle = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets an int  representing the  number of <see cref="PieSlice"/> items for this <see cref="PieItem"/>
-		/// </summary>
-		/// <value>An int containing the number of <see cref="PieSlice"/>items.</value>
-		internal int NumbSlices
-		{
-			get { return (this.numbSlices); }
-			set { this.numbSlices = value; }
-		}
  
-	#endregion
+		#endregion
 
-	#region	 Constructors
+		#region	 Constructors
 		/// <summary>
-		/// The minimal constructor for creating a new <see cref="PieItem"/>.  Default
-		/// values for the other parameters will be assigned during the construction of the
-		/// <see cref="PieSlices"/>.
+		/// Add a <see cref="PieItem"/> to an existing <see cref="PieItem"/>
 		/// </summary>
-		/// <param name="title">A string representing the <see cref="PieTitle"/></param>
-		/// <param name="slices">An int representing the number of <see cref="PieSlice"/>
-		/// items to be added</param>
-      public PieItem( string title, int slices )	: base ( title, slices )
+		/// <param name="value">The value associated with this <see cref="PieItem"/>item.</param>
+		/// <param name="color">The display color for this <see cref="PieItem"/>item.</param>
+		/// <param name="displacement">The amount this <see cref="PieItem"/>  will be 
+		/// displaced from the center point.</param>
+		/// <param name="label">Text label for this <see cref="PieItem"/></param>
+		public PieItem (  double value, Color color,  double displacement, string label ) : base( label )
 		{
-			this.NumbSlices = slices ;
-
-			this.PieTitle = title ;
-
-			if ( sliceList == null )	
-				sliceList = new ArrayList () ;
-
-			for ( int x = 0 ; x < numbSlices ; x++ )
-			{
-				PieSlice slice = new PieSlice( this, x, rotator.NextColor ) ;
-				sliceList.Add (slice) ;
-			}
-			RecalculateSliceAngles () ;
-
-/*
-			for ( int x = 0 ; x < this.SliceList.Count ; x++ )
-			{
-				((PieSlice)(sliceList[x])).StartAngle = x == 0? 0 : ((PieSlice)(sliceList[x - 1])).StartAngle + 
-					((PieSlice)(sliceList[x - 1 ])).SweepAngle ;
-				((PieSlice)(sliceList[x])).SweepAngle = (float)(360 * ((PieSlice)(sliceList[x])).Value / this.PieTotalValue) ;
-			}
-*/
-			this.pieType = PieType.Pie2D ;
-			this.labelType = PieLabelType.Value ;
-
+			this.value = value ;
+			this.fill = new Fill( color.IsEmpty ? rotator.NextColor : color ) ;
+			this.border = new Border(Default.BorderColor, Default.BorderWidth ) ;
+			this.displacement = displacement ;
+			this.labelDetail = new TextItem() ;
 		}
-		
+
 		/// <summary>
-		/// 
+		/// Add a <see cref="PieItem"/> to an existing <see cref="PieItem"/>
 		/// </summary>
-		/// <param name="pieLabel"></param>
-		/// <param name="values"></param>
-		public PieItem( string pieLabel, double [] values )	: base ( values )
+		/// <param name="value">The value associated with this <see cref="PieItem"/>item./param>
+		/// <param name="color">The display color for this <see cref="PieItem"/>item.</param>
+		/// <param name="displaced">The  associated with this <see cref="PieItem"/>item.</param>
+		/// <param name="displacement">The amount this <see cref="PieItem"/>item will be 
+		/// displaced from the center of the <see cref="PieItem"/>.</param>
+		/// <param name="label">Text label for this <see cref="PieItem"/></param>
+		public PieItem (  double value, string label ) : base( label )
 		{
-			NumbSlices = values.Length ;
-			pieTitle = pieLabel ;
-
-			if ( sliceList == null )	
-				sliceList = new ArrayList () ;
-
-			for ( int x = 0 ; x < numbSlices ; x++ )
-			{
-				PieSlice slice = new PieSlice( this,x, values[x],  rotator.NextColor ) ;
-				sliceList.Add (slice) ;
-			}
-			
-			RecalculateSliceAngles () ;
-/*
-			for ( int x = 0 ; x < this.SliceList.Count ; x++ )
-			{
-				((PieSlice)(sliceList[x])).StartAngle = x == 0? 0 : ((PieSlice)(sliceList[x - 1])).StartAngle + 
-														((PieSlice)(sliceList[x - 1 ])).SweepAngle ;
-				((PieSlice)(sliceList[x])).SweepAngle = (float)(360 * ((PieSlice)(sliceList[x])).Value / this.PieTotalValue) ;
-			}
-*/
-			this.pieType = PieType.Pie2D ;
-			this.labelType = PieLabelType.Value ;
+			this.value = value ;
+			this.fill = new Fill( rotator.NextColor  ) ;
+			this.border = new Border(Default.BorderColor, Default.BorderWidth ) ;
+			this.displacement =  Default.Displacement ;
+			this.labelDetail = new TextItem() ;
 		}
-		
+
 		/// <summary>
-		/// Constructor for creating a <see cref="PieItem"/> item when all, or most, values are known.  
-		/// If any of the parameters are null, default values will be assigned.
+		/// The Copy Constructor
 		/// </summary>
-		/// <param name="pieLabel">A string that can be used to assign a specific title
-		///  to this <see cref="PieItem"/>instance.</param>
-		/// <param name="values">A double [] containing the values of each <see cref="PieSlice"/>/param>
-		/// <param name="colors">A Color [] containing the colors of each <see cref="PieSlice"/></param>
-		/// <param name="displaced">a bool [] containing values which indicate whether each 
-		///   <see cref ="PieSlice"/> is displaced from the center.</param>
-		/// <param name="displacements">A double [] containing values which represent the amount, 
-		/// expressed as a percentage of the pie radius, a <see cref="PieSlice"/> is displaced from the 
-		/// center of the pie.  The maximum value is 25% (0.25)...any value greater than this will be adjusted 
-		/// downward. </param>
-		/// <param name="labels">A string [] representing the labels assigned to each <see cref="PieSlice"/>.</param>
-		public PieItem ( string pieLabel, double [] values, Color [] colors, 
-														double [] displacements, string [] labels )  : base ( values )
-		{
-			if ( values != null)
-				NumbSlices = values.Length ; 
-			else if ( colors != null)
-				NumbSlices = colors.Length ; 
-			else if ( displacements != null )
-				NumbSlices = displacements.Length ; 
-			else if ( labels != null )
-				NumbSlices = labels.Length ; 
-
-			this.pieTitle = pieLabel ;
-
-			if ( sliceList == null )	
-					sliceList = new ArrayList () ;
-
-			if ( numbSlices > 0)				  //there's some valid values
-			{
-				for ( int x = 0 ; x < numbSlices ; x++ )
-				{
-					PieSlice slice = new PieSlice( this,  x , values != null? values[x]: PieSlice.Default.value, 
-								colors != null? colors[x]: Color.White, 
-								displacements != null? displacements[x]:PieSlice.Default.displacement, 
-								labels != null? labels[x]: "Default") ;
-					sliceList.Add (slice) ;
-				}
-			}
-			else						//all nulls for data arrays - make a single slice just so that something is displayed
-			{
-				PieSlice slice = new PieSlice( this,  0 , PieSlice.Default.value, Color.White,				 //display White as indicator..
-							PieSlice.Default.displacement ,  "Default") ;
-				sliceList.Add (slice) ;
-				slice.StartAngle = (float)0;
-				slice.SweepAngle = (float)360 ;
-				slice.MidAngle = 180 ;
-			}
-			RecalculateSliceAngles () ;
-
-			this.pieType = PieType.Pie2D ;
-			this.labelType = PieLabelType.Value ;
-		}
-		
-
-			/// <summary>
-			/// The Copy Constructor
-			/// </summary>
-			/// <param name="rhs">The <see cref="PieItem"/> object from which to copy</param>
+		/// <param name="rhs">The <see cref="PieItem"/> object from which to copy</param>
 		public PieItem( PieItem rhs ) : base( rhs )
 		{
 		}
+
 
 
 		/// <summary>
@@ -302,82 +293,16 @@ namespace ZedGraph
 			return new PieItem( this ); 
 		}
 
-	#endregion
+		#endregion
 		
-	#region	  Methods
-		/// <summary>
-		/// Add a <see cref="PieSlice"/> to an existing <see cref="PieItem"/>
-		/// </summary>
-		/// <param name="value">The value associated with this <see cref="PieSlice"/>item./param>
-		/// <param name="color">The display color for this <see cref="PieSlice"/>item.</param>
-		/// <param name="displaced">The  associated with this <see cref="PieSlice"/>item.</param>
-		/// <param name="displacement">The amount this <see cref="PieSlice"/>item will be 
-		/// displaced from the center of the <see cref="PieItem"/>.</param>
-		/// <param name="label">Text label for this <see cref="PieSlice"/></param>
-		public void AddSlice (  double value, Color color,  double displacement, string label )
-		{
-			PieSlice slice = new PieSlice( this,  numbSlices , value, color, displacement, label ) ;
-			sliceList.Add (slice) ;
-			numbSlices++ ;
-			this.points.Add (value) ;
-
-			RecalculateSliceAngles () ;
-		}
-		
-		/// <summary>
-		/// Change the value associated with a specific <see cref="PieSlice"/>.
-		/// </summary>
-		/// <param name="index">An int containing the <see cref="PieSlice.sliceIndex"/> for
-			/// the <see cref="PieSlice.value"/> to be changed.</param>
-	/// <param name="values">A double  containing the new <see cref="PieSlice"/>value.
-		/// for this <see cref="PieSlice"/></param>
-		public void ChangeSliceValue ( int index, double value )	
-		{
-			if ( index > this.SliceList.Count - 1 || index < 0  )
-				return ;
-
-			((PieSlice)(this.SliceList[index])).Value	= value ;
-			
-			RecalculateSliceAngles () ;
-		}
-		/// <summary>
-		/// Change all <see cref="PieSlice.value"/>	for this <see cref="PieItem"/>
-		/// </summary>
-		/// <param name="values">A double [] containing the <see cref="PieSlice"/>values
-		/// for this <see cref="PieItem"/></param>
-		public void ChangeSliceValues ( double [] values )	
-		{
-			if ( numbSlices != values.Length )
-				return ;
-
-			this.points = new PointPairList(values ) ;
-			for ( int x = 0 ; x < this.SliceList.Count ; x++ )
-				((PieSlice)this.sliceList[x]).Value = points[x].X ;
-			
-			RecalculateSliceAngles () ;
-		}
-
-		/// <summary>
-		/// A method which recalculates the various angle fields in each <see cref="PieSlice"/> objects.  This
-		/// method is called when any sort of a change in <see cref="PieSlice.value"/> is experienced.
-		/// </summary>
-		public void RecalculateSliceAngles ()
-		{
-			for ( int x = 0 ; x < this.SliceList.Count ; x++ )
-			{
-				((PieSlice)(sliceList[x])).StartAngle = x == 0? 0 : ((PieSlice)(sliceList[x - 1])).StartAngle + 
-					((PieSlice)(sliceList[x - 1 ])).SweepAngle ;
-				((PieSlice)(sliceList[x])).SweepAngle = (float)(360 * ((PieSlice)(sliceList[x])).Value / this.PieTotalValue) ;
-				((PieSlice)(sliceList[x])).MidAngle = ((PieSlice)(sliceList[x])).StartAngle + ((PieSlice)(sliceList[x])).SweepAngle / 2 ;
-			}
-		}
+		#region	  Methods
 		/// <summary>
 		/// Do all rendering associated with this <see cref="PieItem"/> item to the specified
 		/// <see cref="Graphics"/> device.  This method is normally only
 		/// called by the Draw method of the parent <see cref="ZedGraph.CurveList"/>
 		/// collection object.  This method will layout the display (multiple <see cref="PieItem"/>
 		///  items) , if necessary, draw <see cref="PieItem"/> specific features (<see cref="PieTitle"/> then call 
-		///   <see cref="PieSlice"/> Draw methods to actually render the display.
+		///   <see cref="PieItem"/> Draw methods to actually render the display.
 		/// </summary>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -396,41 +321,210 @@ namespace ZedGraph
 		/// </param>				
 		override public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  )
 		{
-			RectangleF nonExplRect ;
 
-			if ( pane.CurveList.IsPieOnly )
+			RectangleF nonExplRect ;
+			double maxDisplacement = 0 ;	
+
+			if ( !this.isVisible )
+				return ;
+			
+			if ( pane.CurveList.IsPieOnly )						 //calc pierect here
 				nonExplRect = pane.PieRect ;
 			else
 				nonExplRect = pane.AxisRect ;					  //if isAxisRectAuto = false
 			
-			if ( MaxDisplacedSlice != null )												 //need new rectangle if any slice exploded
-				CalcNewBaseRect ( MaxDisplacedSlice, ref nonExplRect ) ;
+			CalculatePieChartParams( pane, ref maxDisplacement ) ;
+
+			if ( maxDisplacement != 0 )			 //need new rectangle if any slice exploded	***figure out how to get maxdispl
+				CalcNewBaseRect ( maxDisplacement, ref nonExplRect ) ;
 			
-			//now gotta loop thru the slices and draw them
-			foreach ( PieSlice slice in this.sliceList)
-				slice.Draw ( g, pane, nonExplRect, scaleFactor ) ;
+			Brush brush = this.fill.MakeBrush( nonExplRect );
+
+			if ( this.displacement == 0 )                                                     //this slice not exploded
+			{
+				g.FillPie( brush,nonExplRect.X,nonExplRect.Y,nonExplRect.Width,nonExplRect.Height, this.StartAngle, this.SweepAngle );
+
+				if ( this.Border.IsVisible)
+				{
+					Pen borderPen = this.border.MakePen ( pane, scaleFactor ) ;
+					g.DrawPie (borderPen, nonExplRect.X,nonExplRect.Y,nonExplRect.Width,nonExplRect.Height, this.StartAngle, this.SweepAngle );
+					borderPen.Dispose () ;
+				}
+
+				if ( this.labelType != PieLabelType.None )
+					DrawLabel ( g, pane, nonExplRect, scaleFactor  ) ;
+			}
+			else									  //got an exploded slice
+			{
+				RectangleF explRect  =nonExplRect;
+
+				CalcExplodedRect (ref explRect ) ;							  //calculate the bounding rectanglefor exploded pie
+
+				g.FillPie( brush,explRect.X,explRect.Y,explRect.Width,explRect.Height, this.StartAngle, this.SweepAngle );
+
+				if ( this.Border.IsVisible )
+				{
+					Pen borderPen = this.Border.MakePen ( pane, scaleFactor ) ;
+					g.DrawPie (borderPen, explRect.X,explRect.Y,explRect.Width,explRect.Height, this.StartAngle, this.SweepAngle );
+					borderPen.Dispose () ;
+				}
+				if ( this.labelType != PieLabelType.None )
+					DrawLabel ( g, pane, explRect, scaleFactor  ) ;
+			}
+
 		}
 
-		
+		/// <summary>
+		///Recalculate the bounding rectangle when a piee slice is displaced.
+		/// </summary>
+		/// <param name="explRect">rectangle to be used for drawing exploded pie</param>
+		private void CalcExplodedRect ( ref RectangleF explRect)
+		{
+			//pie exploded out along the slice bisector - modify upper left of bounding rect to account for displacement
+			//keep height and width same
+			explRect.X += (float)(this.Displacement * explRect.Width / 2 * Math.Cos ( this.midAngle * Math.PI /180 )) ;
+			explRect.Y += (float) (this.Displacement * explRect.Height / 2 * Math.Sin (this.midAngle * Math.PI /180 )) ; 
+		}
+		/// <summary>
+		///Calculate the values needed to properly display this <see cref="PieItem"/>.
+		/// </summary>
+		/// <param name="pane">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="maxDisplacement">maximum slice displacement</param>
+		private void CalculatePieChartParams (GraphPane pane, ref double maxDisplacement )
+		{
+			//loop thru slices and get total value and maxDisplacement
+			double pieTotalValue = 0 ;
+			foreach ( PieItem curve in pane.CurveList )
+				if ( curve.IsPie )
+				{
+					pieTotalValue += curve.value ;
+					if ( curve.Displacement > maxDisplacement)
+						maxDisplacement = curve.Displacement ;
+				}						 
+			
+			double nextStartAngle = 0 ;
+			//now loop thru and calculate the various angle values
+			foreach ( PieItem curve in pane.CurveList )
+			{
+				curve.StartAngle = (float)nextStartAngle ; 
+				curve.SweepAngle = (float)(360 * curve.Value / pieTotalValue) ;
+				curve.MidAngle = curve.StartAngle + curve.SweepAngle / 2 ;
+				nextStartAngle = curve.startAngle + curve.sweepAngle ;
+			}
+		}
+		/// <summary>
+		///Render the label for this <see cref="PieItem"/>.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="pane">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="rect">Bounding rectangle for this <see cref="PieItem"/>.</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>				
+		public void DrawLabel ( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor  )
+		{
+			//label line will come off the explosion radius and then pivot to the horizontal right or left, dependent on position.. 
+			//text will be at the end of horizontal segment...
+			Pen labelPen = this.Border.MakePen (pane, scaleFactor ) ;
+
+			//get the point where the explosion radius intersects the pie arc
+			PointF rectCenter = new PointF ( (rect.X + rect.Width / 2 ) , (rect.Y + rect.Height / 2 )) ;
+			PointF intersectionPoint = new PointF ( (float)(rectCenter.X + ( rect.Width / 2 *  Math.Cos (  (this.midAngle ) * Math.PI /180 ))),
+				(float)(rectCenter.Y + ( rect.Height / 2 * Math.Sin (  (  this.midAngle )  * Math.PI / 180 )) )) ;
+			
+			//draw line from intersection point to pivot point - line to be 20 pixels long
+			PointF pivotPoint = new PointF ((float) (intersectionPoint.X + 20*  Math.Cos (  (this.midAngle ) * Math.PI /180 )), 
+				(float)(intersectionPoint.Y + 20 *Math.Sin (  (  this.midAngle )  * Math.PI / 180 )) )  ;
+			g.DrawLine ( labelPen, intersectionPoint, pivotPoint ) ;
+
+			//draw 20 pixel horizontal	 line to move label away from pie...
+			PointF endPoint ;
+															 //does line go to left or right....label alignment is to the opposite
+			if ( pivotPoint.X >= rectCenter.X)							 //goes to right
+			{
+				endPoint = new PointF (  pivotPoint.X + 20, pivotPoint.Y)	;
+				this.labelDetail.Location.AlignH = AlignH.Left ;
+			}
+			else
+			{
+				endPoint = new PointF (  pivotPoint.X - 20, pivotPoint.Y)	;
+				this.labelDetail.Location.AlignH = AlignH.Right ;
+			}
+			g.DrawLine ( labelPen, pivotPoint, endPoint )	;
+
+			//build the label string to be displayed
+			String labelStr = " " ;
+			BuildLabelString ( ref labelStr ) ;
+										//configure the label (TextItem)
+			this.labelDetail.Location.AlignV = AlignV.Center ;
+			this.labelDetail.Location.CoordinateFrame = CoordType.PaneFraction ;
+			this.labelDetail.Location.X =	endPoint.X / pane.PaneRect.Width ;
+			this.labelDetail.Location.Y =	endPoint.Y / pane.PaneRect.Height ;
+			this.labelDetail.Text = labelStr  ;
+			this.labelDetail.FontSpec.Size = 8 ;
+			this.labelDetail.Draw ( g, pane, scaleFactor ) ;
+		}
+
+		/// <summary>
+		/// Build the string that will be displayed as the slice label as determined by 
+		/// <see cref="PieItem.labelType"/>.
+		/// </summary>
+		/// <param name="labelStr">reference to the string to be displayed</param>
+		private void BuildLabelString ( ref string labelStr )
+		{
+			switch( this.labelType ) 
+			{		
+				case PieLabelType.Value :
+					labelStr = this.value.ToString ("#.###") ;
+					break;
+				case PieLabelType.Percent :
+					double value  = this.sweepAngle / 360 ;	
+					labelStr = value.ToString ("#.000%") ;
+					break;
+				case PieLabelType.Name_Value :
+					labelStr = this.label + " - " + this.value.ToString ("#.###") ;
+					break;
+				case PieLabelType.Name_Percent :
+					value  = this.sweepAngle / 360 ;	
+					labelStr = this.label + " - " + value.ToString ("#.###%") ;
+					break;
+				case PieLabelType.Name :
+					labelStr = this.label ; 
+					break ;
+				case PieLabelType.None :
+				default:
+					break ;
+			}
+		}
 		/// <summary>
 		///A method which calculates the size of	 the bounding rectangle for the non-displaced 
-		///<see cref="PieSlices"/>s in this <see cref="PieItem"/>.  This method is called after it is found
+		///<see cref="PieItems"/>s in this <see cref="PieItem"/>.  This method is called after it is found
 		///that at least one slice is displaced.
 		/// </summary>
-		/// <param name="slice">A reference to the <see cref="PieSlice"/> with the 
-		/// greatest displacement.</param>
-		/// <param name="baseRect">Largest square in axisRect"Pie"/></param>
-		private void CalcNewBaseRect ( PieSlice slice, ref RectangleF baseRect )
+		/// <param name="maxDisplacement"></param>
+		/// <param name="baseRect"></param>
+		private void CalcNewBaseRect ( double maxDisplacement, ref RectangleF baseRect )
 		{
-					//displacement expressed in terms of % of pie radius	...do not want exploded slice to 
-					//go beyond nonExplRect, but want to maintain the same center point...therefore, got to 
-					//reduce the diameter of the nonexploded pie by the alue of the displacement
+			//displacement expressed in terms of % of pie radius	...do not want exploded slice to 
+			//go beyond nonExplRect, but want to maintain the same center point...therefore, got to 
+			//reduce the diameter of the nonexploded pie by the alue of the displacement
 
-			float xDispl =	(float)((slice.Displacement*baseRect.Width/2)) ; 
-			float yDispl	 =  (float)((slice.Displacement * baseRect.Height/2) ); 
+			float xDispl =	(float)((maxDisplacement * baseRect.Width/2)) ; 
+			float yDispl	 =  (float)((maxDisplacement * baseRect.Height/2) ); 
 
-			baseRect.Inflate ( -(float)((xDispl / 2)), -(float)((xDispl / 2 ) )  );
-
+			baseRect.Inflate ( -(float)(.90*(xDispl / 2)), -(float)(.90*(xDispl / 2 ) )  );
 		}
 		
 		/// <summary>
@@ -455,9 +549,24 @@ namespace ZedGraph
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect,
 			double scaleFactor )
 		{
+			if ( !this.isVisible )
+				return ;
+			
+			//	Fill	the slice
+			if	( this.fill.IsVisible )
+			{
+				//	just avoid	height/width	being	less than 0.1	so GDI+ doesn't cry
+				Brush brush = this.fill.MakeBrush( rect );
+				g.FillRectangle( brush, rect );
+				brush.Dispose();
+			}
+
+			//	Border the bar
+			if	( !this.border.Color.IsEmpty	)
+				this.border.Draw( g,	pane,	scaleFactor, rect );
 		}
 
-	#endregion  
+		#endregion  
 	
 	
 	}

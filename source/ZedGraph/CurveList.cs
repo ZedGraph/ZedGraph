@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.17 $ $Date: 2005-01-16 03:46:12 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2005-01-17 12:47:34 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -95,15 +95,12 @@ namespace ZedGraph
 		{
 			get
 			{
-				bool hasPie = false;
 				foreach ( CurveItem curve in this )
 				{
 					if ( !curve.IsPie )
 						return false;
-					else
-						hasPie = true;
 				}
-				return hasPie;
+				return true;
 			}
 		}
 
@@ -583,20 +580,6 @@ namespace ZedGraph
 				//	if	it's a bar type or a sorted overlay or a percentstacked bar, it's already been	done above
 				if	( !(pane.BarType == BarType.SortedOverlay) || !curve.IsBar ||!curve.IsPie ) 
 					curve.Draw( g, pane, pos, scaleFactor );
-
-				if ( curve.IsPie )
-					if (this.NumPies == 1 )
-				{
-					((PieItem)curve).Draw (g, pane, pos, scaleFactor ) ;				  //one pie, use entire AxisRect
-					}
-				else
-				{
-/*
-					RectangleF rect =  pane.MiniPanes[0];
-					rect.X += 5 ;
-*/
-				}
-
 			}
 		}
 	#endregion

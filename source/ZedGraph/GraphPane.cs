@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.25 $ $Date: 2005-01-16 03:46:12 $ </version>
+	/// <version> $Revision: 3.26 $ $Date: 2005-01-17 12:47:34 $ </version>
 	[Serializable]
 	public class GraphPane : ICloneable, ISerializable
 	{
@@ -1217,11 +1217,10 @@ namespace ZedGraph
 				this.axisRect = CalcAxisRect(g, out scaleFactor, out hStack, out legendWidth, out legendHeight);
 			else
 				CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth, out legendHeight );
-			// Border the whole pane			 ***************************
+			// Border the whole pane			
 			DrawPaneFrame( g, this, scaleFactor );
 
 			// do a sanity check on the axisRect
-	//		if ( !this.curveList.IsPieOnly)
 			if ( this.axisRect.Width < 1 || this.axisRect.Height < 1 )
 				return;
 			
@@ -1397,10 +1396,12 @@ namespace ZedGraph
 				this.XAxis.IsVisible = false ;				
 				this.YAxis.IsVisible = false ;
 				this.axisBorder.IsVisible = false ;
+
+				axisRect = tmpRect ;
 			
 
 				//want to draw the largest pie possible within axisRect
-				//but want to leave  5% slack around the pie so labels will not overrun clip area
+				//but want to leave  10% slack around the pie so labels will not overrun clip area
 				//largest pie is limited by the smaller of axisRect.height or axisRect.width...
 				//this rect (nonExplRect)has to be re-positioned so that it's in the center of axisRect.
 				RectangleF nonExplRect = tmpRect ; 
@@ -1408,7 +1409,7 @@ namespace ZedGraph
 				if ( nonExplRect.Width < nonExplRect.Height )
 				{
 					//create slack rect
-					nonExplRect.Inflate (  - (float).05*nonExplRect.Height, - (float).05 * nonExplRect.Width);
+					nonExplRect.Inflate (  - (float)0.1F * nonExplRect.Height, - (float)0.1F * nonExplRect.Width);
 					//get the difference between dimensions
 					float delta =  (nonExplRect.Height - nonExplRect.Width ) / 2 ;
 					//make a square	so we end up with circular pie
@@ -1419,31 +1420,15 @@ namespace ZedGraph
 				}
 				else
 				{
-					nonExplRect.Inflate (  - (float).05*nonExplRect.Height, - (float).05 * nonExplRect.Width);
+					nonExplRect.Inflate (  - (float)0.1F * nonExplRect.Height, - (float)0.1F * nonExplRect.Width);
 					float delta =  (nonExplRect.Width - nonExplRect.Height ) / 2 ;
 					nonExplRect.Width = nonExplRect.Height ;
 					nonExplRect.X +=	delta ;
 					pieRect = nonExplRect ;
 				}
-
-				
-				if ( curveList.NumPies == 1 )			//if only one pie
-					axisRect = tmpRect ;	
-				else
-				{
-/*
-//					MiniPanes  new Array[curveList.NumPies];
-					RectangleF[] minis = new RectangleF[curveList.NumPies] ;
-					miniPanes = minis ;
-					MiniPanes[0] = new RectangleF( 5,10,100,200 ) ;				 //need to create function to define a miniPane for each pie...
-					tmpRect = paneRect ;
-	//				axisRect = tmpRect  ;
-*/
-				}
 			}
 			return tmpRect;
 		}
-
 		/// <summary>
 		/// This method will set the <see cref="Axis.MinSpace"/> property for all three axes;
 		/// <see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>.
@@ -2356,33 +2341,42 @@ namespace ZedGraph
 			return barAxis;
 		}
 
-	#endregion
+		/// <summary>
+		/// Add a <see cref="PieItem"/> to the display/>
+		/// </summary>
+		/// <param name="value">The value associated with this <see cref="PieItem"/>item./param>
+		/// <param name="color">The display color for this <see cref="PieItem"/>item.</param>
+		/// <param name="displaced">The  associated with this <see cref="PieItem"/>item.</param>
+		/// <param name="displacement">The amount this <see cref="PieItem"/>item will be 
+		/// displaced from the center of the <see cref="PieItem"/>.</param>
+		/// <param name="label">Text label for this <see cref="PieItem"/></param>
+		public PieItem AddPieSlice (  double value, Color color,  double displacement, string label )
+		{
+			PieItem slice = new PieItem( value, color, displacement, label ) ;
+			this.CurveList.Add (slice) ;
+			return slice ;
+		}
 
-		public PieItem AddPie(string pieLabel, int slices)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="values"></param>
+		/// <param name="labels"></param>
+		/// <returns></returns>
+		public PieItem [] AddPieSlices ( double [] values, string [] labels )
 		{
-			PieItem pie = new PieItem(pieLabel, slices) ;
-			this.CurveList.Add (pie) ;
-			this.XAxis.IsVisible = false ;
-			this.YAxis.IsVisible = false ;
-			return pie ;
+			PieItem [] slices = new PieItem[values.Length] ;
+			for ( int x = 0 ; x < values.Length ; x++ )
+			{
+				slices[x]= new PieItem(  values[x],  labels [x] ) ;
+				this.CurveList.Add (slices[x]) ;																			  
+
+			}
+			
+			return slices ;
 		}
-		
-		public PieItem AddPie ( string pieLabel, double [] values, Color [] colors, double [] displacements, string [] labels )
-		{
-			PieItem pie = new PieItem( pieLabel, values, colors, displacements, labels );
-			this.CurveList.Add (pie) ;
-			return pie ;
-		}
-	
-	
-		public PieItem AddPie( string pieLabel, double [] values)
-		{	
-			PieItem pie = new PieItem( pieLabel, values) ;
-			this.CurveList.Add (pie) ;
-			this.XAxis.IsVisible = false ;
-			this.YAxis.IsVisible = false ;
-			return pie ;
-		}
+		#endregion
+
 	}
 }
 

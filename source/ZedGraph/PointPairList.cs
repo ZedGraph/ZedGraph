@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.16 $ $Date: 2005-01-09 03:52:20 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2005-01-17 12:47:34 $ </version>
 	[Serializable]
 	public class PointPairList : CollectionPlus, ICloneable
 	{
@@ -72,17 +72,6 @@ namespace ZedGraph
 		/// </summary>
 		public PointPairList()
 		{
-			sorted = false;
-		}
-
-		/// <summary>
-		/// Constructor to initialize the PointPairList from two arrays of
-		/// type double.
-		/// </summary>
-		public PointPairList( double[] x )
-		{
-			Add( x);
-			
 			sorted = false;
 		}
 
@@ -159,36 +148,6 @@ namespace ZedGraph
 			foreach ( PointPair point in pointList )
 				rv = this.Add( point );
 				
-			sorted = false;
-			return rv;
-		}
-
-		/// <summary>
-		/// Add values to the PointPairList from an array of type double.
-		/// Each value in the array represents the value of a <see cref="PieSlice"/> 
-		/// in a <see cref="Pie"/>.  The values will stored in <see cref="PointPair.X"/>.
-		/// <see cref="PointPair.Missing"/> will be assigned to <see cref="PointPair.Y"/>.
-		/// </summary>
-		/// <param name="x">A double[] array of X values</param>
-		/// <returns>The zero-based ordinal index where the last point was added in the list,
-		/// or -1 if no points were added.</returns>
-		/// <seealso cref="IList.Add"/>
-		public int Add( double[] x )
-		{
-			int rv = -1;
-			
-			if ( x == null )
-				return rv ;
-
-			for ( int i=0; i<x.Length; i++ )
-			{
-				PointPair	point = new PointPair( 0, 0, 0 );
-				point.X = x[i] ;
-				point.Y = PointPair.Missing;
-					
-				rv = List.Add( point );
-			}
-			
 			sorted = false;
 			return rv;
 		}
@@ -317,7 +276,7 @@ namespace ZedGraph
 		/// Add a single point to the <see cref="PointPairList"/> from a single value of type double.
 		/// The value will be stored in <see cref="PointPair.X"/>	, while <see cref="PointPair.Y"/>
 		/// will be set to <see cref="PointPair.Missing"/>.	Normally used to assign a value to
-		/// <see cref="PieSlice.value"/>.
+		/// <see cref="PieItem.value"/>.
 		/// </summary>
 		/// <param name="x">The X value</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>

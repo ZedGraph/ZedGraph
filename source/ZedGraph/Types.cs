@@ -188,22 +188,22 @@ namespace ZedGraph
 		Bottom,
 		/// <summary>
 		/// Locate the <see cref="Legend"/> inside the <see cref="GraphPane.AxisRect"/> in the
-		/// top-left corner
+		/// top-left corner.  
 		/// </summary>
 		InsideTopLeft,
 		/// <summary>
 		/// Locate the <see cref="Legend"/> inside the <see cref="GraphPane.AxisRect"/> in the
-		/// top-right corner
+		/// top-right corner. 
 		/// </summary>
 		InsideTopRight,
 		/// <summary>
 		/// Locate the <see cref="Legend"/> inside the <see cref="GraphPane.AxisRect"/> in the
-		/// bottom-left corner
+		/// bottom-left corner.
 		/// </summary>
 		InsideBotLeft,
 		/// <summary>
 		/// Locate the <see cref="Legend"/> inside the <see cref="GraphPane.AxisRect"/> in the
-		/// bottom-right corner
+		/// bottom-right corner. 
 		/// </summary>
 		InsideBotRight,
 		/// <summary>
@@ -562,6 +562,16 @@ namespace ZedGraph
 		/// <summary>
 		/// 
 		/// </summary>
-		Percent
+		Percent,
+
+		/// <summary>
+		/// 
+		/// </summary>
+		Name,
+
+		/// <summary>
+		/// 
+		/// </summary>
+		None
 	};
 }

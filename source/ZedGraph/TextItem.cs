@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-01-08 08:28:08 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-01-17 12:47:34 $ </version>
 	[Serializable]
 	public class TextItem : GraphItem, ICloneable, ISerializable
 	{
@@ -207,6 +207,14 @@ namespace ZedGraph
 			Init( text );
 		}
 
+		public TextItem ()
+		{
+			this.fontSpec = new FontSpec(
+					Default.FontFamily, Default.FontSize,
+					Default.FontColor, Default.FontBold,
+					Default.FontItalic, Default.FontUnderline );
+		}
+		
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>

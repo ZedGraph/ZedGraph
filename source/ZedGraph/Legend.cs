@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15 $ $Date: 2005-01-16 03:46:12 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2005-01-17 12:47:34 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -444,39 +444,6 @@ namespace ZedGraph
 			// Loop for each curve in the CurveList collection
 			foreach( CurveItem curve in pane.CurveList )
 			{
-				if ( curve.IsLegendLabelVisible)
-					if ( curve.IsPie )
-					{
-						foreach ( PieSlice slice in ((PieItem)curve).SliceList)
-						{
-							if ( slice.Label != ""  && slice.IsVisible)
-							{
-								// Calculate the x,y (TopLeft) location of the current
-								// curve legend label
-								// assuming:
-								//  charHeight/2 for the left margin, plus legendWidth for each
-								//    horizontal column
-								//  legendHeight is the line spacing, with no extra margin above
-
-								x = this.rect.Left + halfCharHeight / 2.0F +
-									( iEntry % hStack ) * legendWidth;
-								y = this.rect.Top + (int)( iEntry / hStack ) * legendHeight;
-							
-								// Draw the legend label for the current curve
-								this.FontSpec.Draw( g, pane, slice.Label, x + 2.5F * charHeight, y + legendHeight / 2.0F,
-									AlignH.Left, AlignV.Center, scaleFactor );
-							
-								RectangleF rect = new RectangleF( x, y + legendHeight / 4.0F,
-									2 * charHeight, legendHeight / 2.0F );
-								slice.DrawLegendKey( g, pane, rect, scaleFactor );
-
-								// maintain a curve count for positioning
-								iEntry++;
-							}
-						}
-					}
-					else
-					{
 						if ( curve.Label != "" )
 						{  
 								// Calculate the x,y (TopLeft) location of the current
@@ -502,7 +469,7 @@ namespace ZedGraph
 							iEntry++;
 						}
 				}
-			}
+			
 		
 		
 			// Draw a border around the legend if required
@@ -627,24 +594,6 @@ namespace ZedGraph
 			// Find the maximum width of the legend labels
 			foreach( CurveItem curve in pane.CurveList )
 			{
-				if (curve.IsLegendLabelVisible)
-					if ( curve.IsPie )
-					{
-						foreach ( PieSlice slice in ((PieItem)curve).SliceList)
-						{
-							if ( slice.Label != "" && slice.IsVisible )
-							{
-								// Calculate the width of the label save the max width
-								tmpWidth = this.FontSpec.GetWidth( g, slice.Label, scaleFactor );
-
-								if ( tmpWidth > maxWidth )
-									maxWidth = tmpWidth;
-								nCurve++;
-							}
-						}
-					}
-					else				  //not a pie
-					{
 						if ( curve.Label != "" )
 						{
 							// Calculate the width of the label save the max width
@@ -660,8 +609,8 @@ namespace ZedGraph
 
 							nCurve++;
 						}
-					}
-			}
+				}
+			
 		
 			float widthAvail;
 		

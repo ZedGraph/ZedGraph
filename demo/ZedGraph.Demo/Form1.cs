@@ -10,7 +10,7 @@ using System.Drawing.Printing;
 using System.Drawing.Text;
 using System.Data;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization.Formatters.Soap;
+//using System.Runtime.Serialization.Formatters.Soap;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
@@ -146,7 +146,7 @@ namespace ZedGraph.Demo
 
 #endif
 
-#if true	// The main example
+#if false	// The main example
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -328,34 +328,72 @@ namespace ZedGraph.Demo
 
 #endif
 
-#if false	//Pie Chart Example   
+#if true	//Pie Chart Example   
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"2003 Regional Sales", "", "" );
+
+			double [] values =   { 15, 15, 40, 20 } ;
+			double [] values2 =   { 250, 50, 400, 50 } ;
+			Color [] colors = { Color.Red, Color.Blue, Color.Green, Color.Yellow } ;
+			double [] displacement = {	.0,.0,.0,.0 } ;
+			string [] labels = { "East", "West", "Central", "Canada" } ;
 
 			myPane.PaneFill = new Fill( Color.Cornsilk );
 			myPane.AxisFill = new Fill( Color.Cornsilk );
 			myPane.Legend.Position = LegendPos.Right ;
 			
-			double [] values =   { 25, 15, 40, 20 } ;
-			double [] values2 =   { 250, 50, 400, 200,50 } ;
-			Color [] colors = { Color.Red, Color.Blue, Color.Green, Color.Yellow } ;
-			double [] displacement = {	 .0,.10,.0,.20 } ;
-			string [] labels = { "East", "West", "Central", "Canada" } ;
-
+			PieItem segment1 = myPane.AddPieSlice ( 20, Color.Blue, .20, "North") ;
+			PieItem segment2 = myPane.AddPieSlice ( 40, Color.Red, 0, "South") ;
+			PieItem segment3 = myPane.AddPieSlice ( 30, Color.Yellow,.0, "East") ;
+			PieItem segment4 = myPane.AddPieSlice ( 10.21, Color.Green, 0, "West") ;
+			PieItem segment5 = myPane.AddPieSlice ( 10.5, Color.Aquamarine, .1, "Canada") ;
+//			 PieItem segment5 = new PieItem(myPane, 20, Color.Aquamarine, 0, "Canada" ) ;
+//			segment5.IsVisible = false ;
+					
+			
+			PieItem [] slices = new PieItem[values2.Length] ;
+			slices = myPane.AddPieSlices ( values2, labels ) ;
+			((PieItem)slices[3]).LabelType = PieLabelType.None ;
+			((PieItem)slices[1]).Displacement = .1 ;
+			((PieItem)slices[1]).LabelType = PieLabelType.Name ;
 
 /*
-			PieItem myPie = myPane.AddPie ("2001",5) ;
-			myPie.ChangeSliceValues (values2) ;
-			((PieSlice)myPie.SliceList[4]).Displacement =2.1 ;							//wll be reset internally to 1.0
-			myPie.ChangeSliceValue (4, 200 );							
+			foreach (PieItem segment in myPane.CurveList)
+			{
+				segment.Displacement = .1 ;			
+			}
 */
 
 
-			
-			//			myPie.PieType = PieType.Pie3D ;
+/*
+			int x = 0 ;
+			foreach (PieItem segment in myPane.CurveList)
+			{
+				segment.Value = values[x] ;
+				x++ ;
+			}
+*/
+
+//			myPane.IsAxisRectAuto = false ;
+
+			segment1.LabelType = PieLabelType.Name_Percent ;
+			segment2.LabelType = PieLabelType.Name_Value ;
+			segment3.LabelType = PieLabelType.Percent ;
+			segment4.LabelType = PieLabelType.Value ;
+			segment5.LabelType = PieLabelType.Name_Value ;
+			segment2.LabelDetail.FontSpec.FontColor = Color.Red ;
+																																				
+			TextItem text = new TextItem("First Prod 21-Oct-93", 0.85F, 0.80F,CoordType.PaneFraction );
+			text.Location.AlignH = AlignH.Center;
+			text.Location.AlignV = AlignV.Bottom;
+			text.FontSpec.Border.IsVisible = false ;
+			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
+			text.FontSpec.StringAlignment = StringAlignment.Center ;
+			myPane.GraphItemList.Add( text );
 
 
+/*
 			PieItem myPie1 = myPane.AddPie ( "2002", values, colors, displacement, labels ) ;
 			myPie1.AddSlice	( values[0], Color.Coral, displacement[2], "SE" );
 			myPie1.AddSlice	( 10, Color.Coral, 0 , "x" );
@@ -371,6 +409,7 @@ namespace ZedGraph.Demo
 			myPie1.IsVisible = false;
 			myPie1.Label = "JUnk";
 			myPie1.Color = Color.Red;
+*/
 			//MessageBox.Show( "Start" );
 			//for ( int i=0; i<10000000; i++ )
 			//	myPie1.RecalculateSliceAngles();
@@ -385,9 +424,17 @@ namespace ZedGraph.Demo
 //				PieItem myPie2 = myPane.AddPie ( "2003", values) ;
 
 
-	//		myPane.IsAxisRectAuto = false ;
 																																						
+
 			 
+			BoxItem box = new BoxItem( new RectangleF( 0F, 0F, 1F, 1F ),
+			Color.Empty, Color.PeachPuff );
+			box.Location.CoordinateFrame = CoordType.AxisFraction;
+			box.Border.IsVisible = false;
+			box.Location.AlignH = AlignH.Left;
+			box.Location.AlignV = AlignV.Top;
+			box.ZOrder = ZOrder.E_BehindAxis;
+			myPane.GraphItemList.Add( box );
 
 #endif
 
@@ -2830,7 +2877,7 @@ namespace ZedGraph.Demo
 			//			myPane.AxisRect = myRect;
 			//			myPane.AxisChange( this.CreateGraphics() );
 
-			
+			this.WindowState = FormWindowState.Maximized ;
 			myPane.AxisChange( this.CreateGraphics() );
       
 		}
