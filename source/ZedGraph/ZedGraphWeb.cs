@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-01-22 06:20:51 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-02-12 23:22:51 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -638,7 +638,7 @@ namespace ZedGraph
 			item.IsVisible = web.IsVisible;
 			item.RangeMax = web.RangeMax;
 			item.RangeMin = web.RangeMin;
-			item.Type = web.FillType;
+			item.Type = web.Type;
 		}
 
 		/// <summary>
@@ -672,39 +672,39 @@ namespace ZedGraph
 			for (int i=0; i<CurveList.Count; i++)
 			{
 				curve = CurveList[i];
-				if ( curve is ZedGraphWebBar )
+				if ( curve is ZedGraphWebBarItem )
 				{
-					ZedGraphWebBar item = (ZedGraphWebBar)curve;
+					ZedGraphWebBarItem item = (ZedGraphWebBarItem)curve;
 					BarItem x = pane.AddBar(item.Label,new PointPairList(),item.Color);
 					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);
 					MapWeb2GraphItem(x.Bar.Border,item.Border);
 					MapWeb2GraphItem(x.Bar.Fill,item.Fill);
 				}
-				else if ( curve is ZedGraphWebLine )
+				else if ( curve is ZedGraphWebLineItem )
 				{
-					ZedGraphWebLine item = (ZedGraphWebLine)curve;
+					ZedGraphWebLineItem item = (ZedGraphWebLineItem)curve;
 					LineItem x = pane.AddCurve(item.Label,new PointPairList(),item.Color);
 					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);
 					MapWeb2GraphItem(x.Symbol,item.Symbol);
-					x.Line.Style = item.DashStyle;
+					x.Line.Style = item.Style;
 					x.Line.Width = item.Width;
 					x.Line.IsSmooth = item.IsSmooth;
 					x.Line.SmoothTension = item.SmoothTension;
 					x.Line.StepType = item.StepType;
 					MapWeb2GraphItem(x.Line.Fill,item.Fill);
 				}
-				else if ( curve is ZedGraphWebErrorBar )
+				else if ( curve is ZedGraphWebErrorBarItem )
 				{
-					ZedGraphWebErrorBar item = (ZedGraphWebErrorBar)curve;
+					ZedGraphWebErrorBarItem item = (ZedGraphWebErrorBarItem)curve;
 					ErrorBarItem x = pane.AddErrorBar(item.Label,new PointPairList(),item.Color);
 					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);					
 					MapWeb2GraphItem(x.ErrorBar.Symbol,item.Symbol);
 					x.BarBase = item.BarBase;
 					x.ErrorBar.PenWidth = item.PenWidth;
 				}
-				else if ( curve is ZedGraphWebHiLowBar )
+				else if ( curve is ZedGraphWebHiLowBarItem )
 				{
-					ZedGraphWebHiLowBar item = (ZedGraphWebHiLowBar)curve;
+					ZedGraphWebHiLowBarItem item = (ZedGraphWebHiLowBarItem)curve;
 					HiLowBarItem x = pane.AddHiLowBar(item.Label,new PointPairList(),item.Color);
 					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);									
 					MapWeb2GraphItem(x.Bar.Border,item.Border);
@@ -713,9 +713,9 @@ namespace ZedGraph
 					x.Bar.Size = item.Size;
 					x.Bar.IsMaximumWidth = item.IsMaximumWidth;
 				}
-				else if ( curve is ZedGraphWebPie )
+				else if ( curve is ZedGraphWebPieItem )
 				{
-					ZedGraphWebPie item = (ZedGraphWebPie)curve;
+					ZedGraphWebPieItem item = (ZedGraphWebPieItem)curve;
 					PieItem x = pane.AddPieSlice(item.Value, item.Color, item.Displacement, item.Label);					
 					MapWeb2GraphItem(x.Border,item.Border);					
 					x.LabelType = item.LabelType;

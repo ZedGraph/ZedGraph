@@ -30,7 +30,7 @@ namespace ZedGraph
 {
 	#region ZedGraphWebCurveItem
 	/// <summary>
-	/// Baseclass for curve items in the web control
+	/// Base class for curve items in the web control
 	/// <seealso cref="CurveItem"/>
 	/// </summary>
 	/// <author>Darren Martz</author>
@@ -40,7 +40,9 @@ namespace ZedGraph
 		/// <summary>
 		/// Identifies curve item by the labels value
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>A string containing "CurveItem: label", where 'label' is the
+		/// <see cref="CurveItem.Label"/> property of the <see cref="CurveItem"/>
+		/// </returns>
 		public override string ToString()
 		{
 			return "CurveItem: " + Label;
@@ -65,8 +67,12 @@ namespace ZedGraph
 		#region Properties
 		
 		/// <summary>
-		/// <seealso cref="CurveItem.Label"/>
+		/// Proxy property that gets or sets the value of <see cref="CurveItem.Label"/>.
 		/// </summary>
+		/// <remarks> A text string that represents the <see cref="ZedGraph.Legend"/>
+		/// entry for the the <see cref="CurveItem"/> object.
+		/// </remarks>
+		/// <seealso cref="CurveItem.Label"/>
 		[Category("Curve Details"),NotifyParentProperty(true),
 		Description("A text string that represents the Legend entry for the "+
 			"this CurveItem object")]
@@ -81,8 +87,14 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="CurveItem.Color"/>
+		/// Proxy property that gets or sets the value of <see cref="CurveItem.Color"/>.
 		/// </summary>
+		/// <remarks> The <see cref="LineItem.Line"/>/<see cref="LineItem.Symbol"/>/<see cref="BarItem.Bar"/> 
+		/// color (FillColor for the Bar).  This is a common access to
+		/// <see cref="ZedGraph.Line.Color"/>, <see cref="ZedGraph.Border.Color"/>, and
+		/// <see cref="ZedGraph.Fill.Color"/> properties for this curve
+		/// </remarks>
+		/// <seealso cref="CurveItem.Color"/>
 		[Category("Curve Details"),NotifyParentProperty(true),
 		Description("The Line/Symbol/Bar color (FillColor for the Bar). "+
 			"This is a common access to Color, Color, and Color properties for this curve.")]
@@ -97,8 +109,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="CurveItem.IsVisible"/>
+		/// Proxy property that gets or sets the value of <see cref="CurveItem.IsVisible"/>.
 		/// </summary>
+		/// <remarks> Determines whether the <see cref="CurveItem"/> is visible on the graph.
+		/// Note that this value turns the curve display on or off, but it does not
+		/// affect the display of the legend entry.  To hide the legend entry, you
+		/// have to set <see cref="IsLegendLabelVisible"/> to false.
+		/// </remarks>
+		/// <seealso cref="CurveItem.IsVisible"/>
+		/// <seealso cref="CurveItem.IsLegendLabelVisible"/>
 		[Category("Curve Details"),NotifyParentProperty(true),
 		Description("Determines whether this CurveItem is visible on the graph. "+
 			"Note that this value turns the curve display on or off, but it does not "+
@@ -115,8 +134,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="CurveItem.IsLegendLabelVisible"/>
+		/// Proxy property that gets or sets the value of <see cref="CurveItem.IsLegendLabelVisible"/>.
 		/// </summary>
+		/// <remarks> Determines whether the label for this <see cref="CurveItem"/> is visible in the legend.
+		/// Note that this value turns the legend entry display on or off, but it does not
+		/// affect the display of the curve on the graph.  To hide the curve, you
+		/// have to set <see cref="IsVisible"/> to false.
+		/// </remarks>
+		/// <seealso cref="CurveItem.IsVisible"/>
+		/// <seealso cref="CurveItem.IsLegendLabelVisible"/>
 		[Category("Curve Details"),NotifyParentProperty(true),
 		Description("Determines whether the label for this CurveItem is visible in "+
 			"the legend. Note that this value turns the legend entry display on or off, "+
@@ -133,8 +159,15 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="CurveItem.IsY2Axis"/>
+		/// Proxy property that gets or sets the value of <see cref="CurveItem.IsY2Axis"/>.
 		/// </summary>
+		/// <remarks> Determines which Y axis this <see cref="CurveItem"/>
+		/// is assigned to.  The
+		/// <see cref="ZedGraph.YAxis"/> is on the left side of the graph and the
+		/// <see cref="ZedGraph.Y2Axis"/> is on the right side.  Assignment to an axis
+		/// determines the scale that is used to draw the curve on the graph.
+		/// </remarks>
+		/// <seealso cref="CurveItem.IsY2Axis"/>
 		[Category("Curve Details"),NotifyParentProperty(true),
 		Description("Determines which Y axis this CurveItem is assigned to. The "+
 			"YAxis is on the left side of the graph and the Y2Axis is on the right "+
@@ -156,16 +189,26 @@ namespace ZedGraph
 	#region ZedGraphWebBorder
 
 	/// <summary>
-	/// Web control state management class for a <see cref="Border"/> object
+	/// Web control state management class for a <see cref="Border"/> object.
 	/// </summary>
 	/// <author>Darren Martz</author>
 	public class ZedGraphWebBorder : GenericItem
 	{
+		/// <summary>
+		/// Override ToString function
+		/// </summary>
+		/// <returns>Always returns "Border"</returns>
 		public override string ToString()
 		{
 			return "Border";
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Border.Color"/>.
+		/// </summary>
+		/// <remarks> Determines the <see cref="System.Drawing.Color"/> of the <see cref="Pen"/> used to
+		/// draw this Border.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public Color Color
 		{
@@ -177,6 +220,12 @@ namespace ZedGraph
 			set { ViewState["Color"] = value; }
 		} 
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Border.IsVisible"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the Border will be drawn.  true to draw the Border,
+		/// false otherwise.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsVisible
 		{
@@ -188,6 +237,12 @@ namespace ZedGraph
 			set { ViewState["IsVisible"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Border.PenWidth"/>.
+		/// </summary>
+		/// <remarks> Gets or sets the width, in points (1/72 inch), of the <see cref="Pen"/>
+		/// used to draw this Border.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float PenWidth
 		{
@@ -204,16 +259,30 @@ namespace ZedGraph
 
 	#region ZedGraphWebFill
 	/// <summary>
-	/// Web control state management class for a <see cref="Fill"/> object
+	/// Web control state management class for a <see cref="Fill"/> object.
 	/// </summary>
 	/// <author>Darren Martz</author>
 	public class ZedGraphWebFill : GenericItem
 	{
+		/// <summary>
+		/// Override ToString() function
+		/// </summary>
+		/// <returns>Always returns "Fill"</returns>
 		public override string ToString()
 		{
 			return "Fill";
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Fill.Color"/>.
+		/// </summary>
+		/// <remarks> The fill color.  This property is used as a single color to make a solid fill
+		/// (<see cref="Type"/> is <see cref="FillType.Solid"/>), or it can be used in 
+		/// combination with <see cref="System.Drawing.Color.White"/> to make a
+		/// <see cref="LinearGradientBrush"/>
+		/// when <see cref="Type"/> is <see cref="FillType.Brush"/> and <see cref="Brush"/>
+		/// is null.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public Color Color
 		{
@@ -225,6 +294,20 @@ namespace ZedGraph
 			set { ViewState["Color"] = value; }
 		} 
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Fill.IsVisible"/>.
+		/// </summary>
+		/// <remarks> This property determines the type of color fill. 
+		/// Returns true if the <see cref="Type"/> property is either
+		/// <see cref="FillType.Solid"/> or
+		/// <see cref="FillType.Brush"/>.  If set to true, this property
+		/// will automatically set the <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/>.  If set to false, this property
+		/// will automatically set the <see cref="Type"/> to
+		/// <see cref="FillType.None"/>.  In order to get a regular
+		/// solid-color fill, you have to manually set <see cref="Type"/>
+		/// to <see cref="FillType.Solid"/>.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsVisible
 		{
@@ -236,6 +319,17 @@ namespace ZedGraph
 			set { ViewState["IsVisible"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Fill.RangeMax"/>.
+		/// </summary>
+		/// <remarks> The maximum user-scale value for the gradient-by-value determination.  This defines
+		/// the user-scale value for the end of the gradient.
+		/// </remarks>
+		/// <seealso cref="FillType.GradientByX"/>
+		/// <seealso cref="FillType.GradientByY"/>
+		/// <seealso cref="FillType.GradientByZ"/>
+		/// <seealso cref="ZedGraph.Fill.IsGradientValueType"/>
+		/// <value>A double value, in user scale unit</value>
 		[NotifyParentProperty(true)]
 		public double RangeMax
 		{
@@ -247,6 +341,17 @@ namespace ZedGraph
 			set { ViewState["RangeMax"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Fill.RangeMin"/>.
+		/// </summary>
+		/// <remarks> The minimum user-scale value for the gradient-by-value determination.  This defines
+		/// the user-scale value for the start of the gradient.
+		/// </remarks>
+		/// <seealso cref="FillType.GradientByX"/>
+		/// <seealso cref="FillType.GradientByY"/>
+		/// <seealso cref="FillType.GradientByZ"/>
+		/// <seealso cref="ZedGraph.Fill.IsGradientValueType"/>
+		/// <value>A double value, in user scale unit</value>
 		[NotifyParentProperty(true)]
 		public double RangeMin
 		{
@@ -258,17 +363,34 @@ namespace ZedGraph
 			set { ViewState["RangeMin"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Fill.Type"/>.
+		/// </summary>
+		/// <remarks> Determines the type of fill, which can be either solid
+		/// color (<see cref="ZedGraph.FillType.Solid"/>) or a custom brush
+		/// (<see cref="ZedGraph.FillType.Brush"/>).  See <see cref="Type"/> for
+		/// more information.
+		/// </remarks>
+		/// <seealso cref="ZedGraph.Fill.Color"/>
 		[NotifyParentProperty(true)]
-		public FillType FillType
+		public FillType Type
 		{
 			get 
 			{ 
-				object x = ViewState["FillType"]; 
+				object x = ViewState["Type"]; 
 				return (null == x) ? FillType.Solid : (FillType)x;
 			}
-			set { ViewState["FillType"] = value; }
+			set { ViewState["Type"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Fill.AlignH"/>.
+		/// </summary>
+		/// <remarks> Determines how the brush will be aligned with the filled object
+		/// in the horizontal direction.  This value is a <see cref="ZedGraph.AlignH"/> enumeration.
+		/// This field only applies if <see cref="IsScaled"/> is false.
+		/// </remarks>
+		/// <seealso cref="AlignV"/>
 		[NotifyParentProperty(true)]
 		public AlignH AlignH
 		{
@@ -280,6 +402,14 @@ namespace ZedGraph
 			set { ViewState["AlignH"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Fill.AlignV"/>.
+		/// </summary>
+		/// <remarks> Determines how the brush will be aligned with the filled object
+		/// in the vertical direction.  This value is a <see cref="ZedGraph.AlignV"/> enumeration.
+		/// This field only applies if <see cref="IsScaled"/> is false.
+		/// </remarks>
+		/// <seealso cref="AlignH"/>
 		[NotifyParentProperty(true)]
 		public AlignV AlignV
 		{
@@ -291,6 +421,14 @@ namespace ZedGraph
 			set { ViewState["AlignV"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Fill.IsScaled"/>.
+		/// </summary>
+		/// <remarks> Determines if the brush will be scaled to the bounding box
+		/// of the filled object.  If this value is false, then the brush will only be aligned
+		/// with the filled object based on the <see cref="AlignH"/> and <see cref="AlignV"/>
+		/// properties.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsScaled
 		{
@@ -325,11 +463,18 @@ namespace ZedGraph
 	/// <author>Darren Martz</author>
 	public class ZedGraphWebSymbol : GenericItem
 	{
+		/// <summary>
+		/// Override ToString() function
+		/// </summary>
+		/// <returns>Always returns "Symbol"</returns>
 		public override string ToString()
 		{
 			return "Symbol";
 		}
 
+		/// <summary>
+		/// Default Constructor
+		/// </summary>
 		public ZedGraphWebSymbol() : base()
 		{
 			Register('b',typeof(ZedGraphWebBorder));
@@ -337,6 +482,12 @@ namespace ZedGraph
 		}
 
 		#region Properties
+		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Symbol.IsVisible"/>.
+		/// </summary>
+		/// <remarks> Gets or sets a property that shows or hides the <see cref="Symbol"/>.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsVisible
 		{
@@ -348,6 +499,11 @@ namespace ZedGraph
 			set { ViewState["IsVisible"] = value; }
 		} 
 		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Symbol.Size"/>.
+		/// </summary>
+		/// <remarks> Gets or sets the size of the <see cref="Symbol"/> in points (1/72nd inch).
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float Size
 		{
@@ -359,6 +515,12 @@ namespace ZedGraph
 			set { ViewState["Size"] = value; }
 		} 
 		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Symbol.Type"/>.
+		/// </summary>
+		/// <remarks> Gets or sets the type (shape) of the <see cref="Symbol"/> using
+		/// a <see cref="SymbolType"/> enumeration.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public SymbolType Type
 		{
@@ -373,8 +535,10 @@ namespace ZedGraph
 	
 		#region Border
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebBorder"/>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebBorder"/> object for
+		/// this <see cref="Symbol"/>.
 		/// </summary>
+		/// <seealso cref="ZedGraph.Border"/>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -388,9 +552,12 @@ namespace ZedGraph
 		#endregion
 
 		#region Fill
+		
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebFill"/>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebFill"/> object for
+		/// this <see cref="Symbol"/>.
 		/// </summary>
+		/// <seealso cref="ZedGraph.Fill"/>
 		[
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -401,32 +568,45 @@ namespace ZedGraph
 		{
 			get { return (ZedGraphWebFill)base.GetValue('f'); }
 		}
+		
 		#endregion		
 	}
 	#endregion
 
-	#region ZedGraphWebBar
+	#region ZedGraphWebBarItem
 	/// <summary>
 	/// Web control state management class for a <see cref="BarItem"/> class
 	/// </summary>
 	/// <author>Darren Martz</author>
-	public class ZedGraphWebBar : ZedGraphWebCurveItem
+	public class ZedGraphWebBarItem : ZedGraphWebCurveItem
 	{
+		/// <summary>
+		/// Identifies <see cref="BarItem"/> by the labels value
+		/// </summary>
+		/// <returns>A string containing "BarItem: label", where 'label' is the
+		/// <see cref="CurveItem.Label"/> property of the <see cref="CurveItem"/>
+		/// </returns>
 		public override string ToString()
 		{
-			return "Bar: " + Label;
+			return "BarItem: " + Label;
 		}	
 
-		public ZedGraphWebBar() : base()
+		/// <summary>
+		/// Default Constructor
+		/// </summary>
+		public ZedGraphWebBarItem() : base()
 		{
 			Register('b',typeof(ZedGraphWebBorder));
 			Register('f',typeof(ZedGraphWebFill));
 		}
 
 		#region Border
+		
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebBorder"/>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebBorder"/> object for
+		/// this <see cref="BarItem"/>.
 		/// </summary>
+		/// <seealso cref="ZedGraph.Border"/>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -437,12 +617,16 @@ namespace ZedGraph
 		{
 			get { return (ZedGraphWebBorder)base.GetValue('b'); }
 		}
+		
 		#endregion
 
 		#region Fill
+		
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebFill"/>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebFill"/> object for
+		/// this <see cref="BarItem"/>.
 		/// </summary>
+		/// <seealso cref="ZedGraph.Fill"/>
 		[
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -453,32 +637,45 @@ namespace ZedGraph
 		{
 			get { return (ZedGraphWebFill)base.GetValue('f'); }
 		}
+		
 		#endregion		
 	}
 	
 	#endregion
 
-	#region ZedGraphWebErrorBar
+	#region ZedGraphWebErrorBarItem
 	/// <summary>
 	/// Web control state management class for a <see cref="ErrorBarItem"/> class
 	/// </summary>
 	/// <author>Darren Martz</author>
-	public class ZedGraphWebErrorBar : ZedGraphWebCurveItem
+	public class ZedGraphWebErrorBarItem : ZedGraphWebCurveItem
 	{
+		/// <summary>
+		/// Identifies <see cref="ErrorBarItem"/> by the labels value
+		/// </summary>
+		/// <returns>A string containing "ErrorBarItem: label", where 'label' is the
+		/// <see cref="CurveItem.Label"/> property of the <see cref="CurveItem"/>
+		/// </returns>
 		public override string ToString()
 		{
-			return "ErrorBar: " + Label;
+			return "ErrorBarItem: " + Label;
 		}	
 
-		public ZedGraphWebErrorBar() : base()
+		/// <summary>
+		/// Default Constructor
+		/// </summary>
+		public ZedGraphWebErrorBarItem() : base()
 		{
 			Register('s',typeof(ZedGraphWebSymbol));			
 		}
 
 		#region Symbol
+		
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebSymbol"/>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebSymbol"/> object for
+		/// this <see cref="ErrorBarItem"/>.
 		/// </summary>
+		/// <seealso cref="ZedGraph.Symbol"/>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -489,9 +686,18 @@ namespace ZedGraph
 		{
 			get { return (ZedGraphWebSymbol)base.GetValue('s'); }
 		}
+		
 		#endregion
 
 		#region Properties
+		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ErrorBarItem.BarBase"/>.
+		/// </summary>
+		/// <remarks> Determines which <see cref="Axis"/> is the independent axis
+		/// for this <see cref="ErrorBarItem"/>.
+		/// </remarks>
+		/// <seealso cref="ErrorBarItem.BarBase"/>
 		[NotifyParentProperty(true)]
 		public BarBase BarBase
 		{
@@ -503,6 +709,14 @@ namespace ZedGraph
 			set { ViewState["BarBase"] = value; }
 		}
  		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.ErrorBar.PenWidth"/>.
+		/// </summary>
+		/// <remarks> The pen width to be used for drawing error bars
+		/// Units are points.  This property only controls the pen width for the
+		/// vertical line.  The pen width for the symbol outline is
+		/// controlled separately by the <see cref="Symbol"/> property.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float PenWidth
 		{
@@ -523,20 +737,37 @@ namespace ZedGraph
 	/// Web control state management class for a <see cref="HiLowBarItem"/> class
 	/// </summary>
 	/// <author>Darren Martz</author>
-	public class ZedGraphWebHiLowBar : ZedGraphWebCurveItem
+	public class ZedGraphWebHiLowBarItem : ZedGraphWebCurveItem
 	{
+		/// <summary>
+		/// Identifies <see cref="HiLowBarItem"/> by the labels value
+		/// </summary>
+		/// <returns>A string containing "HiLowBarItem: label", where 'label' is the
+		/// <see cref="CurveItem.Label"/> property of the <see cref="CurveItem"/>
+		/// </returns>
 		public override string ToString()
 		{
-			return "HiLowBar: " + Label;
+			return "HiLowBarItem: " + Label;
 		}
 
-		public ZedGraphWebHiLowBar() : base()
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebHiLowBarItem() : base()
 		{
 			Register('b',typeof(ZedGraphWebBorder));
 			Register('f',typeof(ZedGraphWebFill));
 		}
 
 		#region Properties
+		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="HiLowBarItem.BarBase"/>.
+		/// </summary>
+		/// <remarks> Determines which <see cref="Axis"/> is the independent axis
+		/// for this <see cref="HiLowBarItem"/>.
+		/// </remarks>
+		/// <seealso cref="HiLowBarItem.BarBase"/>
 		[NotifyParentProperty(true)]
 		public BarBase BarBase
 		{
@@ -548,6 +779,18 @@ namespace ZedGraph
 			set { ViewState["BarBase"] = value; }
 		} 
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.HiLowBar.IsMaximumWidth"/>.
+		/// </summary>
+		/// <remarks> Determines whether the bar width will be based on
+		/// the <see cref="Size"/> value, or it will be based on available
+		/// space similar to <see cref="BarItem"/> objects.
+		/// </remarks>
+		/// <value>If true, then the value
+		/// of <see cref="Size"/> is ignored.  If this value is true, then
+		/// <see cref="GraphPane.MinClusterGap"/> will be used to determine the total space between each bar.
+		/// </value>
+		/// <seealso cref="HiLowBarItem.BarBase"/>
 		[NotifyParentProperty(true)]
 		public bool IsMaximumWidth
 		{
@@ -559,6 +802,20 @@ namespace ZedGraph
 			set { ViewState["IsMaximumWidth"] = value; }
 		} 
 		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="HiLowBar.Size"/>.
+		/// </summary>
+		/// <remarks>The size of the bars can be set by this value, which
+		/// is then scaled according to the scaleFactor (see
+		/// <see cref="PaneBase.CalcScaleFactor"/>).  Alternatively,
+		/// if <see cref="IsMaximumWidth"/> is true, the bar width will
+		/// be set according to the maximum available cluster width less
+		/// the cluster gap (see <see cref="GraphPane.GetClusterWidth"/>
+		/// and <see cref="GraphPane.MinClusterGap"/>).  That is, if
+		/// <see cref="IsMaximumWidth"/> is true, then the value of
+		/// <see cref="Size"/> will be ignored.
+		/// </remarks>
+		/// <value>Size in points (1/72 inch)</value>
 		[NotifyParentProperty(true)]
 		public float Size
 		{
@@ -572,9 +829,12 @@ namespace ZedGraph
 		#endregion
 
 		#region Border
+
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebBorder"/>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebBorder"/> object for
+		/// this <see cref="HiLowBarItem"/>.
 		/// </summary>
+		/// <seealso cref="ZedGraph.Border"/>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -588,9 +848,12 @@ namespace ZedGraph
 		#endregion
 
 		#region Fill
+
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebFill"/>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebFill"/> object for
+		/// this <see cref="HiLowBarItem"/>.
 		/// </summary>
+		/// <seealso cref="ZedGraph.Fill"/>
 		[
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -608,25 +871,43 @@ namespace ZedGraph
 
 	#endregion
 	
-	#region ZedGraphWebLine
+	#region ZedGraphWebLineItem
 	/// <summary>
 	/// Web control state management class for a <see cref="LineItem"/> class
 	/// </summary>
 	/// <author>Darren Martz</author>
-	public class ZedGraphWebLine : ZedGraphWebCurveItem
+	public class ZedGraphWebLineItem : ZedGraphWebCurveItem
 	{
+		/// <summary>
+		/// Identifies <see cref="LineItem"/> by the labels value
+		/// </summary>
+		/// <returns>A string containing "LineItem: label", where 'label' is the
+		/// <see cref="CurveItem.Label"/> property of the <see cref="CurveItem"/>
+		/// </returns>
 		public override string ToString()
 		{
-			return "Line: " + Label;
+			return "LineItem: " + Label;
 		}
 	
-		public ZedGraphWebLine() : base()
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebLineItem() : base()
 		{
 			Register('s',typeof(ZedGraphWebSymbol));
 			Register('f',typeof(ZedGraphWebFill));
 		}
 	
 		#region Properties
+		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Line.IsSmooth"/>.
+		/// </summary>
+		/// <remarks> Gets or sets a property that determines if this <see cref="Line"/>
+		/// will be drawn smooth.  The "smoothness" is controlled by
+		/// the <see cref="SmoothTension"/> property.
+		/// </remarks>
+		/// <seealso cref="ZedGraph.Line.IsSmooth"/>
 		[NotifyParentProperty(true)]
 		public bool IsSmooth
 		{
@@ -638,6 +919,12 @@ namespace ZedGraph
 			set { ViewState["IsSmooth"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Line.Width"/>.
+		/// </summary>
+		/// <remarks> The pen width used to draw the <see cref="Line"/>, in points (1/72 inch)
+		/// </remarks>
+		/// <seealso cref="ZedGraph.Line.Width"/>
 		[NotifyParentProperty(true)]
 		public float Width
 		{
@@ -649,6 +936,20 @@ namespace ZedGraph
 			set { ViewState["Width"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Line.SmoothTension"/>.
+		/// </summary>
+		/// <remarks> Gets or sets a property that determines the smoothing tension
+		/// for this <see cref="Line"/>.  This property is only used if
+		/// <see cref="IsSmooth"/> is true.  A tension value 0.0 will just
+		/// draw ordinary line segments like an unsmoothed line.  A tension
+		/// value of 1.0 will be smooth.  Values greater than 1.0 will generally
+		/// give odd results.
+		/// </remarks>
+		/// <value>A floating point value indicating the level of smoothing.
+		/// 0.0F for no smoothing, 1.0F for lots of smoothing, >1.0 for odd
+		/// smoothing.</value>
+		/// <seealso cref="ZedGraph.Line.IsSmooth"/>
 		[NotifyParentProperty(true)]
 		public float SmoothTension
 		{
@@ -660,8 +961,15 @@ namespace ZedGraph
 			set { ViewState["SmoothTension"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Line.Style"/>.
+		/// </summary>
+		/// <remarks> The style of the <see cref="Line"/>, defined as a <see cref="DashStyle"/> enum.
+		/// This allows the line to be solid, dashed, or dotted.
+		/// </remarks>
+		/// <seealso cref="ZedGraph.Line.Style"/>
 		[NotifyParentProperty(true)]
-		public DashStyle DashStyle
+		public DashStyle Style
 		{
 			get 
 			{ 
@@ -671,6 +979,22 @@ namespace ZedGraph
 			set { ViewState["DashStyle"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Line.StepType"/>.
+		/// </summary>
+		/// <remarks> Determines if the <see cref="LineItem"/> will be drawn by directly connecting the
+		/// points from the <see cref="CurveItem.Points"/> data collection,
+		/// or if the curve will be a "stair-step" in which the points are
+		/// connected by a series of horizontal and vertical lines that
+		/// represent discrete, constant values.  Note that the values can
+		/// be forward oriented <c>ForwardStep</c> (<see cref="ZedGraph.StepType"/>) or
+		/// rearward oriented <c>RearwardStep</c>.
+		/// That is, the points are defined at the beginning or end
+		/// of the constant value for which they apply, respectively.
+		/// The <see cref="StepType"/> property is ignored for lines
+		/// that have <see cref="IsSmooth"/> set to true.
+		/// </remarks>
+		/// <seealso cref="ZedGraph.Line.StepType"/>
 		[NotifyParentProperty(true)]
 		public StepType StepType
 		{
@@ -685,8 +1009,10 @@ namespace ZedGraph
 
 		#region Symbol
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebSymbol"/>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebSymbol"/> object for
+		/// this <see cref="LineItem"/>.
 		/// </summary>
+		/// <seealso cref="ZedGraph.Symbol"/>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -701,8 +1027,10 @@ namespace ZedGraph
 
 		#region Fill
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebFill"/>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebFill"/> object for
+		/// this <see cref="LineItem"/>.
 		/// </summary>
+		/// <seealso cref="ZedGraph.Fill"/>
 		[
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -717,24 +1045,40 @@ namespace ZedGraph
 	}
 	#endregion
 
-	#region ZedGraphWebPie
+	#region ZedGraphWebPieItem
 	/// <summary>
 	/// Web control state management class for a <see cref="PieItem"/> class
 	/// </summary>
 	/// <author>Darren Martz</author>
-	public class ZedGraphWebPie : ZedGraphWebCurveItem
+	public class ZedGraphWebPieItem : ZedGraphWebCurveItem
 	{
+		/// <summary>
+		/// Identifies <see cref="PieItem"/> by the labels value
+		/// </summary>
+		/// <returns>A string containing "PieItem: label", where 'label' is the
+		/// <see cref="CurveItem.Label"/> property of the <see cref="CurveItem"/>
+		/// </returns>
 		public override string ToString()
 		{
-			return "Pie: " + Label;
+			return "PieItem: " + Label;
 		}
 
-		public ZedGraphWebPie() : base()
+		/// <summary>
+		/// Default Constructor
+		/// </summary>
+		public ZedGraphWebPieItem() : base()
 		{
 			Register('b',typeof(ZedGraphWebBorder));			
 		}	
 
 		#region Properties
+		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.PieItem.Value"/>.
+		/// </summary>
+		/// <remarks> Gets or sets the value of this <see cref="PieItem"/>.  
+		/// Minimum value is 0. 
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public double Value
 		{
@@ -746,6 +1090,12 @@ namespace ZedGraph
 			set { ViewState["Value"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.PieItem.Displacement"/>.
+		/// </summary>
+		/// <remarks> Gets or sets the a value which determines the amount, if any, of this <see cref="PieItem"/>  
+		/// displacement.
+		/// </remarks>
 		public	double Displacement
 		{
 			get 
@@ -756,6 +1106,12 @@ namespace ZedGraph
 			set { ViewState["Displacement"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.PieItem.LabelType"/>.
+		/// </summary>
+		/// <remarks> Gets or sets the <see cref="PieLabelType"/> to be used in displaying 
+		/// <see cref="PieItem"/> labels.
+		/// </remarks>
 		public	PieLabelType LabelType
 		{
 			get 
@@ -780,9 +1136,12 @@ namespace ZedGraph
 	#endregion
 
 	#region Border
+
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebBorder"/>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebBorder"/> object for
+		/// this <see cref="PieItem"/>.
 		/// </summary>
+		/// <seealso cref="ZedGraph.Border"/>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -798,6 +1157,7 @@ namespace ZedGraph
 	#endregion
 
 	#region ZedGraphWebGraphItem
+	
 	/// <summary>
 	/// Baseclass for graph items in the web control
 	/// <seealso cref="ZedGraph.GraphItem"/>
@@ -806,9 +1166,9 @@ namespace ZedGraph
 	public class ZedGraphWebGraphItem : GenericItem
 	{
 		/// <summary>
-		/// Identifies curve item by the labels value
+		/// Override the ToString() method.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>Always returns the string "GraphItem".</returns>
 		public override string ToString()
 		{
 			return "GraphItem";
@@ -821,6 +1181,13 @@ namespace ZedGraph
 		{
 		}	
 		
+		/*
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.GraphItem.Label"/>.
+		/// </summary>
+		/// <remarks> Gets or sets the <see cref="PieLabelType"/> to be used in displaying 
+		/// <see cref="PieItem"/> labels.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public string Label
 		{
@@ -831,6 +1198,7 @@ namespace ZedGraph
 			}
 			set { ViewState["Label"] = value; }
 		} 
+		*/
 	}
 	#endregion
 
@@ -842,23 +1210,35 @@ namespace ZedGraph
 	/// <author>Darren Martz</author>
 	public class ZedGraphWebCurveCollection : GenericCollection
 	{	
+		/// <summary>
+		/// Override the ToString() method.
+		/// </summary>
+		/// <returns>Always returns String.Empty</returns>
 		public override string ToString(){return String.Empty;}		
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public ZedGraphWebCurveCollection() : base()
 		{
 			Schema = new GenericCollectionItemSchema[5];
 			Schema[0].code = 'b';
-			Schema[0].type = typeof(ZedGraphWebBar);
+			Schema[0].type = typeof(ZedGraphWebBarItem);
 			Schema[1].code = 'l';
-			Schema[1].type = typeof(ZedGraphWebLine);
+			Schema[1].type = typeof(ZedGraphWebLineItem);
 			Schema[2].code = 'e';
-			Schema[2].type = typeof(ZedGraphWebErrorBar);
+			Schema[2].type = typeof(ZedGraphWebErrorBarItem);
 			Schema[3].code = 'h';
-			Schema[3].type = typeof(ZedGraphWebHiLowBar);
+			Schema[3].type = typeof(ZedGraphWebHiLowBarItem);
 			Schema[4].code = 'p';
-			Schema[4].type = typeof(ZedGraphWebPie);
+			Schema[4].type = typeof(ZedGraphWebPieItem);
 		}
 
+		/// <summary>
+		/// Add a <see cref="ZedGraphWebCurveItem"/> to this collection.
+		/// </summary>
+		/// <param name="item">The <see cref="ZedGraphWebCurveItem"/> to be added.</param>
+		/// <seealso cref="ZedGraph.CurveItem"/>
 		public void Add(ZedGraphWebCurveItem item)
 		{
 			if ( null != item )
@@ -867,17 +1247,19 @@ namespace ZedGraph
 				throw new ArgumentException("parameter cannot be null","item");
 		}	
 
+		/// <summary>
+		/// Indexer to access the specified <see cref="ZedGraphWebCurveItem"/> object by
+		/// its ordinal position in the list.
+		/// </summary>
+		/// <param name="index">The ordinal position (zero-based) of the
+		/// <see cref="ZedGraphWebCurveItem"/> object to be accessed.</param>
+		/// <value>A <see cref="ZedGraphWebCurveItem"/> object reference.</value>
+		/// <seealso cref="ZedGraph.CurveItem"/>
 		[NotifyParentProperty(true)]
 		public ZedGraphWebCurveItem this [int index]
 		{
-			get 
-			{
-				return (ZedGraphWebCurveItem)ListGet(index);
-			}
-			set
-			{
-				ListInsert(index,value);
-			}
+			get { return (ZedGraphWebCurveItem)ListGet(index); }
+			set { ListInsert(index, value); }
 		}			
 	}
 
@@ -891,8 +1273,15 @@ namespace ZedGraph
 	/// <author>Darren Martz</author>
 	public class ZedGraphWebGraphItemCollection : GenericCollection
 	{	
+		/// <summary>
+		/// Override the ToString() method.
+		/// </summary>
+		/// <returns>Always returns String.Empty</returns>
 		public override string ToString(){return String.Empty;}		
 
+		/// <summary>
+		/// Default Constructor
+		/// </summary>
 		public ZedGraphWebGraphItemCollection() : base()
 		{
 			Schema = new GenericCollectionItemSchema[1];
@@ -900,6 +1289,11 @@ namespace ZedGraph
 			Schema[0].type = typeof(ZedGraphWebGraphItem);			
 		}
 
+		/// <summary>
+		/// Add a <see cref="ZedGraphWebGraphItem"/> to this collection.
+		/// </summary>
+		/// <param name="item">The <see cref="ZedGraphWebGraphItem"/> to be added.</param>
+		/// <seealso cref="ZedGraph.GraphItem"/>
 		public void Add(ZedGraphWebGraphItem item)
 		{
 			if ( null != item )
@@ -908,6 +1302,14 @@ namespace ZedGraph
 				throw new ArgumentException("parameter cannot be null","item");
 		}	
 
+		/// <summary>
+		/// Indexer to access the specified <see cref="ZedGraphWebGraphItem"/> object by
+		/// its ordinal position in the list.
+		/// </summary>
+		/// <param name="index">The ordinal position (zero-based) of the
+		/// <see cref="ZedGraphWebGraphItem"/> object to be accessed.</param>
+		/// <value>A <see cref="ZedGraphWebGraphItem"/> object reference.</value>
+		/// <seealso cref="ZedGraph.GraphItem"/>
 		[NotifyParentProperty(true)]
 		public ZedGraphWebGraphItem this [int index]
 		{
@@ -932,9 +1334,11 @@ namespace ZedGraph
 	public class ZedGraphWebAxis : GenericItem
 	{
 		/// <summary>
-		/// Identifies axis by the title value
+		/// Identifies <see cref="Axis"/> by the <see cref="Axis.Title"/> value
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>A string containing "Axis: title", where 'title' is the
+		/// <see cref="Axis.Title"/> property of the <see cref="Axis"/>
+		/// </returns>
 		public override string ToString()
 		{
 			return "Axis: " + Title;
@@ -948,9 +1352,15 @@ namespace ZedGraph
 		}		
 
 		#region Properties
+		
 		/// <summary>
-		/// <seealso cref="ZedGraph.Axis.Title"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Title"/>.
 		/// </summary>
+		/// <remarks> The title normally shows the basis and dimensions of
+		/// the scale range, such as "Time (Years)".  The title is only shown if the
+		/// <see cref="Axis.IsShowTitle"/> property is set to true.  If the Title text is empty,
+		/// then no title is shown, and no space is "reserved" for the title on the graph.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public string Title
 		{
@@ -963,8 +1373,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.Axis.Color"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Color"/>.
 		/// </summary>
+		/// <remarks> This affects only the tic
+		/// marks, since the <see cref="Axis.TitleFontSpec"/> and
+		/// <see cref="Axis.ScaleFontSpec"/> both have their own color specification.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public Color Color
 		{
@@ -977,8 +1391,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.Axis.GridColor"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Color"/>.
 		/// </summary>
+		/// <remarks> This affects only the grid
+		/// lines, since the <see cref="Axis.TitleFontSpec"/> and
+		/// <see cref="Axis.ScaleFontSpec"/> both have their own color specification.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public Color GridColor
 		{
@@ -1004,7 +1422,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Identifies legend instance
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>Always returns the string "Legend".</returns>
 		public override string ToString()
 		{
 			return "Legend";
@@ -1020,8 +1438,11 @@ namespace ZedGraph
 		#region Properties
 	
 		/// <summary>
-		/// <seealso cref="ZedGraph.Legend.IsVisible"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Legend.IsVisible"/>.
 		/// </summary>
+		/// <remarks> This property shows or hides the <see cref="Legend"/> entirely.
+		/// </remarks>
+		/// <value> true to show the <see cref="Legend"/>, false to hide it </value>
 		[NotifyParentProperty(true)]
 		public bool IsVisible
 		{
@@ -1050,8 +1471,11 @@ namespace ZedGraph
 		*/
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.Legend.Position"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Legend.Position"/>.
 		/// </summary>
+		/// <remarks> Sets or gets the location of the <see cref="Legend"/> on the
+		/// <see cref="GraphPane"/> using the <see cref="LegendPos"/> enum type
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public LegendPos Position
 		{
@@ -1079,7 +1503,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Identifies fontspec instance
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>Always returns the string "FontSpec".</returns>
 		public override string ToString()
 		{
 			return "FontSpec";
@@ -1097,8 +1521,12 @@ namespace ZedGraph
 		#region Properties
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.FontSpec.Angle"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.FontSpec.Angle"/>.
 		/// </summary>
+		/// <remarks> The angle at which this <see cref="FontSpec"/> object is drawn.
+		/// </remarks>
+		/// <value>The angle of the font, measured in anti-clockwise degrees from
+		/// horizontal.  Negative values are permitted.</value>
 		[NotifyParentProperty(true)]
 		public float Angle
 		{
@@ -1111,8 +1539,11 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.FontSpec.Size"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.FontSpec.Size"/>.
 		/// </summary>
+		/// <remarks> The size of the font for this <see cref="FontSpec"/> object.
+		/// </remarks>
+		/// <value>The size of the font, measured in points (1/72 inch).</value>
 		[NotifyParentProperty(true)]
 		public float Size
 		{
@@ -1125,8 +1556,11 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// <seealso cref="ZedGraph.FontSpec.Family"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.FontSpec.Family"/>.
 		/// </summary>
+		/// <remarks> The font family name for this <see cref="FontSpec"/>.
+		/// </remarks>
+		/// <value>A text string with the font family name, e.g., "Arial"</value>
 		[NotifyParentProperty(true)]
 		public string Family
 		{
@@ -1139,8 +1573,14 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.FontSpec.FontColor"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.FontSpec.FontColor"/>.
 		/// </summary>
+		/// <remarks> The color of the font characters for this <see cref="FontSpec"/>.
+		/// Note that the border and background
+		/// colors are set using the <see cref="ZedGraph.Border.Color"/> and
+		/// <see cref="ZedGraph.Fill.Color"/> properties, respectively.
+		/// </remarks>
+		/// <value>A system <see cref="System.Drawing.Color"/> reference.</value>
 		[NotifyParentProperty(true)]
 		public Color FontColor
 		{
@@ -1153,8 +1593,13 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.FontSpec.StringAlignment"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.FontSpec.StringAlignment"/>.
 		/// </summary>
+		/// <remarks> Determines the alignment with which this
+		/// <see cref="FontSpec"/> object is drawn.  This alignment really only
+		/// affects multi-line strings.
+		/// </remarks>
+		/// <value>A <see cref="StringAlignment"/> enumeration.</value>
 		[NotifyParentProperty(true)]
 		public StringAlignment StringAlignment
 		{
@@ -1167,8 +1612,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.FontSpec.IsBold"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.FontSpec.IsBold"/>.
 		/// </summary>
+		/// <remarks> Determines whether this <see cref="FontSpec"/> is
+		/// drawn with bold typeface.
+		/// </remarks>
+		/// <value>A boolean value, true for bold, false for normal</value>
 		[NotifyParentProperty(true)]
 		public bool IsBold
 		{
@@ -1181,8 +1630,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.FontSpec.IsItalic"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.FontSpec.IsItalic"/>.
 		/// </summary>
+		/// <remarks> Determines whether this <see cref="FontSpec"/> is
+		/// drawn with an italic typeface.
+		/// </remarks>
+		/// <value>A boolean value, true for italic, false for normal</value>
 		[NotifyParentProperty(true)]
 		public bool IsItalic
 		{
@@ -1195,8 +1648,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZedGraph.FontSpec.IsUnderline"/>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.FontSpec.IsUnderline"/>.
 		/// </summary>
+		/// <remarks> Determines whether this <see cref="FontSpec"/> is
+		/// drawn with an underline typeface.
+		/// </remarks>
+		/// <value>A boolean value, true for underline, false for normal</value>
 		[NotifyParentProperty(true)]
 		public bool IsUnderline
 		{
@@ -1211,9 +1668,12 @@ namespace ZedGraph
 		#endregion
 
 		#region Border
+		
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebBorder"/>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebBorder"/> object for
+		/// this <see cref="FontSpec"/>.
 		/// </summary>
+		/// <seealso cref="ZedGraph.Border"/>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -1224,12 +1684,16 @@ namespace ZedGraph
 		{
 			get { return (ZedGraphWebBorder)GetValue('b'); }
 		}
+		
 		#endregion
 
 		#region Fill
+
 		/// <summary>
-		/// <seealso cref="ZedGraph.ZedGraphWebFill"/>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebFill"/> object for
+		/// this <see cref="FontSpec"/>.
 		/// </summary>
+		/// <seealso cref="ZedGraph.Fill"/>
 		[
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -1240,6 +1704,7 @@ namespace ZedGraph
 		{
 			get { return (ZedGraphWebFill)GetValue('f'); }
 		}
+		
 		#endregion		
 	}
 	#endregion

@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-02-12 23:22:51 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -133,7 +133,7 @@ namespace ZedGraph
 			set { color = value; }
 		}
 		/// <summary>
-		/// The default pen width to be used for drawing error bars
+		/// The pen width to be used for drawing error bars
 		/// Units are points.
 		/// </summary>
 		/// <remarks>This property only controls the pen width for the

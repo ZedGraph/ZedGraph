@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.13 $ $Date: 2005-02-05 11:24:28 $ </version>
+	/// <version> $Revision: 1.14 $ $Date: 2005-02-12 23:22:51 $ </version>
 	[Serializable]
 	public class PieItem : ZedGraph.CurveItem , ICloneable, ISerializable
 	{
@@ -227,8 +227,8 @@ namespace ZedGraph
 
 	#region PieItem Properties
 		/// <summary>
-		///Gets or sets the a value which determines the amount, if any, of this <see cref="PieItem"/>  
-		///displacement.
+		/// Gets or sets the a value which determines the amount, if any, of this <see cref="PieItem"/>  
+		/// displacement.
 		/// </summary>
 		public	double Displacement
 		{
@@ -246,7 +246,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Private field holding a <see cref="TextItem"/> to be used
+		/// Gets or sets the <see cref="TextItem"/> to be used
 		/// for displaying this <see cref="PieItem"/>'s label.
 		/// </summary>
 		public TextItem LabelDetail
@@ -256,8 +256,8 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		///Gets or sets the <see cref="Border"/> object so as to be able to modify
-		///its properties.
+		/// Gets or sets the <see cref="Border"/> object so as to be able to modify
+		/// its properties.
 		/// </summary>
 		public	Border Border
 		{
@@ -266,7 +266,7 @@ namespace ZedGraph
 		}
 				
 		/// <summary>
-		///Internal property to get or set the arc length (in degrees) of this <see cref="PieItem"/>.
+		/// Gets or sets the arc length (in degrees) of this <see cref="PieItem"/>.
 		/// </summary>
 		private float SweepAngle
 		{
@@ -275,7 +275,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		///Gets or sets the starting angle (in degrees) of this <see cref="PieItem"/>.
+		/// Gets or sets the starting angle (in degrees) of this <see cref="PieItem"/>.
 		/// </summary>
 		private float StartAngle
 		{
@@ -284,8 +284,8 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		///Internal property to get or set the angle (in degrees) of the radius along which 
-		///this <see cref="PieItem"/> will be displaced.
+		/// Gets or sets the angle (in degrees) of the radius along which 
+		/// this <see cref="PieItem"/> will be displaced.
 		/// </summary>
 		private float MidAngle
 		{
@@ -294,8 +294,8 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		///   Internal property for getting and setting the value of this <see cref="PieItem"/>.  
-		///   Minimum value is 0. 
+		///  Gets or sets the value of this <see cref="PieItem"/>.  
+		///  Minimum value is 0. 
 		/// </summary>
 		public	double Value
 		{
@@ -320,8 +320,8 @@ namespace ZedGraph
 		
 		
 		/// <summary>
-		///Gets or sets the number of decimal digits to be displayed in a <see cref="PieItem"/> 
-		///value label.
+		/// Gets or sets the number of decimal digits to be displayed in a <see cref="PieItem"/> 
+		/// value label.
 		/// </summary>
 		public int ValueDecimalDigits
 		{
@@ -330,8 +330,8 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		///Gets or sets the number of decimal digits to be displayed in a <see cref="PieItem"/> 
-		///percent label.
+		/// Gets or sets the number of decimal digits to be displayed in a <see cref="PieItem"/> 
+		/// percent label.
 		/// </summary>
 		public int PercentDecimalDigits
 		{

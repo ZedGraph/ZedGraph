@@ -586,8 +586,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="index">location in the array to insert the object</param>
 		/// <param name="item">object to insert</param>
-		/// <exception cref="ArguementNullException"></exception>
-		/// <exception cref="ArguementException"></exception>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentException"></exception>
 		protected void ListInsert(int index, object item) 
 		{
 			if (item == null) 
@@ -625,8 +625,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="item">Item to append</param>
 		/// <returns>new index of item</returns>
-		/// <exception cref="ArguementNullException"></exception>
-		/// <exception cref="ArguementException"></exception>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentException"></exception>
 		protected int ListAdd(object item)
 		{
 			if (item == null) 
@@ -666,8 +666,8 @@ namespace ZedGraph
 		/// Removes the item from the array and tracks the change in the viewstate
 		/// </summary>
 		/// <param name="item">object to remove</param>
-		/// <exception cref="ArguementNullException"></exception>
-		/// <exception cref="ArguementException"></exception>
+		/// <exception cref="ArgumentNullException"></exception>
+		/// <exception cref="ArgumentException"></exception>
 		protected void ListRemove(object item) 
 		{
 			if (item == null) 
@@ -692,7 +692,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="item">item to locate in list</param>
 		/// <returns>index of item</returns>
-		/// <exception cref="ArguementNullException"></exception>		
+		/// <exception cref="ArgumentNullException"></exception>		
 		protected int IndexOf(object item) 
 		{
 			if (item == null) 
@@ -705,7 +705,7 @@ namespace ZedGraph
 				
 		#region IEnumerable Implementation
 		/// <summary>
-		/// <see cref="IEnumerator.GetEnumerator"/> 
+		/// <see cref="System.Collections.IEnumerator.GetEnumerator"/> 
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerator GetEnumerator() 
@@ -892,7 +892,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Removes item based on RemoveAt
 		/// <see cref="IList.RemoveAt"/>
-		/// <seealso cref="GenericCollection.RemoveAt"/>
+		/// <seealso cref="System.Collections.RemoveAt"/>
 		/// </summary>
 		/// <param name="index"></param>
 		void IList.RemoveAt(int index) 

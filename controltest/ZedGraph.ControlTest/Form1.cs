@@ -71,108 +71,110 @@ namespace ZedGraph.ControlTest
 			this.tabPage2.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			this.SuspendLayout();
-// 
-// tabControl1
-// 
-			this.tabControl1.Controls.Add( this.tabPage1 );
-			this.tabControl1.Controls.Add( this.tabPage2 );
-			this.tabControl1.Controls.Add( this.tabPage3 );
-			this.tabControl1.Controls.Add( this.tabPage4 );
-			this.tabControl1.Location = new System.Drawing.Point( 0, 0 );
+			// 
+			// tabControl1
+			// 
+			this.tabControl1.Controls.Add(this.tabPage1);
+			this.tabControl1.Controls.Add(this.tabPage2);
+			this.tabControl1.Controls.Add(this.tabPage3);
+			this.tabControl1.Controls.Add(this.tabPage4);
+			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size( 536, 336 );
+			this.tabControl1.Size = new System.Drawing.Size(536, 336);
 			this.tabControl1.TabIndex = 1;
-// 
-// tabPage1
-// 
-			this.tabPage1.Controls.Add( this.zedGraphControl6 );
-			this.tabPage1.Controls.Add( this.label1 );
-			this.tabPage1.Location = new System.Drawing.Point( 4, 22 );
+			// 
+			// tabPage1
+			// 
+			this.tabPage1.Controls.Add(this.zedGraphControl6);
+			this.tabPage1.Controls.Add(this.label1);
+			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Size = new System.Drawing.Size( 528, 310 );
+			this.tabPage1.Size = new System.Drawing.Size(528, 310);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "tabPage1";
-			this.tabPage1.Paint += new System.Windows.Forms.PaintEventHandler( this.tabPage1_Paint );
-// 
-// zedGraphControl6
-// 
+			this.tabPage1.Paint += new System.Windows.Forms.PaintEventHandler(this.tabPage1_Paint);
+			// 
+			// zedGraphControl6
+			// 
 			this.zedGraphControl6.IsShowPointValues = false;
-			this.zedGraphControl6.Location = new System.Drawing.Point( 24, 63 );
+			this.zedGraphControl6.Location = new System.Drawing.Point(24, 63);
 			this.zedGraphControl6.Name = "zedGraphControl6";
 			this.zedGraphControl6.PointDateFormat = "g";
 			this.zedGraphControl6.PointValueFormat = "G";
-			this.zedGraphControl6.Size = new System.Drawing.Size( 461, 209 );
+			this.zedGraphControl6.Size = new System.Drawing.Size(461, 209);
 			this.zedGraphControl6.TabIndex = 1;
-			this.zedGraphControl6.Paint += new System.Windows.Forms.PaintEventHandler( this.zedGraphControl6_Paint );
-// 
-// label1
-// 
-			this.label1.Location = new System.Drawing.Point( 152, 16 );
+			this.zedGraphControl6.Paint += new System.Windows.Forms.PaintEventHandler(this.zedGraphControl6_Paint);
+			this.zedGraphControl6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.zedGraphControl6_MouseDown);
+			// 
+			// label1
+			// 
+			this.label1.Location = new System.Drawing.Point(152, 16);
 			this.label1.Name = "label1";
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Here\'s Tab Page 1";
-// 
-// tabPage2
-// 
-			this.tabPage2.Controls.Add( this.zedGraphControl4 );
-			this.tabPage2.Location = new System.Drawing.Point( 4, 22 );
+			// 
+			// tabPage2
+			// 
+			this.tabPage2.Controls.Add(this.zedGraphControl4);
+			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size( 528, 310 );
+			this.tabPage2.Size = new System.Drawing.Size(528, 310);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "tabPage2";
-// 
-// zedGraphControl4
-// 
+			// 
+			// zedGraphControl4
+			// 
 			this.zedGraphControl4.IsShowPointValues = false;
-			this.zedGraphControl4.Location = new System.Drawing.Point( 24, 25 );
+			this.zedGraphControl4.Location = new System.Drawing.Point(24, 25);
 			this.zedGraphControl4.Name = "zedGraphControl4";
 			this.zedGraphControl4.PointDateFormat = "g";
 			this.zedGraphControl4.PointValueFormat = "G";
-			this.zedGraphControl4.Size = new System.Drawing.Size( 474, 247 );
+			this.zedGraphControl4.Size = new System.Drawing.Size(474, 247);
 			this.zedGraphControl4.TabIndex = 0;
-// 
-// tabPage3
-// 
-			this.tabPage3.Controls.Add( this.zedGraphControl5 );
-			this.tabPage3.Location = new System.Drawing.Point( 4, 22 );
+			this.zedGraphControl4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.zedGraphControl4_MouseDown);
+			// 
+			// tabPage3
+			// 
+			this.tabPage3.Controls.Add(this.zedGraphControl5);
+			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Size = new System.Drawing.Size( 528, 310 );
+			this.tabPage3.Size = new System.Drawing.Size(528, 310);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "tabPage3";
-// 
-// zedGraphControl5
-// 
+			// 
+			// zedGraphControl5
+			// 
 			this.zedGraphControl5.IsShowPointValues = false;
-			this.zedGraphControl5.Location = new System.Drawing.Point( 64, 40 );
+			this.zedGraphControl5.Location = new System.Drawing.Point(64, 40);
 			this.zedGraphControl5.Name = "zedGraphControl5";
 			this.zedGraphControl5.PointDateFormat = "g";
 			this.zedGraphControl5.PointValueFormat = "G";
-			this.zedGraphControl5.Size = new System.Drawing.Size( 328, 224 );
+			this.zedGraphControl5.Size = new System.Drawing.Size(328, 224);
 			this.zedGraphControl5.TabIndex = 0;
-// 
-// tabPage4
-// 
-			this.tabPage4.Location = new System.Drawing.Point( 4, 22 );
+			// 
+			// tabPage4
+			// 
+			this.tabPage4.Location = new System.Drawing.Point(4, 22);
 			this.tabPage4.Name = "tabPage4";
-			this.tabPage4.Size = new System.Drawing.Size( 528, 310 );
+			this.tabPage4.Size = new System.Drawing.Size(528, 310);
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "tabPage4";
-// 
-// Form1
-// 
-			this.AutoScaleBaseSize = new System.Drawing.Size( 5, 13 );
-			this.ClientSize = new System.Drawing.Size( 680, 414 );
-			this.Controls.Add( this.tabControl1 );
+			// 
+			// Form1
+			// 
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.ClientSize = new System.Drawing.Size(680, 414);
+			this.Controls.Add(this.tabControl1);
 			this.Name = "Form1";
 			this.Text = "Form1";
-			this.Resize += new System.EventHandler( this.Form1_Resize );
-			this.Load += new System.EventHandler( this.Form1_Load );
-			this.tabControl1.ResumeLayout( false );
-			this.tabPage1.ResumeLayout( false );
-			this.tabPage2.ResumeLayout( false );
-			this.tabPage3.ResumeLayout( false );
-			this.ResumeLayout( false );
+			this.Resize += new System.EventHandler(this.Form1_Resize);
+			this.Load += new System.EventHandler(this.Form1_Load);
+			this.tabControl1.ResumeLayout(false);
+			this.tabPage1.ResumeLayout(false);
+			this.tabPage2.ResumeLayout(false);
+			this.tabPage3.ResumeLayout(false);
+			this.ResumeLayout(false);
 
 		}
 		#endregion
@@ -256,6 +258,24 @@ namespace ZedGraph.ControlTest
 			tabControl1.Size = size;
 			zedGraphControl6.Size = new Size( size.Width - zedGraphControl6.Left - 20,
 												size.Height - zedGraphControl6.Top - 30 );
+		}
+
+		private void zedGraphControl6_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			
+		}
+
+		private void zedGraphControl4_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			double rangeX = zedGraphControl4.GraphPane.XAxis.Max - zedGraphControl4.GraphPane.XAxis.Min;
+			zedGraphControl4.GraphPane.XAxis.Max -= rangeX/20.0;
+			zedGraphControl4.GraphPane.XAxis.Min += rangeX/20.0;
+			double rangeY = zedGraphControl4.GraphPane.YAxis.Max - zedGraphControl4.GraphPane.YAxis.Min;
+			zedGraphControl4.GraphPane.YAxis.Max -= rangeY/20.0;
+			zedGraphControl4.GraphPane.YAxis.Min += rangeY/20.0;
+			zedGraphControl4.AxisChange();
+			zedGraphControl4.Refresh();
+			//Invalidate();
 		}
 	}
 }

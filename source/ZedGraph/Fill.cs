@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2005-02-12 23:22:51 $ </version>
 	[Serializable]
 	public class Fill : ISerializable
 	{
@@ -682,7 +682,6 @@ namespace ZedGraph
 		/// Determines how the brush will be aligned with the filled object
 		/// in the horizontal direction.  This value is a <see cref="ZedGraph.AlignH"/> enumeration.
 		/// This field only applies if <see cref="IsScaled"/> is false.
-		/// properties.
 		/// </summary>
 		/// <seealso cref="AlignV"/>
 		public AlignH AlignH
@@ -695,7 +694,6 @@ namespace ZedGraph
 		/// Determines how the brush will be aligned with the filled object
 		/// in the vertical direction.  This value is a <see cref="ZedGraph.AlignV"/> enumeration.
 		/// This field only applies if <see cref="IsScaled"/> is false.
-		/// properties.
 		/// </summary>
 		/// <seealso cref="AlignH"/>
 		public AlignV AlignV
