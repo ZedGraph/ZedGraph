@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.9 $ $Date: 2005-01-25 16:28:41 $ </version>
+	/// <version> $Revision: 1.10 $ $Date: 2005-01-30 14:09:56 $ </version>
 	[Serializable]
 	public class PieItem : ZedGraph.CurveItem , ICloneable, ISerializable
 	{
@@ -44,37 +44,13 @@ namespace ZedGraph
 		private PieType pieType;
 */
 		/// <summary>
-		/// Percentage (expressed as #.##) of <see cref="PieItem"/>	diameter  to
+		/// Percentage (expressed as #.##) of <see cref="PieItem"/>	radius  to
 		/// which this <see cref="PieItem"/> is to be displaced from the center.
 		///   Displacement is done outward  along the radius
 		/// bisecting the chord of this <see cref="PieItem"/>.  Maximum allowable value
 		/// is 0.5.
 		/// </summary>
 		private double	displacement;
-
-		/// <summary>
-		/// Private field to hold the GraphicsPath of this <see cref="PieItem"/> to be
-		/// used for 'hit testing'.
-		/// </summary>
-		private GraphicsPath slicePath;
-
-		/// <summary>
-		/// Private field which holds the angle (in degrees) at which the display of this <see cref="PieItem"/>
-		/// object will begin.
-		/// </summary>
-		private float startAngle;
-
-		/// <summary>
-		///Private field which holds the length (in degrees) of the arc representing this <see cref="PieItem"/> 
-		///object.
-		/// </summary>
-		private float sweepAngle;
-
-		/// <summary>
-		///Private field which represents the angle (in degrees) of the radius along which this <see cref="PieItem"/>
-		///object will be displaced, if desired.
-		/// </summary>
-		private float midAngle;
 
 		/// <summary>
 		/// A <see cref="ZedGraph.TextItem"/> which will customize the label display of this
@@ -108,6 +84,57 @@ namespace ZedGraph
 		/// Use enum <see cref="ZedGraph.PieLabelType"/>.
 		/// </summary>
 		private PieLabelType labelType ;
+		/// <summary>
+		/// The point on the arc of this <see cref="PieItem"/> representing the intersection of
+		/// the arc and the explosion radius.
+		/// </summary>
+		private PointF intersectionPoint ;
+
+		/// <summary>
+		/// The bounding rectangle for this <see cref="PieItem"/>.
+		/// </summary>
+		private RectangleF boundingRectangle ;
+
+		/// <summary>
+		/// The formatted string for this <see cref="PieItem"/>'s label.  Formatting is
+		/// done based on  the <see cref="PieItemLabelType"/>.
+		/// </summary>
+		private string labelStr ;
+		/// <summary>
+		/// The point at which the line between this <see cref="PieItem"/> and its
+		/// label bends to the horizontal.
+		/// </summary>
+		private PointF pivotPoint ;
+		/// <summary>
+		/// The point at the end of the line between	this <see cref="PieItem"/> and 
+		/// it's label (i.e. the beginning of the label display)
+		/// </summary>
+		private PointF endPoint ;
+
+		/// <summary>
+		/// Private field to hold the GraphicsPath of this <see cref="PieItem"/> to be
+		/// used for 'hit testing'.
+		/// </summary>
+		private GraphicsPath slicePath;
+
+		/// <summary>
+		/// Private field which holds the angle (in degrees) at which the display of this <see cref="PieItem"/>
+		/// object will begin.
+		/// </summary>
+		private float startAngle;
+
+		/// <summary>
+		///Private field which holds the length (in degrees) of the arc representing this <see cref="PieItem"/> 
+		///object.
+		/// </summary>
+		private float sweepAngle;
+
+		/// <summary>
+		///Private field which represents the angle (in degrees) of the radius along which this <see cref="PieItem"/>
+		///object will be displaced, if desired.
+		/// </summary>
+		private float midAngle;
+
 
 
 		private static ColorSymbolRotator rotator = new ColorSymbolRotator () ;
@@ -175,7 +202,7 @@ namespace ZedGraph
 		public	double Displacement
 		{
 			get { return (this.displacement); }
-			set { this.displacement = value > 1 ? .5 : value ; }
+			set { this.displacement = value > .5 ? .5 : value ; }
 		}
 
 		/// <summary>
@@ -184,7 +211,7 @@ namespace ZedGraph
 		public GraphicsPath SlicePath
 		{
 			get { return (this.slicePath); }
-			set { this.slicePath = value; } 
+//			set { this.slicePath = value; } 
 		}
 
 		/// <summary>
@@ -210,7 +237,7 @@ namespace ZedGraph
 		/// <summary>
 		///Internal property to get or set the arc length (in degrees) of this <see cref="PieItem"/>.
 		/// </summary>
-		internal float SweepAngle
+		private float SweepAngle
 		{
 			get { return (this.sweepAngle); }
 			set { this.sweepAngle = value; }
@@ -219,7 +246,7 @@ namespace ZedGraph
 		/// <summary>
 		///Gets or sets the starting angle (in degrees) of this <see cref="PieItem"/>.
 		/// </summary>
-		internal float StartAngle
+		private float StartAngle
 		{
 			get { return (this.startAngle); }
 			set { this.startAngle = value; }
@@ -229,7 +256,7 @@ namespace ZedGraph
 		///Internal property to get or set the angle (in degrees) of the radius along which 
 		///this <see cref="PieItem"/> will be displaced.
 		/// </summary>
-		internal float MidAngle
+		private float MidAngle
 		{
 			get { return (this.midAngle); }
 			set { this.midAngle = value; }
@@ -252,7 +279,12 @@ namespace ZedGraph
 		public	PieLabelType LabelType
 		{
 			get { return (this.labelType); }
-			set { this.labelType = value; }
+			set { this.labelType = value; 
+						if ( value == PieLabelType.None )
+							this.LabelDetail.IsVisible	= false ;
+						else
+							this.LabelDetail.IsVisible = true ;
+					}  
 		}
 /*
 		/// <summary>
@@ -351,6 +383,15 @@ namespace ZedGraph
 			border = (Border) info.GetValue( "border", typeof(Border) );
 			pieValue = info.GetDouble( "pieValue" );
 			labelType = (PieLabelType) info.GetValue( "labelType", typeof(PieLabelType) );
+			intersectionPoint = (PointF) info.GetValue( "intersectionPoint", typeof(PointF) );
+			boundingRectangle = (RectangleF)info.GetValue ( "boundingRectangle", typeof(RectangleF) );
+			pivotPoint =(PointF) info.GetValue( "pivotPoint", typeof(PointF) );
+		  endPoint =(PointF) info.GetValue( "endPoint", typeof(PointF) );
+			slicePath = (GraphicsPath)info.GetValue ( "slicePath", typeof(GraphicsPath) );
+			startAngle = (float)info.GetDouble( "startAngle" );
+			sweepAngle = (float)info.GetDouble( "sweepAngle" );
+			midAngle = (float)info.GetDouble( "midAngle" );
+			labelStr = info.GetString ("labelStr") ;
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -366,7 +407,17 @@ namespace ZedGraph
 			info.AddValue( "labelDetail", labelDetail );
 			info.AddValue( "fill", fill );
 			info.AddValue( "border", border );
+			info.AddValue( "pieValue", pieValue);
 			info.AddValue( "labelType", labelType );
+			info.AddValue( "intersectionPoint", intersectionPoint);
+			info.AddValue( "boundingRectangle", boundingRectangle );
+			info.AddValue( "pivotPoint", pivotPoint );
+			info.AddValue( "endPoint", endPoint );
+			info.AddValue( "slicePath", slicePath );
+			info.AddValue( "startAngle", startAngle );
+			info.AddValue( "sweepAngle", sweepAngle );
+			info.AddValue( "midAngle", midAngle );
+			info.AddValue( "labelStr", labelStr );
 		}
 	
 	#endregion
@@ -395,9 +446,8 @@ namespace ZedGraph
 		/// </param>				
 		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
+			 pane.PieRect = CalcPieRect (g, pane, scaleFactor, pane.AxisRect ) ;
 
-			RectangleF nonExplRect ;
-			double maxDisplacement = 0 ;	
 			this.slicePath = new GraphicsPath() ;
 
 			if ( !this.isVisible )
@@ -406,34 +456,21 @@ namespace ZedGraph
 			SmoothingMode sMode = g.SmoothingMode ;
 			g.SmoothingMode = SmoothingMode.AntiAlias ;	
 			
-			if ( pane.CurveList.IsPieOnly )						 //calc pierect here
-				nonExplRect = pane.PieRect ;
-			else
-				nonExplRect = pane.AxisRect ;					  //if isAxisRectAuto = false
-			
-			CalculatePieChartParams( pane, ref maxDisplacement ) ;
+			Brush brush = this.fill.MakeBrush(this.boundingRectangle);
 
-			if ( maxDisplacement != 0 )			 //need new rectangle if any slice exploded	***figure out how to get maxdispl
-				CalcNewBaseRect ( maxDisplacement, ref nonExplRect ) ;
-			
-			Brush brush = this.fill.MakeBrush( nonExplRect );
-
-			RectangleF tRect = nonExplRect;
-
-			if ( displacement != 0 )
-				CalcExplodedRect( ref tRect );	//calculate the bounding rectangle for exploded pie
+			RectangleF tRect = this.boundingRectangle ; 
 
 			g.FillPie( brush, tRect.X, tRect.Y, tRect.Width, tRect.Height, this.StartAngle, this.SweepAngle );
 
 			//add GraphicsPath for hit testing
 			this.slicePath.AddPie( tRect.X, tRect.Y, tRect.Width, tRect.Height, 
-									this.StartAngle, this.SweepAngle);
+				this.StartAngle, this.SweepAngle);
 
 			if ( this.Border.IsVisible)
 			{
 				Pen borderPen = this.border.MakePen( pane.IsPenWidthScaled, scaleFactor );
 				g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height, 
-							this.StartAngle, this.SweepAngle );
+					this.StartAngle, this.SweepAngle );
 				borderPen.Dispose();
 			}
 
@@ -470,17 +507,22 @@ namespace ZedGraph
 		public static RectangleF CalcPieRect( Graphics g, GraphPane pane, float scaleFactor, RectangleF axisRect )
 		{
 			//want to draw the largest pie possible within axisRect
-			//but want to leave  10% slack around the pie so labels will not overrun clip area
+			//but want to leave  5% slack around the pie so labels will not overrun clip area
 			//largest pie is limited by the smaller of axisRect.height or axisRect.width...
 			//this rect (nonExplRect)has to be re-positioned so that it's in the center of axisRect.
-			RectangleF nonExplRect = axisRect;
+			//Where axisRect is almost a square - low Aspect Ratio -, need to contract pieRect so that there's some
+			//room for labels, if they're visible.
+			double maxDisplacement = 0 ;
+			RectangleF tempRect ;   //= new RectangleF(0,0,0,0);
+																   
+			RectangleF nonExplRect = axisRect ;
 
 			if ( pane.CurveList.IsPieOnly )
 			{
 				if ( nonExplRect.Width < nonExplRect.Height )
 				{
 					//create slack rect
-					nonExplRect.Inflate (  - (float)0.1F * nonExplRect.Height, - (float)0.1F * nonExplRect.Width);
+					nonExplRect.Inflate (  - (float)0.05F * nonExplRect.Height, - (float)0.05F * nonExplRect.Width);
 					//get the difference between dimensions
 					float delta =  (nonExplRect.Height - nonExplRect.Width ) / 2 ;
 					//make a square	so we end up with circular pie
@@ -490,14 +532,40 @@ namespace ZedGraph
 				}
 				else
 				{
-					nonExplRect.Inflate (  - (float)0.1F * nonExplRect.Height, - (float)0.1F * nonExplRect.Width);
+					nonExplRect.Inflate (  - (float)0.05F * nonExplRect.Height, - (float)0.05F * nonExplRect.Width);
 					float delta =  (nonExplRect.Width - nonExplRect.Height ) / 2 ;
 					nonExplRect.Width = nonExplRect.Height ;
 					nonExplRect.X += delta ;
 				}
-																											
-			}
+																//check aspect ratio
+				double aspectRatio = axisRect.Width / axisRect.Height ;
+														//make an adjustment in rect size,as aspect ratio varies
+				if ( aspectRatio < 1.5 )
+					nonExplRect.Inflate ( -(float)(.1 * (1.5 / aspectRatio ) * nonExplRect.Width), 
+																		-(float)(.1 * ( 1.5 / aspectRatio)  * nonExplRect.Width) );
 
+								//modify the rect to determine if any of the labels need to be wrapped....
+								//first see if there's any exploded slices and if so, what's the max displacement...
+								//also, might as well get all the display params we can
+				PieItem.CalculatePieChartParams (pane, ref maxDisplacement ) ;
+
+				if ( maxDisplacement != 0 )			 //need new rectangle if any slice exploded	
+					CalcNewBaseRect ( maxDisplacement, ref nonExplRect ) ;
+				
+				foreach ( PieItem slice in pane.CurveList )
+				{
+					slice.boundingRectangle = nonExplRect ;
+														//if exploded, need to re-calculate rectangle for slice
+					if ( slice.Displacement != 0 )		
+				  {
+						tempRect = nonExplRect ;
+						slice.CalcExplodedRect ( ref tempRect ) ;
+						slice.boundingRectangle = tempRect ;
+				 }	
+										//now get all the other slice specific drawing details, including need for wrapping label
+				 slice.DesignLabel ( g, pane, slice.boundingRectangle, scaleFactor ) ;
+			  }
+			}
 			return nonExplRect;
 		}
 
@@ -521,8 +589,10 @@ namespace ZedGraph
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		/// <param name="maxDisplacement">maximum slice displacement</param>
-		private void CalculatePieChartParams (GraphPane pane, ref double maxDisplacement )
+		private static void CalculatePieChartParams (GraphPane pane, ref double maxDisplacement )
 		{
+			string lblStr = " " ;
+
 			//loop thru slices and get total value and maxDisplacement
 			double pieTotalValue = 0 ;
 			foreach ( PieItem curve in pane.CurveList )
@@ -537,10 +607,12 @@ namespace ZedGraph
 			//now loop thru and calculate the various angle values
 			foreach ( PieItem curve in pane.CurveList )
 			{
+				lblStr = curve.labelStr ;
 				curve.StartAngle = (float)nextStartAngle ; 
 				curve.SweepAngle = (float)(360 * curve.Value / pieTotalValue) ;
 				curve.MidAngle = curve.StartAngle + curve.SweepAngle / 2 ;
 				nextStartAngle = curve.startAngle + curve.sweepAngle ;
+				PieItem.BuildLabelString ( curve ) ;
 			}
 		}
 
@@ -564,96 +636,216 @@ namespace ZedGraph
 		/// </param>				
 		public void DrawLabel ( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor  )
 		{
+			if ( !this.labelDetail.IsVisible )
+				return ; 
+
+			Pen labelPen = this.Border.MakePen (pane.IsPenWidthScaled, scaleFactor ) ;
 			//label line will come off the explosion radius and then pivot to the horizontal right or left, dependent on position.. 
 			//text will be at the end of horizontal segment...
-			Pen labelPen = this.Border.MakePen (pane.IsPenWidthScaled, scaleFactor ) ;
-
-			//get the point where the explosion radius intersects the pie arc
+								 //get the center of the bounding rectangle
 			PointF rectCenter = new PointF ( (rect.X + rect.Width / 2 ) , (rect.Y + rect.Height / 2 )) ;
-			PointF intersectionPoint = new PointF ( (float)(rectCenter.X + ( rect.Width / 2 *  Math.Cos (  (this.midAngle ) * Math.PI /180 ))),
-				(float)(rectCenter.Y + ( rect.Height / 2 * Math.Sin (  (  this.midAngle )  * Math.PI / 180 )) )) ;
 			
 			//draw line from intersection point to pivot point - line to be 30 pixels long
-			PointF pivotPoint = new PointF ((float) (intersectionPoint.X + 30 *  Math.Cos (  (this.midAngle ) * Math.PI /180 )), 
-				(float)(intersectionPoint.Y + 30 * Math.Sin (  (  this.midAngle )  * Math.PI / 180 )) )  ;
-			g.DrawLine ( labelPen, intersectionPoint, pivotPoint ) ;
+			g.DrawLine ( labelPen, this.intersectionPoint, this.pivotPoint ) ;
 
 			//draw 10 pixel horizontal	 line to move label away from pie...
-			PointF endPoint ;
-															 //does line go to left or right....label alignment is to the opposite
+			//does line go to left or right....label alignment is to the opposite
+			if ( this.pivotPoint.X >= rectCenter.X)							 //goes to right
+				this.labelDetail.Location.AlignH = AlignH.Left ;
+			else
+				this.labelDetail.Location.AlignH = AlignH.Right ;
+			g.DrawLine ( labelPen, this.pivotPoint, this.endPoint )	;
+
+			//draw the label (TextItem)
+			if ( !this.labelDetail.IsWrapped )
+				this.labelDetail.Draw ( g, pane, scaleFactor ) ;
+			else
+				this.labelDetail.Draw ( g, pane, scaleFactor ) ;
+		}
+
+		/// <summary>
+		///This method collects all the data relative to rendering this <see cref="PieItem"/>'s label.
+		///It also limits the label's <see cref="FontSpec.Size"/> to 8.
+		/// </summary>
+		/// <param name="g">
+		///  A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		///</param>
+		/// <param name="pane">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="rect">The rectangle used for rendering this <see cref="PieItem"/>
+		/// </param>
+		/// <param name="slice">A reference to this <see cref="PieItem"/>
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		public void DesignLabel ( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor   )
+		{			
+			if ( !this.labelDetail.IsVisible)
+				return ;
+			
+			this.labelDetail.IsWrapped = false ;
+
+			//label line will come off the explosion radius and then pivot to the horizontal right or left, dependent on position.. 
+			//text will be at the end of horizontal segment...
+			CalculateLinePoints( rect, this.midAngle) ;
+
+			//build the label string to be displayed - force the font to 8
+			this.labelDetail.FontSpec.Size = 8 ;
+			//now get size of bounding rect for label
+			SizeF size =this.labelDetail.FontSpec.BoundingBox ( g, labelStr, scaleFactor ) ;
+			
+			//how much room left for the label - most likely midangles for wrapping
+			//Right - 315 -> 45 degrees
+			//Bottom - 45 -> 135
+			//Left - 135 -> 225
+			//Top - 225 -> 315
+			
+			double fill = 0 ;
+			if ( this.midAngle > 315 || this.midAngle <= 45 )		//correct by wrapping text
+			{
+				fill = pane.AxisRect.X + pane.AxisRect.Width - this.endPoint.X  - 5 ;
+				if ( size.Width > fill )										//need to wrap, so create label rectangle for overloaded DrawString - two rows, max
+				{
+					this.labelDetail.IsWrapped = true ;
+					this.labelDetail.WrappedRect = new RectangleF((this.endPoint.X - pane.PaneRect.X)  ,
+						(this.endPoint.Y - pane.PaneRect.Y) , (float)fill, size.Height * 2 ) ;
+				}
+			}
+			
+			if ( this.midAngle > 45 && this.midAngle <= 135 )        //correct by moving radial line toward one or the other end of the range
+			{
+				fill = pane.AxisRect.Y + pane.AxisRect.Height -  this.endPoint.Y  -5 ;
+				if ( size.Height / 2 > fill )										//is there enuf room for the label
+				{
+												//no, so got to move explosion radius
+					if ( this.midAngle > 90 )										//move label clockwise one-third of way to the end of the arc
+						CalculateLinePoints (rect, this.midAngle + ( this.sweepAngle + this.startAngle - this.midAngle) / 3 );
+					else																						//move label counter-clockwise one-third of way to the start of the arc
+						CalculateLinePoints (rect, this.midAngle - ( this.midAngle - ( this.midAngle - this.startAngle ) / 3 ));
+				}
+			}
+			
+			if ( this.midAngle > 135  && this.midAngle <= 225 )		 //wrap text 
+			{
+				fill = this.endPoint.X - pane.AxisRect.X - 5 ;
+				if ( size.Width > fill )										//need to wrap, so create label rectangle for overloaded DrawString - two rows, max
+				{
+					this.labelDetail.IsWrapped = true ;
+					this.labelDetail.WrappedRect = new RectangleF((this.endPoint.X - pane.PaneRect.X)  ,
+						(this.endPoint.Y - pane.PaneRect.Y) , (float)fill, size.Height * 2 ) ;
+				}
+			}
+			
+			if ( this.midAngle > 225 &&  this.midAngle <= 315 )			 //correct by moving radial line toward one or the other end of the range
+			{
+				fill =  this.endPoint.Y - 5 - pane.AxisRect.Y  ;
+				if ( size.Height / 2 > fill )										//is there enuf room for the label
+				{
+					//no, so got to move explosion radius
+					if ( this.midAngle < 270 )										//move label counter-clockwise one-third of way to the start of the arc
+						CalculateLinePoints (rect, this.midAngle - ( this.sweepAngle + this.startAngle - this.midAngle) / 3 );
+					else																						//move label clockwise one-third of way to the end of the arc
+						CalculateLinePoints (rect, this.midAngle + ( this.midAngle - this.startAngle ) / 3 );
+				}
+			}
+								
+									 //complete the locationDetail info
+			this.labelDetail.Location.AlignV = AlignV.Center ;
+			this.labelDetail.Location.CoordinateFrame = CoordType.PaneFraction ;
+			this.labelDetail.Location.X =(	this.endPoint.X - pane.PaneRect.X)/  (pane.PaneRect.Width )   ;
+			this.labelDetail.Location.Y =	(this.endPoint.Y - pane.PaneRect.Y) /( pane.PaneRect.Height   )  ;
+			this.labelDetail.Text = labelStr  ;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rect"></param>
+		/// <param name="slice"></param>
+		private void CalculateLinePoints ( RectangleF rect, double midAngle  )
+		{
+			//get the point where the explosion radius intersects the this arc
+			PointF rectCenter = new PointF ( (rect.X + rect.Width / 2 ) , (rect.Y + rect.Height / 2 )) ;
+			
+			this.intersectionPoint = new PointF ( (float)(rectCenter.X + ( rect.Width / 2 *  Math.Cos (  (midAngle ) * Math.PI /180 ))),
+				(float)(rectCenter.Y + ( rect.Height / 2 * Math.Sin (  (  midAngle )  * Math.PI / 180 )) )) ;
+			
+			//draw line from intersection point to pivot point - length to be .05 * pieRect.Width pixels long
+			this.pivotPoint = new PointF ((float) (intersectionPoint.X +  .05 * rect.Width *  Math.Cos (  (midAngle ) * Math.PI /180 )), 
+				(float)(intersectionPoint.Y + .05 * rect.Width * Math.Sin (  (  midAngle )  * Math.PI / 180 )) )  ;
+
+			//add horizontal line to move label away from pie...
+			//does line go to left or right....label alignment is to the opposite
 			if ( pivotPoint.X >= rectCenter.X)							 //goes to right
 			{
-				endPoint = new PointF (  pivotPoint.X + 10, pivotPoint.Y)	;
+				this.endPoint = new PointF ( (float)( pivotPoint.X + .05 * rect.Width), pivotPoint.Y)	;
 				this.labelDetail.Location.AlignH = AlignH.Left ;
 			}
 			else
 			{
-				endPoint = new PointF (  pivotPoint.X - 10, pivotPoint.Y)	;
+				this.endPoint = new PointF (  (float)(  pivotPoint.X - .05 * rect.Width), pivotPoint.Y)	;
 				this.labelDetail.Location.AlignH = AlignH.Right ;
 			}
-			g.DrawLine ( labelPen, pivotPoint, endPoint )	;
-
-			//build the label string to be displayed
-			String labelStr = " " ;
-			BuildLabelString ( ref labelStr ) ;
-										//configure the label (TextItem)
-			this.labelDetail.Location.AlignV = AlignV.Center ;
-			this.labelDetail.Location.CoordinateFrame = CoordType.PaneFraction ;
-			this.labelDetail.Location.X =(	endPoint.X - pane.PaneRect.X)/  (pane.PaneRect.Width )   ;
-			this.labelDetail.Location.Y =	(endPoint.Y - pane.PaneRect.Y) /( pane.PaneRect.Height   )  ;
-			this.labelDetail.Text = labelStr  ;
-			this.labelDetail.FontSpec.Size = 8 ;
-			this.labelDetail.Draw ( g, pane, scaleFactor ) ;
+			this.midAngle = (float)midAngle ;
 		}
 
 		/// <summary>
 		/// Build the string that will be displayed as the slice label as determined by 
 		/// <see cref="PieItem.labelType"/>.
 		/// </summary>
-		/// <param name="labelStr">reference to the string to be displayed</param>
-		private void BuildLabelString ( ref string labelStr )
+		/// <param name="curve">reference to the <see cref="PieItem"/></param>
+		private static void BuildLabelString ( PieItem curve )
 		{
-			switch( this.labelType ) 
+			switch( curve.labelType ) 
 			{		
 				case PieLabelType.Value :
-					labelStr = this.pieValue.ToString ("#.###") ;
+					curve.labelStr = curve.pieValue.ToString ("#.###") ;
 					break;
 				case PieLabelType.Percent :
-					double pieValue  = this.sweepAngle / 360 ;	
-					labelStr = pieValue.ToString ("#.000%") ;
+					double pieValue  = curve.sweepAngle / 360 ;	
+					curve.labelStr = pieValue.ToString ("#.000%") ;
 					break;
 				case PieLabelType.Name_Value :
-					labelStr = this.label + ": " + this.pieValue.ToString ("#.###") ;
+					curve.labelStr = curve.label + ": " + curve.pieValue.ToString ("#.###") ;
 					break;
 				case PieLabelType.Name_Percent :
-					pieValue  = this.sweepAngle / 360 ;	
-					labelStr = this.label + ": " + pieValue.ToString ("#.###%") ;
+					pieValue  = curve.sweepAngle / 360 ;	
+					curve.labelStr = curve.label + ": " + pieValue.ToString ("#.###%") ;
 					break;
 				case PieLabelType.Name :
-					labelStr = this.label ; 
+					curve.labelStr = curve.label ; 
 					break ;
 				case PieLabelType.None :
 				default:
 					break ;
 			}
 		}
+
 		/// <summary>
-		/// A method which calculates the size of the bounding rectangle for the non-displaced 
-		/// <see cref="PieItem"/>'s in this <see cref="PieItem"/>.  This method is called after it is found
+		/// A method which calculates a new size for the bounding rectangle for the non-displaced 
+		/// <see cref="PieItem"/>'s in the pie chart.  This method is called after it is found
 		/// that at least one slice is displaced.
 		/// </summary>
-		/// <param name="maxDisplacement"></param>
-		/// <param name="baseRect"></param>
-		private void CalcNewBaseRect ( double maxDisplacement, ref RectangleF baseRect )
+		/// <param name="maxDisplacement">The biggest displacement among the <see cref="PieItem"/>s
+		/// making up the pie chart.</param>
+		/// <param name="baseRect">The current bounding rectangle</param>
+		private static void CalcNewBaseRect ( double maxDisplacement, ref RectangleF baseRect )
 		{
 			//displacement expressed in terms of % of pie radius	...do not want exploded slice to 
 			//go beyond nonExplRect, but want to maintain the same center point...therefore, got to 
 			//reduce the diameter of the nonexploded pie by the alue of the displacement
 
-			float xDispl =	(float)((maxDisplacement * baseRect.Width/2)) ; 
-			float yDispl	 =  (float)((maxDisplacement * baseRect.Height/2) ); 
+			float xDispl =	(float)((maxDisplacement * baseRect.Width)) ; 
+			float yDispl	 =  (float)((maxDisplacement * baseRect.Height) ); 
 
-			baseRect.Inflate ( -(float)(.90*(xDispl / 2)), -(float)(.90*(xDispl / 2 ) )  );
+			baseRect.Inflate ( -(float)( (xDispl / 10 )), -(float)( (xDispl / 10 ) )  );
 		}
 		
 		/// <summary>

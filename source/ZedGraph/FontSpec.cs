@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-01-30 14:09:56 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -659,6 +659,121 @@ namespace ZedGraph
 			// is set up such that 0,0 is at the location where the
 			// CenterTop of the text needs to be.
 			g.DrawString( text, this.font, brush, 0.0F, 0.0F, strFormat );
+
+			// Restore the transform matrix back to original
+			g.Transform = matrix;
+
+		}
+
+		/// <summary>
+		/// Render the specified <paramref name="text"/> to the specifed
+		/// <see cref="Graphics"/> device.  The text, border, and fill options
+		/// will be rendered as required.  This version is used where the	<paramref name="text"/>
+		/// requires wrapping	within the <paramref name="rect"/>
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="isPenWidthScaled">
+		/// Set to true to have the <see cref="Border"/> pen width scaled with the
+		/// scaleFactor.
+		/// </param>
+		/// <param name="text">A string value containing the text to be
+		/// displayed.  This can be multiple lines, separated by newline ('\n')
+		/// characters</param>
+		/// <param name="x">The X location to display the text, in screen
+		/// coordinates, relative to the horizontal (<see cref="AlignH"/>)
+		/// alignment parameter <paramref name="alignH"/></param>
+		/// <param name="y">The Y location to display the text, in screen
+		/// coordinates, relative to the vertical (<see cref="AlignV"/>
+		/// alignment parameter <paramref name="alignV"/></param>
+		/// <param name="alignH">A horizontal alignment parameter specified
+		/// using the <see cref="AlignH"/> enum type</param>
+		/// <param name="alignV">A vertical alignment parameter specified
+		/// using the <see cref="AlignV"/> enum type</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph. </param>
+		/// <param name="rect">The rectangle (in screen coordinates) in which to display the text.
+		///</param>
+		public void Draw( Graphics g, bool isPenWidthScaled, string text, float x,
+					float y, AlignH alignH, AlignV alignV,
+							float scaleFactor, RectangleF rect )
+		{
+			// make sure the font size is properly scaled
+			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
+			
+			// Get the width and height of the text
+			SizeF sizeF = new SizeF(rect.Width, rect.Height ) ;
+			// Save the old transform matrix for later restoration
+			Matrix matrix = g.Transform;
+		
+			// Move the coordinate system to local coordinates
+			// of this text object (that is, at the specified
+			// x,y location)
+			g.TranslateTransform( x, y, MatrixOrder.Prepend );
+			
+			// Rotate the coordinate system according to the 
+			// specified angle of the FontSpec
+			if ( angle != 0.0F )
+				g.RotateTransform( -angle, MatrixOrder.Prepend );
+
+			// Since the text will be drawn by g.DrawString()
+			// assuming the location is the TopCenter
+			// (the Font is aligned using StringFormat to the
+			// center so multi-line text is center justified),
+			// shift the coordinate system so that we are
+			// actually aligned per the caller specified position
+			float xa, ya;
+			if ( alignH == AlignH.Left )
+				xa = sizeF.Width / 2.0F;
+			else if ( alignH == AlignH.Right )
+				xa = -sizeF.Width / 2.0F;
+			else
+				xa = 0.0F;
+				
+			if ( alignV == AlignV.Center )
+				ya = -sizeF.Height / 2.0F;
+			else if ( alignV == AlignV.Bottom )
+				ya = -sizeF.Height;
+			else
+				ya = 0.0F;
+			
+			// Shift the coordinates to accomodate the alignment
+			// parameters
+			g.TranslateTransform( xa, ya, MatrixOrder.Prepend );
+
+			// make a solid brush for rendering the font itself
+			SolidBrush brush = new SolidBrush( this.fontColor );
+			
+			// Create a rectangle representing the border around the
+			// text.  Note that, while the text is drawn based on the
+			// TopCenter position, the rectangle is drawn based on
+			// the TopLeft position.  Therefore, move the rectangle
+			// width/2 to the left to align it properly
+			RectangleF rectF = new RectangleF( -sizeF.Width / 2.0F, 0.0F,
+				sizeF.Width, sizeF.Height );
+
+			// If the background is to be filled, fill it
+			this.fill.Draw( g, rectF );
+			
+			// Draw the border around the text if required
+			this.border.Draw( g, isPenWidthScaled, scaleFactor, rectF );
+
+			// make a center justified StringFormat alignment
+			// for drawing the text
+			StringFormat strFormat = new StringFormat();
+			strFormat.Alignment = StringAlignment.Center ; // this.stringAlignment;
+			if ( this.stringAlignment == StringAlignment.Far )
+				g.TranslateTransform( sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
+			else if ( this.stringAlignment == StringAlignment.Near )
+				g.TranslateTransform( -sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
+			
+			// Draw the actual text within rectF, wrapping as needed.
+			g.DrawString( text, this.font, brush, rectF, strFormat );
 
 			// Restore the transform matrix back to original
 			g.Transform = matrix;
