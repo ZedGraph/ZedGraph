@@ -71,7 +71,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-12 05:09:30 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -205,7 +205,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-12 05:09:30 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
@@ -307,7 +307,7 @@ namespace ZedGraph.UnitTest
 			// Set the XAxis labels
 			testee.XAxis.TextLabels = labels;
 			// Set the XAxis to Text type
-			testee.XAxis.Type = AxisType.Ordinal;
+			testee.XAxis.Type = AxisType.Text;
 
 			testee.XAxis.IsReverse = false;
 			testee.ClusterScaleWidth = 1;
@@ -344,7 +344,7 @@ namespace ZedGraph.UnitTest
 
 			testee.AxisChange( form2.CreateGraphics() );
 			SetSize();
-			form2.Show();
+			form2.Refresh();
 			
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
 				"Is a bar graph visible with 1 set of data and value labels?  <Next Step: Resize the Graph for 3 seconds>" ) );
@@ -785,7 +785,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-12 05:09:30 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{
@@ -1278,12 +1278,31 @@ namespace ZedGraph.UnitTest
 			testee.XAxis.ScaleFontSpec.Angle = 0;
 			testee.YAxis.ScaleFontSpec.Angle = 90.0F;
 			testee.Y2Axis.ScaleFontSpec.Angle = -90.0F;
-			//testee.XAxis.TitleFontSpec.Angle = 0;
-			//testee.YAxis.TitleFontSpec.Angle = 180.0F;
-			//testee.Y2Axis.TitleFontSpec.Angle = 0;
-			//testee.Legend.FontSpec.Angle = 0;
-			//testee.FontSpec.Angle = 0;
 			
+			for ( float angle=0.0F; angle<=360.0F; angle+= 10.0F )
+			{
+				testee.XAxis.TitleFontSpec.Angle = -angle;
+				testee.YAxis.TitleFontSpec.Angle = angle + 180.0F;
+				testee.Y2Axis.TitleFontSpec.Angle = angle;
+				//testee.Legend.FontSpec.Angle = angle;
+				testee.FontSpec.Angle = angle;
+				
+				form2.Refresh();
+				TestUtils.DelaySeconds( 50 );
+			}
+
+			Assert.IsTrue( TestUtils.promptIfTestWorked(
+				"Did Axis Titles Rotate and the AxisRect adjust properly?" ) );
+					
+			testee.XAxis.ScaleFontSpec.Angle = 0;
+			testee.YAxis.ScaleFontSpec.Angle = 90.0F;
+			testee.Y2Axis.ScaleFontSpec.Angle = -90.0F;
+			testee.XAxis.TitleFontSpec.Angle = 0;
+			testee.YAxis.TitleFontSpec.Angle = 180.0F;
+			testee.Y2Axis.TitleFontSpec.Angle = 0;
+			//testee.Legend.FontSpec.Angle = 0;
+			testee.FontSpec.Angle = 0;
+
 			///////////////////////////////////////////////////////////////////////////////
 
 			TextItem text = new TextItem( "ZedGraph TextItem", 0.5F, 0.5F );

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:58 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-12 05:09:30 $ </version>
 	public class Bar
 	{
 	#region Fields
@@ -48,6 +48,14 @@ namespace ZedGraph
 		/// </summary>
 		private Color	fillColor;
 		/// <summary>
+		/// Private field that stores the custom fill brush sor this
+		/// <see cref="Bar"/>.  Use the public
+		/// property <see cref="FillBrush"/> to access this value.  This property is
+		/// only applicable if the 
+		/// <see cref="FillType"/> property is set to <see cref="ZedGraph.FillType.Brush"/>.
+		/// </summary>
+		private Brush	fillBrush;
+		/// <summary>
 		/// Private field that determines if a frame will be drawn around this
 		/// <see cref="Bar"/>.  Use the public
 		/// property <see cref="IsFramed"/> to access this value.  The pen width
@@ -55,12 +63,13 @@ namespace ZedGraph
 		/// </summary>
 		private bool	isFramed;
 		/// <summary>
-		/// Private field that determines if this
-		/// <see cref="Bar"/> will be filled with color.  Use the public
-		/// property <see cref="IsFilled"/> to access this value.  The fill color
-		/// is determined by the property <see cref="FillColor"/>.
+		/// Private field that determines the type of color fill for this
+		/// <see cref="Bar"/>.  Use the public
+		/// property <see cref="FillType"/> to access this value.  The fill color
+		/// is determined by the property <see cref="FillColor"/> or
+		/// <see cref="FillBrush"/>.
 		/// </summary>
-		private bool	isFilled;
+		private FillType	fillType;
 		/// <summary>
 		/// Private field that determines the pen width for the frame around this
 		/// <see cref="Bar"/>, in pixel units.  Use the public
@@ -83,10 +92,9 @@ namespace ZedGraph
 			/// </summary>
 			public static float FrameWidth = 1.0F;
 			/// <summary>
-			/// The default fill mode for bars (<see cref="Bar.IsFilled"/> property).
-			/// true to have bars filled in with color, false to leave them as outlines.
+			/// The default fill mode for bars (<see cref="Bar.FillType"/> property).
 			/// </summary>
-			public static bool IsFilled = true;
+			public static FillType FillType = FillType.Brush;
 			/// <summary>
 			/// The default frame mode for bars (<see cref="Bar.IsFramed"/> property).
 			/// true to display frames around bars, false otherwise
@@ -102,6 +110,12 @@ namespace ZedGraph
 			/// (<see cref="Bar.FillColor"/> property).
 			/// </summary>
 			public static Color FillColor = Color.Red;
+			/// <summary>
+			/// The default custom brush for filling in the bars
+			/// (<see cref="Bar.FillBrush"/> property).
+			/// </summary>
+			public static Brush FillBrush = null; //new LinearGradientBrush( new Rectangle(0,0,100,100),
+				// Color.White, Color.Red, 0F );
 		}
 	#endregion
 
@@ -131,8 +145,9 @@ namespace ZedGraph
 		{
 			this.frameColor = Default.FrameColor;
 			this.fillColor = color.IsEmpty ? Default.FillColor : color;
+			this.fillBrush = Default.FillBrush;
 			this.isFramed = Default.IsFramed;
-			this.isFilled = Default.IsFilled;
+			this.fillType = Default.FillType;
 			this.frameWidth = Default.FrameWidth;
 		}
 
@@ -144,8 +159,9 @@ namespace ZedGraph
 		{
 			this.frameColor = rhs.FrameColor;
 			this.fillColor = rhs.FillColor;
+			this.fillBrush = rhs.FillBrush;
 			this.isFramed = rhs.IsFramed;
-			this.isFilled = rhs.IsFilled;
+			this.fillType = rhs.FillType;
 			this.frameWidth = rhs.FrameWidth;
 		}
 	#endregion
@@ -185,6 +201,18 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// The custom fill brush for this <see cref="Bar"/>.  This property is
+		/// only applicable if the <see cref="FillType"/> property is set
+		/// to <see cref="ZedGraph.FillType.Brush"/>.
+		/// to true.
+		/// </summary>
+		public Brush FillBrush
+		{
+			get { return fillBrush; }
+			set { fillBrush = value; }
+		}
+
+		/// <summary>
 		/// Determines if the <see cref="Bar"/> has a frame around it.
 		/// </summary>
 		/// <seealso cref="FrameColor"/>
@@ -196,14 +224,28 @@ namespace ZedGraph
 			set { isFramed = value; }
 		}
 		/// <summary>
-		/// Determines if the <see cref="Bar"/> is filled with color.
+		/// Determines if the <see cref="Bar"/> is filled with either solid
+		/// color (<see cref="ZedGraph.FillType.Solid"/>) or a custom brush
+		/// (<see cref="ZedGraph.FillType.Brush"/>).  See <see cref="FillType"/> for
+		/// more information.
 		/// </summary>
 		/// <seealso cref="FillColor"/>
-		/// <seealso cref="Default.IsFilled"/>
+		/// <seealso cref="Default.FillType"/>
+		public FillType FillType
+		{
+			get { return fillType; }
+			set { fillType = value; }
+		}
+		/// <summary>
+		/// Determines the type of color fill used for this <see cref="Bar"/>.  Returns true
+		/// if the <see cref="FillType"/> property is either <see cref="ZedGraph.FillType.Solid"/> or
+		/// <see cref="ZedGraph.FillType.Brush"/>.
+		/// </summary>
+		/// <seealso cref="FillColor"/>
+		/// <seealso cref="Default.FillType"/>
 		public bool IsFilled
 		{
-			get { return isFilled; }
-			set { isFilled = value; }
+			get { return fillType != FillType.None; }
 		}
 		/// <summary>
 		/// Determines the pen width for the frame around the <see cref="Bar"/>,
@@ -253,11 +295,33 @@ namespace ZedGraph
 				bottom = junk;
 			}
 
-			if ( this.isFilled && !this.fillColor.IsEmpty )
+			// Fill the Bar
+			if ( this.IsFilled && ( !this.fillColor.IsEmpty || this.fillBrush != null ) )
 			{
-				SolidBrush	brush = new SolidBrush( this.fillColor );
+				Brush	brush;
+				if ( this.fillType == FillType.Brush )
+				{
+					// If they didn't provide a brush, make one using the fillcolor gradient to white
+					if ( this.FillBrush == null )
+						brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
+							Color.White, this.fillColor, 0F );
+					else
+						brush = this.fillBrush;
+				}
+				else
+					brush = (Brush) new SolidBrush( this.fillColor );
 
-				g.FillRectangle( brush, left, top, right-left, bottom-top );
+				RectangleF rect = new RectangleF( left, top, right - left, bottom - top );
+				if ( brush is LinearGradientBrush || brush is TextureBrush )
+				{
+					LinearGradientBrush linBrush = (LinearGradientBrush) brush.Clone();
+					linBrush.ScaleTransform( rect.Width / linBrush.Rectangle.Width,
+						rect.Height / linBrush.Rectangle.Height, MatrixOrder.Append );
+					linBrush.TranslateTransform( rect.Left - linBrush.Rectangle.Left,
+						rect.Top - linBrush.Rectangle.Top, MatrixOrder.Append );
+					brush = (Brush) linBrush;
+				}
+				g.FillRectangle( brush, rect );
 			}
 
 			if ( this.isFramed && !this.frameColor.IsEmpty  )

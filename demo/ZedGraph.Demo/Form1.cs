@@ -23,6 +23,7 @@ namespace ZedGraphTest
 		/// </summary>
 		private System.ComponentModel.Container components = null;
 		private DBGraphics memGraphics;
+		private bool sideWays = false;
 
 		/// <summary>
 		/// 
@@ -89,7 +90,7 @@ namespace ZedGraphTest
 
 		double[] gx = new double[20];
 		double[] gy = new double[20];
-//		int	nPts = 20;
+		//		int	nPts = 20;
 
 		private void Form1_Load(object sender, System.EventArgs e)
 		{
@@ -345,7 +346,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if true	// the text axis sample
+#if false	// the text axis sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Text Graph", "Label", "My Y Axis" );
@@ -378,6 +379,77 @@ namespace ZedGraphTest
 
 #endif
 
+#if true	// The sideways bar graph sample
+
+			sideWays = true;
+
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"My Test Bar Graph", "Label", "My Y Axis" );
+			// Make up some random data points
+			//string[] labels = { "Panther", "Lion", "Cheetah" };
+			//double[] y = { 100, 115, 75, -22, 98, 40 };
+			//double[] y2 = { 90, 100, 95, -35, 80, 35 };
+			//double[] y3 = { 80, 110, 65 };
+			//double[] y4 = { 120, 125, 100 };
+
+			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty" };
+			double[] y = { 100, 115, 75, -22, 98, 40, -10 };
+			double[] y2 = { 90, 100, 95, -35, 80, 35, 35 };
+			double[] y3 = { 80, 110, 65, -15, 54, 67, 18 };
+
+			double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
+
+			// Generate a red bar with "Curve 1" in the legend
+			CurveItem myCurve = myPane.AddCurve( "Curve 1", null, y, Color.Red );
+			// Make it a bar
+			myCurve.IsBar = true;
+			myCurve.IsY2Axis = true;
+			//myCurve.Bar.FillBrush = new LinearGradientBrush( new Point(0,0), new Point(100,0), Color.White,
+			//						Color.Blue );
+			//myCurve.Bar.FillBrush = new LinearGradientBrush( new Rectangle( 0, 0, 400, 400 ), Color.Blue,
+			//							Color.White, 90F );
+			//myCurve.Bar.FillType = FillType.Brush;
+
+
+			myPane.XAxis.IsTicsBetweenLabels = true;
+			myPane.XAxis.TextLabels = labels;
+			myPane.XAxis.Type = AxisType.Text;
+			myPane.XAxis.ScaleFontSpec.Angle = 90;
+			myPane.XAxis.IsOppositeTic = false;
+			myPane.XAxis.IsMinorOppositeTic = false;
+			//myPane.XAxis.IsShowTitle = false;
+			//myPane.XAxis.TitleFontSpec.Angle = 90;
+
+			myPane.YAxis.IsVisible = false;
+
+			myPane.Y2Axis.IsVisible = true;
+			myPane.Y2Axis.ScaleFontSpec.Angle = 0;
+			myPane.Y2Axis.IsOppositeTic = false;
+			myPane.Y2Axis.IsMinorOppositeTic = false;
+			myPane.Y2Axis.Title = "Y Title";
+
+			TextItem text = new TextItem( "Title", 0.06F, 0.5F );
+			text.CoordinateFrame = CoordType.PaneFraction;
+			text.FontSpec.IsFramed = false;
+			text.FontSpec.Angle = 90;
+			text.FontSpec.Size = 18;
+			text.FontSpec.IsBold = true;
+
+			myPane.TextList.Add( text );
+
+			myPane.Legend.IsVisible = false;
+
+			myPane.PaneGap = 80;
+			myPane.IsShowTitle = false;
+			myPane.ClusterScaleWidth = 1;
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+
+			//			GraphPane testPane = (GraphPane) myPane.Clone();
+#endif
+
 #if false	// The bar graph sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
@@ -402,13 +474,13 @@ namespace ZedGraphTest
 			// Make it a bar
 			myCurve.IsBar = true;
 
-/*
+
  			// Generate a blue bar with "Curve 2" in the legend
 			myCurve = myPane.AddCurve( "Curve 2",
 				null, y2, Color.Blue );
 			// Make it a bar
 			myCurve.IsBar = true;
-*/
+
 /*
 			// Generate a green bar with "Curve 3" in the legend
 			myCurve = myPane.AddCurve( "Curve 3",
@@ -873,10 +945,10 @@ namespace ZedGraphTest
 #endif
 			SetSize();
 
-//			RectangleF myRect = myPane.CalcAxisRect( memGraphics.g );
-//			myRect.Height -= 100;
-//			myPane.AxisRect = myRect;
-//			myPane.AxisChange( this.CreateGraphics() );
+			//			RectangleF myRect = myPane.CalcAxisRect( memGraphics.g );
+			//			myRect.Height -= 100;
+			//			myPane.AxisRect = myRect;
+			//			myPane.AxisChange( this.CreateGraphics() );
 
 			myPane.AxisChange( this.CreateGraphics() );
 		}
@@ -904,15 +976,30 @@ namespace ZedGraphTest
 				// Do our drawing using memGraphics.g instead e.Graphics
 		     
 				memGraphics.g.FillRectangle( brush, this.ClientRectangle );
+				Matrix mat = memGraphics.g.Transform;
+				if ( sideWays )
+				{
+					memGraphics.g.RotateTransform( 90 );
+					memGraphics.g.TranslateTransform( 0, -this.ClientRectangle.Width );
+				}
+
 				myPane.Draw( memGraphics.g );
 		   
 				// Render to the form
 				memGraphics.Render( e.Graphics );
+				memGraphics.g.Transform = mat;
 			}
 			else	// if double buffer is not available, do without it
 			{
+				Matrix mat = e.Graphics.Transform;
 				e.Graphics.FillRectangle( brush, this.ClientRectangle );
+				if ( sideWays )
+				{
+					e.Graphics.RotateTransform( 90 );
+					e.Graphics.TranslateTransform( 0, -this.ClientRectangle.Width );
+				}
 				myPane.Draw( e.Graphics );
+				e.Graphics.Transform = mat;
 			}
 		}
 
@@ -1035,11 +1122,14 @@ namespace ZedGraphTest
 			}
 		}
 
-
 		private void Form1_Resize(object sender, System.EventArgs e)
 		{
-			memGraphics.CreateDoubleBuffer( this.CreateGraphics(),
+//			if ( !sideWays )
+				memGraphics.CreateDoubleBuffer( this.CreateGraphics(),
 					this.ClientRectangle.Width, this.ClientRectangle.Height );
+//			else
+//				memGraphics.CreateDoubleBuffer( this.CreateGraphics(),
+//					this.ClientRectangle.Height, this.ClientRectangle.Width );
 			SetSize();
 			myPane.AxisChange( this.CreateGraphics() );
 			Invalidate();
@@ -1047,7 +1137,12 @@ namespace ZedGraphTest
 
 		private void SetSize()
 		{
-			Rectangle paneRect = this.ClientRectangle;
+			Rectangle paneRect;
+			if ( sideWays )
+				paneRect = new Rectangle( 0, 0, this.ClientRectangle.Height, this.ClientRectangle.Width );
+			else
+				paneRect = this.ClientRectangle;
+
 			paneRect.Inflate( -10, -10 );
 			this.myPane.PaneRect = paneRect;
 		}
@@ -1081,56 +1176,60 @@ namespace ZedGraphTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+			myPane.XAxis.TitleFontSpec.Angle += 90;
+			myPane.YAxis.TitleFontSpec.Angle += 90;
+			myPane.Y2Axis.TitleFontSpec.Angle += 90;
+			myPane.AxisChange( this.CreateGraphics() );
+			Invalidate();
+
 			//myPane.IsIgnoreMissing = !myPane.IsIgnoreMissing;
-//			Invalidate();
+			//			Invalidate();
 
-//			DoPrint();
+			//			DoPrint();
 
-			myPane.Image.Save( @"c:\zedgraph.gif", ImageFormat.Gif );
+			//myPane.Image.Save( @"c:\zedgraph.gif", ImageFormat.Gif );
 
 			//myPane.XAxis.Min = 5;
 			//myPane.XAxis.Max = 20;
-			//myPane.AxisChange();
-			//Invalidate();
 
 			//CopyToGif( myPane );
 
-/*
- 			RectangleF tmpRect = myPane.AxisRect;
-			tmpRect.Inflate( -50, -50 );
-			myPane.AxisRect = tmpRect;
-			myPane.AxisChange();
-			Invalidate();
-*/
+			/*
+						RectangleF tmpRect = myPane.AxisRect;
+						tmpRect.Inflate( -50, -50 );
+						myPane.AxisRect = tmpRect;
+						myPane.AxisChange();
+						Invalidate();
+			*/
 
 
-/*
-			CurveItem curve;
-			int	iPt;
+			/*
+						CurveItem curve;
+						int	iPt;
 
-  			if ( myPane.FindNearestPoint( new PointF( e.X, e.Y ), out curve, out iPt ) )
-				MessageBox.Show( String.Format( "label = {0}  X = {1}",
-					curve.Label, curve.Points[iPt].ToString("e2") ) );
-			else
-				MessageBox.Show( "No Point Found" );
-*/
+						if ( myPane.FindNearestPoint( new PointF( e.X, e.Y ), out curve, out iPt ) )
+							MessageBox.Show( String.Format( "label = {0}  X = {1}",
+								curve.Label, curve.Points[iPt].ToString("e2") ) );
+						else
+							MessageBox.Show( "No Point Found" );
+			*/
 			
-/*
- 			double x, y, y2;
+			/*
+						double x, y, y2;
 
-			if ( nPts < 100 && myPane.AxisRect.Contains( e.X, e.Y ) )
-			{
-				this.myPane.ReverseTransform( new PointF( e.X, e.Y ), out x, out y, out y2 );
-				gx[nPts] = x;
-				gy[nPts] = y;
-				nPts++;
-				this.myPane.CurveList[0].X = gx;
-				this.myPane.CurveList[0].Y = gy;
-				this.myPane.AxisChange();
-				Invalidate();
-			}
-			//MessageBox.Show( "x=" + x.ToString() + "  y=" + y.ToString() + " y2=" + y2.ToString() );
-*/
+						if ( nPts < 100 && myPane.AxisRect.Contains( e.X, e.Y ) )
+						{
+							this.myPane.ReverseTransform( new PointF( e.X, e.Y ), out x, out y, out y2 );
+							gx[nPts] = x;
+							gy[nPts] = y;
+							nPts++;
+							this.myPane.CurveList[0].X = gx;
+							this.myPane.CurveList[0].Y = gy;
+							this.myPane.AxisChange();
+							Invalidate();
+						}
+						//MessageBox.Show( "x=" + x.ToString() + "  y=" + y.ToString() + " y2=" + y2.ToString() );
+			*/
 
 			//CopyToGif( myPane );
 			//CopyToEMF( myPane );

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:58 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-12 05:09:30 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -1719,8 +1719,9 @@ namespace ZedGraph
 				// Axis Title gets actual height plus 1x gap
 				if ( this.title.Length > 0 && this.isShowTitle )
 				{
-					space += this.TitleFontSpec.MeasureString( g, this.title, scaleFactor ).Height
-						/* + charHeight / 2 */;
+					//space += this.TitleFontSpec.MeasureString( g, this.title, scaleFactor ).Height
+					//	/* + charHeight / 2 */;
+					space += this.TitleFontSpec.BoundingBox( g, this.title, scaleFactor ).Height;
 				}
 			}
 
@@ -2476,10 +2477,13 @@ namespace ZedGraph
 				// Calculate the title position in screen coordinates
 				float x = ( this.maxPix - this.minPix ) / 2;
 				float y = ScaledTic( scaleFactor ) * 1.5F +
-							GetScaleMaxSpace( g, pane, scaleFactor ).Height;
-				FontAlignV alignV = FontAlignV.Top;
-				if ( this is YAxis )
-					alignV = FontAlignV.Bottom;
+							GetScaleMaxSpace( g, pane, scaleFactor ).Height
+							+ this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
+
+				FontAlignV alignV = FontAlignV.Center;
+				//				FontAlignV alignV = FontAlignV.Top;
+				//if ( this is YAxis )
+				//	alignV = FontAlignV.Bottom;
 
 				// Draw the title
 				this.TitleFontSpec.Draw( g, str, x, y,

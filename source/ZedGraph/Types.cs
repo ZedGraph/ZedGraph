@@ -18,6 +18,8 @@
 //=============================================================================
 
 using System;
+using System.Drawing;
+
 
 namespace ZedGraph
 {	
@@ -48,6 +50,21 @@ namespace ZedGraph
 		/// <seealso cref="AxisType.Text"/>
 		/// <seealso cref="Axis.IsOrdinal"/>
 		Ordinal
+	};
+
+	/// <summary>
+	/// Enumeration type for the various types of fills that can be used with <see cref="Bar"/>
+	/// charts.
+	/// </summary>
+	public enum FillType
+	{
+		/// <summary> No fill </summary>
+		None,
+		/// <summary> A solid fill using <see cref="System.Drawing.SolidBrush"/> </summary>
+		Solid,
+		/// <summary> A custom fill using either <see cref="LinearGradientBrush"/> or
+		/// <see cref="TextureBrush"/></summary>
+		Brush
 	};
 
 	/// <summary>
