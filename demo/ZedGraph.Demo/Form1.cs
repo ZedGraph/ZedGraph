@@ -940,6 +940,9 @@ namespace ZedGraphTest
 			text.FontSpec.Border.IsVisible = false;
 			myPane.TextList.Add( text );
 			
+			myPane.XAxis.IsShowGrid = true;
+			myPane.YAxis.IsShowGrid = true;
+			
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
 			myPane.AxisChange( this.CreateGraphics() );
@@ -1555,7 +1558,7 @@ namespace ZedGraphTest
          double[] y2 = { -40, 60, -70, 20,-30 };               // red - three segments per bar
  //        double[] y3 = { 2, 3, 3.5, 4 };
 
-#if true                                 //           vertical stacked bars
+#if false                                 //           vertical stacked bars
 		LineItem curve;
 		curve = myPane.AddCurve( "Larry", null, y4, Color.Black, SymbolType.Circle );
 		curve.Line.Width = 1.5F;
@@ -1582,7 +1585,7 @@ namespace ZedGraphTest
 		//myPane.BarType = BarType.PercentStack ;
 #endif
 
-#if false                                       //horizontal stacked bars         
+#if true                                       //horizontal stacked bars         
          
 		BarItem bar = myPane.AddBar( "Widget", y4, null, Color.RoyalBlue );
 		bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue, 90F );

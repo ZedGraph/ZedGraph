@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-11-05 19:11:16 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2004-11-10 04:58:30 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -2379,6 +2379,9 @@ namespace ZedGraph
 						{
 							pixVal2 = this.LocalTransform( dVal2 );
 							DrawATic( g, pen, pixVal2, topPix, scaledTic );
+							// draw the grid
+							if ( this.isVisible && this.isShowGrid )
+								g.DrawLine( dottedPen, pixVal2, 0.0F, pixVal2, topPix );
 						}
 					}
 
@@ -2391,6 +2394,10 @@ namespace ZedGraph
 					pixVal2 = pixVal;
 
 				DrawATic( g, pen, pixVal2, topPix, scaledTic );
+				
+				// draw the grid
+				if ( this.isVisible && this.isShowGrid )
+					g.DrawLine( dottedPen, pixVal2, 0.0F, pixVal2, topPix );
 
 				if ( this.isVisible )
 				{
@@ -2418,10 +2425,6 @@ namespace ZedGraph
 							scaleFactor );
 
 				}
-		
-				// draw the grid
-				if ( this.isVisible && this.isShowGrid )
-					g.DrawLine( dottedPen, pixVal, 0.0F, pixVal, topPix );
 			}
 		}
 
