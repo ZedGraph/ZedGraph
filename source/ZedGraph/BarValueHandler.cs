@@ -17,7 +17,6 @@
 //Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //=============================================================================
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 
@@ -29,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-12-03 16:27:05 $ </version>
 	public class BarValueHandler
 	{
 		private GraphPane pane;
