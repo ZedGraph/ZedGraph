@@ -30,8 +30,8 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.11 $ $Date: 2004-12-03 13:31:28 $ </version>
-	public class CurveList : CollectionBase, ICloneable
+	/// <version> $Revision: 3.12 $ $Date: 2004-12-10 05:45:55 $ </version>
+	public class CurveList : CollectionPlus, ICloneable
 	{
 	#region Properties
 		// internal temporary value that keeps
@@ -133,6 +133,25 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Indexer to access the specified <see cref="CurveItem"/> object by
+		/// its <see cref="CurveItem.Label"/> string.
+		/// </summary>
+		/// <param name="label">The string label of the
+		/// <see cref="CurveItem"/> object to be accessed.</param>
+		/// <value>A <see cref="CurveItem"/> object reference.</value>
+		public CurveItem this[ string label ]  
+		{
+			get
+			{
+				int index = IndexOf( label );
+				if ( index >= 0 )
+					return( (CurveItem) List[index]  );
+				else
+					return null;
+			}
+		}
+
+		/// <summary>
 		/// Add a <see cref="CurveItem"/> object to the collection at the end of the list.
 		/// </summary>
 		/// <param name="curve">A reference to the <see cref="CurveItem"/> object to
@@ -141,18 +160,6 @@ namespace ZedGraph
 		public void Add( CurveItem curve )
 		{
 			List.Add( curve );
-		}
-
-		/// <summary>
-		/// Remove a <see cref="CurveItem"/> object from the collection at the
-		/// specified ordinal location.
-		/// </summary>
-		/// <param name="index">An ordinal position in the list at which
-		/// the object to be removed is located. </param>
-		/// <seealso cref="IList.Remove"/>
-		public void Remove( int index )
-		{
-			List.RemoveAt( index );
 		}
 
 		/// <summary>
@@ -180,14 +187,54 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Return the zero-based position index of the specified <see cref="CurveItem"/> in the collection.
+		/// Return the zero-based position index of the
+		/// <see cref="CurveItem"/> with the specified <see cref="CurveItem.Label"/>.
 		/// </summary>
-		/// <returns>The zero-based index of the specified <see cref="CurveItem"/>, or -1 if the <see cref="CurveItem"/>
-		/// is not in the list</returns>
+		/// <param name="label">The <see cref="String"/> label that is in the
+		/// <see cref="CurveItem.Label"/> attribute of the item to be found.
+		/// </param>
+		/// <returns>The zero-based index of the specified <see cref="CurveItem"/>,
+		/// or -1 if the <see cref="CurveItem"/> is not in the list</returns>
 		/// <seealso cref="IList.IndexOf"/>
-		public int IndexOf( CurveItem curve )
+		/// <seealso cref="IndexOfTag"/>
+		public int IndexOf( string label )
 		{
-			return List.IndexOf( curve );
+			int index = 0;
+			foreach ( CurveItem p in this )
+			{
+				if ( String.Compare( p.Label, label, true ) == 0 )
+					return index;
+				index++;
+			}
+
+			return -1;
+		}
+
+		/// <summary>
+		/// Return the zero-based position index of the
+		/// <see cref="CurveItem"/> with the specified <see cref="CurveItem.Tag"/>.
+		/// </summary>
+		/// <remarks>In order for this method to work, the <see cref="CurveItem.Tag"/>
+		/// property must be of type <see cref="String"/>.</remarks>
+		/// <param name="label">The <see cref="String"/> label that is in the
+		/// <see cref="CurveItem.Tag"/> attribute of the item to be found.
+		/// </param>
+		/// <returns>The zero-based index of the specified <see cref="CurveItem"/>,
+		/// or -1 if the <see cref="CurveItem"/> is not in the list</returns>
+		/// <seealso cref="IList.IndexOf"/>
+		/// <seealso cref="IndexOf"/>
+		public int IndexOfTag( string label )
+		{
+			int index = 0;
+			foreach ( CurveItem p in this )
+			{
+				if ( p.Tag is string &&
+							String.Compare( (string) p.Tag, label, true ) == 0 )
+					return index;
+				index++;
+			}
+
+			return -1;
 		}
 
 		/// <summary>

@@ -44,7 +44,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.16 $ $Date: 2004-12-05 04:07:48 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2004-12-10 05:45:55 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1045,9 +1045,9 @@ namespace ZedGraph
 			if ( this.axisRect.Width < 1 || this.axisRect.Height < 1 )
 				return;
 			
-			// Fill the axis background
-			this.axisFill.Draw( g, this.axisRect );
-			
+			// Clip everything to the paneRect
+			g.SetClip( this.paneRect );
+
 			// Draw the graph features only if there is at least one curve with data
 			//			if (	this.curveList.HasData() &&
 			// Go ahead and draw the graph, even without data.  This makes the control
@@ -1055,14 +1055,25 @@ namespace ZedGraph
 			bool showGraf = this.xAxis.Min < this.xAxis.Max &&
 							this.yAxis.Min < this.yAxis.Max &&
 							this.y2Axis.Min < this.y2Axis.Max;
+
+			// Draw the GraphItems that are behind everything
+			if ( showGraf )
+				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.G_BehindAll );
+
+			// Fill the axis background
+			this.axisFill.Draw( g, this.axisRect );
+			
 			if ( showGraf )
 			{
-				// Clip everything to the paneRect
-				g.SetClip( this.paneRect );
+				// Draw the GraphItems that are behind the GraphPane title
+				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.F_BehindTitle );
 
 				// Draw the Pane Title
 				DrawTitle( g, this, scaleFactor );
 			
+				// Draw the GraphItems that are behind the Axis objects
+				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.E_BehindAxis );
+
 				// Setup the axes from graphing
 				//this.xAxis.SetupScaleData( this );
 				//this.yAxis.SetupScaleData( this );
@@ -1073,10 +1084,16 @@ namespace ZedGraph
 				this.yAxis.Draw( g, this, scaleFactor );
 				this.y2Axis.Draw( g, this, scaleFactor );
 				
+				// Draw the GraphItems that are behind the CurveItems
+				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.D_BehindCurves );
+
 				// Clip the points to the actual plot area
 				g.SetClip( this.axisRect );
 				this.curveList.Draw( g, this, scaleFactor );
 				g.SetClip( this.paneRect );
+
+				// Draw the GraphItems that are behind the Axis border
+				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.C_BehindAxisBorder );
 			}
 				
 			// Border the axis itself
@@ -1084,17 +1101,20 @@ namespace ZedGraph
 			
 			if ( showGraf )
 			{
+				// Draw the GraphItems that are behind the Legend object
+				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.B_BehindLegend );
+
 				// Draw the Legend
-				this.legend.Draw( g, this, scaleFactor, hStack, legendWidth, legendHeight );
+				this.legend.Draw( g, this, scaleFactor, hStack, legendWidth,
+							legendHeight );
 				
-				// Draw the Text and Arrow Items
-				this.graphItemList.Draw( g, this, scaleFactor );
+				// Draw the GraphItems that are in front of all other items
+				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.A_InFront );
 				
-				// Reset the clipping
-				g.ResetClip();
 			}
 			
-
+			// Reset the clipping
+			g.ResetClip();
 		}
 
 		/// <summary>

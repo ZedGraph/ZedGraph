@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-11-19 06:41:05 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-12-10 05:45:55 $ </version>
 	public class GraphItemList : CollectionBase, ICloneable
 	{
 	#region Constructors
@@ -89,52 +89,16 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Remove a <see cref="GraphItem"/> object from the <see cref="GraphItemList"/>
-		/// collection at the specified ordinal location.
-		/// </summary>
-		/// <param name="index">An ordinal position in the list at which
-		/// the object to be removed is located. </param>
-		/// <seealso cref="IList.Remove"/>
-		public void Remove( int index )
-		{
-			List.RemoveAt( index );
-		}
-
-		/// <summary>
-		/// Remove a <see cref="GraphItem"/> object from the collection based on an object reference.
-		/// </summary>
-		/// <param name="item">A reference to the <see cref="GraphItem"/> object that is to be
-		/// removed.</param>
-		/// <seealso cref="IList.Remove"/>
-		public void Remove( GraphItem item )
-		{
-			List.Remove( item );
-		}
-
-		/// <summary>
-		/// Insert a <see cref="GraphItem"/> object into the collection at the specified
-		/// zero-based index location.
+		/// Insert a <see cref="GraphItem"/> object into the collection
+		/// at the specified zero-based index location.
 		/// </summary>
 		/// <param name="index">The zero-based index location for insertion.</param>
-		/// <param name="item">A reference to the <see cref="GraphItem"/> object that is to be
+		/// <param name="item">The <see cref="GraphItem"/> object that is to be
 		/// inserted.</param>
 		/// <seealso cref="IList.Insert"/>
 		public void Insert( int index, GraphItem item )
 		{
 			List.Insert( index, item );
-		}
-
-		/// <summary>
-		/// Return the zero-based position index of the specified <see cref="GraphItem"/> in the collection.
-		/// </summary>
-		/// <param name="item">A reference to the <see cref="GraphItem"/> object that is to be found.
-		/// </param>
-		/// <returns>The zero-based index of the specified <see cref="GraphItem"/>, or -1 if the
-		/// <see cref="GraphItem"/> is not in the list</returns>
-		/// <seealso cref="IList.IndexOf"/>
-		public int IndexOf( GraphItem item )
-		{
-			return List.IndexOf( item );
 		}
 
 		/// <summary>
@@ -159,10 +123,23 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void Draw( Graphics g, GraphPane pane, double scaleFactor )
+		/// <param name="zOrder">A <see cref="ZOrder"/> enumeration that controls
+		/// the placement of this <see cref="GraphItem"/> relative to other
+		/// graphic objects.  The order of <see cref="GraphItem"/>'s with the
+		/// same <see cref="ZOrder"/> value is control by their order in
+		/// this <see cref="GraphItemList"/>.</param>
+		public void Draw( Graphics g, GraphPane pane, double scaleFactor,
+							ZOrder zOrder )
 		{
-			foreach ( GraphItem item in this )
-				item.Draw( g, pane, scaleFactor );
+			// Draw the items in reverse order, so the last items in the
+			// list appear behind the first items (consistent with
+			// CurveList)
+			for ( int i=this.Count-1; i>=0; i-- )
+			{
+				GraphItem item = this[i];
+				if ( item.ZOrder == zOrder )
+					item.Draw( g, pane, scaleFactor );
+			}
 		}
 
 		/// <summary>

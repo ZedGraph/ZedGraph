@@ -99,7 +99,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos	revised by John Champion	</author>
-	/// <version>	$Revision: 3.9 $ $Date: 2004-12-09 01:44:45 $ </version>
+	/// <version>	$Revision: 3.10 $ $Date: 2004-12-10 05:45:55 $ </version>
 	[TestFixture]
 	public	class ControlTest
 	{
@@ -234,7 +234,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.9 $ $Date: 2004-12-09 01:44:45 $ </version>
+	/// <version>	$Revision: 3.10 $ $Date: 2004-12-10 05:45:55 $ </version>
 	[TestFixture]
 	public	class LibraryTest
 	{
@@ -1379,7 +1379,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.9 $ $Date: 2004-12-09 01:44:45 $ </version>
+	/// <version>	$Revision: 3.10 $ $Date: 2004-12-10 05:45:55 $ </version>
 	[TestFixture]
 	public	class LongFeatureTest
 	{
@@ -2003,7 +2003,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.9 $ $Date: 2004-12-09 01:44:45 $ </version>
+	/// <version>	$Revision: 3.10 $ $Date: 2004-12-10 05:45:55 $ </version>
 	[TestFixture]
 	public	class FindNearestTest
 	{
@@ -2068,7 +2068,7 @@ namespace ZedGraph.UnitTest
 			TestUtils.clickDone = false;
 			//TestUtils.ShowMessage( msg );
 			form2.Text = msg;
-			TestUtils.WaitForMouseClick( 5000 );
+			TestUtils.WaitForMouseClick( 10000 );
 			bool match = false;
 
 			if ( theType == typeof(GraphItem) )
@@ -2229,12 +2229,13 @@ namespace ZedGraph.UnitTest
 			testee.GraphItemList.Add( ellipse );
 
 //			Bitmap bm = new Bitmap( @"c:\temp\sunspot.jpg" );
-			//Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
-			//Image image = Image.FromHbitmap( bm.GetHbitmap() );
-			//ImageItem imageItem = new ImageItem( image, new RectangleF( 0.8F, 0.8F, 0.2F, 0.2F ),
-			//	CoordType.AxisFraction, AlignH.Left, AlignV.Top );
-			//imageItem.IsScaled = false;
-			//myPane.GraphItemList.Add( imageItem );
+			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
+			Image image = Image.FromHbitmap( bm.GetHbitmap() );
+			ImageItem imageItem = new ImageItem( image, new RectangleF( 0.8F, 0.8F, 0.2F, 0.2F ),
+				CoordType.AxisFraction, AlignH.Left, AlignV.Top );
+			imageItem.IsScaled = true;
+			imageItem.Tag = "Bitmap";
+			testee.GraphItemList.Add( imageItem );
 
 			testee.AxisChange( form2.CreateGraphics() );
 			SetSize();
@@ -2254,6 +2255,7 @@ namespace ZedGraph.UnitTest
 			HandleFind( "Select the negative brown bar", "Wheezy", 2, typeof(CurveItem) );
 			HandleFind( "Select the negative blue bar", "Curly", 2, typeof(CurveItem) );
 			HandleFind( "Select the highest green circle symbol", "Larry", 6, typeof(CurveItem) );
+			HandleFind( "Select the windows bitmap object", "Bitmap", 0, typeof(GraphItem) );
 
 		}
 		#endregion

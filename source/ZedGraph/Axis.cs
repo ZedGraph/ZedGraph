@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.10 $ $Date: 2004-11-22 21:33:17 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2004-12-10 05:45:55 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -661,7 +661,7 @@ namespace ZedGraph
 			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
 			/// </summary>
 			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatYearMonth = "MMM/yyyy";
+			public static string FormatYearMonth = "MMM-yyyy";
 			/// <summary>
 			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
 			/// This values applies only to Date-Time type axes.
@@ -672,7 +672,7 @@ namespace ZedGraph
 			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
 			/// </summary>
 			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatMonthMonth = "MMM/yyyy";
+			public static string FormatMonthMonth = "MMM-yyyy";
 			/// <summary>
 			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
 			/// This values applies only to Date-Time type axes.
@@ -683,7 +683,7 @@ namespace ZedGraph
 			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
 			/// </summary>
 			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatDayDay = "d/MMM";
+			public static string FormatDayDay = "d-MMM";
 			/// <summary>
 			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
 			/// This values applies only to Date-Time type axes.
@@ -694,7 +694,7 @@ namespace ZedGraph
 			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
 			/// </summary>
 			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatDayHour = "d/MMM HH:mm";
+			public static string FormatDayHour = "d-MMM HH:mm";
 			/// <summary>
 			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
 			/// This values applies only to Date-Time type axes.

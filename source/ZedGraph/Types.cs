@@ -444,4 +444,54 @@ namespace ZedGraph
 	   /// </summary>
 	   XValues
 	};
+
+	/// <summary>
+	/// Enumeration that specifies a Z-Order position for <see cref="GraphItem"/>
+	/// objects.
+	/// </summary>
+	/// <remarks>The order of the graph elements is normally (front to back):
+	/// the <see cref="Legend"/> object, the <see cref="Axis"/> border,
+	/// the <see cref="CurveItem"/> objects, the <see cref="Axis"/> objects,
+	/// and the <see cref="GraphPane"/> title object.
+	/// </remarks>
+	public enum ZOrder
+	{
+	   /// <summary>
+	   /// Specifies that the <see cref="GraphItem"/> will be behind all other
+	   /// objects (including the <see cref="Axis"/> rectangle fill).
+	   /// </summary>
+	   G_BehindAll,
+	   /// <summary>
+	   /// Specifies that the <see cref="GraphItem"/> will be behind the
+	   /// <see cref="GraphPane"/> title.
+	   /// </summary>
+	   F_BehindTitle,
+	   /// <summary>
+	   /// Specifies that the <see cref="GraphItem"/> will be behind the
+	   /// <see cref="Axis"/> objects.
+	   /// </summary>
+	   E_BehindAxis,
+	   /// <summary>
+	   /// Specifies that the <see cref="GraphItem"/> will be behind the
+	   /// <see cref="CurveItem"/> objects.
+	   /// </summary>
+	   D_BehindCurves,
+	   /// <summary>
+	   /// Specifies that the <see cref="GraphItem"/> will be behind the
+	   /// <see cref="Axis"/> border.
+	   /// </summary>
+	   C_BehindAxisBorder,
+	   /// <summary>
+	   /// Specifies that the <see cref="GraphItem"/> will be behind the
+	   /// <see cref="Legend"/> object.
+	   /// </summary>
+	   B_BehindLegend,
+	   /// <summary>
+	   /// Specifies that the <see cref="GraphItem"/> will be in front of
+	   /// all other objects, except for the other <see cref="GraphItem"/>
+	   /// objects that have the same <see cref="ZOrder"/> and are before
+	   /// this object in the <see cref="GraphItemList"/>.
+	   /// </summary>
+	   A_InFront
+	};
 }

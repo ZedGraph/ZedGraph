@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-12-05 04:07:48 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-12-10 05:45:55 $ </version>
 	abstract public class GraphItem
 	{
 	#region Fields
@@ -46,6 +46,13 @@ namespace ZedGraph
 		/// not use this value for any purpose.
 		/// </summary>
 		public object Tag;
+
+		/// <summary>
+		/// Protected field that determines the z-order "depth" of this
+		/// item relative to other graphic objects.  Use the public property
+		/// <see cref="ZOrder"/> to access this value.
+		/// </summary>
+		protected ZOrder zOrder;
 	#endregion
 
 	#region Defaults
@@ -90,6 +97,23 @@ namespace ZedGraph
 		{
 			get { return location; }
 			set { location = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines the z-order "depth" of this
+		/// item relative to other graphic objects.
+		/// </summary>
+		/// <remarks>Note that this controls the z-order with respect to
+		/// other elements such as <see cref="CurveItem"/>'s, <see cref="Axis"/>
+		/// objects, etc.  The order of <see cref="GraphItem"/> objects having
+		/// the same <see cref="ZedGraph.ZOrder"/> value is controlled by their order in
+		/// the <see cref="GraphItemList"/>.  The first <see cref="GraphItem"/>
+		/// in the list is drawn in front of other <see cref="GraphItem"/>
+		/// objects having the same <see cref="ZedGraph.ZOrder"/> value.</remarks>
+		public ZOrder ZOrder
+		{
+			get { return zOrder; }
+			set { zOrder = value; }
 		}
 	#endregion
 	
@@ -198,6 +222,8 @@ namespace ZedGraph
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
 		public GraphItem( float x, float y, CoordType coordType, AlignH alignH, AlignV alignV )
 		{
+			this.Tag = null;
+			this.zOrder = ZOrder.A_InFront;
 			this.location = new Location( x, y, coordType, alignH, alignV );
 		}
 
@@ -228,6 +254,8 @@ namespace ZedGraph
 		public GraphItem( float x, float y, float x2, float y2, CoordType coordType,
 					AlignH alignH, AlignV alignV )
 		{
+			this.Tag = null;
+			this.zOrder = ZOrder.A_InFront;
 			this.location = new Location( x, y, x2, y2, coordType, alignH, alignV );
 		}
 
@@ -237,6 +265,8 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="GraphItem"/> object from which to copy</param>
 		public GraphItem( GraphItem rhs )
 		{
+			this.Tag = rhs.Tag;
+			this.zOrder = rhs.ZOrder;
 			this.location = rhs.Location;
 		}
 

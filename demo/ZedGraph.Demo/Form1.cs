@@ -221,7 +221,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if false	// The Oct-2004 initial sample
+#if false	// The Dec-2004 initial sample
 
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
@@ -230,32 +230,34 @@ namespace ZedGraphTest
 				"My Y Axis" );
 
 			// Make up some data arrays based on the Sine function
-			double[] x = new double[36];
-			double[] y1 = new double[36];
-			double[] y2 = new double[36];
+			double x, y1, y2;
+			PointPairList list1 = new PointPairList();
+			PointPairList list2 = new PointPairList();
 			for ( int i=0; i<36; i++ )
 			{
-				x[i] = (double) i + 5;
-				y1[i] = 1.5 + Math.Sin( (double) i * 0.2 );
-				y2[i] = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 ) );
+				x = (double) i + 5;
+				y1 = 1.5 + Math.Sin( (double) i * 0.2 );
+				y2 = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 ) );
+				list1.Add( x, y1 );
+				list2.Add( x, y2 );
 			}
 
 			// Generate a red curve with diamond
 			// symbols, and "Porsche" in the legend
-			CurveItem myCurve = myPane.AddCurve( "Porsche",
-				x, y1, Color.Red, SymbolType.Diamond );
+			LineItem myCurve = myPane.AddCurve( "Porsche",
+				list1, Color.Red, SymbolType.Diamond );
 
 			// Generate a blue curve with circle
 			// symbols, and "Piper" in the legend
-			CurveItem myCurve2 = myPane.AddCurve( "Piper",
-				x, y2, Color.Blue, SymbolType.Circle );
-				
+			LineItem myCurve2 = myPane.AddCurve( "Piper",
+				list2, Color.Blue, SymbolType.Circle );
+
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
 			myPane.AxisChange( this.CreateGraphics() );
 #endif	
 			
-#if false	// The Oct-2004 modified initial sample
+#if false	// The Dec-2004 modified initial sample
 			// Change the color of the title
 			myPane.FontSpec.FontColor = Color.Green;
 
@@ -265,9 +267,8 @@ namespace ZedGraphTest
 			myPane.XAxis.GridColor = Color.LightGray;
 			myPane.YAxis.GridColor = Color.LightGray;
 
-
 			// Move the legend location
-			myPane.Legend.Location = ZedGraph.LegendLoc.Bottom;
+			myPane.Legend.Position = ZedGraph.LegendPos.Bottom;
 
 			// Make both curves thicker
 			myCurve.Line.Width = 2.0F;
@@ -278,8 +279,8 @@ namespace ZedGraphTest
 			myCurve2.Line.Fill = new Fill( Color.White, Color.Blue, 45F );
 
 			// Increase the symbol sizes, and fill them with solid white
-			myCurve.Symbol.Size = 10.0F;
-			myCurve2.Symbol.Size = 10.0F;
+			myCurve.Symbol.Size = 8.0F;
+			myCurve2.Symbol.Size = 8.0F;
 			myCurve.Symbol.Fill = new Fill( Color.White );
 			myCurve2.Symbol.Fill = new Fill( Color.White );
 
@@ -287,33 +288,34 @@ namespace ZedGraphTest
 			myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, -45F );
 
 			// Add a caption and an arrow
-			TextItem myText = new TextItem("Interesting\nPoint", 230F, 70F );
+			TextItem myText = new TextItem( "Interesting\nPoint", 230F, 70F );
 			myText.FontSpec.FontColor = Color.Red;
-			myText.AlignH = AlignH.Center;
-			myText.AlignV = AlignV.Top;
-			myPane.TextList.Add( myText );
+			myText.Location.AlignH = AlignH.Center;
+			myText.Location.AlignV = AlignV.Top;
+			myPane.GraphItemList.Add( myText );
 			ArrowItem myArrow = new ArrowItem( Color.Red, 12F, 230F, 70F, 280F, 55F );
-			myPane.ArrowList.Add( myArrow );
+			myPane.GraphItemList.Add( myArrow );
 #endif
 
-#if false	// The Oct-2004 Date axis sample
+#if false	// The Dec-2004 Date axis sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Date Graph", "Date", "My Y Axis" );
    
 			// Make up some random data points
-			double[] x = new double[36];
-			double[] y = new double[36];
+			double x, y;
+			PointPairList list = new PointPairList();
 			for ( int i=0; i<36; i++ )
 			{
-				x[i] = (double) new XDate( 1995, 5, i+11 );
-				y[i] = Math.Sin( (double) i * Math.PI / 15.0 );
+				x = (double) new XDate( 1995, 5, i+11 );
+				y = Math.Sin( (double) i * Math.PI / 15.0 );
+				list.Add( x, y );
 			}
 
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend
 			CurveItem myCurve = myPane.AddCurve( "My Curve",
-				x, y, Color.Red, SymbolType.Diamond );
+				list, Color.Red, SymbolType.Diamond );
       
 			// Set the XAxis to date type
 			myPane.XAxis.Type = AxisType.Date;
@@ -323,7 +325,9 @@ namespace ZedGraphTest
 			myPane.AxisChange( CreateGraphics() );
 #endif
 
-#if false	// The Oct-2004 Text axis sample
+#if false	// The Dec-2004 Text axis sample
+			ErrorBarItem bar;
+			bar.ErrorBar.Si
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 							"My Test Text Graph", "Label", "My Y Axis" );
@@ -336,7 +340,7 @@ namespace ZedGraphTest
 			y[i] = Math.Sin( (double) i * Math.PI / 2.0 );
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend
-			CurveItem myCurve = myPane.AddCurve( "My Curve",
+			LineItem myCurve = myPane.AddCurve( "My Curve",
 							null, y, Color.Red, SymbolType.Diamond );
 			//Make the curve smooth
 			myCurve.Line.IsSmooth = true;
@@ -352,47 +356,50 @@ namespace ZedGraphTest
 			myPane.AxisChange( CreateGraphics() );
 #endif
 
-#if false	// The Oct-2004 Bar Chart sample
-			// Create a new graph with topLeft at (40,40) and size 600x400
-			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
-				"My Test Bar Graph", "Label", "My Y Axis" );
-			// Make up some random data points
-			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard" };
-			double[] y = { 100, 115, 75, 22, 98, 40 };
-			double[] y2 = { 90, 100, 95, 35, 80, 35 };
-			double[] y3 = { 80, 110, 65, 15, 54, 67 };
-			double[] y4 = { 120, 125, 100, 40, 105, 75 };
+#if false	// The Dec-2004 Bar Chart sample
+	// Create a new graph with topLeft at (40,40) and size 600x400
+	myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+			"My Test Bar Graph", "Label", "My Y Axis" );
+	// Make up some random data points
+	string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard" };
+	double[] y = { 100, 115, 75, 22, 98, 40 };
+	double[] y2 = { 90, 100, 95, 35, 80, 35 };
+	double[] y3 = { 80, 110, 65, 15, 54, 67 };
+	double[] y4 = { 120, 125, 100, 40, 105, 75 };
 
-			// Generate a red bar with "Curve 1" in the legend
-			CurveItem myCurve = myPane.AddBar( "Curve 1", null, y, Color.Red );
+	// Generate a red bar with "Curve 1" in the legend
+	BarItem myBar = myPane.AddBar( "Curve 1", null, y, Color.Red );
+	myBar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red );
 
-			// Generate a blue bar with "Curve 2" in the legend
-			myCurve = myPane.AddBar( "Curve 2", null, y2, Color.Blue );
+	// Generate a blue bar with "Curve 2" in the legend
+	myBar = myPane.AddBar( "Curve 2", null, y2, Color.Blue );
+	myBar.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue );
 
-			// Generate a green bar with "Curve 3" in the legend
-			myCurve = myPane.AddBar( "Curve 3", null, y3, Color.Green );
+	// Generate a green bar with "Curve 3" in the legend
+	myBar = myPane.AddBar( "Curve 3", null, y3, Color.Green );
+	myBar.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green );
 
-			// Generate a black line with "Curve 4" in the legend
-			myCurve = myPane.AddCurve( "Curve 4",
-				null, y4, Color.Black, SymbolType.Circle );
-			myCurve.Line.Fill = new Fill( Color.White, Color.LightSkyBlue, -45F );
+	// Generate a black line with "Curve 4" in the legend
+	LineItem myCurve = myPane.AddCurve( "Curve 4",
+			null, y4, Color.Black, SymbolType.Circle );
+	myCurve.Line.Fill = new Fill( Color.White, Color.LightSkyBlue, -45F );
 
-			// Fix up the curve attributes a little
-			myCurve.Symbol.Size = 10.0F;
-			myCurve.Symbol.Fill = new Fill( Color.White );
-			myCurve.Line.Width = 2.0F;
+	// Fix up the curve attributes a little
+	myCurve.Symbol.Size = 8.0F;
+	myCurve.Symbol.Fill = new Fill( Color.White );
+	myCurve.Line.Width = 2.0F;
 
-			// Draw the X tics between the labels instead of at the labels
-			myPane.XAxis.IsTicsBetweenLabels = true;
+	// Draw the X tics between the labels instead of at the labels
+	myPane.XAxis.IsTicsBetweenLabels = true;
 
-			// Set the XAxis labels
-			myPane.XAxis.TextLabels = labels;
-			// Set the XAxis to Text type
-			myPane.XAxis.Type = AxisType.Text;
+	// Set the XAxis labels
+	myPane.XAxis.TextLabels = labels;
+	// Set the XAxis to Text type
+	myPane.XAxis.Type = AxisType.Text;
 
-			// Tell ZedGraph to refigure the
-			// axes since the data have changed
-			myPane.AxisChange( CreateGraphics() );
+	// Tell ZedGraph to refigure the
+	// axes since the data have changed
+	myPane.AxisChange( CreateGraphics() );
 #endif
 
 #if false	// The Oct-2004 Horizontal Bar Chart sample
@@ -622,6 +629,32 @@ namespace ZedGraphTest
 
 #endif
 
+#if false	// Basic Sine wave test
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"My Test Date Graph", "Date", "My Y Axis" );
+
+			// Make up some random data points
+			double x, y;
+			PointPairList list = new PointPairList();
+			for ( int i=0; i<36; i++ )
+			{
+				x = (double) i * 5.0;
+				y = Math.Sin( (double) i * Math.PI / 15.0 ) * 16.0;
+				if ( i > 10 )
+					list.Add( new PointPair( x, y, "point" + i ) );
+				else
+					list.Add( new PointPair( x, y ) );
+			}
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			LineItem myCurve = myPane.AddCurve( "My Curve",
+				list, Color.Blue, SymbolType.Diamond );
+
+			int iPt = list.IndexOfTag( "point20" );
+			MessageBox.Show( "point is number " + iPt );
+#endif
+
 #if false	// Test Hour Format
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
@@ -822,7 +855,6 @@ namespace ZedGraphTest
 			myCurve.Symbol.Fill.RangeMax = myPane.YAxis.Max;
 
 #endif
-
 
 #if false	// The gradient by value test - big data
 			// Create a new graph with topLeft at (40,40) and size 600x400
@@ -1664,19 +1696,24 @@ namespace ZedGraphTest
 			
 			myPane.IsPenWidthScaled = false ;
 
-			RectangleF rect = new RectangleF( 500, 50, 200, 20 );
+			RectangleF rect = new RectangleF( .5F, .2F, .2F, .2F );
 			EllipseItem ellipse = new EllipseItem( rect, Color.Blue, 
 				Color.Goldenrod );
-			ellipse.Location.CoordinateFrame = CoordType.AxisXYScale;
+			ellipse.Location.CoordinateFrame = CoordType.PaneFraction;
+			ellipse.ZOrder = ZOrder.G_BehindAll;
 			myPane.GraphItemList.Add( ellipse );
 
+			myPane.CurveList.Remove( myPane.CurveList.IndexOf( bar ) );
+
 //			Bitmap bm = new Bitmap( @"c:\temp\sunspot.jpg" );
-			//Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
-			//Image image = Image.FromHbitmap( bm.GetHbitmap() );
-			//ImageItem imageItem = new ImageItem( image, new RectangleF( 0.8F, 0.8F, 0.2F, 0.2F ),
-			//	CoordType.AxisFraction, AlignH.Left, AlignV.Top );
+			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
+			Image image = Image.FromHbitmap( bm.GetHbitmap() );
+			ImageItem imageItem = new ImageItem( image,
+				new RectangleF( 0.2F, 0.6F, 0.2F, 0.2F ),
+				CoordType.AxisFraction, AlignH.Left, AlignV.Top );
 			//imageItem.IsScaled = false;
-			//myPane.GraphItemList.Add( imageItem );
+			imageItem.ZOrder = ZOrder.C_BehindAxisBorder;
+			myPane.GraphItemList.Add( imageItem );
 
 #endif
 

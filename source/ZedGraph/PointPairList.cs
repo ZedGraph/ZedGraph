@@ -30,8 +30,8 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.11 $ $Date: 2004-12-09 01:41:18 $ </version>
-	public class PointPairList : CollectionBase, ICloneable
+	/// <version> $Revision: 3.12 $ $Date: 2004-12-10 05:45:55 $ </version>
+	public class PointPairList : CollectionPlus, ICloneable
 	{
 	#region Fields
 		/// <summary>Private field to maintain the sort status of this
@@ -272,27 +272,15 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="x">The X value</param>
 		/// <param name="y">The Y value</param>
-		/// <param name="baseVal">The base (lower dependent) value</param>
-		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
+		/// <param name="z">The Z or lower dependent axis value</param>
+		/// <returns>The zero-based ordinal index where the point was added
+		/// in the list.</returns>
 		/// <seealso cref="IList.Add"/>
-		public int Add( double x, double y, double baseVal )
+		public int Add( double x, double y, double z )
 		{
 			sorted = false;
-			PointPair	point = new PointPair( x, y, baseVal );
+			PointPair point = new PointPair( x, y, z );
 			return List.Add( point );
-		}
-
-		/// <summary>
-		/// Remove an object from the collection at the specified ordinal location.
-		/// </summary>
-		/// <param name="index">
-		/// An ordinal position in the list at which the object to be removed 
-		/// is located.
-		/// </param>
-		/// <seealso cref="IList.Remove"/>
-		public void Remove( int index )
-		{
-			List.RemoveAt( index );
 		}
 
 		/// <summary>
@@ -306,18 +294,6 @@ namespace ZedGraph
 		public void Remove( PointPair pt )
 		{
 			List.Remove( pt );
-		}
-
-		/// <summary>
-		/// Insert a <see cref="PointPair"/> object into the collection at the specified
-		/// zero-based index location.
-		/// </summary>
-		/// <param name="index">The zero-based index location for insertion.</param>
-		/// <param name="pt">The <see cref="PointPair"/> object that is to be inserted.</param>
-		/// <seealso cref="IList.Insert"/>
-		public void Insert( int index, PointPair pt )
-		{
-			List.Insert( index, pt );
 		}
 
 		/// <summary>
@@ -346,13 +322,14 @@ namespace ZedGraph
 		/// <returns>The zero-based index of the specified <see cref="PointPair"/>,
 		/// or -1 if the <see cref="PointPair"/> is not in the list</returns>
 		/// <seealso cref="IList.IndexOf"/>
-		public int IndexOf( string label )
+		public int IndexOfTag( string label )
 		{
 			int iPt = 0;
 			foreach ( PointPair p in this )
 			{
 				if ( p.Tag is string && String.Compare( (string) p.Tag, label, true ) == 0 )
 					return iPt;
+				iPt++;
 			}
 
 			return -1;
