@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.2.2.1 $ $Date: 2005-01-16 04:11:47 $ </version>
+	/// <version> $Revision: 3.2.2.2 $ $Date: 2005-01-17 01:59:30 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 	#region Fields
@@ -69,6 +69,14 @@ namespace ZedGraph
 		/// value.
 		/// </summary>
 		private string pointValueFormat;
+
+		/// <summary>
+		/// private field that determines the format for displaying tooltip date values.
+		/// This format is passed to <see cref="XDate.ToString(string)"/>.
+		/// Use the public property <see cref="pointDateFormat"/> to access this
+		/// value.
+		/// </summary>
+		private string pointDateFormat;
 
 	#endregion
 
@@ -118,6 +126,7 @@ namespace ZedGraph
 
 			this.isShowPointValues = false;
 			this.pointValueFormat = PointPair.DefaultFormat;
+			this.pointDateFormat = XDate.DefaultFormatStr;
 		}
 
 		/// <summary>
@@ -178,6 +187,16 @@ namespace ZedGraph
 		{
 			get { return pointValueFormat; }
 			set { pointValueFormat = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the format for displaying tooltip values.
+		/// This format is passed to <see cref="XDate.ToString(string)"/>.
+		/// </summary>
+		public string PointDateFormat
+		{
+			get { return pointDateFormat; }
+			set { pointDateFormat = value; }
 		}
 
 		/// <summary>
@@ -305,12 +324,26 @@ namespace ZedGraph
 				if ( graphPane.FindNearestPoint( new PointF( e.X, e.Y ),
 							out curve, out iPt ) )
 				{
-					if ( curve.Points[iPt].Tag is string )
-						this.pointToolTip.SetToolTip( this,
-								(string) curve.Points[iPt].Tag );
+					PointPair pt = curve.Points[iPt];
+					
+					if ( pt.Tag is string )
+						this.pointToolTip.SetToolTip( this, (string) pt.Tag );
 					else
-						this.pointToolTip.SetToolTip( this,
-							curve.Points[iPt].ToString( this.pointValueFormat ) );
+					{
+						string xStr = this.GraphPane.XAxis.IsDate ? XDate.ToString( pt.X, this.pointDateFormat ) :
+							pt.X.ToString( this.pointValueFormat );
+							
+						bool yIsDate = ( curve.IsY2Axis && this.GraphPane.Y2Axis.IsDate ) ||
+							( !curve.IsY2Axis && this.GraphPane.YAxis.IsDate );
+									
+						string yStr = yIsDate ? XDate.ToString( pt.Y, this.pointDateFormat ) :
+							pt.Y.ToString( this.pointValueFormat );
+							
+						this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
+
+						//this.pointToolTip.SetToolTip( this,
+						//	curve.Points[iPt].ToString( this.pointValueFormat ) );
+					}
 					this.pointToolTip.Active = true;
 				}
 				else
