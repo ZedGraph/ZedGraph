@@ -1,5 +1,13 @@
 ZedGraph Class Library Revision History
 
+12-Feb-2005 (by Martz)
+  Fix control parsing error
+  Add full support for graphpane and a variety of additional objects
+  Move proxy/object mapping to individual objects
+  Add support for static default values where possible
+  Add graphitem partial support
+  Add initial support for DataBinding
+
 9-Feb-2005 (Champion)
   Make ZGControl tooltips display text for AxisType.Text
   Push Legend functionality up to PaneBase so MasterPane has a legend
