@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.6 $ $Date: 2004-08-26 05:49:10 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2004-08-31 05:26:20 $ </version>
 	public class Line : ICloneable
 	{
 	#region Fields
@@ -117,7 +117,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The color of the <see cref="Line"/>
 		/// </summary>
-		/// <seealso cref="Default.Lin.Color"/>
+		/// <seealso cref="Default.Color"/>
 		public Color Color
 		{
 			get { return color; }
@@ -127,7 +127,7 @@ namespace ZedGraph
 		/// The style of the <see cref="Line"/>, defined as a <see cref="DashStyle"/> enum.
 		/// This allows the line to be solid, dashed, or dotted.
 		/// </summary>
-		/// <seealso cref="Default.Lin.Style"/>
+		/// <seealso cref="Default.Style"/>
 		public DashStyle Style
 		{
 			get { return style; }
@@ -136,7 +136,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The pen width used to draw the <see cref="Line"/>, in pixel units
 		/// </summary>
-		/// <seealso cref="Default.Lin.Width"/>
+		/// <seealso cref="Default.Width"/>
 		public float Width
 		{
 			get { return width; }
@@ -146,7 +146,7 @@ namespace ZedGraph
 		/// Gets or sets a property that shows or hides the <see cref="Line"/>.
 		/// </summary>
 		/// <value>true to show the line, false to hide it</value>
-		/// <seealso cref="Default.Lin.IsVisible"/>
+		/// <seealso cref="Default.IsVisible"/>
 		public bool IsVisible
 		{
 			get { return isVisible; }
@@ -164,7 +164,7 @@ namespace ZedGraph
 		/// of the constant value for which they apply, respectively.
 		/// </summary>
 		/// <value><see cref="ZedGraph.StepType"/> enum value</value>
-		/// <seealso cref="Default.Lin.StepType"/>
+		/// <seealso cref="Default.StepType"/>
 		public StepType StepType
 		{
 			get { return stepType; }

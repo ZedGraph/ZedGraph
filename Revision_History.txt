@@ -1,5 +1,12 @@
 ZedGraph Class Library Revision History
 
+30-Aug-2004 (by Champion)
+    Fix single point plotting (bug in validity checking code)
+    Fix calls to Transform() so that Transform(i,x) is only called for bar charts
+    Fix XML Comments to get rid of error messages
+    Change the AddPoints() methods of PointPairList to overloaded Add()
+    Add a couple unit tests
+    
 30-Aug-2004 (by Vos)
     Added locking to the ZedGraphControl to make it thread safe
     Added a .AxisChange() method to the ZedGraphControl (it creates a new Graphics object every time it is called)

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 1.2 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.3 $ $Date: 2004-08-31 05:26:20 $ </version>
 	public class PointPairList : CollectionBase, ICloneable
 	{
 		/// <summary>Private field to maintain the sort status of this
@@ -61,7 +61,7 @@ namespace ZedGraph
 		/// </summary>
 		public PointPairList( double[] x, double[] y )
 		{
-			AddPoints( x, y );
+			Add( x, y );
 			
 			sorted = false;
 		}
@@ -72,7 +72,7 @@ namespace ZedGraph
 		/// <param name="rhs">The PointPairList from which to copy</param>
 		public PointPairList( PointPairList rhs )
 		{
-			AddPoints( rhs );
+			Add( rhs );
 
 			sorted = false;
 		}
@@ -115,7 +115,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="pointList">A reference to the <see cref="PointPairList"/> object to
 		/// be added</param>
-		public void AddPoints( PointPairList pointList )
+		public void Add( PointPairList pointList )
 		{
 			foreach ( PointPair point in pointList )
 				this.Add( point );
@@ -132,7 +132,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="x">A double[] array of X values</param>
 		/// <param name="y">A double[] array of Y values</param>
-		public void AddPoints( double[] x, double[] y )
+		public void Add( double[] x, double[] y )
 		{
 			PointPair	point;
 			int 		len = 0;
@@ -160,6 +160,19 @@ namespace ZedGraph
 					
 				List.Add( point );
 			}
+			
+			sorted = false;
+		}
+
+		/// <summary>
+		/// Add a single point to the PointPairList from values of type double.
+		/// </summary>
+		/// <param name="x">The X value</param>
+		/// <param name="y">The Y value</param>
+		public void Add( double x, double y )
+		{
+			PointPair	point = new PointPair( x, y );
+			List.Add( point );
 			
 			sorted = false;
 		}

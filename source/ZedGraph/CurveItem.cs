@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 1.12 $ $Date: 2004-08-27 04:35:17 $ </version>
+	/// <version> $Revision: 1.13 $ $Date: 2004-08-31 05:26:20 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
@@ -92,7 +92,7 @@ namespace ZedGraph
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label and the
 		/// x and y data values as double arrays.  All other properties of the curve are
-		/// defaulted to the values in the <see cref="Default"/> class.
+		/// defaulted to the values in the <see cref="GraphPane.Default"/> class.
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
 		/// <param name="x">An array of double precision values that define
@@ -107,7 +107,7 @@ namespace ZedGraph
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label and the
 		/// x and y data values as a <see cref="PointPairList"/>.  All other properties of the curve are
-		/// defaulted to the values in the <see cref="Default"/> class.
+		/// defaulted to the values in the <see cref="GraphPane.Default"/> class.
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
 		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
@@ -122,11 +122,13 @@ namespace ZedGraph
 		/// x and y data values as a <see cref="PointPairList"/>, the curve
 		/// type (Bar or Line/Symbol), the <see cref="Color"/>, and the
 		/// <see cref="SymbolType"/>. Other properties of the curve are
-		/// defaulted to the values in the <see cref="Default"/> class.
+		/// defaulted to the values in the <see cref="GraphPane.Default"/> class.
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
-		/// the X and Y values for this curve</param>
+		/// <param name="x">An array of double precision values that define
+		/// the independent (X axis) values for this curve</param>
+		/// <param name="y">An array of double precision values that define
+		/// the dependent (Y axis) values for this curve</param>
 		/// <param name="isBar">A boolean value, true to indicate that this curve
 		/// is a bar type, false to indicate a line/symbol type.
 		/// </param>
@@ -151,7 +153,7 @@ namespace ZedGraph
 		/// x and y data values as a <see cref="PointPairList"/>, the curve
 		/// type (Bar or Line/Symbol), the <see cref="Color"/>, and the
 		/// <see cref="SymbolType"/>. Other properties of the curve are
-		/// defaulted to the values in the <see cref="Default"/> class.
+		/// defaulted to the values in the <see cref="GraphPane.Default"/> class.
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
 		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
@@ -208,7 +210,7 @@ namespace ZedGraph
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor that specifies the label of the CurveItem.
 		/// This is the same as <c>CurveItem(label, null, null)</c>.
-		/// <seealso cref="CurveItem(string, double, double)"/>
+		/// <seealso cref="CurveItem( string, double[], double[] )"/>
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
 		public CurveItem( string label ): this( label, null, null)
@@ -281,8 +283,8 @@ namespace ZedGraph
 		/// <summary>
 		/// The <see cref="Line"/>/<see cref="Symbol"/>/<see cref="Bar"/> 
 		/// color (FillColor for the Bar).  This is a common access to
-		/// <see cref="Line.Color"/>, <see cref="Symbol.Color"/>, and
-		/// <see cref="Bar.FillColor"/> properties for this curve.
+		/// <see cref="ZedGraph.Line.Color"/>, <see cref="ZedGraph.Symbol.Color"/>, and
+		/// <see cref="ZedGraph.Bar.FillColor"/> properties for this curve.
 		/// </summary>
 		public Color Color
 		{
@@ -415,7 +417,7 @@ namespace ZedGraph
 		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
 		/// device.  The format (stair-step or line) of the curve is
 		/// defined by the <see cref="StepType"/> property.  The routine
-		/// only draws the line segments; the symbols are draw by the
+		/// only draws the line segments; the symbols are drawn by the
 		/// <see cref="DrawSymbols"/> method.  This method
 		/// is normally only called by the Draw method of the
 		/// <see cref="CurveItem"/> object
@@ -462,11 +464,11 @@ namespace ZedGraph
 				{
 					// Transform the current point from user scale units to
 					// screen coordinates
-					tmpX = pane.XAxis.Transform( i, curX );
+					tmpX = pane.XAxis.Transform( curX );
 					if ( this.isY2Axis )
-						tmpY = pane.Y2Axis.Transform( i, curY );
+						tmpY = pane.Y2Axis.Transform( curY );
 					else
-						tmpY = pane.YAxis.Transform( i, curY );
+						tmpY = pane.YAxis.Transform( curY );
 					
 					// off-scale values "break" the line
 					if ( tmpX < -100000 || tmpX > 100000 ||
@@ -546,14 +548,14 @@ namespace ZedGraph
 						!System.Double.IsInfinity( curX ) &&
 						!System.Double.IsInfinity( curY ) &&
 					( curX > 0 || !pane.XAxis.IsLog ) &&
-					( this.isY2Axis && !pane.Y2Axis.IsLog && curY <= 0.0 ) &&
-					( !this.isY2Axis && !pane.YAxis.IsLog && curY <= 0.0 ) )
+					( this.isY2Axis || !pane.YAxis.IsLog || curY > 0.0 ) &&
+					( !this.isY2Axis || !pane.Y2Axis.IsLog || curY > 0.0 ) )
 				{
-					tmpX = pane.XAxis.Transform( i, curX );
+					tmpX = pane.XAxis.Transform( curX );
 					if ( this.isY2Axis )
-						tmpY = pane.Y2Axis.Transform( i, curY );
+						tmpY = pane.Y2Axis.Transform( curY );
 					else
-						tmpY = pane.YAxis.Transform( i, curY );
+						tmpY = pane.YAxis.Transform( curY );
 
 					this.Symbol.Draw( g, tmpX, tmpY, scaleFactor );		
 				}

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.13 $ $Date: 2004-08-27 22:07:55 $ </version>
+	/// <version> $Revision: 1.14 $ $Date: 2004-08-31 05:26:20 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -1210,9 +1210,9 @@ namespace ZedGraph
 		/// graph, it will just be invisible to the user
 		/// </summary>
 		/// <value>true to show the axis, false to disable all drawing of this axis</value>
-		/// <seealso cref="Default.XAx.IsVisible"/>.
-		/// <seealso cref="Default.YAx.IsVisible"/>.
-		/// <seealso cref="Default.Y2Ax.IsVisible"/>.
+		/// <seealso cref="XAxis.Default.IsVisible"/>.
+		/// <seealso cref="YAxis.Default.IsVisible"/>.
+		/// <seealso cref="Y2Axis.Default.IsVisible"/>.
 		public bool IsVisible
 		{
 			get { return isVisible; }
@@ -2541,10 +2541,14 @@ namespace ZedGraph
 		/// </param>
 		public void PickScale( double minVal, double maxVal, GraphPane pane, Graphics g, double scaleFactor )
 		{
+			// Make sure that minVal and maxVal are legitimate values
+			if ( Double.IsInfinity( minVal ) || Double.IsNaN( minVal ) )
+				minVal = 0.0;
+			if ( Double.IsInfinity( maxVal ) || Double.IsNaN( maxVal ) )
+				maxVal = 0.0;
+
 			// if the scales are autoranged, use the actual data values for the range
 			double range = maxVal - minVal;
-			if ( Double.IsInfinity( range ) || Double.IsNaN( range ) )
-				range = 0.0;
 
 			// "Grace" is applied to the numeric axis types only
 			bool numType = (type == AxisType.Log || type == AxisType.Date || type == AxisType.Linear );
@@ -2870,9 +2874,9 @@ namespace ZedGraph
 			if ( this.max - this.min < 1.0e-20 )
 			{
 				if ( this.maxAuto )
-					this.max = this.min * 10.0;
-				else
-					this.min = this.max / 10.0;
+					this.max = this.max * 2.0;
+				if ( this.minAuto )
+					this.min = this.min / 2.0;
 			}
 			
 			// Get the nearest power of 10 (no partial log cycles allowed)
@@ -2933,9 +2937,9 @@ namespace ZedGraph
 			if ( this.max - this.min < 1.0e-20 )
 			{
 				if ( this.maxAuto )
-					this.max = 1.0 + this.min;
-				else
-					this.min = this.max - 1.0;
+					this.max = this.max + 0.2 * Math.Abs( this.max );
+				if ( this.minAuto )
+					this.min = this.min - 0.2 * Math.Abs( this.min );
 			}
 	
 			// Calculate the new step size
@@ -3008,9 +3012,9 @@ namespace ZedGraph
 			if ( this.max - this.min < 1.0e-20 )
 			{
 				if ( this.maxAuto )
-					this.max = 1.0 + this.min;
-				else
-					this.min = this.max - 1.0;
+					this.max = this.max + 0.2 * Math.Abs( this.max );
+				if ( this.minAuto )
+					this.min = this.min - 0.2 * Math.Abs( this.min );
 			}
 	
 			// This is the zero-lever test.  If minVal is within the zero lever fraction

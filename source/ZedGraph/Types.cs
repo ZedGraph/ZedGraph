@@ -39,7 +39,7 @@ namespace ZedGraph
 		/// ordinal type, then all X values associated with the curves are ignored.</summary>
 		/// <seealso cref="AxisType.Ordinal"/>
 		/// <seealso cref="Axis.IsText"/>
-		/// <seealso cref="Default.MaxTextLabels"/>
+		/// <seealso cref="Axis.Default.MaxTextLabels"/>
 		Text,
 		/// <summary> An ordinal axis with regular numeric labels.  An ordinal axis means that
 		/// all data points are evenly spaced at integral values, and the actual coordinate values

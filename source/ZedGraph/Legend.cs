@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.7 $ $Date: 2004-08-26 05:49:10 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2004-08-31 05:26:20 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -165,35 +165,35 @@ namespace ZedGraph
 
 			/// <summary>
 			/// The default font family for the <see cref="Legend"/> entries
-			/// (<see cref="FontSpec.Family"/> property).
+			/// (<see cref="ZedGraph.FontSpec.Family"/> property).
 			/// </summary>
 			public static string FontFamily = "Arial";
 			/// <summary>
 			/// The default font size for the <see cref="Legend"/> entries
-			/// (<see cref="FontSpec.Size"/> property).  Units are
+			/// (<see cref="ZedGraph.FontSpec.Size"/> property).  Units are
 			/// in points (1/72 inch).
 			/// </summary>
 			public static float FontSize = 12;
 			/// <summary>
 			/// The default font color for the <see cref="Legend"/> entries
-			/// (<see cref="FontSpec.FontColor"/> property).
+			/// (<see cref="ZedGraph.FontSpec.FontColor"/> property).
 			/// </summary>
 			public static Color FontColor = Color.Black;
 			/// <summary>
 			/// The default font bold mode for the <see cref="Legend"/> entries
-			/// (<see cref="FontSpec.IsBold"/> property). true
+			/// (<see cref="ZedGraph.FontSpec.IsBold"/> property). true
 			/// for a bold typeface, false otherwise.
 			/// </summary>
 			public static bool FontBold = false;
 			/// <summary>
 			/// The default font italic mode for the <see cref="Legend"/> entries
-			/// (<see cref="FontSpec.IsItalic"/> property). true
+			/// (<see cref="ZedGraph.FontSpec.IsItalic"/> property). true
 			/// for an italic typeface, false otherwise.
 			/// </summary>
 			public static bool FontItalic = false;
 			/// <summary>
 			/// The default font underline mode for the <see cref="Legend"/> entries
-			/// (<see cref="FontSpec.IsUnderline"/> property). true
+			/// (<see cref="ZedGraph.FontSpec.IsUnderline"/> property). true
 			/// for an underlined typeface, false otherwise.
 			/// </summary>
 			public static bool FontUnderline = false;

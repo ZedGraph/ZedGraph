@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.13 $ $Date: 2004-08-27 06:50:10 $ </version>
+	/// <version> $Revision: 1.14 $ $Date: 2004-08-31 05:26:20 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -226,33 +226,33 @@ namespace ZedGraph
 			/// <summary>
 			/// The default font size (points) for the
 			/// <see cref="GraphPane"/> pane title
-			/// (<see cref="FontSpec.Size"/> property).
+			/// (<see cref="ZedGraph.FontSpec.Size"/> property).
 			/// </summary>
 			public static float FontSize = 16;
 			/// <summary>
 			/// The default font color for the
 			/// <see cref="GraphPane"/> pane title
-			/// (<see cref="FontSpec.FontColor"/> property).
+			/// (<see cref="ZedGraph.FontSpec.FontColor"/> property).
 			/// </summary>
 			public static Color FontColor = Color.Black;
 			/// <summary>
 			/// The default font bold mode for the
 			/// <see cref="GraphPane"/> pane title
-			/// (<see cref="FontSpec.IsBold"/> property). true
+			/// (<see cref="ZedGraph.FontSpec.IsBold"/> property). true
 			/// for a bold typeface, false otherwise.
 			/// </summary>
 			public static bool FontBold = true;
 			/// <summary>
 			/// The default font italic mode for the
 			/// <see cref="GraphPane"/> pane title
-			/// (<see cref="FontSpec.IsItalic"/> property). true
+			/// (<see cref="ZedGraph.FontSpec.IsItalic"/> property). true
 			/// for an italic typeface, false otherwise.
 			/// </summary>
 			public static bool FontItalic = false;
 			/// <summary>
 			/// The default font underline mode for the
 			/// <see cref="GraphPane"/> pane title
-			/// (<see cref="FontSpec.IsUnderline"/> property). true
+			/// (<see cref="ZedGraph.FontSpec.IsUnderline"/> property). true
 			/// for an underlined typeface, false otherwise.
 			/// </summary>
 			public static bool FontUnderline = false;

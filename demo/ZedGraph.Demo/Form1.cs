@@ -146,6 +146,24 @@ namespace ZedGraphTest
 			myPane.XAxis.Min -= 30.0 / 1440.0;
 #endif
 
+#if false	// single value test
+			// Create a new graph
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"My Test Graph\n(For CodeProject Sample)",
+				"My X Axis",
+				"My Y Axis" );
+				
+			double[] x = { 0.4875 };
+			double[] y = { -123456 };
+
+			CurveItem curve;
+			curve = myPane.AddCurve( "One Value", x, y, Color.Red, SymbolType.Diamond );
+			curve.Symbol.IsFilled = true;
+
+			myPane.XAxis.IsShowGrid = true;
+			myPane.YAxis.IsShowGrid = true;
+
+#endif
 
 #if false	// The initial sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
@@ -301,7 +319,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if true	// the date label-width test
+#if false	// the date label-width test
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Date Graph", "Date", "My Y Axis" );
@@ -327,7 +345,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if false	// the text axis sample
+#if true	// the text axis sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Text Graph", "Label", "My Y Axis" );
@@ -335,13 +353,18 @@ namespace ZedGraphTest
 			// Make up some random data points
 			string[] labels = { "USA", "Spain", "Qatar", "Morocco", "UK", "Uganda",
 								  "Cambodia", "Malaysia", "Australia", "Ecuador" };
-			double[] y = new double[10];
-			for ( int i=0; i<10; i++ )
-				y[i] = Math.Sin( (double) i * Math.PI / 2.0 );
+//			double[] y = new double[10];
+//			for ( int i=0; i<10; i++ )
+//				y[i] = Math.Sin( (double) i * Math.PI / 2.0 );
+
+			PointPairList points = new PointPairList();
+			for ( double i=0; i<100; i++ )
+				points.Add( i / 10.0, Math.Sin( i / 10.0 * Math.PI / 2.0 ) );
+
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend
 			CurveItem myCurve = myPane.AddCurve( "My Curve",
-				null, y, Color.Red, SymbolType.Diamond );
+				points, Color.Red, SymbolType.Diamond );
 			// Set the XAxis labels
 			myPane.XAxis.TextLabels = labels;
 			// Set the XAxis to Text type
@@ -852,7 +875,7 @@ namespace ZedGraphTest
 //			RectangleF myRect = myPane.CalcAxisRect( memGraphics.g );
 //			myRect.Height -= 100;
 //			myPane.AxisRect = myRect;
-			myPane.AxisChange( this.CreateGraphics() );
+//			myPane.AxisChange( this.CreateGraphics() );
 
 			myPane.AxisChange( this.CreateGraphics() );
 		}

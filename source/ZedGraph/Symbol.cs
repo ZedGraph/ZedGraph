@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.6 $ $Date: 2004-08-26 05:49:10 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2004-08-31 05:26:20 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -119,7 +119,7 @@ namespace ZedGraph
 		/// Gets or sets the size of the <see cref="Symbol"/>
 		/// </summary>
 		/// <value>Size in pixels</value>
-		/// <seealso cref="Default.Sym.Size"/>
+		/// <seealso cref="Default.Size"/>
 		public float Size
 		{
 			get { return size; }
@@ -129,7 +129,7 @@ namespace ZedGraph
 		/// Gets or sets the type (shape) of the <see cref="Symbol"/>
 		/// </summary>
 		/// <value>A <see cref="SymbolType"/> enum value indicating the shape</value>
-		/// <seealso cref="Default.Sym.Type"/>
+		/// <seealso cref="Default.Type"/>
 		public SymbolType Type
 		{
 			get { return type; }
@@ -141,7 +141,7 @@ namespace ZedGraph
 		/// <see cref="SymbolType.Plus"/> and <see cref="SymbolType.Star"/>
 		/// cannot be filled in since they are not a closed shape.
 		/// </summary>
-		/// <seealso cref="Default.Sym.IsFilled"/>
+		/// <seealso cref="Default.IsFilled"/>
 		public bool IsFilled
 		{
 			get { return isFilled; }
@@ -151,7 +151,7 @@ namespace ZedGraph
 		/// Gets or sets a property that shows or hides the <see cref="Symbol"/>.
 		/// </summary>
 		/// <value>true to show the symbol, false to hide it</value>
-		/// <seealso cref="Default.Sym.IsVisible"/>
+		/// <seealso cref="Default.IsVisible"/>
 		public bool IsVisible
 		{
 			get { return isVisible; }
@@ -161,7 +161,7 @@ namespace ZedGraph
 		/// Gets or sets the pen width used to draw the <see cref="Symbol"/> outline
 		/// </summary>
 		/// <value>Pen width in pixel units</value>
-		/// <seealso cref="Default.Sym.PenWidth"/>
+		/// <seealso cref="Default.PenWidth"/>
 		public float PenWidth
 		{
 			get { return penWidth; }
@@ -170,7 +170,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The color of the <see cref="Symbol"/>
 		/// </summary>
-		/// <seealso cref="Default.Sym.Color"/>
+		/// <seealso cref="Default.Color"/>
 		public Color Color
 		{
 			get { return color; }

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.4 $ $Date: 2004-08-26 05:49:10 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2004-08-31 05:26:20 $ </version>
 	public class Bar
 	{
 		/// <summary>
@@ -160,7 +160,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="IsFramed"/>
 		/// <seealso cref="FrameWidth"/>
-		/// <seealso cref="Default.Br.FrameColor"/>
+		/// <seealso cref="Default.FrameColor"/>
 		public Color FrameColor
 		{
 			get { return frameColor; }
@@ -170,7 +170,7 @@ namespace ZedGraph
 		/// The fill color of the <see cref="Bar"/>.
 		/// </summary>
 		/// <seealso cref="IsFilled"/>
-		/// <seealso cref="Default.Br.FillColor"/>
+		/// <seealso cref="Default.FillColor"/>
 		public Color FillColor
 		{
 			get { return fillColor; }
@@ -182,7 +182,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="FrameColor"/>
 		/// <seealso cref="FrameWidth"/>
-		/// <seealso cref="Default.Br.IsFramed"/>
+		/// <seealso cref="Default.IsFramed"/>
 		public bool IsFramed
 		{
 			get { return isFramed; }
@@ -192,7 +192,7 @@ namespace ZedGraph
 		/// Determines if the <see cref="Bar"/> is filled with color.
 		/// </summary>
 		/// <seealso cref="FillColor"/>
-		/// <seealso cref="Default.Br.IsFilled"/>
+		/// <seealso cref="Default.IsFilled"/>
 		public bool IsFilled
 		{
 			get { return isFilled; }
@@ -204,7 +204,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="IsFramed"/>
 		/// <seealso cref="FrameColor"/>
-		/// <seealso cref="Default.Br.FrameWidth"/>
+		/// <seealso cref="Default.FrameWidth"/>
 		public float FrameWidth
 		{
 			get { return frameWidth; }

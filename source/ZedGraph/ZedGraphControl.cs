@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 1.8 $ $Date: 2004-08-30 17:39:02 $ </version>
+	/// <version> $Revision: 1.9 $ $Date: 2004-08-31 05:26:20 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		/// <summary>
@@ -162,7 +162,6 @@ namespace ZedGraph
 		/// <summary>This performs an axis change command on the graphPane.  
 		/// This is the same as 
 		/// <c>ZedGraphControl.GraphPane.AxisChange( ZedGraphControl.CreateGraphics() )</c>.
-		/// <seealso cref="GraphPane.AxisChange( Graphics )"/>.
 		/// </summary>
 		public virtual void AxisChange()
 		{
