@@ -225,7 +225,7 @@ namespace ZedGraph.Demo
 
 			myPane.XAxis.IsShowGrid = true;
 			myPane.XAxis.Max = 1200;
-			myPane.XAxis.Cross = 80;
+			//myPane.XAxis.Cross = 80;
 			//myPane.IsPenWidthScaled = false;
 			//myPane.XAxis.ScaleFontSpec.Angle = 90;
 			//myPane.XAxis.ScaleAlign = AlignP.Inside;
@@ -235,7 +235,7 @@ namespace ZedGraph.Demo
 			myPane.YAxis.IsShowGrid = true;
 			//myPane.YAxis.ScaleFontSpec.Angle = 90;
 			myPane.YAxis.Max = 120;
-			myPane.YAxis.Cross = 1150;
+			//myPane.YAxis.Cross = 1150;
 			//myPane.YAxis.ScaleAlign = AlignP.Inside;
 			//myPane.YAxis.ScaleFontSpec.Border.IsVisible = true;
 			//myPane.YAxis.Type = AxisType.Log;
@@ -243,8 +243,8 @@ namespace ZedGraph.Demo
 			//myPane.YAxis.IsShowMinorGrid = true;
 			//myPane.YAxis.MinorGridColor = Color.Red;
 
-			myPane.Y2Axis.IsVisible = true;
-			myPane.Y2Axis.Cross = 50;
+			//myPane.Y2Axis.IsVisible = true;
+			//myPane.Y2Axis.Cross = 50;
 			//myPane.Y2Axis.Max = 120;
 			//myPane.Y2Axis.ScaleAlign = AlignP.Outside;
 			
@@ -3282,11 +3282,11 @@ namespace ZedGraph.Demo
 		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
 		{
 			//clone the pane so the paneRect can be changed for printing
-			GraphPane printPane = (GraphPane) myPane.Clone();
+			PaneBase printPane = (PaneBase) master.Clone();
 
 			//printPane.Legend.IsVisible = true;
-			//printPane.PaneRect = new RectangleF( 50, 50,
-			//	this.Size.Width+300, this.Size.Height+300 );
+			//printPane.PaneRect = new RectangleF( 50, 50, 300, 300 );
+			//printPane.ReSize( e.Graphics, new RectangleF( 50, 50, 300, 300 ) );
 				
 			//e.Graphics.PageScale = 1.0F;
 			//printPane.BaseDimension = 2.0F;
@@ -3424,7 +3424,8 @@ namespace ZedGraph.Demo
 #if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			Serialize( master );
+			DoPrint();
+			//Serialize( master );
 			//DeSerialize( out master );
 
 			//object obj;

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-02-11 05:20:43 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-02-14 08:43:16 $ </version>
 	public class PaneBase : ICloneable
 	{
 
@@ -605,6 +605,7 @@ namespace ZedGraph
 			this.isFontsScaled = rhs.isFontsScaled;
 			this.isPenWidthScaled = rhs.isPenWidthScaled;
 
+			this.baseDimension = rhs.baseDimension;
 			this.marginLeft = rhs.marginLeft;
 			this.marginRight = rhs.marginRight;
 			this.marginTop = rhs.marginTop;
