@@ -208,11 +208,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ZedGraph\GraphPaneList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ZedGraph\HiLowBar.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -245,6 +240,10 @@
                 <File
                     RelPath = "ZedGraph\Location.cs"
                     SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\MasterPane.cs"
                     BuildAction = "Compile"
                 />
                 <File

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.17 $ $Date: 2005-01-17 12:47:34 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2005-01-21 05:05:07 $ </version>
 	[Serializable]
 	public class PointPairList : CollectionPlus, ICloneable
 	{
@@ -274,9 +274,9 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Add a single point to the <see cref="PointPairList"/> from a single value of type double.
-		/// The value will be stored in <see cref="PointPair.X"/>	, while <see cref="PointPair.Y"/>
+		/// The value will be stored in <see cref="PointPair.X"/>, while <see cref="PointPair.Y"/>
 		/// will be set to <see cref="PointPair.Missing"/>.	Normally used to assign a value to
-		/// <see cref="PieItem.value"/>.
+		/// <see cref="PieItem.pieValue"/>.
 		/// </summary>
 		/// <param name="x">The X value</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>

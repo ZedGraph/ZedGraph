@@ -22,6 +22,8 @@
 using System;
 using System.Collections;
 using System.Text;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 #endregion
 
@@ -39,7 +41,7 @@ namespace ZedGraph
 	/// Only Remove(), Move(), IndexOf(), etc. methods are included.</remarks>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2005-01-06 02:46:27 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2005-01-21 05:05:06 $ </version>
 	[Serializable]
 	public class CollectionPlus : CollectionBase
 	{
@@ -121,5 +123,40 @@ namespace ZedGraph
 			return index;
 		}
 
+	/*	
+	#region Serialization
+		/// <summary>
+		/// Current schema value that defines the version of the serialized file
+		/// </summary>
+		public const int schema = 1;
+
+		/// <summary>
+		/// Constructor for deserializing objects
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// </param>
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
+		/// </param>
+		protected CollectionPlus( SerializationInfo info, StreamingContext context ) : base( info, context )
+		{
+			// The schema value is just a file version parameter.  You can use it to make future versions
+			// backwards compatible as new member variables are added to classes
+			int sch = info.GetInt32( "schema" );
+
+		}
+		/// <summary>
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
+		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			base.GetObjectData( info, context );
+
+			info.AddValue( "schema", schema );
+		}
+	#endregion
+*/
 	}
 }

@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.30 $ $Date: 2005-01-19 05:54:52 $ </version>
+	/// <version> $Revision: 3.31 $ $Date: 2005-01-21 05:05:06 $ </version>
 	[Serializable]
 	public class GraphPane : ICloneable, ISerializable
 	{
@@ -94,7 +94,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Private field that stores a user-defined tag for this <see cref="GraphPane"/>.  This tag
 		/// can be any user-defined value.  If it is a <see cref="String"/> type, it can be used as
-		/// a parameter to the <see cref="IndexOfTag"/> method.
+		/// a parameter to the <see cref="MasterPane.IndexOfTag"/> method.
 		/// </summary>
 		private object		tag;
 		
@@ -581,7 +581,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Gets or sets the user-defined tag for this <see cref="GraphPane"/>.  This tag
 		/// can be any user-defined value.  If it is a <see cref="String"/> type, it can be used as
-		/// a parameter to the <see cref="IndexOfTag"/> method.
+		/// a parameter to the <see cref="MasterPane.IndexOfTag"/> method.
 		/// </summary>
 		public object Tag
 		{
@@ -593,8 +593,7 @@ namespace ZedGraph
 		/// Gets the graph pane's current image.
 		/// <seealso cref="Bitmap"/>
 		/// </summary>
-		/// <remarks>Note that this image will be 1 pixel larger than the <see cref="PaneRect"/>
-		/// size in order to fully contain the <see cref="PaneRect"/>.  To get a precise bitmap
+		/// <remarks>To get a bitmap scaled to a precise
 		/// size, use <see cref="ScaledImage"/>.</remarks>
 		/// <seealso cref="ScaledImage"/>
 		public Bitmap Image
@@ -603,8 +602,8 @@ namespace ZedGraph
 			{
 				// Need to make the bitmap 1 pixel larger than the image for
 				// proper containment
-				Bitmap bitmap = new Bitmap( (int) this.paneRect.Width+1,
-						(int) this.paneRect.Height+1 );
+				Bitmap bitmap = new Bitmap( (int) this.paneRect.Width,
+						(int) this.paneRect.Height );
 				Graphics bitmapGraphics = Graphics.FromImage( bitmap );
 				bitmapGraphics.TranslateTransform( -this.PaneRect.Left,
 						-this.PaneRect.Top );
@@ -635,7 +634,7 @@ namespace ZedGraph
 			// the paneRect/axisRect calculations of the original
 			GraphPane tempPane = (GraphPane) this.Clone();
 			// Make the paneRect 1 pixel smaller than the actual bitmap size to fully contain the image
-			tempPane.PaneRect = new RectangleF( 0, 0, width-1, height-1 );
+			tempPane.PaneRect = new RectangleF( 0, 0, width, height );
 			//tempPane.AxisChange( bitmapGraphics );
 			tempPane.Draw( bitmapGraphics );
 			//this.Draw( bitmapGraphics );
@@ -1253,8 +1252,9 @@ namespace ZedGraph
 			}
 			else
 				CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth, out legendHeight );
-			// Border the whole pane			
-			DrawPaneFrame( g, this, scaleFactor );
+
+			// Fill the pane background and draw a border around it			
+			DrawPaneFrame( g, scaleFactor );
 
 			// do a sanity check on the axisRect
 			if ( this.axisRect.Width < 1 || this.axisRect.Height < 1 )
@@ -1493,24 +1493,15 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor for the features of the graph based on the <see cref="BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>		
-		public void DrawPaneFrame(Graphics g, GraphPane pane, double scaleFactor)
+		public void DrawPaneFrame( Graphics g, double scaleFactor )
 		{
-			// The Destination image is one pixel larger than the paneRect, because DrawRectangle() draws one
-			// pixel beyond the specified rectangle.  We have to clear out the full destination rect, just
-			// in case the paneBorder is turned off.
 
 			RectangleF rect = this.paneRect;
-			rect.Width = rect.Width +1;
-			rect.Height = rect.Height + 1;
 
 			// Erase the pane background, filling it with the specified brush
 			Brush brush = this.paneFill.MakeBrush( rect );
@@ -1518,8 +1509,12 @@ namespace ZedGraph
 			brush.Dispose();
 
 			// Draw a border around the pane
+			// The Destination image is one pixel larger than the paneRect, because DrawRectangle() draws one
+			// pixel beyond the specified rectangle.
 			//rect.Inflate (-5, -5 ) ;
-			this.paneBorder.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
+			rect.Width = rect.Width - 1;
+			rect.Height = rect.Height - 1;
+			this.paneBorder.Draw( g, isPenWidthScaled, scaleFactor, rect );
 		}
 
 		/// <summary>

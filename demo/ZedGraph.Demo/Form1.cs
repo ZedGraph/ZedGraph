@@ -116,9 +116,12 @@ namespace ZedGraph.Demo
 		/// <summary>
 		/// 
 		/// </summary>
-		protected GraphPane myPane, myPane2;
+		protected GraphPane		myPane, myPane2;
+		protected MasterPane	master = null;
 
 		private bool isResizable = true;
+		PaneLayout paneLayout = PaneLayout.SquareColPreferred;
+
 		double[] gx = new double[20];
 		double[] gy = new double[20];
 
@@ -133,15 +136,16 @@ namespace ZedGraph.Demo
 
 #if false	// serialized data
 
-			SoapFormatter mySerializer = new SoapFormatter();
-			Stream myReader = new FileStream( "myFileName.soap", FileMode.Open,
-						FileAccess.Read, FileShare.Read );
-
-			//BinaryFormatter mySerializer = new BinaryFormatter();
-			//Stream myReader = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Open,
+			//SoapFormatter mySerializer = new SoapFormatter();
+			//Stream myReader = new FileStream( "myFileName.soap", FileMode.Open,
 			//			FileAccess.Read, FileShare.Read );
 
-			myPane = (GraphPane) mySerializer.Deserialize( myReader );
+			BinaryFormatter mySerializer = new BinaryFormatter();
+			Stream myReader = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Open,
+						FileAccess.Read, FileShare.Read );
+
+			//myPane = (GraphPane) mySerializer.Deserialize( myReader );
+			master = (MasterPane) mySerializer.Deserialize( myReader );
 			myReader.Close();
 
 #endif
@@ -198,6 +202,7 @@ namespace ZedGraph.Demo
 			double[] y2 = { 10, 15, 17, 20, 25, 27, 29, 26, 24, 18 };
 			bar = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
 			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
+			bar.Bar.Border.IsVisible = false;
 			myPane.ClusterScaleWidth = 100;
 			//Brush brush = new HatchBrush( HatchStyle.Cross, Color.AliceBlue, Color.Red );
 			//GraphicsPath path = new GraphicsPath();
@@ -216,6 +221,8 @@ namespace ZedGraph.Demo
 			myPane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
 						Color.FromArgb( 255, 255, 190), 90F );
 			
+			//myPane.PaneBorder.InflateFactor = -4.0f;
+
 			myPane.XAxis.IsShowGrid = true;
 			myPane.XAxis.Max = 1200;
 			//myPane.IsPenWidthScaled = false;
@@ -328,7 +335,7 @@ namespace ZedGraph.Demo
 
 #endif
 
-#if true	//Pie Chart Example   
+#if false	//Pie Chart Example   
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"2003 Regional Sales", "", "" );
@@ -437,6 +444,45 @@ namespace ZedGraph.Demo
 			myPane.GraphItemList.Add( box );
 
 #endif
+
+			
+#if true	// MasterPane Test
+
+			master = new MasterPane( "MASTER PANE TEST", new RectangleF( 0, 0, 600, 400 ) );
+
+			for ( int j=0; j<6; j++ )
+			{
+				// Create a new graph with topLeft at (40,40) and size 600x400
+				myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+					"My Test Graph #" + j.ToString(),
+					"X Axis",
+					"Y Axis" );
+
+				// Make up some data arrays based on the Sine function
+				double x, y;
+				PointPairList list = new PointPairList();
+				for ( int i=0; i<36; i++ )
+				{
+					x = (double) i + 5;
+					y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 ) );
+					list.Add( x, y );
+				}
+
+				// Generate a red curve with diamond
+				// symbols, and "Porsche" in the legend
+				LineItem myCurve = myPane.AddCurve( "label",
+					list, Color.Red, SymbolType.Diamond );
+
+				// Tell ZedGraph to refigure the
+				// axes since the data have changed
+				myPane.AxisChange( this.CreateGraphics() );
+
+				master.Add( myPane );
+			}
+
+			master.AutoPaneLayout( this.CreateGraphics(), paneLayout );
+
+#endif	
 
 #if false	// Test Line Stacking
 
@@ -2878,7 +2924,8 @@ namespace ZedGraph.Demo
 			//			myPane.AxisChange( this.CreateGraphics() );
 
 			this.WindowState = FormWindowState.Maximized ;
-			myPane.AxisChange( this.CreateGraphics() );
+			if ( myPane != null )
+				myPane.AxisChange( this.CreateGraphics() );
       
 		}
 
@@ -2899,6 +2946,7 @@ namespace ZedGraph.Demo
 			if ( memGraphics.CanDoubleBuffer() )
 			{
 				//memGraphics.g.SmoothingMode = SmoothingMode.AntiAlias;
+				//memGraphics.g.SmoothingMode = SmoothingMode.None;
 
 				// Fill in Background (for effieciency only the area that has been clipped)
 				memGraphics.g.FillRectangle( new SolidBrush(SystemColors.Window),
@@ -2910,7 +2958,10 @@ namespace ZedGraph.Demo
 				memGraphics.g.FillRectangle( brush, this.ClientRectangle );
 				Matrix mat = memGraphics.g.Transform;
 
-				myPane.Draw( memGraphics.g );
+				if ( master != null )
+					master.Draw( memGraphics.g );
+				else
+					myPane.Draw( memGraphics.g );
 		   
 				// Render to the form
 				memGraphics.Render( e.Graphics );
@@ -2920,7 +2971,12 @@ namespace ZedGraph.Demo
 			{
 				Matrix mat = e.Graphics.Transform;
 				e.Graphics.FillRectangle( brush, this.ClientRectangle );
-				myPane.Draw( e.Graphics );
+
+				if ( master != null )
+					master.Draw( e.Graphics );
+				else
+					myPane.Draw( e.Graphics );
+
 				e.Graphics.Transform = mat;
 			}
 
@@ -3025,7 +3081,17 @@ namespace ZedGraph.Demo
 
 		private void Form1_Resize(object sender, System.EventArgs e)
 		{
-			if ( this.myPane != null )
+			if ( this.master != null )
+			{
+				memGraphics.CreateDoubleBuffer( this.CreateGraphics(),
+					this.ClientRectangle.Width, this.ClientRectangle.Height );
+
+				SetSize();
+				master.AxisChange( this.CreateGraphics() );
+				master.AutoPaneLayout( this.CreateGraphics(), this.paneLayout );
+				Invalidate();
+			}
+			else if ( this.myPane != null )
 			{
 				memGraphics.CreateDoubleBuffer( this.CreateGraphics(),
 					this.ClientRectangle.Width, this.ClientRectangle.Height );
@@ -3038,13 +3104,13 @@ namespace ZedGraph.Demo
 
 		private void SetSize()
 		{
-			if ( this.myPane != null && this.isResizable )
-			{
-				Rectangle paneRect = this.ClientRectangle;
+			Rectangle paneRect = this.ClientRectangle;
+			paneRect.Inflate( -20, -20 );
 
-				//paneRect.Inflate( -10, -10 );
+			if ( this.master != null && this.isResizable )
+				this.master.Rect = paneRect;
+			else if ( this.myPane != null && this.isResizable )
 				this.myPane.PaneRect = paneRect;
-			}
 		}
 
 		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
@@ -3083,7 +3149,7 @@ namespace ZedGraph.Demo
 			images[1].Save( @"c:\zedgraph2.jpg", ImageFormat.Jpeg );
 		}
 		
-#if true
+#if false
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
 /*
@@ -3133,9 +3199,11 @@ namespace ZedGraph.Demo
 			Stream myWriter = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Create,
 						FileAccess.Write, FileShare.None );
 
-			mySerializer.Serialize( myWriter, myPane );
-
-			MessageBox.Show( "Serialized output created" );
+			if ( myPane != null )
+			{
+				mySerializer.Serialize( myWriter, myPane );
+				MessageBox.Show( "Serialized output created" );
+			}
 
 			myWriter.Close();
 		}
@@ -3153,18 +3221,53 @@ namespace ZedGraph.Demo
 			myReader.Close();
 		}
 
-#if false
+		private void Serialize( MasterPane master )
+		{
+			//XmlSerializer mySerializer = new XmlSerializer( typeof( GraphPane ) );
+			//StreamWriter myWriter = new StreamWriter( @"myFileName.xml" );
+
+			//SoapFormatter mySerializer = new SoapFormatter();
+			//FileStream myWriter = new FileStream( @"myFileName.soap", FileMode.Create );
+
+			BinaryFormatter mySerializer = new BinaryFormatter();
+			Stream myWriter = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Create,
+						FileAccess.Write, FileShare.None );
+
+			if ( master != null )
+			{
+				mySerializer.Serialize( myWriter, master );
+				MessageBox.Show( "Serialized output created" );
+			}
+
+			myWriter.Close();
+		}
+
+
+		private void DeSerialize( out MasterPane master )
+		{
+			BinaryFormatter mySerializer = new BinaryFormatter();
+			Stream myReader = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Open,
+						FileAccess.Read, FileShare.Read );
+
+			master = (MasterPane) mySerializer.Deserialize( myReader );
+			Invalidate();
+
+			myReader.Close();
+		}
+
+#if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			object obj;
-			int index;
-			if ( myPane.FindNearestObject( new PointF( e.X, e.Y ), this.CreateGraphics(), out obj, out index ) )
-				MessageBox.Show( obj.ToString() + " index=" + index );
+			Serialize( master );
+			//DeSerialize( out master );
+
+			//object obj;
+			//int index;
+			//if ( myPane.FindNearestObject( new PointF( e.X, e.Y ), this.CreateGraphics(), out obj, out index ) )
+			//	MessageBox.Show( obj.ToString() + " index=" + index );
 			//else
 			//	MessageBox.Show( "No Object Found" );
 
-			//Serialize( myPane );
-			//DeSerialize( out myPane );
 
 			//myPane.XAxis.PickScale( 250, 900, myPane, this.CreateGraphics(), myPane.CalcScaleFactor() );
 			//Invalidate();

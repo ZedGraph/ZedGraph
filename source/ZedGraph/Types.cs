@@ -588,10 +588,15 @@ namespace ZedGraph
 	};
 	
 	/// <summary>
-	/// Define the auto layout options for the <see cref="GraphPaneList.AutoPaneLayout"/> method.
+	/// Define the auto layout options for the <see cref="MasterPane.AutoPaneLayout"/> method.
 	/// </summary>
 	public enum PaneLayout
 	{
+		/// <summary>
+		/// Layout the GraphPane's so they are in a square (always 2x2, 3x3, 4x4), leaving blank spaces
+		/// as required
+		/// </summary>
+		ForceSquare,
 		/// <summary>
 		/// Layout the GraphPane's so they are in a general square (2x2, 3x3, etc.), but use extra
 		/// columns when necessary (1x2, 2x3, 3x4, etc.)

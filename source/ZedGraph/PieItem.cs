@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.6 $ $Date: 2005-01-19 05:54:52 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2005-01-21 05:05:07 $ </version>
 	[Serializable]
 	public class PieItem : ZedGraph.CurveItem , ICloneable, ISerializable
 	{
@@ -271,7 +271,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Add a <see cref="PieItem"/> to an existing <see cref="PieItem"/>
 		/// </summary>
-		/// <param name="value">The value associated with this <see cref="PieItem"/>item.</param>
+		/// <param name="pieValue">The value associated with this <see cref="PieItem"/>item.</param>
 		/// <param name="color">The display color for this <see cref="PieItem"/>item.</param>
 		/// <param name="displacement">The amount this <see cref="PieItem"/>  will be 
 		/// displaced from the center point.</param>
@@ -289,7 +289,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Add a <see cref="PieItem"/> to an existing <see cref="PieItem"/>
 		/// </summary>
-		/// <param name="value">The value associated with this <see cref="PieItem"/>item.</param>
+		/// <param name="pieValue">The value associated with this <see cref="PieItem"/>item.</param>
 		/// <param name="label">Text label for this <see cref="PieItem"/></param>
 		public PieItem ( double pieValue, string label ) : base( label )
 		{
