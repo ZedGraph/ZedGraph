@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+23-Feb-2005 (by Champion)
+  Add Axis.BaseTic property
+  Add ZedGraph.LibTest project to have a class library based general testing platform
+  
 22-Feb-2005 (by Champion)
   Add ZoomState stack for maintaining history of zoom and pan states in UserControl
   

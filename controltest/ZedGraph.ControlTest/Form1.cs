@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Drawing.Printing;
 using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
@@ -58,17 +59,17 @@ namespace ZedGraph.ControlTest
 		private void InitializeComponent()
 		{
 			this.tabControl1 = new System.Windows.Forms.TabControl();
+			this.tabPage2 = new System.Windows.Forms.TabPage();
+			this.zedGraphControl4 = new ZedGraph.ZedGraphControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
 			this.zedGraphControl6 = new ZedGraph.ZedGraphControl();
 			this.label1 = new System.Windows.Forms.Label();
-			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.zedGraphControl4 = new ZedGraph.ZedGraphControl();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.zedGraphControl5 = new ZedGraph.ZedGraphControl();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
 			this.tabControl1.SuspendLayout();
-			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
+			this.tabPage1.SuspendLayout();
 			this.tabPage3.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -83,6 +84,31 @@ namespace ZedGraph.ControlTest
 			this.tabControl1.SelectedIndex = 0;
 			this.tabControl1.Size = new System.Drawing.Size(536, 336);
 			this.tabControl1.TabIndex = 1;
+			this.tabControl1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tabControl1_KeyDown);
+			this.tabControl1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseDown);
+			// 
+			// tabPage2
+			// 
+			this.tabPage2.Controls.Add(this.zedGraphControl4);
+			this.tabPage2.Location = new System.Drawing.Point(4, 22);
+			this.tabPage2.Name = "tabPage2";
+			this.tabPage2.Size = new System.Drawing.Size(528, 310);
+			this.tabPage2.TabIndex = 1;
+			this.tabPage2.Text = "tabPage2";
+			// 
+			// zedGraphControl4
+			// 
+			this.zedGraphControl4.IsEnablePan = true;
+			this.zedGraphControl4.IsEnableZoom = true;
+			this.zedGraphControl4.IsShowContextMenu = true;
+			this.zedGraphControl4.IsShowPointValues = false;
+			this.zedGraphControl4.Location = new System.Drawing.Point(24, 25);
+			this.zedGraphControl4.Name = "zedGraphControl4";
+			this.zedGraphControl4.PointDateFormat = "g";
+			this.zedGraphControl4.PointValueFormat = "G";
+			this.zedGraphControl4.Size = new System.Drawing.Size(474, 247);
+			this.zedGraphControl4.TabIndex = 0;
+			this.zedGraphControl4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.zedGraphControl4_MouseDown);
 			// 
 			// tabPage1
 			// 
@@ -97,6 +123,9 @@ namespace ZedGraph.ControlTest
 			// 
 			// zedGraphControl6
 			// 
+			this.zedGraphControl6.IsEnablePan = true;
+			this.zedGraphControl6.IsEnableZoom = true;
+			this.zedGraphControl6.IsShowContextMenu = true;
 			this.zedGraphControl6.IsShowPointValues = false;
 			this.zedGraphControl6.Location = new System.Drawing.Point(24, 63);
 			this.zedGraphControl6.Name = "zedGraphControl6";
@@ -114,26 +143,6 @@ namespace ZedGraph.ControlTest
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Here\'s Tab Page 1";
 			// 
-			// tabPage2
-			// 
-			this.tabPage2.Controls.Add(this.zedGraphControl4);
-			this.tabPage2.Location = new System.Drawing.Point(4, 22);
-			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(528, 310);
-			this.tabPage2.TabIndex = 1;
-			this.tabPage2.Text = "tabPage2";
-			// 
-			// zedGraphControl4
-			// 
-			this.zedGraphControl4.IsShowPointValues = false;
-			this.zedGraphControl4.Location = new System.Drawing.Point(24, 25);
-			this.zedGraphControl4.Name = "zedGraphControl4";
-			this.zedGraphControl4.PointDateFormat = "g";
-			this.zedGraphControl4.PointValueFormat = "G";
-			this.zedGraphControl4.Size = new System.Drawing.Size(474, 247);
-			this.zedGraphControl4.TabIndex = 0;
-			this.zedGraphControl4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.zedGraphControl4_MouseDown);
-			// 
 			// tabPage3
 			// 
 			this.tabPage3.Controls.Add(this.zedGraphControl5);
@@ -145,6 +154,9 @@ namespace ZedGraph.ControlTest
 			// 
 			// zedGraphControl5
 			// 
+			this.zedGraphControl5.IsEnablePan = true;
+			this.zedGraphControl5.IsEnableZoom = true;
+			this.zedGraphControl5.IsShowContextMenu = true;
 			this.zedGraphControl5.IsShowPointValues = false;
 			this.zedGraphControl5.Location = new System.Drawing.Point(64, 40);
 			this.zedGraphControl5.Name = "zedGraphControl5";
@@ -168,11 +180,13 @@ namespace ZedGraph.ControlTest
 			this.Controls.Add(this.tabControl1);
 			this.Name = "Form1";
 			this.Text = "Form1";
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
 			this.Resize += new System.EventHandler(this.Form1_Resize);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.tabControl1.ResumeLayout(false);
-			this.tabPage1.ResumeLayout(false);
 			this.tabPage2.ResumeLayout(false);
+			this.tabPage1.ResumeLayout(false);
 			this.tabPage3.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -283,6 +297,52 @@ namespace ZedGraph.ControlTest
 			zedGraphControl4.Refresh();
 			//Invalidate();
 			*/
+		}
+
+		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
+		{
+			//clone the pane so the paneRect can be changed for printing
+			//PaneBase printPane = (PaneBase) master.Clone();
+			GraphPane printPane = (GraphPane) zedGraphControl4.GraphPane.Clone();
+			printPane.PaneRect = new RectangleF( 50, 50, 400, 300 );
+
+			//printPane.Legend.IsVisible = true;
+			//printPane.PaneRect = new RectangleF( 50, 50, 300, 300 );
+			//printPane.ReSize( e.Graphics, new RectangleF( 50, 50, 300, 300 ) );
+				
+			//e.Graphics.PageScale = 1.0F;
+			//printPane.BaseDimension = 2.0F;
+			printPane.Draw( e.Graphics );
+		}
+
+		private void DoPrint()
+		{
+			PrintDocument pd = new PrintDocument();
+			//PrintPreviewDialog ppd = new PrintPreviewDialog();
+			pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+			//ppd.Document = pd;
+			//ppd.Show();
+			pd.Print();
+		}
+
+		private void Form1_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		{
+		}
+
+		private void tabControl1_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		{
+		
+		}
+
+		private void tabControl1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+		
+		}
+
+		private void Form1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			//MessageBox.Show( "Howdy" );
+			DoPrint();
 		}
 	}
 }

@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.ControlTest", "con
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.LibTest", "libtest\ZedGraph.LibTest.csproj", "{3986792A-CD38-40EB-BC80-96B05C3ECEB5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -37,6 +41,10 @@ Global
 		{47287BC7-EBDB-4911-8F16-0D01D117E459}.Debug.Build.0 = Debug|.NET
 		{47287BC7-EBDB-4911-8F16-0D01D117E459}.Release.ActiveCfg = Release|.NET
 		{47287BC7-EBDB-4911-8F16-0D01D117E459}.Release.Build.0 = Release|.NET
+		{3986792A-CD38-40EB-BC80-96B05C3ECEB5}.Debug.ActiveCfg = Debug|.NET
+		{3986792A-CD38-40EB-BC80-96B05C3ECEB5}.Debug.Build.0 = Debug|.NET
+		{3986792A-CD38-40EB-BC80-96B05C3ECEB5}.Release.ActiveCfg = Release|.NET
+		{3986792A-CD38-40EB-BC80-96B05C3ECEB5}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Revision_History.txt = Revision_History.txt
