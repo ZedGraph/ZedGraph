@@ -104,11 +104,6 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "ZedGraph.UnitTest\DBGraphics.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ZedGraph.UnitTest\ZGTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -2,7 +2,6 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
-using GDIDB;
 
 using NUnit.Framework;
 
@@ -72,7 +71,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 1.6 $ $Date: 2004-09-01 05:14:54 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2004-09-01 05:22:53 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -206,19 +205,16 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.6 $ $Date: 2004-09-01 05:14:54 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2004-09-01 05:22:53 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
 		Form form2;
 		GraphPane testee;
-		private DBGraphics memGraphics;
       
 		[SetUp]
 		public void SetUp()
 		{
-			memGraphics = new  DBGraphics();
-
 			TestUtils.SetUp();
 
 			form2	= new Form();
@@ -239,28 +235,8 @@ namespace ZedGraph.UnitTest
 		private void Form2_Paint( object sender, System.Windows.Forms.PaintEventArgs e )
 		{
 			SolidBrush brush = new SolidBrush( Color.Gray );
-			if ( memGraphics.CanDoubleBuffer() )
-			{
-				memGraphics.g.SmoothingMode = SmoothingMode.AntiAlias;
-
-				// Fill in Background (for effieciency only the area that has been clipped)
-				memGraphics.g.FillRectangle( new SolidBrush(SystemColors.Window),
-					e.ClipRectangle.X, e.ClipRectangle.Y,
-					e.ClipRectangle.Width, e.ClipRectangle.Height);
-
-				// Do our drawing using memGraphics.g instead e.Graphics
-		     
-				memGraphics.g.FillRectangle( brush, form2.ClientRectangle );
-				testee.Draw( memGraphics.g );
-		   
-				// Render to the form
-				memGraphics.Render( e.Graphics );
-			}
-			else
-			{
-				e.Graphics.FillRectangle( brush, form2.ClientRectangle );
-				testee.Draw( e.Graphics );
-			}
+			e.Graphics.FillRectangle( brush, form2.ClientRectangle );
+			testee.Draw( e.Graphics );
 		}
 
 		private void Form2_Resize(object sender, System.EventArgs e)
@@ -809,7 +785,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.6 $ $Date: 2004-09-01 05:14:54 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2004-09-01 05:22:53 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{
