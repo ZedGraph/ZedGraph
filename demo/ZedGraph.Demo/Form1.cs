@@ -1025,7 +1025,7 @@ namespace ZedGraphTest
 			//			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if false	// The sorted overlay bar graph sample
+#if false // The sorted overlay bar graph sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Overlay Bar Graph", "Label", "My Y Axis" );
@@ -1057,7 +1057,8 @@ namespace ZedGraphTest
 			// Set the XAxis labels
 			myPane.XAxis.TextLabels = labels;
 			// Set the XAxis to Text type
-			myPane.XAxis.Type = AxisType.Ordinal;
+			myPane.XAxis.Type = AxisType.Text;
+			myPane.XAxis.ScaleFontSpec.Size = 9.0F ;
 			
 			myPane.BarBase = BarBase.X;
 			myPane.BarType = BarType.SortedOverlay;
@@ -1275,7 +1276,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if true	// The main example
+#if false	// The main example
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -1381,6 +1382,8 @@ namespace ZedGraphTest
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
 			myPane.TextList.Add( text );
+			
+			myPane.IsPenWidthScaled = false ;
 #endif
 
 #if false	// second graph test
@@ -1404,18 +1407,18 @@ namespace ZedGraphTest
 
 #endif
 
-#if false	// Stacked Bar Example - RPK
+#if true	// Stacked Bar Example - RPK
          myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),"2003 Wacky Widget Sales\nBy Product",
             "Quarter",
             "Sales (KUSD)");
          SetSize();
          
 			
-         string [] quarters = {"Q1", "Q2", "Q3", "Q4" } ;          
-         double[] y2 = { 40, 60, 70, 20 };               // red - three segments per bar
-         double[] y3 = { 20, 0, 35, 40 };             //green
+         string [] quarters = {"Q1", "Q2", "Q3", "Q4", "Q5" } ;          
+         double[] y4 = { 30, -20, -15, 90, 70 };         //blue
+         double[] y3 = { 20, 0, -35, 40,-10 };             //green
+         double[] y2 = { -40, 60, -70, 20,-30 };               // red - three segments per bar
  //        double[] y3 = { 2, 3, 3.5, 4 };
-         double[] y4 = { 30, 15, 15, 90 };         //blue
 
 #if true                                 //           vertical stacked bars
          LineItem curve;
@@ -1434,7 +1437,9 @@ namespace ZedGraphTest
          myPane.BarBase=BarBase.X ;
          myPane.BarType=BarType.Stack;
  //        myPane.BarType=BarType.Cluster ;
-//         myPane.BarType=BarType.Overlay ;
+ //        myPane.BarType=BarType.Overlay ;
+ //        myPane.BarType = BarType.SortedOverlay ;
+ //        myPane.BarType = BarType.PercentStack ;
 #endif
 
 #if false                                       //horizontal stacked bars
@@ -1454,10 +1459,12 @@ namespace ZedGraphTest
          bar = myPane.AddBar( "Bridget",y2,null, Color.Red );
          myPane.BarBase=BarBase.Y ;
          myPane.YAxis.Type = AxisType.Text ;
-         myPane.YAxis.TextLabels=quarters ;         
-         myPane.BarType=BarType.Stack ;
- //         myPane.BarType=BarType.Cluster ;
+         myPane.YAxis.TextLabels=quarters ;      
+         myPane.YAxis.IsTicsBetweenLabels = true ;   
+ //        myPane.BarType=BarType.Stack ;
+  //        myPane.BarType=BarType.Cluster ;
 //         myPane.BarType=BarType.Overlay ;
+         myPane.BarType = BarType.SortedOverlay ;
   #endif
          myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
          myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
@@ -1734,7 +1741,7 @@ namespace ZedGraphTest
 
 			
 			myPane.AxisChange( this.CreateGraphics() );
-
+      
 		}
 
 		/// <summary>
