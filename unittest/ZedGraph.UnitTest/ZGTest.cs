@@ -71,7 +71,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-11-03 04:17:45 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-11-04 16:28:30 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -206,7 +206,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-11-03 04:17:45 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-11-04 16:28:30 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
@@ -353,6 +353,312 @@ namespace ZedGraph.UnitTest
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the graph resize ok?" ) );
 		}
 		#endregion
+	
+      #region Clustered  Bar Graph
+      [Test]
+      public void ClusteredBarGraph()
+      {
+         // Create a new graph
+         testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+            "Clustered Bar Graph Test", "Label", "My Y Axis" );
+
+         string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty" };
+         double[] y = { 100, 115, 75, -22, 98, 40, -10 };
+         double[] y2 = { 90, 100, 95, 35, 0, 35, -35 };
+         double[] y3 = { 80, 110, 65, -15, 54, 67, 18 };
+
+         double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
+
+         // Generate three bars with appropriate entries in the legend
+         CurveItem myCurve = testee.AddBar( "Curve 1", null, y, Color.Red );
+         CurveItem myCurve1 = testee.AddBar( "Curve 2", null, y2, Color.Blue );
+         CurveItem myCurve2 = testee.AddBar( "Curve 3", null, y3, Color.Green );
+         // Draw the X tics between the labels instead of at the labels
+         testee.XAxis.IsTicsBetweenLabels = true;
+
+         // Set the XAxis labels
+         testee.XAxis.TextLabels = labels;
+         testee.XAxis.ScaleFontSpec.Size = 9F ;
+         // Set the XAxis to Text type
+         testee.XAxis.Type = AxisType.Text;
+         testee.BarBase = BarBase.X;
+
+         testee.XAxis.IsReverse = false;
+         testee.ClusterScaleWidth = 1;
+
+         //Add Labels to the curves
+
+         // Shift the text items up by 5 user scale units above the bars
+         const float shift = 5;
+			
+         for ( int i=0; i<y.Length; i++ )
+         {
+            // format the label string to have 1 decimal place
+            string lab = y2[i].ToString( "F1" );
+            // create the text item (assumes the x axis is ordinal or text)
+            // for negative bars, the label appears just above the zero value
+            TextItem text = new TextItem( lab, (float) (i + 1), (float) (y2[i] < 0 ? 0.0 : y2[i]) + shift );
+            // tell Zedgraph to use user scale units for locating the TextItem
+            text.Location.CoordinateFrame = CoordType.AxisXYScale;
+            // Align the left-center of the text to the specified point
+            text.Location.AlignH = AlignH.Left;
+            text.Location.AlignV = AlignV.Center;
+            text.FontSpec.Border.IsVisible = false;
+            // rotate the text 90 degrees
+            text.FontSpec.Angle = 90;
+            // add the TextItem to the list
+            testee.TextList.Add( text );
+         }
+
+         // Tell ZedGraph to refigure the
+         // axes since the data have changed
+         testee.AxisChange( form2.CreateGraphics() );
+         // Add one step to the max scale value to leave room for the labels
+         testee.YAxis.Max += testee.YAxis.Step;
+
+         testee.AxisChange( form2.CreateGraphics() );
+         SetSize();
+         form2.Refresh();
+			
+         Assert.IsTrue( TestUtils.promptIfTestWorked(
+            "Is a clustered bar graph having the proper number of bars per x-Axis point visible ?  <Next Step: Resize the chart>") ) ;
+      
+
+         TestUtils.DelaySeconds( 3000 );
+
+         Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the graph resize ok with all x-Axis labels visible?" ) );
+      }
+      #endregion
+
+
+      #region Horizontal Clustered  Bar Graph
+      [Test]
+      public void HorizClusteredBarGraph()
+      {
+         // Create a new graph
+         testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+            "Horizontal Clustered Bar Graph Test ", "Label", "My Y Axis" );
+
+         string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty", "Wildcat" };
+         double[] y = { 100, 115, 75, -22, 98, 40, -10,20 };
+         double[] y2 = { 90, 100, 95, 35, 80, 35, -35, 30 };
+         double[] y3 = { 80, 0, 65, -15, 54, 67, 18, 50 };
+
+         // Generate three bars with appropriate entries in the legend
+         CurveItem myCurve = testee.AddBar( "Curve 1", y, null, Color.Red );
+         CurveItem myCurve1 = testee.AddBar( "Curve 2",y2, null,  Color.Blue );
+         CurveItem myCurve2 = testee.AddBar( "Curve 3",  y3, null,Color.Green );
+         // Draw the Y tics between the labels instead of at the labels
+         testee.YAxis.IsTicsBetweenLabels = true;
+
+         // Set the YAxis labels
+         testee.YAxis.TextLabels = labels;
+         testee.YAxis.ScaleFontSpec.Size = 9F ;
+                                 //show the zero line
+         testee.XAxis.IsZeroLine = true ;
+         // Set the YAxis to Text type
+         testee.YAxis.Type = AxisType.Text;
+         testee.BarBase = BarBase.Y;
+
+         testee.YAxis.IsReverse = false;
+         testee.ClusterScaleWidth = 1;
+
+
+         // Tell ZedGraph to refigure the
+         // axes since the data have changed
+         testee.AxisChange( form2.CreateGraphics() );
+         // Add one step to the max scale value to leave room for the labels
+         testee.XAxis.Max += testee.YAxis.Step;
+
+         testee.AxisChange( form2.CreateGraphics() );
+         SetSize();
+         form2.Refresh();
+			
+         Assert.IsTrue( TestUtils.promptIfTestWorked(
+            "Is a horizontal clustered bar graph having the proper number of bars per y-Axis point visible ?  <Next Step: Resize the graph>") ) ;
+      
+         TestUtils.DelaySeconds( 3000 );
+
+         Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the graph resize ok with all y-Axis labels visible?" ) );
+      }
+      #endregion
+
+      #region Stack  Bar Graph
+      [Test]
+      public void StkBarGraph()
+      {
+         // Create a new graph
+         testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+            "Stack Bar Graph Test ", "Label", "My Y Axis" );
+
+         string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty" };
+         double[] y = { 100, 115, 75, -22, 98, 40, -10 };
+         double[] y2 = { 90, 100, 95, 35, 0, 35, -35 };
+         double[] y3 = { 80, 110, 65, -15, 54, 67, 18 };
+
+         double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
+
+         // Generate three bars with appropriate entries in the legend
+         CurveItem myCurve = testee.AddBar( "Curve 1", null, y, Color.Red );
+         CurveItem myCurve1 = testee.AddBar( "Curve 2", null, y2, Color.Blue );
+         CurveItem myCurve2 = testee.AddBar( "Curve 3", null, y3, Color.Green );
+         // Draw the X tics between the labels instead of at the labels
+         testee.XAxis.IsTicsBetweenLabels = true;
+
+         // Set the XAxis labels
+         testee.XAxis.TextLabels = labels;
+         testee.XAxis.ScaleFontSpec.Size = 9F ;
+         // Set the XAxis to Text type
+         testee.XAxis.Type = AxisType.Text;
+         testee.BarBase = BarBase.X;
+         //display as stack bar
+         testee.BarType = BarType.Stack ;
+         //display horizontal grid lines
+         testee.YAxis.IsShowGrid = true ;
+         
+         testee.XAxis.IsReverse = false;
+         testee.ClusterScaleWidth = 1;
+                    //turn off pen width scaling
+         testee.IsPenWidthScaled = false ;
+         
+         // Tell ZedGraph to refigure the
+         // axes since the data have changed
+         testee.AxisChange( form2.CreateGraphics() );
+         // Add one step to the max scale value to leave room for the labels
+         testee.YAxis.Max += testee.YAxis.Step;
+
+         testee.AxisChange( form2.CreateGraphics() );
+         SetSize();
+         form2.Refresh();
+			
+         Assert.IsTrue( TestUtils.promptIfTestWorked(
+            "Is a stack bar graph having the proper number of bars per x-Axis point visible ?  <Next Step: Maximize the display>") ) ;
+      
+         TestUtils.DelaySeconds( 3000 );
+
+         Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the graph resize ok with all x-Axis labels visible?  <Next Step: Scale Pen Width>" ) );
+ 
+         testee.IsPenWidthScaled = true ;
+ 
+         testee.AxisChange( form2.CreateGraphics() );
+         SetSize();
+         form2.Refresh();
+                                    
+         TestUtils.DelaySeconds( 3000 );
+
+         Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the lines in the chart become more prominent?" ) );
+      }
+      #endregion
+
+      #region Overlay Bar Graph
+      [Test]
+      public void OverlayBarGraph()
+      {
+         // Create a new graph
+         testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+            "Overlay Bar Graph Test ", "Label", "My Y Axis" );
+
+         string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty" };
+         double[] y = { 100, 115, 75, 22, 98, 40, 10 };
+         double[] y2 = { 90, 100, 95, 35, 0, 35, 35 };
+         double[] y3 = { 80, 110, 65, 15, 54, 67, 18 };
+
+         // Generate three bars with appropriate entries in the legend
+         CurveItem myCurve = testee.AddBar( "Curve 1", null, y3, Color.Red );
+         CurveItem myCurve1 = testee.AddBar( "Curve 2", null, y2, Color.Blue );
+         CurveItem myCurve2 = testee.AddBar( "Curve 3", null, y, Color.Green );
+         // Draw the X tics between the labels instead of at the labels
+         testee.XAxis.IsTicsBetweenLabels = true;
+
+         // Set the XAxis labels
+         testee.XAxis.TextLabels = labels;
+         testee.XAxis.ScaleFontSpec.Size = 9F ;
+         // Set the XAxis to Text type
+         testee.XAxis.Type = AxisType.Text;
+         testee.BarBase = BarBase.X;
+         //display as overlay bars
+         testee.BarType = BarType.Overlay;
+         //display horizontal grid lines
+         testee.YAxis.IsShowGrid = true ;
+         
+         testee.XAxis.IsReverse = false;
+         testee.ClusterScaleWidth = 1;
+
+
+         // Tell ZedGraph to refigure the
+         // axes since the data have changed
+         testee.AxisChange( form2.CreateGraphics() );
+         // Add one step to the max scale value to leave room for the labels
+         testee.YAxis.Max += testee.YAxis.Step;
+
+         testee.AxisChange( form2.CreateGraphics() );
+         SetSize();
+         form2.Refresh();
+			
+         Assert.IsTrue( TestUtils.promptIfTestWorked(
+            "Is a stack bar graph having the proper number of bars per x-Axis point visible ?  <Next Step: Flip to horizontal bars>") ) ;
+      
+
+         TestUtils.DelaySeconds( 3000 );
+
+         Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the graph resize ok with all x-Axis labels visible?" ) );
+      }
+      #endregion
+
+      #region Horizontal Stack Bar Graph
+      [Test]
+      public void HorizStkBarGraph()
+      {
+         // Create a new graph
+         testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+            " Horizontal Stack Bar Graph Test", "Label", "My Y Axis" );
+
+         string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty", "Wildcat" };
+         double[] y = { 100, 115, 75, -22, 98, 40, -10,20 };
+         double[] y2 = { 90, 100, 95, 35, 80, 35, -35, 30 };
+         double[] y3 = { 80, 0, 65, -15, 54, 67, 18, 50 };
+
+         // Generate three bars with appropriate entries in the legend
+         CurveItem myCurve = testee.AddBar( "Curve 1", y, null, Color.Red );
+         CurveItem myCurve1 = testee.AddBar( "Curve 2",y2, null,  Color.Blue );
+         CurveItem myCurve2 = testee.AddBar( "Curve 3",  y3, null,Color.Green );
+         // Draw the Y tics between the labels instead of at the labels
+         testee.YAxis.IsTicsBetweenLabels = true;
+         testee.BarType = BarType.Stack ;
+
+         // Set the YAxis labels
+         testee.YAxis.TextLabels = labels;
+         testee.YAxis.ScaleFontSpec.Size = 9F ;
+         //show the zero line
+         testee.XAxis.IsZeroLine = true ;
+         //show XAxis the grid lines
+         testee.XAxis.IsShowGrid = true ;
+         // Set the YAxis to Text type
+         testee.YAxis.Type = AxisType.Text;
+         testee.BarBase = BarBase.Y;
+
+         testee.YAxis.IsReverse = false;
+         testee.ClusterScaleWidth = 1;
+
+
+         // Tell ZedGraph to refigure the
+         // axes since the data have changed
+         testee.AxisChange( form2.CreateGraphics() );
+         // Add one step to the max scale value to leave room for the labels
+         testee.XAxis.Max += testee.YAxis.Step;
+
+         testee.AxisChange( form2.CreateGraphics() );
+         SetSize();
+         form2.Refresh();
+			
+         Assert.IsTrue( TestUtils.promptIfTestWorked(
+            "Is a horizontal stack bar graph having the proper number of bars per y-Axis point visible ?  <Next Step: Resize the graph>") ) ;
+      
+         TestUtils.DelaySeconds( 3000 );
+
+         Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the graph resize ok with all y-Axis labels visible?" ) );
+      }
+      #endregion
 		
 		#region Animated Date Graph
 		[Test]
@@ -360,7 +666,7 @@ namespace ZedGraph.UnitTest
 		{
 			// Create a new graph
 			testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
-				"My Test Date Graph", "X AXIS", "Y Value" );
+				"Date Graph Test ", "X AXIS", "Y Value" );
 
 			// start with an empty list for testing
 			PointPairList pointList = new PointPairList();
@@ -785,7 +1091,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-11-03 04:17:45 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-11-04 16:28:30 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{
