@@ -383,5 +383,21 @@ namespace ZedGraph
 		/// of all prior bars.
 		/// </summary>
 		Stack
-};
+	};
+	
+	/// <summary>
+	/// Enumeration type that defines which set of data points - X or Y - is used  
+	/// <seealso cref="System.Collections.ArrayList.Sort()"/> to perform the sort.
+	/// </summary>
+	public enum SortType
+	{
+	   /// <summary>
+	   /// Use the Y values to sort the list.
+	   /// </summary>
+	   YValues,
+	   /// <summary>
+	   /// Use the X values to sort the list.
+	   /// </summary>
+	   XValues
+	};
 }

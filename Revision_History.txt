@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+29-Oct-2004 (by Kaye)
+  Add BarType.Stack
+
 28-Oct-2004 (by Champion)
   Add BarType.HiLow
   Add DateTime constructor to XDate

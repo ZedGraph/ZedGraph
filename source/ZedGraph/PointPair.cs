@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-26 05:33:38 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-30 06:48:50 $ </version>
 	public struct PointPair
 	{
 	#region Member variables
@@ -130,12 +130,11 @@ namespace ZedGraph
 
 	#region Inner classes
 		/// <summary>
-		/// Compares points based on their x values.  Is setup to be used in an
+		/// Compares points based on their y values.  Is setup to be used in an
 		/// ascending order sort.
 		/// <seealso cref="System.Collections.ArrayList.Sort()"/>
-		/// <seealso cref="PointPairList.Sort()"/>
 		/// </summary>
-		public class PointPairComparer : IComparer 
+		public class PointPairComparerY : IComparer 
 		{
 		
 			/// <summary>
@@ -143,7 +142,7 @@ namespace ZedGraph
 			/// </summary>
 			/// <param name="l">Point to the left.</param>
 			/// <param name="r">Point to the right.</param>
-			/// <returns>-1, 0, or 1 depending on l.X's relation to r.X</returns>
+			/// <returns>-1, 0, or 1 depending on l.Y's relation to r.Y</returns>
 			int IComparer.Compare( object l, object r ) 
 			{
 				if (l == null && r == null) 
@@ -159,15 +158,55 @@ namespace ZedGraph
 					return 1;
 				} 
 
-				double lX = ((PointPair) l).X;
-				double rX = ((PointPair) r).X;
+				double lY = ((PointPair) l).Y;
+				double rY = ((PointPair) r).Y;
 
-				if (System.Math.Abs(lX - rX) < .000000001)
+				if (System.Math.Abs(lY - rY) < .000000001)
 					return 0;
 				
-				return lX < rX ? -1 : 1;
+				return lY < rY ? -1 : 1;
 			}
 		}
+	
+      /// <summary>
+      /// Compares points based on their x values.  Is setup to be used in an
+      /// ascending order sort.
+      /// <seealso cref="System.Collections.ArrayList.Sort()"/>
+      /// </summary>
+      public class PointPairComparerX : IComparer 
+      {
+		
+         /// <summary>
+         /// Compares two <see cref="PointPair"/>s.
+         /// </summary>
+         /// <param name="l">Point to the left.</param>
+         /// <param name="r">Point to the right.</param>
+         /// <returns>-1, 0, or 1 depending on l.X's relation to r.X</returns>
+         int IComparer.Compare( object l, object r ) 
+         {
+            if (l == null && r == null) 
+            {
+               return 0;
+            } 
+            else if (l == null && r != null) 
+            {
+               return -1;
+            } 
+            else if (l != null && r == null) 
+            {
+               return 1;
+            } 
+
+            double lX = ((PointPair) l).X;
+            double rX = ((PointPair) r).X;
+
+            if (System.Math.Abs(lX - rX) < .000000001)
+               return 0;
+				
+            return lX < rX ? -1 : 1;
+         }
+      }
+	
 	#endregion
 
 	#region Methods

@@ -20,6 +20,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Collections;
 
 namespace ZedGraph
 {
@@ -29,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-29 03:12:14 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-10-30 06:48:50 $ </version>
 	public class Bar : ICloneable
 	{
 	#region Fields
@@ -45,6 +46,13 @@ namespace ZedGraph
 		/// property <see cref="Border"/> to access this value.
 		/// </summary>
 		private Border	border;
+      /// <summary>
+      ///  A private Array used in the rendering of a  <see cref="Bar"/> whose 
+      ///<see cref="BarType"/> is <see cref="Stack"/>.  The stored 
+      ///values will represent the bottom value of the next segment to
+      ///be drawn.
+      /// </summary>
+      private static ArrayList priorTop = new ArrayList () ;
 	#endregion
 
 	#region Defaults
@@ -312,7 +320,7 @@ namespace ZedGraph
 		public void DrawBars( Graphics g, GraphPane pane, PointPairList points, bool isY2Axis,
 							float barWidth, int pos, double scaleFactor )
 		{
-			float 	tmpX, tmpY, tmpBase;
+			float 	tmpX, tmpY;
 			float 	clusterWidth = pane.GetClusterWidth();
 			float 	clusterGap = pane.MinClusterGap * barWidth;
 			float 	barGap = barWidth * pane.MinBarGap;
@@ -321,9 +329,6 @@ namespace ZedGraph
 		
 			double	curX, curY, curBase;
 						
-			if ( pane.BarType == BarType.Overlay )
-				pos = 0;
-				
 			// Determine which Axis is the bar base and which is the bar value
 			Axis valueAxis = BarValueAxis( pane, isY2Axis );
 
@@ -337,6 +342,17 @@ namespace ZedGraph
 				
 			bool isHiLow = ( pane.BarType == BarType.HiLow ) && ( points is PointTrioList );
 
+			//initialize priorTop if this is the first bar series
+			if ( pos == pane.CurveList.NumBars - 1 )
+			{
+				priorTop.Clear();
+				for ( int x = 0 ; x < points.Count ; x++)
+					priorTop.Add( zeroPix );
+			}
+
+			if ( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack)
+				pos = 0;
+   				
 			// Loop over each defined point							
 			for ( int i=0; i<points.Count; i++ )
 			{
@@ -359,40 +375,48 @@ namespace ZedGraph
 				
 				if (	curY != PointPair.Missing &&
 						!System.Double.IsNaN( curY ) &&
-						!System.Double.IsInfinity( curY ) )
+						!System.Double.IsInfinity( curY ) &&
+						( curY > 0 || pane.BarType != BarType.Stack ) )
 				{
 					tmpX = pane.XAxis.Transform( i, curX );
-					if ( isY2Axis )
-					{
-						tmpY = pane.Y2Axis.Transform( i, curY );
-						tmpBase = pane.Y2Axis.Transform( i, curBase );
-					}
-					else
-					{
-						tmpY = pane.YAxis.Transform( i, curY );
-						tmpBase = pane.YAxis.Transform( i, curBase );
-					}
 					
-					if ( curBase == 0 )
+					if ( isY2Axis )
+						tmpY = pane.Y2Axis.Transform( i, curY );
+					else
+						tmpY = pane.YAxis.Transform( i, curY );
+					
+					if ( pane.BarType == BarType.Stack )
+						basePix = (float) priorTop[i];
+					else if ( curBase == 0 )
 						basePix = zeroPix;
 					else
-						basePix = tmpBase;
+						basePix = valueAxis.Transform( i, curBase );
 
 					if ( pane.BarBase == BarBase.X )
 					{
 						float left = tmpX - clusterWidth / 2.0F + clusterGap / 2.0F +
 								pos * ( barWidth + barGap );
 
+						float top = ( pane.BarType == BarType.Stack ) ?
+										(float) priorTop[i] - ( zeroPix - tmpY ) : tmpY;
+										
 						this.Draw( g, left, left + barWidth, basePix,
-							tmpY, scaleFactor, true );
+							top, scaleFactor, true );
+							
+						priorTop[i] = top;
 					}
 					else
 					{
 						float top = tmpY - clusterWidth / 2.0F + clusterGap / 2.0F +
 								pos * ( barWidth + barGap );
 
-						this.Draw( g, basePix, tmpX, top, top + barWidth,
+						float right = ( pane.BarType == BarType.Stack ) ?
+							(float) priorTop[i] - ( zeroPix - tmpX ) : tmpX;
+						
+						this.Draw( g, basePix, right, top, top + barWidth,
 								scaleFactor, true );
+
+						priorTop[i] = right;
 					}
 				}
 			}

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-10-29 03:12:15 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-10-30 06:48:50 $ </version>
 	public class PointPairList : CollectionBase, ICloneable
 	{
 	#region Fields
@@ -273,7 +273,29 @@ namespace ZedGraph
 			if ( sorted )
 				return true;
 
-			InnerList.Sort( new PointPair.PointPairComparer() );
+			InnerList.Sort( new PointPair.PointPairComparerX() );
+			return false;
+		}
+		
+      /// <summary>
+      /// Sorts the list according to the point values . Will not sort the 
+      /// list if the list is already sorted.
+      /// </summary>
+      /// <param name="type"></param>  The <see cref = "SortType"/>
+      ///used to determine whether the X or Y values will be used to sort
+      ///the list
+		/// <returns>If the list was sorted before sort was called</returns>
+		public bool Sort( SortType type)
+		{
+			// if it is already sorted we don't have to sort again
+			if ( sorted )
+				return true;
+				
+         if( type == SortType.XValues)
+			   InnerList.Sort( new PointPair.PointPairComparerX() );
+			else
+            InnerList.Sort( new PointPair.PointPairComparerY() );
+			
 			return false;
 		}
 		

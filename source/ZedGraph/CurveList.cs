@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-10-29 03:12:14 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-10-30 06:48:50 $ </version>
 	public class CurveList : CollectionBase, ICloneable
 	{
 	#region Properties
@@ -194,7 +194,8 @@ namespace ZedGraph
 		/// Go through each <see cref="CurveItem"/> object in the collection,
 		/// calling the <see cref="PointPairList.GetRange"/> member to 
 		/// determine the minimum and maximum values in the
-		/// <see cref="CurveItem.Points"/> list of data value pairs.  In the event that no
+		/// <see cref="CurveItem.Points"/> list of data value pairs.  If the curves include 
+		/// a stack bar, handle within the current GetRange method. In the event that no
 		/// data are available, a default range of min=0.0 and max=1.0 are returned.
 		/// If the Y axis has a valid data range and the Y2 axis not, then the Y2
 		/// range will be a duplicate of the Y range.  Vice-versa for the Y2 axis
@@ -235,24 +236,39 @@ namespace ZedGraph
 					tXMaxVal,
 					tYMinVal,
 					tYMaxVal;
-						
+
 			// initialize the values to outrageous ones to start
 			xMinVal = yMinVal = y2MinVal = tXMinVal = tYMinVal = Double.MaxValue;
 			xMaxVal = yMaxVal = y2MaxVal = tXMaxVal = tYMaxVal = Double.MinValue;
-			maxPts = 1;
+			maxPts = 1;			
 			
-			// Loop over each curve in the collection
+			PointPairList sumList = null;
+
+			// Loop over each curve in the collection and examine any that are not a stack bar
 			foreach( CurveItem curve in this )
 			{
-				// Call the GetRange() member function for the current
-				// curve to get the min and max values
-				curve.Points.GetRange( ref tXMinVal, ref tXMaxVal,
-										ref tYMinVal, ref tYMaxVal, bIgnoreInitial );
-				
+				if ( curve.IsBar && pane.BarType == BarType.Stack )
+				{
+					if ( sumList == null )
+						sumList = (PointPairList) curve.Points.Clone();
+					else if ( pane.BarBase == BarBase.X )
+						sumList.SumY( curve.Points );
+					else
+						sumList.SumX( curve.Points );
+					
+					sumList.GetRange( ref tXMinVal, ref tXMaxVal,
+						ref tYMinVal, ref tYMaxVal, bIgnoreInitial );
+				}
+				else
+					// Call the GetRange() member function for the current
+					// curve to get the min and max values
+					curve.Points.GetRange( ref tXMinVal, ref tXMaxVal,
+						ref tYMinVal, ref tYMaxVal, bIgnoreInitial );
+   			
 				bool isYOrd = ( ( pane.Y2Axis.IsOrdinal || pane.Y2Axis.IsText ) && curve.IsY2Axis ) ||
 								( ( pane.YAxis.IsOrdinal || pane.YAxis.IsText ) && ! curve.IsY2Axis );
 				bool isXOrd = pane.XAxis.IsOrdinal || pane.XAxis.IsText;
-								
+   							
 				// For ordinal Axes, the data range is just 1 to Npts
 				if ( isYOrd )
 				{
@@ -274,7 +290,7 @@ namespace ZedGraph
 							tYMinVal = 0;
 						else if ( tYMaxVal < 0 )
 							tYMaxVal = 0;
-						
+   					
 						if ( !isXOrd )
 						{
 							tXMinVal -= pane.ClusterScaleWidth / 2.0;
@@ -287,7 +303,7 @@ namespace ZedGraph
 							tXMinVal = 0;
 						else if ( tXMaxVal < 0 )
 							tXMaxVal = 0;
-							
+   						
 						if ( !isYOrd )
 						{
 							tYMinVal -= pane.ClusterScaleWidth / 2.0;
@@ -317,12 +333,12 @@ namespace ZedGraph
 					if ( tYMaxVal > yMaxVal )
 						yMaxVal = tYMaxVal;
 				}
-				
+   			
 				if ( tXMinVal < xMinVal )
 					xMinVal = tXMinVal;
 				if ( tXMaxVal > xMaxVal )
 					xMaxVal = tXMaxVal;
-				
+			
 			}
 		
 			// Define suitable default ranges in the event that
