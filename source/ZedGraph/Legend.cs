@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.22 $ $Date: 2005-02-15 04:50:02 $ </version>
+	/// <version> $Revision: 3.23 $ $Date: 2005-03-01 01:27:27 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -496,6 +496,8 @@ namespace ZedGraph
 						iEntry++;
 					}
 				}
+				if ( pane is MasterPane && ((MasterPane)pane).HasUniformLegendEntries )	
+					break ;
 			}
 
 			// Draw a border around the legend if required
@@ -570,6 +572,7 @@ namespace ZedGraph
 			// For a single GraphPane, create a PaneList to contain it
 			// Otherwise, just use the paneList from the MasterPane
 			PaneList paneList;
+			
 			if ( pane is GraphPane )
 			{
 				paneList = new PaneList();
@@ -577,7 +580,7 @@ namespace ZedGraph
 			}
 			else
 				paneList = ((MasterPane)pane).PaneList;
-
+			
 			return paneList;
 		}
 
@@ -652,6 +655,8 @@ namespace ZedGraph
 						nCurve++;
 					}
 				}
+				if ( pane is MasterPane && ((MasterPane)pane).HasUniformLegendEntries )				
+						break ;
 			}
 
 			float widthAvail;
@@ -673,6 +678,7 @@ namespace ZedGraph
 					case LegendPos.Top:
 					case LegendPos.TopCenter:
 					case LegendPos.Bottom:
+					case LegendPos.BottomCenter :
 						widthAvail = tAxisRect.Width;
 						break;
 		
@@ -770,8 +776,8 @@ namespace ZedGraph
 						tAxisRect.Height -= totLegHeight + halfCharHeight;
 						break;
 					case LegendPos.BottomCenter:
-						newRect.X = tAxisRect.Left;
-						newRect.Y = pane.PaneRect.Bottom - totLegHeight - pane.MarginBottom * (float) scaleFactor;
+						newRect.X = tAxisRect.Left + ( tAxisRect.Width - totLegWidth ) / 2;
+						newRect.Y = tAxisRect.Bottom;
 						
 						tAxisRect.Height -= totLegHeight + halfCharHeight;
 						break;

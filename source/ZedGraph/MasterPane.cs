@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-02-19 19:01:12 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-03-01 01:27:27 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -83,6 +83,16 @@ namespace ZedGraph
 		/// null if <see cref="AutoPaneLayout(Graphics,bool,int[])"/> was never called.
 		/// </summary>
 		private int[] countList;
+		/// <summary>
+		///Private field that stores a boolean value which signifies whether all 
+		///<see cref="ZedGraph.GraphPane"/>s in the chart use the same entries in their 
+		///<see cref="Legend"/>  If set to true, only one set of entries will be displayed in 
+		///this <see cref="Legend"/> instance.  If set to false, this instance will display all 
+		///entries from all <see cref="ZedGraph.GraphPane/>s.
+		/// </summary>
+		private bool hasUniformLegendEntries;
+
+
 
 	#endregion
 
@@ -111,6 +121,10 @@ namespace ZedGraph
 			/// the <see cref="MasterPane"/> class.
 			/// </summary>
 			public static bool IsShowLegend = false;
+			/// <summary>
+			/// The default value for the <see cref="MasterPane.hasUniformLegendEntries"/> property.
+			/// </summary>
+			public static bool hasUniformLegendEntries = false;
 		}
 	#endregion
 
@@ -142,8 +156,15 @@ namespace ZedGraph
 			get { return innerPaneGap; }
 			set { innerPaneGap = value; }
 		}
-
-	#endregion
+		/// <summary>
+		/// Gets or set the value of the	 <see cref="MasterPane.hasUniformLegendEntries"/>
+		/// </summary>
+		public bool HasUniformLegendEntries
+		{
+			get { return (this.hasUniformLegendEntries); }
+			set { this.hasUniformLegendEntries = value; } 
+		}
+		#endregion
 	
 	#region Constructors
 
@@ -166,6 +187,7 @@ namespace ZedGraph
 			this.columns = -1;
 			this.isColumnSpecified = false;
 			this.countList = null;
+			this.hasUniformLegendEntries = Default.hasUniformLegendEntries ;
 
 			this.paneList = new PaneList();
 
@@ -184,6 +206,7 @@ namespace ZedGraph
 			this.columns = rhs.rows;
 			this.isColumnSpecified = rhs.isColumnSpecified;
 			this.countList = rhs.countList;
+			this.hasUniformLegendEntries = rhs.hasUniformLegendEntries ;
 
 			this.paneList = (PaneList) rhs.paneList.Clone();
 		}
@@ -226,6 +249,7 @@ namespace ZedGraph
 			this.columns = info.GetInt32( "columns" );
 			this.isColumnSpecified = info.GetBoolean( "isColumnSpecified" );
 			this.countList = (int[]) info.GetValue( "countList", typeof(int[]) );
+			this.hasUniformLegendEntries = info.GetBoolean( "hasUniformLegendEntries" );
 
 		}
 		/// <summary>
@@ -247,6 +271,7 @@ namespace ZedGraph
 			info.AddValue( "columns", columns );
 			info.AddValue( "isColumnSpecified", isColumnSpecified );
 			info.AddValue( "countList", countList );
+			info.AddValue( "hasUniformLegendEntries", hasUniformLegendEntries );
 
 		}
 
