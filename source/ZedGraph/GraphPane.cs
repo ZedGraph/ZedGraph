@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
+	/// <version> $Revision: 2.4 $ $Date: 2004-09-16 04:41:36 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1122,6 +1122,31 @@ namespace ZedGraph
 								out hStack, out legendWidth );
 
 			return tmpRect;
+		}
+
+		/// <summary>
+		/// This method will set the <see cref="Axis.MinSpace"/> property for all three axes;
+		/// <see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>.  The <see cref="Axis.MinSpace"/>
+		/// is calculated using the currently required space multiplied by a fraction
+		/// (<paramref>bufferFraction</paramref>).
+		/// The currently required space is calculated using <see cref="Axis.CalcSpace"/>, and is
+		/// based on current data ranges, font sizes, etc.  The "space" is actually the amount of space
+		/// required to fit the tic marks, scale labels, and axis title.
+		/// The calculation is done by calling the <see cref="Axis.SetMinSpaceBuffer"/> method for
+		/// each <see cref="Axis"/>.
+		/// </summary>
+		/// <param name="g">A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.</param>
+		/// <param name="bufferFraction">The amount of space to allocate for the axis, expressed
+		/// as a fraction of the currently required space.  For example, a value of 1.2 would
+		/// allow for 20% extra above the currently required space.</param>
+		/// <param name="isGrowOnly">If true, then this method will only modify the <see cref="Axis.MinSpace"/>
+		/// property if the calculated result is more than the current value.</param>
+		public void SetMinSpaceBuffer( Graphics g, float bufferFraction, bool isGrowOnly )
+		{
+			this.xAxis.SetMinSpaceBuffer( g, this, bufferFraction, isGrowOnly );
+			this.yAxis.SetMinSpaceBuffer( g, this, bufferFraction, isGrowOnly  );
+			this.y2Axis.SetMinSpaceBuffer( g, this, bufferFraction, isGrowOnly  );
 		}
 
 		/// <summary>

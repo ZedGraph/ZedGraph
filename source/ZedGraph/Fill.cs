@@ -12,7 +12,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.2 $ $Date: 2004-09-14 05:33:06 $ </version>
+	/// <version> $Revision: 2.3 $ $Date: 2004-09-16 04:41:36 $ </version>
 	public class Fill
 	{
 	#region Fields
@@ -160,6 +160,11 @@ namespace ZedGraph
 				Brush	brush;
 				if ( this.type == FillType.Brush )
 				{
+					if ( rect.Height < 1.0F )
+						rect.Height = 1.0F;
+					if ( rect.Width < 1.0F )
+						rect.Width = 1.0F;
+						
 					if ( this.brush != null )
 					{
 						brush = this.brush;

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
+	/// <version> $Revision: 2.4 $ $Date: 2004-09-16 04:41:36 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -1630,7 +1630,40 @@ namespace ZedGraph
 				this.minScale = this.min;
 				this.maxScale = this.max;
 			}
-		}	
+		}
+		
+		/// <summary>
+		/// This method will set the <see cref="MinSpace"/> property for this <see cref="Axis"/>
+		/// using the currently required space multiplied by a fraction (<paramref>bufferFraction</paramref>).
+		/// The currently required space is calculated using <see cref="CalcSpace"/>, and is
+		/// based on current data ranges, font sizes, etc.  The "space" is actually the amount of space
+		/// required to fit the tic marks, scale labels, and axis title.
+		/// </summary>
+		/// <param name="g">A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.</param>
+		/// <param name="pane">A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.</param>
+		/// <param name="bufferFraction">The amount of space to allocate for the axis, expressed
+		/// as a fraction of the currently required space.  For example, a value of 1.2 would
+		/// allow for 20% extra above the currently required space.</param>
+		/// <param name="isGrowOnly">If true, then this method will only modify the <see cref="MinSpace"/>
+		/// property if the calculated result is more than the current value.</param>
+		public void SetMinSpaceBuffer( Graphics g, GraphPane pane, float bufferFraction,
+										bool isGrowOnly )
+		{
+			// save the original value of minSpace
+			float oldSpace = this.MinSpace;
+			// set minspace to zero, since we don't want it to affect the CalcSpace() result
+			this.MinSpace = 0;
+			// Calculate the space required for the current graph assuming scalefactor = 1.0
+			// and apply the bufferFraction
+			float space = this.CalcSpace( g, pane, 1.0 ) * bufferFraction;
+			// isGrowOnly indicates the minSpace can grow but not shrink
+			if ( isGrowOnly )
+				space = Math.Max( oldSpace, space );
+			// Set the minSpace
+			this.MinSpace = space;
+		}
 
 		/// <summary>
 		/// Setup the Transform Matrix to handle drawing of this <see cref="Axis"/>
@@ -2007,6 +2040,8 @@ namespace ZedGraph
 			float textCenter = ticSize * 1.5F +
 				this.GetScaleMaxSpace( g, pane, scaleFactor ).Height / 2.0F;
 
+			double rangeTol = ( this.maxScale - this.minScale ) * 0.00001;
+			
 			// loop for each major tic
 			for ( int i=0; i<nTics; i++ )
 			{
@@ -2016,7 +2051,7 @@ namespace ZedGraph
 				if ( dVal < this.minScale )
 					continue;
 				// if we've already past the end of the scale, then we're done
-				if ( dVal > this.maxScale )
+				if ( dVal > this.maxScale + rangeTol )
 					break;
 
 				// convert the value to a pixel position

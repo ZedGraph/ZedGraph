@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.3 $ $Date: 2004-09-14 05:33:06 $ </version>
+	/// <version> $Revision: 2.4 $ $Date: 2004-09-16 04:41:36 $ </version>
 	public class Bar
 	{
 	#region Fields
@@ -242,8 +242,8 @@ namespace ZedGraph
 			if ( this.fill.IsFilled )
 			{
 				// just avoid height/width being less than 0.1 so GDI+ doesn't cry
-				RectangleF rect = new RectangleF( left, top, Math.Max( right - left, 0.1f ),
-													Math.Max( bottom - top, 0.1f ) );
+				RectangleF rect = new RectangleF( left, top, right - left,
+													bottom - top );
 				Brush brush = this.fill.MakeBrush( rect );
 				g.FillRectangle( brush, rect );
 				brush.Dispose();

@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+15-Sep-2004 (by Champion/Vos)
+    Fix roundoff problem that caused the last scale label to occasionally disappear
+    Add SetMinSpaceBuffer() to GraphPane and Axis
+    Add a check in MakeBrush() to make sure the rect width and height are at least 1.0
+
 14-Sep-2004 (by Champion)
     Add gradient fills to symbol type
     Symbol Frame can now have different color than fill
