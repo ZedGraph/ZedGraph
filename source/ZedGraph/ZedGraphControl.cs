@@ -34,14 +34,10 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-02-21 18:53:57 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-02-21 19:04:57 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
-		
-		private bool isEnableZoom = true;
-		private bool isEnablePan = true;
-		
 		
 	#region Fields
 
@@ -101,6 +97,19 @@ namespace ZedGraph
 		/// Internal variable that indicates the control is currently being panned.
 		/// </summary>
 		private bool		isPanning = false;
+		
+		/// <summary>
+		/// Private value that determines whether or not zooming is allowed for the control.  Use the
+		/// public property <see cref="IsEnableZoom"/> to access this value.
+		/// </summary>
+		private bool isEnableZoom = true;
+		/// <summary>
+		/// Private value that determines whether or not panning is allowed for the control.  Use the
+		/// public property <see cref="IsEnablePan"/> to access this value.
+		/// </summary>
+		private bool isEnablePan = true;
+		
+		
 		/// <summary>
 		/// Internal variable that indicates the user is currently dragging the mouse with the left button
 		/// down, associated with either a Zoom or Pan operation.
@@ -216,15 +225,8 @@ namespace ZedGraph
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public MasterPane MasterPane
 		{
-			get
-			{
-				lock( this ) return masterPane;
-			}
-			
-			set
-			{ 
-				lock( this ) masterPane = value;
-			}
+			get { lock( this ) return masterPane; }
+			set { lock( this ) masterPane = value; }
 		}
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.GraphPane"/> property for the control
@@ -265,6 +267,32 @@ namespace ZedGraph
 		{
 			get { return isShowPointValues; }
 			set { isShowPointValues = value; }
+		}
+		
+		/// <summary>
+		/// Gets or sets a value that determines whether or not zooming is allowed for the control.
+		/// </summary>
+		/// <remarks>
+		/// Zooming is done by left-clicking inside the <see cref="GraphPane.AxisRect"/> to drag
+		/// out a rectangle, indicating the new scale ranges that will be part of the graph.
+		/// </remarks>
+		public bool IsEnableZoom
+		{
+			get { return isEnableZoom; }
+			set { isEnableZoom = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines whether or not panning is allowed for the control.
+		/// </summary>
+		/// <remarks>
+		/// Panning is done by clicking the middle mouse button (or holding down the shift key
+		/// while clicking the left mouse button) inside the <see cref="GraphPane.AxisRect"/> and
+		/// dragging the mouse around to shift the scale ranges as desired.
+		/// </remarks>
+		public bool IsEnablePan
+		{
+			get { return isEnablePan; }
+			set { isEnablePan = value; }
 		}
 		
 		/// <summary>
