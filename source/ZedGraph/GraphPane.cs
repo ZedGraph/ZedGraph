@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.10 $ $Date: 2004-11-05 19:11:17 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2004-11-10 04:36:52 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1344,7 +1344,8 @@ namespace ZedGraph
 		/// symbols, etc.</param>
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
-		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
+		/// are not defined as arguments to the
+		/// <see cref="AddCurve(string,double[],double[],Color)"/> method.</returns>
 		public LineItem AddCurve( string label, double[] x, double[] y, Color color )
 		{
 			LineItem curve = new LineItem( label, x, y, color, SymbolType.Default );
@@ -1368,7 +1369,8 @@ namespace ZedGraph
 		/// symbols, etc.</param>
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
-		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
+		/// are not defined as arguments to the
+		/// <see cref="AddCurve(string,PointPairList,Color)"/> method.</returns>
 		public LineItem AddCurve( string label, PointPairList points, Color color )
 		{
 			LineItem curve = new LineItem( label, points, color, SymbolType.Default );
@@ -1396,7 +1398,8 @@ namespace ZedGraph
 		/// that will be used for this curve.</param>
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
-		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
+		/// are not defined as arguments to the
+		/// <see cref="AddCurve(string,double[],double[],Color,SymbolType)"/> method.</returns>
 		public LineItem AddCurve( string label, double[] x, double[] y,
 			Color color, SymbolType symbolType )
 		{
@@ -1423,7 +1426,8 @@ namespace ZedGraph
 		/// that will be used for this curve.</param>
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
-		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
+		/// are not defined as arguments to the
+		/// <see cref="AddCurve(string,PointPairList,Color,SymbolType)"/> method.</returns>
 		public LineItem AddCurve( string label, PointPairList points,
 			Color color, SymbolType symbolType )
 		{
@@ -1447,7 +1451,8 @@ namespace ZedGraph
 		/// <param name="color">The color to used to fill the bars</param>
 		/// <returns>A <see cref="CurveItem"/> class for the newly created bar curve.
 		/// This can then be used to access all of the curve properties that
-		/// are not defined as arguments to the <see cref="AddBar"/> method.</returns>
+		/// are not defined as arguments to the
+		/// <see cref="AddBar(string,PointPairList,Color)"/> method.</returns>
 		public BarItem AddBar( string label, PointPairList points, Color color )
 		{
 			BarItem curve = new BarItem( label, points, color );
@@ -1472,7 +1477,8 @@ namespace ZedGraph
 		/// <param name="color">The color to used for the bars</param>
 		/// <returns>A <see cref="CurveItem"/> class for the newly created bar curve.
 		/// This can then be used to access all of the curve properties that
-		/// are not defined as arguments to the <see cref="AddBar"/> method.</returns>
+		/// are not defined as arguments to the
+		/// <see cref="AddBar(string,double[],double[],Color)"/> method.</returns>
 		public BarItem AddBar( string label, double[] x, double[] y, Color color )
 		{
 			BarItem curve = new BarItem( label, x, y, color );
@@ -1500,7 +1506,8 @@ namespace ZedGraph
 		/// <param name="color">The color to used for the bars</param>
 		/// <returns>A <see cref="CurveItem"/> class for the newly created bar curve.
 		/// This can then be used to access all of the curve properties that
-		/// are not defined as arguments to the <see cref="AddBar"/> method.</returns>
+		/// are not defined as arguments to the
+		/// <see cref="AddBar(string,double[],double[],double[],Color)"/> method.</returns>
 		public BarItem AddBar( string label, double[] x, double[] y, double[] baseVal, Color color )
 		{
 			BarItem curve = new BarItem( label, x, y, baseVal, color );

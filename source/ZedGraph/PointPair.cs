@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-11-06 02:16:51 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-11-10 04:36:52 $ </version>
 	public struct PointPair
 	{
 	#region Member variables
@@ -49,9 +49,10 @@ namespace ZedGraph
 		public double Y;
 		
 		/// <summary>
-		/// This PointPair's base (lower dependent) coordinate
+		/// This PointPair's Z coordinate.  Also used for the lower value (dependent axis)
+		/// for <see cref="BarType.HiLow"/> charts.
 		/// </summary>
-		public double BaseVal;
+		public double Z;
 	#endregion
 
 	#region Constructors
@@ -64,7 +65,7 @@ namespace ZedGraph
 		{
 			this.X = x;
 			this.Y = y;
-			this.BaseVal = 0;
+			this.Z = 0;
 		}
 
 		/// <summary>
@@ -72,12 +73,12 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="x">This pair's x coordinate.</param>
 		/// <param name="y">This pair's y coordinate.</param>
-		/// <param name="baseVal">This pair's base coordinate.</param>
-		public PointPair( double x, double y, double baseVal )
+		/// <param name="z">This pair's z or lower dependent coordinate.</param>
+		public PointPair( double x, double y, double z )
 		{
 			this.X = x;
 			this.Y = y;
-			this.BaseVal = baseVal;
+			this.Z = z;
 		}
 
 		/// <summary>
@@ -89,7 +90,7 @@ namespace ZedGraph
 		{
 			this.X = pt.X;
 			this.Y = pt.Y;
-			this.BaseVal = 0;
+			this.Z = 0;
 		}
 
 		/// <summary>
@@ -100,7 +101,7 @@ namespace ZedGraph
 		{
 			this.X = rhs.X;
 			this.Y = rhs.Y;
-			this.BaseVal = rhs.BaseVal;
+			this.Z = rhs.Z;
 		}
 	#endregion
 
@@ -132,6 +133,18 @@ namespace ZedGraph
 							Double.IsNaN( this.Y );
 				}
 		}
+
+		/// <summary>
+		/// The "low" value for this point (lower dependent-axis value).
+		/// This is really just an alias for <see cref="PointPair.Z"/>.
+		/// </summary>
+		/// <value>The lower dependent value for this <see cref="PointPair"/>.</value>
+		public double LowValue
+		{
+			get { return this.Z; }
+			set { this.Z = value; }
+		}
+
 	#endregion
 
 	#region Operator Overloads
@@ -255,13 +268,24 @@ namespace ZedGraph
 
 	#region Methods
 		/// <summary>
-		/// Format this PointPair value using the default format.  Example:  "( 12.345, -16.876)".
+		/// Format this PointPair value using the default format.  Example:  "( 12.345, -16.876 )".
 		/// The two double values are formatted with the "g" format type.
 		/// </summary>
 		/// <returns>A string representation of the PointPair</returns>
 		public override string ToString()
 		{
-			return this.ToString( "G" );
+			return this.ToString( "G", false );
+		}
+
+		/// <summary>
+		/// Format this PointPair value using the default format.  Example:  "( 12.345, -16.876 )".
+		/// The two double values are formatted with the "g" format type.
+		/// </summary>
+		/// <param name="isShowZ">true to show the third "Z" or low dependent value coordinate</param>
+		/// <returns>A string representation of the PointPair</returns>
+		public string ToString( bool isShowZ )
+		{
+			return this.ToString( "G", isShowZ );
 		}
 
 		/// <summary>
@@ -273,7 +297,25 @@ namespace ZedGraph
 		/// <returns>A string representation of the PointPair</returns>
 		public string ToString( string format )
 		{
-			return "( " + this.X.ToString( format ) + ", " + this.Y.ToString( format ) + " )";
+			return this.ToString( format, false );
+		}
+
+		/// <summary>
+		/// Format this PointPair value using a general format string.
+		/// Example:  a format string of "e2" would give "( 1.23e+001, -1.69e+001 )".
+		/// If <see paramref="isShowZ"/>
+		/// is true, then the third "Z" coordinate is also shown.
+		/// </summary>
+		/// <param name="format">A format string that will be used to format each of
+		/// the two double type values (see <see cref="System.Double.ToString()"/>).</param>
+		/// <returns>A string representation of the PointPair</returns>
+		/// <param name="isShowZ">true to show the third "Z" or low dependent value coordinate</param>
+		public string ToString( string format, bool isShowZ )
+		{
+			return "( " + this.X.ToString( format ) +
+					", " + this.Y.ToString( format ) + 
+					( isShowZ ? ( ", " + this.Z.ToString( format ) ) : "" )
+					+ " )";
 		}
 	#endregion
 	}

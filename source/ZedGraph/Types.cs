@@ -65,7 +65,40 @@ namespace ZedGraph
 		Solid,
 		/// <summary> A custom fill using either <see cref="LinearGradientBrush"/> or
 		/// <see cref="TextureBrush"/></summary>
-		Brush
+		Brush,
+		/// <summary>
+		/// Fill with a single solid color based on the X value of the data.</summary>
+		/// <remarks>The X value is
+		/// used to determine the color value based on a gradient brush, and using a data range
+		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
+		/// range by initializing the <see cref="Fill"/> class with your own custom
+		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
+		/// data value makes no sense (<see cref="GraphPane.PaneFill"/>, <see cref="Legend.Fill"/>,
+		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
+		/// </remarks>
+		GradientByX,
+		/// <summary>
+		/// Fill with a single solid color based on the Z value of the data.</summary>
+		/// <remarks>The Z value is
+		/// used to determine the color value based on a gradient brush, and using a data range
+		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
+		/// range by initializing the <see cref="Fill"/> class with your own custom
+		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
+		/// data value makes no sense (<see cref="GraphPane.PaneFill"/>, <see cref="Legend.Fill"/>,
+		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
+		/// </remarks>
+		GradientByY,
+		/// <summary>
+		/// Fill with a single solid color based on the Z value of the data.</summary>
+		/// <remarks>The Z value is
+		/// used to determine the color value based on a gradient brush, and using a data range
+		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
+		/// range by initializing the <see cref="Fill"/> class with your own custom
+		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
+		/// data value makes no sense (<see cref="GraphPane.PaneFill"/>, <see cref="Legend.Fill"/>,
+		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
+		/// </remarks>
+		GradientByZ
 	};
 
 	/// <summary>
@@ -363,7 +396,8 @@ namespace ZedGraph
 		/// be drawn such that the last bar in the <see cref="CurveList"/> will be behind
 		/// all other bars.  Note that the bar values are not summed up for the overlay
 		/// mode.  The data values must be summed before being passed
-		/// to <see cref="GraphPane.AddCurve"/>.  For example, if the first bar of
+		/// to <see cref="GraphPane.AddBar(string,PointPairList,Color)"/>.
+		/// For example, if the first bar of
 		/// the first <see cref="BarItem"/> has a value of 100, and the first bar of
 		/// the second <see cref="BarItem"/> has a value of 120, then that bar will
 		/// appear to be 20 units on top of the first bar.
@@ -376,7 +410,7 @@ namespace ZedGraph
 		/// This is similar to the <see cref="Overlay"/> mode, but the bars are sorted at
 		/// each base value.
 		/// The data values must be summed before being passed
-		/// to <see cref="GraphPane.AddCurve"/>.  For example, if the first bar of
+		/// to <see cref="GraphPane.AddBar(string,PointPairList,Color)"/>.  For example, if the first bar of
 		/// the first <see cref="BarItem"/> has a value of 100, and the first bar of
 		/// the second <see cref="BarItem"/> has a value of 120, then that bar will
 		/// appear to be 20 units on top of the first bar.
@@ -384,7 +418,7 @@ namespace ZedGraph
 		SortedOverlay,
 		/// <summary>
 		/// Draw the <see cref="BarItem"/> bars in the same format as a <see cref="BarType.Cluster"/>,
-		/// except that the bottom of the bars is defined by the <see cref="PointPair.BaseVal"/>
+		/// except that the bottom of the bars is defined by the <see cref="PointPair.LowValue"/>
 		/// from the <see cref="PointPair"/> struct.
 		/// </summary>
 		HiLow,

@@ -1,5 +1,11 @@
 ZedGraph Class Library Revision History
 
+9-Oct-2004 (by Champion)
+  Add FillType.GradientByX, Y, Z
+  Fix & Consolidate DrawSingleBar() code
+  Add UserControl transparency
+  Add new Fill constructors for ColorBlend, color array, etc.
+
 5-Oct-2004 (by Champion)
   Add BaseVal to PointPair
   Remove PointTrio and PointTrioList entirely

@@ -30,7 +30,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.8 $ $Date: 2004-11-07 12:16:12 $ </version>
+   /// <version> $Revision: 3.9 $ $Date: 2004-11-10 04:36:52 $ </version>
    public class Bar : ICloneable
    {
    #region Fields
@@ -437,151 +437,124 @@ namespace ZedGraph
          DrawSingleBar( g, pane, points, index, pos, zeroPix, isY2Axis, barWidth, scaleFactor );
       }
 
-      /// <summary>
-      /// Private internal routine that draws the specified single bar (an individual "point")
-      /// of this series to the specified <see cref="Graphics"/> device.
-      /// </summary>
-      /// <param name="g">
-      /// A graphic device object to be drawn into.  This is normally e.Graphics from the
-      /// PaintEventArgs argument to the Paint() method.
-      /// </param>
-      /// <param name="pane">
-      /// A reference to the <see cref="GraphPane"/> object that is the parent or
-      /// owner of this object.
-      /// </param>
-      /// <param name="points">A <see cref="PointPairList"/> of point values representing this
-      /// <see cref="Bar"/>.</param>
-      /// <param name="index">
-      /// The zero-based index number for the single bar to be drawn.
-      /// </param>
-      /// <param name="pos">
-      /// The ordinal position of the this bar series (0=first bar, 1=second bar, etc.)
-      /// in the cluster of bars.
-      /// </param>
-      /// <param name="zeroPix">The pixel value corresponding to zero on the value axis.</param>
-      /// <param name="isY2Axis">A value indicating to which Y axis this <see cref="Bar"/> is assigned.
-      /// true for the "Y2" axis, false for the "Y" axis.</param>
-      /// <param name="barWidth">
-      /// The width of each bar, in pixels.
-      /// </param>
-      /// <param name="scaleFactor">
-      /// The scaling factor to be used for rendering objects.  This is calculated and
-      /// passed down by the parent <see cref="GraphPane"/> object using the
-      /// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
-      /// font sizes, etc. according to the actual size of the graph.
-      /// </param>
-      private void DrawSingleBar( Graphics g, GraphPane pane, PointPairList points, int index,
-                           int pos, float zeroPix, bool isY2Axis, float barWidth,
-                           double scaleFactor )
-      {
-         float tmpX, tmpY, basePix;
+		/// <summary>
+		/// Private internal routine that draws the specified single bar (an individual "point")
+		/// of this series to the specified <see cref="Graphics"/> device.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
+		/// <see cref="Bar"/>.</param>
+		/// <param name="index">
+		/// The zero-based index number for the single bar to be drawn.
+		/// </param>
+		/// <param name="pos">
+		/// The ordinal position of the this bar series (0=first bar, 1=second bar, etc.)
+		/// in the cluster of bars.
+		/// </param>
+		/// <param name="zeroPix">The pixel value corresponding to zero on the value axis.</param>
+		/// <param name="isY2Axis">A value indicating to which Y axis this <see cref="Bar"/> is assigned.
+		/// true for the "Y2" axis, false for the "Y" axis.</param>
+		/// <param name="barWidth">
+		/// The width of each bar, in pixels.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		private void DrawSingleBar( Graphics g, GraphPane pane, PointPairList points, int index,
+							int pos, float zeroPix, bool isY2Axis, float barWidth,
+							double scaleFactor )
+		{
+			// pixBase = pixel value for the bar center on the base axis
+			// pixValue = pixel value for the bar top on the value axis
+			// pixLow = pixel value for the bar bottom on the value axis
+			float pixBase, pixValue, pixLow;
 
-         double curX = points[index].X;
-         double curY = points[index].Y;
-         
-         float    clusterWidth = pane.GetClusterWidth();
-         float    clusterGap = pane.MinClusterGap * barWidth;
-         float    barGap = barWidth * pane.MinBarGap;
+			float clusterWidth = pane.GetClusterWidth();
+			float clusterGap = pane.MinClusterGap * barWidth;
+			float barGap = barWidth * pane.MinBarGap;
 
-         // Get a base value for the bottom of the bar and verify validity
-         double curBase = 0;
-            // Is this a high-low type bar, with a valid PointTrio set?
-         if ( pane.BarType == BarType.HiLow )
-            curBase = points[index].BaseVal;
-            
-         if ( curBase == PointPair.Missing ||
-               System.Double.IsNaN( curBase ) ||
-               System.Double.IsInfinity( curBase ) )
-            curBase = 0;
-         
-         // Any value set to double max is invalid and should be skipped
-         // This is used for calculated values that are out of range, divide
-         //   by zero, etc.
-         // Also, any value <= zero on a log scale is invalid
-         
-         if ( curY != PointPair.Missing &&   curX != PointPair.Missing &&
-            !System.Double.IsNaN( curY ) && !System.Double.IsNaN( curX ) &&
-            !System.Double.IsInfinity( curY )  && !System.Double.IsInfinity( curX )  &&
-                  curY != 0 && curX != 0 || pane.BarType != BarType.Stack  )
-         {
-            // Calculate a pixel value for the X scale value
-            tmpX = pane.XAxis.Transform( index, curX );
-            
-            // calculate a pixel value for the Y scale value
-            if ( isY2Axis )
-               tmpY = pane.Y2Axis.Transform( index, curY );
-            else
-               tmpY = pane.YAxis.Transform( index, curY );
-            
-            // calculate a pixel value for the bottom of the bar
-            if ( pane.BarType == BarType.Stack )
-            {
-               if ( pane.BarBase == BarBase.X )
-                  if ( tmpY < zeroPix)                     //positive value
-                     basePix = (float) priorTop[index];
-                  else                                               //negative value
-                     basePix = (float)priorBottom[index] ;
-              else                                                                    
-                  if ( tmpX > zeroPix)                      //positive value
-                     basePix = (float) priorTop[index];
-               else                                               //negative value
-                  basePix = (float)priorBottom[index] ;
-           
-            }
-            else if ( curBase == 0 )
-               basePix = zeroPix;
-            else
-               basePix = BarValueAxis( pane, isY2Axis ).Transform( index, curBase );
+			// baseAxis = the axis that defines the separation between bars
+			Axis baseAxis = BarBaseAxis( pane );
+			// valueAxis = the axis the defines the height of the bars
+			Axis valueAxis = BarValueAxis( pane, isY2Axis );
 
-            // Depending on horizontal or vertical bar setting, calculate the bar rectangle and draw it.
-            float top ;
-            if ( pane.BarBase == BarBase.X )                                            //vertical
-            {
-               float left = tmpX - clusterWidth / 2.0F + clusterGap / 2.0F +
-                     pos * ( barWidth + barGap );
+			// curBase = the scale value on the base axis of the current bar
+			// curValue = the scale value on the value axis of the current bar
+			double curBase = ( pane.BarBase == BarBase.X ) ? points[index].X : points[index].Y;
+			double curValue = ( pane.BarBase == BarBase.X ) ? points[index].Y : points[index].X;
 
-               if ( tmpY <= zeroPix)                                          //if positive value
-                  top = ( pane.BarType == BarType.Stack ) ?
-                           (float) priorTop[index] - ( zeroPix - tmpY ) : tmpY;
-               else
-                  top = ( pane.BarType == BarType.Stack ) ?       //negative value
-                     (float) priorBottom[index] - ( zeroPix - tmpY ) : tmpY;
-                              
-               this.Draw( g, pane, left, left + barWidth, basePix,
-                  top, scaleFactor, true );
-                  
-               if ( curY >= 0) 
-                  priorTop[index] = top;
-               else
-                  priorBottom[index] = top ;               
-            }
-            else                                                                  //horizontal
-            {
-               float right ;
-               top = tmpY - clusterWidth / 2.0F + clusterGap / 2.0F +
-                     pos * ( barWidth + barGap );
+			// curLow = the scale value on the value axis for the bottom of the current bar
+			// Get a "low" value for the bottom of the bar and verify validity
+			double curLow = 0;
+			// Is this a high-low type bar, with a valid low value?
+			if ( pane.BarType == BarType.HiLow )
+				curLow = points[index].LowValue;
 
-               if ( tmpX >= zeroPix )                                       //positive
-                  right = ( pane.BarType == BarType.Stack ) ?
-                     (float) priorTop[index] - ( zeroPix - tmpX ) : tmpX;
-               else
-                  right = ( pane.BarType == BarType.Stack ) ?
-                     (float) priorBottom[index] - ( zeroPix - tmpX ) : tmpX;
-                     
-               
-               this.Draw( g, pane, basePix, right, top, top + barWidth,
-                     scaleFactor, true );
+			if ( curLow == PointPair.Missing ||
+					System.Double.IsNaN( curLow ) ||
+					System.Double.IsInfinity( curLow ) )
+				curLow = 0;
 
-               if ( curX >= 0 )
-                  priorTop[index] = right;
-               else
-                  priorBottom[index] = right;
-                  
-            }
-         }
-      }
+			// Any value set to double max is invalid and should be skipped
+			// This is used for calculated values that are out of range, divide
+			//   by zero, etc.
+			// Also, any value <= zero on a log scale is invalid
 
-      /// <summary>
+			if ( !points[index].IsInvalid )
+					//&&	curY != 0 && curX != 0 || pane.BarType != BarType.Stack )
+			{
+				// calculate a pixel value for the top of the bar on value axis
+				pixValue = valueAxis.Transform( index, curValue );
+				// calculate a pixel value for the center of the bar on the base axis
+				pixBase = baseAxis.Transform( index, curBase );
+
+				// calculate a pixel value for the bottom of the bar
+				if ( pane.BarType == BarType.Stack )
+				{
+					if ( curValue > 0 )
+						pixLow = (float) priorTop[index];
+					else
+						pixLow = (float) priorBottom[index];
+		
+					// adjust the bar top for stacked bars to account for prior bars
+					pixValue = pixLow - ( zeroPix - pixValue );
+				}
+				else if ( curLow == 0 )
+					pixLow = zeroPix;
+				else
+					pixLow = valueAxis.Transform( index, curLow );
+
+				// Calculate the pixel location for the side of the bar (on the base axis)
+				float pixSide = pixBase - clusterWidth / 2.0F + clusterGap / 2.0F +
+								pos * ( barWidth + barGap );
+
+				// Draw the bar
+				if ( pane.BarBase == BarBase.X )
+					this.Draw( g, pane, pixSide, pixSide + barWidth, pixLow,
+								pixValue, scaleFactor, true );
+				else
+					this.Draw( g, pane, pixLow, pixValue, pixSide, pixSide + barWidth,
+								scaleFactor, true );
+
+				// Save the old bar top for stacked bar accumulations
+				if ( curValue >= 0 )
+					priorTop[index] = pixValue;
+				else
+					priorBottom[index] = pixValue;
+		   }
+	   }
+
+	  /// <summary>
       /// Calculate the screen pixel position of the center of the specified bar, using the
       /// <see cref="Axis"/> as specified by <see cref="GraphPane.BarBase"/>.  This method is
       /// used primarily by the <see cref="GraphPane.FindNearestPoint"/> method in order to

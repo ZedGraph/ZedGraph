@@ -787,31 +787,166 @@ namespace ZedGraphTest
 
 #endif
 
-#if false	// the date label-width test
+#if false	// The gradient by value test
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Date Graph", "Date", "My Y Axis" );
 
 			// Make up some random data points
-			double[] x = new double[36];
-			double[] y = new double[36];
+			PointPairList pp = new PointPairList();
+			double x, y, z;
 			for ( int i=0; i<36; i++ )
 			{
-				x[i] = (double) new XDate( 1995, 1, i+1 );
-				y[i] = Math.Sin( (double) i * Math.PI / 15.0 );
+				x = (double) new XDate( 1995, 1, i+1 );
+				y = Math.Sin( (double) i * Math.PI / 15.0 );
+				z = Math.Abs(y) > 0.75 ? 1.0 : 0.0;
+				pp.Add( x, y, z );
 			}
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend
-			CurveItem myCurve = myPane.AddCurve( "My Curve",
-				x, y, Color.Red, SymbolType.Diamond );
+			LineItem myCurve = myPane.AddCurve( "My Curve",
+				pp, Color.Red, SymbolType.Diamond );
+			myCurve.Symbol.Size = 14;
+			myCurve.Symbol.Fill = new Fill( Color.Red, Color.Blue );
+
 			// Set the XAxis to date type
 			myPane.XAxis.Type = AxisType.Date;
-			myPane.XAxis.ScaleFormat = "&dd-&mmm-&yyyy";
+			myPane.XAxis.ScaleFormat = "dd-MMM-yyyy";
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
 			myPane.AxisChange( this.CreateGraphics() );
 
+			myCurve.Symbol.Fill.Type = FillType.GradientByY;
+			myCurve.Symbol.Fill.RangeMin = myPane.YAxis.Min;
+			myCurve.Symbol.Fill.RangeMax = myPane.YAxis.Max;
+
 #endif
+
+
+#if true	// The gradient by value test - big data
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"PVT Properties", "Pressure (atm)", "Temperature (C)" );
+
+			// Make up some random data points
+			double[] x = new double[84];
+			double[] y = new double[84];
+			double[] z = new double[84];
+
+			x[0]=59.2690155133587;y[0]=13.0347597737329; z[0]=31.6707334770289;
+			x[1]=75.6256579235177;y[1]=18.7338681246069; z[1]=23.3487523321607;
+			x[2]=11.0948941053594;y[2]=16.9475522014175; z[2]=21.0418171109274;
+			x[3]=29.6801815855515;y[3]=11.662785883584; z[3]=32.1907600255431;
+			x[4]=27.7373465648711;y[4]=12.9414407814019; z[4]=28.9406131925813;
+			x[5]=54.7165315342683;y[5]=18.0457514573456; z[5]=22.7676972564456;
+			x[6]=66.923156520351;y[6]=17.363090132363; z[6]=24.5190833698874;
+			x[7]=27.6551890140726;y[7]=13.1950716547497; z[7]=28.3905250001784;
+			x[8]=41.9314339753887;y[8]=12.7919501577703; z[8]=30.6041524149724;
+			x[9]=52.2144011580139;y[9]=19.6627270331092; z[9]=20.7998377171663;
+			x[10]=41.8296445362445;y[10]=17.1755481566211; z[10]=22.9846226717416;
+			x[11]=25.5938166635454;y[11]=12.5781665952824; z[11]=29.5391446510843;
+			x[12]=45.8612662166761;y[12]=18.7490742644499; z[12]=21.3683243810907;
+			x[13]=8.73577887496437;y[13]=12.6696395860345; z[13]=27.7148002883588;
+			x[14]=26.4947518019312;y[14]=13.2910895071743; z[14]=28.0759037761891;
+			x[15]=22.5832577514905;y[15]=12.4706834693471; z[15]=29.4834881991168;
+			x[16]=38.8753015409025;y[16]=14.7696594261642; z[16]=26.3690410146156;
+			x[17]=75.9330743341926;y[17]=22.5403081165937; z[17]=19.5013833703907;
+			x[18]=72.008149687096;y[18]=14.382014161109; z[18]=29.8868255540371;
+			x[19]=12.9547022830521;y[19]=12.0168064974744; z[19]=29.5860421565501;
+			x[20]=8.99777600571237;y[20]=14.9609989137124; z[20]=23.6021107891377;
+			x[21]=88.9954276654712;y[21]=17.5845342833154; z[21]=25.7685413526421;
+			x[22]=34.6618137487389;y[22]=15.4061070279849; z[22]=24.9778781907313;
+			x[23]=19.740116723097;y[23]=15.3967277989848; z[23]=23.7938322539581;
+			x[24]=43.6384494575732;y[24]=19.8899396485174; z[24]=20.0346951788851;
+			x[25]=26.1757787219191;y[25]=12.4288925985614; z[25]=29.9318994219954;
+			x[26]=21.1744580740721;y[26]=12.918732213922; z[26]=28.3788937275709;
+			x[27]=62.6761477197907;y[27]=16.4830150736975; z[27]=25.4722300412052;
+			x[28]=21.3324403527083;y[28]=12.0528983268088; z[28]=30.3628512364698;
+			x[29]=95.9188601750263;y[29]=17.4042657887662; z[29]=26.5208990663358;
+			x[30]=63.0143677474208;y[30]=17.9216500282948; z[30]=23.5198374325909;
+			x[31]=21.0829415516912;y[31]=15.7440225795778; z[31]=23.4069563361563;
+			x[32]=20.996284938157;y[32]=14.574398709823; z[32]=25.2117710065702;
+			x[33]=30.1204176704613;y[33]=16.0888404829054; z[33]=23.5817768409804;
+			x[34]=31.2332045358083;y[34]=17.4424762259568; z[34]=21.907872875214;
+			x[35]=44.7070230501362;y[35]=15.7937812238067; z[35]=25.1922860062714;
+			x[36]=42.4034870623767;y[36]=13.6701040625502; z[36]=28.7482163481671;
+			x[37]=55.9615354787538;y[37]=15.9828116744902; z[37]=25.7470615191364;
+			x[38]=33.0683563132001;y[38]=15.4163646549692; z[38]=24.8341248897715;
+			x[39]=41.3163203523396;y[39]=14.374576097864; z[39]=27.2893539150593;
+			x[40]=59.2746567931748;y[40]=13.9984483279329; z[40]=29.5867777430474;
+			x[41]=47.1373089783433;y[41]=11.4369128784326; z[41]=34.6594675796569;
+			x[42]=46.2096024807582;y[42]=15.2154216802627; z[42]=26.2190276042839;
+			x[43]=59.6693658721222;y[43]=20.0889628842732; z[43]=20.8275401603438;
+			x[44]=42.4229368808933;y[44]=16.4586382134001; z[44]=24.0011435929977;
+			x[45]=6.28541292465883;y[45]=11.7604210432682; z[45]=29.5180605118776;
+			x[46]=62.3428668960823;y[46]=18.6650870471943; z[46]=22.5652333157332;
+			x[47]=32.1489362138958;y[47]=14.9140468037734; z[47]=25.5810482471077;
+			x[48]=50.8524048477699;y[48]=14.2046535903614; z[48]=28.4339748337717;
+			x[49]=46.3889651354548;y[49]=14.9901012116761; z[49]=26.607881958616;
+			x[50]=80.7758299108841;y[50]=23.5546357777381; z[50]=18.9308584812203;
+			x[51]=21.1413422902109;y[51]=13.402239456366; z[51]=27.3476978415455;
+			x[52]=33.1616752873533;y[52]=15.3973653024138; z[52]=24.887405625999;
+			x[53]=38.2291950107296;y[53]=20.4027576108462; z[53]=19.2107430865102;
+			x[54]=58.7854496029097;y[54]=13.6339407530609; z[54]=30.2896404063085;
+			x[55]=70.0374387920014;y[55]=13.2373834887901; z[55]=32.201978817743;
+			x[56]=39.3428635398272;y[56]=15.2504660520163; z[56]=25.6243825489507;
+			x[57]=13.6835201822122;y[57]=14.9213810181659; z[57]=24.0463347946148;
+			x[58]=85.4195771181699;y[58]=23.8191912472925; z[58]=18.9370362721485;
+			x[59]=28.8644071788187;y[59]=18.5056427685091; z[59]=20.4846114675371;
+			x[60]=98.5140770963972;y[60]=14.1154361783096; z[60]=32.7257494620468;
+			x[61]=94.7034168810299;y[61]=17.2286769056374; z[61]=26.6806281654792;
+			x[62]=87.2159567122151;y[62]=22.9479051380357; z[62]=19.7499247716626;
+			x[63]=72.772248881859;y[63]=12.3868408971676; z[63]=34.616613174359;
+			x[64]=71.6931418204309;y[64]=13.267945990599; z[64]=32.262816914466;
+			x[65]=5.3721372219111;y[65]=15.0745408851388; z[65]=23.1175918138848;
+			x[66]=70.1076986886622;y[66]=16.2095545747361; z[66]=26.4579025801831;
+			x[67]=16.6127346545559;y[67]=12.8171274280432; z[67]=28.1400579198932;
+			x[68]=10.0663248757239;y[68]=11.6343795145634; z[68]=30.2336564148105;
+			x[69]=85.767706624334;y[69]=13.8406804186684; z[69]=32.2314015091442;
+			x[70]=6.93979112610956;y[70]=14.8019927727885; z[70]=23.6724228970852;
+			x[71]=26.6884614273252;y[71]=13.6019285616846; z[71]=27.5036370517293;
+			x[72]=63.2241783216606;y[72]=13.6511646638392; z[72]=30.6464508638642;
+			x[73]=97.2050756555494;y[73]=24.8563763295124; z[73]=18.7746279525116;
+			x[74]=44.9931625296034;y[74]=13.8039983573787; z[74]=28.7140700312222;
+			x[75]=96.9960673373471;y[75]=20.0237443863215; z[75]=23.1907128075457;
+			x[76]=50.4709737973869;y[76]=16.9122212266641; z[76]=23.9469087680024;
+			x[77]=32.2337485763923;y[77]=11.9434358288873; z[77]=31.7289273140442;
+			x[78]=77.0916428623078;y[78]=19.9702389392266; z[78]=22.0098048379942;
+			x[79]=98.4810050748141;y[79]=14.2133739141374; z[79]=32.499977272364;
+			x[80]=38.7647703587753;y[80]=17.6645010401759; z[80]=22.1546224634088;
+			x[81]=42.5020779370493;y[81]=17.2326352856953; z[81]=22.9651817724226;
+			x[82]=8.97791512776777;y[82]=14.4327202032572; z[82]=24.4349622392316;
+			x[83]=60.7691328464917;y[83]=14.9453915601231; z[83]=27.8770175020912;
+
+			PointPairList pp = new PointPairList( y, x, z );
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			LineItem myCurve = myPane.AddCurve( "Gas Data",
+				pp, Color.Red, SymbolType.Diamond );
+			myCurve.Symbol.Size = 12;
+			myCurve.Symbol.Fill = new Fill( Color.Red, Color.Blue );
+			myCurve.Symbol.Border.IsVisible = false;
+			myCurve.Symbol.Fill.Type = FillType.GradientByZ;
+			myCurve.Symbol.Fill.RangeMin = 19;
+			myCurve.Symbol.Fill.RangeMax = 34;
+			myCurve.Line.IsVisible = false;
+
+			TextItem text = new TextItem( "MW=34", 14, 110, CoordType.AxisXYScale );
+			text.FontSpec.FontColor = Color.Blue;
+			text.FontSpec.Border.IsVisible = false;
+			myPane.TextList.Add( text );
+			text = new TextItem( "MW=19", 25, 110, CoordType.AxisXYScale );
+			text.FontSpec.FontColor = Color.Red;
+			text.FontSpec.Border.IsVisible = false;
+			myPane.TextList.Add( text );
+			
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			myPane.AxisChange( this.CreateGraphics() );
+
+
+#endif
+
 
 #if false	// the text axis sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
@@ -1407,7 +1542,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if true	// Stacked Bar Example - RPK
+#if false	// Stacked Bar Example - RPK
          myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),"2003 Wacky Widget Sales\nBy Product",
             "Quarter",
             "Sales (KUSD)");
@@ -1421,55 +1556,53 @@ namespace ZedGraphTest
  //        double[] y3 = { 2, 3, 3.5, 4 };
 
 #if true                                 //           vertical stacked bars
-         LineItem curve;
-         curve = myPane.AddCurve( "Larry", null, y4, Color.Black, SymbolType.Circle );
-         curve.Line.Width = 1.5F;
-         curve.Line.IsSmooth = true;
-         curve.Line.SmoothTension = 0.6F;
-         curve.Symbol.Fill = new Fill( Color.White );
-         curve.Symbol.Size = 12;
-        
-         BarItem bar = myPane.AddBar( "Widget", null, y4, Color.RoyalBlue );
-         bar = myPane.AddBar( "Stridget",  null, y3, Color.LimeGreen );
-         bar = myPane.AddBar( "Bridget",null, y2, Color.Red );
-         myPane.XAxis.Type = AxisType.Text ;
-         myPane.XAxis.TextLabels=quarters ;         
-         myPane.BarBase=BarBase.X ;
-         myPane.BarType=BarType.Stack;
- //        myPane.BarType=BarType.Cluster ;
- //        myPane.BarType=BarType.Overlay ;
- //        myPane.BarType = BarType.SortedOverlay ;
- //        myPane.BarType = BarType.PercentStack ;
+		LineItem curve;
+		curve = myPane.AddCurve( "Larry", null, y4, Color.Black, SymbolType.Circle );
+		curve.Line.Width = 1.5F;
+		curve.Line.IsSmooth = true;
+		curve.Line.SmoothTension = 0.6F;
+		curve.Symbol.Fill = new Fill( Color.White );
+		curve.Symbol.Size = 12;
+
+		BarItem bar = myPane.AddBar( "Widget", null, y4, Color.RoyalBlue );
+		//Color[] colors = { Color.LimeGreen, Color.RoyalBlue, Color.Red };
+		//bar.Bar.Fill = new Fill( colors, 90F );
+		bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
+		bar = myPane.AddBar( "Stridget",  null, y3, Color.LimeGreen );
+		bar.Bar.Fill = new Fill( Color.LimeGreen, Color.White, Color.LimeGreen );
+		bar = myPane.AddBar( "Bridget",null, y2, Color.Red );
+		bar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red );
+		myPane.XAxis.Type = AxisType.Text ;
+		myPane.XAxis.TextLabels=quarters ;         
+		myPane.BarBase=BarBase.X ;
+		myPane.BarType=BarType.Stack;
+		//myPane.BarType=BarType.Cluster ;
+		//myPane.BarType=BarType.Overlay ;
+		//myPane.BarType = BarType.SortedOverlay ;
+		//myPane.BarType = BarType.PercentStack ;
 #endif
 
-#if false                                       //horizontal stacked bars
-/*
-         LineItem curve;
-         curve = myPane.AddCurve( "Larry", null, y4, Color.Black, SymbolType.Circle );
-         curve.Line.Width = 1.5F;
-         curve.Line.IsSmooth = true;
-         curve.Line.SmoothTension = 0.6F;
-         curve.Symbol.Fill = new Fill( Color.White );
-         curve.Symbol.Size = 12;
-*/
+#if false                                       //horizontal stacked bars         
          
-         
-         BarItem bar = myPane.AddBar( "Widget", y4,null, Color.RoyalBlue );
-         bar = myPane.AddBar( "Stridget",  y3,null, Color.LimeGreen );
-         bar = myPane.AddBar( "Bridget",y2,null, Color.Red );
-         myPane.BarBase=BarBase.Y ;
-         myPane.YAxis.Type = AxisType.Text ;
-         myPane.YAxis.TextLabels=quarters ;      
-         myPane.YAxis.IsTicsBetweenLabels = true ;   
- //        myPane.BarType=BarType.Stack ;
-  //        myPane.BarType=BarType.Cluster ;
-//         myPane.BarType=BarType.Overlay ;
-         myPane.BarType = BarType.SortedOverlay ;
-  #endif
-         myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
-         myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
-         myPane.XAxis.IsShowGrid = true;
-         myPane.YAxis.IsShowGrid = true;
+		BarItem bar = myPane.AddBar( "Widget", y4, null, Color.RoyalBlue );
+		bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue, 90F );
+		bar = myPane.AddBar( "Stridget",  y3, null, Color.LimeGreen );
+		bar.Bar.Fill = new Fill( Color.LimeGreen, Color.White, Color.LimeGreen, 90F );
+		bar = myPane.AddBar( "Bridget", y2, null, Color.Red );
+		bar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 90F );
+		myPane.BarBase=BarBase.Y ;
+		myPane.YAxis.Type = AxisType.Text ;
+		myPane.YAxis.TextLabels=quarters ;      
+		myPane.YAxis.IsTicsBetweenLabels = true ;   
+		myPane.BarType=BarType.Stack ;
+		//myPane.BarType=BarType.Cluster ;
+		//myPane.BarType=BarType.Overlay ;
+		//myPane.BarType = BarType.SortedOverlay ;
+#endif
+		myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+		myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
+		myPane.XAxis.IsShowGrid = true;
+		myPane.YAxis.IsShowGrid = true;
 			
 #endif
 
@@ -1978,8 +2111,8 @@ namespace ZedGraphTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			DoPrint();
-			//CopyToGif( myPane );
+			//DoPrint();
+			CopyToGif( myPane );
 			
 			//Bitmap image = myPane.ScaledImage( 3000, 2400, 600 );
 			//image.Save( @"c:\zedgraph.jpg", ImageFormat.Jpeg );

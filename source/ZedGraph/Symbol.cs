@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-11-03 04:17:45 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-11-10 04:36:52 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -614,11 +614,13 @@ namespace ZedGraph
 			{
 				// For the sake of speed, go ahead and create a solid brush and a pen
 				// If it's a gradient fill, it will be created on the fly for each symbol
-				SolidBrush	brush = new SolidBrush( this.fill.Color );
+				//SolidBrush	brush = new SolidBrush( this.fill.Color );
                 Pen pen = this.border.MakePen(pane, scaleFactor);
                 //Pen pen = new Pen( this.border.Color, pane.ScaledPenWidth(border.PenWidth * scaleFactor) );
 				
 				GraphicsPath path = MakePath( g, scaleFactor );
+				RectangleF rect = path.GetBounds();
+				Brush brush = this.Fill.MakeBrush( rect );
 
 				// Loop over each defined point							
 				for ( int i=0; i<points.Count; i++ )
@@ -647,6 +649,8 @@ namespace ZedGraph
 						else
 							tmpY = pane.YAxis.Transform( curY );
 
+						if ( this.fill.IsGradientValueType )
+							brush = fill.MakeBrush( rect, points[i] );
 						this.DrawSymbol( g, tmpX, tmpY, path, pen, brush );		
 					}
 				}

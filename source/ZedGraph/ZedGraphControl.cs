@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-11-10 04:36:52 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 	#region Fields
@@ -48,6 +48,8 @@ namespace ZedGraph
 		/// disposed.
 		/// </summary>
 		private GraphPane graphPane;
+
+		//private bool isTransparentBackground;
 	#endregion
 
 	#region Component Designer generated code
@@ -77,7 +79,10 @@ namespace ZedGraph
 
 			// Use double-buffering for flicker-free updating:
 			SetStyle( ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint
-				| ControlStyles.DoubleBuffer | ControlStyles.ResizeRedraw, true);
+				| ControlStyles.DoubleBuffer | ControlStyles.ResizeRedraw, true );
+			//isTransparentBackground = false;
+			SetStyle( ControlStyles.Opaque, false );
+			SetStyle( ControlStyles.SupportsTransparentBackColor, true );
 
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
 			graphPane = new GraphPane( rect, "Title", "X-Axis", "Y-Axis" );
@@ -121,7 +126,18 @@ namespace ZedGraph
 				lock( this ) graphPane = value; 
 			}
 		}
-
+/*
+		public bool IsTransparentBackground
+		{
+			get { return isTransparentBackground; }
+			set
+			{
+				isTransparentBackground = value;
+				SetStyle( ControlStyles.Opaque, !isTransparentBackground );
+				SetStyle( ControlStyles.SupportsTransparentBackColor, isTransparentBackground );
+			}
+		}
+*/
 		/// <summary>
 		/// Gets the graph pane's current image.
 		/// <seealso cref="Bitmap"/>

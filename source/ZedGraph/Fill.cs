@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-11-06 02:16:51 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-11-10 04:36:52 $ </version>
 	public class Fill
 	{
 	#region Fields
@@ -41,14 +41,14 @@ namespace ZedGraph
 		/// property <see cref="Color"/> to access this value.  This property is
 		/// only applicable if the <see cref="Type"/> is not <see cref="ZedGraph.FillType.None"/>.
 		/// </summary>
-		private Color	color;
+		private Color		color;
 		/// <summary>
 		/// Private field that stores the custom fill brush.  Use the public
 		/// property <see cref="Brush"/> to access this value.  This property is
 		/// only applicable if the 
 		/// <see cref="Type"/> property is set to <see cref="ZedGraph.FillType.Brush"/>.
 		/// </summary>
-		private Brush	brush;
+		private Brush		brush;
 		/// <summary>
 		/// Private field that determines the type of color fill.  Use the public
 		/// property <see cref="Type"/> to access this value.  The fill color
@@ -82,6 +82,10 @@ namespace ZedGraph
 		/// <seealso cref="AlignV"/>
 		private AlignV		alignV;
 
+		private double	rangeMin;
+		private double	rangeMax;
+		private Bitmap	gradientBM;
+
 	#endregion
 
 	#region Defaults
@@ -112,16 +116,27 @@ namespace ZedGraph
 	
 	#region Constructors
 		/// <summary>
-		/// The default constructor.  Initialized to no fill.
+		/// Generic initializer to default values
 		/// </summary>
-		public Fill()
+		private void Init()
 		{
-			color = Color.Red;
+			color = Color.White;
 			brush = null;
 			type = FillType.None;
 			this.isScaled = Default.IsScaled;
 			this.alignH = Default.AlignH;
 			this.alignV = Default.AlignV;
+			this.rangeMin = 0.0;
+			this.rangeMax = 1.0;
+			gradientBM = null;
+		}
+
+		/// <summary>
+		/// The default constructor.  Initialized to no fill.
+		/// </summary>
+		public Fill()
+		{
+			Init();
 		}
 		
 		/// <summary>
@@ -133,12 +148,10 @@ namespace ZedGraph
 		/// <param name="type">The <see cref="FillType"/> for this fill.</param>
 		public Fill( Color color, Brush brush, FillType type )
 		{
+			Init();
 			this.color = color;
 			this.brush = brush;
 			this.type = type;
-			this.isScaled = Default.IsScaled;
-			this.alignH = Default.AlignH;
-			this.alignV = Default.AlignV;
 		}
 		
 		/// <summary>
@@ -149,12 +162,9 @@ namespace ZedGraph
 		/// <param name="color">The color of the solid fill</param>
 		public Fill( Color color )
 		{
+			Init();
 			this.color = color;
-			this.brush = null;
 			this.type = FillType.Solid;
-			this.isScaled = Default.IsScaled;
-			this.alignH = Default.AlignH;
-			this.alignV = Default.AlignV;
 		}
 		
 		/// <summary>
@@ -166,13 +176,11 @@ namespace ZedGraph
 		/// <param name="angle">The angle (degrees) of the gradient fill</param>
 		public Fill( Color color1, Color color2, float angle )
 		{
+			Init();
 			this.color = color2;
 			this.brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
 				color1, color2, angle );
 				this.type = FillType.Brush;
-			this.isScaled = Default.IsScaled;
-			this.alignH = Default.AlignH;
-			this.alignV = Default.AlignV;
 		}
 		
 		/// <summary>
@@ -183,13 +191,11 @@ namespace ZedGraph
 		/// <param name="color2">The second color for the gradient fill</param>
 		public Fill( Color color1, Color color2 )
 		{
+			Init();
 			this.color = color2;
 			this.brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
 				color1, color2, 0F );
 			this.type = FillType.Brush;
-			this.isScaled = Default.IsScaled;
-			this.alignH = Default.AlignH;
-			this.alignV = Default.AlignV;
 		}
 		
 		/// <summary>
@@ -216,6 +222,7 @@ namespace ZedGraph
 		/// <param name="angle">The angle (degrees) of the gradient fill</param>
 		public Fill( Color color1, Color color2, Color color3, float angle )
 		{
+			Init();
 			ColorBlend blend = new ColorBlend( 3 );
 			blend.Colors[0] = color1;
 			blend.Colors[1] = color2;
@@ -229,11 +236,124 @@ namespace ZedGraph
 				color1, color2, angle );
 			((LinearGradientBrush)this.brush).InterpolationColors = blend;
 			this.type = FillType.Brush;
-			this.isScaled = Default.IsScaled;
-			this.alignH = Default.AlignH;
-			this.alignV = Default.AlignV;
 		}
 		
+		/// <summary>
+		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of many colors based on a <see cref="ColorBlend"/> object.  The gradient
+		/// angle is defaulted to zero.
+		/// </summary>
+		/// <param name="blend">The <see cref="ColorBlend"/> object that defines the colors
+		/// and positions along the gradient.</param>
+		public Fill( ColorBlend blend ) :
+			this( blend, 0.0F )
+		{
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of many colors based on a <see cref="ColorBlend"/> object, drawn at the
+		/// specified angle (degrees).
+		/// </summary>
+		/// <param name="blend">The <see cref="ColorBlend"/> object that defines the colors
+		/// and positions along the gradient.</param>
+		/// <param name="angle">The angle (degrees) of the gradient fill</param>
+		public Fill( ColorBlend blend, float angle )
+		{
+			Init();
+			this.brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
+				Color.Red, Color.White, angle );
+			((LinearGradientBrush)this.brush).InterpolationColors = blend;
+			this.type = FillType.Brush;
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of many colors based on an array of <see cref="Color"/> objects, drawn at an
+		/// angle of zero (degrees).  The <see paramref="colors"/> array is used to create
+		/// a <see cref="ColorBlend"/> object assuming a even linear distribution of the colors
+		/// across the gradient.
+		/// </summary>
+		/// <param name="colors">The array of <see cref="Color"/> objects that defines the colors
+		/// along the gradient.</param>
+		public Fill( Color[] colors ) :
+			this( colors, 0.0F )
+		{
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of many colors based on an array of <see cref="Color"/> objects, drawn at the
+		/// specified angle (degrees).  The <see paramref="colors"/> array is used to create
+		/// a <see cref="ColorBlend"/> object assuming a even linear distribution of the colors
+		/// across the gradient.
+		/// </summary>
+		/// <param name="colors">The array of <see cref="Color"/> objects that defines the colors
+		/// along the gradient.</param>
+		/// <param name="angle">The angle (degrees) of the gradient fill</param>
+		public Fill( Color[] colors, float angle )
+		{
+			Init();
+			ColorBlend blend = new ColorBlend();
+			blend.Colors = colors;
+			blend.Positions = new float[colors.Length];
+			blend.Positions[0] = 0.0F;
+			for ( int i=1; i<colors.Length; i++ )
+				blend.Positions[i] = (float) i / (float)( colors.Length - 1 );
+
+			this.brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
+				Color.Red, Color.White, angle );
+			((LinearGradientBrush)this.brush).InterpolationColors = blend;
+			this.type = FillType.Brush;
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of many colors based on an array of <see cref="Color"/> objects, drawn at the
+		/// an angle of zero (degrees).  The <see paramref="colors"/> array is used to create
+		/// a <see cref="ColorBlend"/> object assuming a even linear distribution of the colors
+		/// across the gradient.
+		/// </summary>
+		/// <param name="colors">The array of <see cref="Color"/> objects that defines the colors
+		/// along the gradient.</param>
+		/// <param name="positions">The array of floating point values that defines the color
+		/// positions along the gradient.  Values should range from 0 to 1.</param>
+		public Fill( Color[] colors, float[] positions ) :
+			this( colors, positions, 0.0F )
+		{
+		}
+
+		/// <summary>
+		/// Constructor that creates a linear gradient multi-color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of many colors based on an array of <see cref="Color"/> objects, drawn at the
+		/// specified angle (degrees).  The <see paramref="colors"/> array is used to create
+		/// a <see cref="ColorBlend"/> object assuming a even linear distribution of the colors
+		/// across the gradient.
+		/// </summary>
+		/// <param name="colors">The array of <see cref="Color"/> objects that defines the colors
+		/// along the gradient.</param>
+		/// <param name="positions">The array of floating point values that defines the color
+		/// positions along the gradient.  Values should range from 0 to 1.</param>
+		/// <param name="angle">The angle (degrees) of the gradient fill</param>
+		public Fill( Color[] colors, float[] positions, float angle )
+		{
+			Init();
+			ColorBlend blend = new ColorBlend();
+			blend.Colors = colors;
+			blend.Positions = positions;
+
+			this.brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
+				Color.Red, Color.White, angle );
+			((LinearGradientBrush)this.brush).InterpolationColors = blend;
+			this.type = FillType.Brush;
+		}
+
 		/// <summary>
 		/// Constructor that creates a texture fill, setting <see cref="Type"/> to
 		/// <see cref="FillType.Brush"/> and using the specified image.
@@ -242,12 +362,10 @@ namespace ZedGraph
 		/// <param name="wrapMode">The <see cref="WrapMode"/> class that controls the image wrapping properties</param>
 		public Fill( Image image, WrapMode wrapMode )
 		{
+			Init();
 			this.color = Color.White;
 			this.brush = new TextureBrush( image, wrapMode );
 			this.type = FillType.Brush;
-			this.isScaled = Default.IsScaled;
-			this.alignH = Default.AlignH;
-			this.alignV = Default.AlignV;
 		}
 		
 		/// <summary>
@@ -259,12 +377,10 @@ namespace ZedGraph
 		/// be a <see cref="LinearGradientBrush"/> or a <see cref="TextureBrush"/> class</param>
 		public Fill( Brush brush )
 		{
+			Init();
 			this.color = Color.White;
 			this.brush = (Brush) brush.Clone();
 			this.type = FillType.Brush;
-			this.isScaled = Default.IsScaled;
-			this.alignH = Default.AlignH;
-			this.alignV = Default.AlignV;
 		}
 		
 		/// <summary>
@@ -278,12 +394,11 @@ namespace ZedGraph
 		/// of the destination object.  true to scale it, false to leave it unscaled</param>
 		public Fill( Brush brush, bool isScaled )
 		{
+			Init();
 			this.isScaled = isScaled;
 			this.color = Color.White;
 			this.brush = (Brush) brush.Clone();
 			this.type = FillType.Brush;
-			this.alignH = Default.AlignH;
-			this.alignV = Default.AlignV;
 		}
 		
 		/// <summary>
@@ -300,6 +415,7 @@ namespace ZedGraph
 		/// (see <see cref="AlignV"/></param>
 		public Fill( Brush brush, AlignH alignH, AlignV alignV )
 		{
+			Init();
 			this.alignH = alignH;
 			this.alignV = alignV;
 			this.isScaled = false;
@@ -323,6 +439,9 @@ namespace ZedGraph
 			alignH = rhs.AlignH;
 			alignV = rhs.AlignV;
             isScaled = rhs.IsScaled;
+			rangeMin = rhs.RangeMin;
+			rangeMax = rhs.RangeMax;
+			gradientBM = null;
         }
 		
 		/// <summary>
@@ -434,6 +553,64 @@ namespace ZedGraph
 			set { alignV = value; }
 		}
 
+		/// <summary>
+		/// Returns a boolean value indicating whether or not this fill is a "Gradient-By-Value"
+		/// type.  This is true for <see cref="FillType.GradientByX"/>, <see cref="FillType.GradientByY"/>,
+		/// or <see cref="FillType.GradientByZ"/>.
+		/// </summary>
+		/// <remarks>
+		/// The gradient by value fill method allows the fill color for each point or bar to
+		/// be based on a value for that point (either X, Y, or Z in the <see cref="PointPairList"/>.
+		/// For example, assume a <see cref="Fill"/> class is defined with a linear gradient ranging from
+		/// <see cref="System.Drawing.Color.Blue"/> to <see cref="System.Drawing.Color.Red"/> and the <see cref="Fill.Type"/>
+		/// is set to <see cref="FillType.GradientByY"/>.  If <see cref="RangeMin"/> is set to 
+		/// 100.0 and <see cref="RangeMax"/> is set to 200.0, then a point that has a Y value of
+		/// 100 or less will be colored blue, a point with a Y value of 200 or more will be
+		/// colored red, and a point between 100 and 200 will have a color based on a linear scale
+		/// between blue and red.  Note that the fill color is always solid for any given point.
+		/// You can use the Z value from <see cref="PointPairList"/> along with
+		/// <see cref="FillType.GradientByZ"/> to color individual points according to some
+		/// property that is independent of the X,Y point pair.
+		/// </remarks>
+		/// <value>true if this is a Gradient-by-value type, false otherwise</value>
+		/// <seealso cref="FillType.GradientByX"/>
+		/// <seealso cref="FillType.GradientByY"/>
+		/// <seealso cref="FillType.GradientByZ"/>
+		public bool IsGradientValueType
+		{
+			get { return type == FillType.GradientByX || type == FillType.GradientByY ||
+					type == FillType.GradientByZ; }
+		}
+
+		/// <summary>
+		/// The minimum user-scale value for the gradient-by-value determination.  This defines
+		/// the user-scale value for the start of the gradient.
+		/// </summary>
+		/// <seealso cref="FillType.GradientByX"/>
+		/// <seealso cref="FillType.GradientByY"/>
+		/// <seealso cref="FillType.GradientByZ"/>
+		/// <seealso cref="IsGradientValueType"/>
+		/// <value>A double value, in user scale unit</value>
+		public double RangeMin
+		{
+			get { return rangeMin; }
+			set { rangeMin = value; }
+		}
+		/// <summary>
+		/// The maximum user-scale value for the gradient-by-value determination.  This defines
+		/// the user-scale value for the end of the gradient.
+		/// </summary>
+		/// <seealso cref="FillType.GradientByX"/>
+		/// <seealso cref="FillType.GradientByY"/>
+		/// <seealso cref="FillType.GradientByZ"/>
+		/// <seealso cref="IsGradientValueType"/>
+		/// <value>A double value, in user scale unit</value>
+		public double RangeMax
+		{
+			get { return rangeMax; }
+			set { rangeMax = value; }
+		}
+
 	#endregion
 
 	#region Methods
@@ -452,6 +629,27 @@ namespace ZedGraph
 		/// <returns>A <see cref="System.Drawing.Brush"/> class representing the fill brush</returns>
 		public Brush MakeBrush( RectangleF rect )
 		{
+			// just provide a default value for the valueFraction
+			return MakeBrush( rect, new PointPair( 0.5, 0.5, 0.5 ) );
+		}
+
+		/// <summary>
+		/// Create a fill brush using current properties.  This method will construct a brush based on the
+		/// settings of <see cref="ZedGraph.Fill.Type"/>, <see cref="ZedGraph.Fill.Color"/>
+		/// and <see cref="ZedGraph.Fill.Brush"/>.  If
+		/// <see cref="ZedGraph.Fill.Type"/> is set to <see cref="ZedGraph.FillType.Brush"/> and
+		/// <see cref="ZedGraph.Fill.Brush"/>
+		/// is null, then a <see cref="LinearGradientBrush"/> will be created between the colors of
+		/// <see cref="System.Drawing.Color.White"/> and <see cref="ZedGraph.Fill.Color"/>.
+		/// </summary>
+		/// <param name="rect">A rectangle that bounds the object to be filled.  This determines
+		/// the start and end of the gradient fill.</param>
+		/// <param name="dataValue">The data value to be used for a value-based
+		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
+		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
+		/// <returns>A <see cref="System.Drawing.Brush"/> class representing the fill brush</returns>
+		public Brush MakeBrush( RectangleF rect, PointPair dataValue )
+		{
 			// get a brush
 			if ( this.IsVisible&& ( !this.color.IsEmpty || this.brush != null ) )
 			{
@@ -462,109 +660,12 @@ namespace ZedGraph
 						rect.Height = 1.0F;
 					if ( rect.Width < 1.0F )
 						rect.Width = 1.0F;
-						
-					if ( this.brush != null )
-					{
-						if ( this.brush is SolidBrush )
-						{
-							return (Brush) this.Brush.Clone();
-						}
-						else if ( this.brush is LinearGradientBrush )
-						{
-							LinearGradientBrush linBrush = (LinearGradientBrush) this.brush.Clone();
-							
-							if ( this.isScaled )
-							{
-								linBrush.ScaleTransform( rect.Width / linBrush.Rectangle.Width,
-									rect.Height / linBrush.Rectangle.Height, MatrixOrder.Append );
-								linBrush.TranslateTransform( rect.Left - linBrush.Rectangle.Left,
-									rect.Top - linBrush.Rectangle.Top, MatrixOrder.Append );
-							}
-							else
-							{
-								float	dx = 0,
-										dy = 0;
-								switch ( this.alignH )
-								{
-								case AlignH.Left:
-									dx = rect.Left - linBrush.Rectangle.Left;
-									break;
-								case AlignH.Center:
-									dx = ( rect.Left + rect.Width / 2.0F ) - linBrush.Rectangle.Left;
-									break;
-								case AlignH.Right:
-									dx = ( rect.Left + rect.Width ) - linBrush.Rectangle.Left;
-									break;
-								}
-								
-								switch ( this.alignV )
-								{
-								case AlignV.Top:
-									dy = rect.Top - linBrush.Rectangle.Top;
-									break;
-								case AlignV.Center:
-									dy = ( rect.Top + rect.Height / 2.0F ) - linBrush.Rectangle.Top;
-									break;
-								case AlignV.Bottom:
-									dy = ( rect.Top + rect.Height) - linBrush.Rectangle.Top;
-									break;
-								}
-
-								linBrush.TranslateTransform( dx, dy, MatrixOrder.Append );
-							}
-							
-							return linBrush;
-							
-						} // LinearGradientBrush
-						else // TextureBrush
-						{
-							TextureBrush texBrush = (TextureBrush) this.brush.Clone();
-							
-							if ( this.isScaled )
-							{
-								texBrush.ScaleTransform( rect.Width / texBrush.Image.Width,
-									rect.Height / texBrush.Image.Height, MatrixOrder.Append );
-								texBrush.TranslateTransform( rect.Left, rect.Top, MatrixOrder.Append );
-							}
-							else
-							{
-								float	dx = 0,
-									dy = 0;
-								switch ( this.alignH )
-								{
-								case AlignH.Left:
-									dx = rect.Left;
-									break;
-								case AlignH.Center:
-									dx = ( rect.Left + rect.Width / 2.0F );
-									break;
-								case AlignH.Right:
-									dx = ( rect.Left + rect.Width );
-									break;
-								}
-								
-								switch ( this.alignV )
-								{
-								case AlignV.Top:
-									dy = rect.Top;
-									break;
-								case AlignV.Center:
-									dy = ( rect.Top + rect.Height / 2.0F );
-									break;
-								case AlignV.Bottom:
-									dy = ( rect.Top + rect.Height);
-									break;
-								}
-
-								texBrush.TranslateTransform( dx, dy, MatrixOrder.Append );
-							}
-							
-							return texBrush;
-						}
-					}
-					else
-						// If they didn't provide a brush, make one using the fillcolor gradient to white
-						return new LinearGradientBrush( rect, Color.White, this.color, 0F );
+					
+					return ScaleBrush( rect, this.brush, this.isScaled );
+				}
+				else if ( IsGradientValueType )
+				{
+					return new SolidBrush( GetGradientColor( dataValue ) );
 				}
 				else
 					return new SolidBrush( this.color );
@@ -572,6 +673,147 @@ namespace ZedGraph
 
 			// Always return a suitable default
 			return new SolidBrush( Color.White );
+		}
+
+		private Color GetGradientColor( PointPair dataValue )
+		{
+			double val, valueFraction;
+
+			if ( this.type == FillType.GradientByZ )
+				val = dataValue.Z;
+			else if ( this.type == FillType.GradientByY )
+				val = dataValue.Y;
+			else
+				val = dataValue.X;
+
+			if ( Double.IsInfinity( val ) || double.IsNaN( val ) || val == PointPair.Missing ||
+					this.rangeMax - this.rangeMin < 1e-20 )
+				valueFraction = 0.5;
+			else
+				valueFraction = ( val - this.rangeMin ) / ( rangeMax - rangeMin );
+
+			if ( valueFraction < 0.0 )
+				valueFraction = 0.0;
+			else if ( valueFraction > 1.0 )
+				valueFraction = 1.0;
+
+			if ( gradientBM == null )
+			{
+				RectangleF rect = new RectangleF( 0, 0, 100, 1 );
+				gradientBM = new Bitmap( 100, 1 );
+				Graphics gBM = Graphics.FromImage( gradientBM );
+
+				Brush tmpBrush = ScaleBrush( rect, this.brush, true );
+				gBM.FillRectangle( tmpBrush, rect );
+			}
+
+			return gradientBM.GetPixel( (int) (99.9 * valueFraction), 0 );
+		}
+
+		private Brush ScaleBrush( RectangleF rect, Brush brush, bool isScaled )
+		{
+			if ( brush != null )
+			{
+				if ( brush is SolidBrush )
+				{
+					return (Brush) brush.Clone();
+				}
+				else if ( brush is LinearGradientBrush )
+				{
+					LinearGradientBrush linBrush = (LinearGradientBrush) brush.Clone();
+					
+					if ( isScaled )
+					{
+						linBrush.ScaleTransform( rect.Width / linBrush.Rectangle.Width,
+							rect.Height / linBrush.Rectangle.Height, MatrixOrder.Append );
+						linBrush.TranslateTransform( rect.Left - linBrush.Rectangle.Left,
+							rect.Top - linBrush.Rectangle.Top, MatrixOrder.Append );
+					}
+					else
+					{
+						float	dx = 0,
+								dy = 0;
+						switch ( this.alignH )
+						{
+						case AlignH.Left:
+							dx = rect.Left - linBrush.Rectangle.Left;
+							break;
+						case AlignH.Center:
+							dx = ( rect.Left + rect.Width / 2.0F ) - linBrush.Rectangle.Left;
+							break;
+						case AlignH.Right:
+							dx = ( rect.Left + rect.Width ) - linBrush.Rectangle.Left;
+							break;
+						}
+						
+						switch ( this.alignV )
+						{
+						case AlignV.Top:
+							dy = rect.Top - linBrush.Rectangle.Top;
+							break;
+						case AlignV.Center:
+							dy = ( rect.Top + rect.Height / 2.0F ) - linBrush.Rectangle.Top;
+							break;
+						case AlignV.Bottom:
+							dy = ( rect.Top + rect.Height) - linBrush.Rectangle.Top;
+							break;
+						}
+
+						linBrush.TranslateTransform( dx, dy, MatrixOrder.Append );
+					}
+					
+					return linBrush;
+					
+				} // LinearGradientBrush
+				else // TextureBrush
+				{
+					TextureBrush texBrush = (TextureBrush) brush.Clone();
+					
+					if ( isScaled )
+					{
+						texBrush.ScaleTransform( rect.Width / texBrush.Image.Width,
+							rect.Height / texBrush.Image.Height, MatrixOrder.Append );
+						texBrush.TranslateTransform( rect.Left, rect.Top, MatrixOrder.Append );
+					}
+					else
+					{
+						float	dx = 0,
+								dy = 0;
+						switch ( this.alignH )
+						{
+						case AlignH.Left:
+							dx = rect.Left;
+							break;
+						case AlignH.Center:
+							dx = ( rect.Left + rect.Width / 2.0F );
+							break;
+						case AlignH.Right:
+							dx = ( rect.Left + rect.Width );
+							break;
+						}
+						
+						switch ( this.alignV )
+						{
+						case AlignV.Top:
+							dy = rect.Top;
+							break;
+						case AlignV.Center:
+							dy = ( rect.Top + rect.Height / 2.0F );
+							break;
+						case AlignV.Bottom:
+							dy = ( rect.Top + rect.Height);
+							break;
+						}
+
+						texBrush.TranslateTransform( dx, dy, MatrixOrder.Append );
+					}
+					
+					return texBrush;
+				}
+			}
+			else
+				// If they didn't provide a brush, make one using the fillcolor gradient to white
+				return new LinearGradientBrush( rect, Color.White, this.color, 0F );
 		}
 
 		/// <summary>

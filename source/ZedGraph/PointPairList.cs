@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-11-06 02:16:51 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2004-11-10 04:36:52 $ </version>
 	public class PointPairList : CollectionBase, ICloneable
 	{
 	#region Fields
@@ -206,11 +206,11 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="x">A double[] array of X values</param>
 		/// <param name="y">A double[] array of Y values</param>
-		/// <param name="baseVal">A double[] array of "base" values</param>
+		/// <param name="z">A double[] array of Z or lower-dependent axis values</param>
 		/// <returns>The zero-based ordinal index where the last point was added in the list,
 		/// or -1 if no points were added.</returns>
 		/// <seealso cref="IList.Add"/>
-		public int Add( double[] x, double[] y, double[] baseVal )
+		public int Add( double[] x, double[] y, double[] z )
 		{
 			PointPair	point;
 			int 		len = 0,
@@ -220,8 +220,8 @@ namespace ZedGraph
 				len = x.Length;
 			if ( y != null && y.Length > len )
 				len = y.Length;
-			if ( baseVal != null && baseVal.Length > len )
-				len = baseVal.Length;
+			if ( z != null && z.Length > len )
+				len = z.Length;
 						
 			for ( int i=0; i<len; i++ )
 			{
@@ -239,12 +239,12 @@ namespace ZedGraph
 				else
 					point.Y = PointPair.Missing;
 					
-				if ( baseVal == null )
-					point.BaseVal = (double) i + 1.0;
-				else if ( i < baseVal.Length )
-					point.BaseVal = baseVal[i];
+				if ( z == null )
+					point.Z = (double) i + 1.0;
+				else if ( i < z.Length )
+					point.Z = z[i];
 				else
-					point.BaseVal = PointPair.Missing;
+					point.Z = PointPair.Missing;
 					
 				rv = List.Add( point );
 			}
