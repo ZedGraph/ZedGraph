@@ -435,7 +435,44 @@ namespace ZedGraphTest
 
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
-			myPane.AxisChange();
+			myPane.AxisChange( CreateGraphics() );
+		
+			//myPane.YAxis.MaxAuto = false;
+			//myPane.YAxis.MinAuto = false;
+			//myPane.YAxis.StepAuto = false;
+			//myPane.YAxis.Min = 50;
+			//double[] x2 = { 200, 400, System.Double.MaxValue, 600, 800 };
+			//double[] y2 = { 110, 110, 110, 110, 110 };
+			
+			//myCurve = myPane.AddCurve( "", x2, y2, Color.Black );
+			//myCurve.Line.Fill = new Fill( Color.White, Color.Blue );
+			//myCurve.Line.IsVisible = false;
+			//myCurve.Symbol.IsVisible = false;
+			// First set up your main curve, etc.
+			//<your code goes here>
+									// Have ZedGraph pick the scales
+									myPane.AxisChange( CreateGraphics() );
+									
+			// Now lock down the Y axis range so it does not get modified by the fake curves that follow
+			myPane.YAxis.MaxAuto = false;
+			myPane.YAxis.MinAuto = false;
+			myPane.YAxis.StepAuto = false;
+			// Get the value that is just above the Y scale range
+			double yVal = myPane.YAxis.Max + 1;
+			// Make a curve for the first band
+			double[] xBand = { 100, 200 };
+			double[] yBand = { yVal, yVal };
+			CurveItem bandCurve = myPane.AddCurve( "", xBand, yBand, Color.Black );
+			// Fill the curve with the band color
+			bandCurve.Line.Fill = new Fill( Color.PaleGreen );
+			// Make another band from X=50 to 78
+			xBand[0] = 400;
+			xBand[1] = 500;
+			bandCurve = myPane.AddCurve( "", xBand, yBand, Color.Black );
+			bandCurve.Line.Fill = new Fill( Color.Green );
+
+
+			
 #endif
 
 #if false	// the modified initial sample

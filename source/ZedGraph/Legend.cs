@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-09-23 02:31:06 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -425,36 +425,39 @@ namespace ZedGraph
 			// Loop for each curve in the CurveList collection
 			foreach( CurveItem curve in pane.CurveList )
 			{	
-				// Calculate the x,y (TopLeft) location of the current
-				// curve legend label
-				// assuming:
-				//  charHeight/2 for the left margin, plus legendWidth for each
-				//    horizontal column
-				//  charHeight is the line spacing, with no extra margin above
-				x = this.rect.Left + halfCharHeight +
-							( iEntry % hStack ) * legendWidth;
-				y = this.rect.Top + (int)( iEntry / hStack ) * charHeight;
-				// Draw the legend label for the current curve
-				this.FontSpec.Draw( g, curve.Label, x + 2.5F * charHeight, y,
-								AlignH.Left, AlignV.Top, scaleFactor );
-				
-				if ( curve.IsBar )
+				if ( curve.Label != "" )
 				{
-					curve.Bar.Draw( g, x, x + 2 * charHeight, y + charHeight / 4.0F,
-								y + 3.0F * charHeight / 4.0F, scaleFactor, true );
+					// Calculate the x,y (TopLeft) location of the current
+					// curve legend label
+					// assuming:
+					//  charHeight/2 for the left margin, plus legendWidth for each
+					//    horizontal column
+					//  charHeight is the line spacing, with no extra margin above
+					x = this.rect.Left + halfCharHeight +
+								( iEntry % hStack ) * legendWidth;
+					y = this.rect.Top + (int)( iEntry / hStack ) * charHeight;
+					// Draw the legend label for the current curve
+					this.FontSpec.Draw( g, curve.Label, x + 2.5F * charHeight, y,
+									AlignH.Left, AlignV.Top, scaleFactor );
+					
+					if ( curve.IsBar )
+					{
+						curve.Bar.Draw( g, x, x + 2 * charHeight, y + charHeight / 4.0F,
+									y + 3.0F * charHeight / 4.0F, scaleFactor, true );
+					}
+					else
+					{
+						// Draw a sample curve to the left of the label text
+						curve.Line.DrawSegment( g, x, y + charHeight / 2,
+							x + 2 * charHeight, y + halfCharHeight );
+						// Draw a sample symbol to the left of the label text				
+						curve.Symbol.DrawSymbol( g, x + charHeight, y + halfCharHeight,
+							scaleFactor );
+					}
+										
+					// maintain a curve count for positioning
+					iEntry++;
 				}
-				else
-				{
-					// Draw a sample curve to the left of the label text
-					curve.Line.DrawSegment( g, x, y + charHeight / 2,
-						x + 2 * charHeight, y + halfCharHeight );
-					// Draw a sample symbol to the left of the label text				
-					curve.Symbol.DrawSymbol( g, x + charHeight, y + halfCharHeight,
-						scaleFactor );
-				}
-									
-				// maintain a curve count for positioning
-				iEntry++;
 			}
 		
 		
@@ -519,14 +522,17 @@ namespace ZedGraph
 			// Find the maximum width of the legend labels
 			foreach( CurveItem curve in pane.CurveList )
 			{
-				// Calculate the width of the label save the max width
+				if ( curve.Label != "" )
+				{
+					// Calculate the width of the label save the max width
 
-				tmpWidth = this.FontSpec.GetWidth( g, curve.Label, scaleFactor );
+					tmpWidth = this.FontSpec.GetWidth( g, curve.Label, scaleFactor );
 
-				if ( tmpWidth > maxWidth )
-					maxWidth = tmpWidth;
-	
-				nCurve++;
+					if ( tmpWidth > maxWidth )
+						maxWidth = tmpWidth;
+		
+					nCurve++;
+				}
 			}
 		
 			float widthAvail;

@@ -1,5 +1,12 @@
 ZedGraph Class Library Revision History
 
+22-Sep-2004 (by Champion)
+    Eliminate legend entries for curves with blank labels
+    
+21-Sep-2004 (by Champion)
+    Release 3.0
+    Fix grid so it's behind the bar/line fills
+    
 18-Sep-2004 (by Champion)
     More Constructors for Fill class, gradients/texture fills
     Add Fill.IsScaled and Fill.AlignH/V
