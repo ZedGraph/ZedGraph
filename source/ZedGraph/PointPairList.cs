@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-10-30 06:48:50 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-11-05 19:11:17 $ </version>
 	public class PointPairList : CollectionBase, ICloneable
 	{
 	#region Fields
@@ -70,7 +70,7 @@ namespace ZedGraph
 		/// <summary>
 		/// true if the list is currently sorted.
 		/// </summary>
-		/// <seealso cref="Sort"/>
+		/// <seealso cref="Sort()"/>
 		public bool Sorted
 		{
 			get { return sorted; }

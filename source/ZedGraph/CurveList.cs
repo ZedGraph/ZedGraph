@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-10-30 06:48:50 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2004-11-05 19:11:17 $ </version>
 	public class CurveList : CollectionBase, ICloneable
 	{
 	#region Properties
@@ -400,13 +400,11 @@ namespace ZedGraph
 		/// </param>
 		public void Draw( Graphics g, GraphPane pane, double scaleFactor )
 		{
-			// keep track of the ordinal position for bar curves only
-			int pos = 0;
-			foreach ( CurveItem curve in this )
-			{
-				if ( curve.IsBar )
-					pos++;
-			}
+			// Configure the accumulator for stacked bars
+			Bar.ResetBarStack();
+
+			// Count the number of BarItems in the curvelist
+			int pos = this.NumBars;
 			
 			// Loop for each curve in reverse order
 			for ( int i=this.Count-1; i>=0; i-- )
@@ -418,7 +416,6 @@ namespace ZedGraph
 					
 				// Render the curve
 				curve.Draw( g, pane, pos, scaleFactor );
-
 			}
 			
 		}

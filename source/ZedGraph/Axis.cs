@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-11-03 04:17:44 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2004-11-05 19:11:16 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -543,9 +543,10 @@ namespace ZedGraph
 			/// <summary>
 			/// The default setting for the <see cref="Axis"/> scale date format string
 			/// (<see cref="Axis.ScaleFormat"/> property).  This value is set as per
-			/// the <see cref="XDate.ToString"/> function.
+			/// the <see cref="XDate.ToString()"/> function.
 			/// </summary>
-			public static string ScaleFormat = "&dd-&mmm-&yy &hh:&nn";
+			//public static string ScaleFormat = "&dd-&mmm-&yy &hh:&nn";
+			public static string ScaleFormat = "g";
 			/// <summary>
 			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
 			/// This values applies only to Date-Time type axes.
@@ -1718,7 +1719,7 @@ namespace ZedGraph
 		/// This property may be set automatically by ZedGraph, depending on the state of
 		/// <see cref="ScaleFormatAuto"/>.
 		/// </summary>
-		/// <value>This format string is as defined for the <see cref="XDate.ToString"/> function</value>
+		/// <value>This format string is as defined for the <see cref="XDate.ToString()"/> function</value>
 		/// <seealso cref="ScaleMag"/>
 		/// <seealso cref="ScaleFormatAuto"/>
 		/// <seealso cref="ScaleFontSpec"/>

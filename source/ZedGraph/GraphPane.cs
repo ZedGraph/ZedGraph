@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.9 $ $Date: 2004-11-03 04:17:45 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2004-11-05 19:11:17 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -345,15 +345,22 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsAxisBorderVisible = true;
 
-			/// <summary>
-			/// The default settings for the <see cref="Axis"/> scale ignore initial
-			/// zero values option (<see cref="GraphPane.IsIgnoreInitial"/> property).
-			/// true to have the auto-scale-range code ignore the initial data points
-			/// until the first non-zero Y value, false otherwise.
-			/// </summary>
-			public static bool IsIgnoreInitial = false;
+            /// <summary>
+            /// The default settings for the <see cref="Axis"/> scale ignore initial
+            /// zero values option (<see cref="GraphPane.IsIgnoreInitial"/> property).
+            /// true to have the auto-scale-range code ignore the initial data points
+            /// until the first non-zero Y value, false otherwise.
+            /// </summary>
+            public static bool IsIgnoreInitial = false;
+            /// <summary>
+            /// The default setting for the <see cref="GraphPane.IsPenWidthScaled"/> option.
+            /// true to have all pen widths scaled according to <see cref="GraphPane.BaseDimension"/>,
+            /// false otherwise.
+            /// </summary>
+            /// <seealso cref="GraphPane.CalcScaleFactor"/>
+            public static bool IsPenWidthScaled = false;
 
-			/// <summary>
+            /// <summary>
 			/// The default value for the <see cref="GraphPane.PaneGap"/> property.
 			/// This is the size of the margin around the edge of the
             /// <see cref="GraphPane.PaneRect"/>, in units of points (1/72 inch).
@@ -642,7 +649,7 @@ namespace ZedGraph
 		/// to false.  If you set this value to false, you must also manually set
 		/// the <see cref="AxisRect"/> property.
 		/// You can easily determine the axisRect that ZedGraph would have
-		/// calculated by calling the <see cref="CalcAxisRect"/> method, which returns
+		/// calculated by calling the <see cref="CalcAxisRect(Graphics)"/> method, which returns
 		/// an axis rect sized for the current data range, scale sizes, etc.
 		/// </summary>
 		/// <value>true to have ZedGraph calculate the axisRect, false to do it yourself</value>
@@ -756,10 +763,19 @@ namespace ZedGraph
 
         /// <summary>
         /// Gets or sets the property that controls whether or not pen widths are scaled for this
-        /// <see cref="GraphPane"/>.  This value is only applicable if <see cref="IsFontsScaled"/>
-        /// is true.  If <see cref="IsFontsScaled"/> is false, then no scaling will be done,
-        /// regardless of the value of <see cref="IsPenWidthScaled"/>.
+        /// <see cref="GraphPane"/>.
         /// </summary>
+        /// <remarks>This value is only applicable if <see cref="IsFontsScaled"/>
+        /// is true.  If <see cref="IsFontsScaled"/> is false, then no scaling will be done,
+        /// regardless of the value of <see cref="IsPenWidthScaled"/>.  Note that scaling the pen
+        /// widths can cause "artifacts" to appear at typical screen resolutions.  This occurs
+        /// because of roundoff differences; in some cases the pen width may round to 1 pixel wide
+        /// and in another it may round to 2 pixels wide.  The result is typically undesirable.
+        /// Therefore, this option defaults to false.  This option is primarily useful for high
+        /// resolution output, such as printer output or high resolution bitmaps (from
+        /// <see cref="GraphPane.ScaledImage"/>) where it is desirable to have the pen width
+        /// be consistent with the screen image.
+        /// </remarks>
         /// <value>true to scale the pen widths according to the size of the graph,
         /// false otherwise.</value>
         /// <seealso cref="IsFontsScaled"/>
@@ -882,7 +898,7 @@ namespace ZedGraph
 			this.baseDimension = Default.BaseDimension;
 			this.paneGap = Default.PaneGap;
 			this.isFontsScaled = true;
-            this.isPenWidthScaled = true;
+            this.isPenWidthScaled = Default.IsPenWidthScaled;
 
             this.minClusterGap = Default.MinClusterGap;
 			this.minBarGap = Default.MinBarGap;
@@ -1251,17 +1267,31 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Calculate the scaling factor based on the ratio of the current <see cref="PaneRect"/> dimensions and
-		/// the <see cref="BaseDimension"/>.  This scaling factor is used to proportionally scale the
-		/// features of the <see cref="GraphPane"/> so that small graphs don't have huge fonts, and vice versa.
-		/// The scale factor represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+		/// the <see cref="BaseDimension"/>.
 		/// </summary>
-		/// <param name="g">
+		/// <remarks>This scaling factor is used to proportionally scale the
+		/// features of the <see cref="GraphPane"/> so that small graphs don't have huge fonts, and vice versa.
+		/// The scale factor represents a linear multiple to be applied to font sizes, symbol sizes, tic sizes,
+		/// gap sizes, pen widths, etc.  The units of the scale factor are "World Pixels" per "Standard Point".
+		/// If any object size, in points, is multiplied by this scale factor, the result is the size, in pixels,
+		/// that the object should be drawn using the standard GDI+ drawing instructions.  A "Standard Point"
+		/// is a dimension based on points (1/72nd inch) assuming that the <see cref="PaneRect"/> size
+		/// matches the <see cref="BaseDimension"/>.
+		/// Note that "World Pixels" will still be transformed by the GDI+ transform matrices to result
+		/// in "Output Device Pixels", but "World Pixels" are the reference basis for the drawing commands.
+		/// The use of the scale factor depends upon the settings of <see cref="GraphPane.IsFontsScaled"/> and
+		/// <see cref="GraphPane.IsPenWidthScaled"/>.
+        /// </remarks>
+        /// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		/// <returns>
 		/// A double precision value representing the scaling factor to use for the rendering calculations.
 		/// </returns>
+		/// <seealso cref="GraphPane.IsFontsScaled"/>
+		/// <seealso cref="GraphPane.IsPenWidthScaled"/>
+		/// <seealso cref="GraphPane.BaseDimension"/>
 		protected double CalcScaleFactor( Graphics g )
 		{
 			double scaleFactor; //, xInch, yInch;

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-30 06:48:50 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-11-05 19:11:17 $ </version>
 	public struct PointPair
 	{
 	#region Member variables
@@ -225,7 +225,7 @@ namespace ZedGraph
 		/// Example:  a format string of "e2" would give "( 1.23e+001, -1.69e+001 )".
 		/// </summary>
 		/// <param name="format">A format string that will be used to format each of
-		/// the two double type values (see <see cref="System.Double.ToString"/>).</param>
+		/// the two double type values (see <see cref="System.Double.ToString()"/>).</param>
 		/// <returns>A string representation of the PointPair</returns>
 		public string ToString( string format )
 		{

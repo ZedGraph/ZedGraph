@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-11-03 04:17:45 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-11-05 19:11:17 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -77,7 +77,7 @@ namespace ZedGraph
 		/// </summary>
 		public const double SecondsPerDay = 86400.0;
 		/// <summary>
-		/// The default format string to be used in <see cref="ToString"/> when
+		/// The default format string to be used in <see cref="ToString()"/> when
 		/// no format is provided
 		/// </summary>
 //		public const string DefaultFormatStr = "&d-&mmm-&yy &hh:&nn";
@@ -1108,8 +1108,7 @@ namespace ZedGraph
 		/// <returns>A string representation of the date</returns>
 		public string ToString( string fmtStr )
 		{
-			DateTime dt = XLDateToDateTime( this.XLDate );
-			return dt.ToString( fmtStr );
+			return ToString( this.XLDate, fmtStr );
 		}
 
 		/// <summary>

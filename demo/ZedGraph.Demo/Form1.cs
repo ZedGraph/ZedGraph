@@ -1232,8 +1232,9 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if false	// The main example
-			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+#if true	// The main example
+
+            myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
 				"Widget Production\n(units/hour)" );
@@ -1279,7 +1280,7 @@ namespace ZedGraphTest
 			myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
 			
 			myPane.XAxis.IsShowGrid = true;
-			myPane.IsPenWidthScaled = false;
+			//myPane.IsPenWidthScaled = false;
 			//myPane.XAxis.ScaleFontSpec.Angle = 90;
 			//myPane.XAxis.ScaleAlign = AlignP.Inside;
 			//myPane.XAxis.IsShowMinorGrid = true;
@@ -1360,7 +1361,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if true	// Stacked Bar Example - RPK
+#if false	// Stacked Bar Example - RPK
          myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),"2003 Wacky Widget Sales\nBy Product",
             "Quarter",
             "Sales (KUSD)");
@@ -1927,10 +1928,11 @@ namespace ZedGraphTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+			DoPrint();
 			//CopyToGif( myPane );
 			
-			Bitmap image = myPane.ScaledImage( 3000, 2400, 600 );
-			image.Save( @"c:\zedgraph.jpg", ImageFormat.Jpeg );
+			//Bitmap image = myPane.ScaledImage( 3000, 2400, 600 );
+			//image.Save( @"c:\zedgraph.jpg", ImageFormat.Jpeg );
 			
 			//MultiImage( myPane, myPane2 );
 			
@@ -1951,7 +1953,6 @@ namespace ZedGraphTest
 			}
 			*/
 			
-			//DoPrint();
 			
 			/*
 			const int NUMITER = 100;

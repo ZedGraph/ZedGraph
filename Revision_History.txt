@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+5-Oct-2004 (by Champion)
+  Add DrawSingleBar code - prep for sorted overlay
+  
 2-Oct-2004 (by Champion)
   Fix scaling logic throughout - all sizes now in points
   Fix CalcScaleFactor so scale factor is world pixels/standard point
