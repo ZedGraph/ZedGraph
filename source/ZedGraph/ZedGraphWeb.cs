@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-02-18 06:26:00 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2005-02-18 06:30:16 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -75,8 +75,7 @@ namespace ZedGraph
 			vsassist.Register('c',typeof(ZedGraphWebCurveCollection));
 			vsassist.Register('g',typeof(ZedGraphWebGraphItemCollection));
 			vsassist.Register('r',typeof(ZedGraphWebRect));
-			vsassist.Register('R',typeof(ZedGraphWebRect));
-			vsassist.Register('P',typeof(ZedGraphWebRect));
+			vsassist.Register('R',typeof(ZedGraphWebRect));			
 		}
 		#endregion
 
@@ -191,6 +190,19 @@ namespace ZedGraph
 		#endregion
 
 	#region Attributes
+
+		[Category("Page Cache"),NotifyParentProperty(true),
+		Description("Optional output caching parameter in seconds. A zero value ignores cache settings. " +
+			"For more advanced caching see microsoft documentation")]
+		public int CacheDuration
+		{
+			get 
+			{ 
+				object x = ViewState["CacheDuration"]; 
+				return (null == x) ? 0 : (int)x;
+			}
+			set { ViewState["CacheDuration"] = value; }
+		}
 
 		/// <summary>
 		/// The <see cref="String"/> name of the data member that contains the data to be
@@ -595,21 +607,7 @@ namespace ZedGraph
 		public ZedGraphWebRect PieRect
 		{
 			get { return (ZedGraphWebRect)vsassist.GetValue('R',this.IsTrackingViewState); }
-		}
-
-		/// <summary>
-		/// Proxy property that gets the value of the <see cref="PaneBase.PaneRect"/>.
-		/// </summary>
-		[
-		Category("Appearance"),
-		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
-		NotifyParentProperty(true),
-		PersistenceMode(PersistenceMode.InnerProperty)
-		]
-		public ZedGraphWebRect PaneRect
-		{
-			get { return (ZedGraphWebRect)vsassist.GetValue('P',this.IsTrackingViewState); }
-		}
+		}		
 				
 		/// <summary>
 		/// Proxy property that gets the value of the <see cref="PaneBase.FontSpec"/>.
@@ -764,6 +762,13 @@ namespace ZedGraph
 			{
 				try
 				{
+					// Add visual designer influences here - first!!
+					MapWebContent(g,pane);
+
+					// Add DataSource values if available before the callback
+					PopulateByDataSource(g,pane);
+
+					// Add custom callback tweeking next
 					handler( g, pane );
 				}
 				catch(Exception)
@@ -771,7 +776,7 @@ namespace ZedGraph
 					//TODO: what now, callback for errors? ;)
 				}
 			}
-			else if (CurveList.Count == 0 )
+			else if ((CurveList.Count == 0) && (GraphItemList.Count == 0) )
 			{// default with the sample graph if no callback provided
 				ZedGraphWeb.RenderDemo(g,pane);
 			}
@@ -807,8 +812,7 @@ namespace ZedGraph
 				this.AxisFill.CopyTo(pane.AxisFill);
 				pane.MinClusterGap = this.MinClusterGap;
 				pane.MinBarGap = this.MinBarGap;
-				pane.BarBase = this.BarBase;
-				this.PaneRect.CopyTo(pane.PaneRect);
+				pane.BarBase = this.BarBase;				
 				this.Legend.CopyTo(pane.Legend);
 				this.FontSpec.CopyTo(pane.FontSpec);
 				pane.Title = this.Title;
@@ -973,6 +977,20 @@ namespace ZedGraph
 		protected override void OnPreRender( EventArgs e )
 		{
 			base.OnPreRender( e );		
+
+			if ( this.CacheDuration > 0 )
+			{
+				System.Web.HttpContext context = System.Web.HttpContext.Current;
+				if ( context != null )
+				{
+					System.Web.HttpCachePolicy policy = context.Response.Cache;
+					if ( policy != null )
+					{
+						policy.SetExpires( DateTime.Now.AddSeconds(this.CacheDuration) );
+					}
+				}
+			}
+			
 			Draw( true );
 		}
 		
@@ -988,13 +1006,7 @@ namespace ZedGraph
 			GraphPane pane = new GraphPane( rect, Title, string.Empty, string.Empty );
 												
 			Bitmap image = new Bitmap( this.Width, this.Height ); 			
-			Graphics g = Graphics.FromImage( image );		
-
-			//add visual designer influences here - first!!
-			MapWebContent(g,pane);
-
-			// Add DataSource values if available before the callback
-			PopulateByDataSource(g,pane);
+			Graphics g = Graphics.FromImage( image );					
 
 			// Use callback to gather more settings and data values
 			OnDrawPane( g, pane );			
