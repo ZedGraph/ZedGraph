@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.6 $ $Date: 2004-09-20 05:10:22 $ </version>
+	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:07 $ </version>
 	public class Bar
 	{
 	#region Fields

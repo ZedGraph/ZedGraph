@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
+	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
 	public struct PointPair
 	{
 	#region Member variables

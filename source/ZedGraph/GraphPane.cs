@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.7 $ $Date: 2004-09-22 02:08:13 $ </version>
+	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
