@@ -138,7 +138,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if true	// The main example
+#if false	// The main example
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -322,6 +322,7 @@ namespace ZedGraphTest
 
 			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
+			//double[] y = { -20, -10, -50, -25, -35, -75, -90, -40, -33, -50 };
 			LineItem curve;
 			curve = myPane.AddCurve( "Larry", x, y, Color.Green, SymbolType.Circle );
 			curve.Line.Width = 1.5F;
@@ -333,6 +334,7 @@ namespace ZedGraphTest
 			curve.Line.Fill.IsVisible = false;
 			
 			double[] y3 = { 5.2, 49.0, 33.8, 88.57, 99.9, 36.8, 22.1, 34.3, 10.4, 17.5 };
+			//double[] y3 = { -5.2, -49.0, -33.8, -88.57, -99.9, -36.8, -22.1, -34.3, -10.4, -17.5 };
 			curve = myPane.AddCurve( "Moe", x, y3, Color.FromArgb( 200, 55, 135), SymbolType.Triangle );
 			curve.Line.Width = 1.5F;
 			//curve.Line.IsSmooth = true;
@@ -846,22 +848,30 @@ namespace ZedGraphTest
 			myPane.AxisChange( CreateGraphics() );
 #endif
 
-#if false	// The initial sample
+#if true	// The initial sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Graph\n(For CodeProject Sample)",
 				"My X Axis",
 				"My Y Axis" );
 			// Make up some random data points
-			double[] x = { 0.2, 2, 20, 80, 150, 400, 700, 800, 900, 1000 };
-			double[] y = { 20, 10, 50, 40, 35, 60, 90, 25, 48, 75 };
+			//double[] x = { 0.2, 2, 20, 80, 150, 400, 700, 800, 900, 1000 };
+			//double[] y = { 20, 10, 50, 40, 35, 60, 90, 25, 48, 75 };
+
+			double[] x = { 0.1, 0.25, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 };
+			double[] y = { 0.2, 0.088, 0.2, 0.9, 0.2, 0.34, 0.2, 0.2 };
 			string[] labels = { "point\none", "two", "point\nthree", "four", "5", "6", "Point\n7", "8", "9", "Point\nten" };
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend
 			LineItem myCurve = myPane.AddCurve( "My Curve",
 				x, y, Color.Red, SymbolType.Diamond );
 
-			myCurve.IsVisible = false;
+			myCurve.Line.IsSmooth = true;
+			myCurve.Line.SmoothTension = 0.5F;
+
+			myPane.YAxis.Min = -0.1;
+
+			MessageBox.Show( myCurve.Points.SplineInterpolateX( 0.652, 0.5 ).ToString() );
 			
 			//myPane.YAxis.Min = 100;
 			//myPane.YAxis.Max = 150;
@@ -1494,7 +1504,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if false	//HiLoClose Example
+#if false	// HiLoClose Example
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"Hi-Low-Close Chart",
@@ -1761,7 +1771,7 @@ namespace ZedGraphTest
 			//			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if false // The sorted overlay bar graph sample
+#if false	// The sorted overlay bar graph sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Overlay Bar Graph", "Label", "My Y Axis" );
@@ -2383,7 +2393,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if false  // Will's Test
+#if false	// Will's Test
 			// Create a new graph
 			myPane = new GraphPane( new Rectangle( 40, 40, 300, 200 ),
 				"My Pane",

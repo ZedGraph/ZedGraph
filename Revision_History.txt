@@ -1,5 +1,13 @@
 ZedGraph Class Library Revision History
 
+8-Jan-2005 (by Champion)
+  Fix CurveList.GetRange bug for stacked curves
+  Some code cleanup
+  Add SplineInterpolateX to PointPairList
+
+7-Jan-2005 (by Martz)
+  Add expanded interface for Web Chart
+
 5-Jan-2005 (by Champion)
   Add Line Stacking via GraphPane.LineType
   Add Serialization - Implement ISerializable
