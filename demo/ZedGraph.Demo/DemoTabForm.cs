@@ -40,6 +40,7 @@ namespace ZedGraph.Demo
 			loadDemo(new BarChartSampleDemo());
 			loadDemo(new HorizontalBarSampleDemo());
 			loadDemo(new StackedBarSampleDemo());
+			loadDemo(new PercentStkBarDemo());
 			
 			// TODO: add more demos here
 			// ...
