@@ -4,6 +4,11 @@ using System.Windows.Forms;
 
 namespace ZedGraph
 {
+	// <summary>
+	// <c>ZedGraph</c> is a class library and UserControl (<see cref="ZedGraphControl"/>) that display
+	// 2D line graphs of user specified data.  The <c>ZedGraph</c> namespace includes all functionality
+	// required to draw, modify, and update the graph.
+	// </summary>
 	
 	/// <summary>
 	/// Class <see cref="GraphPane"/> encapsulates the graph pane, which is all display elements
@@ -12,7 +17,7 @@ namespace ZedGraph
 	/// of the graph.  You can have multiple graphs in the same document or form,
 	/// just instantiate multiple GraphPane's.
 	/// </summary>
-	public class GraphPane
+	public class GraphPane : ICloneable
 	{
 		// Item subclasses
 		private XAxis		xAxis;			// A class representing the X axis
@@ -105,6 +110,50 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The GraphPane object from which to copy</param>
+		public GraphPane( GraphPane rhs )
+		{
+			paneRect = rhs.PaneRect;
+			xAxis = new XAxis( rhs.XAxis );
+			yAxis = new YAxis( rhs.YAxis );
+			y2Axis = new Y2Axis( rhs.Y2Axis );
+			legend = new Legend( rhs.Legend);
+			curveList = new CurveList( rhs.CurveList );
+			textList = new TextList( rhs.TextList );
+			arrowList = new ArrowList(rhs.ArrowList );
+			
+			this.title = rhs.Title;
+			this.isShowTitle = rhs.IsShowTitle;
+			this.fontSpec = new FontSpec( rhs.FontSpec );
+					
+			this.isIgnoreInitial = rhs.IsIgnoreInitial;
+			
+			this.isPaneFramed = rhs.IsPaneFramed;
+			this.paneFrameColor = rhs.PaneFrameColor;
+			this.paneFramePenWidth = rhs.PaneFramePenWidth;
+			this.paneBackColor = rhs.PaneBackColor;
+
+			this.isAxisFramed = rhs.IsAxisFramed;
+			this.axisFrameColor = rhs.AxisFrameColor;
+			this.axisFramePenWidth = rhs.AxisFramePenWidth;
+			this.axisBackColor = rhs.AxisBackColor;
+
+			this.baseDimension = rhs.BaseDimension;
+			this.paneGap = rhs.PaneGap;
+		} 
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the GraphPane</returns>
+		public object Clone()
+		{ 
+			return new GraphPane( this ); 
+		}
+		
+		/// <summary>
 		/// Gets or sets the rectangle that defines the full area into which the
 		/// <see cref="GraphPane"/> can be rendered.
 		/// </summary>
@@ -124,28 +173,31 @@ namespace ZedGraph
 			get { return axisRect; }
 		}
 		/// <summary>
-		/// Accesses the list of <see cref="ArrowItem"/> items for this <see cref="GraphPane"/>
+		/// Gets or sets the list of <see cref="ArrowItem"/> items for this <see cref="GraphPane"/>
 		/// </summary>
 		/// <value>A reference to an <see cref="ArrowList"/> collection object</value>
 		public ArrowList ArrowList
 		{
 			get { return arrowList; }
+			set { arrowList = value; }
 		}
 		/// <summary>
-		/// Accesses the list of <see cref="TextItem"/> items for this <see cref="GraphPane"/>
+		/// Gets or sets the list of <see cref="TextItem"/> items for this <see cref="GraphPane"/>
 		/// </summary>
 		/// <value>A reference to a <see cref="TextList"/> collection object</value>
 		public TextList TextList
 		{
 			get { return textList; }
+			set { textList = value; }
 		}
 		/// <summary>
-		/// Accesses the list of <see cref="CurveItem"/> items for this <see cref="GraphPane"/>
+		/// Gets or sets the list of <see cref="CurveItem"/> items for this <see cref="GraphPane"/>
 		/// </summary>
 		/// <value>A reference to a <see cref="CurveList"/> collection object</value>
 		public CurveList CurveList
 		{
 			get { return curveList; }
+			set { curveList = value; }
 		}
 		/// <summary>
 		/// Accesses the <see cref="Legend"/> for this <see cref="GraphPane"/>
@@ -332,6 +384,8 @@ namespace ZedGraph
 		/// scaling factor is calculated by the <see cref="CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>
+		/// <returns>Returns the paneGap size, in pixels, after scaling according to
+		/// <paramref name="scalefactor"/></returns>
 		public float ScaledGap( double scaleFactor )
 		{
 			return (float) ( this.paneGap * scaleFactor );
@@ -352,7 +406,7 @@ namespace ZedGraph
 			// Get the scale range of the data (all curves)
 			this.curveList.GetRange( out xMin, out xMax, out yMin,
 									out yMax, out y2Min, out y2Max,
-									this.isIgnoreInitial );
+									this.isIgnoreInitial, this );
 		
 			// Pick new scales based on the range
 			this.xAxis.PickScale( xMin, xMax );
@@ -581,9 +635,9 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <return>
+		/// <returns>
 		/// A double precision value representing the scaling factor to use for the rendering calculations.
-		/// </return>
+		/// </returns>
 		protected double CalcScaleFactor( Graphics g )
 		{
 			double scaleFactor;
@@ -681,6 +735,26 @@ namespace ZedGraph
 			}
 
 			return ptPix;
+		}
+
+		/// <summary>
+		/// Return the user scale values that correspond to the specified screen
+		/// coordinate position (pixels).
+		/// </summary>
+		/// <param name="ptF">The X,Y pair that defines the screen coordinate
+		/// point of interest</param>
+		/// <param name="x">The resultant value in user coordinates from the
+		/// <see cref="XAxis"/></param>
+		/// <param name="y">The resultant value in user coordinates from the
+		/// <see cref="YAxis"/></param>
+		/// <param name="y2">The resultant value in user coordinates from the
+		/// <see cref="Y2Axis"/></param>
+		public void ReverseTransform( PointF ptF, out double x, out double y,
+			out double y2 )
+		{
+			x = this.XAxis.ReverseTransform( ptF.X );
+			y = this.YAxis.ReverseTransform( ptF.Y );
+			y2 = this.Y2Axis.ReverseTransform( ptF.Y );
 		}
 	}
 }

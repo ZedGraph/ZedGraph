@@ -3,6 +3,41 @@ using System;
 namespace ZedGraph
 {
 	/// <summary>
+	/// Enumeration type for the various axis types that are available
+	/// </summary>
+	/// <seealso cref="ZedGraph.Axis.Type"/>
+	public enum AxisType
+	{
+		/// <summary> An ordinary, cartesian axis </summary>
+		Linear,
+		/// <summary> A base 10 log axis </summary>
+		Log,
+		/// <summary> A cartesian axis with calendar dates or times </summary>
+		Date,
+		/// <summary> An ordinal axis with user-defined text labels </summary>
+		Text
+	};
+
+	/// <summary>
+	/// Enumeration type for the various axis date and time unit types that are available
+	/// </summary>
+	public enum DateUnit
+	{
+		/// <summary> Yearly units <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/> </summary>
+		Year,
+		/// <summary> Monthly units <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/> </summary>
+		Month,
+		/// <summary> Daily units <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/> </summary>
+		Day,
+		/// <summary> Hourly units <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/> </summary>
+		Hour,
+		/// <summary> Minute units <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/> </summary>
+		Minute,
+		/// <summary> Second units <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/> </summary>
+		Second
+	};
+
+	/// <summary>
 	/// Enumeration type for the various symbol shapes that are available
 	/// </summary>
 	/// <seealso cref="ZedGraph.Symbol.IsFilled"/>
@@ -175,7 +210,7 @@ namespace ZedGraph
 	/// all lines segments are either horizontal or vertical.  In a non-step (line)
 	/// plot, the lines can be any angle.
 	/// </summary>
-	/// <seealso cref="CurveItem.StepType"/>
+	/// <seealso cref="Line.StepType"/>
 	public enum StepType
 	{
 		/// <summary>

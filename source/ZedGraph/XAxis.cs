@@ -9,7 +9,7 @@ namespace ZedGraph
 	/// the bottom of the <see cref="GraphPane.AxisRect"/> of the <see cref="GraphPane"/>
 	/// object
 	/// </summary>
-	public class XAxis : Axis
+	public class XAxis : Axis, ICloneable
 	{
 		/// <summary>
 		/// Default constructor that sets all <see cref="XAxis"/> properties to
@@ -24,6 +24,23 @@ namespace ZedGraph
 			this.ScaleFontSpec.Angle = 0F;
 		}
 
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The XAxis object from which to copy</param>
+		public XAxis( XAxis rhs ) : base( rhs )
+		{
+		}
+		
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the XAxis</returns>
+		public object Clone()
+		{ 
+			return new XAxis( this ); 
+		}
+		
 		/// <summary>
 		/// Setup the Transform Matrix to handle drawing of this <see cref="XAxis"/>
 		/// </summary>

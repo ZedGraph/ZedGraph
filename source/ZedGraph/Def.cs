@@ -88,6 +88,21 @@ namespace ZedGraph
 			/// This is defined with the <see cref="DashStyle"/> enumeration.
 			/// </summary>
 			public static DashStyle Style = DashStyle.Solid;
+			/// <summary>
+			/// Default value for the curve type property
+			/// (<see cref="Line.StepType"/>).  This determines if the curve
+			/// will be drawn by directly connecting the points from the
+			/// <see cref="CurveItem.X"/> and <see cref="CurveItem.Y"/> data arrays,
+			/// or if the curve will be a "stair-step" in which the points are
+			/// connected by a series of horizontal and vertical lines that
+			/// represent discrete, staticant values.  Note that the values can
+			/// be forward oriented <code>ForwardStep</code> (<see cref="StepType"/>) or
+			/// rearward oriented <code>RearwardStep</code>.
+			/// That is, the points are defined at the beginning or end
+			/// of the staticant value for which they apply, respectively.
+			/// </summary>
+			/// <value><see cref="StepType"/> enum value</value>
+			public static StepType Type = StepType.NonStep;
 		}
 		
 		/// <summary>
@@ -567,7 +582,109 @@ namespace ZedGraph
 			/// true to have the auto-scale-range code ignore the initial data points
 			/// until the first non-zero Y value, false otherwise.
 			/// </summary>
-			public static bool IgnoreInitial = true;
+			public static bool IgnoreInitial = false;
+			/// <summary>
+			/// The default setting for the <see cref="Axis"/> scale axis type
+			/// (<see cref="Axis.Type"/> property).  This value is set as per
+			/// the <see cref="AxisType"/> enumeration
+			/// </summary>
+			public static AxisType Type = AxisType.Linear;
+			/// <summary>
+			/// The default setting for the <see cref="Axis"/> scale date format string
+			/// (<see cref="Axis.ScaleFormat"/> property).  This value is set as per
+			/// the <see cref="XDate.ToString"/> function.
+			/// </summary>
+			public static string ScaleFormat = "&dd-&mmm-&yy &hh:&nn";
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Year"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Year"/>.
+			/// This value normally defaults to 1825 days (5 years).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeYearYear = 1825;  // 5 years
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Year"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Month"/>.
+			/// This value normally defaults to 365 days (1 year).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeYearMonth = 365;  // 1 year
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Month"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Month"/>.
+			/// This value normally defaults to 90 days (3 months).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeMonthMonth = 90;  // 3 months
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Day"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Day"/>.
+			/// This value normally defaults to 10 days.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeDayDay = 10;  // 10 days
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Day"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Hour"/>.
+			/// This value normally defaults to 3 days.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeDayHour = 3;  // 3 days
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Hour"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Hour"/>.
+			/// This value normally defaults to 0.4167 days (10 hours).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeHourHour = 0.4167;  // 10 hours
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Hour"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Minute"/>.
+			/// This value normally defaults to 0.125 days (3 hours).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeHourMinute = 0.125;  // 3 hours
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Minute"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Minute"/>.
+			/// This value normally defaults to 6.94e-3 days (10 minutes).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeMinuteMinute = 6.94e-3;  // 10 Minutes
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Minute"/>
+			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Second"/>.
+			/// This value normally defaults to 2.083e-3 days (3 minutes).
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeMinuteSecond = 2.083e-3;  // 3 Minutes
 		}
 		
 		/// <summary>
@@ -622,21 +739,6 @@ namespace ZedGraph
 		public struct Curve
 		{
 			// Default curve properties
-			/// <summary>
-			/// Default value for the curve type property
-			/// (<see cref="CurveItem.StepType"/>).  This determines if the curve
-			/// will be drawn by directly connecting the points from the
-			/// <see cref="CurveItem.X"/> and <see cref="CurveItem.Y"/> data arrays,
-			/// or if the curve will be a "stair-step" in which the points are
-			/// connected by a series of horizontal and vertical lines that
-			/// represent discrete, staticant values.  Note that the values can
-			/// be forward oriented <code>ForwardStep</code> (<see cref="StepType"/>) or
-			/// rearward oriented <code>RearwardStep</code>.
-			/// That is, the points are defined at the beginning or end
-			/// of the staticant value for which they apply, respectively.
-			/// </summary>
-			/// <value><see cref="StepType"/> enum value</value>
-			public static StepType Type = StepType.NonStep;
 		}
 		
 		/// <summary>

@@ -8,7 +8,7 @@ namespace ZedGraph
 	/// A collection class containing a list of <see cref="CurveItem"/> objects
 	/// that define the set of curves to be displayed on the graph.
 	/// </summary>
-	public class CurveList : CollectionBase
+	public class CurveList : CollectionBase, ICloneable
 	{
 		/// <summary>
 		/// Default constructor for the collection class
@@ -17,6 +17,25 @@ namespace ZedGraph
 		{
 		}
 
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The XAxis object from which to copy</param>
+		public CurveList( CurveList rhs )
+		{
+			foreach ( CurveItem item in rhs )
+				this.Add( new CurveItem( item ) );
+		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the CurveList</returns>
+		public object Clone()
+		{ 
+			return new CurveList( this ); 
+		}
+		
 		/// <summary>
 		/// Indexer to access the specified <see cref="CurveItem"/> object by
 		/// its ordinal position in the list.
@@ -57,6 +76,9 @@ namespace ZedGraph
 		/// determine the minimum and maximum values in the
 		/// <see cref="CurveItem.X"/> and <see cref="CurveItem.Y"/> data arrays.  In the event that no
 		/// data are available, a default range of min=0.0 and max=1.0 are returned.
+		/// If any <see cref="CurveItem"/> in the list has a missing
+		/// <see cref="CurveItem.X"/> or <see cref="CurveItem.Y"/> data array, and suitable
+		/// default array will be created with ordinal values.
 		/// </summary>
 		/// <param name="xMinVal">The minimun X value in the data range for all curves
 		/// in this collection</param>
@@ -78,10 +100,14 @@ namespace ZedGraph
 		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.  All data after
 		/// the first non-zero Y value are included.
 		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
 		public void GetRange( 	out double xMinVal, out double xMaxVal,
 								out double yMinVal, out double yMaxVal,
 								out double y2MinVal, out double y2MaxVal,
-								bool bIgnoreInitial )
+								bool bIgnoreInitial, GraphPane pane )
 		{
 			double	tXMinVal,
 					tXMaxVal,
@@ -95,6 +121,9 @@ namespace ZedGraph
 			// Loop over each curve in the collection
 			foreach( CurveItem curve in this )
 			{
+				// Generate default arrays of ordinal values if any data arrays are missing
+				curve.DataCheck( pane );
+			
 				// Call the GetRange() member function for the current
 				// curve to get the min and max values
 				curve.GetRange( ref tXMinVal, ref tXMaxVal,

@@ -12,11 +12,12 @@ namespace ZedGraph
 	/// </summary>
 	abstract public class Axis
 	{
+		#region Class Fields
 		/// <summary> Private fields for the <see cref="Axis"/> scale definitions.
 		/// Use the public properties <see cref="Min"/>, <see cref="Max"/>,
 		/// <see cref="Step"/>, and <see cref="MinorStep"/> for access to these values.
 		/// </summary>
-		private		 double	min,
+		private	double		min,
 							max,
 							step,
 							minorStep;
@@ -41,7 +42,8 @@ namespace ZedGraph
 		/// <see cref="IsTic"/>, <see cref="IsInsideTic"/>, <see cref="IsOppositeTic"/>,
 		/// <see cref="IsMinorTic"/>, <see cref="IsMinorInsideTic"/>,
 		/// <see cref="IsMinorOppositeTic"/>, <see cref="IsLog"/>, <see cref="IsReverse"/>,
-		/// and <see cref="IsOmitMag"/> for access to these values.
+		/// <see cref="IsOmitMag"/>, <see cref="IsText"/>,
+		/// and <see cref="IsDate"/> for access to these values.
 		/// </summary>
 		private bool		isVisible,
 							isShowGrid,
@@ -51,13 +53,27 @@ namespace ZedGraph
 							isMinorTic,
 							isMinorInsideTic,
 							isMinorOppositeTic,
-							isLog,
 							isReverse,
 							isOmitMag;
+		/// <summary> Private field for the <see cref="Axis"/> type.  This can be one of the
+		/// types as defined in the <see cref="AxisType"/> enumeration.
+		/// Use the public property <see cref="Type"/>
+		/// for access to this value. </summary>
+		private AxisType	type;
 		/// <summary> Private field for the <see cref="Axis"/> title string.
 		/// Use the public property <see cref="Title"/>
 		/// for access to this value. </summary>
 		private		 string	title;
+		/// <summary> Private field for the format of the <see cref="Axis"/> tic labels.
+		/// This field is only used if the <see cref="Type"/> is set to <see cref="AxisType.Date"/>.
+		/// Use the public property <see cref="ScaleFormat"/>
+		/// for access to this value. </summary>
+		private		 string	scaleFormat;
+		/// <summary> Public field for the <see cref="Axis"/> array of text labels.
+		/// This property is only used if <see cref="Type"/> is set to
+		/// <see cref="AxisType.Text"/>.
+		/// is set to true. </summary>
+		public		 string[]	TextLabels = null;
 		/// <summary> Private fields for the <see cref="Axis"/> font specificatios.
 		/// Use the public properties <see cref="TitleFontSpec"/> and
 		/// <see cref="ScaleFontSpec"/> for access to these values. </summary>
@@ -91,7 +107,20 @@ namespace ZedGraph
 		/// </summary>
 		private double	minScale,
 						maxScale;
-							
+		
+		/// <summary>
+		/// Private fields for Unit types to be used for the major and minor tics.
+		/// See <see cref="MajorUnit"/> and <see cref="MinorUnit"/> for the corresponding
+		/// public properties.
+		/// These types only apply for date-time scales (<see cref="IsDate"/>).
+		/// </summary>
+		/// <value>The value of these types is of enumeration type <see cref="DateUnit"/>
+		/// </value>
+		private DateUnit	majorUnit,
+							minorUnit;
+		#endregion
+
+		#region Constructors
 		/// <summary>
 		/// Default constructor for <see cref="Axis"/> that sets all axis properties
 		/// to default values as defined in the <see cref="Def"/> class.
@@ -121,7 +150,6 @@ namespace ZedGraph
 		
 			this.isVisible = true;
 			this.isShowGrid = Def.Ax.IsShowGrid;
-			this.isLog = Def.Ax.IsLog;
 			this.isReverse = Def.Ax.IsReverse;
 			this.isOmitMag = false;
 			this.isTic = Def.Ax.IsTic;
@@ -131,7 +159,13 @@ namespace ZedGraph
 			this.isMinorInsideTic = Def.Ax.IsMinorInsideTic;
 			this.isMinorOppositeTic = Def.Ax.IsMinorOppositeTic;
 		
+			this.type = Def.Ax.Type;
 			this.title = "";
+			this.TextLabels = null;
+			this.scaleFormat = null;
+			
+			this.majorUnit = DateUnit.Year;
+			this.minorUnit = DateUnit.Year;
 
 			this.ticPenWidth = Def.Ax.TicPenWidth;
 			this.color = Def.Ax.Color;
@@ -151,29 +185,75 @@ namespace ZedGraph
 			this.scaleFontSpec.IsFilled = false;
 			this.scaleFontSpec.IsFramed = false;
 		}
+
 		/// <summary>
-		/// Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
-		/// the scale values
+		/// The Copy Constructor
 		/// </summary>
-		public FontSpec ScaleFontSpec
+		/// <param name="rhs">The Axis object from which to copy</param>
+		public Axis( Axis rhs )
 		{
-			get { return scaleFontSpec; }
-		}
-		/// <summary>
-		/// Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
-		/// the <see cref="Axis"/> <see cref="Title"/>,
-		/// </summary>
-		public FontSpec TitleFontSpec
-		{
-			get { return titleFontSpec; }
-		}
+			min = rhs.Min;
+			max = rhs.Max;
+			step = rhs.Step;
+			minorStep = rhs.MinorStep;
+			minAuto = rhs.MinAuto;
+			maxAuto = rhs.MaxAuto;
+			stepAuto = rhs.StepAuto;
+			minorStepAuto = rhs.MinorStepAuto;
+			numDecAuto = rhs.NumDecAuto;
+			scaleMagAuto = rhs.ScaleMagAuto;
+
+			numDec = rhs.numDec;
+			scaleMag = rhs.scaleMag;
+			isVisible = rhs.IsVisible;
+			isShowGrid = rhs.IsShowGrid;
+			isTic = rhs.IsTic;
+			isInsideTic = rhs.IsInsideTic;
+			isOppositeTic = rhs.IsOppositeTic;
+			isMinorTic = rhs.IsMinorTic;
+			isMinorInsideTic = rhs.IsMinorInsideTic;
+			isMinorOppositeTic = rhs.IsMinorOppositeTic;
+			isReverse = rhs.IsReverse;
+			isOmitMag = rhs.IsOmitMag;
+			title = rhs.Title;
+			
+			type = rhs.Type;
+			
+			majorUnit = rhs.MajorUnit;
+			minorUnit = rhs.MinorUnit;
+			
+			if ( rhs.TextLabels != null )
+				TextLabels = (string[]) rhs.TextLabels.Clone();
+			else
+				TextLabels = null;
+
+			titleFontSpec = new FontSpec( rhs.TitleFontSpec );
+			scaleFontSpec = new FontSpec( rhs.ScaleFontSpec );
+
+			ticPenWidth = rhs.TicPenWidth;
+			ticSize = rhs.TicSize;
+			minorTicSize = rhs.MinorTicSize;
+			gridDashOn = rhs.GridDashOn;
+			gridDashOff = rhs.GridDashOff;
+			gridPenWidth = rhs.GridPenWidth;
+
+			color = rhs.Color;
+			gridColor = rhs.GridColor;
+		} 
+		#endregion
+
+		#region Scale Properties
 		/// <summary>
 		/// The minimum scale value for this axis.  This value can be set
 		/// automatically based on the state of <see cref="MinAuto"/>.  If
 		/// this value is set manually, then <see cref="MinAuto"/> will
 		/// also be set to false.
 		/// </summary>
-		/// <value> The value is defined in user scale units </value>
+		/// <value> The value is defined in user scale units for <see cref="AxisType.Log"/>
+		/// and <see cref="AxisType.Linear"/> axes. For <see cref="AxisType.Text"/> axes,
+		/// this value is an ordinal starting with 1.0.  For <see cref="AxisType.Date"/>
+		/// axes, this value is in XL Date format (see <see cref="XDate"/>, which is the
+		/// number of days since the reference date of January 1, 1900.</value>
 		public double Min
 		{
 			get { return min; }
@@ -185,7 +265,11 @@ namespace ZedGraph
 		/// this value is set manually, then <see cref="MaxAuto"/> will
 		/// also be set to false.
 		/// </summary>
-		/// <value> The value is defined in user scale units </value>
+		/// <value> The value is defined in user scale units for <see cref="AxisType.Log"/>
+		/// and <see cref="AxisType.Linear"/> axes. For <see cref="AxisType.Text"/> axes,
+		/// this value is an ordinal starting with 1.0.  For <see cref="AxisType.Date"/>
+		/// axes, this value is in XL Date format (see <see cref="XDate"/>, which is the
+		/// number of days since the reference date of January 1, 1900.</value>
 		public double Max
 		{
 			get { return max; }
@@ -196,7 +280,9 @@ namespace ZedGraph
 		/// labeled axis values).  This value can be set
 		/// automatically based on the state of <see cref="StepAuto"/>.  If
 		/// this value is set manually, then <see cref="StepAuto"/> will
-		/// also be set to false.
+		/// also be set to false.  This value is ignored for <see cref="AxisType.Log"/> and
+		/// <see cref="AxisType.Text"/> axes.  For <see cref="AxisType.Date"/> axes, this
+		/// value is defined in units of <see cref="MajorUnit"/>.
 		/// </summary>
 		/// <value> The value is defined in user scale units </value>
 		public double Step
@@ -205,11 +291,37 @@ namespace ZedGraph
 			set { step = value; this.stepAuto = false; }
 		}
 		/// <summary>
+		/// The type of units used for the major step size (<see cref="Step"/>).
+		/// This unit type only applies to Date-Time axes (<see cref="AxisType.Date"/> = true).
+		/// The axis is set to date type with the <see cref="Type"/> property.
+		/// The unit types are defined as <see cref="DateUnit"/>.
+		/// </summary>
+		/// <value> The value is a <see cref="DateUnit"/> enum type </value>
+		public DateUnit MajorUnit
+		{
+			get { return majorUnit; }
+			set { majorUnit = value; }
+		}
+		/// <summary>
+		/// The type of units used for the minor step size (<see cref="MinorStep"/>).
+		/// This unit type only applies to Date-Time axes (<see cref="AxisType.Date"/> = true).
+		/// The axis is set to date type with the <see cref="Type"/> property.
+		/// The unit types are defined as <see cref="DateUnit"/>.
+		/// </summary>
+		/// <value> The value is a <see cref="DateUnit"/> enum type </value>
+		public DateUnit MinorUnit
+		{
+			get { return minorUnit; }
+			set { minorUnit = value; }
+		}
+		/// <summary>
 		/// The scale minor step size for this axis (the spacing between
 		/// minor tics).  This value can be set
 		/// automatically based on the state of <see cref="MinorStepAuto"/>.  If
 		/// this value is set manually, then <see cref="MinorStepAuto"/> will
-		/// also be set to false.
+		/// also be set to false.  This value is ignored for <see cref="AxisType.Log"/> and
+		/// <see cref="AxisType.Text"/> axes.  For <see cref="AxisType.Date"/> axes, this
+		/// value is defined in units of <see cref="MinorUnit"/>.
 		/// </summary>
 		/// <value> The value is defined in user scale units </value>
 		public double MinorStep
@@ -260,6 +372,315 @@ namespace ZedGraph
 		{
 			get { return minorStepAuto; }
 			set { minorStepAuto = value; }
+		}
+		#endregion
+
+		#region Tic Properties
+		/// <summary>
+		/// The color to use for drawing this <see cref="Axis"/>.  This affects only the tic
+		/// marks, since the <see cref="TitleFontSpec"/> and
+		/// <see cref="ScaleFontSpec"/> both have their own color specification.
+		/// </summary>
+		/// <value> The color is defined using the
+		/// <see cref="System.Drawing.Color"/> class</value>
+		public Color Color
+		{
+			get { return color; }
+			set { color = value; }
+		}
+		/// <summary>
+		/// The length of the <see cref="Axis"/> tic marks.  This length will be scaled
+		/// according to the <see cref="GraphPane.CalcScaleFactor"/> for the
+		/// <see cref="GraphPane"/>
+		/// </summary>
+		/// <value>The tic size is measured in pixels</value>
+		public float TicSize
+		{
+			get { return ticSize; }
+			set { ticSize = value; }
+		}
+		/// <summary>
+		/// The length of the <see cref="Axis"/> minor tic marks.  This length will be scaled
+		/// according to the <see cref="GraphPane.CalcScaleFactor"/> for the
+		/// <see cref="GraphPane"/>
+		/// </summary>
+		/// <value>The tic size is measured in pixels</value>
+		public float MinorTicSize
+		{
+			get { return minorTicSize; }
+			set { minorTicSize = value; }
+		}
+		/// <summary>
+		/// Calculate the scaled tic size for this <see cref="Axis"/>
+		/// </summary>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <returns>The scaled tic size, in pixels</returns>
+		public float ScaledTic( double scaleFactor )
+		{
+			return (float) ( this.ticSize * scaleFactor + 0.5 );
+		}
+		/// <summary>
+		/// Calculate the scaled minor tic size for this <see cref="Axis"/>
+		/// </summary>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <returns>The scaled tic size, in pixels</returns>
+		public float ScaledMinorTic( double scaleFactor )
+		{
+			return (float) ( this.minorTicSize * scaleFactor + 0.5 );
+		}
+		/// <summary>
+		/// This property determines whether or not the major outside tic marks
+		/// are shown.  These are the tic marks on the outside of the <see cref="Axis"/> frame.
+		/// The major tic spacing is controlled by <see cref="Step"/>.
+		/// </summary>
+		/// <value>true to show the major outside tic marks, false otherwise</value>
+		public bool IsTic
+		{
+			get { return isTic; }
+			set { isTic = value; }
+		}
+		/// <summary>
+		/// This property determines whether or not the minor outside tic marks
+		/// are shown.  These are the tic marks on the outside of the <see cref="Axis"/> frame.
+		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.  This setting is
+		/// ignored (no minor tics are drawn) for text axes (see <see cref="IsText"/>).
+		/// </summary>
+		/// <value>true to show the minor outside tic marks, false otherwise</value>
+		public bool IsMinorTic
+		{
+			get { return isMinorTic; }
+			set { isMinorTic = value; }
+		}
+		/// <summary>
+		/// This property determines whether or not the major inside tic marks
+		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> frame.
+		/// The major tic spacing is controlled by <see cref="Step"/>.
+		/// </summary>
+		/// <value>true to show the major inside tic marks, false otherwise</value>
+		public bool IsInsideTic
+		{
+			get { return isInsideTic; }
+			set { isInsideTic = value; }
+		}
+		/// <summary>
+		/// This property determines whether or not the major opposite tic marks
+		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> frame on
+		/// the opposite side from the axis.
+		/// The major tic spacing is controlled by <see cref="Step"/>.
+		/// </summary>
+		/// <value>true to show the major opposite tic marks, false otherwise</value>
+		public bool IsOppositeTic
+		{
+			get { return isOppositeTic; }
+			set { isOppositeTic = value; }
+		}
+		/// <summary>
+		/// This property determines whether or not the minor inside tic marks
+		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> frame.
+		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
+		/// </summary>
+		/// <value>true to show the minor inside tic marks, false otherwise</value>
+		public bool IsMinorInsideTic
+		{
+			get { return isMinorInsideTic; }
+			set { isMinorInsideTic = value; }
+		}
+		/// <summary>
+		/// This property determines whether or not the minor opposite tic marks
+		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> frame on
+		/// the opposite side from the axis.
+		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
+		/// </summary>
+		/// <value>true to show the minor opposite tic marks, false otherwise</value>
+		public bool IsMinorOppositeTic
+		{
+			get { return isMinorOppositeTic; }
+			set { isMinorOppositeTic = value; }
+		}
+		/// <summary>
+		/// The pen width to be used when drawing the tic marks for this <see cref="Axis"/>
+		/// </summary>
+		/// <value>The pen width is defined in pixels</value>
+		public float TicPenWidth
+		{
+			get { return ticPenWidth; }
+			set { ticPenWidth = value; }
+		}
+		#endregion
+
+		#region Grid Properties
+		/// <summary>
+		/// Determines if the major <see cref="Axis"/> gridlines (at each labeled value) will be shown
+		/// </summary>
+		/// <value>true to show the gridlines, false otherwise</value>
+		public bool IsShowGrid
+		{
+			get { return isShowGrid; }
+			set { isShowGrid = value; }
+		}
+		/// <summary>
+		/// The "Dash On" mode for drawing the grid.  This is the distance,
+		/// in pixels, of the dash segments that make up the dashed grid lines.
+		/// </summary>
+		/// <value>The dash on length is defined in pixel units</value>
+		/// <seealso cref="GridDashOff"/>
+		/// <seealso cref="IsShowGrid"/>
+		public float GridDashOn
+		{
+			get { return gridDashOn; }
+			set { gridDashOn = value; }
+		}
+		/// <summary>
+		/// The "Dash Off" mode for drawing the grid.  This is the distance,
+		/// in pixels, of the spaces between the dash segments that make up
+		/// the dashed grid lines.
+		/// </summary>
+		/// <value>The dash off length is defined in pixel units</value>
+		/// <seealso cref="GridDashOn"/>
+		/// <seealso cref="IsShowGrid"/>
+		public float GridDashOff
+		{
+			get { return gridDashOff; }
+			set { gridDashOff = value; }
+		}
+		/// <summary>
+		/// The default pen width used for drawing the grid lines.
+		/// </summary>
+		/// <value>The grid pen width is defined in pixel units</value>
+		/// <seealso cref="IsShowGrid"/>
+		public float GridPenWidth
+		{
+			get { return gridPenWidth; }
+			set { gridPenWidth = value; }
+		}
+		/// <summary>
+		/// The color to use for drawing this <see cref="Axis"/> grid.  This affects only the grid
+		/// lines, since the <see cref="TitleFontSpec"/> and
+		/// <see cref="ScaleFontSpec"/> both have their own color specification.
+		/// </summary>
+		/// <value> The color is defined using the
+		/// <see cref="System.Drawing.Color"/> class</value>
+		public Color GridColor
+		{
+			get { return gridColor; }
+			set { gridColor = value; }
+		}
+		#endregion
+
+		#region Type Properties
+		/// <summary>
+		/// This property determines whether or not the <see cref="Axis"/> is shown.
+		/// Note that even if
+		/// the axis is not visible, it can still be actively used to draw curves on a
+		/// graph, it will just be invisible to the user
+		/// </summary>
+		/// <value>true to show the axis, false to disable all drawing of this axis</value>
+		public bool IsVisible
+		{
+			get { return isVisible; }
+			set { isVisible = value; }
+		}
+		/// <summary>
+		/// Determines if the scale values are reversed for this <see cref="Axis"/>
+		/// </summary>
+		/// <value>true for the X values to decrease to the right or the Y values to
+		/// decrease upwards, false otherwise</value>
+		public bool IsReverse
+		{
+			get { return isReverse; }
+			set { isReverse = value; }
+		}
+		/// <summary>
+		/// Determines if this <see cref="Axis"/> is logarithmic (base 10).  To make this property
+		/// true, set <see cref="Type"/> to <see cref="AxisType.Log"/>.
+		/// </summary>
+		/// <value>true for a logarithmic axis, false for a linear, date, or text axis</value>
+		public bool IsLog
+		{
+			get { return type == AxisType.Log; }
+		}
+		/// <summary>
+		/// Determines if this <see cref="Axis"/> is of the date-time type.  To make this property
+		/// true, set <see cref="Type"/> to <see cref="AxisType.Date"/>.
+		/// </summary>
+		/// <value>true for a date axis, false for a linear, log, or text axis</value>
+		public bool IsDate
+		{
+			get { return type == AxisType.Date; }
+		}
+		/// <summary>
+		/// Tests if this <see cref="Axis"/> is labeled with user provided text
+		/// labels rather than calculated numeric values.  The text labels are provided via the
+		/// <see cref="TextLabels"/> property.  Internally, the axis is still handled with ordinal values
+		/// such that the axis <see cref="Min"/> is set to 1.0, and the axis <see cref="Max"/> is set
+		/// to the number of labels.  To make this property true, set <see cref="Type"/> to
+		/// <see cref="AxisType.Text"/>.
+		/// </summary>
+		/// <value>true for a text-based axis, false for a linear, log, or date axes.
+		/// If this property is true, then you should also provide
+		/// an array of labels via <see cref="TextLabels"/>.
+		/// </value>
+		public bool IsText
+		{
+			get { return type == AxisType.Text; }
+		}
+		/// <summary>
+		/// Gets or sets the <see cref="AxisType"/> for this <see cref="Axis"/>.
+		/// The type can be either <see cref="AxisType.Linear"/>,
+		/// <see cref="AxisType.Log"/>, <see cref="AxisType.Date"/>,
+		/// or <see cref="AxisType.Text"/>.
+		/// </summary>
+		public AxisType Type
+		{
+			get { return type; }
+			set { type = value; }
+		}
+		#endregion
+
+		#region Label Properties
+		/// <summary>
+		/// For large scale values, a "magnitude" value (power of 10) is automatically
+		/// used for scaling the graph.  This magnitude value is automatically appended
+		/// to the end of the <see cref="Axis"/> <see cref="Title"/> (e.g., "(10^4)") to indicate
+		/// that a magnitude is in use.  This property controls whether or not the
+		/// magnitude is included in the title.  Note that it only affects the axis
+		/// title; a magnitude value may still be used even if it is not shown in the title.
+		/// </summary>
+		/// <value>true to show the magnitude value, false to hide it</value>
+		public bool IsOmitMag
+		{
+			get { return isOmitMag; }
+			set { isOmitMag = value; }
+		}
+		/// <summary>
+		/// The text title of this <see cref="Axis"/>.  This normally shows the basis and dimensions of
+		/// the scale range, such as "Time (Years)"
+		/// </summary>
+		/// <value>the title is a string value</value>
+		public string Title
+		{
+			get { return title; }
+			set { title = value; }
+		}
+		/// <summary>
+		/// The format of the <see cref="Axis"/> tic labels.
+		/// This field is only used if the <see cref="Type"/> is set to <see cref="AxisType.Date"/>.
+		/// </summary>
+		/// <value>This format string is as defined for the <see cref="XDate.ToString"/> function</value>
+		public string ScaleFormat
+		{
+			get { return scaleFormat; }
+			set { scaleFormat = value; }
 		}
 		/// <summary>
 		/// Determines whether or not the number of decimal places for value
@@ -317,254 +738,23 @@ namespace ZedGraph
 			set { scaleMagAuto = value; }
 		}
 		/// <summary>
-		/// The length of the <see cref="Axis"/> tic marks.  This length will be scaled
-		/// according to the <see cref="GraphPane.CalcScaleFactor"/> for the
-		/// <see cref="GraphPane"/>
+		/// Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
+		/// the scale values
 		/// </summary>
-		/// <value>The tic size is measured in pixels</value>
-		public float TicSize
+		public FontSpec ScaleFontSpec
 		{
-			get { return ticSize; }
-			set { ticSize = value; }
+			get { return scaleFontSpec; }
 		}
 		/// <summary>
-		/// The length of the <see cref="Axis"/> minor tic marks.  This length will be scaled
-		/// according to the <see cref="GraphPane.CalcScaleFactor"/> for the
-		/// <see cref="GraphPane"/>
+		/// Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
+		/// the <see cref="Axis"/> <see cref="Title"/>,
 		/// </summary>
-		/// <value>The tic size is measured in pixels</value>
-		public float MinorTicSize
+		public FontSpec TitleFontSpec
 		{
-			get { return minorTicSize; }
-			set { minorTicSize = value; }
+			get { return titleFontSpec; }
 		}
-		/// <summary>
-		/// Calculate the scaled tic size for this <see cref="Axis"/>
-		/// </summary>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <returns>The scaled tic size, in pixels</returns>
-		public float ScaledTic( double scaleFactor )
-		{
-			return (float) ( this.ticSize * scaleFactor + 0.5 );
-		}
-		/// <summary>
-		/// Calculate the scaled minor tic size for this <see cref="Axis"/>
-		/// </summary>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <returns>The scaled tic size, in pixels</returns>
-		public float ScaledMinorTic( double scaleFactor )
-		{
-			return (float) ( this.minorTicSize * scaleFactor + 0.5 );
-		}
-		/// <summary>
-		/// This property determines whether or not the <see cref="Axis"/> is shown.
-		/// Note that even if
-		/// the axis is not visible, it can still be actively used to draw curves on a
-		/// graph, it will just be invisible to the user
-		/// </summary>
-		/// <value>true to show the axis, false to disable all drawing of this axis</value>
-		public bool IsVisible
-		{
-			get { return isVisible; }
-			set { isVisible = value; }
-		}
-		/// <summary>
-		/// This property determines whether or not the major outside tic marks
-		/// are shown.  These are the tic marks on the outside of the <see cref="Axis"/> frame.
-		/// The major tic spacing is controlled by <see cref="Step"/>.
-		/// </summary>
-		/// <value>true to show the major outside tic marks, false otherwise</value>
-		public bool IsTic
-		{
-			get { return isTic; }
-			set { isTic = value; }
-		}
-		/// <summary>
-		/// This property determines whether or not the minor outside tic marks
-		/// are shown.  These are the tic marks on the outside of the <see cref="Axis"/> frame.
-		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
-		/// </summary>
-		/// <value>true to show the minor outside tic marks, false otherwise</value>
-		public bool IsMinorTic
-		{
-			get { return isMinorTic; }
-			set { isMinorTic = value; }
-		}
-		/// <summary>
-		/// This property determines whether or not the major inside tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> frame.
-		/// The major tic spacing is controlled by <see cref="Step"/>.
-		/// </summary>
-		/// <value>true to show the major inside tic marks, false otherwise</value>
-		public bool IsInsideTic
-		{
-			get { return isInsideTic; }
-			set { isInsideTic = value; }
-		}
-		/// <summary>
-		/// This property determines whether or not the major opposite tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> frame on
-		/// the opposite side from the axis.
-		/// The major tic spacing is controlled by <see cref="Step"/>.
-		/// </summary>
-		/// <value>true to show the major opposite tic marks, false otherwise</value>
-		public bool IsOppositeTic
-		{
-			get { return isOppositeTic; }
-			set { isOppositeTic = value; }
-		}
-		/// <summary>
-		/// This property determines whether or not the minor inside tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> frame.
-		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
-		/// </summary>
-		/// <value>true to show the minor inside tic marks, false otherwise</value>
-		public bool IsMinorInsideTic
-		{
-			get { return isMinorInsideTic; }
-			set { isMinorInsideTic = value; }
-		}
-		/// <summary>
-		/// This property determines whether or not the minor opposite tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="Axis"/> frame on
-		/// the opposite side from the axis.
-		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
-		/// </summary>
-		/// <value>true to show the minor opposite tic marks, false otherwise</value>
-		public bool IsMinorOppositeTic
-		{
-			get { return isMinorOppositeTic; }
-			set { isMinorOppositeTic = value; }
-		}
-		/// <summary>
-		/// Determines if the major <see cref="Axis"/> gridlines (at each labeled value) will be shown
-		/// </summary>
-		/// <value>true to show the gridlines, false otherwise</value>
-		public bool IsShowGrid
-		{
-			get { return isShowGrid; }
-			set { isShowGrid = value; }
-		}
-		/// <summary>
-		/// Determines if this <see cref="Axis"/> is logarithmic (base 10)
-		/// </summary>
-		/// <value>true for a logarithmic axis, false for a cartesian axis</value>
-		public bool IsLog
-		{
-			get { return isLog; }
-			set { isLog= value; }
-		}
-		/// <summary>
-		/// Determines if the scale values are reversed for this <see cref="Axis"/>
-		/// </summary>
-		/// <value>true for the X values to decrease to the right or the Y values to
-		/// decrease upwards, false otherwise</value>
-		public bool IsReverse
-		{
-			get { return isReverse; }
-			set { isReverse = value; }
-		}
-		/// <summary>
-		/// For large scale values, a "magnitude" value (power of 10) is automatically
-		/// used for scaling the graph.  This magnitude value is automatically appended
-		/// to the end of the <see cref="Axis"/> <see cref="Title"/> (e.g., "(10^4)") to indicate
-		/// that a magnitude is in use.  This property controls whether or not the
-		/// magnitude is included in the title.  Note that it only affects the axis
-		/// title; a magnitude value may still be used even if it is not shown in the title.
-		/// </summary>
-		/// <value>true to show the magnitude value, false to hide it</value>
-		public bool IsOmitMag
-		{
-			get { return isOmitMag; }
-			set { isOmitMag = value; }
-		}
-		/// <summary>
-		/// The text title of this <see cref="Axis"/>.  This normally shows the basis and dimensions of
-		/// the scale range, such as "Time (Years)"
-		/// </summary>
-		/// <value>the title is a string value</value>
-		public string Title
-		{
-			get { return title; }
-			set { title = value; }
-		}
-		/// <summary>
-		/// The pen width to be used when drawing the tic marks for this <see cref="Axis"/>
-		/// </summary>
-		/// <value>The pen width is defined in pixels</value>
-		public float TicPenWidth
-		{
-			get { return ticPenWidth; }
-			set { ticPenWidth = value; }
-		}
-		/// <summary>
-		/// The "Dash On" mode for drawing the grid.  This is the distance,
-		/// in pixels, of the dash segments that make up the dashed grid lines.
-		/// </summary>
-		/// <value>The dash on length is defined in pixel units</value>
-		/// <seealso cref="GridDashOff"/>
-		/// <seealso cref="IsShowGrid"/>
-		public float GridDashOn
-		{
-			get { return gridDashOn; }
-			set { gridDashOn = value; }
-		}
-		/// <summary>
-		/// The "Dash Off" mode for drawing the grid.  This is the distance,
-		/// in pixels, of the spaces between the dash segments that make up
-		/// the dashed grid lines.
-		/// </summary>
-		/// <value>The dash off length is defined in pixel units</value>
-		/// <seealso cref="GridDashOn"/>
-		/// <seealso cref="IsShowGrid"/>
-		public float GridDashOff
-		{
-			get { return gridDashOff; }
-			set { gridDashOff = value; }
-		}
-		/// <summary>
-		/// The default pen width used for drawing the grid lines.
-		/// </summary>
-		/// <seealso cref="IsShowGrid"/>
-		public float GridPenWidth
-		{
-			get { return gridPenWidth; }
-			set { gridPenWidth = value; }
-		}
-		/// <summary>
-		/// The color to use for drawing this <see cref="Axis"/>.  This affects only the tic
-		/// marks, since the <see cref="TitleFontSpec"/> and
-		/// <see cref="ScaleFontSpec"/> both have their own color specification.
-		/// </summary>
-		/// <value> The color is defined using the
-		/// <see cref="System.Drawing.Color"/> class</value>
-		public Color Color
-		{
-			get { return color; }
-			set { color = value; }
-		}
-		/// <summary>
-		/// The color to use for drawing this <see cref="Axis"/> grid.  This affects only the grid
-		/// lines, since the <see cref="TitleFontSpec"/> and
-		/// <see cref="ScaleFontSpec"/> both have their own color specification.
-		/// </summary>
-		/// <value> The color is defined using the
-		/// <see cref="System.Drawing.Color"/> class</value>
-		public Color GridColor
-		{
-			get { return gridColor; }
-			set { gridColor = value; }
-		}
+		#endregion
+
 		
 		/// <summary>
 		/// Restore the scale ranging to automatic mode, and recalculate the
@@ -640,7 +830,7 @@ namespace ZedGraph
 				this.maxPix = pane.AxisRect.Bottom;
 			}
 
-			if ( this.isLog )
+			if ( this.type == AxisType.Log )
 			{
 				this.minScale = SafeLog( this.min );
 				this.maxScale = SafeLog( this.max );
@@ -671,75 +861,7 @@ namespace ZedGraph
 		/// </param>
 		abstract public void SetTransformMatrix( Graphics g, GraphPane pane, double scaleFactor );
 
-/*
-		/// <summary>
-		/// Get the maximum width of the scale value text that is required to label this
-		/// <see cref="Axis"/>.
-		/// The results of this method are used to determine how much space is required for
-		/// the axis labels.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <returns>the maximum width of the text in pixel units</returns>
-		protected float GetScaleMaxWidth( Graphics g, GraphPane pane, double scaleFactor )
-		{
-			string tmpStr;
-			double	dVal,
-					scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
-			int		i, iStart, iEnd;
 
-			if ( this.isLog )
-			{
-				iStart = (int) ( Math.Ceiling( SafeLog(this.min) - 0.000001 ) + 0.000001 );
-				iEnd = (int) ( Math.Floor( SafeLog(this.max) + 0.000001 ) + 0.000001 );
-			}
-			else
-			{
-				iStart = 0;
-				iEnd = (int) (( this.max - this.min ) / this.step + 0.01);
-			}
-
-			float width;
-			float maxWidth = 0;
-
-			// Only worry about the first and the last value on the scale
-			for ( i=iStart; i<=iEnd; i+=iEnd-iStart)
-			{
-				if ( this.isLog )
-					dVal = Math.Pow( (double) 10.0, (double) i );
-				else
-					dVal = (double) this.min + (double) this.step * (double) i;
-
-				// draw the label
-				if ( isLog )
-					tmpStr = String.Format( "10^{0}", i );
-				else
-				{
-					tmpStr = "{0:F*}";
-					tmpStr = tmpStr.Replace("*", this.numDec.ToString("D") );
-					tmpStr = String.Format( tmpStr, dVal / scaleMult );
-				}
-
-				width = this.ScaleFontSpec.MeasureString( g, tmpStr, scaleFactor ).Width;
-				if ( width > maxWidth )
-					maxWidth = width;
-			}
-
-			return maxWidth;
-		}
-*/
 		/// <summary>
 		/// Get the maximum width of the scale value text that is required to label this
 		/// <see cref="Axis"/>.
@@ -766,43 +888,21 @@ namespace ZedGraph
 			string tmpStr;
 			double	dVal,
 				scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
-			int		i, iStart, iEnd;
+			int		i;
 
-			if ( this.isLog )
-			{
-				iStart = (int) ( Math.Ceiling( SafeLog(this.min) - 0.000001 ) + 0.000001 );
-				iEnd = (int) ( Math.Floor( SafeLog(this.max) + 0.000001 ) + 0.000001 );
-			}
-			else
-			{
-				iStart = 0;
-				iEnd = (int) (( this.max - this.min ) / this.step + 0.01);
-			}
+			int nTics = CalcNumTics();
+			
+			double startVal = CalcBaseTic();
 
 			SizeF maxSpace = new SizeF( 0, 0 );
 
-			// Only worry about the first and the last value on the scale
-			for ( i=iStart; i<=iEnd; i+=iEnd-iStart)
+			// Repeat for each tic
+			for ( i=0; i<nTics; i++)
 			{
-				if ( this.isLog )
-					dVal = Math.Pow( (double) 10.0, (double) i );
-				else
-					dVal = (double) this.min + (double) this.step * (double) i;
+				dVal = CalcMajorTicValue( startVal, i );
 
 				// draw the label
-				if ( isLog )
-				{
-					if ( i >= -3 && i <= 4 )
-						tmpStr = string.Format( "{0}", Math.Pow( 10.0, i ) );
-					else
-						tmpStr = string.Format( "1e{0}", i );
-				}
-				else
-				{
-					tmpStr = "{0:F*}";
-					tmpStr = tmpStr.Replace("*", this.numDec.ToString("D") );
-					tmpStr = String.Format( tmpStr, dVal / scaleMult );
-				}
+				MakeLabel( i, dVal, out tmpStr );
 
 				SizeF sizeF = this.ScaleFontSpec.BoundingBox( g, tmpStr, scaleFactor );
 				if ( sizeF.Height > maxSpace.Height )
@@ -833,6 +933,8 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
+		/// <returns>Returns the space, in pixels, required for this axis (between the
+		/// paneRect and axisRect)</returns>
 		public float CalcSpace( Graphics g, GraphPane pane, double scaleFactor )
 		{
 			float charHeight = this.ScaleFontSpec.GetHeight( scaleFactor );
@@ -913,44 +1015,141 @@ namespace ZedGraph
 				topPix = pane.AxisRect.Width;
 			}
 			
-			int		iStart, iEnd;
-
 			// sanity check
 			if ( this.min >= this.max )
 				return;
 
 			// if the step size is outrageous, then quit
 			// (step size not used for log scales)
-			if ( !this.isLog )
+			if ( !this.IsLog  )
 			{
-				if ( this.step <= 0 ||
-					( this.max - this.min ) / this.step > 1000 ||
+				if ( this.step <= 0 || this.minorStep <= 0 )
+					return;
+
+				double tMajor = ( this.max - this.min ) / this.step,
+						tMinor = ( this.max - this.min ) / this.minorStep;
+				if ( IsDate )
+				{
+					tMajor /= GetUnitMultiple( majorUnit );
+					tMinor /= GetUnitMultiple( minorUnit );
+				}
+				if ( tMajor > 1000 ||
 					( ( this.isMinorTic || this.isMinorInsideTic || this.isMinorOppositeTic )
-					&& ( this.max - this.minScale ) / this.minorStep > 5000 ) )
+					&& tMinor > 5000 ) )
 					return;
 			}
 
-			if ( this.isLog )
-			{
-				iStart = (int) ( Math.Ceiling( this.minScale - 1.0e-12 ) );
-				iEnd = (int) ( Math.Floor( this.maxScale + 1.0e-12 ) );
-			}
-			else
-			{
-				iStart = 0;
-				iEnd = (int) (( this.maxScale - this.minScale ) / this.step + 0.01);
-			}
+			// calculate the total number of major tics required
+			int nTics = CalcNumTics();
+			// get the first major tic value
+			double baseVal = CalcBaseTic();
 
 			Pen pen = new Pen( this.color, this.ticPenWidth  );
 			
 			// redraw the axis border
 			g.DrawLine( pen, 0.0F, 0.0F, rightPix, 0.0F );
 
-			DrawLabels( g, pane, iStart, iEnd, topPix, scaleFactor );
+			// draw the major tics and labels
+			DrawLabels( g, pane, baseVal, nTics, topPix, scaleFactor );
 		
-			DrawMinorTics( g, iStart, scaleFactor, topPix );
+			DrawMinorTics( g, baseVal, scaleFactor, topPix );
 		}
 	
+		/// <summary>
+		/// Internal routine to calculate a multiplier to the selected unit back to days.
+		/// </summary>
+		/// <param name="unit">The unit type for which the multiplier is to be
+		/// calculated</param>
+		/// <returns>
+		/// This is ratio of days/selected unit
+		/// </returns>
+		private double GetUnitMultiple( DateUnit unit )
+		{
+			switch( unit )
+			{
+				case DateUnit.Year:
+				default:
+					return 365.0;
+				case DateUnit.Month:
+					return 30.0;
+				case DateUnit.Day:
+					return 1.0;
+				case DateUnit.Hour:
+					return 1.0 / XDate.HoursPerDay;
+				case DateUnit.Minute:
+					return 1.0 / XDate.MinutesPerDay;
+				case DateUnit.Second:
+					return 1.0 / XDate.SecondsPerDay;
+			}
+		}
+
+		/// <summary>
+		/// Internal routine to determine the ordinals of the first and last major axis label.
+		/// </summary>
+		/// <returns>
+		/// This is the total number of major tics for this axis.
+		/// </returns>
+		private int CalcNumTics()
+		{
+			if ( this.IsText ) // text labels (ordinal scale)
+			{
+				// If no array of labels is available, just assume 10 labels so we don't blow up.
+				if ( this.TextLabels == null )
+					return 10;
+				else
+					return this.TextLabels.Length;
+			}
+			else if ( this.IsDate )  // Date-Time scale
+			{
+				int year1, year2, month1, month2, day1, day2, hour1, hour2, minute1, minute2, second1, second2;
+				int nTics;
+
+				XDate.XLDateToCalendarDate( this.min, out year1, out month1, out day1,
+											out hour1, out minute1, out second1 );
+				XDate.XLDateToCalendarDate( this.max, out year2, out month2, out day2,
+											out hour2, out minute2, out second2 );
+				
+				switch ( this.majorUnit )
+				{
+					case DateUnit.Year:
+					default:
+						nTics = (int) ( ( year2 - year1 + 1.0 ) / this.step );
+						break;
+					case DateUnit.Month:
+						nTics = (int) ( ( month2 - month1 + 12.0 * (year2 - year1) + 1.0 ) / this.step );
+						break;
+					case DateUnit.Day:
+						nTics = (int) ( ( ( this.max - this.min ) + 1.0 ) / this.step );
+						break;
+					case DateUnit.Hour:
+						nTics = (int) ( ( this.max - this.min ) * XDate.HoursPerDay + 1.0 );
+						break;
+					case DateUnit.Minute:
+						nTics = (int) ( ( this.max - this.min ) * XDate.MinutesPerDay + 1.0 );
+						break;
+					case DateUnit.Second:
+						nTics = (int) ( ( this.max - this.min ) * XDate.SecondsPerDay + 1.0 );
+						break;
+				}
+		
+				if ( nTics < 1 )
+					nTics = 1;
+
+				return nTics;
+			}
+			else if ( this.IsLog )  // log scale
+			{
+				//iStart = (int) ( Math.Ceiling( SafeLog( this.min ) - 1.0e-12 ) );
+				//iEnd = (int) ( Math.Floor( SafeLog( this.max ) + 1.0e-12 ) );
+				return  (int) ( Math.Floor( SafeLog( this.max ) + 1.0e-12 ) ) -
+						(int) ( Math.Ceiling( SafeLog( this.min ) - 1.0e-12 ) ) + 1;
+			}
+			else  // regular linear scale
+			{
+				return (int) (( this.max - this.min ) / this.step + 0.01) + 1;
+			}
+		}
+
 		/// <summary>
 		/// Draw the value labels, tic marks, and grid lines as
 		/// required for this <see cref="Axis"/>.
@@ -963,15 +1162,11 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <param name="iStart">
-		/// The starting ordinal for the value labels of this axis.  This value is
-		/// always zero for a linear scale, or the starting power of 10 for a log
-		/// scale.
+		/// <param name="baseVal">
+		/// The first major tic value for the axis
 		/// </param>
-		/// <param name="iEnd">
-		/// The ending ordinal for the value labels of this axis.  This value is
-		/// always the total number of labels for a linear scale, or the ending
-		/// power of 10 for a log scale.
+		/// <param name="nTics">
+		/// The total number of major tics for the axis
 		/// </param>
 		/// <param name="topPix">
 		/// The pixel location of the far side of the axisRect from this axis.
@@ -984,7 +1179,7 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void DrawLabels( Graphics g, GraphPane pane, int iStart, int iEnd,
+		public void DrawLabels( Graphics g, GraphPane pane, double baseVal, int nTics,
 						float topPix, double scaleFactor )
 		{
 			double	dVal;
@@ -1007,13 +1202,18 @@ namespace ZedGraph
 				this.GetScaleMaxSpace( g, pane, scaleFactor ).Height / 2.0F;
 
 			// loop for each major tic
-			for ( int i=iStart; i<=iEnd; i++ )
+			for ( int i=0; i<nTics; i++ )
 			{
-				if ( this.isLog )
-					dVal = Math.Pow( (double) 10.0, (double) i );
-				else
-					dVal = (double) this.minScale + (double) this.step * (double) i;
-		
+				dVal = CalcMajorTicValue( baseVal, i );
+				
+				// If we're before the start of the scale, just go to the next tic
+				if ( dVal < this.minScale )
+					continue;
+				// if we've already past the end of the scale, then we're done
+				if ( dVal > this.maxScale )
+					break;
+
+				// convert the value to a pixel position
 				pixVal = this.LocalTransform( dVal );
 		
 				if ( this.isVisible )
@@ -1031,19 +1231,7 @@ namespace ZedGraph
 						g.DrawLine( pen, pixVal, topPix, pixVal, topPix + scaledTic );
 
 					// draw the label
-					if ( isLog )
-					{
-						if ( i >= -3 && i <= 4 )
-							tmpStr = string.Format( "{0}", Math.Pow( 10.0, i ) );
-						else
-							tmpStr = string.Format( "1e{0}", i );
-					}
-					else
-					{
-						tmpStr = "{0:F*}";
-						tmpStr = tmpStr.Replace("*", this.numDec.ToString("D") );
-						tmpStr = String.Format( tmpStr, dVal / scaleMult );
-					}
+					MakeLabel( i, dVal, out tmpStr );
 					
 					this.ScaleFontSpec.Draw( g, tmpStr,
 						pixVal, 0.0F + textCenter,
@@ -1052,8 +1240,200 @@ namespace ZedGraph
 				}
 		
 				// draw the grid
-				if ( this.isVisible && this.isShowGrid && i > iStart && i < iEnd )
+				if ( this.isVisible && this.isShowGrid )
 					g.DrawLine( dottedPen, pixVal, 0.0F, pixVal, topPix );
+			}
+		}
+
+		/// <summary>
+		/// Determine the value for the first major tic.  This is done by finding the first possible
+		/// value that is an integral multiple of the step size, taking into account the date/time units
+		/// if appropriate.
+		/// This routine properly
+		/// accounts for <see cref="IsLog"/>, <see cref="IsText"/>, and other axis format settings.
+		/// </summary>
+		/// <returns>
+		/// First major tic value (floating point double).
+		/// </returns>
+		private double CalcBaseTic()
+		{
+			if ( this.IsDate )
+			{
+				int year, month, day, hour, minute, second;
+				XDate.XLDateToCalendarDate( this.min, out year, out month, out day, out hour, out minute,
+											out second );
+				switch ( this.majorUnit )
+				{
+					case DateUnit.Year:
+					default:
+						month = 1; day = 1; hour = 0; minute = 0; second = 0;
+						break;
+					case DateUnit.Month:
+						day = 1; hour = 0; minute = 0; second = 0;
+						break;
+					case DateUnit.Day:
+						hour = 0; minute = 0; second = 0;
+						break;
+					case DateUnit.Hour:
+						minute = 0; second = 0;
+						break;
+					case DateUnit.Minute:
+						second = 0;
+						break;
+					case DateUnit.Second:
+						break;
+						
+				}
+				
+				double xlDate = XDate.CalendarDateToXLDate( year, month, day, hour, minute, second );
+				if ( xlDate < this.min )
+				{
+					switch ( this.majorUnit )
+					{
+						case DateUnit.Year:
+						default:
+							year++;
+							break;
+						case DateUnit.Month:
+							month++;
+							break;
+						case DateUnit.Day:
+							day++;
+							break;
+						case DateUnit.Hour:
+							hour++;
+							break;
+						case DateUnit.Minute:
+							minute++;
+							break;
+						case DateUnit.Second:
+							second++;
+							break;
+							
+					}
+					
+					xlDate = XDate.CalendarDateToXLDate( year, month, day, hour, minute, second );
+				}
+				
+				return xlDate;
+			}
+			else if ( this.IsLog )
+			{
+				// go to the nearest even multiple of the step size
+				return Math.Ceiling( SafeLog( this.min ) - 0.00000001 );
+			}
+			else if ( this.IsText )
+			{
+				return 1.0;
+			}
+			else
+			{
+				// go to the nearest even multiple of the step size
+				return Math.Ceiling( (double) this.min / (double) this.step - 0.00000001 )
+														* (double) this.step;
+			}
+
+		}
+		
+		/// <summary>
+		/// Determine the value for any major tic.  This routine properly
+		/// accounts for <see cref="IsLog"/>, <see cref="IsText"/>, and other axis format settings.
+		/// </summary>
+		/// <param name="baseVal">
+		/// The value of the first major tic (floating point double)
+		/// </param>
+		/// <param name="iTic">
+		/// The major tic number (0 = first major tic).  For log scales, this is the actual power of 10.
+		/// </param>
+		/// <returns>
+		/// The specified major tic value (floating point double).
+		/// </returns>
+		private double CalcMajorTicValue( double baseVal, int iTic )
+		{
+			if ( this.IsDate ) // date scale
+			{
+				XDate xDate = new XDate( baseVal );
+				
+				switch ( this.majorUnit )
+				{
+					case DateUnit.Year:
+					default:
+						xDate.AddYears( (double) iTic * this.step );
+						break;
+					case DateUnit.Month:
+						xDate.AddMonths( (double) iTic * this.step );
+						break;
+					case DateUnit.Day:
+						xDate.AddDays( (double) iTic * this.step );
+						break;
+					case DateUnit.Hour:
+						xDate.AddHours( (double) iTic * this.step );
+						break;
+					case DateUnit.Minute:
+						xDate.AddMinutes( (double) iTic * this.step );
+						break;
+					case DateUnit.Second:
+						xDate.AddSeconds( (double) iTic * this.step );
+						break;	
+				}
+				
+				return xDate.XLDate;
+			}
+			else if ( this.IsLog ) // log scale
+			{
+				return baseVal * Math.Pow( 10.0, (double) iTic );
+			}
+			else // regular linear scale
+			{
+				return baseVal + (double) this.step * (double) iTic;
+			}
+		}
+		
+		/// <summary>
+		/// Make a value label for the axis at the specified ordinal position.  This routine properly
+		/// accounts for <see cref="IsLog"/>, <see cref="IsText"/>, and other axis format settings.
+		/// </summary>
+		/// <param name="index">
+		/// The zero-based, ordinal index of the label to be generated.  For example, a value of 2 would
+		/// cause the third value label on the axis to be generated.
+		/// </param>
+		/// <param name="dVal">
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="IsLog"/>)
+		/// and text (<see cref="IsText"/>) type axes.
+		/// </param>
+		/// <param name="label">
+		/// Output only.  The resulting value label.
+		/// </param>
+		private void MakeLabel( int index, double dVal, out string label )
+		{
+			// draw the label
+			if ( this.IsText )
+			{
+				if ( this.TextLabels == null || index < 0 || index >= TextLabels.Length )
+					label = "";
+				else
+					label = TextLabels[index];
+			}
+			else if ( this.IsDate )
+			{
+				if ( this.scaleFormat == null )
+					this.scaleFormat = Def.Ax.ScaleFormat;
+				label = XDate.ToString( dVal, this.scaleFormat );
+			}
+			else if ( this.IsLog )
+			{
+				if ( index >= -3 && index <= 4 )
+					label = string.Format( "{0}", Math.Pow( 10.0, index ) );
+				else
+					label = string.Format( "1e{0}", index );
+			}
+			else
+			{
+				double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
+
+				string tmpStr = "{0:F*}";
+				tmpStr = tmpStr.Replace("*", this.numDec.ToString("D") );
+				label = String.Format( tmpStr, dVal / scaleMult );
 			}
 		}
 
@@ -1065,10 +1445,9 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="iStart">
-		/// The starting ordinal for the value labels of this axis.  This value is
-		/// always zero for a linear scale, or the starting power of 10 for a log
-		/// scale.
+		/// <param name="baseVal">
+		/// The scale value for the first major tic position.  This is the reference point
+		/// for all other tic marks.
 		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
@@ -1081,14 +1460,16 @@ namespace ZedGraph
 		/// This value is the axisRect.Height for the XAxis, or the axisRect.Width
 		/// for the YAxis and Y2Axis.
 		/// </param>
-		public void DrawMinorTics( Graphics g, int iStart, double scaleFactor, float topPix )
+		public void DrawMinorTics( Graphics g, double baseVal, double scaleFactor, float topPix )
 		{
-			if ( this.isMinorTic && this.isVisible )
+			if ( this.isMinorTic && this.isVisible && ! this.IsText )
 			{
-				if ( this.isLog || this.minorStep < this.step )
+				double tMajor = this.step * ( IsDate ? GetUnitMultiple( majorUnit ) : 1.0 ),
+					tMinor = this.minorStep * ( IsDate ? GetUnitMultiple( minorUnit ) : 1.0 );
+
+				if ( this.IsLog || tMinor < tMajor )
 				{
 					float minorScaledTic = this.ScaledMinorTic( scaleFactor );
-					int count = 0;
 
 					// Minor tics start at the minimum value and step all the way thru
 					// the full scale.  This means that if the minor step size is not
@@ -1098,16 +1479,14 @@ namespace ZedGraph
 					float	pixVal;
 					Pen		pen = new Pen( this.color, this.ticPenWidth  );
 					
-					// Draw the minor tic marks for linear scales
-					while ( dVal < this.max && count < 5000 )
+					int iTic = CalcMinorStart( baseVal );
+					
+					// Draw the minor tic marks
+					while ( dVal < this.max && iTic < 5000 )
 					{
-						if ( this.isLog )
-							dVal = Math.Pow( 10.0, (double) iStart +
-									(double) ( count / 10 )) * (double) ( count % 10 );
-						else
-							dVal += this.minorStep;
+						dVal = CalcMinorTicValue( baseVal, iTic );
 
-						if ( dVal > this.min && dVal < this.max )
+						if ( dVal >= this.min && dVal <= this.max )
 						{
 							pixVal = this.LocalTransform( dVal );
 
@@ -1124,9 +1503,111 @@ namespace ZedGraph
 								g.DrawLine( pen, pixVal, topPix, pixVal, topPix + minorScaledTic );
 						}
 
-						count++;  // a paranoid check to avoid infinite loops
+						iTic++;
 					}
 				}
+			}
+		}
+
+		/// <summary>
+		/// Determine the value for any minor tic.  This routine properly
+		/// accounts for <see cref="IsLog"/>, <see cref="IsText"/>, and other axis format settings.
+		/// </summary>
+		/// <param name="baseVal">
+		/// The value of the first major tic (floating point double).  This tic value is the base
+		/// reference for all tics (including minor ones).
+		/// </param>
+		/// <param name="iTic">
+		/// The major tic number (0 = first major tic).  For log scales, this is the actual power of 10.
+		/// </param>
+		/// <returns>
+		/// The specified minor tic value (floating point double).
+		/// </returns>
+		private double CalcMinorTicValue( double baseVal, int iTic )
+		{
+			if ( this.IsDate ) // date scale
+			{
+				XDate xDate= new XDate( baseVal );
+				
+				switch ( this.minorUnit )
+				{
+					case DateUnit.Year:
+					default:
+						xDate.AddYears( (double) iTic * this.minorStep );
+						break;
+					case DateUnit.Month:
+						xDate.AddMonths( (double) iTic * this.minorStep );
+						break;
+					case DateUnit.Day:
+						xDate.AddDays( (double) iTic * this.minorStep );
+						break;
+					case DateUnit.Hour:
+						xDate.AddHours( (double) iTic * this.minorStep );
+						break;
+					case DateUnit.Minute:
+						xDate.AddMinutes( (double) iTic * this.minorStep );
+						break;
+					case DateUnit.Second:
+						xDate.AddSeconds( (double) iTic * this.minorStep );
+						break;	
+				}
+				
+				return xDate.XLDate;
+			}
+			else if ( this.IsLog ) // log scale
+			{
+				return baseVal * Math.Pow( 10.0, (double) ( iTic / 9 ) ) * (double) ( ( iTic % 9 ) + 1 );
+			}
+			else // regular linear scale
+			{
+				return baseVal + (double) this.minorStep * (double) iTic;
+			}
+		}
+		
+		/// <summary>
+		/// Internal routine to determine the ordinals of the first minor tic mark
+		/// </summary>
+		/// <param name="baseVal">
+		/// The value of the first major tic for the axis.
+		/// </param>
+		/// <returns>
+		/// The ordinal position of the first minor tic, relative to the first major tic.
+		/// This value can be negative (e.g., -3 means the first minor tic is 3 minor step
+		/// increments before the first major tic.
+		/// </returns>
+		private int CalcMinorStart( double baseVal )
+		{
+			if ( this.IsText ) // text labels (ordinal scale)
+			{
+				// This should never happen (no minor tics for text labels)
+				return 0;
+			}
+			else if ( this.IsDate )  // Date-Time scale
+			{
+				switch ( this.majorUnit )
+				{
+					case DateUnit.Year:
+					default:
+						return (int) ( ( this.min - baseVal ) / 365.0 );
+					case DateUnit.Month:
+						return (int) ( ( this.min - baseVal ) / 28.0 );
+					case DateUnit.Day:
+						return (int) ( this.min - baseVal );
+					case DateUnit.Hour:
+						return (int) ( ( this.min - baseVal ) * XDate.HoursPerDay );
+					case DateUnit.Minute:
+						return (int) ( ( this.min - baseVal ) * XDate.MinutesPerDay );
+					case DateUnit.Second:
+						return (int) ( ( this.min - baseVal ) * XDate.SecondsPerDay );
+				}				
+			}
+			else if ( this.IsLog )  // log scale
+			{
+				return -9;
+			}
+			else  // regular linear scale
+			{
+				return (int) ( ( this.min - baseVal ) / this.minorStep );
 			}
 		}
 
@@ -1206,7 +1687,32 @@ namespace ZedGraph
 			if ( this.maxAuto )
 				this.max = maxVal;
 		
-			if ( this.isLog )	// Log Scale
+			// if this is a text-based axis, then ignore all settings and make it simply ordinal
+			if ( this.IsText )
+			{
+				// if text labels are provided, then autorange to the number of labels
+				if ( this.TextLabels != null )
+				{
+					if ( this.minAuto )
+						this.min = 0;
+					if ( this.maxAuto )
+						this.max = this.TextLabels.Length + 1;
+				}
+
+				// Test for trivial condition of range = 0 and pick a suitable default
+				if ( this.max - this.min < .1 )
+				{
+					if ( this.maxAuto )
+						this.max = this.min + 10.0;
+					else
+						this.min = this.max - 10.0;
+				}
+
+				this.step = 1.0;
+				this.numDec = 0;
+				this.scaleMag = 0;
+			}	
+			else if ( this.IsLog )	// Log Scale
 			{
 				if ( this.scaleMagAuto )
 					this.scaleMag = 0;		// Never use a magnitude shift for log scales
@@ -1244,6 +1750,34 @@ namespace ZedGraph
 				if ( this.maxAuto )
 					this.max = Math.Pow( (double) 10.0,
 								Math.Ceiling( Math.Log10( this.max ) ) );
+		
+			}
+			else if ( this.IsDate )			// Date Scale
+			{
+				
+				// Test for trivial condition of range = 0 and pick a suitable default
+				if ( this.max - this.min < 1.0e-20 )
+				{
+					if ( this.maxAuto )
+						this.max = 1.0 + this.min;
+					else
+						this.min = this.max - 1.0;
+				}
+		
+				// Calculate the new step size
+				if ( this.stepAuto )
+					this.step = CalcDateStepSize( this.max - this.min, Def.Ax.TargetSteps );
+				
+				// Calculate the scale minimum
+				if ( this.minAuto )
+					this.min = CalcEvenStepDate( this.min, -1 );
+		
+				// Calculate the scale maximum
+				if ( this.maxAuto )
+					this.max = CalcEvenStepDate( this.max, 1 );
+
+				this.scaleMag = 0;		// Never use a magnitude shift for date scales
+				this.numDec = 0;		// The number of decimal places to display is not used
 		
 			}
 			else			// Linear Scale
@@ -1358,6 +1892,291 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Calculate a step size for a <see cref="AxisType.Date"/> scale.
+		/// This method is used by <see cref="PickScale"/>.
+		/// </summary>
+		/// <param name="range">The range of data in units of days</param>
+		/// <param name="targetSteps">The desired "typical" number of steps
+		/// to divide the range into</param>
+		/// <returns>The calculated step size for the specified data range.  Also
+		/// calculates and sets the values for <see cref="MajorUnit"/>,
+		/// <see cref="MinorUnit"/>, <see cref="MinorStep"/>, and
+		/// <see cref="ScaleFormat"/></returns>
+		protected double CalcDateStepSize( double range, double targetSteps )
+		{
+			// Calculate an initial guess at step size
+			double tempStep = range / targetSteps;
+
+			if ( range > Def.Ax.RangeYearYear )
+			{
+				majorUnit = DateUnit.Year;
+				this.scaleFormat = "&yyyy";
+				tempStep = Math.Floor( tempStep/365.0 );
+				if ( tempStep < 1.0 )
+					tempStep = 1.0;
+
+				if ( minorStepAuto )
+				{
+					minorUnit = DateUnit.Year;
+					if ( tempStep == 1.0 )
+						minorStep = 0.25;
+					else
+						minorStep = CalcStepSize( tempStep, targetSteps );
+				}
+			}
+			else if ( range > Def.Ax.RangeYearMonth )
+			{
+				majorUnit = DateUnit.Year;
+				this.scaleFormat = "&mmm-&yy";
+				tempStep = 1.0;
+
+				if ( minorStepAuto )
+				{
+					minorUnit = DateUnit.Month;
+					// Calculate the minor steps to give an estimated 4 steps
+					// per major step.
+					minorStep = Math.Ceiling( range / ( targetSteps * 3 ) / 30.0 );
+					// make sure the minorStep is 1, 2, 3, 6, or 12 months
+					if ( minorStep > 6 )
+						minorStep = 12;
+					else if ( minorStep > 3 )
+						minorStep = 6;
+				}
+			}
+			else if ( range > Def.Ax.RangeMonthMonth )
+			{
+				majorUnit = DateUnit.Month;
+				this.scaleFormat = "&mmm-&yy";
+				tempStep = Math.Floor( tempStep / 30.0 );
+				if ( tempStep < 1.0 )
+					tempStep = 1.0;
+				if ( minorStepAuto )
+				{
+					minorUnit = DateUnit.Month;
+					minorStep = 0.25;
+				}
+			}
+			else if ( range > Def.Ax.RangeDayDay )
+			{
+				majorUnit = DateUnit.Day;
+				scaleFormat = "&d-&mmm";
+				tempStep = Math.Floor( tempStep );
+				if ( tempStep < 1.0 )
+					tempStep = 1.0;
+				if ( minorStepAuto )
+				{
+					minorUnit = DateUnit.Day;
+					minorStep = 1.0;
+				}
+			}
+			else if ( range > Def.Ax.RangeDayHour )
+			{
+				majorUnit = DateUnit.Day;
+				this.scaleFormat = "&d-&mmm &hh:&nn";
+				tempStep = 1.0;
+
+				if ( minorStepAuto )
+				{
+					minorUnit = DateUnit.Hour;
+					// Calculate the minor steps to give an estimated 4 steps
+					// per major step.
+					minorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.HoursPerDay );
+					// make sure the minorStep is 1, 2, 3, 6, or 12 hours
+					if ( minorStep > 6 )
+						minorStep = 12;
+					else if ( minorStep > 3 )
+						minorStep = 6;
+					else if ( minorStep < 1 )
+						minorStep = 1;
+				}
+			}
+			else if ( range > Def.Ax.RangeHourHour )
+			{
+				majorUnit = DateUnit.Hour;
+				tempStep = Math.Floor( tempStep * XDate.HoursPerDay );
+				scaleFormat = "&hh:&nn";
+
+				if ( tempStep > 12.0 )
+					tempStep = 24.0;
+				else if ( tempStep > 6.0 )
+					tempStep = 12.0;
+				else if ( tempStep > 3.0 )
+					tempStep = 6.0;
+				else if ( tempStep < 1.0 )
+					tempStep = 1.0;
+
+				if ( minorStepAuto )
+				{
+					minorUnit = DateUnit.Hour;
+					minorStep = 0.25;
+				}
+			}
+			else if ( range > Def.Ax.RangeHourMinute )
+			{
+				majorUnit = DateUnit.Hour;
+				tempStep = 1.0;
+				scaleFormat = "&hh:&nn";
+
+				if ( minorStepAuto )
+				{
+					minorUnit = DateUnit.Minute;
+					// Calculate the minor steps to give an estimated 4 steps
+					// per major step.
+					minorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.MinutesPerDay );
+					// make sure the minorStep is 1, 5, 15, or 30 minutes
+					if ( minorStep > 15.0 )
+						minorStep = 30.0;
+					else if ( minorStep > 5.0 )
+						minorStep = 15.0;
+					else if ( minorStep > 1.0 )
+						minorStep = 5.0;
+					else if ( minorStep < 1.0 )
+						minorStep = 1.0;
+				}
+			}
+			else if ( range > Def.Ax.RangeMinuteMinute )
+			{
+				majorUnit = DateUnit.Minute;
+				scaleFormat = "&hh:&nn";
+
+				tempStep = Math.Floor( tempStep * XDate.MinutesPerDay );
+				// make sure the minute step size is 1, 5, 15, or 30 minutes
+				if ( tempStep > 15.0 )
+					tempStep = 30.0;
+				else if ( tempStep > 5.0 )
+					tempStep = 15.0;
+				else if ( tempStep > 1.0 )
+					tempStep = 5.0;
+				else if ( tempStep < 1.0 )
+					tempStep = 1.0;
+
+				if ( minorStepAuto )
+				{
+					minorUnit = DateUnit.Minute;
+					minorStep = 0.25;
+				}
+			}
+			else if ( range > Def.Ax.RangeMinuteSecond )
+			{
+				majorUnit = DateUnit.Minute;
+				tempStep = 1.0;
+				scaleFormat = "&nn:&ss";
+
+				if ( minorStepAuto )
+				{
+					minorUnit = DateUnit.Second;
+					// Calculate the minor steps to give an estimated 4 steps
+					// per major step.
+					minorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.SecondsPerDay );
+					// make sure the minorStep is 1, 5, 15, or 30 seconds
+					if ( minorStep > 15.0 )
+						minorStep = 30.0;
+					else if ( minorStep > 5.0 )
+						minorStep = 15.0;
+					else if ( minorStep > 1.0 )
+						minorStep = 5.0;
+					else if ( minorStep < 1.0 )
+						minorStep = 1.0;
+				}
+			}
+			else // SecondSecond
+			{
+				majorUnit = DateUnit.Second;
+				scaleFormat = "&nn:&ss";
+
+				tempStep = Math.Floor( tempStep * XDate.SecondsPerDay );
+				// make sure the second step size is 1, 5, 15, or 30 seconds
+				if ( tempStep > 15.0 )
+					tempStep = 30.0;
+				else if ( tempStep > 5.0 )
+					tempStep = 15.0;
+				else if ( tempStep > 1.0 )
+					tempStep = 5.0;
+				else if ( tempStep < 1.0 )
+					tempStep = 1.0;
+
+				if ( minorStepAuto )
+				{
+					minorUnit = DateUnit.Second;
+					minorStep = 0.25;
+				}
+			}
+
+			return tempStep;
+		}
+
+		/// <summary>
+		/// Calculate a date that is close to the specified date and an
+		/// even multiple of the selected
+		/// <see cref="MajorUnit"/> for a <see cref="AxisType.Date"/> scale.
+		/// This method is used by <see cref="PickScale"/>.
+		/// </summary>
+		/// <param name="date">The date which the calculation should be close to</param>
+		/// <param name="direction">The desired direction for the date to take.
+		/// 1 indicates the result date should be greater than the specified
+		/// date parameter.  -1 indicates the other direction.</param>
+		/// <returns>The calculated date</returns>
+		protected double CalcEvenStepDate( double date, int direction )
+		{
+			int year, month, day, hour, minute, second;
+
+			XDate.XLDateToCalendarDate( date, out year, out month, out day,
+										out hour, out minute, out second );
+
+			// If the direction is -1, then it is sufficient to go to the beginning of
+			// the current time period, .e.g., for 15-May-95, and monthly steps, we
+			// can just back up to 1-May-95
+			if ( direction < 0 )
+				direction = 0;
+
+			switch ( majorUnit )
+			{
+				case DateUnit.Year:
+				default:
+					// If the date is already an exact year, then don't step to the next year
+					if ( direction == 1 && month == 1 && day == 1 && hour == 0
+						&& minute == 0 && second == 0 )
+						return date;
+					else
+						return XDate.CalendarDateToXLDate( year+direction, 1, 1,
+														0, 0, 0 );
+				case DateUnit.Month:
+					// If the date is already an exact month, then don't step to the next month
+					if ( direction == 1 && day == 1 && hour == 0
+						&& minute == 0 && second == 0 )
+						return date;
+					else
+						return XDate.CalendarDateToXLDate( year, month+direction, 1,
+												0, 0, 0 );
+				case DateUnit.Day:
+					// If the date is already an exact Day, then don't step to the next day
+					if ( direction == 1 && hour == 0 && minute == 0 && second == 0 )
+						return date;
+					else
+						return XDate.CalendarDateToXLDate( year, month,
+											day+direction, 0, 0, 0 );
+				case DateUnit.Hour:
+					// If the date is already an exact hour, then don't step to the next hour
+					if ( direction == 1 && minute == 0 && second == 0 )
+						return date;
+					else
+						return XDate.CalendarDateToXLDate( year, month, day,
+													hour+direction, 0, 0 );
+				case DateUnit.Minute:
+					// If the date is already an exact minute, then don't step to the next minute
+					if ( direction == 1 && second == 0 )
+						return date;
+					else
+						return XDate.CalendarDateToXLDate( year, month, day, hour,
+													minute+direction, 0 );
+				case DateUnit.Second:
+					return XDate.CalendarDateToXLDate( year, month, day, hour,
+													minute, second+direction );
+
+			}
+		}
+
+		/// <summary>
 		/// Calculate the modulus (remainder) in a safe manner so that divide
 		/// by zero errors are avoided
 		/// </summary>
@@ -1394,7 +2213,7 @@ namespace ZedGraph
 		{
 			// Must take into account Log, and Reverse Axes
 			double ratio;
-			if ( this.isLog )
+			if ( this.IsLog )
 				ratio = ( SafeLog( x ) - this.minScale ) / ( this.maxScale  - this.minScale );
 			else
 				ratio = ( x - this.minScale ) / ( this.maxScale - this.minScale );
@@ -1408,6 +2227,41 @@ namespace ZedGraph
 			else
 				return (float) ( this.maxPix - ( this.maxPix - this.minPix ) * ratio );
 		}
+
+		/// <summary>
+		/// Reverse transform the user coordinates (scale value)
+		/// given a graphics device coordinate (pixels).  This method takes into
+		/// account the scale range (<see cref="Min"/> and <see cref="Max"/>),
+		/// logarithmic state (<see cref="IsLog"/>), scale reverse state
+		/// (<see cref="IsReverse"/>) and axis type (<see cref="XAxis"/>,
+		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).  Note that
+		/// <see cref="SetupScaleData"/> must be called for the
+		/// current configuration before using this method (this is called everytime
+		/// the graph is drawn (i.e., <see cref="GraphPane.Draw"/> is called).
+		/// </summary>
+		/// <param name="pixVal">The screen pixel value, in graphics device coordinates to
+		/// be transformed</param>
+		/// <returns>The user scale value that corresponds to the screen pixel location</returns>
+		public double ReverseTransform( float pixVal )
+		{
+			double val;
+			
+			// see if the sign of the equation needs to be reversed
+			if ( (this.isReverse) == (this is XAxis) )
+				val = (double) ( pixVal - this.maxPix )
+						/ (double) ( this.minPix - this.maxPix )
+						* ( this.maxScale - this.minScale ) + this.minScale;
+			else
+				val = (double) ( pixVal - this.minPix )
+						/ (double) ( this.maxPix - this.minPix )
+						* ( this.maxScale - this.minScale ) + this.minScale;
+			
+			if ( this.IsLog )
+				val = Math.Pow( 10.0, val );
+			
+			return val;
+		}
+				
 
 		/// <summary>
 		/// Transform the coordinate value from user coordinates (scale value)
@@ -1433,7 +2287,7 @@ namespace ZedGraph
 			double	ratio;
 			float	rv;
 
-			if ( this.isLog )
+			if ( this.IsLog )
 				ratio = ( SafeLog( x ) - this.minScale ) / ( this.maxScale  - this.minScale );
 			else
 				ratio = ( x - this.minScale ) / ( this.maxScale - this.minScale );
@@ -1459,6 +2313,25 @@ namespace ZedGraph
 				return Math.Log10( x );
 			else
 				return 0.0;
+		}
+		
+		/// <summary>
+		/// Create an array of default values for a curve associated with this axis.  The default
+		/// values are simple ordinals based on the number of axis labels.
+		/// </summary>
+		/// <returns>an ordinal array of floating point double values</returns>
+		public double[] MakeDefaultArray()
+		{
+			int length = 10;
+			if ( this.IsText && this.TextLabels != null )
+				length = this.TextLabels.Length;
+
+			double[] dArray = new double[length];
+			
+			for ( int i=0; i<length; i++ )
+				dArray[i] = (double) i;
+			
+			return dArray;
 		}
 
 	}

@@ -7,7 +7,7 @@ namespace ZedGraph
 	/// This class encapsulates the chart <see cref="Legend"/> that is displayed
 	/// in the <see cref="GraphPane"/>
 	/// </summary>
-	public class Legend
+	public class Legend : ICloneable
 	{
 		private RectangleF rect;
 		private LegendLoc location;
@@ -41,6 +41,34 @@ namespace ZedGraph
 									Def.Leg.FontItalic, Def.Leg.FontUnderline );						
 			this.fontSpec.IsFilled = false;
 			this.fontSpec.IsFramed = false;
+		}
+
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The XAxis object from which to copy</param>
+		public Legend( Legend rhs )
+		{
+			rect = rhs.Rect;
+			location = rhs.Location;
+			isFramed = rhs.isFramed;
+			isFilled = rhs.isFilled;
+			isHStack = rhs.IsHStack;
+			isVisible = rhs.IsVisible;
+			fillColor = rhs.FillColor;
+			frameColor = rhs.FrameColor;
+			frameWidth = rhs.FrameWidth;
+			
+			fontSpec = new FontSpec( rhs.FontSpec );
+		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the Legend</returns>
+		public object Clone()
+		{ 
+			return new Legend( this ); 
 		}
 
 		/// <summary>
@@ -251,7 +279,7 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="axisRect">
 		/// The rectangle that contains the area bounded by the axes, in pixel units.
-		/// <seealso cref="ZedGraph.AxisRect">AxisRect</seealso>
+		/// <seealso cref="GraphPane.AxisRect">AxisRect</seealso>
 		/// </param>
 		/// <param name="hStack">The number of columns (horizontal stacking) to be used
 		/// for drawing the legend</param>

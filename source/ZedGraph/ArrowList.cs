@@ -9,7 +9,7 @@ namespace ZedGraph
 	/// A collection class containing a list of <see cref="ZedGraph.ArrowItem"/> type graphic objects
 	/// to be displayed on the graph.
 	/// </summary>
-	public class ArrowList : CollectionBase
+	public class ArrowList : CollectionBase, ICloneable
 	{
 		/// <summary>
 		/// Default constructor for the collection class
@@ -18,6 +18,25 @@ namespace ZedGraph
 		{
 		}
 
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The ArrowList object from which to copy</param>
+		public ArrowList( ArrowList rhs )
+		{
+			foreach ( ArrowItem item in rhs )
+				this.Add( new ArrowItem( item ) );
+		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the ArrowList</returns>
+		public object Clone()
+		{ 
+			return new ArrowList( this ); 
+		}
+		
 		/// <summary>
 		/// Indexer to access the specified <see cref="ZedGraph.ArrowItem"/> object by its ordinal
 		/// position in the list.
@@ -83,16 +102,69 @@ namespace ZedGraph
 	/// A class that represents a graphic arrow or line object on the graph.  A list of
 	/// ArrowItem objects is maintained by the <see cref="ArrowList"/> collection class.
 	/// </summary>
-	public class ArrowItem
+	public class ArrowItem : ICloneable
 	{
-		private float		x1,
-							y1,
-							x2,
-							y2;
+		/// <summary>
+		/// Private field that stores the X location of the starting point
+		/// that defines the arrow segment.  Use the public property
+		/// <see cref="X1"/> to access this value.
+		/// </summary>
+		/// <value>The units are defined as per the <see cref="coordinateFrame"/> setting</value>
+		private float x1;
+		/// <summary>
+		/// Private field that stores the Y location of the starting point
+		/// that defines the arrow segment.  Use the public property
+		/// <see cref="Y1"/> to access this value.
+		/// </summary>
+		/// <value>The units are defined as per the <see cref="coordinateFrame"/> setting</value>
+		private float y1;
+		/// <summary>
+		/// Private field that stores the X location of the ending point
+		/// that defines the arrow segment.  Use the public property
+		/// <see cref="X2"/> to access this value.
+		/// </summary>
+		/// <value>The units are defined as per the <see cref="coordinateFrame"/> setting</value>
+		private float x2;
+		/// <summary>
+		/// Private field that stores the Y location of the ending point
+		/// that defines the arrow segment.  Use the public property
+		/// <see cref="Y2"/> to access this value.
+		/// </summary>
+		/// <value>The units are defined as per the <see cref="coordinateFrame"/> setting</value>
+		private float y2;
+
+		/// <summary>
+		/// Private field that stores the arrowhead size, measured in points.
+		/// Use the public property <see cref="Size"/> to access this value.
+		/// </summary>
 		private float		size;
+		/// <summary>
+		/// Private field that stores the color of the arrow.
+		/// Use the public property <see cref="Color"/> to access this value.
+		/// </summary>
+		/// <value>The color value is declared with a <see cref="System.Drawing.Color"/>
+		/// specification</value>
 		private Color		color;
+		/// <summary>
+		/// Private field that stores the width of the pen for drawing the line
+		/// segment of the arrow.
+		/// Use the public property <see cref="PenWidth"/> to access this value.
+		/// </summary>
+		/// <value> The width is defined in pixel units </value>
 		private float		penWidth;
+		/// <summary>
+		/// Private boolean field that stores the arrowhead state.
+		/// Use the public property <see cref="IsArrowHead"/> to access this value.
+		/// </summary>
+		/// <value> true if an arrowhead is to be drawn, false otherwise </value>
 		private bool		isArrowHead;
+		/// <summary>
+		/// Private field that stores the coordinate system to be used for
+		/// defining the <see cref="ArrowItem"/> position.  Use the public
+		/// property <see cref="CoordinateFrame"/> to access this value.
+		/// </summary>
+		/// <value> The coordinate system is defined with the <see cref="CoordType"/>
+		/// enum</value>
 		private CoordType	coordinateFrame;
 
 		/// <overloads>Constructors for the <see cref="ArrowItem"/> object</overloads>
@@ -168,6 +240,32 @@ namespace ZedGraph
 			this.y2 = 0.2F;
 			isArrowHead = Def.Arr.IsArrowHead;
 			coordinateFrame = Def.Arr.CoordFrame;
+		}
+
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The ArrowItem object from which to copy</param>
+		public ArrowItem( ArrowItem rhs )
+		{
+			x1 = rhs.X1;
+			y1 = rhs.Y1;
+			x2 = rhs.X2;
+			y2 = rhs.Y2;
+			size = rhs.Size;
+			color = rhs.Color;
+			penWidth = rhs.PenWidth;
+			isArrowHead = rhs.IsArrowHead;
+			coordinateFrame = rhs.CoordinateFrame;
+		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the ArrowItem</returns>
+		public object Clone()
+		{ 
+			return new ArrowItem( this ); 
 		}
 
 		/// <summary>
@@ -288,53 +386,57 @@ namespace ZedGraph
 			PointF pix2 = pane.GeneralTransform( new PointF(this.x2, this.y2),
 				this.coordinateFrame );
 
-			// get a scaled size for the arrowhead
-			float scaledSize = (float) ( this.size * scaleFactor );
-
-			// calculate the length and the angle of the arrow "vector"
-			double dy = pix2.Y - pix1.Y;
-			double dx = pix2.X - pix1.X;
-			float angle = (float) Math.Atan2( dy, dx ) * 180.0F / (float) Math.PI;
-			float length = (float) Math.Sqrt( dx*dx + dy*dy );
-
-			// Save the old transform matrix
-			Matrix transform = g.Transform;
-			// Move the coordinate system so it is located at the starting point
-			// of this arrow
-			g.TranslateTransform( pix1.X, pix1.Y );
-			// Rotate the coordinate system according to the angle of this arrow
-			// about the starting point
-			g.RotateTransform( angle );
-
-			// get a pen according to this arrow properties
-			Pen pen = new Pen( this.color, this.penWidth );
-			
-			// Draw the line segment for this arrow
-			g.DrawLine( pen, 0, 0, length, 0 );
-
-			// Only show the arrowhead if required
-			if ( this.isArrowHead )
+			if ( pix1.X > -10000 && pix1.X < 100000 && pix1.Y > -100000 && pix1.Y < 100000 &&
+				pix2.X > -10000 && pix2.X < 100000 && pix2.Y > -100000 && pix2.Y < 100000 )
 			{
-				SolidBrush brush = new SolidBrush( this.color );
+				// get a scaled size for the arrowhead
+				float scaledSize = (float) ( this.size * scaleFactor );
+
+				// calculate the length and the angle of the arrow "vector"
+				double dy = pix2.Y - pix1.Y;
+				double dx = pix2.X - pix1.X;
+				float angle = (float) Math.Atan2( dy, dx ) * 180.0F / (float) Math.PI;
+				float length = (float) Math.Sqrt( dx*dx + dy*dy );
+
+				// Save the old transform matrix
+				Matrix transform = g.Transform;
+				// Move the coordinate system so it is located at the starting point
+				// of this arrow
+				g.TranslateTransform( pix1.X, pix1.Y );
+				// Rotate the coordinate system according to the angle of this arrow
+				// about the starting point
+				g.RotateTransform( angle );
+
+				// get a pen according to this arrow properties
+				Pen pen = new Pen( this.color, this.penWidth );
 				
-				// Create a polygon representing the arrowhead based on the scaled
-				// size
-				PointF[] polyPt = new PointF[4];
-				float hsize = scaledSize / 3.0F;
-				polyPt[0].X = length;
-				polyPt[0].Y = 0;
-				polyPt[1].X = length-size;
-				polyPt[1].Y = hsize;
-				polyPt[2].X = length-size;
-				polyPt[2].Y = -hsize;
-				polyPt[3] = polyPt[0];
+				// Draw the line segment for this arrow
+				g.DrawLine( pen, 0, 0, length, 0 );
+
+				// Only show the arrowhead if required
+				if ( this.isArrowHead )
+				{
+					SolidBrush brush = new SolidBrush( this.color );
+					
+					// Create a polygon representing the arrowhead based on the scaled
+					// size
+					PointF[] polyPt = new PointF[4];
+					float hsize = scaledSize / 3.0F;
+					polyPt[0].X = length;
+					polyPt[0].Y = 0;
+					polyPt[1].X = length-size;
+					polyPt[1].Y = hsize;
+					polyPt[2].X = length-size;
+					polyPt[2].Y = -hsize;
+					polyPt[3] = polyPt[0];
+					
+					// render the arrowhead
+					g.FillPolygon( brush, polyPt );
+				}
 				
-				// render the arrowhead
-				g.FillPolygon( brush, polyPt );
+				// Restore the transform matrix back to its original state
+				g.Transform = transform;
 			}
-			
-			// Restore the transform matrix back to its original state
-			g.Transform = transform;
 		}
 	}
 }

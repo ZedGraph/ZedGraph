@@ -8,7 +8,7 @@ namespace ZedGraph
 	/// A collection class containing a list of <see cref="TextItem"/> objects
 	/// to be displayed on the graph.
 	/// </summary>
-	public class TextList : CollectionBase
+	public class TextList : CollectionBase, ICloneable
 	{
 		/// <summary>
 		/// Default constructor for the <see cref="TextList"/> collection class
@@ -17,6 +17,25 @@ namespace ZedGraph
 		{
 		}
 
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The TextList object from which to copy</param>
+		public TextList( TextList rhs )
+		{
+			foreach ( TextItem item in rhs )
+				this.Add( new TextItem( item ) );
+		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the TextList</returns>
+		public object Clone()
+		{ 
+			return new TextList( this ); 
+		}
+		
 		/// <summary>
 		/// Indexer to access the specified <see cref="TextItem"/> object by its ordinal
 		/// position in the list.
@@ -84,7 +103,7 @@ namespace ZedGraph
 	/// <see cref="TextItem"/> objects is maintained by the
 	/// <see cref="TextList"/> collection class.
 	/// </summary>
-	public class TextItem
+	public class TextItem : ICloneable
 	{
 		private string		text;
 		private FontAlignV	alignV;
@@ -147,6 +166,30 @@ namespace ZedGraph
 			this.text = text;
 			this.x = x;
 			this.y = y;
+		}
+
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The TextItem object from which to copy</param>
+		public TextItem( TextItem rhs )
+		{
+			text = rhs.Text;
+			alignV = rhs.AlignV;
+			alignH = rhs.AlignH;
+			x = rhs.X;
+			y = rhs.Y;
+			coordinateFrame = rhs.CoordinateFrame;
+			fontSpec = new FontSpec( rhs.FontSpec );
+		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the TextItem</returns>
+		public object Clone()
+		{ 
+			return new TextItem( this ); 
 		}
 
 		/// <summary>
@@ -243,11 +286,11 @@ namespace ZedGraph
 			PointF pix = pane.GeneralTransform( new PointF(this.x, this.y),
 						this.coordinateFrame );
 			
-			
 			// Draw the text on the screen, including any frame and background
 			// fill elements
-			this.FontSpec.Draw( g, this.text, pix.X, pix.Y,
-					this.alignH, this.alignV, scaleFactor );
+			if ( pix.X > -10000 && pix.X < 100000 && pix.Y > -100000 && pix.Y < 100000 )
+				this.FontSpec.Draw( g, this.text, pix.X, pix.Y,
+								this.alignH, this.alignV, scaleFactor );
 		}
 	}
 }

@@ -8,13 +8,46 @@ namespace ZedGraph
 	/// The symbols are the small shapes that appear over each defined point
 	/// along the curve.
 	/// </summary>
-	public class Symbol
+	public class Symbol : ICloneable
 	{
+		/// <summary>
+		/// Private field that stores the size of this
+		/// <see cref="Symbol"/> in pixels.  Use the public
+		/// property <see cref="Size"/> to access this value.
+		/// </summary>
 		private float		size;
+		/// <summary>
+		/// Private field that stores the <see cref="SymbolType"/> for this
+		/// <see cref="Symbol"/>.  Use the public
+		/// property <see cref="Type"/> to access this value.
+		/// </summary>
 		private SymbolType	type;
+		/// <summary>
+		/// Private field that stores the pen width for this
+		/// <see cref="Symbol"/>.  Use the public
+		/// property <see cref="PenWidth"/> to access this value.
+		/// </summary>
 		private float		penWidth;
+		/// <summary>
+		/// Private field that stores the color of this
+		/// <see cref="Symbol"/>.  Use the public
+		/// property <see cref="Color"/> to access this value.
+		/// </summary>
 		private Color		color;
+		/// <summary>
+		/// Private field that stores the visibility of this
+		/// <see cref="Symbol"/>.  Use the public
+		/// property <see cref="IsVisible"/> to access this value.  If this value is
+		/// false, the symbols will not be shown (but the <see cref="Line"/> may
+		/// still be shown).
+		/// </summary>
 		private bool		isVisible;
+		/// <summary>
+		/// Private field that determines if the shape is filled with color for this
+		/// <see cref="Symbol"/>.  Use the public
+		/// property <see cref="IsFilled"/> to access this value.  If this value is
+		/// false, the symbols will be drawn in outline.
+		/// </summary>
 		private bool		isFilled;
 
 		/// <summary>
@@ -24,6 +57,29 @@ namespace ZedGraph
 		public Symbol()
 		{
 			Init();
+		}
+
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The Symbol object from which to copy</param>
+		public Symbol( Symbol rhs )
+		{
+			size = rhs.Size;
+			type = rhs.Type;
+			penWidth = rhs.PenWidth;
+			color = rhs.Color;
+			isVisible = rhs.IsVisible;
+			isFilled = rhs.IsFilled;
+		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the Symbol</returns>
+		public object Clone()
+		{ 
+			return new Symbol( this ); 
 		}
 
 		/// <summary>
@@ -118,14 +174,59 @@ namespace ZedGraph
 			// Only draw if the symbol is visible
 			if ( this.isVisible )
 			{
+				SolidBrush	brush = new SolidBrush( this.color );
+				Pen pen = new Pen( this.color, this.penWidth );
+
 				// Fill or draw the symbol as required
 				if ( this.isFilled )
-					FillPoint( g, x, y, scaleFactor );
+					FillPoint( g, x, y, scaleFactor, pen, brush );
 				else
-					DrawPoint( g, x, y, scaleFactor );
+					DrawPoint( g, x, y, scaleFactor, pen );
 			}
 		}
 
+		/// <summary>
+		/// Draw the <see cref="Symbol"/> to the specified <see cref="Graphics"/> device
+		/// at the specified list of locations.  This routine draws a series of symbols, and
+		/// is intended to provide a speed improvement over the single Draw() method.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="x">The x position of the center of the symbol in
+		/// screen pixel units</param>
+		/// <param name="y">The y position of the center of the symbol in
+		/// screen pixel units</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+		/// </param>	
+			
+		public void DrawMany( Graphics g, float[] x, float[] y, double scaleFactor )
+		{
+			// Only draw if the symbol is visible
+			if ( this.isVisible )
+			{
+				SolidBrush	brush = new SolidBrush( this.color );
+				Pen pen = new Pen( this.color, this.penWidth );
+				int nPts = x.Length;
+				for ( int i=0; i<nPts; i++ )
+				{
+					if ( x[i] != System.Single.MaxValue && 
+						y[i] != System.Single.MaxValue )
+					{
+						// Fill or draw the symbol as required
+						if ( this.isFilled )
+							FillPoint( g, x[i], y[i], scaleFactor, pen, brush );
+						else
+							DrawPoint( g, x[i], y[i], scaleFactor, pen );
+					}
+				}
+			}
+		}
+		
 		/// <summary>
 		/// Draw the <see cref="Symbol"/> (outline only) to the specified <see cref="Graphics"/>
 		/// device at the specified location.
@@ -142,14 +243,15 @@ namespace ZedGraph
 		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-		/// </param>		
-		public void DrawPoint( Graphics g, float x, float y, double scaleFactor )
+		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
+		/// <see cref="PenWidth"/> for this symbol</param>
+		/// </param>
+		
+		public void DrawPoint( Graphics g, float x, float y, double scaleFactor, Pen pen )
 		{
 			float	scaledSize = (float) ( this.size * scaleFactor );
 			float	hsize = scaledSize / 2,
-					hsize1 = hsize + 1;
-
-			Pen pen = new Pen( this.color, this.penWidth );
+				hsize1 = hsize + 1;
 
 			switch( this.type )
 			{
@@ -194,7 +296,7 @@ namespace ZedGraph
 					break;
 			}
 		}
-
+		
 		/// <summary>
 		/// Render the filled <see cref="Symbol"/> to the specified <see cref="Graphics"/>
 		/// device at the specified location.
@@ -212,7 +314,12 @@ namespace ZedGraph
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>		
-		public void FillPoint( Graphics g, float x, float y, double scaleFactor )
+		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
+		/// <see cref="PenWidth"/> for this symbol</param>
+		/// <param name="brush">A brush with the <see cref="Color"/> attribute
+		/// for this symbol</param>
+		public void FillPoint( Graphics g, float x, float y, double scaleFactor,
+								Pen pen, Brush brush )
 		{
 			float	scaledSize = (float) ( this.size * scaleFactor ),
 					hsize = scaledSize / 2,
@@ -221,8 +328,6 @@ namespace ZedGraph
 					hsize1 = hsize + 1;
 
 			PointF[]	polyPt = new PointF[5];
-			SolidBrush	brush = new SolidBrush( this.color );
-			Pen pen = new Pen( this.color, this.penWidth );
 			
 			switch( this.type )
 			{

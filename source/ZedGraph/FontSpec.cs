@@ -11,23 +11,115 @@ namespace ZedGraph
 	/// <see cref="FontAlignH"/> and <see cref="FontAlignV"/> parameters in the
 	/// <see cref="Draw"/> method.
 	/// </summary>
-	public class FontSpec
+	public class FontSpec : ICloneable
 	{
+		/// <summary>
+		/// Private field that stores the color of the font characters for this
+		/// <see cref="FontSpec"/>.  Use the public property <see cref="FontColor"/>
+		/// to access this value.
+		/// </summary>
+		/// <value>A system <see cref="System.Drawing.Color"/> reference.</value>
 		private Color fontColor;
+		/// <summary>
+		/// Private field that stores the font family name for this <see cref="FontSpec"/>.
+		/// Use the public property <see cref="Family"/> to access this value.
+		/// </summary>
+		/// <value>A text string with the font family name, e.g., "Arial"</value>
 		private string family;
+		/// <summary>
+		/// Private field that determines whether this <see cref="FontSpec"/> is
+		/// drawn with bold typeface.
+		/// Use the public property <see cref="IsBold"/> to access this value.
+		/// </summary>
+		/// <value>A boolean value, true for bold, false for normal</value>
 		private bool isBold;
+		/// <summary>
+		/// Private field that determines whether this <see cref="FontSpec"/> is
+		/// drawn with italic typeface.
+		/// Use the public property <see cref="IsItalic"/> to access this value.
+		/// </summary>
+		/// <value>A boolean value, true for italic, false for normal</value>
 		private bool isItalic;
+		/// <summary>
+		/// Private field that determines whether this <see cref="FontSpec"/> is
+		/// drawn with underlined typeface.
+		/// Use the public property <see cref="IsUnderline"/> to access this value.
+		/// </summary>
+		/// <value>A boolean value, true for underline, false for normal</value>
 		private bool isUnderline;
+		/// <summary>
+		/// Private field that determines whether this <see cref="FontSpec"/> is
+		/// drawn with filled background.
+		/// Use the public property <see cref="IsFilled"/> to access this value.
+		/// </summary>
+		/// <value>A boolean value, true for a color-filled background,
+		/// false for transparent background</value>
 		private bool isFilled;
+		/// <summary>
+		/// Private field that determines the background fill color for this
+		/// <see cref="FontSpec"/>.  This color is only used if
+		/// <see cref="isFilled"/> is true.
+		/// Use the public property <see cref="FillColor"/> to access this value.
+		/// </summary>
+		/// <value>A <see cref="System.Drawing.Color"/> value</value>
 		private Color fillColor;
+		/// <summary>
+		/// Private field that determines whether this <see cref="FontSpec"/> is
+		/// drawn with a frame around it.
+		/// Use the public property <see cref="IsFramed"/> to access this value.
+		/// </summary>
+		/// <value>A boolean value, true for a frame,
+		/// false for no frame</value>
 		private bool isFramed;
+		/// <summary>
+		/// Private field that determines the frame color for this
+		/// <see cref="FontSpec"/>.  This color is only used if
+		/// <see cref="isFramed"/> is true.
+		/// Use the public property <see cref="FrameColor"/> to access this value.
+		/// </summary>
+		/// <value>A <see cref="System.Drawing.Color"/> value</value>
 		private Color frameColor;
+		/// <summary>
+		/// Private field that determines the width of the frame for this
+		/// <see cref="FontSpec"/>.  This width is only used if
+		/// <see cref="isFramed"/> is true.
+		/// Use the public property <see cref="FrameWidth"/> to access this value.
+		/// </summary>
+		/// <value>The width of the frame, in pixel units</value>
 		private float frameWidth;
 
+		/// <summary>
+		/// Private field that determines the angle at which this
+		/// <see cref="FontSpec"/> object is drawn.  Use the public property
+		/// <see cref="Angle"/> to access this value.
+		/// </summary>
+		/// <value>The angle of the font, measured in anti-clockwise degrees from
+		/// horizontal.  Negative values are permitted.</value>
 		private float angle;
+		/// <summary>
+		/// Private field that determines the size of the font for this
+		/// <see cref="FontSpec"/> object.  Use the public property
+		/// <see cref="Size"/> to access this value.
+		/// </summary>
+		/// <value>The size of the font, measured in points (1/72 inch).</value>
 		private float size;
 		
+		/// <summary>
+		/// Private field that stores a reference to the <see cref="Font"/>
+		/// object for this <see cref="FontSpec"/>.  This font object will be at
+		/// the actual drawn size <see cref="scaledSize"/> according to the current
+		/// size of the <see cref="GraphPane"/>.  Use the public method
+		/// <see cref="GetFont"/> to access this font object.
+		/// </summary>
+		/// <value>A reference to a <see cref="Font"/> object</value>
 		private Font font;
+		/// <summary>
+		/// Private field that temporarily stores the scaled size of the font for this
+		/// <see cref="FontSpec"/> object.  This represents the actual on-screen
+		/// size, rather than the <see cref="Size"/> that represents the reference
+		/// size for a "full-sized" <see cref="GraphPane"/>.
+		/// </summary>
+		/// <value>The size of the font, measured in points (1/72 inch).</value>
 		private float scaledSize;
 		
 		/// <summary>
@@ -64,6 +156,40 @@ namespace ZedGraph
 			
 			Remake( 1.0 );
 		}
+
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The FontSpec object from which to copy</param>
+		public FontSpec( FontSpec rhs )
+		{
+			fontColor = rhs.FontColor;
+			family = rhs.Family;
+			isBold = rhs.IsBold;
+			isItalic = rhs.IsItalic;
+			isUnderline = rhs.IsUnderline;
+			isFilled = rhs.IsFilled;
+			fillColor = rhs.FillColor;
+			isFramed = rhs.IsFramed;
+			frameColor = rhs.FrameColor;
+			frameWidth = rhs.FrameWidth;
+
+			angle = rhs.Angle;
+			size = rhs.Size;
+		
+			scaledSize = rhs.scaledSize;
+			Remake( 1.0F );
+		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the FontSpec</returns>
+		public object Clone()
+		{ 
+			return new FontSpec( this ); 
+		}
+		
 		/// <summary>
 		/// The color of the font characters for this <see cref="FontSpec"/>.
 		/// Note that the frame and background
@@ -77,8 +203,9 @@ namespace ZedGraph
 			set { fontColor = value; }
 		}
 		/// <summary>
-		/// A text string with the font family name, e.g., "Arial"
+		/// The font family name for this <see cref="FontSpec"/>.
 		/// </summary>
+		/// <value>A text string with the font family name, e.g., "Arial"</value>
 		public string Family
 		{
 			get { return family; }
@@ -92,8 +219,10 @@ namespace ZedGraph
 			}
 		}
 		/// <summary>
-		/// true for a bold typeface, false otherwise
+		/// Determines whether this <see cref="FontSpec"/> is
+		/// drawn with bold typeface.
 		/// </summary>
+		/// <value>A boolean value, true for bold, false for normal</value>
 		public bool IsBold
 		{
 			get { return isBold; }
@@ -107,8 +236,10 @@ namespace ZedGraph
 			}
 		}
 		/// <summary>
-		/// true for an italic typeface, false otherwise
+		/// Determines whether this <see cref="FontSpec"/> is
+		/// drawn with italic typeface.
 		/// </summary>
+		/// <value>A boolean value, true for italic, false for normal</value>
 		public bool IsItalic
 		{
 			get { return isItalic; }
@@ -122,8 +253,10 @@ namespace ZedGraph
 			}
 		}
 		/// <summary>
-		/// true for an underlined font, false otherwise
+		/// Determines whether this <see cref="FontSpec"/> is
+		/// drawn with underlined typeface.
 		/// </summary>
+		/// <value>A boolean value, true for underline, false for normal</value>
 		public bool IsUnderline
 		{
 			get { return isUnderline; }
@@ -137,17 +270,19 @@ namespace ZedGraph
 			}
 		}
 		/// <summary>
-		/// The angle of the font, measured in anti-clockwise degrees.
-		/// Negative values are permitted.
+		/// The angle at which this <see cref="FontSpec"/> object is drawn.
 		/// </summary>
+		/// <value>The angle of the font, measured in anti-clockwise degrees from
+		/// horizontal.  Negative values are permitted.</value>
 		public float Angle
 		{
 			get { return angle; }
 			set { angle = value; }
 		}
 		/// <summary>
-		/// The size of the font in points (1/72 inch).
+		/// The size of the font for this <see cref="FontSpec"/> object.
 		/// </summary>
+		/// <value>The size of the font, measured in points (1/72 inch).</value>
 		public float Size
 		{
 			get { return size; }
@@ -161,29 +296,35 @@ namespace ZedGraph
 			}
 		}
 		/// <summary>
-		/// The pen width used for drawing the frame around the text
+		/// The pen width used for drawing the frame around this
+		/// <see cref="FontSpec"/>.  This width is only used if
+		/// <see cref="IsFramed"/> is true.
 		/// </summary>
-		/// <value>Pen width in pixel units</value>
+		/// <value>The width of the frame, in pixel units</value>
 		public float FrameWidth
 		{
 			get { return frameWidth; }
 			set { frameWidth = value; }
 		}
 		/// <summary>
-		/// Set to true to display a frame around the text using the
+		/// Determines whether or not to display a frame around the text using the
 		/// <see cref="FrameColor"/> color and <see cref="FrameWidth"/>
-		/// pen width, or false for no frame
+		/// pen width
 		/// </summary>
+		/// <value>A boolean value, true for a frame,
+		/// false for no frame</value>
 		public bool IsFramed
 		{
 			get { return isFramed; }
 			set { isFramed = value; }
 		}
 		/// <summary>
-		/// Set to true to fill the area behind the text using the
-		/// <see cref="FillColor"/> color, or false for a transparent
-		/// background
+		/// Determines whether or not the area behind the text of this
+		/// <see cref="FontSpec"/> is filled using the
+		/// <see cref="FillColor"/> color.
 		/// </summary>
+		/// <value>A boolean value, true for a color-filled background,
+		/// false for transparent background</value>
 		public bool IsFilled
 		{
 			get { return isFilled; }
@@ -249,6 +390,9 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
+		/// <returns>Returns a reference to a <see cref="Font"/> object
+		/// with a size of <see cref="scaledSize"/>, and font <see cref="Family"/>.
+		/// </returns>
 		public Font GetFont( double scaleFactor )
 		{
 			Remake( scaleFactor );

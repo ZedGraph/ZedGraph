@@ -9,7 +9,7 @@ namespace ZedGraph
 	/// the right side of the <see cref="GraphPane.AxisRect"/> of the <see cref="GraphPane"/>
 	/// object
 	/// </summary>
-	public class Y2Axis : Axis
+	public class Y2Axis : Axis, ICloneable
 	{
 		/// <summary>
 		/// Default constructor that sets all <see cref="Y2Axis"/> properties to
@@ -24,6 +24,23 @@ namespace ZedGraph
 			this.ScaleFontSpec.Angle = -90.0F;
 		}
 
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The Y2Axis object from which to copy</param>
+		public Y2Axis( Y2Axis rhs ) : base( rhs )
+		{
+		}
+		
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the Y2Axis</returns>
+		public object Clone()
+		{ 
+			return new Y2Axis( this ); 
+		}
+		
 		/// <summary>
 		/// Setup the Transform Matrix to handle drawing of this <see cref="Y2Axis"/>
 		/// </summary>

@@ -1,5 +1,14 @@
 ZedGraph Class Library Revision History
 
+1-Mar-2004 (Release 1.3)
+    Added Date-Time Axis capability 
+    Added Text Axis capability 
+    Added ReverseTransform() function (returns axis values associated with a mousePt location on the graph) 
+    Made some optimizations that dramatically increase the drawing speed for large datasets 
+    Updated code to implement ICloneable interface and copy constructor for primary classes 
+    Updated axis label code so that axis edge does not have to begin with a label (ex: axis min is 175, but first label is 200 and step is 50) 
+    (Only the ZedGraphControl source file has changed) 
+
 28-Nov-2003 (Release 1.2)
     Fixed the Axis.IsMinorOppositeTic bug (it wasn't working) 
     Changed over the ZedGraph code so that it can also be a UserControl 
