@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+27-Aug-2004 (by Champion)
+    Add MinGrace and MaxGrace
+    Fix up overlapping labels with double PickScale() call
+
 26-Aug-2004 (by Champion)
     Fix problem with zero/negative values on Y Log scale
     Add long unittest

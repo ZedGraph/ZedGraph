@@ -1060,7 +1060,9 @@ namespace ZedGraphTest
 			//myPane.IsIgnoreMissing = !myPane.IsIgnoreMissing;
 //			Invalidate();
 
-			DoPrint();
+//			DoPrint();
+
+			myPane.Image.Save( @"c:\zedgraph.gif", ImageFormat.Gif );
 
 			//myPane.XAxis.Min = 5;
 			//myPane.XAxis.Max = 20;

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.12 $ $Date: 2004-08-27 06:50:10 $ </version>
+	/// <version> $Revision: 1.13 $ $Date: 2004-08-27 22:07:55 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -56,6 +56,14 @@ namespace ZedGraph
 							numDecAuto,
 							scaleMagAuto,
 							scaleFormatAuto;
+		/// <summary> Private fields for the <see cref="Axis"/> "grace" settings.
+		/// These values determine how much extra space is left before the first data value
+		/// and after the last data value.
+		/// Use the public properties <see cref="MinGrace"/> and <see cref="MaxGrace"/>
+		/// for access to these values.
+		/// </summary>
+		private double		minGrace,
+							maxGrace;
 		/// <summary> Private fields for the <see cref="Axis"/> scale value display.
 		/// Use the public properties <see cref="NumDec"/> and <see cref="ScaleMag"/>
 		/// for access to these values. </summary>
@@ -198,6 +206,25 @@ namespace ZedGraph
 			/// <see cref="Default"/> class, and cannot be changed after compilation.
 			/// </summary>
 			public static double ZeroLever = 0.25;
+			/// <summary> The default "grace" value applied to the minimum data range.
+			/// This value is
+			/// expressed as a fraction of the total data range.  For example, assume the data
+			/// range is from 4.0 to 16.0, leaving a range of 12.0.  If MinGrace is set to
+			/// 0.1, then 10% of the range, or 1.2 will be subtracted from the minimum data value.
+			/// The scale will then be ranged to cover at least 2.8 to 16.0.
+			/// </summary>
+			/// <seealso cref="Axis.MinGrace"/>
+			public static double MinGrace = 0.1;
+			/// <summary> The default "grace" value applied to the maximum data range.
+			/// This value is
+			/// expressed as a fraction of the total data range.  For example, assume the data
+			/// range is from 4.0 to 16.0, leaving a range of 12.0.  If MaxGrace is set to
+			/// 0.1, then 10% of the range, or 1.2 will be added to the maximum data value.
+			/// The scale will then be ranged to cover at least 4.0 to 17.2.
+			/// </summary>
+			/// <seealso cref="Axis.MinGrace"/>
+			/// <seealso cref="MaxGrace"/>
+			public static double MaxGrace = 0.1;
 			/// <summary>
 			/// The maximum number of text labels (major tics) that will be allowed on the plot by
 			/// the automatic scaling logic.  This value applies only to <see cref="AxisType.Text"/>
@@ -545,6 +572,9 @@ namespace ZedGraph
 			this.max = 1.0;
 			this.step = 0.1;
 			this.minorStep = 0.1;
+
+			this.minGrace = Default.MinGrace;
+			this.maxGrace = Default.MaxGrace;
 		
 			this.minAuto = true;
 			this.maxAuto = true;
@@ -621,6 +651,9 @@ namespace ZedGraph
 			numDecAuto = rhs.NumDecAuto;
 			scaleMagAuto = rhs.ScaleMagAuto;
 			scaleFormatAuto = rhs.ScaleFormatAuto;
+
+			minGrace = rhs.MinGrace;
+			maxGrace = rhs.MaxGrace;
 
 			numDec = rhs.numDec;
 			scaleMag = rhs.scaleMag;
@@ -834,7 +867,39 @@ namespace ZedGraph
 			get { return minorStepAuto; }
 			set { minorStepAuto = value; }
 		}
-	#endregion
+		/// <summary> The "grace" value applied to the minimum data range.
+		/// This value is
+		/// expressed as a fraction of the total data range.  For example, assume the data
+		/// range is from 4.0 to 16.0, leaving a range of 12.0.  If MinGrace is set to
+		/// 0.1, then 10% of the range, or 1.2 will be subtracted from the minimum data value.
+		/// The scale will then be ranged to cover at least 2.8 to 16.0.
+		/// </summary>
+		/// <seealso cref="Min"/>
+		/// <seealso cref="Default.MinGrace"/>
+		/// <seealso cref="MaxGrace"/>
+		public double MinGrace
+		{
+			get { return minGrace; }
+			set { minGrace = value; }
+		}
+		/// <summary> The "grace" value applied to the maximum data range.
+		/// This values determines how much extra space is left after the last data value.
+		/// This value is
+		/// expressed as a fraction of the total data range.  For example, assume the data
+		/// range is from 4.0 to 16.0, leaving a range of 12.0.  If MaxGrace is set to
+		/// 0.1, then 10% of the range, or 1.2 will be added to the maximum data value.
+		/// The scale will then be ranged to cover at least 4.0 to 17.2.
+		/// </summary>
+		/// <seealso cref="Max"/>
+		/// <seealso cref="Default.MaxGrace"/>
+		/// <seealso cref="MinGrace"/>
+		public double MaxGrace
+		{
+			get { return maxGrace; }
+			set { maxGrace = value; }
+		}
+
+		#endregion
 
 	#region Tic Properties
 		/// <summary>
@@ -2477,10 +2542,27 @@ namespace ZedGraph
 		public void PickScale( double minVal, double maxVal, GraphPane pane, Graphics g, double scaleFactor )
 		{
 			// if the scales are autoranged, use the actual data values for the range
+			double range = maxVal - minVal;
+			if ( Double.IsInfinity( range ) || Double.IsNaN( range ) )
+				range = 0.0;
+
+			// "Grace" is applied to the numeric axis types only
+			bool numType = (type == AxisType.Log || type == AxisType.Date || type == AxisType.Linear );
+
+			// For autoranged values, assign the value.  If appropriate, adjust the value by the
+			// "Grace" value.
 			if ( this.minAuto )
+			{
 				this.min = minVal;
+				if ( numType )
+					this.min = minVal - this.MinGrace * range;
+			}
 			if ( this.maxAuto )
+			{
 				this.max = maxVal;
+				if ( numType )
+					this.max = maxVal + this.MaxGrace * range;
+			}
 				
 			switch( this.type )
 			{
