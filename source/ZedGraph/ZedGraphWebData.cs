@@ -19,6 +19,7 @@
 
 using System;
 using System.Web.UI;
+using System.Web.UI.Design;
 using System.ComponentModel;
 using System.Collections;
 using System.ComponentModel.Design;
@@ -768,6 +769,9 @@ namespace ZedGraph
 		public void CopyTo( ErrorBarItem item )
 		{
 			base.CopyTo(item);
+			this.Symbol.CopyTo(item.ErrorBar.Symbol);
+			item.BarBase = this.BarBase;
+			item.ErrorBar.PenWidth = this.PenWidth;
 		}
 
 		#region Symbol
@@ -824,7 +828,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["PenWidth"]; 
-				return (null == x) ? 1 : (float)x;
+				return (null == x) ? ErrorBar.Default.PenWidth : (float)x;
 			}
 			set { ViewState["PenWidth"] = value; }
 		}
@@ -1197,6 +1201,7 @@ namespace ZedGraph
 		public ZedGraphWebPieItem() : base()
 		{
 			Register('b',typeof(ZedGraphWebBorder));			
+			Register('t',typeof(ZedGraphWebTextItem));
 		}	
 
 		/// <summary>
@@ -1207,6 +1212,13 @@ namespace ZedGraph
 		public void CopyTo( PieItem item )
 		{
 			base.CopyTo(item);
+			this.Border.CopyTo(item.Border);
+			this.LabelDetail.CopyTo(item.LabelDetail);
+			item.Value = this.Value;
+			item.Displacement = this.Displacement;
+			item.LabelType = this.LabelType;
+			item.PercentDecimalDigits = this.PercentDecimalDigits;
+			item.ValueDecimalDigits = this.ValueDecimalDigits;			
 		}
 
 		#region Properties
@@ -1234,6 +1246,7 @@ namespace ZedGraph
 		/// <remarks> Gets or sets the a value which determines the amount, if any, of this <see cref="PieItem"/>  
 		/// displacement.
 		/// </remarks>
+		[NotifyParentProperty(true)]
 		public	double Displacement
 		{
 			get 
@@ -1250,30 +1263,49 @@ namespace ZedGraph
 		/// <remarks> Gets or sets the <see cref="PieLabelType"/> to be used in displaying 
 		/// <see cref="PieItem"/> labels.
 		/// </remarks>
+		[NotifyParentProperty(true)]
 		public	PieLabelType LabelType
 		{
 			get 
 			{ 
 				object x = ViewState["LabelType"]; 
-				return (null == x) ? PieLabelType.None : (PieLabelType)x;
+				return (null == x) ? PieItem.Default.LabelType : (PieLabelType)x;
 			}
 			set { ViewState["LabelType"] = value; }
 		}
 
-/*
-		public	PieType PieType
+		[NotifyParentProperty(true)]
+		public int ValueDecimalDigits
 		{
 			get 
 			{ 
-				object x = ViewState["PieType"]; 
-				return (null == x) ? PieType.Pie2D : (PieType)x;
+				object x = ViewState["ValueDecimalDigits"]; 
+				return (null == x) ? PieItem.Default.ValueDecimalDigits : (int)x;
 			}
-			set { ViewState["PieType"] = value; }
+			set { ViewState["ValueDecimalDigits"] = value; }
 		}
-*/
-	#endregion
 
-	#region Border
+		[NotifyParentProperty(true)]
+		public int PercentDecimalDigits
+		{
+			get 
+			{ 
+				object x = ViewState["PercentDecimalDigits"]; 
+				return (null == x) ? PieItem.Default.PercentDecimalDigits : (int)x;
+			}
+			set { ViewState["PercentDecimalDigits"] = value; }
+		}
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebTextItem LabelDetail
+		{
+			get { return (ZedGraphWebTextItem)base.GetValue('t'); }
+		}
 
 		/// <summary>
 		/// Proxy property that gets or sets the <see cref="ZedGraphWebBorder"/> object for
@@ -1533,6 +1565,8 @@ namespace ZedGraph
 		/// </summary>
 		public ZedGraphWebAxis() : base()
 		{
+			Register('s',typeof(ZedGraphWebFontSpec));
+			Register('t',typeof(ZedGraphWebFontSpec));
 		}	
 	
 		/// <summary>
@@ -1541,7 +1575,55 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.Axis"/> object</param>
 		public void CopyTo(Axis item)
-		{
+		{	
+			this.ScaleFontSpec.CopyTo(item.ScaleFontSpec);
+			this.TitleFontSpec.CopyTo(item.TitleFontSpec);
+			item.Title = this.Title;
+			item.Color = this.Color;
+			item.GridColor = this.GridColor;
+			item.Cross = this.Cross;
+			item.MinAuto = this.MinAuto;
+			item.MaxAuto = this.MaxAuto;
+			item.StepAuto = this.StepAuto;
+			item.MinorStepAuto = this.MinorStepAuto;
+			item.CrossAuto = this.CrossAuto;
+			item.MinGrace = this.MinGrace;
+			item.MaxGrace = this.MaxGrace;
+			item.MinSpace = this.MinSpace;
+			item.TicSize = this.TicSize;
+			item.MinorTicSize = this.MinorTicSize;
+			item.IsTic = this.IsTic;
+			item.IsMinorTic = this.IsMinorTic;
+			item.IsInsideTic = this.IsInsideTic;
+			item.IsOppositeTic = this.IsOppositeTic;
+			item.IsMinorInsideTic = this.IsMinorInsideTic;
+			item.IsMinorOppositeTic = this.IsMinorOppositeTic;
+			item.IsTicsBetweenLabels = this.IsTicBetweenLabels;
+			item.TicPenWidth = this.TicPenWidth;
+			item.IsShowGrid = this.IsShowGrid;
+			item.IsZeroLine = this.IsZeroLine;
+			item.GridDashOn = this.GridDashOn;
+			item.GridDashOff = this.GridDashOff;
+			item.GridPenWidth = this.GridPenWidth;
+			item.IsShowMinorGrid = this.IsShowMinorGrid;
+			item.MinorGridDashOn = this.MinorGridDashOn;
+			item.MinorGridDashOff = this.MinorGridDashOff;
+			item.MinorGridPenWidth = this.MinorGridPenWidth;
+			item.MinorGridColor = this.MinorGridColor;
+			item.IsVisible = this.IsVisible;
+			item.IsReverse = this.IsReverse;
+			item.Type = this.Type;
+			item.IsOmitMag = this.IsOmitMag;
+			item.IsShowTitle = this.IsShowTitle;
+			item.IsUseTenPower = this.IsUseTenPower;
+			item.IsPreventLabelOverlap = this.IsPreventLabelOverlap;
+			item.ScaleFormatAuto = this.ScaleFormatAuto;
+			item.ScaleFormat = this.ScaleFormat;
+			item.ScaleAlign = this.ScaleAlign;
+			item.NumDecAuto = this.NumDecAuto;
+			item.NumDec = this.NumDec;
+			item.ScaleMag = this.ScaleMag;
+			item.ScaleMagAuto = this.ScaleMagAuto;			
 		}
 
 		#region Properties
@@ -1600,8 +1682,503 @@ namespace ZedGraph
 			}
 			set { ViewState["GridColor"] = value; }
 		}
-		#endregion
-		//TODO: complete
+
+		[NotifyParentProperty(true)]
+		public double Cross
+		{
+			get 
+			{ 
+				object x = ViewState["Cross"]; 
+				return (null == x) ? 0 : (double)x;
+			}
+			set { ViewState["Cross"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool MinAuto
+		{
+			get 
+			{ 
+				object x = ViewState["MinAuto"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["MinAuto"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool MaxAuto
+		{
+			get 
+			{ 
+				object x = ViewState["MaxAuto"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["MaxAuto"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool StepAuto
+		{
+			get 
+			{ 
+				object x = ViewState["StepAuto"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["StepAuto"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool MinorStepAuto
+		{
+			get 
+			{ 
+				object x = ViewState["MinorStepAuto"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["MinorStepAuto"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool CrossAuto
+		{
+			get 
+			{ 
+				object x = ViewState["CrossAuto"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["CrossAuto"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public double MinGrace
+		{
+			get 
+			{ 
+				object x = ViewState["MinGrace"]; 
+				return (null == x) ? 0 : (double)x;
+			}
+			set { ViewState["MinGrace"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public double MaxGrace
+		{
+			get 
+			{ 
+				object x = ViewState["MaxGrace"]; 
+				return (null == x) ? 0 : (double)x;
+			}
+			set { ViewState["MaxGrace"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float MinSpace
+		{
+			get 
+			{ 
+				object x = ViewState["MinSpace"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["MinSpace"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float TicSize
+		{
+			get 
+			{ 
+				object x = ViewState["TicSize"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["TicSize"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float MinorTicSize
+		{
+			get 
+			{ 
+				object x = ViewState["MinorTicSize"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["MinorTicSize"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsTic
+		{
+			get 
+			{ 
+				object x = ViewState["IsTic"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsTic"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsMinorTic
+		{
+			get 
+			{ 
+				object x = ViewState["IsMinorTic"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsMinorTic"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsInsideTic
+		{
+			get 
+			{ 
+				object x = ViewState["IsInsideTic"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsInsideTic"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsOppositeTic
+		{
+			get 
+			{ 
+				object x = ViewState["IsOppositeTic"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsOppositeTic"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsMinorInsideTic
+		{
+			get 
+			{ 
+				object x = ViewState["IsMinorInsideTic"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsMinorInsideTic"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsMinorOppositeTic
+		{
+			get 
+			{ 
+				object x = ViewState["IsMinorOppositeTic"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsMinorOppositeTic"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsTicBetweenLabels
+		{
+			get 
+			{ 
+				object x = ViewState["IsTicBetweenLabels"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsTicBetweenLabels"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float TicPenWidth
+		{
+			get 
+			{ 
+				object x = ViewState["TicPenWidth"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["TicPenWidth"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsShowGrid
+		{
+			get 
+			{ 
+				object x = ViewState["IsShowGrid"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsShowGrid"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsZeroLine
+		{
+			get 
+			{ 
+				object x = ViewState["IsZeroLine"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsZeroLine"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float GridDashOn
+		{
+			get 
+			{ 
+				object x = ViewState["GridDashOn"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["GridDashOn"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float GridDashOff
+		{
+			get 
+			{ 
+				object x = ViewState["GridDashOff"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["GridDashOff"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float GridPenWidth
+		{
+			get 
+			{ 
+				object x = ViewState["GridPenWidth"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["GridPenWidth"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsShowMinorGrid
+		{
+			get 
+			{ 
+				object x = ViewState["IsShowMinorGrid"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsShowMinorGrid"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float MinorGridDashOn
+		{
+			get 
+			{ 
+				object x = ViewState["MinorGridDashOn"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["MinorGridDashOn"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float MinorGridDashOff
+		{
+			get 
+			{ 
+				object x = ViewState["MinorGridDashOff"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["MinorGridDashOff"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float MinorGridPenWidth
+		{
+			get 
+			{ 
+				object x = ViewState["MinorGridPenWidth"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["MinorGridPenWidth"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public Color MinorGridColor
+		{
+			get 
+			{ 
+				object x = ViewState["MinorGridColor"]; 
+				return (null == x) ? Color.Empty : (Color)x;
+			}
+			set { ViewState["MinorGridColor"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsVisible
+		{
+			get 
+			{ 
+				object x = ViewState["IsVisible"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsVisible"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsReverse
+		{
+			get 
+			{ 
+				object x = ViewState["IsReverse"]; 
+				return (null == x) ? false : (bool)x;
+			}
+			set { ViewState["IsReverse"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public AxisType Type
+		{
+			get 
+			{ 
+				object x = ViewState["Type"]; 
+				return (null == x) ? AxisType.Ordinal : (AxisType)x;
+			}
+			set { ViewState["Type"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsOmitMag
+		{
+			get 
+			{ 
+				object x = ViewState["IsOmitMag"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsOmitMag"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsShowTitle
+		{
+			get 
+			{ 
+				object x = ViewState["IsShowTitle"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsShowTitle"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsUseTenPower
+		{
+			get 
+			{ 
+				object x = ViewState["IsUseTenPower"]; 
+				return (null == x) ? false : (bool)x;
+			}
+			set { ViewState["IsUseTenPower"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsPreventLabelOverlap
+		{
+			get 
+			{ 
+				object x = ViewState["IsPreventLabelOverlap"]; 
+				return (null == x) ? false : (bool)x;
+			}
+			set { ViewState["IsPreventLabelOverlap"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool ScaleFormatAuto
+		{
+			get 
+			{ 
+				object x = ViewState["ScaleFormatAuto"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["ScaleFormatAuto"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public string ScaleFormat
+		{
+			get 
+			{ 
+				object x = ViewState["ScaleFormat"]; 
+				return (null == x) ? "G" : (string)x;
+			}
+			set { ViewState["ScaleFormat"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public AlignP ScaleAlign
+		{
+			get 
+			{ 
+				object x = ViewState["ScaleAlign"]; 
+				return (null == x) ? AlignP.Center : (AlignP)x;
+			}
+			set { ViewState["ScaleAlign"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool NumDecAuto
+		{
+			get 
+			{ 
+				object x = ViewState["NumDecAuto"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["NumDecAuto"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public int NumDec
+		{
+			get 
+			{ 
+				object x = ViewState["NumDec"]; 
+				return (null == x) ? 0 : (int)x;
+			}
+			set { ViewState["NumDec"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public int ScaleMag
+		{
+			get 
+			{ 
+				object x = ViewState["ScaleMag"]; 
+				return (null == x) ? 0 : (int)x;
+			}
+			set { ViewState["ScaleMag"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool ScaleMagAuto
+		{
+			get 
+			{ 
+				object x = ViewState["ScaleMagAuto"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["ScaleMagAuto"] = value; }
+		}
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebFontSpec ScaleFontSpec
+		{
+			get { return (ZedGraphWebFontSpec)base.GetValue('s'); }
+		}
+
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebFontSpec TitleFontSpec
+		{
+			get { return (ZedGraphWebFontSpec)base.GetValue('t'); }
+		}
+
+		#endregion		
 	}
 	#endregion
 
@@ -2279,6 +2856,9 @@ namespace ZedGraph
 		public void CopyTo( TextItem item )
 		{
 			base.CopyTo(item);
+			this.LayoutArea.CopyTo(item.LayoutArea);
+			item.Text = this.Text;
+			this.FontSpec.CopyTo(item.FontSpec);
 		}
 		
 		/// <summary>
@@ -2302,7 +2882,7 @@ namespace ZedGraph
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
-		PersistenceMode(PersistenceMode.Attribute)
+		PersistenceMode(PersistenceMode.InnerProperty)
 		]
 		public ZedGraphWebSize LayoutArea
 		{
@@ -2357,7 +2937,59 @@ namespace ZedGraph
 		public void CopyTo( ArrowItem item )
 		{
 			base.CopyTo(item);
+			item.Size = this.Size;
+			item.PenWidth = this.PenWidth;
+			item.Color = this.Color;
+			item.IsArrowHead = this.IsArrowHead;
 		}
+
+		#region Properties
+
+		[NotifyParentProperty(true)]
+		public float Size
+		{
+			get 
+			{ 
+				object x = ViewState["Size"]; 
+				return (null == x) ? ArrowItem.Default.Size : (float)x;
+			}
+			set { ViewState["Size"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public float PenWidth
+		{
+			get 
+			{ 
+				object x = ViewState["PenWidth"]; 
+				return (null == x) ? ArrowItem.Default.PenWidth : (float)x;
+			}
+			set { ViewState["PenWidth"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public Color Color
+		{
+			get 
+			{ 
+				object x = ViewState["Color"]; 
+				return (null == x) ? ArrowItem.Default.Color : (Color)x;
+			}
+			set { ViewState["Color"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsArrowHead
+		{
+			get 
+			{ 
+				object x = ViewState["IsArrowHead"]; 
+				return (null == x) ? ArrowItem.Default.IsArrowHead : (bool)x;
+			}
+			set { ViewState["IsArrowHead"] = value; }
+		}
+
+		#endregion
 	}
 	#endregion
 
@@ -2390,10 +3022,52 @@ namespace ZedGraph
 		/// <see cref="ZedGraph.ImageItem"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.ImageItem"/> object</param>
-		public void CopyTo( ArrowItem item )
+		public void CopyTo( ImageItem item )
 		{
 			base.CopyTo(item);
+			item.IsScaled = this.IsScaled;					
+
+			item.Image = null;
+			try
+			{
+				if ( (this.ImageUrl != null) && (this.ImageUrl != string.Empty) )
+				{
+					string path = System.AppDomain.CurrentDomain.BaseDirectory;
+					path = System.IO.Path.Combine(path,this.ImageUrl);						
+					item.Image = Image.FromFile(path);
+				}
+			}
+			catch(Exception)
+			{
+				//TODO: deal with failure?
+			}			
 		}
+
+		#region Properties
+
+		[NotifyParentProperty(true)]
+		public string ImageUrl
+		{
+			get 
+			{ 
+				object x = ViewState["ImageUrl"]; 
+				return (null == x) ? string.Empty : (string)x;
+			}
+			set { ViewState["ImageUrl"] = value; }
+		}
+
+		[NotifyParentProperty(true)]
+		public bool IsScaled
+		{
+			get 
+			{ 
+				object x = ViewState["IsScaled"]; 
+				return (null == x) ? false : (bool)x;
+			}
+			set { ViewState["IsScaled"] = value; }
+		}
+
+		#endregion
 	}
 	#endregion
 
@@ -2419,6 +3093,8 @@ namespace ZedGraph
 		/// </summary>
 		public ZedGraphWebBoxItem() : base()
 		{
+			Register('b',typeof(ZedGraphWebBorder));
+			Register('f',typeof(ZedGraphWebFill));
 		}			
 	
 		/// <summary>
@@ -2429,7 +3105,49 @@ namespace ZedGraph
 		public void CopyTo( BoxItem item )
 		{
 			base.CopyTo(item);
+			this.Border.CopyTo(item.Border);
+			this.Fill.CopyTo(item.Fill);
 		}
+
+		#region Border
+		
+		/// <summary>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebBorder"/> object for
+		/// this <see cref="BarItem"/>.
+		/// </summary>
+		/// <seealso cref="ZedGraph.Border"/>
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebBorder Border
+		{
+			get { return (ZedGraphWebBorder)base.GetValue('b'); }
+		}
+		
+		#endregion
+
+		#region Fill
+		
+		/// <summary>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebFill"/> object for
+		/// this <see cref="BarItem"/>.
+		/// </summary>
+		/// <seealso cref="ZedGraph.Fill"/>
+		[
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebFill Fill
+		{
+			get { return (ZedGraphWebFill)base.GetValue('f'); }
+		}
+		
+		#endregion		
 	}
 	#endregion
 
@@ -2455,6 +3173,8 @@ namespace ZedGraph
 		/// </summary>
 		public ZedGraphWebEllipseItem() : base()
 		{
+			Register('b',typeof(ZedGraphWebBorder));
+			Register('f',typeof(ZedGraphWebFill));
 		}
 		
 		/// <summary>
@@ -2465,7 +3185,49 @@ namespace ZedGraph
 		public void CopyTo( EllipseItem item )
 		{
 			base.CopyTo(item);
+			this.Border.CopyTo(item.Border);
+			this.Fill.CopyTo(item.Fill);
 		}
+
+		#region Border
+		
+		/// <summary>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebBorder"/> object for
+		/// this <see cref="BarItem"/>.
+		/// </summary>
+		/// <seealso cref="ZedGraph.Border"/>
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebBorder Border
+		{
+			get { return (ZedGraphWebBorder)base.GetValue('b'); }
+		}
+		
+		#endregion
+
+		#region Fill
+		
+		/// <summary>
+		/// Proxy property that gets or sets the <see cref="ZedGraphWebFill"/> object for
+		/// this <see cref="BarItem"/>.
+		/// </summary>
+		/// <seealso cref="ZedGraph.Fill"/>
+		[
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebFill Fill
+		{
+			get { return (ZedGraphWebFill)base.GetValue('f'); }
+		}
+		
+		#endregion		
 	}
 	#endregion
 
@@ -2516,7 +3278,7 @@ namespace ZedGraph
 			this.BottomRight.CopyTo(item.BottomRight);
 		}
 
-		#region Object Properties
+		#region Properties
 
 		/// <summary>
 		/// Proxy property that gets the value of <see cref="ZedGraph.Location.Rect"/>
@@ -2558,11 +3320,7 @@ namespace ZedGraph
 		public ZedGraphWebPoint BottomRight
 		{
 			get { return (ZedGraphWebPoint)GetValue('b'); }
-		}
-
-		#endregion
-		
-		#region Properties
+		}		
 
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.Height"/>

@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-02-13 17:31:41 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2005-02-14 02:49:00 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -555,7 +555,7 @@ namespace ZedGraph
 		{
 			get {  return (ZedGraphWebGraphItemCollection)vsassist.GetValue('g',this.IsTrackingViewState); }				
 		}
-					
+							
 		/// <summary>
 		/// Proxy property that gets the value of the <see cref="GraphPane.AxisRect"/>.
 		/// </summary>
@@ -667,7 +667,7 @@ namespace ZedGraph
 		{
 			get { return (ZedGraphWebFill)vsassist.GetValue('F',this.IsTrackingViewState); }
 		}
-	
+			
 		/// <summary>
 		/// Proxy property that gets the value of the <see cref="GraphPane.XAxis"/>.
 		/// </summary>
@@ -709,7 +709,7 @@ namespace ZedGraph
 		{
 			get { return (ZedGraphWebAxis)vsassist.GetValue('z',this.IsTrackingViewState); }
 		}
-			
+					
 		/// <summary>
 		/// Proxy property that gets the value of the <see cref="PaneBase.Legend"/>.
 		/// </summary>
@@ -776,119 +776,134 @@ namespace ZedGraph
 		/// <param name="pane"><see cref="GraphPane"/></param>
 		protected void MapWebContent( Graphics g, GraphPane pane )
 		{
-			pane.IsShowTitle = this.IsShowTitle;
-			pane.BarType = this.BarType;
-			pane.ClusterScaleWidth = this.ClusterScaleWidth;				
-			XAxis.CopyTo( pane.XAxis );
-			YAxis.CopyTo( pane.YAxis );
-			Y2Axis.CopyTo( pane.Y2Axis );
-			pane.IsIgnoreInitial = this.IsIgnoreInitial;
-			pane.IsIgnoreMissing = this.IsIgnoreMissing;
-			pane.LineType = this.LineType;
-			this.AxisRect.CopyTo(pane.AxisRect);
-			pane.IsAxisRectAuto = this.IsAxisRectAuto;
-			this.PieRect.CopyTo(pane.PieRect);
-			this.AxisBorder.CopyTo(pane.AxisBorder);
-			this.AxisFill.CopyTo(pane.AxisFill);
-			pane.MinClusterGap = this.MinClusterGap;
-			pane.MinBarGap = this.MinBarGap;
-			pane.BarBase = this.BarBase;
-			this.PaneRect.CopyTo(pane.PaneRect);
-			this.Legend.CopyTo(pane.Legend);
-			this.FontSpec.CopyTo(pane.FontSpec);
-			pane.Title = this.Title;
-			this.PaneBorder.CopyTo(pane.PaneBorder);
-			this.PaneFill.CopyTo(pane.PaneFill);
-			pane.MarginLeft = this.MarginLeft;
-			pane.MarginRight = this.MarginRight;
-			pane.MarginTop = this.MarginTop;
-			pane.MarginBottom = this.MarginBottom;
-			pane.BaseDimension = this.BaseDimension;
-			pane.IsFontsScaled = this.IsFontsScaled;
-			pane.IsPenWidthScaled = this.IsPenWidthScaled;
+			try 
+			{
+				pane.IsShowTitle = this.IsShowTitle;
+				pane.BarType = this.BarType;
+				pane.ClusterScaleWidth = this.ClusterScaleWidth;								
+				XAxis.CopyTo( pane.XAxis );
+				YAxis.CopyTo( pane.YAxis );
+				Y2Axis.CopyTo( pane.Y2Axis );				
+				pane.IsIgnoreInitial = this.IsIgnoreInitial;
+				pane.IsIgnoreMissing = this.IsIgnoreMissing;
+				pane.LineType = this.LineType;
+				this.AxisRect.CopyTo(pane.AxisRect);
+				pane.IsAxisRectAuto = this.IsAxisRectAuto;
+				this.PieRect.CopyTo(pane.PieRect);
+				this.AxisBorder.CopyTo(pane.AxisBorder);
+				this.AxisFill.CopyTo(pane.AxisFill);
+				pane.MinClusterGap = this.MinClusterGap;
+				pane.MinBarGap = this.MinBarGap;
+				pane.BarBase = this.BarBase;
+				this.PaneRect.CopyTo(pane.PaneRect);
+				this.Legend.CopyTo(pane.Legend);
+				this.FontSpec.CopyTo(pane.FontSpec);
+				pane.Title = this.Title;
+				this.PaneBorder.CopyTo(pane.PaneBorder);
+				this.PaneFill.CopyTo(pane.PaneFill);
+				pane.MarginLeft = this.MarginLeft;
+				pane.MarginRight = this.MarginRight;
+				pane.MarginTop = this.MarginTop;
+				pane.MarginBottom = this.MarginBottom;
+				pane.BaseDimension = this.BaseDimension;
+				pane.IsFontsScaled = this.IsFontsScaled;
+				pane.IsPenWidthScaled = this.IsPenWidthScaled;
+			}
+			catch(Exception)
+			{
+				//base mapping
+			}
 
-			ZedGraphWebCurveItem curve;
-			for (int i=0; i<CurveList.Count; i++)
+			try
 			{
-				curve = CurveList[i];
-				if ( curve is ZedGraphWebBarItem )
+				ZedGraphWebCurveItem curve;
+				for (int i=0; i<CurveList.Count; i++)
 				{
-					ZedGraphWebBarItem item = (ZedGraphWebBarItem)curve;
-					BarItem x = pane.AddBar(item.Label,new PointPairList(),item.Color);
-					item.CopyTo(x);					
-				}
-				else if ( curve is ZedGraphWebLineItem )
-				{
-					ZedGraphWebLineItem item = (ZedGraphWebLineItem)curve;
-					LineItem x = pane.AddCurve(item.Label,new PointPairList(),item.Color);
-					item.CopyTo(x);
-				}
-				else if ( curve is ZedGraphWebErrorBarItem )
-				{
-					ZedGraphWebErrorBarItem item = (ZedGraphWebErrorBarItem)curve;
-					ErrorBarItem x = pane.AddErrorBar(item.Label,new PointPairList(),item.Color);
-					item.CopyTo(x);
-				}
-				else if ( curve is ZedGraphWebHiLowBarItem )
-				{
-					ZedGraphWebHiLowBarItem item = (ZedGraphWebHiLowBarItem)curve;
-					HiLowBarItem x = pane.AddHiLowBar(item.Label,new PointPairList(),item.Color);
-					item.CopyTo(x);
-				}
-				else if ( curve is ZedGraphWebPieItem )
-				{
-					ZedGraphWebPieItem item = (ZedGraphWebPieItem)curve;
-					PieItem x = pane.AddPieSlice(item.Value, item.Color, item.Displacement, item.Label);					
-					item.CopyTo(x);
-				}				
-			}
-			
-			ZedGraphWebGraphItem draw;
-			for (int i=0; i<GraphItemList.Count; i++)
-			{
-				draw = GraphItemList[i];
-				if ( draw is ZedGraphWebTextItem )
-				{
-					ZedGraphWebTextItem item = (ZedGraphWebTextItem)draw;
-					TextItem x = new TextItem();
-					item.CopyTo(x);
-					pane.GraphItemList.Add(x);
-				}
-				else if ( draw is ZedGraphWebArrowItem )
-				{
-					ZedGraphWebArrowItem item = (ZedGraphWebArrowItem)draw;
-					//TODO: deal with default values
-					ArrowItem x = new ArrowItem(item.Location.X,
-						item.Location.Y,item.Location.X1,item.Location.Y1);
-					item.CopyTo(x);
-					pane.GraphItemList.Add(x);
-				}
-				else if ( draw is ZedGraphWebImageItem )
-				{
-					ZedGraphWebImageItem item = (ZedGraphWebImageItem)draw;
-					//TODO: deal with default values
-					ImageItem x = new ImageItem(null,item.Location.X,item.Location.Y,
-						item.Location.Width,item.Location.Height);
-					item.CopyTo(x);
-					pane.GraphItemList.Add(x);
-				}
-				else if ( draw is ZedGraphWebBoxItem )
-				{
-					ZedGraphWebBoxItem item = (ZedGraphWebBoxItem)draw;
-					//TODO: deal with default values
-					BoxItem x = new BoxItem(RectangleF.Empty,Color.Empty,Color.Empty);
-					item.CopyTo(x);
-					pane.GraphItemList.Add(x);
-				}
-				else if ( draw is ZedGraphWebEllipseItem )
-				{
-					ZedGraphWebEllipseItem item = (ZedGraphWebEllipseItem)draw;
-					//TODO: deal with default values
-					EllipseItem x = new EllipseItem(RectangleF.Empty,Color.Empty,Color.Empty);
-					item.CopyTo(x);
-					pane.GraphItemList.Add(x);
+					curve = CurveList[i];
+					if ( curve is ZedGraphWebBarItem )
+					{
+						ZedGraphWebBarItem item = (ZedGraphWebBarItem)curve;
+						BarItem x = pane.AddBar(item.Label,new PointPairList(),item.Color);
+						item.CopyTo(x);					
+					}
+					else if ( curve is ZedGraphWebLineItem )
+					{
+						ZedGraphWebLineItem item = (ZedGraphWebLineItem)curve;
+						LineItem x = pane.AddCurve(item.Label,new PointPairList(),item.Color);
+						item.CopyTo(x);
+					}
+					else if ( curve is ZedGraphWebErrorBarItem )
+					{
+						ZedGraphWebErrorBarItem item = (ZedGraphWebErrorBarItem)curve;
+						ErrorBarItem x = pane.AddErrorBar(item.Label,new PointPairList(),item.Color);
+						item.CopyTo(x);
+					}
+					else if ( curve is ZedGraphWebHiLowBarItem )
+					{
+						ZedGraphWebHiLowBarItem item = (ZedGraphWebHiLowBarItem)curve;
+						HiLowBarItem x = pane.AddHiLowBar(item.Label,new PointPairList(),item.Color);
+						item.CopyTo(x);
+					}
+					else if ( curve is ZedGraphWebPieItem )
+					{
+						ZedGraphWebPieItem item = (ZedGraphWebPieItem)curve;
+						PieItem x = pane.AddPieSlice(item.Value, item.Color, item.Displacement, item.Label);					
+						item.CopyTo(x);
+					}				
 				}
 			}
+			catch(Exception)
+			{
+				//curveitems
+			}
+						
+			try
+			{
+				ZedGraphWebGraphItem draw;
+				for (int i=0; i<GraphItemList.Count; i++)
+				{
+					draw = GraphItemList[i];
+					if ( draw is ZedGraphWebTextItem )
+					{
+						ZedGraphWebTextItem item = (ZedGraphWebTextItem)draw;
+						TextItem x = new TextItem();
+						item.CopyTo(x);
+						pane.GraphItemList.Add(x);
+					}
+					else if ( draw is ZedGraphWebArrowItem )
+					{
+						ZedGraphWebArrowItem item = (ZedGraphWebArrowItem)draw;					
+						ArrowItem x = new ArrowItem();
+						item.CopyTo(x);
+						pane.GraphItemList.Add(x);
+					}
+					else if ( draw is ZedGraphWebImageItem )
+					{
+						ZedGraphWebImageItem item = (ZedGraphWebImageItem)draw;					
+						ImageItem x = new ImageItem();
+						item.CopyTo(x);
+						pane.GraphItemList.Add(x);
+					}
+					else if ( draw is ZedGraphWebBoxItem )
+					{
+						ZedGraphWebBoxItem item = (ZedGraphWebBoxItem)draw;					
+						BoxItem x = new BoxItem();
+						item.CopyTo(x);
+						pane.GraphItemList.Add(x);
+					}
+					else if ( draw is ZedGraphWebEllipseItem )
+					{
+						ZedGraphWebEllipseItem item = (ZedGraphWebEllipseItem)draw;					
+						EllipseItem x = new EllipseItem();
+						item.CopyTo(x);
+						pane.GraphItemList.Add(x);
+					}
+				}
+			}
+			catch(Exception)
+			{
+				//graphitems
+			}						
 		}
 		#endregion
 
@@ -916,6 +931,14 @@ namespace ZedGraph
 				pane.CurveList[0].Points.Add(x,y,z);
 			}
 			*/
+
+			try
+			{
+			}
+			catch(Exception)
+			{
+				//databinding
+			}
 		}
 
 	#endregion
@@ -938,8 +961,7 @@ namespace ZedGraph
 		/// <param name="OutputStream">A <see cref="Stream"/> in which to output the ZedGraph
 		/// <see cref="System.Drawing.Image"/>.</param>
 		protected void CreateGraph( System.IO.Stream OutputStream )
-		{
-			//TODO: fix/verify the height/width values are okay like this
+		{			
 			RectangleF rect = new RectangleF( 0, 0, this.Width-1, this.Height-1 );
 			GraphPane pane = new GraphPane( rect, Title, string.Empty, string.Empty );
 												

@@ -218,7 +218,7 @@ namespace ZedGraph
 		TypeConverter(typeof(ExpandableObjectConverter))
 	]
 	public class GenericItem : IStateManager
-	{		
+	{				
 		/// <summary>
 		/// Default constructor that does nothing
 		/// </summary>
