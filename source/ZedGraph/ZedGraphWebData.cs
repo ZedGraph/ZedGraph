@@ -1542,6 +1542,104 @@ namespace ZedGraph
 
 	#endregion
 
+	#region ZedGraphWebStringCollection
+	/// <summary>
+	/// Manages a collection of <see cref="ZedGraphWebGraphItem"/> objects that are 
+	/// state management aware.
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebStringCollection : GenericCollection
+	{	
+		/// <summary>
+		/// Override the ToString() method.
+		/// </summary>
+		/// <returns>Always returns String.Empty</returns>
+		public override string ToString(){return String.Empty;}		
+
+		/// <summary>
+		/// Default Constructor
+		/// </summary>
+		public ZedGraphWebStringCollection() : base()
+		{
+			Schema = new GenericCollectionItemSchema[1];
+			Schema[0].code = 's';
+			Schema[0].type = typeof(ZedGraphWebString);						
+		}		
+
+		public void Add(ZedGraphWebString item)
+		{
+			if ( null != item )
+				ListAdd( item );
+		}
+
+		/// <summary>
+		/// Indexer to access the specified <see cref="string"/> object by
+		/// its ordinal position in the list.
+		/// </summary>
+		/// <param name="index">The ordinal position (zero-based) of the
+		/// <see cref="System.String"/> object to be accessed.</param>
+		/// <value>A <see cref="string"/> object reference.</value>
+		/// <seealso cref="System.String"/>
+		[NotifyParentProperty(true)]
+		public ZedGraphWebString this [int index]
+		{
+			get 
+			{
+				return (ZedGraphWebString)ListGet(index);
+			}
+			set
+			{
+				ListInsert(index,value);
+			}
+		}			
+	}
+
+	#endregion
+
+	#region ZedGraphWebString
+	/// <summary>
+	/// String class for a <see cref="ZedGraph.String"/> object
+	/// </summary>
+	/// <author>Darren Martz</author>
+	[DefaultProperty("Value")]
+	public class ZedGraphWebString : GenericItem
+	{
+		/// <summary>
+		/// Identifies fontspec instance
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{						
+			return this.Value;
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebString() : base()
+		{				
+		}		
+		
+		#region Properties
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="SizeF.Height"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public string Value
+		{
+			get 
+			{ 
+				object x = ViewState["Value"]; 
+				return (null == x) ? string.Empty : (string)x;
+			}
+			set { ViewState["Value"] = value; }
+		}		
+		
+		#endregion
+	}
+	#endregion
+
 	#region ZedGraphWebAxis
 	/// <summary>
 	/// Web control state management class for a <see cref="ZedGraph.Axis"/> object
@@ -1566,7 +1664,7 @@ namespace ZedGraph
 		public ZedGraphWebAxis() : base()
 		{
 			Register('s',typeof(ZedGraphWebFontSpec));
-			Register('t',typeof(ZedGraphWebFontSpec));
+			Register('t',typeof(ZedGraphWebFontSpec));			
 		}	
 	
 		/// <summary>
@@ -1575,7 +1673,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.Axis"/> object</param>
 		public void CopyTo(Axis item)
-		{	
+		{				
 			this.ScaleFontSpec.CopyTo(item.ScaleFontSpec);
 			this.TitleFontSpec.CopyTo(item.TitleFontSpec);
 			item.Title = this.Title;
@@ -1623,10 +1721,10 @@ namespace ZedGraph
 			item.NumDecAuto = this.NumDecAuto;
 			item.NumDec = this.NumDec;
 			item.ScaleMag = this.ScaleMag;
-			item.ScaleMagAuto = this.ScaleMagAuto;			
+			item.ScaleMagAuto = this.ScaleMagAuto;					
 		}
 
-		#region Properties
+		#region Properties			
 		
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Title"/>.
@@ -1660,7 +1758,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["Color"]; 
-				return (null == x) ? Color.Empty : (Color)x;
+				return (null == x) ? ZedGraph.Axis.Default.Color : (Color)x;
 			}
 			set { ViewState["Color"] = value; }
 		}
@@ -1678,7 +1776,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["GridColor"]; 
-				return (null == x) ? Color.Empty : (Color)x;
+				return (null == x) ? ZedGraph.Axis.Default.GridColor : (Color)x;
 			}
 			set { ViewState["GridColor"] = value; }
 		}
@@ -1755,7 +1853,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["MinGrace"]; 
-				return (null == x) ? 0 : (double)x;
+				return (null == x) ? ZedGraph.Axis.Default.MinGrace : (double)x;
 			}
 			set { ViewState["MinGrace"] = value; }
 		}
@@ -1766,7 +1864,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["MaxGrace"]; 
-				return (null == x) ? 0 : (double)x;
+				return (null == x) ? ZedGraph.Axis.Default.MaxGrace : (double)x;
 			}
 			set { ViewState["MaxGrace"] = value; }
 		}
@@ -1777,7 +1875,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["MinSpace"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.Axis.Default.MinSpace : (float)x;
 			}
 			set { ViewState["MinSpace"] = value; }
 		}
@@ -1788,7 +1886,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["TicSize"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.Axis.Default.TicSize : (float)x;
 			}
 			set { ViewState["TicSize"] = value; }
 		}
@@ -1799,7 +1897,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["MinorTicSize"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.Axis.Default.MinorTicSize : (float)x;
 			}
 			set { ViewState["MinorTicSize"] = value; }
 		}
@@ -1810,7 +1908,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsTic"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? ZedGraph.Axis.Default.IsTic : (bool)x;
 			}
 			set { ViewState["IsTic"] = value; }
 		}
@@ -1821,7 +1919,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsMinorTic"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? ZedGraph.Axis.Default.IsMinorTic : (bool)x;
 			}
 			set { ViewState["IsMinorTic"] = value; }
 		}
@@ -1832,7 +1930,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsInsideTic"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? ZedGraph.Axis.Default.IsInsideTic : (bool)x;
 			}
 			set { ViewState["IsInsideTic"] = value; }
 		}
@@ -1843,7 +1941,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsOppositeTic"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? ZedGraph.Axis.Default.IsOppositeTic : (bool)x;
 			}
 			set { ViewState["IsOppositeTic"] = value; }
 		}
@@ -1854,7 +1952,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsMinorInsideTic"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? ZedGraph.Axis.Default.IsMinorInsideTic : (bool)x;
 			}
 			set { ViewState["IsMinorInsideTic"] = value; }
 		}
@@ -1865,7 +1963,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsMinorOppositeTic"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? ZedGraph.Axis.Default.IsMinorOppositeTic : (bool)x;
 			}
 			set { ViewState["IsMinorOppositeTic"] = value; }
 		}
@@ -1876,7 +1974,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsTicBetweenLabels"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? false : (bool)x;
 			}
 			set { ViewState["IsTicBetweenLabels"] = value; }
 		}
@@ -1887,7 +1985,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["TicPenWidth"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.Axis.Default.TicPenWidth : (float)x;
 			}
 			set { ViewState["TicPenWidth"] = value; }
 		}
@@ -1898,7 +1996,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsShowGrid"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? ZedGraph.Axis.Default.IsShowGrid : (bool)x;
 			}
 			set { ViewState["IsShowGrid"] = value; }
 		}
@@ -1909,7 +2007,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsZeroLine"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? false : (bool)x;
 			}
 			set { ViewState["IsZeroLine"] = value; }
 		}
@@ -1920,7 +2018,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["GridDashOn"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.Axis.Default.GridDashOn : (float)x;
 			}
 			set { ViewState["GridDashOn"] = value; }
 		}
@@ -1931,7 +2029,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["GridDashOff"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.Axis.Default.GridDashOff : (float)x;
 			}
 			set { ViewState["GridDashOff"] = value; }
 		}
@@ -1942,7 +2040,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["GridPenWidth"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.Axis.Default.GridPenWidth : (float)x;
 			}
 			set { ViewState["GridPenWidth"] = value; }
 		}
@@ -1953,7 +2051,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsShowMinorGrid"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? ZedGraph.Axis.Default.IsShowMinorGrid : (bool)x;
 			}
 			set { ViewState["IsShowMinorGrid"] = value; }
 		}
@@ -1964,7 +2062,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["MinorGridDashOn"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.Axis.Default.MinorGridDashOn : (float)x;
 			}
 			set { ViewState["MinorGridDashOn"] = value; }
 		}
@@ -1975,7 +2073,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["MinorGridDashOff"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.Axis.Default.MinorGridDashOff : (float)x;
 			}
 			set { ViewState["MinorGridDashOff"] = value; }
 		}
@@ -1986,7 +2084,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["MinorGridPenWidth"]; 
-				return (null == x) ? 0 : (float)x;
+				return (null == x) ? ZedGraph.Axis.Default.MinorGridPenWidth : (float)x;
 			}
 			set { ViewState["MinorGridPenWidth"] = value; }
 		}
@@ -1997,7 +2095,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["MinorGridColor"]; 
-				return (null == x) ? Color.Empty : (Color)x;
+				return (null == x) ? ZedGraph.Axis.Default.MinorGridColor : (Color)x;
 			}
 			set { ViewState["MinorGridColor"] = value; }
 		}
@@ -2019,7 +2117,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsReverse"]; 
-				return (null == x) ? false : (bool)x;
+				return (null == x) ? ZedGraph.Axis.Default.IsReverse : (bool)x;
 			}
 			set { ViewState["IsReverse"] = value; }
 		}
@@ -2030,7 +2128,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["Type"]; 
-				return (null == x) ? AxisType.Ordinal : (AxisType)x;
+				return (null == x) ? ZedGraph.Axis.Default.Type : (AxisType)x;
 			}
 			set { ViewState["Type"] = value; }
 		}
@@ -2041,7 +2139,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsOmitMag"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? false : (bool)x;
 			}
 			set { ViewState["IsOmitMag"] = value; }
 		}
@@ -2052,7 +2150,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsShowTitle"]; 
-				return (null == x) ? true : (bool)x;
+				return (null == x) ? ZedGraph.Axis.Default.IsShowTitle : (bool)x;
 			}
 			set { ViewState["IsShowTitle"] = value; }
 		}
@@ -2096,7 +2194,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["ScaleFormat"]; 
-				return (null == x) ? "G" : (string)x;
+				return (null == x) ? ZedGraph.Axis.Default.ScaleFormat : (string)x;
 			}
 			set { ViewState["ScaleFormat"] = value; }
 		}
@@ -2107,7 +2205,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["ScaleAlign"]; 
-				return (null == x) ? AlignP.Center : (AlignP)x;
+				return (null == x) ? ZedGraph.Axis.Default.ScaleAlign : (AlignP)x;
 			}
 			set { ViewState["ScaleAlign"] = value; }
 		}
@@ -2204,7 +2302,7 @@ namespace ZedGraph
 		public ZedGraphWebLegend() : base()
 		{
 			Register('r',typeof(ZedGraphWebRect));
-			Register('f',typeof(ZedGraphWebFontSpec));
+			Register('F',typeof(ZedGraphWebFontSpec));
 			Register('b',typeof(ZedGraphWebBorder));
 			Register('f',typeof(ZedGraphWebFill));
 			Register('l',typeof(ZedGraphWebLocation));
@@ -2254,7 +2352,7 @@ namespace ZedGraph
 		]
 		public ZedGraphWebFontSpec FontSpec
 		{
-			get { return (ZedGraphWebFontSpec)base.GetValue('f'); }
+			get { return (ZedGraphWebFontSpec)base.GetValue('F'); }
 		}
 
 		/// <summary>

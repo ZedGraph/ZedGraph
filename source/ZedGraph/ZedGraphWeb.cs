@@ -38,14 +38,14 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-02-14 02:49:00 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-02-14 23:32:57 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
 	//DefaultProperty("Title"),
 	ToolboxData("<{0}:ZedGraphWeb runat=server></{0}:ZedGraphWeb>")
 	]
-	public class ZedGraphWeb : Control, INamingContainer
+	public class ZedGraphWeb : Control, INamingContainer, IDisposable
 	{
 		/// <summary>
 		/// Override the <see cref="ToString"/> method to do nothing.
@@ -960,7 +960,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="OutputStream">A <see cref="Stream"/> in which to output the ZedGraph
 		/// <see cref="System.Drawing.Image"/>.</param>
-		protected void CreateGraph( System.IO.Stream OutputStream )
+		protected void CreateGraph( System.IO.Stream OutputStream, ImageFormat Format )
 		{			
 			RectangleF rect = new RectangleF( 0, 0, this.Width-1, this.Height-1 );
 			GraphPane pane = new GraphPane( rect, Title, string.Empty, string.Empty );
@@ -986,11 +986,13 @@ namespace ZedGraph
         
 			// Stream the graph out				
 			MemoryStream ms = new MemoryStream(); 
-			image.Save( ms, this.ImageFormat );				
+			image.Save( ms, Format );							
 
 			//TODO: provide caching options
 			ms.WriteTo(OutputStream);
 		}
+
+		private System.IO.FileStream DesignTimeFileStream = null;
 
 		/// <summary>
 		/// Override the Render() method with a do-nothing method.
@@ -998,7 +1000,57 @@ namespace ZedGraph
 		/// <param name="output"></param>
 		protected override void Render( HtmlTextWriter output )
 		{	
-			//not used
+			try
+			{
+				if ( null == DesignTimeFileStream )
+				{					
+					string path = Path.GetTempPath();
+					string name = string.Empty;
+					int pid = System.Diagnostics.Process.GetCurrentProcess().Id;
+					string test;
+
+					for ( int i=0; i<100; i++ )
+					{
+						test = string.Format("{0:X}-{1:X}.jpg",i,pid);
+						test = Path.Combine(path,test);
+						if ( !File.Exists(test) )
+						{
+							name = test;
+							break;
+						}
+					}
+					if ( name == string.Empty ) 
+					{
+						throw new Exception("unable to create temp file for ZedGraph rendering");
+					}
+					
+					DesignTimeFileStream = new FileStream(name,FileMode.CreateNew,
+						FileAccess.ReadWrite, FileShare.ReadWrite, 512);
+				}
+
+				DesignTimeFileStream.SetLength(0);
+				DesignTimeFileStream.Seek(0,SeekOrigin.Begin);
+				CreateGraph( DesignTimeFileStream, ImageFormat.Jpeg );			
+				DesignTimeFileStream.Flush();
+				
+				string url = "file://" + DesignTimeFileStream.Name;
+				output.AddAttribute(HtmlTextWriterAttribute.Width,this.Width.ToString());
+				output.AddAttribute(HtmlTextWriterAttribute.Height,this.Height.ToString());
+				output.AddAttribute(HtmlTextWriterAttribute.Src,url);
+				output.AddAttribute(HtmlTextWriterAttribute.Alt,url);
+				output.RenderBeginTag(HtmlTextWriterTag.Img);
+				output.RenderEndTag();
+			}
+			catch(Exception e)
+			{				
+				output.AddAttribute(HtmlTextWriterAttribute.Width,this.Width.ToString());
+				output.AddAttribute(HtmlTextWriterAttribute.Height,this.Height.ToString());				
+				output.RenderBeginTag(HtmlTextWriterTag.Span);
+				output.Write(e.ToString());
+				output.RenderEndTag();
+			}
+
+			
 		}
 
 		/// <summary>
@@ -1010,7 +1062,7 @@ namespace ZedGraph
 			System.Web.HttpContext ctx = System.Web.HttpContext.Current;
 			if ( null == ctx )
 				throw new Exception( "missing context object" );
-			CreateGraph( ctx.Response.OutputStream );
+			CreateGraph( ctx.Response.OutputStream, this.ImageFormat );
 			ctx.Response.ContentType = this.ContentType;
 			if ( end )
 				ctx.Response.End();
@@ -1024,7 +1076,7 @@ namespace ZedGraph
 		{
 			if ( null == stream )
 				throw new Exception( "stream parameter cannot be null" );
-			CreateGraph( stream );
+			CreateGraph( stream, this.ImageFormat );
 		}
 
 	#endregion
@@ -1136,6 +1188,27 @@ namespace ZedGraph
 			base.TrackViewState();
 			vsassist.TrackViewState();			
 		}
+		#endregion
+
+	#region IDisposable Members
+
+		public void Dispose()
+		{
+			try
+			{
+				if ( DesignTimeFileStream != null )
+				{
+					string name = DesignTimeFileStream.Name;
+					DesignTimeFileStream.Close();
+					DesignTimeFileStream = null;
+					File.Delete(name);
+				}
+			}
+			catch(Exception)
+			{
+			}
+		}
+
 		#endregion
 	}
 

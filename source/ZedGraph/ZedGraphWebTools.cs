@@ -260,6 +260,17 @@ namespace ZedGraph
 		/// <param name="type"></param>
 		protected void Register(char code, Type type)
 		{
+#if DEBUG
+			for (int i=0; i<_subitemlist.Count; i++)
+			{
+				if ( ((AssistNode)_subitemlist[i]).Code == code )
+				{
+					throw new Exception(string.Format(
+						"duplicate register code '{0}' found on {1} for type {2}",
+						code,this.GetType().Name, type.Name));
+				}
+			}
+#endif			
 			_subitemlist.Add( new AssistNode(code,type) );			
 		}
 
@@ -517,7 +528,7 @@ namespace ZedGraph
 			return types;           
 		}
 	}
-	#endregion
+	#endregion	
 
 	#region Generic Collection
 	/// <summary>
