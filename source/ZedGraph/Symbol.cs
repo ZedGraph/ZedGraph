@@ -20,6 +20,8 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace ZedGraph
 {
@@ -30,8 +32,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-01-05 15:55:51 $ </version>
-	public class Symbol : ICloneable
+	/// <version> $Revision: 3.9 $ $Date: 2005-01-06 02:46:28 $ </version>
+	[Serializable]
+	public class Symbol : ICloneable, ISerializable
 	{
 	#region Fields
 		/// <summary>
@@ -226,7 +229,49 @@ namespace ZedGraph
 			return new Symbol( this ); 
 		}
 	#endregion
-	
+
+	#region Serialization
+		/// <summary>
+		/// Current schema value that defines the version of the serialized file
+		/// </summary>
+		public const int schema = 1;
+
+		/// <summary>
+		/// Constructor for deserializing objects
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// </param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// </param>
+		protected Symbol( SerializationInfo info, StreamingContext context )
+		{
+			// The schema value is just a file version parameter.  You can use it to make future versions
+			// backwards compatible as new member variables are added to classes
+			int sch = info.GetInt32( "schema" );
+
+			size = info.GetSingle( "size" );
+			type = (SymbolType) info.GetValue( "type", typeof(SymbolType) );
+			isVisible = info.GetBoolean( "isVisible" );
+			fill = (Fill) info.GetValue( "fill", typeof(Fill) );
+			border = (Border) info.GetValue( "border", typeof(Border) );
+		}
+		/// <summary>
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			info.AddValue( "schema", schema );
+			info.AddValue( "size", size );
+			info.AddValue( "type", type );
+			info.AddValue( "isVisible", isVisible );
+			info.AddValue( "fill", fill );
+			info.AddValue( "border", border );
+		}
+	#endregion
+
 	#region Rendering Methods
 		/// <summary>
 		/// Draw the <see cref="Symbol"/> to the specified <see cref="Graphics"/> device

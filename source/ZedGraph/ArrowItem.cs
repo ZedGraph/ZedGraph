@@ -21,6 +21,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace ZedGraph
 {
@@ -30,8 +32,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-12-10 08:33:14 $ </version>
-	public class ArrowItem : GraphItem, ICloneable
+	/// <version> $Revision: 3.8 $ $Date: 2005-01-06 02:46:27 $ </version>
+	[Serializable]
+	public class ArrowItem : GraphItem, ICloneable, ISerializable
 	{
 	#region Fields
 		/// <summary>
@@ -215,6 +218,47 @@ namespace ZedGraph
 		override public object Clone()
 		{ 
 			return new ArrowItem( this ); 
+		}
+	#endregion
+
+	#region Serialization
+		/// <summary>
+		/// Current schema value that defines the version of the serialized file
+		/// </summary>
+		public const int schema2 = 1;
+
+		/// <summary>
+		/// Constructor for deserializing objects
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// </param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// </param>
+		protected ArrowItem( SerializationInfo info, StreamingContext context ) : base( info, context )
+		{
+			// The schema value is just a file version parameter.  You can use it to make future versions
+			// backwards compatible as new member variables are added to classes
+			int sch = info.GetInt32( "schema2" );
+
+			size = info.GetSingle( "size" );
+			color = (Color) info.GetValue( "color", typeof(Color) );
+			penWidth = info.GetSingle( "penWidth" );
+			isArrowHead = info.GetBoolean( "isArrowHead" );
+		}
+		/// <summary>
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		public override void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			base.GetObjectData( info, context );
+			info.AddValue( "schema2", schema2 );
+			info.AddValue( "size", size );
+			info.AddValue( "color", color );
+			info.AddValue( "penWidth", penWidth );
+			info.AddValue( "isArrowHead", isArrowHead );
 		}
 	#endregion
 	

@@ -9,6 +9,10 @@ using System.Drawing.Imaging;
 using System.Drawing.Printing;
 using System.Drawing.Text;
 using System.Data;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml;
+using System.Xml.Serialization;
+using System.IO;
 using GDIDB;
 using ZedGraph;
 
@@ -122,13 +126,27 @@ namespace ZedGraphTest
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
-#if false	// The main example
+
+#if false	// serialized data
+
+			BinaryFormatter mySerializer = new BinaryFormatter();
+			Stream myReader = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Open,
+						FileAccess.Read, FileShare.Read );
+
+			myPane = (GraphPane) mySerializer.Deserialize( myReader );
+			myReader.Close();
+
+#endif
+
+#if true	// The main example
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
 				"Widget Production\n(units/hour)" );
 			SetSize();
+
+			myPane.XAxis.ScaleFontSpec.Size = 8;
 
 			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
@@ -141,6 +159,8 @@ namespace ZedGraphTest
 			curve.Symbol.Fill = new Fill( Color.White );
 			curve.Symbol.Size = 10;
 			
+			//MessageBox.Show( curve.Points.InterpolateX( 450 ).ToString() );
+
 			double[] x3 = { 150, 250, 400, 520, 780, 940 };
 			double[] y3 = { 5.2, 49.0, 33.8, 88.57, 99.9, 36.8 };
 			curve = myPane.AddCurve( "Moe", x3, y3, Color.FromArgb( 200, 55, 135), SymbolType.Triangle );
@@ -191,7 +211,8 @@ namespace ZedGraphTest
 			myPane.YAxis.IsShowGrid = true;
 			//myPane.YAxis.ScaleFontSpec.Angle = 90;
 			myPane.YAxis.Max = 120;
-			//myPane.YAxis.ScaleAlign = AlignP.Center;
+			//myPane.YAxis.ScaleAlign = AlignP.Inside;
+			//myPane.YAxis.ScaleFontSpec.Border.IsVisible = true;
 			//myPane.YAxis.Type = AxisType.Log;
 			//myPane.YAxis.IsUseTenPower = false;
 			//myPane.YAxis.IsShowMinorGrid = true;
@@ -269,11 +290,11 @@ namespace ZedGraphTest
 			//myPane.LineType = LineType.Stack;
 			//myPane.PaneBorder.IsVisible= false;
 
-//			RectangleF rect = new RectangleF( .5F, .2F, .2F, .2F );
-//			EllipseItem ellipse = new EllipseItem( rect, Color.Black, Color.Blue );
-//			ellipse.Location.CoordinateFrame = CoordType.PaneFraction;
-//			ellipse.ZOrder = ZOrder.G_BehindAll;
-//			myPane.GraphItemList.Add( ellipse );
+			RectangleF rect = new RectangleF( .5F, .2F, .2F, .2F );
+			EllipseItem ellipse = new EllipseItem( rect, Color.Black, Color.Blue );
+			ellipse.Location.CoordinateFrame = CoordType.PaneFraction;
+			ellipse.ZOrder = ZOrder.D_BehindCurves;
+			myPane.GraphItemList.Add( ellipse );
 
 			//myPane.CurveList.Remove( myPane.CurveList.IndexOf( bar ) );
 
@@ -291,7 +312,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if true	// Test Line Stacking
+#if false	// Test Line Stacking
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -1382,7 +1403,10 @@ namespace ZedGraphTest
 
 			// Make up some random data points
 			string[] labels = { "USA", "Spain", "Qatar", "Morocco", "UK", "Uganda",
-								  "Cambodia", "Malaysia", "Australia", "Ecuador" };
+								  "Cambodia", "Malaysia", "Australia", "Ecuador",
+								"UAE", "Kuwait", "Iraq", "Iran", "Italy", "Turkey", "Russia",
+								"Ukraine", "Venezuela", "Bolivia", "Colombia", "Peru",
+								"Oman", "Saudi Arabia" };
 //			double[] y = new double[10];
 //			for ( int i=0; i<10; i++ )
 //				y[i] = Math.Sin( (double) i * Math.PI / 2.0 );
@@ -2723,15 +2747,43 @@ namespace ZedGraphTest
 		}
 #endif
 
+		private void Serialize( GraphPane myPane )
+		{
+			//XmlSerializer mySerializer = new XmlSerializer( typeof( GraphPane ) );
+			//StreamWriter myWriter = new StreamWriter( "c:\\temp\\myFileName.xml" );
+
+			BinaryFormatter mySerializer = new BinaryFormatter();
+			Stream myWriter = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Create,
+						FileAccess.Write, FileShare.None );
+
+			mySerializer.Serialize( myWriter, myPane );
+
+			MessageBox.Show( "Serialized output created" );
+
+			myWriter.Close();
+
+
+			Stream myReader = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Open,
+						FileAccess.Read, FileShare.Read );
+
+			myPane = null;
+			myPane = (GraphPane) mySerializer.Deserialize( myReader );
+			Invalidate();
+
+			myReader.Close();
+		}
+
 #if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+			Serialize( myPane );
+
 			//myPane.XAxis.PickScale( 250, 900, myPane, this.CreateGraphics(), myPane.CalcScaleFactor() );
 			//Invalidate();
 			
 			//showTicks = true;
 			//Invalidate();
-			
+/*			
 			if ( myText != null )
 			{
 				CurveItem curve;
@@ -2746,7 +2798,7 @@ namespace ZedGraphTest
 					((LineItem) curve).Line.IsVisible = false;
 				Invalidate();
 			}
-
+*/
 			//DoPrint();
 			//CopyToPNG( myPane );
 			

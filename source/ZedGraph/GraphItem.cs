@@ -20,6 +20,8 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace ZedGraph
 {
@@ -30,8 +32,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-01-05 15:55:50 $ </version>
-	abstract public class GraphItem
+	/// <version> $Revision: 3.8 $ $Date: 2005-01-06 02:46:27 $ </version>
+	[Serializable]
+	abstract public class GraphItem : ISerializable
 	{
 	#region Fields
 		/// <summary>
@@ -60,6 +63,7 @@ namespace ZedGraph
 		/// <see cref="ZOrder"/> to access this value.
 		/// </summary>
 		protected ZOrder zOrder;
+
 	#endregion
 
 	#region Defaults
@@ -297,7 +301,47 @@ namespace ZedGraph
 		/// <returns>A new, independent copy of the GraphItem</returns>
 		public abstract object Clone();
 	#endregion
-	
+
+	#region Serialization
+		/// <summary>
+		/// Current schema value that defines the version of the serialized file
+		/// </summary>
+		public const int schema = 1;
+
+		/// <summary>
+		/// Constructor for deserializing objects
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// </param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// </param>
+		protected GraphItem( SerializationInfo info, StreamingContext context )
+		{
+			// The schema value is just a file version parameter.  You can use it to make future versions
+			// backwards compatible as new member variables are added to classes
+			int sch = info.GetInt32( "schema" );
+
+			location = (Location) info.GetValue( "location", typeof(Location) );
+			isVisible = info.GetBoolean( "isVisible" );
+			Tag = info.GetValue( "Tag", typeof(object) );
+			zOrder = (ZOrder) info.GetValue( "zOrder", typeof(ZOrder) );
+		}
+		/// <summary>
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			info.AddValue( "schema", schema );
+			info.AddValue( "location", location );
+			info.AddValue( "isVisible", isVisible );
+			info.AddValue( "Tag", Tag );
+			info.AddValue( "zOrder", zOrder );
+		}
+	#endregion
+
 	#region Rendering Methods
 		/// <summary>
 		/// Render this <see cref="GraphItem"/> object to the specified <see cref="Graphics"/> device.

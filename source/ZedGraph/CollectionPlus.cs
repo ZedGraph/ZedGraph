@@ -39,7 +39,8 @@ namespace ZedGraph
 	/// Only Remove(), Move(), IndexOf(), etc. methods are included.</remarks>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-12-10 05:45:55 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2005-01-06 02:46:27 $ </version>
+	[Serializable]
 	public class CollectionPlus : CollectionBase
 	{
 		/// <summary>

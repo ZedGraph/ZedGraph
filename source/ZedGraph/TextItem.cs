@@ -20,6 +20,8 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace ZedGraph
 {
@@ -30,8 +32,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2004-12-12 20:19:54 $ </version>
-	public class TextItem : GraphItem, ICloneable
+	/// <version> $Revision: 3.11 $ $Date: 2005-01-06 02:46:28 $ </version>
+	[Serializable]
+	public class TextItem : GraphItem, ICloneable, ISerializable
 	{
 	#region Fields
 		/// <summary> Private field to store the actual text string for this
@@ -223,7 +226,44 @@ namespace ZedGraph
 			return new TextItem( this ); 
 		}
 	#endregion
-	
+
+	#region Serialization
+		/// <summary>
+		/// Current schema value that defines the version of the serialized file
+		/// </summary>
+		public const int schema2 = 1;
+
+		/// <summary>
+		/// Constructor for deserializing objects
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// </param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// </param>
+		protected TextItem( SerializationInfo info, StreamingContext context ) : base( info, context )
+		{
+			// The schema value is just a file version parameter.  You can use it to make future versions
+			// backwards compatible as new member variables are added to classes
+			int sch = info.GetInt32( "schema2" );
+
+			text = info.GetString( "text" );
+			fontSpec = (FontSpec) info.GetValue( "fontSpec", typeof(FontSpec) );
+		}
+		/// <summary>
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		public override void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			base.GetObjectData( info, context );
+			info.AddValue( "schema2", schema2 );
+			info.AddValue( "text", text );
+			info.AddValue( "fontSpec", fontSpec );
+		}
+	#endregion
+
 	#region Rendering Methods
 		/// <summary>
 		/// Render this <see cref="TextItem"/> object to the specified <see cref="Graphics"/> device

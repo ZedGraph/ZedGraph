@@ -31,8 +31,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-01-05 15:55:51 $ </version>
-	public struct PointPair
+	/// <version> $Revision: 3.10 $ $Date: 2005-01-06 02:46:28 $ </version>
+	[Serializable]
+	public class PointPair : ISerializable
 	{
 	#region Member variables
 		/// <summary>
@@ -74,6 +75,18 @@ namespace ZedGraph
 	#endregion
 
 	#region Constructors
+
+		/// <summary>
+		/// Default Constructor
+		/// </summary>
+		public PointPair()
+		{
+			this.X = 0;
+			this.Y = 0;
+			this.Z = 0;
+			this.Tag = null;
+		}
+
 		/// <summary>
 		/// Creates a point pair with the specified X and Y.
 		/// </summary>
@@ -155,6 +168,47 @@ namespace ZedGraph
 			this.Y = rhs.Y;
 			this.Z = rhs.Z;
 			this.Tag = rhs.Tag;
+		}
+	#endregion
+
+	#region Serialization
+		/// <summary>
+		/// Current schema value that defines the version of the serialized file
+		/// </summary>
+		public const int schema = 1;
+
+		/// <summary>
+		/// Constructor for deserializing objects
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// </param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// </param>
+		protected PointPair( SerializationInfo info, StreamingContext context )
+		{
+			// The schema value is just a file version parameter.  You can use it to make future versions
+			// backwards compatible as new member variables are added to classes
+			int sch = info.GetInt32( "schema" );
+
+			X = info.GetDouble( "X" );
+			Y = info.GetDouble( "Y" );
+			Z = info.GetDouble( "Z" );
+
+			Tag = info.GetValue( "Tag", typeof(object) );
+		}
+		/// <summary>
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			info.AddValue( "schema", schema );
+			info.AddValue( "X", X );
+			info.AddValue( "Y", Y );
+			info.AddValue( "Z", Z );
+			info.AddValue( "Tag", Tag );
 		}
 	#endregion
 

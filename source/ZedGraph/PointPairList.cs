@@ -30,7 +30,8 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.12 $ $Date: 2004-12-10 05:45:55 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-01-06 02:46:28 $ </version>
+	[Serializable]
 	public class PointPairList : CollectionPlus, ICloneable
 	{
 	#region Fields
@@ -71,6 +72,7 @@ namespace ZedGraph
 		/// </summary>
 		public PointPairList()
 		{
+			sorted = false;
 		}
 
 		/// <summary>
@@ -128,7 +130,7 @@ namespace ZedGraph
 		public int Add( PointPair point )
 		{
 			sorted = false;
-			return List.Add( point );
+			return List.Add( new PointPair( point ) );
 		}
 
 		/// <summary>
@@ -164,7 +166,6 @@ namespace ZedGraph
 		/// <seealso cref="IList.Add"/>
 		public int Add( double[] x, double[] y )
 		{
-			PointPair	point = new PointPair( 0, 0, 0 );
 			int 		len = 0,
 						rv = -1;
 			
@@ -175,6 +176,7 @@ namespace ZedGraph
 			
 			for ( int i=0; i<len; i++ )
 			{
+				PointPair	point = new PointPair( 0, 0, 0 );
 				if ( x == null )
 					point.X = (double) i + 1.0;
 				else if ( i < x.Length )
@@ -212,7 +214,6 @@ namespace ZedGraph
 		/// <seealso cref="IList.Add"/>
 		public int Add( double[] x, double[] y, double[] z )
 		{
-			PointPair	point = new PointPair();
 			int 		len = 0,
 						rv = -1;
 			
@@ -225,6 +226,8 @@ namespace ZedGraph
 						
 			for ( int i=0; i<len; i++ )
 			{
+				PointPair point = new PointPair();
+
 				if ( x == null )
 					point.X = (double) i + 1.0;
 				else if ( i < x.Length )
@@ -382,11 +385,7 @@ namespace ZedGraph
 			for ( int i=0; i<this.Count; i++ )
 			{
 				if ( i < sumList.Count )
-				{
-					PointPair point = this[i];
-					point.Y += sumList[i].Y;
-					this[i] = point;
-				}
+					this[i].Y += sumList[i].Y;
 			}
 				
 			//sorted = false;
@@ -405,14 +404,116 @@ namespace ZedGraph
 			for ( int i=0; i<this.Count; i++ )
 			{
 				if ( i < sumList.Count )
-				{
-					PointPair point = this[i];
-					point.X += sumList[i].X;
-					this[i] = point;
-				}
+					this[i].X += sumList[i].X;
 			}
 				
 			sorted = false;
+		}
+
+		/// <summary>
+		/// Interpolate the data to find an arbitraty Y value that corresponds to the specified X value.
+		/// </summary>
+		/// <remarks>
+		/// This method uses linear interpolation with a binary search algorithm.  It therefore
+		/// requires that the x data be monotonically increasing.  Missing values are not allowed.  This
+		/// method will extrapolate outside the range of the PointPairList if necessary.
+		/// </remarks>
+		/// <param name="xTarget">The target X value on which to interpolate</param>
+		/// <returns>The Y value that corresponds to the <see paramref="xTarget"/> value.</returns>
+		public double InterpolateX( double xTarget )
+		{
+			int lo, mid, hi;
+			if ( this.Count < 2 )
+				throw new Exception( "Error: Not enough points in curve to interpolate" );
+
+			if ( xTarget <= this[0].X )
+			{
+				lo = 0;
+				hi = 1;
+			}
+			else if ( xTarget >= this[this.Count-1].X )
+			{
+				lo = this.Count - 2;
+				hi = this.Count - 1;
+			}
+			else
+			{
+				// if x is within the bounds of the x table, then do a binary search
+				// in the x table to find table entries that bound the x value
+				lo = 0;
+				hi = this.Count - 1;
+			    
+				// limit to 1000 loops to avoid an infinite loop problem
+				int j;
+				for ( j=0; j<1000 && hi > lo + 1; j++ )
+				{
+					mid = ( hi + lo ) / 2;
+					if ( xTarget > this[mid].X )
+						lo = mid;
+					else
+						hi = mid;
+				}
+
+				if ( j >= 1000 )
+					throw new Exception( "Error: Infinite loop in interpolation" );
+			}
+
+			return ( xTarget - this[lo].X ) / ( this[hi].X - this[lo].X ) *
+					( this[hi].Y - this[lo].Y ) + this[lo].Y;
+
+		}
+
+		/// <summary>
+		/// Interpolate the data to find an arbitraty X value that corresponds to the specified Y value.
+		/// </summary>
+		/// <remarks>
+		/// This method uses linear interpolation with a binary search algorithm.  It therefore
+		/// requires that the Y data be monotonically increasing.  Missing values are not allowed.  This
+		/// method will extrapolate outside the range of the PointPairList if necessary.
+		/// </remarks>
+		/// <param name="yTarget">The target Y value on which to interpolate</param>
+		/// <returns>The X value that corresponds to the <see paramref="yTarget"/> value.</returns>
+		public double InterpolateY( double yTarget )
+		{
+			int lo, mid, hi;
+			if ( this.Count < 2 )
+				throw new Exception( "Error: Not enough points in curve to interpolate" );
+
+			if ( yTarget <= this[0].Y )
+			{
+				lo = 0;
+				hi = 1;
+			}
+			else if ( yTarget >= this[this.Count-1].Y )
+			{
+				lo = this.Count - 2;
+				hi = this.Count - 1;
+			}
+			else
+			{
+				// if y is within the bounds of the y table, then do a binary search
+				// in the y table to find table entries that bound the y value
+				lo = 0;
+				hi = this.Count - 1;
+			    
+				// limit to 1000 loops to avoid an infinite loop problem
+				int j;
+				for ( j=0; j<1000 && hi > lo + 1; j++ )
+				{
+					mid = ( hi + lo ) / 2;
+					if ( yTarget > this[mid].Y )
+						lo = mid;
+					else
+						hi = mid;
+				}
+
+				if ( j >= 1000 )
+					throw new Exception( "Error: Infinite loop in interpolation" );
+			}
+
+			return ( yTarget - this[lo].Y ) / ( this[hi].Y - this[lo].Y ) *
+					( this[hi].X - this[lo].X ) + this[lo].X;
+
 		}
 
 		/// <summary>

@@ -20,6 +20,8 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace ZedGraph
 {
@@ -32,8 +34,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-11-03 04:17:45 $ </version>
-	public class FontSpec : ICloneable
+	/// <version> $Revision: 3.8 $ $Date: 2005-01-06 02:46:27 $ </version>
+	[Serializable]
+	public class FontSpec : ICloneable, ISerializable
 	{
 	#region Fields
 		/// <summary>
@@ -75,7 +78,7 @@ namespace ZedGraph
 		/// <see cref="FontSpec"/>.  Use the public property <see cref="Fill"/> to
 		/// access this value.
 		/// </summary>
-		private Fill		fill;
+		private Fill fill;
 		/// <summary>
 		/// Private field that determines the properties of the border around the text.
 		/// Use the public property <see cref="Border"/> to access this value.
@@ -327,6 +330,14 @@ namespace ZedGraph
 	#endregion
 	
 	#region Constructors
+
+		/// <summary>
+		/// Construct a <see cref="FontSpec"/> object with default properties.
+		/// </summary>
+		public FontSpec() : this( "Arial", 12, Color.Black, false, false, false )
+		{
+		}
+
 		/// <summary>
 		/// Construct a <see cref="FontSpec"/> object with the given properties.  All other properties
 		/// are defaulted according to the values specified in the <see cref="Default"/>
@@ -350,14 +361,14 @@ namespace ZedGraph
 			this.isItalic = isItalic;
 			this.isUnderline = isUnderline;
 			this.size = size;
-			this.scaledSize = -1;
 			this.angle = 0F;
 			this.stringAlignment = Default.StringAlignment;
 
 			this.border = new Border( true, Color.Black, 1.0F );
 			this.fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
-			
-			Remake( 1.0, this.Size, ref this.scaledSize, ref this.font );
+
+			this.scaledSize = -1;
+			Remake( 1.0, this.size, ref this.scaledSize, ref this.font );
 		}
 
 		/// <summary>
@@ -388,7 +399,6 @@ namespace ZedGraph
 			this.isItalic = isItalic;
 			this.isUnderline = isUnderline;
 			this.size = size;
-			this.scaledSize = -1;
 			this.angle = 0F;
 			this.stringAlignment = Default.StringAlignment;
 
@@ -396,7 +406,8 @@ namespace ZedGraph
 			this.fill = new Fill( fillColor, fillBrush, fillType );
 			this.border = new Border( true, Color.Black, 1.0F );
 			
-			Remake( 1.0, this.Size, ref this.scaledSize, ref this.font );
+			this.scaledSize = -1;
+			Remake( 1.0, this.size, ref this.scaledSize, ref this.font );
 		}
 
 		/// <summary>
@@ -418,7 +429,7 @@ namespace ZedGraph
 			size = rhs.Size;
 		
 			scaledSize = rhs.scaledSize;
-			Remake( 1.0, this.Size, ref this.scaledSize, ref this.font );
+			Remake( 1.0, this.size, ref this.scaledSize, ref this.font );
 		}
 
 		/// <summary>
@@ -430,7 +441,62 @@ namespace ZedGraph
 			return new FontSpec( this ); 
 		}
 	#endregion
-	
+
+	#region Serialization
+		/// <summary>
+		/// Current schema value that defines the version of the serialized file
+		/// </summary>
+		public const int schema = 1;
+
+		/// <summary>
+		/// Constructor for deserializing objects
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// </param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// </param>
+		protected FontSpec( SerializationInfo info, StreamingContext context )
+		{
+			// The schema value is just a file version parameter.  You can use it to make future versions
+			// backwards compatible as new member variables are added to classes
+			int sch = info.GetInt32( "schema" );
+
+			fontColor = (Color) info.GetValue( "fontColor", typeof(Color) );
+			family = info.GetString( "family" );
+			isBold = info.GetBoolean( "isBold" );
+			isItalic = info.GetBoolean( "isItalic" );
+			isUnderline = info.GetBoolean( "isUnderline" );
+			fill = (Fill) info.GetValue( "fill", typeof(Fill) );
+			border = (Border) info.GetValue( "border", typeof(Border) );
+			angle = info.GetSingle( "angle" );
+			stringAlignment = (StringAlignment) info.GetValue( "stringAlignment", typeof(StringAlignment) );
+			size = info.GetSingle( "size" );
+
+			scaledSize = -1;
+			Remake( 1.0, this.size, ref this.scaledSize, ref this.font );
+		}
+		/// <summary>
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			info.AddValue( "schema", schema );
+			info.AddValue( "fontColor", fontColor );
+			info.AddValue( "family", family );
+			info.AddValue( "isBold", isBold );
+			info.AddValue( "isItalic", isItalic );
+			info.AddValue( "isUnderline", isUnderline );
+			info.AddValue( "fill", fill );
+			info.AddValue( "border", border );
+			info.AddValue( "angle", angle );
+			info.AddValue( "stringAlignment", stringAlignment );
+			info.AddValue( "size", size );
+		}
+	#endregion
+
 	#region Font Construction Methods
 		/// <summary>
 		/// Recreate the font based on a new scaled size.  The font
@@ -566,15 +632,6 @@ namespace ZedGraph
 			// make a solid brush for rendering the font itself
 			SolidBrush brush = new SolidBrush( this.fontColor );
 			
-			// make a center justified StringFormat alignment
-			// for drawing the text
-			StringFormat strFormat = new StringFormat();
-			strFormat.Alignment = this.stringAlignment;
-			if ( this.stringAlignment == StringAlignment.Far )
-				g.TranslateTransform( sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
-			else if ( this.stringAlignment == StringAlignment.Near )
-				g.TranslateTransform( -sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
-			
 			// Create a rectangle representing the border around the
 			// text.  Note that, while the text is drawn based on the
 			// TopCenter position, the rectangle is drawn based on
@@ -589,6 +646,15 @@ namespace ZedGraph
 			// Draw the border around the text if required
 			this.border.Draw( g, pane, scaleFactor, rectF );
 
+			// make a center justified StringFormat alignment
+			// for drawing the text
+			StringFormat strFormat = new StringFormat();
+			strFormat.Alignment = this.stringAlignment;
+			if ( this.stringAlignment == StringAlignment.Far )
+				g.TranslateTransform( sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
+			else if ( this.stringAlignment == StringAlignment.Near )
+				g.TranslateTransform( -sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
+			
 			// Draw the actual text.  Note that the coordinate system
 			// is set up such that 0,0 is at the location where the
 			// CenterTop of the text needs to be.

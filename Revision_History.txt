@@ -1,5 +1,12 @@
 ZedGraph Class Library Revision History
 
+5-Jan-2005 (by Champion)
+  Add Line Stacking via GraphPane.LineType
+  Add Serialization - Implement ISerializable
+  Fix StringAlignment bug for FontSpec
+  Add Interpolation methods to PointPairList
+  Fix maxlabels bug for text axes
+
 10-Dec-2004 (by Champion)
   Add Z-Order control to GraphItems
   Add CollectionPlus base class with Move(), etc. methods

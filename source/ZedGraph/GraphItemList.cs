@@ -29,7 +29,8 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-01-05 15:55:50 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-01-06 02:46:27 $ </version>
+	[Serializable]
 	public class GraphItemList : CollectionBase, ICloneable
 	{
 	#region Constructors

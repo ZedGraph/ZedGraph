@@ -19,6 +19,8 @@
 
 using System;
 using System.Drawing;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace ZedGraph
 {
@@ -27,8 +29,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-12-10 17:54:50 $ </version>
-	public class Location : ICloneable
+	/// <version> $Revision: 3.7 $ $Date: 2005-01-06 02:46:28 $ </version>
+	[Serializable]
+	public class Location : ICloneable, ISerializable
 	{
 	#region Private Fields
 		/// <summary> Private field to store the vertical alignment property for
@@ -246,6 +249,14 @@ namespace ZedGraph
 	#endregion
 	
 	#region Constructors
+
+		/// <summary>
+		/// Default constructor for the <see cref="Location"/> class.
+		/// </summary>
+		public Location() : this( 0, 0, CoordType.AxisFraction )
+		{
+		}
+
 		/// <summary>
 		/// Constructor for the <see cref="Location"/> class that specifies the
 		/// x, y position and the <see cref="CoordType"/>.
@@ -347,7 +358,53 @@ namespace ZedGraph
 			return new Location( this ); 
 		}
 	#endregion
-	
+
+	#region Serialization
+		/// <summary>
+		/// Current schema value that defines the version of the serialized file
+		/// </summary>
+		public const int schema = 1;
+
+		/// <summary>
+		/// Constructor for deserializing objects
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// </param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// </param>
+		protected Location( SerializationInfo info, StreamingContext context )
+		{
+			// The schema value is just a file version parameter.  You can use it to make future versions
+			// backwards compatible as new member variables are added to classes
+			int sch = info.GetInt32( "schema" );
+
+			alignV = (AlignV) info.GetValue( "alignV", typeof(AlignV) );
+			alignH = (AlignH) info.GetValue( "alignH", typeof(AlignH) );
+			x = info.GetSingle( "x" );
+			y = info.GetSingle( "y" );
+			width = info.GetSingle( "width" );
+			height = info.GetSingle( "height" );
+			coordinateFrame = (CoordType) info.GetValue( "coordinateFrame", typeof(CoordType) );
+		}
+		/// <summary>
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			info.AddValue( "schema", schema );
+			info.AddValue( "alignV", alignV );
+			info.AddValue( "alignH", alignH );
+			info.AddValue( "x", x );
+			info.AddValue( "y", y );
+			info.AddValue( "width", width );
+			info.AddValue( "height", height );
+			info.AddValue( "coordinateFrame", coordinateFrame );
+		}
+	#endregion
+
 	#region Methods
 		/// <summary>
 		/// Transform this <see cref="Location"/> object to display device

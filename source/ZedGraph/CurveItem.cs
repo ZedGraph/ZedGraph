@@ -20,6 +20,8 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace ZedGraph
 {
@@ -32,11 +34,12 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.11 $ $Date: 2004-12-10 17:54:50 $ </version>
-	abstract public class CurveItem
+	/// <version> $Revision: 3.12 $ $Date: 2005-01-06 02:46:27 $ </version>
+	[Serializable]
+	abstract public class CurveItem : ISerializable
 	{
 	
-	#region Fields		
+	#region Fields
 		/// <summary>
 		/// protected field that stores a legend label string for this
 		/// <see cref="CurveItem"/>.  Use the public
@@ -86,6 +89,7 @@ namespace ZedGraph
 		/// not use this value for any purpose.
 		/// </summary>
 		public object Tag;
+
 	#endregion
 	
 	#region Constructors
@@ -170,6 +174,50 @@ namespace ZedGraph
 		/// <returns>A new, independent copy of the CurveItem</returns>
 		public abstract object Clone();
 		
+	#endregion
+
+	#region Serialization
+		/// <summary>
+		/// Current schema value that defines the version of the serialized file
+		/// </summary>
+		public const int schema = 1;
+
+		/// <summary>
+		/// Constructor for deserializing objects
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// </param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// </param>
+		protected CurveItem( SerializationInfo info, StreamingContext context )
+		{
+			// The schema value is just a file version parameter.  You can use it to make future versions
+			// backwards compatible as new member variables are added to classes
+			int sch = info.GetInt32( "schema" );
+
+			label = info.GetString( "label" );
+			isY2Axis = info.GetBoolean( "isY2Axis" );
+			isVisible = info.GetBoolean( "isVisible" );
+			isLegendLabelVisible = info.GetBoolean( "isLegendLabelVisible" );
+			points = (PointPairList) info.GetValue( "points", typeof(PointPairList) );
+			Tag = info.GetValue( "Tag", typeof(object) );
+		}
+		/// <summary>
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			info.AddValue( "schema", schema );
+			info.AddValue( "label", label );
+			info.AddValue( "isY2Axis", isY2Axis );
+			info.AddValue( "isVisible", isVisible );
+			info.AddValue( "isLegendLabelVisible", isLegendLabelVisible );
+			info.AddValue( "points", points );
+			info.AddValue( "Tag", Tag );
+		}
 	#endregion
 	
 	#region Properties
@@ -285,9 +333,9 @@ namespace ZedGraph
 			get 
 			{
 				if ( this.points == null )
-						return 0;
-					else
-						return this.points.Count;
+					return 0;
+				else
+					return this.points.Count;
 			}
 		}
 		
@@ -425,7 +473,7 @@ namespace ZedGraph
 		/// </param>
 		virtual public void MakeUnique( ColorSymbolRotator rotator )
 		{
-			this.Color			= rotator.NextColor;
+			this.Color = rotator.NextColor;
 		}
 	
 		/// <summary>

@@ -24,6 +24,8 @@ using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace ZedGraph
 {
@@ -44,8 +46,9 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.21 $ $Date: 2005-01-05 15:55:50 $ </version>
-	public class GraphPane : ICloneable
+	/// <version> $Revision: 3.22 $ $Date: 2005-01-06 02:46:27 $ </version>
+	[Serializable]
+	public class GraphPane : ICloneable, ISerializable
 	{
 	#region Private Fields
 	
@@ -882,6 +885,14 @@ namespace ZedGraph
 	#endregion
 	
 	#region Constructors
+
+		/// <summary>
+		/// Default Constructor
+		/// </summary>
+		public GraphPane() : this( new RectangleF( 0, 0, 100, 100 ), "Title", "X Axis", "Y Axis" )
+		{
+		}
+
 		/// <summary>
 		/// Constructor for the <see cref="GraphPane"/> object.  This routine will
 		/// initialize all member variables and classes, setting appropriate default
@@ -987,7 +998,114 @@ namespace ZedGraph
 			return new GraphPane( this ); 
 		}
 	#endregion
-	
+
+	#region Serialization
+		/// <summary>
+		/// Current schema value that defines the version of the serialized file
+		/// </summary>
+		public const int schema = 1;
+
+		/// <summary>
+		/// Constructor for deserializing objects
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// </param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// </param>
+		protected GraphPane( SerializationInfo info, StreamingContext context )
+		{
+			// The schema value is just a file version parameter.  You can use it to make future versions
+			// backwards compatible as new member variables are added to classes
+			int sch = info.GetInt32( "schema" );
+
+			xAxis = (XAxis) info.GetValue( "xAxis", typeof(XAxis) );
+			yAxis = (YAxis) info.GetValue( "yAxis", typeof(YAxis) );
+			y2Axis = (Y2Axis) info.GetValue( "y2Axis", typeof(Y2Axis) );
+			legend = (Legend) info.GetValue( "legend", typeof(Legend) );
+			curveList = (CurveList) info.GetValue( "curveList", typeof(CurveList) );
+			graphItemList = (GraphItemList) info.GetValue( "graphItemList", typeof(GraphItemList) );
+
+			title = info.GetString( "title" );
+			isShowTitle = info.GetBoolean( "isShowTitle" );
+			fontSpec = (FontSpec) info.GetValue( "fontSpec" , typeof(FontSpec) );
+
+			paneFill = (Fill) info.GetValue( "paneFill", typeof(Fill) );
+			paneBorder = (Border) info.GetValue( "paneBorder", typeof(Border) );
+
+			isAxisRectAuto = info.GetBoolean( "isAxisRectAuto" );
+			axisFill = (Fill) info.GetValue( "axisFill", typeof(Fill) );
+			axisBorder = (Border) info.GetValue( "axisBorder", typeof(Border) );
+
+			isIgnoreInitial = info.GetBoolean( "isIgnoreInitial" );
+			isIgnoreMissing = info.GetBoolean( "isIgnoreMissing" );
+
+			paneGap = info.GetSingle( "paneGap" );
+			baseDimension = info.GetDouble( "baseDimension" );
+			minClusterGap = info.GetSingle( "minClusterGap" );
+			minBarGap = info.GetSingle( "minBarGap" );
+
+			barBase = (BarBase) info.GetValue( "barBase", typeof(BarBase) );
+			barType = (BarType) info.GetValue( "barType", typeof(BarType) );
+
+			clusterScaleWidth = info.GetDouble( "clusterScaleWidth" );
+			isFontsScaled = info.GetBoolean( "isFontsScaled" );
+			isPenWidthScaled = info.GetBoolean( "isPenWidthScaled" );
+
+			paneRect = (RectangleF) info.GetValue( "paneRect", typeof(RectangleF) );
+			axisRect = (RectangleF) info.GetValue( "axisRect", typeof(RectangleF) );
+
+			lineType = (LineType) info.GetValue( "lineType", typeof(LineType) );
+		}
+		/// <summary>
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			info.AddValue( "schema", schema );
+
+			info.AddValue( "xAxis", xAxis );
+			info.AddValue( "yAxis", yAxis );
+			info.AddValue( "y2Axis", y2Axis );
+			info.AddValue( "legend", legend );
+			info.AddValue( "curveList", curveList );
+			info.AddValue( "graphItemList", graphItemList );
+
+			info.AddValue( "title", title );
+			info.AddValue( "isShowTitle", isShowTitle );
+			info.AddValue( "fontSpec", fontSpec );
+
+			info.AddValue( "paneFill", paneFill );
+			info.AddValue( "paneBorder", paneBorder );
+
+			info.AddValue( "isAxisRectAuto", isAxisRectAuto );
+			info.AddValue( "axisFill", axisFill );
+			info.AddValue( "axisBorder", axisBorder );
+
+			info.AddValue( "isIgnoreInitial", isIgnoreInitial );
+			info.AddValue( "isIgnoreMissing", isIgnoreMissing );
+
+			info.AddValue( "paneGap", paneGap );
+			info.AddValue( "baseDimension", baseDimension );
+			info.AddValue( "minClusterGap", minClusterGap );
+			info.AddValue( "minBarGap", minBarGap );
+
+			info.AddValue( "barBase", barBase );
+			info.AddValue( "barType", barType );
+
+			info.AddValue( "clusterScaleWidth", clusterScaleWidth );
+			info.AddValue( "isFontsScaled", isFontsScaled );
+			info.AddValue( "isPenWidthScaled", isPenWidthScaled );
+
+			info.AddValue( "paneRect", paneRect );
+			info.AddValue( "axisRect", axisRect );
+
+			info.AddValue( "lineType", lineType );
+		}
+	#endregion
+
 	#region Rendering Methods
 		/// <summary>
 		/// AxisChange causes the axes scale ranges to be recalculated based on the current data range.
