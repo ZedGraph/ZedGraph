@@ -2,6 +2,7 @@ ZedGraph Class Library Revision History
 
 8-Dec-2004 (by Champion)
   Add FindNearest unit tests
+  Fix extreme outlier overflow problem for symbols
   
 8-Dec-2004 (by Kaye)
   Add Unit Tests

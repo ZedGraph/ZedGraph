@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-11-10 04:36:52 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-12-09 02:09:35 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -252,7 +252,10 @@ namespace ZedGraph
 		public void DrawSymbol( Graphics g, float x, float y, double scaleFactor, Pen pen, Brush brush )
 		{
 			// Only draw if the symbol is visible
-			if ( this.isVisible && this.Type != SymbolType.None )
+			if (	this.isVisible &&
+					this.Type != SymbolType.None &&
+					x < 100000 && x > -100000 &&
+					y < 100000 && y > -100000 )
 			{
 				// Fill or draw the symbol as required
 				if ( this.fill.IsVisible)
@@ -285,7 +288,10 @@ namespace ZedGraph
 							Pen pen, Brush brush )
 		{
 			// Only draw if the symbol is visible
-			if ( this.isVisible && this.Type != SymbolType.None )
+			if (	this.isVisible &&
+					this.Type != SymbolType.None &&
+					x < 100000 && x > -100000 &&
+					y < 100000 && y > -100000 )
 			{
 				Matrix saveMatrix = g.Transform;
 				g.TranslateTransform( x, y );
@@ -327,7 +333,10 @@ namespace ZedGraph
 		public void DrawSymbol( Graphics g, GraphPane pane, float x, float y, double scaleFactor )
 		{
 			// Only draw if the symbol is visible
-			if ( this.isVisible && this.Type != SymbolType.None )
+			if (	this.isVisible &&
+					this.Type != SymbolType.None &&
+					x < 100000 && x > -100000 &&
+					y < 100000 && y > -100000 )
 			{
 				SolidBrush	brush = new SolidBrush( this.fill.Color );
                 Pen pen = border.MakePen(pane, scaleFactor);
@@ -656,53 +665,6 @@ namespace ZedGraph
 				}
 			}
 		}
-		/*
-		public void Draw( Graphics g, GraphPane pane, PointPairList points,
-			bool isY2Axis, double scaleFactor )
-		{
-			float	tmpX, tmpY;
-			double	curX, curY;
-		
-			if ( points != null )
-			{
-				// For the sake of speed, go ahead and create a solid brush and a pen
-				// If it's a gradient fill, it will be created on the fly for each symbol
-				SolidBrush	brush = new SolidBrush( this.fill.Color );
-				Pen pen = new Pen( this.frame.Color, (float) (this.frame.PenWidth * scaleFactor) );
-
-				// Loop over each defined point							
-				for ( int i=0; i<points.Count; i++ )
-				{
-					curX = points[i].X;
-					curY = points[i].Y;
-				
-					// Any value set to double max is invalid and should be skipped
-					// This is used for calculated values that are out of range, divide
-					//   by zero, etc.
-					// Also, any value <= zero on a log scale is invalid
-				
-					if (	curX != PointPair.Missing &&
-						curY != PointPair.Missing &&
-						!System.Double.IsNaN( curX ) &&
-						!System.Double.IsNaN( curY ) &&
-						!System.Double.IsInfinity( curX ) &&
-						!System.Double.IsInfinity( curY ) &&
-						( curX > 0 || !pane.XAxis.IsLog ) &&
-						( isY2Axis || !pane.YAxis.IsLog || curY > 0.0 ) &&
-						( !isY2Axis || !pane.Y2Axis.IsLog || curY > 0.0 ) )
-					{
-						tmpX = pane.XAxis.Transform( curX );
-						if ( isY2Axis )
-							tmpY = pane.Y2Axis.Transform( curY );
-						else
-							tmpY = pane.YAxis.Transform( curY );
-
-						this.DrawSymbol( g, tmpX, tmpY, scaleFactor, pen, brush );		
-					}
-				}
-			}
-		}
-		*/
 		#endregion
 	
 	}
