@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-03-09 06:42:36 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-03-21 15:33:16 $ </version>
 	public class PaneBase : ICloneable
 	{
 
@@ -253,7 +253,7 @@ namespace ZedGraph
 			/// false otherwise.
 			/// </summary>
 			/// <seealso cref="PaneBase.CalcScaleFactor"/>
-			public static bool IsFontsScaled = false;
+			public static bool IsFontsScaled = true;
 		}
 	#endregion
 
@@ -883,6 +883,10 @@ namespace ZedGraph
 			float scaleFactor; //, xInch, yInch;
 			const float ASPECTLIMIT = 1.5F;
 			
+			// if font scaling is turned off, then always return a 1.0 scale factor
+			if ( !this.isFontsScaled )
+				return 1.0f;
+
 			// Assume the standard width (BaseDimension) is 8.0 inches
 			// Therefore, if the paneRect is 8.0 inches wide, then the fonts will be scaled at 1.0
 			// if the paneRect is 4.0 inches wide, the fonts will be half-sized.

@@ -126,13 +126,14 @@ namespace ZedGraph.LibTest
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
-#if false
+#if true
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
 				"Widget Production\n(units/hour)" );
 			SetSize();
 
+			//myPane.IsFontsScaled = true;
 			//myPane.XAxis.ScaleFontSpec.Size = 8;
 
 			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
@@ -321,7 +322,7 @@ namespace ZedGraph.LibTest
 			myPane.GraphItemList.Add( newArrow );
 #endif
 
-#if true
+#if false
 			master = new MasterPane( "ZedGraph MasterPane Example", new Rectangle( 10, 10, 10, 10 ) );
 
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
@@ -331,6 +332,7 @@ namespace ZedGraph.LibTest
 			//master.InnerPaneGap = 10;
 			master.Legend.IsVisible = true;
 			master.Legend.Position = LegendPos.TopCenter;
+			
 
 			TextItem text = new TextItem( "Priority", 0.88F, 0.12F );
 			text.Location.CoordinateFrame = CoordType.PaneFraction;
