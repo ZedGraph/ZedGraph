@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.21 $ $Date: 2005-02-15 04:50:02 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2005-02-19 19:01:12 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -2280,7 +2280,7 @@ namespace ZedGraph
 
 			DrawScale( g, pane, scaleFactor );
 		
-			DrawTitle( g, pane, scaleFactor );
+			//DrawTitle( g, pane, scaleFactor );
 
 			g.Transform = saveMatrix;
 		}
@@ -2616,6 +2616,8 @@ namespace ZedGraph
 				DrawLabels( g, pane, baseVal, nTics, topPix, shift, scaleFactor );
 			
 				DrawMinorTics( g, pane, baseVal, shift, scaleFactor, topPix );
+				
+				DrawTitle( g, pane, shift, scaleFactor );
 			}
 		}
 	
@@ -2826,8 +2828,8 @@ namespace ZedGraph
 				// the shiftTolerance of the beginning or end of the axis.  This is the zone in which a
 				// label will tend to overlap the opposing axis
 				bool isOverlapZone = false;
-				if ( Math.Abs(shift) > 0 && ( pixVal < edgeTolerance ||
-								pixVal > this.maxPix - this.minPix - edgeTolerance ) )
+				if ( Math.Abs(shift) > 0 && ( ( pixVal < edgeTolerance && pane.AxisBorder.IsVisible ) ||
+							pixVal > this.maxPix - this.minPix - edgeTolerance  ) )
 					isOverlapZone = true;
 
 				if ( this.isVisible && !isOverlapZone )
@@ -3348,13 +3350,16 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
+		/// <param name="shift">The number of pixels to shift this axis, based on the
+		/// value of <see cref="Cross"/>.  A positive value is into the axisRect relative to
+		/// the default axis position.</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void DrawTitle( Graphics g, GraphPane pane, float scaleFactor )
+		public void DrawTitle( Graphics g, GraphPane pane, float shift, float scaleFactor )
 		{
 			string str;
 
@@ -3375,9 +3380,10 @@ namespace ZedGraph
 				// calculate that actual shift amount at this point, because the AxisRect rect has not yet been
 				// calculated, and the cross value is determined using a transform of scale values (which
 				// rely on AxisRect).
-				float y = ScaledTic( scaleFactor ) * 2.0F +
-							( IsCrossed( pane ) ? 0 : GetScaleMaxSpace( g, pane, scaleFactor ).Height )
-							+ this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
+				float y = ScaledTic( scaleFactor ) * 2.0F + shift +
+								//( IsCrossed( pane ) ? 0 : GetScaleMaxSpace( g, pane, scaleFactor ).Height ) +
+								GetScaleMaxSpace( g, pane, scaleFactor ).Height +
+								this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
 
 				AlignV alignV = AlignV.Center;
 				//				AlignV alignV = AlignV.Top;

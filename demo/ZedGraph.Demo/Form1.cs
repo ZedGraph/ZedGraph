@@ -561,6 +561,42 @@ namespace ZedGraph.Demo
 
 #endif	
 
+#if true	// Axis Cross Test
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"Axis Cross Demo",
+				"My X Axis",
+				"My Y Axis" );
+
+			// Make up some data arrays based on the Sine function
+			double x, y;
+			PointPairList list = new PointPairList();
+			for ( int i=0; i<37; i++ )
+			{
+				x = ((double) i - 18.0 ) / 5.0;
+				y = x * x;
+				list.Add( x, y );
+			}
+
+			// Generate a red curve with diamond
+			// symbols, and "Porsche" in the legend
+			LineItem myCurve = myPane.AddCurve( "Parabola",
+				list, Color.Green, SymbolType.Diamond );
+
+			myPane.YAxis.Cross = 0.0;
+			myPane.YAxis.IsReverse = true;
+			myPane.AxisBorder.IsVisible = false;
+			myPane.XAxis.IsOppositeTic = false;
+			myPane.XAxis.IsMinorOppositeTic = false;
+			myPane.YAxis.IsOppositeTic = false;
+			myPane.YAxis.IsMinorOppositeTic = false;
+			
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+
+			myPane.AxisChange( this.CreateGraphics() );
+#endif
+
 #if false   //multiple pie charts
 			master = new MasterPane( "MASTER PANE TEST", new RectangleF( 0, 0, 600, 400 ) );
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );

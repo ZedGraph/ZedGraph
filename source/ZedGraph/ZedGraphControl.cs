@@ -34,20 +34,19 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-02-10 05:06:47 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-02-19 19:01:13 $ </version>
 	public class ZedGraphControl : UserControl
 	{
+		private System.ComponentModel.IContainer components;
+		
 	#region Fields
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+
 
 		/// <summary>
 		/// private variable for displaying point-by-point tooltips on
 		/// mouseover events.
 		/// </summary>
-		private System.Windows.Forms.ToolTip pointToolTip;
+		private ToolTip pointToolTip;
 
 		/// <summary>
 		/// This private field contains the instance for the MasterPane object of this control.
@@ -72,12 +71,49 @@ namespace ZedGraph
 		private string pointValueFormat;
 		
 		/// <summary>
+		/// Stores the <see cref="ContextMenu"/> reference for internal use.
+		/// </summary>
+		private ContextMenu contextMenu;
+		
+		/// <summary>
 		/// private field that determines the format for displaying tooltip date values.
 		/// This format is passed to <see cref="XDate.ToString(string)"/>.
 		/// Use the public property <see cref="pointDateFormat"/> to access this
 		/// value.
 		/// </summary>
 		private string pointDateFormat;
+		
+		/// <summary>
+		/// The mouse position at any given point in time.  This needs to be replaced when I find
+		/// out how to get the mouse position from inside a context menu handler.
+		/// </summary>
+		private PointF mousePt;
+		
+		/// <summary>
+		/// Internal variable that indicates the user has selected Zoom mode from the context menu.  This
+		/// affects the mouse cursor type, and it causes a zoom operation when the user left clicks.
+		/// </summary>
+		private bool		isZoomMode = false;
+		/// <summary>
+		/// Internal variable that indicates the user has selected Pan mode from the context menu.  This
+		/// affects the mouse cursor type, and it causes a pan operation when the user left clicks.
+		/// </summary>
+		private bool		isPanMode = false;
+		/// <summary>
+		/// Internal variable that indicates the user is currently dragging the mouse with the left button
+		/// down, associated with either a Zoom or Pan operation.
+		/// </summary>
+		private bool		isDragging = false;
+		/// <summary>
+		/// Internal variable that stores the <see cref="GraphPane"/> reference for the Pane that is
+		/// currently being zoomed or panned.
+		/// </summary>
+		private GraphPane	dragPane = null;
+		/// <summary>
+		/// Internal variable that stores a rectangle which is either the zoom rectangle, or the incremental
+		/// pan amount since the last mousemove event.
+		/// </summary>
+		private Rectangle	dragRect;
 
 	#endregion
 
@@ -89,19 +125,28 @@ namespace ZedGraph
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.pointToolTip = new System.Windows.Forms.ToolTip( this.components );
+			this.pointToolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.contextMenu = new System.Windows.Forms.ContextMenu();
 			// 
-			// PointToolTip
+			// pointToolTip
 			// 
 			this.pointToolTip.AutoPopDelay = 50000;
 			this.pointToolTip.InitialDelay = 500;
 			this.pointToolTip.ReshowDelay = 0;
 			// 
-			// GraphPane
+			// contextMenu1
 			// 
+			this.contextMenu.Popup += new System.EventHandler(this.ContextMenu_Popup);
+			// 
+			// ZedGraphControl
+			// 
+			this.ContextMenu = this.contextMenu;
 			this.Name = "ZedGraphControl";
-			this.Resize += new System.EventHandler( this.ChangeSize );
-			this.MouseMove += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseMove );
+			this.Resize += new System.EventHandler(this.ChangeSize);
+			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseUp);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseMove);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseDown);
+
 		}
 	#endregion
 
@@ -129,7 +174,9 @@ namespace ZedGraph
 			masterPane.MarginBottom = 0;
 
 			GraphPane graphPane = new GraphPane( rect, "Title", "X-Axis", "Y-Axis" );
-			graphPane.AxisChange( this.CreateGraphics() );
+			Graphics g = this.CreateGraphics();
+			graphPane.AxisChange( g );
+			g.Dispose();
 			masterPane.Add( graphPane );
 
 			this.isShowPointValues = false;
@@ -309,7 +356,9 @@ namespace ZedGraph
 				if ( BeenDisposed )
 					return;
 
-				this.masterPane.ReSize( this.CreateGraphics(), new RectangleF( 0, 0, this.Size.Width, this.Size.Height ) );
+				Graphics g = this.CreateGraphics();
+				this.masterPane.ReSize( g, new RectangleF( 0, 0, this.Size.Width, this.Size.Height ) );
+				g.Dispose();
 				this.Invalidate();
 			}
 		}
@@ -332,6 +381,77 @@ namespace ZedGraph
 				g.Dispose();
 			}
 		}
+	#endregion
+	
+	#region Mouse Events
+		private void ZedGraphControl_MouseDown( object sender, MouseEventArgs e )
+		{
+			this.isDragging = false;
+			
+			GraphPane pane = this.MasterPane.FindAxisRect( new PointF( e.X, e.Y ) );
+			
+			if ( pane != null && this.isZoomMode && e.Button == MouseButtons.Left )
+			{
+				isDragging = true;
+				// Calculate the startPoint by using the PointToScreen
+				// method.
+				this.dragRect = new Rectangle( ((Control)sender).PointToScreen( new Point(e.X, e.Y) ),
+					new Size( 1, 1 ) );
+				this.dragPane = pane;
+			}
+			else if ( pane != null && this.isPanMode && e.Button == MouseButtons.Left )
+			{
+				isDragging = true;
+				// Calculate the startPoint by using the PointToScreen
+				// method.
+				this.dragRect = new Rectangle( ((Control)sender).PointToScreen( new Point(e.X, e.Y) ),
+					new Size( 1, 1 ) );
+				this.dragPane = pane;
+			}
+		}
+
+		private void ZedGraphControl_MouseUp( object sender, MouseEventArgs e )
+		{
+			
+			// If the MouseUp event occurs, the user is done dragging.
+			if ( this.isDragging && this.isZoomMode )
+			{
+				// Only accept a drag if it covers at least 5 pixels in each direction
+				Point curPt = ((Control)sender).PointToScreen( new Point(e.X, e.Y) );
+				if ( Math.Abs( curPt.X - this.dragRect.X ) > 4 && Math.Abs( curPt.Y - this.dragRect.Y ) > 4 )
+				{
+					// Draw the rectangle to be evaluated. Set a dashed frame style
+					// using the FrameStyle enumeration.
+					ControlPaint.DrawReversibleFrame( this.dragRect,
+						this.BackColor, FrameStyle.Dashed );
+
+					double x1, x2, y1, y2, yy1, yy2;
+					PointF endPoint = new PointF(e.X, e.Y); // ((Control)sender).PointToScreen( new Point(e.X, e.Y) );
+					PointF startPoint =((Control)sender).PointToClient( this.dragRect.Location );
+
+					this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
+					this.dragPane.ReverseTransform( endPoint, out x2, out y2, out yy2 );
+
+					this.dragPane.XAxis.Min = Math.Min( x1, x2 );
+					this.dragPane.XAxis.Max = Math.Max( x1, x2 );
+					this.dragPane.YAxis.Min = Math.Min( y1, y2 );
+					this.dragPane.YAxis.Max = Math.Max( y1, y2 );
+
+					Graphics g = this.CreateGraphics();
+					this.dragPane.AxisChange( g );
+					g.Dispose();
+					Refresh();
+				}
+			}
+
+			// Reset the rectangle.
+			this.dragRect = new Rectangle(0, 0, 0, 0);
+			isDragging = false;
+			isZoomMode = false;
+			isPanMode = false;
+			Cursor.Current = Cursors.Default;
+
+		}
 
 		/// <summary>
 		/// private method for handling MouseMove events to display tooltips over
@@ -343,18 +463,65 @@ namespace ZedGraph
 		/// <param name="e">
 		/// A MouseEventArgs object.
 		/// </param>
-		private void ZedGraphControl_MouseMove( object sender,
-				System.Windows.Forms.MouseEventArgs e )
+		private void ZedGraphControl_MouseMove( object sender, MouseEventArgs e )
 		{
-			if ( isShowPointValues )
+			this.mousePt = new PointF( e.X, e.Y );
+			GraphPane pane = this.MasterPane.FindAxisRect( this.mousePt );
+			if ( isZoomMode && ( pane != null || isDragging ) )
+				Cursor.Current = Cursors.Cross;
+			else if ( isPanMode && ( pane != null || isDragging ) )
+				Cursor.Current = Cursors.Hand;
+			else if ( isZoomMode || isPanMode )
+				Cursor.Current = Cursors.No;
+			
+			// If the mouse is being dragged,
+			// undraw and redraw the rectangle as the mouse moves.
+			if ( this.isDragging && this.isZoomMode )
+			{
+				// Hide the previous rectangle by calling the
+				// DrawReversibleFrame method with the same parameters.
+				ControlPaint.DrawReversibleFrame( this.dragRect,
+					this.BackColor, FrameStyle.Dashed);
+
+				// Calculate the endpoint and dimensions for the new
+				// rectangle, again using the PointToScreen method.
+				Point curPt = ((Control)sender).PointToScreen( new Point( e.X, e.Y ) );
+				this.dragRect.Width = curPt.X - this.dragRect.X;
+				this.dragRect.Height = curPt.Y - this.dragRect.Y;
+
+				// Draw the new rectangle by calling DrawReversibleFrame
+				// again.
+				ControlPaint.DrawReversibleFrame( this.dragRect,
+					this.BackColor, FrameStyle.Dashed );
+			}
+			else if ( this.isDragging && this.isPanMode )
+			{
+				double x1, x2, y1, y2, yy1, yy2;
+				PointF endPoint = new PointF(e.X, e.Y);
+				PointF startPoint =((Control)sender).PointToClient( this.dragRect.Location );
+
+				this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
+				this.dragPane.ReverseTransform( endPoint, out x2, out y2, out yy2 );
+
+				this.dragPane.XAxis.Min += x1 - x2;
+				this.dragPane.XAxis.Max += x1 - x2;
+				this.dragPane.YAxis.Min += y1 - y2;
+				this.dragPane.YAxis.Max += y1 - y2;
+				Refresh();
+				
+				this.dragRect.Location = ((Control)sender).PointToScreen( new Point(e.X, e.Y) );
+				
+			}
+			else if ( isShowPointValues )
 			{
 				int			iPt;
-				GraphPane	pane;
+				//GraphPane	pane;
 				object		nearestObj;
 	 
+				Graphics g = this.CreateGraphics();
+				
 				if ( masterPane.FindNearestPaneObject( new PointF( e.X, e.Y ),
-							this.CreateGraphics(),
-							out pane, out nearestObj, out iPt ) )
+							g, out pane, out nearestObj, out iPt ) )
 				{
 					if ( nearestObj is CurveItem && iPt >= 0 )
 					{
@@ -395,8 +562,107 @@ namespace ZedGraph
 					else
 						this.pointToolTip.Active = false;
 				}
+				
+				g.Dispose();
 			}
 		}
+		
 	#endregion
+
+	#region ContextMenu
+	
+		private void ContextMenu_Popup( object sender, System.EventArgs e )
+		{
+			contextMenu.MenuItems.Clear();
+			this.isDragging = false;
+			this.isZoomMode = false;
+			this.isPanMode = false;
+			Cursor.Current = Cursors.Default;
+			
+			MenuItem menuItem;
+			int index = 0;
+
+			menuItem = new MenuItem();
+			menuItem.Index = index++;
+			menuItem.Text = "Copy";
+			this.contextMenu.MenuItems.Add( menuItem );
+			menuItem.Click += new System.EventHandler( this.MenuClick_Copy );
+
+			menuItem = new MenuItem();
+			menuItem.Index = index++;
+			menuItem.Text = "Show Point Values";
+			menuItem.Checked = this.IsShowPointValues;
+			this.contextMenu.MenuItems.Add( menuItem );
+			menuItem.Click += new System.EventHandler( this.MenuClick_ShowValues );
+
+			menuItem = new MenuItem();
+			menuItem.Index = index++;
+			menuItem.Text = "AutoScale";
+			this.contextMenu.MenuItems.Add( menuItem );
+			menuItem.Click += new EventHandler( this.MenuClick_AutoScale );
+
+			menuItem = new MenuItem();
+			menuItem.Index = index++;
+			menuItem.Text = "Zoom";
+			this.contextMenu.MenuItems.Add( menuItem );
+			menuItem.Click += new System.EventHandler( this.MenuClick_Zoom );
+
+			menuItem = new MenuItem();
+			menuItem.Index = index++;
+			menuItem.Text = "Pan";
+			this.contextMenu.MenuItems.Add( menuItem );
+			menuItem.Click += new System.EventHandler( this.MenuClick_Pan );
+
+		}
+		
+		protected void MenuClick_Copy( System.Object sender, System.EventArgs e )
+		{
+			Clipboard.SetDataObject( this.MasterPane.Image, true );
+			MessageBox.Show( "Image Copied to ClipBoard" );
+		}
+
+		protected void MenuClick_ShowValues( System.Object sender, System.EventArgs e )
+		{
+			this.IsShowPointValues = ! ((MenuItem)sender).Checked;
+		}
+
+		protected void MenuClick_AutoScale( System.Object sender, EventArgs e )
+		{
+			GraphPane pane = this.MasterPane.FindPane( this.mousePt );
+			if ( pane != null )
+			{
+				Graphics g = this.CreateGraphics();
+				pane.XAxis.ResetAutoScale( pane, g );
+				pane.YAxis.ResetAutoScale( pane, g );
+				pane.Y2Axis.ResetAutoScale( pane, g );
+				g.Dispose();
+				Refresh();
+			}
+		}
+
+		protected void MenuClick_Zoom( System.Object sender, System.EventArgs e )
+		{
+			GraphPane pane = this.MasterPane.FindPane( this.mousePt );
+			if ( pane != null )
+			{
+				this.dragPane = null;
+				this.isZoomMode = true;
+				this.isDragging = false;
+			}
+		}
+
+		protected void MenuClick_Pan( System.Object sender, EventArgs e )
+		{
+			GraphPane pane = this.MasterPane.FindPane( this.mousePt );
+			if ( pane != null )
+			{
+				this.dragPane = null;
+				this.isPanMode = true;
+				this.isDragging = false;
+			}
+		}
+		
+	#endregion
+
 	}
 }

@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-02-14 08:43:16 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-02-19 19:01:12 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -718,6 +718,42 @@ namespace ZedGraph
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// Find the <see cref="GraphPane"/> within the <see cref="PaneList"/> that contains the
+		/// <see paramref="mousePt"/> within its <see cref="PaneRect"/>.
+		/// </summary>
+		/// <param name="mousePt">The mouse point location where you want to search</param>
+		/// <returns>A <see cref="GraphPane"/> object that contains the mouse point, or
+		/// null if no <see cref="GraphPane"/> was found.</returns>
+		public GraphPane FindPane( PointF mousePt )
+		{
+			foreach ( GraphPane pane in this.paneList )
+			{
+				if ( pane.PaneRect.Contains( mousePt ) )
+					return pane;
+			}
+			
+			return null;
+		}
+
+		/// <summary>
+		/// Find the <see cref="GraphPane"/> within the <see cref="PaneList"/> that contains the
+		/// <see paramref="mousePt"/> within its <see cref="AxisRect"/>.
+		/// </summary>
+		/// <param name="mousePt">The mouse point location where you want to search</param>
+		/// <returns>A <see cref="GraphPane"/> object that contains the mouse point, or
+		/// null if no <see cref="GraphPane"/> was found.</returns>
+		public GraphPane FindAxisRect( PointF mousePt )
+		{
+			foreach ( GraphPane pane in this.paneList )
+			{
+				if ( pane.AxisRect.Contains( mousePt ) )
+					return pane;
+			}
+			
+			return null;
 		}
 
 	#endregion

@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+19-Feb-2005 (by Champion)
+  Make Axis label shift along with axis for non-default Cross value
+  Make bounding axis label visible if pane.AxisBorder.IsVisible = false
+  Add Pan/Zoom/Copy/ShowValues/AutoScale options in new context menu for ZedGraphControl
+
 14-Feb-2005 (by Martz)
   Fix subitem persistance bug
   Add designtime graph display

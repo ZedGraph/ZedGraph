@@ -206,7 +206,8 @@ namespace ZedGraph.ControlTest
 
 			for( int i = 0; i < 18; i++ )
 			{
-				x = new XDate( -325, i, i+5, i, i*2, i*3 );
+				//x = new XDate( -325, i, i+5, i, i*2, i*3 );
+				x = (double) i;
 				
 				y1 = Math.Sin( i / 9.0 * Math.PI );
 				y2 = Math.Cos( i / 9.0 * Math.PI );
@@ -219,6 +220,14 @@ namespace ZedGraph.ControlTest
 			zedGraphControl6.MasterPane.Add( testPane );
 			zedGraphControl6.MasterPane.Add( (GraphPane) testPane.Clone() );
 			zedGraphControl6.MasterPane.Add( (GraphPane) testPane.Clone() );
+			zedGraphControl6.MasterPane[0].YAxis.Min = 0.3;
+			zedGraphControl6.MasterPane[0].YAxis.Min = 0.7;
+			zedGraphControl6.MasterPane[1].YAxis.Min = 0.3;
+			zedGraphControl6.MasterPane[1].YAxis.Min = 0.7;
+			zedGraphControl6.MasterPane[2].YAxis.Min = 0.3;
+			zedGraphControl6.MasterPane[2].YAxis.Min = 0.7;
+			zedGraphControl6.MasterPane[3].YAxis.Min = 0.3;
+			zedGraphControl6.MasterPane[3].YAxis.Min = 0.7;
 
 			LineItem myCurve = zedGraphControl4.GraphPane.AddCurve("Sine", list1, Color.Red, SymbolType.Circle);
 			LineItem myCurve2 = zedGraphControl5.GraphPane.AddCurve("Cosine", list2, Color.Blue, SymbolType.Circle);
@@ -226,6 +235,10 @@ namespace ZedGraph.ControlTest
 			LineItem myCurve4 = zedGraphControl6.GraphPane.AddCurve("Cosine", list2, Color.Red, SymbolType.Circle);
 			myCurve3.Line.StepType = StepType.ForwardStep;
 			myCurve4.Line.StepType = StepType.RearwardStep;
+			
+			zedGraphControl4.GraphPane.YAxis.Min = 0.3;
+			zedGraphControl4.GraphPane.YAxis.Max = 0.7;
+			
 			zedGraphControl6.GraphPane.AxisBorder.IsVisible = false;
 			zedGraphControl6.GraphPane.XAxis.Type = AxisType.Date;
 			zedGraphControl6.IsShowPointValues = true;
@@ -267,6 +280,7 @@ namespace ZedGraph.ControlTest
 
 		private void zedGraphControl4_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+			/*
 			double rangeX = zedGraphControl4.GraphPane.XAxis.Max - zedGraphControl4.GraphPane.XAxis.Min;
 			zedGraphControl4.GraphPane.XAxis.Max -= rangeX/20.0;
 			zedGraphControl4.GraphPane.XAxis.Min += rangeX/20.0;
@@ -276,6 +290,7 @@ namespace ZedGraph.ControlTest
 			zedGraphControl4.AxisChange();
 			zedGraphControl4.Refresh();
 			//Invalidate();
+			*/
 		}
 	}
 }
