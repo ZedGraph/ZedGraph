@@ -1,6 +1,6 @@
 //============================================================================
-//PointPair Class
-//Copyright (C) 2004  Jerry Vos
+//PointTrio Class
+//Copyright (C) 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion from PointPair code by Jerry Vos</author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-22 23:50:42 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-26 05:33:38 $ </version>
 	public struct PointTrio
 	{
 	#region Member variables
@@ -39,28 +39,28 @@ namespace ZedGraph
 		public double X;
 
 		/// <summary>
-		/// This PointTrio's first Y coordinate
+		/// This PointTrio's Y coordinate
 		/// </summary>
-		public double Y1;
+		public double Y;
 
 		/// <summary>
-		/// This PointTrio's second Y coordinate
+		/// This PointTrio's base (lower dependent) coordinate
 		/// </summary>
-		public double Y2;
+		public double BaseVal;
 	#endregion
 
 	#region Constructors
 		/// <summary>
-		/// Creates a point trio with the specified X, Y1, and Y2.
+		/// Creates a point trio with the specified X, Y, and base value.
 		/// </summary>
 		/// <param name="x">This pair's x coordinate.</param>
-		/// <param name="y1">This pair's y1 coordinate.</param>
-		/// <param name="y2">This pair's y2 coordinate.</param>
-		public PointTrio( double x, double y1, double y2 )
+		/// <param name="y">This pair's y coordinate.</param>
+		/// <param name="baseVal">This pair's base coordinate.</param>
+		public PointTrio( double x, double y, double baseVal )
 		{
 			this.X = x;
-			this.Y1 = y1;
-			this.Y2 = y2;
+			this.Y = y;
+			this.BaseVal = baseVal;
 		}
 
 		/// <summary>
@@ -69,26 +69,27 @@ namespace ZedGraph
 		/// <param name="rhs">The basis for the copy.</param>
 		public PointTrio( PointTrio rhs )
 		{
-			this.x = rhs.X;
-			this.Y1 = rhs.Y1;
-			this.Y2 = rhs.Y2;
+			this.X = rhs.X;
+			this.Y = rhs.Y;
+			this.BaseVal = rhs.BaseVal;
 		}
 	#endregion
 
 	#region Properties
+	
 		/// <summary>
-		/// Readonly value that determines if the X, the Y1, or the Y2
+		/// Readonly value that determines if the X1, the Y1, or the X2/Y2
 		/// coordinate in this PointTrio is a missing value.
 		/// </summary>
 		/// <returns>true if any value is missing</returns>
 		public bool IsMissing
 		{
-			get { return this.X == PointPair.Missing || this.Y1 == PointPair.Missing ||
-					this.Y2 == PointPair.Missing; }
+			get { return this.X == PointPair.Missing || this.Y == PointPair.Missing ||
+					this.BaseVal == PointPair.Missing; }
 		}
 
 		/// <summary>
-		/// Readonly value that determines if either the X, Y1, or Y2
+		/// Readonly value that determines if either the X, Y, or BaseVal
 		/// coordinate in this PointTrio is an invalid (not plotable) value.
 		/// It is considered invalid if it is missing (equal to System.Double.Max),
 		/// Infinity, or NaN.
@@ -97,101 +98,83 @@ namespace ZedGraph
 		public bool IsInvalid
 		{
 			get { return	this.X == PointPair.Missing ||
-							this.Y1 == PointPair.Missing ||
-							this.Y2 == PointPair.Missing ||
+							this.Y == PointPair.Missing ||
+							this.BaseVal == PointPair.Missing ||
 							Double.IsInfinity( this.X ) ||
-							Double.IsInfinity( this.Y1 ) ||
-							Double.IsInfinity( this.Y2 ) ||
+							Double.IsInfinity( this.Y ) ||
+							Double.IsInfinity( this.BaseVal ) ||
 							Double.IsNaN( this.X ) ||
-							Double.IsNaN( this.Y1 ) ||
-							Double.IsNaN( this.Y2 );
+							Double.IsNaN( this.Y ) ||
+							Double.IsNaN( this.BaseVal );
 				}
 		}
 		
 		/// <summary>
 		/// Readonly property that returns a <see cref="PointPair"/> struct corresponding
-		/// to the (X,Y1) values of this <see cref="PointTrio"/>.
+		/// to the (X,Y) values of this <see cref="PointTrio"/>.
 		/// </summary>
 		/// <returns>The first <see cref="PointPair"/> struct.</returns>
-		public PointPair PointPair1
+		public PointPair PointPair
 		{
-			get { return new PointPair( this.X, this.Y1 ); }
+			get { return new PointPair( this.X, this.Y ); }
 		}
 		/// <summary>
 		/// Readonly property that returns a <see cref="PointPair"/> struct corresponding
-		/// to the (X,Y2) values of this <see cref="PointTrio"/>.
+		/// to the (X,BaseVal) values of this <see cref="PointTrio"/>.  This property implicitly
+		/// assumes that the dependent axis is Y.
 		/// </summary>
 		/// <returns>The second <see cref="PointPair"/> struct.</returns>
-		public PointPair PointPair2
+		public PointPair PointPairYBase
 		{
-			get { return new PointPair( this.X, this.Y2 ); }
+			get { return new PointPair( this.X, this.BaseVal ); }
+		}
+		/// <summary>
+		/// Readonly property that returns a <see cref="PointPair"/> struct corresponding
+		/// to the (BaseVal,Y) values of this <see cref="PointTrio"/>.  This property implicitly
+		/// assumes that the dependent axis is X.
+		/// </summary>
+		/// <returns>The second <see cref="PointPair"/> struct.</returns>
+		public PointPair PointPairXBase
+		{
+			get { return new PointPair( this.BaseVal, this.Y ); }
 		}
 		
 		/// <summary>
 		/// Readonly property that returns a <see cref="PointF"/> struct corresponding
-		/// to the (X,Y1) values of this <see cref="PointTrio"/>.  This routine can
+		/// to the (X,Y) values of this <see cref="PointTrio"/>.  This routine can
 		/// result in data loss since it reduces precision from <see cref="System.Double"/>
 		/// to <see cref="System.Single"/>.
 		/// </summary>
 		/// <returns>The first <see cref="PointF"/> struct.</returns>
-		public PointF Point1
+		public PointF PointF
 		{
-			get { return new PointF( (float) this.X, (float) this.Y1 ); }
+			get { return new PointF( (float) this.X, (float) this.Y ); }
 		}
 		/// <summary>
 		/// Readonly property that returns a <see cref="PointF"/> struct corresponding
-		/// to the (X,Y2) values of this <see cref="PointTrio"/>.  This routine can
+		/// to the (X,BaseVal) values of this <see cref="PointTrio"/>.  This routine can
 		/// result in data loss since it reduces precision from <see cref="System.Double"/>
-		/// to <see cref="System.Single"/>.
+		/// to <see cref="System.Single"/>.  Note that this property implicitly assumes
+		/// that the dependent axis is Y.
 		/// </summary>
 		/// <returns>The second <see cref="PointF"/> struct.</returns>
-		public PointF Point2
+		public PointF PointFYBase
 		{
-			get { return new PointF( (float) this.X, (float) this.Y2 ); }
+			get { return new PointF( (float) this.X, (float) this.BaseVal ); }
 		}
-		
-	#endregion
-
-	#region Inner classes
 		/// <summary>
-		/// Compares points based on their x values.  Is setup to be used in an
-		/// ascending order sort.
-		/// <seealso cref="System.Collections.ArrayList.Sort()"/>
-		/// <seealso cref="PointPairList.Sort()"/>
+		/// Readonly property that returns a <see cref="PointF"/> struct corresponding
+		/// to the (BaseVal,Y) values of this <see cref="PointTrio"/>.  This routine can
+		/// result in data loss since it reduces precision from <see cref="System.Double"/>
+		/// to <see cref="System.Single"/>.  Note that this property implicitly assumes
+		/// that the dependent axis is X.
 		/// </summary>
-		public class PointTrioComparer : IComparer 
+		/// <returns>The second <see cref="PointF"/> struct.</returns>
+		public PointF PointFXBase
 		{
-		
-			/// <summary>
-			/// Compares two <see cref="PointTrio"/>s.
-			/// </summary>
-			/// <param name="l">Point to the left.</param>
-			/// <param name="r">Point to the right.</param>
-			/// <returns>-1, 0, or 1 depending on l.X's relation to r.X</returns>
-			int IComparer.Compare( object l, object r ) 
-			{
-				if (l == null && r == null) 
-				{
-					return 0;
-				} 
-				else if (l == null && r != null) 
-				{
-					return -1;
-				} 
-				else if (l != null && r == null) 
-				{
-					return 1;
-				} 
-
-				double lX = ((PointTrio) l).X;
-				double rX = ((PointTrio) r).X;
-
-				if (System.Math.Abs(lX - rX) < .000000001)
-					return 0;
-				
-				return lX < rX ? -1 : 1;
-			}
+			get { return new PointF( (float) this.BaseVal, (float) this.Y ); }
 		}
+		
 	#endregion
 
 	#region Methods
@@ -215,8 +198,8 @@ namespace ZedGraph
 		public string ToString( string format )
 		{
 			return "( " + this.X.ToString( format ) + ", " +
-					this.Y1.ToString( format ) + ", " +
-					this.Y2.ToString( format ) + " )";
+					this.Y.ToString( format ) + ", " +
+					this.BaseVal.ToString( format ) + " )";
 		}
 	#endregion
 	}

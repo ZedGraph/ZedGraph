@@ -375,5 +375,5 @@ namespace ZedGraph
 		/// of all prior bars.
 		/// </summary>
 		Stack
-	};
+};
 }

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-26 05:33:38 $ </version>
 	public struct PointPair
 	{
 	#region Member variables
@@ -59,6 +59,17 @@ namespace ZedGraph
 		{
 			this.X = x;
 			this.Y = y;
+		}
+
+		/// <summary>
+		/// Creates a point pair from the specified <see cref="PointF"/> struct.
+		/// </summary>
+		/// <param name="pt">The <see cref="PointF"/> struct from which to get the
+		/// new <see cref="PointPair"/> values.</param>
+		public PointPair( PointF pt )
+		{
+			this.X = pt.X;
+			this.Y = pt.Y;
 		}
 
 		/// <summary>

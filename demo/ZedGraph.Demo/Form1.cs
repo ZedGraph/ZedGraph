@@ -1236,7 +1236,7 @@ namespace ZedGraphTest
 			myPane.ClusterScaleWidth = 100;
 			//curve.Bar.Fill = new Fill( Color.Blue );
 			//curve.Symbol.Size = 12;
-
+			
 			myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
 			
 			myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );

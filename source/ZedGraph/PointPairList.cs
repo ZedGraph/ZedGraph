@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-22 23:50:42 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-26 05:33:38 $ </version>
 	public class PointPairList : CollectionBase, ICloneable
 	{
 	#region Fields
@@ -38,7 +38,7 @@ namespace ZedGraph
 		/// <see cref="PointPairList"/>.  Use the public property
 		/// <see cref="Sorted"/> to access this value.
 		/// </summary>
-		private bool sorted = true;
+		protected bool sorted = true;
 	#endregion
 
 	#region Properties
@@ -200,8 +200,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Remove a <see cref="PointPair"/> object from the collection at the
-		/// specified ordinal location.
+		/// Remove an object from the collection at the specified ordinal location.
 		/// </summary>
 		/// <param name="index">
 		/// An ordinal position in the list at which the object to be removed 
@@ -328,9 +327,9 @@ namespace ZedGraph
 		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.  All data after
 		/// the first non-zero Y value are included.
 		/// </param>
-		public void GetRange(	ref double xMin, ref double xMax,
-								ref double yMin, ref double yMax,
-								bool ignoreInitial )
+		virtual public void GetRange(	ref double xMin, ref double xMax,
+										ref double yMin, ref double yMax,
+										bool ignoreInitial )
 		{
 			// initialize the values to outrageous ones to start
 			xMin = yMin = Double.MaxValue;

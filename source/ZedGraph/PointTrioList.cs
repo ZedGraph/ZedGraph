@@ -1,6 +1,6 @@
 //============================================================================
 //PointTrioList Class
-//Copyright (C) 2004  Jerry Vos
+//Copyright (C) 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -24,33 +24,15 @@ using System.Collections;
 namespace ZedGraph
 {
 	/// <summary>
-	/// A collection class containing a list of <see cref="PointTrio objects
+	/// A collection class containing a list of <see cref="PointTrio"/> objects
 	/// that define the set of points to be displayed on the curve.
 	/// </summary>
 	/// 
 	/// <author> John Champion based on code by Jerry Vos
 	/// </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-22 23:50:42 $ </version>
-	public class PointTrioList : CollectionBase, ICloneable
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-26 05:33:38 $ </version>
+	public class PointTrioList : PointPairList, ICloneable
 	{
-	#region Fields
-		/// <summary>Private field to maintain the sort status of this
-		/// <see cref="PointTrioList"/>.  Use the public property
-		/// <see cref="Sorted"/> to access this value.
-		/// </summary>
-		private bool sorted = true;
-	#endregion
-
-	#region Properties
-		/// <summary>
-		/// true if the list is currently sorted.
-		/// </summary>
-		/// <seealso cref="Sort"/>
-		public bool Sorted
-		{
-			get { return sorted; }
-		}
-	#endregion
 
 	#region Constructors
 		/// <summary>
@@ -64,9 +46,9 @@ namespace ZedGraph
 		/// Constructor to initialize the PointTrioList from three arrays of
 		/// type double.
 		/// </summary>
-		public PointTrioList( double[] x, double[] y1, double[] y2 )
+		public PointTrioList( double[] x, double[] y, double[] baseVal )
 		{
-			Add( x, y1, y2 );
+			Add( x, y, baseVal );
 			
 			sorted = false;
 		}
@@ -82,14 +64,15 @@ namespace ZedGraph
 			sorted = false;
 		}
 
-		/// <summary>
+/*		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>
 		/// <returns>A new, independent copy of the PointTrioList</returns>
-		public object Clone()
+		override public object Clone()
 		{ 
 			return new PointTrioList( this ); 
 		}
+*/
 		
 	#endregion
 
@@ -101,7 +84,7 @@ namespace ZedGraph
 		/// <param name="index">The ordinal position (zero-based) of the
 		/// <see cref="PointTrio"/> object to be accessed.</param>
 		/// <value>A <see cref="PointTrio"/> object reference.</value>
-		public PointTrio this[ int index ]  
+		new public PointTrio this[ int index ]  
 		{
 			get { return( (PointTrio) List[index] ); }
 			set { List[index] = value; }
@@ -144,15 +127,15 @@ namespace ZedGraph
 		/// If any array is null, then a set of ordinal values is automatically
 		/// generated in its place (see <see cref="AxisType.Ordinal"/>.
 		/// If the arrays are of different size, then the larger array prevails and the
-		/// smaller array is padded with <see cref="PointTrio.Missing"/> values.
+		/// smaller array is padded with <see cref="PointPair.Missing"/> values.
 		/// </summary>
 		/// <param name="x">A double[] array of X values</param>
-		/// <param name="y1">A double[] array of Y1 values</param>
-		/// <param name="y2">A double[] array of Y2 values</param>
+		/// <param name="y">A double[] array of Y values</param>
+		/// <param name="baseVal">A double[] array of "base" values</param>
 		/// <returns>The zero-based ordinal index where the last point was added in the list,
 		/// or -1 if no points were added.</returns>
 		/// <seealso cref="IList.Add"/>
-		public int Add( double[] x, double[] y1, double[] y2 )
+		public int Add( double[] x, double[] y, double[] baseVal )
 		{
 			PointTrio	point;
 			int 		len = 0,
@@ -160,10 +143,10 @@ namespace ZedGraph
 			
 			if ( x != null )
 				len = x.Length;
-			if ( y1 != null && y1.Length > len )
-				len = y1.Length;
-			if ( y2 != null && y2.Length > len )
-				len = y2.Length;
+			if ( y != null && y.Length > len )
+				len = y.Length;
+			if ( baseVal != null && baseVal.Length > len )
+				len = baseVal.Length;
 						
 			for ( int i=0; i<len; i++ )
 			{
@@ -174,19 +157,19 @@ namespace ZedGraph
 				else
 					point.X = PointPair.Missing;
 					
-				if ( y1 == null )
-					point.Y1 = (double) i + 1.0;
-				else if ( i < y1.Length )
-					point.Y1 = y1[i];
+				if ( y == null )
+					point.Y = (double) i + 1.0;
+				else if ( i < y.Length )
+					point.Y = y[i];
 				else
-					point.Y1 = PointPair.Missing;
+					point.Y = PointPair.Missing;
 					
-				if ( y2 == null )
-					point.Y2 = (double) i + 1.0;
-				else if ( i < y2.Length )
-					point.Y2 = y2[i];
+				if ( baseVal == null )
+					point.BaseVal = (double) i + 1.0;
+				else if ( i < baseVal.Length )
+					point.BaseVal = baseVal[i];
 				else
-					point.Y2 = PointPair.Missing;
+					point.BaseVal = PointPair.Missing;
 					
 				rv = List.Add( point );
 			}
@@ -199,29 +182,15 @@ namespace ZedGraph
 		/// Add a single point to the PointTrioList from values of type double.
 		/// </summary>
 		/// <param name="x">The X value</param>
-		/// <param name="y1">The Y1 value</param>
-		/// <param name="y2">The Y2 value</param>
+		/// <param name="y">The Y value</param>
+		/// <param name="baseVal">The base (lower dependent) value</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
 		/// <seealso cref="IList.Add"/>
-		public int Add( double x, double y1, double y2 )
+		public int Add( double x, double y, double baseVal )
 		{
 			sorted = false;
-			PointTrio	point = new PointTrio( x, y1, y2 );
+			PointTrio	point = new PointTrio( x, y, baseVal );
 			return List.Add( point );
-		}
-
-		/// <summary>
-		/// Remove a <see cref="PointTrio"/> object from the collection at the
-		/// specified ordinal location.
-		/// </summary>
-		/// <param name="index">
-		/// An ordinal position in the list at which the object to be removed 
-		/// is located.
-		/// </param>
-		/// <seealso cref="IList.Remove"/>
-		public void Remove( int index )
-		{
-			List.RemoveAt( index );
 		}
 
 		/// <summary>
@@ -263,21 +232,6 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Sorts the list according to the point x values. Will not sort the 
-		/// list if the list is already sorted.
-		/// </summary>
-		/// <returns>If the list was sorted before sort was called</returns>
-		public bool Sort()
-		{
-			// if it is already sorted we don't have to sort again
-			if ( sorted )
-				return true;
-
-			InnerList.Sort( new PointTrio.PointTrioComparer() );
-			return false;
-		}
-		
-		/// <summary>
 		/// Go through the list of <see cref="PointTrio"/> data values
 		/// and determine the minimum and maximum values in the data.
 		/// </summary>
@@ -293,9 +247,9 @@ namespace ZedGraph
 		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.  All data after
 		/// the first non-zero Y1 or Y2 value are included.
 		/// </param>
-		public void GetRange(	ref double xMin, ref double xMax,
-								ref double yMin, ref double yMax,
-								bool ignoreInitial )
+		override public void GetRange(	ref double xMin, ref double xMax,
+										ref double yMin, ref double yMax,
+										bool ignoreInitial )
 		{
 			// initialize the values to outrageous ones to start
 			xMin = yMin = Double.MaxValue;
@@ -305,33 +259,33 @@ namespace ZedGraph
 			foreach ( PointTrio point in this )
 			{
 				double curX = point.X;
-				double curY1 = point.Y1;
-				double curY2 = point.Y2;
+				double curY = point.Y;
+				double curBase = point.BaseVal;
 				
 				// ignoreInitial becomes false at the first non-zero
 				// Y value
 				if (	ignoreInitial &&
-						( ( curY1 != 0 && curY1 != PointPair.Missing ) ||
-						  ( curY2 != 0 && curY2 != PointPair.Missing ) ) )
+						( ( curY != 0 && curY != PointPair.Missing ) ||
+						  ( curBase != 0 && curBase != PointPair.Missing ) ) )
 					ignoreInitial = false;
 				
 				if ( 	!ignoreInitial &&
 						curX != PointPair.Missing &&
-						curY1 != PointPair.Missing &&
-						curY2 != PointPair.Missing )
+						curY != PointPair.Missing &&
+						curBase != PointPair.Missing )
 				{
 					if ( curX < xMin )
 						xMin = curX;
 					if ( curX > xMax )
 						xMax = curX;
-					if ( curY1 < yMin )
-						yMin = curY1;
-					if ( curY1 > yMax )
-						yMax = curY1;
-					if ( curY2 < yMin )
-						yMin = curY2;
-					if ( curY2 > yMax )
-						yMax = curY2;
+					if ( curY < yMin )
+						yMin = curY;
+					if ( curY > yMax )
+						yMax = curY;
+					if ( curBase < yMin )
+						yMin = curBase;
+					if ( curBase > yMax )
+						yMax = curBase;
 				}
 			}	
 		}

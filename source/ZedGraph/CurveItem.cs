@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-10-14 04:06:01 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-10-26 05:33:38 $ </version>
 	abstract public class CurveItem
 	{
 	
@@ -69,7 +69,7 @@ namespace ZedGraph
 		protected bool		isLegendLabelVisible;
 		
 		/// <summary>
-		/// The <see cref="PointPairList"/> of independent value pairs that
+		/// The <see cref="PointPairList"/> of value sets that
 		/// represent this <see cref="CurveItem"/>.
 		/// The size of this list determines the number of points that are
 		/// plotted.  Note that values defined as
@@ -114,8 +114,8 @@ namespace ZedGraph
 			this.label = label == null ? "" : label;
 			this.isY2Axis = false;
 			this.isVisible = true;
-			this.isLegendLabelVisible = true;
-			
+			this.isLegendLabelVisible = true;			
+
 			if ( points == null )
 				this.points = new PointPairList();
 			else
@@ -128,7 +128,7 @@ namespace ZedGraph
 		/// <seealso cref="CurveItem( string, double[], double[] )"/>
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
-		public CurveItem( string label ): this( label, null, null )
+		public CurveItem( string label ): this( label, null )
 		{
 		}
 
@@ -273,7 +273,7 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// The <see cref="PointPairList"/> of X,Y point pairs that represent this
+		/// The <see cref="PointPairList"/> of X,Y point sets that represent this
 		/// <see cref="CurveItem"/>.
 		/// </summary>
 		public PointPairList Points
@@ -293,7 +293,7 @@ namespace ZedGraph
 				if ( this.points == null )
 					return new PointPair( PointPair.Missing, PointPair.Missing );
 				else
-					return this.points[index];
+					return ( this.points )[index];
 			}
 		}
 	#endregion
@@ -365,6 +365,7 @@ namespace ZedGraph
 		{
 			if ( this.points == null )
 				this.Points = new PointPairList();
+			
 			this.points.Add( point );
 		}
 

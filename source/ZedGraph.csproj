@@ -193,6 +193,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\PointTrio.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\PointTrioList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\Symbol.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
