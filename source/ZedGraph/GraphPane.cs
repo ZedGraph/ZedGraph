@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.35 $ $Date: 2005-02-14 08:43:16 $ </version>
+	/// <version> $Revision: 3.36 $ $Date: 2005-02-23 05:49:26 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -69,6 +69,13 @@ namespace ZedGraph
 		/// public property <see cref="GraphPane.CurveList"/> to access this class.</summary>
 		private CurveList	curveList;
 						
+		/// <summary>
+		/// private value that contains a <see cref="ZoomStateStack"/>, which stores prior <see cref="ZoomStates"/>
+		/// containing scale range information.  This enables zooming out functionality for the
+		/// <see cref="ZedGraphControl"/>.
+		/// </summary>
+		internal ZoomStateStack zoomStack;
+		
 		// Axis Border Properties //////////////////////////////////////////////////////////////
 		
 		/// <summary>Private field that determines if the <see cref="AxisRect"/> will be
@@ -501,6 +508,7 @@ namespace ZedGraph
 			yAxis = new YAxis( yTitle );
 			y2Axis = new Y2Axis( "" );
 			curveList = new CurveList();
+			zoomStack = new ZoomStateStack();
 								
 			this.isIgnoreInitial = Default.IsIgnoreInitial;
 			
@@ -527,6 +535,7 @@ namespace ZedGraph
 			yAxis = new YAxis( rhs.YAxis );
 			y2Axis = new Y2Axis( rhs.Y2Axis );
 			curveList = new CurveList( rhs.CurveList );
+			zoomStack = new ZoomStateStack( rhs.zoomStack );
 			
 			this.isIgnoreInitial = rhs.IsIgnoreInitial;
 			
@@ -1535,128 +1544,126 @@ namespace ZedGraph
 			double	tolSquared = Default.NearestTol * Default.NearestTol;
 
 			int		iBar = 0;
-			int iPie = 0 ;
 
 			foreach ( CurveItem curve in targetCurveList )
 			{
-				bool hit ;
-							//test for pie first...if it's a pie rest of method superfluous
+				//test for pie first...if it's a pie rest of method superfluous
 				if ( curve is PieItem )
 				{
-					hit = ((PieItem)curve).SlicePath.IsVisible (mousePt) ;
-					if ( hit )
+					if ( ((PieItem)curve).SlicePath.IsVisible (mousePt) )
 					{
-						nearestCurve = curve ;
-						iNearest = iPie ;
-						return true ;
+						nearestBar = curve;
+						iNearestBar = 0;
 					}
-					iPie++ ;
-					continue ;
-				}
 
-				if ( curve.IsY2Axis )
-				{
-					yAct = y2;
-					yMinAct = y2Axis.Min;
-					yMaxAct = y2Axis.Max;
-					yPixPerUnitAct = y2PixPerUnit;
+					continue;
 				}
 				else
 				{
-					yAct = y;
-					yMinAct = yAxis.Min;
-					yMaxAct = yAxis.Max;
-					yPixPerUnitAct = yPixPerUnit;
-				}
-
-				PointPairList points = curve.Points;
-				float barWidth = curve.GetBarWidth( this );
-				double barWidthUserHalf;
-				bool isXBaseAxis = ( curve.BaseAxis( this ) == XAxis );
-				if ( isXBaseAxis )
-					barWidthUserHalf = barWidth / xPixPerUnit / 2.0;
-				else
-					barWidthUserHalf = barWidth / yPixPerUnit / 2.0;
-
-				if ( points != null )
-				{
-					for ( int iPt=0; iPt<curve.NPts; iPt++ )
+					if ( curve.IsY2Axis )
 					{
-						if ( xAxis.IsOrdinal )
-							xVal = (double) iPt + 1.0;
-						else
-							xVal = points[iPt].X;
+						yAct = y2;
+						yMinAct = y2Axis.Min;
+						yMaxAct = y2Axis.Max;
+						yPixPerUnitAct = y2PixPerUnit;
+					}
+					else
+					{
+						yAct = y;
+						yMinAct = yAxis.Min;
+						yMaxAct = yAxis.Max;
+						yPixPerUnitAct = yPixPerUnit;
+					}
 
-						if ( yAxis.IsOrdinal )
-							yVal = (double) iPt + 1.0;
-						else
-							yVal = points[iPt].Y;
+					PointPairList points = curve.Points;
+					float barWidth = curve.GetBarWidth( this );
+					double barWidthUserHalf;
+					bool isXBaseAxis = ( curve.BaseAxis( this ) == XAxis );
+					if ( isXBaseAxis )
+						barWidthUserHalf = barWidth / xPixPerUnit / 2.0;
+					else
+						barWidthUserHalf = barWidth / yPixPerUnit / 2.0;
 
-						if (	xVal != PointPair.Missing &&
-							xVal >= xAxis.Min && xVal <= xAxis.Max &&
-							yVal != PointPair.Missing &&
-							yVal >= yMinAct && yVal <= yMaxAct )
+					if ( points != null )
+					{
+						for ( int iPt=0; iPt<curve.NPts; iPt++ )
 						{
+							if ( xAxis.IsOrdinal )
+								xVal = (double) iPt + 1.0;
+							else
+								xVal = points[iPt].X;
 
-							if ( curve.IsBar || curve is ErrorBarItem ||
-								curve is HiLowBarItem )
+							if ( yAxis.IsOrdinal )
+								yVal = (double) iPt + 1.0;
+							else
+								yVal = points[iPt].Y;
+
+							if (	xVal != PointPair.Missing &&
+								xVal >= xAxis.Min && xVal <= xAxis.Max &&
+								yVal != PointPair.Missing &&
+								yVal >= yMinAct && yVal <= yMaxAct )
 							{
-								double baseVal, lowVal, hiVal;
-								valueHandler.GetBarValues( curve, iPt, out baseVal,
-									out lowVal, out hiVal );
 
-								if ( lowVal > hiVal )
+								if ( curve.IsBar || curve is ErrorBarItem ||
+									curve is HiLowBarItem )
 								{
-									double tmpVal = lowVal;
-									lowVal = hiVal;
-									hiVal = tmpVal;
-								}
+									double baseVal, lowVal, hiVal;
+									valueHandler.GetBarValues( curve, iPt, out baseVal,
+										out lowVal, out hiVal );
 
-								if ( isXBaseAxis )
-								{
-									
-									double centerVal = valueHandler.BarCenterValue( curve, barWidth, iPt, xVal, iBar );
-									
-									if (	x < centerVal - barWidthUserHalf ||
-										x > centerVal + barWidthUserHalf ||
-										y < lowVal || y > hiVal )
-										continue;
+									if ( lowVal > hiVal )
+									{
+										double tmpVal = lowVal;
+										lowVal = hiVal;
+										hiVal = tmpVal;
+									}
+
+									if ( isXBaseAxis )
+									{
+										
+										double centerVal = valueHandler.BarCenterValue( curve, barWidth, iPt, xVal, iBar );
+										
+										if (	x < centerVal - barWidthUserHalf ||
+											x > centerVal + barWidthUserHalf ||
+											y < lowVal || y > hiVal )
+											continue;
+									}
+									else
+									{
+										double centerVal = valueHandler.BarCenterValue( curve, barWidth, iPt, yVal, iBar );
+										
+										if (	y < centerVal - barWidthUserHalf ||
+											y > centerVal + barWidthUserHalf ||
+											x < lowVal || x > hiVal )
+											continue;
+									}
+
+									if ( nearestBar == null )
+									{
+										iNearestBar = iPt;
+										nearestBar = curve;
+									}
 								}
 								else
 								{
-									double centerVal = valueHandler.BarCenterValue( curve, barWidth, iPt, yVal, iBar );
-									
-									if (	y < centerVal - barWidthUserHalf ||
-										y > centerVal + barWidthUserHalf ||
-										x < lowVal || x > hiVal )
+									distX = (xVal - x) * xPixPerUnit;
+									distY = (yVal - yAct) * yPixPerUnitAct;
+									dist = distX * distX + distY * distY;
+
+									if ( dist >= minDist )
 										continue;
+										
+									minDist = dist;
+									iNearest = iPt;
+									nearestCurve = curve;
 								}
 
-								if ( nearestBar == null )
-								{
-									iNearestBar = iPt;
-									nearestBar = curve;
-								}
 							}
-							else
-							{
-								distX = (xVal - x) * xPixPerUnit;
-								distY = (yVal - yAct) * yPixPerUnitAct;
-								dist = distX * distX + distY * distY;
-
-								if ( dist >= minDist )
-									continue;
-									
-								minDist = dist;
-								iNearest = iPt;
-								nearestCurve = curve;
-							}
-
 						}
+						
+						if ( curve.IsBar )
+							iBar++;
 					}
-					
-					if ( curve.IsBar )
-						iBar++;
 				}
 			}
 

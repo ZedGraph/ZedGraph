@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+22-Feb-2005 (by Champion)
+  Add ZoomState stack for maintaining history of zoom and pan states in UserControl
+  
 19-Feb-2005 (by Champion)
   Make Axis label shift along with axis for non-default Cross value
   Make bounding axis label visible if pane.AxisBorder.IsVisible = false

@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-02-21 19:04:57 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-02-23 05:49:26 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -109,7 +109,6 @@ namespace ZedGraph
 		/// </summary>
 		private bool isEnablePan = true;
 		
-		
 		/// <summary>
 		/// Internal variable that indicates the user is currently dragging the mouse with the left button
 		/// down, associated with either a Zoom or Pan operation.
@@ -125,6 +124,10 @@ namespace ZedGraph
 		/// pan amount since the last mousemove event.
 		/// </summary>
 		private Rectangle	dragRect;
+		/// <summary>
+		/// private field that stores the state of the scale ranges prior to starting a panning action.
+		/// </summary>
+		private ZoomState	zoomState;
 
 	#endregion
 
@@ -141,7 +144,7 @@ namespace ZedGraph
 			// 
 			// pointToolTip
 			// 
-			this.pointToolTip.AutoPopDelay = 50000;
+			this.pointToolTip.AutoPopDelay = 5000;
 			this.pointToolTip.InitialDelay = 500;
 			this.pointToolTip.ReshowDelay = 0;
 			// 
@@ -435,6 +438,7 @@ namespace ZedGraph
 		{
 			this.isPanning = false;
 			this.isZooming = false;
+			this.dragPane = null;
 			
 			GraphPane pane = this.MasterPane.FindAxisRect( new PointF( e.X, e.Y ) );
 			
@@ -448,6 +452,7 @@ namespace ZedGraph
 				this.dragRect = new Rectangle( ((Control)sender).PointToScreen( new Point(e.X, e.Y) ),
 					new Size( 1, 1 ) );
 				this.dragPane = pane;
+				this.zoomState = new ZoomState( this.dragPane, ZoomState.StateType.Pan );
 			}
 			else if ( pane != null && this.isEnableZoom && e.Button == MouseButtons.Left )
 			{
@@ -462,40 +467,50 @@ namespace ZedGraph
 
 		private void ZedGraphControl_MouseUp( object sender, MouseEventArgs e )
 		{
-			
-			// If the MouseUp event occurs, the user is done dragging.
-			if ( this.isZooming )
+			if ( this.dragPane != null )
 			{
-				// Only accept a drag if it covers at least 5 pixels in each direction
-				Point curPt = ((Control)sender).PointToScreen( new Point(e.X, e.Y) );
-				if ( Math.Abs( curPt.X - this.dragRect.X ) > 4 && Math.Abs( curPt.Y - this.dragRect.Y ) > 4 )
+				// If the MouseUp event occurs, the user is done dragging.
+				if ( this.isZooming )
 				{
-					// Draw the rectangle to be evaluated. Set a dashed frame style
-					// using the FrameStyle enumeration.
-					ControlPaint.DrawReversibleFrame( this.dragRect,
-						this.BackColor, FrameStyle.Dashed );
+					// Only accept a drag if it covers at least 5 pixels in each direction
+					Point curPt = ((Control)sender).PointToScreen( new Point(e.X, e.Y) );
+					if ( Math.Abs( curPt.X - this.dragRect.X ) > 4 && Math.Abs( curPt.Y - this.dragRect.Y ) > 4 )
+					{
+						// Draw the rectangle to be evaluated. Set a dashed frame style
+						// using the FrameStyle enumeration.
+						ControlPaint.DrawReversibleFrame( this.dragRect,
+							this.BackColor, FrameStyle.Dashed );
 
-					double x1, x2, y1, y2, yy1, yy2;
-					PointF endPoint = new PointF(e.X, e.Y); // ((Control)sender).PointToScreen( new Point(e.X, e.Y) );
-					PointF startPoint =((Control)sender).PointToClient( this.dragRect.Location );
+						double x1, x2, y1, y2, yy1, yy2;
+						PointF endPoint = new PointF(e.X, e.Y); // ((Control)sender).PointToScreen( new Point(e.X, e.Y) );
+						PointF startPoint =((Control)sender).PointToClient( this.dragRect.Location );
 
-					this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
-					this.dragPane.ReverseTransform( endPoint, out x2, out y2, out yy2 );
+						this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
+						this.dragPane.ReverseTransform( endPoint, out x2, out y2, out yy2 );
 
-					this.dragPane.XAxis.Min = Math.Min( x1, x2 );
-					this.dragPane.XAxis.Max = Math.Max( x1, x2 );
-					this.dragPane.YAxis.Min = Math.Min( y1, y2 );
-					this.dragPane.YAxis.Max = Math.Max( y1, y2 );
+						this.dragPane.zoomStack.Push( this.dragPane, ZoomState.StateType.Zoom );
 
-					Graphics g = this.CreateGraphics();
-					this.dragPane.AxisChange( g );
-					g.Dispose();
-					Refresh();
+						this.dragPane.XAxis.Min = Math.Min( x1, x2 );
+						this.dragPane.XAxis.Max = Math.Max( x1, x2 );
+						this.dragPane.YAxis.Min = Math.Min( y1, y2 );
+						this.dragPane.YAxis.Max = Math.Max( y1, y2 );
+
+						Graphics g = this.CreateGraphics();
+						this.dragPane.AxisChange( g );
+						g.Dispose();
+						Refresh();
+					}
 				}
+				else if ( this.isPanning )
+					// push the prior saved zoomstate, since the scale ranges have already been changed on
+					// the fly during the panning operation
+					if ( this.zoomState.IsChanged( this.dragPane ) )
+						this.dragPane.zoomStack.Push( this.zoomState );
 			}
 
 			// Reset the rectangle.
 			this.dragRect = new Rectangle(0, 0, 0, 0);
+			this.dragPane = null;
 			isZooming = false;
 			isPanning = false;
 			Cursor.Current = Cursors.Default;
@@ -577,37 +592,46 @@ namespace ZedGraph
 					if ( nearestObj is CurveItem && iPt >= 0 )
 					{
 						CurveItem curve = (CurveItem) nearestObj;
-						PointPair pt = curve.Points[iPt];
-						
-						if ( pt.Tag is string )
-							this.pointToolTip.SetToolTip( this, (string) pt.Tag );
+						if ( curve is PieItem )
+						{
+							this.pointToolTip.SetToolTip( this,
+									((PieItem)curve).Value.ToString( this.pointValueFormat ) );
+						}
 						else
 						{
-							string xStr, yStr;
-
-							if ( pane.XAxis.IsDate )
-								xStr = XDate.ToString( pt.X, this.pointDateFormat );
-							else if ( pane.XAxis.IsText && pane.XAxis.TextLabels != null &&
-											iPt >= 0 && iPt < pane.XAxis.TextLabels.Length )
-								xStr = pane.XAxis.TextLabels[iPt];
+							PointPair pt = curve.Points[iPt];
+							
+							if ( pt.Tag is string )
+								this.pointToolTip.SetToolTip( this, (string) pt.Tag );
 							else
-								xStr = pt.X.ToString( this.pointValueFormat );
+							{
+								string xStr, yStr;
 
-							Axis yAxis = curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis;
-								
-							if ( yAxis.IsDate )
-								yStr = XDate.ToString( pt.Y, this.pointDateFormat );
-							else if ( yAxis.IsText && yAxis.TextLabels != null &&
-											iPt >= 0 && iPt < yAxis.TextLabels.Length )
-								yStr = yAxis.TextLabels[iPt];
-							else
-								yStr = pt.Y.ToString( this.pointValueFormat );
+								if ( pane.XAxis.IsDate )
+									xStr = XDate.ToString( pt.X, this.pointDateFormat );
+								else if ( pane.XAxis.IsText && pane.XAxis.TextLabels != null &&
+												iPt >= 0 && iPt < pane.XAxis.TextLabels.Length )
+									xStr = pane.XAxis.TextLabels[iPt];
+								else
+									xStr = pt.X.ToString( this.pointValueFormat );
 
-							this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
+								Axis yAxis = curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis;
+									
+								if ( yAxis.IsDate )
+									yStr = XDate.ToString( pt.Y, this.pointDateFormat );
+								else if ( yAxis.IsText && yAxis.TextLabels != null &&
+												iPt >= 0 && iPt < yAxis.TextLabels.Length )
+									yStr = yAxis.TextLabels[iPt];
+								else
+									yStr = pt.Y.ToString( this.pointValueFormat );
 
-							//this.pointToolTip.SetToolTip( this,
-							//	curve.Points[iPt].ToString( this.pointValueFormat ) );
+								this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
+
+								//this.pointToolTip.SetToolTip( this,
+								//	curve.Points[iPt].ToString( this.pointValueFormat ) );
+							}
 						}
+
 						this.pointToolTip.Active = true;
 					}
 					else
@@ -643,6 +667,7 @@ namespace ZedGraph
 			this.isZooming = false;
 			this.isPanning = false;
 			Cursor.Current = Cursors.Default;
+			GraphPane pane = this.MasterPane.FindPane( this.PointToClient( Control.MousePosition ) );
 			
 			if ( this.isShowContextMenu )
 			{
@@ -664,9 +689,20 @@ namespace ZedGraph
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
-				menuItem.Text = "Restore Scale";
+				menuItem.Text = "Un-" + ( ( pane == null || pane.zoomStack.IsEmpty ) ?
+											"Zoom" : pane.zoomStack.Top.TypeString );
+				this.contextMenu.MenuItems.Add( menuItem );
+				menuItem.Click += new EventHandler( this.MenuClick_ZoomOut );
+				if ( pane == null || pane.zoomStack.IsEmpty )
+					menuItem.Enabled = false;
+
+				menuItem = new MenuItem();
+				menuItem.Index = index++;
+				menuItem.Text = "Set Scale to Default";
 				this.contextMenu.MenuItems.Add( menuItem );
 				menuItem.Click += new EventHandler( this.MenuClick_RestoreScale );
+				if ( pane == null )
+					menuItem.Enabled = false;
 /*
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
@@ -705,6 +741,18 @@ namespace ZedGraph
 				pane.YAxis.ResetAutoScale( pane, g );
 				pane.Y2Axis.ResetAutoScale( pane, g );
 				g.Dispose();
+				Refresh();
+
+				pane.zoomStack.Clear();
+			}
+		}
+
+		protected void MenuClick_ZoomOut( System.Object sender, System.EventArgs e )
+		{
+			GraphPane pane = this.MasterPane.FindPane( this.PointToClient( Control.MousePosition ) );
+			if ( pane != null && !pane.zoomStack.IsEmpty )
+			{
+				pane.zoomStack.Pop( pane );
 				Refresh();
 			}
 		}
