@@ -39,8 +39,11 @@ namespace ZedGraph.Demo
 			base.GraphPane.ClusterScaleWidth = 100f;
 			base.GraphPane.XAxis.Min = 0;
 			base.GraphPane.XAxis.Max = 800;
-			base.GraphPane.YAxis.Min = 0;
-			base.GraphPane.YAxis.Max = 140;
+			base.GraphPane.YAxis.IsShowGrid = true;
+			base.GraphPane.YAxis.IsShowMinorGrid = true;
+			//base.GraphPane.YAxis.Min = 0;
+			//base.GraphPane.YAxis.Max = 140;
+/*
 			double[] xg = { 0, 800 };
 			double[] yg = { 0, 0 };
 			LineItem myCurve2;
@@ -58,7 +61,11 @@ namespace ZedGraph.Demo
 				myCurve2 = base.GraphPane.AddCurve( "", xg, yg, Color.Gray, SymbolType.None );
 				//myCurve2.Line.Style = DashStyle.Dot;
 			}
-
+*/
+			BoxItem box = new BoxItem( new RectangleF( 0, 100, 800, 50 ), Color.Empty, Color.PaleGreen );
+			box.ZOrder = ZOrder.E_BehindAxis;
+			base.GraphPane.GraphItemList.Add( box );
+/*
 			double[] xx = { 0, 800 };
 			double[] yy = { 100, 100 };
 			double[] yy2 = { 50, 50 };
@@ -67,6 +74,9 @@ namespace ZedGraph.Demo
 			myCurve2.Line.Fill = new Fill( Color.White );
 			myCurve2 = base.GraphPane.AddCurve( "", xx, yy, Color.PaleGreen, SymbolType.None );
 			myCurve2.Line.Fill = new Fill( Color.PaleGreen );
+*/
+			
+			base.GraphPane.YAxis.Type = AxisType.Log;
 		}
 	}
 }

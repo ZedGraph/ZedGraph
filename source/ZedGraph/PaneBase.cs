@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-02-14 08:43:16 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-03-01 06:41:32 $ </version>
 	public class PaneBase : ICloneable
 	{
 
@@ -220,25 +220,25 @@ namespace ZedGraph
 			/// the size of the space on the left side of the <see cref="PaneBase.PaneRect"/>.
 			/// </summary>
 			/// <value>Units are points (1/72 inch)</value>
-			public static float MarginLeft = 20.0F;
+			public static float MarginLeft = 10.0F;
 			/// <summary>
 			/// The default value for the <see cref="PaneBase.MarginRight"/> property, which is
 			/// the size of the space on the right side of the <see cref="PaneBase.PaneRect"/>.
 			/// </summary>
 			/// <value>Units are points (1/72 inch)</value>
-			public static float MarginRight = 20.0F;
+			public static float MarginRight = 10.0F;
 			/// <summary>
 			/// The default value for the <see cref="PaneBase.MarginTop"/> property, which is
 			/// the size of the space on the top side of the <see cref="PaneBase.PaneRect"/>.
 			/// </summary>
 			/// <value>Units are points (1/72 inch)</value>
-			public static float MarginTop = 20.0F;
+			public static float MarginTop = 10.0F;
 			/// <summary>
 			/// The default value for the <see cref="PaneBase.MarginBottom"/> property, which is
 			/// the size of the space on the bottom side of the <see cref="PaneBase.PaneRect"/>.
 			/// </summary>
 			/// <value>Units are points (1/72 inch)</value>
-			public static float MarginBottom = 20.0F;
+			public static float MarginBottom = 10.0F;
 
 			/// <summary>
 			/// The default setting for the <see cref="PaneBase.IsPenWidthScaled"/> option.

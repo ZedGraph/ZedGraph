@@ -32,21 +32,22 @@ namespace ZedGraph.Demo
 				x = i / 44.0;
 				y = Math.Sin( (double) i * Math.PI / 15.0 );
 				yBase = y - 0.4;
-				list.Add( y, x, yBase );
+				list.Add( x, y, yBase );
 			}
 
 			// Generate a red bar with "Curve 1" in the legend
 			ErrorBarItem myCurve = base.GraphPane.AddErrorBar( "Curve 1", list,
 				Color.Red );
-			myCurve.BarBase = BarBase.Y;
+			myCurve.BarBase = BarBase.X;
 			//myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
 			
 			//myPane.BarType = BarType.HiLow;
 			//myCurve.ErrorBar.Size = 0;
 			myCurve.ErrorBar.PenWidth = 1f;
-			myCurve.ErrorBar.Symbol.Type = SymbolType.VDash;
+			myCurve.ErrorBar.Symbol.Type = SymbolType.HDash;
 			myCurve.ErrorBar.Symbol.Border.PenWidth = .1f;
-			myCurve.ErrorBar.Symbol.IsVisible = false;
+			myCurve.ErrorBar.Symbol.IsVisible = true;
+			myCurve.ErrorBar.Symbol.Size = 4;
 			
 			//myPane.AxisChange( this.CreateGraphics() );
 

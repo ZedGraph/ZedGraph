@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.36 $ $Date: 2005-02-23 05:49:26 $ </version>
+	/// <version> $Revision: 3.37 $ $Date: 2005-03-01 06:41:32 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -676,6 +676,7 @@ namespace ZedGraph
 				//don't want to display axis or border if there's only pies
 				this.XAxis.IsVisible = false ;				
 				this.YAxis.IsVisible = false ;
+				this.Y2Axis.IsVisible = false ;
 				this.axisBorder.IsVisible = false ;
 				//this.Legend.Position = LegendPos.TopCenter;
 			}
@@ -781,9 +782,9 @@ namespace ZedGraph
 				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.E_BehindAxis );
 
 				// Draw the Axes
-					this.xAxis.Draw( g, this, scaleFactor );
-					this.yAxis.Draw( g, this, scaleFactor );
-					this.y2Axis.Draw( g, this, scaleFactor );
+				this.xAxis.Draw( g, this, scaleFactor );
+				this.yAxis.Draw( g, this, scaleFactor );
+				this.y2Axis.Draw( g, this, scaleFactor );
 				
 				// Draw the GraphItems that are behind the CurveItems
 				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.D_BehindCurves );
@@ -1187,11 +1188,31 @@ namespace ZedGraph
 		/// displaced from the center of the <see cref="PieItem"/>.</param>
 		/// <param name="label">Text label for this <see cref="PieItem"/></param>
 		/// <returns>a reference to the <see cref="PieItem"/> constructed</returns>
-		public PieItem AddPieSlice (  double value, Color color,  double displacement, string label )
+		public PieItem AddPieSlice ( double value, Color color, double displacement, string label )
 		{
-			PieItem slice = new PieItem( value, color, displacement, label ) ;
-			this.CurveList.Add (slice) ;
-			return slice ;
+			PieItem slice = new PieItem( value, color, displacement, label );
+			this.CurveList.Add( slice );
+			return slice;
+		}
+
+		/// <summary>
+		/// Add a <see cref="PieItem"/> to the display, providing a gradient fill for the pie color.
+		/// </summary>
+		/// <param name="value">The value associated with this <see cref="PieItem"/> instance.</param>
+		/// <param name="color1">The starting display color for the gradient <see cref="Fill"/> for this
+		/// <see cref="PieItem"/> instance.</param>
+		/// <param name="color2">The ending display color for the gradient <see cref="Fill"/> for this
+		/// <see cref="PieItem"/> instance.</param>
+		/// <param name="fillAngle">The angle for the gradient <see cref="Fill"/>.</param>
+		/// <param name="displacement">The amount this <see cref="PieItem"/>  instance will be 
+		/// displaced from the center point.</param>
+		/// <param name="label">Text label for this <see cref="PieItem"/> instance.</param>
+		public PieItem AddPieSlice ( double value, Color color1, Color color2, float fillAngle,
+						double displacement, string label )
+		{
+			PieItem slice = new PieItem( value, color1, color2, fillAngle, displacement, label ) ;
+			this.CurveList.Add( slice );
+			return slice;
 		}
 
 		/// <summary>

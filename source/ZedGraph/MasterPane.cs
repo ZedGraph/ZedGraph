@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-03-01 01:27:27 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-03-01 06:41:32 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -114,7 +114,7 @@ namespace ZedGraph
 			/// objects, in units of points (1/72 inch).
 			/// </summary>
 			/// <seealso cref="MasterPane.InnerPaneGap"/>
-			public static float InnerPaneGap = 20;
+			public static float InnerPaneGap = 10;
 			
 			/// <summary>
 			/// The default value for the <see cref="Legend.IsVisible"/> property for

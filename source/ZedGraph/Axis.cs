@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.23 $ $Date: 2005-02-24 04:53:11 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2005-03-01 06:41:32 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -3822,7 +3822,7 @@ namespace ZedGraph
 			this.numDec = 0;		// The number of decimal places to display is not used
 	
 			// Check for bad data range
-			if (this.min <= 0.0 && this.max <= 0.0 )
+			if ( this.min <= 0.0 && this.max <= 0.0 )
 			{
 				this.min = 1.0;
 				this.max = 10.0;

@@ -26,8 +26,8 @@ namespace ZedGraph
 	/// Class used to get the next color/symbol for GraphPane.AddCurve methods.
 	/// </summary>
 	/// 
-	/// <author> Jerry Vos </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:07 $ </version>
+	/// <author> Jerry Vos modified by John Champion </author>
+	/// <version> $Revision: 3.1 $ $Date: 2005-03-01 06:41:32 $ </version>
 	public class ColorSymbolRotator
 	{
 	#region Static fields
@@ -41,8 +41,12 @@ namespace ZedGraph
 			Color.Blue,
 			Color.Green,
 			Color.Purple,
-			Color.Orange,
+			Color.Cyan,
+			Color.Pink,
 			Color.LightBlue,
+			Color.PaleVioletRed,
+			Color.SeaGreen,
+			Color.Yellow
 		};
 
 		/// <summary>
@@ -59,6 +63,8 @@ namespace ZedGraph
 			SymbolType.Triangle,
 			SymbolType.TriangleDown,
 			SymbolType.XCross,
+			SymbolType.HDash,
+			SymbolType.VDash
 		};		
 
 		private static ColorSymbolRotator staticInstance;
@@ -80,7 +86,8 @@ namespace ZedGraph
 
 	#region Properties
 		/// <summary>
-		/// Retrieves the next color in the rotation.
+		/// Retrieves the next color in the rotation  Calling this
+		/// method has the side effect of incrementing the color index.
 		/// <seealso cref="NextSymbol"/>
 		/// <seealso cref="NextColorIndex"/>
 		/// </summary>
@@ -91,8 +98,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Retrieves the index of the next color to be used.  Calling this
-		/// method has the side effect of incrimenting the index of the 
-		/// color index.
+		/// method has the side effect of incrementing the color index.
 		/// </summary>
 		public int NextColorIndex
 		{
@@ -110,19 +116,19 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Retrieves the next color in the rotation.
+		/// Retrieves the next color in the rotation.  Calling this
+		/// method has the side effect of incrementing the symbol index.
 		/// <seealso cref="NextColor"/>
 		/// <seealso cref="NextSymbolIndex"/>
 		/// </summary>
 		public SymbolType NextSymbol
 		{
-			get { return SYMBOLS[NextColorIndex]; }
+			get { return SYMBOLS[NextSymbolIndex]; }
 		}
 
 		/// <summary>
 		/// Retrieves the index of the next symbol to be used.  Calling this
-		/// method has the side effect of incrimenting the index of the 
-		/// symbol index.
+		/// method has the side effect of incrementing the symbol index.
 		/// </summary>
 		public int NextSymbolIndex
 		{

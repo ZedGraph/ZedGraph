@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+28-Feb-2005 (by Champion)
+  Fix ColorSymbolRotator to use symbolCount.  Add more symbols & colors
+  Add gradient color overload for GraphPane.AddPieSlice
+  Revert demo project back to remove the property control
+  
 23-Feb-2005 (by Champion)
   Add Axis.BaseTic property
   Add ZedGraph.LibTest project to have a class library based general testing platform

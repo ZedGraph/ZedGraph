@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.14 $ $Date: 2005-02-12 23:22:51 $ </version>
+	/// <version> $Revision: 1.15 $ $Date: 2005-03-01 06:41:32 $ </version>
 	[Serializable]
 	public class PieItem : ZedGraph.CurveItem , ICloneable, ISerializable
 	{
@@ -353,6 +353,26 @@ namespace ZedGraph
 	#endregion
 
 	#region Constructors
+		/// <summary>
+		/// Create a new <see cref="PieItem"/>, providing a gradient fill for the pie color.
+		/// </summary>
+		/// <param name="pieValue">The value associated with this <see cref="PieItem"/> instance.</param>
+		/// <param name="color1">The starting display color for the gradient <see cref="Fill"/> for this
+		/// <see cref="PieItem"/> instance.</param>
+		/// <param name="color2">The ending display color for the gradient <see cref="Fill"/> for this
+		/// <see cref="PieItem"/> instance.</param>
+		/// <param name="fillAngle">The angle for the gradient <see cref="Fill"/>.</param>
+		/// <param name="displacement">The amount this <see cref="PieItem"/>  instance will be 
+		/// displaced from the center point.</param>
+		/// <param name="label">Text label for this <see cref="PieItem"/> instance.</param>
+		public PieItem ( double pieValue, Color color1, Color color2, float fillAngle,
+						double displacement, string label ) :
+						this( pieValue, color1, displacement, label )
+		{
+			if ( !color1.IsEmpty && !color2.IsEmpty )
+				this.fill = new Fill( color1, color2, fillAngle ) ;
+		}
+
 		/// <summary>
 		/// Create a new <see cref="PieItem"/>.
 		/// </summary>

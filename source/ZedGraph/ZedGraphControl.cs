@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-02-23 05:49:26 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-03-01 06:41:32 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -139,28 +139,30 @@ namespace ZedGraph
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.pointToolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.pointToolTip = new System.Windows.Forms.ToolTip( this.components );
 			this.contextMenu = new System.Windows.Forms.ContextMenu();
-			// 
-			// pointToolTip
-			// 
+// 
+// pointToolTip
+// 
 			this.pointToolTip.AutoPopDelay = 5000;
 			this.pointToolTip.InitialDelay = 500;
 			this.pointToolTip.ReshowDelay = 0;
-			// 
-			// contextMenu
-			// 
-			this.contextMenu.Popup += new System.EventHandler(this.ContextMenu_Popup);
-			// 
-			// ZedGraphControl
-			// 
+// 
+// contextMenu
+// 
+			//this.contextMenu.Name = "contextMenu";
+			this.contextMenu.Popup += new System.EventHandler( this.ContextMenu_Popup );
+// 
+// ZedGraphControl
+// 
 			this.ContextMenu = this.contextMenu;
 			this.Name = "ZedGraphControl";
-			this.Resize += new System.EventHandler(this.ChangeSize);
-			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseUp);
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ZedGraphControl_KeyDown);
-			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseMove);
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseDown);
+			this.Resize += new System.EventHandler( this.ChangeSize );
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseMove );
+			this.KeyUp += new System.Windows.Forms.KeyEventHandler( this.ZedGraphControl_KeyUp );
+			this.MouseUp += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseUp );
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseDown );
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler( this.ZedGraphControl_KeyDown );
 
 		}
 	#endregion
@@ -529,17 +531,9 @@ namespace ZedGraph
 		/// </param>
 		private void ZedGraphControl_MouseMove( object sender, MouseEventArgs e )
 		{
-			PointF mousePt = new PointF( e.X, e.Y );
-			GraphPane pane = this.MasterPane.FindAxisRect( mousePt );
-			if ( isEnablePan && ( Control.ModifierKeys == Keys.Shift || isPanning ) &&
-								( pane != null || isPanning ) )
-				Cursor.Current = Cursors.Hand;
-			else if ( isEnableZoom && ( pane != null || isZooming ) )
-				Cursor.Current = Cursors.Cross;
-				
-//			else if ( isZoomMode || isPanMode )
-//				Cursor.Current = Cursors.No;
-			
+			Point mousePt = new Point( e.X, e.Y );
+			SetCursor( mousePt );
+
 			// If the mouse is being dragged,
 			// undraw and redraw the rectangle as the mouse moves.
 			if ( this.isZooming )
@@ -551,7 +545,7 @@ namespace ZedGraph
 
 				// Calculate the endpoint and dimensions for the new
 				// rectangle, again using the PointToScreen method.
-				Point curPt = ((Control)sender).PointToScreen( new Point( e.X, e.Y ) );
+				Point curPt = ((Control)sender).PointToScreen( mousePt );
 				this.dragRect.Width = curPt.X - this.dragRect.X;
 				this.dragRect.Height = curPt.Y - this.dragRect.Y;
 
@@ -575,13 +569,13 @@ namespace ZedGraph
 				this.dragPane.YAxis.Max += y1 - y2;
 				Refresh();
 				
-				this.dragRect.Location = ((Control)sender).PointToScreen( new Point(e.X, e.Y) );
+				this.dragRect.Location = ((Control)sender).PointToScreen( mousePt );
 				
 			}
 			else if ( isShowPointValues )
 			{
 				int			iPt;
-				//GraphPane	pane;
+				GraphPane	pane;
 				object		nearestObj;
 	 
 				Graphics g = this.CreateGraphics();
@@ -642,6 +636,29 @@ namespace ZedGraph
 			}
 		}
 		
+		private void SetCursor()
+		{
+			SetCursor( this.PointToClient( Control.MousePosition ) );
+		}
+
+		private void SetCursor( Point mousePt )
+		{
+			GraphPane pane = this.MasterPane.FindAxisRect( mousePt );
+			if ( isEnablePan && ( Control.ModifierKeys == Keys.Shift || isPanning ) &&
+								( pane != null || isPanning ) )
+				Cursor.Current = Cursors.Hand;
+			else if ( isEnableZoom && ( pane != null || isZooming ) )
+				Cursor.Current = Cursors.Cross;
+				
+//			else if ( isZoomMode || isPanMode )
+//				Cursor.Current = Cursors.No;
+		}
+
+		private void ZedGraphControl_KeyUp(object sender, KeyEventArgs e)
+		{
+			SetCursor();
+		}
+
 		/// <summary>
 		/// Handle the Key Events so ZedGraph can Escape out of a panning or zooming operation.
 		/// </summary>
@@ -649,6 +666,8 @@ namespace ZedGraph
 		/// <param name="e"></param>
 		private void ZedGraphControl_KeyDown( object sender, System.Windows.Forms.KeyEventArgs e )
 		{
+			SetCursor();
+
 			if ( e.KeyCode == Keys.Escape )
 			{
 				this.isZooming = false;
