@@ -1,5 +1,12 @@
 ZedGraph Class Library Revision History
 
+17-Mar-2005 (by Champion)
+  Added Save As... to context menu
+  Fix up Web Demos
+  
+17-Mar-2005 (by Martz)
+  Add ZedGraphWebPointPairCollection
+
 15-Mar-2005 (by Champion)
   Fixed a bug that caused missing tics at the beginning of the axis for date type axes
 

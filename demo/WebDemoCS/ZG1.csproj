@@ -177,6 +177,17 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "Graph3.aspx"
+                    SubType = "Form"
+                    BuildAction = "Content"
+                />
+                <File
+                    RelPath = "Graph3.aspx.cs"
+                    DependentUpon = "Graph3.aspx"
+                    SubType = "ASPXCodeBehind"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Web.config"
                     BuildAction = "Content"
                 />

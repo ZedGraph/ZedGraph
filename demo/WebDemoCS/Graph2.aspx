@@ -11,7 +11,7 @@
 	</HEAD>
 	<body MS_POSITIONING="GridLayout">
 		<form id="Form1" method="post" runat="server">
-			<zgw:ZedGraphWeb id="ZedGraphWeb1" runat="server" Height="400" Width="600" BarType="Overlay" BarBase="X"
+			<zgw:ZedGraphWeb id="ZedGraphWeb1" runat="server" width="500" Height="375" BarType="Overlay" BarBase="X"
 				title="Sample Pie Chart">
 				<AxisFill RangeMax="0" Type="Brush" AlignH="Center" IsScaled="True" Color="Salmon" RangeMin="0"
 					IsVisible="True" AlignV="Center"></AxisFill>

@@ -31,11 +31,13 @@ using ZedGraph;
 
 namespace ZG1
 {
+
 	/// <summary>
-	/// Summary description for Graph2.
+	/// Summary description for graph.
 	/// </summary>
-	public partial class Graph3 
+	public class Graph3 : System.Web.UI.Page
 	{
+		protected ZedGraph.ZedGraphWeb ZedGraphWeb1;
 	
 		private void Page_Load(object sender, System.EventArgs e)
 		{
@@ -52,19 +54,21 @@ namespace ZG1
 			base.OnInit(e);
 		}
 		
-    /// <summary>
-    /// Required method for Designer support - do not modify
-    /// the contents of this method with the code editor.
-    /// </summary>
-    private void InitializeComponent()
-    {
-        this.ZedGraphWeb1.RenderGraph += new ZedGraph.ZedGraphWebControlEventHandler(this.OnRenderGraph);
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{    
+			this.ZedGraphWeb1.RenderGraph += new ZedGraph.ZedGraphWebControlEventHandler(this.OnRenderGraph);
+			this.Load += new System.EventHandler(this.Page_Load);
 
-    }
-    #endregion
-    private void OnRenderGraph(System.Drawing.Graphics g, ZedGraph.GraphPane pane)
-    {
+		}
+		#endregion
+
+		private void OnRenderGraph(System.Drawing.Graphics g, ZedGraph.GraphPane pane)
+		{
         pane.AxisChange(g);
-    }
-  }
+		}
+	}
 }

@@ -11,7 +11,7 @@
 	</HEAD>
 	<body MS_POSITIONING="GridLayout">
 		<form id="Form1" method="post" runat="server">
-			<zgw:ZedGraphWeb id="ZedGraphWeb1" runat="server"></zgw:ZedGraphWeb>
+			<zgw:ZedGraphWeb id="ZedGraphWeb1" width="500" Height="375" runat="server"></zgw:ZedGraphWeb>
 		</form>
 	</body>
 </HTML>
