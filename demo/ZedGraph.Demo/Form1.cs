@@ -3083,37 +3083,42 @@ namespace ZedGraph.Demo
 			images[1].Save( @"c:\zedgraph2.jpg", ImageFormat.Jpeg );
 		}
 		
-#if false
+#if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
 /*
 			CurveItem curve;
 			int	iPt;
+*/
 
+/*
 			if ( myPane.FindNearestPoint( new PointF( e.X, e.Y ), out curve, out iPt ) )
 				MessageBox.Show( String.Format( "label = {0}  X = {1}",
 						curve.Label, curve.Points[iPt].ToString("e2") ) );
 			else
 				MessageBox.Show( "No Point Found" );
 */
-			/*
-			object	obj;
+						object	obj;
 			int		index;
 
 			if ( myPane.FindNearestObject( new PointF( e.X, e.Y ), this.CreateGraphics(),
 					out obj, out index ) )
 			{
 				if ( obj is CurveItem )
-					MessageBox.Show( String.Format( "label = {0}  X = {1}",
-						((CurveItem)obj).Label,
-						((CurveItem)obj).Points[index].ToString("e2") ) );
+					if ( obj is PieItem)
+						MessageBox.Show( String.Format( "{0} Region: Sales = ${1}M",
+							((PieItem)obj).Label,
+							((PieItem)obj).Value.ToString() ) );
+					else
+						MessageBox.Show( String.Format( "label = {0}  X = {1}",
+							((CurveItem)obj).Label,
+							((CurveItem)obj).Points[index].ToString("e2") ) );
 				else
 					MessageBox.Show( String.Format( "type is {0}", obj.ToString() ) );
 			}
 			else
 				MessageBox.Show( "No Object Found" );
-			*/
-		}
+					}
 #endif
 
 		private void Serialize( GraphPane myPane )
@@ -3148,7 +3153,7 @@ namespace ZedGraph.Demo
 			myReader.Close();
 		}
 
-#if true
+#if false
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
 			object obj;
