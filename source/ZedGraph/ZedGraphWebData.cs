@@ -56,12 +56,13 @@ namespace ZedGraph
 		{
 			return "CurveItem: " + Label;
 		}
-
+		
 		/// <summary>
 		/// Default constructor
 		/// </summary>
 		public ZedGraphWebCurveItem() : base()
 		{
+			Register('0',typeof(ZedGraphWebPointPairCollection));
 		}
 
 		/// <summary>
@@ -221,6 +222,21 @@ namespace ZedGraph
 			}
 			set { ViewState["IsY2Axis"] = value; }
 		}
+
+		/// <summary>
+		/// Proxy property that gets the value of the <see cref="CurveItem.Points"/>.
+		/// </summary>
+		[
+		Category("Data"),		
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebPointPairCollection Points
+		{			
+			get {  return (ZedGraphWebPointPairCollection)GetValue('0');} 
+		}
+							
 		#endregion
 	}
 	#endregion
@@ -1656,6 +1672,151 @@ namespace ZedGraph
 
 	#endregion
 
+	#region ZedGraphWebPointPairCollection
+	/// <summary>
+	/// Manages a collection of <see cref="ZedGraphWebPointPair"/> objects that are 
+	/// state management aware.
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class ZedGraphWebPointPairCollection : GenericCollection
+	{	
+		/// <summary>
+		/// Override the ToString() method.
+		/// </summary>
+		/// <returns>Always returns String.Empty</returns>
+		public override string ToString(){return String.Empty;}		
+
+		/// <summary>
+		/// Default Constructor
+		/// </summary>
+		public ZedGraphWebPointPairCollection() : base()
+		{
+			Schema = new GenericCollectionItemSchema[1];
+			Schema[0].code = 'p';
+			Schema[0].type = typeof(ZedGraphWebPointPair);			
+		}
+
+		/// <summary>
+		/// Add a <see cref="ZedGraphWebPointPair"/> to this collection.
+		/// </summary>
+		/// <param name="item">The <see cref="ZedGraphWebPointPair"/> to be added.</param>
+		/// <seealso cref="ZedGraph.PointPair"/>
+		public void Add(ZedGraphWebPointPair item)
+		{
+			if ( null != item )
+				ListAdd( item );
+			else
+				throw new ArgumentException("parameter cannot be null","item");
+		}	
+
+		/// <summary>
+		/// Indexer to access the specified <see cref="ZedGraphWebPointPair"/> object by
+		/// its ordinal position in the list.
+		/// </summary>
+		/// <param name="index">The ordinal position (zero-based) of the
+		/// <see cref="ZedGraphWebPointPair"/> object to be accessed.</param>
+		/// <value>A <see cref="ZedGraphWebPointPair"/> object reference.</value>
+		/// <seealso cref="ZedGraph.PointPair"/>
+		[NotifyParentProperty(true)]
+		public ZedGraphWebPointPair this [int index]
+		{
+			get 
+			{
+				return (ZedGraphWebPointPair)ListGet(index);
+			}
+			set
+			{
+				ListInsert(index,value);
+			}
+		}			
+	}
+
+	#endregion
+
+	#region ZedGraphWebPointPair
+	/// <summary>
+	/// A Web PointPair class
+	/// </summary>
+	/// <author>Darren Martz</author>
+	[DefaultProperty("Value")]
+	public class ZedGraphWebPointPair : GenericItem
+	{
+		/// <summary>
+		/// Identifies PointPair instance
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{						
+			return string.Format( "PointPair({0},{1})", X, Y );
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebPointPair() : base()
+		{				
+		}		
+		
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebPointPair"/> to the specified
+		/// <see cref="PointPair"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="PointPair"/> object</param>
+		public void CopyTo( PointPair item )
+		{
+			item.X = this.X;
+			item.Y = this.Y;			
+			item.Z = this.Z;			
+		}
+		
+		#region Properties
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="PointPair.X"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public double X
+		{
+			get 
+			{ 
+				object x = ViewState["X"]; 
+				return (null == x) ? 0 : (double)x;
+			}
+			set { ViewState["X"] = value; }
+		}
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="PointPair.Y"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public double Y
+		{
+			get 
+			{ 
+				object y = ViewState["Y"]; 
+				return (null == y) ? 0 : (double)y;
+			}
+			set { ViewState["Y"] = value; }
+		}
+		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="PointPair.Z"/>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public double Z
+		{
+			get 
+			{ 
+				object z = ViewState["Z"]; 
+				return (null == z) ? 0 : (double)z;
+			}
+			set { ViewState["Z"] = value; }
+		}
+		
+		#endregion
+	}
+	#endregion
+
 	#region ZedGraphWebString
 	/// <summary>
 	/// A Web String class
@@ -1708,10 +1869,10 @@ namespace ZedGraph
 	public class ZedGraphWebXAxis : ZedGraphWebAxis
 	{
 		/// <summary>
-		/// Identifies <see cref="XAxis"/> by the <see cref="XAxis.Title"/> value
+		/// Identifies <see cref="XAxis"/> by the <see cref="Axis.Title"/> value
 		/// </summary>
 		/// <returns>A string containing "XAxis: title", where 'title' is the
-		/// <see cref="XAxis.Title"/> property of the <see cref="XAxis"/>
+		/// <see cref="Axis.Title"/> property of the <see cref="XAxis"/>
 		/// </returns>
 		public override string ToString()
 		{
@@ -1719,6 +1880,9 @@ namespace ZedGraph
 			return "XAxis: " + Title;
 		}
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public ZedGraphWebXAxis() : base()
 		{
 		}
@@ -1733,10 +1897,10 @@ namespace ZedGraph
 	public class ZedGraphWebYAxis : ZedGraphWebAxis
 	{
 		/// <summary>
-		/// Identifies <see cref="YAxis"/> by the <see cref="YAxis.Title"/> value
+		/// Identifies <see cref="YAxis"/> by the <see cref="Axis.Title"/> value
 		/// </summary>
 		/// <returns>A string containing "YAxis: title", where 'title' is the
-		/// <see cref="YAxis.Title"/> property of the <see cref="YAxis"/>
+		/// <see cref="Axis.Title"/> property of the <see cref="YAxis"/>
 		/// </returns>
 		public override string ToString()
 		{
@@ -1744,8 +1908,13 @@ namespace ZedGraph
 			return "YAxis: " + Title;
 		}
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public ZedGraphWebYAxis() : base()
 		{
+			this.ScaleFontSpec.Angle = 90.0F;
+			this.TitleFontSpec.Angle = -180F;
 		}
 	}
 	#endregion
@@ -1758,10 +1927,10 @@ namespace ZedGraph
 	public class ZedGraphWebY2Axis : ZedGraphWebAxis
 	{
 		/// <summary>
-		/// Identifies <see cref="Y2Axis"/> by the <see cref="Y2Axis.Title"/> value
+		/// Identifies <see cref="Y2Axis"/> by the <see cref="Axis.Title"/> value
 		/// </summary>
 		/// <returns>A string containing "Y2Axis: title", where 'title' is the
-		/// <see cref="Y2Axis.Title"/> property of the <see cref="Y2Axis"/>
+		/// <see cref="Axis.Title"/> property of the <see cref="Y2Axis"/>
 		/// </returns>
 		public override string ToString()
 		{
@@ -1769,8 +1938,12 @@ namespace ZedGraph
 			return "Y2Axis: " + Title;
 		}
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public ZedGraphWebY2Axis() : base()
 		{
+			this.ScaleFontSpec.Angle = -90.0F;
 		}
 	}
 	#endregion
@@ -1819,18 +1992,6 @@ namespace ZedGraph
 			this.TitleFontSpec.IsUnderline = ZedGraph.Axis.Default.TitleFontUnderline;
 			this.TitleFontSpec.Fill.Color = ZedGraph.Axis.Default.TitleFillColor;
 			this.TitleFontSpec.Fill.Type = ZedGraph.Axis.Default.TitleFillType;
-
-			/*
-			if ( item is YAxis )
-			{
-				this.ScaleFontSpec.Angle = 90.0F;
-				this.TitleFontSpec.Angle = -180F;
-			}
-			else if ( item is Y2Axis )
-			{
-				this.ScaleFontSpec.Angle = -90.0F;
-			}
-			*/
 		}	
 	
 		/// <summary>

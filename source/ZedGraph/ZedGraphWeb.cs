@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.22 $ $Date: 2005-03-18 00:19:16 $ </version>
+	/// <version> $Revision: 3.23 $ $Date: 2005-03-18 22:37:31 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -915,28 +915,37 @@ namespace ZedGraph
 				for (int i=0; i<CurveList.Count; i++)
 				{
 					curve = CurveList[i];
+
+					PointPairList points = new PointPairList();
+					PointPair pair = new PointPair();
+					for ( int j=0; j<curve.Points.Count; j++ )
+					{
+						curve.Points[j].CopyTo( pair );
+						points.Add( pair );
+					}
+
 					if ( curve is ZedGraphWebBarItem )
 					{
 						ZedGraphWebBarItem item = (ZedGraphWebBarItem)curve;
-						BarItem x = pane.AddBar(item.Label,new PointPairList(),item.Color);
+						BarItem x = pane.AddBar(item.Label,points,item.Color);
 						item.CopyTo(x);					
 					}
 					else if ( curve is ZedGraphWebLineItem )
 					{
 						ZedGraphWebLineItem item = (ZedGraphWebLineItem)curve;
-						LineItem x = pane.AddCurve(item.Label,new PointPairList(),item.Color);
+						LineItem x = pane.AddCurve(item.Label,points,item.Color);
 						item.CopyTo(x);
 					}
 					else if ( curve is ZedGraphWebErrorBarItem )
 					{
 						ZedGraphWebErrorBarItem item = (ZedGraphWebErrorBarItem)curve;
-						ErrorBarItem x = pane.AddErrorBar(item.Label,new PointPairList(),item.Color);
+						ErrorBarItem x = pane.AddErrorBar(item.Label,points,item.Color);
 						item.CopyTo(x);
 					}
 					else if ( curve is ZedGraphWebHiLowBarItem )
 					{
 						ZedGraphWebHiLowBarItem item = (ZedGraphWebHiLowBarItem)curve;
-						HiLowBarItem x = pane.AddHiLowBar(item.Label,new PointPairList(),item.Color);
+						HiLowBarItem x = pane.AddHiLowBar(item.Label,points,item.Color);
 						item.CopyTo(x);
 					}
 					else if ( curve is ZedGraphWebPieItem )
@@ -1300,7 +1309,7 @@ namespace ZedGraph
 			base.TrackViewState();
 			vsassist.TrackViewState();			
 		}
-		#endregion
+	#endregion
 
 	#region IDisposable Members
 
