@@ -15,6 +15,8 @@
 			<img src="graph.aspx?graph=2">
 			<br>
 			<img src="graph2.aspx">
+			<br>
+			<img src="graph3.aspx">
 		</form>
 	</body>
 </html>

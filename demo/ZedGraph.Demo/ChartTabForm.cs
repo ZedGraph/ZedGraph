@@ -30,7 +30,7 @@ namespace ZedGraph.Demo
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos </author>
-	/// <version> $Revision: 1.7 $ $Date: 2005-03-08 05:55:16 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2005-03-19 09:49:22 $ </version>
 	public abstract class ChartTabForm : System.Windows.Forms.Form
 	{
 		private const string TitlePrefix = "ZedGraph Demos : ";
@@ -179,11 +179,14 @@ namespace ZedGraph.Demo
 		private void Init(object key) 
 		{
 			ZedGraphDemo demo = (ZedGraphDemo) this.demos[key];
+			
+			if ( demo == null )
+				return;
 
 			this.tabDemo.Controls.Clear();
 			this.tabDemo.Controls.Add(demo.ZedGraphControl);
 
-			demo.ZedGraphControl.Width		= tabDemo.Width;
+			demo.ZedGraphControl.Width = tabDemo.Width;
 			demo.ZedGraphControl.Height	= tabDemo.Height;
 
 			demo.ZedGraphControl.Anchor	= AnchorStyles.Left | AnchorStyles.Top  
@@ -385,6 +388,7 @@ namespace ZedGraph.Demo
 			this.Menu = this.mainMenu1;
 			this.Name = "ChartTabForm";
 			this.Text = "DemoForm";
+			this.Load += new System.EventHandler(this.ChartTabForm_Load);
 			this.chartDescGB.ResumeLayout(false);
 			this.displayTC.ResumeLayout(false);
 			this.ResumeLayout(false);
@@ -448,5 +452,10 @@ namespace ZedGraph.Demo
 			Help.ShowHelp(this, "http://codeproject.com/csharp/zedgraph.asp");
 		}
 	#endregion
+
+		private void ChartTabForm_Load(object sender, System.EventArgs e)
+		{
+			Init( "Combo Demo" );
+		}
 	}
 }

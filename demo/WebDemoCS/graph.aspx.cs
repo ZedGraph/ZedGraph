@@ -27,6 +27,7 @@ using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
+using ZedGraph;
 
 namespace ZG1
 {
@@ -71,16 +72,65 @@ namespace ZG1
 			if ( val == null ) val = string.Empty;
 			val = val.Trim();
 
-			if ( val == "2" )
-			{
-				ZedGraph.ZedGraphWeb.RenderDemo(g,pane);
-				pane.Title = "Graph Number 2";				
-			}
-			else
-			{
-				ZedGraph.ZedGraphWeb.RenderDemo(g,pane);
-				pane.Title = "Graph Number 1";
-			}
+      if (val == "2")
+      {
+          // Use the Horizontal Stacked Bar Demo
+
+          // Set the title and axis labels
+          pane.Title = "Cat Stats";
+          pane.YAxis.Title = "Big Cats";
+          pane.XAxis.Title = "Population";
+
+          // Make up some data points
+          string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard" };
+          double[] x = { 100, 115, 75, 22, 98, 40 };
+          double[] x2 = { 120, 175, 95, 57, 113, 110 };
+          double[] x3 = { 204, 192, 119, 80, 134, 156 };
+
+          // Generate a red bar with "Curve 1" in the legend
+          BarItem myCurve = pane.AddBar("Here", x, null, Color.Red);
+          // Fill the bar with a red-white-red color gradient for a 3d look
+          myCurve.Bar.Fill = new Fill(Color.Red, Color.White, Color.Red, 90f);
+
+          // Generate a blue bar with "Curve 2" in the legend
+          myCurve = pane.AddBar("There", x2, null, Color.Blue);
+          // Fill the bar with a Blue-white-Blue color gradient for a 3d look
+          myCurve.Bar.Fill = new Fill(Color.Blue, Color.White, Color.Blue, 90f);
+
+          // Generate a green bar with "Curve 3" in the legend
+          myCurve = pane.AddBar("Elsewhere", x3, null, Color.Green);
+          // Fill the bar with a Green-white-Green color gradient for a 3d look
+          myCurve.Bar.Fill = new Fill(Color.Green, Color.White, Color.Green, 90f);
+
+          // Draw the Y tics between the labels instead of at the labels
+          pane.YAxis.IsTicsBetweenLabels = true;
+
+          // Set the YAxis labels
+          pane.YAxis.TextLabels = labels;
+          // Set the YAxis to Text type
+          pane.YAxis.Type = AxisType.Text;
+
+          // Set the bar type to stack, which stacks the bars by automatically accumulating the values
+          pane.BarType = BarType.Stack;
+
+          // Make the bars horizontal by setting the BarBase to "Y"
+          pane.BarBase = BarBase.Y;
+
+          // Fill the axis background with a color gradient
+          pane.AxisFill = new Fill(Color.White,
+                  Color.FromArgb(255, 255, 166), 45.0F);
+
+          pane.Title = "Graph Number 2";
+
+          pane.AxisChange(g);
+      }
+      else
+      {
+          // Use the standard, built-in demo
+          ZedGraph.ZedGraphWeb.RenderDemo(g, pane);
+          pane.Title = "Graph Number 1";
+      }
+
 		}
 	}
 }

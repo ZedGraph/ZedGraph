@@ -19,9 +19,11 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Text;
 using System.ComponentModel;
+using System.IO;
 
 namespace ZedGraph
 {
@@ -34,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.15 $ $Date: 2005-03-05 07:24:10 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2005-03-19 09:49:23 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -701,6 +703,12 @@ namespace ZedGraph
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
+				menuItem.Text = "Save Image As...";
+				this.contextMenu.MenuItems.Add( menuItem );
+				menuItem.Click += new System.EventHandler( this.MenuClick_SaveAs );
+
+				menuItem = new MenuItem();
+				menuItem.Index = index++;
 				menuItem.Text = "Show Point Values";
 				menuItem.Checked = this.IsShowPointValues;
 				this.contextMenu.MenuItems.Add( menuItem );
@@ -736,6 +744,56 @@ namespace ZedGraph
 		{
 			Clipboard.SetDataObject( this.MasterPane.Image, true );
 			MessageBox.Show( "Image Copied to ClipBoard" );
+		}
+
+		/// <summary>
+		/// Handler for the "Save Image As" context menu item.  Copies the current image to the selected
+		/// file.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		protected void MenuClick_SaveAs( System.Object sender, System.EventArgs e )
+		{
+			SaveFileDialog saveDlg = new SaveFileDialog();
+			saveDlg.Filter = "PNG Format (*.png)|*.png|" +
+							"Gif Format (*.gif)|*.gif|" +
+							"Jpeg Format (*.jpg)|*.jpg|" +
+							"Tiff Format (*.tif)|*.tif|" +
+							"Bmp Format (*.bmp)|*.bmp";
+
+			if ( saveDlg.ShowDialog() == DialogResult.OK )
+			{
+				ImageFormat format = ImageFormat.Png;
+				if ( saveDlg.FilterIndex == 2 )
+					format = ImageFormat.Gif;
+				else if ( saveDlg.FilterIndex == 3 )
+					format = ImageFormat.Jpeg;
+				else if ( saveDlg.FilterIndex == 4 )
+					format = ImageFormat.Tiff;
+				else if ( saveDlg.FilterIndex == 5 )
+					format = ImageFormat.Bmp;
+				
+				/*
+				string fileName = saveDlg.FileName.Trim();
+				if ( fileName.EndsWith( "jpg", true, System.Globalization.CultureInfo.CurrentCulture ) ||
+						fileName.EndsWith( "jpg", true, System.Globalization.CultureInfo.CurrentCulture ) )
+					format = ImageFormat.Jpeg;
+				else if ( fileName.EndsWith( "bmp", true, System.Globalization.CultureInfo.CurrentCulture ) )
+					format = ImageFormat.Bmp;
+				else if ( fileName.EndsWith( "gif", true, System.Globalization.CultureInfo.CurrentCulture ) )
+					format = ImageFormat.Gif;
+				else if ( fileName.EndsWith( "tif", true, System.Globalization.CultureInfo.CurrentCulture ) ||
+						fileName.EndsWith( "tiff", true, System.Globalization.CultureInfo.CurrentCulture ) )
+					format = ImageFormat.Tiff;
+				*/
+
+				Stream myStream = saveDlg.OpenFile();
+				if ( myStream != null)
+				{
+					this.MasterPane.Image.Save( myStream, format );
+					myStream.Close();
+				}
+			}
 		}
 
 		/// <summary>
