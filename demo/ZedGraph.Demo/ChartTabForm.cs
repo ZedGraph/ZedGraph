@@ -27,6 +27,13 @@ namespace ZedGraph.Demo
 		private System.Windows.Forms.Splitter splitterVert;
 		private System.Windows.Forms.GroupBox chartDescGB;
 		private System.Windows.Forms.RichTextBox descriptionBox;
+		private System.Windows.Forms.TabPage tabAbout;
+		private System.Windows.Forms.TabPage tabLicense;
+		private System.Windows.Forms.RichTextBox richTextBox1;
+		private System.Windows.Forms.LinkLabel linkLabel1;
+		private System.Windows.Forms.LinkLabel linkLabel2;
+		private System.Windows.Forms.RichTextBox richTextBox2;
+		private System.Windows.Forms.RichTextBox richTextBox3;
 
 		private Hashtable demos;
 
@@ -185,12 +192,21 @@ namespace ZedGraph.Demo
 			this.demoTree = new System.Windows.Forms.TreeView();
 			this.splitterHoriz = new System.Windows.Forms.Splitter();
 			this.chartDescGB = new System.Windows.Forms.GroupBox();
+			this.descriptionBox = new System.Windows.Forms.RichTextBox();
+			this.splitterVert = new System.Windows.Forms.Splitter();
 			this.displayTC = new System.Windows.Forms.TabControl();
 			this.tabDemo = new System.Windows.Forms.TabPage();
-			this.splitterVert = new System.Windows.Forms.Splitter();
-			this.descriptionBox = new System.Windows.Forms.RichTextBox();
+			this.tabAbout = new System.Windows.Forms.TabPage();
+			this.richTextBox2 = new System.Windows.Forms.RichTextBox();
+			this.linkLabel2 = new System.Windows.Forms.LinkLabel();
+			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+			this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+			this.tabLicense = new System.Windows.Forms.TabPage();
+			this.richTextBox3 = new System.Windows.Forms.RichTextBox();
 			this.chartDescGB.SuspendLayout();
 			this.displayTC.SuspendLayout();
+			this.tabAbout.SuspendLayout();
+			this.tabLicense.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// demoTree
@@ -224,9 +240,30 @@ namespace ZedGraph.Demo
 			this.chartDescGB.TabIndex = 2;
 			this.chartDescGB.TabStop = false;
 			// 
+			// descriptionBox
+			// 
+			this.descriptionBox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.descriptionBox.Location = new System.Drawing.Point(3, 363);
+			this.descriptionBox.Name = "descriptionBox";
+			this.descriptionBox.ReadOnly = true;
+			this.descriptionBox.Size = new System.Drawing.Size(487, 104);
+			this.descriptionBox.TabIndex = 13;
+			this.descriptionBox.Text = "In here goes the demo description";
+			// 
+			// splitterVert
+			// 
+			this.splitterVert.Dock = System.Windows.Forms.DockStyle.Top;
+			this.splitterVert.Location = new System.Drawing.Point(3, 360);
+			this.splitterVert.Name = "splitterVert";
+			this.splitterVert.Size = new System.Drawing.Size(487, 3);
+			this.splitterVert.TabIndex = 11;
+			this.splitterVert.TabStop = false;
+			// 
 			// displayTC
 			// 
 			this.displayTC.Controls.Add(this.tabDemo);
+			this.displayTC.Controls.Add(this.tabAbout);
+			this.displayTC.Controls.Add(this.tabLicense);
 			this.displayTC.Dock = System.Windows.Forms.DockStyle.Top;
 			this.displayTC.Location = new System.Drawing.Point(3, 16);
 			this.displayTC.Name = "displayTC";
@@ -243,24 +280,83 @@ namespace ZedGraph.Demo
 			this.tabDemo.TabIndex = 0;
 			this.tabDemo.Text = "Demo";
 			// 
-			// splitterVert
+			// tabAbout
 			// 
-			this.splitterVert.Dock = System.Windows.Forms.DockStyle.Top;
-			this.splitterVert.Location = new System.Drawing.Point(3, 360);
-			this.splitterVert.Name = "splitterVert";
-			this.splitterVert.Size = new System.Drawing.Size(487, 3);
-			this.splitterVert.TabIndex = 11;
-			this.splitterVert.TabStop = false;
+			this.tabAbout.Controls.Add(this.richTextBox2);
+			this.tabAbout.Controls.Add(this.linkLabel2);
+			this.tabAbout.Controls.Add(this.linkLabel1);
+			this.tabAbout.Controls.Add(this.richTextBox1);
+			this.tabAbout.Location = new System.Drawing.Point(4, 22);
+			this.tabAbout.Name = "tabAbout";
+			this.tabAbout.Size = new System.Drawing.Size(479, 318);
+			this.tabAbout.TabIndex = 1;
+			this.tabAbout.Text = "About";
 			// 
-			// descriptionBox
+			// richTextBox2
 			// 
-			this.descriptionBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.descriptionBox.Location = new System.Drawing.Point(3, 363);
-			this.descriptionBox.Name = "descriptionBox";
-			this.descriptionBox.ReadOnly = true;
-			this.descriptionBox.Size = new System.Drawing.Size(487, 104);
-			this.descriptionBox.TabIndex = 13;
-			this.descriptionBox.Text = "In here goes the demo description";
+			this.richTextBox2.Location = new System.Drawing.Point(56, 160);
+			this.richTextBox2.Name = "richTextBox2";
+			this.richTextBox2.ReadOnly = true;
+			this.richTextBox2.Size = new System.Drawing.Size(336, 112);
+			this.richTextBox2.TabIndex = 3;
+			this.richTextBox2.Text = "ZedGraph was written and is maintained by the following individuals:\n\nJohn Champi" +
+				"on\nJerry Vos\nBob Kaye\nDarren Martz\n\nZedGraph is Copyright © 2003-2005 by the aut" +
+				"hors.";
+			// 
+			// linkLabel2
+			// 
+			this.linkLabel2.Location = new System.Drawing.Point(88, 128);
+			this.linkLabel2.Name = "linkLabel2";
+			this.linkLabel2.Size = new System.Drawing.Size(248, 23);
+			this.linkLabel2.TabIndex = 2;
+			this.linkLabel2.TabStop = true;
+			this.linkLabel2.Text = "http://codeproject.com/csharp/zedgraph.asp";
+			// 
+			// linkLabel1
+			// 
+			this.linkLabel1.Location = new System.Drawing.Point(88, 104);
+			this.linkLabel1.Name = "linkLabel1";
+			this.linkLabel1.Size = new System.Drawing.Size(168, 23);
+			this.linkLabel1.TabIndex = 1;
+			this.linkLabel1.TabStop = true;
+			this.linkLabel1.Text = "http://zedgraph.sourceforge.net";
+			// 
+			// richTextBox1
+			// 
+			this.richTextBox1.Location = new System.Drawing.Point(56, 24);
+			this.richTextBox1.Name = "richTextBox1";
+			this.richTextBox1.ReadOnly = true;
+			this.richTextBox1.Size = new System.Drawing.Size(336, 72);
+			this.richTextBox1.TabIndex = 0;
+			this.richTextBox1.Text = "ZedGraph is an open-source charting library, released under the LGPL license (see" +
+				" the next tab).  Latest updates, samples, forums, and downloads are available on" +
+				" SourceForge.  An extensive tutorial article is available on CodeProject as well" +
+				".";
+			// 
+			// tabLicense
+			// 
+			this.tabLicense.Controls.Add(this.richTextBox3);
+			this.tabLicense.Location = new System.Drawing.Point(4, 22);
+			this.tabLicense.Name = "tabLicense";
+			this.tabLicense.Size = new System.Drawing.Size(479, 318);
+			this.tabLicense.TabIndex = 2;
+			this.tabLicense.Text = "License";
+			// 
+			// richTextBox3
+			// 
+			this.richTextBox3.Location = new System.Drawing.Point(24, 16);
+			this.richTextBox3.Name = "richTextBox3";
+			this.richTextBox3.ReadOnly = true;
+			this.richTextBox3.Size = new System.Drawing.Size(424, 272);
+			this.richTextBox3.TabIndex = 0;
+			this.richTextBox3.Text = @"ZedGraph Class Library - A Flexible Charting Library for .net
+Copyright (C) 2003  John Champion, Jerry Vos, Bob Kaye, Darren Martz
+
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 2.1 of the License, or (at your option) any later version. 
+
+This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for more details. 
+
+You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA";
 			// 
 			// ChartTabForm
 			// 
@@ -273,6 +369,8 @@ namespace ZedGraph.Demo
 			this.Text = "DemoForm";
 			this.chartDescGB.ResumeLayout(false);
 			this.displayTC.ResumeLayout(false);
+			this.tabAbout.ResumeLayout(false);
+			this.tabLicense.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}

@@ -118,6 +118,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph.Demo\BaseTicDemo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph.Demo\ChartTabForm.cs"
                     SubType = "Form"
                     BuildAction = "Compile"
@@ -222,6 +227,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph.Demo\MasterSampleDemo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph.Demo\ModInitialSampleDemo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -247,6 +257,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph.Demo\PieSampleDemo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph.Demo\SimpleDemo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -257,12 +272,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph.Demo\SmoothChartDemo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph.Demo\SortedOverlayBarDemo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "ZedGraph.Demo\StackedBarSampleDemo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph.Demo\StepChartDemo.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
