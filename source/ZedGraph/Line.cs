@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-03-09 06:42:36 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-03-31 23:42:58 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -393,18 +393,15 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="curve">A <see cref="LineItem"/> representing this
 		/// curve.</param>
-		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
-		/// true for the "Y2" axis, false for the "Y" axis.</param>
-		public void Draw( Graphics g, GraphPane pane, LineItem curve,
-                        bool isY2Axis, float scaleFactor )
+		public void Draw( Graphics g, GraphPane pane, LineItem curve, float scaleFactor )
         {
 			// If the line is being shown, draw it
 			if ( this.IsVisible )
 			{
 				if ( this.IsSmooth || this.Fill.IsVisible )
-                    DrawSmoothFilledCurve( g, pane, curve, isY2Axis, scaleFactor );
+                    DrawSmoothFilledCurve( g, pane, curve, scaleFactor );
                 else
-                    DrawCurve( g, pane, curve, isY2Axis, scaleFactor );
+                    DrawCurve( g, pane, curve, scaleFactor );
             }
 		}		
 
@@ -470,41 +467,45 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="curve">A <see cref="LineItem"/> representing this
 		/// curve.</param>
-		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
-		/// true for the "Y2" axis, false for the "Y" axis.</param>
 		public void DrawSmoothFilledCurve( Graphics g, GraphPane pane,
-                                LineItem curve, bool isY2Axis, float scaleFactor )
+                                LineItem curve, float scaleFactor )
         {
 			PointF[]	arrPoints;
 			int			count;
 			PointPairList points = curve.Points;
 
 			if ( this.IsVisible && !this.Color.IsEmpty && points != null &&
-				BuildPointsArray( pane, curve, isY2Axis, out arrPoints, out count ) &&
+				BuildPointsArray( pane, curve, out arrPoints, out count ) &&
 				count > 2 )
 			{
-                Pen pen = new Pen(this.Color, pane.ScaledPenWidth(width, scaleFactor));
+                Pen pen = new Pen(this.Color, pane.ScaledPenWidth( width, scaleFactor ) );
                 pen.DashStyle = this.Style;
 				float tension = this.isSmooth ? this.smoothTension : 0f;
 				
 				// Fill the curve if needed
 				if ( this.Fill.IsVisible )
 				{
+					Axis yAxis = curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis;
+
 					GraphicsPath path = new GraphicsPath( FillMode.Winding );
 					path.AddCurve( arrPoints, 0, count-2, tension );
 
-					double yMin = pane.YAxis.Min < 0 ? 0.0 : pane.YAxis.Min;
-					//double yMin = pane.YAxis.Min;
-					CloseCurve( pane, curve, arrPoints, isY2Axis, count, yMin, path );
+					double yMin = yAxis.Min < 0 ? 0.0 : yAxis.Min;
+					CloseCurve( pane, curve, arrPoints, count, yMin, path );
 				
-					Brush brush = this.fill.MakeBrush( path.GetBounds() );
+					RectangleF rect = path.GetBounds();
+					Brush brush = this.fill.MakeBrush( rect );
 					g.FillPath( brush, path );
-
 					brush.Dispose();
+
+					// restore the zero line if needed (since the fill tends to cover it up)
+					yAxis.FixZeroLine( g, pane, scaleFactor, rect.Left, rect.Right );
 				}
 
 				// Stroke the curve
 				g.DrawCurve( pen, arrPoints, 0, count-2, tension );
+
+				pen.Dispose();
 			}
 		}
 
@@ -533,10 +534,8 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="curve">A <see cref="LineItem"/> representing this
 		/// curve.</param>
-		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
-		/// true for the "Y2" axis, false for the "Y" axis.</param>
 		public void DrawCurve( Graphics g, GraphPane pane,
-                                LineItem curve, bool isY2Axis, float scaleFactor)
+                                LineItem curve, float scaleFactor)
         {
 			float	tmpX, tmpY,
 					lastX = 0,
@@ -545,8 +544,9 @@ namespace ZedGraph
 			bool	broke = true;
 			PointPairList points = curve.Points;
 			ValueHandler valueHandler = new ValueHandler( pane, false );
+			Axis yAxis = curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis;
 
-            Pen pen = new Pen(this.color, pane.ScaledPenWidth(width, scaleFactor));
+            Pen pen = new Pen( this.color, pane.ScaledPenWidth( width, scaleFactor ) );
             pen.DashStyle = this.Style;
 
 			if ( points != null && !this.color.IsEmpty && this.IsVisible )
@@ -579,8 +579,7 @@ namespace ZedGraph
 							System.Double.IsInfinity( curX ) ||
 							System.Double.IsInfinity( curY ) ||
 							( pane.XAxis.IsLog && curX <= 0.0 ) ||
-							( isY2Axis && pane.Y2Axis.IsLog && curY <= 0.0 ) ||
-							( !isY2Axis && pane.YAxis.IsLog && curY <= 0.0 ) )
+							( yAxis.IsLog && curY <= 0.0 ) )
 					{
 						broke = true;
 					}
@@ -589,10 +588,7 @@ namespace ZedGraph
 						// Transform the current point from user scale units to
 						// screen coordinates
 						tmpX = pane.XAxis.Transform( i, curX );
-						if ( isY2Axis )
-							tmpY = pane.Y2Axis.Transform( i, curY );
-						else
-							tmpY = pane.YAxis.Transform( i, curY );
+						tmpY = yAxis.Transform( i, curY );
 						
 						// off-scale values "break" the line
 						if ( tmpX < -1000000 || tmpX > 1000000 ||
@@ -637,14 +633,12 @@ namespace ZedGraph
 		/// owner of this object.</param>
 		/// <param name="curve">A <see cref="LineItem"/> representing this
 		/// curve.</param>
-		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
-		/// true for the "Y2" axis, false for the "Y" axis.</param>
 		/// <param name="arrPoints">An array of <see cref="PointF"/> values in pixel
 		/// coordinates representing the current curve.</param>
 		/// <param name="count">The number of points contained in the "arrPoints"
 		/// parameter.</param>
 		/// <returns>true for a successful points array build, false for data problems</returns>
-		public bool BuildPointsArray( GraphPane pane, LineItem curve, bool isY2Axis,
+		public bool BuildPointsArray( GraphPane pane, LineItem curve,
 			out PointF[] arrPoints, out int count )
 		{
 			arrPoints = null;
@@ -655,8 +649,8 @@ namespace ZedGraph
 			{
 				int		index = 0;
 				float	curX, curY,
-					lastX = 0,
-					lastY = 0;
+						lastX = 0,
+						lastY = 0;
 				double	x, y, lowVal;
 				ValueHandler valueHandler = new ValueHandler( pane, false );
 
@@ -688,7 +682,7 @@ namespace ZedGraph
 						
 						// Transform the user scale values to pixel locations
 						curX = pane.XAxis.Transform( i, x );
-						if ( isY2Axis )
+						if ( curve.IsY2Axis )
 							curY = pane.Y2Axis.Transform( i, y );
 						else
 							curY = pane.YAxis.Transform( i, y );
@@ -757,15 +751,13 @@ namespace ZedGraph
 		/// owner of this object.</param>
 		/// <param name="curve">A <see cref="LineItem"/> representing this
 		/// curve.</param>
-		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
-		/// true for the "Y2" axis, false for the "Y" axis.</param>
 		/// <param name="arrPoints">An array of <see cref="PointF"/> values in pixel
 		/// coordinates representing the current curve.</param>
 		/// <param name="count">The number of points contained in the "arrPoints"
 		/// parameter.</param>
 		/// <returns>true for a successful points array build, false for data problems</returns>
-		public bool BuildLowPointsArray( GraphPane pane, LineItem curve, bool isY2Axis,
-			out PointF[] arrPoints, out int count )
+		public bool BuildLowPointsArray( GraphPane pane, LineItem curve,
+						out PointF[] arrPoints, out int count )
 		{
 			arrPoints = null;
 			count = 0;
@@ -799,7 +791,7 @@ namespace ZedGraph
 						
 						// Transform the user scale values to pixel locations
 						curX = pane.XAxis.Transform( i, x );
-						if ( isY2Axis )
+						if ( curve.IsY2Axis )
 							curY = pane.Y2Axis.Transform( i, y );
 						else
 							curY = pane.YAxis.Transform( i, y );
@@ -863,13 +855,11 @@ namespace ZedGraph
 		/// curve.</param>
 		/// <param name="arrPoints">An array of <see cref="PointF"/> values in screen pixel
 		/// coordinates representing the current curve.</param>
-		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
-		/// true for the "Y2" axis, false for the "Y" axis.</param>
 		/// <param name="count">The number of points contained in the "arrPoints"
 		/// parameter.</param>
 		/// <param name="yMin">The Y axis value location where the X axis crosses.</param>
 		/// <param name="path">The <see cref="GraphicsPath"/> class that represents the curve.</param>
-		public void CloseCurve( GraphPane pane, LineItem curve, PointF[] arrPoints, bool isY2Axis,
+		public void CloseCurve( GraphPane pane, LineItem curve, PointF[] arrPoints,
 									int count, double yMin, GraphicsPath path )
 		{
 			// For non-stacked lines, the fill area is just the area between the curve and the X axis
@@ -878,7 +868,7 @@ namespace ZedGraph
 				// Determine the current value for the bottom of the curve (usually the Y value where
 				// the X axis crosses)
 				float yBase;
-				if ( isY2Axis )
+				if ( curve.IsY2Axis )
 					yBase = pane.Y2Axis.Transform( yMin );
 				else
 					yBase = pane.YAxis.Transform( yMin );
@@ -917,7 +907,7 @@ namespace ZedGraph
 				
 				// Build another points array consisting of the low points (which are actually the points for
 				// the curve below the current curve)
-				BuildLowPointsArray( pane, curve, isY2Axis, out arrPoints2, out count2 );
+				BuildLowPointsArray( pane, curve, out arrPoints2, out count2 );
 				
 				// Add the new points to the GraphicsPath
 				path.AddCurve( arrPoints2, 0, count2-2, tension );

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-03-25 16:19:57 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-03-31 23:43:00 $ </version>
 	[Serializable]
 	public class LineItem : CurveItem, ICloneable, ISerializable
 	{
@@ -200,9 +200,9 @@ namespace ZedGraph
 		{
 			if ( this.isVisible )
 			{
-				Line.Draw( g, pane, this, isY2Axis, scaleFactor );
+				Line.Draw( g, pane, this, scaleFactor );
 				
-				Symbol.Draw( g, pane, this, isY2Axis, scaleFactor );
+				Symbol.Draw( g, pane, this, scaleFactor );
 			}
 		}		
 

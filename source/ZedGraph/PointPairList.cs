@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.20 $ $Date: 2005-03-11 17:24:38 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2005-03-31 23:43:08 $ </version>
 	[Serializable]
 	public class PointPairList : CollectionPlus, ICloneable
 	{
@@ -388,6 +388,84 @@ namespace ZedGraph
 			return false;
 		}
 		
+		/// <summary>
+		/// Set the X values for this <see cref="PointPairList"/> from the specified
+		/// array of double values.
+		/// </summary>
+		/// <remarks>
+		/// If <see paramref="x"/> has more values than
+		/// this list, then the extra values will be ignored.  If <see paramref="x"/>
+		/// has less values, then the corresponding <see cref="PointPairList"/> values
+		/// will not be changed.  That is, if the <see cref="PointPairList"/> has 20 values
+		/// and <see paramref="x"/> has 15 values, then the first 15 values of the
+		/// <see cref="PointPairList"/> will be changed, and the last 5 values will not be
+		/// changed.
+		/// </remarks>
+		/// <param name="x">An array of double values that will replace the existing X
+		/// values in the <see cref="PointPairList"/>.</param>
+		public void SetX( double[] x )
+		{
+			for ( int i=0; i<x.Length; i++ )
+			{
+				if ( i < this.Count )
+					this[i].X = x[i];
+			}
+				
+			sorted = false;
+		}
+
+		/// <summary>
+		/// Set the Y values for this <see cref="PointPairList"/> from the specified
+		/// array of double values.
+		/// </summary>
+		/// <remarks>
+		/// If <see paramref="y"/> has more values than
+		/// this list, then the extra values will be ignored.  If <see paramref="y"/>
+		/// has less values, then the corresponding <see cref="PointPairList"/> values
+		/// will not be changed.  That is, if the <see cref="PointPairList"/> has 20 values
+		/// and <see paramref="y"/> has 15 values, then the first 15 values of the
+		/// <see cref="PointPairList"/> will be changed, and the last 5 values will not be
+		/// changed.
+		/// </remarks>
+		/// <param name="y">An array of double values that will replace the existing Y
+		/// values in the <see cref="PointPairList"/>.</param>
+		public void SetY( double[] y )
+		{
+			for ( int i=0; i<y.Length; i++ )
+			{
+				if ( i < this.Count )
+					this[i].Y = y[i];
+			}
+				
+			sorted = false;
+		}
+
+		/// <summary>
+		/// Set the Z values for this <see cref="PointPairList"/> from the specified
+		/// array of double values.
+		/// </summary>
+		/// <remarks>
+		/// If <see paramref="z"/> has more values than
+		/// this list, then the extra values will be ignored.  If <see paramref="z"/>
+		/// has less values, then the corresponding <see cref="PointPairList"/> values
+		/// will not be changed.  That is, if the <see cref="PointPairList"/> has 20 values
+		/// and <see paramref="z"/> has 15 values, then the first 15 values of the
+		/// <see cref="PointPairList"/> will be changed, and the last 5 values will not be
+		/// changed.
+		/// </remarks>
+		/// <param name="z">An array of double values that will replace the existing Z
+		/// values in the <see cref="PointPairList"/>.</param>
+		public void SetZ( double[] z )
+		{
+			for ( int i=0; i<z.Length; i++ )
+			{
+				if ( i < this.Count )
+					this[i].Z = z[i];
+			}
+				
+			sorted = false;
+		}
+
 		/// <summary>
 		/// Add the Y values from the specified <see cref="PointPairList"/> object to this
 		/// <see cref="PointPairList"/>.  If <see paramref="sumList"/> has more values than

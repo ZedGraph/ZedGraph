@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.27 $ $Date: 2005-03-21 06:15:45 $ </version>
+	/// <version> $Revision: 3.28 $ $Date: 2005-03-31 23:42:55 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -2544,11 +2544,13 @@ namespace ZedGraph
 					space += this.GetScaleMaxSpace( g, pane, scaleFactor ).Height +
 							ticSize * 2.0F;
 		
+				string str = MakeTitle();
+
 				// Only add space for the label if there is one
 				// Axis Title gets actual height plus 1x gap
-				if ( this.title.Length > 0 && this.isShowTitle )
+				if ( str.Length > 0 && this.isShowTitle )
 				{
-					space += this.TitleFontSpec.BoundingBox( g, this.title, scaleFactor ).Height;
+					space += this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height;
 				}
 			}
 
@@ -2556,6 +2558,7 @@ namespace ZedGraph
 			// and last X axis scale label
 			if ( ( ( this is YAxis ) || ( this is Y2Axis ) ) && pane.XAxis.IsVisible )
 			{
+				// half the width of the widest item, plus a gap of 1/2 the charheight
 				float tmpSpace =
 					pane.XAxis.GetScaleMaxSpace( g, pane, scaleFactor ).Width / 2.0F +
 							charHeight / 2.0F;
@@ -2657,6 +2660,22 @@ namespace ZedGraph
 			}
 		}
 	
+		internal void FixZeroLine( Graphics g, GraphPane pane, float scaleFactor,
+				float left, float right )
+		{
+			// restore the zero line if needed (since the fill tends to cover it up)
+			if ( this.isVisible && this.isZeroLine &&
+					this.Min < 0.0 && this.Max > 0.0 )
+			{
+				float zeroPix = this.Transform( 0.0 );
+
+				Pen zeroPen = new Pen( this.Color,
+						pane.ScaledPenWidth( this.TicPenWidth, scaleFactor ) );
+				g.DrawLine( zeroPen, left, zeroPix, right, zeroPix );
+				zeroPen.Dispose();
+			}
+		}
+
 		/// <summary>
 		/// Internal routine to calculate a multiplier to the selected unit back to days.
 		/// </summary>
@@ -3406,16 +3425,11 @@ namespace ZedGraph
 		/// </param>
 		public void DrawTitle( Graphics g, GraphPane pane, float shift, float scaleFactor )
 		{
-			string str;
-
-			if ( this.ScaleMag != 0 && ! this.IsOmitMag )
-				str = this.title + String.Format( " (10^{0})", this.ScaleMag );
-			else
-				str = this.title;
+			string str = MakeTitle();
 
 			// If the Axis is visible, draw the title
 			if ( this.isVisible && this.isShowTitle && str.Length > 0 )
-			{		
+			{
 				// Calculate the title position in screen coordinates
 				float x = ( this.maxPix - this.minPix ) / 2;
 
@@ -3439,6 +3453,15 @@ namespace ZedGraph
 				this.TitleFontSpec.Draw( g, pane.IsPenWidthScaled, str, x, y,
 							AlignH.Center, alignV, scaleFactor );
 			}
+		}
+
+		private string MakeTitle()
+		{
+			if ( this.scaleMag != 0 && ! this.isOmitMag )
+				return this.title + String.Format( " (10^{0})", this.scaleMag );
+			else
+				return this.title;
+
 		}
 		
 		/// <summary>
