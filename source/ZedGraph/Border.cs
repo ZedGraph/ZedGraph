@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-12-10 08:33:14 $ </version>
 	public class Border
 	{
 		#region Fields
@@ -106,7 +106,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="color">The color of the Border</param>
         /// <param name="penWidth">The width, in points (1/72 inch), for the Border.</param>
-        public Border( Color color, float penWidth ) : this( true, color, penWidth )
+        public Border( Color color, float penWidth ) :
+				this( !color.IsEmpty, color, penWidth )
 		{
 		}
 

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-12-10 08:33:14 $ </version>
 	public class ImageItem : GraphItem, ICloneable
 	{
 	#region Fields
@@ -104,7 +104,7 @@ namespace ZedGraph
 		/// image location, specifed in units based on the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		public ImageItem( Image image, RectangleF rect ) :
-				this( image, rect.X, rect.Y, rect.Right, rect.Bottom )
+				this( image, rect.X, rect.Y, rect.Width, rect.Height )
 		{
 		}
 
@@ -128,7 +128,8 @@ namespace ZedGraph
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
 		public ImageItem( Image image, RectangleF rect, CoordType coordType,
 					AlignH alignH, AlignV alignV ) :
-				base( rect.X, rect.Y, rect.Right, rect.Bottom, coordType, alignH, alignV )
+				base( rect.X, rect.Y, rect.Width, rect.Height, coordType,
+					alignH, alignV )
 		{
 			this.image = image;
 			isScaled = Default.IsScaled;
@@ -148,14 +149,15 @@ namespace ZedGraph
 		/// <param name="top">The position of the top side of the rectangle that defines the
 		/// <see cref="ImageItem"/> location.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		/// <param name="right">The position of the right side of the rectangle that defines the
+		/// <param name="width">The width of the rectangle that defines the
 		/// <see cref="ImageItem"/> location.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		/// <param name="bottom">The position of the bottom side of the rectangle that defines the
+		/// <param name="height">The height of the rectangle that defines the
 		/// <see cref="ImageItem"/> location.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		public ImageItem( Image image, float left, float top, float right, float bottom ) :
-				base( left, top, right, bottom )
+		public ImageItem( Image image, float left, float top,
+					float width, float height ) :
+				base( left, top, width, height )
 		{
 			this.image = image;
 			isScaled = Default.IsScaled;

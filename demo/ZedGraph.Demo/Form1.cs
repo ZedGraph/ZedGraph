@@ -1679,7 +1679,7 @@ namespace ZedGraphTest
 			arrow.PenWidth = 2.0F;
 			myPane.GraphItemList.Add( arrow );
 
-			text = new TextItem("Confidential", 0.8F, -0.03F );
+			text = new TextItem("Confidential", 0.85F, -0.03F );
 			text.Location.CoordinateFrame = CoordType.AxisFraction;
 
 			text.FontSpec.Angle = 15.0F;
@@ -1693,17 +1693,37 @@ namespace ZedGraphTest
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
 			myPane.GraphItemList.Add( text );
+
+			BoxItem box = new BoxItem( new RectangleF( 0, 115, 1200, 20 ),
+					Color.Empty, Color.FromArgb( 250, 210, 225) );
+			box.Location.CoordinateFrame = CoordType.AxisXYScale;
 			
-			myPane.IsPenWidthScaled = false ;
+//			BoxItem box = new BoxItem( new RectangleF( 0F, .2F, 1F, .2F ),
+//					Color.Empty, Color.PeachPuff );
+//			box.Location.CoordinateFrame = CoordType.AxisFraction;
+			//box.Border.IsVisible = false;
+			box.Location.AlignH = AlignH.Left;
+			box.Location.AlignV = AlignV.Top;
+			box.ZOrder = ZOrder.E_BehindAxis;
+			myPane.GraphItemList.Add( box );
+			
+			text = new TextItem( "Peak Range", 1170, 105 );
+			text.Location.CoordinateFrame = CoordType.AxisXYScale;
+			text.Location.AlignH = AlignH.Right;
+			text.Location.AlignV = AlignV.Center;
+			text.FontSpec.IsItalic = true;
+			text.FontSpec.IsBold = false;
+			text.FontSpec.Fill.IsVisible = false;
+			text.FontSpec.Border.IsVisible = false;
+			myPane.GraphItemList.Add( text );
 
-			RectangleF rect = new RectangleF( .5F, .2F, .2F, .2F );
-			EllipseItem ellipse = new EllipseItem( rect, Color.Blue, 
-				Color.Goldenrod );
-			ellipse.Location.CoordinateFrame = CoordType.PaneFraction;
-			ellipse.ZOrder = ZOrder.G_BehindAll;
-			myPane.GraphItemList.Add( ellipse );
+//			RectangleF rect = new RectangleF( .5F, .2F, .2F, .2F );
+//			EllipseItem ellipse = new EllipseItem( rect, Color.Black, Color.Blue );
+//			ellipse.Location.CoordinateFrame = CoordType.PaneFraction;
+//			ellipse.ZOrder = ZOrder.G_BehindAll;
+//			myPane.GraphItemList.Add( ellipse );
 
-			myPane.CurveList.Remove( myPane.CurveList.IndexOf( bar ) );
+			//myPane.CurveList.Remove( myPane.CurveList.IndexOf( bar ) );
 
 //			Bitmap bm = new Bitmap( @"c:\temp\sunspot.jpg" );
 			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );

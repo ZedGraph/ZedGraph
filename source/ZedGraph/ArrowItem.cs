@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2004-12-10 08:33:14 $ </version>
 	public class ArrowItem : GraphItem, ICloneable
 	{
 	#region Fields
@@ -161,14 +161,17 @@ namespace ZedGraph
 		/// <param name="y2">The y position of the ending point that defines the
 		/// arrow.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		public ArrowItem( Color color, float size, float x1, float y1, float x2, float y2 ) :
-				base( x1, y1, x2, y2 )
+		public ArrowItem( Color color, float size, float x1, float y1,
+					float x2, float y2 ) :
+				base( x1, y1, x2-x1, y2-y1 )
 		{
 			this.penWidth = Default.PenWidth;
 			isArrowHead = Default.IsArrowHead;
 
 			this.color = color;
 			this.size = size;
+			this.Location.AlignH = AlignH.Left;
+			this.Location.AlignV = AlignV.Top;
 		}
 
 		/// <summary>
@@ -189,7 +192,7 @@ namespace ZedGraph
 		/// <see cref="ArrowItem"/>.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		public ArrowItem( float x1, float y1, float x2, float y2 ) :
-				this( Default.Color, Default.Size, x1, y1, x2, y2 )
+				this( Default.Color, Default.Size, x1, y1, x2-x1, y2-y1 )
 		{
 		}
 

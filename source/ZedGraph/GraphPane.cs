@@ -44,7 +44,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.17 $ $Date: 2004-12-10 05:45:55 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2004-12-10 08:33:14 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1056,6 +1056,13 @@ namespace ZedGraph
 							this.yAxis.Min < this.yAxis.Max &&
 							this.y2Axis.Min < this.y2Axis.Max;
 
+			// Setup the axes from graphing - This setup must be done before
+			// the GraphItem's are drawn so that the Transform functions are
+			// ready.
+			this.xAxis.SetupScaleData( this );
+			this.yAxis.SetupScaleData( this );
+			this.y2Axis.SetupScaleData( this );
+
 			// Draw the GraphItems that are behind everything
 			if ( showGraf )
 				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.G_BehindAll );
@@ -1073,11 +1080,6 @@ namespace ZedGraph
 			
 				// Draw the GraphItems that are behind the Axis objects
 				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.E_BehindAxis );
-
-				// Setup the axes from graphing
-				//this.xAxis.SetupScaleData( this );
-				//this.yAxis.SetupScaleData( this );
-				//this.y2Axis.SetupScaleData( this );
 
 				// Draw the Axes
 				this.xAxis.Draw( g, this, scaleFactor );

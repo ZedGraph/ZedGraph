@@ -27,7 +27,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-11-19 06:41:05 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-12-10 08:33:14 $ </version>
 	public class Location : ICloneable
 	{
 	#region Private Fields
@@ -49,8 +49,8 @@ namespace ZedGraph
 		/// </summary>
 		private float		x,
 							y,
-							x2,
-							y2;
+							width,
+							height;
 							
 		/// <summary>
 		/// Private field to store the coordinate system to be used for defining the
@@ -147,23 +147,48 @@ namespace ZedGraph
 			set { y = value; }
 		}
 		/// <summary>
+		/// The width of the object.
+		/// </summary>
+		/// <remarks>
+		/// The units of this position are specified by the
+		/// <see cref="CoordinateFrame"/> property.
+		/// </remarks>
+		public float Width
+		{
+			get { return width; }
+			set { width = value; }
+		}
+		/// <summary>
+		/// The height of the object.
+		/// </summary>
+		/// <remarks>
+		/// The units of this position are specified by the
+		/// <see cref="CoordinateFrame"/> property.
+		/// </remarks>
+		public float Height
+		{
+			get { return height; }
+			set { height = value; }
+		}
+		/// <summary>
 		/// The x2 position of the object.
 		/// </summary>
 		/// <remarks>
-		/// The units of this position
-		/// are specified by the <see cref="CoordinateFrame"/> property.
+		/// The units of this position are specified by the
+		/// <see cref="CoordinateFrame"/> property.
 		/// The object will be aligned to this position based on the
 		/// <see cref="AlignH"/> property.  This position is only used for
 		/// objects such as <see cref="ArrowItem"/>, where it makes sense
-		/// to have a second coordinate.
+		/// to have a second coordinate.  Note that the X2 position is stored
+		/// internally as a <see cref="Width"/> offset from <see cref="X"/>.
 		/// </remarks>
 		public float X2
 		{
-			get { return x2; }
-			set { x2 = value; }
+			get { return x+width; }
+			//set { width = value-x; }
 		}
 		/// <summary>
-		/// The x position of the object.
+		/// The y2 position of the object.
 		/// </summary>
 		/// <remarks>
 		/// The units of this position
@@ -171,29 +196,31 @@ namespace ZedGraph
 		/// The object will be aligned to this position based on the
 		/// <see cref="AlignV"/> property.  This position is only used for
 		/// objects such as <see cref="ArrowItem"/>, where it makes sense
-		/// to have a second coordinate.
+		/// to have a second coordinate.  Note that the Y2 position is stored
+		/// internally as a <see cref="Height"/> offset from <see cref="Y"/>.
 		/// </remarks>
 		public float Y2
 		{
-			get { return y2; }
-			set { y2 = value; }
+			get { return y+height; }
+			//set { height = value-y; }
 		}
 
 		/// <summary>
 		/// The <see cref="RectangleF"/> for this object as defined by the
-		/// <see cref="X"/>, <see cref="Y"/>, <see cref="X2"/>, and <see cref="Y2"/>
-		/// properties.
+		/// <see cref="X"/>, <see cref="Y"/>, <see cref="Width"/>, and
+		/// <see cref="Height"/> properties.
 		/// </summary>
-		/// <value>A <see cref="RectangleF"/> in <see cref="CoordinateFrame"/> units.</value>
+		/// <value>A <see cref="RectangleF"/> in <see cref="CoordinateFrame"/>
+		/// units.</value>
 		public RectangleF Rect
 		{
-			get { return new RectangleF( this.x, this.y, this.x2 - this.x, this.y2 - this.y ); }
+			get { return new RectangleF( this.x, this.y, this.width, this.height ); }
 			set
 			{
 				this.x = value.X;
 				this.y = value.Y;
-				this.x2 = value.X + value.Width;
-				this.y2 = value.Y + value.Height;
+				this.width = value.Width;
+				this.height = value.Height;
 			}
 		}
 
@@ -214,7 +241,7 @@ namespace ZedGraph
 		public PointF BottomRight
 		{
 			get { return new PointF( this.X2, this.Y2 ); }
-			set { this.X2 = value.X; this.Y2 = value.Y; }
+			//set { this.X2 = value.X; this.Y2 = value.Y; }
 		}
 	#endregion
 	
@@ -258,8 +285,8 @@ namespace ZedGraph
 		{
 			this.x = x;
 			this.y = y;
-			this.x2 = 0;
-			this.y2 = 0;
+			this.width = 0;
+			this.height = 0;
 			this.coordinateFrame = coordType;
 			this.alignH = alignH;
 			this.alignV = alignV;
@@ -288,11 +315,12 @@ namespace ZedGraph
 		/// the horizontal alignment of the object with respect to the (x,y) location</param>
 		/// <param name="alignV">The <see cref="ZedGraph.AlignV"/> enum that specifies
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
-		public Location( float x, float y, float x2, float y2, CoordType coordType, AlignH alignH, AlignV alignV ) :
-			this( x, y, coordType, alignH, alignV )
+		public Location( float x, float y, float width, float height,
+			CoordType coordType, AlignH alignH, AlignV alignV ) :
+				this( x, y, coordType, alignH, alignV )
 		{
-			this.x2 = x2;
-			this.y2 = y2;
+			this.width = width;
+			this.height = height;
 		}
 		
 		/// <summary>
@@ -303,8 +331,8 @@ namespace ZedGraph
 		{
 			this.x = rhs.x;
 			this.y = rhs.y;
-			this.x2 = rhs.x2;
-			this.y2 = rhs.y2;
+			this.width = rhs.width;
+			this.height = rhs.height;
 			this.coordinateFrame = rhs.CoordinateFrame;
 			this.alignH = rhs.AlignH;
 			this.alignV = rhs.AlignV;
@@ -333,7 +361,8 @@ namespace ZedGraph
 		/// specified user point.</returns>
 		public PointF Transform( GraphPane pane )
 		{
-			return Transform( pane, new PointF( this.x, this.y ), this.coordinateFrame );
+			return Transform( pane, new PointF( this.x, this.y ),
+						this.coordinateFrame );
 		}
 		
 		/// <summary>
@@ -432,8 +461,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// The <see cref="PointF"/> for this object as defined by the
-		/// <see cref="X2"/> and <see cref="Y2"/>
-		/// properties.
+		/// <see cref="X2"/> and <see cref="Y2"/> properties.
 		/// </summary>
 		/// <remarks>
 		/// This method transforms the location to output device pixel units.
@@ -443,14 +471,14 @@ namespace ZedGraph
 		/// <value>A <see cref="PointF"/> in pixel units.</value>
 		public PointF TransformBottomRight( GraphPane pane )
 		{
-			return Transform( pane, new PointF( this.x2, this.y2 ),
+			return Transform( pane, new PointF( this.X2, this.Y2 ),
 				this.coordinateFrame );
 		}
 
 		/// <summary>
 		/// Transform the <see cref="RectangleF"/> for this object as defined by the
-		/// <see cref="X"/>, <see cref="Y"/>, <see cref="X2"/>, and <see cref="Y2"/>
-		/// properties.
+		/// <see cref="X"/>, <see cref="Y"/>, <see cref="Width"/>, and
+		/// <see cref="Height"/> properties.
 		/// </summary>
 		/// <remarks>
 		/// This method transforms the location to output device pixel units.
@@ -462,9 +490,9 @@ namespace ZedGraph
 		{
 			PointF pix1 = TransformTopLeft( pane );
 			PointF pix2 = TransformBottomRight( pane );
-			PointF pix3 = TransformTopLeft( pane, pix2.X - pix1.X, pix2.Y - pix1.Y );
+			//PointF pix3 = TransformTopLeft( pane, pix2.X - pix1.X, pix2.Y - pix1.Y );
 
-			return new RectangleF( pix3.X, pix3.Y, pix2.X - pix1.X, pix2.Y - pix1.Y );
+			return new RectangleF( pix1.X, pix1.Y, Math.Abs(pix2.X - pix1.X), Math.Abs(pix2.Y - pix1.Y) );
 		}
 
 	#endregion

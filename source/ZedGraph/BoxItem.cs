@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-12-10 08:33:14 $ </version>
 	public class BoxItem : GraphItem, ICloneable
 	{
 	#region Fields
@@ -110,7 +110,7 @@ namespace ZedGraph
 		/// the box.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
 		public BoxItem( RectangleF rect, Color borderColor, Color fillColor ) :
-				base( rect.Left, rect.Top, rect.Left+rect.Width, rect.Top+rect.Height )
+				base( rect.Left, rect.Top, rect.Width, rect.Height )
 		{
 			this.Border = new Border( borderColor, Default.PenWidth );
 			this.Fill = new Fill( fillColor );
@@ -132,7 +132,7 @@ namespace ZedGraph
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
 		public BoxItem( RectangleF rect, Color borderColor,
 							Color fillColor1, Color fillColor2 ) :
-				base( rect.Left, rect.Top, rect.Left+rect.Width, rect.Top+rect.Height )
+				base( rect.Left, rect.Top, rect.Width, rect.Height )
 		{
 			this.Border = new Border( borderColor, Default.PenWidth );
 			this.Fill = new Fill( fillColor1, fillColor2 );
