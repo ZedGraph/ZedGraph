@@ -312,7 +312,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if false	// Test Line Stacking
+#if true	// Test Line Stacking
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -848,7 +848,7 @@ namespace ZedGraphTest
 			myPane.AxisChange( CreateGraphics() );
 #endif
 
-#if true	// The initial sample
+#if false	// The initial sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Graph\n(For CodeProject Sample)",

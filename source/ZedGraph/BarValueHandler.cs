@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-01-05 15:55:50 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-01-08 08:28:07 $ </version>
 	public class BarValueHandler
 	{
 		private GraphPane pane;
@@ -71,8 +71,9 @@ namespace ZedGraph
 		/// Get the user scale values associate with a particular point of a
 		/// particular curve.</summary>
 		/// <remarks>The main purpose of this method is to handle
-		/// stacked bars, in which case the stacked values are returned rather
-		/// than the individual data values.
+		/// stacked bars and lines, in which case the stacked values are returned rather
+		/// than the individual data values.  However, this method works generically for any
+		/// curve type.
 		/// </remarks>
 		/// <param name="pane">The parent <see cref="GraphPane"/> object.</param>
 		/// <param name="curve">A <see cref="CurveItem"/> object of interest.</param>
@@ -102,33 +103,42 @@ namespace ZedGraph
 			else
 				baseVal = curve.Points[iPt].Y;
 
+			// is it a stacked bar type?
 			if ( curve is BarItem && ( pane.BarType == BarType.Stack ||
 						pane.BarType == BarType.PercentStack ) )
 			{
 				double positiveStack = 0;
 				double negativeStack = 0;
 				double curVal;
+
+				// loop through all the curves, summing up the values to get a total (only
+				// for the current ordinal position iPt)
 				foreach ( CurveItem tmpCurve in pane.CurveList )
-				//for ( int iCurve=pane.CurveList.Count-1; iCurve >=0; iCurve-- )
 				{
-					//CurveItem tmpCurve = pane.CurveList[iCurve];
+					// Sum the value for the current curve only if it is a bar, and only if
+					// it has a point for this ordinal position
 					if ( tmpCurve.IsBar && iPt < tmpCurve.Points.Count )
 					{
+						// Get the value for the appropriate value axis
 						if ( baseAxis is XAxis )
 							curVal = tmpCurve.Points[iPt].Y;
 						else
 							curVal = tmpCurve.Points[iPt].X;
 
+						// If it's a missing value, skip it
 						if ( curVal == PointPair.Missing )
 							continue;
 
+						// the current curve is the target curve, save the summed values for later
 						if ( tmpCurve == curve )
 						{
+							// if the value is positive, use the positive stack
 							if ( curVal >= 0 )
 							{
 								lowVal = positiveStack;
 								hiVal = positiveStack + curVal;
 							}
+							// otherwise, use the negative stack
 							else
 							{
 								hiVal = negativeStack;
@@ -136,6 +146,8 @@ namespace ZedGraph
 							}
 						}
 
+						// Add all positive values to the positive stack, and negative values to the
+						// negative stack
 						if ( curVal >= 0 )
 							positiveStack += curVal;
 						else
@@ -143,12 +155,18 @@ namespace ZedGraph
 					}
 				}
 
+				// if the curve is a PercentStack type, then calculate the percent for this bar
+				// based on the total height of the stack
 				if ( pane.BarType == BarType.PercentStack )
 				{
+					// Use the total magnitude of the positive plus negative bar stacks to determine
+					// the percentage value
 					positiveStack += Math.Abs( negativeStack );
 
+					// just to avoid dividing by zero...
 					if ( positiveStack != 0 )
 					{
+						// calculate the percentage values
 						lowVal = lowVal / positiveStack * 100.0;
 						hiVal = hiVal / positiveStack * 100.0;
 					}
@@ -165,25 +183,36 @@ namespace ZedGraph
 				else
 					return true;
 			}
+			// If the curve is a stacked line type, then sum up the values similar to the stacked bar type
 			else if ( curve is LineItem && pane.LineType == LineType.Stack )
 			{
 				double stack = 0;
 				double curVal;
+
+				// loop through all the curves, summing up the values to get a total (only
+				// for the current ordinal position iPt)
 				foreach ( CurveItem tmpCurve in pane.CurveList )
 				{
+					// make sure the curve is a Line type, and that it has a value for the
+					// current ordinal position iPt.
 					if ( tmpCurve is LineItem && iPt < tmpCurve.Points.Count )
 					{
+						// For line types, the Y axis is always the value axis
 						curVal = tmpCurve.Points[iPt].Y;
 
+						// if the current value is missing, skip it
 						if ( curVal == PointPair.Missing )
 							continue;
 
+						// if the current curve is the target curve, save the values
 						if ( tmpCurve == curve )
 						{
 							lowVal = stack;
 							hiVal = stack + curVal;
 						}
 
+						// sum all the curves to a single total.  This includes both positive and
+						// negative values (unlike the bar stack type).
 						stack += curVal;
 					}
 				}
@@ -194,6 +223,7 @@ namespace ZedGraph
 				else
 					return true;
 			}
+			// otherwise, the curve is not a stacked type (not a stacked bar or stacked line)
 			else
 			{
 				if ( curve is BarItem )

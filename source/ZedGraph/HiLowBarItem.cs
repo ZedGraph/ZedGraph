@@ -54,7 +54,7 @@ namespace ZedGraph
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2005-01-06 02:46:28 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2005-01-08 08:28:07 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -138,7 +138,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
 		/// </param>
-		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
 		protected HiLowBarItem( SerializationInfo info, StreamingContext context ) : base( info, context )
 		{
@@ -153,7 +153,7 @@ namespace ZedGraph
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
-		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
 		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
 		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
@@ -283,7 +283,6 @@ namespace ZedGraph
 		}
 
 	#endregion
-
 
 	}
 }

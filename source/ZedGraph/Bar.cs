@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.13 $ $Date: 2005-01-06 02:46:27 $ </version>
+   /// <version> $Revision: 3.14 $ $Date: 2005-01-08 08:28:07 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -152,7 +152,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
 		/// </param>
-		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
 		protected Bar( SerializationInfo info, StreamingContext context )
 		{
@@ -167,7 +167,7 @@ namespace ZedGraph
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
-		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
 		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
@@ -230,7 +230,7 @@ namespace ZedGraph
 		/// <param name="fullFrame">true to draw the bottom portion of the border around the
 		/// bar (this is for legend entries)</param> 
 		public void Draw( Graphics g, GraphPane pane, float left, float right, float top,
-		float bottom, double scaleFactor, bool fullFrame )
+							float bottom, double scaleFactor, bool fullFrame )
 		{
 			// Do a sanity check to make sure the top < bottom.  If not, reverse them
 			if ( top > bottom )
@@ -275,7 +275,7 @@ namespace ZedGraph
 		/// <param name="fullFrame">true to draw the bottom portion of the border around the
 		/// bar (this is for legend entries)</param> 
 		public void Draw( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor,
-		bool fullFrame )
+							bool fullFrame )
 		{
 			// Fill the Bar
 			if ( this.fill.IsVisible )
@@ -335,7 +335,7 @@ namespace ZedGraph
 					pane.BarType == BarType.PercentStack )
 				pos = 0;
 
-			// Loop over each defined point                   
+			// Loop over each defined point and draw the corresponding bar                
 			for ( int i=0; i<curve.Points.Count; i++ )
 				DrawSingleBar( g, pane, curve, i, pos, baseAxis, valueAxis, scaleFactor );
 		}
@@ -377,10 +377,9 @@ namespace ZedGraph
 									Axis baseAxis, Axis valueAxis,
 									int pos, int index, double scaleFactor )
 		{
+			// Make sure that a bar value exists for the current curve and current ordinal position
 			if ( index >= curve.Points.Count )
 				return;
-
-			//SetupBarStack( valueAxis, curve.Points.Count );
 
 			// For Overlay and Stack bars, the position is always zero since the bars are on top
 			// of eachother
@@ -388,6 +387,7 @@ namespace ZedGraph
 					pane.BarType == BarType.PercentStack )
 				pos = 0;
 
+			// Draw the specified bar
 			DrawSingleBar( g, pane, curve, index, pos, baseAxis, valueAxis, scaleFactor );
 		}
 

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-01-06 02:46:28 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-01-08 08:28:07 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -241,7 +241,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
 		/// </param>
-		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
 		protected Symbol( SerializationInfo info, StreamingContext context )
 		{
@@ -259,7 +259,7 @@ namespace ZedGraph
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
-		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
 		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
@@ -693,10 +693,15 @@ namespace ZedGraph
 				// Loop over each defined point							
 				for ( int i=0; i<points.Count; i++ )
 				{
+					// Get the user scale values for the current point
+					// use the valueHandler only for stacked types
 					if ( pane.LineType == LineType.Stack )
 					{
 						valueHandler.GetBarValues( curve, i, out curX, out lowVal, out curY );
 					}
+					// otherwise, just access the values directly.  Avoiding the valueHandler for
+					// non-stacked types is an optimization to minimize overhead in case there are
+					// a large number of points.
 					else
 					{
 						curX = points[i].X;
@@ -709,23 +714,28 @@ namespace ZedGraph
 					// Also, any value <= zero on a log scale is invalid
 				
 					if (	curX != PointPair.Missing &&
-						curY != PointPair.Missing &&
-						!System.Double.IsNaN( curX ) &&
-						!System.Double.IsNaN( curY ) &&
-						!System.Double.IsInfinity( curX ) &&
-						!System.Double.IsInfinity( curY ) &&
-						( curX > 0 || !pane.XAxis.IsLog ) &&
-						( isY2Axis || !pane.YAxis.IsLog || curY > 0.0 ) &&
-						( !isY2Axis || !pane.Y2Axis.IsLog || curY > 0.0 ) )
+							curY != PointPair.Missing &&
+							!System.Double.IsNaN( curX ) &&
+							!System.Double.IsNaN( curY ) &&
+							!System.Double.IsInfinity( curX ) &&
+							!System.Double.IsInfinity( curY ) &&
+							( curX > 0 || !pane.XAxis.IsLog ) &&
+							( isY2Axis || !pane.YAxis.IsLog || curY > 0.0 ) &&
+							( !isY2Axis || !pane.Y2Axis.IsLog || curY > 0.0 ) )
 					{
+						// Transform the user scale values to pixel locations
 						tmpX = pane.XAxis.Transform( curX );
 						if ( isY2Axis )
 							tmpY = pane.Y2Axis.Transform( curY );
 						else
 							tmpY = pane.YAxis.Transform( curY );
 
+						// If the fill type for this symbol is a Gradient by value type,
+						// the make a brush corresponding to the appropriate current value
 						if ( this.fill.IsGradientValueType )
 							brush = fill.MakeBrush( rect, points[i] );
+						// Otherwise, the brush is already defined
+						// Draw the symbol at the specified pixel location
 						this.DrawSymbol( g, tmpX, tmpY, path, pen, brush );		
 					}
 				}

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-01-06 02:46:27 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-01-08 08:28:07 $ </version>
 	[Serializable]
 	abstract public class GraphItem : ISerializable
 	{
@@ -313,7 +313,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
 		/// </param>
-		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
 		protected GraphItem( SerializationInfo info, StreamingContext context )
 		{
@@ -330,7 +330,7 @@ namespace ZedGraph
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
-		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
 		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-01-06 02:46:27 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2005-01-08 08:28:06 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -949,7 +949,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
 		/// </param>
-		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
 		protected Axis( SerializationInfo info, StreamingContext context )
 		{
@@ -1024,7 +1024,7 @@ namespace ZedGraph
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
-		/// <param name="context">A <see cref="StreamingContect"/> instance that contains the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
 		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
@@ -2332,7 +2332,7 @@ namespace ZedGraph
 				dVal = CalcMajorTicValue( startVal, i );
 
 				// draw the label
-				MakeLabel( i, dVal, out tmpStr );
+				MakeLabel( pane, i, dVal, out tmpStr );
 
 				SizeF sizeF;
 				if ( this.IsLog && this.isUseTenPower )
@@ -2703,15 +2703,7 @@ namespace ZedGraph
 				if ( this.isVisible )
 				{
 					// draw the label
-					MakeLabel( i, dVal, out tmpStr );
-					
-					if ( pane.BarType == BarType.PercentStack )															//rpk
-					{
-						if( this is YAxis && pane.BarBase == BarBase.X  )
-							tmpStr = tmpStr + "%" ;
-						if( this is XAxis && pane.BarBase == BarBase.Y )
-							tmpStr = tmpStr + "%" ;
-					}
+					MakeLabel( pane, i, dVal, out tmpStr );
 					
 					float height = ScaleFontSpec.BoundingBox( g, tmpStr, scaleFactor ).Height;
 					if ( this.ScaleAlign == AlignP.Center )
@@ -2924,6 +2916,10 @@ namespace ZedGraph
 		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
 		/// and other axis format settings.
 		/// </remarks>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
 		/// <param name="index">
 		/// The zero-based, ordinal index of the label to be generated.  For example, a value of 2 would
 		/// cause the third value label on the axis to be generated.
@@ -2935,7 +2931,7 @@ namespace ZedGraph
 		/// <param name="label">
 		/// Output only.  The resulting value label.
 		/// </param>
-		private void MakeLabel( int index, double dVal, out string label )
+		private void MakeLabel( GraphPane pane, int index, double dVal, out string label )
 		{
 			// draw the label
 			if ( this.IsText )
@@ -2968,13 +2964,20 @@ namespace ZedGraph
 								
 				label = String.Format( tmpStr, Math.Pow( 10.0, dVal ) );
 			}
-			else // linear or ordinal or (log && ! isUseTenPower)
+			else // linear or ordinal
 			{
 				double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
 
 				string tmpStr = "{0:F*}";
 				tmpStr = tmpStr.Replace("*", this.numDec.ToString("D") );
 				label = String.Format( tmpStr, dVal / scaleMult );
+
+				if ( pane.BarType == BarType.PercentStack )															//rpk
+				{
+					if (( this is YAxis && pane.BarBase == BarBase.X  ) ||
+						( this is XAxis && pane.BarBase == BarBase.Y ) )
+						label = label + "%" ;
+				}
 			}
 		}
 
