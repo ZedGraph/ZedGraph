@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-10-29 03:12:14 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2004-11-01 06:23:45 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -538,6 +538,7 @@ namespace ZedGraph
 			{
 				Bitmap bitmap = new Bitmap( (int) this.paneRect.Width, (int) this.paneRect.Height );
 				Graphics bitmapGraphics = Graphics.FromImage( bitmap );
+				bitmapGraphics.TranslateTransform( -this.PaneRect.Left, -this.PaneRect.Top );
 				this.Draw( bitmapGraphics );
 				bitmapGraphics.Dispose();
 

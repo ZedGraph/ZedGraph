@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+31-Oct-2004 (by Champion)
+  Fix Image ScaleTransform bug
+  Fix another reference problem in BuildPointsArray()
+  
 30-Oct-2004 (by Champion)
   Fix array ref problem when index=0 in BuildPointsArray()
   CVS was wacky, corrected a few files

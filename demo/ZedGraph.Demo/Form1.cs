@@ -1319,9 +1319,9 @@ namespace ZedGraphTest
 			myPane.TextList.Add( text );
 #endif
 
-#if false	// second graph test
+#if true	// second graph test
 			// Create a new graph
-			myPane2 = new GraphPane( new Rectangle( 0, 0, 300, 200 ),
+			myPane2 = new GraphPane( new Rectangle( 40, 40, 300, 200 ),
 				"My Pane 2",
 				"My X Axis 2",
 				"My Y Axis 2" );
@@ -1832,7 +1832,7 @@ namespace ZedGraphTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			// MultiImage( myPane, myPane2 );
+			MultiImage( myPane, myPane2 );
 			
 			/*
 			myPane.Legend.Position = LegendPos.Float;

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-31 06:05:41 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-11-01 06:23:45 $ </version>
 	public class Line : ICloneable
 	{
 	#region Fields
@@ -404,39 +404,31 @@ namespace ZedGraph
 			int			count;
 
 			if ( this.IsVisible && !this.Color.IsEmpty && points != null &&
-				BuildPointsArray( pane, points, isY2Axis, out arrPoints, out count ) )
+				BuildPointsArray( pane, points, isY2Axis, out arrPoints, out count ) &&
+				count > 2 )
 			{
 				Pen pen = new Pen( this.Color, this.Width );
 				pen.DashStyle = this.Style;
 				float tension = this.isSmooth ? this.smoothTension : 0f;
 				
-				if ( count > 1 )
+				// Fill the curve if needed
+				if ( this.Fill.IsVisible )
 				{
-					if ( this.Fill.IsVisible )
-					{
-						GraphicsPath path = new GraphicsPath( FillMode.Winding );
-						path.AddCurve( arrPoints, 0, count-2, tension );
+					GraphicsPath path = new GraphicsPath( FillMode.Winding );
+					path.AddCurve( arrPoints, 0, count-2, tension );
 
-						double yMin = pane.YAxis.Min < 0 ? 0.0 : pane.YAxis.Min;
+					double yMin = pane.YAxis.Min < 0 ? 0.0 : pane.YAxis.Min;
 
-						CloseCurve( pane, arrPoints, isY2Axis, count, yMin, path );
-					
-						Brush brush = this.fill.MakeBrush( path.GetBounds() );
-						g.FillPath( brush, path );
+					CloseCurve( pane, arrPoints, isY2Axis, count, yMin, path );
+				
+					Brush brush = this.fill.MakeBrush( path.GetBounds() );
+					g.FillPath( brush, path );
 
-						brush.Dispose();
-					}
-
-					// Draw the curve
-					
-					//GraphicsPath path2 = new GraphicsPath( FillMode.Winding );								
-					//path2.AddCurve( arrPoints, 0, count-2, tension );
-					//path2.StartFigure();
-					//g.DrawPath( pen, path2 );
-
-					g.DrawCurve( pen, arrPoints, 0, count-2, tension );
+					brush.Dispose();
 				}
 
+				// Stroke the curve
+				g.DrawCurve( pen, arrPoints, 0, count-2, tension );
 			}
 		}
 
