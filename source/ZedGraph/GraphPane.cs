@@ -20,6 +20,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Collections ;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Diagnostics;
@@ -46,11 +47,11 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.23 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2005-01-09 03:52:20 $ </version>
 	[Serializable]
 	public class GraphPane : ICloneable, ISerializable
 	{
-	#region Private Fields
+		#region Private Fields
 	
 		// Item subclasses ////////////////////////////////////////////////////////////////////
 		
@@ -137,8 +138,8 @@ namespace ZedGraph
 		/// this value. </summary>
 		private bool		isIgnoreMissing;
 		/// <summary>Private field that determines the size of the gap (margin) around the
-        /// edges of the pane, in points (1/72 inch).  This value is scaled according to the graph size.
-        /// Use the public property <see cref="PaneGap"/> to access this value. </summary>
+		/// edges of the pane, in points (1/72 inch).  This value is scaled according to the graph size.
+		/// Use the public property <see cref="PaneGap"/> to access this value. </summary>
 		/// <seealso cref="isFontsScaled"/>
 		/// <seealso cref="GraphPane.CalcScaleFactor"/>
 		private float		paneGap;
@@ -187,17 +188,18 @@ namespace ZedGraph
 		/// <seealso cref="CalcScaleFactor"/>
 		/// <seealso cref="IsPenWidthScaled"/>
 		private bool		isFontsScaled;
-        /// <summary>
-        /// Private field that controls whether or not pen widths are scaled according to the
-        /// size of the graph.  This value is only applicable if <see cref="IsFontsScaled"/>
-        /// is true.  If <see cref="IsFontsScaled"/> is false, then no scaling will be done,
-        /// regardless of the value of <see cref="IsPenWidthScaled"/>.
-        /// </summary>
-        /// <value>true to scale the pen widths according to the size of the graph,
-        /// false otherwise.</value>
-        /// <seealso cref="IsFontsScaled"/>
-        /// <seealso cref="CalcScaleFactor"/>
-        private bool isPenWidthScaled;
+		/// <summary>
+		/// Private field that controls whether or not pen widths are scaled according to the
+		/// size of the graph.  This value is only applicable if <see cref="IsFontsScaled"/>
+		/// is true.  If <see cref="IsFontsScaled"/> is false, then no scaling will be done,
+		/// regardless of the value of <see cref="IsPenWidthScaled"/>.
+		/// </summary>
+		/// <value>true to scale the pen widths according to the size of the graph,
+		/// false otherwise.</value>
+		/// <seealso cref="IsFontsScaled"/>
+		/// <seealso cref="CalcScaleFactor"/>
+		private bool isPenWidthScaled;
+
 
 		/// <summary>Private field that determines how the <see cref="LineItem"/>
 		/// graphs will be displayed. See the <see cref="ZedGraph.LineType"/> enum
@@ -217,9 +219,22 @@ namespace ZedGraph
 		/// pixel units
 		/// </summary>
 		private RectangleF	axisRect;			// The area of the pane defined by the axes
-	#endregion
+		/// <summary>
+		/// The largest square contained in <see cref="GraphPane.axisRect"/>, in
+		/// pixel units, used for drawing <see cref="PieItem"/> object.
+		/// Use the public property <see cref="PieRect"/> to access this value.
+		/// </summary>
+		private RectangleF	pieRect;			
+		
+		/// <summary>
+		/// Array of RectangleFs to be used where more than one <see cref="PieItems"/>
+		/// is to be displayed.	 Use the public property <see cref="MiniPanes"/> to access this value.
+		/// </summary>
+		private RectangleF[]	miniPanes ;
 
-	#region Defaults
+		#endregion
+
+		#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
 		/// default property values for the <see cref="GraphPane"/> class.
@@ -317,8 +332,8 @@ namespace ZedGraph
 			public static FillType PaneBackType = FillType.Brush;
 			/// <summary>
 			/// The default pen width for the <see cref="GraphPane"/> border border.
-            /// (<see cref="GraphPane.PaneBorder"/> property).  Units are in points (1/72 inch).
-            /// </summary>
+			/// (<see cref="GraphPane.PaneBorder"/> property).  Units are in points (1/72 inch).
+			/// </summary>
 			public static float PaneBorderPenWidth = 1;
 
 			/// <summary>
@@ -345,8 +360,8 @@ namespace ZedGraph
 			/// The default pen width for drawing the 
 			/// <see cref="GraphPane.AxisRect"/> border border
 			/// (<see cref="GraphPane.AxisBorder"/> property).
-            /// Units are in points (1/72 inch).
-            /// </summary>
+			/// Units are in points (1/72 inch).
+			/// </summary>
 			public static float AxisBorderPenWidth = 1F;
 			/// <summary>
 			/// The default display mode for the <see cref="Axis"/> border border
@@ -355,26 +370,26 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsAxisBorderVisible = true;
 
-            /// <summary>
-            /// The default settings for the <see cref="Axis"/> scale ignore initial
-            /// zero values option (<see cref="GraphPane.IsIgnoreInitial"/> property).
-            /// true to have the auto-scale-range code ignore the initial data points
-            /// until the first non-zero Y value, false otherwise.
-            /// </summary>
-            public static bool IsIgnoreInitial = false;
-            /// <summary>
-            /// The default setting for the <see cref="GraphPane.IsPenWidthScaled"/> option.
-            /// true to have all pen widths scaled according to <see cref="GraphPane.BaseDimension"/>,
-            /// false otherwise.
-            /// </summary>
-            /// <seealso cref="GraphPane.CalcScaleFactor"/>
-            public static bool IsPenWidthScaled = false;
+			/// <summary>
+			/// The default settings for the <see cref="Axis"/> scale ignore initial
+			/// zero values option (<see cref="GraphPane.IsIgnoreInitial"/> property).
+			/// true to have the auto-scale-range code ignore the initial data points
+			/// until the first non-zero Y value, false otherwise.
+			/// </summary>
+			public static bool IsIgnoreInitial = false;
+			/// <summary>
+			/// The default setting for the <see cref="GraphPane.IsPenWidthScaled"/> option.
+			/// true to have all pen widths scaled according to <see cref="GraphPane.BaseDimension"/>,
+			/// false otherwise.
+			/// </summary>
+			/// <seealso cref="GraphPane.CalcScaleFactor"/>
+			public static bool IsPenWidthScaled = false;
 
-            /// <summary>
+			/// <summary>
 			/// The default value for the <see cref="GraphPane.PaneGap"/> property.
 			/// This is the size of the margin around the edge of the
-            /// <see cref="GraphPane.PaneRect"/>, in units of points (1/72 inch).
-            /// </summary>
+			/// <see cref="GraphPane.PaneRect"/>, in units of points (1/72 inch).
+			/// </summary>
 			public static float PaneGap = 20;
 			/// <summary>
 			/// The default dimension of the <see cref="GraphPane.PaneRect"/>, which
@@ -438,9 +453,9 @@ namespace ZedGraph
 			/// </summary>
 			public static double NearestTol = 7.0;
 		}
-	#endregion
+		#endregion
 
-	#region public Class Instance Properties
+		#region public Class Instance Properties
 		/// <summary>
 		/// Gets or sets the list of <see cref="GraphItem"/> items for this <see cref="GraphPane"/>
 		/// </summary>
@@ -450,6 +465,18 @@ namespace ZedGraph
 			get { return graphItemList; }
 			set { graphItemList = value; }
 		}
+
+		/// <summary>
+		/// Gets or sets the display rectangles for multiple <see cref="PieItem"/> items for this <see cref="GraphPane"/>
+		/// </summary>
+		/// <value>A reference to a RectangleF.</value>
+		public RectangleF[]  MiniPanes
+		{
+			get { return miniPanes; }
+			set { miniPanes = value; }
+		}
+
+		
 		/// <summary>
 		/// Gets or sets the list of <see cref="CurveItem"/> items for this <see cref="GraphPane"/>
 		/// </summary>
@@ -491,9 +518,9 @@ namespace ZedGraph
 		{
 			get { return y2Axis; }
 		}
-	#endregion
+		#endregion
 	
-	#region General Properties
+		#region General Properties
 		/// <summary>
 		/// Gets or sets a boolean value that affects the data range that is considered
 		/// for the automatic scale ranging.
@@ -628,7 +655,7 @@ namespace ZedGraph
 		
 	#endregion
 	
-	#region PaneRect Properties
+		#region PaneRect Properties
 		/// <summary>
 		/// Gets or sets the rectangle that defines the full area into which the
 		/// <see cref="GraphPane"/> can be rendered.
@@ -662,7 +689,7 @@ namespace ZedGraph
 		}
 		#endregion
 	
-	#region AxisRect Properties
+		#region AxisRect Properties
 		/// <summary>
 		/// Gets or sets the rectangle that contains the area bounded by the axes
 		/// (<see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
@@ -692,6 +719,11 @@ namespace ZedGraph
 			get { return isAxisRectAuto; }
 			set { isAxisRectAuto = value; }
 		}
+
+		public RectangleF PieRect
+		{
+			get { return pieRect; }
+		}
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Border"/> class for drawing the border
 		/// border around the <see cref="AxisRect"/>
@@ -712,16 +744,16 @@ namespace ZedGraph
 			get { return axisFill; }
 			set { axisFill = value; }
 		}
-	#endregion
+		#endregion
 	
-	#region Pane Scaling Properties
+		#region Pane Scaling Properties
 		/// <summary>
 		/// PaneGap is a float value that sets the margin area between the edge of the
 		/// <see cref="GraphPane"/> rectangle (<see cref="PaneRect"/>)
 		/// and the features of the graph.
 		/// </summary>
-        /// <value>This value is in units of points (1/72 inch), and is scaled
-        /// linearly with the graph size.</value>
+		/// <value>This value is in units of points (1/72 inch), and is scaled
+		/// linearly with the graph size.</value>
 		/// <seealso cref="Default.PaneGap"/>
 		/// <seealso cref="IsFontsScaled"/>
 		public float PaneGap
@@ -776,53 +808,53 @@ namespace ZedGraph
 			return (float) ( this.paneGap * scaleFactor );
 		}
 
-        /// <summary>
-        /// Calculate the scaled pen width, taking into account the scaleFactor and the
-        /// setting of the <see cref="IsPenWidthScaled"/> property of the pane.
-        /// </summary>
-        /// <param name="penWidth">The pen width, in points (1/72 inch)</param>
-        /// <param name="scaleFactor">
-        /// The scaling factor for the features of the graph based on the <see cref="BaseDimension"/>.  This
-        /// scaling factor is calculated by the <see cref="CalcScaleFactor"/> method.  The scale factor
-        /// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-        /// </param>
-        /// <returns>The scaled pen width, in world pixels</returns>
-        public float ScaledPenWidth(float penWidth, double scaleFactor)
-        {
-            if (isPenWidthScaled)
-                return (float)(penWidth * scaleFactor);
-            else
-                return penWidth;
-        }
+		/// <summary>
+		/// Calculate the scaled pen width, taking into account the scaleFactor and the
+		/// setting of the <see cref="IsPenWidthScaled"/> property of the pane.
+		/// </summary>
+		/// <param name="penWidth">The pen width, in points (1/72 inch)</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor for the features of the graph based on the <see cref="BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="CalcScaleFactor"/> method.  The scale factor
+		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+		/// </param>
+		/// <returns>The scaled pen width, in world pixels</returns>
+		public float ScaledPenWidth(float penWidth, double scaleFactor)
+		{
+			if (isPenWidthScaled)
+				return (float)(penWidth * scaleFactor);
+			else
+				return penWidth;
+		}
 
-        /// <summary>
-        /// Gets or sets the property that controls whether or not pen widths are scaled for this
-        /// <see cref="GraphPane"/>.
-        /// </summary>
-        /// <remarks>This value is only applicable if <see cref="IsFontsScaled"/>
-        /// is true.  If <see cref="IsFontsScaled"/> is false, then no scaling will be done,
-        /// regardless of the value of <see cref="IsPenWidthScaled"/>.  Note that scaling the pen
-        /// widths can cause "artifacts" to appear at typical screen resolutions.  This occurs
-        /// because of roundoff differences; in some cases the pen width may round to 1 pixel wide
-        /// and in another it may round to 2 pixels wide.  The result is typically undesirable.
-        /// Therefore, this option defaults to false.  This option is primarily useful for high
-        /// resolution output, such as printer output or high resolution bitmaps (from
-        /// <see cref="GraphPane.ScaledImage"/>) where it is desirable to have the pen width
-        /// be consistent with the screen image.
-        /// </remarks>
-        /// <value>true to scale the pen widths according to the size of the graph,
-        /// false otherwise.</value>
-        /// <seealso cref="IsFontsScaled"/>
-        /// <seealso cref="CalcScaleFactor"/>
-        public bool IsPenWidthScaled
-        {
-            get { return isPenWidthScaled; }
-            set { isPenWidthScaled = value; }
-        }
+		/// <summary>
+		/// Gets or sets the property that controls whether or not pen widths are scaled for this
+		/// <see cref="GraphPane"/>.
+		/// </summary>
+		/// <remarks>This value is only applicable if <see cref="IsFontsScaled"/>
+		/// is true.  If <see cref="IsFontsScaled"/> is false, then no scaling will be done,
+		/// regardless of the value of <see cref="IsPenWidthScaled"/>.  Note that scaling the pen
+		/// widths can cause "artifacts" to appear at typical screen resolutions.  This occurs
+		/// because of roundoff differences; in some cases the pen width may round to 1 pixel wide
+		/// and in another it may round to 2 pixels wide.  The result is typically undesirable.
+		/// Therefore, this option defaults to false.  This option is primarily useful for high
+		/// resolution output, such as printer output or high resolution bitmaps (from
+		/// <see cref="GraphPane.ScaledImage"/>) where it is desirable to have the pen width
+		/// be consistent with the screen image.
+		/// </remarks>
+		/// <value>true to scale the pen widths according to the size of the graph,
+		/// false otherwise.</value>
+		/// <seealso cref="IsFontsScaled"/>
+		/// <seealso cref="CalcScaleFactor"/>
+		public bool IsPenWidthScaled
+		{
+			get { return isPenWidthScaled; }
+			set { isPenWidthScaled = value; }
+		}
 
-	#endregion
+		#endregion
 	
-	#region Bar Properties
+		#region Bar Properties
 		/// <summary>
 		/// The minimum space between <see cref="Bar"/> clusters, expressed as a
 		/// fraction of the bar size.
@@ -882,7 +914,7 @@ namespace ZedGraph
 			get { return clusterScaleWidth; }
 			set { clusterScaleWidth = value; }
 		}
-	#endregion
+		#endregion
 	
 	#region Constructors
 
@@ -938,9 +970,9 @@ namespace ZedGraph
 			this.baseDimension = Default.BaseDimension;
 			this.paneGap = Default.PaneGap;
 			this.isFontsScaled = true;
-            this.isPenWidthScaled = Default.IsPenWidthScaled;
+			this.isPenWidthScaled = Default.IsPenWidthScaled;
 
-            this.minClusterGap = Default.MinClusterGap;
+			this.minClusterGap = Default.MinClusterGap;
 			this.minBarGap = Default.MinBarGap;
 			this.clusterScaleWidth = Default.ClusterScaleWidth;
 			this.barBase = Default.BarBase;
@@ -978,8 +1010,8 @@ namespace ZedGraph
 
 			this.baseDimension = rhs.BaseDimension;
 			this.isFontsScaled = rhs.isFontsScaled;
-            this.isPenWidthScaled = rhs.isPenWidthScaled;
-            this.paneGap = rhs.PaneGap;
+			this.isPenWidthScaled = rhs.isPenWidthScaled;
+			this.paneGap = rhs.PaneGap;
 			this.minClusterGap = rhs.MinClusterGap;
 			this.minBarGap = rhs.MinBarGap;
 			this.clusterScaleWidth = rhs.ClusterScaleWidth;
@@ -1132,7 +1164,6 @@ namespace ZedGraph
 			this.curveList.GetRange( out xMin, out xMax, out yMin,
 				out yMax, out y2Min, out y2Max,
 				this.isIgnoreInitial, this );
-
 			// Determine the scale factor
 			double	scaleFactor = this.CalcScaleFactor();
 
@@ -1172,8 +1203,8 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-        public void Draw(Graphics g)
-        {			
+		public void Draw(Graphics g)
+		{			
 			// Calculate the axis rect, deducting the area for the scales, titles, legend, etc.
 			double	scaleFactor;
 			int		hStack;
@@ -1183,14 +1214,14 @@ namespace ZedGraph
 			// otherwise, calculate the legendrect, scalefactor, hstack, and legendwidth parameters
 			// but leave the axisRect alone
 			if ( this.isAxisRectAuto )
-                this.axisRect = CalcAxisRect(g, out scaleFactor, out hStack, out legendWidth, out legendHeight);
-            else
+				this.axisRect = CalcAxisRect(g, out scaleFactor, out hStack, out legendWidth, out legendHeight);
+			else
 				CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth, out legendHeight );
-
-			// Border the whole pane
+			// Border the whole pane			 ***************************
 			DrawPaneFrame( g, this, scaleFactor );
 
 			// do a sanity check on the axisRect
+	//		if ( !this.curveList.IsPieOnly)
 			if ( this.axisRect.Width < 1 || this.axisRect.Height < 1 )
 				return;
 			
@@ -1202,8 +1233,8 @@ namespace ZedGraph
 			// Go ahead and draw the graph, even without data.  This makes the control
 			// version still look like a graph before it is fully set up
 			bool showGraf = this.xAxis.Min < this.xAxis.Max &&
-							this.yAxis.Min < this.yAxis.Max &&
-							this.y2Axis.Min < this.y2Axis.Max;
+				this.yAxis.Min < this.yAxis.Max &&
+				this.y2Axis.Min < this.y2Axis.Max;
 
 			// Setup the axes from graphing - This setup must be done before
 			// the GraphItem's are drawn so that the Transform functions are
@@ -1226,14 +1257,14 @@ namespace ZedGraph
 
 				// Draw the Pane Title
 				DrawTitle( g, this, scaleFactor );
-			
+		
 				// Draw the GraphItems that are behind the Axis objects
 				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.E_BehindAxis );
 
 				// Draw the Axes
-				this.xAxis.Draw( g, this, scaleFactor );
-				this.yAxis.Draw( g, this, scaleFactor );
-				this.y2Axis.Draw( g, this, scaleFactor );
+					this.xAxis.Draw( g, this, scaleFactor );
+					this.yAxis.Draw( g, this, scaleFactor );
+					this.y2Axis.Draw( g, this, scaleFactor );
 				
 				// Draw the GraphItems that are behind the CurveItems
 				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.D_BehindCurves );
@@ -1250,17 +1281,17 @@ namespace ZedGraph
 			// Border the axis itself
 			this.axisBorder.Draw( g, this, scaleFactor, this.axisRect );
 			
+				
 			if ( showGraf )
 			{
 				// Draw the GraphItems that are behind the Legend object
 				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.B_BehindLegend );
 
-				// Draw the Legend
-				this.legend.Draw( g, this, scaleFactor, hStack, legendWidth,
-							legendHeight );
+					this.legend.Draw( g, this, scaleFactor, hStack, legendWidth,
+						legendHeight );
 				
-				// Draw the GraphItems that are in front of all other items
-				this.graphItemList.Draw( g, this, scaleFactor, ZOrder.A_InFront );
+					// Draw the GraphItems that are in front of all other items
+					this.graphItemList.Draw( g, this, scaleFactor, ZOrder.A_InFront );
 				
 			}
 			
@@ -1310,18 +1341,19 @@ namespace ZedGraph
 		/// The number of legend columns to use for horizontal legend stacking.  This is a temporary
 		/// variable calculated by the routine for use in the Legend.Draw method.
 		/// </param>
-        /// <param name="legendWidth">
-        /// The width of a single legend entry, in pixel units.  This is a temporary
-        /// variable calculated by the routine for use in the Legend.Draw method.
-        /// </param>
-        /// <param name="legendHeight">
-        /// The height of a single legend entry, in pixel units.  This is a temporary
-        /// variable calculated by the routine for use in the Legend.Draw method.
-        /// </param>
-        /// <returns>The calculated axis rect, in pixel coordinates.</returns>
-        public RectangleF CalcAxisRect( Graphics g, out double scaleFactor,
-									out int hStack, out float legendWidth, out float legendHeight )
+		/// <param name="legendWidth">
+		/// The width of a single legend entry, in pixel units.  This is a temporary
+		/// variable calculated by the routine for use in the Legend.Draw method.
+		/// </param>
+		/// <param name="legendHeight">
+		/// The height of a single legend entry, in pixel units.  This is a temporary
+		/// variable calculated by the routine for use in the Legend.Draw method.
+		/// </param>
+		/// <returns>The calculated axis rect, in pixel coordinates.</returns>
+		public RectangleF CalcAxisRect( Graphics g, out double scaleFactor,
+			out int hStack, out float legendWidth, out float legendHeight )
 		{
+
 			// calculate scaleFactor on "normal" pane size (BaseDimension)
 			scaleFactor = this.CalcScaleFactor();
 
@@ -1356,8 +1388,59 @@ namespace ZedGraph
 			
 			// Calculate the legend rect, and back it out of the current axisRect
 			this.legend.CalcRect( g, this, scaleFactor, ref tmpRect,
-								out hStack, out legendWidth, out legendHeight );
+				out hStack, out legendWidth, out legendHeight );
 
+			
+			if ( this.CurveList.IsPieOnly)
+			{
+				//don't want to display axis or border if there's only pies
+				this.XAxis.IsVisible = false ;				
+				this.YAxis.IsVisible = false ;
+				this.axisBorder.IsVisible = false ;
+			
+
+				//want to draw the largest pie possible within axisRect
+				//but want to leave  5% slack around the pie so labels will not overrun clip area
+				//largest pie is limited by the smaller of axisRect.height or axisRect.width...
+				//this rect (nonExplRect)has to be re-positioned so that it's in the center of axisRect.
+				RectangleF nonExplRect = tmpRect ; 
+		
+				if ( nonExplRect.Width < nonExplRect.Height )
+				{
+					//create slack rect
+					nonExplRect.Inflate (  - (float).05*nonExplRect.Height, - (float).05 * nonExplRect.Width);
+					//get the difference between dimensions
+					float delta =  (nonExplRect.Height - nonExplRect.Width ) / 2 ;
+					//make a square	so we end up with circular pie
+					nonExplRect.Height = nonExplRect.Width ;
+					//keep the center point  the same
+					nonExplRect.Y += delta ;
+					pieRect = nonExplRect ;
+				}
+				else
+				{
+					nonExplRect.Inflate (  - (float).05*nonExplRect.Height, - (float).05 * nonExplRect.Width);
+					float delta =  (nonExplRect.Width - nonExplRect.Height ) / 2 ;
+					nonExplRect.Width = nonExplRect.Height ;
+					nonExplRect.X +=	delta ;
+					pieRect = nonExplRect ;
+				}
+
+				
+				if ( curveList.NumPies == 1 )			//if only one pie
+					axisRect = tmpRect ;	
+				else
+				{
+/*
+//					MiniPanes  new Array[curveList.NumPies];
+					RectangleF[] minis = new RectangleF[curveList.NumPies] ;
+					miniPanes = minis ;
+					MiniPanes[0] = new RectangleF( 5,10,100,200 ) ;				 //need to create function to define a miniPane for each pie...
+					tmpRect = paneRect ;
+	//				axisRect = tmpRect  ;
+*/
+				}
+			}
 			return tmpRect;
 		}
 
@@ -1395,12 +1478,12 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-        /// <param name="pane">
-        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
-        /// owner of this object.
-        /// </param>
-        /// <param name="scaleFactor">
-        /// The scaling factor for the features of the graph based on the <see cref="BaseDimension"/>.  This
+		/// <param name="pane">
+		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor for the features of the graph based on the <see cref="BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>		
@@ -1414,9 +1497,9 @@ namespace ZedGraph
 				// use the internal fontSpec class to draw the text using user-specified and/or
 				// default attributes.
 				this.FontSpec.Draw( g, pane, this.title,
-							( this.paneRect.Left + this.paneRect.Right ) / 2,
-							this.paneRect.Top + this.ScaledGap( scaleFactor ) + size.Height / 2.0F,
-							AlignH.Center, AlignV.Center, scaleFactor );
+					( this.paneRect.Left + this.paneRect.Right ) / 2,
+					this.paneRect.Top + this.ScaledGap( scaleFactor ) + size.Height / 2.0F,
+					AlignH.Center, AlignV.Center, scaleFactor );
 			}
 		}
 		
@@ -1427,17 +1510,17 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-        /// <param name="pane">
-        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
-        /// owner of this object.
-        /// </param>
-        /// <param name="scaleFactor">
-        /// The scaling factor for the features of the graph based on the <see cref="BaseDimension"/>.  This
-        /// scaling factor is calculated by the <see cref="CalcScaleFactor"/> method.  The scale factor
-        /// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-        /// </param>		
-        public void DrawPaneFrame(Graphics g, GraphPane pane, double scaleFactor)
-        {
+		/// <param name="pane">
+		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor for the features of the graph based on the <see cref="BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="CalcScaleFactor"/> method.  The scale factor
+		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+		/// </param>		
+		public void DrawPaneFrame(Graphics g, GraphPane pane, double scaleFactor)
+		{
 			// Erase the pane background
 			Brush brush = this.paneFill.MakeBrush( this.paneRect );
 			//SolidBrush brush = new SolidBrush( this.paneBackColor );
@@ -1463,7 +1546,7 @@ namespace ZedGraph
 		/// in "Output Device Pixels", but "World Pixels" are the reference basis for the drawing commands.
 		/// The use of the scale factor depends upon the settings of <see cref="GraphPane.IsFontsScaled"/> and
 		/// <see cref="GraphPane.IsPenWidthScaled"/>.
-        /// </remarks>
+		/// </remarks>
 		/// <returns>
 		/// A double precision value representing the scaling factor to use for the rendering calculations.
 		/// </returns>
@@ -1485,26 +1568,26 @@ namespace ZedGraph
 				return 1.0;
 
 			// Scale the size depending on the client area width in linear fashion
-            if (paneRect.Height <= 0)
-                return 1.0;
-            double length = paneRect.Width;
-            double aspect = paneRect.Width / paneRect.Height;
-            if ( aspect > ASPECTLIMIT )
-                length = paneRect.Height * ASPECTLIMIT;
-            if ( aspect < 1.0 / ASPECTLIMIT )
-                length = paneRect.Width * ASPECTLIMIT;
+			if (paneRect.Height <= 0)
+				return 1.0;
+			double length = paneRect.Width;
+			double aspect = paneRect.Width / paneRect.Height;
+			if ( aspect > ASPECTLIMIT )
+				length = paneRect.Height * ASPECTLIMIT;
+			if ( aspect < 1.0 / ASPECTLIMIT )
+				length = paneRect.Width * ASPECTLIMIT;
 
-            scaleFactor = length / (this.baseDimension * 72);
+			scaleFactor = length / (this.baseDimension * 72);
 
-            // Don't let the scaleFactor get ridiculous
+			// Don't let the scaleFactor get ridiculous
 			if ( scaleFactor < 0.1 )
 				scaleFactor = 0.1;
 						
 			return scaleFactor;
 		}
-	#endregion
+		#endregion
 	
-	#region AddCurve Methods
+		#region AddCurve Methods
 		/// <summary>
 		/// Add a curve (<see cref="CurveItem"/> object) to the plot with
 		/// the given data points (double arrays) and properties.
@@ -1638,10 +1721,10 @@ namespace ZedGraph
 		/// are not defined as arguments to the
 		/// <see cref="AddErrorBar(string,PointPairList,Color)"/> method.</returns>
 		public ErrorBarItem AddErrorBar( string label, double[] x, double[] y,
-										double[] baseValue, Color color )
+			double[] baseValue, Color color )
 		{
 			ErrorBarItem curve = new ErrorBarItem( label, new PointPairList( x, y, baseValue),
-													color );
+				color );
 			this.curveList.Add( curve );
 			
 			return curve;
@@ -1743,7 +1826,7 @@ namespace ZedGraph
 		/// are not defined as arguments to the
 		/// <see cref="AddHiLowBar(string,double[],double[],double[],Color)"/> method.</returns>
 		public HiLowBarItem AddHiLowBar( string label, double[] x, double[] y,
-											double[] baseVal, Color color )
+			double[] baseVal, Color color )
 		{
 			HiLowBarItem curve = new HiLowBarItem( label, x, y, baseVal, color );
 			this.curveList.Add( curve );
@@ -1777,7 +1860,7 @@ namespace ZedGraph
 		
 		#endregion
 
-	#region General Utility Methods
+		#region General Utility Methods
 		/// <summary>
 		/// Transform a data point from the specified coordinate type
 		/// (<see cref="CoordType"/>) to screen coordinates (pixels).
@@ -1890,15 +1973,15 @@ namespace ZedGraph
 		/// <returns>true if an object was found, false otherwise.</returns>
 		/// <seealso cref="FindNearestObject"/>
 		public bool FindNearestObject( PointF mousePt, Graphics g, 
-										out object nearestObj, out int index )
+			out object nearestObj, out int index )
 		{
 			nearestObj = null;
 			index = -1;
 
 			// Make sure that the axes & data are being drawn
 			if ( 	this.xAxis.Min < this.xAxis.Max &&
-					this.yAxis.Min < this.yAxis.Max &&
-					this.y2Axis.Min < this.y2Axis.Max )
+				this.yAxis.Min < this.yAxis.Max &&
+				this.y2Axis.Min < this.y2Axis.Max )
 			{
 				double		scaleFactor;
 				int			hStack;
@@ -1907,7 +1990,7 @@ namespace ZedGraph
 	
 				// Calculate the axis rect, deducting the area for the scales, titles, legend, etc.
 				RectangleF tmpAxisRect = CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth,
-                                            out legendHeight );
+					out legendHeight );
 	
 				// See if the point is in a GraphItem
 				if ( this.GraphItemList.FindPoint( mousePt, this, g, scaleFactor, out index ) )
@@ -1928,8 +2011,8 @@ namespace ZedGraph
 				{
 					SizeF size = this.FontSpec.BoundingBox( g, this.title, scaleFactor );
 					tmpRect = new RectangleF( ( this.paneRect.Left + this.paneRect.Right - size.Width ) / 2,
-												this.paneRect.Top + this.ScaledGap( scaleFactor ),
-												size.Width, size.Height );
+						this.paneRect.Top + this.ScaledGap( scaleFactor ),
+						size.Width, size.Height );
 					if ( tmpRect.Contains( mousePt ) )
 					{
 						nearestObj = this;
@@ -1939,7 +2022,7 @@ namespace ZedGraph
 
 				// See if the point is in the Y Axis
 				tmpRect = new RectangleF( this.paneRect.Left, tmpAxisRect.Top,
-										tmpAxisRect.Left - this.paneRect.Left, tmpAxisRect.Height );
+					tmpAxisRect.Left - this.paneRect.Left, tmpAxisRect.Height );
 				if ( tmpRect.Contains( mousePt ) )
 				{
 					nearestObj = this.YAxis;
@@ -1948,7 +2031,7 @@ namespace ZedGraph
 				
 				// See if the point is in the Y2 Axis
 				tmpRect = new RectangleF( tmpAxisRect.Right, tmpAxisRect.Top,
-										this.paneRect.Right - tmpAxisRect.Right, tmpAxisRect.Height );
+					this.paneRect.Right - tmpAxisRect.Right, tmpAxisRect.Height );
 				if ( tmpRect.Contains( mousePt ) )
 				{
 					nearestObj = this.Y2Axis;
@@ -1957,7 +2040,7 @@ namespace ZedGraph
 				
 				// See if the point is in the X Axis
 				tmpRect = new RectangleF( tmpAxisRect.Left, tmpAxisRect.Bottom,
-										tmpAxisRect.Width, this.paneRect.Bottom - tmpAxisRect.Bottom );
+					tmpAxisRect.Width, this.paneRect.Bottom - tmpAxisRect.Bottom );
 				if ( tmpRect.Contains( mousePt ) )
 				{
 					nearestObj = this.XAxis;
@@ -2005,7 +2088,7 @@ namespace ZedGraph
 			CurveList targetCurveList = new CurveList();
 			targetCurveList.Add( targetCurve );
 			return FindNearestPoint( mousePt, targetCurveList,
-					out nearestCurve, out iNearest );
+				out nearestCurve, out iNearest );
 		}
 
 		/// <summary>
@@ -2033,7 +2116,7 @@ namespace ZedGraph
 			out CurveItem nearestCurve, out int iNearest )
 		{
 			return FindNearestPoint( mousePt, this.curveList,
-					out nearestCurve, out iNearest );
+				out nearestCurve, out iNearest );
 		}
 
 		/// <summary>
@@ -2133,17 +2216,17 @@ namespace ZedGraph
 							yVal = points[iPt].Y;
 
 						if (	xVal != PointPair.Missing &&
-								xVal >= xAxis.Min && xVal <= xAxis.Max &&
-								yVal != PointPair.Missing &&
-								yVal >= yMinAct && yVal <= yMaxAct )
+							xVal >= xAxis.Min && xVal <= xAxis.Max &&
+							yVal != PointPair.Missing &&
+							yVal >= yMinAct && yVal <= yMaxAct )
 						{
 
 							if ( curve.IsBar || curve is ErrorBarItem ||
-									curve is HiLowBarItem )
+								curve is HiLowBarItem )
 							{
 								double baseVal, lowVal, hiVal;
 								valueHandler.GetBarValues( curve, iPt, out baseVal,
-										out lowVal, out hiVal );
+									out lowVal, out hiVal );
 
 								if ( lowVal > hiVal )
 								{
@@ -2158,8 +2241,8 @@ namespace ZedGraph
 									double centerVal = valueHandler.BarCenterValue( curve, barWidth, iPt, xVal, iBar );
 									
 									if (	x < centerVal - barWidthUserHalf ||
-											x > centerVal + barWidthUserHalf ||
-											y < lowVal || y > hiVal )
+										x > centerVal + barWidthUserHalf ||
+										y < lowVal || y > hiVal )
 										continue;
 								}
 								else
@@ -2167,8 +2250,8 @@ namespace ZedGraph
 									double centerVal = valueHandler.BarCenterValue( curve, barWidth, iPt, yVal, iBar );
 									
 									if (	y < centerVal - barWidthUserHalf ||
-											y > centerVal + barWidthUserHalf ||
-											x < lowVal || x > hiVal )
+										y > centerVal + barWidthUserHalf ||
+										x < lowVal || x > hiVal )
 										continue;
 								}
 
@@ -2203,7 +2286,7 @@ namespace ZedGraph
 			if ( nearestCurve is LineItem )
 			{
 				float halfSymbol = (float) ( ((LineItem)nearestCurve).Symbol.Size *
-						CalcScaleFactor() / 2 );
+					CalcScaleFactor() / 2 );
 				minDist -= halfSymbol * halfSymbol;
 				if ( minDist < 0 )
 					minDist = 0;
@@ -2265,7 +2348,33 @@ namespace ZedGraph
 			return barAxis;
 		}
 
-	#endregion
+		#endregion
+
+		public PieItem AddPie(string pieLabel, int slices)
+		{
+			PieItem pie = new PieItem(pieLabel, slices) ;
+			this.CurveList.Add (pie) ;
+			this.XAxis.IsVisible = false ;
+			this.YAxis.IsVisible = false ;
+			return pie ;
+		}
+		
+		public PieItem AddPie ( string pieLabel, double [] values, Color [] colors, double [] displacements, string [] labels )
+		{
+			PieItem pie = new PieItem( pieLabel, values, colors, displacements, labels );
+			this.CurveList.Add (pie) ;
+			return pie ;
+		}
+	
+	
+		public PieItem AddPie( string pieLabel, double [] values)
+		{	
+			PieItem pie = new PieItem( pieLabel, values) ;
+			this.CurveList.Add (pie) ;
+			this.XAxis.IsVisible = false ;
+			this.YAxis.IsVisible = false ;
+			return pie ;
+		}
 	}
 }
 

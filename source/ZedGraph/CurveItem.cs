@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-01-09 03:51:29 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -110,6 +110,19 @@ namespace ZedGraph
 		{
 		}
 		
+		
+		public CurveItem( string label, int  y ) : this(  label, new PointPairList( ) )
+		{
+		}
+
+		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="x"></param>
+		public CurveItem( double[] x) : this(  "", new PointPairList( x ) )
+		{
+		}
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label, the
 		/// x and y data values as a <see cref="PointPairList"/>, the curve
@@ -152,7 +165,17 @@ namespace ZedGraph
 		public CurveItem( string label ): this( label, null )
 		{
 		}
-
+		 /// <summary>
+		 /// 
+		 /// </summary>
+		public CurveItem(  )
+		{
+			this.label = "";
+			this.isY2Axis = false;
+			this.isVisible = true;
+			this.isLegendLabelVisible = true;
+			this.Tag = null;
+		}
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
@@ -307,10 +330,20 @@ namespace ZedGraph
 		/// is a <see cref="BarItem"/>.  This does not include <see cref="HiLowBarItem"/>'s
 		/// or <see cref="ErrorBarItem"/>'s.
 		/// </summary>
-		/// <value>true for a bar chart, or false for a line graph</value>
+		/// <value>true for a bar chart, or false for a line or pie graph</value>
 		public bool IsBar
 		{
 			get { return this is BarItem; }
+		}
+		
+		/// <summary>
+		/// Determines whether this <see cref="CurveItem"/>
+		/// is a <see cref="PieItem"/>.
+		/// </summary>
+		/// <value>true for a pie chart, or false for a line or bar graph</value>
+		public bool IsPie
+		{
+			get { return this is PieItem; }
 		}
 		
 		/// <summary>

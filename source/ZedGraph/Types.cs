@@ -520,4 +520,40 @@ namespace ZedGraph
 	   /// </summary>
 	   A_InFront
 	};
+	
+	public enum PieType
+	{
+		/// <summary>
+		///	Specifies that the <see cref="Pie"/> chart will be displayed in two dimensions
+		/// </summary>
+		Pie2D,
+
+		/// <summary>
+		///	Specifies that the <see cref="Pie"/> chart will be displayed in three dimensions
+		/// </summary>
+		Pie3D
+	} ;
+
+	public enum PieLabelType
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		Name_Value,
+
+		/// <summary>
+		/// 
+		/// </summary>
+		Name_Percent,		
+
+		/// <summary>
+		/// 
+		/// </summary>
+		Value,
+
+		/// <summary>
+		/// 
+		/// </summary>
+		Percent
+	};
 }

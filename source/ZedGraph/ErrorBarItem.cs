@@ -49,11 +49,11 @@ namespace ZedGraph
 	/// is assigned with <see cref="ErrorBarItem.BarBase"/>, and is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-01-09 03:52:20 $ </version>
 	[Serializable]
 	public class ErrorBarItem : CurveItem, ICloneable, ISerializable
 	{
-	#region Fields
+		#region Fields
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="ZedGraph.ErrorBar"/>
 		/// class defined for this <see cref="ErrorBarItem"/>.  Use the public

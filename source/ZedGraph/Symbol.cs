@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2005-01-09 03:52:20 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -463,6 +463,7 @@ namespace ZedGraph
 					g.DrawLine( pen, x-hsize, y-hsize, x, y+hsize );
 					break;
 				case SymbolType.HDash:
+					pen.Width = 1 ;
 					g.DrawLine( pen, x-hsize, y, x+hsize1, y );
 					break;
 				case SymbolType.VDash:
