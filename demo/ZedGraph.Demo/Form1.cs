@@ -335,7 +335,7 @@ namespace ZedGraph.Demo
 
 #endif
 
-#if false	//Pie Chart Example   
+#if true	//Pie Chart Example   
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"2003 Regional Sales", "", "" );
@@ -534,7 +534,7 @@ namespace ZedGraph.Demo
 
 #endif	
 
-#if true   //multiple pie charts
+#if false   //multiple pie charts
 			master = new MasterPane( "MASTER PANE TEST", new RectangleF( 0, 0, 600, 400 ) );
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
 

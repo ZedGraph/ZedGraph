@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.18 $ $Date: 2005-01-30 14:09:56 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2005-02-01 06:03:19 $ </version>
 	[Serializable]
 	public class TextItem : GraphItem, ICloneable, ISerializable
 	{
@@ -48,20 +48,24 @@ namespace ZedGraph
 		/// to access this class.
 		/// </summary>
 		private FontSpec	fontSpec;
+
+		/*
 		/// <summary>
 		/// Private field to indicate whether this <see cref="TextItem"/> is to be
 		/// wrapped when rendered.  Wrapping is to be done within <see cref="TextItem.wrappedRect"/>.
-		///  Use the public property <see cref="TextItem.IsWrapped"/>
+		/// Use the public property <see cref="TextItem.IsWrapped"/>
 		/// to access this value.
 		/// </summary>
 		private bool isWrapped;
+		*/
 
 		/// <summary>
-		/// Private field holding the RectangleF into which this <see cref="TextItem"/>
-		/// should be rendered.   Use the public property <see cref="TextItem.WrappedRect"/>
+		/// Private field holding the SizeF into which this <see cref="TextItem"/>
+		/// should be rendered. Use the public property <see cref="TextItem.LayoutArea"/>
 		/// to access this value.
 		/// </summary>
-		private RectangleF wrappedRect;
+		private SizeF layoutArea;
+
 
 		#endregion
 
@@ -72,6 +76,7 @@ namespace ZedGraph
 		/// </summary>
 		new public struct Default
 		{
+			/*
 			/// <summary>
 			/// The default wrapped flag for rendering this <see cref="TextItem,Text"/>. 
 			/// </summary>
@@ -79,7 +84,9 @@ namespace ZedGraph
 			/// <summary>
 			/// The default RectangleF for rendering this <see cref="TextItem.Text"/> 
 			/// </summary>
-			public static RectangleF WrappedRect = new RectangleF (0,0,0,0 );
+			public static SizeF WrappedSize = new SizeF( 0,0 );
+			*/
+
 			/// <summary>
 			/// The default font family for the <see cref="TextItem"/> text
 			/// (<see cref="ZedGraph.FontSpec.Family"/> property).
@@ -119,6 +126,7 @@ namespace ZedGraph
 
 	#region Properties
 		
+		/*
 		/// <summary>
 		/// 
 		/// </summary>
@@ -127,14 +135,18 @@ namespace ZedGraph
 			get { return (this.isWrapped); }
 			set { this.isWrapped = value; } 
 		}
+		*/
+
 		/// <summary>
 		/// 
 		/// </summary>
-		internal RectangleF WrappedRect
+		public SizeF LayoutArea
 		{
-			get { return (this.wrappedRect); }
-			set { this.wrappedRect = value; } 
+			get { return this.layoutArea; }
+			set { this.layoutArea = value; } 
 		}
+
+
 		/// <summary>
 		/// The <see cref="TextItem"/> to be displayed.  This text can be multi-line by
 		/// including newline ('\n') characters between the lines.
@@ -194,8 +206,8 @@ namespace ZedGraph
 				Default.FontColor, Default.FontBold,
 				Default.FontItalic, Default.FontUnderline );
 			
-			this.isWrapped = Default.IsWrapped ;
-			this.wrappedRect = Default.WrappedRect ;
+			//this.isWrapped = Default.IsWrapped ;
+			this.layoutArea = new SizeF( 0, 0 );
 		}
 		
 		/// <summary>
@@ -299,8 +311,8 @@ namespace ZedGraph
 
 			text = info.GetString( "text" );
 			fontSpec = (FontSpec) info.GetValue( "fontSpec", typeof(FontSpec) );
-			isWrapped = info.GetBoolean ("isWrapped") ;
-			wrappedRect = (RectangleF) info.GetValue( "wrappedRect", typeof(RectangleF) );
+			//isWrapped = info.GetBoolean ("isWrapped") ;
+			layoutArea = (SizeF) info.GetValue( "layoutArea", typeof(SizeF) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -314,8 +326,8 @@ namespace ZedGraph
 			info.AddValue( "schema2", schema2 );
 			info.AddValue( "text", text );
 			info.AddValue( "fontSpec", fontSpec );
-			info.AddValue( "isWrapped", isWrapped );
-			info.AddValue( "wrappedRect", wrappedRect );
+			//info.AddValue( "isWrapped", isWrapped );
+			info.AddValue( "layoutArea", layoutArea );
 		}
 	#endregion
 
@@ -349,12 +361,12 @@ namespace ZedGraph
 			// fill elements
 			if ( pix.X > -100000 && pix.X < 100000 && pix.Y > -100000 && pix.Y < 100000 )
 			{
-				if (!this.isWrapped)
+				//if ( this.layoutSize.IsEmpty )
+				//	this.FontSpec.Draw( g, pane.IsPenWidthScaled, this.text, pix.X, pix.Y,
+				//		this.location.AlignH, this.location.AlignV, scaleFactor );
+				//else
 					this.FontSpec.Draw( g, pane.IsPenWidthScaled, this.text, pix.X, pix.Y,
-						this.location.AlignH, this.location.AlignV, scaleFactor );
-				else
-					this.FontSpec.Draw( g, pane.IsPenWidthScaled, this.text, pix.X, pix.Y,
-						this.location.AlignH, this.location.AlignV, scaleFactor, this.wrappedRect );
+						this.location.AlignH, this.location.AlignV, scaleFactor, this.layoutArea );
 
 			}
 		}
@@ -387,7 +399,7 @@ namespace ZedGraph
 			PointF pix = this.location.Transform( pane );
 			
 			return this.fontSpec.PointInBox( pt, g, this.text, pix.X, pix.Y,
-								this.location.AlignH, this.location.AlignV, scaleFactor );
+								this.location.AlignH, this.location.AlignV, scaleFactor, this.LayoutArea );
 		}
 		
 	#endregion
