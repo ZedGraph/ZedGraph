@@ -23,9 +23,140 @@ using System.ComponentModel;
 using System.Collections;
 using System.ComponentModel.Design;
 using System.Drawing.Design;
+using System.Reflection;
 
 namespace ZedGraph
-{
+{	
+	#region Generic View State Assistant
+
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <author>Darren Martz</author>
+	public class GenericViewStateAssistant
+	{
+		private ArrayList list = new ArrayList();
+		protected class AssistNode
+		{
+			public AssistNode(char code, Type type)
+			{
+				Code = code;
+				Key = type;
+				Value = null;
+			}
+			public char	  Code;
+			public Type   Key;
+			public object Value;
+		}
+
+		public GenericViewStateAssistant()
+		{
+		}
+
+		public void Register(char code, Type type)
+		{
+			list.Add( new AssistNode(code,type) );
+		}
+
+		public object GetValue(object host, char code)
+		{
+			AssistNode test = null;
+			AssistNode node = null;
+			
+			for ( int i=0; i<list.Count; i++ )
+			{
+				test = (AssistNode)list[i];
+				if ( test.Code == code )
+				{
+					node = test;
+					break;
+				}
+			}
+
+			if ( node.Value == null )
+			{
+				node.Value = Activator.CreateInstance(node.Key);					
+				if (((IStateManager)host).IsTrackingViewState) 
+				{	
+					((IStateManager)node.Value).TrackViewState();						
+				}	
+			}
+			return node.Value;
+		}
+
+		protected object GetValue(object host, int index)
+		{			
+			AssistNode node = (AssistNode)list[index];
+			
+			if ( node.Value == null )
+			{
+				node.Value = Activator.CreateInstance(node.Key);					
+				if (((IStateManager)host).IsTrackingViewState) 
+				{	
+					((IStateManager)node.Value).TrackViewState();						
+				}	
+			}
+			return node.Value;
+		}
+		
+		public object SaveViewState(object BaseState)
+		{			
+			object[] myState = new object[list.Count+1];			
+			myState[0] = BaseState;
+			AssistNode node;
+
+			for (int i=0; i<list.Count; i++)
+			{
+				node = (AssistNode)list[i];
+				if ( node.Value != null )
+				{					
+					myState[i+1] = ((IStateManager)node.Value).SaveViewState();	
+				}
+			}
+
+			return myState;
+		}
+
+		public object LoadViewState(object host, object savedState)
+		{
+			if ( savedState == null ) return null;
+			object[] myState = (object[])savedState;
+			            
+#if DEBUG
+			if ( myState.Length != list.Count+1 )
+			{
+				System.Diagnostics.Debugger.Break();
+			}
+#endif
+			
+			IStateManager state;				
+			for ( int i=0; i<list.Count; i++ )
+			{	
+				if ( myState[i+1] != null )
+				{
+					state = (IStateManager)GetValue(host,i);					
+					state.LoadViewState(myState[i+1]);
+				}
+			}
+
+			return myState[0];
+		}
+
+		public void TrackViewState()
+		{			
+			AssistNode node;
+			for ( int i=0; i<list.Count; i++ )
+			{	
+				node = (AssistNode)list[i];
+				if ( node.Value != null )
+				{
+					((IStateManager)node.Value).TrackViewState();				
+				}
+			}				
+		}
+	}
+	#endregion
+
 	#region Generic Data Schema
 	/// <summary>
 	/// Identifies state management items by a unique code and its datatype. The code is defined 
@@ -97,6 +228,66 @@ namespace ZedGraph
 		/// </summary>
 		private StateBag _viewState;		
 
+		private ArrayList _subitemlist = new ArrayList();
+		private class AssistNode
+		{
+			public AssistNode(char code, Type type)
+			{
+				Code = code;
+				Key = type;
+				Value = null;
+			}
+			public char	  Code;
+			public Type   Key;
+			public object Value;
+		}
+
+		protected void Register(char code, Type type)
+		{
+			_subitemlist.Add( new AssistNode(code,type) );
+		}
+
+		protected object GetValue(char code)
+		{
+			AssistNode test = null;
+			AssistNode node = null;
+			
+			for ( int i=0; i<_subitemlist.Count; i++ )
+			{
+				test = (AssistNode)_subitemlist[i];
+				if ( test.Code == code )
+				{
+					node = test;
+					break;
+				}
+			}
+
+			if ( node.Value == null )
+			{
+				node.Value = Activator.CreateInstance(node.Key);					
+				if (((IStateManager)this).IsTrackingViewState) 
+				{	
+					((IStateManager)node.Value).TrackViewState();						
+				}	
+			}
+			return node.Value;
+		}
+
+		private object GetValue(int index)
+		{			
+			AssistNode node = (AssistNode)_subitemlist[index];
+			
+			if ( node.Value == null )
+			{
+				node.Value = Activator.CreateInstance(node.Key);					
+				if (((IStateManager)this).IsTrackingViewState) 
+				{	
+					((IStateManager)node.Value).TrackViewState();						
+				}	
+			}
+			return node.Value;
+		}
+
 		/// <summary>
 		/// Internal access to the viewstate array. Subclassed objects can access this
 		/// to read/write changes to the objects view state.
@@ -153,8 +344,26 @@ namespace ZedGraph
 		/// <param name="savedState">object containing asp.net page viewstate</param>
 		protected virtual void LoadViewState(object savedState)
 		{
-			if ( savedState == null ) return;
-			((IStateManager)ViewState).LoadViewState(savedState);
+			if ( savedState == null ) return;			
+			object[] myState = (object[])savedState;
+			            
+#if DEBUG
+			if ( myState.Length != _subitemlist.Count+1 )
+			{
+				System.Diagnostics.Debugger.Break();
+			}
+#endif
+			((IStateManager)ViewState).LoadViewState(myState[0]);
+
+			IStateManager state;				
+			for ( int i=0; i<_subitemlist.Count; i++ )
+			{	
+				if ( myState[i+1] != null )
+				{
+					state = (IStateManager)GetValue(i);					
+					state.LoadViewState(myState[i+1]);
+				}
+			}
 		}
 
 		/// <summary>
@@ -173,7 +382,21 @@ namespace ZedGraph
 		protected virtual object SaveViewState()
 		{
 			if ( null == _viewState ) return null;
-			return ((IStateManager)_viewState).SaveViewState();
+
+			object[] myState = new object[_subitemlist.Count+1];			
+			myState[0] = ((IStateManager)_viewState).SaveViewState();
+			AssistNode node;
+
+			for (int i=0; i<_subitemlist.Count; i++)
+			{
+				node = (AssistNode)_subitemlist[i];
+				if ( node.Value != null )
+				{					
+					myState[i+1] = ((IStateManager)node.Value).SaveViewState();	
+				}
+			}
+
+			return myState;
 		}
 
 		/// <summary>
@@ -192,6 +415,16 @@ namespace ZedGraph
 		{
 			_isTrackingViewState = true;
 			if ( null != _viewState ) ((IStateManager)_viewState).TrackViewState();
+
+			AssistNode node;
+			for ( int i=0; i<_subitemlist.Count; i++ )
+			{	
+				node = (AssistNode)_subitemlist[i];
+				if ( node.Value != null )
+				{
+					((IStateManager)node.Value).TrackViewState();				
+				}
+			}	
 		}
 
 		/// <summary>
