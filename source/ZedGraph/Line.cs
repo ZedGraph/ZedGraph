@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-01-16 03:46:12 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -384,7 +384,7 @@ namespace ZedGraph
         /// <param name="scaleFactor">
         /// The scaling factor to be used for rendering objects.  This is calculated and
         /// passed down by the parent <see cref="GraphPane"/> object using the
-        /// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+        /// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
         /// font sizes, etc. according to the actual size of the graph.
         /// </param>
         /// <param name="pane">
@@ -396,7 +396,7 @@ namespace ZedGraph
 		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
 		/// true for the "Y2" axis, false for the "Y" axis.</param>
 		public void Draw( Graphics g, GraphPane pane, LineItem curve,
-                        bool isY2Axis, double scaleFactor )
+                        bool isY2Axis, float scaleFactor )
         {
 			// If the line is being shown, draw it
 			if ( this.IsVisible )
@@ -423,7 +423,7 @@ namespace ZedGraph
         /// <param name="scaleFactor">
         /// The scaling factor to be used for rendering objects.  This is calculated and
         /// passed down by the parent <see cref="GraphPane"/> object using the
-        /// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+        /// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
         /// font sizes, etc. according to the actual size of the graph.
         /// </param>
         /// <param name="x1">The x position of the starting point that defines the
@@ -435,7 +435,7 @@ namespace ZedGraph
 		/// <param name="y2">The y position of the ending point that defines the
 		/// line segment in screen pixel units</param>
         public void DrawSegment( Graphics g, GraphPane pane, float x1, float y1,
-                            float x2, float y2, double scaleFactor )
+                            float x2, float y2, float scaleFactor )
         {
 			if ( this.isVisible && !this.Color.IsEmpty )
 			{
@@ -461,7 +461,7 @@ namespace ZedGraph
         /// <param name="scaleFactor">
         /// The scaling factor to be used for rendering objects.  This is calculated and
         /// passed down by the parent <see cref="GraphPane"/> object using the
-        /// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+        /// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
         /// font sizes, etc. according to the actual size of the graph.
         /// </param>
         /// <param name="pane">
@@ -473,7 +473,7 @@ namespace ZedGraph
 		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
 		/// true for the "Y2" axis, false for the "Y" axis.</param>
 		public void DrawSmoothFilledCurve( Graphics g, GraphPane pane,
-                                LineItem curve, bool isY2Axis, double scaleFactor )
+                                LineItem curve, bool isY2Axis, float scaleFactor )
         {
 			PointF[]	arrPoints;
 			int			count;
@@ -524,7 +524,7 @@ namespace ZedGraph
         /// <param name="scaleFactor">
         /// The scaling factor to be used for rendering objects.  This is calculated and
         /// passed down by the parent <see cref="GraphPane"/> object using the
-        /// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+        /// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
         /// font sizes, etc. according to the actual size of the graph.
         /// </param>
         /// <param name="pane">
@@ -536,7 +536,7 @@ namespace ZedGraph
 		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
 		/// true for the "Y2" axis, false for the "Y" axis.</param>
 		public void DrawCurve( Graphics g, GraphPane pane,
-                                LineItem curve, bool isY2Axis, double scaleFactor)
+                                LineItem curve, bool isY2Axis, float scaleFactor)
         {
 			float	tmpX, tmpY,
 					lastX = 0,

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.7 $ $Date: 2005-01-21 05:05:07 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class PieItem : ZedGraph.CurveItem , ICloneable, ISerializable
 	{
@@ -390,10 +390,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>				
-		override public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  )
+		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
 
 			RectangleF nonExplRect ;
@@ -461,13 +461,13 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>				
 		/// <param name="axisRect">The <see cref="RectangleF"/> (normally the <see cref="GraphPane.AxisRect"/>)
 		/// that bounds this pie.</param>
 		/// <returns></returns>
-		public static RectangleF CalcPieRect( Graphics g, GraphPane pane, double scaleFactor, RectangleF axisRect )
+		public static RectangleF CalcPieRect( Graphics g, GraphPane pane, float scaleFactor, RectangleF axisRect )
 		{
 			//want to draw the largest pie possible within axisRect
 			//but want to leave  10% slack around the pie so labels will not overrun clip area
@@ -558,10 +558,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>				
-		public void DrawLabel ( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor  )
+		public void DrawLabel ( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor  )
 		{
 			//label line will come off the explosion radius and then pivot to the horizontal right or left, dependent on position.. 
 			//text will be at the end of horizontal segment...
@@ -671,10 +671,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor )
+		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor )
 		{
 			if ( !this.isVisible )
 				return ;

@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -181,7 +181,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>The size of the bars can be set by this value, which
 		/// is then scaled according to the scaleFactor (see
-		/// <see cref="GraphPane.CalcScaleFactor"/>).  Alternatively,
+		/// <see cref="PaneBase.CalcScaleFactor"/>).  Alternatively,
 		/// if <see cref="IsMaximumWidth"/> is true, the bar width will
 		/// be set according to the maximum available cluster width less
 		/// the cluster gap (see <see cref="GraphPane.GetClusterWidth"/>
@@ -242,13 +242,13 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		override protected void DrawSingleBar( Graphics g, GraphPane pane,
 							CurveItem curve,
 							int index, int pos, Axis baseAxis, Axis valueAxis,
-							double scaleFactor )
+							float scaleFactor )
 		{
 			float	scaledSize = GetBarWidth( pane, baseAxis, scaleFactor );
 
@@ -311,11 +311,11 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>The width of each bar, in pixel units</returns>
-		public float GetBarWidth( GraphPane pane, Axis baseAxis, double scaleFactor )
+		public float GetBarWidth( GraphPane pane, Axis baseAxis, float scaleFactor )
 		{
 			if ( isMaximumWidth )
 				return baseAxis.GetClusterWidth( pane ) / ( 1.0F + pane.MinClusterGap );

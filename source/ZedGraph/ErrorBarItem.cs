@@ -49,7 +49,7 @@ namespace ZedGraph
 	/// is assigned with <see cref="ErrorBarItem.BarBase"/>, and is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-01-09 03:52:20 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class ErrorBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -222,10 +222,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		override public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  )
+		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
 			if ( this.isVisible )
 			{
@@ -250,11 +250,11 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect,
-									double scaleFactor )
+									float scaleFactor )
 		{
 			float pixBase, pixValue, pixLowValue;
 

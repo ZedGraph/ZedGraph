@@ -148,6 +148,7 @@ namespace ZedGraph.Demo
 			master = (MasterPane) mySerializer.Deserialize( myReader );
 			myReader.Close();
 
+
 #endif
 
 #if false	// The main example
@@ -313,10 +314,10 @@ namespace ZedGraph.Demo
 			//myPane.LineType = LineType.Stack;
 			//myPane.PaneBorder.IsVisible= false;
 
-			RectangleF rect = new RectangleF( .5F, .2F, .2F, .2F );
+			RectangleF rect = new RectangleF( .5F, .05F, .2F, .2F );
 			EllipseItem ellipse = new EllipseItem( rect, Color.Black, Color.Blue );
 			ellipse.Location.CoordinateFrame = CoordType.PaneFraction;
-			ellipse.ZOrder = ZOrder.D_BehindCurves;
+			ellipse.ZOrder = ZOrder.G_BehindAll;
 			myPane.GraphItemList.Add( ellipse );
 
 			//myPane.CurveList.Remove( myPane.CurveList.IndexOf( bar ) );
@@ -449,14 +450,60 @@ namespace ZedGraph.Demo
 #if true	// MasterPane Test
 
 			master = new MasterPane( "MASTER PANE TEST", new RectangleF( 0, 0, 600, 400 ) );
+			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+			
+			master.Tag = "This is my tag";
+
+			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
+			Image image = Image.FromHbitmap( bm.GetHbitmap() );
+			ImageItem imageItem = new ImageItem( image,
+				new RectangleF( 0.1F, 0.03F, 0.1F, 0.06F ),
+				CoordType.PaneFraction, AlignH.Left, AlignV.Top );
+			//imageItem.IsScaled = false;
+			imageItem.ZOrder = ZOrder.G_BehindAll;
+			master.GraphItemList.Add( imageItem );
+
+			TextItem text = new TextItem("Confidential", 0.80F, 0.12F );
+			text.Location.CoordinateFrame = CoordType.PaneFraction;
+
+			text.FontSpec.Angle = 15.0F;
+			text.FontSpec.FontColor = Color.Red;
+			text.FontSpec.IsBold = true;
+			text.FontSpec.Size = 16;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Border.Color = Color.Red;
+			text.FontSpec.Fill.IsVisible = false;
+
+			text.Location.AlignH = AlignH.Left;
+			text.Location.AlignV = AlignV.Bottom;
+			master.GraphItemList.Add( text );
+
+			text = new TextItem("DRAFT", 0.5F, 0.5F );
+			text.Location.CoordinateFrame = CoordType.PaneFraction;
+
+			text.FontSpec.Angle = 30.0F;
+			text.FontSpec.FontColor = Color.FromArgb( 70, 255, 100, 100 );
+			text.FontSpec.IsBold = true;
+			text.FontSpec.Size = 100;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Fill.IsVisible = false;
+
+			text.Location.AlignH = AlignH.Center;
+			text.Location.AlignV = AlignV.Center;
+			text.ZOrder = ZOrder.A_InFront;
+			
+			master.GraphItemList.Add( text );
 
 			for ( int j=0; j<6; j++ )
 			{
 				// Create a new graph with topLeft at (40,40) and size 600x400
 				myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
-					"My Test Graph #" + j.ToString(),
+					"My Test Graph #" + (j+1).ToString(),
 					"X Axis",
 					"Y Axis" );
+
+				myPane.PaneFill = new Fill( Color.White, Color.LightYellow, 45.0F );
+				myPane.BaseDimension = 6.0F;
 
 				// Make up some data arrays based on the Sine function
 				double x, y;
@@ -464,7 +511,7 @@ namespace ZedGraph.Demo
 				for ( int i=0; i<36; i++ )
 				{
 					x = (double) i + 5;
-					y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 ) );
+					y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 + (double) j ) );
 					list.Add( x, y );
 				}
 
@@ -3108,9 +3155,12 @@ namespace ZedGraph.Demo
 			paneRect.Inflate( -20, -20 );
 
 			if ( this.master != null && this.isResizable )
-				this.master.Rect = paneRect;
+				this.master.ReSize( this.CreateGraphics(), paneRect );
+				//this.master.PaneRect = paneRect;
 			else if ( this.myPane != null && this.isResizable )
-				this.myPane.PaneRect = paneRect;
+				this.myPane.ReSize( this.CreateGraphics(), paneRect );
+
+			Invalidate();
 		}
 
 		private void Graph_PrintPage( object sender, PrintPageEventArgs e )

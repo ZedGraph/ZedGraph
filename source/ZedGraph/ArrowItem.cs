@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-01-08 08:28:06 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-01-22 06:20:49 $ </version>
 	[Serializable]
 	public class ArrowItem : GraphItem, ICloneable, ISerializable
 	{
@@ -275,16 +275,16 @@ namespace ZedGraph
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// A reference to the <see cref="PaneBase"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		override public void Draw( Graphics g, GraphPane pane, double scaleFactor )
+		override public void Draw( Graphics g, PaneBase pane, float scaleFactor )
 		{
 			// Convert the arrow coordinates from the user coordinate system
 			// to the screen coordinate system
@@ -363,11 +363,11 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
-		override public bool PointInBox( PointF pt, GraphPane pane, Graphics g, double scaleFactor )
+		override public bool PointInBox( PointF pt, GraphPane pane, Graphics g, float scaleFactor )
 		{
 			// transform the x,y location from the user-defined
 			// coordinate frame to the screen pixel location

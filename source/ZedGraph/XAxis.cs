@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2005-01-08 08:28:08 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class XAxis : Axis, ICloneable, ISerializable
 	{
@@ -150,10 +150,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		override public void SetTransformMatrix( Graphics g, GraphPane pane, double scaleFactor )
+		override public void SetTransformMatrix( Graphics g, GraphPane pane, float scaleFactor )
 		{
 			// Move the origin to the BottomLeft of the axisRect, which is the left
 			// side of the X axis (facing from the label side)

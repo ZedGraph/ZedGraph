@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-01-19 05:54:52 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class GraphItemList : CollectionBase, ICloneable
 	{
@@ -115,13 +115,13 @@ namespace ZedGraph
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// A reference to the <see cref="PaneBase"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <param name="zOrder">A <see cref="ZOrder"/> enumeration that controls
@@ -129,7 +129,7 @@ namespace ZedGraph
 		/// graphic objects.  The order of <see cref="GraphItem"/>'s with the
 		/// same <see cref="ZOrder"/> value is control by their order in
 		/// this <see cref="GraphItemList"/>.</param>
-		public void Draw( Graphics g, GraphPane pane, double scaleFactor,
+		public void Draw( Graphics g, PaneBase pane, float scaleFactor,
 							ZOrder zOrder )
 		{
 			// Draw the items in reverse order, so the last items in the
@@ -159,17 +159,17 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <param name="index">The index number of the <see cref="TextItem"/>
 		///  that is under the mouse point.  The <see cref="TextItem"/> object is
-		/// accessible via <see cref="GraphPane.GraphItemList">GraphItemList[index]</see>.
+		/// accessible via <see cref="GraphItemList.this[int]"></see>.
 		/// </param>
 		/// <returns>true if the mouse point is within a <see cref="GraphItem"/> bounding
 		/// box, false otherwise.</returns>
 		/// <seealso cref="GraphPane.FindNearestObject"/>
-		public bool FindPoint( PointF mousePt, GraphPane pane, Graphics g, double scaleFactor, out int index )
+		public bool FindPoint( PointF mousePt, GraphPane pane, Graphics g, float scaleFactor, out int index )
 		{
 			index = -1;
 			

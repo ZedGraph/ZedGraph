@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-01-19 05:54:52 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class PointPair : ISerializable
 	{
@@ -70,6 +70,11 @@ namespace ZedGraph
 		/// may be displayed in a <see cref="System.Windows.Forms.ToolTip"/>
 		/// within the <see cref="ZedGraphControl"/> object.
 		/// </summary>
+		/// <remarks>
+		/// Note that, if you are going to Serialize ZedGraph data, then any type
+		/// that you store in <see cref="Tag"/> must be a serializable type (or
+		/// it will cause an exception).
+		/// </remarks>
 		public object Tag;
 
 	#endregion

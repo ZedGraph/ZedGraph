@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-01-18 06:45:38 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-01-22 06:20:51 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -80,7 +80,7 @@ namespace ZedGraph
 		/// Renders the demo graph with one call.
 		/// </summary>
 		/// <param name="g">A <see cref="Graphics"/> object for which the drawing will be done.</param>
-		/// <param name="pane">A reference to the <see cref="GraphPane"/>
+		/// <param name="pane">A reference to the <see cref="GraphPane"/></param>
 		static public void RenderDemo( Graphics g, ZedGraph.GraphPane pane )
 		{
 			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
@@ -187,19 +187,22 @@ namespace ZedGraph
 
 	#region Attributes
 
+		/// <summary>
+		/// Gets or sets the value of the <see cref="PaneBase.BaseDimension"/>.
+		/// </summary>
 		[Bindable(true),Category("Layout"),NotifyParentProperty(true)]
-		public double BaseDimension
+		public float BaseDimension
 		{
 			get 
 			{ 
 				object x = ViewState["BaseDimension"]; 
-				return (null == x) ? GraphPane.Default.BaseDimension : (double)x;
+				return (null == x) ? PaneBase.Default.BaseDimension : (float)x;
 			}
 			set { ViewState["BaseDimension"] = value; }
 		}
 		
 		/// <summary>
-		/// Gets or sets the width of the <see cref="ZedGraph.GraphPane.PaneRect"/>.
+		/// Gets or sets the width of the <see cref="PaneBase.PaneRect"/>.
 		/// </summary>
 		/// <value>The width in output device pixels</value>
 		[Bindable(true),Category("Layout"),NotifyParentProperty(true),DefaultValue(400)]
@@ -214,7 +217,7 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// Gets or sets the Height of the <see cref="ZedGraph.GraphPane.PaneRect"/>.
+		/// Gets or sets the Height of the <see cref="PaneBase.PaneRect"/>.
 		/// </summary>
 		/// <value>The height in output device pixels</value>
 		[Bindable(true),Category("Layout"),NotifyParentProperty(true),DefaultValue(250)]
@@ -244,7 +247,7 @@ namespace ZedGraph
 		}		
 		
 		/// <summary>
-		/// Gets or sets the value that determines if the <see cref="ZedGraph.GraphPane.Title"/>
+		/// Gets or sets the value that determines if the <see cref="ZedGraph.PaneBase.Title"/>
 		/// is visible.
 		/// </summary>
 		/// <value>true to show the pane title, false otherwise</value>
@@ -254,13 +257,13 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsShowTitle"]; 
-				return (null == x) ? GraphPane.Default.IsShowTitle : (bool)x;
+				return (null == x) ? PaneBase.Default.IsShowTitle : (bool)x;
 			}
 			set { ViewState["IsShowTitle"] = value; }			
 		}
 
 		/// <summary>
-		/// <seealso cref="ZegGraph.GraphPane.IsIgnoreInitial"/>
+		/// <seealso cref="ZedGraph.GraphPane.IsIgnoreInitial"/>
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public bool IsIgnoreInitial
@@ -274,7 +277,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZegGraph.GraphPane.IsIgnoreMissing"/>
+		/// <seealso cref="ZedGraph.GraphPane.IsIgnoreMissing"/>
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public bool IsIgnoreMissing
@@ -288,7 +291,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZegGraph.GraphPane.IsFontsScaled"/>
+		/// <seealso cref="ZedGraph.PaneBase.IsFontsScaled"/>
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public bool IsFontsScaled
@@ -302,7 +305,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZegGraph.GraphPane.BarBase"/>
+		/// <seealso cref="ZedGraph.GraphPane.BarBase"/>
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public BarBase BarBase
@@ -316,7 +319,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZegGraph.GraphPane.IsAxisRectAuto"/>
+		/// <seealso cref="ZedGraph.GraphPane.IsAxisRectAuto"/>
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public bool IsAxisRectAuto
@@ -330,7 +333,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// <seealso cref="ZegGraph.GraphPane.IsPenWidthScaled"/>
+		/// <seealso cref="ZedGraph.PaneBase.IsPenWidthScaled"/>
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public bool IsPenWidthScaled
@@ -338,11 +341,15 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsPenWidthScaled"]; 
-				return (null == x) ? GraphPane.Default.IsPenWidthScaled : (bool)x;
+				return (null == x) ? PaneBase.Default.IsPenWidthScaled : (bool)x;
 			}
 			set { ViewState["IsPenWidthScaled"] = value; }			
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <value></value>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true),DefaultValue("false")]
 		public bool AxisChanged
 		{
@@ -371,6 +378,9 @@ namespace ZedGraph
 			set { ViewState["OutputFormat"] = value; }						
 		}	
 	
+		/// <summary>
+		/// Gets or sets the value of the <see cref="GraphPane.ClusterScaleWidth"/>.
+		/// </summary>
 		[NotifyParentProperty(true),Category("Behavior")]
 		public double ClusterScaleWidth
 		{
@@ -382,6 +392,9 @@ namespace ZedGraph
 			set { ViewState["ClusterScaleWidth"] = value; }
 		} 
 
+		/// <summary>
+		/// Gets or sets the value of the <see cref="GraphPane.BarType"/>.
+		/// </summary>
 		[NotifyParentProperty(true),Category("Appearance")]
 		public BarType BarType
 		{
@@ -395,7 +408,12 @@ namespace ZedGraph
 
 	#endregion
 
-	#region CurveList Property		
+	#region CurveList Property	
+	
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <value></value>
 		[
 		Category("Data"),		
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),

@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-01-18 06:45:38 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-01-22 06:20:51 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 	#region Fields
@@ -208,7 +208,7 @@ namespace ZedGraph
 		/// <exception cref="ZedGraphException">
 		/// When the control has been disposed before this call.
 		/// </exception>
-		public Bitmap Image
+		public Image Image
 		{
 			get
 			{

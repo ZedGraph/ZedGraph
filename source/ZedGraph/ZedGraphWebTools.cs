@@ -242,11 +242,21 @@ namespace ZedGraph
 			public object Value;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="code"></param>
+		/// <param name="type"></param>
 		protected void Register(char code, Type type)
 		{
 			_subitemlist.Add( new AssistNode(code,type) );
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="code"></param>
+		/// <returns></returns>
 		protected object GetValue(char code)
 		{
 			AssistNode test = null;

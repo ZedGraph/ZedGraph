@@ -1,4 +1,9 @@
 ZedGraph Class Library Revision History
+21-Jan-2005 (by Champion)
+  Replace GraphPaneList with MasterPane
+  Add PaneList as GraphPane collection class
+  Add PaneBase as parent of MasterPane and GraphPane
+  
 18-Jan-2005 (by Champion)
   Add GraphPaneList
   Use Tag.Clone() when ICloneable available

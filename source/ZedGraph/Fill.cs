@@ -28,12 +28,12 @@ namespace ZedGraph
 {
 	/// <summary>
 	/// A class that encapsulates color-fill properties for an object.  The <see cref="Fill"/> class
-	/// is used in <see cref="GraphPane.PaneRect"/>, <see cref="GraphPane.AxisRect"/>, <see cref="Legend"/>,
+	/// is used in <see cref="PaneBase.PaneRect"/>, <see cref="GraphPane.AxisRect"/>, <see cref="Legend"/>,
 	/// <see cref="Bar"/>, and <see cref="Line"/> objects.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-01-16 03:46:12 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class Fill : ISerializable
 	{

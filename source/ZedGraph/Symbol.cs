@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-01-19 05:54:52 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -286,15 +286,15 @@ namespace ZedGraph
 		/// <param name="y">The y position of the center of the symbol in
 		/// pixel units</param>
 		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>
 		/// <param name="pen">A <see cref="Pen"/> class representing the standard pen for this symbol</param>
 		/// <param name="brush">A <see cref="Brush"/> class representing a default solid brush for this symbol
 		/// If this symbol uses a <see cref="LinearGradientBrush"/>, it will be created on the fly for
 		/// each point, since it has to be scaled to the individual point coordinates.</param>
-		public void DrawSymbol( Graphics g, float x, float y, double scaleFactor, Pen pen, Brush brush )
+		public void DrawSymbol( Graphics g, float x, float y, float scaleFactor, Pen pen, Brush brush )
 		{
 			// Only draw if the symbol is visible
 			if (	this.isVisible &&
@@ -371,11 +371,11 @@ namespace ZedGraph
 		/// <param name="y">The y position of the center of the symbol in
 		/// pixel units</param>
 		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>
-		public void DrawSymbol( Graphics g, GraphPane pane, float x, float y, double scaleFactor )
+		public void DrawSymbol( Graphics g, GraphPane pane, float x, float y, float scaleFactor )
 		{
 			// Only draw if the symbol is visible
 			if (	this.isVisible &&
@@ -409,13 +409,13 @@ namespace ZedGraph
 		/// <param name="y">The y position of the center of the symbol in
 		/// pixel units</param>
 		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.</param>
 		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
 		/// <see cref="ZedGraph.Border.PenWidth"/> for this symbol</param>
 		
-		public void DrawPoint( Graphics g, float x, float y, double scaleFactor, Pen pen )
+		public void DrawPoint( Graphics g, float x, float y, float scaleFactor, Pen pen )
 		{
 			float	scaledSize = (float) ( this.size * scaleFactor );
 			float	hsize = scaledSize / 2,
@@ -480,11 +480,11 @@ namespace ZedGraph
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.</param>
 		/// <returns>Returns the <see cref="GraphicsPath"/> for the current symbol</returns>
-		public GraphicsPath MakePath( Graphics g, double scaleFactor )
+		public GraphicsPath MakePath( Graphics g, float scaleFactor )
 		{
 			float	scaledSize = (float) ( this.size * scaleFactor );
 			float	hsize = scaledSize / 2,
@@ -557,15 +557,15 @@ namespace ZedGraph
 		/// <param name="y">The y position of the center of the symbol in
 		/// pixel units</param>
 		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>		
 		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
 		/// <see cref="ZedGraph.Border.PenWidth"/> for this symbol</param>
 		/// <param name="brush">A brush with the <see cref="Color"/> attribute
 		/// for this symbol</param>
-		public void FillPoint( Graphics g, float x, float y, double scaleFactor,
+		public void FillPoint( Graphics g, float x, float y, float scaleFactor,
 			Pen pen, Brush brush )
 		{
 			float	scaledSize = (float) ( this.size * scaleFactor ),
@@ -668,11 +668,11 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		public void Draw( Graphics g, GraphPane pane, LineItem curve,
-			bool isY2Axis, double scaleFactor )
+			bool isY2Axis, float scaleFactor )
 		{
 			float	tmpX, tmpY;
 			double	curX, curY, lowVal;

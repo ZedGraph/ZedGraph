@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-01-21 05:05:06 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class Border : ISerializable
 	{
@@ -244,12 +244,12 @@ namespace ZedGraph
 		/// scaleFactor.
 		/// </param>
 		/// <param name="scaleFactor">
-        /// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
-        /// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+        /// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
+        /// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
         /// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
         /// </param>
         /// <returns>A <see cref="Pen"/> object with the proper color and pen width.</returns>
-        public Pen MakePen( bool isPenWidthScaled, double scaleFactor )
+        public Pen MakePen( bool isPenWidthScaled, float scaleFactor )
 		{
 			float scaledPenWidth = penWidth;
 			if ( isPenWidthScaled )
@@ -271,12 +271,12 @@ namespace ZedGraph
 		/// scaleFactor.
 		/// </param>
 		/// <param name="scaleFactor">
-        /// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
-        /// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+        /// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
+        /// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
         /// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
         /// </param>
         /// <param name="rect">A <see cref="RectangleF"/> struct to be drawn.</param>
-        public void Draw( Graphics g, bool isPenWidthScaled, double scaleFactor, RectangleF rect )
+        public void Draw( Graphics g, bool isPenWidthScaled, float scaleFactor, RectangleF rect )
 		{
             // Need to use the RectangleF props since rounding it can cause the axisFrame to
             // not line up properly with the last tic mark

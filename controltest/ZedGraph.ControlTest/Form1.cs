@@ -59,13 +59,13 @@ namespace ZedGraph.ControlTest
 		{
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();
-			this.zedGraphControl6 = new ZedGraph.ZedGraphControl();
 			this.label1 = new System.Windows.Forms.Label();
 			this.tabPage2 = new System.Windows.Forms.TabPage();
-			this.zedGraphControl4 = new ZedGraph.ZedGraphControl();
 			this.tabPage3 = new System.Windows.Forms.TabPage();
-			this.zedGraphControl5 = new ZedGraph.ZedGraphControl();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.zedGraphControl6 = new ZedGraph.ZedGraphControl();
+			this.zedGraphControl4 = new ZedGraph.ZedGraphControl();
+			this.zedGraphControl5 = new ZedGraph.ZedGraphControl();
 			this.tabControl1.SuspendLayout();
 			this.tabPage1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
@@ -93,15 +93,7 @@ namespace ZedGraph.ControlTest
 			this.tabPage1.Size = new System.Drawing.Size( 528, 310 );
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "tabPage1";
-// 
-// zedGraphControl6
-// 
-			this.zedGraphControl6.IsShowPointValues = false;
-			this.zedGraphControl6.Location = new System.Drawing.Point( 24, 63 );
-			this.zedGraphControl6.Name = "zedGraphControl6";
-			this.zedGraphControl6.PointValueFormat = "G";
-			this.zedGraphControl6.Size = new System.Drawing.Size( 461, 209 );
-			this.zedGraphControl6.TabIndex = 1;
+			this.tabPage1.Paint += new System.Windows.Forms.PaintEventHandler( this.tabPage1_Paint );
 // 
 // label1
 // 
@@ -119,15 +111,6 @@ namespace ZedGraph.ControlTest
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "tabPage2";
 // 
-// zedGraphControl4
-// 
-			this.zedGraphControl4.IsShowPointValues = false;
-			this.zedGraphControl4.Location = new System.Drawing.Point( 24, 25 );
-			this.zedGraphControl4.Name = "zedGraphControl4";
-			this.zedGraphControl4.PointValueFormat = "G";
-			this.zedGraphControl4.Size = new System.Drawing.Size( 474, 247 );
-			this.zedGraphControl4.TabIndex = 0;
-// 
 // tabPage3
 // 
 			this.tabPage3.Controls.Add( this.zedGraphControl5 );
@@ -137,15 +120,6 @@ namespace ZedGraph.ControlTest
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "tabPage3";
 // 
-// zedGraphControl5
-// 
-			this.zedGraphControl5.IsShowPointValues = false;
-			this.zedGraphControl5.Location = new System.Drawing.Point( 64, 40 );
-			this.zedGraphControl5.Name = "zedGraphControl5";
-			this.zedGraphControl5.PointValueFormat = "G";
-			this.zedGraphControl5.Size = new System.Drawing.Size( 328, 224 );
-			this.zedGraphControl5.TabIndex = 0;
-// 
 // tabPage4
 // 
 			this.tabPage4.Location = new System.Drawing.Point( 4, 22 );
@@ -153,6 +127,37 @@ namespace ZedGraph.ControlTest
 			this.tabPage4.Size = new System.Drawing.Size( 528, 310 );
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "tabPage4";
+// 
+// zedGraphControl6
+// 
+			this.zedGraphControl6.IsShowPointValues = false;
+			this.zedGraphControl6.Location = new System.Drawing.Point( 24, 63 );
+			this.zedGraphControl6.Name = "zedGraphControl6";
+			this.zedGraphControl6.PointDateFormat = "g";
+			this.zedGraphControl6.PointValueFormat = "G";
+			this.zedGraphControl6.Size = new System.Drawing.Size( 461, 209 );
+			this.zedGraphControl6.TabIndex = 1;
+			this.zedGraphControl6.Paint += new System.Windows.Forms.PaintEventHandler( this.zedGraphControl6_Paint );
+// 
+// zedGraphControl4
+// 
+			this.zedGraphControl4.IsShowPointValues = false;
+			this.zedGraphControl4.Location = new System.Drawing.Point( 24, 25 );
+			this.zedGraphControl4.Name = "zedGraphControl4";
+			this.zedGraphControl4.PointDateFormat = "g";
+			this.zedGraphControl4.PointValueFormat = "G";
+			this.zedGraphControl4.Size = new System.Drawing.Size( 474, 247 );
+			this.zedGraphControl4.TabIndex = 0;
+// 
+// zedGraphControl5
+// 
+			this.zedGraphControl5.IsShowPointValues = false;
+			this.zedGraphControl5.Location = new System.Drawing.Point( 64, 40 );
+			this.zedGraphControl5.Name = "zedGraphControl5";
+			this.zedGraphControl5.PointDateFormat = "g";
+			this.zedGraphControl5.PointValueFormat = "G";
+			this.zedGraphControl5.Size = new System.Drawing.Size( 328, 224 );
+			this.zedGraphControl5.TabIndex = 0;
 // 
 // Form1
 // 
@@ -213,6 +218,14 @@ namespace ZedGraph.ControlTest
 			zedGraphControl4.AxisChange();
 			zedGraphControl5.AxisChange();
 			zedGraphControl6.AxisChange();
+		}
+
+		private void tabPage1_Paint(object sender, PaintEventArgs e)
+		{
+		}
+
+		private void zedGraphControl6_Paint(object sender, PaintEventArgs e)
+		{
 		}
 	}
 }

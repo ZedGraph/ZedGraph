@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.18 $ $Date: 2005-01-19 05:54:51 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -88,6 +88,11 @@ namespace ZedGraph
 		/// information associated with the <see cref="CurveItem"/>.  ZedGraph does
 		/// not use this value for any purpose.
 		/// </summary>
+		/// <remarks>
+		/// Note that, if you are going to Serialize ZedGraph data, then any type
+		/// that you store in <see cref="Tag"/> must be a serializable type (or
+		/// it will cause an exception).
+		/// </remarks>
 		public object Tag;
 
 	#endregion
@@ -422,10 +427,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		abstract public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  );
+		abstract public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  );
 		
 		/// <summary>
 		/// Draw a legend key entry for this <see cref="CurveItem"/> at the specified location.
@@ -445,10 +450,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		abstract public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor );
+		abstract public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor );
 		
 	#endregion
 

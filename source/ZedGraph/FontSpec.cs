@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-01-19 05:54:52 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -211,7 +211,7 @@ namespace ZedGraph
 				if ( value != family )
 				{
 					family = value;
-					Remake( (double) scaledSize / size, this.Size, ref this.scaledSize, ref this.font );
+					Remake( scaledSize / size, this.Size, ref this.scaledSize, ref this.font );
 				}
 			}
 		}
@@ -228,7 +228,7 @@ namespace ZedGraph
 				if ( value != isBold )
 				{
 					isBold = value;
-					Remake( (double) scaledSize / size, this.Size, ref this.scaledSize, ref this.font );
+					Remake( scaledSize / size, this.Size, ref this.scaledSize, ref this.font );
 				}
 			}
 		}
@@ -245,7 +245,7 @@ namespace ZedGraph
 				if ( value != isItalic )
 				{
 					isItalic = value;
-					Remake( (double) scaledSize / size, this.Size, ref this.scaledSize, ref this.font );
+					Remake( scaledSize / size, this.Size, ref this.scaledSize, ref this.font );
 				}
 			}
 		}
@@ -262,7 +262,7 @@ namespace ZedGraph
 				if ( value != isUnderline )
 				{
 					isUnderline = value;
-					Remake( (double) scaledSize / size, this.Size, ref this.scaledSize, ref this.font );
+					Remake( scaledSize / size, this.Size, ref this.scaledSize, ref this.font );
 				}
 			}
 		}
@@ -300,7 +300,7 @@ namespace ZedGraph
 			{ 
 				if ( value != size )
 				{
-					Remake( (double) scaledSize / size * (double) value, size, ref scaledSize,
+					Remake( scaledSize / size * value, size, ref scaledSize,
 								ref this.font );
 					size = value;
 				}
@@ -346,8 +346,8 @@ namespace ZedGraph
 		/// <param name="family">A text string representing the font family
 		/// (default is "Arial")</param>
 		/// <param name="size">A size of the font in points.  This size will be scaled
-		/// based on the ratio of the <see cref="GraphPane.PaneRect"/> dimension to the
-		/// <see cref="GraphPane.BaseDimension"/> of the <see cref="GraphPane"/> object. </param>
+		/// based on the ratio of the <see cref="PaneBase.PaneRect"/> dimension to the
+		/// <see cref="PaneBase.BaseDimension"/> of the <see cref="GraphPane"/> object. </param>
 		/// <param name="color">The color with which to render the font</param>
 		/// <param name="isBold">true for a bold typeface, false otherwise</param>
 		/// <param name="isItalic">true for an italic typeface, false otherwise</param>
@@ -368,7 +368,7 @@ namespace ZedGraph
 			this.fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
 
 			this.scaledSize = -1;
-			Remake( 1.0, this.size, ref this.scaledSize, ref this.font );
+			Remake( 1.0F, this.size, ref this.scaledSize, ref this.font );
 		}
 
 		/// <summary>
@@ -379,8 +379,8 @@ namespace ZedGraph
 		/// <param name="family">A text string representing the font family
 		/// (default is "Arial")</param>
 		/// <param name="size">A size of the font in points.  This size will be scaled
-		/// based on the ratio of the <see cref="GraphPane.PaneRect"/> dimension to the
-		/// <see cref="GraphPane.BaseDimension"/> of the <see cref="GraphPane"/> object. </param>
+		/// based on the ratio of the <see cref="PaneBase.PaneRect"/> dimension to the
+		/// <see cref="PaneBase.BaseDimension"/> of the <see cref="GraphPane"/> object. </param>
 		/// <param name="color">The color with which to render the font</param>
 		/// <param name="isBold">true for a bold typeface, false otherwise</param>
 		/// <param name="isItalic">true for an italic typeface, false otherwise</param>
@@ -407,7 +407,7 @@ namespace ZedGraph
 			this.border = new Border( true, Color.Black, 1.0F );
 			
 			this.scaledSize = -1;
-			Remake( 1.0, this.size, ref this.scaledSize, ref this.font );
+			Remake( 1.0F, this.size, ref this.scaledSize, ref this.font );
 		}
 
 		/// <summary>
@@ -429,7 +429,7 @@ namespace ZedGraph
 			size = rhs.Size;
 		
 			scaledSize = rhs.scaledSize;
-			Remake( 1.0, this.size, ref this.scaledSize, ref this.font );
+			Remake( 1.0F, this.size, ref this.scaledSize, ref this.font );
 		}
 
 		/// <summary>
@@ -473,7 +473,7 @@ namespace ZedGraph
 			size = info.GetSingle( "size" );
 
 			scaledSize = -1;
-			Remake( 1.0, this.size, ref this.scaledSize, ref this.font );
+			Remake( 1.0F, this.size, ref this.scaledSize, ref this.font );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -506,15 +506,15 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <param name="size">The unscaled size of the font, in points</param>
 		/// <param name="scaledSize">The scaled size of the font, in points</param>
 		/// <param name="font">A reference to the <see cref="Font"/> object</param>
-		private void Remake( double scaleFactor, float size, ref float scaledSize, ref Font font )
+		private void Remake( float scaleFactor, float size, ref float scaledSize, ref Font font )
 		{
-			float newSize = (float) ( size * scaleFactor );
+			float newSize = size * scaleFactor;
 			
 			// Regenerate the font only if the size has changed significantly
 			if ( font == null || Math.Abs( newSize - scaledSize ) > 0.1 )
@@ -535,13 +535,13 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>Returns a reference to a <see cref="Font"/> object
 		/// with a size of <see cref="scaledSize"/>, and font <see cref="Family"/>.
 		/// </returns>
-		public Font GetFont( double scaleFactor )
+		public Font GetFont( float scaleFactor )
 		{
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
 			return this.font;
@@ -578,12 +578,12 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		public void Draw( Graphics g, bool isPenWidthScaled, string text, float x,
 			float y, AlignH alignH, AlignV alignV,
-			double scaleFactor )
+			float scaleFactor )
 		{
 			// make sure the font size is properly scaled
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
@@ -690,13 +690,13 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>true if the point lies within the bounding box, false otherwise</returns>
 		public bool PointInBox( PointF pt, Graphics g, string text, float x,
 			float y, AlignH alignH, AlignV alignV,
-			double scaleFactor )
+			float scaleFactor )
 		{
 			// make sure the font size is properly scaled
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
@@ -783,12 +783,12 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		public void DrawTenPower( Graphics g, GraphPane pane, string text, float x,
 			float y, AlignH alignH, AlignV alignV,
-			double scaleFactor )
+			float scaleFactor )
 		{
 			// make sure the font size is properly scaled
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
@@ -887,11 +887,11 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>The scaled font height, in pixels</returns>
-		public float GetHeight( double scaleFactor )
+		public float GetHeight( float scaleFactor )
 		{
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
 			return this.font.Height;
@@ -907,11 +907,11 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>The scaled font width, in pixels</returns>
-		public float GetWidth( Graphics g, double scaleFactor )
+		public float GetWidth( Graphics g, float scaleFactor )
 		{
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
 			return g.MeasureString( "x", this.font ).Width;
@@ -929,11 +929,11 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>The scaled text width, in pixels</returns>
-		public float GetWidth( Graphics g, string text, double scaleFactor )
+		public float GetWidth( Graphics g, string text, float scaleFactor )
 		{
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
 			return g.MeasureString( text, this.font ).Width;
@@ -951,12 +951,12 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>The scaled text dimensions, in pixels, in the form of
 		/// a <see cref="SizeF"/> struct</returns>
-		public SizeF MeasureString( Graphics g, string text, double scaleFactor )
+		public SizeF MeasureString( Graphics g, string text, float scaleFactor )
 		{
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
 			return g.MeasureString( text, this.font );
@@ -978,12 +978,12 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>The scaled text dimensions, in pixels, in the form of
 		/// a <see cref="SizeF"/> struct</returns>
-		public SizeF BoundingBox( Graphics g, string text, double scaleFactor )
+		public SizeF BoundingBox( Graphics g, string text, float scaleFactor )
 		{
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
 			SizeF s = g.MeasureString( text, this.font );
@@ -1016,12 +1016,12 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>The scaled text dimensions, in pixels, in the form of
 		/// a <see cref="SizeF"/> struct</returns>
-		public SizeF BoundingBoxTenPower( Graphics g, string text, double scaleFactor )
+		public SizeF BoundingBoxTenPower( Graphics g, string text, float scaleFactor )
 		{
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
 			float scaledSuperSize = this.scaledSize * Default.SuperSize;

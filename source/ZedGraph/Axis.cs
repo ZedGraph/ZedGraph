@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.16 $ $Date: 2005-01-19 05:54:51 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2005-01-22 06:20:49 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -770,10 +770,10 @@ namespace ZedGraph
 
 			/// <summary>
 			/// The default setting for the axis space allocation.  This term, expressed in
-            /// points (1/72 inch) and scaled according to <see cref="GraphPane.CalcScaleFactor"/> for the
+            /// points (1/72 inch) and scaled according to <see cref="PaneBase.CalcScaleFactor"/> for the
             /// <see cref="GraphPane"/>, determines the minimum amount of space an axis must
 			/// have between the <see cref="GraphPane.AxisRect"/> and the
-			/// <see cref="GraphPane.PaneRect"/>.  This minimum space
+			/// <see cref="PaneBase.PaneRect"/>.  This minimum space
 			/// applies whether <see cref="Axis.IsVisible"/> is true or false.
 			/// </summary>
 			public static float MinSpace = 0f;
@@ -1326,10 +1326,10 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// This term, expressed in
-        /// points (1/72 inch) and scaled according to <see cref="GraphPane.CalcScaleFactor"/>
+        /// points (1/72 inch) and scaled according to <see cref="PaneBase.CalcScaleFactor"/>
         /// for the <see cref="GraphPane"/>, determines the minimum amount of space
 		/// an axis must have between the <see cref="GraphPane.AxisRect"/> and the
-		/// <see cref="GraphPane.PaneRect"/>.  This minimum space
+		/// <see cref="PaneBase.PaneRect"/>.  This minimum space
 		/// applies whether <see cref="IsVisible"/> is true or false.
 		/// </remarks>
 		public float MinSpace
@@ -1364,7 +1364,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// This length will be scaled
-		/// according to the <see cref="GraphPane.CalcScaleFactor"/> for the
+		/// according to the <see cref="PaneBase.CalcScaleFactor"/> for the
 		/// <see cref="GraphPane"/>
 		/// </remarks>
         /// <value>The tic size is measured in points (1/72 inch)</value>
@@ -1382,7 +1382,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// This length will be scaled
-		/// according to the <see cref="GraphPane.CalcScaleFactor"/> for the
+		/// according to the <see cref="PaneBase.CalcScaleFactor"/> for the
 		/// <see cref="GraphPane"/>
 		/// </remarks>
         /// <value>The tic size is measured in points (1/72 inch)</value>
@@ -1399,7 +1399,7 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
         /// <returns>The scaled tic size, in points (1/72 inch)</returns>
@@ -1407,8 +1407,8 @@ namespace ZedGraph
 		/// <seealso cref="MinorTicSize"/>
 		/// <seealso cref="TitleFontSpec"/>
 		/// <seealso cref="ScaleFontSpec"/>
-		/// <seealso cref="GraphPane.CalcScaleFactor"/>
-		public float ScaledTic( double scaleFactor )
+		/// <seealso cref="PaneBase.CalcScaleFactor"/>
+		public float ScaledTic( float scaleFactor )
 		{
 			return (float) ( this.ticSize * scaleFactor + 0.5 );
 		}
@@ -1418,13 +1418,13 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
         /// <returns>The scaled tic size, in points (1/72 inch)</returns>
         /// <seealso cref="MinorTicSize"/>
-		/// <seealso cref="GraphPane.CalcScaleFactor"/>
-		public float ScaledMinorTic( double scaleFactor )
+		/// <seealso cref="PaneBase.CalcScaleFactor"/>
+		public float ScaledMinorTic( float scaleFactor )
 		{
 			return (float) ( this.minorTicSize * scaleFactor + 0.5 );
 		}
@@ -2178,10 +2178,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void Draw( Graphics g, GraphPane pane, double scaleFactor )
+		public void Draw( Graphics g, GraphPane pane, float scaleFactor )
 		{
 			Matrix saveMatrix = g.Transform;
 
@@ -2264,7 +2264,7 @@ namespace ZedGraph
 			this.MinSpace = 0;
 			// Calculate the space required for the current graph assuming scalefactor = 1.0
 			// and apply the bufferFraction
-			float space = this.CalcSpace( g, pane, 1.0 ) * bufferFraction;
+			float space = this.CalcSpace( g, pane, 1.0F ) * bufferFraction;
 			// isGrowOnly indicates the minSpace can grow but not shrink
 			if ( isGrowOnly )
 				space = Math.Max( oldSpace, space );
@@ -2286,10 +2286,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		abstract public void SetTransformMatrix( Graphics g, GraphPane pane, double scaleFactor );
+		abstract public void SetTransformMatrix( Graphics g, GraphPane pane, float scaleFactor );
 
 
 		/// <summary>
@@ -2309,11 +2309,11 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>the maximum width of the text in pixel units</returns>
-		protected SizeF GetScaleMaxSpace( Graphics g, GraphPane pane, double scaleFactor )
+		protected SizeF GetScaleMaxSpace( Graphics g, GraphPane pane, float scaleFactor )
 		{
 			string tmpStr;
 			double	dVal,
@@ -2367,21 +2367,27 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>Returns the space, in pixels, required for this axis (between the
 		/// paneRect and axisRect)</returns>
-		public float CalcSpace( Graphics g, GraphPane pane, double scaleFactor )
+		public float CalcSpace( Graphics g, GraphPane pane, float scaleFactor )
 		{
 			float charHeight = this.ScaleFontSpec.GetHeight( scaleFactor );
-			float gap = pane.ScaledGap( scaleFactor );
+			//float gap = pane.ScaledGap( scaleFactor );
 			float ticSize = this.ScaledTic( scaleFactor );
 		
 			// axisRect is the actual area of the plot as bounded by the axes
 			
 			// Always leave 1xgap space, even if no axis is displayed
-			float space = gap;
+			float space;
+			if ( this is XAxis )
+				space = pane.MarginBottom * scaleFactor;
+			else if ( this is YAxis )
+				space = pane.MarginLeft * scaleFactor;
+			else
+				space = pane.MarginRight * scaleFactor;
 
 			// Account for the Axis
 			if ( this.isVisible )
@@ -2433,10 +2439,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void DrawScale( Graphics g, GraphPane pane, double scaleFactor )
+		public void DrawScale( Graphics g, GraphPane pane, float scaleFactor )
 		{
 			float	rightPix,
 					topPix;
@@ -2623,11 +2629,11 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		public void DrawLabels( Graphics g, GraphPane pane, double baseVal, int nTics,
-						float topPix, double scaleFactor )
+						float topPix, float scaleFactor )
 		{
 			double	dVal, dVal2;
 			float	pixVal, pixVal2;
@@ -2999,7 +3005,7 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <param name="topPix">
@@ -3007,7 +3013,7 @@ namespace ZedGraph
 		/// This value is the axisRect.Height for the XAxis, or the axisRect.Width
 		/// for the YAxis and Y2Axis.
 		/// </param>
-		public void DrawMinorTics( Graphics g, GraphPane pane, double baseVal, double scaleFactor, float topPix )
+		public void DrawMinorTics( Graphics g, GraphPane pane, double baseVal, float scaleFactor, float topPix )
 		{
 			if ( this.isMinorTic && this.isVisible )
 			{
@@ -3214,10 +3220,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void DrawTitle( Graphics g, GraphPane pane, double scaleFactor )
+		public void DrawTitle( Graphics g, GraphPane pane, float scaleFactor )
 		{
 			string str;
 
@@ -3298,10 +3304,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void PickScale( double minVal, double maxVal, GraphPane pane, Graphics g, double scaleFactor )
+		public void PickScale( double minVal, double maxVal, GraphPane pane, Graphics g, float scaleFactor )
 		{
 			// Make sure that minVal and maxVal are legitimate values
 			if ( Double.IsInfinity( minVal ) || Double.IsNaN( minVal ) || minVal == Double.MaxValue )
@@ -3389,12 +3395,12 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <seealso cref="PickScale"/>
 		/// <seealso cref="AxisType.Text"/>
-		public void PickTextScale( Graphics g, GraphPane pane, double scaleFactor )
+		public void PickTextScale( Graphics g, GraphPane pane, float scaleFactor )
 		{
 			// if text labels are provided, then autorange to the number of labels
 			if ( this.TextLabels != null )
@@ -3470,10 +3476,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public int CalcMaxLabels( Graphics g, GraphPane pane, double scaleFactor )
+		public int CalcMaxLabels( Graphics g, GraphPane pane, float scaleFactor )
 		{
 			SizeF size = this.GetScaleMaxSpace( g, pane, scaleFactor );
 			double maxWidth;
@@ -3546,12 +3552,12 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <seealso cref="PickScale"/>
 		/// <seealso cref="AxisType.Ordinal"/>
-		public void PickOrdinalScale( Graphics g, GraphPane pane, double scaleFactor )
+		public void PickOrdinalScale( Graphics g, GraphPane pane, float scaleFactor )
 		{
 			// Test for trivial condition of range = 0 and pick a suitable default
 			if ( this.max - this.min < 1.0 )
@@ -3696,14 +3702,14 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <seealso cref="PickScale"/>
 		/// <seealso cref="AxisType.Date"/>
 		/// <seealso cref="MajorUnit"/>
 		/// <seealso cref="MinorUnit"/>
-		public void PickDateScale( Graphics g, GraphPane pane, double scaleFactor )
+		public void PickDateScale( Graphics g, GraphPane pane, float scaleFactor )
 		{
 			
 			// Test for trivial condition of range = 0 and pick a suitable default
@@ -3776,12 +3782,12 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <seealso cref="PickScale"/>
 		/// <seealso cref="AxisType.Linear"/>
-		public void PickLinearScale( Graphics g, GraphPane pane, double scaleFactor )
+		public void PickLinearScale( Graphics g, GraphPane pane, float scaleFactor )
 		{
 			// Test for trivial condition of range = 0 and pick a suitable default
 			if ( this.max - this.min < 1.0e-20 )

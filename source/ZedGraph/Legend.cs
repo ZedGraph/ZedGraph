@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.18 $ $Date: 2005-01-19 05:54:52 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -412,14 +412,14 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <param name="hStack">The number of columns (horizontal stacking) to be used
 		/// for drawing the legend</param>
         /// <param name="legendWidth">The width of each column in the legend</param>
         /// <param name="legendHeight">The height of each row in the legend</param>
-        public void Draw(Graphics g, GraphPane pane, double scaleFactor,
+        public void Draw(Graphics g, GraphPane pane, float scaleFactor,
                                     int hStack, float legendWidth, float legendHeight )
 		{
 			// if the legend is not visible, do nothing
@@ -490,7 +490,7 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <param name="hStack">The number of columns (horizontal stacking) to be used
@@ -503,7 +503,7 @@ namespace ZedGraph
 		/// <returns>true if the mouse point is within the <see cref="Legend"/> bounding
 		/// box, false otherwise.</returns>
 		/// <seealso cref="GraphPane.FindNearestObject"/>
-		public bool FindPoint( PointF mousePt, GraphPane pane, double scaleFactor, int hStack,
+		public bool FindPoint( PointF mousePt, GraphPane pane, float scaleFactor, int hStack,
 							float legendWidth, out int index )
 		{
 			index = -1;
@@ -558,7 +558,7 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <param name="tAxisRect">
@@ -569,7 +569,7 @@ namespace ZedGraph
 		/// for drawing the legend</param>
         /// <param name="legendWidth">The width of each column in the legend (pixels)</param>
         /// <param name="legendHeight">The height of each row in the legend (pixels)</param>
-        public void CalcRect(Graphics g, GraphPane pane, double scaleFactor,
+        public void CalcRect(Graphics g, GraphPane pane, float scaleFactor,
                                         ref RectangleF tAxisRect, out int hStack,
 								        out float legendWidth, out float legendHeight )
 		{
@@ -587,7 +587,6 @@ namespace ZedGraph
 			float	charHeight = this.FontSpec.GetHeight( scaleFactor ),
 					halfCharHeight = charHeight / 2.0F,
 					charWidth = this.FontSpec.GetWidth( g, scaleFactor ),
-					gap = pane.ScaledGap( scaleFactor ),
 					maxWidth = 0,
 					tmpWidth;
 
@@ -703,7 +702,7 @@ namespace ZedGraph
 				switch( this.position )
 				{
 					case LegendPos.Right:
-						newRect.X = pane.PaneRect.Right - totLegWidth - gap;
+						newRect.X = pane.PaneRect.Right - totLegWidth - pane.MarginRight * (float) scaleFactor;
 						newRect.Y = tAxisRect.Top;
 		
 						tAxisRect.Width -= totLegWidth + halfCharHeight;
@@ -724,18 +723,18 @@ namespace ZedGraph
 						break;
 					case LegendPos.Bottom:
 						newRect.X = tAxisRect.Left + ( tAxisRect.Width - totLegWidth ) /2 ;
-						newRect.Y = pane.PaneRect.Bottom - totLegHeight - gap;
+						newRect.Y = pane.PaneRect.Bottom - totLegHeight - pane.MarginBottom * (float) scaleFactor;
 						
 						tAxisRect.Height -= totLegHeight + halfCharHeight;
 						break;
 					case LegendPos.BottomCenter:
 						newRect.X = tAxisRect.Left;
-						newRect.Y = pane.PaneRect.Bottom - totLegHeight - gap;
+						newRect.Y = pane.PaneRect.Bottom - totLegHeight - pane.MarginBottom * (float) scaleFactor;
 						
 						tAxisRect.Height -= totLegHeight + halfCharHeight;
 						break;
 					case LegendPos.Left:
-						newRect.X = pane.PaneRect.Left + gap;
+						newRect.X = pane.PaneRect.Left + pane.MarginLeft * (float) scaleFactor;
 						newRect.Y = tAxisRect.Top;
 						
 						tAxisRect.X += totLegWidth + halfCharHeight;

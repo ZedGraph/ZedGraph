@@ -244,6 +244,17 @@
                 />
                 <File
                     RelPath = "ZedGraph\MasterPane.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\PaneBase.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\PaneList.cs"
+                    SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File

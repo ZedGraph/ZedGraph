@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-01-19 05:54:52 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	abstract public class GraphItem : ISerializable
 	{
@@ -55,6 +55,11 @@ namespace ZedGraph
 		/// information associated with the <see cref="GraphItem"/>.  ZedGraph does
 		/// not use this value for any purpose.
 		/// </summary>
+		/// <remarks>
+		/// Note that, if you are going to Serialize ZedGraph data, then any type
+		/// that you store in <see cref="Tag"/> must be a serializable type (or
+		/// it will cause an exception).
+		/// </remarks>
 		public object Tag;
 
 		/// <summary>
@@ -360,16 +365,16 @@ namespace ZedGraph
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// A reference to the <see cref="PaneBase"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// passed down by the parent <see cref="PaneBase"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		abstract public void Draw( Graphics g, GraphPane pane, double scaleFactor );
+		abstract public void Draw( Graphics g, PaneBase pane, float scaleFactor );
 		
 		/// <summary>
 		/// Determine if the specified screen point lies inside the bounding box of this
@@ -386,12 +391,12 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// passed down by the parent <see cref="PaneBase"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
-		abstract public bool PointInBox( PointF pt, GraphPane pane, Graphics g, double scaleFactor );		
+		abstract public bool PointInBox( PointF pt, GraphPane pane, Graphics g, float scaleFactor );		
 	#endregion
 	
 	}

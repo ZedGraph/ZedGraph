@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -269,14 +269,14 @@ namespace ZedGraph
 		/// <param name="pixLowValue">The dependent axis position of the bottom of the error bar in
 		/// pixel units</param>
 		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.</param>
 		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
 		/// <see cref="PenWidth"/> for this <see cref="ErrorBar"/></param>
 		public void Draw( Graphics g, GraphPane pane, bool isXBase,
 								float pixBase, float pixValue,
-								float pixLowValue, double scaleFactor, Pen pen )
+								float pixLowValue, float scaleFactor, Pen pen )
 		{
 			if ( isXBase )
 			{
@@ -314,11 +314,11 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		public void Draw( Graphics g, GraphPane pane, ErrorBarItem curve,
-							Axis baseAxis, Axis valueAxis, double scaleFactor )
+							Axis baseAxis, Axis valueAxis, float scaleFactor )
 		{
 			BarValueHandler valueHandler = new BarValueHandler( pane );
 

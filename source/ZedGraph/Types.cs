@@ -73,7 +73,7 @@ namespace ZedGraph
 		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
 		/// range by initializing the <see cref="Fill"/> class with your own custom
 		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
-		/// data value makes no sense (<see cref="GraphPane.PaneFill"/>, <see cref="Legend.Fill"/>,
+		/// data value makes no sense (<see cref="PaneBase.PaneFill"/>, <see cref="Legend.Fill"/>,
 		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
 		/// </remarks>
 		GradientByX,
@@ -84,7 +84,7 @@ namespace ZedGraph
 		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
 		/// range by initializing the <see cref="Fill"/> class with your own custom
 		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
-		/// data value makes no sense (<see cref="GraphPane.PaneFill"/>, <see cref="Legend.Fill"/>,
+		/// data value makes no sense (<see cref="PaneBase.PaneFill"/>, <see cref="Legend.Fill"/>,
 		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
 		/// </remarks>
 		GradientByY,
@@ -95,7 +95,7 @@ namespace ZedGraph
 		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
 		/// range by initializing the <see cref="Fill"/> class with your own custom
 		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
-		/// data value makes no sense (<see cref="GraphPane.PaneFill"/>, <see cref="Legend.Fill"/>,
+		/// data value makes no sense (<see cref="PaneBase.PaneFill"/>, <see cref="Legend.Fill"/>,
 		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
 		/// </remarks>
 		GradientByZ
@@ -324,7 +324,7 @@ namespace ZedGraph
 		AxisFraction,
 		/// <summary>
 		/// Coordinates are specified as a fraction of the
-		/// <see cref="GraphPane.PaneRect"/>.  That is, for the X coordinate, 0.0
+		/// <see cref="PaneBase.PaneRect"/>.  That is, for the X coordinate, 0.0
 		/// is at the left edge of the PaneRect and 1.0
 		/// is at the right edge of the PaneRect. A value less
 		/// than zero is left of the PaneRect and a value
@@ -483,23 +483,51 @@ namespace ZedGraph
 	/// Enumeration that specifies a Z-Order position for <see cref="GraphItem"/>
 	/// objects.
 	/// </summary>
-	/// <remarks>The order of the graph elements is normally (front to back):
-	/// the <see cref="Legend"/> object, the <see cref="Axis"/> border,
-	/// the <see cref="CurveItem"/> objects, the <see cref="Axis"/> objects,
-	/// and the <see cref="GraphPane"/> title object.
+	/// <remarks>This enumeration allows you to set the layering of various graph
+	/// features.  Except for the <see cref="GraphItem"/> objects, other feature types
+	/// all have a fixed depth as follows (front to back):
+	/// <list>
+	/// <see cref="Legend"/> objects
+	/// The border around <see cref="GraphPane.AxisRect"/>
+	/// <see cref="CurveItem"/> objects
+	/// The <see cref="Axis"/> features
+	/// The background fill of the <see cref="GraphPane.AxisRect"/>
+	/// The pane <see cref="PaneBase.Title"/>
+	/// The background fill of the <see cref="PaneBase.PaneRect"/>
+	/// </list>
+	/// You cannot place anything behind the <see cref="PaneBase.PaneRect"/>
+	/// background fill, but <see cref="GraphItem.ZOrder"/> allows you to
+	/// explicitly control the depth of <see cref="GraphItem"/> objects
+	/// between all other object types.  For items of equal <see cref="ZOrder"/>,
+	/// such as multiple <see cref="CurveItem"/>'s or <see cref="GraphItem"/>'s
+	/// having the same <see cref="ZOrder"/> value, the relative depth is
+	/// controlled by the ordinal position in the list (either
+	/// <see cref="CurveList"/> or <see cref="GraphItemList"/>).
+	/// <see cref="GraphItem"/> objects
+	/// can be placed in the <see cref="GraphItemList"/> of either a
+	/// <see cref="GraphPane"/> or a <see cref="MasterPane"/>.  For a
+	/// <see cref="GraphPane"/>-based <see cref="GraphItem"/>, all <see cref="ZOrder"/>
+	/// values are applicable.  For a <see cref="MasterPane"/>-based
+	/// <see cref="GraphItem"/>, any <see cref="ZOrder"/> value can be used, but there
+	/// are really only three depths:
+	/// <list><see cref="ZOrder.G_BehindAll"/> will place the item behind the pane title,
+	/// <see cref="ZOrder.A_InFront"/> will place on top of all other graph features,
+	/// any other value places the object above the pane title, but behind the <see cref="GraphPane"/>'s.
+	/// </list>
 	/// </remarks>
 	public enum ZOrder
 	{
 	   /// <summary>
 	   /// Specifies that the <see cref="GraphItem"/> will be behind all other
-	   /// objects (including the <see cref="Axis"/> rectangle fill).
+	   /// objects (including the <see cref="PaneBase"/> <see cref="PaneBase.Title"/>).
 	   /// </summary>
 	   G_BehindAll,
 	   /// <summary>
 	   /// Specifies that the <see cref="GraphItem"/> will be behind the
-	   /// <see cref="GraphPane"/> title.
+	   /// <see cref="GraphPane.AxisRect"/> background <see cref="Fill"/>
+	   /// (see <see cref="GraphPane.AxisFill"/>).
 	   /// </summary>
-	   F_BehindTitle,
+	   F_BehindAxisFill,
 	   /// <summary>
 	   /// Specifies that the <see cref="GraphItem"/> will be behind the
 	   /// <see cref="Axis"/> objects.
@@ -576,8 +604,7 @@ namespace ZedGraph
 		Percent,
 
 		/// <summary>
-		/// Displays <see cref="CurveItem.Label"/> for
-		/// a slice in a Pie Chart.
+		/// Displays <see cref="CurveItem.Label"/> for a slice in a Pie Chart.
 		/// </summary>
 		Name,
 
@@ -588,32 +615,81 @@ namespace ZedGraph
 	};
 	
 	/// <summary>
-	/// Define the auto layout options for the <see cref="MasterPane.AutoPaneLayout"/> method.
+	/// Define the auto layout options for the <see cref="MasterPane.AutoPaneLayout(Graphics,PaneLayout)"/> method.
 	/// </summary>
 	public enum PaneLayout
 	{
 		/// <summary>
-		/// Layout the GraphPane's so they are in a square (always 2x2, 3x3, 4x4), leaving blank spaces
-		/// as required
+		/// Layout the <see cref="GraphPane"/>'s so they are in a square grid (always 2x2, 3x3, 4x4),
+		/// leaving blank spaces as required.
 		/// </summary>
+		/// <remarks>For example, a single pane would generate a 1x1 grid, between 2 and 4 panes would generate
+		/// a 2x2 grid, 5 to 9 panes would generate a 3x3 grid.</remarks>
 		ForceSquare,
 		/// <summary>
-		/// Layout the GraphPane's so they are in a general square (2x2, 3x3, etc.), but use extra
-		/// columns when necessary (1x2, 2x3, 3x4, etc.)
+		/// Layout the <see cref="GraphPane"/>'s so they are in a general square (2x2, 3x3, etc.), but use extra
+		/// columns when necessary (row x column = 1x2, 2x3, 3x4, etc.) depending on the total number
+		/// of panes required.
 		/// </summary>
+		/// <remarks>For example, a 2x2 grid has four panes and a 3x3 grid has 9 panes.  If there are
+		/// 6 panes required, then this option will eliminate a row (column preferred) to make a
+		/// 2 row x 3 column grid.  With 7 panes, it will make a 3x3 grid with 2 empty spaces.</remarks>
 		SquareColPreferred,
 		/// <summary>
-		/// Layout the GraphPane's so they are in a general square (2x2, 3x3, etc.), but use extra
-		/// rows when necessary (2x1, 3x2, 4x3, etc.)
+		/// Layout the <see cref="GraphPane"/>'s so they are in a general square (2x2, 3x3, etc.), but use extra
+		/// rows when necessary (2x1, 3x2, 4x3, etc.) depending on the total number of panes required.
 		/// </summary>
+		/// <remarks>For example, a 2x2 grid has four panes and a 3x3 grid has 9 panes.  If there are
+		/// 6 panes required, then this option will eliminate a column (row preferred) to make a
+		/// 3 row x 2 column grid.  With 7 panes, it will make a 3x3 grid with 2 empty spaces.</remarks>
 		SquareRowPreferred,
 		/// <summary>
-		/// Layout the GraphPane's in a single row
+		/// Layout the <see cref="GraphPane"/>'s in a single row
 		/// </summary>
 		SingleRow,
 		/// <summary>
-		/// Layout the GraphPane's in a single column
+		/// Layout the <see cref="GraphPane"/>'s in a single column
 		/// </summary>
-		SingleColumn
+		SingleColumn,
+		/// <summary>
+		/// Layout the <see cref="GraphPane"/>'s with an explicit number of columns: The first row has
+		/// 1 column and the second row has 2 columns for a total of 3 panes.
+		/// </summary>
+		ExplicitCol12,
+		/// <summary>
+		/// Layout the <see cref="GraphPane"/>'s with an explicit number of columns: The first row has
+		/// 2 columns and the second row has 1 column for a total of 3 panes.
+		/// </summary>
+		ExplicitCol21,
+		/// <summary>
+		/// Layout the <see cref="GraphPane"/>'s with an explicit number of columns: The first row has
+		/// 2 columns and the second row has 3 columns for a total of 5 panes.
+		/// </summary>
+		ExplicitCol23,
+		/// <summary>
+		/// Layout the <see cref="GraphPane"/>'s with an explicit number of columns: The first row has
+		/// 3 columns and the second row has 2 columns for a total of 5 panes.
+		/// </summary>
+		ExplicitCol32,
+		/// <summary>
+		/// Layout the <see cref="GraphPane"/>'s with an explicit number of rows: The first column has
+		/// 1 row and the second column has 2 rows for a total of 3 panes.
+		/// </summary>
+		ExplicitRow12,
+		/// <summary>
+		/// Layout the <see cref="GraphPane"/>'s with an explicit number of rows: The first column has
+		/// 2 rows and the second column has 1 row for a total of 3 panes.
+		/// </summary>
+		ExplicitRow21,
+		/// <summary>
+		/// Layout the <see cref="GraphPane"/>'s with an explicit number of rows: The first column has
+		/// 2 rows and the second column has 3 rows for a total of 5 panes.
+		/// </summary>
+		ExplicitRow23,
+		/// <summary>
+		/// Layout the <see cref="GraphPane"/>'s with an explicit number of rows: The first column has
+		/// 3 rows and the second column has 2 rows for a total of 5 panes.
+		/// </summary>
+		ExplicitRow32
 	};
 }

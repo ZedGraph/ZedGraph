@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// chart, etc.  The width of the bar can be set in two ways.  First,
 	/// <see cref="HiLowBar.Size"/> can be used to set a width in points (1/72nd inch),
 	/// that is scaled using the regular scalefactor method (see
-	/// <see cref="GraphPane.CalcScaleFactor"/>).  In this manner, the bar widths
+	/// <see cref="PaneBase.CalcScaleFactor"/>).  In this manner, the bar widths
 	/// are set similar to symbol sizes.  The other method is to set
 	/// <see cref="HiLowBar.IsMaximumWidth"/> to true, which will cause the bars
 	/// to be scaled just like a <see cref="BarItem"/> in which only one
@@ -54,7 +54,7 @@ namespace ZedGraph
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -218,10 +218,10 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		override public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  )
+		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
 			if ( this.isVisible )
 				bar.DrawBars( g, pane, this, BaseAxis(pane), ValueAxis(pane,isY2Axis),
@@ -244,11 +244,11 @@ namespace ZedGraph
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect,
-									double scaleFactor )
+									float scaleFactor )
 		{
 			this.bar.Draw( g, pane, rect, scaleFactor, true );
 		}

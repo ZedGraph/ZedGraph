@@ -99,7 +99,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion	</author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-01-18 06:45:38 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-01-22 06:20:51 $ </version>
 	[TestFixture]
 	public	class ControlTest
 	{
@@ -234,7 +234,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.11 $ $Date: 2005-01-18 06:45:38 $ </version>
+	/// <version>	$Revision: 3.12 $ $Date: 2005-01-22 06:20:51 $ </version>
 	[TestFixture]
 	public	class LibraryTest
 	{
@@ -1379,7 +1379,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.11 $ $Date: 2005-01-18 06:45:38 $ </version>
+	/// <version>	$Revision: 3.12 $ $Date: 2005-01-22 06:20:51 $ </version>
 	[TestFixture]
 	public	class LongFeatureTest
 	{
@@ -1539,12 +1539,18 @@ namespace ZedGraph.UnitTest
 			testee.AxisBorder	=	new Border( Color.Black, 1.0F );
 
 			testee.PaneFill = new	Fill( Color.White, Color.LightGoldenrodYellow );
-			testee.PaneGap	=	50.0F;
+			testee.MarginTop	=	50.0F;
+			testee.MarginBottom	=	50.0F;
+			testee.MarginLeft	=	50.0F;
+			testee.MarginRight	=	50.0F;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Pane Background Filled?" ) );
 			
-			testee.PaneGap	=	20.0F;
+			testee.MarginTop	=	20.0F;
+			testee.MarginBottom	=	20.0F;
+			testee.MarginLeft	=	20.0F;
+			testee.MarginRight	=	20.0F;
 			testee.PaneFill.IsVisible =	false;
 			testee.AxisFill = new Fill(	Color.White, Color.LightGoldenrodYellow );
 
@@ -2003,7 +2009,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.11 $ $Date: 2005-01-18 06:45:38 $ </version>
+	/// <version>	$Revision: 3.12 $ $Date: 2005-01-22 06:20:51 $ </version>
 	[TestFixture]
 	public	class FindNearestTest
 	{

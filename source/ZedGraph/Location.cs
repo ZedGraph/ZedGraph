@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-01-22 06:20:50 $ </version>
 	[Serializable]
 	public class Location : ICloneable, ISerializable
 	{
@@ -411,12 +411,12 @@ namespace ZedGraph
 		/// coordinates using the properties of the specified <see cref="GraphPane"/>.
 		/// </summary>
 		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that contains
+		/// A reference to the <see cref="PaneBase"/> object that contains
 		/// the <see cref="Axis"/> classes which will be used for the transform.
 		/// </param>
 		/// <returns>A point in display device coordinates that corresponds to the
 		/// specified user point.</returns>
-		public PointF Transform( GraphPane pane )
+		public PointF Transform( PaneBase pane )
 		{
 			return Transform( pane, new PointF( this.x, this.y ),
 						this.coordinateFrame );
@@ -426,8 +426,12 @@ namespace ZedGraph
 		/// Transform a data point from the specified coordinate type
 		/// (<see cref="CoordType"/>) to display device coordinates (pixels).
 		/// </summary>
+		/// <remarks>
+		/// If <see paramref="pane"/> is not of type <see cref="GraphPane"/>, then
+		/// only the <see cref="CoordType.PaneFraction"/> transformation is available.
+		/// </remarks>
 		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that contains
+		/// A reference to the <see cref="PaneBase"/> object that contains
 		/// the <see cref="Axis"/> classes which will be used for the transform.
 		/// </param>
 		/// <param name="ptF">The X,Y pair that defines the point in user
@@ -436,24 +440,36 @@ namespace ZedGraph
 		/// coordinate system in which the X,Y pair is defined.</param>
 		/// <returns>A point in display device coordinates that corresponds to the
 		/// specified user point.</returns>
-		public static PointF Transform( GraphPane pane, PointF ptF, CoordType coord )
+		public static PointF Transform( PaneBase pane, PointF ptF, CoordType coord )
 		{
 			PointF ptPix = new PointF();
 
-			if ( coord == CoordType.AxisFraction )
+			// If the Transformation is an illegal type, just stick it in the middle
+			if ( !(pane is GraphPane) && !( coord == CoordType.PaneFraction ) )
 			{
-				ptPix.X = pane.AxisRect.Left + ptF.X * pane.AxisRect.Width;
-				ptPix.Y = pane.AxisRect.Top + ptF.Y * pane.AxisRect.Height;
+				coord = CoordType.PaneFraction;
+				ptF = new PointF( 0.5F, 0.5F );
 			}
-			else if ( coord == CoordType.AxisXYScale )
+
+			// Just to save some casts
+			GraphPane tPane = null;
+			if ( pane is GraphPane )
+				tPane = (GraphPane) pane;
+
+			if ( pane is GraphPane && coord == CoordType.AxisFraction )
 			{
-				ptPix.X = pane.XAxis.Transform( ptF.X );
-				ptPix.Y = pane.YAxis.Transform( ptF.Y );
+				ptPix.X = tPane.AxisRect.Left + ptF.X * tPane.AxisRect.Width;
+				ptPix.Y = tPane.AxisRect.Top + ptF.Y * tPane.AxisRect.Height;
 			}
-			else if ( coord == CoordType.AxisXY2Scale )
+			else if ( pane is GraphPane && coord == CoordType.AxisXYScale )
 			{
-				ptPix.X = pane.XAxis.Transform( ptF.X );
-				ptPix.Y = pane.Y2Axis.Transform( ptF.Y );
+				ptPix.X = tPane.XAxis.Transform( ptF.X );
+				ptPix.Y = tPane.YAxis.Transform( ptF.Y );
+			}
+			else if ( pane is GraphPane && coord == CoordType.AxisXY2Scale )
+			{
+				ptPix.X = tPane.XAxis.Transform( ptF.X );
+				ptPix.Y = tPane.Y2Axis.Transform( ptF.Y );
 			}
 			else	// PaneFraction
 			{
@@ -467,7 +483,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Transform this <see cref="Location"/> from the coordinate system
 		/// as specified by <see cref="CoordinateFrame"/> to the device coordinates
-		/// of the specified <see cref="GraphPane"/> object.
+		/// of the specified <see cref="PaneBase"/> object.
 		/// </summary>
 		/// <remarks>
 		/// The returned
@@ -477,13 +493,13 @@ namespace ZedGraph
 		/// this transformation.
 		/// </remarks>
 		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that contains
+		/// A reference to the <see cref="PaneBase"/> object that contains
 		/// the <see cref="Axis"/> classes which will be used for the transform.
 		/// </param>
 		/// <param name="width">The width of the object in device pixels</param>
 		/// <param name="height">The height of the object in device pixels</param>
 		/// <returns>The top-left corner of the object</returns>
-		public PointF TransformTopLeft( GraphPane pane, float width, float height )
+		public PointF TransformTopLeft( PaneBase pane, float width, float height )
 		{
 			PointF pt = Transform( pane );
 			
@@ -508,10 +524,10 @@ namespace ZedGraph
 		/// <remarks>
 		/// This method transforms the location to output device pixel units.
 		/// The <see cref="AlignH"/> and <see cref="AlignV"/> properties are ignored for
-		/// this transformation (see <see cref="TransformTopLeft(GraphPane,float,float)"/>).
+		/// this transformation (see <see cref="TransformTopLeft(PaneBase,float,float)"/>).
 		/// </remarks>
 		/// <value>A <see cref="PointF"/> in pixel units.</value>
-		public PointF TransformTopLeft( GraphPane pane )
+		public PointF TransformTopLeft( PaneBase pane )
 		{
 			return Transform( pane );
 		}
@@ -523,10 +539,10 @@ namespace ZedGraph
 		/// <remarks>
 		/// This method transforms the location to output device pixel units.
 		/// The <see cref="AlignH"/> and <see cref="AlignV"/> properties are ignored for
-		/// this transformation (see <see cref="TransformTopLeft(GraphPane,float,float)"/>).
+		/// this transformation (see <see cref="TransformTopLeft(PaneBase,float,float)"/>).
 		/// </remarks>
 		/// <value>A <see cref="PointF"/> in pixel units.</value>
-		public PointF TransformBottomRight( GraphPane pane )
+		public PointF TransformBottomRight( PaneBase pane )
 		{
 			return Transform( pane, new PointF( this.X2, this.Y2 ),
 				this.coordinateFrame );
@@ -543,7 +559,7 @@ namespace ZedGraph
 		/// this transformation.
 		/// </remarks>
 		/// <value>A <see cref="RectangleF"/> in pixel units.</value>
-		public RectangleF TransformRect( GraphPane pane )
+		public RectangleF TransformRect( PaneBase pane )
 		{
 			PointF pix1 = TransformTopLeft( pane );
 			PointF pix2 = TransformBottomRight( pane );
