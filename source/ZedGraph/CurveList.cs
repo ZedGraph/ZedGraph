@@ -154,7 +154,7 @@ namespace ZedGraph
 			xMinVal = yMinVal = y2MinVal = tXMinVal = tYMinVal = 1e20;
 			xMaxVal = yMaxVal = y2MaxVal = tXMaxVal = tYMaxVal = -1e20;
 			maxPts = 1;
-		
+
 			// Loop over each curve in the collection
 			foreach( CurveItem curve in this )
 			{
@@ -166,6 +166,19 @@ namespace ZedGraph
 				curve.GetRange( ref tXMinVal, ref tXMaxVal,
 								ref tYMinVal, ref tYMaxVal, bIgnoreInitial );
 				
+				// For ordinal Axes, the data range is just 1 to Npts
+				if ( ( ( pane.Y2Axis.IsOrdinal || pane.Y2Axis.IsText ) && curve.IsY2Axis ) ||
+					( ( pane.YAxis.IsOrdinal || pane.YAxis.IsText ) && ! curve.IsY2Axis ) )
+				{
+					tYMinVal = 1.0;
+					tYMaxVal = curve.NPts;
+				}
+				if ( pane.XAxis.IsOrdinal || pane.XAxis.IsText )
+				{
+					tXMinVal = 1.0;
+					tXMaxVal = curve.NPts;
+				}
+
 				// determine which curve has the maximum number of points
 				if ( curve.NPts > maxPts )
 					maxPts = curve.NPts;
@@ -175,10 +188,10 @@ namespace ZedGraph
 				// Also, differentiate between Y and Y2 values		
 				if ( curve.IsY2Axis )
 				{
-					if ( tYMinVal < y2MinVal )
-						y2MinVal = tYMinVal;
-					if ( tYMaxVal > y2MaxVal )
-						y2MaxVal = tYMaxVal;
+						if ( tYMinVal < y2MinVal )
+							y2MinVal = tYMinVal;
+						if ( tYMaxVal > y2MaxVal )
+							y2MaxVal = tYMaxVal;
 				}
 				else
 				{

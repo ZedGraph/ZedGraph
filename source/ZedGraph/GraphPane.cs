@@ -50,11 +50,14 @@ namespace ZedGraph
 		private bool		isIgnoreInitial;	// true to ignore initial zero values for auto scale selection
 		private float		paneGap;			// Size of the gap (margin) around the edges of the pane
 		private double		baseDimension;		// Basic length scale (inches) of the plot for scaling features
+		private double		baseDPI;			// dots per inch for "normal" device, zero to use default
 		private float		minClusterGap;		// The minimum space between bar clusters,
-		// expressed as a fraction of the bar size
+												// expressed as a fraction of the bar size
 		private float		minBarGap;			// The minimum space between individual bars
-		// within a cluster, expressed as a fraction
-		// of the bar size
+												// within a cluster, expressed as a fraction
+												// of the bar size
+		private bool		isFontsScaled;		// true for font and feature scaling with graph size
+												// false for fixed font sizes (scaleFactor = 1.0)
 		/// <summary>
 		/// The rectangle that defines the full area into which the
 		/// graph can be rendered.  Units are pixels.
@@ -113,10 +116,13 @@ namespace ZedGraph
 			this.axisBackColor = Def.Pane.AxisBackColor;
 
 			this.baseDimension = Def.Pane.BaseDimension;
+			this.BaseDPI = 0;
 			this.paneGap = Def.Pane.PaneGap;
+			this.isFontsScaled = true;
 
 			this.MinClusterGap = Def.Pane.MinClusterGap;
 			this.MinBarGap = Def.Pane.MinBarGap;
+
 		}
 
 		/// <summary>
@@ -152,6 +158,8 @@ namespace ZedGraph
 			this.axisBackColor = rhs.AxisBackColor;
 
 			this.baseDimension = rhs.BaseDimension;
+			this.isFontsScaled = rhs.isFontsScaled;
+			this.BaseDPI = rhs.BaseDPI;
 			this.paneGap = rhs.PaneGap;
 			this.MinClusterGap = rhs.MinClusterGap;
 			this.MinBarGap = rhs.MinBarGap;
@@ -426,6 +434,33 @@ namespace ZedGraph
 			get { return baseDimension; }
 			set { baseDimension = value; }
 		}
+		/// <summary>
+		/// Determines if the font sizes, tic sizes, gap sizes, etc. will be scaled according to
+		/// the size of the <see cref="PaneRect"/> and the <see cref="BaseDimension"/>.  If this
+		/// value is set to false, then the font sizes and tic sizes will always be exactly as
+		/// specified, without any scaling.
+		/// </summary>
+		/// <value>True to have the fonts and tics scaled, false to have them constant</value>
+		/// <seealso cref="GraphPane.CalcScaleFactor"/>
+		public bool IsFontsScaled
+		{
+			get { return isFontsScaled; }
+			set { isFontsScaled = value; }
+		}
+		/// <summary>
+		/// BaseDPI is a double precision value that overrides the default DPI setting for this
+		/// <see cref="GraphPane"/>.  Normally, you won't need to use this value for screen displays.
+		/// However, when printing, the print device often scales the output internally such that
+		/// the paneRect is the same size as the screen display, but the DPI goes up to 600.  Therefore,
+		/// in order to scale the output properly, you need to override the scale calculations
+		/// made by ZedGraph.  Leave this value at 0 to not override.
+		/// </summary>
+		/// <seealso cref="Def.Pane.BaseDimension"/>
+		public double BaseDPI
+		{
+			get { return baseDPI; }
+			set { baseDPI = value; }
+		}
 
 		/// <summary>
 		/// The minimum space between <see cref="Bar"/> clusters, expressed as a
@@ -476,7 +511,7 @@ namespace ZedGraph
 		public void AxisChange()
 		{
 			double	xMin, xMax, yMin, yMax, y2Min, y2Max;
-		
+
 			// Get the scale range of the data (all curves)
 			this.curveList.GetRange( out xMin, out xMax, out yMin,
 				out yMax, out y2Min, out y2Max,
@@ -686,24 +721,24 @@ namespace ZedGraph
 			g.FillRectangle( brush, this.paneRect );
 
 			RectangleF tempRect = this.paneRect;
-			tempRect.Width -= 1;
-			tempRect.Height -= 1;
+			//tempRect.Width -= 1;
+			//tempRect.Height -= 1;
 
 			if ( this.isPaneFramed )
 			{
 				Pen pen = new Pen( this.paneFrameColor, this.paneFramePenWidth );
-				g.DrawRectangle( pen, Rectangle.Round( tempRect ) );
+				//g.DrawRectangle( pen, Rectangle.Round( tempRect ) );
 				
 				// FrameRect draws one pixel short of the bottom/right border, so
 				//  just draw it manually
-				//				g.DrawLine( pen, rect.Left, rect.Bottom,
-				//									rect.Left, rect.Top );
-				//				g.DrawLine( pen, rect.Left, rect.Top,
-				//									rect.Right, rect.Top );
-				//				g.DrawLine( pen, rect.Right, rect.Top,
-				//									rect.Right, rect.Bottom );
-				//				g.DrawLine( pen, rect.Right, rect.Bottom,
-				//									rect.Left, rect.Bottom );
+				g.DrawLine( pen, paneRect.Left, paneRect.Bottom,
+									paneRect.Left, paneRect.Top );
+				g.DrawLine( pen, paneRect.Left, paneRect.Top,
+									paneRect.Right, paneRect.Top );
+				g.DrawLine( pen, paneRect.Right, paneRect.Top,
+									paneRect.Right, paneRect.Bottom );
+				g.DrawLine( pen, paneRect.Right, paneRect.Bottom,
+									paneRect.Left, paneRect.Bottom );
 			}
 		}
 
@@ -723,7 +758,17 @@ namespace ZedGraph
 			if ( this.isAxisFramed )
 			{
 				Pen pen = new Pen( this.axisFrameColor, this.axisFramePenWidth );
-				g.DrawRectangle( pen, Rectangle.Round( this.axisRect ) );
+				//g.DrawRectangle( pen, Rectangle.Round( this.axisRect ) );
+				// FrameRect draws one pixel short of the bottom/right border, so
+				//  just draw it manually
+				g.DrawLine( pen, axisRect.Left, axisRect.Bottom,
+					axisRect.Left, axisRect.Top );
+				g.DrawLine( pen, axisRect.Left, axisRect.Top,
+					axisRect.Right, axisRect.Top );
+				g.DrawLine( pen, axisRect.Right, axisRect.Top,
+					axisRect.Right, axisRect.Bottom );
+				g.DrawLine( pen, axisRect.Right, axisRect.Bottom,
+					axisRect.Left, axisRect.Bottom );
 			}
 		}
 
@@ -742,7 +787,7 @@ namespace ZedGraph
 		/// </returns>
 		protected double CalcScaleFactor( Graphics g )
 		{
-			double scaleFactor;
+			double scaleFactor, xInch, yInch;
 			const double ASPECTLIMIT = 2.0;
 			
 			// Assume the standard width (BaseDimension) is 8.0 inches
@@ -750,9 +795,21 @@ namespace ZedGraph
 			// if the paneRect is 4.0 inches wide, the fonts will be half-sized.
 			// if the paneRect is 16.0 inches wide, the fonts will be double-sized.
 		
+			// if font scaling is turned off, then always return a 1.0 scale factor
+			if ( !this.isFontsScaled )
+				return 1.0;
+
 			// determine the size of the paneRect in inches
-			double xInch = (double) this.paneRect.Width / (double) g.DpiX;
-			double yInch = (double) this.paneRect.Height / (double) g.DpiY;
+			if ( this.baseDPI == 0 )
+			{
+				xInch = (double) this.paneRect.Width / (double) g.DpiX;
+				yInch = (double) this.paneRect.Height / (double) g.DpiY;
+			}
+			else
+			{
+				xInch = (double) this.paneRect.Width / this.baseDPI;
+				yInch = (double) this.paneRect.Height / this.baseDPI;
+			}
 					
 			// Limit the aspect ratio so long plots don't have outrageous font sizes
 			double aspect = (double) xInch / (double) yInch;
@@ -913,12 +970,18 @@ namespace ZedGraph
 			nearestCurve = null;
 			iNearest = -1;
 
+			// If the point is outside the axisRect, always return false
+			if ( ! axisRect.Contains( mousePt ) )
+				return false;
+
 			double x, y, y2;
 			ReverseTransform( mousePt, out x, out y, out y2 );
 
 			if ( xAxis.Min == xAxis.Max || yAxis.Min == yAxis.Max ||
 						y2Axis.Min == y2Axis.Max )
 				return false;
+
+			float barWidth = CalcBarWidth();
 
 			double xPixPerUnit = axisRect.Width / ( xAxis.Max - xAxis.Min );
 			double yPixPerUnit = axisRect.Height / ( yAxis.Max - yAxis.Min );
@@ -928,6 +991,8 @@ namespace ZedGraph
 			double		minDist = 1e20;
 			double		xVal, yVal, dist, distX, distY;
 			double		tolSquared = Def.Pane.NearestTol * Def.Pane.NearestTol;
+
+			int			iBar = 0;
 
 			foreach ( CurveItem curve in curveList )
 			{
@@ -950,7 +1015,14 @@ namespace ZedGraph
 				{
 					for ( int iPt=0; iPt<curve.NPts; iPt++ )
 					{
-						xVal = curve.X[iPt];
+						if ( curve.IsBar )
+						{
+							float xPix = curve.CalcBarCenter( this, barWidth, iPt, iBar );
+							xVal = this.xAxis.ReverseTransform( xPix );
+						}
+						else
+							xVal = curve.X[iPt];
+
 						yVal = curve.Y[iPt];
 
 						if (	xVal != System.Double.MaxValue &&
@@ -970,6 +1042,9 @@ namespace ZedGraph
 							}
 						}
 					}
+
+					if ( curve.IsBar )
+						iBar++;
 				}
 			}
 

@@ -186,6 +186,7 @@ namespace ZedGraph
 			this.isMinorTic = Def.Ax.IsMinorTic;
 			this.isMinorInsideTic = Def.Ax.IsMinorInsideTic;
 			this.isMinorOppositeTic = Def.Ax.IsMinorOppositeTic;
+			this.isTicsBetweenLabels = false;
 		
 			this.type = Def.Ax.Type;
 			this.title = "";
@@ -243,6 +244,8 @@ namespace ZedGraph
 			isMinorTic = rhs.IsMinorTic;
 			isMinorInsideTic = rhs.IsMinorInsideTic;
 			isMinorOppositeTic = rhs.IsMinorOppositeTic;
+			isTicsBetweenLabels = rhs.IsTicsBetweenLabels;
+
 			isReverse = rhs.IsReverse;
 			isOmitMag = rhs.IsOmitMag;
 			title = rhs.Title;
@@ -710,6 +713,22 @@ namespace ZedGraph
 			get { return type == AxisType.Text; }
 		}
 		/// <summary>
+		/// Tests if this <see cref="Axis"/> is an <see cref="AxisType.Ordinal"/> type axis with numeric labels.
+		/// This is similar to a <see cref="AxisType.Text"/> axis, but the labels are numeric
+		/// rather than user-defined text.  An ordinal axis will cause the associated values for the
+		/// curves to be ignored, and replaced by sequential integer values.
+		/// For example, if the X Axis is ordinal, then the X values for each curve will be ignored, and the
+		/// first point will be plotted at an ordinal value of 1.0, the second value at 2.0, etc.
+		/// To make this property true, set <see cref="Type"/> to
+		/// <see cref="AxisType.Ordinal"/>.
+		/// </summary>
+		/// <value>true for an ordinal axis, false for a linear, log, text, or date axes.
+		/// </value>
+		public bool IsOrdinal
+		{
+			get { return type == AxisType.Ordinal; }
+		}
+		/// <summary>
 		/// Gets or sets the <see cref="AxisType"/> for this <see cref="Axis"/>.
 		/// The type can be either <see cref="AxisType.Linear"/>,
 		/// <see cref="AxisType.Log"/>, <see cref="AxisType.Date"/>,
@@ -727,7 +746,7 @@ namespace ZedGraph
 		/// <summary>
 		/// For large scale values, a "magnitude" value (power of 10) is automatically
 		/// used for scaling the graph.  This magnitude value is automatically appended
-		/// to the end of the <see cref="Axis"/> <see cref="Title"/> (e.g., "(10^4)") to indicate
+		/// to the end of the Axis <see cref="Title"/> (e.g., "(10^4)") to indicate
 		/// that a magnitude is in use.  This property controls whether or not the
 		/// magnitude is included in the title.  Note that it only affects the axis
 		/// title; a magnitude value may still be used even if it is not shown in the title.
@@ -743,6 +762,7 @@ namespace ZedGraph
 		/// the scale range, such as "Time (Years)"
 		/// </summary>
 		/// <value>the title is a string value</value>
+		/// <seealso cref="IsOmitMag"/>
 		public string Title
 		{
 			get { return title; }
@@ -758,8 +778,8 @@ namespace ZedGraph
 		/// if it is to be set manually by the user</value>
 		public bool ScaleFormatAuto
 		{
-			get { return ScaleFormatAuto; }
-			set { ScaleFormatAuto = value; }
+			get { return scaleFormatAuto; }
+			set { scaleFormatAuto = value; }
 		}
 		/// <summary>
 		/// The format of the <see cref="Axis"/> tic labels.
@@ -810,6 +830,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>The magnitude multiplier (power of 10) for the scale
 		/// value labels</value>
+		/// <seealso cref="IsOmitMag"/>
+		/// <seealso cref="Title"/>
 		public int ScaleMag
 		{
 			get { return scaleMag; }
@@ -823,6 +845,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>true to have <see cref="ScaleMag"/> set automatically,
 		/// false otherwise</value>
+		/// <seealso cref="IsOmitMag"/>
+		/// <seealso cref="Title"/>
 		public bool ScaleMagAuto
 		{
 			get { return scaleMagAuto; }
@@ -1107,16 +1131,16 @@ namespace ZedGraph
 				rightPix = pane.AxisRect.Width;
 				topPix = -pane.AxisRect.Height;
 			}
-			else if ( this is YAxis )
+			else // if ( this is YAxis )
 			{
 				rightPix = pane.AxisRect.Height;
 				topPix = -pane.AxisRect.Width;
 			}
-			else  // Y2Axis
-			{
-				rightPix = pane.AxisRect.Height;
-				topPix = pane.AxisRect.Width;
-			}
+//			else  // Y2Axis
+//			{
+//				rightPix = pane.AxisRect.Height;
+//				topPix = pane.AxisRect.Width;
+//			}
 			
 			// sanity check
 			if ( this.min >= this.max )
@@ -1155,7 +1179,7 @@ namespace ZedGraph
 				g.DrawLine( pen, 0.0F, 0.0F, rightPix, 0.0F );
 
 				// Draw a zero-value line if needed
-				if ( this.min < 0.0 && this.max > 0.0 )
+				if ( this.isZeroLine && this.min < 0.0 && this.max > 0.0 )
 				{
 					float zeroPix = LocalTransform( 0.0 );
 					g.DrawLine( pen, zeroPix, 0.0F, zeroPix, topPix );
@@ -1567,6 +1591,7 @@ namespace ZedGraph
 			// draw the label
 			if ( this.IsText )
 			{
+				index *= (int) this.step;
 				if ( this.TextLabels == null || index < 0 || index >= TextLabels.Length )
 					label = "";
 				else
@@ -1585,7 +1610,7 @@ namespace ZedGraph
 				else
 					label = string.Format( "1e{0}", index );
 			}
-			else
+			else // linear or ordinal
 			{
 				double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
 
@@ -1856,7 +1881,13 @@ namespace ZedGraph
 					if ( this.maxAuto )
 						this.max = this.TextLabels.Length + 0.5;
 				}
-
+				else
+				{
+					if ( this.minAuto )
+						this.min -= 0.5;
+					if ( this.maxAuto )
+						this.max += 0.5;
+				}
 				// Test for trivial condition of range = 0 and pick a suitable default
 				if ( this.max - this.min < .1 )
 				{
@@ -1866,10 +1897,48 @@ namespace ZedGraph
 						this.min = this.max - 10.0;
 				}
 
-				this.step = 1.0;
+				if ( this.stepAuto )
+					this.step = (int) ( ( this.max - this.min - 1.0 ) / Def.Ax.MaxTextLabels ) + 1.0;
+				else
+				{
+					this.step = (int) this.step;
+					if ( this.step <= 0 )
+						this.step = 1.0;
+				}
+
 				this.numDec = 0;
 				this.scaleMag = 0;
-			}	
+			}
+			else if ( this.IsOrdinal )
+			{
+				// Test for trivial condition of range = 0 and pick a suitable default
+				if ( this.max - this.min < 1.0 )
+				{
+					if ( this.maxAuto )
+						this.max = this.min + 0.5;
+					else
+						this.min = this.max - 0.5;
+				}
+				else
+				{
+					// Calculate the new step size
+					if ( this.stepAuto )
+						this.step = CalcStepSize( this.max - this.min, Def.Ax.TargetSteps );
+		
+					this.step = (int) this.Step;
+					if ( this.step < 1.0 )
+						this.step = 1.0;
+
+					// Calculate the new minor step size
+					if ( this.minorStepAuto )
+						this.minorStep = CalcStepSize( this.step, Def.Ax.TargetMinorSteps );
+
+					if ( this.minAuto )
+						this.min -= 0.5;
+					if ( this.maxAuto )
+						this.max += 0.5;
+				}
+			}
 			else if ( this.IsLog )	// Log Scale
 			{
 				if ( this.scaleMagAuto )
@@ -1904,10 +1973,10 @@ namespace ZedGraph
 				// Get the nearest power of 10 (no partial log cycles allowed)
 				if ( this.minAuto )
 					this.min = Math.Pow( (double) 10.0,
-								Math.Floor( Math.Log10( this.min ) ) );
+						Math.Floor( Math.Log10( this.min ) ) );
 				if ( this.maxAuto )
 					this.max = Math.Pow( (double) 10.0,
-								Math.Ceiling( Math.Log10( this.max ) ) );
+						Math.Ceiling( Math.Log10( this.max ) ) );
 		
 			}
 			else if ( this.IsDate )			// Date Scale
@@ -1940,7 +2009,6 @@ namespace ZedGraph
 			}
 			else			// Linear Scale
 			{
-				
 				// Test for trivial condition of range = 0 and pick a suitable default
 				if ( this.max - this.min < 1.0e-20 )
 				{
@@ -1954,13 +2022,13 @@ namespace ZedGraph
 				// of the data range, then use zero.
 		
 				if ( this.minAuto && this.min > 0 &&
-						this.min / ( this.max - this.min ) < Def.Ax.ZeroLever )
+					this.min / ( this.max - this.min ) < Def.Ax.ZeroLever )
 					this.min = 0;
 		
 				// Repeat the zero-lever test for cases where the maxVal is less than zero
 				if ( this.maxAuto && this.max < 0 &&
-						Math.Abs( this.max / ( this.max - this.min )) <
-								Def.Ax.ZeroLever )
+					Math.Abs( this.max / ( this.max - this.min )) <
+					Def.Ax.ZeroLever )
 					this.max = 0;
 		
 				// Calculate the new step size
@@ -1978,7 +2046,7 @@ namespace ZedGraph
 				// Calculate the scale maximum
 				if ( this.maxAuto )
 					this.max = MyMod( this.max, this.step ) == 0.0 ? this.max :
-								this.max + this.step - MyMod( this.max, this.step );
+						this.max + this.step - MyMod( this.max, this.step );
 		
 				// set the scale magnitude if required
 				if ( this.scaleMagAuto )
@@ -1999,7 +2067,7 @@ namespace ZedGraph
 						mag = 0;
 			
 					// Use a power of 10 that is a multiple of 3 (engineering scale)
-						this.scaleMag = (int) ( Math.Floor( mag / 3.0 ) * 3.0 );
+					this.scaleMag = (int) ( Math.Floor( mag / 3.0 ) * 3.0 );
 				}
 				
 				// Calculate the appropriate number of dec places to display if required
@@ -2397,6 +2465,30 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Transform the coordinate value from user coordinates (scale value)
+		/// to graphics device coordinates (pixels).  This method takes into
+		/// account the scale range (<see cref="Min"/> and <see cref="Max"/>),
+		/// logarithmic state (<see cref="IsLog"/>), scale reverse state
+		/// (<see cref="IsReverse"/>) and axis type (<see cref="XAxis"/>,
+		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).  Note that
+		/// <see cref="SetupScaleData"/> must be called for the
+		/// current configuration before using this method.
+		/// </summary>
+		/// <param name="i">The ordinal value of this point, just in case
+		/// this is an <see cref="AxisType.Ordinal"/> axis</param>
+		/// <param name="x">The coordinate value, in user scale units, to
+		/// be transformed</param>
+		/// <returns>the coordinate value transformed to screen coordinates
+		/// for use in calling the <see cref="Graphics"/> draw routines</returns>
+		public float Transform( int i, double x )
+		{
+			if ( ( this.IsOrdinal || this.IsText ) && i >= 0 )
+				x = (double) i + 1.0;
+			return Transform( x );
+
+		}
+
+		/// <summary>
 		/// Reverse transform the user coordinates (scale value)
 		/// given a graphics device coordinate (pixels).  This method takes into
 		/// account the scale range (<see cref="Min"/> and <see cref="Max"/>),
@@ -2478,7 +2570,7 @@ namespace ZedGraph
 		/// <returns>The width of each bar cluster, in pixel units</returns>
 		public float GetClusterWidth( GraphPane pane )
 		{
-			return this.Transform( 2.0 ) - this.Transform( 1.0 );
+			return Math.Abs( this.Transform( 2.0 ) - this.Transform( 1.0 ) );
 		}
 
 		/// <summary>

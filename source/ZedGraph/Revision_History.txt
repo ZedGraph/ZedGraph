@@ -1,5 +1,17 @@
 ZedGraph Class Library Revision History
 
+13-Jul-2004 (Release 1.5)
+    Added AxisType.Ordinal 
+    Added Def.Ax.MaxTextLabels and made Text labels honor the Axis.Step setting 
+    Added GraphPane.IsFontsScaled 
+    Added GraphPane.BaseDPI for proper printer scaling 
+    Fixed broken logarithmic scales 
+    Fixed roundoff problems that caused minor cosmetic annoyances 
+    Fixed bad rendering of Y2 axis grid and tics 
+    Fixed zeroline flag 
+    Bars now work properly with XAxis.IsReverse and FindNearestPoint() 
+    Fixed other minor bugs 
+
 10-Jun-2004 (Release 1.4)
     Added Bar Charts 
     Added FindNearestPoint() method 

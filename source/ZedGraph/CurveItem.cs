@@ -124,6 +124,7 @@ namespace ZedGraph
 			bar = new Bar( rhs.Bar );
 			label = rhs.Label;
 			isY2Axis = rhs.IsY2Axis;
+			isBar = rhs.IsBar;
 
 			int len = rhs.X.Length;
 			X = new double[ len ];
@@ -400,11 +401,11 @@ namespace ZedGraph
 				{
 					// Transform the current point from user scale units to
 					// screen coordinates
-					tmpX = pane.XAxis.Transform( this.X[i] );
+					tmpX = pane.XAxis.Transform( i, this.X[i] );
 					if ( this.isY2Axis )
-						tmpY = pane.Y2Axis.Transform( this.Y[i] );
+						tmpY = pane.Y2Axis.Transform( i, this.Y[i] );
 					else
-						tmpY = pane.YAxis.Transform( this.Y[i] );
+						tmpY = pane.YAxis.Transform( i, this.Y[i] );
 					
 					// off-scale values "break" the line
 					if ( tmpX < -100000 || tmpX > 100000 ||
@@ -480,11 +481,11 @@ namespace ZedGraph
 					(this.isY2Axis && !pane.Y2Axis.IsLog ) ||
 					(!this.isY2Axis && !pane.YAxis.IsLog ) ) )
 				{
-					tmpX = pane.XAxis.Transform( this.X[i] );
+					tmpX = pane.XAxis.Transform( i, this.X[i] );
 					if ( this.isY2Axis )
-						tmpY = pane.Y2Axis.Transform( this.Y[i] );
+						tmpY = pane.Y2Axis.Transform( i, this.Y[i] );
 					else
-						tmpY = pane.YAxis.Transform( this.Y[i] );
+						tmpY = pane.YAxis.Transform( i, this.Y[i] );
 
 					this.Symbol.Draw( g, tmpX, tmpY, scaleFactor );		
 				}
@@ -552,11 +553,11 @@ namespace ZedGraph
 				if ( this.Y[i] != System.Double.MaxValue )
 				{
 					//tmpX = pane.XAxis.GetOrdinalPosition( pane, i );
-					tmpX = pane.XAxis.Transform( (double) i + 1.0 );
+					tmpX = pane.XAxis.Transform( i, (double) i + 1.0 );
 					if ( this.isY2Axis )
-						tmpY = pane.Y2Axis.Transform( this.Y[i] );
+						tmpY = pane.Y2Axis.Transform( i, this.Y[i] );
 					else
-						tmpY = pane.YAxis.Transform( this.Y[i] );
+						tmpY = pane.YAxis.Transform( i, this.Y[i] );
 
 					float left = tmpX - clusterWidth / 2.0F + clusterGap / 2.0F +
 								pos * ( barWidth + barGap );
@@ -572,6 +573,33 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Calculate the X screen pixel position of the center of the specified bar.  This method is
+		/// used primarily by the <see cref="GraphPane.FindNearestPoint"/> method in order to
+		/// determine the bar "location,"
+		/// which is defined as the center of the top of the individual bar.
+		/// </summary>
+		/// <param name="pane">The active GraphPane object</param>
+		/// <param name="barWidth">The width of each individual bar.  This can be calculated using
+		/// the <see cref="GraphPane.CalcBarWidth"/> method.</param>
+		/// <param name="iCluster">The cluster number for the bar of interest.  This is the ordinal
+		/// position of the current point.  That is, if a particular <see cref="CurveItem"/> has
+		/// 10 points, then a value of 3 would indicate the 4th point in the data array.</param>
+		/// <param name="iOrdinal">The ordinal position of the <see cref="CurveItem"/> of interest.
+		/// That is, the first bar series is 0, the second is 1, etc.  Note that this applies only
+		/// to the bars.  If a graph includes both bars and lines, then count only the bars.</param>
+		/// <returns>A screen pixel X position of the center of the bar of interest.</returns>
+		public float CalcBarCenter( GraphPane pane, float barWidth, int iCluster, int iOrdinal )
+		{
+			float clusterWidth = pane.XAxis.GetClusterWidth( pane );
+			//float barWidth = pane.CalcBarWidth();
+			float clusterGap = pane.MinClusterGap * barWidth;
+			float barGap = barWidth * pane.MinBarGap;
+
+			return pane.XAxis.Transform( iCluster, (double) iCluster + 1.0 )
+						- clusterWidth / 2.0F + clusterGap / 2.0F +
+						iOrdinal * ( barWidth + barGap ) + 0.5F * barWidth;
+		}
 
 /*
 		/// <summary>

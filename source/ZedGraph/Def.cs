@@ -450,6 +450,14 @@ namespace ZedGraph
 			/// </summary>
 			public static double ZeroLever = 0.25;
 			/// <summary>
+			/// The maximum number of text labels (major tics) that will be allowed on the plot by
+			/// the automatic scaling logic.  This value applies only to <see cref="AxisType.Text"/>
+			/// axes.  If there are more than MaxTextLabels on the plot, then
+			/// <see cref="Axis.Step"/> will be increased to reduce the number of labels.  That is,
+			/// the step size might be increased to 2.0 to show only every other label.
+			/// </summary>
+			public static double MaxTextLabels = 12.0;
+			/// <summary>
 			/// The default target number of steps for automatically selecting the axis
 			/// scale step size (see <see cref="Axis.PickScale"/>).
 			/// This number is an initial target value for the number of major steps

@@ -14,9 +14,21 @@ namespace ZedGraph
 		Log,
 		/// <summary> A cartesian axis with calendar dates or times </summary>
 		Date,
-		/// <summary> An ordinal axis with user-defined text labels </summary>
-		Text
-	};
+		/// <summary> An ordinal axis with user-defined text labels.  An ordinal axis means that
+		/// all data points are evenly spaced at integral values, and the actual coordinate values
+		/// for points corresponding to that axis are ignored.  That is, if the X axis is an
+		/// ordinal type, then all X values associated with the curves are ignored.</summary>
+		/// <seealso cref="AxisType.Ordinal"/>
+		/// <seealso cref="Axis.IsText"/>
+		Text,
+		/// <summary> An ordinal axis with regular numeric labels.  An ordinal axis means that
+		/// all data points are evenly spaced at integral values, and the actual coordinate values
+		/// for points corresponding to that axis are ignored.  That is, if the X axis is an
+		/// ordinal type, then all X values associated with the curves are ignored. </summary>
+		/// <seealso cref="AxisType.Text"/>
+		/// <seealso cref="Axis.IsOrdinal"/>
+		Ordinal
+};
 
 	/// <summary>
 	/// Enumeration type for the various axis date and time unit types that are available
