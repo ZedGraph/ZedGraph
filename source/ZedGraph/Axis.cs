@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.12 $ $Date: 2004-12-11 04:37:41 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2004-12-12 20:19:54 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -307,7 +307,7 @@ namespace ZedGraph
 			/// (<see cref="FontSpec.Size"/> property).  Units are
 			/// in points (1/72 inch).
 			/// </summary>
-			public static float ScaleFontSize = 12;
+			public static float ScaleFontSize = 14;
 			/// <summary>
 			/// The default font color for the <see cref="Axis"/> scale values
 			/// font specification <see cref="Axis.ScaleFontSpec"/>
@@ -370,7 +370,7 @@ namespace ZedGraph
 			/// (<see cref="FontSpec.Size"/> property).  Units are
 			/// in points (1/72 inch).
 			/// </summary>
-			public static float TitleFontSize = 12;
+			public static float TitleFontSize = 14;
 			/// <summary>
 			/// The default font color for the <see cref="Axis"/> title text
 			/// font specification <see cref="Axis.TitleFontSpec"/>

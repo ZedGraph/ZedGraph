@@ -44,7 +44,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.19 $ $Date: 2004-12-11 04:37:41 $ </version>
+	/// <version> $Revision: 3.20 $ $Date: 2004-12-12 20:19:54 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -232,7 +232,7 @@ namespace ZedGraph
 			/// <see cref="GraphPane"/> pane title
 			/// (<see cref="ZedGraph.FontSpec.Size"/> property).
 			/// </summary>
-			public static float FontSize = 14;
+			public static float FontSize = 16;
 			/// <summary>
 			/// The default font color for the
 			/// <see cref="GraphPane"/> pane title
@@ -555,10 +555,13 @@ namespace ZedGraph
 		{
 			get
 			{
-				// Need to make the bitmap 1 pixel larger than the image for proper containment
-				Bitmap bitmap = new Bitmap( (int) this.paneRect.Width+1, (int) this.paneRect.Height+1 );
+				// Need to make the bitmap 1 pixel larger than the image for
+				// proper containment
+				Bitmap bitmap = new Bitmap( (int) this.paneRect.Width+1,
+						(int) this.paneRect.Height+1 );
 				Graphics bitmapGraphics = Graphics.FromImage( bitmap );
-				bitmapGraphics.TranslateTransform( -this.PaneRect.Left, -this.PaneRect.Top );
+				bitmapGraphics.TranslateTransform( -this.PaneRect.Left,
+						-this.PaneRect.Top );
 				this.Draw( bitmapGraphics );
 				bitmapGraphics.Dispose();
 

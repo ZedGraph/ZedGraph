@@ -19,15 +19,11 @@ namespace ZedGraphTest
 	/// </summary>
 	public class Form1 : System.Windows.Forms.Form
 	{
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
+		private IContainer components;
 		private DBGraphics memGraphics;
 		private System.Windows.Forms.MainMenu mainMenu1;
 		private System.Windows.Forms.MenuItem menuFile;
 		private System.Windows.Forms.MenuItem menuItemHowdy;
-		private bool sideWays = false;
 
 		/// <summary>
 		/// 
@@ -63,36 +59,44 @@ namespace ZedGraphTest
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.mainMenu1 = new System.Windows.Forms.MainMenu();
+			this.components = new System.ComponentModel.Container();
+			this.mainMenu1 = new System.Windows.Forms.MainMenu( this.components );
 			this.menuFile = new System.Windows.Forms.MenuItem();
 			this.menuItemHowdy = new System.Windows.Forms.MenuItem();
-			// 
-			// mainMenu1
-			// 
-			this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] { this.menuFile } );
-			// 
-			// menuFile
-			// 
+// 
+// mainMenu1
+// 
+			this.mainMenu1.MenuItems.AddRange( new System.Windows.Forms.MenuItem[] {
+				this.menuFile
+			} );
+			this.mainMenu1.Name = "mainMenu1";
+// 
+// menuFile
+// 
 			this.menuFile.Index = 0;
-			this.menuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] { this.menuItemHowdy } );
+			this.menuFile.MenuItems.AddRange( new System.Windows.Forms.MenuItem[] {
+				this.menuItemHowdy
+			} );
+			this.menuFile.Name = "menuFile";
 			this.menuFile.Text = "File";
-			// 
-			// menuItemHowdy
-			// 
+// 
+// menuItemHowdy
+// 
 			this.menuItemHowdy.Index = 0;
+			this.menuItemHowdy.Name = "menuItemHowdy";
 			this.menuItemHowdy.Text = "Howdy";
-			// 
-			// Form1
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(500, 329);
+// 
+// Form1
+// 
+			this.AutoScaleBaseSize = new System.Drawing.Size( 5, 13 );
+			this.ClientSize = new System.Drawing.Size( 507, 342 );
 			this.Menu = this.mainMenu1;
 			this.Name = "Form1";
 			this.Text = "Form1";
-			this.Resize += new System.EventHandler(this.Form1_Resize);
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
-			this.Load += new System.EventHandler(this.Form1_Load);
-			this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
+			this.Paint += new System.Windows.Forms.PaintEventHandler( this.Form1_Paint );
+			this.Resize += new System.EventHandler( this.Form1_Resize );
+			this.Load += new System.EventHandler( this.Form1_Load );
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form1_MouseDown );
 
 		}
 		#endregion
@@ -285,7 +289,9 @@ namespace ZedGraphTest
 			myCurve2.Symbol.Fill = new Fill( Color.White );
 
 			// Add a background gradient fill to the axis frame
-			myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, -45F );
+			//myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, -45F );
+			myPane.AxisFill = new Fill( Color.White,
+					Color.FromArgb( 255, 255, 210), -45F );
 
 			// Add a caption and an arrow
 			TextItem myText = new TextItem( "Interesting\nPoint", 230F, 70F );
@@ -397,55 +403,63 @@ namespace ZedGraphTest
 	// Set the XAxis to Text type
 	myPane.XAxis.Type = AxisType.Text;
 
+	myPane.AxisFill = new Fill( Color.White,
+			Color.FromArgb( 255, 255, 166), 90F );
+	myPane.PaneFill = new Fill( Color.FromArgb( 250, 250, 255) );
 	// Tell ZedGraph to refigure the
 	// axes since the data have changed
 	myPane.AxisChange( CreateGraphics() );
 #endif
 
-#if false	// The Oct-2004 Horizontal Bar Chart sample
+#if false	// The Dec-2004 Horizontal Bar Chart sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
-				"My Test Horizontal Bar Graph", "My X Axis", "My Y Axis" );
+				"A Horizontal Percent Stack Graph", "Stuff", "" );
 			// Make up some random data points
-			double[] y = { 100, 115, 75, 22, 98 };
-			double[] y2 = { 90, 100, 95, 35, 80 };
-			double[] y3 = { 80, 110, 65, 15, 54 };
+			double[] y = { 100, 115, 15, 22, 98 };
+			double[] y2 = { 90, 60, 95, 35, 30 };
+			double[] y3 = { 20, 40, 105, 15, 30 };
 
 			// Generate a red bar with "Curve 1" in the legend
-			CurveItem myCurve = myPane.AddBar( "Curve 1", y, null, Color.Red );
-			myCurve.Bar.Fill = new Fill( Color.White, Color.Red, 90F );
+			BarItem myCurve = myPane.AddBar( "Nina", y, null, Color.Red );
+			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 90F );
 
 			// Generate a blue bar with "Curve 2" in the legend
-			myCurve = myPane.AddBar( "Curve 2", y2, null, Color.Blue );
-			myCurve.Bar.Fill = new Fill( Color.White, Color.Blue, 90F );
+			myCurve = myPane.AddBar( "Pinta", y2, null, Color.Blue );
+			myCurve.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 90F );
 
 			// Generate a green bar with "Curve 3" in the legend
-			myCurve = myPane.AddBar( "Curve 3", y3, null, Color.Green );
-			myCurve.Bar.Fill = new Fill( Color.White, Color.Green, 90F );
-
-			// Fix up the curve attributes a little
-			myCurve.Symbol.Size = 10.0F;
-			myCurve.Symbol.Fill = new Fill( Color.White );
-			myCurve.Line.Width = 2.0F;
+			myCurve = myPane.AddBar( "Santa Maria", y3, null, Color.Green );
+			myCurve.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 90F );
 
 			// Draw the Y tics between the labels instead of at the labels
 			myPane.YAxis.IsTicsBetweenLabels = true;
 
 			// Set the YAxis to Ordinal type
-			myPane.YAxis.Type = AxisType.Ordinal;
+			myPane.YAxis.Type = AxisType.Text;
+			string[] labels = { "Australia", "Africa", "America", "Asia", "Antartica" };
+			myPane.YAxis.TextLabels = labels;
+			myPane.XAxis.Max = 110;
 
 			// Make the bars horizontal by setting bar base axis to Y
 			myPane.BarBase = BarBase.Y;
+			myPane.BarType = BarType.PercentStack;
 			
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
 			myPane.AxisChange( CreateGraphics() );
+
+			myPane.AxisFill = new Fill( Color.White,
+					Color.FromArgb( 255, 255, 166), 90F );
+			myPane.Legend.Fill = new Fill( Color.White,
+					Color.FromArgb( 255, 255, 250), 90F );
+			myPane.PaneFill = new Fill( Color.FromArgb( 250, 250, 255) );
 #endif
 
-#if false	// The Oct-2004 Stacked Bar Chart sample
+#if false	// The Dec-2004 Stacked Bar Chart sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
-				"My Test Stacked Bar Graph", "Label", "My Y Axis" );
+				"Cat Stats", "Big Cats", "Population" );
 			// Make up some random data points
 			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard" };
 			double[] y = { 100, 115, 75, 22, 98, 40 };
@@ -453,18 +467,16 @@ namespace ZedGraphTest
 			double[] y3 = { 204, 192, 119, 80, 134, 156 };
 
 			// Generate a red bar with "Curve 1" in the legend
-			CurveItem myCurve = myPane.AddBar( "Curve 1", null, y, Color.Red );
+			BarItem myCurve = myPane.AddBar( "Here", null, y, Color.Red );
+			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red );
 
 			// Generate a blue bar with "Curve 2" in the legend
-			myCurve = myPane.AddBar( "Curve 2", null, y2, Color.Blue );
+			myCurve = myPane.AddBar( "There", null, y2, Color.Blue );
+			myCurve.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue );
 
 			// Generate a green bar with "Curve 3" in the legend
-			myCurve = myPane.AddBar( "Curve 3", null, y3, Color.Green );
-
-			// Fix up the curve attributes a little
-			myCurve.Symbol.Size = 10.0F;
-			myCurve.Symbol.Fill = new Fill( Color.White );
-			myCurve.Line.Width = 2.0F;
+			myCurve = myPane.AddBar( "Elsewhere", null, y3, Color.Green );
+			myCurve.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green );
 
 			// Draw the X tics between the labels instead of at the labels
 			myPane.XAxis.IsTicsBetweenLabels = true;
@@ -474,7 +486,7 @@ namespace ZedGraphTest
 			// Set the XAxis to Text type
 			myPane.XAxis.Type = AxisType.Text;
 
-			myPane.IsBarStacked = true;
+			myPane.BarType = BarType.Stack;
 			
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
@@ -856,6 +868,40 @@ namespace ZedGraphTest
 
 #endif
 
+#if false	// Another gradient by value test
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"My Test Date Graph", "Date", "My Y Axis" );
+
+			// Make up some random data points
+			PointPairList pp = new PointPairList();
+			double x, y, z;
+			for ( int i=0; i<100; i++ )
+			{
+				x = (double) i;
+				y = Math.Log10( x / 25 + ( x / 8 - (int)( x / 8 ) ) );
+				z = Math.Abs(50 - x);
+				pp.Add( x, y, z );
+			}
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			LineItem myCurve = myPane.AddCurve( "My Curve",
+				pp, Color.Red, SymbolType.Diamond );
+			myCurve.Line.IsVisible = false;
+			myCurve.Symbol.Size = 14;
+			myCurve.Symbol.Border.IsVisible = false;
+			myCurve.Symbol.Fill = new Fill( Color.Red, Color.Blue );
+			myCurve.Symbol.Fill.Type = FillType.GradientByZ;
+			myCurve.Symbol.Fill.RangeMin = 0;
+			myCurve.Symbol.Fill.RangeMax = 40;
+
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			myPane.AxisChange( this.CreateGraphics() );
+
+
+#endif
+
 #if false	// The gradient by value test - big data
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
@@ -964,21 +1010,33 @@ namespace ZedGraphTest
 			myCurve.Symbol.Fill.RangeMax = 34;
 			myCurve.Line.IsVisible = false;
 
-			TextItem text = new TextItem( "MW=34", 14, 110, CoordType.AxisXYScale );
+			TextItem text = new TextItem( "MW = 34", 12.9F, 110, CoordType.AxisXYScale );
 			text.FontSpec.FontColor = Color.Blue;
 			text.FontSpec.Border.IsVisible = false;
-			myPane.TextList.Add( text );
-			text = new TextItem( "MW=19", 25, 110, CoordType.AxisXYScale );
+			text.FontSpec.Fill.IsVisible = false;
+			text.FontSpec.Size = 14;
+			myPane.GraphItemList.Add( text );
+			text = new TextItem( "MW = 19", 25, 110, CoordType.AxisXYScale );
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.Border.IsVisible = false;
-			myPane.TextList.Add( text );
+			text.FontSpec.Fill.IsVisible = false;
+			text.FontSpec.Size = 14;
+			myPane.GraphItemList.Add( text );
 			
 			myPane.XAxis.IsShowGrid = true;
+			myPane.XAxis.ScaleFontSpec.Size = 14;
+			myPane.XAxis.TitleFontSpec.Size = 14;
+			myPane.YAxis.ScaleFontSpec.Size = 14;
+			myPane.YAxis.TitleFontSpec.Size = 14;
 			myPane.YAxis.IsShowGrid = true;
+			myPane.FontSpec.Size = 16;
+			myPane.Legend.IsVisible = false;
 			
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
 			myPane.AxisChange( this.CreateGraphics() );
+			myPane.AxisFill = new Fill( Color.White,
+					Color.FromArgb( 255, 255, 166), 90F );
 
 
 #endif
@@ -1143,7 +1201,7 @@ namespace ZedGraphTest
 
 			myPane.FontSpec.Family = "Times";
 			myPane.FontSpec.IsItalic = true;
-			myPane.FontSpec.Size = 16;
+			myPane.FontSpec.Size = 18;
 
 			double hi, low, close, x;
 			PointPairList hList = new PointPairList();
@@ -1167,7 +1225,7 @@ namespace ZedGraphTest
 				SymbolType.Diamond );
 			curve.Line.IsVisible = false ;
 			curve.Symbol.Fill = new Fill( Color.Red );
-			curve.Symbol.Size = 5;
+			curve.Symbol.Size = 7;
 
 			ErrorBarItem myCurve = myPane.AddErrorBar(	"Price Range", hList,
 				Color.Blue );
@@ -1175,7 +1233,7 @@ namespace ZedGraphTest
 			//	Set the XAxis	to date type
 			myPane.XAxis.Type =	AxisType.Date;
 			myPane.XAxis.Step = 1 ;
-			myPane.XAxis.ScaleFontSpec.Size = 10 ;
+			myPane.XAxis.ScaleFontSpec.Size = 12 ;
 			myPane.XAxis.ScaleFontSpec.Angle = 65 ;
 			myPane.XAxis.MajorUnit = DateUnit.Day ;
 			myPane.XAxis.ScaleFontSpec.IsBold = true ;
@@ -1186,7 +1244,7 @@ namespace ZedGraphTest
 			myCurve.ErrorBar.Symbol.IsVisible = false;
 			
 			myPane.YAxis.IsShowGrid = true ;
-			myPane.YAxis.IsShowMinorGrid = true ;
+			//myPane.YAxis.IsShowMinorGrid = true ;
 			myPane.YAxis.MinorStep = 0.5;
 
 			myPane.AxisFill = new Fill( Color.White,
@@ -1752,7 +1810,8 @@ namespace ZedGraphTest
 			
 			myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
 			
-			myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
+			myPane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
+						Color.FromArgb( 255, 255, 190), 90F );
 			
 			myPane.XAxis.IsShowGrid = true;
 			//myPane.IsPenWidthScaled = false;
@@ -1814,8 +1873,8 @@ namespace ZedGraphTest
 			text.Location.AlignV = AlignV.Bottom;
 			myPane.GraphItemList.Add( text );
 
-			BoxItem box = new BoxItem( new RectangleF( 0, 115, 1200, 20 ),
-					Color.Empty, Color.FromArgb( 250, 210, 225) );
+			BoxItem box = new BoxItem( new RectangleF( 0, 110, 1200, 10 ),
+					Color.Empty, Color.FromArgb( 225, 245, 225) );
 			box.Location.CoordinateFrame = CoordType.AxisXYScale;
 			
 //			BoxItem box = new BoxItem( new RectangleF( 0F, .2F, 1F, .2F ),
@@ -1836,6 +1895,7 @@ namespace ZedGraphTest
 			text.FontSpec.Fill.IsVisible = false;
 			text.FontSpec.Border.IsVisible = false;
 			myPane.GraphItemList.Add( text );
+			//myPane.PaneBorder.IsVisible= false;
 
 //			RectangleF rect = new RectangleF( .5F, .2F, .2F, .2F );
 //			EllipseItem ellipse = new EllipseItem( rect, Color.Black, Color.Blue );
@@ -2282,11 +2342,6 @@ namespace ZedGraphTest
 		     
 				memGraphics.g.FillRectangle( brush, this.ClientRectangle );
 				Matrix mat = memGraphics.g.Transform;
-				if ( sideWays )
-				{
-					memGraphics.g.RotateTransform( 90 );
-					memGraphics.g.TranslateTransform( 0, -this.ClientRectangle.Width );
-				}
 
 				myPane.Draw( memGraphics.g );
 		   
@@ -2298,11 +2353,6 @@ namespace ZedGraphTest
 			{
 				Matrix mat = e.Graphics.Transform;
 				e.Graphics.FillRectangle( brush, this.ClientRectangle );
-				if ( sideWays )
-				{
-					e.Graphics.RotateTransform( 90 );
-					e.Graphics.TranslateTransform( 0, -this.ClientRectangle.Width );
-				}
 				myPane.Draw( e.Graphics );
 				e.Graphics.Transform = mat;
 			}
@@ -2325,39 +2375,12 @@ namespace ZedGraphTest
 
 		private void CopyToPNG( GraphPane thePane )
 		{
-			Metafile metaFile;
-			Graphics g = this.CreateGraphics();
-			IntPtr hdc = g.GetHdc();
-			metaFile = new Metafile( hdc, EmfType.EmfPlusOnly );
-			g.ReleaseHdc( hdc );
-			g.Dispose();
-
-			Graphics gMeta = Graphics.FromImage( metaFile );
-
-			thePane.Draw( gMeta );
-			gMeta.Dispose();
-
-			Bitmap oBitmap = new Bitmap(metaFile);
-			oBitmap.Save(@"c:\zedgraph.png", System.Drawing.Imaging.ImageFormat.Png);
-
+			myPane.Image.Save(@"c:\zedgraph.png", System.Drawing.Imaging.ImageFormat.Png);
 		}
 
 		private void CopyToGif( GraphPane myPane )
 		{
-			Metafile metaFile;
-			Graphics g = this.CreateGraphics();
-			IntPtr hdc = g.GetHdc();
-			metaFile = new Metafile( hdc, EmfType.EmfPlusOnly );
-			g.ReleaseHdc( hdc );
-			g.Dispose();
-
-			Graphics gMeta = Graphics.FromImage( metaFile );
-
-			myPane.Draw( gMeta );
-			gMeta.Dispose();
-
-			Bitmap bmap = new Bitmap( metaFile );
-			bmap.Save( @"c:\zedgraph.gif", ImageFormat.Gif );
+			myPane.Image.Save( @"c:\zedgraph.gif", ImageFormat.Gif );
 		}
 
 		private void CopyToClip( GraphPane thePane )
@@ -2443,11 +2466,7 @@ namespace ZedGraphTest
 		{
 			if ( this.myPane != null )
 			{
-				Rectangle paneRect;
-				if ( sideWays )
-					paneRect = new Rectangle( 0, 0, this.ClientRectangle.Height, this.ClientRectangle.Width );
-				else
-					paneRect = this.ClientRectangle;
+				Rectangle paneRect = this.ClientRectangle;
 
 				//paneRect.Inflate( -10, -10 );
 				this.myPane.PaneRect = paneRect;
@@ -2490,48 +2509,9 @@ namespace ZedGraphTest
 			images[1].Save( @"c:\zedgraph2.jpg", ImageFormat.Jpeg );
 		}
 		
-#if true
+#if false
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			double dFitness = 150;
-			double nIteration = 1300;
-			//myPane.CurveList[0].AddPoint( 1300, 94 );
-			//myPane.AxisChange( this.CreateGraphics() );
-			//Invalidate();
-			//Since the application needs only one curve here the code 
-			//for adding points:
-
-			// if a curve exists ... add a new point to that curve
-			if ( myPane.CurveList.Count > 0 )
-			{
-				dFitness = 1;
-				CurveItem oCurve  = myPane.CurveList[0];
-				oCurve.AddPoint( new PointPair( nIteration, dFitness ) );
-			}
-			// otherwise just create a new one
-			else
-			{
-				LineItem oCurve = myPane.AddCurve( "fitness",
-					new double[] { nIteration }, new double[] { dFitness },
-					Color.Blue, SymbolType.Circle);
-				oCurve.Symbol.Fill.IsVisible = true;
-				oCurve.Line.IsVisible = false;                    
-			}
-
-
-			//To display the new item afterwards I use:
-			try
-			{
-				if ( dFitness < myPane.YAxis.Max )
-				{ 
-					myPane.AxisChange( this.CreateGraphics() );
-					Invalidate();
-				}
-			}
-			catch( Exception )
-			{
-			}
-
 /*
 			CurveItem curve;
 			int	iPt;
@@ -2562,7 +2542,7 @@ namespace ZedGraphTest
 		}
 #endif
 
-#if false
+#if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
 			//DoPrint();

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2004-12-11 04:37:41 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2004-12-12 20:19:54 $ </version>
 	public class TextItem : GraphItem, ICloneable
 	{
 	#region Fields
@@ -75,7 +75,7 @@ namespace ZedGraph
 			/// (<see cref="ZedGraph.FontSpec.IsBold"/> property). true
 			/// for a bold typeface, false otherwise.
 			/// </summary>
-			public static bool FontBold = true;
+			public static bool FontBold = false;
 			/// <summary>
 			/// The default font underline mode for the <see cref="TextItem"/> text
 			/// (<see cref="ZedGraph.FontSpec.IsUnderline"/> property). true

@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2004-12-11 04:37:41 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2004-12-12 20:19:54 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -164,7 +164,7 @@ namespace ZedGraph
 			/// (<see cref="ZedGraph.FontSpec.Size"/> property).  Units are
 			/// in points (1/72 inch).
 			/// </summary>
-			public static float FontSize = 10;
+			public static float FontSize = 12;
 			/// <summary>
 			/// The default font color for the <see cref="Legend"/> entries
 			/// (<see cref="ZedGraph.FontSpec.FontColor"/> property).
