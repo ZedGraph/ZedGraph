@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2005-01-19 05:54:52 $ </version>
 	[Serializable]
 	public class EllipseItem : BoxItem, ICloneable, ISerializable
 	{
@@ -161,7 +161,7 @@ namespace ZedGraph
 					Math.Abs( pixRect.Right ) < 100000 &&
 					Math.Abs( pixRect.Bottom ) < 100000 )
 			{
-				Pen pen = this.border.MakePen( pane, scaleFactor );
+				Pen pen = this.border.MakePen( pane.IsPenWidthScaled, scaleFactor );
 				Brush brush = this.fill.MakeBrush( pixRect );
 
 				if ( this.fill.IsVisible )

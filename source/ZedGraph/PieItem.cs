@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.5 $ $Date: 2005-01-18 15:59:02 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2005-01-19 05:54:52 $ </version>
 	[Serializable]
 	public class PieItem : ZedGraph.CurveItem , ICloneable, ISerializable
 	{
@@ -159,6 +159,11 @@ namespace ZedGraph
 			///Default value for controlling <see cref="PieItem"/> display.
 			/// </summary>
 			public static bool isVisible = true ;
+
+			/// <summary>
+			/// Default value for <see cref="PieItem.LabelType"/>.
+			/// </summary>
+			public static PieLabelType LabelType = PieLabelType.Name;
 		}
 	#endregion Defaults
 
@@ -241,8 +246,8 @@ namespace ZedGraph
 		}
 				
 		/// <summary>
-		///Gets or sets the <see cref="PieLabelType"/> to be used in displaying 
-		///<see cref="PieItem"/> labels.
+		/// Gets or sets the <see cref="PieLabelType"/> to be used in displaying 
+		/// <see cref="PieItem"/> labels.
 		/// </summary>
 		public	PieLabelType LabelType
 		{
@@ -277,7 +282,8 @@ namespace ZedGraph
 			this.fill = new Fill( color.IsEmpty ? rotator.NextColor : color ) ;
 			this.border = new Border(Default.BorderColor, Default.BorderWidth ) ;
 			this.displacement = displacement ;
-			this.labelDetail = new TextItem() ;
+			this.labelDetail = new TextItem();
+			this.labelType = Default.LabelType;
 		}
 
 		/// <summary>
@@ -292,6 +298,7 @@ namespace ZedGraph
 			this.border = new Border(Default.BorderColor, Default.BorderWidth ) ;
 			this.displacement =  Default.Displacement ;
 			this.labelDetail = new TextItem() ;
+			this.labelType = Default.LabelType;
 		}
 
 		/// <summary>
@@ -300,6 +307,12 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="PieItem"/> object from which to copy</param>
 		public PieItem( PieItem rhs ) : base( rhs )
 		{
+			this.pieValue = rhs.pieValue;
+			this.fill = (Fill) rhs.fill.Clone();
+			this.Border = (Border) rhs.border.Clone();
+			this.displacement = rhs.displacement;
+			this.labelDetail = (TextItem) rhs.labelDetail.Clone();
+			this.labelType = rhs.labelType;
 		}
 
 		/// <summary>
@@ -405,43 +418,28 @@ namespace ZedGraph
 			
 			Brush brush = this.fill.MakeBrush( nonExplRect );
 
-			if ( this.displacement == 0 )                                                     //this slice not exploded
+			RectangleF tRect = nonExplRect;
+
+			if ( displacement != 0 )
+				CalcExplodedRect( ref tRect );	//calculate the bounding rectangle for exploded pie
+
+			g.FillPie( brush, tRect.X, tRect.Y, tRect.Width, tRect.Height, this.StartAngle, this.SweepAngle );
+
+			//add GraphicsPath for hit testing
+			this.slicePath.AddPie( tRect.X, tRect.Y, tRect.Width, tRect.Height, 
+									this.StartAngle, this.SweepAngle);
+
+			if ( this.Border.IsVisible)
 			{
-				g.FillPie( brush,nonExplRect.X,nonExplRect.Y,nonExplRect.Width,nonExplRect.Height, this.StartAngle, this.SweepAngle );
-																			//add GraphicsPath for hit testing
-				this.slicePath.AddPie (nonExplRect.X,nonExplRect.Y,nonExplRect.Width,nonExplRect.Height, 
-																			this.StartAngle, this.SweepAngle) ;
-
-				if ( this.Border.IsVisible)
-				{
-					Pen borderPen = this.border.MakePen ( pane, scaleFactor ) ;
-					g.DrawPie (borderPen, nonExplRect.X,nonExplRect.Y,nonExplRect.Width,nonExplRect.Height, 
-																				this.StartAngle, this.SweepAngle );
-					borderPen.Dispose () ;
-				}
-
-				if ( this.labelType != PieLabelType.None )
-					DrawLabel ( g, pane, nonExplRect, scaleFactor  ) ;
+				Pen borderPen = this.border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+				g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height, 
+							this.StartAngle, this.SweepAngle );
+				borderPen.Dispose();
 			}
-			else									  //got an exploded slice
-			{
-				RectangleF explRect  =nonExplRect;
 
-				CalcExplodedRect (ref explRect ) ;							  //calculate the bounding rectangle for exploded pie
+			if ( this.labelType != PieLabelType.None )
+				DrawLabel( g, pane, tRect, scaleFactor  ) ;
 
-				g.FillPie( brush,explRect.X,explRect.Y,explRect.Width,explRect.Height, this.StartAngle, this.SweepAngle );
-																			//add GraphicsPath for hit testing
-				this.slicePath.AddPie (	explRect.X,explRect.Y,explRect.Width,explRect.Height, this.StartAngle, this.SweepAngle );
-
-				if ( this.Border.IsVisible )
-				{
-					Pen borderPen = this.Border.MakePen ( pane, scaleFactor ) ;
-					g.DrawPie (borderPen, explRect.X,explRect.Y,explRect.Width,explRect.Height, this.StartAngle, this.SweepAngle );
-					borderPen.Dispose () ;
-				}
-				if ( this.labelType != PieLabelType.None )
-					DrawLabel ( g, pane, explRect, scaleFactor  ) ;
-			}
 			brush.Dispose () ;
 			g.SmoothingMode = sMode ;	
 		}
@@ -503,7 +501,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		///Recalculate the bounding rectangle when a piee slice is displaced.
+		/// Recalculate the bounding rectangle when a piee slice is displaced.
 		/// </summary>
 		/// <param name="explRect">rectangle to be used for drawing exploded pie</param>
 		private void CalcExplodedRect ( ref RectangleF explRect)
@@ -513,8 +511,9 @@ namespace ZedGraph
 			explRect.X += (float)(this.Displacement * explRect.Width / 2 * Math.Cos ( this.midAngle * Math.PI /180 )) ;
 			explRect.Y += (float) (this.Displacement * explRect.Height / 2 * Math.Sin (this.midAngle * Math.PI /180 )) ; 
 		}
+
 		/// <summary>
-		///Calculate the values needed to properly display this <see cref="PieItem"/>.
+		/// Calculate the values needed to properly display this <see cref="PieItem"/>.
 		/// </summary>
 		/// <param name="pane">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -543,6 +542,7 @@ namespace ZedGraph
 				nextStartAngle = curve.startAngle + curve.sweepAngle ;
 			}
 		}
+
 		/// <summary>
 		///Render the label for this <see cref="PieItem"/>.
 		/// </summary>
@@ -565,7 +565,7 @@ namespace ZedGraph
 		{
 			//label line will come off the explosion radius and then pivot to the horizontal right or left, dependent on position.. 
 			//text will be at the end of horizontal segment...
-			Pen labelPen = this.Border.MakePen (pane, scaleFactor ) ;
+			Pen labelPen = this.Border.MakePen (pane.IsPenWidthScaled, scaleFactor ) ;
 
 			//get the point where the explosion radius intersects the pie arc
 			PointF rectCenter = new PointF ( (rect.X + rect.Width / 2 ) , (rect.Y + rect.Height / 2 )) ;
@@ -674,8 +674,7 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect,
-			double scaleFactor )
+		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor )
 		{
 			if ( !this.isVisible )
 				return ;
@@ -690,8 +689,8 @@ namespace ZedGraph
 			}
 
 			//	Border the bar
-			if	( !this.border.Color.IsEmpty	)
-				this.border.Draw( g,	pane,	scaleFactor, rect );
+			if	( !this.border.Color.IsEmpty )
+				this.border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
 		}
 
 	#endregion  

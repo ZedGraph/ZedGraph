@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.19 $ $Date: 2005-01-18 06:45:29 $ </version>
+	/// <version> $Revision: 3.20 $ $Date: 2005-01-19 05:54:52 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -108,14 +108,6 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Default constructor for the collection class
-		/// </summary>
-		public CurveList()
-		{
-			maxPts = 1;
-		}
-
-		/// <summary>
 		/// Determine if there is any data in any of the <see cref="CurveItem"/>
 		/// objects for this graph.  This method does not verify valid data, it
 		/// only checks to see if <see cref="CurveItem.NPts"/> > 0.
@@ -133,6 +125,15 @@ namespace ZedGraph
 	#endregion
 	
 	#region Constructors
+	
+		/// <summary>
+		/// Default constructor for the collection class
+		/// </summary>
+		public CurveList()
+		{
+			maxPts = 1;
+		}
+
 		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>

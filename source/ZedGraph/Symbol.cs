@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-01-16 03:46:12 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-01-19 05:54:52 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -384,11 +384,11 @@ namespace ZedGraph
 					y < 100000 && y > -100000 )
 			{
 				SolidBrush	brush = new SolidBrush( this.fill.Color );
-                Pen pen = border.MakePen(pane, scaleFactor);
+                Pen pen = border.MakePen( pane.IsPenWidthScaled, scaleFactor );
                 //Pen pen = new Pen(this.border.Color, pane.ScaledPenWidth(border.PenWidth * scaleFactor));
 
                 // Fill or draw the symbol as required
-				if ( this.fill.IsVisible)
+				if ( this.fill.IsVisible )
 					FillPoint( g, x, y, scaleFactor, pen, brush );
 				
 				if ( this.border.IsVisible )
@@ -683,7 +683,7 @@ namespace ZedGraph
 				// For the sake of speed, go ahead and create a solid brush and a pen
 				// If it's a gradient fill, it will be created on the fly for each symbol
 				//SolidBrush	brush = new SolidBrush( this.fill.Color );
-                Pen pen = this.border.MakePen(pane, scaleFactor);
+                Pen pen = this.border.MakePen( pane.IsPenWidthScaled, scaleFactor );
                 //Pen pen = new Pen( this.border.Color, pane.ScaledPenWidth(border.PenWidth * scaleFactor) );
 				
 				GraphicsPath path = MakePath( g, scaleFactor );

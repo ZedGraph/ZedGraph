@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-01-18 07:16:40 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-01-19 05:54:52 $ </version>
 	[Serializable]
 	public class GraphItemList : CollectionBase, ICloneable
 	{
@@ -47,7 +47,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="GraphItemList"/> object from which to copy</param>
 		public GraphItemList( GraphItemList rhs )
 		{
-			foreach ( GraphItemList item in rhs )
+			foreach ( GraphItem item in rhs )
 				this.Add( (GraphItem) item.Clone() );
 		}
 

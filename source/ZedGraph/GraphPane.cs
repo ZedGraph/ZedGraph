@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.29 $ $Date: 2005-01-18 15:59:01 $ </version>
+	/// <version> $Revision: 3.30 $ $Date: 2005-01-19 05:54:52 $ </version>
 	[Serializable]
 	public class GraphPane : ICloneable, ISerializable
 	{
@@ -90,6 +90,13 @@ namespace ZedGraph
 		/// <see cref="FontSpec"/> to access this class.
 		/// </summary>
 		private FontSpec	fontSpec;
+
+		/// <summary>
+		/// Private field that stores a user-defined tag for this <see cref="GraphPane"/>.  This tag
+		/// can be any user-defined value.  If it is a <see cref="String"/> type, it can be used as
+		/// a parameter to the <see cref="IndexOfTag"/> method.
+		/// </summary>
+		private object		tag;
 		
 		// Pane Border Properties ///////////////////////////////////////////////////////////////
 		
@@ -572,6 +579,17 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Gets or sets the user-defined tag for this <see cref="GraphPane"/>.  This tag
+		/// can be any user-defined value.  If it is a <see cref="String"/> type, it can be used as
+		/// a parameter to the <see cref="IndexOfTag"/> method.
+		/// </summary>
+		public object Tag
+		{
+			get { return tag; }
+			set { tag = value; }
+		}
+
+		/// <summary>
 		/// Gets the graph pane's current image.
 		/// <seealso cref="Bitmap"/>
 		/// </summary>
@@ -948,6 +966,7 @@ namespace ZedGraph
 			graphItemList = new GraphItemList();
 			
 			this.title = paneTitle;
+			this.tag = null;
 			this.isShowTitle = Default.IsShowTitle;
 			this.fontSpec = new FontSpec( Default.FontFamily,
 				Default.FontSize, Default.FontColor, Default.FontBold,
@@ -994,6 +1013,11 @@ namespace ZedGraph
 			graphItemList = new GraphItemList( rhs.GraphItemList );
 			
 			this.title = rhs.Title;
+			if ( rhs.tag is ICloneable )
+				this.tag = ((ICloneable) rhs.tag).Clone();
+			else
+				this.tag = rhs.tag;
+
 			this.isShowTitle = rhs.IsShowTitle;
 			this.fontSpec = (FontSpec) rhs.FontSpec.Clone();
 					
@@ -1212,7 +1236,7 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		public void Draw(Graphics g)
+		public void Draw( Graphics g )
 		{			
 			// Calculate the axis rect, deducting the area for the scales, titles, legend, etc.
 			double	scaleFactor;
@@ -1290,7 +1314,7 @@ namespace ZedGraph
 			}
 				
 			// Border the axis itself
-			this.axisBorder.Draw( g, this, scaleFactor, this.axisRect );
+			this.axisBorder.Draw( g, this.IsPenWidthScaled, scaleFactor, this.axisRect );
 			
 				
 			if ( showGraf )
@@ -1455,7 +1479,7 @@ namespace ZedGraph
 				
 				// use the internal fontSpec class to draw the text using user-specified and/or
 				// default attributes.
-				this.FontSpec.Draw( g, pane, this.title,
+				this.FontSpec.Draw( g, pane.IsPenWidthScaled, this.title,
 					( this.paneRect.Left + this.paneRect.Right ) / 2,
 					this.paneRect.Top + this.ScaledGap( scaleFactor ) + size.Height / 2.0F,
 					AlignH.Center, AlignV.Center, scaleFactor );
@@ -1494,8 +1518,8 @@ namespace ZedGraph
 			brush.Dispose();
 
 			// Draw a border around the pane
-			rect.Inflate (-5, -5 ) ;
-			this.paneBorder.Draw( g, pane, scaleFactor, rect );
+			//rect.Inflate (-5, -5 ) ;
+			this.paneBorder.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
 		}
 
 		/// <summary>

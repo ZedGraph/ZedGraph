@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.14 $ $Date: 2005-01-08 08:28:07 $ </version>
+   /// <version> $Revision: 3.15 $ $Date: 2005-01-19 05:54:51 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -288,7 +288,7 @@ namespace ZedGraph
 
 			// Border the Bar
 			if ( !this.border.Color.IsEmpty )
-				this.border.Draw( g, pane, scaleFactor, rect );
+				this.border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
 
 		}
 

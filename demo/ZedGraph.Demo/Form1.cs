@@ -146,7 +146,7 @@ namespace ZedGraph.Demo
 
 #endif
 
-#if true	// The main example
+#if false	// The main example
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -328,7 +328,7 @@ namespace ZedGraph.Demo
 
 #endif
 
-#if false	//Pie Chart Example   
+#if true	//Pie Chart Example   
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"2003 Regional Sales", "", "" );

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-01-16 03:46:12 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2005-01-19 05:54:52 $ </version>
 	[Serializable]
 	abstract public class GraphItem : ISerializable
 	{
@@ -290,7 +290,12 @@ namespace ZedGraph
 		public GraphItem( GraphItem rhs )
 		{
 			this.isVisible = rhs.IsVisible;
-			this.Tag = rhs.Tag;
+
+			if ( rhs.Tag is ICloneable )
+				this.Tag = ((ICloneable) rhs.Tag).Clone();
+			else
+				this.Tag = rhs.Tag;
+
 			this.zOrder = rhs.ZOrder;
 			this.location = (Location) rhs.Location.Clone();
 		}

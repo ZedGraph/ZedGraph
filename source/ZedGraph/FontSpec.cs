@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-01-19 05:54:52 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -558,9 +558,9 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-        /// <param name="pane">
-        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
-        /// owner of this object.
+        /// <param name="isPenWidthScaled">
+        /// Set to true to have the <see cref="Border"/> pen width scaled with the
+        /// scaleFactor.
         /// </param>
         /// <param name="text">A string value containing the text to be
         /// displayed.  This can be multiple lines, separated by newline ('\n')
@@ -581,7 +581,7 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void Draw( Graphics g, GraphPane pane, string text, float x,
+		public void Draw( Graphics g, bool isPenWidthScaled, string text, float x,
 			float y, AlignH alignH, AlignV alignV,
 			double scaleFactor )
 		{
@@ -644,7 +644,7 @@ namespace ZedGraph
 			this.fill.Draw( g, rectF );
 			
 			// Draw the border around the text if required
-			this.border.Draw( g, pane, scaleFactor, rectF );
+			this.border.Draw( g, isPenWidthScaled, scaleFactor, rectF );
 
 			// make a center justified StringFormat alignment
 			// for drawing the text
@@ -861,7 +861,7 @@ namespace ZedGraph
 			this.fill.Draw( g, rectF );
 			
 			// Draw the border around the text if required
-			this.border.Draw( g, pane, scaleFactor, rectF );
+			this.border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rectF );
 
 			// Draw the actual text.  Note that the coordinate system
 			// is set up such that 0,0 is at the location where the

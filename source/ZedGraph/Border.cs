@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-01-19 05:54:51 $ </version>
 	[Serializable]
 	public class Border : ISerializable
 	{
@@ -207,21 +207,25 @@ namespace ZedGraph
 		/// Create a new <see cref="Pen"/> object from the properties of this
 		/// <see cref="Border"/> object.
 		/// </summary>
-        /// <param name="pane">
-        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
-        /// owner of this object.
-        /// </param>
-        /// <param name="scaleFactor">
+		/// <param name="isPenWidthScaled">
+		/// Set to true to have the <see cref="Border"/> pen width scaled with the
+		/// scaleFactor.
+		/// </param>
+		/// <param name="scaleFactor">
         /// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
         /// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
         /// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
         /// </param>
         /// <returns>A <see cref="Pen"/> object with the proper color and pen width.</returns>
-        public Pen MakePen( GraphPane pane, double scaleFactor )
+        public Pen MakePen( bool isPenWidthScaled, double scaleFactor )
 		{
-            return new Pen( color, pane.ScaledPenWidth( penWidth, scaleFactor ) );
+			float scaledPenWidth = penWidth;
+			if ( isPenWidthScaled )
+				scaledPenWidth = (float)(penWidth * scaleFactor);
+			
+			return new Pen( color, scaledPenWidth );
         }
-		
+				
 		/// <summary>
 		/// Draw the specified Border (<see cref="RectangleF"/>) using the properties of
 		/// this <see cref="Border"/> object.
@@ -230,24 +234,25 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-        /// <param name="pane">
-        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
-        /// owner of this object.
-        /// </param>
-        /// <param name="scaleFactor">
+		/// <param name="isPenWidthScaled">
+		/// Set to true to have the <see cref="Border"/> pen width scaled with the
+		/// scaleFactor.
+		/// </param>
+		/// <param name="scaleFactor">
         /// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
         /// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
         /// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
         /// </param>
         /// <param name="rect">A <see cref="RectangleF"/> struct to be drawn.</param>
-        public void Draw( Graphics g, GraphPane pane, double scaleFactor, RectangleF rect )
+        public void Draw( Graphics g, bool isPenWidthScaled, double scaleFactor, RectangleF rect )
 		{
             // Need to use the RectangleF props since rounding it can cause the axisFrame to
             // not line up properly with the last tic mark
             if ( this.isVisible )
                 // g.DrawRectangle( MakePen( pane, scaleFactor ), Rectangle.Round( rect ) );
-                g.DrawRectangle( MakePen(pane, scaleFactor), rect.X, rect.Y, rect.Width, rect.Height );
+                g.DrawRectangle( MakePen(isPenWidthScaled, scaleFactor), rect.X, rect.Y, rect.Width, rect.Height );
         }
+
 		#endregion
 	}
 }

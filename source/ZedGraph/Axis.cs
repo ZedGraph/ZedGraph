@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.15 $ $Date: 2005-01-08 08:28:06 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2005-01-19 05:54:51 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -2720,7 +2720,7 @@ namespace ZedGraph
 							AlignH.Center, AlignV.Center,
 							scaleFactor );
 					else
-						this.ScaleFontSpec.Draw( g, pane, tmpStr,
+						this.ScaleFontSpec.Draw( g, pane.IsPenWidthScaled, tmpStr,
 							pixVal, textCenter,
 							AlignH.Center, AlignV.Center,
 							scaleFactor );
@@ -3241,7 +3241,7 @@ namespace ZedGraph
 				//	alignV = AlignV.Bottom;
 
 				// Draw the title
-				this.TitleFontSpec.Draw( g, pane, str, x, y,
+				this.TitleFontSpec.Draw( g, pane.IsPenWidthScaled, str, x, y,
 							AlignH.Center, alignV, scaleFactor );
 			}
 		}

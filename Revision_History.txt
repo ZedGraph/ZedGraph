@@ -1,6 +1,12 @@
 ZedGraph Class Library Revision History
-
-17-Jan-2005 Version (by Champion)
+18-Jan-2005 (by Champion)
+  Add GraphPaneList
+  Use Tag.Clone() when ICloneable available
+  Fix GraphItemList copy constructor
+  Fix PieItem copy constructor
+  Add Tag to GraphPane
+  
+17-Jan-2005 (by Champion)
   Add ZedGraphControl.PointDateFormat
   Move Axis visibility setup for pies to AxisChange()
   Move pie rect calcs out to static PieItem.CalcRect()

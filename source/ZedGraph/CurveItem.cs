@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.17 $ $Date: 2005-01-18 06:45:28 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2005-01-19 05:54:51 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -177,7 +177,10 @@ namespace ZedGraph
 			isY2Axis = rhs.IsY2Axis;
 			isVisible = rhs.IsVisible;
 			isLegendLabelVisible = rhs.IsLegendLabelVisible;
-			Tag = rhs.Tag;
+			if ( rhs.Tag is ICloneable )
+				this.Tag = ((ICloneable) rhs.Tag).Clone();
+			else
+				this.Tag = rhs.Tag;
 			
 			this.points = (PointPairList) rhs.Points.Clone();
 		}

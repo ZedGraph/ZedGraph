@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2005-01-18 06:45:38 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2005-01-19 05:54:52 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -458,7 +458,8 @@ namespace ZedGraph
 							y = this.rect.Top + (int)( iEntry / hStack ) * legendHeight;
 							
 							// Draw the legend label for the current curve
-							this.FontSpec.Draw( g, pane, curve.Label, x + 2.5F * charHeight, y + legendHeight / 2.0F,
+							this.FontSpec.Draw( g, pane.IsPenWidthScaled, curve.Label,
+											x + 2.5F * charHeight, y + legendHeight / 2.0F,
 											AlignH.Left, AlignV.Center, scaleFactor );
 							
 							RectangleF rect = new RectangleF( x, y + legendHeight / 4.0F,
@@ -474,7 +475,7 @@ namespace ZedGraph
 		
 			// Draw a border around the legend if required
 			if ( iEntry > 0 )
-				this.Border.Draw( g, pane, scaleFactor, this.rect );
+				this.Border.Draw( g, pane.IsPenWidthScaled, scaleFactor, this.rect );
 		}
 
 		/// <summary>

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-01-18 06:45:38 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2005-01-19 05:54:52 $ </version>
 	[Serializable]
 	public class TextItem : GraphItem, ICloneable, ISerializable
 	{
@@ -301,7 +301,7 @@ namespace ZedGraph
 			// Draw the text on the screen, including any frame and background
 			// fill elements
 			if ( pix.X > -100000 && pix.X < 100000 && pix.Y > -100000 && pix.Y < 100000 )
-				this.FontSpec.Draw( g, pane, this.text, pix.X, pix.Y,
+				this.FontSpec.Draw( g, pane.IsPenWidthScaled, this.text, pix.X, pix.Y,
 								this.location.AlignH, this.location.AlignV, scaleFactor );
 		}
 		

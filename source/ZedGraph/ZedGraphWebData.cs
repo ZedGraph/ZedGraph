@@ -741,7 +741,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["Value"]; 
-				return (null == x) ? PieSlice.Default.value : (double)x;
+				return (null == x) ? PointPair.Missing : (double)x;
 			}
 			set { ViewState["Value"] = value; }
 		}
@@ -751,7 +751,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["Displacement"]; 
-				return (null == x) ? PieSlice.Default.displacement : (double)x;
+				return (null == x) ? PieItem.Default.Displacement : (double)x;
 			}
 			set { ViewState["Displacement"] = value; }
 		}

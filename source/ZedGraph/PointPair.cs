@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-01-19 05:54:52 $ </version>
 	[Serializable]
 	public class PointPair : ISerializable
 	{
@@ -167,7 +167,11 @@ namespace ZedGraph
 			this.X = rhs.X;
 			this.Y = rhs.Y;
 			this.Z = rhs.Z;
-			this.Tag = rhs.Tag;
+
+			if ( rhs.Tag is ICloneable )
+				this.Tag = ((ICloneable) rhs.Tag).Clone();
+			else
+				this.Tag = rhs.Tag;
 		}
 	#endregion
 

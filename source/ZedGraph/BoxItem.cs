@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-01-19 05:54:51 $ </version>
 	[Serializable]
 	public class BoxItem : GraphItem, ICloneable, ISerializable
 	{
@@ -235,7 +235,7 @@ namespace ZedGraph
 				this.fill.Draw( g, pixRect );
 				
 				// Draw the border around the box if required
-				this.border.Draw( g, pane, scaleFactor, pixRect );
+				this.border.Draw( g, pane.IsPenWidthScaled, scaleFactor, pixRect );
 			}
 		}
 		
