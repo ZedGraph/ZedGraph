@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:07 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-09-25 00:24:06 $ </version>
 	public class FontSpec : ICloneable
 	{
 	#region Fields
@@ -109,6 +109,16 @@ namespace ZedGraph
 		/// <value>The angle of the font, measured in anti-clockwise degrees from
 		/// horizontal.  Negative values are permitted.</value>
 		private float angle;
+		
+		/// <summary>
+		/// Private field that determines the alignment with which this
+		/// <see cref="FontSpec"/> object is drawn.  This alignment really only
+		/// affects multi-line strings.  Use the public property
+		/// <see cref="StringAlignment"/> to access this value.
+		/// </summary>
+		/// <value>A <see cref="StringAlignment"/> enumeration.</value>
+		private StringAlignment stringAlignment;
+		
 		/// <summary>
 		/// Private field that determines the size of the font for this
 		/// <see cref="FontSpec"/> object.  Use the public property
@@ -181,6 +191,14 @@ namespace ZedGraph
 			/// (<see cref="ZedGraph.Fill.Type"/> property).
 			/// </summary>
 			public static FillType FillType = FillType.Solid;
+			/// <summary>
+			/// Default value for the alignment with which this
+			/// <see cref="FontSpec"/> object is drawn.  This alignment really only
+			/// affects multi-line strings.
+			/// </summary>
+			/// <value>A <see cref="StringAlignment"/> enumeration.</value>
+			public static StringAlignment StringAlignment = StringAlignment.Center;
+		
 		}
 	#endregion
 	
@@ -274,6 +292,19 @@ namespace ZedGraph
 			get { return angle; }
 			set { angle = value; }
 		}
+		
+		/// <summary>
+		/// Determines the alignment with which this
+		/// <see cref="FontSpec"/> object is drawn.  This alignment really only
+		/// affects multi-line strings.
+		/// </summary>
+		/// <value>A <see cref="StringAlignment"/> enumeration.</value>
+		public StringAlignment StringAlignment
+		{
+			get { return stringAlignment; }
+			set { stringAlignment = value; }
+		}
+		
 		/// <summary>
 		/// The size of the font for this <see cref="FontSpec"/> object.
 		/// </summary>
@@ -367,6 +398,7 @@ namespace ZedGraph
 			this.size = size;
 			this.scaledSize = -1;
 			this.angle = 0F;
+			this.stringAlignment = Default.StringAlignment;
 
 			this.fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
 			this.isFramed = true;
@@ -406,6 +438,7 @@ namespace ZedGraph
 			this.size = size;
 			this.scaledSize = -1;
 			this.angle = 0F;
+			this.stringAlignment = Default.StringAlignment;
 
 			this.fill = new Fill( fillColor, fillBrush, fillType );
 			this.isFramed = true;
@@ -432,6 +465,7 @@ namespace ZedGraph
 			frameColor = rhs.FrameColor;
 			frameWidth = rhs.FrameWidth;
 
+			stringAlignment = rhs.StringAlignment;
 			angle = rhs.Angle;
 			size = rhs.Size;
 		
@@ -582,7 +616,11 @@ namespace ZedGraph
 			// make a center justified StringFormat alignment
 			// for drawing the text
 			StringFormat strFormat = new StringFormat();
-			strFormat.Alignment = StringAlignment.Center;
+			strFormat.Alignment = this.stringAlignment;
+			if ( this.stringAlignment == StringAlignment.Far )
+				g.TranslateTransform( sizeF.Width / 2.0F, 0F );
+			else if ( this.stringAlignment == StringAlignment.Near )
+				g.TranslateTransform( -sizeF.Width / 2.0F, 0F );
 			
 			// Create a rectangle representing the frame around the
 			// text.  Note that, while the text is drawn based on the
@@ -707,7 +745,7 @@ namespace ZedGraph
 			// make a center justified StringFormat alignment
 			// for drawing the text
 			StringFormat strFormat = new StringFormat();
-			strFormat.Alignment = StringAlignment.Center;
+			strFormat.Alignment = this.stringAlignment;
 			
 			// Create a rectangle representing the frame around the
 			// text.  Note that, while the text is drawn based on the

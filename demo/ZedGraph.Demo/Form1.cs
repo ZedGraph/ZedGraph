@@ -428,6 +428,7 @@ namespace ZedGraphTest
 			// Make up some random data points
 			double[] x = { 0.2, 2, 20, 80, 150, 400, 700, 800, 900, 1000 };
 			double[] y = { 20, 10, 50, 40, 35, 60, 90, 25, 48, 75 };
+			string[] labels = { "point\none", "two", "point\nthree", "four", "5", "6", "Point\n7", "8", "9", "Point\nten" };
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend
 			CurveItem myCurve = myPane.AddCurve( "My Curve",
@@ -437,6 +438,11 @@ namespace ZedGraphTest
 			// axes since the data have changed
 			myPane.AxisChange( CreateGraphics() );
 		
+			myPane.YAxis.Type = AxisType.Text;
+			myPane.YAxis.TextLabels = labels;
+			myPane.YAxis.ScaleAlign = AlignP.Inside;
+			myPane.YAxis.ScaleFontSpec.StringAlignment = StringAlignment.Far;
+			
 			//myPane.YAxis.MaxAuto = false;
 			//myPane.YAxis.MinAuto = false;
 			//myPane.YAxis.StepAuto = false;
