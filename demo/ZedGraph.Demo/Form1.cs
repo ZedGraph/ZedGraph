@@ -1214,7 +1214,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if true	// The main example
+#if false	// The main example
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -1319,7 +1319,7 @@ namespace ZedGraphTest
 			myPane.TextList.Add( text );
 #endif
 
-#if true	// second graph test
+#if false	// second graph test
 			// Create a new graph
 			myPane2 = new GraphPane( new Rectangle( 40, 40, 300, 200 ),
 				"My Pane 2",
@@ -1340,7 +1340,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if false	// Stacked Bar Example - RPK
+#if true	// Stacked Bar Example - RPK
          myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),"2003 Wacky Widget Sales\nBy Product",
             "Quarter",
             "Sales (KUSD)");
