@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.20 $ $Date: 2005-02-10 05:06:44 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2005-02-11 05:20:42 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -509,9 +509,6 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		/// <param name="hStack">The number of columns (horizontal stacking) to be used
-		/// for drawing the legend</param>
-		/// <param name="legendWidth">The width of each column in the legend</param>
 		/// <param name="index">The index number of the <see cref="CurveItem"/> legend
 		/// entry that is under the mouse point.  The <see cref="CurveItem"/> object is
 		/// accessible via <see cref="GraphPane.CurveList">CurveList[index]</see>.
@@ -602,10 +599,6 @@ namespace ZedGraph
 		/// The rectangle that contains the area bounded by the axes, in pixel units.
 		/// <seealso cref="GraphPane.AxisRect">AxisRect</seealso>
 		/// </param>
-		/// <param name="hStack">The number of columns (horizontal stacking) to be used
-		/// for drawing the legend</param>
-        /// <param name="legendWidth">The width of each column in the legend (pixels)</param>
-        /// <param name="legendHeight">The height of each row in the legend (pixels)</param>
         public void CalcRect( Graphics g, PaneBase pane, float scaleFactor,
                                         ref RectangleF tAxisRect )
 		{

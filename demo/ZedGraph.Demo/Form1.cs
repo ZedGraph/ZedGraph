@@ -347,7 +347,7 @@ namespace ZedGraph.Demo
 
 #endif
 
-#if false	//Pie Chart Example   
+#if false	// Pie Chart Example   
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"2003 Regional Sales", "", "" );
@@ -533,6 +533,7 @@ namespace ZedGraph.Demo
 
 				myPane.PaneFill = new Fill( Color.White, Color.LightYellow, 45.0F );
 				myPane.BaseDimension = 6.0F;
+				myPane.Tag = "MyTag" + j;
 
 				// Make up some data arrays based on the Sine function
 				double x, y;
@@ -3314,7 +3315,7 @@ namespace ZedGraph.Demo
 			images[1].Save( @"c:\zedgraph2.jpg", ImageFormat.Jpeg );
 		}
 		
-#if true
+#if false
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
 /*
@@ -3420,7 +3421,7 @@ namespace ZedGraph.Demo
 			myReader.Close();
 		}
 
-#if false
+#if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
 			Serialize( master );

@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-02-10 05:06:45 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-02-11 05:20:43 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -358,6 +358,9 @@ namespace ZedGraph
 			// Draw the pane border & background fill, the title, and the GraphItem objects that lie at
 			// ZOrder.G_BehindAll
 			base.Draw( g );
+
+			if ( paneRect.Width <= 1 || paneRect.Height <= 1 )
+				return;
 
 			float scaleFactor = CalcScaleFactor();
 

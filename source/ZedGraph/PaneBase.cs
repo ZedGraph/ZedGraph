@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.3 $ $Date: 2005-02-10 05:06:46 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2005-02-11 05:20:43 $ </version>
 	public class PaneBase : ICloneable
 	{
 
@@ -716,6 +716,9 @@ namespace ZedGraph
 		/// </param>
 		public virtual void Draw( Graphics g  )
 		{
+			if ( paneRect.Width <= 1 || paneRect.Height <= 1 )
+				return;
+
 			// calculate scaleFactor on "normal" pane size (BaseDimension)
 			float scaleFactor = this.CalcScaleFactor();
 
@@ -744,7 +747,7 @@ namespace ZedGraph
 		/// <remarks>The client rectangle is the actual area available for <see cref="GraphPane"/>
 		/// or <see cref="MasterPane"/> items after taking out space for the margins and the title.
 		/// This method does not take out the area required for the <see cref="PaneBase.Legend"/>.
-		/// To do so, you must separately call <see cref="Legend.CalcRect"/>.
+		/// To do so, you must separately call <see cref="ZedGraph.Legend.CalcRect"/>.
 		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the

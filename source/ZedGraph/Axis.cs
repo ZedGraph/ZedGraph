@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.19 $ $Date: 2005-02-10 05:06:40 $ </version>
+	/// <version> $Revision: 3.20 $ $Date: 2005-02-11 05:20:42 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -257,6 +257,19 @@ namespace ZedGraph
 			/// <seealso cref="Axis.MinGrace"/>
 			/// <seealso cref="MaxGrace"/>
 			public static double MaxGrace = 0.1;
+			/// <summary>
+			/// Determines the size of the band at the beginning and end of the axis that will have labels
+			/// omitted if the axis is shifted due to a non-default location using the <see cref="Axis.Cross"/>
+			/// property.
+			/// </summary>
+			/// <remarks>
+			/// This parameter applies only when <see cref="CrossAuto"/> is false.  It is scaled according
+			/// to the size of the graph based on <see cref="PaneBase.BaseDimension"/>.  When a non-default
+			/// axis location is selected, the first and last labels on that axis will overlap the opposing
+			/// axis frame.  This parameter allows those labels to be omitted to avoid the overlap.  Set this
+			/// parameter to zero to turn off the effect.
+			/// </remarks>
+			public static float EdgeTolerance = 6;
 			/// <summary>
 			/// The maximum number of text labels (major tics) that will be allowed on the plot by
 			/// the automatic scaling logic.  This value applies only to <see cref="AxisType.Text"/>
@@ -2724,6 +2737,9 @@ namespace ZedGraph
 		/// This value is the axisRect.Height for the XAxis, or the axisRect.Width
 		/// for the YAxis and Y2Axis.
 		/// </param>
+		/// <param name="shift">The number of pixels to shift this axis, based on the
+		/// value of <see cref="Cross"/>.  A positive value is into the axisRect relative to
+		/// the default axis position.</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
@@ -2740,6 +2756,8 @@ namespace ZedGraph
 			double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
             Pen pen = new Pen(this.color, pane.ScaledPenWidth(ticPenWidth, scaleFactor));
             Pen dottedPen = new Pen(this.gridColor, pane.ScaledPenWidth(gridPenWidth, scaleFactor));
+
+			float edgeTolerance = Default.EdgeTolerance * scaleFactor;
 
             dottedPen.DashStyle = DashStyle.Custom;
 			float[] pattern = new float[2];
@@ -2804,7 +2822,15 @@ namespace ZedGraph
 				if ( this.isVisible && this.isShowGrid )
 					g.DrawLine( dottedPen, pixVal2, 0.0F, pixVal2, topPix );
 
-				if ( this.isVisible )
+				// See if the axis is shifted (due to CrossAuto = false) and the current label is within
+				// the shiftTolerance of the beginning or end of the axis.  This is the zone in which a
+				// label will tend to overlap the opposing axis
+				bool isOverlapZone = false;
+				if ( Math.Abs(shift) > 0 && ( pixVal < edgeTolerance ||
+								pixVal > this.maxPix - this.minPix - edgeTolerance ) )
+					isOverlapZone = true;
+
+				if ( this.isVisible && !isOverlapZone )
 				{
 					// draw the label
 					MakeLabel( pane, i, dVal, out tmpStr );
@@ -2845,6 +2871,9 @@ namespace ZedGraph
 		/// <param name="pixVal">The pixel location of the tic mark on this
 		/// <see cref="Axis"/></param>
 		/// <param name="topPix">The pixel value of the top of the axis border</param>
+		/// <param name="shift">The number of pixels to shift this axis, based on the
+		/// value of <see cref="Cross"/>.  A positive value is into the axisRect relative to
+		/// the default axis position.</param>
         /// <param name="scaledTic">The length of the tic mark, in points (1/72 inch)</param>
         void DrawATic( Graphics g, Pen pen, float pixVal, float topPix, float shift, float scaledTic )
 		{
@@ -3100,6 +3129,9 @@ namespace ZedGraph
         /// The scale value for the first major tic position.  This is the reference point
 		/// for all other tic marks.
 		/// </param>
+		/// <param name="shift">The number of pixels to shift this axis, based on the
+		/// value of <see cref="Cross"/>.  A positive value is into the axisRect relative to
+		/// the default axis position.</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the

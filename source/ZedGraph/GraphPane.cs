@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.33 $ $Date: 2005-02-10 05:06:43 $ </version>
+	/// <version> $Revision: 3.34 $ $Date: 2005-02-11 05:20:42 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -718,6 +718,9 @@ namespace ZedGraph
 			// ZOrder.G_BehindAll
 			base.Draw( g );
 
+			if ( paneRect.Width <= 1 || paneRect.Height <= 1 )
+				return;
+
 			// Clip everything to the paneRect
 			g.SetClip( this.paneRect );
 
@@ -839,18 +842,6 @@ namespace ZedGraph
 		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-		/// </param>
-		/// <param name="hStack">
-		/// The number of legend columns to use for horizontal legend stacking.  This is a temporary
-		/// variable calculated by the routine for use in the Legend.Draw method.
-		/// </param>
-		/// <param name="legendWidth">
-		/// The width of a single legend entry, in pixel units.  This is a temporary
-		/// variable calculated by the routine for use in the Legend.Draw method.
-		/// </param>
-		/// <param name="legendHeight">
-		/// The height of a single legend entry, in pixel units.  This is a temporary
-		/// variable calculated by the routine for use in the Legend.Draw method.
 		/// </param>
 		/// <returns>The calculated axis rect, in pixel coordinates.</returns>
 		public RectangleF CalcAxisRect( Graphics g, float scaleFactor )

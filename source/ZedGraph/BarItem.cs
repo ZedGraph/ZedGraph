@@ -26,10 +26,15 @@ using System.Security.Permissions;
 namespace ZedGraph
 {
 	/// <summary>
-	/// Summary description for BarItem.
+	/// Encapsulates a bar type that displays vertical or horizontal bars
 	/// </summary>
+	/// <remarks>
+	/// The orientation of the bars depends on the state of
+	/// <see cref="GraphPane.BarBase"/>, and the bars can be stacked or
+	/// clustered, depending on the state of <see cref="GraphPane.BarType"/>
+	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-01-22 06:20:49 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2005-02-11 05:20:42 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
