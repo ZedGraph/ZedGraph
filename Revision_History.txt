@@ -1,5 +1,13 @@
 ZedGraph Class Library Revision History
 
+30-Aug-2004 (by Vos)
+    Added locking to the ZedGraphControl to make it thread safe
+    Added a .AxisChange() method to the ZedGraphControl (it creates a new Graphics object every time it is called)
+    Added a ZedGraphException class
+    ZGC.Image now throws a ZedGraphException if the control has been disposed
+    Added a ZGC.BeenDisposed property, which checks if the GraphPane is null. This probably should have a separate field in the ZGC called beenDisposed, but for now it doesn't.
+    Projects now reference the main ZedGraph by using project references instead of direct .dll references
+
 27-Aug-2004 (by Champion)
     Add MinGrace and MaxGrace
     Fix up overlapping labels with double PickScale() call
