@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.18 $ $Date: 2005-03-05 07:24:10 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2005-03-15 19:20:13 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -788,7 +788,13 @@ namespace ZedGraph
 		{
 			ZedGraphWebControlEventHandler handler;
 			handler = (ZedGraphWebControlEventHandler) Events[_eventRender];
-			if ( handler != null )
+
+			if ( (handler == null) && (CurveList.Count == 0) && (GraphItemList.Count == 0) )
+			{
+				// default with the sample graph if no callback provided
+				ZedGraphWeb.RenderDemo(g,pane);
+			}
+			else
 			{
 				try
 				{
@@ -805,10 +811,6 @@ namespace ZedGraph
 				{
 					//TODO: what now, callback for errors? ;)
 				}
-			}
-			else if ((CurveList.Count == 0) && (GraphItemList.Count == 0) )
-			{// default with the sample graph if no callback provided
-				ZedGraphWeb.RenderDemo(g,pane);
 			}
 		}		
 	#endregion
