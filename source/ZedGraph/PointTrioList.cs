@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion based on code by Jerry Vos
 	/// </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-26 05:33:38 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-29 03:12:15 $ </version>
 	public class PointTrioList : PointPairList, ICloneable
 	{
 
@@ -64,7 +64,7 @@ namespace ZedGraph
 			sorted = false;
 		}
 
-/*		/// <summary>
+		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>
 		/// <returns>A new, independent copy of the PointTrioList</returns>
@@ -72,7 +72,6 @@ namespace ZedGraph
 		{ 
 			return new PointTrioList( this ); 
 		}
-*/
 		
 	#endregion
 

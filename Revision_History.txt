@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+28-Oct-2004 (by Champion)
+  Add BarType.HiLow
+  Add DateTime constructor to XDate
+  PointTrioList is child of PointPairList
+
 22-Oct-2004 (by Champion)
   Add PointTrio + PointTrioList
   Add Sum() to PointPairList

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-10-26 05:33:38 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-10-29 03:12:14 $ </version>
 	abstract public class CurveItem
 	{
 	
@@ -111,15 +111,44 @@ namespace ZedGraph
 		/// the X and Y values for this curve</param>
 		public CurveItem( string label, PointPairList points )
 		{
-			this.label = label == null ? "" : label;
-			this.isY2Axis = false;
-			this.isVisible = true;
-			this.isLegendLabelVisible = true;			
+			Init( label );
 
 			if ( points == null )
 				this.points = new PointPairList();
 			else
 				this.points = (PointPairList) points.Clone();
+		}
+		
+		/// <summary>
+		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label, the
+		/// x, y, and base data values as a <see cref="PointTrioList"/>, the curve
+		/// type (Bar or Line/Symbol), the <see cref="Color"/>, and the
+		/// <see cref="SymbolType"/>. Other properties of the curve are
+		/// defaulted to the values in the <see cref="GraphPane.Default"/> class.
+		/// </summary>
+		/// <param name="label">A string label (legend entry) for this curve</param>
+		/// <param name="points">A <see cref="PointTrioList"/> of double precision value pairs that define
+		/// the X, Y, and Base values for this curve</param>
+		public CurveItem( string label, PointTrioList points )
+		{
+			Init( label );
+
+			if ( points == null )
+				this.points = new PointTrioList();
+			else
+				this.points = (PointTrioList) points.Clone();
+		}
+		
+		/// <summary>
+		/// Internal initialization routine thats sets some initial values to defaults.
+		/// </summary>
+		/// <param name="label">A string label (legend entry) for this curve</param>
+		private void Init( string label )
+		{
+			this.label = label == null ? "" : label;
+			this.isY2Axis = false;
+			this.isVisible = true;
+			this.isLegendLabelVisible = true;			
 		}
 			
 		/// <summary>

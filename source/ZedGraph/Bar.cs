@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-14 04:06:01 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-29 03:12:14 $ </version>
 	public class Bar : ICloneable
 	{
 	#region Fields
@@ -158,6 +158,45 @@ namespace ZedGraph
 			get { return fill; }
 			set { fill = value; }
 		}
+
+		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "base"
+		/// (independent axis) from which the <see cref="Bar"/>'s are drawn.
+		/// The base axis is the axis from which the bars grow with increasing value.  This
+		/// property is determined by the value of <see cref="GraphPane.BarBase"/>.
+		/// </summary>
+		/// <seealso cref="GraphPane.Default.BarBase"/>
+		/// <seealso cref="ZedGraph.BarBase"/>
+		/// <seealso cref="BarValueAxis"/>
+		public Axis BarBaseAxis( GraphPane pane )
+		{
+			if ( pane.BarBase == BarBase.X )
+				return pane.XAxis;
+			else if ( pane.BarBase == BarBase.Y )
+				return pane.YAxis;
+			else
+				return pane.Y2Axis;
+		}
+		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "value"
+		/// (dependent axis) for the <see cref="Bar"/>'s.
+		/// The value axis determines the height of the bars.  This
+		/// property is determined by the value of <see cref="GraphPane.BarBase"/>.
+		/// </summary>
+		/// <seealso cref="GraphPane.Default.BarBase"/>
+		/// <seealso cref="ZedGraph.BarBase"/>
+		/// <seealso cref="BarBaseAxis"/>
+		public Axis BarValueAxis( GraphPane pane, bool isY2Axis )
+		{
+			if ( pane.BarBase == BarBase.X )
+			{
+				if ( isY2Axis )
+					return pane.Y2Axis;
+				else
+					return pane.YAxis;
+			}
+			else
+				return pane.XAxis;
+		}
+
 	#endregion
 
 	#region Rendering Methods
@@ -236,20 +275,7 @@ namespace ZedGraph
 			// Border the Bar
 			if ( !this.border.Color.IsEmpty )
 				this.border.Draw( g, rect );
-				
-			/*
-			if ( this.isFramed && !this.frameColor.IsEmpty  )
-			{
-				Pen pen = new Pen( this.frameColor, this.frameWidth );
-
-				g.DrawLine( pen, left, bottom, left, top );
-				g.DrawLine( pen, left, top, right, top );
-				g.DrawLine( pen, right, top, right, bottom );
-				if ( fullFrame )
-					g.DrawLine( pen, right, bottom, left, bottom );
-			}
-			*/
-			
+							
 		}
 
 		/// <summary>
@@ -286,43 +312,45 @@ namespace ZedGraph
 		public void DrawBars( Graphics g, GraphPane pane, PointPairList points, bool isY2Axis,
 							float barWidth, int pos, double scaleFactor )
 		{
-			float 	tmpX, tmpY;
+			float 	tmpX, tmpY, tmpBase;
 			float 	clusterWidth = pane.GetClusterWidth();
 			float 	clusterGap = pane.MinClusterGap * barWidth;
 			float 	barGap = barWidth * pane.MinBarGap;
 			
-			float	basePix;
+			float	zeroPix, basePix;
 		
-			double	curX, curY;
+			double	curX, curY, curBase;
 						
 			if ( pane.BarType == BarType.Overlay )
 				pos = 0;
 				
 			// Determine which Axis is the bar base and which is the bar value
-			Axis valueAxis;
-			if ( pane.BarBase == BarBase.X )
-			{
-				if ( isY2Axis )
-					valueAxis = pane.Y2Axis;
-				else
-					valueAxis = pane.YAxis;
-			}
-			else
-				valueAxis = pane.XAxis;
+			Axis valueAxis = BarValueAxis( pane, isY2Axis );
 
 			// Determine the pixel value where the "base" of the bar lies
 			if ( valueAxis.Min < 0.0 && valueAxis.Max > 0.0 )
-				basePix = valueAxis.Transform( 0.0 );
+				zeroPix = valueAxis.Transform( 0.0 );
 			else if ( valueAxis.Min < 0.0 && valueAxis.Max <= 0.0 )
-				basePix = ( pane.BarBase == BarBase.Y ) ? valueAxis.MaxPix : valueAxis.MinPix;
+				zeroPix = ( pane.BarBase == BarBase.Y ) ? valueAxis.MaxPix : valueAxis.MinPix;
 			else
-				basePix = ( pane.BarBase == BarBase.Y ) ? valueAxis.MinPix : valueAxis.MaxPix;
+				zeroPix = ( pane.BarBase == BarBase.Y ) ? valueAxis.MinPix : valueAxis.MaxPix;
+				
+			bool isHiLow = ( pane.BarType == BarType.HiLow ) && ( points is PointTrioList );
 
 			// Loop over each defined point							
 			for ( int i=0; i<points.Count; i++ )
 			{
 				curX = points[i].X;
 				curY = points[i].Y;
+				
+				curBase = 0;
+				if ( isHiLow )
+					curBase = ( (PointTrioList) points)[i].BaseVal;
+					
+				if ( curBase == PointPair.Missing ||
+						System.Double.IsNaN( curBase ) ||
+						System.Double.IsInfinity( curBase ) )
+					curBase = 0;
 				
 				// Any value set to double max is invalid and should be skipped
 				// This is used for calculated values that are out of range, divide
@@ -335,9 +363,20 @@ namespace ZedGraph
 				{
 					tmpX = pane.XAxis.Transform( i, curX );
 					if ( isY2Axis )
+					{
 						tmpY = pane.Y2Axis.Transform( i, curY );
+						tmpBase = pane.Y2Axis.Transform( i, curBase );
+					}
 					else
+					{
 						tmpY = pane.YAxis.Transform( i, curY );
+						tmpBase = pane.YAxis.Transform( i, curBase );
+					}
+					
+					if ( curBase == 0 )
+						basePix = zeroPix;
+					else
+						basePix = tmpBase;
 
 					if ( pane.BarBase == BarBase.X )
 					{

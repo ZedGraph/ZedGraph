@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-10-15 05:11:30 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2004-10-29 03:12:14 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1376,6 +1376,34 @@ namespace ZedGraph
 		public BarItem AddBar( string label, double[] x, double[] y, Color color )
 		{
 			BarItem curve = new BarItem( label, x, y, color );
+			this.curveList.Add( curve );
+			
+			return curve;
+		}
+
+		/// <summary>
+		/// Add a bar type curve (<see cref="CurveItem"/> object) to the plot with
+		/// the given data points (double arrays) and properties.
+		/// This is simplified way to add curves without knowledge of the
+		/// <see cref="CurveList"/> class.  An alternative is to use
+		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// </summary>
+		/// <param name="label">The text label (string) for the curve that will be
+		/// used as a <see cref="Legend"/> entry.</param>
+		/// <param name="x">An array of double precision X values (the
+		/// independent values) that define the curve.</param>
+		/// <param name="y">An array of double precision Y values (the
+		/// dependent values) that define the curve.</param>
+		/// <param name="baseVal">An array of double precision values that define the
+		/// base value (the bottom) of the bars for this curve.
+		/// </param>
+		/// <param name="color">The color to used for the bars</param>
+		/// <returns>A <see cref="CurveItem"/> class for the newly created bar curve.
+		/// This can then be used to access all of the curve properties that
+		/// are not defined as arguments to the <see cref="AddBar"/> method.</returns>
+		public BarItem AddBar( string label, double[] x, double[] y, double[] baseVal, Color color )
+		{
+			BarItem curve = new BarItem( label, x, y, baseVal, color );
 			this.curveList.Add( curve );
 			
 			return curve;

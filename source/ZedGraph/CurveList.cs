@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-10-15 05:11:30 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-10-29 03:12:14 $ </version>
 	public class CurveList : CollectionBase, ICloneable
 	{
 	#region Properties
@@ -113,14 +113,6 @@ namespace ZedGraph
 			foreach ( CurveItem item in rhs )
 			{
 				this.Add( (CurveItem) item.Clone() );
-				/*
-				if ( item is LineItem )
-					this.Add( new LineItem( (LineItem) item ) );
-				else if ( item is BarItem )
-					this.Add( new BarItem( (BarItem) item ) );
-				else
-					throw new System.Exception( "Bad CurveItem child type" );
-				*/
 			}
 		}
 		

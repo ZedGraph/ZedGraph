@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion from PointPair code by Jerry Vos</author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-26 05:33:38 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-29 03:12:15 $ </version>
 	public struct PointTrio
 	{
 	#region Member variables
@@ -75,6 +75,36 @@ namespace ZedGraph
 		}
 	#endregion
 
+	#region Operator Overloads
+/*	
+		/// <summary>
+		/// Implicit conversion from <see cref="PointTrio"/> to <see cref="PointPair"/>.
+		/// This conversion extracts the (x,y) point from the <see cref="PointTrio"/>,
+		/// ignoring the <see cref="BaseVal"/>.
+		/// </summary>
+		/// <param name="pt">The <see cref="PointTrio"/> struct on which to operate</param>
+		/// <returns>A <see cref="PointPair"/> struct with the (X,Y) value from the
+		/// <see cref="PointTrio"/></returns>
+		public static implicit operator PointPair( PointTrio pt )
+		{
+			return pt.PointPair;
+		}
+	
+		/// <summary>
+		/// Implicit conversion from <see cref="PointPair"/> to <see cref="PointTrio"/>.
+		/// This conversion creates a <see cref="PointTrio"/> by taking the (X,Y) pair
+		/// from the <see cref="PointPair"/> and setting the <see cref="BaseVal"/> to zero.
+		/// </summary>
+		/// <param name="pt">The <see cref="PointPair"/> struct on which to operate</param>
+		/// <returns>A <see cref="PointTrio"/> struct with the (X,Y) value from the
+		/// <see cref="PointPair"/></returns>
+		public static implicit operator PointTrio( PointPair pt )
+		{
+			return new PointTrio( pt.X, pt.Y, 0.0 );
+		}
+*/
+	#endregion
+	
 	#region Properties
 	
 		/// <summary>

@@ -73,6 +73,40 @@ namespace ZedGraph
 		{
 		}
 		/// <summary>
+		/// Create a new <see cref="BarItem"/> using the specified properties.  This method
+		/// creates a <see cref="PointTrioList"/> intended for <see cref="BarType.HiLow"/> Bars.
+		/// </summary>
+		/// <param name="label">The label that will appear in the legend.</param>
+		/// <param name="x">An array of double precision values that define
+		/// the independent (X axis) values for this curve</param>
+		/// <param name="y">An array of double precision values that define
+		/// the dependent (Y axis) values for this curve</param>
+		/// <param name="color">A <see cref="Color"/> value that will be applied to
+		/// the <see cref="ZedGraph.Bar.Fill"/> and <see cref="ZedGraph.Bar.Border"/> properties.
+		/// </param>
+		/// <param name="baseVal">An array of double precision values that define the
+		/// base value (the bottom) of the bars for this curve.
+		/// </param>
+		public BarItem( string label, double[] x, double[] y, double[] baseVal, Color color )
+			: this( label, new PointTrioList( x, y, baseVal ), color )
+		{
+		}
+		/// <summary>
+		/// Create a new <see cref="BarItem"/> using the specified properties.
+		/// </summary>
+		/// <param name="label">The label that will appear in the legend.</param>
+		/// <param name="points">A <see cref="PointTrioList"/> of double precision value trios that define
+		/// the X, Y, and base values for this curve</param>
+		/// <param name="color">A <see cref="Color"/> value that will be applied to
+		/// the <see cref="ZedGraph.Bar.Fill"/> and <see cref="ZedGraph.Bar.Border"/> properties.
+		/// </param>
+		public BarItem( string label, PointTrioList points, Color color )
+			: base( label, points )
+		{
+			bar = new Bar( color );
+		}
+		
+		/// <summary>
 		/// Create a new <see cref="BarItem"/> using the specified properties.
 		/// </summary>
 		/// <param name="label">The label that will appear in the legend.</param>
@@ -132,7 +166,7 @@ namespace ZedGraph
 		override public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  )
 		{
 			if ( this.isVisible )
-				Bar.DrawBars( g, pane, (PointPairList) points, isY2Axis, pane.CalcBarWidth(), pos, scaleFactor );
+				Bar.DrawBars( g, pane, points, isY2Axis, pane.CalcBarWidth(), pos, scaleFactor );
 		}
 		
 		/// <summary>

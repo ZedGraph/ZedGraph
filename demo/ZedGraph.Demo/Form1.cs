@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
+using System.Drawing.Text;
 using System.Data;
 using GDIDB;
 using ZedGraph;
@@ -620,6 +621,53 @@ namespace ZedGraphTest
 
 #endif
 
+#if false	// Test Hour Format
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"My Test Date Graph", "Date", "My Y Axis" );
+
+			// Make up some random data points
+			PointPairList list1 = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+			
+
+			list1.Add( new XDate(2004, 10, 26, 10, 0, 0), 67 );
+			list1.Add( new XDate(2004, 10, 26, 16, 0, 0), 63 );
+			list1.Add( new XDate(2004, 10, 26, 23, 0, 0), 65 );
+
+			list2.Add( new XDate(2004, 10, 26, 2, 0, 0), 49 );
+			list2.Add( new XDate(2004, 10, 26, 14, 0, 0), 56 );
+			list2.Add( new XDate(2004, 10, 26, 20, 0, 0), 65 );
+
+			list3.Add( new XDate(2004, 10, 26, 10, 0, 0), 43 );
+			list3.Add( new XDate(2004, 10, 26, 16, 0, 0), 55 );
+			list3.Add( new XDate(2004, 10, 26, 23, 0, 0), 60 );
+
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			CurveItem myCurve = myPane.AddCurve( "My Curve",
+				list1, Color.Red, SymbolType.Diamond );
+			myCurve = myPane.AddCurve( "My Curve 2",
+				list2, Color.Blue, SymbolType.Square );
+			myCurve = myPane.AddCurve( "My Curve 3",
+				list3, Color.Green, SymbolType.Circle );
+			// Set the XAxis to date type
+			myPane.XAxis.Type = AxisType.Date;
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			myPane.AxisChange( this.CreateGraphics() );
+			myPane.XAxis.ScaleFormat = "&mm-&dd &hh:&nn";
+			myPane.XAxis.MajorUnit = DateUnit.Day;
+			myPane.XAxis.MinorUnit = DateUnit.Hour;
+			myPane.XAxis.Step = 0.5;
+			myPane.XAxis.MinorStep = 2;
+			myPane.XAxis.Min = new XDate(2004,10,26);
+			myPane.XAxis.Max = new XDate(2004,10,27,4,0,0);
+			myPane.AxisChange( this.CreateGraphics() );
+			
+#endif
+
 #if false	// the date axis sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
@@ -642,6 +690,11 @@ namespace ZedGraphTest
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
 			//			myPane.AxisChange();
+			
+			myPane.FontSpec.Family = "Times New Roman";
+			
+			InstalledFontCollection inst = new InstalledFontCollection();
+			FontFamily[] famList = inst.Families;
 
 #endif
 
@@ -775,69 +828,30 @@ namespace ZedGraphTest
 
 #endif
 
-#if false	// The single bar graph sample
-
-			sideWays = true;
+#if true	// The HiLow bar graph sample
 
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Bar Graph", "Label", "My Y Axis" );
+			
 			// Make up some random data points
 
-			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty" };
-			double[] y = { 100, 115, 75, -22, 98, 40, -10 };
-			double[] y2 = { 90, 100, 95, -35, 80, 35, 35 };
-			double[] y3 = { 80, 110, 65, -15, 54, 67, 18 };
+			double[] y = new double[44];
+			double[] yBase = new double[44];
 
-			double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
+			for ( int i=0; i<44; i++ )
+			{
+				y[i] = Math.Sin( (double) i * Math.PI / 15.0 );
+				yBase[i] = y[i] - 0.4;
+			}
 
 			// Generate a red bar with "Curve 1" in the legend
-			CurveItem myCurve = myPane.AddBar( "Curve 1", null, y, Color.Red );
-
-			myCurve.IsY2Axis = true;
-			//myCurve.Bar.FillBrush = new LinearGradientBrush( new Point(0,0), new Point(100,0), Color.White,
-			//						Color.Blue );
-			//myCurve.Bar.FillBrush = new LinearGradientBrush( new Rectangle( 0, 0, 400, 400 ), Color.Blue,
-			//							Color.White, 90F );
-			//myCurve.Bar.FillType = FillType.Brush;
-
-
-			myPane.XAxis.IsTicsBetweenLabels = true;
-			myPane.XAxis.TextLabels = labels;
-			myPane.XAxis.Type = AxisType.Text;
-			myPane.XAxis.ScaleFontSpec.Angle = 90;
-			myPane.XAxis.IsOppositeTic = false;
-			myPane.XAxis.IsMinorOppositeTic = false;
-			//myPane.XAxis.IsShowTitle = false;
-			//myPane.XAxis.TitleFontSpec.Angle = 90;
-
-			myPane.YAxis.IsVisible = false;
-
-			myPane.Y2Axis.IsVisible = true;
-			myPane.Y2Axis.ScaleFontSpec.Angle = 0;
-			myPane.Y2Axis.IsOppositeTic = false;
-			myPane.Y2Axis.IsMinorOppositeTic = false;
-			myPane.Y2Axis.Title = "Y Title";
-
-			TextItem text = new TextItem( "Title", 0.06F, 0.5F );
-			text.CoordinateFrame = CoordType.PaneFraction;
-			text.FontSpec.IsFramed = false;
-			text.FontSpec.Angle = 90;
-			text.FontSpec.Size = 18;
-			text.FontSpec.IsBold = true;
-
-			myPane.TextList.Add( text );
-
-			myPane.Legend.IsVisible = false;
-
-			myPane.PaneGap = 80;
-			myPane.IsShowTitle = false;
-			myPane.ClusterScaleWidth = 1;
-
+			CurveItem myCurve = myPane.AddBar( "Curve 1", null, y, yBase, Color.Red );
+			
+			myPane.BarType = BarType.HiLow;
+			
 			myPane.AxisChange( this.CreateGraphics() );
 
-
-			//			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
 #if false	// The sideways bar graph sample
@@ -1064,11 +1078,11 @@ namespace ZedGraphTest
 				// for negative bars, the label appears just above the zero value
 				TextItem text = new TextItem( lab, (float) (i+1), (float) (maxVal < 0 ? 0.0 : maxVal) + shift );
 				// tell Zedgraph to use user scale units for locating the TextItem
-				text.CoordinateFrame = CoordType.AxisXYScale;
+				text.Location.CoordinateFrame = CoordType.AxisXYScale;
 				// AlignH the left-center of the text to the specified point
-				text.AlignH = AlignH.Left;
-				text.AlignV = AlignV.Center;
-				text.FontSpec.IsFramed = false;
+				text.Location.AlignH = AlignH.Left;
+				text.Location.AlignV = AlignV.Center;
+				text.FontSpec.Border.IsVisible = false;
 				// rotate the text 90 degrees
 				text.FontSpec.Angle = 90;
 				// add the TextItem to the list
@@ -1203,7 +1217,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if true	// The main example
+#if false	// The main example
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",

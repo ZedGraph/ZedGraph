@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-26 05:33:38 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-10-29 03:12:15 $ </version>
 	public class PointPairList : CollectionBase, ICloneable
 	{
 	#region Fields
@@ -42,6 +42,31 @@ namespace ZedGraph
 	#endregion
 
 	#region Properties
+		/// <summary>
+		/// Indexer to access the specified <see cref="PointPair"/> object by
+		/// its ordinal position in the list.
+		/// </summary>
+		/// <param name="index">The ordinal position (zero-based) of the
+		/// <see cref="PointPair"/> object to be accessed.</param>
+		/// <value>A <see cref="PointPair"/> object reference.</value>
+		public PointPair this[ int index ]  
+		{
+			get
+			{
+				// This is ugly, but it's just for protection.  If you call the indexer
+				// with a PointPairList variable and the variable happens to be a
+				// PointTrioList, then this will make sure that the return struct from
+				// the List[index] is PointTrio, which is converted to a PointPair.
+				// Unfortunately, you can't make this indexer function virtual and
+				// override it in the PointTrioList, since they have different return types.
+				if ( this is PointTrioList )
+					return ((PointTrio) List[index]).PointPair;
+				else
+					return (PointPair) List[index];
+			}
+			set { List[index] = value; }
+		}
+
 		/// <summary>
 		/// true if the list is currently sorted.
 		/// </summary>
@@ -86,7 +111,7 @@ namespace ZedGraph
 		/// Deep-copy clone routine
 		/// </summary>
 		/// <returns>A new, independent copy of the PointPairList</returns>
-		public object Clone()
+		virtual public object Clone()
 		{ 
 			return new PointPairList( this ); 
 		}
@@ -94,19 +119,6 @@ namespace ZedGraph
 	#endregion
 
 	#region Methods
-		/// <summary>
-		/// Indexer to access the specified <see cref="PointPair"/> object by
-		/// its ordinal position in the list.
-		/// </summary>
-		/// <param name="index">The ordinal position (zero-based) of the
-		/// <see cref="PointPair"/> object to be accessed.</param>
-		/// <value>A <see cref="PointPair"/> object reference.</value>
-		public PointPair this[ int index ]  
-		{
-			get { return( (PointPair) List[index] ); }
-			set { List[index] = value; }
-		}
-
 		/// <summary>
 		/// Add a <see cref="PointPair"/> object to the collection at the end of the list.
 		/// </summary>

@@ -370,6 +370,14 @@ namespace ZedGraph
 		/// </summary>
 		Overlay,
 		/// <summary>
+		/// Draw the <see cref="BarItem"/> bars in the same format as a <see cref="BarType.Cluster"/>,
+		/// except that the bottom of the bars is defined by the <see cref="PointTrio.BaseVal"/>
+		/// from the <see cref="PointTrio"/> struct.  For this mode to work properly,
+		/// <see cref="CurveItem.Points"/> must be a <see cref="PointTrioList"/>.  Otherwise,
+		/// the bottoms of the bars will default to zero base value.
+		/// </summary>
+		HiLow,
+		/// <summary>
 		/// Draw the <see cref="BarItem"/> bars in an additive format so that they stack on
 		/// top of one another.  The value of the last bar drawn will be the sum of the values
 		/// of all prior bars.

@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-10-29 03:12:15 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -97,6 +97,18 @@ namespace ZedGraph
 		public XDate( double xlDate )
 		{
 			this.xlDate = xlDate;
+		}
+		
+		/// <summary>
+		/// Construct a date class from a <see cref="DateTime"/> struct.
+		/// </summary>
+		/// <param name="dateTime">
+		/// A <see cref="DateTime"/> struct containing the initial date information.
+		/// </param>
+		public XDate( DateTime dateTime )
+		{
+			this.xlDate = CalendarDateToXLDate( dateTime.Year, dateTime.Month,
+							dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second );
 		}
 		
 		/// <summary>
