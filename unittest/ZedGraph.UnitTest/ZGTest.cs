@@ -71,7 +71,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 1.7 $ $Date: 2004-09-01 05:22:53 $ </version>
+	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -205,7 +205,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.7 $ $Date: 2004-09-01 05:22:53 $ </version>
+	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
@@ -785,7 +785,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.7 $ $Date: 2004-09-01 05:22:53 $ </version>
+	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{

@@ -7,7 +7,7 @@ namespace ZedGraph
 	/// </summary>
 	///
 	/// <author> Jerry Vos modified by John Champion</author>
-	/// <version> $Revision: 1.3 $ $Date: 2004-09-02 06:19:31 $ </version>
+	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
 	public class ZedGraphException : System.ApplicationException
 	{
 		/// <summary>

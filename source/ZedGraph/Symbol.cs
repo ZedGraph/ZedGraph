@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.8 $ $Date: 2004-09-02 06:19:31 $ </version>
+	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
