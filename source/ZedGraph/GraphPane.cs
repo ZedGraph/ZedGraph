@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.6 $ $Date: 2004-09-20 05:10:22 $ </version>
+	/// <version> $Revision: 2.7 $ $Date: 2004-09-22 02:08:13 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -1090,19 +1090,19 @@ namespace ZedGraph
 				DrawTitle( g, scaleFactor );
 			
 				// Setup the axes from graphing
-				this.xAxis.SetupScaleData( this );
-				this.yAxis.SetupScaleData( this );
-				this.y2Axis.SetupScaleData( this );
+				//this.xAxis.SetupScaleData( this );
+				//this.yAxis.SetupScaleData( this );
+				//this.y2Axis.SetupScaleData( this );
 
-				// Clip the points to the actual plot area
-				g.SetClip( this.axisRect );
-				this.curveList.Draw( g, this, scaleFactor );
-				g.SetClip( this.paneRect );
-				
 				// Draw the Axes
 				this.xAxis.Draw( g, this, scaleFactor );
 				this.yAxis.Draw( g, this, scaleFactor );
 				this.y2Axis.Draw( g, this, scaleFactor );
+				
+				// Clip the points to the actual plot area
+				g.SetClip( this.axisRect );
+				this.curveList.Draw( g, this, scaleFactor );
+				g.SetClip( this.paneRect );
 				
 				// Draw the Legend
 				this.legend.Draw( g, this, scaleFactor, hStack, legendWidth );

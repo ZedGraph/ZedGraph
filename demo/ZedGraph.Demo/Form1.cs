@@ -63,7 +63,7 @@ namespace ZedGraphTest
 			// Form1
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(600, 401);
+			this.ClientSize = new System.Drawing.Size(500, 329);
 			this.Name = "Form1";
 			this.Text = "Form1";
 			this.Resize += new System.EventHandler(this.Form1_Resize);
@@ -982,7 +982,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if false	// The bar graph Texture Fill sample
+#if true	// The bar graph Texture Fill sample
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"Cheesy Texture Fill Sample", "", "" );
@@ -1034,7 +1034,7 @@ namespace ZedGraphTest
 			myPane.ClusterScaleWidth = 1;
 			myPane.Legend.IsVisible = false;
 			
-			myPane.AxisFill = new Fill( Color.White, Color.Orchid, 45F );
+			//myPane.AxisFill = new Fill( Color.White, Color.Orchid, 45F );
 
 			//Add Labels to the curves
 
@@ -1100,7 +1100,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if true	// The main example
+#if false	// The main example
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
