@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-02-19 19:01:13 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-02-19 19:22:21 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -74,6 +74,12 @@ namespace ZedGraph
 		/// Stores the <see cref="ContextMenu"/> reference for internal use.
 		/// </summary>
 		private ContextMenu contextMenu;
+		
+		/// <summary>
+		/// private field that determines whether or not the context menu will be available.  Use the
+		/// public property <see cref="IsShowContextMenu"/> to access this value.
+		/// </summary>
+		private bool isShowContextMenu;
 		
 		/// <summary>
 		/// private field that determines the format for displaying tooltip date values.
@@ -180,6 +186,7 @@ namespace ZedGraph
 			masterPane.Add( graphPane );
 
 			this.isShowPointValues = false;
+			this.isShowContextMenu = true;
 			this.pointValueFormat = PointPair.DefaultFormat;
 			this.pointDateFormat = XDate.DefaultFormatStr;
 		}
@@ -262,6 +269,21 @@ namespace ZedGraph
 			get { return isShowPointValues; }
 			set { isShowPointValues = value; }
 		}
+		
+		/// <summary>
+		/// Gets or sets a value that determines whether or not the context menu will be available.
+		/// </summary>
+		/// <remarks>The context menu is a menu that appears when you right-click on the
+		/// <see cref="ZedGraphControl"/>.  It provides options for Zoom, Pan, AutoScale, Clipboard
+		/// Copy, and toggle <see cref="IsShowPointValues"/>.
+		/// </remarks>
+		/// <value>true to allow the context menu, false to disable it</value>
+		public bool IsShowContextMenu
+		{
+			get { return isShowContextMenu; }
+			set { isShowContextMenu = value; }
+		}
+		
 
 		/// <summary>
 		/// Gets or sets the format for displaying tooltip values.
@@ -579,39 +601,42 @@ namespace ZedGraph
 			this.isPanMode = false;
 			Cursor.Current = Cursors.Default;
 			
-			MenuItem menuItem;
-			int index = 0;
+			if ( this.isShowContextMenu )
+			{
+				MenuItem menuItem;
+				int index = 0;
 
-			menuItem = new MenuItem();
-			menuItem.Index = index++;
-			menuItem.Text = "Copy";
-			this.contextMenu.MenuItems.Add( menuItem );
-			menuItem.Click += new System.EventHandler( this.MenuClick_Copy );
+				menuItem = new MenuItem();
+				menuItem.Index = index++;
+				menuItem.Text = "Copy";
+				this.contextMenu.MenuItems.Add( menuItem );
+				menuItem.Click += new System.EventHandler( this.MenuClick_Copy );
 
-			menuItem = new MenuItem();
-			menuItem.Index = index++;
-			menuItem.Text = "Show Point Values";
-			menuItem.Checked = this.IsShowPointValues;
-			this.contextMenu.MenuItems.Add( menuItem );
-			menuItem.Click += new System.EventHandler( this.MenuClick_ShowValues );
+				menuItem = new MenuItem();
+				menuItem.Index = index++;
+				menuItem.Text = "Show Point Values";
+				menuItem.Checked = this.IsShowPointValues;
+				this.contextMenu.MenuItems.Add( menuItem );
+				menuItem.Click += new System.EventHandler( this.MenuClick_ShowValues );
 
-			menuItem = new MenuItem();
-			menuItem.Index = index++;
-			menuItem.Text = "AutoScale";
-			this.contextMenu.MenuItems.Add( menuItem );
-			menuItem.Click += new EventHandler( this.MenuClick_AutoScale );
+				menuItem = new MenuItem();
+				menuItem.Index = index++;
+				menuItem.Text = "AutoScale";
+				this.contextMenu.MenuItems.Add( menuItem );
+				menuItem.Click += new EventHandler( this.MenuClick_AutoScale );
 
-			menuItem = new MenuItem();
-			menuItem.Index = index++;
-			menuItem.Text = "Zoom";
-			this.contextMenu.MenuItems.Add( menuItem );
-			menuItem.Click += new System.EventHandler( this.MenuClick_Zoom );
+				menuItem = new MenuItem();
+				menuItem.Index = index++;
+				menuItem.Text = "Zoom";
+				this.contextMenu.MenuItems.Add( menuItem );
+				menuItem.Click += new System.EventHandler( this.MenuClick_Zoom );
 
-			menuItem = new MenuItem();
-			menuItem.Index = index++;
-			menuItem.Text = "Pan";
-			this.contextMenu.MenuItems.Add( menuItem );
-			menuItem.Click += new System.EventHandler( this.MenuClick_Pan );
+				menuItem = new MenuItem();
+				menuItem.Index = index++;
+				menuItem.Text = "Pan";
+				this.contextMenu.MenuItems.Add( menuItem );
+				menuItem.Click += new System.EventHandler( this.MenuClick_Pan );
+			}
 
 		}
 		
