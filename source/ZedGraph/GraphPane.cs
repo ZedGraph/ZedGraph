@@ -44,7 +44,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.14 $ $Date: 2004-11-19 06:41:05 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2004-12-03 13:31:28 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -413,7 +413,8 @@ namespace ZedGraph
 			/// <seealso cref="GraphPane.MinBarGap"/>
 			public static double ClusterScaleWidth = 1.0;
 			/// <summary>
-			/// The tolerance that is applied to the <see cref="GraphPane.FindNearestPoint"/> routine.
+			/// The tolerance that is applied to the
+			/// <see cref="GraphPane.FindNearestPoint(PointF,out CurveItem,out int)"/> routine.
 			/// If a given curve point is within this many pixels of the mousePt, the curve
 			/// point is considered to be close enough for selection as a nearest point
 			/// candidate.
@@ -546,12 +547,16 @@ namespace ZedGraph
 		/// Gets the graph pane's current image.
 		/// <seealso cref="Bitmap"/>
 		/// </summary>
+		/// <remarks>Note that this image will be 1 pixel larger than the <see cref="PaneRect"/>
+		/// size in order to fully contain the <see cref="PaneRect"/>.  To get a precise bitmap
+		/// size, use <see cref="ScaledImage"/>.</remarks>
 		/// <seealso cref="ScaledImage"/>
 		public Bitmap Image
 		{
 			get
 			{
-				Bitmap bitmap = new Bitmap( (int) this.paneRect.Width, (int) this.paneRect.Height );
+				// Need to make the bitmap 1 pixel larger than the image for proper containment
+				Bitmap bitmap = new Bitmap( (int) this.paneRect.Width+1, (int) this.paneRect.Height+1 );
 				Graphics bitmapGraphics = Graphics.FromImage( bitmap );
 				bitmapGraphics.TranslateTransform( -this.PaneRect.Left, -this.PaneRect.Top );
 				this.Draw( bitmapGraphics );
@@ -562,13 +567,13 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Gets an image for the current GraphPane, scaled to the specified size and resolution
-		/// <seealso cref="Bitmap"/>
+		/// Gets an image for the current GraphPane, scaled to the specified size and resolution.
 		/// </summary>
 		/// <param name="width">The scaled width of the bitmap in pixels</param>
 		/// <param name="height">The scaled height of the bitmap in pixels</param>
 		/// <param name="dpi">The resolution of the bitmap, in dots per inch</param>
 		/// <seealso cref="Image"/>
+		/// <seealso cref="Bitmap"/>
 		public Bitmap ScaledImage( int width, int height, float dpi )
 		{
 			Bitmap bitmap = new Bitmap( width, height );
@@ -580,7 +585,8 @@ namespace ZedGraph
 			// Clone the GraphPane so we don't mess up the minPix and maxPix values or
 			// the paneRect/axisRect calculations of the original
 			GraphPane tempPane = (GraphPane) this.Clone();
-			tempPane.PaneRect = new RectangleF( 0, 0, width, height );
+			// Make the paneRect 1 pixel smaller than the actual bitmap size to fully contain the image
+			tempPane.PaneRect = new RectangleF( 0, 0, width-1, height-1 );
 			//tempPane.AxisChange( bitmapGraphics );
 			tempPane.Draw( bitmapGraphics );
 			//this.Draw( bitmapGraphics );
@@ -956,11 +962,14 @@ namespace ZedGraph
 		/// AxisChange causes the axes scale ranges to be recalculated based on the current data range.
 		/// </summary>
 		/// <remarks>
-		/// Call this function anytime you change, add, or remove curve data.  This routine calculates
+		/// There is no obligation to call AxisChange() for manually scaled axes.  AxisChange() is only
+		/// intended to handle auto scaling operations.  Call this function anytime you change, add, or
+		/// remove curve data to insure that the scale range of the axes are appropriate for the data range.
+		/// This method calculates
 		/// a scale minimum, maximum, and step size for each axis based on the current curve data.
 		/// Only the axis attributes (min, max, step) that are set to auto-range (<see cref="Axis.MinAuto"/>,
 		/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.StepAuto"/>) will be modified.  You must call
-		/// Invalidate() after calling AxisChange to make sure the display gets updated.
+		/// <see cref="Control.Invalidate()"/> after calling AxisChange to make sure the display gets updated.
 		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -976,7 +985,7 @@ namespace ZedGraph
 				this.isIgnoreInitial, this );
 
 			// Determine the scale factor
-			double	scaleFactor = this.CalcScaleFactor( g );
+			double	scaleFactor = this.CalcScaleFactor();
 
 			// if the AxisRect is not yet determined, then pick a scale based on a default AxisRect
 			// size (using 75% of PaneRect -- code is in Axis.CalcMaxLabels() )
@@ -1143,7 +1152,7 @@ namespace ZedGraph
 									out int hStack, out float legendWidth, out float legendHeight )
 		{
 			// calculate scaleFactor on "normal" pane size (BaseDimension)
-			scaleFactor = this.CalcScaleFactor( g );
+			scaleFactor = this.CalcScaleFactor();
 
 			// get scaled values for the paneGap and character height
 			float gap = this.ScaledGap( scaleFactor );
@@ -1284,17 +1293,13 @@ namespace ZedGraph
 		/// The use of the scale factor depends upon the settings of <see cref="GraphPane.IsFontsScaled"/> and
 		/// <see cref="GraphPane.IsPenWidthScaled"/>.
         /// </remarks>
-        /// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
 		/// <returns>
 		/// A double precision value representing the scaling factor to use for the rendering calculations.
 		/// </returns>
 		/// <seealso cref="GraphPane.IsFontsScaled"/>
 		/// <seealso cref="GraphPane.IsPenWidthScaled"/>
 		/// <seealso cref="GraphPane.BaseDimension"/>
-		protected double CalcScaleFactor( Graphics g )
+		public double CalcScaleFactor()
 		{
 			double scaleFactor; //, xInch, yInch;
 			const double ASPECTLIMIT = 1.5;
@@ -1801,10 +1806,44 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Find the data point that lies closest to the specified mouse (screen) point.
+		/// Find the data point that lies closest to the specified mouse (screen)
+		/// point.
 		/// </summary>
 		/// <remarks>
-		/// This method will search through the list of curves to find which point is
+		/// This method will search only through the points for the specified
+		/// curve to determine which point is
+		/// nearest the mouse point.  It will only consider points that are within
+		/// <see cref="Default.NearestTol"/> pixels of the screen point.
+		/// </remarks>
+		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
+		/// <param name="targetCurve">A <see cref="CurveItem"/> object containing
+		/// the data points to be searched.</param>
+		/// <param name="nearestCurve">A reference to the <see cref="CurveItem"/>
+		/// instance that contains the closest point.  nearestCurve will be null if
+		/// no data points are available.</param>
+		/// <param name="iNearest">The index number of the closest point.  The
+		/// actual data vpoint will then be <see cref="CurveItem.Points">CurveItem.Points[iNearest]</see>
+		/// .  iNearest will
+		/// be -1 if no data points are available.</param>
+		/// <returns>true if a point was found and that point lies within
+		/// <see cref="Default.NearestTol"/> pixels
+		/// of the screen point, false otherwise.</returns>
+		public bool FindNearestPoint( PointF mousePt, CurveItem targetCurve,
+			out CurveItem nearestCurve, out int iNearest )
+		{
+			CurveList targetCurveList = new CurveList();
+			targetCurveList.Add( targetCurve );
+			return FindNearestPoint( mousePt, targetCurveList,
+					out nearestCurve, out iNearest );
+		}
+
+		/// <summary>
+		/// Find the data point that lies closest to the specified mouse (screen)
+		/// point.
+		/// </summary>
+		/// <remarks>
+		/// This method will search through all curves in
+		/// <see cref="GraphPane.CurveList"/> to find which point is
 		/// nearest.  It will only consider points that are within
 		/// <see cref="Default.NearestTol"/> pixels of the screen point.
 		/// </remarks>
@@ -1822,6 +1861,39 @@ namespace ZedGraph
 		public bool FindNearestPoint( PointF mousePt,
 			out CurveItem nearestCurve, out int iNearest )
 		{
+			return FindNearestPoint( mousePt, this.curveList,
+					out nearestCurve, out iNearest );
+		}
+
+		/// <summary>
+		/// Find the data point that lies closest to the specified mouse (screen)
+		/// point.
+		/// </summary>
+		/// <remarks>
+		/// This method will search through the specified list of curves to find which point is
+		/// nearest.  It will only consider points that are within
+		/// <see cref="Default.NearestTol"/> pixels of the screen point, and it will
+		/// only consider <see cref="CurveItem"/>'s that are in 
+		/// <paramref name="targetCurveList"/>.
+		/// </remarks>
+		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
+		/// <param name="targetCurveList">A <see cref="CurveList"/> object containing
+		/// a subset of <see cref="CurveItem"/>'s to be searched.</param>
+		/// <param name="nearestCurve">A reference to the <see cref="CurveItem"/>
+		/// instance that contains the closest point.  nearestCurve will be null if
+		/// no data points are available.</param>
+		/// <param name="iNearest">The index number of the closest point.  The
+		/// actual data vpoint will then be <see cref="CurveItem.Points">CurveItem.Points[iNearest]</see>
+		/// .  iNearest will
+		/// be -1 if no data points are available.</param>
+		/// <returns>true if a point was found and that point lies within
+		/// <see cref="Default.NearestTol"/> pixels
+		/// of the screen point, false otherwise.</returns>
+		public bool FindNearestPoint( PointF mousePt, CurveList targetCurveList,
+			out CurveItem nearestCurve, out int iNearest )
+		{
+			CurveItem nearestBar = null;
+			int iNearestBar = -1;
 			nearestCurve = null;
 			iNearest = -1;
 
@@ -1836,7 +1908,7 @@ namespace ZedGraph
 				y2Axis.Min == y2Axis.Max )
 				return false;
 
-			float	barWidth = CalcBarWidth();
+			BarValueHandler valueHandler = new BarValueHandler( this );
 
 			double	xPixPerUnit = axisRect.Width / ( xAxis.Max - xAxis.Min );
 			double	yPixPerUnit = axisRect.Height / ( yAxis.Max - yAxis.Min );
@@ -1844,22 +1916,13 @@ namespace ZedGraph
 
 			double	yPixPerUnitAct, yAct, yMinAct, yMaxAct;
 			double	minDist = 1e20;
-			double	xVal, yVal, dist, distX, distY;
+			double	xVal, yVal, dist=99999, distX, distY;
 			double	tolSquared = Default.NearestTol * Default.NearestTol;
-
-			double	barWidthUserHalf;
-			if ( this.barBase == BarBase.X )
-				barWidthUserHalf = barWidth / xPixPerUnit / 2.0;
-			else
-				barWidthUserHalf = barWidth / yPixPerUnit / 2.0;
 
 			int		iBar = 0;
 
-			foreach ( CurveItem curve in curveList )
-			// for ( int i=curveList.Count-1; i>=0; i-- )
+			foreach ( CurveItem curve in targetCurveList )
 			{
-				//CurveItem curve = curveList[i];
-				
 				if ( curve.IsY2Axis )
 				{
 					yAct = y2;
@@ -1876,7 +1939,13 @@ namespace ZedGraph
 				}
 
 				PointPairList points = curve.Points;
-				
+				float barWidth = curve.GetBarWidth( this );
+				double barWidthUserHalf;
+				if ( curve.BaseAxis(this) == XAxis )
+					barWidthUserHalf = barWidth / xPixPerUnit / 2.0;
+				else
+					barWidthUserHalf = barWidth / yPixPerUnit / 2.0;
+
 				if ( points != null )
 				{
 					for ( int iPt=0; iPt<curve.NPts; iPt++ )
@@ -1897,33 +1966,37 @@ namespace ZedGraph
 								yVal >= yMinAct && yVal <= yMaxAct )
 						{
 
-							if ( curve.IsBar )
+							if ( curve.IsBar || curve is ErrorBarItem ||
+									curve is HiLowBarItem )
 							{
-
-								if ( this.barBase == BarBase.X )
+								double baseVal, lowVal, hiVal;
+								valueHandler.GetBarValues( curve, iPt, out baseVal,
+										out lowVal, out hiVal );
+								if ( curve.BaseAxis( this ) is XAxis )
 								{
-									float centerPix = Bar.CalcBarCenter( this, barWidth, iPt, xVal, iBar );
-									double centerVal = BarBaseAxis().ReverseTransform( centerPix );
 									
-									if (	( x < centerVal - barWidthUserHalf ) ||
-											( x > centerVal + barWidthUserHalf ) ||
-											( yVal >=0 && ( y < 0 || y > yVal ) ) ||
-											( yVal < 0 && ( y >= 0 || y < yVal ) ) )
+									double centerVal = valueHandler.BarCenterValue( curve, barWidth, iPt, xVal, iBar );
+									
+									if (	x < centerVal - barWidthUserHalf ||
+											x > centerVal + barWidthUserHalf ||
+											y < lowVal || y > hiVal )
 										continue;
 								}
 								else
 								{
-									float centerPix = Bar.CalcBarCenter( this, barWidth, iPt, yVal, iBar );
-									double centerVal = BarBaseAxis().ReverseTransform( centerPix );
+									double centerVal = valueHandler.BarCenterValue( curve, barWidth, iPt, yVal, iBar );
 									
-									if (	( y < centerVal - barWidthUserHalf ) ||
-											( y > centerVal + barWidthUserHalf ) ||
-											( xVal >=0 && ( x < 0 || x > xVal ) ) ||
-											( xVal < 0 && ( x >= 0 || x < xVal ) ) )
+									if (	y < centerVal - barWidthUserHalf ||
+											y > centerVal + barWidthUserHalf ||
+											x < lowVal || x > hiVal )
 										continue;
 								}
 
-								dist = 0;
+								if ( nearestBar == null )
+								{
+									iNearestBar = iPt;
+									nearestBar = curve;
+								}
 							}
 							else
 							{
@@ -1931,14 +2004,14 @@ namespace ZedGraph
 								distY = (yVal - yAct) * yPixPerUnitAct;
 								dist = distX * distX + distY * distY;
 
+								if ( dist >= minDist )
+									continue;
+									
+								minDist = dist;
+								iNearest = iPt;
+								nearestCurve = curve;
 							}
 
-							if ( dist >= minDist )
-								continue;
-								
-							minDist = dist;
-							iNearest = iPt;
-							nearestCurve = curve;
 						}
 					}
 
@@ -1947,49 +2020,32 @@ namespace ZedGraph
 				}
 			}
 
-			// Did we find a close point, and is it within the tolerance?
-			// (minDist is the square of the distance in pixel units)
-			if ( minDist < tolSquared )
+			if ( nearestCurve is LineItem )
 			{
-				return true;
+				float halfSymbol = (float) ( ((LineItem)nearestCurve).Symbol.Size *
+						CalcScaleFactor() / 2 );
+				minDist -= halfSymbol * halfSymbol;
+				if ( minDist < 0 )
+					minDist = 0;
 			}
 
-			return false;
+			if ( minDist >= tolSquared && nearestBar != null )
+			{
+				// if no point met the tolerance, but a bar was found, use it
+				nearestCurve = nearestBar;
+				iNearest = iNearestBar;
+				return true;
+			}
+			else if ( minDist < tolSquared )
+			{
+				// Did we find a close point, and is it within the tolerance?
+				// (minDist is the square of the distance in pixel units)
+				return true;
+			}
+			else  // otherwise, no valid point found
+				return false;
 		}
 
-		/// <summary>
-		/// Calculate the width of each bar
-		/// </summary>
-		/// <returns>The width for an individual bar, in pixel units</returns>
-		public float CalcBarWidth()
-		{
-			// Total axis width = 
-			// npts * ( nbars * ( bar + bargap ) - bargap + clustgap )
-			// cg * bar = cluster gap
-			// npts = max number of points in any curve
-			// nbars = total number of curves that are of type IsBar
-			// bar = bar width
-			// bg * bar = bar gap
-			// therefore:
-			// totwidth = npts * ( nbars * (bar + bg*bar) - bg*bar + cg*bar )
-			// totwidth = bar * ( npts * ( nbars * ( 1 + bg ) - bg + cg ) )
-			// solve for bar
-
-			// For stacked bar types, the bar width will be based on a single bar
-			float numBars = 1.0F;
-			if ( this.BarType == BarType.Cluster )
-				numBars = CurveList.NumBars;
-				
-			float denom = numBars * ( 1.0F + MinBarGap ) - MinBarGap + MinClusterGap;
-			
-			float barWidth = GetClusterWidth() / denom;
-
-			if ( barWidth <= 0 )
-				return 1;
-
-			return barWidth;
-		}
-		
 		/// <summary>
 		/// Determine the width, in screen pixel units, of each bar cluster including
 		/// the cluster gaps and bar gaps.

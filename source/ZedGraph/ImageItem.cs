@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-11-19 06:41:05 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-12-03 13:31:28 $ </version>
 	public class ImageItem : GraphItem, ICloneable
 	{
 	#region Fields
@@ -175,7 +175,7 @@ namespace ZedGraph
 		/// Deep-copy clone routine
 		/// </summary>
 		/// <returns>A new, independent copy of the <see cref="ImageItem"/></returns>
-		public object Clone()
+		override public object Clone()
 		{ 
 			return new ImageItem( this ); 
 		}

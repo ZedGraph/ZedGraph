@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-11-03 04:17:45 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-12-03 13:31:28 $ </version>
 	public class Border
 	{
 		#region Fields
@@ -177,7 +177,7 @@ namespace ZedGraph
         /// <returns>A <see cref="Pen"/> object with the proper color and pen width.</returns>
         public Pen MakePen( GraphPane pane, double scaleFactor )
 		{
-            return new Pen(color, pane.ScaledPenWidth(penWidth,scaleFactor));
+            return new Pen( color, pane.ScaledPenWidth( penWidth, scaleFactor ) );
         }
 		
 		/// <summary>
@@ -202,9 +202,9 @@ namespace ZedGraph
 		{
             // Need to use the RectangleF props since rounding it can cause the axisFrame to
             // not line up properly with the last tic mark
-            if (this.isVisible)
+            if ( this.isVisible )
                 // g.DrawRectangle( MakePen( pane, scaleFactor ), Rectangle.Round( rect ) );
-                g.DrawRectangle(MakePen(pane, scaleFactor), rect.X, rect.Y, rect.Width, rect.Height);
+                g.DrawRectangle( MakePen(pane, scaleFactor), rect.X, rect.Y, rect.Width, rect.Height );
         }
 		#endregion
 	}

@@ -75,6 +75,11 @@
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
                 />
                 <Reference
+                    Name = "System.Web"
+                    AssemblyName = "System.Web"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.dll"
+                />
+                <Reference
                     Name = "System.XML"
                     AssemblyName = "System.Xml"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
@@ -123,7 +128,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\BarValueHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\Border.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\BoxItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -139,6 +154,11 @@
                 />
                 <File
                     RelPath = "ZedGraph\CurveList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\EllipseItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -269,6 +289,11 @@
                 />
                 <File
                     RelPath = "ZedGraph\ZedGraphException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\ZedGraphWeb.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.10 $ $Date: 2004-11-22 21:34:36 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2004-12-03 13:31:28 $ </version>
 	public class CurveList : CollectionBase, ICloneable
 	{
 	#region Properties
@@ -418,7 +418,7 @@ namespace ZedGraph
 					}
 				}		
 			
-						  //create reasonable min/max values for bartype = percentStack 
+			//create reasonable min/max values for bartype = percentStack 
 			bool hasNegative = false ;
 			if ( pane.BarType == BarType.PercentStack)
 			{
@@ -441,10 +441,10 @@ namespace ZedGraph
 								}
 								break ;			
 							}
-						if ( hasNegative)
+						if ( hasNegative )
 							break ;
 					}
-				if (!hasNegative)
+				if ( !hasNegative )
 					if ( pane.BarBase == BarBase.X )
 					{
 						yMinVal = 0 ;
@@ -482,11 +482,10 @@ namespace ZedGraph
 		public void Draw( Graphics g, GraphPane pane, double scaleFactor )
 		{
 			// Configure the accumulator for stacked bars
-			Bar.ResetBarStack();
+			//Bar.ResetBarStack();
 
 			// Count the number of BarItems in the curvelist
 			int pos = this.NumBars;
-			float barWidth = pane.CalcBarWidth();
 			
 			if ( pane.BarType == BarType.SortedOverlay )
 			{
@@ -500,49 +499,14 @@ namespace ZedGraph
 				{
 					tempList.Sort( pane.BarBase == BarBase.X ? SortType.YValues : SortType.XValues, i );
 					foreach ( BarItem barItem in tempList )
-						barItem.Bar.DrawSingleBar( g, pane, barItem.Points,
+						barItem.Bar.DrawSingleBar( g, pane, barItem,
 							((BarItem)barItem).BaseAxis(pane),
 							((BarItem)barItem).ValueAxis(pane, barItem.IsY2Axis),
-							barWidth, 0, i, scaleFactor );
+							0, i, scaleFactor );
 				}
 			}
 
-
-			if	( pane.BarType == BarType.PercentStack )
-			{
-             				//	First, clone a new	curveList with copies of	the curves
-				CurveList tempList = (CurveList)this.Clone () ;
-				//now get rid of non-bars
-				for ( int z = 0 ; z < tempList.Count ; z++)
-					if	( !tempList[z].IsBar )
-							tempList.Remove (z);
-				
-				double [] totals = new double[tempList[0].NPts] ;                      //to accumulate total values for each bar 
-
-				foreach ( CurveItem curve in tempList )
-					//accumulate total values for each bar so that values can be converted to percents
-					for ( int i=0; i<curve.NPts; i++ )
-						if ( pane.BarBase == BarBase.X)
-							totals[i] += Math.Abs(curve.Points[i].Y) ;
-						else
-							totals[i] += Math.Abs(curve.Points[i].X) ;
-            
-				//now change the values in each of the Points arrays to percents	and draw that curve
-				foreach ( CurveItem curve in tempList ) 
-				{
-					for ( int i=0; i<curve.NPts ; i++ )
-					{
-						if ( pane.BarBase == BarBase.X)
-							curve.Points[i] = new PointPair(curve.Points[i].X, ( curve.Points[i].Y / totals[i]) * 100 ) ;
-						else
-							curve.Points[i] = new PointPair( ( curve.Points[i].X / totals[i]) * 100, curve.Points[i].Y) ;
-					}
-					curve.Draw( g, pane, pos, scaleFactor );
-					pos++ ;
-				}
-			}
-		
-		//	Loop for	each curve	in reverse	order to pick up the remaining bartypes
+			//	Loop for each curve in reverse order to pick up the remaining bartypes
 			for ( int i=this.Count-1; i>=0; i-- )
 			{
 				CurveItem curve = this[i];
@@ -552,7 +516,7 @@ namespace ZedGraph
 					
 				// Render the curve
 				//	if	it's a bar type or a sorted overlay or a percentstacked bar, it's already been	done above
-				if	( !(pane.BarType == BarType.SortedOverlay || pane.BarType == BarType.PercentStack ) 	||	!curve.IsBar  ) 
+				if	( !(pane.BarType == BarType.SortedOverlay) || !curve.IsBar  ) 
 					curve.Draw( g, pane, pos, scaleFactor );
 			}
 		}

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-11-17 03:35:39 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2004-12-03 13:31:28 $ </version>
 	public struct PointPair
 	{
 	#region Member variables
@@ -53,6 +53,14 @@ namespace ZedGraph
 		/// for <see cref="HiLowBarItem"/> charts.
 		/// </summary>
 		public double Z;
+
+		/// <summary>
+		/// A tag object for use by the user.  This can be used to store additional
+		/// information associated with the <see cref="PointPair"/>.  ZedGraph does
+		/// not use this value for any purpose.
+		/// </summary>
+		public object Tag;
+
 	#endregion
 
 	#region Constructors
@@ -66,6 +74,7 @@ namespace ZedGraph
 			this.X = x;
 			this.Y = y;
 			this.Z = 0;
+			this.Tag = null;
 		}
 
 		/// <summary>
@@ -79,6 +88,7 @@ namespace ZedGraph
 			this.X = x;
 			this.Y = y;
 			this.Z = z;
+			this.Tag = null;
 		}
 
 		/// <summary>
@@ -91,6 +101,7 @@ namespace ZedGraph
 			this.X = pt.X;
 			this.Y = pt.Y;
 			this.Z = 0;
+			this.Tag = null;
 		}
 
 		/// <summary>
@@ -102,6 +113,7 @@ namespace ZedGraph
 			this.X = rhs.X;
 			this.Y = rhs.Y;
 			this.Z = rhs.Z;
+			this.Tag = null;
 		}
 	#endregion
 
@@ -132,6 +144,21 @@ namespace ZedGraph
 							Double.IsNaN( this.X ) ||
 							Double.IsNaN( this.Y );
 				}
+		}
+
+		/// <summary>
+		/// static method to determine if the specified point value is invalid.
+		/// </summary>
+		/// <remarks>The value is considered invalid if it is <see cref="PointPair.Missing"/>,
+		/// <see cref="Double.PositiveInfinity"/>, <see cref="Double.NegativeInfinity"/>
+		/// or <see cref="Double.NaN"/>.</remarks>
+		/// <param name="value">The value to be checked for validity.</param>
+		/// <returns>true if the value is invalid, false otherwise</returns>
+		public static bool IsValueInvalid( double value )
+		{
+			return ( value == PointPair.Missing ||
+					Double.IsInfinity( value ) ||
+					Double.IsNaN( value ) );
 		}
 
 		/// <summary>

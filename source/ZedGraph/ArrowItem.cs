@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-11-19 06:41:05 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-12-03 13:31:28 $ </version>
 	public class ArrowItem : GraphItem, ICloneable
 	{
 	#region Fields
@@ -209,7 +209,7 @@ namespace ZedGraph
 		/// Deep-copy clone routine
 		/// </summary>
 		/// <returns>A new, independent copy of the <see cref="ArrowItem"/></returns>
-		public object Clone()
+		override public object Clone()
 		{ 
 			return new ArrowItem( this ); 
 		}

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.9 $ $Date: 2004-11-17 03:35:39 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2004-12-03 13:31:28 $ </version>
 	public class PointPairList : CollectionBase, ICloneable
 	{
 	#region Fields
@@ -212,7 +212,7 @@ namespace ZedGraph
 		/// <seealso cref="IList.Add"/>
 		public int Add( double[] x, double[] y, double[] z )
 		{
-			PointPair	point;
+			PointPair	point = new PointPair();
 			int 		len = 0,
 						rv = -1;
 			

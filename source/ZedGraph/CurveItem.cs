@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.9 $ $Date: 2004-11-17 03:35:39 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2004-12-03 13:31:28 $ </version>
 	abstract public class CurveItem
 	{
 	
@@ -79,6 +79,13 @@ namespace ZedGraph
 		/// to indicate the values are missing.
 		/// </summary>
 		protected PointPairList points;
+
+		/// <summary>
+		/// A tag object for use by the user.  This can be used to store additional
+		/// information associated with the <see cref="CurveItem"/>.  ZedGraph does
+		/// not use this value for any purpose.
+		/// </summary>
+		public object Tag;
 	#endregion
 	
 	#region Constructors
@@ -128,7 +135,8 @@ namespace ZedGraph
 			this.label = label == null ? "" : label;
 			this.isY2Axis = false;
 			this.isVisible = true;
-			this.isLegendLabelVisible = true;			
+			this.isLegendLabelVisible = true;
+			this.Tag = null;
 		}
 			
 		/// <summary>
@@ -151,6 +159,7 @@ namespace ZedGraph
 			isY2Axis = rhs.IsY2Axis;
 			isVisible = rhs.IsVisible;
 			isLegendLabelVisible = rhs.IsLegendLabelVisible;
+			Tag = rhs.Tag;
 			
 			this.points = (PointPairList) rhs.Points.Clone();
 		}
@@ -247,7 +256,8 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Determines whether this <see cref="CurveItem"/>
-		/// is a <see cref="BarItem"/>.
+		/// is a <see cref="BarItem"/>.  This does not include <see cref="HiLowBarItem"/>'s
+		/// or <see cref="ErrorBarItem"/>'s.
 		/// </summary>
 		/// <value>true for a bar chart, or false for a line graph</value>
 		public bool IsBar
@@ -259,7 +269,7 @@ namespace ZedGraph
 		/// Determines whether this <see cref="CurveItem"/>
 		/// is a <see cref="LineItem"/>.
 		/// </summary>
-		/// <value>true for a bar chart, or false for a line graph</value>
+		/// <value>true for a line chart, or false for a bar type</value>
 		public bool IsLine
 		{
 			get { return this is LineItem; }
@@ -445,6 +455,118 @@ namespace ZedGraph
 			// Call a default GetRange() that does not include Z data points
 			this.points.GetRange( ref xMin, ref xMax, ref yMin, ref yMax, bIgnoreInitial, false, true );
 		}
+
+		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "base"
+		/// (independent axis) from which the values are drawn. </summary>
+		/// <remarks>
+		/// This property is determined by the value of <see cref="GraphPane.BarBase"/> for
+		/// <see cref="BarItem"/> types.  It is determined by <see cref="ErrorBarItem.BarBase"/>
+		/// for <see cref="ErrorBarItem"/> types, and by <see cref="HiLowBarItem.BarBase"/>
+		/// for <see cref="HiLowBarItem"/> types (in these cases it can vary for each
+		/// curve.  It is always the X axis for regular <see cref="LineItem"/> types.
+		/// </remarks>
+		/// <seealso cref="BarBase"/>
+		/// <seealso cref="ValueAxis"/>
+		public virtual Axis BaseAxis( GraphPane pane )
+		{
+			BarBase barBase;
+
+			if ( this is BarItem )
+				barBase = pane.BarBase;
+			else if ( this is ErrorBarItem )
+				barBase = ((ErrorBarItem)this).BarBase;
+			else if ( this is HiLowBarItem )
+				barBase = ((HiLowBarItem)this).BarBase;
+			else
+				barBase = BarBase.X;
+
+			if ( barBase == BarBase.X )
+				return pane.XAxis;
+			else if ( barBase == BarBase.Y )
+				return pane.YAxis;
+			else
+				return pane.Y2Axis;
+
+		}
+		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "value"
+		/// (dependent axis) from which the points are drawn. </summary>
+		/// <remarks>
+		/// This property is determined by the value of <see cref="GraphPane.BarBase"/> for
+		/// <see cref="BarItem"/> types.  It is determined by <see cref="ErrorBarItem.BarBase"/>
+		/// for <see cref="ErrorBarItem"/> types, and by <see cref="HiLowBarItem.BarBase"/>
+		/// for <see cref="HiLowBarItem"/> types (in these cases it can vary for each
+		/// curve.  It is always the Y axis for regular <see cref="LineItem"/> types.
+		/// </remarks>
+		/// <seealso cref="BarBase"/>
+		/// <seealso cref="BaseAxis"/>
+		public virtual Axis ValueAxis( GraphPane pane, bool isY2Axis )
+		{
+			BarBase barBase;
+
+			if ( this is BarItem )
+				barBase = pane.BarBase;
+			else if ( this is ErrorBarItem )
+				barBase = ((ErrorBarItem)this).BarBase;
+			else if ( this is HiLowBarItem )
+				barBase = ((HiLowBarItem)this).BarBase;
+			else
+				barBase = BarBase.X;
+
+			if ( barBase == BarBase.X )
+			{
+				if ( isY2Axis )
+					return pane.Y2Axis;
+				else
+					return pane.YAxis;
+			}
+			else
+				return pane.XAxis;
+		}
+
+		/// <summary>
+		/// Calculate the width of each bar, depending on the actual bar type
+		/// </summary>
+		/// <returns>The width for an individual bar, in pixel units</returns>
+		public float GetBarWidth( GraphPane pane )
+		{
+			// Total axis width = 
+			// npts * ( nbars * ( bar + bargap ) - bargap + clustgap )
+			// cg * bar = cluster gap
+			// npts = max number of points in any curve
+			// nbars = total number of curves that are of type IsBar
+			// bar = bar width
+			// bg * bar = bar gap
+			// therefore:
+			// totwidth = npts * ( nbars * (bar + bg*bar) - bg*bar + cg*bar )
+			// totwidth = bar * ( npts * ( nbars * ( 1 + bg ) - bg + cg ) )
+			// solve for bar
+
+			float barWidth;
+
+			if ( this is ErrorBarItem )
+				barWidth = (float) ( ((ErrorBarItem)this).ErrorBar.Size * pane.CalcScaleFactor() );
+			else if ( this is HiLowBarItem )
+				barWidth = (float) ( ((HiLowBarItem)this).Bar.GetBarWidth( pane,
+						((HiLowBarItem)this).BaseAxis(pane), pane.CalcScaleFactor() ) );
+			else // BarItem or LineItem
+			{
+				// For stacked bar types, the bar width will be based on a single bar
+				float numBars = 1.0F;
+				if ( pane.BarType == BarType.Cluster )
+					numBars = pane.CurveList.NumBars;
+					
+				float denom = numBars * ( 1.0F + pane.MinBarGap ) - pane.MinBarGap + pane.MinClusterGap;
+				if ( denom <= 0 )
+					denom = 1;
+				barWidth = pane.GetClusterWidth() / denom;
+			}
+
+			if ( barWidth <= 0 )
+				return 1;
+
+			return barWidth;
+		}
+		
 
 	#endregion
 	

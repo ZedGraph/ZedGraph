@@ -47,44 +47,6 @@ namespace ZedGraph
 			get { return bar; }
 		}
 
-		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "base"
-		/// (independent axis) from which the <see cref="Bar"/>'s are drawn.
-		/// The base axis is the axis from which the bars grow with increasing value.  This
-		/// property is determined by the value of <see cref="GraphPane.BarBase"/>.
-		/// </summary>
-		/// <seealso cref="GraphPane.Default.BarBase"/>
-		/// <seealso cref="ZedGraph.BarBase"/>
-		/// <seealso cref="ValueAxis"/>
-		virtual public Axis BaseAxis( GraphPane pane )
-		{
-			if ( pane.BarBase == BarBase.X )
-				return pane.XAxis;
-			else if ( pane.BarBase == BarBase.Y )
-				return pane.YAxis;
-			else
-				return pane.Y2Axis;
-		}
-		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "value"
-		/// (dependent axis) for the <see cref="Bar"/>'s.
-		/// The value axis determines the height of the bars.  This
-		/// property is determined by the value of <see cref="GraphPane.BarBase"/>.
-		/// </summary>
-		/// <seealso cref="GraphPane.Default.BarBase"/>
-		/// <seealso cref="ZedGraph.BarBase"/>
-		/// <seealso cref="BaseAxis"/>
-		virtual public Axis ValueAxis( GraphPane pane, bool isY2Axis )
-		{
-			if ( pane.BarBase == BarBase.X )
-			{
-				if ( isY2Axis )
-					return pane.Y2Axis;
-				else
-					return pane.YAxis;
-			}
-			else
-				return pane.XAxis;
-		}
-
 	#endregion
 	
 	#region Constructors
@@ -172,8 +134,8 @@ namespace ZedGraph
 		override public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  )
 		{
 			if ( this.isVisible )
-				Bar.DrawBars( g, pane, points, BaseAxis(pane), ValueAxis(pane,isY2Axis),
-								pane.CalcBarWidth(), pos, scaleFactor );
+				bar.DrawBars( g, pane, this, BaseAxis(pane), ValueAxis(pane,isY2Axis),
+								this.GetBarWidth( pane ), pos, scaleFactor );
 		}
 		
 		/// <summary>
@@ -197,7 +159,7 @@ namespace ZedGraph
 		/// </param>
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor )
 		{
-			this.Bar.Draw( g, pane, rect, scaleFactor, true );
+			this.bar.Draw( g, pane, rect, scaleFactor, true );
 		}
 
 	#endregion

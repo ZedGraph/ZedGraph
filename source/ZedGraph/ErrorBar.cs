@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-11-17 03:35:39 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-12-03 13:31:28 $ </version>
 	public class ErrorBar : ICloneable
 	{
 	#region Fields
@@ -95,8 +95,11 @@ namespace ZedGraph
 
 	#region Properties
 		/// <summary>
-		/// Gets or sets the size of the <see cref="ErrorBar"/>
+		/// Gets or sets the size of the <see cref="ErrorBar"/>.
 		/// </summary>
+		/// <remarks>Note that this controls the width of the I-Beam sections.
+		/// If this width is set to zero, then the bars will appear as simple
+		/// vertical lines.</remarks>
         /// <value>Size in points (1/72 inch)</value>
         /// <seealso cref="Default.Size"/>
 		public float Size
@@ -241,8 +244,8 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
-		/// curve.</param>
+		/// <param name="curve">A <see cref="CurveItem"/> object representing the
+		/// <see cref="Bar"/>'s to be drawn.</param>
 		/// <param name="baseAxis">The <see cref="Axis"/> class instance that defines the base (independent)
 		/// axis for the <see cref="Bar"/></param>
 		/// <param name="valueAxis">The <see cref="Axis"/> class instance that defines the value (dependent)
@@ -253,19 +256,22 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void Draw( Graphics g, GraphPane pane, PointPairList points,
+		public void Draw( Graphics g, GraphPane pane, ErrorBarItem curve,
 							Axis baseAxis, Axis valueAxis, double scaleFactor )
 		{
+			BarValueHandler valueHandler = new BarValueHandler( pane );
+
 			float	pixBase, pixValue, pixLowValue;
 			double	scaleBase, scaleValue, scaleLowValue;
 		
-			if ( points != null && this.IsVisible )
+			if ( curve.Points != null && this.IsVisible )
 			{
 				Pen pen = new Pen( color, penWidth );
 				
 				// Loop over each defined point							
-				for ( int i=0; i<points.Count; i++ )
+				for ( int i=0; i<curve.Points.Count; i++ )
 				{
+					/*
 					if ( baseAxis is XAxis )
 					{
 						scaleBase = points[i].X;
@@ -277,14 +283,17 @@ namespace ZedGraph
 						scaleValue = points[i].X;
 					}
 					scaleLowValue = points[i].LowValue;
+					*/
 
-				
+					valueHandler.GetBarValues( curve, i, out scaleBase,
+								out scaleLowValue, out scaleValue );
+
 					// Any value set to double max is invalid and should be skipped
 					// This is used for calculated values that are out of range, divide
 					//   by zero, etc.
 					// Also, any value <= zero on a log scale is invalid
 				
-					if (	!points[i].IsInvalid3D &&
+					if (	!curve.Points[i].IsInvalid3D &&
 							( scaleBase > 0 || !baseAxis.IsLog ) &&
 							( ( scaleValue > 0 && scaleLowValue > 0 ) || !valueAxis.IsLog ) )
 					{

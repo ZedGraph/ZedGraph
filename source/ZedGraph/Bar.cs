@@ -30,7 +30,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.11 $ $Date: 2004-11-22 21:34:09 $ </version>
+   /// <version> $Revision: 3.12 $ $Date: 2004-12-03 13:31:28 $ </version>
    public class Bar : ICloneable
    {
    #region Fields
@@ -46,7 +46,8 @@ namespace ZedGraph
       /// property <see cref="Border"/> to access this value.
       /// </summary>
       private Border border;
-      /// <summary>
+/*
+	  /// <summary>
       /// A private Array used in the rendering of a  <see cref="Bar"/> whose 
       ///<see cref="BarType"/> is <see cref="Stack"/>.  The stored 
       ///values will represent the bottom value of the next segment to
@@ -54,6 +55,7 @@ namespace ZedGraph
       /// </summary>
       private static ArrayList priorTop = new ArrayList () ;
       private static ArrayList priorBottom = new ArrayList () ;
+*/
       #endregion
 
    #region Defaults
@@ -276,8 +278,8 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
-		/// <see cref="Bar"/>.</param>
+		/// <param name="curve">A <see cref="CurveItem"/> object representing the
+		/// <see cref="Bar"/>'s to be drawn.</param>
 		/// <param name="baseAxis">The <see cref="Axis"/> class instance that defines the base (independent)
 		/// axis for the <see cref="Bar"/></param>
 		/// <param name="valueAxis">The <see cref="Axis"/> class instance that defines the value (dependent)
@@ -295,44 +297,23 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void DrawBars( Graphics g, GraphPane pane, PointPairList points,
+		public void DrawBars( Graphics g, GraphPane pane, CurveItem curve,
 							Axis baseAxis, Axis valueAxis,
 							float barWidth, int pos, double scaleFactor )
 		{
-			float zeroPix = GetZeroPix( valueAxis );
-
-			// initialize priorTop if this is the first bar series
-			// PriorTop is the value accumulator for stacked bars
-			if ( priorTop.Count == 0 )
-				for ( int x = 0 ; x < points.Count ; x++)
-				{
-					priorTop.Add( zeroPix );
-					priorBottom.Add( zeroPix );
-				}
-
 			// For Overlay and Stack bars, the position is always zero since the bars are on top
 			// of eachother
-			if	( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack|| pane.BarType == BarType.PercentStack)
+			if	( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack ||
+						pane.BarType == BarType.PercentStack )
 				pos = 0;
 
 			// Loop over each defined point                   
-			for ( int i=0; i<points.Count; i++ )
-				DrawSingleBar( g, pane, points, i, pos, baseAxis, valueAxis,
-								barWidth, scaleFactor );
+			for ( int i=0; i<curve.Points.Count; i++ )
+				DrawSingleBar( g, pane, curve, i, pos, baseAxis, valueAxis,
+								scaleFactor );
 		}
 
-		private float GetZeroPix( Axis valueAxis )
-		{
-			// Determine the pixel value where the "base" of the bar lies
-			if ( valueAxis.Min < 0.0 && valueAxis.Max > 0.0 )
-				return valueAxis.Transform( 0.0 );
-			else if ( valueAxis.Min < 0.0 && valueAxis.Max <= 0.0 )
-				return ( valueAxis is YAxis ) ? valueAxis.MinPix : valueAxis.MaxPix ;
-			else
-				return ( valueAxis is YAxis ) ? valueAxis.MaxPix : valueAxis.MinPix;
-		}
-
-		/// <summary>
+	   /// <summary>
 		/// Draw the specified single bar (an individual "point") of this series to the specified
 		/// <see cref="Graphics"/> device.  This method is not as efficient as
 		/// <see cref="DrawBars"/>, which draws the bars for all points.  It is intended to be used
@@ -346,15 +327,12 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
-		/// <see cref="Bar"/>.</param>
+		/// <param name="curve">A <see cref="CurveItem"/> object representing the
+		/// <see cref="Bar"/>'s to be drawn.</param>
 		/// <param name="baseAxis">The <see cref="Axis"/> class instance that defines the base (independent)
 		/// axis for the <see cref="Bar"/></param>
 		/// <param name="valueAxis">The <see cref="Axis"/> class instance that defines the value (dependent)
 		/// axis for the <see cref="Bar"/></param>
-		/// <param name="barWidth">
-		/// The width of each bar, in pixels.
-		/// </param>
 		/// <param name="pos">
 		/// The ordinal position of the this bar series (0=first bar, 1=second bar, etc.)
 		/// in the cluster of bars.
@@ -368,33 +346,23 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void DrawSingleBar( Graphics g, GraphPane pane, PointPairList points,
+		public void DrawSingleBar( Graphics g, GraphPane pane, CurveItem curve,
 								Axis baseAxis, Axis valueAxis,
-								float barWidth, int pos, int index, double scaleFactor )
+								int pos, int index, double scaleFactor )
 		{
-			if ( index >= points.Count )
+			if ( index >= curve.Points.Count )
 				return;
 
-			float zeroPix = GetZeroPix( valueAxis );
-
-			// initialize priorTop if this is the first bar series
-			// PriorTop is the value accumulator for stacked bars
-			if ( priorTop.Count == 0 )
-			{
-				for ( int x = 0 ; x < points.Count ; x++)
-				{
-					priorTop.Add( zeroPix );
-					priorBottom.Add ( zeroPix ) ;
-				}
-			}
+			//SetupBarStack( valueAxis, curve.Points.Count );
 
 			// For Overlay and Stack bars, the position is always zero since the bars are on top
 			// of eachother
-			if	( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack|| pane.BarType == BarType.PercentStack )
+			if	( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack ||
+					pane.BarType == BarType.PercentStack )
 				pos = 0;
 
-			DrawSingleBar( g, pane, points, index, pos, baseAxis, valueAxis,
-							barWidth, scaleFactor );
+			DrawSingleBar( g, pane, curve, index, pos, baseAxis, valueAxis,
+							scaleFactor );
 		}
 
 		/// <summary>
@@ -409,8 +377,8 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
-		/// <see cref="Bar"/>.</param>
+		/// <param name="curve">A <see cref="CurveItem"/> object representing the
+		/// <see cref="Bar"/>'s to be drawn.</param>
 		/// <param name="index">
 		/// The zero-based index number for the single bar to be drawn.
 		/// </param>
@@ -422,59 +390,47 @@ namespace ZedGraph
 		/// axis for the <see cref="Bar"/></param>
 		/// <param name="valueAxis">The <see cref="Axis"/> class instance that defines the value (dependent)
 		/// axis for the <see cref="Bar"/></param>
-		/// <param name="barWidth">
-		/// The width of each bar, in pixels.
-		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		virtual protected void DrawSingleBar( Graphics g, GraphPane pane, PointPairList points,
+		virtual protected void DrawSingleBar( Graphics g, GraphPane pane,
+							CurveItem curve,
 							int index, int pos, Axis baseAxis, Axis valueAxis,
-							float barWidth, double scaleFactor )
+							double scaleFactor )
 		{
 			// pixBase = pixel value for the bar center on the base axis
-			// pixValue = pixel value for the bar top on the value axis
-			// pixLow = pixel value for the bar bottom on the value axis
-			float pixBase, pixValue, pixLow;
+			// pixHiVal = pixel value for the bar top on the value axis
+			// pixLowVal = pixel value for the bar bottom on the value axis
+			float pixBase, pixHiVal, pixLowVal;
 
 			float clusterWidth = pane.GetClusterWidth();
+			float barWidth = curve.GetBarWidth( pane );
 			float clusterGap = pane.MinClusterGap * barWidth;
 			float barGap = barWidth * pane.MinBarGap;
 
 			// curBase = the scale value on the base axis of the current bar
-			// curValue = the scale value on the value axis of the current bar
-			double curBase = ( pane.BarBase == BarBase.X ) ? points[index].X : points[index].Y;
-			double curValue = ( pane.BarBase == BarBase.X ) ? points[index].Y : points[index].X;
+			// curHiVal = the scale value on the value axis of the current bar
+			// curLowVal = the scale value of the bottom of the bar
+			double curBase, curLowVal, curHiVal;
+			BarValueHandler valueHandler = new BarValueHandler( pane );
+			valueHandler.GetBarValues( curve, index, out curBase,
+					out curLowVal, out curHiVal );
 
 			// Any value set to double max is invalid and should be skipped
 			// This is used for calculated values that are out of range, divide
 			//   by zero, etc.
 			// Also, any value <= zero on a log scale is invalid
 
-			if ( !points[index].IsInvalid )
-					//&&	curY != 0 && curX != 0 || pane.BarType != BarType.Stack )
+			if ( !curve.Points[index].IsInvalid )
 			{
 				// calculate a pixel value for the top of the bar on value axis
-				pixValue = valueAxis.Transform( index, curValue );
+				pixLowVal = valueAxis.Transform( index, curLowVal );
+				pixHiVal = valueAxis.Transform( index, curHiVal );
 				// calculate a pixel value for the center of the bar on the base axis
 				pixBase = baseAxis.Transform( index, curBase );
-
-				// calculate a pixel value for the bottom of the bar
-				if	( pane.BarType == BarType.Stack|| pane.BarType == BarType.PercentStack )
-				{
-					if ( curValue > 0 )
-						pixLow = (float) priorTop[index];
-					else
-						pixLow = (float) priorBottom[index];
-		
-					// adjust the bar top for stacked bars to account for prior bars
-					pixValue = pixLow - ( GetZeroPix( valueAxis ) - pixValue );
-				}
-				else
-					pixLow = GetZeroPix( valueAxis );
 
 				// Calculate the pixel location for the side of the bar (on the base axis)
 				float pixSide = pixBase - clusterWidth / 2.0F + clusterGap / 2.0F +
@@ -482,61 +438,14 @@ namespace ZedGraph
 
 				// Draw the bar
 				if ( pane.BarBase == BarBase.X )
-					this.Draw( g, pane, pixSide, pixSide + barWidth, pixLow,
-								pixValue, scaleFactor, true );
+					this.Draw( g, pane, pixSide, pixSide + barWidth, pixLowVal,
+								pixHiVal, scaleFactor, true );
 				else
-					this.Draw( g, pane, pixLow, pixValue, pixSide, pixSide + barWidth,
+					this.Draw( g, pane, pixLowVal, pixHiVal, pixSide, pixSide + barWidth,
 								scaleFactor, true );
-
-				// Save the old bar top for stacked bar accumulations
-				if	( curValue > 0 )																													//rpk
-					priorTop[index] = pixValue;
-				else
-					priorBottom[index] = pixValue;
 		   }
 	   }
 
-	  /// <summary>
-      /// Calculate the screen pixel position of the center of the specified bar, using the
-      /// <see cref="Axis"/> as specified by <see cref="GraphPane.BarBase"/>.  This method is
-      /// used primarily by the <see cref="GraphPane.FindNearestPoint"/> method in order to
-      /// determine the bar "location," which is defined as the center of the top of the individual bar.
-      /// </summary>
-      /// <param name="pane">The active GraphPane object</param>
-      /// <param name="barWidth">The width of each individual bar. This can be calculated using
-      /// the <see cref="GraphPane.CalcBarWidth"/> method.</param>
-      /// <param name="iCluster">The cluster number for the bar of interest.  This is the ordinal
-      /// position of the current point.  That is, if a particular <see cref="CurveItem"/> has
-      /// 10 points, then a value of 3 would indicate the 4th point in the data array.</param>
-      /// <param name="val">The actual independent axis value for the bar of interest.</param>
-      /// <param name="iOrdinal">The ordinal position of the <see cref="CurveItem"/> of interest.
-      /// That is, the first bar series is 0, the second is 1, etc.  Note that this applies only
-      /// to the bars.  If a graph includes both bars and lines, then count only the bars.</param>
-      /// <returns>A screen pixel X position of the center of the bar of interest.</returns>
-      public static float CalcBarCenter( GraphPane pane, float barWidth, int iCluster,
-										double val, int iOrdinal )
-      {
-         float clusterWidth = pane.GetClusterWidth();
-         float clusterGap = pane.MinClusterGap * barWidth;
-         float barGap = barWidth * pane.MinBarGap;
-
-         if ( pane.BarType == BarType.Overlay )
-            iOrdinal = 0;
-
-         return pane.BarBaseAxis().Transform( iCluster, val )
-                  - clusterWidth / 2.0F + clusterGap / 2.0F +
-                  iOrdinal * ( barWidth + barGap ) + 0.5F * barWidth;
-      }
-
-      /// <summary>
-      /// Setup the accumulator array for stacked bars.  This method is called by <see cref="CurveList.Draw"/>
-      /// at the beginning of a draw cycle.
-      /// </summary>
-      public static void ResetBarStack()
-      {
-         priorTop.Clear();
-         priorBottom.Clear () ;
-      }
    #endregion
    }
 }

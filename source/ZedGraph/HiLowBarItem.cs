@@ -1,4 +1,4 @@
-﻿//============================================================================
+//============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
 //Copyright (C) 2004  John Champion
 //
@@ -29,14 +29,39 @@ using System.Drawing.Drawing2D;
 namespace ZedGraph
 {
 	/// <summary>
-	/// A bar-type <see cref="CurveItem"/> similar to the <see cref="BarType.Cluster"/>,
-	/// except that the bottom of the bars is defined by the <see cref="PointPair.LowValue"/>
-	/// from the <see cref="PointPair"/> struct.
+	/// Encapsulates an "High-Low" Bar curve type that displays a bar in which both
+	/// the bottom and the top of the bar are set by data valuesfrom the
+	/// <see cref="PointPair"/> struct.
 	/// </summary>
-	public class HiLowBarItem : BarItem, ICloneable
+	/// <remarks>The <see cref="HiLowBarItem"/> type is intended for displaying
+	/// bars that cover a band of data, such as a confidence interval, "waterfall"
+	/// chart, etc.  The width of the bar can be set in two ways.  First,
+	/// <see cref="HiLowBar.Size"/> can be used to set a width in points (1/72nd inch),
+	/// that is scaled using the regular scalefactor method (see
+	/// <see cref="GraphPane.CalcScaleFactor"/>).  In this manner, the bar widths
+	/// are set similar to symbol sizes.  The other method is to set
+	/// <see cref="HiLowBar.IsMaximumWidth"/> to true, which will cause the bars
+	/// to be scaled just like a <see cref="BarItem"/> in which only one
+	/// bar series is present.  That is, the bars width will be the width of
+	/// a cluster less the clustergap (see <see cref="GraphPane.GetClusterWidth"/>
+	/// and <see cref="GraphPane.MinClusterGap"/>). The position of each bar is set
+	/// according to the <see cref="PointPair"/> values.  The independent axis
+	/// is assigned with <see cref="HiLowBarItem.BarBase"/>, and is a
+	/// <see cref="BarBase"/> enum type.  If <see cref="HiLowBarItem.BarBase"/>
+	/// is set to <see cref="ZedGraph.BarBase.Y"/> or <see cref="ZedGraph.BarBase.Y2"/>, then
+	/// the bars will actually be horizontal, since the X axis becomes the
+	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
+	public class HiLowBarItem : CurveItem, ICloneable
 	{
 
 	#region Fields
+		/// <summary>
+		/// Private field that stores a reference to the <see cref="ZedGraph.HiLowBar"/>
+		/// class defined for this <see cref="HiLowBarItem"/>.  Use the public
+		/// property <see cref="Bar"/> to access this value.
+		/// </summary>
+		private HiLowBar bar;
+
 		/// <summary>
 		/// Private field that determines which <see cref="Axis"/> is the independent axis
 		/// for this <see cref="HiLowBarItem"/>.
@@ -62,7 +87,6 @@ namespace ZedGraph
 		public HiLowBarItem( string label, double[] x, double[] y, double[] baseVal, Color color ) :
 					this( label, new PointPairList( x, y, baseVal ), color )
 		{
-			
 		}
 		
 		/// <summary>
@@ -75,7 +99,7 @@ namespace ZedGraph
 		/// the <see cref="ZedGraph.Bar.Fill"/> and <see cref="ZedGraph.Bar.Border"/> properties.
 		/// </param>
 		public HiLowBarItem( string label, PointPairList points, Color color )
-			: base( label, points, color )
+			: base( label, points )
 		{
 			bar = new HiLowBar( color );
 		}
@@ -92,7 +116,7 @@ namespace ZedGraph
 		/// Deep-copy clone routine
 		/// </summary>
 		/// <returns>A new, independent copy of the <see cref="HiLowBarItem"/></returns>
-		new public object Clone()
+		override public object Clone()
 		{ 
 			return new HiLowBarItem( this ); 
 		}
@@ -100,57 +124,93 @@ namespace ZedGraph
 
 	#region Properties
 		/// <summary>
+		/// Gets a reference to the <see cref="HiLowBar"/> class defined
+		/// for this <see cref="HiLowBarItem"/>.
+		/// </summary>
+		public HiLowBar Bar
+		{
+			get { return bar; }
+		}
+
+		/// <summary>
 		/// Determines which <see cref="Axis"/> is the independent axis
 		/// for this <see cref="HiLowBarItem"/>.
 		/// </summary>
+		/// <remarks>Typically this is set to <see cref="ZedGraph.BarBase.X"/> for
+		/// vertical bars.  If it is set to <see cref="ZedGraph.BarBase.Y"/> or
+		/// <see cref="ZedGraph.BarBase.Y2"/>, then the bars will be horizontal.
+		/// Note that for <see cref="HiLowBarItem"/>'s, the <see cref="BarBase"/>
+		/// is set individually for each curve.  You can have one
+		/// <see cref="HiLowBarItem"/> aligned vertically, and the next
+		/// horizontally.  This is in contrast to <see cref="BarItem"/>'s, in
+		/// which the <see cref="ZedGraph.BarBase"/> is set according to
+		/// the global <see cref="GraphPane.BarBase"/>, so all
+		/// <see cref="BarItem"/>'s on a <see cref="GraphPane"/> will have the
+		/// same alignment.
+		/// </remarks>
 		public BarBase	BarBase
 		{
 			get { return barBase; }
 			set { barBase = value; }
 		}
 
-		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "base"
-		/// (independent axis) from which the <see cref="Bar"/>'s are drawn.
-		/// The base axis is the axis from which the bars grow with increasing value.  This
-		/// property is determined by the value of <see cref="BarBase"/>.
-		/// </summary>
-		/// <remarks>For regular <see cref="BarItem"/>'s, the base axis is determined
-		/// by <see cref="ZedGraph.BarBase"/> (a global value).  For <see cref="HiLowBarItem"/>'s, the
-		/// base axis is determined by <see cref="HiLowBarItem.BarBase"/>, and can be
-		/// different for each curve.</remarks>
-		/// <seealso cref="BarBase"/>
-		/// <seealso cref="ValueAxis"/>
-		override public Axis BaseAxis( GraphPane pane )
-		{
-			if ( barBase == BarBase.X )
-				return pane.XAxis;
-			else if ( barBase == BarBase.Y )
-				return pane.YAxis;
-			else
-				return pane.Y2Axis;
-		}
-		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "value"
-		/// (dependent axis) for the <see cref="Bar"/>'s.
-		/// The value axis determines the height of the bars.  This
-		/// property is determined by the value of <see cref="BarBase"/>.
-		/// </summary>
-		/// <seealso cref="BarBase"/>
-		/// <seealso cref="BaseAxis"/>
-		override public Axis ValueAxis( GraphPane pane, bool isY2Axis )
-		{
-			if ( barBase == BarBase.X )
-			{
-				if ( isY2Axis )
-					return pane.Y2Axis;
-				else
-					return pane.YAxis;
-			}
-			else
-				return pane.XAxis;
-		}
 	#endregion
 
 	#region Methods
+		/// <summary>
+		/// Do all rendering associated with this <see cref="HiLowBarItem"/> to the specified
+		/// <see cref="Graphics"/> device.  This method is normally only
+		/// called by the Draw method of the parent <see cref="ZedGraph.CurveList"/>
+		/// collection object.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="pos">The ordinal position of the current <see cref="ErrorBarItem"/>
+		/// curve.</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		override public void Draw( Graphics g, GraphPane pane, int pos, double scaleFactor  )
+		{
+			if ( this.isVisible )
+				bar.DrawBars( g, pane, this, BaseAxis(pane), ValueAxis(pane,isY2Axis),
+								GetBarWidth( pane ), pos, scaleFactor );
+		}		
+
+		/// <summary>
+		/// Draw a legend key entry for this <see cref="HiLowBarItem"/> at the specified location
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="rect">The <see cref="RectangleF"/> struct that specifies the
+        /// location for the legend key</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect,
+									double scaleFactor )
+		{
+			this.bar.Draw( g, pane, rect, scaleFactor, true );
+		}
+
 		/// <summary>
 		/// Go through the list of <see cref="PointPair"/> data values for this
 		/// <see cref="HiLowBarItem"/> and determine the minimum and maximum values in the data.

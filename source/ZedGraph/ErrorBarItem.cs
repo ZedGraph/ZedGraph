@@ -31,13 +31,25 @@ namespace ZedGraph
 	/// <summary>
 	/// Encapsulates an "Error Bar" curve type that displays an I-beam of data.
 	/// </summary>
+	/// <remarks>The <see cref="ErrorBarItem"/> type is intended for displaying
+	/// confidence intervals, candlesticks, stock High-Low charts, etc.  It is
+	/// technically not a bar, since it is drawn as a vertical line with horizontal
+	/// segments at the top and bottom (like a capital "I" letter).  The width
+	/// of the horizontal segments is controlled by <see cref="ZedGraph.ErrorBar.Size"/>,
+	/// specified in points (1/72nd inch).  The position of each "I-Beam" is set
+	/// according to the <see cref="PointPair"/> values.  The independent axis
+	/// is assigned with <see cref="ErrorBarItem.BarBase"/>, and is a
+	/// <see cref="ZedGraph.BarBase"/> enum type.  If <see cref="ErrorBarItem.BarBase"/>
+	/// is set to <see cref="ZedGraph.BarBase.Y"/> or <see cref="ZedGraph.BarBase.Y2"/>, then
+	/// the I-Beams will actually be horizontal, since the X axis becomes the
+	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	public class ErrorBarItem : CurveItem, ICloneable
 	{
 	#region Fields
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="ZedGraph.ErrorBar"/>
 		/// class defined for this <see cref="ErrorBarItem"/>.  Use the public
-		/// property <see cref="Line"/> to access this value.
+		/// property <see cref="ErrorBar"/> to access this value.
 		/// </summary>
 		private ErrorBar errorBar;
 
@@ -62,51 +74,24 @@ namespace ZedGraph
 		/// Determines which <see cref="Axis"/> is the independent axis
 		/// for this <see cref="ErrorBarItem"/>.
 		/// </summary>
+		/// <remarks>Typically this is set to <see cref="ZedGraph.BarBase.X"/> for
+		/// vertical error bars.  If it is set to <see cref="ZedGraph.BarBase.Y"/> or
+		/// <see cref="ZedGraph.BarBase.Y2"/>, then the error bars will be horizontal.
+		/// Note that for <see cref="ErrorBarItem"/>'s, the <see cref="BarBase"/>
+		/// is set individually for each curve.  You can have one
+		/// <see cref="ErrorBarItem"/> aligned vertically, and the next
+		/// horizontally.  This is in contrast to <see cref="BarItem"/>'s, in
+		/// which the <see cref="ZedGraph.BarBase"/> is set according to
+		/// the global <see cref="GraphPane.BarBase"/>, so all
+		/// <see cref="BarItem"/>'s on a <see cref="GraphPane"/> will have the
+		/// same alignment.
+		/// </remarks>
 		public BarBase	BarBase
 		{
 			get { return barBase; }
 			set { barBase = value; }
 		}
 
-		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "base"
-		/// (independent axis) from which the <see cref="ErrorBar"/>'s are drawn.
-		/// The base axis is the axis from which the bars grow with increasing value.  This
-		/// property is determined by the value of <see cref="BarBase"/>.
-		/// </summary>
-		/// <remarks>For regular <see cref="BarItem"/>'s, the base axis is determined
-		/// by <see cref="ZedGraph.BarBase"/> (a global value).  For <see cref="ErrorBarItem"/>'s, the
-		/// base axis is determined by <see cref="ErrorBarItem.BarBase"/>, and can be
-		/// different for each curve.</remarks>
-		/// <seealso cref="BarBase"/>
-		/// <seealso cref="ValueAxis"/>
-		public Axis BaseAxis( GraphPane pane )
-		{
-			if ( barBase == BarBase.X )
-				return pane.XAxis;
-			else if ( barBase == BarBase.Y )
-				return pane.YAxis;
-			else
-				return pane.Y2Axis;
-		}
-		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "value"
-		/// (dependent axis) for the <see cref="ErrorBar"/>'s.
-		/// The value axis determines the height of the bars.  This
-		/// property is determined by the value of <see cref="BarBase"/>.
-		/// </summary>
-		/// <seealso cref="BarBase"/>
-		/// <seealso cref="BaseAxis"/>
-		public Axis ValueAxis( GraphPane pane, bool isY2Axis )
-		{
-			if ( barBase == BarBase.X )
-			{
-				if ( isY2Axis )
-					return pane.Y2Axis;
-				else
-					return pane.YAxis;
-			}
-			else
-				return pane.XAxis;
-		}
 	#endregion
 
 	#region Constructors
@@ -199,7 +184,7 @@ namespace ZedGraph
 		{
 			if ( this.isVisible )
 			{
-				ErrorBar.Draw( g, pane, points, this.BaseAxis( pane ),
+				errorBar.Draw( g, pane, this, this.BaseAxis( pane ),
 								this.ValueAxis( pane,isY2Axis ), scaleFactor );
 			}
 		}		

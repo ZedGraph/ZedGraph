@@ -116,7 +116,7 @@ namespace ZedGraphTest
 		//		int	nPts = 20;
 
 		private void Form1_Load(object sender, System.EventArgs e)
-		{
+		{			
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
@@ -1001,10 +1001,40 @@ namespace ZedGraphTest
 			}
 
 			// Generate a red bar with "Curve 1" in the legend
-			BarItem myCurve = myPane.AddHiLowBar( "Curve 1", null, y, yBase, Color.Red );
+			HiLowBarItem myCurve = myPane.AddHiLowBar( "Curve 1", null, y, yBase, Color.Red );
 			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
+			myCurve.Bar.IsMaximumWidth = true;
+			//myPane.BarType = BarType.HiLow;
+			
+			myPane.AxisChange( this.CreateGraphics() );
+
+#endif
+
+#if false	// The Error bar graph sample
+
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"My Test Bar Graph", "Label", "My Y Axis" );
+			
+			// Make up some random data points
+
+			double[] y = new double[44];
+			double[] yBase = new double[44];
+
+			for ( int i=0; i<44; i++ )
+			{
+				y[i] = Math.Sin( (double) i * Math.PI / 15.0 );
+				yBase[i] = y[i] - 0.4;
+			}
+
+			// Generate a red bar with "Curve 1" in the legend
+			ErrorBarItem myCurve = myPane.AddErrorBar( "Curve 1", null, y, yBase,
+						Color.Red );
+			//myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
 			
 			//myPane.BarType = BarType.HiLow;
+			myCurve.ErrorBar.Size = 0;
+			myCurve.ErrorBar.PenWidth = 4;
 			
 			myPane.AxisChange( this.CreateGraphics() );
 
@@ -1247,7 +1277,7 @@ namespace ZedGraphTest
 			
 			// Generate a green bar with "Curve 3" in the legend
 			myCurve = myPane.AddBar( "Curve 3", null, y3, Color.Green );
-
+			
 			// Draw the X tics between the labels instead of at the labels
 			myPane.XAxis.IsTicsBetweenLabels = true;
 
@@ -1282,7 +1312,7 @@ namespace ZedGraphTest
 				// rotate the text 90 degrees
 				text.FontSpec.Angle = 90;
 				// add the TextItem to the list
-				myPane.TextList.Add( text );
+				myPane.GraphItemList.Add( text );
 			}
 			
 			// Tell ZedGraph to refigure the
@@ -1291,6 +1321,69 @@ namespace ZedGraphTest
 			// Add one step to the max scale value to leave room for the labels
 			myPane.YAxis.Max += myPane.YAxis.Step;
 
+
+//			GraphPane testPane = (GraphPane) myPane.Clone();
+#endif
+
+#if false	// The bar graph sample - color band
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"My Test Bar Graph", "Label", "My Y Axis" );
+			// Make up some random data points
+			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty" };
+			
+			double[] y = { 100, 115, 75, 22, 98, 40, 10 };
+			double[] y2 = { 90, 100, 95, 35, 80, 35, 35 };
+			double[] y3 = { 80, 110, 65, 15, 54, 67, 18 };
+			double[] x = { 100, 200, 300, 400, 500, 600, 700 };
+
+			//double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
+
+			// Generate a red bar with "Curve 1" in the legend
+			CurveItem myCurve = myPane.AddCurve( "Curve 1", x, y, Color.Red );
+
+ 			// Generate a blue bar with "Curve 2" in the legend
+			myCurve = myPane.AddCurve( "Curve 2", x, y2, Color.Blue );
+
+			// Generate a green bar with "Curve 3" in the legend
+			myCurve = myPane.AddCurve( "Curve 3", x, y3, Color.Green );
+
+			myPane.ClusterScaleWidth = 100f;
+			myPane.XAxis.Min = 0;
+			myPane.XAxis.Max = 800;
+			myPane.YAxis.Min = 0;
+			myPane.YAxis.Max = 140;
+			double[] xg = { 0, 800 };
+			double[] yg = { 0, 0 };
+			LineItem myCurve2;
+			for ( double i=10; i<=130; i+=10 )
+			{
+				yg[0] = i; yg[1] = i;
+				myCurve2 = myPane.AddCurve( "", xg, yg, Color.Gray, SymbolType.None );
+				myCurve2.Line.Style = DashStyle.Dot;
+			}
+			
+			yg[0] = 0; yg[1] = 140;
+			for ( double i=100; i<=700; i+=100 )
+			{
+				xg[0] = i; xg[1] = i;
+				myCurve2 = myPane.AddCurve( "", xg, yg, Color.Gray, SymbolType.None );
+				myCurve2.Line.Style = DashStyle.Dot;
+			}
+
+			double[] xx = { 0, 800 };
+			double[] yy = { 100, 100 };
+			double[] yy2 = { 50, 50 };
+			
+			myCurve2 = myPane.AddCurve( "", xx, yy2, Color.White, SymbolType.None );
+			myCurve2.Line.Fill = new Fill( Color.White );
+			myCurve2 = myPane.AddCurve( "", xx, yy, Color.PaleGreen, SymbolType.None );
+			myCurve2.Line.Fill = new Fill( Color.PaleGreen );
+			
+			
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			myPane.AxisChange( this.CreateGraphics() );
 
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
@@ -1386,17 +1479,17 @@ namespace ZedGraphTest
 			double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
 
 			// Generate a black line with "Curve 4" in the legend
-			CurveItem myCurve = myPane.AddCurve( "Curve 4",
+			LineItem myCurve = myPane.AddCurve( "Curve 4",
 				x, y4, Color.Black, SymbolType.Circle );
 			myCurve.Symbol.Size = 14.0F;
 			myCurve.Symbol.Fill = new Fill( Color.White );
 			myCurve.Line.Width = 2.0F;
 
 			// Generate a red bar with "Curve 1" in the legend
-			myCurve = myPane.AddBar( "Curve 1", x, y, Color.Red );
+			BarItem myBar = myPane.AddBar( "Curve 1", x, y, Color.Red );
 
 			// Generate a blue bar with "Curve 2" in the legend
-			myCurve = myPane.AddBar( "Curve 2", x, y2, Color.Blue );
+			myBar = myPane.AddBar( "Curve 2", x, y2, Color.Blue );
 
 
 			// Draw the X tics between the labels instead of at the labels
@@ -1409,6 +1502,45 @@ namespace ZedGraphTest
 
 			myPane.XAxis.IsReverse = false;
 			myPane.ClusterScaleWidth = 1;
+
+//			GraphPane testPane = (GraphPane) myPane.Clone();
+#endif
+
+#if false	// Ceatly sample
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"My Test Bar Graph", "Label", "My Y Axis" );
+
+			const int size = 10;
+			double[] x1 = new double[size];
+			double[] y1 = new double[size];
+
+			for ( int i=0; i<size; i++ )
+			{
+				y1[i] = i + 1;
+				x1[i] = Math.Sin( (double) i / 30.0 * 2.0 * Math.PI ) * 50.0 + 5.0;
+			}
+
+			myPane.MinClusterGap = 0.1f;
+			myPane.BarBase = BarBase.Y;
+
+			myPane.ClusterScaleWidth = 20;
+			double right = 1000;
+			double[] x = new double[]{right, right, right, right};
+
+			double[] y = new double[]{90, 110, 130, 150};
+			BarItem curve = myPane.AddBar( "Normal Values", x, y, Color.PaleGreen );
+			curve.Bar.Fill = new Fill( Color.PaleGreen );
+			curve.Bar.Border.IsVisible = false;
+
+			myPane.YAxis.Max = 300;
+			myPane.YAxis.Min = 0;
+			myPane.YAxis.Step = 20;
+			myPane.YAxis.MinorStep = 4;
+			myPane.XAxis.Max = 1000;
+
+			// Generate a red bar with "Curve 1" in the legend
+			//BarItem myBar = myPane.AddBar( "Curve 1", x, y, Color.Red );
 
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
@@ -1438,12 +1570,21 @@ namespace ZedGraphTest
 			curve.Line.Width = 1.5F;
 			//curve.Line.IsSmooth = true;
 			curve.Symbol.Fill = new Fill( Color.White );
-			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 230, 145, 205), 90F );
+			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 160, 230, 145, 205), 90F );
 			curve.Symbol.Size = 10;
 			
+			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y4 = { 30, 45, 53, 60, 75, 83, 84, 79, 71, 57 };
+			BarItem bar = myPane.AddBar( "Wheezy", x4, y4, Color.SteelBlue );
+			bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown );
+			myPane.ClusterScaleWidth = 100;
+			myPane.BarType = BarType.Stack;
+			//curve.Bar.Fill = new Fill( Color.Blue );
+			//curve.Symbol.Size = 12;
+
 			double[] x2 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y2 = { 10, 15, 17, 20, 25, 27, 29, 26, 24, 18 };
-			BarItem bar = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
+			bar = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
 			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
 			myPane.ClusterScaleWidth = 100;
 			//Brush brush = new HatchBrush( HatchStyle.Cross, Color.AliceBlue, Color.Red );
@@ -1455,14 +1596,6 @@ namespace ZedGraphTest
 			//brush = new PathGradientBrush( path );
 			//bar.Bar.Fill = new Fill( brush );
 			
-			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
-			double[] y4 = { 30, 45, 53, 60, 75, 83, 84, 79, 71, 57 };
-			bar = myPane.AddBar( "Wheezy", x4, y4, Color.SteelBlue );
-			bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown );
-			myPane.ClusterScaleWidth = 100;
-			myPane.BarType = BarType.Stack;
-			//curve.Bar.Fill = new Fill( Color.Blue );
-			//curve.Symbol.Size = 12;
 			
 			myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
 			
@@ -1530,13 +1663,19 @@ namespace ZedGraphTest
 			
 			myPane.IsPenWidthScaled = false ;
 
+			RectangleF rect = new RectangleF( 500, 50, 200, 20 );
+			EllipseItem ellipse = new EllipseItem( rect, Color.Blue, 
+				Color.Goldenrod );
+			ellipse.Location.CoordinateFrame = CoordType.AxisXYScale;
+			myPane.GraphItemList.Add( ellipse );
+
 //			Bitmap bm = new Bitmap( @"c:\temp\sunspot.jpg" );
-			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
-			Image image = Image.FromHbitmap( bm.GetHbitmap() );
-			ImageItem imageItem = new ImageItem( image, new RectangleF( 0.8F, 0.8F, 0.2F, 0.2F ),
-				CoordType.AxisFraction, AlignH.Left, AlignV.Top );
+			//Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
+			//Image image = Image.FromHbitmap( bm.GetHbitmap() );
+			//ImageItem imageItem = new ImageItem( image, new RectangleF( 0.8F, 0.8F, 0.2F, 0.2F ),
+			//	CoordType.AxisFraction, AlignH.Left, AlignV.Top );
 			//imageItem.IsScaled = false;
-			myPane.GraphItemList.Add( imageItem );
+			//myPane.GraphItemList.Add( imageItem );
 
 #endif
 
@@ -1574,7 +1713,7 @@ namespace ZedGraphTest
          double[] y2 = { -40, 60, -70, 20,-30 };               // red - three segments per bar
  //        double[] y3 = { 2, 3, 3.5, 4 };
 
-#if false                                 //           vertical stacked bars
+#if true                                 //           vertical stacked bars
 		LineItem curve;
 		curve = myPane.AddCurve( "Larry", null, y4, Color.Black, SymbolType.Circle );
 		curve.Line.Width = 1.5F;
@@ -1594,14 +1733,14 @@ namespace ZedGraphTest
 		myPane.XAxis.Type = AxisType.Text ;
 		myPane.XAxis.TextLabels=quarters ;         
 		myPane.BarBase=BarBase.X ;
-		myPane.BarType=BarType.Stack;
+		//myPane.BarType=BarType.Stack;
 		//myPane.BarType=BarType.Cluster ;
 		//myPane.BarType=BarType.Overlay ;
 		//myPane.BarType = BarType.SortedOverlay ;
-		//myPane.BarType = BarType.PercentStack ;
+		myPane.BarType = BarType.PercentStack ;
 #endif
 
-#if true                                       //horizontal stacked bars         
+#if false                                       //horizontal stacked bars         
          
 		BarItem bar = myPane.AddBar( "Widget", y4, null, Color.RoyalBlue );
 		bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue, 90F );
@@ -2094,7 +2233,7 @@ namespace ZedGraphTest
 
 		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
 		{
-			// clone the pane so the paneRect can be changed for printing
+			//clone the pane so the paneRect can be changed for printing
 			GraphPane printPane = (GraphPane) myPane.Clone();
 
 			//printPane.Legend.IsVisible = true;
@@ -2127,9 +2266,11 @@ namespace ZedGraphTest
 			images[0].Save( @"c:\zedgraph1.jpg", ImageFormat.Jpeg );
 			images[1].Save( @"c:\zedgraph2.jpg", ImageFormat.Jpeg );
 		}
-
+		
+#if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+/*
 			CurveItem curve;
 			int	iPt;
 
@@ -2138,13 +2279,30 @@ namespace ZedGraphTest
 						curve.Label, curve.Points[iPt].ToString("e2") ) );
 			else
 				MessageBox.Show( "No Point Found" );
+*/
+			object	obj;
+			int		index;
+
+			if ( myPane.FindNearestObject( new PointF( e.X, e.Y ), this.CreateGraphics(),
+					out obj, out index ) )
+			{
+				if ( obj is CurveItem )
+					MessageBox.Show( String.Format( "label = {0}  X = {1}",
+						((CurveItem)obj).Label,
+						((CurveItem)obj).Points[index].ToString("e2") ) );
+				else
+					MessageBox.Show( String.Format( "type is {0}", obj.ToString() ) );
+			}
+			else
+				MessageBox.Show( "No Object Found" );
 		}
-		
+#endif
+
 #if false
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
 			//DoPrint();
-			CopyToGif( myPane );
+			CopyToPNG( myPane );
 			
 			//Bitmap image = myPane.ScaledImage( 3000, 2400, 600 );
 			//image.Save( @"c:\zedgraph.jpg", ImageFormat.Jpeg );
@@ -2254,7 +2412,7 @@ namespace ZedGraphTest
 			//CopyToGif( myPane );
 			//CopyToEMF( myPane );
 		}
-	#endif
+#endif
 
 	}
 }

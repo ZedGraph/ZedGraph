@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-11-19 06:41:05 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-12-03 13:31:28 $ </version>
 	abstract public class GraphItem
 	{
 	#region Fields
@@ -232,6 +232,12 @@ namespace ZedGraph
 		{
 			this.location = rhs.Location;
 		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the GraphItem</returns>
+		public abstract object Clone();
 	#endregion
 	
 	#region Rendering Methods
