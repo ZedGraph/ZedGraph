@@ -35,58 +35,69 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the title and axis labels
 			myPane.Title = "ZedgroSoft, International\nHi-Low-Close Daily Stock Chart";
 			myPane.XAxis.Title = "";
 			myPane.YAxis.Title = "Trading Price, $US";
 			
+			// Set the title font characteristics
 			myPane.FontSpec.Family = "Arial";
 			myPane.FontSpec.IsItalic = true;
 			myPane.FontSpec.Size = 18;
 
-			double hi, low, close, x;
+
+			// Generate some random stock price data
 			PointPairList hList = new PointPairList();
 			PointPairList cList = new PointPairList();
 			Random rand = new Random();
-			close = 45;
+			// initialize the starting close price
+			double close = 45;
 
 			for ( int i=45;	i<65; i++	)
 			{
-				x = (double) new XDate( 2004, 12, i-30 );
+				double x = (double) new XDate( 2004, 12, i-30 );
 				close = close + 2.0 * rand.NextDouble() - 0.5;
-				hi = close + 2.0 * rand.NextDouble();
-				low = close - 2.0 * rand.NextDouble();
+				double hi = close + 2.0 * rand.NextDouble();
+				double low = close - 2.0 * rand.NextDouble();
 				hList.Add( x, hi, low );
 				cList.Add( x, close );
 			}
 
 
+			// Make a new curve with a "Closing Price" label
 			LineItem curve;
 			curve = myPane.AddCurve( "Closing Price", cList, Color.Black,
 				SymbolType.Diamond );
+			// Turn off the line display, symbols only
 			curve.Line.IsVisible = false ;
+			// Fill the symbols with solid red color
 			curve.Symbol.Fill = new Fill( Color.Red );
 			curve.Symbol.Size = 7;
 
+			// Add a blue error bar to the graph
 			ErrorBarItem myCurve = myPane.AddErrorBar(	"Price Range", hList,
 				Color.Blue );
-
-			//	Set the XAxis	to date type
-			myPane.XAxis.Type =	AxisType.Date;
-			myPane.XAxis.Step = 1 ;
-			myPane.XAxis.ScaleFontSpec.Size = 12 ;
-			myPane.XAxis.ScaleFontSpec.Angle = 65 ;
-			myPane.XAxis.MajorUnit = DateUnit.Day ;
-			myPane.XAxis.ScaleFontSpec.IsBold = true ;
-			myPane.XAxis.ScaleFormat = "d MMM" ;
-			myPane.XAxis.Min = hList[0].X - 1 ;
-
 			myCurve.ErrorBar.PenWidth = 3;
 			myCurve.ErrorBar.Symbol.IsVisible = false;
 			
+			// Set the XAxis to date type
+			myPane.XAxis.Type =	AxisType.Date;
+			// X axis step size is 1 day
+			myPane.XAxis.Step = 1;
+			myPane.XAxis.MajorUnit = DateUnit.Day ;
+			// tilt the x axis labels to an angle of 65 degrees
+			myPane.XAxis.ScaleFontSpec.Angle = 65 ;
+			myPane.XAxis.ScaleFontSpec.IsBold = true ;
+			myPane.XAxis.ScaleFontSpec.Size = 12 ;
+			myPane.XAxis.ScaleFormat = "d MMM" ;
+			// make the x axis scale minimum 1 step less than the minimum data value
+			myPane.XAxis.Min = hList[0].X - 1 ;
+
+			// Display the Y axis grid
 			myPane.YAxis.IsShowGrid = true ;
-			//myPane.YAxis.IsShowMinorGrid = true ;
 			myPane.YAxis.MinorStep = 0.5;
 
+			// Fill the axis background with a color gradient
 			myPane.AxisFill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 90F );
 

@@ -35,17 +35,17 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the titles and axis labels
 			myPane.Title = "My Test Date Graph";
 			myPane.XAxis.Title = "Date";
 			myPane.YAxis.Title = "My Y Axis";
 			   
-			// Make up some random data points
-			double x, y;
+			// Make up some data points based on the Sine function
 			PointPairList list = new PointPairList();
 			for ( int i=0; i<36; i++ )
 			{
-				x = (double) new XDate( 1995, 5, i+11 );
-				y = Math.Sin( (double) i * Math.PI / 15.0 );
+				double x = (double) new XDate( 1995, 5, i+11 );
+				double y = Math.Sin( (double) i * Math.PI / 15.0 );
 				list.Add( x, y );
 			}
 

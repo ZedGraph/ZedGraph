@@ -39,36 +39,36 @@ namespace ZedGraph.Demo
 						DemoType.Bar )
 		{
 			GraphPane myPane = base.GraphPane;
+
+			// Set the title and axis label
 			myPane.Title = "Overlay Bar Graph Demo";
 			myPane.YAxis.Title = "Value";
 			
+			// Enter some data values
 			double[] y = { 100, 115, 75, -22, 98, 40, -10 };
 			double[] y2 = { 90, 100, 95, -35, 80, 35, 35 };
 			double[] y3 = { 80, 110, 65, -15, 54, 67, 18 };
 
+			// Manually sum up the curves
 			for ( int i=0; i<y.GetLength(0); i++ )
 				y2[i] += y[i];
 			for ( int i=0; i<y2.GetLength(0); i++ )
 				y3[i] += y2[i];
 
-			//double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
 
 			// Generate a red bar with "Curve 1" in the legend
-			CurveItem myCurve = myPane.AddBar( "Curve 1",
-				null, y, Color.Red );
+			CurveItem myCurve = myPane.AddBar( "Curve 1", null, y, Color.Red );
 
 			// Generate a blue bar with "Curve 2" in the legend
-			myCurve = myPane.AddBar( "Curve 2",
-				null, y2, Color.Blue );
+			myCurve = myPane.AddBar( "Curve 2", null, y2, Color.Blue );
 
 			// Generate a green bar with "Curve 3" in the legend
-			myCurve = myPane.AddBar( "Curve 3",
-				null, y3, Color.Green );
+			myCurve = myPane.AddBar( "Curve 3", null, y3, Color.Green );
 
 			// Draw the X tics between the labels instead of at the labels
 			myPane.XAxis.IsTicsBetweenLabels = true;
 
-			// Set the XAxis to Text type
+			// Set the XAxis to the ordinal type
 			myPane.XAxis.Type = AxisType.Ordinal;
 
 			//Add Labels to the curves
@@ -96,9 +96,10 @@ namespace ZedGraph.Demo
 				myPane.GraphItemList.Add( text );
 			}
 			
-			myPane.BarBase = BarBase.X;
+			// Indicate that the bars are overlay type, which are drawn on top of eachother
 			myPane.BarType = BarType.Overlay;
 			
+			// Fill the axis background with a color gradient
 			myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0F );
 
 			base.ZedGraphControl.AxisChange();

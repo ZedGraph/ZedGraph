@@ -35,30 +35,32 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the title and axis labels
 			myPane.Title = "A Horizontal Percent Stack Graph";
 			myPane.XAxis.Title = "Stuff";
 			myPane.YAxis.Title = "";
 			
+			// Enter some random data values
 			double[] y = { 100, 115, 15, 22, 98 };
 			double[] y2 = { 90, 60, 95, 35, 30 };
 			double[] y3 = { 20, 40, 105, 15, 30 };
 
-			// Generate a red bar with "Curve 1" in the legend
+			// Generate a red bar with "Nina" in the legend
 			BarItem myCurve = myPane.AddBar( "Nina", y, null, Color.Red );
 			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 90F );
 
-			// Generate a blue bar with "Curve 2" in the legend
+			// Generate a blue bar with "Pinta" in the legend
 			myCurve = myPane.AddBar( "Pinta", y2, null, Color.Blue );
 			myCurve.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 90F );
 
-			// Generate a green bar with "Curve 3" in the legend
+			// Generate a green bar with "Santa Maria" in the legend
 			myCurve = myPane.AddBar( "Santa Maria", y3, null, Color.Green );
 			myCurve.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 90F );
 
 			// Draw the Y tics between the labels instead of at the labels
 			myPane.YAxis.IsTicsBetweenLabels = true;
 
-			// Set the YAxis to Ordinal type
+			// Set the YAxis to text type
 			myPane.YAxis.Type = AxisType.Text;
 			string[] labels = { "Australia", "Africa", "America", "Asia", "Antartica" };
 			myPane.YAxis.TextLabels = labels;
@@ -66,12 +68,16 @@ namespace ZedGraph.Demo
 
 			// Make the bars horizontal by setting bar base axis to Y
 			myPane.BarBase = BarBase.Y;
+			// Make the bars percent stack type
 			myPane.BarType = BarType.PercentStack;
 			
+			// Fill the axis background with a color gradient
 			myPane.AxisFill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 90F );
+			// Fill the legend background with a color gradient
 			myPane.Legend.Fill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 250), 90F );
+			// Fill the pane background with a solid color
 			myPane.PaneFill = new Fill( Color.FromArgb( 250, 250, 255) );
 
 			base.ZedGraphControl.AxisChange();

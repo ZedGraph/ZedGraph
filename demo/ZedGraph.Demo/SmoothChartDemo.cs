@@ -35,33 +35,41 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// set the title and axis labels
 			myPane.Title = "Smooth Line Demo";
 			myPane.XAxis.Title = "Value";
 			myPane.YAxis.Title = "Time";
 			
+			// Enter some arbitrary data
 			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
 
+			// Add a smoothed curve
 			LineItem curve = myPane.AddCurve( "Smooth (Tension=0.5)", x, y, Color.Red, SymbolType.Diamond );
 			curve.Symbol.Fill = new Fill( Color.White );
 			curve.Symbol.Size = 5;
+			// activate the cardinal spline smoothing
 			curve.Line.IsSmooth = true;
 			curve.Line.SmoothTension = 0.5F;
 
+			// Add a forward step type curve
 			curve = myPane.AddCurve( "Forward Step", x, y, Color.Green, SymbolType.Circle );
 			curve.Symbol.Fill = new Fill( Color.White );
 			curve.Symbol.Size = 5;
 			curve.Line.StepType = StepType.ForwardStep;
 
+			// add a rearward step type curve
 			curve = myPane.AddCurve( "Rearward Step", x, y, Color.Gold, SymbolType.Square );
 			curve.Symbol.Fill = new Fill( Color.White );
 			curve.Symbol.Size = 5;
 			curve.Line.StepType = StepType.RearwardStep;
 
+			// add a regular non-step, non-smooth curve
 			curve = myPane.AddCurve( "Non-Step", x, y, Color.Blue, SymbolType.Triangle );
 			curve.Symbol.Fill = new Fill( Color.White );
 			curve.Symbol.Size = 5;
 
+			// Fill the axis background with a color gradient
 			myPane.AxisFill = new Fill( Color.White, Color.LightGray, 45.0F );
 
 			base.ZedGraphControl.AxisChange();

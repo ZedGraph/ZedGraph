@@ -35,30 +35,33 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the titles and axis labels
 			myPane.Title = "Error Bar Demo Chart";
 			myPane.XAxis.Title = "Label";
 			myPane.YAxis.Title = "My Y Axis";
 			
-			double x, y, yBase;
+			// Make up some data points based on the Sine function
 			PointPairList list = new PointPairList();
 			for ( int i=0; i<44; i++ )
 			{
-				x = i / 44.0;
-				y = Math.Sin( (double) i * Math.PI / 15.0 );
-				yBase = y - 0.4;
+				double x = i / 44.0;
+				double y = Math.Sin( (double) i * Math.PI / 15.0 );
+				double yBase = y - 0.4;
 				list.Add( x, y, yBase );
 			}
 
 			// Generate a red bar with "Curve 1" in the legend
 			ErrorBarItem myCurve = myPane.AddErrorBar( "Curve 1", list, Color.Red );
+			// Make the X axis the base for this curve (this is the default)
 			myCurve.BarBase = BarBase.X;
-			
 			myCurve.ErrorBar.PenWidth = 1f;
+			// Use the HDash symbol so that the error bars look like I-beams
 			myCurve.ErrorBar.Symbol.Type = SymbolType.HDash;
 			myCurve.ErrorBar.Symbol.Border.PenWidth = .1f;
 			myCurve.ErrorBar.Symbol.IsVisible = true;
 			myCurve.ErrorBar.Symbol.Size = 4;
 			
+			// Fill the axis background with a color gradient
 			myPane.AxisFill = new Fill( Color.White,
 				Color.LightGoldenrodYellow, 45.0F );
 

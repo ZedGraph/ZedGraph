@@ -34,45 +34,52 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the pane title
 			myPane.Title = "2004 ZedGraph Sales by Region\n ($M)";
 
+			// Enter some data values
 			double [] values =   { 15, 15, 40, 20 } ;
 			double [] values2 =   { 250, 50, 400, 50 } ;
 			Color [] colors = { Color.Red, Color.Blue, Color.Green, Color.Yellow } ;
 			double [] displacement = {	.0,.0,.0,.0 } ;
 			string [] labels = { "Europe", "Pac Rim", "South America", "Africa" } ;
 
+			// Fill the pane and axis background with solid color
 			myPane.PaneFill = new Fill( Color.Cornsilk );
 			myPane.AxisFill = new Fill( Color.Cornsilk );
 			myPane.Legend.Position = LegendPos.Right ;
 			
+			// Create some pie slices
 			PieItem segment1 = myPane.AddPieSlice ( 20, Color.Navy, .20, "North") ;
 			PieItem segment2 = myPane.AddPieSlice ( 40, Color.Salmon, 0, "South") ;
 			PieItem segment3 = myPane.AddPieSlice ( 30, Color.Yellow,.0, "East") ;
 			PieItem segment4 = myPane.AddPieSlice ( 10.21, Color.LimeGreen, 0, "West") ;
 			PieItem segment5 = myPane.AddPieSlice ( 10.5, Color.Aquamarine, .3, "Canada") ;
 			
+			// Add some more slices as an array
 			PieItem [] slices = new PieItem[values2.Length] ;
 			slices = myPane.AddPieSlices ( values2, labels ) ;
+
+			// Modify the slice label types
 			((PieItem)slices[0]).LabelType = PieLabelType.Name_Value ;
 			((PieItem)slices[1]).LabelType = PieLabelType.Name_Value_Percent ;
 			((PieItem)slices[2]).LabelType = PieLabelType.Name_Value ;
 			((PieItem)slices[3]).LabelType = PieLabelType.Name_Value ;
 			((PieItem)slices[1]).Displacement = .2 ;
-
-
 			segment1.LabelType = PieLabelType.Name_Percent ;
 			segment2.LabelType = PieLabelType.Name_Value ;
 			segment3.LabelType = PieLabelType.Percent ;
 			segment4.LabelType = PieLabelType.Value ;
 			segment5.LabelType = PieLabelType.Name_Value ;
 			segment2.LabelDetail.FontSpec.FontColor = Color.Red ;
-																																				
+			
+			// Sum up the values																					
 			CurveList curves = myPane.CurveList ;
 			double total = 0 ;
 			for ( int x = 0 ; x <  curves.Count ; x++ )
 				total += ((PieItem)curves[x]).Value ;
 
+			// Add a text item to highlight total sales
 			TextItem text = new TextItem("Total 2004 Sales - " + "$" + total.ToString () + "M", 0.85F, 0.80F,CoordType.PaneFraction );
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Bottom;
@@ -80,7 +87,8 @@ namespace ZedGraph.Demo
 			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
 			text.FontSpec.StringAlignment = StringAlignment.Center ;
 			myPane.GraphItemList.Add( text );
-			 
+			
+			// Add a colored background behind the pie
 			BoxItem box = new BoxItem( new RectangleF( 0F, 0F, 1F, 1F ),
 				Color.Empty, Color.PeachPuff );
 			box.Location.CoordinateFrame = CoordType.AxisFraction;

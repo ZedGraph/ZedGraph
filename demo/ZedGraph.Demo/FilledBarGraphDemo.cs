@@ -34,6 +34,7 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the titles and axis labels
 			myPane.Title = "Image Fill Example";
 			myPane.XAxis.Title = "Region";
 			myPane.YAxis.Title = "Astronomy Sector Sales";
@@ -43,20 +44,28 @@ namespace ZedGraph.Demo
 			double[] y2 = { 70, 50, 85, 54, 63 };
 			string[] str = { "North", "South", "West", "East", "Central" };
 
+			// Add a bar to the graph
 			BarItem myCurve = myPane.AddBar( "Curve 1", null, y, Color.White );
-
+			// Access a image from the resources
 			Image image = Bitmap.FromStream(
 				GetType().Assembly.GetManifestResourceStream("ZedGraph.Demo.ngc4414.jpg") );
+			// create a brush with the image
 			TextureBrush brush = new TextureBrush( image );
+			// use the image for the bar fill
 			myCurve.Bar.Fill = new Fill( brush );
+			// turn off the bar border
 			myCurve.Bar.Border.IsVisible = false;
 
+			// Add a second bar to the graph
 			myCurve = myPane.AddBar( "Curve 2", null, y2, Color.White );
-
+			// Access a image from the resources
 			Image image2 = Bitmap.FromStream(
 				GetType().Assembly.GetManifestResourceStream("ZedGraph.Demo.ngc4261.gif") );
+			// create a brush with the image
 			TextureBrush brush2 = new TextureBrush( image2 );			
+			// use the image for the bar fill
 			myCurve.Bar.Fill = new Fill( brush2 );
+			// turn off the bar border
 			myCurve.Bar.Border.IsVisible = false;
 			
 			// Draw the X tics between the labels instead of at the labels
@@ -67,8 +76,11 @@ namespace ZedGraph.Demo
 
 			// Set the XAxis to Text type
 			myPane.XAxis.Type = AxisType.Text;
+
+			// Fill the axis background with a color gradient
 			myPane.AxisFill = new Fill( Color.White, Color.SteelBlue, 45.0f );
 
+			// disable the legend
 			myPane.Legend.IsVisible = false;
 			
 			base.ZedGraphControl.AxisChange();

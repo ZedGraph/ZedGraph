@@ -35,19 +35,19 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the title and axis labels
 			myPane.Title = "My Test Graph\n(For CodeProject Sample)";
 			myPane.XAxis.Title = "My X Axis";
 			myPane.YAxis.Title = "My Y Axis";
 			
 			// Make up some data arrays based on the Sine function
-			double x, y1, y2;
 			PointPairList list1 = new PointPairList();
 			PointPairList list2 = new PointPairList();
 			for ( int i=0; i<36; i++ )
 			{
-				x = (double) i + 5;
-				y1 = 1.5 + Math.Sin( (double) i * 0.2 );
-				y2 = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 ) );
+				double x = (double) i + 5;
+				double y1 = 1.5 + Math.Sin( (double) i * 0.2 );
+				double y2 = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 ) );
 				list1.Add( x, y1 );
 				list2.Add( x, y2 );
 			}

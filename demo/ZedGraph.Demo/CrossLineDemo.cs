@@ -1,3 +1,21 @@
+//============================================================================
+//ZedGraph Class Library - A Flexible Charting Library for .Net
+//Copyright (C) 2005 John Champion and Jerry Vos
+//
+//This library is free software; you can redistribute it and/or
+//modify it under the terms of the GNU Lesser General Public
+//License as published by the Free Software Foundation; either
+//version 2.1 of the License, or (at your option) any later version.
+//
+//This library is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public
+//License along with this library; if not, write to the Free Software
+//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//=============================================================================
 using System;
 using System.Drawing;
 using System.Collections;
@@ -17,16 +35,11 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the titles and axis labels
 			myPane.Title = "Axis Cross Demo";
 			myPane.XAxis.Title = "My X Axis";
 			myPane.YAxis.Title = "My Y Axis";
 			
-			// Create a new graph with topLeft at (40,40) and size 600x400
-			//myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
-			//	"My Test Graph\n(For CodeProject Sample)",
-			//	"My X Axis",
-			//	"My Y Axis" );
-
 			// Make up some data arrays based on the Sine function
 			double x, y;
 			PointPairList list = new PointPairList();
@@ -42,7 +55,9 @@ namespace ZedGraph.Demo
 			LineItem myCurve = myPane.AddCurve( "Parabola",
 				list, Color.Green, SymbolType.Diamond );
 
+			// Set the Y axis intersect the X axis at an X value of 0.0
 			myPane.YAxis.Cross = 0.0;
+			// Turn off the axis frame and all the opposite side tics
 			myPane.AxisBorder.IsVisible = false;
 			myPane.XAxis.IsOppositeTic = false;
 			myPane.XAxis.IsMinorOppositeTic = false;

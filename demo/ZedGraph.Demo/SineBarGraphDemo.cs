@@ -34,11 +34,12 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
-			// Create a new graph with topLeft at (40,40) and size 600x400
+			// Set the title and axis labels
 			myPane.Title = "A Sine wave displayed by a bar graph.";
 			myPane.XAxis.Title = "Label";
 			myPane.YAxis.Title = "My Y Axis";
 
+			// Generate some curve data from the Sine function
 			const int size = 41;
 			string[] labels = new string[size];
 			PointPairList list = new PointPairList();
@@ -54,19 +55,16 @@ namespace ZedGraph.Demo
 				list2.Add( x, y2 );
 			}
 
-			double[] y4 = { 120, 125, 100, 20, 105, 75, -40 };
-
 			// Generate a red bar with "Curve 1" in the legend
 			BarItem myBar = myPane.AddBar( "Curve 1", list, Color.Red );
 
 			// Generate a blue bar with "Curve 2" in the legend
 			myBar = myPane.AddBar( "Curve 2", list2, Color.Blue );
 
-			// Set the XAxis labels
-			myPane.XAxis.TextLabels = labels;
-			// Set the XAxis to Text type
+			// Set the XAxis to ordinal type
 			myPane.XAxis.Type = AxisType.Ordinal;
 
+			// Fill the axis background with a color gradient
 			myPane.AxisFill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 45.0F );
 

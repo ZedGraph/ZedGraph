@@ -35,11 +35,12 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the title and axis labels
 			myPane.Title = "Cat Stats";
 			myPane.XAxis.Title = "Big Cats";
 			myPane.YAxis.Title = "Population";
 			
-			// Make up some random data points
+			// Make up some data points
 			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard" };
 			double[] y = { 100, 115, 75, 22, 98, 40 };
 			double[] y2 = { 120, 175, 95, 57, 113, 110 };
@@ -47,14 +48,17 @@ namespace ZedGraph.Demo
 
 			// Generate a red bar with "Curve 1" in the legend
 			BarItem myCurve = myPane.AddBar( "Here", null, y, Color.Red );
+			// Fill the bar with a red-white-red color gradient for a 3d look
 			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red );
 
 			// Generate a blue bar with "Curve 2" in the legend
 			myCurve = myPane.AddBar( "There", null, y2, Color.Blue );
+			// Fill the bar with a Blue-white-Blue color gradient for a 3d look
 			myCurve.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue );
 
 			// Generate a green bar with "Curve 3" in the legend
 			myCurve = myPane.AddBar( "Elsewhere", null, y3, Color.Green );
+			// Fill the bar with a Green-white-Green color gradient for a 3d look
 			myCurve.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green );
 
 			// Draw the X tics between the labels instead of at the labels
@@ -65,6 +69,7 @@ namespace ZedGraph.Demo
 			// Set the XAxis to Text type
 			myPane.XAxis.Type = AxisType.Text;
 
+			// Set the bar type to stack, which stacks the bars by automatically accumulating the values
 			myPane.BarType = BarType.Stack;
 			
 			base.ZedGraphControl.AxisChange();

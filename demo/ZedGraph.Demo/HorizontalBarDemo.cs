@@ -36,42 +36,49 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the title and axis labels
 			myPane.Title = "Horizontal Bar Graph";
 			myPane.XAxis.Title = "Performance Factor";
 			myPane.YAxis.Title = "Grouping";
 			
+			// Enter some random data values
 			double[] y = { 100, 115, 75, -22, 98, 40, -10 };
 			double[] y2 = { 90, 100, 95, -35, 80, 35, 35 };
 			double[] y3 = { 80, 110, 65, -15, 54, 67, 18 };
 
-			// Generate a red bar with "Curve 1" in the legend
+			// Generate a bar with "Curve 1" in the legend
 			BarItem myCurve = myPane.AddBar( "Curve 1", y, null, Color.Red );
-			myCurve.Bar.Fill = new Fill( Color.White, Color.Red, 90F );
+			// Fill the bar with a red-white-red gradient
+			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 90F );
 			
-			// Generate a blue bar with "Curve 2" in the legend
+			// Generate a bar with "Curve 2" in the legend
 			myCurve = myPane.AddBar( "Curve 2", y2, null, Color.Blue );
-			myCurve.Bar.Fill = new Fill( Color.White, Color.Blue, 90F );
+			// Fill the bar with a blue-white-blue gradient for a 3d look
+			myCurve.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 90F );
 
-			// Generate a green bar with "Curve 3" in the legend
+			// Generate a bar with "Curve 3" in the legend
 			myCurve = myPane.AddBar( "Curve 3", y3, null, Color.Green );
+			// Fill the bar with a Green-white-Green gradient for a 3d look
 			myCurve.Bar.Fill = new Fill( Color.White, Color.Green, 90F );
 
 			// Draw the X tics between the labels instead of at the labels
 			myPane.YAxis.IsTicsBetweenLabels = true;
 
-			// Set the XAxis to Text type
+			// Set the XAxis to an ordinal type
 			myPane.YAxis.Type = AxisType.Ordinal;
+			// draw the X axis zero line
 			myPane.XAxis.IsZeroLine = true;
 
 			//This is the part that makes the bars horizontal
 			myPane.BarBase = BarBase.Y;
 			
+			// Fill the axis background with a color gradient
 			myPane.AxisFill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 45.0F );
 
 			base.ZedGraphControl.AxisChange();
 
-			// The BarValueHandler is a helper that does some position calculations for us.
+			// The ValueHandler is a helper that does some position calculations for us.
 			ValueHandler valueHandler = new ValueHandler( myPane, true );
 
 			// Display a value for the maximum of each bar cluster
@@ -90,6 +97,7 @@ namespace ZedGraph.Demo
 					for ( int i=0; i<points.Count; i++ )
 					{
 						double xVal = points[i].X;
+						// Calculate the Y value at the center of each bar
 						double yVal = valueHandler.BarCenterValue( curve, curve.GetBarWidth( myPane ),
 									i, points[i].Y, ord );
 

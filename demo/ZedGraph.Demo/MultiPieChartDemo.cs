@@ -34,51 +34,70 @@ namespace ZedGraph.Demo
 		{
 			MasterPane myMaster = base.MasterPane;
 
+			// Set the master pane title
 			myMaster.Title = "Multiple Pie Charts on a MasterPane";
 			myMaster.IsShowTitle = true ;
+
+			// Fill the masterpane background with a color gradient
 			myMaster.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+
+			// Set the margins and the space between panes to 10 points
 			myMaster.MarginAll = 10;
 			myMaster.InnerPaneGap = 10;
-			myMaster.Legend.Position = LegendPos.TopCenter ;
-			myMaster.HasUniformLegendEntries = true ;
-			myMaster.Legend.IsVisible = true ;
 
-			double [] values =   { 15, 15, 40, 20 } ;
-			double [] values2 =   { 250, 50, 400, 50 } ;
+			// Enable the masterpane legend
+			myMaster.Legend.IsVisible = true ;
+			myMaster.Legend.Position = LegendPos.TopCenter;
+			myMaster.HasUniformLegendEntries = true;
+
+			// Enter some data values
+			double [] values = { 15, 15, 40, 20 } ;
+			double [] values2 = { 250, 50, 400, 50 } ;
 			Color [] colors = { Color.Red, Color.Blue, Color.Green, Color.Yellow } ;
-			double [] displacement = {	.0,.0,.0,.0 } ;
+			double [] displacement = { .0,.0,.0,.0 } ;
 			string [] labels = { "East", "West", "Central", "Canada" } ;
 			
+			// Remove the default GraphPane that comes with ZedGraphControl
 			myMaster.PaneList.Remove( 0 );
 			
-			for (int x = 0 ; x < 3 ; x++ )
+			// Create some GraphPanes
+			for ( int x=0; x<3; x++ )
 			{
-				GraphPane myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
-					"2003 Regional Sales", "", "" );
-				myPane.PaneFill = new Fill( Color.Cornsilk );
-				myPane.AxisFill = new Fill( Color.Cornsilk );
-				myPane.Legend.Position = LegendPos.Right ;
-				myPane.Legend.IsVisible = false	 ;
-				PieItem segment1 = myPane.AddPieSlice ( 20, Color.Blue, .10, "North") ;
-				PieItem segment2 = myPane.AddPieSlice ( 40, Color.Red, 0, "South") ;
-				PieItem segment3 = myPane.AddPieSlice ( 30, Color.Yellow,.0, "East") ;
-				PieItem segment4 = myPane.AddPieSlice ( 10.21, Color.Green, .20, "West") ;
-				PieItem segment5 = myPane.AddPieSlice ( 10.5, Color.Aquamarine, .0, "Canada") ;
-				segment1.LabelType = PieLabelType.Name_Value ;
-				segment2.LabelType = PieLabelType.Name_Value ;
-				segment3.LabelType = PieLabelType.Name_Value ;
-				segment4.LabelType = PieLabelType.Name_Value ;
-				segment5.LabelType = PieLabelType.Name_Value ;
+				// Create the GraphPane
+				GraphPane myPane = new GraphPane();
+				myPane.Title = "2003 Regional Sales";
 
+				// Fill the pane background with a solid color
+				myPane.PaneFill = new Fill( Color.Cornsilk );
+				// Fill the axis background with a solid color
+				myPane.AxisFill = new Fill( Color.Cornsilk );
+
+				// Hide the GraphPane legend
+				myPane.Legend.IsVisible = false	 ;
+
+				// Add some pie slices
+				PieItem segment1 = myPane.AddPieSlice( 20, Color.Blue, .10, "North" );
+				PieItem segment2 = myPane.AddPieSlice( 40, Color.Red, 0, "South" );
+				PieItem segment3 = myPane.AddPieSlice( 30, Color.Yellow, .0, "East" );
+				PieItem segment4 = myPane.AddPieSlice( 10.21, Color.Green, .20, "West" );
+				PieItem segment5 = myPane.AddPieSlice( 10.5, Color.Aquamarine, .0, "Canada" );
+				segment1.LabelType = PieLabelType.Name_Value;
+				segment2.LabelType = PieLabelType.Name_Value;
+				segment3.LabelType = PieLabelType.Name_Value;
+				segment4.LabelType = PieLabelType.Name_Value;
+				segment5.LabelType = PieLabelType.Name_Value;
+
+				// Add the graphpane to the masterpane
 				myMaster.Add( myPane );
 			}
 			
+			// Tell ZedGraph to auto layout the graphpanes
 			Graphics g = this.ZedGraphControl.CreateGraphics();
-			myMaster.AutoPaneLayout( g, PaneLayout.ExplicitRow12 );
+			myMaster.AutoPaneLayout( g, PaneLayout.ExplicitRow12 );			
+			g.Dispose();
 
 			base.ZedGraphControl.AxisChange();
-			
-			g.Dispose();
+
 		}
 	}
 }

@@ -35,11 +35,12 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the titles and axis labels
 			myPane.Title = "My Test Date Graph";
 			myPane.XAxis.Title = "Date";
 			myPane.YAxis.Title = "My Y Axis";
 			
-			// Make up some random data points
+			// Make up some data points from the Sine function
 			PointPairList list = new PointPairList();
 			PointPairList list2 = new PointPairList();
 			for ( int i=0; i<36; i++ )
@@ -51,21 +52,27 @@ namespace ZedGraph.Demo
 				list.Add( x, y );
 				list2.Add( x, y2 );
 			}
-			// Generate a red curve with diamond
-			// symbols, and "My Curve" in the legend
-			LineItem myCurve2 = myPane.AddCurve( "My Curve 2",
-				list, Color.Blue, SymbolType.Circle );
+
+			// Generate a blue curve with circle symbols, and "My Curve 2" in the legend
+			LineItem myCurve2 = myPane.AddCurve( "My Curve 2", list, Color.Blue,
+									SymbolType.Circle );
+			// Fill the area under the curve with a white-red gradient at 45 degrees
 			myCurve2.Line.Fill = new Fill( Color.White, Color.Red, 45F );
+			// Make the symbols opaque by filling them with white
 			myCurve2.Symbol.Fill = new Fill( Color.White );
 
+			// Generate a red curve with diamond symbols, and "My Curve" in the legend
 			LineItem myCurve = myPane.AddCurve( "My Curve",
 				list2, Color.MediumVioletRed, SymbolType.Diamond );
+			// Fill the area under the curve with a white-green gradient
 			myCurve.Line.Fill = new Fill( Color.White, Color.Green );
+			// Make the symbols opaque by filling them with white
 			myCurve.Symbol.Fill = new Fill( Color.White );
 			
 			// Set the XAxis to date type
 			myPane.XAxis.Type = AxisType.Date;
 
+			// Fill the axis background with a color gradient
 			myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, 45F );
 
 			base.ZedGraphControl.AxisChange();

@@ -36,11 +36,12 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the title and axis labels
 			myPane.Title = "PVT Properties";
 			myPane.XAxis.Title = "Pressure (atm)";
 			myPane.YAxis.Title = "Temperature (C)";
 			
-			// Make up some random data points
+			// Enter some calculated data constants
 			double[] x = new double[84];
 			double[] y = new double[84];
 			double[] z = new double[84];
@@ -132,19 +133,25 @@ namespace ZedGraph.Demo
 
 			PointPairList pp = new PointPairList( y, x, z );
 
-			// Generate a red curve with diamond
-			// symbols, and "My Curve" in the legend
-			LineItem myCurve = myPane.AddCurve( "Gas Data",
-				pp, Color.Red, SymbolType.Diamond );
-
+			// Generate a red curve with diamond symbols, and "Gas Data" in the legend
+			LineItem myCurve = myPane.AddCurve( "Gas Data", pp, Color.Red,
+										SymbolType.Diamond );
 			myCurve.Symbol.Size = 12;
+			// Set up a red-blue color gradient to be used for the fill
 			myCurve.Symbol.Fill = new Fill( Color.Red, Color.Blue );
+			// Turn off the symbol borders
 			myCurve.Symbol.Border.IsVisible = false;
+			// Instruct ZedGraph to fill the symbols by selecting a color out of the
+			// red-blue gradient based on the Z value.  A value of 19 or less will be red,
+			// a value of 34 or more will be blue, and values in between will be a
+			// linearly apportioned color between red and blue.
 			myCurve.Symbol.Fill.Type = FillType.GradientByZ;
 			myCurve.Symbol.Fill.RangeMin = 19;
 			myCurve.Symbol.Fill.RangeMax = 34;
+			// Turn off the line, so the curve will by symbols only
 			myCurve.Line.IsVisible = false;
 
+			// Display a text item with "MW = 34" on the graph
 			TextItem text = new TextItem( "MW = 34", 12.9F, 110, CoordType.AxisXYScale );
 			text.FontSpec.FontColor = Color.Blue;
 			text.FontSpec.Border.IsVisible = false;
@@ -152,6 +159,7 @@ namespace ZedGraph.Demo
 			text.FontSpec.Size = 14;
 			myPane.GraphItemList.Add( text );
 
+			// Display a text item with "MW = 19" on the graph
 			text = new TextItem( "MW = 19", 25, 110, CoordType.AxisXYScale );
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.Border.IsVisible = false;
@@ -159,15 +167,22 @@ namespace ZedGraph.Demo
 			text.FontSpec.Size = 14;
 			myPane.GraphItemList.Add( text );
 			
+
+			// Show the X and Y grids
 			myPane.XAxis.IsShowGrid = true;
+			myPane.YAxis.IsShowGrid = true;
+
+			// Set the x and y scale and title font sizes to 14
 			myPane.XAxis.ScaleFontSpec.Size = 14;
 			myPane.XAxis.TitleFontSpec.Size = 14;
 			myPane.YAxis.ScaleFontSpec.Size = 14;
 			myPane.YAxis.TitleFontSpec.Size = 14;
-			myPane.YAxis.IsShowGrid = true;
+			// Set the GraphPane title font size to 16
 			myPane.FontSpec.Size = 16;
+			// Turn off the legend
 			myPane.Legend.IsVisible = false;
 			
+			// Fill the axis background with a color gradient
 			myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
 
 			base.ZedGraphControl.AxisChange();

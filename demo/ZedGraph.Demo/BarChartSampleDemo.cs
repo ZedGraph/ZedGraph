@@ -35,6 +35,7 @@ namespace ZedGraph.Demo
 		{
 			GraphPane myPane = base.GraphPane;
 
+			// Set the titles and axis labels
 			myPane.Title = "My Test Bar Graph";
 			myPane.XAxis.Title = "Label";
 			myPane.YAxis.Title = "My Y Axis";
@@ -76,8 +77,10 @@ namespace ZedGraph.Demo
 			// Set the XAxis to Text type
 			myPane.XAxis.Type = AxisType.Text;
 
+			// Fill the axis area with a gradient
 			myPane.AxisFill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 90F );
+			// Fill the pane area with a solid color
 			myPane.PaneFill = new Fill( Color.FromArgb( 250, 250, 255) );
 
 			base.ZedGraphControl.AxisChange();

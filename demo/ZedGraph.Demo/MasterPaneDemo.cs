@@ -34,19 +34,25 @@ namespace ZedGraph.Demo
 		{
 			MasterPane myMaster = base.MasterPane;
 
+			// Set the master pane title
 			myMaster.Title = "MasterPane Test";
-			myMaster.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
 			myMaster.IsShowTitle = true;
+
+			// Fill the pane background with a color gradient
+			myMaster.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
 			
-			myMaster.Tag = "This is my tag";
+			// Set the margins and the space between panes to 10 points
 			myMaster.MarginAll = 10;
 			myMaster.InnerPaneGap = 10;
+
+			// Enable the master pane legend
 			myMaster.Legend.IsVisible = true;
 			myMaster.Legend.Position = LegendPos.TopCenter;
 
+			// Add a confidential stamp
 			TextItem text = new TextItem( "Confidential", 0.80F, 0.12F );
 			text.Location.CoordinateFrame = CoordType.PaneFraction;
-
+			// angle the text at 15 degrees
 			text.FontSpec.Angle = 15.0F;
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.IsBold = true;
@@ -54,58 +60,60 @@ namespace ZedGraph.Demo
 			text.FontSpec.Border.IsVisible = false;
 			text.FontSpec.Border.Color = Color.Red;
 			text.FontSpec.Fill.IsVisible = false;
-
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
 			myMaster.GraphItemList.Add( text );
 
+			// Add a draft watermark
 			text = new TextItem("DRAFT", 0.5F, 0.5F );
 			text.Location.CoordinateFrame = CoordType.PaneFraction;
-
+			// tilt the text at 30 degrees
 			text.FontSpec.Angle = 30.0F;
+			// Use the alpha value (70) to make the text semi-transparent (a watermark)
 			text.FontSpec.FontColor = Color.FromArgb( 70, 255, 100, 100 );
 			text.FontSpec.IsBold = true;
 			text.FontSpec.Size = 100;
 			text.FontSpec.Border.IsVisible = false;
 			text.FontSpec.Fill.IsVisible = false;
-
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Center;
 			text.ZOrder = ZOrder.A_InFront;
-			
 			myMaster.GraphItemList.Add( text );
+
+			// Remove the default pane that comes with the ZedGraphControl.MasterPane
 			myMaster.PaneList.Remove( 0 );
 			
 			for ( int j=0; j<6; j++ )
 			{
-				// Create a new graph with topLeft at (40,40) and size 600x400
-				GraphPane myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
-					"My Test Graph #" + (j+1).ToString(),
-					"X Axis",
-					"Y Axis" );
+				// Create a new GraphPane
+				GraphPane myPane = new GraphPane();
+				myPane.Title = "My Test Graph #" + (j+1).ToString();
+				myPane.XAxis.Title = "X Axis";
+				myPane.YAxis.Title = "Y Axis";
 
+				// Fill the pane background with a color gradient
 				myPane.PaneFill = new Fill( Color.White, Color.LightYellow, 45.0F );
+				// Reduce the base dimension to 6 inches, since these panes tend to be smaller
 				myPane.BaseDimension = 6.0F;
-				myPane.Tag = "MyTag" + j;
 
 				// Make up some data arrays based on the Sine function
-				double x, y;
 				PointPairList list = new PointPairList();
 				for ( int i=0; i<36; i++ )
 				{
-					x = (double) i + 5;
-					y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 + (double) j ) );
+					double x = (double) i + 5;
+					double y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 + (double) j ) );
 					list.Add( x, y );
 				}
 
-				// Generate a red curve with diamond
-				// symbols, and "Porsche" in the legend
+				// Generate a red curve with diamond symbols
 				LineItem myCurve = myPane.AddCurve( "label" + j.ToString(),
 					list, Color.Red, SymbolType.Diamond );
 
+				// Add the new GraphPane to the MasterPane
 				myMaster.Add( myPane );
 			}
 
+			// Tell ZedGraph to auto layout all the panes
 			Graphics g = base.ZedGraphControl.CreateGraphics();
 			myMaster.AutoPaneLayout( g, PaneLayout.SquareColPreferred );
 			g.Dispose();
