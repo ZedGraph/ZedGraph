@@ -31,12 +31,12 @@ namespace ZedGraph
 	#region Generic View State Assistant
 
 	/// <summary>
-	/// 
 	/// </summary>
 	/// <author>Darren Martz</author>
 	public class GenericViewStateAssistant
 	{
 		private ArrayList list = new ArrayList();
+
 		protected class AssistNode
 		{
 			public AssistNode(char code, Type type)
@@ -726,7 +726,7 @@ namespace ZedGraph
 				
 		#region IEnumerable Implementation
 		/// <summary>
-		/// <see cref="System.Collections.IEnumerator.GetEnumerator"/> 
+		/// <see cref="System.Collections.IEnumerable.GetEnumerator"/> 
 		/// </summary>
 		/// <returns></returns>
 		public IEnumerator GetEnumerator() 
@@ -913,7 +913,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Removes item based on RemoveAt
 		/// <see cref="IList.RemoveAt"/>
-		/// <seealso cref="System.Collections.RemoveAt"/>
+		/// <seealso cref="CollectionBase.RemoveAt"/>
 		/// </summary>
 		/// <param name="index"></param>
 		void IList.RemoveAt(int index) 

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.20 $ $Date: 2005-02-11 05:20:42 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2005-02-15 04:50:02 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -1727,7 +1727,7 @@ namespace ZedGraph
 			set { gridDashOff = value; }
 		}
 		/// <summary>
-		/// The default pen width used for drawing the grid lines.
+		/// The pen width used for drawing the grid lines.
 		/// </summary>
         /// <value>The grid pen width is defined in points (1/72 inch)</value>
         /// <seealso cref="IsShowGrid"/>
@@ -1962,8 +1962,8 @@ namespace ZedGraph
 
 	#region Label Properties
 		/// <summary>
-		/// Gets or sets the property that controls the magnitude factor (power of 10) for
-		/// this scale.
+		/// Gets or sets the property that controls whether or not the magnitude factor (power of 10) for
+		/// this scale will be included in the label.
 		/// </summary>
 		/// <remarks>
 		/// For large scale values, a "magnitude" value (power of 10) is automatically

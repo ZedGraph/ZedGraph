@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-02-14 23:32:57 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-02-15 04:50:02 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -192,6 +192,10 @@ namespace ZedGraph
 
 	#region Attributes
 
+		/// <summary>
+		/// The <see cref="String"/> name of the data member that contains the data to be
+		/// bound to the graph.
+		/// </summary>
 		[Category("Data"),NotifyParentProperty(true),
 		Description("Optional binding member name for populating curve items with values")]
 		public string DataMember
@@ -204,6 +208,9 @@ namespace ZedGraph
 			set { ViewState["DataMember"] = value; }
 		}
 
+		/// <summary>
+		/// The object reference that points to a data source from which to bind curve data.
+		/// </summary>
 		[Bindable(true),Category("Data"),NotifyParentProperty(true)]
 		public object DataSource
 		{
@@ -374,6 +381,12 @@ namespace ZedGraph
 			set { ViewState["IsPenWidthScaled"] = value; }			
 		}
 
+		/// <summary>
+		/// Gets or sets a boolean flag value that, if true, will cause the
+		/// <see cref="ZedGraph.GraphPane.AxisChange"/> method to be called when
+		/// <see cref="CreateGraph"/> is called.
+		/// </summary>
+		/// <value>A boolean value, true to call <see cref="GraphPane.AxisChange"/>, false otherwise</value>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true),DefaultValue("false")]
 		public bool AxisChanged
 		{
@@ -909,6 +922,14 @@ namespace ZedGraph
 
 	#region Process DataSource
 
+		/// <summary>
+		/// Provides binding between <see cref="DataSource"/> and the specified pane.  Extracts the
+		/// data from <see cref="DataSource"/> and copies it into the appropriate
+		/// <see cref="ZedGraph.PointPairList"/> for each <see cref="ZedGraph.CurveItem"/> in the
+		/// specified <see cref="ZedGraph.GraphPane"/>.
+		/// </summary>
+		/// <param name="g">The <see cref="Graphics"/> object to be used for rendering the data.</param>
+		/// <param name="pane">The <see cref="ZedGraph.GraphPane"/> object which will receive the data.</param>
 		protected void PopulateByDataSource( Graphics g, GraphPane pane )
 		{
 			if ( this.DataSource == null ) return;
@@ -960,6 +981,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="OutputStream">A <see cref="Stream"/> in which to output the ZedGraph
 		/// <see cref="System.Drawing.Image"/>.</param>
+		/// <param name="Format">The <see cref="ImageFormat"/> type to be output.</param>
 		protected void CreateGraph( System.IO.Stream OutputStream, ImageFormat Format )
 		{			
 			RectangleF rect = new RectangleF( 0, 0, this.Width-1, this.Height-1 );

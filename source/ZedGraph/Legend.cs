@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.21 $ $Date: 2005-02-11 05:20:42 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2005-02-15 04:50:02 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -445,6 +445,15 @@ namespace ZedGraph
 			float	charHeight = this.FontSpec.GetHeight( scaleFactor ),
 					halfCharHeight = charHeight / 2.0F;
 			float charWidth = this.FontSpec.GetWidth( g, scaleFactor );
+
+			// Check for bad data values
+			if ( this.hStack <= 0 )
+				this.hStack = 1;
+			if ( this.legendItemWidth <= 0 )
+				this.legendItemWidth = 100;
+			if ( this.legendItemHeight <= 0 )
+				this.legendItemHeight = charHeight;
+
 			//float gap = pane.ScaledGap( scaleFactor );
 
 			int		iEntry = 0;

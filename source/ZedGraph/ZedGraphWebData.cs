@@ -89,6 +89,10 @@ namespace ZedGraph
 
 		#region Properties
 		
+		/// <summary>
+		/// The <see cref="String"/> name of the data member that contains the data to be
+		/// bound to this <see cref="ZedGraph.CurveItem"/>.
+		/// </summary>
 		[Category("Data"),NotifyParentProperty(true),
 		Description("Optional binding member name for populating this curve item with values")]
 		public string DataMember
@@ -302,6 +306,12 @@ namespace ZedGraph
 			set { ViewState["PenWidth"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="Border.InflateFactor"/>.
+		/// </summary>
+		/// <remarks> Gets or sets the amount of inflation to be done on the rectangle
+		/// before rendering.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float InflateFactor
 		{
@@ -517,7 +527,7 @@ namespace ZedGraph
 		}
 		
 		// not accessible via webcontrol properties
-		public Brush Brush = null;			
+		private Brush Brush = null;			
 	}
 
 	#endregion
@@ -1274,6 +1284,12 @@ namespace ZedGraph
 			set { ViewState["LabelType"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.PieItem.ValueDecimalDigits"/>.
+		/// </summary>
+		/// <remarks> Gets or sets the number of decimal digits to be displayed in a <see cref="PieItem"/> 
+		/// value label.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public int ValueDecimalDigits
 		{
@@ -1285,6 +1301,12 @@ namespace ZedGraph
 			set { ViewState["ValueDecimalDigits"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.PieItem.PercentDecimalDigits"/>.
+		/// </summary>
+		/// <remarks> Gets or sets the number of decimal digits to be displayed in a <see cref="PieItem"/> 
+		/// percent label.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public int PercentDecimalDigits
 		{
@@ -1296,6 +1318,12 @@ namespace ZedGraph
 			set { ViewState["PercentDecimalDigits"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.PieItem.LabelDetail"/>.
+		/// </summary>
+		/// <remarks> Gets or sets the <see cref="TextItem"/> to be used
+		/// for displaying this <see cref="PieItem"/>'s label.
+		/// </remarks>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -1696,7 +1724,7 @@ namespace ZedGraph
 			item.IsOppositeTic = this.IsOppositeTic;
 			item.IsMinorInsideTic = this.IsMinorInsideTic;
 			item.IsMinorOppositeTic = this.IsMinorOppositeTic;
-			item.IsTicsBetweenLabels = this.IsTicBetweenLabels;
+			item.IsTicsBetweenLabels = this.IsTicsBetweenLabels;
 			item.TicPenWidth = this.TicPenWidth;
 			item.IsShowGrid = this.IsShowGrid;
 			item.IsZeroLine = this.IsZeroLine;
@@ -1781,6 +1809,19 @@ namespace ZedGraph
 			set { ViewState["GridColor"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Cross"/>.
+		/// </summary>
+		/// <remarks>This property allows the axis to be shifted away from its default location.
+		/// For example, for a graph with an X range from -100 to +100, the Y Axis can be located
+		/// at the X=0 value rather than the left edge of the axisRect.  This value can be set
+		/// automatically based on the state of <see cref="CrossAuto"/>.  If
+		/// this value is set manually, then <see cref="CrossAuto"/> will
+		/// also be set to false.  The "other" axis is the axis the handles the second dimension
+		/// for the graph.  For the XAxis, the "other" axis is the YAxis.  For the YAxis or
+		/// Y2Axis, the "other" axis is the XAxis.
+		/// </remarks>
+		/// <value> The value is defined in user scale units </value>
 		[NotifyParentProperty(true)]
 		public double Cross
 		{
@@ -1789,9 +1830,15 @@ namespace ZedGraph
 				object x = ViewState["Cross"]; 
 				return (null == x) ? 0 : (double)x;
 			}
-			set { ViewState["Cross"] = value; }
+			set { ViewState["Cross"] = value; ViewState["CrossAuto"] = false; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinAuto"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the minimum scale value <see cref="ZedGraph.Axis.Min"/>
+		/// is set automatically.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool MinAuto
 		{
@@ -1803,6 +1850,12 @@ namespace ZedGraph
 			set { ViewState["MinAuto"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MaxAuto"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the maximum scale value <see cref="ZedGraph.Axis.Max"/>
+		/// is set automatically.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool MaxAuto
 		{
@@ -1814,6 +1867,12 @@ namespace ZedGraph
 			set { ViewState["MaxAuto"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.StepAuto"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the scale major step size value <see cref="ZedGraph.Axis.Step"/>
+		/// is set automatically.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool StepAuto
 		{
@@ -1825,6 +1884,12 @@ namespace ZedGraph
 			set { ViewState["StepAuto"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinorStepAuto"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the scale minor step size value <see cref="ZedGraph.Axis.MinorStep"/>
+		/// is set automatically.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool MinorStepAuto
 		{
@@ -1836,6 +1901,12 @@ namespace ZedGraph
 			set { ViewState["MinorStepAuto"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.CrossAuto"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the axis intersection point <see cref="ZedGraph.Axis.Cross"/>
+		/// is set automatically.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool CrossAuto
 		{
@@ -1847,6 +1918,15 @@ namespace ZedGraph
 			set { ViewState["CrossAuto"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinGrace"/>.
+		/// </summary>
+		/// <remarks> This is the "grace" value applied to the minimum data range.
+		/// This value is expressed as a fraction of the total data range.  For example, assume the data
+		/// range is from 4.0 to 16.0, leaving a range of 12.0.  If MinGrace is set to
+		/// 0.1, then 10% of the range, or 1.2 will be subtracted from the minimum data value.
+		/// The scale will then be ranged to cover at least 2.8 to 16.0.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public double MinGrace
 		{
@@ -1858,6 +1938,15 @@ namespace ZedGraph
 			set { ViewState["MinGrace"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MaxGrace"/>.
+		/// </summary>
+		/// <remarks> This is the "grace" value applied to the maximum data range.
+		/// This value is expressed as a fraction of the total data range.  For example, assume the data
+		/// range is from 4.0 to 16.0, leaving a range of 12.0.  If MaxGrace is set to
+		/// 0.1, then 10% of the range, or 1.2 will be added to the maximum data value.
+		/// The scale will then be ranged to cover at least 4.0 to 17.2.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public double MaxGrace
 		{
@@ -1869,6 +1958,16 @@ namespace ZedGraph
 			set { ViewState["MaxGrace"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinSpace"/>.
+		/// </summary>
+		/// <remarks> This is the minimum axis space allocation.
+		/// This term, expressed in points (1/72 inch) and scaled according to <see cref="PaneBase.CalcScaleFactor"/>
+        /// for the <see cref="ZedGraph.GraphPane"/>, determines the minimum amount of space
+		/// an axis must have between the <see cref="ZedGraph.GraphPane.AxisRect"/> and the
+		/// <see cref="PaneBase.PaneRect"/>.  This minimum space
+		/// applies whether <see cref="ZedGraph.Axis.IsVisible"/> is true or false.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float MinSpace
 		{
@@ -1880,6 +1979,12 @@ namespace ZedGraph
 			set { ViewState["MinSpace"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.TicSize"/>.
+		/// </summary>
+		/// <remarks> The length of the <see cref="ZedGraph.Axis"/> major tic marks, expressed in points
+		/// (1/72nd inch).
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float TicSize
 		{
@@ -1891,6 +1996,12 @@ namespace ZedGraph
 			set { ViewState["TicSize"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinorTicSize"/>.
+		/// </summary>
+		/// <remarks> The length of the <see cref="ZedGraph.Axis"/> minor tic marks, expressed in points
+		/// (1/72nd inch).
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float MinorTicSize
 		{
@@ -1902,6 +2013,12 @@ namespace ZedGraph
 			set { ViewState["MinorTicSize"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsTic"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the <see cref="ZedGraph.Axis"/> major tics (where the
+		/// scale labels are located) will be displayed.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsTic
 		{
@@ -1913,6 +2030,12 @@ namespace ZedGraph
 			set { ViewState["IsTic"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsMinorTic"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the <see cref="ZedGraph.Axis"/> minor tics
+		/// will be displayed.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsMinorTic
 		{
@@ -1924,6 +2047,13 @@ namespace ZedGraph
 			set { ViewState["IsMinorTic"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsInsideTic"/>.
+		/// </summary>
+		/// <remarks> This value determines whether or not the major inside tic marks
+		/// are shown.  These are the tic marks on the inside of the <see cref="ZedGraph.Axis"/> border.
+		/// The major tic spacing is controlled by <see cref="ZedGraph.Axis.Step"/>.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsInsideTic
 		{
@@ -1935,6 +2065,14 @@ namespace ZedGraph
 			set { ViewState["IsInsideTic"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsOppositeTic"/>.
+		/// </summary>
+		/// <remarks> This value determines whether or not the major opposite tic marks
+		/// are shown.  These are the tic marks on the inside of the <see cref="ZedGraph.Axis"/> border on
+		/// the opposite side from the axis.
+		/// The major tic spacing is controlled by <see cref="ZedGraph.Axis.Step"/>.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsOppositeTic
 		{
@@ -1946,6 +2084,13 @@ namespace ZedGraph
 			set { ViewState["IsOppositeTic"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsMinorInsideTic"/>.
+		/// </summary>
+		/// <remarks> This value determines whether or not the minor inside tic marks
+		/// are shown.  These are the tic marks on the inside of the <see cref="ZedGraph.Axis"/> border.
+		/// The minor tic spacing is controlled by <see cref="ZedGraph.Axis.MinorStep"/>.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsMinorInsideTic
 		{
@@ -1957,6 +2102,14 @@ namespace ZedGraph
 			set { ViewState["IsMinorInsideTic"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsMinorOppositeTic"/>.
+		/// </summary>
+		/// <remarks> This value determines whether or not the minor opposite tic marks
+		/// are shown.  These are the tic marks on the inside of the <see cref="ZedGraph.Axis"/> border on
+		/// the opposite side from the axis.
+		/// The minor tic spacing is controlled by <see cref="ZedGraph.Axis.MinorStep"/>.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsMinorOppositeTic
 		{
@@ -1968,17 +2121,30 @@ namespace ZedGraph
 			set { ViewState["IsMinorOppositeTic"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsTicsBetweenLabels"/>.
+		/// </summary>
+		/// <remarks> This property determines whether or not the major tics will be drawn
+		/// inbetween the labels, rather than right at the labels.  Note that this setting is only
+		/// applicable if <see cref="ZedGraph.Axis.Type"/> = <see cref="AxisType.Text"/>.
+		/// </remarks>
 		[NotifyParentProperty(true)]
-		public bool IsTicBetweenLabels
+		public bool IsTicsBetweenLabels
 		{
 			get 
 			{ 
-				object x = ViewState["IsTicBetweenLabels"]; 
-				return (null == x) ? false : (bool)x;
+				object x = ViewState["IsTicsBetweenLabels"]; 
+				return (null == x) ? true : (bool)x;
 			}
-			set { ViewState["IsTicBetweenLabels"] = value; }
+			set { ViewState["IsTicsBetweenLabels"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.TicPenWidth"/>.
+		/// </summary>
+		/// <remarks> This property determines the pen width to be used when drawing the tic marks for
+		/// this <see cref="ZedGraph.Axis"/>.  The pen width is expressed in points (1/72nd inch).
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float TicPenWidth
 		{
@@ -1990,6 +2156,12 @@ namespace ZedGraph
 			set { ViewState["TicPenWidth"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsShowGrid"/>.
+		/// </summary>
+		/// <remarks> This property determines if the major <see cref="Axis"/> gridlines
+		/// (at each labeled value) will be visible.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsShowGrid
 		{
@@ -2001,6 +2173,12 @@ namespace ZedGraph
 			set { ViewState["IsShowGrid"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsZeroLine"/>.
+		/// </summary>
+		/// <remarks> This boolean value that determines if a line will be drawn at the
+		/// zero value for the axis.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsZeroLine
 		{
@@ -2012,6 +2190,12 @@ namespace ZedGraph
 			set { ViewState["IsZeroLine"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.GridDashOn"/>.
+		/// </summary>
+		/// <remarks> This is the distance,
+        /// in points (1/72 inch), of the dash segments that make up the dashed grid lines.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float GridDashOn
 		{
@@ -2023,6 +2207,13 @@ namespace ZedGraph
 			set { ViewState["GridDashOn"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.GridDashOff"/>.
+		/// </summary>
+		/// <remarks> This is the distance,
+        /// in points (1/72 inch), of the spaces between the dash segments that make up
+        /// the dashed grid lines.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float GridDashOff
 		{
@@ -2034,6 +2225,11 @@ namespace ZedGraph
 			set { ViewState["GridDashOff"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.GridPenWidth"/>.
+		/// </summary>
+		/// <remarks> The pen width used for drawing the grid lines, expressed in points (1/72nd inch).
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float GridPenWidth
 		{
@@ -2045,6 +2241,12 @@ namespace ZedGraph
 			set { ViewState["GridPenWidth"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsShowMinorGrid"/>.
+		/// </summary>
+		/// <remarks> Determines if the minor <see cref="ZedGraph.Axis"/> gridlines
+		/// (in between each labeled value) will be visible
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsShowMinorGrid
 		{
@@ -2056,6 +2258,12 @@ namespace ZedGraph
 			set { ViewState["IsShowMinorGrid"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinorGridDashOn"/>.
+		/// </summary>
+		/// <remarks> This is the distance,
+        /// in points (1/72 inch), of the dash segments that make up the dashed minor grid lines.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float MinorGridDashOn
 		{
@@ -2067,6 +2275,13 @@ namespace ZedGraph
 			set { ViewState["MinorGridDashOn"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinorGridDashOff"/>.
+		/// </summary>
+		/// <remarks> This is the distance,
+        /// in points (1/72 inch), of the spaces between the dash segments that make up
+        /// the dashed minor grid lines.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float MinorGridDashOff
 		{
@@ -2078,6 +2293,11 @@ namespace ZedGraph
 			set { ViewState["MinorGridDashOff"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinorGridPenWidth"/>.
+		/// </summary>
+		/// <remarks> The pen width used for drawing the minor grid lines, expressed in points (1/72nd inch).
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float MinorGridPenWidth
 		{
@@ -2089,6 +2309,12 @@ namespace ZedGraph
 			set { ViewState["MinorGridPenWidth"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinorGridColor"/>.
+		/// </summary>
+		/// <remarks> The <see cref="System.Drawing.Color"/> to use for drawing this
+		/// <see cref="ZedGraph.Axis"/> minor grid.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public Color MinorGridColor
 		{
@@ -2100,6 +2326,11 @@ namespace ZedGraph
 			set { ViewState["MinorGridColor"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsVisible"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the <see cref="ZedGraph.Axis"/> is shown.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsVisible
 		{
@@ -2111,6 +2342,11 @@ namespace ZedGraph
 			set { ViewState["IsVisible"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsReverse"/>.
+		/// </summary>
+		/// <remarks> Determines if the scale values are reversed for this <see cref="ZedGraph.Axis"/>.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsReverse
 		{
@@ -2122,6 +2358,14 @@ namespace ZedGraph
 			set { ViewState["IsReverse"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Type"/>.
+		/// </summary>
+		/// <remarks> Determines the <see cref="AxisType"/> for this <see cref="ZedGraph.Axis"/>.
+		/// The type can be either <see cref="AxisType.Linear"/>,
+		/// <see cref="AxisType.Log"/>, <see cref="AxisType.Date"/>,
+		/// or <see cref="AxisType.Text"/>.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public AxisType Type
 		{
@@ -2133,6 +2377,18 @@ namespace ZedGraph
 			set { ViewState["Type"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsOmitMag"/>.
+		/// </summary>
+		/// <remarks> This property controls whether or not the magnitude factor (power of 10) for
+		/// this scale will be included in the label.
+		/// For large scale values, a "magnitude" value (power of 10) is automatically
+		/// used for scaling the graph.  This magnitude value is automatically appended
+		/// to the end of the Axis <see cref="ZedGraph.Axis.Title"/> (e.g., "(10^4)") to indicate
+		/// that a magnitude is in use.  This property controls whether or not the
+		/// magnitude is included in the title.  Note that it only affects the axis
+		/// title; a magnitude value may still be used even if it is not shown in the title.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsOmitMag
 		{
@@ -2144,6 +2400,12 @@ namespace ZedGraph
 			set { ViewState["IsOmitMag"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsShowTitle"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the <see cref="ZedGraph.Axis"/>
+		/// <see cref="ZedGraph.Axis.Title"/> will be displayed.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsShowTitle
 		{
@@ -2155,6 +2417,11 @@ namespace ZedGraph
 			set { ViewState["IsShowTitle"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsUseTenPower"/>.
+		/// </summary>
+		/// <remarks> Determines if powers-of-ten notation will be used for the numeric value labels.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsUseTenPower
 		{
@@ -2166,6 +2433,13 @@ namespace ZedGraph
 			set { ViewState["IsUseTenPower"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsPreventLabelOverlap"/>.
+		/// </summary>
+		/// <remarks> This <see cref="bool"/> value determines if ZedGraph will check to
+		/// see if the <see cref="ZedGraph.Axis"/> scale labels are close enough to overlap.  If so,
+		/// ZedGraph will adjust the step size to prevent overlap.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsPreventLabelOverlap
 		{
@@ -2177,6 +2451,12 @@ namespace ZedGraph
 			set { ViewState["IsPreventLabelOverlap"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.ScaleFormatAuto"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the scale label format <see cref="ZedGraph.Axis.ScaleFormat"/>
+		/// is determined automatically based on the range of data values.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool ScaleFormatAuto
 		{
@@ -2188,6 +2468,14 @@ namespace ZedGraph
 			set { ViewState["ScaleFormatAuto"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.ScaleFormat"/>.
+		/// </summary>
+		/// <remarks> The format of the <see cref="ZedGraph.Axis"/> tic labels.
+		/// This property is only used if the <see cref="Type"/> is set to <see cref="AxisType.Date"/>.
+		/// This property may be set automatically by ZedGraph, depending on the state of
+		/// <see cref="ZedGraph.Axis.ScaleFormatAuto"/>.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public string ScaleFormat
 		{
@@ -2196,9 +2484,14 @@ namespace ZedGraph
 				object x = ViewState["ScaleFormat"]; 
 				return (null == x) ? ZedGraph.Axis.Default.ScaleFormat : (string)x;
 			}
-			set { ViewState["ScaleFormat"] = value; }
+			set { ViewState["ScaleFormat"] = value; ViewState["ScaleFormatAuto"] = false; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.ScaleAlign"/>.
+		/// </summary>
+		/// <remarks> Controls the alignment of the <see cref="ZedGraph.Axis"/> tic labels.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public AlignP ScaleAlign
 		{
@@ -2210,6 +2503,13 @@ namespace ZedGraph
 			set { ViewState["ScaleAlign"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.NumDecAuto"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the number of decimal places for value
+		/// labels <see cref="ZedGraph.Axis.NumDec"/> is determined automatically based
+		/// on the magnitudes of the scale values.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool NumDecAuto
 		{
@@ -2221,6 +2521,14 @@ namespace ZedGraph
 			set { ViewState["NumDecAuto"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.NumDec"/>.
+		/// </summary>
+		/// <remarks> The number of decimal places displayed for axis value labels.
+		/// This value can be determined automatically depending on the state of
+		/// <see cref="ZedGraph.Axis.NumDecAuto"/>.  If this value is set manually by the user,
+		/// then <see cref="ZedGraph.Axis.NumDecAuto"/> will also be set to false.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public int NumDec
 		{
@@ -2229,9 +2537,21 @@ namespace ZedGraph
 				object x = ViewState["NumDec"]; 
 				return (null == x) ? 0 : (int)x;
 			}
-			set { ViewState["NumDec"] = value; }
+			set { ViewState["NumDec"] = value; ViewState["NumDecAuto"] = false; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.ScaleMag"/>.
+		/// </summary>
+		/// <remarks> The magnitude multiplier for scale values.
+		/// This is used to limit
+		/// the size of the displayed value labels.  For example, if the value
+		/// is really 2000000, then the graph will display 2000 with a 10^3
+		/// magnitude multiplier.  This value can be determined automatically
+		/// depending on the state of <see cref="ZedGraph.Axis.ScaleMagAuto"/>.
+		/// If this value is set manually by the user,
+		/// then <see cref="ZedGraph.Axis.ScaleMagAuto"/> will also be set to false.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public int ScaleMag
 		{
@@ -2240,9 +2560,17 @@ namespace ZedGraph
 				object x = ViewState["ScaleMag"]; 
 				return (null == x) ? 0 : (int)x;
 			}
-			set { ViewState["ScaleMag"] = value; }
+			set { ViewState["ScaleMag"] = value; ViewState["ScaleMagAuto"] = false; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.ScaleMagAuto"/>.
+		/// </summary>
+		/// <remarks> Determines whether the <see cref="ZedGraph.Axis.ScaleMag"/> value will be set
+		/// automatically based on the data, or manually by the user.
+		/// If the user manually sets the <see cref="ZedGraph.Axis.ScaleMag"/> value, then this
+		/// flag will be set to false.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool ScaleMagAuto
 		{
@@ -2254,6 +2582,12 @@ namespace ZedGraph
 			set { ViewState["ScaleMagAuto"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.ScaleFontSpec"/>.
+		/// </summary>
+		/// <remarks> Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
+		/// the scale values.
+		/// </remarks>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -2265,6 +2599,12 @@ namespace ZedGraph
 			get { return (ZedGraphWebFontSpec)base.GetValue('s'); }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.TitleFontSpec"/>.
+		/// </summary>
+		/// <remarks> Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
+		/// the <see cref="ZedGraph.Axis.Title"/>
+		/// </remarks>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -3043,6 +3383,11 @@ namespace ZedGraph
 
 		#region Properties
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.ArrowItem.Size"/>.
+		/// </summary>
+		/// <remarks> The size of the arrowhead, expressed in points (1/72nd inch).
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float Size
 		{
@@ -3054,6 +3399,12 @@ namespace ZedGraph
 			set { ViewState["Size"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.ArrowItem.PenWidth"/>.
+		/// </summary>
+		/// <remarks> The width of the pen, expressed in points (1/72nd inch), used to draw the
+		/// arrow line segment.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public float PenWidth
 		{
@@ -3065,6 +3416,11 @@ namespace ZedGraph
 			set { ViewState["PenWidth"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.ArrowItem.Color"/>.
+		/// </summary>
+		/// <remarks> The <see cref="System.Drawing.Color"/> value used to draw the <see cref="ZedGraph.ArrowItem"/>.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public Color Color
 		{
@@ -3076,6 +3432,12 @@ namespace ZedGraph
 			set { ViewState["Color"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.ArrowItem.IsArrowHead"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not an arrowhead will be draw.  If false, only a line segment
+		/// will be drawn.
+		/// </remarks>
 		[NotifyParentProperty(true)]
 		public bool IsArrowHead
 		{
@@ -3143,6 +3505,10 @@ namespace ZedGraph
 
 		#region Properties
 
+		/// <summary>
+		/// The <see cref="String"/> url reference from which to get the <see cref="Image"/>
+		/// data for this <see cref="ZedGraph.ImageItem"/>.
+		/// </summary>
 		[NotifyParentProperty(true)]
 		public string ImageUrl
 		{
@@ -3154,6 +3520,14 @@ namespace ZedGraph
 			set { ViewState["ImageUrl"] = value; }
 		}
 
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.ImageItem.IsScaled"/>.
+		/// </summary>
+		/// <remarks>
+		/// Determines if the image will be scaled to the output rectangle (see <see cref="Location"/>).
+		/// </remarks>
+		/// <value>true to scale the image, false to draw the image unscaled, but clipped
+		/// to the destination rectangle</value>
 		[NotifyParentProperty(true)]
 		public bool IsScaled
 		{
