@@ -118,9 +118,6 @@ namespace ZedGraph.LibTest
 		protected GraphPane		myPane, myPane2;
 		protected MasterPane	master = null;
 
-		private bool isResizable = true;
-		PaneLayout paneLayout = PaneLayout.SquareColPreferred;
-
 		private void Form1_Load(object sender, System.EventArgs e)
 		{			
 			Trace.Listeners.Add(new TextWriterTraceListener( @"myTrace.txt" ) );
@@ -129,6 +126,7 @@ namespace ZedGraph.LibTest
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
+#if false
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -321,17 +319,143 @@ namespace ZedGraph.LibTest
 			//newArrow.IsArrowHead = false;
 			newArrow.Size = 10;
 			myPane.GraphItemList.Add( newArrow );
+#endif
+
+#if true
+			master = new MasterPane( "ZedGraph MasterPane Example", new Rectangle( 10, 10, 10, 10 ) );
+
+			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+			//master.IsShowTitle = true;
+
+			//master.MarginAll = 10;
+			//master.InnerPaneGap = 10;
+			master.Legend.IsVisible = true;
+			master.Legend.Position = LegendPos.TopCenter;
+
+			TextItem text = new TextItem( "Priority", 0.88F, 0.12F );
+			text.Location.CoordinateFrame = CoordType.PaneFraction;
+
+			text.FontSpec.Angle = 15.0F;
+			text.FontSpec.FontColor = Color.Red;
+			text.FontSpec.IsBold = true;
+			text.FontSpec.Size = 16;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Border.Color = Color.Red;
+			text.FontSpec.Fill.IsVisible = false;
+
+			text.Location.AlignH = AlignH.Left;
+			text.Location.AlignV = AlignV.Bottom;
+			master.GraphItemList.Add( text );
+
+			text = new TextItem("DRAFT", 0.5F, 0.5F );
+			text.Location.CoordinateFrame = CoordType.PaneFraction;
+
+			text.FontSpec.Angle = 30.0F;
+			text.FontSpec.FontColor = Color.FromArgb( 70, 255, 100, 100 );
+			text.FontSpec.IsBold = true;
+			text.FontSpec.Size = 100;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Fill.IsVisible = false;
+
+			text.Location.AlignH = AlignH.Center;
+			text.Location.AlignV = AlignV.Center;
+			text.ZOrder = ZOrder.A_InFront;
+			
+			master.GraphItemList.Add( text );
+			ColorSymbolRotator rotator = new ColorSymbolRotator();
+
+			for ( int j=0; j<5; j++ )
+			{
+				// Create a new graph with topLeft at (40,40) and size 600x400
+				GraphPane myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+					"Case #" + (j+1).ToString(),
+					"Time, Days",
+					"Rate, m/s" );
+
+				myPane.PaneFill = new Fill( Color.White, Color.LightYellow, 45.0F );
+				myPane.BaseDimension = 6.0F;
+
+				// Make up some data arrays based on the Sine function
+				double x, y;
+				PointPairList list = new PointPairList();
+				for ( int i=0; i<36; i++ )
+				{
+					x = (double) i + 5;
+					y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 + (double) j ) );
+					list.Add( x, y );
+				}
+
+				LineItem myCurve = myPane.AddCurve( "Type " + j.ToString(),
+					list, rotator.NextColor, rotator.NextSymbol );
+				myCurve.Symbol.Fill = new Fill( Color.White );
+
+				master.Add( myPane );
+			}
+
+			Graphics g = this.CreateGraphics();
+			
+			master.AutoPaneLayout( g, PaneLayout.ExplicitRow32 );
+			master.AxisChange( g );
+
+			g.Dispose();
+#endif
+
+#if false
+            myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+				"2004 ZedGraph Sales by Region\n($M)",
+				"",
+				"" );
+
+			myPane.FontSpec.IsItalic = true;
+			myPane.FontSpec.Size = 24f;
+			myPane.FontSpec.Family = "Times";
+			myPane.PaneFill = new Fill( Color.White, Color.Goldenrod, 45.0f );
+			myPane.AxisFill.Type = FillType.None;
+			myPane.Legend.Position = LegendPos.Float ;
+			myPane.Legend.Location = new Location( 0.95f, 0.15f, CoordType.PaneFraction,
+								AlignH.Right, AlignV.Top );
+			myPane.Legend.FontSpec.Size = 10f;
+			myPane.Legend.IsHStack = false;
+			
+			PieItem segment1 = myPane.AddPieSlice( 20, Color.Navy, Color.White, 45f, 0, "North" );
+			PieItem segment3 = myPane.AddPieSlice( 30, Color.Purple, Color.White, 45f, .0, "East" );
+			PieItem segment4 = myPane.AddPieSlice( 10.21, Color.LimeGreen, Color.White, 45f, 0, "West" );
+			PieItem segment2 = myPane.AddPieSlice( 40, Color.SandyBrown, Color.White, 45f, 0.2, "South" );
+			PieItem segment6 = myPane.AddPieSlice( 250, Color.Red, Color.White, 45f, 0, "Europe" );
+			PieItem segment7 = myPane.AddPieSlice( 50, Color.Blue, Color.White, 45f, 0.2, "Pac Rim" );
+			PieItem segment8 = myPane.AddPieSlice( 400, Color.Green, Color.White, 45f, 0, "South America" );
+			PieItem segment9 = myPane.AddPieSlice( 50, Color.Yellow, Color.White, 45f, 0.2, "Africa" );
+			
+			segment2.LabelDetail.FontSpec.FontColor = Color.Red ;
+																																				
+			CurveList curves = myPane.CurveList ;
+			double total = 0 ;
+			for ( int x = 0 ; x <  curves.Count ; x++ )
+				total += ((PieItem)curves[x]).Value ;
+
+			TextItem text = new TextItem( "Total 2004 Sales\n" + "$" + total.ToString () + "M",
+								0.18F, 0.40F, CoordType.PaneFraction );
+			text.Location.AlignH = AlignH.Center;
+			text.Location.AlignV = AlignV.Bottom;
+			text.FontSpec.Border.IsVisible = false ;
+			text.FontSpec.Fill = new Fill( Color.White, Color.FromArgb( 255, 100, 100 ), 45F );
+			text.FontSpec.StringAlignment = StringAlignment.Center ;
+			myPane.GraphItemList.Add( text );
+
+			TextItem text2 = new TextItem( text );
+			text2.FontSpec.Fill = new Fill( Color.Black );
+			text2.Location.X += 0.008f;
+			text2.Location.Y += 0.01f;
+			myPane.GraphItemList.Add( text2 );
+			 
+			myPane.AxisChange( this.CreateGraphics() );
+#endif
 
 			SetSize();
 
-			//			RectangleF myRect = myPane.CalcAxisRect( memGraphics.g );
-			//			myRect.Height -= 100;
-			//			myPane.AxisRect = myRect;
-			//			myPane.AxisChange( this.CreateGraphics() );
-
-			this.WindowState = FormWindowState.Maximized ;
-			if ( myPane != null )
-				myPane.AxisChange( this.CreateGraphics() );
+			//this.WindowState = FormWindowState.Maximized ;
+			if ( this.myPane != null )
+				this.myPane.AxisChange( this.CreateGraphics() );
       
 		}
 
@@ -394,14 +518,16 @@ namespace ZedGraph.LibTest
 			}
 		}
 		
-		private void CopyToPNG( GraphPane thePane )
+		private void CopyToPNG( PaneBase thePane )
 		{
-			myPane.Image.Save(@"c:\zedgraph.png", System.Drawing.Imaging.ImageFormat.Png);
+			if ( thePane != null )
+				thePane.Image.Save(@"c:\zedgraph.png", System.Drawing.Imaging.ImageFormat.Png);
 		}
 
-		private void CopyToGif( GraphPane myPane )
+		private void CopyToGif( GraphPane thePane )
 		{
-			myPane.Image.Save( @"c:\zedgraph.gif", ImageFormat.Gif );
+			if ( thePane != null )
+				thePane.Image.Save( @"c:\zedgraph.gif", ImageFormat.Gif );
 		}
 
 		private void CopyToClip( GraphPane thePane )
@@ -472,25 +598,7 @@ namespace ZedGraph.LibTest
 
 		private void Form1_Resize(object sender, System.EventArgs e)
 		{
-			if ( this.master != null )
-			{
-				memGraphics.CreateDoubleBuffer( this.CreateGraphics(),
-					this.ClientRectangle.Width, this.ClientRectangle.Height );
-
-				SetSize();
-				master.AxisChange( this.CreateGraphics() );		//returns with panes allocated
-				master.AutoPaneLayout( this.CreateGraphics(), this.paneLayout );
-				Invalidate();
-			}
-			else if ( this.myPane != null )
-			{
-				memGraphics.CreateDoubleBuffer( this.CreateGraphics(),
-					this.ClientRectangle.Width, this.ClientRectangle.Height );
-
-				SetSize();
-				myPane.AxisChange( this.CreateGraphics() );
-				Invalidate();
-			}
+			SetSize();
 		}
 
 		private void SetSize()
@@ -498,13 +606,16 @@ namespace ZedGraph.LibTest
 			Rectangle paneRect = this.ClientRectangle;
 			paneRect.Inflate( -20, -20 );
 
-			if ( this.master != null && this.isResizable )
-				this.master.ReSize( this.CreateGraphics(), paneRect );
-				//this.master.PaneRect = paneRect;
-			else if ( this.myPane != null && this.isResizable )
-				this.myPane.ReSize( this.CreateGraphics(), paneRect );
+			Graphics g = this.CreateGraphics();
+			memGraphics.CreateDoubleBuffer( g, this.ClientRectangle.Width, this.ClientRectangle.Height );
+
+			if ( this.master != null )
+				this.master.ReSize( g, paneRect );
+			else if ( this.myPane != null )
+				this.myPane.ReSize( g, paneRect );
 
 			Invalidate();
+			g.Dispose();
 		}
 
 		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
@@ -604,7 +715,7 @@ namespace ZedGraph.LibTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			DoPrint();
+			//DoPrint();
 			//Serialize( master );
 			//DeSerialize( out master );
 
@@ -638,7 +749,7 @@ namespace ZedGraph.LibTest
 						}
 			*/
 			//DoPrint();
-			//CopyToPNG( myPane );
+			CopyToPNG( master );
 			
 			//Bitmap image = myPane.ScaledImage( 3000, 2400, 600 );
 			//image.Save( @"c:\zedgraph.jpg", ImageFormat.Jpeg );
@@ -688,7 +799,7 @@ namespace ZedGraph.LibTest
 			//myPane.XAxis.Min = 5;
 			//myPane.XAxis.Max = 20;
 
-			//CopyToGif( myPane );
+			CopyToPNG( myPane );
 
 			/*
 						RectangleF tmpRect = myPane.AxisRect;

@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.MinorStepAuto"/>,
 	/// and <see cref="Axis.StepAuto"/>.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2005-02-23 05:49:26 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2005-03-02 06:23:27 $ </version>
 	public class ScaleState
 	{
 		/// <summary>
@@ -51,7 +51,16 @@ namespace ZedGraph
 		/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.MinorStepAuto"/>,
 		/// and <see cref="Axis.StepAuto"/>
 		/// </summary>
-		private bool	minAuto, minorStepAuto, stepAuto, maxAuto;
+		private bool	minAuto, minorStepAuto, stepAuto, maxAuto,
+						scaleFormatAuto, numDecAuto, scaleMagAuto;
+
+		/// <summary>
+		/// The status of <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/>
+		/// </summary>
+		private DateUnit minorUnit, majorUnit;
+
+		private string	scaleFormat;
+		private int		numDec, scaleMag;
 
 		/// <summary>
 		/// Construct a <see cref="ScaleState"/> from the specified <see cref="Axis"/>
@@ -64,11 +73,21 @@ namespace ZedGraph
 			this.minorStep = axis.MinorStep;
 			this.step = axis.Step;
 			this.max = axis.Max;
+			this.majorUnit = axis.MajorUnit;
+			this.minorUnit = axis.MinorUnit;
+
+			this.scaleFormat = axis.ScaleFormat;
+			this.scaleMag = axis.ScaleMag;
+			this.numDec = axis.NumDec;
 
 			this.minAuto = axis.MinAuto;
 			this.stepAuto = axis.StepAuto;
 			this.minorStepAuto = axis.MinorStepAuto;
 			this.maxAuto = axis.MaxAuto;
+
+			this.scaleFormatAuto = axis.ScaleFormatAuto;
+			this.scaleMagAuto = axis.ScaleMagAuto;
+			this.numDecAuto = axis.NumDecAuto;
 		}
 
 		/// <summary>
@@ -81,11 +100,21 @@ namespace ZedGraph
 			this.step = rhs.step;
 			this.minorStep = rhs.minorStep;
 			this.max = rhs.max;
+			this.majorUnit = rhs.majorUnit;
+			this.minorUnit = rhs.minorUnit;
+
+			this.scaleFormat = rhs.scaleFormat;
+			this.scaleMag = rhs.scaleMag;
+			this.numDec = rhs.numDec;
 
 			this.minAuto = rhs.minAuto;
 			this.stepAuto = rhs.stepAuto;
 			this.minorStepAuto = rhs.minorStepAuto;
 			this.maxAuto = rhs.maxAuto;
+
+			this.scaleFormatAuto = rhs.scaleFormatAuto;
+			this.scaleMagAuto = rhs.scaleMagAuto;
+			this.numDecAuto = rhs.numDecAuto;
 		}
 
 		/// <summary>
@@ -99,6 +128,12 @@ namespace ZedGraph
 			axis.Step = this.step;
 			axis.MinorStep = this.minorStep;
 			axis.Max = this.max;
+			axis.MajorUnit = this.majorUnit;
+			axis.MinorUnit = this.minorUnit;
+
+			axis.ScaleFormat = this.scaleFormat;
+			axis.ScaleMag = this.scaleMag;
+			axis.NumDec = this.numDec;
 
 			// The auto settings must be made after the min/step/max settings, since setting those
 			// properties actually affects the auto settings.
@@ -106,6 +141,11 @@ namespace ZedGraph
 			axis.MinorStepAuto = this.minorStepAuto;
 			axis.StepAuto = this.stepAuto;
 			axis.MaxAuto = this.maxAuto;
+
+			axis.ScaleFormatAuto = this.scaleFormatAuto;
+			axis.ScaleMagAuto = this.scaleMagAuto;
+			axis.NumDecAuto = this.numDecAuto;
+
 		}
 
 		/// <summary>
@@ -120,6 +160,8 @@ namespace ZedGraph
 					axis.Step != this.step ||
 					axis.MinorStep != this.minorStep ||
 					axis.Max != this.max ||
+					axis.MinorUnit != this.minorUnit ||
+					axis.MajorUnit != this.majorUnit ||
 					axis.MinAuto != this.minAuto ||
 					axis.MinorStepAuto != this.minorStepAuto ||
 					axis.StepAuto != this.stepAuto ||
@@ -139,7 +181,7 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2005-02-23 05:49:26 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2005-03-02 06:23:27 $ </version>
 	public class ZoomState
 	{
 		public enum StateType { Zoom, Pan }
@@ -223,7 +265,7 @@ namespace ZedGraph
 	/// states (of scale range settings).
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2005-02-23 05:49:26 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2005-03-02 06:23:27 $ </version>
 	public class ZoomStateStack : CollectionBase
 	{
 		/// <summary>
