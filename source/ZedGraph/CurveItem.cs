@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:58 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-13 06:51:42 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
@@ -284,14 +284,14 @@ namespace ZedGraph
 		/// The <see cref="Line"/>/<see cref="Symbol"/>/<see cref="Bar"/> 
 		/// color (FillColor for the Bar).  This is a common access to
 		/// <see cref="ZedGraph.Line.Color"/>, <see cref="ZedGraph.Symbol.Color"/>, and
-		/// <see cref="ZedGraph.Bar.FillColor"/> properties for this curve.
+		/// <see cref="ZedGraph.Fill.Color"/> properties for this curve.
 		/// </summary>
 		public Color Color
 		{
 			get
 			{
 				if ( this.IsBar )
-					return Bar.FillColor;
+					return Bar.Fill.Color;
 				else if ( this.Line.IsVisible )
 					return this.Line.Color;
 				else
@@ -300,7 +300,7 @@ namespace ZedGraph
 			set 
 			{ 
 				Line.Color		= value;
-				Bar.FillColor	= value;
+				Bar.Fill.Color	= value;
 				Symbol.Color	= value;
 			}
 		}
@@ -405,212 +405,17 @@ namespace ZedGraph
 			{
 				// If the line is being shown, draw it
 				if ( this.Line.IsVisible )
-					if ( this.Line.IsSmooth )
-						DrawSmoothCurve( g, pane );
+					if ( this.Line.IsSmooth || this.Line.Fill.IsFilled )
+						Line.DrawSmoothFilledCurve( g, pane, points, isY2Axis );
 					else
-						DrawCurve( g, pane );
+						Line.DrawCurve( g, pane, points, isY2Axis );
 
 				// If symbols are being shown, then draw them
 				if ( this.Symbol.IsVisible )
-					DrawSymbols( g, pane, scaleFactor );
+					Symbol.DrawSymbols( g, pane, points, isY2Axis, scaleFactor );
 			}
 		}		
 		
-		/// <summary>
-		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
-		/// device using the specified smoothing property (<see cref="ZedGraph.Line.SmoothTension"/>).
-		/// The routine only draws the line segments; the symbols are drawn by the
-		/// <see cref="DrawSymbols"/> method.  This method
-		/// is normally only called by the Draw method of the
-		/// <see cref="CurveItem"/> object.  Note that the <see cref="StepType"/> property
-		/// is ignored for smooth lines (e.g., when <see cref="ZedGraph.Line.IsSmooth"/> is true).
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		public void DrawSmoothCurve( Graphics g, GraphPane pane )
-		{
-			if ( this.Line.IsVisible && !this.Line.Color.IsEmpty )
-			{
-				int index = 0;
-
-				PointF[] arrPoints = new PointF[this.Points.Count];
-
-				for ( int i=0; i<this.Points.Count; i++ )
-				{
-					if ( !this.Points[i].IsInvalid )
-					{
-						arrPoints[index].X = pane.XAxis.Transform( this.Points[i].X );
-						if ( this.isY2Axis )
-							arrPoints[index].Y = pane.Y2Axis.Transform( this.Points[i].Y );
-						else
-							arrPoints[index].Y = pane.YAxis.Transform( this.Points[i].Y );
-
-						index++;
-					}
-				}
-
-				Pen pen = new Pen( this.Line.Color, this.Line.Width );
-				pen.DashStyle = this.Line.Style;
-				if ( index > 1 )
-					g.DrawCurve( pen, arrPoints, 0, index-1, this.Line.SmoothTension );
-			}
-		}
-
-		/// <summary>
-		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
-		/// device.  The format (stair-step or line) of the curve is
-		/// defined by the <see cref="StepType"/> property.  The routine
-		/// only draws the line segments; the symbols are drawn by the
-		/// <see cref="DrawSymbols"/> method.  This method
-		/// is normally only called by the Draw method of the
-		/// <see cref="CurveItem"/> object
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		protected void DrawCurve( Graphics g, GraphPane pane )
-		{
-			float	tmpX, tmpY,
-					lastX = 0,
-					lastY = 0;
-			double	curX, curY;
-			bool	broke = true;
-			
-			// Loop over each point in the curve
-			for ( int i=0; i<this.NPts; i++ )
-			{
-				curX = this.points[i].X;
-				curY = this.points[i].Y;
-				
-				// Any value set to double max is invalid and should be skipped
-				// This is used for calculated values that are out of range, divide
-				//   by zero, etc.
-				// Also, any value <= zero on a log scale is invalid
-				if ( 	curX == PointPair.Missing ||
-						curY == PointPair.Missing ||
-						System.Double.IsNaN( curX ) ||
-						System.Double.IsNaN( curY ) ||
-						System.Double.IsInfinity( curX ) ||
-						System.Double.IsInfinity( curY ) ||
-					( pane.XAxis.IsLog && curX <= 0.0 ) ||
-					( this.isY2Axis && pane.Y2Axis.IsLog && curY <= 0.0 ) ||
-					( !this.isY2Axis && pane.YAxis.IsLog && curY <= 0.0 ) )
-				{
-					broke = true;
-				}
-				else
-				{
-					// Transform the current point from user scale units to
-					// screen coordinates
-					tmpX = pane.XAxis.Transform( curX );
-					if ( this.isY2Axis )
-						tmpY = pane.Y2Axis.Transform( curY );
-					else
-						tmpY = pane.YAxis.Transform( curY );
-					
-					// off-scale values "break" the line
-					if ( tmpX < -100000 || tmpX > 100000 ||
-						tmpY < -100000 || tmpY > 100000 )
-						broke = true;
-					else
-					{
-						// If the last two points are valid, draw a line segment
-						if ( !broke || ( pane.IsIgnoreMissing && lastX != 0 ) )
-						{
-							if ( this.Line.StepType == StepType.ForwardStep )
-							{
-								this.Line.Draw( g, lastX, lastY, tmpX, lastY );
-								this.Line.Draw( g, tmpX, lastY, tmpX, tmpY );
-							}
-							else if ( this.Line.StepType == StepType.RearwardStep )
-							{
-								this.Line.Draw( g, lastX, lastY, lastX, tmpY );
-								this.Line.Draw( g, lastX, tmpY, tmpX, tmpY );
-							}
-							else 		// non-step
-								this.Line.Draw( g, lastX, lastY, tmpX, tmpY );
-
-						}
-
-						// Save some values for the next point
-						broke = false;
-						lastX = tmpX;
-						lastY = tmpY;
-					}
-				}
-			}
-		}
-
-		/// <summary>
-		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
-		/// device as a symbol at each defined point.  The routine
-		/// only draws the symbols; the lines are draw by the
-		/// <see cref="DrawCurve"/> method.  This method
-		/// is normally only called by the Draw method of the
-		/// <see cref="CurveItem"/> object
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		public void DrawSymbols( Graphics g, GraphPane pane, double scaleFactor )
-		{
-			float	tmpX, tmpY;
-			double	curX, curY;
-			
-			// Loop over each defined point							
-			for ( int i=0; i<this.NPts; i++ )
-			{
-				curX = this.points[i].X;
-				curY = this.points[i].Y;
-				
-				// Any value set to double max is invalid and should be skipped
-				// This is used for calculated values that are out of range, divide
-				//   by zero, etc.
-				// Also, any value <= zero on a log scale is invalid
-				
-				if (	curX != PointPair.Missing &&
-						curY != PointPair.Missing &&
-						!System.Double.IsNaN( curX ) &&
-						!System.Double.IsNaN( curY ) &&
-						!System.Double.IsInfinity( curX ) &&
-						!System.Double.IsInfinity( curY ) &&
-					( curX > 0 || !pane.XAxis.IsLog ) &&
-					( this.isY2Axis || !pane.YAxis.IsLog || curY > 0.0 ) &&
-					( !this.isY2Axis || !pane.Y2Axis.IsLog || curY > 0.0 ) )
-				{
-					tmpX = pane.XAxis.Transform( curX );
-					if ( this.isY2Axis )
-						tmpY = pane.Y2Axis.Transform( curY );
-					else
-						tmpY = pane.YAxis.Transform( curY );
-
-					this.Symbol.Draw( g, tmpX, tmpY, scaleFactor );		
-				}
-			}
-		}
-
 		/// <summary>
 		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
 		/// device as a bar at each defined point.  This method

@@ -29,10 +29,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-13 06:51:43 $ </version>
 	public class Line : ICloneable
 	{
-	#region Fields
+		#region Fields
 		/// <summary>
 		/// Private field that stores the pen width for this
 		/// <see cref="Line"/>.  Use the public
@@ -83,9 +83,16 @@ namespace ZedGraph
 		/// property <see cref="StepType"/> to access this value.
 		/// </summary>
 		private StepType	stepType;
-	#endregion
+		/// <summary>
+		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="Line"/>.  Use the public property <see cref="Fill"/> to
+		/// access this value.
+		/// </summary>
+		private Fill		fill;
+
+		#endregion
 	
-	#region Defaults
+		#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
 		/// default property values for the <see cref="Line"/> class.
@@ -98,6 +105,20 @@ namespace ZedGraph
 			/// This is the default value for the <see cref="Line.Color"/> property.
 			/// </summary>
 			public static Color Color = Color.Red;
+			/// <summary>
+			/// The default color for filling in the area under the curve
+			/// (<see cref="ZedGraph.Fill.Color"/> property).
+			/// </summary>
+			public static Color FillColor = Color.Red;
+			/// <summary>
+			/// The default custom brush for filling in the area under the curve
+			/// (<see cref="ZedGraph.Fill.Brush"/> property).
+			/// </summary>
+			public static Brush FillBrush = null;
+			/// <summary>
+			/// The default fill mode for the curve (<see cref="ZedGraph.Fill.Type"/> property).
+			/// </summary>
+			public static FillType FillType = FillType.None;
 			/// <summary>
 			/// The default mode for displaying line segments (<see cref="Line.IsVisible"/>
 			/// property).  True to show the line segments, false to hide them.
@@ -138,9 +159,9 @@ namespace ZedGraph
 			/// <value><see cref="StepType"/> enum value</value>
 			public static StepType StepType = StepType.NonStep;
 		}
-	#endregion
+		#endregion
 
-	#region Properties
+		#region Properties
 		/// <summary>
 		/// The color of the <see cref="Line"/>
 		/// </summary>
@@ -232,7 +253,18 @@ namespace ZedGraph
 		{
 			get { return stepType; }
 			set { stepType = value;}
-		}		
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="Line"/>.
+		/// </summary>
+		public Fill	Fill
+		{
+			get { return fill; }
+			set { fill = value; }
+		}
+
 	#endregion
 	
 	#region Constructors
@@ -259,6 +291,7 @@ namespace ZedGraph
 			this.stepType = Default.StepType;
 			this.isSmooth = Default.IsSmooth;
 			this.smoothTension = Default.SmoothTension;
+			this.fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
 		}
 
 		/// <summary>
@@ -274,6 +307,7 @@ namespace ZedGraph
 			stepType = rhs.StepType;
 			isSmooth = rhs.IsSmooth;
 			smoothTension = rhs.SmoothTension;
+			fill = rhs.Fill;
 		}
 
 		/// <summary>
@@ -303,7 +337,7 @@ namespace ZedGraph
 		/// line segment in screen pixel units</param>
 		/// <param name="y2">The y position of the ending point that defines the
 		/// line segment in screen pixel units</param>
-		public void Draw( Graphics g, float x1, float y1, float x2, float y2 )
+		public void DrawSegment( Graphics g, float x1, float y1, float x2, float y2 )
 		{
 			if ( this.isVisible && !this.Color.IsEmpty )
 			{
@@ -312,6 +346,364 @@ namespace ZedGraph
 				g.DrawLine( pen, x1, y1, x2, y2 );
 			}
 		}
+
+		/// <summary>
+		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
+		/// device using the specified smoothing property (<see cref="ZedGraph.Line.SmoothTension"/>).
+		/// The routine draws the line segments and the area fill (if any, see <see cref="FillType"/>;
+		/// the symbols are drawn by the
+		/// <see cref="Symbol.DrawSymbols"/> method.  This method
+		/// is normally only called by the Draw method of the
+		/// <see cref="CurveItem"/> object.  Note that the <see cref="StepType"/> property
+		/// is ignored for smooth lines (e.g., when <see cref="ZedGraph.Line.IsSmooth"/> is true).
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
+		/// curve.</param>
+		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
+		/// true for the "Y2" axis, false for the "Y" axis.</param>
+		public void DrawSmoothFilledCurve( Graphics g, GraphPane pane, PointPairList points, bool isY2Axis )
+		{
+			PointF[]	arrPoints;
+			int			count;
+			RectangleF	boundingBox;
+
+			if ( this.IsVisible && !this.Color.IsEmpty && points != null &&
+				BuildPointsArray( pane, points, isY2Axis, out arrPoints, out count, out boundingBox ) )
+			{
+				Pen pen = new Pen( this.Color, this.Width );
+				pen.DashStyle = this.Style;
+				if ( count > 1 )
+				{
+					if ( this.Fill.IsFilled )
+					{
+						int closedCount = count;
+						double yMin = pane.YAxis.Min < 0 ? 0.0 : pane.YAxis.Min;
+
+						CloseCurve( pane, arrPoints, isY2Axis, ref closedCount, yMin );
+						int len = arrPoints.GetLength(0);
+						PointF lastPt = arrPoints[closedCount-1];
+						for ( int i=closedCount; i<len; i++ )
+							arrPoints[i] = lastPt;
+
+						Brush brush = this.fill.MakeBrush( boundingBox );
+						if ( this.isSmooth )
+							g.FillClosedCurve( brush, arrPoints, FillMode.Winding, this.smoothTension );
+						else
+							g.FillClosedCurve( brush, arrPoints, FillMode.Winding, 0F );
+					}
+
+					if ( this.isSmooth )
+						g.DrawCurve( pen, arrPoints, 0, count-1, this.SmoothTension );
+					else
+						g.DrawCurve( pen, arrPoints, 0, count-1, 0F );
+				}
+
+			}
+		}
+
+		/// <summary>
+		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
+		/// device.  The format (stair-step or line) of the curve is
+		/// defined by the <see cref="StepType"/> property.  The routine
+		/// only draws the line segments; the symbols are drawn by the
+		/// <see cref="Symbol.DrawSymbols"/> method.  This method
+		/// is normally only called by the Draw method of the
+		/// <see cref="CurveItem"/> object
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
+		/// curve.</param>
+		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
+		/// true for the "Y2" axis, false for the "Y" axis.</param>
+		public void DrawCurve( Graphics g, GraphPane pane, PointPairList points, bool isY2Axis )
+		{
+			float	tmpX, tmpY,
+					lastX = 0,
+					lastY = 0;
+			double	curX, curY;
+			bool	broke = true;
+			
+			if ( points != null && !this.color.IsEmpty )
+			{
+				// Loop over each point in the curve
+				for ( int i=0; i<points.Count; i++ )
+				{
+					curX = points[i].X;
+					curY = points[i].Y;
+					
+					// Any value set to double max is invalid and should be skipped
+					// This is used for calculated values that are out of range, divide
+					//   by zero, etc.
+					// Also, any value <= zero on a log scale is invalid
+					if ( 	curX == PointPair.Missing ||
+							curY == PointPair.Missing ||
+							System.Double.IsNaN( curX ) ||
+							System.Double.IsNaN( curY ) ||
+							System.Double.IsInfinity( curX ) ||
+							System.Double.IsInfinity( curY ) ||
+							( pane.XAxis.IsLog && curX <= 0.0 ) ||
+							( isY2Axis && pane.Y2Axis.IsLog && curY <= 0.0 ) ||
+							( !isY2Axis && pane.YAxis.IsLog && curY <= 0.0 ) )
+					{
+						broke = true;
+					}
+					else
+					{
+						// Transform the current point from user scale units to
+						// screen coordinates
+						tmpX = pane.XAxis.Transform( curX );
+						if ( isY2Axis )
+							tmpY = pane.Y2Axis.Transform( curY );
+						else
+							tmpY = pane.YAxis.Transform( curY );
+						
+						// off-scale values "break" the line
+						if ( tmpX < -100000 || tmpX > 100000 ||
+							tmpY < -100000 || tmpY > 100000 )
+							broke = true;
+						else
+						{
+							// If the last two points are valid, draw a line segment
+							if ( !broke || ( pane.IsIgnoreMissing && lastX != 0 ) )
+							{
+								if ( this.StepType == StepType.ForwardStep )
+								{
+									this.DrawSegment( g, lastX, lastY, tmpX, lastY );
+									this.DrawSegment( g, tmpX, lastY, tmpX, tmpY );
+								}
+								else if ( this.StepType == StepType.RearwardStep )
+								{
+									this.DrawSegment( g, lastX, lastY, lastX, tmpY );
+									this.DrawSegment( g, lastX, tmpY, tmpX, tmpY );
+								}
+								else 		// non-step
+									this.DrawSegment( g, lastX, lastY, tmpX, tmpY );
+
+							}
+
+							// Save some values for the next point
+							broke = false;
+							lastX = tmpX;
+							lastY = tmpY;
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Build an array of <see cref="PointF"/> values (screen pixel coordinates) that represents
+		/// the current curve.  Note that this drawing routine ignores <see cref="PointPair.Missing"/>
+		/// values, but it does not "break" the line to indicate values are missing.
+		/// </summary>
+		/// <param name="pane">A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.</param>
+		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
+		/// curve.</param>
+		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
+		/// true for the "Y2" axis, false for the "Y" axis.</param>
+		/// <param name="arrPoints">An array of <see cref="PointF"/> values in screen pixel
+		/// coordinates representing the current curve.</param>
+		/// <param name="count">The number of points contained in the "arrPoints"
+		/// parameter.</param>
+		/// <returns>true for a successful points array build, false for data problems</returns>
+		/// <param name="boundingBox">A <see cref="RectangleF"/> structure represent the outer
+		/// bounding box of the the data points in screen pixel coordinates.</param>
+		public bool BuildPointsArray( GraphPane pane, PointPairList points, bool isY2Axis,
+									out PointF[] arrPoints, out int count, out RectangleF boundingBox )
+		{
+			arrPoints = null;
+			count = 0;
+
+			if ( this.IsVisible && !this.Color.IsEmpty && points != null )
+			{
+				int		index = 0;
+				float	curX, curY,
+						lastX = 0,
+						lastY = 0;
+
+				float minX = System.Single.MaxValue;
+				float minY = System.Single.MaxValue;
+				float maxX = System.Single.MinValue;
+				float maxY = System.Single.MinValue;
+				
+				// Step type plots get twice as many points.  Always add three points so there is
+				// room to close out the curve for area fills.
+				arrPoints = new PointF[ ( this.stepType == ZedGraph.StepType.NonStep ? 1 : 2 )
+											* points.Count + 3 ];
+
+				for ( int i=0; i<points.Count; i++ )
+				{
+					if ( !points[i].IsInvalid )
+					{
+						curX = pane.XAxis.Transform( points[i].X );
+						if ( isY2Axis )
+							curY = pane.Y2Axis.Transform( points[i].Y );
+						else
+							curY = pane.YAxis.Transform( points[i].Y );
+
+						// ignore step-type setting for smooth curves
+						if ( this.isSmooth || index == 0 || this.StepType == StepType.NonStep )
+						{
+							arrPoints[index].X = curX;
+							arrPoints[index].Y = curY;
+						}
+						if ( this.StepType == StepType.ForwardStep )
+						{
+							arrPoints[index].X = curX;
+							arrPoints[index].Y = lastY;
+							index++;
+							arrPoints[index].X = curX;
+							arrPoints[index].Y = curY;
+						}
+						else if ( this.StepType == StepType.RearwardStep )
+						{
+							arrPoints[index].X = lastX;
+							arrPoints[index].Y = curY;
+							index++;
+							arrPoints[index].X = curX;
+							arrPoints[index].Y = curY;
+						}
+
+						lastX = curX;
+						lastY = curY;
+						index++;
+						
+						if ( curX < minX )
+							minX = curX;
+						if ( curY < minY )
+							minY = curY;
+						if ( curX > maxX )
+							maxX = curX;
+						if ( curY > maxY )
+							maxY = curY;
+					}
+
+				}
+
+				boundingBox = new RectangleF( minX, minY, maxX, maxY );
+
+				count = index;
+				return true;
+			}
+			else
+			{
+				boundingBox = new RectangleF( 0, 0, 0, 0 );
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pane">A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.</param>
+		/// <param name="arrPoints">An array of <see cref="PointF"/> values in screen pixel
+		/// coordinates representing the current curve.</param>
+		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
+		/// true for the "Y2" axis, false for the "Y" axis.</param>
+		/// <param name="count">The number of points contained in the "arrPoints"
+		/// parameter.</param>
+		/// <param name="yMin">The Y axis value location where the X axis crosses.</param>
+		public void CloseCurve( GraphPane pane, PointF[] arrPoints, bool isY2Axis,
+									ref int count, double yMin )
+		{
+			float yBase;
+			if ( isY2Axis )
+				yBase = pane.Y2Axis.Transform( yMin );
+			else
+				yBase = pane.YAxis.Transform( yMin );
+
+			arrPoints[count].X = arrPoints[count-1].X;
+			arrPoints[count].Y = yBase;
+			count++;
+			arrPoints[count].X = arrPoints[0].X;
+			arrPoints[count].Y = yBase;
+			count++;
+			arrPoints[count].X = arrPoints[0].X;
+			arrPoints[count].Y = arrPoints[0].Y;
+			count++;
+		}
+/*
+		/// <summary>
+		/// Create a fill brush for the current curve.  This method will construct a brush based on the
+		/// settings of <see cref="FillType"/>, <see cref="FillColor"/> and <see cref="FillBrush"/>.  If
+		/// <see cref="FillType"/> is set to <see cref="ZedGraph.FillType.Brush"/> and <see cref="FillBrush"/>
+		/// is null, then a <see cref="LinearGradientBrush"/> will be created between the colors of
+		/// <see cref="System.Drawing.Color.White"/> and <see cref="FillColor"/>.
+		/// </summary>
+		/// <param name="arrPoints">An array of <see cref="PointF"/> values in screen pixel
+		/// coordinates representing the current curve.</param>
+		/// <param name="count">The number of points contained in the "arrPoints"
+		/// parameter.</param>
+		/// <returns>A <see cref="System.Drawing.Brush"/> class representing the fill brush</returns>
+		public Brush MakeBrush( PointF[] arrPoints, int count )
+		{
+			// get a brush
+			if ( this.IsFilled && ( !this.fillColor.IsEmpty || this.fillBrush != null ) )
+			{
+				Brush	brush;
+				if ( this.fillType == FillType.Brush )
+				{
+					// If they didn't provide a brush, make one using the fillcolor gradient to white
+					if ( this.FillBrush == null )
+						brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
+													Color.White, this.fillColor, 0F );
+					else
+						brush = this.fillBrush;
+				}
+				else
+					brush = (Brush) new SolidBrush( this.fillColor );
+
+				float minX = System.Single.MaxValue;
+				float minY = System.Single.MaxValue;
+				float maxX = System.Single.MinValue;
+				float maxY = System.Single.MinValue;
+
+				for ( int i=0; i<count; i++ )
+				{
+					PointF pt = arrPoints[i];
+					if ( pt.X < minX )
+						minX = pt.X;
+					if ( pt.Y < minY )
+						minY = pt.Y;
+					if ( pt.X > maxX )
+						maxX = pt.X;
+					if ( pt.Y > maxY )
+						maxY = pt.Y;
+				}
+
+				RectangleF rect = new RectangleF( minX, minY, maxX, maxY );
+				if ( brush is LinearGradientBrush || brush is TextureBrush )
+				{
+					LinearGradientBrush linBrush = (LinearGradientBrush) brush.Clone();
+					linBrush.ScaleTransform( rect.Width / linBrush.Rectangle.Width,
+					rect.Height / linBrush.Rectangle.Height, MatrixOrder.Append );
+					linBrush.TranslateTransform( rect.Left - linBrush.Rectangle.Left,
+					rect.Top - linBrush.Rectangle.Top, MatrixOrder.Append );
+					brush = (Brush) linBrush;
+				}
+				return brush;
+			}
+			return null;
+		}
+*/
+
 	#endregion
 	}
 }

@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-13 06:51:42 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -55,13 +55,6 @@ namespace ZedGraph
 		/// <seealso cref="Default.IsFramed"/>
 		private bool		isFramed;
 		/// <summary>
-		/// Private field to enable/disable filling of the background behind the legend
-		/// with color.  Use the public property <see cref="IsFilled"/>
-		/// to access this value.
-		/// </summary>
-		/// <seealso cref="Default.IsFilled"/>
-		private bool		isFilled;
-		/// <summary>
 		/// Private field to enable/disable horizontal stacking of the legend entries.
 		/// If this value is false, then the legend entries will always be a single column.
 		/// Use the public property <see cref="IsHStack"/> to access this value.
@@ -75,11 +68,11 @@ namespace ZedGraph
 		/// </summary>
 		private bool		isVisible;
 		/// <summary>
-		/// Private field to store the color of any filling of the background behind the legend.
-		/// This value only applies if <see cref="IsFilled"/> is true.
-		/// Use the public property <see cref="FillColor"/> to access this value.
+		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="Legend"/>.  Use the public property <see cref="Fill"/> to
+		/// access this value.
 		/// </summary>
-		private Color		fillColor;
+		private Fill		fill;
 		/// <summary>
 		/// Private field to store the color of the frame around the legend bounding box.
 		/// This value only applies if <see cref="IsFramed"/> is true.
@@ -123,11 +116,19 @@ namespace ZedGraph
 			public static Color FrameColor = Color.Black;
 			/// <summary>
 			/// The default color for the <see cref="Legend"/> background.
-			/// (<see cref="Legend.FillColor"/> property).  Use of this
-			/// color depends on the status of the <see cref="Legend.IsFilled"/>
+			/// (<see cref="ZedGraph.Fill.Color"/> property).  Use of this
+			/// color depends on the status of the <see cref="ZedGraph.Fill.Type"/>
 			/// property.
 			/// </summary>
 			public static Color FillColor = Color.White;
+			/// <summary>
+			/// The default custom brush for filling in this <see cref="Legend"/>.
+			/// </summary>
+			public static Brush FillBrush = null;
+			/// <summary>
+			/// The default fill mode for the <see cref="Legend"/> background.
+			/// </summary>
+			public static FillType FillType = FillType.Brush;
 			/// <summary>
 			/// The default location for the <see cref="Legend"/> on the graph
 			/// (<see cref="Legend.Location"/> property).  This property is
@@ -150,7 +151,7 @@ namespace ZedGraph
 			public static bool IsVisible = true;
 			/// <summary>
 			/// The default fill mode for the <see cref="Legend"/> background
-			/// (<see cref="Legend.IsFilled"/> property).
+			/// (<see cref="ZedGraph.Fill.Type"/> property).
 			/// true to fill-in the background with color,
 			/// false to leave the background transparent.
 			/// </summary>
@@ -235,19 +236,6 @@ namespace ZedGraph
 			set { isVisible = value; }
 		}
 		/// <summary>
-		/// Gets or sets a property that makes the <see cref="Legend"/> background
-		/// either filled with a specified color (<see cref="FillColor"/>)
-		/// or transparent
-		/// </summary>
-		/// <value> true to fill the <see cref="Legend"/> background with a color,
-		/// false to leave the background transparent</value>
-		/// <seealso cref="Default.IsFilled"/>
-		public bool IsFilled
-		{
-			get { return isFilled; }
-			set { isFilled = value; }
-		}
-		/// <summary>
 		/// Set to true to display a frame around the text using the
 		/// <see cref="FrameColor"/> color and <see cref="FrameWidth"/>
 		/// pen width, or false for no frame
@@ -281,18 +269,17 @@ namespace ZedGraph
 			get { return frameColor; }
 			set { frameColor = value; }
 		}
+		
 		/// <summary>
-		/// Sets or gets the color of the background behind the <see cref="Legend"/>.
-		/// This background fill option is turned on or off using the
-		/// <see cref="IsFilled"/> property.
+		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="Legend"/> background.
 		/// </summary>
-		/// <value>A system <see cref="System.Drawing.Color"/> specification.</value>
-		/// <seealso cref="Default.FillColor"/>
-		public Color FillColor
+		public Fill	Fill
 		{
-			get { return fillColor; }
-			set { fillColor = value; }
+			get { return fill; }
+			set { fill = value; }
 		}
+		
 		/// <summary>
 		/// Sets or gets a property that allows the <see cref="Legend"/> items to
 		/// stack horizontally in addition to the vertical stacking
@@ -328,8 +315,6 @@ namespace ZedGraph
 			this.isFramed = Default.IsFramed;
 			this.frameColor = Default.FrameColor;
 			this.frameWidth = Default.FrameWidth;
-			this.isFilled = Default.IsFilled;
-			this.fillColor = Default.FillColor;
 			this.isHStack = Default.IsHStack;
 			this.isVisible = Default.IsVisible;
 			
@@ -338,6 +323,8 @@ namespace ZedGraph
 									Default.FontItalic, Default.FontUnderline );						
 			this.fontSpec.IsFilled = false;
 			this.fontSpec.IsFramed = false;
+			
+			this.fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
 		}
 
 		/// <summary>
@@ -349,12 +336,12 @@ namespace ZedGraph
 			rect = rhs.Rect;
 			location = rhs.Location;
 			isFramed = rhs.isFramed;
-			isFilled = rhs.isFilled;
 			isHStack = rhs.IsHStack;
 			isVisible = rhs.IsVisible;
-			fillColor = rhs.FillColor;
 			frameColor = rhs.FrameColor;
 			frameWidth = rhs.FrameWidth;
+			
+			this.fill = rhs.Fill;
 			
 			fontSpec = new FontSpec( rhs.FontSpec );
 		}
@@ -400,9 +387,9 @@ namespace ZedGraph
 				return;
 								
 			// Fill the background with the specified color if required
-			if ( this.isFilled )
+			if ( this.fill.IsFilled )
 			{
-				SolidBrush brush = new SolidBrush( this.fillColor );
+				Brush brush = this.fill.MakeBrush( this.Rect );
 				g.FillRectangle( brush, this.rect );
 			}
 		
@@ -442,7 +429,7 @@ namespace ZedGraph
 				else
 				{
 					// Draw a sample curve to the left of the label text
-					curve.Line.Draw( g, x, y + charHeight / 2,
+					curve.Line.DrawSegment( g, x, y + charHeight / 2,
 						x + 2 * charHeight, y + halfCharHeight );
 					// Draw a sample symbol to the left of the label text				
 					curve.Symbol.Draw( g, x + charHeight, y + halfCharHeight,

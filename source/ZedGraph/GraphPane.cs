@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-13 06:51:42 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -102,11 +102,12 @@ namespace ZedGraph
 		/// this value. </summary>
 		/// <seealso cref="isPaneFramed"/>
 		private float		paneFramePenWidth;
-		/// <summary>Private field that determines the color of the <see cref="PaneRect"/>
-		/// background fill.  Use the public property <see cref="PaneBackColor"/> to access
-		/// this value. </summary>
-		/// <seealso cref="isPaneFramed"/>
-		private Color		paneBackColor;
+		/// <summary>
+		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="PaneRect"/>.  Use the public property <see cref="PaneFill"/> to
+		/// access this value.
+		/// </summary>
+		private Fill		paneFill;
 		
 		// Axis Frame Properties //////////////////////////////////////////////////////////////
 		
@@ -128,11 +129,12 @@ namespace ZedGraph
 		/// this value. </summary>
 		/// <seealso cref="isAxisFramed"/>
 		private float		axisFramePenWidth;
-		/// <summary>Private field that determines the color of the <see cref="AxisRect"/>
-		/// background fill.  Use the public property <see cref="AxisBackColor"/> to access
-		/// this value. </summary>
-		/// <seealso cref="isAxisFramed"/>
-		private Color		axisBackColor;
+		/// <summary>
+		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="AxisRect"/>.  Use the public property <see cref="AxisFill"/> to
+		/// access this value.
+		/// </summary>
+		private Fill axisFill;
 		
 		/// <summary>Private field that determines whether or not initial zero values will
 		/// be included or excluded when determining the Y or Y2 axis scale range.
@@ -276,6 +278,16 @@ namespace ZedGraph
 			/// </summary>
 			public static Color PaneBackColor = Color.White;
 			/// <summary>
+			/// The default brush for the <see cref="GraphPane.PaneRect"/> background.
+			/// (<see cref="GraphPane.PaneFill"/> property). 
+			/// </summary>
+			public static Brush PaneBackBrush = null;
+			/// <summary>
+			/// The default <see cref="FillType"/> for the <see cref="GraphPane.PaneRect"/> background.
+			/// (<see cref="GraphPane.PaneFill"/> property). 
+			/// </summary>
+			public static FillType PaneBackType = FillType.Brush;
+			/// <summary>
 			/// The default pen width for the <see cref="GraphPane"/> frame border.
 			/// (<see cref="GraphPane.PaneFramePenWidth"/> property).  Units are in pixels.
 			/// </summary>
@@ -291,6 +303,16 @@ namespace ZedGraph
 			/// (<see cref="GraphPane.AxisBackColor"/> property). 
 			/// </summary>
 			public static Color AxisBackColor = Color.White;
+			/// <summary>
+			/// The default brush for the <see cref="GraphPane.AxisRect"/> background.
+			/// (<see cref="ZedGraph.Fill.Brush"/> property of <see cref="GraphPane.AxisFill"/>). 
+			/// </summary>
+			public static Brush AxisBackBrush = null;
+			/// <summary>
+			/// The default <see cref="FillType"/> for the <see cref="GraphPane.AxisRect"/> background.
+			/// (<see cref="ZedGraph.Fill.Type"/> property of <see cref="GraphPane.AxisFill"/>). 
+			/// </summary>
+			public static FillType AxisBackType = FillType.Brush;
 			/// <summary>
 			/// The default pen width for drawing the 
 			/// <see cref="GraphPane.AxisRect"/> frame border
@@ -547,8 +569,8 @@ namespace ZedGraph
 		/// <seealso cref="Default.PaneBackColor"/>
 		public Color PaneBackColor
 		{
-			get { return paneBackColor; }
-			set { paneBackColor = value; }
+			get { return paneFill.Color; }
+			set { paneFill.Color = value; }
 		}
 		/// <summary>
 		/// FrameWidth is a float value indicating the width (thickness) of the
@@ -560,7 +582,17 @@ namespace ZedGraph
 			get { return paneFramePenWidth; }
 			set { paneFramePenWidth = value; }
 		}
-	#endregion
+		
+		/// <summary>
+		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="PaneRect"/>.
+		/// </summary>
+		public Fill	PaneFill
+		{
+			get { return paneFill; }
+			set { paneFill = value; }
+		}
+		#endregion
 	
 	#region AxisRect Properties
 		/// <summary>
@@ -621,8 +653,8 @@ namespace ZedGraph
 		/// <seealso cref="Default.AxisBackColor"/>
 		public Color AxisBackColor
 		{
-			get { return axisBackColor; }
-			set { axisBackColor = value; }
+			get { return axisFill.Color; }
+			set { axisFill.Color = value; }
 		}
 		/// <summary>
 		/// FrameWidth is a float value indicating the width (thickness) of the axis frame border.
@@ -633,6 +665,16 @@ namespace ZedGraph
 		{
 			get { return axisFramePenWidth; }
 			set { axisFramePenWidth = value; }
+		}
+		
+		/// <summary>
+		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="AxisRect"/>.
+		/// </summary>
+		public Fill	AxisFill
+		{
+			get { return axisFill; }
+			set { axisFill = value; }
 		}
 	#endregion
 	
@@ -797,13 +839,13 @@ namespace ZedGraph
 			this.isPaneFramed = Default.IsPaneFramed;
 			this.paneFrameColor = Default.PaneFrameColor;
 			this.paneFramePenWidth = Default.PaneFramePenWidth;
-			this.paneBackColor = Default.PaneBackColor;
+			this.paneFill = new Fill( Default.PaneBackColor, Default.PaneBackBrush, Default.PaneBackType );
 
 			this.isAxisRectAuto = true;
 			this.isAxisFramed = Default.IsAxisFramed;
 			this.axisFrameColor = Default.AxisFrameColor;
 			this.axisFramePenWidth = Default.AxisFramePenWidth;
-			this.axisBackColor = Default.AxisBackColor;
+			this.axisFill = new Fill( Default.AxisBackColor, Default.AxisBackBrush, Default.AxisBackType );
 
 			this.baseDimension = Default.BaseDimension;
 			this.baseDPI = 0;
@@ -839,13 +881,13 @@ namespace ZedGraph
 			this.isPaneFramed = rhs.IsPaneFramed;
 			this.paneFrameColor = rhs.PaneFrameColor;
 			this.paneFramePenWidth = rhs.PaneFramePenWidth;
-			this.paneBackColor = rhs.PaneBackColor;
+			this.paneFill = rhs.PaneFill;
 
 			this.isAxisRectAuto = rhs.IsAxisRectAuto;
 			this.isAxisFramed = rhs.IsAxisFramed;
 			this.axisFrameColor = rhs.AxisFrameColor;
 			this.axisFramePenWidth = rhs.AxisFramePenWidth;
-			this.axisBackColor = rhs.AxisBackColor;
+			this.axisFill = rhs.AxisFill;
 
 			this.baseDimension = rhs.BaseDimension;
 			this.isFontsScaled = rhs.isFontsScaled;
@@ -1060,7 +1102,7 @@ namespace ZedGraph
 			// Leave room for the pane title
 			if ( this.isShowTitle )
 			{
-				SizeF titleSize = this.FontSpec.MeasureString( g, this.title, scaleFactor );
+				SizeF titleSize = this.FontSpec.BoundingBox( g, this.title, scaleFactor );
 				// Leave room for the title height, plus a line spacing of charHeight/2
 				tmpRect.Y += titleSize.Height + charHeight / 2.0F;
 				tmpRect.Height -= titleSize.Height + charHeight / 2.0F;
@@ -1090,12 +1132,14 @@ namespace ZedGraph
 			// only draw the title if it's required
 			if ( this.isShowTitle )
 			{
+				SizeF size = this.FontSpec.BoundingBox( g, this.title, scaleFactor );
+				
 				// use the internal fontSpec class to draw the text using user-specified and/or
 				// default attributes.
 				this.FontSpec.Draw( g, this.title,
 							( this.paneRect.Left + this.paneRect.Right ) / 2,
-							this.paneRect.Top + this.ScaledGap( scaleFactor ),
-							FontAlignH.Center, FontAlignV.Top, scaleFactor );
+							this.paneRect.Top + this.ScaledGap( scaleFactor ) + size.Height / 2.0F,
+							FontAlignH.Center, FontAlignV.Center, scaleFactor );
 			}
 		}
 		
@@ -1109,7 +1153,8 @@ namespace ZedGraph
 		public void DrawPaneFrame( Graphics g )
 		{
 			// Erase the pane background
-			SolidBrush brush = new SolidBrush( this.paneBackColor );
+			Brush brush = this.paneFill.MakeBrush( this.paneRect );
+			//SolidBrush brush = new SolidBrush( this.paneBackColor );
 			g.FillRectangle( brush, this.paneRect );
 
 			RectangleF tempRect = this.paneRect;
@@ -1144,7 +1189,8 @@ namespace ZedGraph
 		public void DrawAxisFrame( Graphics g )
 		{
 			// Erase the axis background
-			SolidBrush brush = new SolidBrush( this.axisBackColor );
+			//SolidBrush brush = new SolidBrush( this.axisBackColor );
+			Brush brush = this.axisFill.MakeBrush( this.axisRect );
 			g.FillRectangle( brush, this.axisRect );
 
 			if ( this.isAxisFramed )

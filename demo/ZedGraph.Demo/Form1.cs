@@ -295,6 +295,48 @@ namespace ZedGraphTest
 
 #endif
 
+#if true	// the filled curve sample
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"My Test Date Graph", "Date", "My Y Axis" );
+
+			// Make up some random data points
+			double[] x = new double[36];
+			double[] y = new double[36];
+			double[] y2 = new double[36];
+			for ( int i=0; i<36; i++ )
+			{
+				x[i] = (double) new XDate( 1995, i+1, 1 );
+				y[i] = Math.Sin( (double) i * Math.PI / 15.0 );
+				y2[i] = 2 * Math.Sin( (double) i * Math.PI / 15.0 );
+			}
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			CurveItem myCurve2 = myPane.AddCurve( "My Curve 2",
+				x, y2, Color.Blue, SymbolType.Circle );
+			myCurve2.Line.Fill.Type = FillType.Brush;
+			myCurve2.Line.Fill.Color = Color.Red;
+
+			CurveItem myCurve = myPane.AddCurve( "My Curve",
+				x, y, Color.MediumVioletRed, SymbolType.Diamond );
+			myCurve.Line.Fill.Type = FillType.Brush;
+			myCurve.Line.Fill.Color = Color.Green;
+			// Set the XAxis to date type
+			myPane.XAxis.Type = AxisType.Date;
+
+			myPane.AxisFill.Color = Color.LightGoldenrodYellow;
+			myPane.AxisFill.Type = FillType.Brush;
+
+			//myPane.PaneFill.Color = Color.MediumTurquoise;
+			//myPane.PaneFill.Type = FillType.Brush;
+
+			//myPane.Legend.Fill.Color = Color.Fuchsia;
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			//			myPane.AxisChange();
+
+#endif
+
 #if false	// the date axis sample (stress test with NaN)
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
@@ -379,7 +421,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if true	// The sideways bar graph sample
+#if false	// The sideways bar graph sample
 
 			sideWays = true;
 

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-13 06:51:43 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -357,13 +357,13 @@ namespace ZedGraph
 		/// <param name="brush">A brush with the <see cref="Color"/> attribute
 		/// for this symbol</param>
 		public void FillPoint( Graphics g, float x, float y, double scaleFactor,
-								Pen pen, Brush brush )
+			Pen pen, Brush brush )
 		{
 			float	scaledSize = (float) ( this.size * scaleFactor ),
-					hsize = scaledSize / 2,
-					hsize4 = scaledSize / 3,
-					hsize41 = hsize4 + 1,
-					hsize1 = hsize + 1;
+				hsize = scaledSize / 2,
+				hsize4 = scaledSize / 3,
+				hsize41 = hsize4 + 1,
+				hsize1 = hsize + 1;
 
 			PointF[]	polyPt = new PointF[5];
 			
@@ -399,7 +399,7 @@ namespace ZedGraph
 					break;
 				case SymbolType.XCross:
 					g.FillRectangle( brush, x-hsize4, y-hsize4,
-									hsize4+hsize41, hsize4+hsize41 );
+						hsize4+hsize41, hsize4+hsize41 );
 					g.DrawLine( pen, x-hsize, y-hsize, x+hsize1, y+hsize1 );
 					g.DrawLine( pen, x+hsize, y-hsize, x-hsize1, y+hsize1 );
 					break;
@@ -427,6 +427,73 @@ namespace ZedGraph
 					polyPt[3] = polyPt[0];
 					g.FillPolygon( brush, polyPt );
 					break;
+			}
+		}
+
+		/// <summary>
+		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
+		/// device as a symbol at each defined point.  The routine
+		/// only draws the symbols; the lines are draw by the
+		/// <see cref="Line.DrawCurve"/> method.  This method
+		/// is normally only called by the Draw method of the
+		/// <see cref="CurveItem"/> object
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
+		/// curve.</param>
+		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
+		/// true for the "Y2" axis, false for the "Y" axis.</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		public void DrawSymbols( Graphics g, GraphPane pane, PointPairList points,
+							bool isY2Axis, double scaleFactor )
+		{
+			float	tmpX, tmpY;
+			double	curX, curY;
+		
+			if ( points != null )
+			{
+				// Loop over each defined point							
+				for ( int i=0; i<points.Count; i++ )
+				{
+					curX = points[i].X;
+					curY = points[i].Y;
+				
+					// Any value set to double max is invalid and should be skipped
+					// This is used for calculated values that are out of range, divide
+					//   by zero, etc.
+					// Also, any value <= zero on a log scale is invalid
+				
+					if (	curX != PointPair.Missing &&
+							curY != PointPair.Missing &&
+							!System.Double.IsNaN( curX ) &&
+							!System.Double.IsNaN( curY ) &&
+							!System.Double.IsInfinity( curX ) &&
+							!System.Double.IsInfinity( curY ) &&
+							( curX > 0 || !pane.XAxis.IsLog ) &&
+							( isY2Axis || !pane.YAxis.IsLog || curY > 0.0 ) &&
+							( !isY2Axis || !pane.Y2Axis.IsLog || curY > 0.0 ) )
+					{
+						tmpX = pane.XAxis.Transform( curX );
+						if ( isY2Axis )
+							tmpY = pane.Y2Axis.Transform( curY );
+						else
+							tmpY = pane.YAxis.Transform( curY );
+
+						this.Draw( g, tmpX, tmpY, scaleFactor );		
+					}
+				}
 			}
 		}
 	#endregion

@@ -71,7 +71,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 2.1 $ $Date: 2004-09-12 05:09:30 $ </version>
+	/// <version> $Revision: 2.2 $ $Date: 2004-09-13 06:51:43 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -205,7 +205,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.1 $ $Date: 2004-09-12 05:09:30 $ </version>
+	/// <version> $Revision: 2.2 $ $Date: 2004-09-13 06:51:43 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
@@ -785,7 +785,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.1 $ $Date: 2004-09-12 05:09:30 $ </version>
+	/// <version> $Revision: 2.2 $ $Date: 2004-09-13 06:51:43 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{
@@ -919,7 +919,7 @@ namespace ZedGraph.UnitTest
 			testee.Legend.IsHStack = false;
 			testee.Legend.IsVisible = false;
 			testee.Legend.IsFramed = false;
-			testee.Legend.IsFilled = false;
+			testee.Legend.Fill.Type = FillType.None;
 			testee.Legend.Location = LegendLoc.Bottom;
 
 			// Tell ZedGraph to refigure the
@@ -992,8 +992,8 @@ namespace ZedGraph.UnitTest
 			testee.Legend.FrameColor = Color.Black;
 			testee.Legend.FrameWidth = 1.0F;
 
-			testee.Legend.IsFilled = true;
-			testee.Legend.FillColor = Color.LightGoldenrodYellow;
+			testee.Legend.Fill.Type = FillType.Brush;
+			testee.Legend.Fill.Color = Color.LightGoldenrodYellow;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Fill Added?" ) );
@@ -1030,7 +1030,7 @@ namespace ZedGraph.UnitTest
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Horizontal Stacked?" ) );
-			testee.Legend.IsFilled = false;
+			testee.Legend.Fill.Type = FillType.None;
 
 			/////////  X AXIS /////////////////////////////////////////////////////////////////////////
 
@@ -1388,6 +1388,23 @@ namespace ZedGraph.UnitTest
 
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
 				"Text Rotate with Bottom-Left at (75, 0.5)?" ) );
+				
+			testee.PaneFill.Type = FillType.Brush;
+			testee.AxisFill.Type = FillType.Brush;
+			testee.Legend.Fill.Type = FillType.Brush;
+
+			for ( float angle=0.0F; angle<=360.0F; angle+= 10.0F )
+			{
+				testee.PaneFill.Brush = new LinearGradientBrush( testee.PaneRect, Color.White,
+					Color.Red, angle, true );
+				testee.AxisFill.Brush = new LinearGradientBrush( testee.AxisRect, Color.White,
+					Color.Blue, -angle, true );
+				testee.Legend.Fill.Brush = new LinearGradientBrush( testee.Legend.Rect, Color.White,
+					Color.Green, -angle, true );
+				
+				form2.Refresh();
+				TestUtils.DelaySeconds( 50 );
+			}
 
 			TestUtils.waitForUserOK = userOK;
 
