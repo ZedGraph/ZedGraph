@@ -14,15 +14,16 @@ namespace ZedGraph.ControlTest
 	/// </summary>
 	public class Form1 : System.Windows.Forms.Form
 	{
-		private System.Windows.Forms.TabControl tabControl1;
-		private System.Windows.Forms.TabPage tabPage1;
-		private System.Windows.Forms.TabPage tabPage2;
-		private System.Windows.Forms.TabPage tabPage3;
-		private System.Windows.Forms.TabPage tabPage4;
-		private System.Windows.Forms.Label label1;
+		private TabControl tabControl1;
+		private TabPage tabPage1;
+		private TabPage tabPage2;
+		private TabPage tabPage3;
+		private TabPage tabPage4;
+		private Label label1;
 		private ZedGraphControl zedGraphControl6;
 		private ZedGraphControl zedGraphControl4;
 		private ZedGraphControl zedGraphControl5;
+		private PropertyGrid propertyGrid1;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -67,6 +68,7 @@ namespace ZedGraph.ControlTest
 			this.tabPage3 = new System.Windows.Forms.TabPage();
 			this.zedGraphControl5 = new ZedGraph.ZedGraphControl();
 			this.tabPage4 = new System.Windows.Forms.TabPage();
+			this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
 			this.tabControl1.SuspendLayout();
 			this.tabPage2.SuspendLayout();
 			this.tabPage1.SuspendLayout();
@@ -82,7 +84,7 @@ namespace ZedGraph.ControlTest
 			this.tabControl1.Location = new System.Drawing.Point(0, 0);
 			this.tabControl1.Name = "tabControl1";
 			this.tabControl1.SelectedIndex = 0;
-			this.tabControl1.Size = new System.Drawing.Size(536, 336);
+			this.tabControl1.Size = new System.Drawing.Size(424, 336);
 			this.tabControl1.TabIndex = 1;
 			this.tabControl1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tabControl1_KeyDown);
 			this.tabControl1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.tabControl1_MouseDown);
@@ -92,7 +94,7 @@ namespace ZedGraph.ControlTest
 			this.tabPage2.Controls.Add(this.zedGraphControl4);
 			this.tabPage2.Location = new System.Drawing.Point(4, 22);
 			this.tabPage2.Name = "tabPage2";
-			this.tabPage2.Size = new System.Drawing.Size(528, 310);
+			this.tabPage2.Size = new System.Drawing.Size(416, 310);
 			this.tabPage2.TabIndex = 1;
 			this.tabPage2.Text = "tabPage2";
 			// 
@@ -102,11 +104,11 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl4.IsEnableZoom = true;
 			this.zedGraphControl4.IsShowContextMenu = true;
 			this.zedGraphControl4.IsShowPointValues = false;
-			this.zedGraphControl4.Location = new System.Drawing.Point(24, 25);
+			this.zedGraphControl4.Location = new System.Drawing.Point(8, 8);
 			this.zedGraphControl4.Name = "zedGraphControl4";
 			this.zedGraphControl4.PointDateFormat = "g";
 			this.zedGraphControl4.PointValueFormat = "G";
-			this.zedGraphControl4.Size = new System.Drawing.Size(474, 247);
+			this.zedGraphControl4.Size = new System.Drawing.Size(400, 296);
 			this.zedGraphControl4.TabIndex = 0;
 			this.zedGraphControl4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.zedGraphControl4_MouseDown);
 			// 
@@ -116,7 +118,7 @@ namespace ZedGraph.ControlTest
 			this.tabPage1.Controls.Add(this.label1);
 			this.tabPage1.Location = new System.Drawing.Point(4, 22);
 			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Size = new System.Drawing.Size(528, 310);
+			this.tabPage1.Size = new System.Drawing.Size(416, 310);
 			this.tabPage1.TabIndex = 0;
 			this.tabPage1.Text = "tabPage1";
 			this.tabPage1.Paint += new System.Windows.Forms.PaintEventHandler(this.tabPage1_Paint);
@@ -127,11 +129,11 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl6.IsEnableZoom = true;
 			this.zedGraphControl6.IsShowContextMenu = true;
 			this.zedGraphControl6.IsShowPointValues = false;
-			this.zedGraphControl6.Location = new System.Drawing.Point(24, 63);
+			this.zedGraphControl6.Location = new System.Drawing.Point(8, 8);
 			this.zedGraphControl6.Name = "zedGraphControl6";
 			this.zedGraphControl6.PointDateFormat = "g";
 			this.zedGraphControl6.PointValueFormat = "G";
-			this.zedGraphControl6.Size = new System.Drawing.Size(461, 209);
+			this.zedGraphControl6.Size = new System.Drawing.Size(400, 296);
 			this.zedGraphControl6.TabIndex = 1;
 			this.zedGraphControl6.Paint += new System.Windows.Forms.PaintEventHandler(this.zedGraphControl6_Paint);
 			this.zedGraphControl6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.zedGraphControl6_MouseDown);
@@ -148,7 +150,7 @@ namespace ZedGraph.ControlTest
 			this.tabPage3.Controls.Add(this.zedGraphControl5);
 			this.tabPage3.Location = new System.Drawing.Point(4, 22);
 			this.tabPage3.Name = "tabPage3";
-			this.tabPage3.Size = new System.Drawing.Size(528, 310);
+			this.tabPage3.Size = new System.Drawing.Size(416, 310);
 			this.tabPage3.TabIndex = 2;
 			this.tabPage3.Text = "tabPage3";
 			// 
@@ -158,25 +160,40 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl5.IsEnableZoom = true;
 			this.zedGraphControl5.IsShowContextMenu = true;
 			this.zedGraphControl5.IsShowPointValues = false;
-			this.zedGraphControl5.Location = new System.Drawing.Point(64, 40);
+			this.zedGraphControl5.Location = new System.Drawing.Point(8, 8);
 			this.zedGraphControl5.Name = "zedGraphControl5";
 			this.zedGraphControl5.PointDateFormat = "g";
 			this.zedGraphControl5.PointValueFormat = "G";
-			this.zedGraphControl5.Size = new System.Drawing.Size(328, 224);
+			this.zedGraphControl5.Size = new System.Drawing.Size(400, 296);
 			this.zedGraphControl5.TabIndex = 0;
 			// 
 			// tabPage4
 			// 
 			this.tabPage4.Location = new System.Drawing.Point(4, 22);
 			this.tabPage4.Name = "tabPage4";
-			this.tabPage4.Size = new System.Drawing.Size(528, 310);
+			this.tabPage4.Size = new System.Drawing.Size(416, 310);
 			this.tabPage4.TabIndex = 3;
 			this.tabPage4.Text = "tabPage4";
+			// 
+			// propertyGrid1
+			// 
+			this.propertyGrid1.CommandsVisibleIfAvailable = true;
+			this.propertyGrid1.LargeButtons = false;
+			this.propertyGrid1.LineColor = System.Drawing.SystemColors.ScrollBar;
+			this.propertyGrid1.Location = new System.Drawing.Point(432, 24);
+			this.propertyGrid1.Name = "propertyGrid1";
+			this.propertyGrid1.Size = new System.Drawing.Size(424, 504);
+			this.propertyGrid1.TabIndex = 2;
+			this.propertyGrid1.Text = "ZedGraph GraphPane Properties";
+			this.propertyGrid1.ViewBackColor = System.Drawing.SystemColors.Window;
+			this.propertyGrid1.ViewForeColor = System.Drawing.SystemColors.WindowText;
+			this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
 			// 
 			// Form1
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(680, 414);
+			this.ClientSize = new System.Drawing.Size(864, 534);
+			this.Controls.Add(this.propertyGrid1);
 			this.Controls.Add(this.tabControl1);
 			this.Name = "Form1";
 			this.Text = "Form1";
@@ -255,6 +272,8 @@ namespace ZedGraph.ControlTest
 			zedGraphControl6.AxisChange();
 
 			SetSize();
+			
+			propertyGrid1.SelectedObject = zedGraphControl4.GraphPane;
 		}
 
 		private void tabPage1_Paint(object sender, PaintEventArgs e)
@@ -343,6 +362,11 @@ namespace ZedGraph.ControlTest
 		{
 			//MessageBox.Show( "Howdy" );
 			DoPrint();
+		}
+
+		private void propertyGrid1_PropertyValueChanged(object s, System.Windows.Forms.PropertyValueChangedEventArgs e)
+		{
+			Refresh();
 		}
 	}
 }
