@@ -165,7 +165,7 @@ namespace ZedGraph
 	/// Enumeration type for the different horizontal text alignment options
 	/// </summary>
 	/// <seealso cref="FontSpec"/>
-	public enum FontAlignH
+	public enum AlignH
 	{
 		/// <summary>
 		/// Position the text so that its left edge is aligned with the
@@ -192,7 +192,7 @@ namespace ZedGraph
 	/// </summary>
 	/// specified X,Y location.  Used by the
 	/// <see cref="FontSpec.Draw"/> method.
-	public enum FontAlignV
+	public enum AlignV
 	{
 		/// <summary>
 		/// Position the text so that its top edge is aligned with the
@@ -285,5 +285,27 @@ namespace ZedGraph
 		/// points are connected directly by line segments.
 		/// </summary>
 		NonStep
+	};
+	
+	/// <summary>
+	/// Enumeration type that defines the base axis from which <see cref="Bar"/> graphs
+	/// are displayed. The bars can be drawn on any of the three axes (<see cref="XAxis"/>,
+	/// <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
+	/// </summary>
+	/// <seealso cref="GraphPane.BarBase"/>
+	public enum BarBase
+	{
+		/// <summary>
+		/// Draw the <see cref="Bar"/> chart based from the <see cref="XAxis"/>.
+		/// </summary>
+		X,
+		/// <summary>
+		/// Draw the <see cref="Bar"/> chart based from the <see cref="YAxis"/>.
+		/// </summary>
+		Y,
+		/// <summary>
+		/// Draw the <see cref="Bar"/> chart based from the <see cref="Y2Axis"/>.
+		/// </summary>
+		Y2
 	};
 }

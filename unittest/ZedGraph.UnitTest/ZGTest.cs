@@ -71,7 +71,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
+	/// <version> $Revision: 2.4 $ $Date: 2004-09-19 06:12:08 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -123,7 +123,7 @@ namespace ZedGraph.UnitTest
 		[Test]
 		public void StandardUserControl()
 		{
-			testee.AxisBackColor = Color.LightGoldenrodYellow;
+			testee.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow );
 
 			double[] x = { 72, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y = { 20, 10, 50, 40, 35, 60, 90, 25, 48, 75 };
@@ -151,9 +151,10 @@ namespace ZedGraph.UnitTest
 			testee.YAxis.IsShowGrid = true;
 			
 			TextItem text = new TextItem("First Prod\n21-Oct-99", 100F, 50.0F );
-			text.AlignH = FontAlignH.Center;
-			text.AlignV = FontAlignV.Bottom;
-			text.FontSpec.FillColor = Color.LightBlue;
+			text.AlignH = AlignH.Center;
+			text.AlignV = AlignV.Bottom;
+			text.FontSpec.Fill.Color = Color.LightBlue;
+			text.FontSpec.Fill.Type = FillType.Brush;
 			text.FontSpec.IsItalic = true;
 			testee.TextList.Add( text );
 			
@@ -164,10 +165,10 @@ namespace ZedGraph.UnitTest
 			text = new TextItem("Upgrade", 700F, 50.0F );
 			text.FontSpec.Angle = 90;
 			text.FontSpec.FontColor = Color.Black;
-			text.AlignH = FontAlignH.Right;
-			text.AlignV = FontAlignV.Center;
-			text.FontSpec.IsFilled = true;
-			text.FontSpec.FillColor = Color.LightGoldenrodYellow;
+			text.AlignH = AlignH.Right;
+			text.AlignV = AlignV.Center;
+			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
+			text.FontSpec.Fill.Type = FillType.Brush;
 			text.FontSpec.IsFramed = false;
 			testee.TextList.Add( text );
 			
@@ -183,8 +184,8 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.Size = 16;
 			text.FontSpec.IsFramed = true;
 			text.FontSpec.FrameColor = Color.Red;
-			text.AlignH = FontAlignH.Left;
-			text.AlignV = FontAlignV.Bottom;
+			text.AlignH = AlignH.Left;
+			text.AlignV = AlignV.Bottom;
 			testee.TextList.Add( text );
 			
 			testee.AxisChange( control.CreateGraphics() );
@@ -205,7 +206,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
+	/// <version> $Revision: 2.4 $ $Date: 2004-09-19 06:12:08 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
@@ -327,8 +328,8 @@ namespace ZedGraph.UnitTest
 				// tell Zedgraph to use user scale units for locating the TextItem
 				text.CoordinateFrame = CoordType.AxisXYScale;
 				// Align the left-center of the text to the specified point
-				text.AlignH = FontAlignH.Left;
-				text.AlignV = FontAlignV.Center;
+				text.AlignH = AlignH.Left;
+				text.AlignV = AlignV.Center;
 				text.FontSpec.IsFramed = false;
 				// rotate the text 90 degrees
 				text.FontSpec.Angle = 90;
@@ -473,8 +474,8 @@ namespace ZedGraph.UnitTest
 			curve.Symbol.Fill.Type = FillType.Solid;
 			curve.Symbol.Size = 12;
 
-			testee.PaneBackColor = Color.WhiteSmoke;
-			testee.AxisBackColor = Color.LightGoldenrodYellow;
+			testee.PaneFill = new Fill( Color.White, Color.WhiteSmoke );
+			testee.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow );
 			testee.XAxis.IsShowGrid = true;
 			testee.XAxis.ScaleFontSpec.Angle = 0;
 
@@ -482,9 +483,10 @@ namespace ZedGraph.UnitTest
 			testee.YAxis.ScaleFontSpec.Angle = 90;
 
 			TextItem text = new TextItem("First Prod\n21-Oct-93", 100F, 50.0F );
-			text.AlignH = FontAlignH.Center;
-			text.AlignV = FontAlignV.Bottom;
-			text.FontSpec.FillColor = Color.PowderBlue;
+			text.AlignH = AlignH.Center;
+			text.AlignV = AlignV.Bottom;
+			text.FontSpec.Fill.Color = Color.PowderBlue;
+			text.FontSpec.Fill.Type = FillType.Brush;
 			testee.TextList.Add( text );
 
 			ArrowItem arrow = new ArrowItem( Color.Black, 12F, 100F, 47F, 72F, 25F );
@@ -494,10 +496,10 @@ namespace ZedGraph.UnitTest
 			text = new TextItem("Upgrade", 700F, 50.0F );
 			text.FontSpec.Angle = 90;
 			text.FontSpec.FontColor = Color.Black;
-			text.AlignH = FontAlignH.Right;
-			text.AlignV = FontAlignV.Center;
-			text.FontSpec.IsFilled = true;
-			text.FontSpec.FillColor = Color.LightGoldenrodYellow;
+			text.AlignH = AlignH.Right;
+			text.AlignV = AlignV.Center;
+			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
+			text.FontSpec.Fill.Type = FillType.Brush;
 			text.FontSpec.IsFramed = false;
 			testee.TextList.Add( text );
 
@@ -515,10 +517,10 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.Size = 16;
 			text.FontSpec.IsFramed = false;
 			text.FontSpec.FrameColor = Color.Red;
-			text.FontSpec.IsFilled = false;
+			text.FontSpec.Fill.Type = FillType.None;
 
-			text.AlignH = FontAlignH.Left;
-			text.AlignV = FontAlignV.Bottom;
+			text.AlignH = AlignH.Left;
+			text.AlignV = AlignV.Bottom;
 			testee.TextList.Add( text );
 			
 			testee.AxisChange( form2.CreateGraphics() );
@@ -785,7 +787,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
+	/// <version> $Revision: 2.4 $ $Date: 2004-09-19 06:12:08 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{
@@ -950,21 +952,21 @@ namespace ZedGraph.UnitTest
 			testee.AxisFrameColor = Color.Black;
 			testee.AxisFramePenWidth = 1.0F;
 
-			testee.PaneBackColor = Color.LightGoldenrodYellow;
+			testee.PaneFill = new Fill( Color.White, Color.LightGoldenrodYellow );
 			testee.PaneGap = 50.0F;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Pane Background Filled?" ) );
 			
 			testee.PaneGap = 20.0F;
-			testee.PaneBackColor = Color.White;
-			testee.AxisBackColor = Color.LightGoldenrodYellow;
+			testee.PaneFill.IsFilled = false;
+			testee.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Axis Background Filled?" ) );
 			
-			testee.AxisBackColor = Color.White;
-
+			testee.AxisFill.IsFilled = false;
+			
 			testee.IsShowTitle = true;
 			testee.FontSpec.FontColor = Color.Red;
 			testee.Title = "The Title";
@@ -1313,7 +1315,7 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.IsUnderline = false;
 			text.FontSpec.Angle = 0.0F;
 			text.FontSpec.IsFramed = false;
-			text.FontSpec.IsFilled = false;
+			text.FontSpec.Fill.Type = FillType.None;
 			text.FontSpec.FontColor = Color.Red;
 			
 			form2.Refresh();
@@ -1332,8 +1334,8 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.FrameWidth = 1.0F;
 			text.FontSpec.FrameColor = Color.Black;
 			
-			text.FontSpec.IsFilled = true;
-			text.FontSpec.FillColor = Color.LightGoldenrodYellow;
+			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
+			text.FontSpec.Fill.Type = FillType.Brush;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
@@ -1364,15 +1366,15 @@ namespace ZedGraph.UnitTest
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
 				"Centered at (75, 0.0)?" ) );
 			
-			text.AlignH = FontAlignH.Right;
-			text.AlignV = FontAlignV.Top;
+			text.AlignH = AlignH.Right;
+			text.AlignV = AlignV.Top;
 			
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
 				"Top-Right at (75, 0.0)?" ) );
 			
-			text.AlignH = FontAlignH.Left;
-			text.AlignV = FontAlignV.Bottom;
+			text.AlignH = AlignH.Left;
+			text.AlignV = AlignV.Bottom;
 			
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked(

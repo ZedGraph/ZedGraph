@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.4 $ $Date: 2004-09-16 04:41:36 $ </version>
+	/// <version> $Revision: 2.5 $ $Date: 2004-09-19 06:12:07 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -313,6 +313,21 @@ namespace ZedGraph
 			/// for an underlined typeface, false otherwise.
 			/// </summary>
 			public static bool ScaleFontUnderline = false;
+			/// <summary>
+			/// The default color for filling in the scale text background
+			/// (see <see cref="ZedGraph.Fill.Color"/> property).
+			/// </summary>
+			public static Color ScaleFillColor = Color.White;
+			/// <summary>
+			/// The default custom brush for filling in the scale text background
+			/// (see <see cref="ZedGraph.Fill.Brush"/> property).
+			/// </summary>
+			public static Brush ScaleFillBrush = null;
+			/// <summary>
+			/// The default fill mode for filling in the scale text background
+			/// (see <see cref="ZedGraph.Fill.Type"/> property).
+			/// </summary>
+			public static FillType ScaleFillType = FillType.None;
 			
 			/// <summary>
 			/// The default display mode for the <see cref="Axis"/>
@@ -361,6 +376,21 @@ namespace ZedGraph
 			/// for an underlined typeface, false otherwise.
 			/// </summary>
 			public static bool TitleFontUnderline = false;
+			/// <summary>
+			/// The default color for filling in the title text background
+			/// (see <see cref="ZedGraph.Fill.Color"/> property).
+			/// </summary>
+			public static Color TitleFillColor = Color.White;
+			/// <summary>
+			/// The default custom brush for filling in the title text background
+			/// (see <see cref="ZedGraph.Fill.Brush"/> property).
+			/// </summary>
+			public static Brush TitleFillBrush = null;
+			/// <summary>
+			/// The default fill mode for filling in the title text background
+			/// (see <see cref="ZedGraph.Fill.Type"/> property).
+			/// </summary>
+			public static FillType TitleFillType = FillType.None;
 
 			/// <summary>
 			/// The default "dash on" size for drawing the <see cref="Axis"/> grid
@@ -641,15 +671,18 @@ namespace ZedGraph
 			this.titleFontSpec = new FontSpec(
 					Default.TitleFontFamily, Default.TitleFontSize,
 					Default.TitleFontColor, Default.TitleFontBold,
-					Default.TitleFontUnderline, Default.TitleFontItalic );
-			this.titleFontSpec.IsFilled = false;
+					Default.TitleFontUnderline, Default.TitleFontItalic,
+					Default.TitleFillColor, Default.TitleFillBrush,
+					Default.TitleFillType );
+
 			this.titleFontSpec.IsFramed = false;
 
 			this.scaleFontSpec = new FontSpec(
 				Default.ScaleFontFamily, Default.ScaleFontSize,
 				Default.ScaleFontColor, Default.ScaleFontBold,
-				Default.ScaleFontUnderline, Default.ScaleFontItalic );
-			this.scaleFontSpec.IsFilled = false;
+				Default.ScaleFontUnderline, Default.ScaleFontItalic,
+				Default.ScaleFillColor, Default.ScaleFillBrush,
+				Default.ScaleFillType );
 			this.scaleFontSpec.IsFramed = false;
 		}
 
@@ -704,8 +737,8 @@ namespace ZedGraph
 
 			scaleFormat = rhs.scaleFormat;
 
-			titleFontSpec = new FontSpec( rhs.TitleFontSpec );
-			scaleFontSpec = new FontSpec( rhs.ScaleFontSpec );
+			titleFontSpec = (FontSpec) rhs.TitleFontSpec.Clone();
+			scaleFontSpec = (FontSpec) rhs.ScaleFontSpec.Clone();
 
 			ticPenWidth = rhs.TicPenWidth;
 			ticSize = rhs.TicSize;
@@ -2091,12 +2124,12 @@ namespace ZedGraph
 					if ( this.IsLog )
 						this.ScaleFontSpec.DrawTenPower( g, tmpStr,
 							pixVal, 0.0F + textCenter,
-							FontAlignH.Center, FontAlignV.Center,
+							AlignH.Center, AlignV.Center,
 							scaleFactor );
 					else
 						this.ScaleFontSpec.Draw( g, tmpStr,
 							pixVal, 0.0F + textCenter,
-							FontAlignH.Center, FontAlignV.Center,
+							AlignH.Center, AlignV.Center,
 							scaleFactor );
 
 				}
@@ -2553,14 +2586,14 @@ namespace ZedGraph
 							GetScaleMaxSpace( g, pane, scaleFactor ).Height
 							+ this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
 
-				FontAlignV alignV = FontAlignV.Center;
-				//				FontAlignV alignV = FontAlignV.Top;
+				AlignV alignV = AlignV.Center;
+				//				AlignV alignV = AlignV.Top;
 				//if ( this is YAxis )
-				//	alignV = FontAlignV.Bottom;
+				//	alignV = AlignV.Bottom;
 
 				// Draw the title
 				this.TitleFontSpec.Draw( g, str, x, y,
-							FontAlignH.Center, alignV, scaleFactor );
+							AlignH.Center, alignV, scaleFactor );
 			}
 		}
 		

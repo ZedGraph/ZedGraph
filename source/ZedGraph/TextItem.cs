@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-19 06:12:07 $ </version>
 	public class TextItem : ICloneable
 	{
 	#region Fields
@@ -41,14 +41,14 @@ namespace ZedGraph
 		private string		text;
 		/// <summary> Private field to store the vertical Font alignment property for
 		/// this <see cref="TextItem"/>.  Use the public property <see cref="TextItem.AlignV"/>
-		/// to access this value.  The value of this field is a <see cref="FontAlignV"/> enum.
+		/// to access this value.  The value of this field is a <see cref="AlignV"/> enum.
 		/// </summary>
-		private FontAlignV	alignV;
+		private AlignV	alignV;
 		/// <summary> Private field to store the horizontal Font alignment property for
 		/// this <see cref="TextItem"/>.  Use the public property <see cref="TextItem.AlignH"/>
-		/// to access this value.  The value of this field is a <see cref="FontAlignH"/> enum.
+		/// to access this value.  The value of this field is a <see cref="AlignH"/> enum.
 		/// </summary>
-		private FontAlignH	alignH;
+		private AlignH	alignH;
 
 		/// <summary> Private fields to store the X and Y coordinate positions for
 		/// this <see cref="TextItem"/>.  Use the public properties <see cref="X"/> and
@@ -85,16 +85,16 @@ namespace ZedGraph
 			/// Default value for the vertical <see cref="TextItem"/>
 			/// text alignment (<see cref="TextItem.AlignV"/> property).
 			/// This is specified
-			/// using the <see cref="FontAlignV"/> enum type.
+			/// using the <see cref="AlignV"/> enum type.
 			/// </summary>
-			public static FontAlignV AlignV = FontAlignV.Center;
+			public static AlignV AlignV = AlignV.Center;
 			/// <summary>
 			/// Default value for the horizontal <see cref="TextItem"/>
 			/// text alignment (<see cref="TextItem.AlignH"/> property).
 			/// This is specified
-			/// using the <see cref="FontAlignH"/> enum type.
+			/// using the <see cref="AlignH"/> enum type.
 			/// </summary>
-			public static FontAlignH AlignH = FontAlignH.Center;
+			public static AlignH AlignH = AlignH.Center;
 			/// <summary>
 			/// The default coordinate system to be used for defining the
 			/// <see cref="TextItem"/> location coordinates
@@ -166,20 +166,20 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// A horizontal alignment parameter for this <see cref="TextItem"/> specified
-		/// using the <see cref="FontAlignH"/> enum type
+		/// using the <see cref="AlignH"/> enum type
 		/// </summary>
 		/// <seealso cref="Default.AlignH"/>
-		public FontAlignH AlignH
+		public AlignH AlignH
 		{
 			get { return alignH; }
 			set { alignH = value; }
 		}
 		/// <summary>
 		/// A vertical alignment parameter for this <see cref="TextItem"/> specified
-		/// using the <see cref="FontAlignV"/> enum type
+		/// using the <see cref="AlignV"/> enum type
 		/// </summary>
 		/// <seealso cref="Default.AlignV"/>
-		public FontAlignV AlignV
+		public AlignV AlignV
 		{
 			get { return alignV; }
 			set { alignV = value; }

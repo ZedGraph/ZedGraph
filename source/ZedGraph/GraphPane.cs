@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 2.4 $ $Date: 2004-09-16 04:41:36 $ </version>
+	/// <version> $Revision: 2.5 $ $Date: 2004-09-19 06:12:07 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -179,6 +179,26 @@ namespace ZedGraph
 		/// bar size (1.0 means leave a 1-barwidth gap between each bar).
 		/// Use the public property <see cref="MinBarGap"/> to access this value. </summary>
 		private float		minBarGap;
+		/// <summary>Private field that determines the base axis from which <see cref="Bar"/>
+		/// graphs will be displayed.  The base axis is the axis from which the bars grow with
+		/// increasing value. The value is of the enumeration type <see cref="ZedGraph.BarBase"/>.
+		/// To access this value, use the public property <see cref="BarBase"/>.
+		/// </summary>
+		/// <seealso cref="Default.BarBase"/>
+		private BarBase		barBase;
+		/// <summary>Private field that determines the whether or not the <see cref="Bar"/>
+		/// graphs will be displayed in stacked format.  Note that the bar values are not summed up to
+		/// create the stacking, the data values must be summed before being passed
+		/// to <see cref="GraphPane.AddCurve"/>.  For example, if the first bar of
+		/// the first <see cref="CurveItem"/> has a value of 100, and the first bar of
+		/// the second <see cref="CurveItem"/> has a value of 120, then that bar will
+		/// appear to be 20 units on top of the first bar.
+		/// Set this value to true for stacked
+		/// bars, or false for clustered bars.
+		/// To access this value, use the public property <see cref="IsBarStacked"/>.
+		/// </summary>
+		/// <seealso cref="Default.IsBarStacked"/>
+		private bool	isBarStacked;
 		/// <summary>Private field that determines the width of a bar cluster (for bar charts)
 		/// in user scale units.  Normally, this value is 1.0 because bar charts are typically
 		/// <see cref="AxisType.Ordinal"/> or <see cref="AxisType.Text"/>, and the bars are
@@ -258,6 +278,21 @@ namespace ZedGraph
 			/// for an underlined typeface, false otherwise.
 			/// </summary>
 			public static bool FontUnderline = false;
+			/// <summary>
+			/// The default color for filling in the scale text background
+			/// (see <see cref="ZedGraph.Fill.Color"/> property).
+			/// </summary>
+			public static Color FontFillColor = Color.White;
+			/// <summary>
+			/// The default custom brush for filling in the scale text background
+			/// (see <see cref="ZedGraph.Fill.Brush"/> property).
+			/// </summary>
+			public static Brush FontFillBrush = null;
+			/// <summary>
+			/// The default fill mode for filling in the scale text background
+			/// (see <see cref="ZedGraph.Fill.Type"/> property).
+			/// </summary>
+			public static FillType FontFillType = FillType.None;
 			
 			//		public static bool stepPlot = false;
 			/// <summary>
@@ -274,7 +309,7 @@ namespace ZedGraph
 			public static Color PaneFrameColor = Color.Black;
 			/// <summary>
 			/// The default color for the <see cref="GraphPane.PaneRect"/> background.
-			/// (<see cref="GraphPane.PaneBackColor"/> property). 
+			/// (<see cref="GraphPane.PaneFill"/> property). 
 			/// </summary>
 			public static Color PaneBackColor = Color.White;
 			/// <summary>
@@ -300,7 +335,7 @@ namespace ZedGraph
 			public static Color AxisFrameColor = Color.Black;
 			/// <summary>
 			/// The default color for the <see cref="GraphPane.AxisRect"/> background.
-			/// (<see cref="GraphPane.AxisBackColor"/> property). 
+			/// (<see cref="GraphPane.AxisFill"/> property). 
 			/// </summary>
 			public static Color AxisBackColor = Color.White;
 			/// <summary>
@@ -365,6 +400,18 @@ namespace ZedGraph
 			/// <seealso cref="Default.MinClusterGap"/>
 			/// <seealso cref="GraphPane.MinBarGap"/>
 			public static float MinBarGap = 0.2F;
+			/// <summary>The default value for the <see cref="BarBase"/>, which determines the base
+			/// <see cref="Axis"/> from which the <see cref="Bar"/> graphs will be displayed.
+			/// </summary>
+			/// <seealso cref="GraphPane.BarBase"/>
+			public static BarBase BarBase = BarBase.X;
+			/// <summary>The default value for the <see cref="IsBarStacked"/> property, which
+			/// determines if the bars are drawn overlapping eachother in a "stacked" format,
+			/// or side-by-side in a "cluster" format.  The value is true for stacked format
+			/// or false for cluster format.
+			/// </summary>
+			/// <seealso cref="GraphPane.IsBarStacked"/>
+			public static bool IsBarStacked = false;
 			/// <summary>
 			/// The default width of a bar cluster 
 			/// on a <see cref="Bar"/> graph.  This value only applies to
@@ -551,6 +598,7 @@ namespace ZedGraph
 			get { return isPaneFramed; }
 			set { isPaneFramed = value; }
 		}
+		
 		/// <summary>
 		/// Frame color is a <see cref="System.Drawing.Color"/> specification
 		/// for the <see cref="GraphPane"/> frame border.
@@ -561,6 +609,7 @@ namespace ZedGraph
 			get { return paneFrameColor; }
 			set { paneFrameColor = value; }
 		}
+		/*
 		/// <summary>
 		/// Gets or sets the <see cref="System.Drawing.Color"/> specification
 		/// for the <see cref="GraphPane"/> pane background, which is the
@@ -572,6 +621,7 @@ namespace ZedGraph
 			get { return paneFill.Color; }
 			set { paneFill.Color = value; }
 		}
+		*/
 		/// <summary>
 		/// FrameWidth is a float value indicating the width (thickness) of the
 		/// <see cref="GraphPane"/> frame border.
@@ -645,6 +695,7 @@ namespace ZedGraph
 			get { return axisFrameColor; }
 			set { axisFrameColor = value; }
 		}
+		/*
 		/// <summary>
 		/// Gets or sets the <see cref="System.Drawing.Color"/> specification
 		/// for the <see cref="Axis"/> background, which is the
@@ -656,6 +707,7 @@ namespace ZedGraph
 			get { return axisFill.Color; }
 			set { axisFill.Color = value; }
 		}
+		*/
 		/// <summary>
 		/// FrameWidth is a float value indicating the width (thickness) of the axis frame border.
 		/// </summary>
@@ -784,6 +836,32 @@ namespace ZedGraph
 			get { return minBarGap; }
 			set { minBarGap = value; }
 		}
+		/// <summary>Determines the base axis from which <see cref="Bar"/>
+		/// graphs will be displayed.  The base axis is the axis from which the bars grow with
+		/// increasing value. The value is of the enumeration type <see cref="ZedGraph.BarBase"/>.
+		/// </summary>
+		/// <seealso cref="Default.BarBase"/>
+		public BarBase BarBase
+		{
+			get { return barBase; }
+			set { barBase = value; }
+		}
+		/// <summary>Determines whether or not the <see cref="Bar"/>
+		/// graphs will be displayed in stacked format.  Note that the bar values are not summed up to
+		/// create the stacking, the data values must be summed before being passed
+		/// to <see cref="GraphPane.AddCurve"/>.  For example, if the first bar of
+		/// the first <see cref="CurveItem"/> has a value of 100, and the first bar of
+		/// the second <see cref="CurveItem"/> has a value of 120, then that bar will
+		/// appear to be 20 units on top of the first bar.
+		/// Set this value to true for stacked
+		/// bars, or false for clustered bars.
+		/// </summary>
+		/// <seealso cref="Default.IsBarStacked"/>
+		public bool	IsBarStacked
+		{
+			get { return isBarStacked; }
+			set { isBarStacked = value; }
+		}
 		/// <summary>
 		/// The width of an individual bar cluster on a <see cref="Bar"/> graph.
 		/// This value only applies to bar graphs plotted on non-ordinal X axis
@@ -830,8 +908,9 @@ namespace ZedGraph
 			this.isShowTitle = Default.IsShowTitle;
 			this.fontSpec = new FontSpec( Default.FontFamily,
 				Default.FontSize, Default.FontColor, Default.FontBold,
-				Default.FontItalic, Default.FontUnderline );
-			this.fontSpec.IsFilled = false;
+				Default.FontItalic, Default.FontUnderline,
+				Default.FontFillColor, Default.FontFillBrush,
+				Default.FontFillType );
 			this.fontSpec.IsFramed = false;
 					
 			this.isIgnoreInitial = Default.IsIgnoreInitial;
@@ -855,6 +934,8 @@ namespace ZedGraph
 			this.minClusterGap = Default.MinClusterGap;
 			this.minBarGap = Default.MinBarGap;
 			this.clusterScaleWidth = Default.ClusterScaleWidth;
+			this.barBase = Default.BarBase;
+			this.isBarStacked = Default.IsBarStacked;
 		}
 
 		/// <summary>
@@ -874,20 +955,20 @@ namespace ZedGraph
 			
 			this.title = rhs.Title;
 			this.isShowTitle = rhs.IsShowTitle;
-			this.fontSpec = new FontSpec( rhs.FontSpec );
+			this.fontSpec = (FontSpec) rhs.FontSpec.Clone();
 					
 			this.isIgnoreInitial = rhs.IsIgnoreInitial;
 			
 			this.isPaneFramed = rhs.IsPaneFramed;
 			this.paneFrameColor = rhs.PaneFrameColor;
 			this.paneFramePenWidth = rhs.PaneFramePenWidth;
-			this.paneFill = rhs.PaneFill;
+			this.paneFill = (Fill) rhs.PaneFill.Clone();
 
 			this.isAxisRectAuto = rhs.IsAxisRectAuto;
 			this.isAxisFramed = rhs.IsAxisFramed;
 			this.axisFrameColor = rhs.AxisFrameColor;
 			this.axisFramePenWidth = rhs.AxisFramePenWidth;
-			this.axisFill = rhs.AxisFill;
+			this.axisFill = (Fill) rhs.AxisFill.Clone();
 
 			this.baseDimension = rhs.BaseDimension;
 			this.isFontsScaled = rhs.isFontsScaled;
@@ -896,6 +977,8 @@ namespace ZedGraph
 			this.minClusterGap = rhs.MinClusterGap;
 			this.minBarGap = rhs.MinBarGap;
 			this.clusterScaleWidth = rhs.ClusterScaleWidth;
+			this.barBase = rhs.BarBase;
+			this.isBarStacked = rhs.IsBarStacked;
 		} 
 
 		/// <summary>
@@ -1006,7 +1089,7 @@ namespace ZedGraph
 				// Draw the Pane Title
 				DrawTitle( g, scaleFactor );
 			
-				// Draw the Axes
+				// Setup the axes from graphing
 				this.xAxis.SetupScaleData( this );
 				this.yAxis.SetupScaleData( this );
 				this.y2Axis.SetupScaleData( this );
@@ -1173,7 +1256,7 @@ namespace ZedGraph
 				this.FontSpec.Draw( g, this.title,
 							( this.paneRect.Left + this.paneRect.Right ) / 2,
 							this.paneRect.Top + this.ScaledGap( scaleFactor ) + size.Height / 2.0F,
-							FontAlignH.Center, FontAlignV.Center, scaleFactor );
+							AlignH.Center, AlignV.Center, scaleFactor );
 			}
 		}
 		
@@ -1433,9 +1516,9 @@ namespace ZedGraph
 		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">The color to used to fill the bars</param>
-		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
+		/// <returns>A <see cref="CurveItem"/> class for the newly created bar curve.
 		/// This can then be used to access all of the curve properties that
-		/// are not defined as arguments to the <see cref="AddCurve"/> method.</returns>
+		/// are not defined as arguments to the <see cref="AddBar"/> method.</returns>
 		public CurveItem AddBar( string label, PointPairList points, Color color )
 		{
 			CurveItem curve = new CurveItem( label, points, true, color, SymbolType.Empty );
@@ -1443,6 +1526,32 @@ namespace ZedGraph
 			
 			return curve;
 		}
+		
+		/// <summary>
+		/// Add a bar type curve (<see cref="CurveItem"/> object) to the plot with
+		/// the given data points (double arrays) and properties.
+		/// This is simplified way to add curves without knowledge of the
+		/// <see cref="CurveList"/> class.  An alternative is to use
+		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// </summary>
+		/// <param name="label">The text label (string) for the curve that will be
+		/// used as a <see cref="Legend"/> entry.</param>
+		/// <param name="x">An array of double precision X values (the
+		/// independent values) that define the curve.</param>
+		/// <param name="y">An array of double precision Y values (the
+		/// dependent values) that define the curve.</param>
+		/// <param name="color">The color to used for the bars</param>
+		/// <returns>A <see cref="CurveItem"/> class for the newly created bar curve.
+		/// This can then be used to access all of the curve properties that
+		/// are not defined as arguments to the <see cref="AddBar"/> method.</returns>
+		public CurveItem AddBar( string label, double[] x, double[] y, Color color )
+		{
+			CurveItem curve = new CurveItem( label, x, y, true, color, SymbolType.Empty );
+			this.curveList.Add( curve );
+			
+			return curve;
+		}
+
 		#endregion
 
 	#region General Utility Methods
@@ -1549,12 +1658,19 @@ namespace ZedGraph
 			double	xVal, yVal, dist, distX, distY;
 			double	tolSquared = Default.NearestTol * Default.NearestTol;
 
-			double	barWidthUserHalf = barWidth / xPixPerUnit / 2.0;
+			double	barWidthUserHalf;
+			if ( this.barBase == BarBase.X )
+				barWidthUserHalf = barWidth / xPixPerUnit / 2.0;
+			else
+				barWidthUserHalf = barWidth / yPixPerUnit / 2.0;
 
 			int		iBar = 0;
 
 			foreach ( CurveItem curve in curveList )
+			// for ( int i=curveList.Count-1; i>=0; i-- )
 			{
+				//CurveItem curve = curveList[i];
+				
 				if ( curve.IsY2Axis )
 				{
 					yAct = y2;
@@ -1594,14 +1710,25 @@ namespace ZedGraph
 
 							if ( curve.IsBar )
 							{
-								float xPix = curve.CalcBarCenter( this, barWidth, iPt, iBar );
-								xVal = this.xAxis.ReverseTransform( xPix );
+								float centerPix = Bar.CalcBarCenter( this, barWidth, iPt, iBar );
+								double centerVal = BarBaseAxis().ReverseTransform( centerPix );
 
-								if (	( x < xVal - barWidthUserHalf ) ||
-										( x > xVal + barWidthUserHalf ) ||
-										( yVal >=0 && ( y < 0 || y > yVal ) ) ||
-										( yVal < 0 && ( y >= 0 || y < yVal ) ) )
-									continue;
+								if ( this.barBase == BarBase.X )
+								{
+									if (	( x < centerVal - barWidthUserHalf ) ||
+											( x > centerVal + barWidthUserHalf ) ||
+											( yVal >=0 && ( y < 0 || y > yVal ) ) ||
+											( yVal < 0 && ( y >= 0 || y < yVal ) ) )
+										continue;
+								}
+								else
+								{
+									if (	( y < centerVal - barWidthUserHalf ) ||
+											( y > centerVal + barWidthUserHalf ) ||
+											( xVal >=0 && ( x < 0 || x > xVal ) ) ||
+											( xVal < 0 && ( x >= 0 || x < xVal ) ) )
+										continue;
+								}
 
 								dist = 0;
 							}
@@ -1611,10 +1738,11 @@ namespace ZedGraph
 								distY = (yVal - yAct) * yPixPerUnitAct;
 								dist = distX * distX + distY * distY;
 
-								if ( dist > minDist )
-									continue;
 							}
 
+							if ( dist >= minDist )
+								continue;
+								
 							minDist = dist;
 							iNearest = iPt;
 							nearestCurve = curve;
@@ -1635,103 +1763,7 @@ namespace ZedGraph
 
 			return false;
 		}
-/*
-		public bool FindNearestPoint( PointF mousePt,
-								  out CurveItem nearestCurve, out int iNearest )
-		{
-			nearestCurve = null;
-			iNearest = -1;
 
-			// If the point is outside the axisRect, always return false
-			if ( ! axisRect.Contains( mousePt ) )
-				return false;
-
-			double x, y, y2;
-			ReverseTransform( mousePt, out x, out y, out y2 );
-
-			if ( xAxis.Min == xAxis.Max || yAxis.Min == yAxis.Max ||
-						y2Axis.Min == y2Axis.Max )
-				return false;
-
-			float barWidth = CalcBarWidth();
-
-			double xPixPerUnit = axisRect.Width / ( xAxis.Max - xAxis.Min );
-			double yPixPerUnit = axisRect.Height / ( yAxis.Max - yAxis.Min );
-			double y2PixPerUnit = axisRect.Height / ( y2Axis.Max - y2Axis.Min );
-
-			double		yPixPerUnitAct, yAct, yMinAct, yMaxAct;
-			double		minDist = 1e20;
-			double		xVal, yVal, dist, distX, distY;
-			double		tolSquared = Default.NearestTol * Default.NearestTol;
-
-			int			iBar = 0;
-
-			foreach ( CurveItem curve in curveList )
-			{
-				if ( curve.IsY2Axis )
-				{
-					yAct = y2;
-					yMinAct = y2Axis.Min;
-					yMaxAct = y2Axis.Max;
-					yPixPerUnitAct = y2PixPerUnit;
-				}
-				else
-				{
-					yAct = y;
-					yMinAct = yAxis.Min;
-					yMaxAct = yAxis.Max;
-					yPixPerUnitAct = yPixPerUnit;
-				}
-
-				PointPairList points = curve.Points;
-				
-				if ( points != null )
-				{
-					for ( int iPt=0; iPt<curve.NPts; iPt++ )
-					{
-						if ( curve.IsBar )
-						{
-							float xPix = curve.CalcBarCenter( this, barWidth, iPt, iBar );
-							xVal = this.xAxis.ReverseTransform( xPix );
-						}
-						else
-							xVal = points[iPt].X;
-
-						yVal = points[iPt].Y;
-
-						if (	xVal != PointPair.Missing &&
-								xVal >= xAxis.Min && xVal <= xAxis.Max &&
-								yVal != PointPair.Missing &&
-								yVal >= yMinAct && yVal <= yMaxAct )
-						{
-							distX = (xVal - x) * xPixPerUnit;
-							distY = (yVal - yAct) * yPixPerUnitAct;
-							dist = distX * distX + distY * distY;
-
-							if ( dist < minDist )
-							{
-								minDist = dist;
-								iNearest = iPt;
-								nearestCurve = curve;
-							}
-						}
-					}
-
-					if ( curve.IsBar )
-						iBar++;
-				}
-			}
-
-			// Did we find a close point, and is it within the tolerance?
-			// (minDist is the square of the distance in pixel units)
-			if ( minDist < tolSquared )
-			{
-				return true;
-			}
-
-			return false;
-		}
-*/
 		/// <summary>
 		/// Calculate the width of each bar
 		/// </summary>
@@ -1750,16 +1782,59 @@ namespace ZedGraph
 			// totwidth = bar * ( npts * ( nbars * ( 1 + bg ) - bg + cg ) )
 			// solve for bar
 
-			float denom = CurveList.NumBars * ( 1.0F + MinBarGap ) -
-							MinBarGap + MinClusterGap;
-
-			float barWidth = this.XAxis.GetClusterWidth( this ) / denom;
+			// For stacked bar types, the bar width will be based on a single bar
+			float numBars = 1.0F;
+			if ( !this.isBarStacked )
+				numBars = CurveList.NumBars;
+				
+			float denom = numBars * ( 1.0F + MinBarGap ) - MinBarGap + MinClusterGap;
+			
+			float barWidth = GetClusterWidth() / denom;
 
 			if ( barWidth <= 0 )
 				return 1;
 
 			return barWidth;
 		}
+		
+		/// <summary>
+		/// Determine the width, in screen pixel units, of each bar cluster including
+		/// the cluster gaps and bar gaps.  This method calls the <see cref="Axis.GetClusterWidth"/>
+		/// method for the base <see cref="Axis"/> for <see cref="Bar"/> graphs
+		/// (the base <see cref="Axis"/> is assigned by the <see cref="GraphPane.BarBase"/>
+		/// property).
+		/// </summary>
+		/// <seealso cref="ZedGraph.BarBase"/>
+		/// <seealso cref="GraphPane.BarBase"/>
+		/// <seealso cref="Axis.GetClusterWidth"/>
+		/// <seealso cref="GraphPane.IsBarStacked"/>
+		/// <returns>The width of each bar cluster, in pixel units</returns>
+		public float GetClusterWidth()
+		{
+			
+			return BarBaseAxis().GetClusterWidth( this );
+		}
+		
+		/// <summary>
+		/// Determine the <see cref="Axis"/> from which the <see cref="Bar"/> charts are based.
+		/// </summary>
+		/// <seealso cref="ZedGraph.BarBase"/>
+		/// <seealso cref="GraphPane.BarBase"/>
+		/// <seealso cref="Axis.GetClusterWidth"/>
+		/// <returns>The <see cref="Axis"/> class for the axis from which the bars are based</returns>
+		public Axis BarBaseAxis()
+		{
+			Axis barAxis;
+			if ( this.BarBase == BarBase.Y )
+				barAxis = this.YAxis;
+			else if ( this.BarBase == BarBase.Y2 )
+				barAxis = this.Y2Axis;
+			else
+				barAxis = this.XAxis;
+			
+			return barAxis;
+		}
+
 	#endregion
 	}
 }

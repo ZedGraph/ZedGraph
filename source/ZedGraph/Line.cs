@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
+	/// <version> $Revision: 2.4 $ $Date: 2004-09-19 06:12:07 $ </version>
 	public class Line : ICloneable
 	{
 		#region Fields
@@ -307,7 +307,7 @@ namespace ZedGraph
 			stepType = rhs.StepType;
 			isSmooth = rhs.IsSmooth;
 			smoothTension = rhs.SmoothTension;
-			fill = rhs.Fill;
+			fill = (Fill) rhs.Fill.Clone();
 		}
 
 		/// <summary>
@@ -373,10 +373,9 @@ namespace ZedGraph
 		{
 			PointF[]	arrPoints;
 			int			count;
-			RectangleF	boundingBox;
 
 			if ( this.IsVisible && !this.Color.IsEmpty && points != null &&
-				BuildPointsArray( pane, points, isY2Axis, out arrPoints, out count, out boundingBox ) )
+				BuildPointsArray( pane, points, isY2Axis, out arrPoints, out count ) )
 			{
 				Pen pen = new Pen( this.Color, this.Width );
 				pen.DashStyle = this.Style;
@@ -392,8 +391,8 @@ namespace ZedGraph
 						double yMin = pane.YAxis.Min < 0 ? 0.0 : pane.YAxis.Min;
 
 						CloseCurve( pane, arrPoints, isY2Axis, count, yMin, path );
-						
-						Brush brush = this.fill.MakeBrush( boundingBox );
+					
+						Brush brush = this.fill.MakeBrush( path.GetBounds() );
 						g.FillPath( brush, path );
 
 						brush.Dispose();
@@ -525,10 +524,8 @@ namespace ZedGraph
 		/// <param name="count">The number of points contained in the "arrPoints"
 		/// parameter.</param>
 		/// <returns>true for a successful points array build, false for data problems</returns>
-		/// <param name="boundingBox">A <see cref="RectangleF"/> structure represent the outer
-		/// bounding box of the the data points in screen pixel coordinates.</param>
 		public bool BuildPointsArray( GraphPane pane, PointPairList points, bool isY2Axis,
-									out PointF[] arrPoints, out int count, out RectangleF boundingBox )
+									out PointF[] arrPoints, out int count )
 		{
 			arrPoints = null;
 			count = 0;
@@ -540,11 +537,6 @@ namespace ZedGraph
 						lastX = 0,
 						lastY = 0;
 
-				float minX = System.Single.MaxValue;
-				float minY = System.Single.MaxValue;
-				float maxX = System.Single.MinValue;
-				float maxY = System.Single.MinValue;
-				
 				// Step type plots get twice as many points.  Always add three points so there is
 				// room to close out the curve for area fills.
 				arrPoints = new PointF[ ( this.stepType == ZedGraph.StepType.NonStep ? 1 : 2 )
@@ -587,14 +579,6 @@ namespace ZedGraph
 						lastY = curY;
 						index++;
 						
-						if ( curX < minX )
-							minX = curX;
-						if ( curY < minY )
-							minY = curY;
-						if ( curX > maxX )
-							maxX = curX;
-						if ( curY > maxY )
-							maxY = curY;
 					}
 
 				}
@@ -602,15 +586,12 @@ namespace ZedGraph
 				// Add an extra point at the end, since the smoothing algorithm requires it
 				arrPoints[index] = arrPoints[index-1];
 				index++;
-				
-				boundingBox = new RectangleF( minX, minY, maxX, maxY );
-
+												
 				count = index;
 				return true;
 			}
 			else
 			{
-				boundingBox = new RectangleF( 0, 0, 0, 0 );
 				return false;
 			}
 		}

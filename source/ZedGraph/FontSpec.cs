@@ -27,12 +27,12 @@ namespace ZedGraph
 	/// The <see cref="FontSpec"/> class is a generic font class that maintains the font family,
 	/// attributes, colors, frame and fill modes, font size, and angle information.
 	/// This class can render text with a variety of alignment options using the
-	/// <see cref="FontAlignH"/> and <see cref="FontAlignV"/> parameters in the
+	/// <see cref="AlignH"/> and <see cref="AlignV"/> parameters in the
 	/// <see cref="Draw"/> method.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-19 06:12:07 $ </version>
 	public class FontSpec : ICloneable
 	{
 	#region Fields
@@ -71,21 +71,11 @@ namespace ZedGraph
 		/// <value>A boolean value, true for underline, false for normal</value>
 		private bool isUnderline;
 		/// <summary>
-		/// Private field that determines whether this <see cref="FontSpec"/> is
-		/// drawn with filled background.
-		/// Use the public property <see cref="IsFilled"/> to access this value.
+		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="FontSpec"/>.  Use the public property <see cref="Fill"/> to
+		/// access this value.
 		/// </summary>
-		/// <value>A boolean value, true for a color-filled background,
-		/// false for transparent background</value>
-		private bool isFilled;
-		/// <summary>
-		/// Private field that determines the background fill color for this
-		/// <see cref="FontSpec"/>.  This color is only used if
-		/// <see cref="isFilled"/> is true.
-		/// Use the public property <see cref="FillColor"/> to access this value.
-		/// </summary>
-		/// <value>A <see cref="System.Drawing.Color"/> value</value>
-		private Color fillColor;
+		private Fill		fill;
 		/// <summary>
 		/// Private field that determines whether this <see cref="FontSpec"/> is
 		/// drawn with a frame around it.
@@ -176,6 +166,21 @@ namespace ZedGraph
 			/// font have the tops aligned).
 			/// </summary>
 			public static float SuperShift = 0.4F;
+			/// <summary>
+			/// The default color for filling in the background of the text block
+			/// (<see cref="ZedGraph.Fill.Color"/> property).
+			/// </summary>
+			public static Color FillColor = Color.White;
+			/// <summary>
+			/// The default custom brush for filling in this <see cref="FontSpec"/>
+			/// (<see cref="ZedGraph.Fill.Brush"/> property).
+			/// </summary>
+			public static Brush FillBrush = null;
+			/// <summary>
+			/// The default fill mode for this <see cref="FontSpec"/>
+			/// (<see cref="ZedGraph.Fill.Type"/> property).
+			/// </summary>
+			public static FillType FillType = FillType.Solid;
 		}
 	#endregion
 	
@@ -184,7 +189,7 @@ namespace ZedGraph
 		/// The color of the font characters for this <see cref="FontSpec"/>.
 		/// Note that the frame and background
 		/// colors are set using the <see cref="FrameColor"/> and
-		/// <see cref="FillColor"/> properties, respectively.
+		/// <see cref="ZedGraph.Fill.Color"/> properties, respectively.
 		/// </summary>
 		/// <value>A system <see cref="System.Drawing.Color"/> reference.</value>
 		public Color FontColor
@@ -309,18 +314,7 @@ namespace ZedGraph
 			get { return isFramed; }
 			set { isFramed = value; }
 		}
-		/// <summary>
-		/// Determines whether or not the area behind the text of this
-		/// <see cref="FontSpec"/> is filled using the
-		/// <see cref="FillColor"/> color.
-		/// </summary>
-		/// <value>A boolean value, true for a color-filled background,
-		/// false for transparent background</value>
-		public bool IsFilled
-		{
-			get { return isFilled; }
-			set { isFilled = value; }
-		}
+		
 		/// <summary>
 		/// Sets or gets the color of the frame around the text.  This
 		/// frame is turned on or off using the <see cref="IsFramed"/>
@@ -333,17 +327,18 @@ namespace ZedGraph
 			get { return frameColor; }
 			set { frameColor = value; }
 		}
+		
 		/// <summary>
-		/// Sets or gets the color of the background behind the text.
-		/// This background fill option is turned on or off using the
-		/// <see cref="IsFilled"/> property.
+		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="FontSpec"/>, which controls how the background
+		/// behind the text is filled.
 		/// </summary>
-		/// <value>A system <see cref="System.Drawing.Color"/> reference.</value>
-		public Color FillColor
+		public Fill	Fill
 		{
-			get { return fillColor; }
-			set { fillColor = value; }
+			get { return fill; }
+			set { fill = value; }
 		}
+
 	#endregion
 	
 	#region Constructors
@@ -362,7 +357,7 @@ namespace ZedGraph
 		/// <param name="isItalic">true for an italic typeface, false otherwise</param>
 		/// <param name="isUnderline">true for an underlined font, false otherwise</param>
 		public FontSpec( string family, float size, Color color, bool isBold,
-								bool isItalic, bool isUnderline )
+			bool isItalic, bool isUnderline )
 		{
 			this.fontColor = color;
 			this.family = family;
@@ -373,8 +368,46 @@ namespace ZedGraph
 			this.scaledSize = -1;
 			this.angle = 0F;
 
-			this.isFilled = true;
-			this.fillColor = Color.White;
+			this.fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
+			this.isFramed = true;
+			this.frameColor = Color.Black;
+			this.frameWidth = 1.0F;
+			
+			Remake( 1.0, this.Size, ref this.scaledSize, ref this.font );
+		}
+
+		/// <summary>
+		/// Construct a <see cref="FontSpec"/> object with the given properties.  All other properties
+		/// are defaulted according to the values specified in the <see cref="Default"/>
+		/// default class.
+		/// </summary>
+		/// <param name="family">A text string representing the font family
+		/// (default is "Arial")</param>
+		/// <param name="size">A size of the font in points.  This size will be scaled
+		/// based on the ratio of the <see cref="GraphPane.PaneRect"/> dimension to the
+		/// <see cref="GraphPane.BaseDimension"/> of the <see cref="GraphPane"/> object. </param>
+		/// <param name="color">The color with which to render the font</param>
+		/// <param name="isBold">true for a bold typeface, false otherwise</param>
+		/// <param name="isItalic">true for an italic typeface, false otherwise</param>
+		/// <param name="isUnderline">true for an underlined font, false otherwise</param>
+		/// <param name="fillColor">The <see cref="Color"/> to use for filling in the text background</param>
+		/// <param name="fillBrush">The <see cref="Brush"/> to use for filling in the text background</param>
+		/// <param name="fillType">The <see cref="ZedGraph.FillType"/> to use for the
+		/// text background</param>
+		public FontSpec( string family, float size, Color color, bool isBold,
+			bool isItalic, bool isUnderline, Color fillColor, Brush fillBrush,
+			FillType fillType )
+		{
+			this.fontColor = color;
+			this.family = family;
+			this.isBold = isBold;
+			this.isItalic = isItalic;
+			this.isUnderline = isUnderline;
+			this.size = size;
+			this.scaledSize = -1;
+			this.angle = 0F;
+
+			this.fill = new Fill( fillColor, fillBrush, fillType );
 			this.isFramed = true;
 			this.frameColor = Color.Black;
 			this.frameWidth = 1.0F;
@@ -393,8 +426,8 @@ namespace ZedGraph
 			isBold = rhs.IsBold;
 			isItalic = rhs.IsItalic;
 			isUnderline = rhs.IsUnderline;
-			isFilled = rhs.IsFilled;
-			fillColor = rhs.FillColor;
+			fill = (Fill) rhs.Fill.Clone();
+
 			isFramed = rhs.IsFramed;
 			frameColor = rhs.FrameColor;
 			frameWidth = rhs.FrameWidth;
@@ -481,15 +514,15 @@ namespace ZedGraph
 		/// displayed.  This can be multiple lines, separated by newline ('\n')
 		/// characters</param>
 		/// <param name="x">The X location to display the text, in screen
-		/// coordinates, relative to the horizontal (<see cref="FontAlignH"/>)
+		/// coordinates, relative to the horizontal (<see cref="AlignH"/>)
 		/// alignment parameter <paramref name="alignH"/></param>
 		/// <param name="y">The Y location to display the text, in screen
-		/// coordinates, relative to the vertical (<see cref="FontAlignV"/>
+		/// coordinates, relative to the vertical (<see cref="AlignV"/>
 		/// alignment parameter <paramref name="alignV"/></param>
 		/// <param name="alignH">A horizontal alignment parameter specified
-		/// using the <see cref="FontAlignH"/> enum type</param>
+		/// using the <see cref="AlignH"/> enum type</param>
 		/// <param name="alignV">A vertical alignment parameter specified
-		/// using the <see cref="FontAlignV"/> enum type</param>
+		/// using the <see cref="AlignV"/> enum type</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
@@ -497,7 +530,7 @@ namespace ZedGraph
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		public void Draw( Graphics g, string text, float x,
-			float y, FontAlignH alignH, FontAlignV alignV,
+			float y, AlignH alignH, AlignV alignV,
 			double scaleFactor )
 		{
 			// make sure the font size is properly scaled
@@ -520,16 +553,16 @@ namespace ZedGraph
 			// center so multi-line text is center justified),
 			// shift the coordinate system so that we are
 			// actually aligned per the caller specified position
-			if ( alignH == FontAlignH.Left )
+			if ( alignH == AlignH.Left )
 				x = sizeF.Width / 2.0F;
-			else if ( alignH == FontAlignH.Right )
+			else if ( alignH == AlignH.Right )
 				x = -sizeF.Width / 2.0F;
 			else
 				x = 0.0F;
 				
-			if ( alignV == FontAlignV.Center )
+			if ( alignV == AlignV.Center )
 				y = -sizeF.Height / 2.0F;
-			else if ( alignV == FontAlignV.Bottom )
+			else if ( alignV == AlignV.Bottom )
 				y = -sizeF.Height;
 			else
 				y = 0.0F;
@@ -560,10 +593,11 @@ namespace ZedGraph
 								sizeF.Width, sizeF.Height );
 
 			// If the background is to be filled, fill it
-			if ( isFilled )
+			if ( this.fill.IsFilled )
 			{
-				SolidBrush fillBrush = new SolidBrush( this.fillColor );
+				Brush fillBrush = this.fill.MakeBrush( rectF );
 				g.FillRectangle( fillBrush, rectF );
+				fillBrush.Dispose();
 			}
 			
 			// Draw the frame around the text if required
@@ -598,15 +632,15 @@ namespace ZedGraph
 		/// displayed.  This can be multiple lines, separated by newline ('\n')
 		/// characters</param>
 		/// <param name="x">The X location to display the text, in screen
-		/// coordinates, relative to the horizontal (<see cref="FontAlignH"/>)
+		/// coordinates, relative to the horizontal (<see cref="AlignH"/>)
 		/// alignment parameter <paramref name="alignH"/></param>
 		/// <param name="y">The Y location to display the text, in screen
-		/// coordinates, relative to the vertical (<see cref="FontAlignV"/>
+		/// coordinates, relative to the vertical (<see cref="AlignV"/>
 		/// alignment parameter <paramref name="alignV"/></param>
 		/// <param name="alignH">A horizontal alignment parameter specified
-		/// using the <see cref="FontAlignH"/> enum type</param>
+		/// using the <see cref="AlignH"/> enum type</param>
 		/// <param name="alignV">A vertical alignment parameter specified
-		/// using the <see cref="FontAlignV"/> enum type</param>
+		/// using the <see cref="AlignV"/> enum type</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
@@ -614,7 +648,7 @@ namespace ZedGraph
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		public void DrawTenPower( Graphics g, string text, float x,
-			float y, FontAlignH alignH, FontAlignV alignV,
+			float y, AlignH alignH, AlignV alignV,
 			double scaleFactor )
 		{
 			// make sure the font size is properly scaled
@@ -644,16 +678,16 @@ namespace ZedGraph
 			// center so multi-line text is center justified),
 			// shift the coordinate system so that we are
 			// actually aligned per the caller specified position
-			if ( alignH == FontAlignH.Left )
+			if ( alignH == AlignH.Left )
 				x = totSize.Width / 2.0F;
-			else if ( alignH == FontAlignH.Right )
+			else if ( alignH == AlignH.Right )
 				x = -totSize.Width / 2.0F;
 			else
 				x = 0.0F;
 				
-			if ( alignV == FontAlignV.Center )
+			if ( alignV == AlignV.Center )
 				y = -totSize.Height / 2.0F;
-			else if ( alignV == FontAlignV.Bottom )
+			else if ( alignV == AlignV.Bottom )
 				y = -totSize.Height;
 			else
 				y = 0.0F;
@@ -684,10 +718,11 @@ namespace ZedGraph
 				totSize.Width, totSize.Height );
 
 			// If the background is to be filled, fill it
-			if ( isFilled )
+			if ( this.fill.IsFilled )
 			{
-				SolidBrush fillBrush = new SolidBrush( this.fillColor );
+				Brush fillBrush = this.fill.MakeBrush( rectF );
 				g.FillRectangle( fillBrush, rectF );
+				fillBrush.Dispose();
 			}
 			
 			// Draw the frame around the text if required

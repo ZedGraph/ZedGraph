@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.2 $ $Date: 2004-09-15 06:12:09 $ </version>
+	/// <version> $Revision: 2.3 $ $Date: 2004-09-19 06:12:07 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
@@ -255,7 +255,7 @@ namespace ZedGraph
 			frameColor = rhs.FrameColor;
 			isVisible = rhs.IsVisible;
 			isFramed = rhs.IsFramed;
-			fill = rhs.Fill;
+			fill = (Fill) rhs.Fill.Clone();
 		}
 
 		/// <summary>

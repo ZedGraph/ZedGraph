@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 2.3 $ $Date: 2004-09-15 06:12:09 $ </version>
+	/// <version> $Revision: 2.4 $ $Date: 2004-09-19 06:12:07 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -198,6 +198,21 @@ namespace ZedGraph
 			/// for an underlined typeface, false otherwise.
 			/// </summary>
 			public static bool FontUnderline = false;
+			/// <summary>
+			/// The default color for filling in the scale text background
+			/// (see <see cref="ZedGraph.Fill.Color"/> property).
+			/// </summary>
+			public static Color FontFillColor = Color.White;
+			/// <summary>
+			/// The default custom brush for filling in the scale text background
+			/// (see <see cref="ZedGraph.Fill.Brush"/> property).
+			/// </summary>
+			public static Brush FontFillBrush = null;
+			/// <summary>
+			/// The default fill mode for filling in the scale text background
+			/// (see <see cref="ZedGraph.Fill.Type"/> property).
+			/// </summary>
+			public static FillType FontFillType = FillType.None;
 		}
 	#endregion
 
@@ -320,8 +335,9 @@ namespace ZedGraph
 			
 			this.fontSpec = new FontSpec( Default.FontFamily, Default.FontSize,
 									Default.FontColor, Default.FontBold,
-									Default.FontItalic, Default.FontUnderline );						
-			this.fontSpec.IsFilled = false;
+									Default.FontItalic, Default.FontUnderline,
+									Default.FontFillColor, Default.FontFillBrush,
+									Default.FontFillType );						
 			this.fontSpec.IsFramed = false;
 			
 			this.fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
@@ -341,9 +357,9 @@ namespace ZedGraph
 			frameColor = rhs.FrameColor;
 			frameWidth = rhs.FrameWidth;
 			
-			this.fill = rhs.Fill;
+			this.fill = (Fill) rhs.Fill.Clone();
 			
-			fontSpec = new FontSpec( rhs.FontSpec );
+			fontSpec = (FontSpec) rhs.FontSpec.Clone();
 		}
 
 		/// <summary>
@@ -420,7 +436,7 @@ namespace ZedGraph
 				y = this.rect.Top + (int)( iEntry / hStack ) * charHeight;
 				// Draw the legend label for the current curve
 				this.FontSpec.Draw( g, curve.Label, x + 2.5F * charHeight, y,
-								FontAlignH.Left, FontAlignV.Top, scaleFactor );
+								AlignH.Left, AlignV.Top, scaleFactor );
 				
 				if ( curve.IsBar )
 				{

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 2.0 $ $Date: 2004-09-02 06:24:59 $ </version>
+	/// <version> $Revision: 2.1 $ $Date: 2004-09-19 06:12:07 $ </version>
 	public class CurveList : CollectionBase, ICloneable
 	{
 	#region Properties
@@ -225,10 +225,20 @@ namespace ZedGraph
 				// Bar types always include the Y=0 value
 				if ( curve.IsBar )
 				{
-					if ( tYMinVal > 0 )
-						tYMinVal = 0;
-					else if ( tYMaxVal < 0 )
-						tYMaxVal = 0;
+					if ( pane.BarBase == BarBase.X )
+					{
+						if ( tYMinVal > 0 )
+							tYMinVal = 0;
+						else if ( tYMaxVal < 0 )
+							tYMaxVal = 0;
+					}
+					else
+					{
+						if ( tXMinVal > 0 )
+							tXMinVal = 0;
+						else if ( tXMaxVal < 0 )
+							tXMaxVal = 0;
+					}
 				}
 
 				// determine which curve has the maximum number of points
@@ -321,16 +331,25 @@ namespace ZedGraph
 		{
 			// keep track of the ordinal position for bar curves only
 			int pos = 0;
-
-			// Loop for each curve
-			foreach( CurveItem curve in this )
+			foreach ( CurveItem curve in this )
 			{
-				// Render the curve
-				curve.Draw( g, pane, pos, scaleFactor );
-
 				if ( curve.IsBar )
 					pos++;
 			}
+			
+			// Loop for each curve in reverse order
+			for ( int i=this.Count-1; i>=0; i-- )
+			{
+				CurveItem curve = this[i];
+				
+				if ( curve.IsBar )
+					pos--;
+					
+				// Render the curve
+				curve.Draw( g, pane, pos, scaleFactor );
+
+			}
+			
 		}
 	#endregion
 	}

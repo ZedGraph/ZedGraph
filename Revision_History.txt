@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+18-Sep-2004 (by Champion)
+    More Constructors for Fill class, gradients/texture fills
+    Add Fill.IsScaled and Fill.AlignH/V
+
 15-Sep-2004 (by Champion/Vos)
     Fix roundoff problem that caused the last scale label to occasionally disappear
     Add SetMinSpaceBuffer() to GraphPane and Axis

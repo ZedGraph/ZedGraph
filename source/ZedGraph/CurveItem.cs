@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 2.2 $ $Date: 2004-09-15 06:12:09 $ </version>
+	/// <version> $Revision: 2.3 $ $Date: 2004-09-19 06:12:07 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
@@ -400,7 +400,7 @@ namespace ZedGraph
 		{
 			if ( this.isBar )
 			{
-				DrawBars( g, pane, pane.CalcBarWidth(), pos, scaleFactor );
+				Bar.DrawBars( g, pane, points, isY2Axis, pane.CalcBarWidth(), pos, scaleFactor );
 			}
 			else
 			{
@@ -417,116 +417,6 @@ namespace ZedGraph
 			}
 		}		
 		
-		/// <summary>
-		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
-		/// device as a bar at each defined point.  This method
-		/// is normally only called by the Draw method of the
-		/// <see cref="CurveItem"/> object
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="barWidth">
-		/// The width of each bar, in screen pixels.
-		/// </param>
-		/// <param name="pos">
-		/// The ordinal position of the this bar series (0=first bar, 1=second bar, etc.)
-		/// in the cluster of bars.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		public void DrawBars( Graphics g, GraphPane pane, float barWidth,
-							int pos, double scaleFactor )
-		{
-			float 	tmpX, tmpY;
-			float 	clusterWidth = pane.XAxis.GetClusterWidth( pane );
-			float 	clusterGap = pane.MinClusterGap * barWidth;
-			float 	barGap = barWidth * pane.MinBarGap;
-			
-			float	basePix;
-		
-			double	curX, curY;
-			
-			Axis yAxis;
-			if ( this.IsY2Axis )
-				yAxis = pane.Y2Axis;
-			else
-				yAxis = pane.YAxis;
-
-			if ( yAxis.Min < 0.0 && yAxis.Max > 0.0 )
-				basePix = yAxis.Transform( 0.0 );
-			else if ( yAxis.Min < 0.0 && yAxis.Max <= 0.0 )
-				basePix = yAxis.MinPix;
-			else
-				basePix = yAxis.MaxPix;
-
-			// Loop over each defined point							
-			for ( int i=0; i<this.NPts; i++ )
-			{
-				curX = this.points[i].X;
-				curY = this.points[i].Y;
-				
-				// Any value set to double max is invalid and should be skipped
-				// This is used for calculated values that are out of range, divide
-				//   by zero, etc.
-				// Also, any value <= zero on a log scale is invalid
-				
-				if (	curY != PointPair.Missing &&
-						!System.Double.IsNaN( curY ) &&
-						!System.Double.IsInfinity( curY ) )
-				{
-					//tmpX = pane.XAxis.GetOrdinalPosition( pane, i );
-					tmpX = pane.XAxis.Transform( i, curX );
-					if ( this.isY2Axis )
-						tmpY = pane.Y2Axis.Transform( i, curY );
-					else
-						tmpY = pane.YAxis.Transform( i, curY );
-
-					float left = tmpX - clusterWidth / 2.0F + clusterGap / 2.0F +
-								pos * ( barWidth + barGap );
-
-					Bar.Draw( g, left, left + barWidth, basePix,
-						tmpY, scaleFactor, true );
-				}
-			}
-		}
-
-		/// <summary>
-		/// Calculate the X screen pixel position of the center of the specified bar.  This method is
-		/// used primarily by the <see cref="GraphPane.FindNearestPoint"/> method in order to
-		/// determine the bar "location,"
-		/// which is defined as the center of the top of the individual bar.
-		/// </summary>
-		/// <param name="pane">The active GraphPane object</param>
-		/// <param name="barWidth">The width of each individual bar.  This can be calculated using
-		/// the <see cref="GraphPane.CalcBarWidth"/> method.</param>
-		/// <param name="iCluster">The cluster number for the bar of interest.  This is the ordinal
-		/// position of the current point.  That is, if a particular <see cref="CurveItem"/> has
-		/// 10 points, then a value of 3 would indicate the 4th point in the data array.</param>
-		/// <param name="iOrdinal">The ordinal position of the <see cref="CurveItem"/> of interest.
-		/// That is, the first bar series is 0, the second is 1, etc.  Note that this applies only
-		/// to the bars.  If a graph includes both bars and lines, then count only the bars.</param>
-		/// <returns>A screen pixel X position of the center of the bar of interest.</returns>
-		public float CalcBarCenter( GraphPane pane, float barWidth, int iCluster, int iOrdinal )
-		{
-			float clusterWidth = pane.XAxis.GetClusterWidth( pane );
-			//float barWidth = pane.CalcBarWidth();
-			float clusterGap = pane.MinClusterGap * barWidth;
-			float barGap = barWidth * pane.MinBarGap;
-
-			return pane.XAxis.Transform( iCluster, (double) iCluster + 1.0 )
-						- clusterWidth / 2.0F + clusterGap / 2.0F +
-						iOrdinal * ( barWidth + barGap ) + 0.5F * barWidth;
-		}
 	#endregion
 
 	#region Utility Methods
