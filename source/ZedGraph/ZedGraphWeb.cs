@@ -26,6 +26,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using ZedGraph;
 
+[assembly: TagPrefix("ZedGraph","zgw")]
+
 namespace ZedGraph
 {
 	/// <summary>
@@ -36,11 +38,11 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-01-11 11:18:26 $ </version>
-	[
+	/// <version> $Revision: 3.5 $ $Date: 2005-01-17 23:01:19 $ </version>
+	[	
 	ParseChildren(true),
 	PersistChildren(false),
-	DefaultProperty("Title"),
+	//DefaultProperty("Title"),
 	ToolboxData("<{0}:ZedGraphWeb runat=server></{0}:ZedGraphWeb>")
 	]
 	public class ZedGraphWeb : Control
@@ -54,39 +56,26 @@ namespace ZedGraph
 			return String.Empty;
 		}
 
+		#region Constructors
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
 		public ZedGraphWeb()
-		{
-		}
-
-		#region Curves
-		protected ZedGraphWebCurveCollection _curves = null;
-		[
-		Category("Data"),		
-		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
-		NotifyParentProperty(true),
-		PersistenceMode(PersistenceMode.InnerProperty)
-		]
-		public ZedGraphWebCurveCollection Curves
-		{
-			get 
-			{				
-				if ( null == _curves )
-				{
-					_curves = new ZedGraphWebCurveCollection();
-					if (IsTrackingViewState) 
-					{
-						((IStateManager)_curves).TrackViewState();
-					}					
-				}
-				return _curves;
-			}			
+		{				
+			vsassist = new GenericViewStateAssistant();									
+			vsassist.Register('x',typeof(ZedGraphWebAxis));
+			vsassist.Register('y',typeof(ZedGraphWebAxis));
+			vsassist.Register('z',typeof(ZedGraphWebAxis));
+			vsassist.Register('l',typeof(ZedGraphWebLegend));
+			vsassist.Register('b',typeof(ZedGraphWebBorder));
+			vsassist.Register('f',typeof(ZedGraphWebFill));
+			vsassist.Register('s',typeof(ZedGraphWebFontSpec));
+			vsassist.Register('c',typeof(ZedGraphWebCurveCollection));
+			vsassist.Register('g',typeof(ZedGraphWebGraphItemCollection));
 		}
 		#endregion
 
-		#region RenderDemo
+	#region RenderDemo
 		/// <summary>
 		/// Renders the demo graph with one call.
 		/// </summary>
@@ -195,8 +184,19 @@ namespace ZedGraph
 			pane.AxisChange( g );
 		}
 		#endregion
-	
-		#region Attributes
+
+	#region Attributes
+
+		[Bindable(true),Category("Layout"),NotifyParentProperty(true)]
+		public double BaseDimension
+		{
+			get 
+			{ 
+				object x = ViewState["BaseDimension"]; 
+				return (null == x) ? GraphPane.Default.BaseDimension : (double)x;
+			}
+			set { ViewState["BaseDimension"] = value; }
+		}
 		
 		/// <summary>
 		/// Gets or sets the width of the <see cref="ZedGraph.GraphPane.PaneRect"/>.
@@ -241,46 +241,14 @@ namespace ZedGraph
 				return (null == x) ? string.Empty : (string)x;
 			}
 			set { ViewState["Title"] = value; }			
-		}
-
-		/// <summary>
-		/// private field to store the X axis label.  Use the public property
-		/// <see cref="XLabel"/> to access this value.
-		/// </summary>
-		private string xlabel = string.Empty;
-		/// <summary>
-		/// Gets or sets the X Axis label of the <see cref="ZedGraph.GraphPane.XAxis"/>.
-		/// </summary>
-		/// <value>An X axis label <see cref="string"/></value>
-		[Bindable(true),Category("Appearance"),NotifyParentProperty(true),DefaultValue("")]
-		public string XLabel
-		{
-			get { return xlabel; }
-			set { xlabel = value; }			
-		}
-
-		/// <summary>
-		/// private field to store the Y axis label.  Use the public property
-		/// <see cref="YLabel"/> to access this value.
-		/// </summary>
-		private string ylabel = string.Empty;
-		/// <summary>
-		/// Gets or sets the Y Axis label of the <see cref="ZedGraph.GraphPane.YAxis"/>.
-		/// </summary>
-		/// <value>A Y axis label <see cref="string"/></value>
-		[Bindable(true),Category("Appearance"),NotifyParentProperty(true),DefaultValue("")]
-		public string YLabel
-		{
-			get { return ylabel; }
-			set { ylabel = value; }			
-		}
+		}		
 		
 		/// <summary>
 		/// Gets or sets the value that determines if the <see cref="ZedGraph.GraphPane.Title"/>
 		/// is visible.
 		/// </summary>
 		/// <value>true to show the pane title, false otherwise</value>
-		[Bindable(true),Category("Appearance"),NotifyParentProperty(true),DefaultValue("true")]
+		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public bool IsShowTitle
 		{
 			get 
@@ -291,7 +259,91 @@ namespace ZedGraph
 			set { ViewState["IsShowTitle"] = value; }			
 		}
 
-		[Bindable(true),Category("Appearance"),NotifyParentProperty(true),DefaultValue("false")]
+		/// <summary>
+		/// <seealso cref="ZegGraph.GraphPane.IsIgnoreInitial"/>
+		/// </summary>
+		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
+		public bool IsIgnoreInitial
+		{
+			get 
+			{ 
+				object x = ViewState["IsIgnoreInitial"]; 
+				return (null == x) ? GraphPane.Default.IsIgnoreInitial : (bool)x;
+			}
+			set { ViewState["IsIgnoreInitial"] = value; }			
+		}
+
+		/// <summary>
+		/// <seealso cref="ZegGraph.GraphPane.IsIgnoreMissing"/>
+		/// </summary>
+		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
+		public bool IsIgnoreMissing
+		{
+			get 
+			{ 
+				object x = ViewState["IsIgnoreMissing"]; 
+				return (null == x) ? false : (bool)x;
+			}
+			set { ViewState["IsIgnoreMissing"] = value; }			
+		}
+
+		/// <summary>
+		/// <seealso cref="ZegGraph.GraphPane.IsFontsScaled"/>
+		/// </summary>
+		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
+		public bool IsFontsScaled
+		{
+			get 
+			{ 
+				object x = ViewState["IsFontsScaled"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsFontsScaled"] = value; }			
+		}
+
+		/// <summary>
+		/// <seealso cref="ZegGraph.GraphPane.BarBase"/>
+		/// </summary>
+		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
+		public BarBase BarBase
+		{
+			get 
+			{ 
+				object x = ViewState["BarBase"]; 
+				return (null == x) ? GraphPane.Default.BarBase : (BarBase)x;
+			}
+			set { ViewState["BarBase"] = value; }			
+		}
+
+		/// <summary>
+		/// <seealso cref="ZegGraph.GraphPane.IsAxisRectAuto"/>
+		/// </summary>
+		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
+		public bool IsAxisRectAuto
+		{
+			get 
+			{ 
+				object x = ViewState["IsAxisRectAuto"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["IsAxisRectAuto"] = value; }			
+		}
+
+		/// <summary>
+		/// <seealso cref="ZegGraph.GraphPane.IsPenWidthScaled"/>
+		/// </summary>
+		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
+		public bool IsPenWidthScaled
+		{
+			get 
+			{ 
+				object x = ViewState["IsPenWidthScaled"]; 
+				return (null == x) ? GraphPane.Default.IsPenWidthScaled : (bool)x;
+			}
+			set { ViewState["IsPenWidthScaled"] = value; }			
+		}
+
+		[Bindable(true),Category("Behavior"),NotifyParentProperty(true),DefaultValue("false")]
 		public bool AxisChanged
 		{
 			get 
@@ -301,26 +353,25 @@ namespace ZedGraph
 			}
 			set { ViewState["AxisChanged"] = value; }			
 		}
-
-		/// <summary>
-		/// private field that determines the output format for the control.  Use the public property
-		/// <see cref="OutputFormat"/> to access this value.
-		/// </summary>
-		private ZedGraphWebFormat outputformat = ZedGraphWebFormat.Jpeg;
+		
 		/// <summary>
 		/// Gets or sets the value that determines the output format for the control, in the
 		/// form of a <see cref="ZedGraphWebFormat"/> enumeration.  This is typically Gif, Jpeg,
 		/// Png, or Icon.
 		/// </summary>
 		/// <value>A <see cref="ZedGraphWebFormat"/> enumeration.</value>
-		[Bindable(true),Category("Appearance"),NotifyParentProperty(true),DefaultValue("Jpeg")]
+		[Bindable(true),Category("Behavior"),NotifyParentProperty(true),DefaultValue("Jpeg")]
 		public ZedGraphWebFormat OutputFormat
 		{
-			get { return outputformat; }
-			set { outputformat = value; }			
+			get 
+			{ 
+				object x = ViewState["OutputFormat"]; 
+				return (null == x) ? ZedGraphWebFormat.Jpeg : (ZedGraphWebFormat)x;
+			}
+			set { ViewState["OutputFormat"] = value; }						
 		}	
 	
-		[NotifyParentProperty(true),Category("Appearance")]
+		[NotifyParentProperty(true),Category("Behavior")]
 		public double ClusterScaleWidth
 		{
 			get 
@@ -344,7 +395,148 @@ namespace ZedGraph
 
 	#endregion
 
-		#region Event Handlers
+	#region CurveList Property		
+		[
+		Category("Data"),		
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebCurveCollection CurveList
+		{
+			get { return (ZedGraphWebCurveCollection)vsassist.GetValue(this,'c'); }
+		}
+		#endregion
+
+#if NOTREADY_FOR_PRODUCTION
+
+	#region GraphItemList Property		
+		[
+		Category("Data"),		
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebGraphItemCollection GraphItemList
+		{
+			get {  return (ZedGraphWebGraphItemCollection)vsassist.GetValue(this,'g'); }				
+		}
+		#endregion		
+
+	#region FontSpec Property		
+		/// <summary>
+		/// <seealso cref="ZedGraph.ZedGraphWebFontSpec"/>
+		/// </summary>
+		[
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebFontSpec FontSpec
+		{
+			get { return (ZedGraphWebFontSpec)vsassist.GetValue(this,'s'); }
+		}
+		#endregion
+
+	#region AxisBorder Property		
+		/// <summary>
+		/// <seealso cref="ZedGraphWebBorder"/>
+		/// </summary>
+		[		
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebBorder AxisBorder
+		{
+			get { return (ZedGraphWebBorder)vsassist.GetValue(this,'b'); }
+		}
+		#endregion
+
+	#region AxisFill Property		
+		/// <summary>
+		/// <seealso cref="ZedGraphWebFill"/>
+		/// </summary>
+		[
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebFill AxisFill
+		{
+			get { return (ZedGraphWebFill)vsassist.GetValue(this,'f'); }
+		}
+		#endregion
+
+	#region XAxis Property		
+		/// <summary>
+		/// <seealso cref="ZedGraph.GraphPane.XAxis"/>
+		/// </summary>
+		[		
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebAxis XAxis
+		{
+			get { return (ZedGraphWebAxis)vsassist.GetValue(this,'x'); }
+		}
+		#endregion
+
+	#region YAxis Property		
+		/// <summary>
+		/// <seealso cref="ZedGraph.GraphPane.YAxis"/>
+		/// </summary>
+		[		
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebAxis YAxis
+		{
+			get { return (ZedGraphWebAxis)vsassist.GetValue(this,'y'); }
+		}
+		#endregion
+
+	#region Y2Axis Property		
+		/// <summary>
+		/// <seealso cref="ZedGraph.GraphPane.Y2Axis"/>
+		/// </summary>
+		[		
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebAxis Y2Axis
+		{
+			get { return (ZedGraphWebAxis)vsassist.GetValue(this,'z'); }
+		}
+		#endregion
+
+	#region Legend Property		
+		/// <summary>
+		/// <seealso cref="ZedGraph.GraphPane.Legend"/>
+		/// </summary>
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebLegend Legend
+		{
+			get { return (ZedGraphWebLegend)vsassist.GetValue(this,'l'); }
+		}
+		#endregion
+#endif
+
+	#region Event Handlers
 		/// <summary>
 		/// Sets the rendering event handler.
 		/// </summary>
@@ -368,16 +560,23 @@ namespace ZedGraph
 			handler = (ZedGraphWebControlEventHandler) Events[_eventRender];
 			if ( handler != null )
 			{
-				handler( g, pane );
+				try
+				{
+					handler( g, pane );
+				}
+				catch(Exception)
+				{
+					//TODO: what now, callback for errors? ;)
+				}
 			}
-			else if (_curves == null )
+			else if (CurveList.Count == 0 )
 			{// default with the sample graph if no callback provided
 				ZedGraphWeb.RenderDemo(g,pane);
 			}
 		}		
 	#endregion
-
-		#region Map Embedded Content
+		
+	#region Map Embedded Content
 
 		/// <summary>
 		/// transfers values from a <see cref="ZedGraphWebCurveItem"/> instance to a <see cref="CurveItem"/> instance
@@ -452,9 +651,9 @@ namespace ZedGraph
 			pane.ClusterScaleWidth = this.ClusterScaleWidth;
 			
 			ZedGraphWebCurveItem curve;
-			for (int i=0; i<Curves.Count; i++)
+			for (int i=0; i<CurveList.Count; i++)
 			{
-				curve = Curves[i];
+				curve = CurveList[i];
 				if ( curve is ZedGraphWebBar )
 				{
 					ZedGraphWebBar item = (ZedGraphWebBar)curve;
@@ -499,25 +698,16 @@ namespace ZedGraph
 				else if ( curve is ZedGraphWebPie )
 				{
 					ZedGraphWebPie item = (ZedGraphWebPie)curve;
-					ZedGraphWebPieSlice slice;
-					PieItem x = pane.AddPie(item.Label,0);
-					MapWeb2GraphItem((CurveItem)x,(ZedGraphWebCurveItem)item);
-					
+					PieItem x = pane.AddPieSlice(item.Value, item.Color, item.Displacement, item.Label);					
+					MapWeb2GraphItem(x.Border,item.Border);					
 					x.LabelType = item.LabelType;
-					x.PieTitle = item.PieTitle;
 					x.PieType = item.PieType;
-					
-					for ( int j=0; j<item.SliceList.Count; j++ )
-					{
-						slice = item.SliceList[j];
-						x.AddSlice(slice.Value,Color.Red,slice.Displacement,slice.Label);						
-					}
 				}
 			}
 		}
 		#endregion
 
-		#region Render Methods
+	#region Render Methods
 
 		/// <summary>
 		/// Calls the Draw() method for the control.
@@ -538,7 +728,7 @@ namespace ZedGraph
 		{
 			//TODO: fix/verify the height/width values are okay like this
 			RectangleF rect = new RectangleF( 0, 0, this.Width-1, this.Height-1 );
-			GraphPane pane = new GraphPane( rect, Title, xlabel, ylabel );
+			GraphPane pane = new GraphPane( rect, Title, string.Empty, string.Empty );
 												
 			Bitmap image = new Bitmap( this.Width, this.Height ); 			
 			Graphics g = Graphics.FromImage( image );		
@@ -546,7 +736,7 @@ namespace ZedGraph
 			//add visual designer influences here - first!!
 			MapWebContent(g,pane);
 
-			// Use callback to gather more settings
+			// Use callback to gather more settings and data values
 			OnDrawPane( g, pane );			
 
 			// Allow designer control of axischange
@@ -601,7 +791,7 @@ namespace ZedGraph
 
 	#endregion
 
-		#region Internal Output Type Helpers
+	#region Internal Output Type Helpers
 
 		/// <summary>
 		/// An enumeration type that defines the output image types supported by
@@ -637,7 +827,7 @@ namespace ZedGraph
 		{
 			get
 			{
-				switch( outputformat )
+				switch( OutputFormat )
 				{
 					case ZedGraphWebFormat.Gif:
 						return ImageFormat.Gif;
@@ -661,7 +851,7 @@ namespace ZedGraph
 		{
 			get
 			{
-				switch( outputformat )
+				switch( OutputFormat )
 				{
 					case ZedGraphWebFormat.Gif:
 						return "image/gif";
@@ -677,39 +867,33 @@ namespace ZedGraph
 		}
 	#endregion
 
-		#region State Management
+	#region State Management	
+	
+		private GenericViewStateAssistant vsassist;
+
 		/// <summary>
 		/// Used by asp.net to load the viewstate values into the web control
 		/// </summary>
 		/// <param name="savedState">portable view state object</param>
 		protected override void LoadViewState(object savedState) 
 		{
-			object baseState = null;
-			object[] myState = null;
+			object state = vsassist.LoadViewState(this,savedState);
+			if ( state != null ) base.LoadViewState(state);											
 
-			if (savedState != null) 
-			{
-				myState = (object[])savedState;
+			/*
+			if ( savedState == null ) return;
+			object[] state = (object[])savedState;
 
-				baseState = myState[0];
-			}
-
-			// Always call the base class, even if the saved state is null, so
-			// that the base class gets a chance implement its LoadViewState
-			// functionality.
-			base.LoadViewState(baseState);
-            
-			if (myState == null) 
-			{
-				return;
-			}
-
-			// NOTE: Accessing a style causes the style to be created if it
-			//       is null. For perf reasons, a style should be created 
-			//       only if there is saved state for that style.           
-
-			if (myState[1] != null)
-				((IStateManager)Curves).LoadViewState(myState[1]);			
+			if (state[0] != null) base.LoadViewState(state[0]);
+			if (state[1] != null) ((IStateManager)XAxis).LoadViewState(state[1]);
+			if (state[2] != null) ((IStateManager)YAxis).LoadViewState(state[2]);
+			if (state[3] != null) ((IStateManager)Y2Axis).LoadViewState(state[3]);
+			if (state[4] != null) ((IStateManager)Legend).LoadViewState(state[4]);
+			if (state[5] != null) ((IStateManager)AxisBorder).LoadViewState(state[5]);
+			if (state[6] != null) ((IStateManager)AxisFill).LoadViewState(state[6]);
+			if (state[7] != null) ((IStateManager)FontSpec).LoadViewState(state[7]);
+			if (state[8] != null) ((IStateManager)CurveList).LoadViewState(state[8]);
+			*/						
 		}
 
 		/// <summary>
@@ -717,33 +901,40 @@ namespace ZedGraph
 		/// </summary>
 		/// <returns>portable state object</returns>
 		protected override object SaveViewState() 
-		{
-			object[] myState = new object[2];
-
-			// NOTE: Styles are only saved only if they have been created.
-
-			myState[0] = base.SaveViewState();
-			myState[1] = (_curves != null) ? ((IStateManager)_curves).SaveViewState() : null;			
-
-			// NOTE: We don't check for all nulls, because the control is almost certain to
-			//       have some view state. Most data-bound controls save state information 
-			//       to recreate themselves without a live data source on postback.
-			return myState;
+		{			
+			return vsassist.SaveViewState(base.SaveViewState());	
+			/*
+			object[] state = new object[9];
+			state[0] = base.SaveViewState();
+			state[1] = (xaxis==null) ? null : ((IStateManager)XAxis).SaveViewState();
+			state[2] = (yaxis==null) ? null : ((IStateManager)YAxis).SaveViewState();
+			state[3] = (y2axis==null) ? null : ((IStateManager)Y2Axis).SaveViewState();
+			state[4] = (legend==null) ? null : ((IStateManager)Legend).SaveViewState();
+			state[5] = (axisborder==null) ? null : ((IStateManager)AxisBorder).SaveViewState();
+			state[6] = (axisfill==null) ? null : ((IStateManager)AxisFill).SaveViewState();
+			state[7] = (fontspec==null) ? null : ((IStateManager)FontSpec).SaveViewState();
+			state[8] = (curvelist==null) ? null : ((IStateManager)CurveList).SaveViewState();			
+			return state;
+			*/
 		}
 
 		/// <summary>
 		/// Used by asp.net to inform the viewstate to start tracking changes.
 		/// </summary>
 		protected override void TrackViewState() 
-		{
+		{	
 			base.TrackViewState();
-
-			// NOTE: Start tracking state on styles that have been created.
-			//       New styles created hereafter will start
-			//       tracking view state when they are demand created.
-
-			if (_curves != null)
-				((IStateManager)_curves).TrackViewState();			
+			vsassist.TrackViewState();
+			/*
+			if (xaxis!=null)     ((IStateManager)xaxis).TrackViewState();
+			if (yaxis!=null)     ((IStateManager)yaxis).TrackViewState();
+			if (y2axis!=null)    ((IStateManager)y2axis).TrackViewState();
+			if (legend!=null)    ((IStateManager)legend).TrackViewState();
+			if (axisborder!=null)((IStateManager)axisborder).TrackViewState();
+			if (axisfill!=null)  ((IStateManager)axisfill).TrackViewState();
+			if (fontspec!=null)  ((IStateManager)fontspec).TrackViewState();
+			if (curvelist!=null) ((IStateManager)curvelist).TrackViewState();
+			*/
 		}
 		#endregion
 	}
