@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-26 05:33:38 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-11-03 04:17:45 $ </version>
 	public class Border
 	{
 		#region Fields
@@ -66,8 +66,8 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsVisible = false;
 			/// <summary>
-			/// The default pen width (pixels) for the Border.  See the <see cref="PenWidth"/>
-			/// property.
+            /// The default pen width, in points (1/72 inch), for the Border.  See the <see cref="PenWidth"/>
+            /// property.
 			/// </summary>
 			public static float PenWidth = 1.0F;
 			/// <summary>
@@ -93,8 +93,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="isVisible">Determines whether or not the Border will be drawn.</param>
 		/// <param name="color">The color of the Border</param>
-		/// <param name="penWidth">The width, in pixels, for the Border.</param>
-		public Border( bool isVisible, Color color, float penWidth )
+        /// <param name="penWidth">The width, in points (1/72 inch), for the Border.</param>
+        public Border( bool isVisible, Color color, float penWidth )
 		{
 			this.color = color.IsEmpty ? Default.Color : color;
 			this.penWidth = penWidth;
@@ -105,8 +105,8 @@ namespace ZedGraph
 		/// Constructor that specifies the color and penWidth of the Border.
 		/// </summary>
 		/// <param name="color">The color of the Border</param>
-		/// <param name="penWidth">The width, in pixels, for the Border.</param>
-		public Border( Color color, float penWidth ) : this( true, color, penWidth )
+        /// <param name="penWidth">The width, in points (1/72 inch), for the Border.</param>
+        public Border( Color color, float penWidth ) : this( true, color, penWidth )
 		{
 		}
 
@@ -142,8 +142,8 @@ namespace ZedGraph
 			set { color = value; }
 		}
 		/// <summary>
-		/// Gets or sets the width of the <see cref="Pen"/> used to draw this Border.
-		/// </summary>
+        /// Gets or sets the width, in points (1/72 inch), of the <see cref="Pen"/> used to draw this Border.
+        /// </summary>
 		public float PenWidth
 		{
 			get { return penWidth; }
@@ -165,11 +165,20 @@ namespace ZedGraph
 		/// Create a new <see cref="Pen"/> object from the properties of this
 		/// <see cref="Border"/> object.
 		/// </summary>
-		/// <returns>A <see cref="Pen"/> object with the proper color and pen width.</returns>
-		public Pen MakePen()
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="scaleFactor">
+        /// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
+        /// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+        /// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+        /// </param>
+        /// <returns>A <see cref="Pen"/> object with the proper color and pen width.</returns>
+        public Pen MakePen( GraphPane pane, double scaleFactor )
 		{
-			return new Pen( color, penWidth );
-		}
+            return new Pen(color, pane.ScaledPenWidth(penWidth,scaleFactor));
+        }
 		
 		/// <summary>
 		/// Draw the specified Border (<see cref="RectangleF"/>) using the properties of
@@ -179,12 +188,24 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="rect">A <see cref="RectangleF"/> struct to be drawn.</param>
-		public void Draw( Graphics g, RectangleF rect )
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="scaleFactor">
+        /// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
+        /// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
+        /// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+        /// </param>
+        /// <param name="rect">A <see cref="RectangleF"/> struct to be drawn.</param>
+        public void Draw( Graphics g, GraphPane pane, double scaleFactor, RectangleF rect )
 		{
-			if ( this.isVisible )
-				g.DrawRectangle( MakePen(), Rectangle.Round( rect ) );
-		}
+            // Need to use the RectangleF props since rounding it can cause the axisFrame to
+            // not line up properly with the last tic mark
+            if (this.isVisible)
+                // g.DrawRectangle( MakePen( pane, scaleFactor ), Rectangle.Round( rect ) );
+                g.DrawRectangle(MakePen(pane, scaleFactor), rect.X, rect.Y, rect.Width, rect.Height);
+        }
 		#endregion
 	}
 }

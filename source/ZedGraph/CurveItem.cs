@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-10-29 03:12:14 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2004-11-03 04:17:45 $ </version>
 	abstract public class CurveItem
 	{
 	
@@ -361,15 +361,19 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="rect">The <see cref="RectangleF"/> struct that specifies the
-		/// location for the legend key</param>
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="rect">The <see cref="RectangleF"/> struct that specifies the
+        /// location for the legend key</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		abstract public void DrawLegendKey( Graphics g, RectangleF rect, double scaleFactor );
+		abstract public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor );
 		
 	#endregion
 

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-10-15 05:11:30 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-11-03 04:17:45 $ </version>
 	public class TextItem : ICloneable
 	{
 	#region Fields
@@ -282,7 +282,7 @@ namespace ZedGraph
 			// Draw the text on the screen, including any frame and background
 			// fill elements
 			if ( pix.X > -100000 && pix.X < 100000 && pix.Y > -100000 && pix.Y < 100000 )
-				this.FontSpec.Draw( g, this.text, pix.X, pix.Y,
+				this.FontSpec.Draw( g, pane, this.text, pix.X, pix.Y,
 								this.location.AlignH, this.location.AlignV, scaleFactor );
 		}
 		

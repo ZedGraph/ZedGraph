@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-10-15 05:11:30 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2004-11-03 04:17:45 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -366,9 +366,10 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="hStack">The number of columns (horizontal stacking) to be used
 		/// for drawing the legend</param>
-		/// <param name="legendWidth">The width of each column in the legend</param>
-		public void Draw( Graphics g, GraphPane pane, double scaleFactor,
-							int hStack, float legendWidth )
+        /// <param name="legendWidth">The width of each column in the legend</param>
+        /// <param name="legendHeight">The height of each row in the legend</param>
+        public void Draw(Graphics g, GraphPane pane, double scaleFactor,
+                                    int hStack, float legendWidth, float legendHeight )
 		{
 			// if the legend is not visible, do nothing
 			if ( ! this.isVisible )
@@ -399,19 +400,19 @@ namespace ZedGraph
 					// assuming:
 					//  charHeight/2 for the left margin, plus legendWidth for each
 					//    horizontal column
-					//  charHeight is the line spacing, with no extra margin above
+					//  legendHeight is the line spacing, with no extra margin above
 
-					x = this.rect.Left + halfCharHeight +
+					x = this.rect.Left + halfCharHeight / 2.0F +
 								( iEntry % hStack ) * legendWidth;
-					y = this.rect.Top + (int)( iEntry / hStack ) * charHeight;
+					y = this.rect.Top + (int)( iEntry / hStack ) * legendHeight;
 					
 					// Draw the legend label for the current curve
-					this.FontSpec.Draw( g, curve.Label, x + 2.5F * charHeight, y,
-									AlignH.Left, AlignV.Top, scaleFactor );
+					this.FontSpec.Draw( g, pane, curve.Label, x + 2.5F * charHeight, y + legendHeight / 2.0F,
+									AlignH.Left, AlignV.Center, scaleFactor );
 					
-					RectangleF rect = new RectangleF( x, y + charHeight / 4.0F,
-											2 * charHeight, charHeight / 2.0F );
-					curve.DrawLegendKey( g, rect, scaleFactor );
+					RectangleF rect = new RectangleF( x, y + legendHeight / 4.0F,
+											2 * charHeight, legendHeight / 2.0F );
+					curve.DrawLegendKey( g, pane, rect, scaleFactor );
 
 					// maintain a curve count for positioning
 					iEntry++;
@@ -421,7 +422,7 @@ namespace ZedGraph
 		
 			// Draw a border around the legend if required
 			if ( iEntry > 0 )
-				this.Border.Draw( g, this.rect );
+				this.Border.Draw( g, pane, scaleFactor, this.rect );
 		}
 
 		/// <summary>
@@ -511,17 +512,19 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="hStack">The number of columns (horizontal stacking) to be used
 		/// for drawing the legend</param>
-		/// <param name="legendWidth">The width of each column in the legend (pixels)</param>
-		public void CalcRect( Graphics g, GraphPane pane, double scaleFactor,
-								ref RectangleF tAxisRect, out int hStack,
-								out float legendWidth )
+        /// <param name="legendWidth">The width of each column in the legend (pixels)</param>
+        /// <param name="legendHeight">The height of each row in the legend (pixels)</param>
+        public void CalcRect(Graphics g, GraphPane pane, double scaleFactor,
+                                        ref RectangleF tAxisRect, out int hStack,
+								        out float legendWidth, out float legendHeight )
 		{
 			// Start with an empty rectangle
 			this.rect = Rectangle.Empty;
 			hStack = 1;
 			legendWidth = 1;
-		
-			// If the legend is invisible, don't do anything
+            legendHeight = 0;
+
+            // If the legend is invisible, don't do anything
 			if ( !this.isVisible )
 				return;
 		
@@ -532,8 +535,8 @@ namespace ZedGraph
 					gap = pane.ScaledGap( scaleFactor ),
 					maxWidth = 0,
 					tmpWidth;
-							
-			// Loop through each curve in the curve list
+
+            // Loop through each curve in the curve list
 			// Find the maximum width of the legend labels
 			foreach( CurveItem curve in pane.CurveList )
 			{
@@ -545,8 +548,12 @@ namespace ZedGraph
 
 					if ( tmpWidth > maxWidth )
 						maxWidth = tmpWidth;
-		
-					nCurve++;
+
+                    // Save the maximum symbol height for line-type curves
+                    if (curve is LineItem && ((LineItem)curve).Symbol.Size > legendHeight)
+                        legendHeight = ((LineItem)curve).Symbol.Size;
+
+                    nCurve++;
 				}
 			}
 		
@@ -619,8 +626,11 @@ namespace ZedGraph
 			float totLegWidth = hStack * legendWidth;	
 		
 			// The total legend height
-			float legHeight = (float) Math.Ceiling( (double) nCurve / (double) hStack )
-									* charHeight;
+            legendHeight = legendHeight * (float) scaleFactor + halfCharHeight;
+            if (charHeight > legendHeight)
+                legendHeight = charHeight;
+            float totLegHeight = (float) Math.Ceiling( (double) nCurve / (double) hStack )
+									* legendHeight;
 			
 			RectangleF newRect = new RectangleF();
 			
@@ -628,7 +638,7 @@ namespace ZedGraph
 			// Also, adjust the axisRect to reflect the space for the legend
 			if ( nCurve > 0 )
 			{
-				newRect = new RectangleF( 0, 0, totLegWidth, legHeight );
+				newRect = new RectangleF( 0, 0, totLegWidth, totLegHeight );
 				
 				// The switch statement assigns the left and top edges, and adjusts the axisRect
 				// as required.  The right and bottom edges are calculated at the bottom of the switch.
@@ -644,14 +654,14 @@ namespace ZedGraph
 						newRect.X = tAxisRect.Left;
 						newRect.Y = tAxisRect.Top;
 						
-						tAxisRect.Y += legHeight + halfCharHeight;
-						tAxisRect.Height -= legHeight + halfCharHeight;
+						tAxisRect.Y += totLegHeight + halfCharHeight;
+						tAxisRect.Height -= totLegHeight + halfCharHeight;
 						break;
 					case LegendPos.Bottom:
 						newRect.X = tAxisRect.Left;
-						newRect.Y = pane.PaneRect.Bottom - legHeight - gap;
+						newRect.Y = pane.PaneRect.Bottom - totLegHeight - gap;
 						
-						tAxisRect.Height -= legHeight + halfCharHeight;
+						tAxisRect.Height -= totLegHeight + halfCharHeight;
 						break;
 					case LegendPos.Left:
 						newRect.X = pane.PaneRect.Left + gap;
@@ -670,14 +680,14 @@ namespace ZedGraph
 						break;
 					case LegendPos.InsideBotRight:
 						newRect.X = tAxisRect.Right - totLegWidth;
-						newRect.Y = tAxisRect.Bottom - legHeight;
+						newRect.Y = tAxisRect.Bottom - totLegHeight;
 						break;
 					case LegendPos.InsideBotLeft:
 						newRect.X = tAxisRect.Left;
-						newRect.Y = tAxisRect.Bottom - legHeight;
+						newRect.Y = tAxisRect.Bottom - totLegHeight;
 						break;
 					case LegendPos.Float:
-						newRect.Location = this.Location.TransformTopLeft( pane, totLegWidth, legHeight );
+						newRect.Location = this.Location.TransformTopLeft( pane, totLegWidth, totLegHeight );
 						break;
 				}
 			}

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-26 05:33:38 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-11-03 04:17:45 $ </version>
 	public class Fill
 	{
 	#region Fields
@@ -186,7 +186,36 @@ namespace ZedGraph
 			this.color = color2;
 			this.brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
 				color1, color2, 0F );
-				this.type = FillType.Brush;
+			this.type = FillType.Brush;
+			this.isScaled = Default.IsScaled;
+			this.alignH = Default.AlignH;
+			this.alignV = Default.AlignV;
+		}
+		
+		/// <summary>
+		/// Constructor that creates a linear gradient color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of three colors
+		/// </summary>
+		/// <param name="color1">The first color for the gradient fill</param>
+		/// <param name="color2">The second color for the gradient fill</param>
+		/// <param name="color3">The third color for the gradient fill</param>
+		/// <param name="angle">The angle (degrees) of the gradient fill</param>
+		public Fill( Color color1, Color color2, Color color3, float angle )
+		{
+			ColorBlend blend = new ColorBlend( 3 );
+			blend.Colors[0] = color1;
+			blend.Colors[1] = color2;
+			blend.Colors[2] = color3;
+			blend.Positions[0] = 0.0f;
+			blend.Positions[1] = 0.5f;
+			blend.Positions[2] = 1.0f;
+			
+			this.color = color3;
+			this.brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
+				color1, color2, angle );
+			((LinearGradientBrush)this.brush).InterpolationColors = blend;
+			this.type = FillType.Brush;
 			this.isScaled = Default.IsScaled;
 			this.alignH = Default.AlignH;
 			this.alignV = Default.AlignV;
@@ -280,7 +309,8 @@ namespace ZedGraph
 			type = rhs.type;
 			alignH = rhs.AlignH;
 			alignV = rhs.AlignV;
-		}
+            isScaled = rhs.IsScaled;
+        }
 		
 		/// <summary>
 		/// Deep-copy clone routine

@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-29 03:12:15 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-11-03 04:17:45 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -80,7 +80,8 @@ namespace ZedGraph
 		/// The default format string to be used in <see cref="ToString"/> when
 		/// no format is provided
 		/// </summary>
-		public const string DefaultFormatStr = "&d-&mmm-&yy &hh:&nn";
+//		public const string DefaultFormatStr = "&d-&mmm-&yy &hh:&nn";
+		public const string DefaultFormatStr = "g";
 	#endregion
 	
 	#region Construtors
@@ -883,6 +884,38 @@ namespace ZedGraph
 		{
 			return xDate.xlDate;
 		}
+		
+		/// <summary>
+		/// Implicit conversion from double (an XL Date) to XDate.
+		/// </summary>
+		/// <param name="xlDate">The XDate struct on which to operate</param>
+		/// <returns>An XDate struct representing the specified xlDate value.</returns>
+		public static implicit operator XDate( double xlDate )
+		{
+			return new XDate( xlDate );
+		}
+		
+		/// <summary>
+		/// Implicit conversion from XDate to <see cref="DateTime"/>.
+		/// </summary>
+		/// <param name="xDate">The XDate struct on which to operate</param>
+		/// <returns>A <see cref="DateTime"/> struct representing the specified xDate value.</returns>
+		public static implicit operator DateTime( XDate xDate )
+		{
+			
+			return XLDateToDateTime( xDate );
+		}
+		
+		/// <summary>
+		/// Implicit conversion from <see cref="DateTime"/> to <see cref="XDate"/>.
+		/// </summary>
+		/// <param name="dt">The <see cref="DateTime"/> struct on which to operate</param>
+		/// <returns>An <see cref="XDate"/> struct representing the specified DateTime value.</returns>
+		public static implicit operator XDate( DateTime dt )
+		{
+			
+			return new XDate( DateTimeToXLDate( dt ) );
+		}
 	#endregion
 		
 	#region General Overrides
@@ -950,6 +983,7 @@ namespace ZedGraph
 			return ToString( this.xlDate, DefaultFormatStr );
 		}
 		
+/*
 		/// <summary>
 		/// Format this XDate value using the specified format string
 		/// </summary>
@@ -989,7 +1023,7 @@ namespace ZedGraph
 		{
 			return ToString( this.xlDate, fmtStr );
 		}
-		
+
 		/// <summary>
 		/// Format the specified XL Date value using the specified format string
 		/// </summary>
@@ -1061,6 +1095,39 @@ namespace ZedGraph
 			
 			
 			return resultStr;
+		}
+*/		
+		/// <summary>
+		/// Format this XL Date value using the specified format string.  The format
+		/// string is specified according to the <see cref="DateTime"/> class.
+		/// </summary>
+		/// <param name="fmtStr">
+		/// The formatting string to be used for the date.  See
+		/// <see cref="System.Globalization.DateTimeFormatInfo"/>
+		/// class for a list of the format types available.</param>
+		/// <returns>A string representation of the date</returns>
+		public string ToString( string fmtStr )
+		{
+			DateTime dt = XLDateToDateTime( this.XLDate );
+			return dt.ToString( fmtStr );
+		}
+
+		/// <summary>
+		/// Format the specified XL Date value using the specified format string.  The format
+		/// string is specified according to the <see cref="DateTime"/> class.
+		/// </summary>
+		/// <param name="xlDate">
+		/// The XL date value to be formatted in floating point double format.
+		/// </param>
+		/// <param name="fmtStr">
+		/// The formatting string to be used for the date.  See
+		/// <see cref="System.Globalization.DateTimeFormatInfo"/>
+		/// for a list of the format types available.</param>
+		/// <returns>A string representation of the date</returns>
+		public static string ToString( double xlDate, string fmtStr )
+		{
+			DateTime dt = XLDateToDateTime( xlDate );
+			return dt.ToString( fmtStr );
 		}
 	#endregion
 	}

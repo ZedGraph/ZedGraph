@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-02 07:00:42 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-11-03 04:17:44 $ </version>
 	public class ArrowItem : ICloneable
 	{
 	#region Fields
@@ -80,7 +80,7 @@ namespace ZedGraph
 		/// segment of the arrow.
 		/// Use the public property <see cref="PenWidth"/> to access this value.
 		/// </summary>
-		/// <value> The width is defined in pixel units </value>
+		/// <value> The width is defined in point units (1/72 inch) </value>
 		private float		penWidth;
 		/// <summary>
 		/// Private boolean field that stores the arrowhead state.
@@ -107,8 +107,8 @@ namespace ZedGraph
 		{
 			/// <summary>
 			/// The default size for the <see cref="ArrowItem"/> item arrowhead
-			/// (<see cref="ArrowItem.Size"/> property).  Units are in pixels.
-			/// </summary>
+            /// (<see cref="ArrowItem.Size"/> property).  Units are in points (1/72 inch).
+            /// </summary>
 			public static float Size = 12.0F;
 			/// <summary>
 			/// The default coordinate system to be used for defining the
@@ -126,8 +126,8 @@ namespace ZedGraph
 			public static bool IsArrowHead = true;
 			/// <summary>
 			/// The default pen width used for the <see cref="ArrowItem"/> line segment
-			/// (<see cref="ArrowItem.PenWidth"/> property).  Units are pixels.
-			/// </summary>
+            /// (<see cref="ArrowItem.PenWidth"/> property).  Units are points (1/72 inch).
+            /// </summary>
 			public static float PenWidth = 1.0F;
 			/// <summary>
 			/// The default color used for the <see cref="ArrowItem"/> line segment
@@ -182,8 +182,8 @@ namespace ZedGraph
 		/// The size of the arrowhead.  The display of the arrowhead can be
 		/// enabled or disabled with the <see cref="IsArrowHead"/> property.
 		/// </summary>
-		/// <value> The size is defined in pixel units </value>
-		/// <seealso cref="Default.Size"/>
+        /// <value> The size is defined in points (1/72 inch) </value>
+        /// <seealso cref="Default.Size"/>
 		public float Size
 		{
 			get { return size; }
@@ -192,8 +192,8 @@ namespace ZedGraph
 		/// <summary>
 		/// The width of the line segment for the <see cref="ArrowItem"/>
 		/// </summary>
-		/// <value> The width is defined in pixel units </value>
-		/// <seealso cref="Default.PenWidth"/>
+        /// <value> The width is defined in points (1/72 inch) </value>
+        /// <seealso cref="Default.PenWidth"/>
 		public float PenWidth
 		{
 			get { return penWidth; }
@@ -388,10 +388,10 @@ namespace ZedGraph
 				g.RotateTransform( angle );
 
 				// get a pen according to this arrow properties
-				Pen pen = new Pen( this.color, this.penWidth );
+				Pen pen = new Pen( this.color, pane.ScaledPenWidth( penWidth,scaleFactor) );
 				
 				// Draw the line segment for this arrow
-				g.DrawLine( pen, 0, 0, length, 0 );
+				g.DrawLine( pen, 0, 0, length-scaledSize*0.75F, 0 );
 
 				// Only show the arrowhead if required
 				if ( this.isArrowHead )
@@ -404,9 +404,9 @@ namespace ZedGraph
 					float hsize = scaledSize / 3.0F;
 					polyPt[0].X = length;
 					polyPt[0].Y = 0;
-					polyPt[1].X = length-size;
+					polyPt[1].X = length-scaledSize;
 					polyPt[1].Y = hsize;
-					polyPt[2].X = length-size;
+					polyPt[2].X = length-scaledSize;
 					polyPt[2].Y = -hsize;
 					polyPt[3] = polyPt[0];
 					

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2004-10-30 06:48:50 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2004-11-03 04:17:44 $ </version>
 	public class Bar : ICloneable
 	{
 	#region Fields
@@ -216,14 +216,18 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="left">The x position of the left side of the bar in
-		/// screen pixel units</param>
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="left">The x position of the left side of the bar in
+        /// pixel units</param>
 		/// <param name="right">The x position of the right side of the bar in
-		/// screen pixel units</param>
+		/// pixel units</param>
 		/// <param name="top">The y position of the top of the bar in
-		/// screen pixel units</param>
+		/// pixel units</param>
 		/// <param name="bottom">The y position of the bottom of the bar in
-		/// screen pixel units</param>
+		/// pixel units</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
@@ -231,7 +235,7 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="fullFrame">true to draw the bottom portion of the border around the
 		/// bar (this is for legend entries)</param>	
-		public void Draw( Graphics g, float left, float right, float top,
+		public void Draw( Graphics g, GraphPane pane, float left, float right, float top,
 						float bottom, double scaleFactor, bool fullFrame )
 		{
 			if ( top > bottom )
@@ -250,7 +254,7 @@ namespace ZedGraph
 
 			RectangleF rect = new RectangleF( left, top, right - left, bottom - top );
 			
-			Draw( g, rect, scaleFactor, fullFrame );			
+			Draw( g, pane, rect, scaleFactor, fullFrame );			
 		}
 
 		/// <summary>
@@ -261,15 +265,19 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="rect">The rectangle (screen pixels) to contain the bar</param>
-		/// <param name="scaleFactor">
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="rect">The rectangle (pixels) to contain the bar</param>
+        /// <param name="scaleFactor">
 		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>
 		/// <param name="fullFrame">true to draw the bottom portion of the border around the
 		/// bar (this is for legend entries)</param>	
-		public void Draw( Graphics g, RectangleF rect, double scaleFactor, bool fullFrame )
+		public void Draw( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor, bool fullFrame )
 		{
 			// Fill the Bar
 			if ( this.fill.IsVisible )
@@ -282,7 +290,7 @@ namespace ZedGraph
 
 			// Border the Bar
 			if ( !this.border.Color.IsEmpty )
-				this.border.Draw( g, rect );
+				this.border.Draw( g, pane, scaleFactor, rect );
 							
 		}
 
@@ -305,7 +313,7 @@ namespace ZedGraph
 		/// <param name="isY2Axis">A value indicating to which Y axis this <see cref="Bar"/> is assigned.
 		/// true for the "Y2" axis, false for the "Y" axis.</param>
 		/// <param name="barWidth">
-		/// The width of each bar, in screen pixels.
+		/// The width of each bar, in pixels.
 		/// </param>
 		/// <param name="pos">
 		/// The ordinal position of the this bar series (0=first bar, 1=second bar, etc.)
@@ -400,7 +408,7 @@ namespace ZedGraph
 						float top = ( pane.BarType == BarType.Stack ) ?
 										(float) priorTop[i] - ( zeroPix - tmpY ) : tmpY;
 										
-						this.Draw( g, left, left + barWidth, basePix,
+						this.Draw( g, pane, left, left + barWidth, basePix,
 							top, scaleFactor, true );
 							
 						priorTop[i] = top;
@@ -413,7 +421,7 @@ namespace ZedGraph
 						float right = ( pane.BarType == BarType.Stack ) ?
 							(float) priorTop[i] - ( zeroPix - tmpX ) : tmpX;
 						
-						this.Draw( g, basePix, right, top, top + barWidth,
+						this.Draw( g, pane, basePix, right, top, top + barWidth,
 								scaleFactor, true );
 
 						priorTop[i] = right;

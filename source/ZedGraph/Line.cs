@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-11-01 06:23:45 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-11-03 04:17:45 $ </version>
 	public class Line : ICloneable
 	{
 	#region Fields
@@ -126,8 +126,8 @@ namespace ZedGraph
 			public static bool IsVisible = true;
 			/// <summary>
 			/// The default width for line segments (<see cref="Line.Width"/> property).
-			/// Units are pixels.
-			/// </summary>
+            /// Units are points (1/72 inch).
+            /// </summary>
 			public static float Width = 1;
 			/// <summary>
 			/// The default value for the <see cref="Line.IsSmooth"/>
@@ -182,8 +182,8 @@ namespace ZedGraph
 			set { style = value;}
 		}
 		/// <summary>
-		/// The pen width used to draw the <see cref="Line"/>, in pixel units
-		/// </summary>
+        /// The pen width used to draw the <see cref="Line"/>, in points (1/72 inch)
+        /// </summary>
 		/// <seealso cref="Default.Width"/>
 		public float Width
 		{
@@ -330,8 +330,14 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// <param name="scaleFactor">
+        /// The scaling factor to be used for rendering objects.  This is calculated and
+        /// passed down by the parent <see cref="GraphPane"/> object using the
+        /// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+        /// font sizes, etc. according to the actual size of the graph.
+        /// </param>
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
 		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
@@ -339,16 +345,16 @@ namespace ZedGraph
 		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
 		/// true for the "Y2" axis, false for the "Y" axis.</param>
 		public void Draw( Graphics g, GraphPane pane, PointPairList points,
-						bool isY2Axis  )
-		{
+                        bool isY2Axis, double scaleFactor)
+        {
 			// If the line is being shown, draw it
 			if ( this.IsVisible )
 			{
 				if ( this.IsSmooth || this.Fill.IsVisible )
-					DrawSmoothFilledCurve( g, pane, points, isY2Axis );
-				else
-					DrawCurve( g, pane, points, isY2Axis );
-			}
+                    DrawSmoothFilledCurve(g, pane, points, isY2Axis, scaleFactor);
+                else
+                    DrawCurve(g, pane, points, isY2Axis, scaleFactor);
+            }
 		}		
 
 		/// <summary>
@@ -359,20 +365,31 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="x1">The x position of the starting point that defines the
-		/// line segment in screen pixel units</param>
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="scaleFactor">
+        /// The scaling factor to be used for rendering objects.  This is calculated and
+        /// passed down by the parent <see cref="GraphPane"/> object using the
+        /// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+        /// font sizes, etc. according to the actual size of the graph.
+        /// </param>
+        /// <param name="x1">The x position of the starting point that defines the
+        /// line segment in screen pixel units</param>
 		/// <param name="y1">The y position of the starting point that defines the
 		/// line segment in screen pixel units</param>
 		/// <param name="x2">The x position of the ending point that defines the
 		/// line segment in screen pixel units</param>
 		/// <param name="y2">The y position of the ending point that defines the
 		/// line segment in screen pixel units</param>
-		public void DrawSegment( Graphics g, float x1, float y1, float x2, float y2 )
-		{
+        public void DrawSegment(Graphics g, GraphPane pane, float x1, float y1,
+                            float x2, float y2, double scaleFactor)
+        {
 			if ( this.isVisible && !this.Color.IsEmpty )
 			{
-				Pen pen = new Pen( this.color, this.width );
-				pen.DashStyle = this.Style;
+                Pen pen = new Pen(this.color, pane.ScaledPenWidth(width, scaleFactor));
+                pen.DashStyle = this.Style;
 				g.DrawLine( pen, x1, y1, x2, y2 );
 			}
 		}
@@ -390,16 +407,23 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+        /// <param name="scaleFactor">
+        /// The scaling factor to be used for rendering objects.  This is calculated and
+        /// passed down by the parent <see cref="GraphPane"/> object using the
+        /// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+        /// font sizes, etc. according to the actual size of the graph.
+        /// </param>
+        /// <param name="pane">
+        /// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
 		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
 		/// curve.</param>
 		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
 		/// true for the "Y2" axis, false for the "Y" axis.</param>
-		public void DrawSmoothFilledCurve( Graphics g, GraphPane pane, PointPairList points, bool isY2Axis )
-		{
+		public void DrawSmoothFilledCurve( Graphics g, GraphPane pane,
+                                PointPairList points, bool isY2Axis, double scaleFactor)
+        {
 			PointF[]	arrPoints;
 			int			count;
 
@@ -407,8 +431,8 @@ namespace ZedGraph
 				BuildPointsArray( pane, points, isY2Axis, out arrPoints, out count ) &&
 				count > 2 )
 			{
-				Pen pen = new Pen( this.Color, this.Width );
-				pen.DashStyle = this.Style;
+                Pen pen = new Pen(this.Color, pane.ScaledPenWidth(width, scaleFactor));
+                pen.DashStyle = this.Style;
 				float tension = this.isSmooth ? this.smoothTension : 0f;
 				
 				// Fill the curve if needed
@@ -418,6 +442,7 @@ namespace ZedGraph
 					path.AddCurve( arrPoints, 0, count-2, tension );
 
 					double yMin = pane.YAxis.Min < 0 ? 0.0 : pane.YAxis.Min;
+					//double yMin = pane.YAxis.Min;
 
 					CloseCurve( pane, arrPoints, isY2Axis, count, yMin, path );
 				
@@ -445,24 +470,31 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+        /// <param name="scaleFactor">
+        /// The scaling factor to be used for rendering objects.  This is calculated and
+        /// passed down by the parent <see cref="GraphPane"/> object using the
+        /// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
+        /// font sizes, etc. according to the actual size of the graph.
+        /// </param>
+        /// <param name="pane">
+        /// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
 		/// <param name="points">A <see cref="PointPairList"/> of point values representing this
 		/// curve.</param>
 		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
 		/// true for the "Y2" axis, false for the "Y" axis.</param>
-		public void DrawCurve( Graphics g, GraphPane pane, PointPairList points, bool isY2Axis )
-		{
+		public void DrawCurve( Graphics g, GraphPane pane,
+                                PointPairList points, bool isY2Axis, double scaleFactor)
+        {
 			float	tmpX, tmpY,
 					lastX = 0,
 					lastY = 0;
 			double	curX, curY;
 			bool	broke = true;
-			
-			Pen pen = new Pen( this.color, this.width );
-			pen.DashStyle = this.Style;
+
+            Pen pen = new Pen(this.color, pane.ScaledPenWidth(width, scaleFactor));
+            pen.DashStyle = this.Style;
 
 			if ( points != null && !this.color.IsEmpty && this.IsVisible )
 			{
@@ -533,7 +565,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Build an array of <see cref="PointF"/> values (screen pixel coordinates) that represents
+		/// Build an array of <see cref="PointF"/> values (pixel coordinates) that represents
 		/// the current curve.  Note that this drawing routine ignores <see cref="PointPair.Missing"/>
 		/// values, but it does not "break" the line to indicate values are missing.
 		/// </summary>
@@ -543,7 +575,7 @@ namespace ZedGraph
 		/// curve.</param>
 		/// <param name="isY2Axis">A value indicating to which Y axis this curve is assigned.
 		/// true for the "Y2" axis, false for the "Y" axis.</param>
-		/// <param name="arrPoints">An array of <see cref="PointF"/> values in screen pixel
+		/// <param name="arrPoints">An array of <see cref="PointF"/> values in pixel
 		/// coordinates representing the current curve.</param>
 		/// <param name="count">The number of points contained in the "arrPoints"
 		/// parameter.</param>

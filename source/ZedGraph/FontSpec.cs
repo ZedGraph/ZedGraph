@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-10-14 04:06:01 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2004-11-03 04:17:45 $ </version>
 	public class FontSpec : ICloneable
 	{
 	#region Fields
@@ -459,7 +459,7 @@ namespace ZedGraph
 							 ( this.isUnderline ? FontStyle.Underline : style );
 				
 				scaledSize = size * (float) scaleFactor;
-				font = new Font( this.family, scaledSize, style );
+				font = new Font( this.family, scaledSize, style, GraphicsUnit.World );
 			}
 		}
 		
@@ -492,8 +492,12 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="text">A string value containing the text to be
-		/// displayed.  This can be multiple lines, separated by newline ('\n')
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="text">A string value containing the text to be
+        /// displayed.  This can be multiple lines, separated by newline ('\n')
 		/// characters</param>
 		/// <param name="x">The X location to display the text, in screen
 		/// coordinates, relative to the horizontal (<see cref="AlignH"/>)
@@ -511,7 +515,7 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void Draw( Graphics g, string text, float x,
+		public void Draw( Graphics g, GraphPane pane, string text, float x,
 			float y, AlignH alignH, AlignV alignV,
 			double scaleFactor )
 		{
@@ -583,7 +587,7 @@ namespace ZedGraph
 			this.fill.Draw( g, rectF );
 			
 			// Draw the border around the text if required
-			this.border.Draw( g, rectF );
+			this.border.Draw( g, pane, scaleFactor, rectF );
 
 			// Draw the actual text.  Note that the coordinate system
 			// is set up such that 0,0 is at the location where the
@@ -693,8 +697,12 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="text">A string value containing the text to be
-		/// displayed.  This can be multiple lines, separated by newline ('\n')
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="text">A string value containing the text to be
+        /// displayed.  This can be multiple lines, separated by newline ('\n')
 		/// characters</param>
 		/// <param name="x">The X location to display the text, in screen
 		/// coordinates, relative to the horizontal (<see cref="AlignH"/>)
@@ -712,7 +720,7 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void DrawTenPower( Graphics g, string text, float x,
+		public void DrawTenPower( Graphics g, GraphPane pane, string text, float x,
 			float y, AlignH alignH, AlignV alignV,
 			double scaleFactor )
 		{
@@ -787,7 +795,7 @@ namespace ZedGraph
 			this.fill.Draw( g, rectF );
 			
 			// Draw the border around the text if required
-			this.border.Draw( g, rectF );
+			this.border.Draw( g, pane, scaleFactor, rectF );
 
 			// Draw the actual text.  Note that the coordinate system
 			// is set up such that 0,0 is at the location where the

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-10-14 04:06:00 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-11-03 04:17:44 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -208,18 +208,18 @@ namespace ZedGraph
 			// Default Axis Properties
 			/// <summary>
 			/// The default size for the <see cref="Axis"/> tic marks.
-			/// (<see cref="Axis.TicSize"/> property). Units are pixels.
-			/// </summary>
+            /// (<see cref="Axis.TicSize"/> property). Units are in points (1/72 inch).
+            /// </summary>
 			public static float TicSize = 5;
 			/// <summary>
 			/// The default size for the <see cref="Axis"/> minor tic marks.
-			/// (<see cref="Axis.MinorTicSize"/> property). Units are pixels.
-			/// </summary>
+            /// (<see cref="Axis.MinorTicSize"/> property). Units are in points (1/72 inch).
+            /// </summary>
 			public static float MinorTicSize = 2.5F;
 			/// <summary>
 			/// The default pen width for drawing the <see cref="Axis"/> tic marks.
-			/// (<see cref="Axis.TicPenWidth"/> property). Units are pixels.
-			/// </summary>
+            /// (<see cref="Axis.TicPenWidth"/> property). Units are in points (1/72 inch).
+            /// </summary>
 			public static float TicPenWidth = 1.0F;
 			/// <summary>
 			/// The default "zero lever" for automatically selecting the axis
@@ -414,18 +414,18 @@ namespace ZedGraph
 
 			/// <summary>
 			/// The default "dash on" size for drawing the <see cref="Axis"/> grid
-			/// (<see cref="Axis.GridDashOn"/> property). Units are in pixels.
-			/// </summary>
+            /// (<see cref="Axis.GridDashOn"/> property). Units are in points (1/72 inch).
+            /// </summary>
 			public static float GridDashOn = 1.0F;
 			/// <summary>
 			/// The default "dash off" size for drawing the <see cref="Axis"/> grid
-			/// (<see cref="Axis.GridDashOff"/> property). Units are in pixels.
-			/// </summary>
+            /// (<see cref="Axis.GridDashOff"/> property). Units are in points (1/72 inch).
+            /// </summary>
 			public static float GridDashOff = 5.0F;
 			/// <summary>
 			/// The default pen width for drawing the <see cref="Axis"/> grid
-			/// (<see cref="Axis.GridPenWidth"/> property). Units are in pixels.
-			/// </summary>
+            /// (<see cref="Axis.GridPenWidth"/> property). Units are in points (1/72 inch).
+            /// </summary>
 			public static float GridPenWidth = 1.0F;
 			/// <summary>
 			/// The default color for the <see cref="Axis"/> grid lines
@@ -435,18 +435,18 @@ namespace ZedGraph
 			public static Color GridColor = Color.Black;
 			/// <summary>
 			/// The default "dash on" size for drawing the <see cref="Axis"/> minor grid
-			/// (<see cref="Axis.MinorGridDashOn"/> property). Units are in pixels.
-			/// </summary>
+            /// (<see cref="Axis.MinorGridDashOn"/> property). Units are in points (1/72 inch).
+            /// </summary>
 			public static float MinorGridDashOn = 1.0F;
 			/// <summary>
 			/// The default "dash off" size for drawing the <see cref="Axis"/> minor grid
-			/// (<see cref="Axis.MinorGridDashOff"/> property). Units are in pixels.
-			/// </summary>
+            /// (<see cref="Axis.MinorGridDashOff"/> property). Units are in points (1/72 inch).
+            /// </summary>
 			public static float MinorGridDashOff = 10.0F;
 			/// <summary>
 			/// The default pen width for drawing the <see cref="Axis"/> minor grid
-			/// (<see cref="Axis.MinorGridPenWidth"/> property). Units are in pixels.
-			/// </summary>
+            /// (<see cref="Axis.MinorGridPenWidth"/> property). Units are in points (1/72 inch).
+            /// </summary>
 			public static float MinorGridPenWidth = 1.0F;
 			/// <summary>
 			/// The default color for the <see cref="Axis"/> minor grid lines
@@ -638,9 +638,133 @@ namespace ZedGraph
 			public static double RangeMinuteSecond = 2.083e-3;  // 3 Minutes
 			
 			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// This is the format used for the scale values when auto-ranging code
+			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Year"/>
+			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Year"/> for 
+			/// for <see cref="Axis.MinorUnit"/>.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
+			public static string FormatYearYear = "yyyy";
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// This is the format used for the scale values when auto-ranging code
+			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Year"/>
+			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Month"/> for 
+			/// for <see cref="Axis.MinorUnit"/>.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
+			public static string FormatYearMonth = "MMM/yyyy";
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// This is the format used for the scale values when auto-ranging code
+			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Month"/>
+			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Month"/> for 
+			/// for <see cref="Axis.MinorUnit"/>.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
+			public static string FormatMonthMonth = "MMM/yyyy";
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// This is the format used for the scale values when auto-ranging code
+			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Day"/>
+			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Day"/> for 
+			/// for <see cref="Axis.MinorUnit"/>.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
+			public static string FormatDayDay = "d/MMM";
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// This is the format used for the scale values when auto-ranging code
+			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Day"/>
+			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Hour"/> for 
+			/// for <see cref="Axis.MinorUnit"/>.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
+			public static string FormatDayHour = "d/MMM HH:mm";
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// This is the format used for the scale values when auto-ranging code
+			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Hour"/>
+			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Hour"/> for 
+			/// for <see cref="Axis.MinorUnit"/>.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
+			public static string FormatHourHour = "HH:mm";
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// This is the format used for the scale values when auto-ranging code
+			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Hour"/>
+			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Minute"/> for 
+			/// for <see cref="Axis.MinorUnit"/>.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
+			public static string FormatHourMinute = "HH:mm";
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// This is the format used for the scale values when auto-ranging code
+			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Minute"/>
+			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Minute"/> for 
+			/// for <see cref="Axis.MinorUnit"/>.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
+			public static string FormatMinuteMinute = "HH:mm";
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// This is the format used for the scale values when auto-ranging code
+			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Minute"/>
+			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Second"/> for 
+			/// for <see cref="Axis.MinorUnit"/>.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
+			public static string FormatMinuteSecond = "mm:ss";
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// This is the format used for the scale values when auto-ranging code
+			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Second"/>
+			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Second"/> for 
+			/// for <see cref="Axis.MinorUnit"/>.
+			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
+			/// </summary>
+			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
+			public static string FormatSecondSecond = "mm:ss";
+
+			/*  Prior format assignments using original XDate.ToString()
+					this.scaleFormat = "&yyyy";
+					this.scaleFormat = "&mmm-&yy";
+					this.scaleFormat = "&mmm-&yy";
+					scaleFormat = "&d-&mmm";
+					this.scaleFormat = "&d-&mmm &hh:&nn";
+					scaleFormat = "&hh:&nn";
+					scaleFormat = "&hh:&nn";
+					scaleFormat = "&hh:&nn";
+					scaleFormat = "&nn:&ss";
+					scaleFormat = "&nn:&ss";
+			*/
+
+			/// <summary>
 			/// The default setting for the axis space allocation.  This term, expressed in
-			/// pixels and scaled according to <see cref="GraphPane.CalcScaleFactor"/> for the
-			/// <see cref="GraphPane"/>, determines the minimum amount of space an axis must
+            /// points (1/72 inch) and scaled according to <see cref="GraphPane.CalcScaleFactor"/> for the
+            /// <see cref="GraphPane"/>, determines the minimum amount of space an axis must
 			/// have between the <see cref="GraphPane.AxisRect"/> and the
 			/// <see cref="GraphPane.PaneRect"/>.  This minimum space
 			/// applies whether <see cref="Axis.IsVisible"/> is true or false.
@@ -1008,8 +1132,8 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// The minimum axis space allocation.  This term, expressed in
-		/// pixels and scaled according to <see cref="GraphPane.CalcScaleFactor"/>
-		/// for the <see cref="GraphPane"/>, determines the minimum amount of space
+        /// points (1/72 inch) and scaled according to <see cref="GraphPane.CalcScaleFactor"/>
+        /// for the <see cref="GraphPane"/>, determines the minimum amount of space
 		/// an axis must have between the <see cref="GraphPane.AxisRect"/> and the
 		/// <see cref="GraphPane.PaneRect"/>.  This minimum space
 		/// applies whether <see cref="IsVisible"/> is true or false.
@@ -1043,8 +1167,8 @@ namespace ZedGraph
 		/// according to the <see cref="GraphPane.CalcScaleFactor"/> for the
 		/// <see cref="GraphPane"/>
 		/// </summary>
-		/// <value>The tic size is measured in pixels</value>
-		/// <seealso cref="Default.TicSize"/>.
+        /// <value>The tic size is measured in points (1/72 inch)</value>
+        /// <seealso cref="Default.TicSize"/>.
 		/// <seealso cref="IsTic"/>
 		/// <seealso cref="IsVisible"/>
 		/// <seealso cref="Color"/>
@@ -1058,8 +1182,8 @@ namespace ZedGraph
 		/// according to the <see cref="GraphPane.CalcScaleFactor"/> for the
 		/// <see cref="GraphPane"/>
 		/// </summary>
-		/// <value>The tic size is measured in pixels</value>
-		/// <seealso cref="Default.MinorTicSize"/>.
+        /// <value>The tic size is measured in points (1/72 inch)</value>
+        /// <seealso cref="Default.MinorTicSize"/>.
 		/// <seealso cref="IsMinorTic"/>
 		public float MinorTicSize
 		{
@@ -1075,8 +1199,8 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		/// <returns>The scaled tic size, in pixels</returns>
-		/// <seealso cref="TicSize"/>
+        /// <returns>The scaled tic size, in points (1/72 inch)</returns>
+        /// <seealso cref="TicSize"/>
 		/// <seealso cref="MinorTicSize"/>
 		/// <seealso cref="TitleFontSpec"/>
 		/// <seealso cref="ScaleFontSpec"/>
@@ -1094,8 +1218,8 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		/// <returns>The scaled tic size, in pixels</returns>
-		/// <seealso cref="MinorTicSize"/>
+        /// <returns>The scaled tic size, in points (1/72 inch)</returns>
+        /// <seealso cref="MinorTicSize"/>
 		/// <seealso cref="GraphPane.CalcScaleFactor"/>
 		public float ScaledMinorTic( double scaleFactor )
 		{
@@ -1226,8 +1350,8 @@ namespace ZedGraph
 		/// <summary>
 		/// The pen width to be used when drawing the tic marks for this <see cref="Axis"/>
 		/// </summary>
-		/// <value>The pen width is defined in pixels</value>
-		/// <seealso cref="Default.TicPenWidth"/>.
+        /// <value>The pen width is defined in points (1/72 inch)</value>
+        /// <seealso cref="Default.TicPenWidth"/>.
 		/// <seealso cref="IsTic"/>
 		/// <seealso cref="Color"/>
 		public float TicPenWidth
@@ -1270,10 +1394,10 @@ namespace ZedGraph
 
 		/// <summary>
 		/// The "Dash On" mode for drawing the grid.  This is the distance,
-		/// in pixels, of the dash segments that make up the dashed grid lines.
-		/// </summary>
-		/// <value>The dash on length is defined in pixel units</value>
-		/// <seealso cref="GridDashOff"/>
+        /// in points (1/72 inch), of the dash segments that make up the dashed grid lines.
+        /// </summary>
+        /// <value>The dash on length is defined in points (1/72 inch)</value>
+        /// <seealso cref="GridDashOff"/>
 		/// <seealso cref="IsShowGrid"/>
 		/// <seealso cref="Default.GridDashOn"/>.
 		public float GridDashOn
@@ -1283,11 +1407,11 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// The "Dash Off" mode for drawing the grid.  This is the distance,
-		/// in pixels, of the spaces between the dash segments that make up
-		/// the dashed grid lines.
+        /// in points (1/72 inch), of the spaces between the dash segments that make up
+        /// the dashed grid lines.
 		/// </summary>
-		/// <value>The dash off length is defined in pixel units</value>
-		/// <seealso cref="GridDashOn"/>
+        /// <value>The dash off length is defined in points (1/72 inch)</value>
+        /// <seealso cref="GridDashOn"/>
 		/// <seealso cref="IsShowGrid"/>
 		/// <seealso cref="Default.GridDashOff"/>.
 		public float GridDashOff
@@ -1298,8 +1422,8 @@ namespace ZedGraph
 		/// <summary>
 		/// The default pen width used for drawing the grid lines.
 		/// </summary>
-		/// <value>The grid pen width is defined in pixel units</value>
-		/// <seealso cref="IsShowGrid"/>
+        /// <value>The grid pen width is defined in points (1/72 inch)</value>
+        /// <seealso cref="IsShowGrid"/>
 		/// <seealso cref="Default.GridPenWidth"/>.
 		/// <seealso cref="GridColor"/>
 		public float GridPenWidth
@@ -1343,10 +1467,10 @@ namespace ZedGraph
 
 		/// <summary>
 		/// The "Dash On" mode for drawing the minor grid.  This is the distance,
-		/// in pixels, of the dash segments that make up the dashed grid lines.
-		/// </summary>
-		/// <value>The dash on length is defined in pixel units</value>
-		/// <seealso cref="MinorGridDashOff"/>
+        /// in points (1/72 inch), of the dash segments that make up the dashed grid lines.
+        /// </summary>
+        /// <value>The dash on length is defined in points (1/72 inch)</value>
+        /// <seealso cref="MinorGridDashOff"/>
 		/// <seealso cref="IsShowMinorGrid"/>
 		/// <seealso cref="Default.MinorGridDashOn"/>.
 		public float MinorGridDashOn
@@ -1356,11 +1480,11 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// The "Dash Off" mode for drawing the minor grid.  This is the distance,
-		/// in pixels, of the spaces between the dash segments that make up
-		/// the dashed grid lines.
+        /// in points (1/72 inch), of the spaces between the dash segments that make up
+        /// the dashed grid lines.
 		/// </summary>
-		/// <value>The dash off length is defined in pixel units</value>
-		/// <seealso cref="MinorGridDashOn"/>
+        /// <value>The dash off length is defined in points (1/72 inch)</value>
+        /// <seealso cref="MinorGridDashOn"/>
 		/// <seealso cref="IsShowMinorGrid"/>
 		/// <seealso cref="Default.MinorGridDashOff"/>.
 		public float MinorGridDashOff
@@ -1371,8 +1495,8 @@ namespace ZedGraph
 		/// <summary>
 		/// The default pen width used for drawing the minor grid lines.
 		/// </summary>
-		/// <value>The grid pen width is defined in pixel units</value>
-		/// <seealso cref="IsShowMinorGrid"/>
+        /// <value>The grid pen width is defined in points (1/72 inch)</value>
+        /// <seealso cref="IsShowMinorGrid"/>
 		/// <seealso cref="Default.MinorGridPenWidth"/>.
 		/// <seealso cref="MinorGridColor"/>
 		public float MinorGridPenWidth
@@ -2057,9 +2181,9 @@ namespace ZedGraph
 
 			if ( this.IsVisible )
 			{
-				Pen pen = new Pen( this.color, this.ticPenWidth  );
-				
-				// redraw the axis border
+                Pen pen = new Pen(this.color, pane.ScaledPenWidth(ticPenWidth, scaleFactor));
+
+                // redraw the axis border
 				g.DrawLine( pen, 0.0F, 0.0F, rightPix, 0.0F );
 
 				// Draw a zero-value line if needed
@@ -2072,7 +2196,7 @@ namespace ZedGraph
 				// draw the major tics and labels
 				DrawLabels( g, pane, baseVal, nTics, topPix, scaleFactor );
 			
-				DrawMinorTics( g, baseVal, scaleFactor, topPix );
+				DrawMinorTics( g, pane, baseVal, scaleFactor, topPix );
 			}
 		}
 	
@@ -2208,10 +2332,10 @@ namespace ZedGraph
 			string	tmpStr;
 			float	scaledTic = this.ScaledTic( scaleFactor );
 			double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
-			Pen		pen = new Pen( this.color, this.ticPenWidth  );
-			Pen		dottedPen = new Pen( this.gridColor, this.gridPenWidth  );
+            Pen pen = new Pen(this.color, pane.ScaledPenWidth(ticPenWidth, scaleFactor));
+            Pen dottedPen = new Pen(this.gridColor, pane.ScaledPenWidth(gridPenWidth, scaleFactor));
 
-			dottedPen.DashStyle = DashStyle.Custom;
+            dottedPen.DashStyle = DashStyle.Custom;
 			float[] pattern = new float[2];
 			pattern[0] = this.gridDashOn;
 			pattern[1] = this.gridDashOff;
@@ -2221,7 +2345,7 @@ namespace ZedGraph
 			// (the axis itself is referenced at zero)
 			float maxSpace = this.GetScaleMaxSpace( g, pane, scaleFactor ).Height;
 			
-			float textTop = ticSize * 1.5F;
+			float textTop = (float) scaleFactor * ( ticSize * 1.5F );
 			float textCenter;
 
 			double rangeTol = ( this.maxScale - this.minScale ) * 0.00001;
@@ -2282,12 +2406,12 @@ namespace ZedGraph
 					
 					
 					if ( this.IsLog && this.isUseTenPower )
-						this.ScaleFontSpec.DrawTenPower( g, tmpStr,
+						this.ScaleFontSpec.DrawTenPower( g, pane, tmpStr,
 							pixVal, textCenter,
 							AlignH.Center, AlignV.Center,
 							scaleFactor );
 					else
-						this.ScaleFontSpec.Draw( g, tmpStr,
+						this.ScaleFontSpec.Draw( g, pane, tmpStr,
 							pixVal, textCenter,
 							AlignH.Center, AlignV.Center,
 							scaleFactor );
@@ -2312,8 +2436,8 @@ namespace ZedGraph
 		/// <param name="pixVal">The pixel location of the tic mark on this
 		/// <see cref="Axis"/></param>
 		/// <param name="topPix">The pixel value of the top of the axis border</param>
-		/// <param name="scaledTic">The length of the tic mark, in pixels</param>
-		void DrawATic( Graphics g, Pen pen, float pixVal, float topPix, float scaledTic )
+        /// <param name="scaledTic">The length of the tic mark, in points (1/72 inch)</param>
+        void DrawATic( Graphics g, Pen pen, float pixVal, float topPix, float scaledTic )
 		{
 			if ( this.isVisible )
 			{
@@ -2541,8 +2665,12 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="baseVal">
-		/// The scale value for the first major tic position.  This is the reference point
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="baseVal">
+        /// The scale value for the first major tic position.  This is the reference point
 		/// for all other tic marks.
 		/// </param>
 		/// <param name="scaleFactor">
@@ -2556,7 +2684,7 @@ namespace ZedGraph
 		/// This value is the axisRect.Height for the XAxis, or the axisRect.Width
 		/// for the YAxis and Y2Axis.
 		/// </param>
-		public void DrawMinorTics( Graphics g, double baseVal, double scaleFactor, float topPix )
+		public void DrawMinorTics( Graphics g, GraphPane pane, double baseVal, double scaleFactor, float topPix )
 		{
 			if ( this.isMinorTic && this.isVisible )
 			{
@@ -2582,10 +2710,11 @@ namespace ZedGraph
 					
 					double	dVal = first;
 					float	pixVal;
-					Pen		pen = new Pen( this.color, this.ticPenWidth  );
-					Pen		minorGridPen = new Pen( this.minorGridColor, this.minorGridPenWidth  );
+                    Pen pen = new Pen(this.color, pane.ScaledPenWidth(ticPenWidth, scaleFactor));
+                    Pen		minorGridPen = new Pen( this.minorGridColor,
+                                    pane.ScaledPenWidth(minorGridPenWidth, scaleFactor));
 
-					minorGridPen.DashStyle = DashStyle.Custom;
+                    minorGridPen.DashStyle = DashStyle.Custom;
 					float[] pattern = new float[2];
 					pattern[0] = this.minorGridDashOn;
 					pattern[1] = this.minorGridDashOff;
@@ -2784,13 +2913,13 @@ namespace ZedGraph
 				//	alignV = AlignV.Bottom;
 
 				// Draw the title
-				this.TitleFontSpec.Draw( g, str, x, y,
+				this.TitleFontSpec.Draw( g, pane, str, x, y,
 							AlignH.Center, alignV, scaleFactor );
 			}
 		}
 		
 		/// <summary>
-		/// Determine the width, in screen pixel units, of each bar cluster including
+		/// Determine the width, in pixel units, of each bar cluster including
 		/// the cluster gaps and bar gaps.
 		/// </summary>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
@@ -3476,7 +3605,8 @@ namespace ZedGraph
 			{
 				majorUnit = DateUnit.Year;
 				if ( this.scaleFormatAuto )
-					this.scaleFormat = "&yyyy";
+					this.scaleFormat = Default.FormatYearYear;					
+					
 				tempStep = Math.Ceiling( tempStep / 365.0 );
 				if ( tempStep < 1.0 )
 					tempStep = 1.0;
@@ -3494,7 +3624,7 @@ namespace ZedGraph
 			{
 				majorUnit = DateUnit.Year;
 				if ( this.scaleFormatAuto )
-					this.scaleFormat = "&mmm-&yy";
+					this.scaleFormat = Default.FormatYearMonth;
 				tempStep = 1.0;
 
 				if ( minorStepAuto )
@@ -3514,7 +3644,7 @@ namespace ZedGraph
 			{
 				majorUnit = DateUnit.Month;
 				if ( this.scaleFormatAuto )
-					this.scaleFormat = "&mmm-&yy";
+					this.scaleFormat = Default.FormatMonthMonth;
 				tempStep = Math.Ceiling( tempStep / 30.0 );
 				if ( tempStep < 1.0 )
 					tempStep = 1.0;
@@ -3528,7 +3658,7 @@ namespace ZedGraph
 			{
 				majorUnit = DateUnit.Day;
 				if ( this.scaleFormatAuto )
-					scaleFormat = "&d-&mmm";
+					this.scaleFormat = Default.FormatDayDay;
 				tempStep = Math.Ceiling( tempStep );
 				if ( tempStep < 1.0 )
 					tempStep = 1.0;
@@ -3542,7 +3672,7 @@ namespace ZedGraph
 			{
 				majorUnit = DateUnit.Day;
 				if ( this.scaleFormatAuto )
-					this.scaleFormat = "&d-&mmm &hh:&nn";
+					this.scaleFormat = Default.FormatDayHour;
 				tempStep = 1.0;
 
 				if ( minorStepAuto )
@@ -3565,7 +3695,7 @@ namespace ZedGraph
 				majorUnit = DateUnit.Hour;
 				tempStep = Math.Ceiling( tempStep * XDate.HoursPerDay );
 				if ( this.scaleFormatAuto )
-					scaleFormat = "&hh:&nn";
+					this.scaleFormat = Default.FormatHourHour;
 
 				if ( tempStep > 12.0 )
 					tempStep = 24.0;
@@ -3587,7 +3717,7 @@ namespace ZedGraph
 				majorUnit = DateUnit.Hour;
 				tempStep = 1.0;
 				if ( this.scaleFormatAuto )
-					scaleFormat = "&hh:&nn";
+					this.scaleFormat = Default.FormatHourMinute;
 
 				if ( minorStepAuto )
 				{
@@ -3610,7 +3740,7 @@ namespace ZedGraph
 			{
 				majorUnit = DateUnit.Minute;
 				if ( this.scaleFormatAuto )
-					scaleFormat = "&hh:&nn";
+					this.scaleFormat = Default.FormatMinuteMinute;
 
 				tempStep = Math.Ceiling( tempStep * XDate.MinutesPerDay );
 				// make sure the minute step size is 1, 5, 15, or 30 minutes
@@ -3634,7 +3764,7 @@ namespace ZedGraph
 				majorUnit = DateUnit.Minute;
 				tempStep = 1.0;
 				if ( this.scaleFormatAuto )
-					scaleFormat = "&nn:&ss";
+					this.scaleFormat = Default.FormatMinuteSecond;
 
 				if ( minorStepAuto )
 				{
@@ -3657,7 +3787,7 @@ namespace ZedGraph
 			{
 				majorUnit = DateUnit.Second;
 				if ( this.scaleFormatAuto )
-					scaleFormat = "&nn:&ss";
+					this.scaleFormat = Default.FormatSecondSecond;
 
 				tempStep = Math.Ceiling( tempStep * XDate.SecondsPerDay );
 				// make sure the second step size is 1, 5, 15, or 30 seconds

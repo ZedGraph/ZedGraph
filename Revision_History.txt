@@ -1,5 +1,16 @@
 ZedGraph Class Library Revision History
 
+2-Oct-2004 (by Champion)
+  Fix scaling logic throughout - all sizes now in points
+  Fix CalcScaleFactor so scale factor is world pixels/standard point
+  Legend Height calculation now accounts for big symbols
+  Correct Axis border so it is drawn with floats instead of ints (avoids misalignment)
+  Add GraphPane.IsPenWidthScaled
+  Add scaling to pen widths throughout
+  Fix Fill.IsScaled (missing from copy constructor)
+  Fix missing scale factor on tic spacing for axis text
+  Add GraphPane.ScaledImage()
+  
 31-Oct-2004 (by Champion)
   Fix Image ScaleTransform bug
   Fix another reference problem in BuildPointsArray()

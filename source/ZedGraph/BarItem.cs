@@ -176,17 +176,21 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="rect">The <see cref="RectangleF"/> struct that specifies the
-		/// location for the legend key</param>
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="rect">The <see cref="RectangleF"/> struct that specifies the
+        /// location for the legend key</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		override public void DrawLegendKey( Graphics g, RectangleF rect, double scaleFactor )
+		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor )
 		{
-			this.Bar.Draw( g, rect, scaleFactor, true );
+			this.Bar.Draw( g, pane, rect, scaleFactor, true );
 		}
 
 	#endregion

@@ -30,14 +30,14 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-14 04:06:01 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-11-03 04:17:45 $ </version>
 	public class Symbol : ICloneable
 	{
 	#region Fields
 		/// <summary>
 		/// Private field that stores the size of this
-		/// <see cref="Symbol"/> in pixels.  Use the public
-		/// property <see cref="Size"/> to access this value.
+        /// <see cref="Symbol"/> in points (1/72 inch).  Use the public
+        /// property <see cref="Size"/> to access this value.
 		/// </summary>
 		private float		size;
 		/// <summary>
@@ -126,8 +126,8 @@ namespace ZedGraph
 		/// <summary>
 		/// Gets or sets the size of the <see cref="Symbol"/>
 		/// </summary>
-		/// <value>Size in pixels</value>
-		/// <seealso cref="Default.Size"/>
+        /// <value>Size in points (1/72 inch)</value>
+        /// <seealso cref="Default.Size"/>
 		public float Size
 		{
 			get { return size; }
@@ -237,9 +237,9 @@ namespace ZedGraph
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		/// <param name="x">The x position of the center of the symbol in
-		/// screen pixel units</param>
+		/// pixel units</param>
 		/// <param name="y">The y position of the center of the symbol in
-		/// screen pixel units</param>
+		/// pixel units</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
@@ -272,9 +272,9 @@ namespace ZedGraph
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		/// <param name="x">The x position of the center of the symbol in
-		/// screen pixel units</param>
+		/// pixel units</param>
 		/// <param name="y">The y position of the center of the symbol in
-		/// screen pixel units</param>
+		/// pixel units</param>
 		/// <param name="path">A <see cref="GraphicsPath"/> previously constructed by
 		/// <see cref="MakePath"/> for this symbol</param>
 		/// <param name="pen">A <see cref="Pen"/> class representing the standard pen for this symbol</param>
@@ -311,24 +311,29 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="x">The x position of the center of the symbol in
-		/// screen pixel units</param>
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="x">The x position of the center of the symbol in
+        /// pixel units</param>
 		/// <param name="y">The y position of the center of the symbol in
-		/// screen pixel units</param>
+		/// pixel units</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>
-		public void DrawSymbol( Graphics g, float x, float y, double scaleFactor )
+		public void DrawSymbol( Graphics g, GraphPane pane, float x, float y, double scaleFactor )
 		{
 			// Only draw if the symbol is visible
 			if ( this.isVisible && this.Type != SymbolType.None )
 			{
 				SolidBrush	brush = new SolidBrush( this.fill.Color );
-				Pen pen = new Pen( this.border.Color, this.border.PenWidth );
+                Pen pen = border.MakePen(pane, scaleFactor);
+                //Pen pen = new Pen(this.border.Color, pane.ScaledPenWidth(border.PenWidth * scaleFactor));
 
-				// Fill or draw the symbol as required
+                // Fill or draw the symbol as required
 				if ( this.fill.IsVisible)
 					FillPoint( g, x, y, scaleFactor, pen, brush );
 				
@@ -346,9 +351,9 @@ namespace ZedGraph
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		/// <param name="x">The x position of the center of the symbol in
-		/// screen pixel units</param>
+		/// pixel units</param>
 		/// <param name="y">The y position of the center of the symbol in
-		/// screen pixel units</param>
+		/// pixel units</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
@@ -481,9 +486,9 @@ namespace ZedGraph
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		/// <param name="x">The x position of the center of the symbol in
-		/// screen pixel units</param>
+		/// pixel units</param>
 		/// <param name="y">The y position of the center of the symbol in
-		/// screen pixel units</param>
+		/// pixel units</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor for the features of the graph based on the <see cref="GraphPane.BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="GraphPane.CalcScaleFactor"/> method.  The scale factor
@@ -610,7 +615,8 @@ namespace ZedGraph
 				// For the sake of speed, go ahead and create a solid brush and a pen
 				// If it's a gradient fill, it will be created on the fly for each symbol
 				SolidBrush	brush = new SolidBrush( this.fill.Color );
-				Pen pen = new Pen( this.border.Color, this.border.PenWidth );
+                Pen pen = this.border.MakePen(pane, scaleFactor);
+                //Pen pen = new Pen( this.border.Color, pane.ScaledPenWidth(border.PenWidth * scaleFactor) );
 				
 				GraphicsPath path = MakePath( g, scaleFactor );
 
@@ -658,7 +664,7 @@ namespace ZedGraph
 				// For the sake of speed, go ahead and create a solid brush and a pen
 				// If it's a gradient fill, it will be created on the fly for each symbol
 				SolidBrush	brush = new SolidBrush( this.fill.Color );
-				Pen pen = new Pen( this.frame.Color, this.frame.PenWidth );
+				Pen pen = new Pen( this.frame.Color, (float) (this.frame.PenWidth * scaleFactor) );
 
 				// Loop over each defined point							
 				for ( int i=0; i<points.Count; i++ )

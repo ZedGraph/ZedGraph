@@ -71,7 +71,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-15 05:11:30 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-11-03 04:17:45 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -206,7 +206,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-15 05:11:30 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-11-03 04:17:45 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
@@ -785,7 +785,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-15 05:11:30 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-11-03 04:17:45 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{
@@ -912,8 +912,8 @@ namespace ZedGraph.UnitTest
 			//testee.Y2Axis.IsLog = false;
 			testee.Y2Axis.Title = "";
 
-			testee.AxisFrame.IsVisible = false;
-			testee.PaneFrame.IsVisible = false;
+			testee.AxisBorder.IsVisible = false;
+			testee.PaneBorder.IsVisible = false;
 
 			testee.IsShowTitle = false;
 			testee.Legend.IsHStack = false;
@@ -930,19 +930,19 @@ namespace ZedGraph.UnitTest
 
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Do you see a dual Y graph with no axes?" ) );
 			
-			testee.PaneFrame = new Border( true, Color.Red, 3.0F );
+			testee.PaneBorder = new Border( true, Color.Red, 3.0F );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Pane Frame Added?" ) );
 			
-			testee.PaneFrame = new Border( Color.Black, 1.0F );
+			testee.PaneBorder = new Border( Color.Black, 1.0F );
 
-			testee.AxisFrame = new Border( true, Color.Red, 3.0F );
+			testee.AxisBorder = new Border( true, Color.Red, 3.0F );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Axis Frame Added?" ) );
 			
-			testee.AxisFrame = new Border( Color.Black, 1.0F );
+			testee.AxisBorder = new Border( Color.Black, 1.0F );
 
 			testee.PaneFill = new Fill( Color.White, Color.LightGoldenrodYellow );
 			testee.PaneGap = 50.0F;

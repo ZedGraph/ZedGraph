@@ -679,12 +679,30 @@ namespace ZedGraphTest
 			for ( int i=0; i<36; i++ )
 			{
 				x[i] = (double) new XDate( 1995, i+1, 1 );
-				y[i] = Math.Sin( (double) i * Math.PI / 15.0 );
+				y[i] = Math.Sin( (double) i * Math.PI / 15.0 ) + 0.25;
 			}
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend
-			CurveItem myCurve = myPane.AddCurve( "My Curve",
+			LineItem myCurve = myPane.AddCurve( "My Curve",
 				x, y, Color.Red, SymbolType.Diamond );
+			
+			ColorBlend blend = new ColorBlend();
+			blend.Colors = new Color[3];
+			blend.Positions = new float[3];
+			blend.Colors[0] = Color.Red;
+			blend.Colors[1] = Color.White;
+			blend.Colors[2] = Color.Red;
+			blend.Positions[0] = 0.0F;
+			// (ymax - 0 ) / ( ymax - ymin )
+			blend.Positions[1] = (1.25F - 0.0F ) / ( 1.25F - -0.75F );
+			blend.Positions[2] = 1.0F;
+
+			LinearGradientBrush brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
+				Color.Red, Color.White, 90.0F );
+			brush.InterpolationColors = blend;
+			//myCurve.Line.Fill = new Fill( Color.White, Color.Red, -90 );
+			myCurve.Line.Fill = new Fill( brush, true );
+
 			// Set the XAxis to date type
 			myPane.XAxis.Type = AxisType.Date;
 			// Tell ZedGraph to refigure the
@@ -1230,7 +1248,7 @@ namespace ZedGraphTest
 			curve.Line.IsSmooth = true;
 			curve.Line.SmoothTension = 0.6F;
 			curve.Symbol.Fill = new Fill( Color.White );
-			curve.Symbol.Size = 12;
+			curve.Symbol.Size = 10;
 			
 			double[] x3 = { 150, 250, 400, 520, 780, 940 };
 			double[] y3 = { 5.2, 49.0, 33.8, 88.57, 99.9, 36.8 };
@@ -1239,19 +1257,20 @@ namespace ZedGraphTest
 			//curve.Line.IsSmooth = true;
 			curve.Symbol.Fill = new Fill( Color.White );
 			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 230, 145, 205), 90F );
-			curve.Symbol.Size = 12;
+			curve.Symbol.Size = 10;
 			
 			double[] x2 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y2 = { 10, 15, 17, 20, 25, 27, 29, 26, 24, 18 };
 			BarItem bar = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
+			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue, 0F );
 			myPane.ClusterScaleWidth = 100;
 			
 			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y4 = { 30, 45, 53, 60, 75, 83, 84, 79, 71, 57 };
-			bar = myPane.AddBar( "Curly", x4, y4, Color.SteelBlue );
+			bar = myPane.AddBar( "Wheezy", x4, y4, Color.SteelBlue );
+			bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown, 0F );
 			myPane.ClusterScaleWidth = 100;
 			myPane.BarType = BarType.Stack;
-			
 			//curve.Bar.Fill = new Fill( Color.Blue );
 			//curve.Symbol.Size = 12;
 			
@@ -1260,6 +1279,7 @@ namespace ZedGraphTest
 			myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
 			
 			myPane.XAxis.IsShowGrid = true;
+			myPane.IsPenWidthScaled = false;
 			//myPane.XAxis.ScaleFontSpec.Angle = 90;
 			//myPane.XAxis.ScaleAlign = AlignP.Inside;
 			//myPane.XAxis.IsShowMinorGrid = true;
@@ -1586,6 +1606,81 @@ namespace ZedGraphTest
 
 #endif
 
+#if false  // Will's Test
+			// Create a new graph
+			myPane = new GraphPane( new Rectangle( 40, 40, 300, 200 ),
+				"My Pane",
+				"My X Axis",
+				"My Y Axis" );
+				
+			double[] x = new double[52];
+			double[] y = new double[52];
+
+			x[0]=38272.5652314815;	y[0]=18.8888888889;
+			x[1]=38287.9129976852;	y[1]=7.22222222222;
+			x[2]=38289.0180555556;	y[2]=9;
+			x[3]=38289.025;	y[3]=9;
+			x[4]=38289.0368055556;	y[4]=9;
+			x[5]=38289.0631944444;	y[5]=8;
+			x[6]=38289.0784722222;	y[6]=9;
+			x[7]=38289.0861111111;	y[7]=9;
+			x[8]=38289.0909722222;	y[8]=9;
+			x[9]=38289.1041666667;	y[9]=9;
+			x[10]=38289.1118055556;	y[10]=9;
+			x[11]=38289.1201388889;	y[11]=9;
+			x[12]=38289.1263888889;	y[12]=9;
+			x[13]=38289.1416666667;	y[13]=9;
+			x[14]=38289.15625;	y[14]=9;
+			x[15]=38289.1618055556;	y[15]=9;
+			x[16]=38289.1722222222;	y[16]=9;
+			x[17]=38289.1791666667;	y[17]=9;
+			x[18]=38289.1854166667;	y[18]=9;
+			x[19]=38289.1916666667;	y[19]=9;
+			x[20]=38289.2034722222;	y[20]=9;
+			x[21]=38289.2222222222;	y[21]=9;
+			x[22]=38289.2284722222;	y[22]=9;
+			x[23]=38289.2368055556;	y[23]=9;
+			x[24]=38289.2451388889;	y[24]=9;
+			x[25]=38289.25;	y[25]=9;
+			x[26]=38289.2868055556;	y[26]=9;
+			x[27]=38289.3111111111;	y[27]=9;
+			x[28]=38289.31875;	y[28]=9;
+			x[29]=38289.3284722222;	y[29]=9;
+			x[30]=38289.3333333333;	y[30]=9;
+			x[31]=38289.3479166667;	y[31]=9;
+			x[32]=38289.3701388889;	y[32]=9;
+			x[33]=38289.4118055556;	y[33]=9;
+			x[34]=38289.4534722222;	y[34]=10;
+			x[35]=38289.4951388889;	y[35]=11;
+			x[36]=38289.5368055556;	y[36]=12;
+			x[37]=38289.5604166667;	y[37]=11;
+			x[38]=38289.5784722222;	y[38]=11;
+			x[39]=38289.6201388889;	y[39]=12;
+			x[40]=38289.6618055556;	y[40]=13;
+			x[41]=38289.6666666667;	y[41]=13;
+			x[42]=38289.7034722222;	y[42]=13;
+			x[43]=38289.7451388889;	y[43]=12;
+			x[44]=38289.75;	y[44]=12;
+			x[45]=38289.7590277778;	y[45]=12;
+			x[46]=38289.7868055556;	y[46]=12;
+			x[47]=38289.8284722222;	y[47]=8;
+			x[48]=38289.8701388889;	y[48]=11;
+			x[49]=38289.9118055556;	y[49]=12;
+			x[50]=38289.9534722222;	y[50]=11;
+			x[51]=38289.9951388889;	y[51]=11;
+
+			LineItem curve = myPane.AddCurve( "One Value", x, y, Color.Red, SymbolType.Diamond );
+			curve.Symbol.Fill.IsVisible = false;
+			curve.Line.IsSmooth = true;
+			curve.Line.SmoothTension = 0.3F;
+
+			//myPane.XAxis.IsShowGrid = true;
+			//myPane.YAxis.IsShowGrid = true;
+			
+			myPane.AxisChange( this.CreateGraphics() );
+
+#endif
+
 			SetSize();
 
 			//			RectangleF myRect = myPane.CalcAxisRect( memGraphics.g );
@@ -1832,7 +1927,12 @@ namespace ZedGraphTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			MultiImage( myPane, myPane2 );
+			//CopyToGif( myPane );
+			
+			Bitmap image = myPane.ScaledImage( 3000, 2400, 600 );
+			image.Save( @"c:\zedgraph.jpg", ImageFormat.Jpeg );
+			
+			//MultiImage( myPane, myPane2 );
 			
 			/*
 			myPane.Legend.Position = LegendPos.Float;

@@ -156,7 +156,7 @@ namespace ZedGraph
 		{
 			if ( this.isVisible )
 			{
-				Line.Draw( g, pane, (PointPairList) points, isY2Axis );
+				Line.Draw( g, pane, (PointPairList) points, isY2Axis, scaleFactor );
 				
 				Symbol.Draw( g, pane, (PointPairList) points, isY2Axis, scaleFactor );
 			}
@@ -169,22 +169,26 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="rect">The <see cref="RectangleF"/> struct that specifies the
-		/// location for the legend key</param>
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+        /// <param name="rect">The <see cref="RectangleF"/> struct that specifies the
+        /// location for the legend key</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		override public void DrawLegendKey( Graphics g, RectangleF rect, double scaleFactor )
+		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, double scaleFactor )
 		{
 			// Draw a sample curve to the left of the label text
 			float yMid = rect.Top + rect.Height / 2.0F;
-			this.Line.DrawSegment( g, rect.Left, yMid, rect.Right, yMid );
-			
-			// Draw a sample symbol to the left of the label text				
-			this.Symbol.DrawSymbol( g, rect.Left + rect.Width / 2.0F, yMid, scaleFactor );
+            this.Line.DrawSegment( g, pane, rect.Left, yMid, rect.Right, yMid, scaleFactor );
+
+            // Draw a sample symbol to the left of the label text				
+			this.Symbol.DrawSymbol( g, pane, rect.Left + rect.Width / 2.0F, yMid, scaleFactor );
 		}
 	
 		/// <summary>
