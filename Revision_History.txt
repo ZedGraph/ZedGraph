@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+23-Aug-2004 (by Champion)
+    Fix NaN handling so it doesn't cause exceptions
+
 18-Aug-2004 (by Vos)
     Add Image property
     Add ColorSymbolRotator

@@ -30,8 +30,9 @@ namespace ZedGraph
 	/// key and item names, colors, symbols and sizes, linetypes, etc.
 	/// </summary>
 	/// 
-	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.9 $ $Date: 2004-08-23 20:33:59 $ </version>
+	/// <author> John Champion
+	/// modified by Jerry Vos </author>
+	/// <version> $Revision: 1.10 $ $Date: 2004-08-24 02:57:07 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
@@ -373,6 +374,10 @@ namespace ZedGraph
 				// Also, any value <= zero on a log scale is invalid
 				if ( 	curX == PointPair.Missing ||
 						curY == PointPair.Missing ||
+						System.Double.IsNaN( curX ) ||
+						System.Double.IsNaN( curY ) ||
+						System.Double.IsInfinity( curX ) ||
+						System.Double.IsInfinity( curY ) ||
 					( pane.XAxis.IsLog && curX <= 0.0 ) ||
 					( this.isY2Axis && pane.Y2Axis.IsLog && curY <= 0.0 ) ||
 					( !this.isY2Axis && pane.YAxis.IsLog && curY <= 0.0 ) )
@@ -462,6 +467,10 @@ namespace ZedGraph
 				
 				if (	curX != PointPair.Missing &&
 						curY != PointPair.Missing &&
+						!System.Double.IsNaN( curX ) &&
+						!System.Double.IsNaN( curY ) &&
+						!System.Double.IsInfinity( curX ) &&
+						!System.Double.IsInfinity( curY ) &&
 					( curX > 0 || !pane.XAxis.IsLog ) &&
 					( curY > 0 ||
 					( this.isY2Axis && !pane.Y2Axis.IsLog ) ||
@@ -541,7 +550,9 @@ namespace ZedGraph
 				//   by zero, etc.
 				// Also, any value <= zero on a log scale is invalid
 				
-				if ( curY != PointPair.Missing )
+				if (	curY != PointPair.Missing &&
+						!System.Double.IsNaN( curY ) &&
+						!System.Double.IsInfinity( curY ) )
 				{
 					//tmpX = pane.XAxis.GetOrdinalPosition( pane, i );
 					tmpX = pane.XAxis.Transform( i, curX );
