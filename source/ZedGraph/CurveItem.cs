@@ -31,11 +31,11 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.7 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2004-08-23 20:28:49 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
-	#region Fields
+		#region Fields
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="ZedGraph.Symbol"/>
 		/// class defined for this <see cref="CurveItem"/>.  Use the public
@@ -85,9 +85,9 @@ namespace ZedGraph
 		/// to indicate the values are missing.
 		/// </summary>
 		private PointPairList points;
-	#endregion
+		#endregion
 	
-	#region Constructors
+		#region Constructors
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label and the
 		/// x and y data values as double arrays.  All other properties of the curve are
@@ -177,9 +177,9 @@ namespace ZedGraph
 			this.points.Add( point );
 		}
 
-	#endregion
+		#endregion
 	
-	#region Properties
+		#region Properties
 		/// <summary>
 		/// Gets a reference to the <see cref="ZedGraph.Symbol"/> class defined
 		/// for this <see cref="CurveItem"/>.
@@ -246,11 +246,13 @@ namespace ZedGraph
 		/// </summary>
 		public int NPts
 		{
-			get {	if ( this.points == null )
-					  return 0;
+			get 
+			{
+				if ( this.points == null )
+						return 0;
 					else
-					  return this.points.Count;
-				}
+						return this.points.Count;
+			}
 		}
 		
 		/// <summary>
@@ -261,6 +263,21 @@ namespace ZedGraph
 		{
 			get { return points; }
 			set { points = value; }
+		}
+
+		/// <summary>
+		/// An accessor for the <see cref="PointPair"/> datum for this <see cref="CurveItem"/>.
+		/// Index is the ordinal reference (zero based) of the point.
+		/// </summary>
+		public PointPair this[int index]
+		{
+			get
+			{
+				if ( this.points == null )
+					return new PointPair( PointPair.Missing, PointPair.Missing );
+				else
+					return this.points[index];
+			}
 		}
 	#endregion
 	

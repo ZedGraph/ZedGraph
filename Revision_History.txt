@@ -1,5 +1,11 @@
 ZedGraph Class Library Revision History
 
+17-Aug-2004 (by Champion)
+    Fix overlapping labels logic for X vs Y axes
+    Fix scaleFormat in copy constuctor
+    Add Point indexer to CurveItem
+    Fix problem with recursive loop for text label calcs
+
 25-Jul-2004 (by Champion)
     Add XTargetSteps, YTargetSteps
     New Format for 10 power log scale labels

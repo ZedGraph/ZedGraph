@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.8 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.9 $ $Date: 2004-08-23 20:28:49 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -707,15 +707,18 @@ namespace ZedGraph
 			this.curveList.GetRange( out xMin, out xMax, out yMin,
 				out yMax, out y2Min, out y2Max,
 				this.isIgnoreInitial, this );
+
 		
 			// Determine the scale factor
-			double	scaleFactor;
-			int		hStack;
+			double	scaleFactor = this.CalcScaleFactor( g );
+/*
+ * 			int		hStack;
 			float	legendWidth;
 			if ( this.isAxisRectAuto )
 				this.axisRect = CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth );
 			else
 				CalcAxisRect( g, out scaleFactor, out hStack, out legendWidth );
+*/
 
 			// Pick new scales based on the range
 			this.xAxis.PickScale( xMin, xMax, this, g, scaleFactor );

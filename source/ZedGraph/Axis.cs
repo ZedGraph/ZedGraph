@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.8 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.9 $ $Date: 2004-08-23 20:28:49 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -279,6 +279,8 @@ namespace ZedGraph
 				TextLabels = (string[]) rhs.TextLabels.Clone();
 			else
 				TextLabels = null;
+
+			scaleFormat = rhs.scaleFormat;
 
 			titleFontSpec = new FontSpec( rhs.TitleFontSpec );
 			scaleFontSpec = new FontSpec( rhs.ScaleFontSpec );
@@ -2258,8 +2260,13 @@ namespace ZedGraph
 			maxWidth = 1;
 
 			// Calculate the maximum number of labels
-			int maxLabels = (int) ( ( (this is XAxis ) ? pane.AxisRect.Width : pane.AxisRect.Height )
-										/ maxWidth );
+			double width;
+			if ( this is XAxis )
+				width = ( pane.AxisRect.Width == 0 ) ? pane.PaneRect.Width * 0.7 : pane.AxisRect.Width;
+			else
+				width = ( pane.AxisRect.Height == 0 ) ? pane.PaneRect.Height * 0.7 : pane.AxisRect.Height;
+
+			int maxLabels = (int) ( width / maxWidth );
 			if ( maxLabels <= 0 )
 				maxLabels = 1;
 
