@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 1.11 $ $Date: 2004-08-26 05:49:10 $ </version>
+	/// <version> $Revision: 1.12 $ $Date: 2004-08-27 04:35:17 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
@@ -546,9 +546,8 @@ namespace ZedGraph
 						!System.Double.IsInfinity( curX ) &&
 						!System.Double.IsInfinity( curY ) &&
 					( curX > 0 || !pane.XAxis.IsLog ) &&
-					( curY > 0 ||
-					( this.isY2Axis && !pane.Y2Axis.IsLog ) ||
-					( !this.isY2Axis && !pane.YAxis.IsLog ) ) )
+					( this.isY2Axis && !pane.Y2Axis.IsLog && curY <= 0.0 ) &&
+					( !this.isY2Axis && !pane.YAxis.IsLog && curY <= 0.0 ) )
 				{
 					tmpX = pane.XAxis.Transform( i, curX );
 					if ( this.isY2Axis )

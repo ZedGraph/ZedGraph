@@ -9,20 +9,60 @@ namespace ZedGraph.UnitTest
 	class TestUtils
 	{
 		public static bool waitForUserOK = true;
+		public static int delayTime = 500;
+		static System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
+		static bool exitFlag;
 
+		public static void SetUp()
+		{
+			/* Adds the event and the event handler for the method that will 
+				process the timer event to the timer. */
+			myTimer.Tick += new EventHandler( TimerEventProcessor );
+		}
+			
 		public static bool promptIfTestWorked(string msg)
 		{
+			Console.WriteLine( msg );
+
 			// just act like the test worked
-			if (!waitForUserOK)
+			if ( !waitForUserOK )
+			{
+				if ( delayTime > 0 )
+					DelaySeconds( delayTime );
 				return true;
+			}
 
 			if (DialogResult.Yes == MessageBox.Show(msg, "ZedGraph Test", MessageBoxButtons.YesNo))
 				return true;
 			else
 				return false;
 		}
+
+		// This is the method to run when the timer is raised.
+		private static void TimerEventProcessor( Object myObject,
+			EventArgs myEventArgs ) 
+		{
+			myTimer.Stop();
+			exitFlag = true;
+		}
+
+		public static void DelaySeconds( int sec )
+		{
+			// Sets the timer interval to 3 seconds.
+			myTimer.Interval = sec;
+			myTimer.Start();
+
+			// Runs the timer, and raises the event.
+			exitFlag = false;
+			while( exitFlag == false ) 
+			{
+				// Processes all the events in the queue.
+				Application.DoEvents();
+			}
+		}
 	}
 
+	#region ControlTest
 	/// <summary>
 	/// Basically the initial graph given in the ZedGraph example
 	/// <a href="http://www.codeproject.com/csharp/ZedGraph.asp">
@@ -30,24 +70,18 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 1.2 $ $Date: 2004-08-26 05:49:11 $ </version>
+	/// <version> $Revision: 1.3 $ $Date: 2004-08-27 04:35:17 $ </version>
 	[TestFixture]
-	public class BaseZGTest
+	public class ControlTest
 	{
 		Form form;
-		Form form2;
 		GraphPane testee;
 		ZedGraphControl control;
-		static System.Windows.Forms.Timer myTimer;
        
-		[SetUp]
+		[TestFixtureSetUp]
 		public void SetUp()
 		{
-			form2	= new Form();
-			form2.Size = new Size( 500, 500 );
-			form2.Paint += new System.Windows.Forms.PaintEventHandler( this.Form2_Paint );
-			form2.Resize += new System.EventHandler( this.Form2_Resize );
-			form2.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form2_MouseDown );
+			TestUtils.SetUp();
 
 			form	= new Form();
 			control	= new ZedGraphControl();
@@ -70,35 +104,10 @@ namespace ZedGraph.UnitTest
 		[TearDown] 
 		public void Terminate()
 		{
-			form2.Dispose();
 			form.Dispose();
 		}
 
-		private void Form2_Paint( object sender, System.Windows.Forms.PaintEventArgs e )
-		{
-			SolidBrush brush = new SolidBrush( Color.Gray );
-			e.Graphics.FillRectangle( brush, form2.ClientRectangle );
-			testee.Draw( e.Graphics );
-		}
 
-		private void Form2_Resize(object sender, System.EventArgs e)
-		{
-			SetSize();
-			testee.AxisChange( form2.CreateGraphics() );
-			form2.Refresh();
-		}
-
-		private void SetSize()
-		{
-			Rectangle paneRect = form2.ClientRectangle;
-			paneRect.Inflate( -10, -10 );
-			testee.PaneRect = paneRect;
-		}
-
-		private void Form2_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
-		{
-		}
-		
 		#region Empty UserControl
 		[Test]
 		public void EmptyUserControl()
@@ -182,9 +191,68 @@ namespace ZedGraph.UnitTest
 			form.Show();
 			
 			Assertion.Assert( TestUtils.promptIfTestWorked(
-					"Is a graph visible with 3 sets of data and text labels?" ) );
+				"Is a graph visible with 3 sets of data and text labels?" ) );
 		}
 		#endregion
+
+	}
+	#endregion
+
+	#region Library Test
+	/// <summary>
+	/// Test code suite for the class library
+	/// </summary>
+	/// 
+	/// <author> John Champion </author>
+	/// <version> $Revision: 1.3 $ $Date: 2004-08-27 04:35:17 $ </version>
+	[TestFixture]
+	public class LibraryTest
+	{
+		Form form2;
+		GraphPane testee;
+       
+		[TestFixtureSetUp]
+		public void SetUp()
+		{
+			TestUtils.SetUp();
+
+			form2	= new Form();
+			form2.Size = new Size( 500, 500 );
+			form2.Paint += new System.Windows.Forms.PaintEventHandler( this.Form2_Paint );
+			form2.Resize += new System.EventHandler( this.Form2_Resize );
+			form2.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form2_MouseDown );
+		}
+
+		[TearDown] 
+		public void Terminate()
+		{
+			form2.Dispose();
+		}
+		
+		private void Form2_Paint( object sender, System.Windows.Forms.PaintEventArgs e )
+		{
+			SolidBrush brush = new SolidBrush( Color.Gray );
+			e.Graphics.FillRectangle( brush, form2.ClientRectangle );
+			testee.Draw( e.Graphics );
+		}
+
+		private void Form2_Resize(object sender, System.EventArgs e)
+		{
+			SetSize();
+			testee.AxisChange( form2.CreateGraphics() );
+			form2.Refresh();
+		}
+
+		private void SetSize()
+		{
+			Rectangle paneRect = form2.ClientRectangle;
+			paneRect.Inflate( -10, -10 );
+			testee.PaneRect = paneRect;
+		}
+
+		private void Form2_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
+		{
+		}
 
 		#region Standard Bar Graph
 		[Test]
@@ -278,7 +346,7 @@ namespace ZedGraph.UnitTest
 			Assertion.Assert( TestUtils.promptIfTestWorked(
 				"Is a bar graph visible with 1 set of data and value labels?  <Next Step: Resize the Graph for 3 seconds>" ) );
 
-			DelaySeconds( 3000 );
+			TestUtils.DelaySeconds( 3000 );
 
 			Assertion.Assert( TestUtils.promptIfTestWorked( "Did the graph resize ok?" ) );
 		}
@@ -354,9 +422,6 @@ namespace ZedGraph.UnitTest
 				"Time, Years\n(Since Plant Construction Startup)",
 				"Widget Production\n(units/hour)" );
 				
-			SetSize();
-			form2.Show();
-
 			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y = { 20, 10, PointPair.Missing, PointPair.Missing, 35, 60, 90, 25, 48, PointPair.Missing };
 			double[] x2 = { 300, 400, 500, 600, 700, 800, 900 };
@@ -427,30 +492,37 @@ namespace ZedGraph.UnitTest
 			text.AlignV = FontAlignV.Bottom;
 			testee.TextList.Add( text );
 			
-			for ( int i=0; i<curve.Points.Count; i++ )
-			{
-				PointPair point = curve.Points[i];
-				if ( i % 3 == 0 )
-					point.Y = PointPair.Missing;
-				else if ( i % 3 == 1 )
-					point.Y = System.Double.NaN;
-				else if ( i % 3 == 2 )
-					point.Y = System.Double.PositiveInfinity;
+			testee.AxisChange( form2.CreateGraphics() );
+			SetSize();
+			form2.Show();
 
-				form2.Refresh();
-				
-				// delay for 10 ms
-				DelaySeconds( 100 );
-			}
-			
-			Assertion.Assert( TestUtils.promptIfTestWorked( "Did you see an initial graph, with points disappearing one by one?" ) );
+			for ( int iCurve=0; iCurve<3; iCurve++ )
+				for ( int i=0; i<testee.CurveList[iCurve].Points.Count; i++ )
+				{
+					PointPair pt = testee.CurveList[iCurve].Points[i];
+
+					if ( i % 3 == 0 )
+						pt.Y = PointPair.Missing;
+					else if ( i % 3 == 1 )
+						pt.Y = System.Double.NaN;
+					else if ( i % 3 == 2 )
+						pt.Y = System.Double.PositiveInfinity;
+
+					testee.CurveList[iCurve].Points[i] = pt;
+
+					form2.Refresh();
+					
+					// delay for 10 ms
+					TestUtils.DelaySeconds( 300 );
+				}
+
+			Assertion.Assert( TestUtils.promptIfTestWorked( "xDid you see an initial graph, with points disappearing one by one?" ) );
 			
 			// Go ahead and refigure the axes with the invalid data just to check
 			testee.AxisChange( form2.CreateGraphics() );
 		}
 		#endregion
-
-			
+		
 		#region A dual Y test
 		[Test]
 		public void DualY()
@@ -498,7 +570,7 @@ namespace ZedGraph.UnitTest
 			Assertion.Assert( TestUtils.promptIfTestWorked( "Do you see a dual Y graph?" ) );
 		}
 		#endregion
-		
+
 		#region Stress test with all NaN's
 		[Test]
 		public void AllNaN()
@@ -566,7 +638,7 @@ namespace ZedGraph.UnitTest
 			Assertion.Assert( TestUtils.promptIfTestWorked( "If you see a date graph, resize it and make" +
 									" sure the label count is reduced to avoid overlap" ) );
 
-			DelaySeconds( 3000 );
+			TestUtils.DelaySeconds( 3000 );
 			
 			Assertion.Assert( TestUtils.promptIfTestWorked( "Did the anti-overlap work?" ) );
 		}
@@ -616,33 +688,607 @@ namespace ZedGraph.UnitTest
 		}
 		#endregion
 
-		static bool exitFlag;
-
-		// This is the method to run when the timer is raised.
-		private static void TimerEventProcessor( Object myObject,
-			EventArgs myEventArgs ) 
-		{
-			myTimer.Stop();
-			exitFlag = true;
- 		}
-
-		public void DelaySeconds( int sec )
-		{
-			myTimer = new System.Windows.Forms.Timer();
-			/* Adds the event and the event handler for the method that will 
-				process the timer event to the timer. */
-			myTimer.Tick += new EventHandler( TimerEventProcessor );
-			// Sets the timer interval to 3 seconds.
-			myTimer.Interval = sec;
-			myTimer.Start();
-
-			// Runs the timer, and raises the event.
-			exitFlag = false;
-			while( !exitFlag ) 
-			{
-				// Processes all the events in the queue.
-				Application.DoEvents();
-			}
-		}
 	}
+	#endregion
+
+	#region Long Feature Test
+	/// <summary>
+	/// Test code suite for the class library
+	/// </summary>
+	/// 
+	/// <author> John Champion </author>
+	/// <version> $Revision: 1.3 $ $Date: 2004-08-27 04:35:17 $ </version>
+	[TestFixture]
+	public class LongFeatureTest
+	{
+		Form form2;
+		GraphPane testee;
+       
+		[TestFixtureSetUp]
+		public void SetUp()
+		{
+			TestUtils.SetUp();
+
+			form2	= new Form();
+			form2.Size = new Size( 500, 500 );
+			form2.Paint += new System.Windows.Forms.PaintEventHandler( this.Form2_Paint );
+			form2.Resize += new System.EventHandler( this.Form2_Resize );
+			form2.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form2_MouseDown );
+		}
+
+		[TearDown] 
+		public void Terminate()
+		{
+			form2.Dispose();
+		}
+		
+		private void Form2_Paint( object sender, System.Windows.Forms.PaintEventArgs e )
+		{
+			SolidBrush brush = new SolidBrush( Color.Gray );
+			e.Graphics.FillRectangle( brush, form2.ClientRectangle );
+			testee.Draw( e.Graphics );
+		}
+
+		private void Form2_Resize(object sender, System.EventArgs e)
+		{
+			SetSize();
+			testee.AxisChange( form2.CreateGraphics() );
+			form2.Refresh();
+		}
+
+		private void SetSize()
+		{
+			Rectangle paneRect = form2.ClientRectangle;
+			paneRect.Inflate( -10, -10 );
+			testee.PaneRect = paneRect;
+		}
+
+		private void Form2_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
+		{
+		}
+
+		#region The Long Feature Test
+		[Test]
+		public void LongFeature()
+		{
+			bool userOK = TestUtils.waitForUserOK;
+
+			if ( MessageBox.Show( "Do you want to prompt at each step (otherwise, I will just run through" +
+				" the whole test)?  Pick YES to Prompt at each step", "Test Setup",
+				MessageBoxButtons.YesNo ) == DialogResult.No )
+			{
+				TestUtils.waitForUserOK = false;
+			}
+
+			// Create a new graph
+			testee = new GraphPane( new Rectangle( 40, 40, form2.Size.Width-80, form2.Size.Height-80 ),
+				"My Test Dual Y Graph", "Date", "My Y Axis" );
+				
+			// Make up some random data points
+			double[] x = new double[36];
+			double[] y = new double[36];
+			double[] y2 = new double[36];
+			for ( int i=0; i<36; i++ )
+			{
+				x[i] = (double) i * 5.0;
+				y[i] = Math.Sin( (double) i * Math.PI / 15.0 ) * 16.0;
+				y2[i] = y[i] * 10.5;
+			}
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			CurveItem myCurve = testee.AddCurve( "My Curve",
+				x, y, Color.Red, SymbolType.Diamond );
+
+			// Generate a blue curve with diamond
+			// symbols, and "My Curve" in the legend
+			myCurve = testee.AddCurve( "My Curve 1",
+				x, y2, Color.Blue, SymbolType.Circle );
+			myCurve.IsY2Axis = true;
+
+			testee.XAxis.IsShowGrid = false;
+			testee.XAxis.IsVisible = false;
+			testee.XAxis.IsZeroLine = false;
+			testee.XAxis.IsTic = false;
+			testee.XAxis.IsMinorTic = false;
+			testee.XAxis.IsInsideTic = false;
+			testee.XAxis.IsMinorInsideTic = false;
+			testee.XAxis.IsMinorOppositeTic = false;
+			testee.XAxis.IsOppositeTic = false;
+			testee.XAxis.IsReverse = false;
+			// testee.XAxis.IsLog = false;
+			testee.XAxis.Title = "";
+
+			testee.YAxis.IsShowGrid = false;
+			testee.YAxis.IsVisible = false;
+			testee.YAxis.IsZeroLine = false;
+			testee.YAxis.IsTic = false;
+			testee.YAxis.IsMinorTic = false;
+			testee.YAxis.IsInsideTic = false;
+			testee.YAxis.IsMinorInsideTic = false;
+			testee.YAxis.IsMinorOppositeTic = false;
+			testee.YAxis.IsOppositeTic = false;
+			testee.YAxis.IsReverse = false;
+			//testee.YAxis.IsLog = false;
+			testee.YAxis.Title = "";
+
+			testee.Y2Axis.IsShowGrid = false;
+			testee.Y2Axis.IsVisible = false;
+			testee.Y2Axis.IsZeroLine = false;
+			testee.Y2Axis.IsTic = false;
+			testee.Y2Axis.IsMinorTic = false;
+			testee.Y2Axis.IsInsideTic = false;
+			testee.Y2Axis.IsMinorInsideTic = false;
+			testee.Y2Axis.IsMinorOppositeTic = false;
+			testee.Y2Axis.IsOppositeTic = false;
+			testee.Y2Axis.IsReverse = false;
+			//testee.Y2Axis.IsLog = false;
+			testee.Y2Axis.Title = "";
+
+			testee.IsAxisFramed = false;
+			testee.IsPaneFramed = false;
+
+			testee.IsShowTitle = false;
+			testee.Legend.IsHStack = false;
+			testee.Legend.IsVisible = false;
+			testee.Legend.IsFramed = false;
+			testee.Legend.IsFilled = false;
+			testee.Legend.Location = LegendLoc.Bottom;
+
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			testee.AxisChange( form2.CreateGraphics() );
+			SetSize();
+			form2.Show();
+
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Do you see a dual Y graph with no axes?" ) );
+			
+			testee.IsPaneFramed = true;
+			testee.PaneFrameColor = Color.Red;
+			testee.PaneFramePenWidth = 3.0F;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Pane Frame Added?" ) );
+			
+			testee.PaneFrameColor = Color.Black;
+			testee.PaneFramePenWidth = 1.0F;
+
+			testee.IsAxisFramed = true;
+			testee.AxisFrameColor = Color.Red;
+			testee.AxisFramePenWidth = 3.0F;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Axis Frame Added?" ) );
+			
+			testee.AxisFrameColor = Color.Black;
+			testee.AxisFramePenWidth = 1.0F;
+
+			testee.PaneBackColor = Color.LightGoldenrodYellow;
+			testee.PaneGap = 50.0F;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Pane Background Filled?" ) );
+			
+			testee.PaneGap = 20.0F;
+			testee.PaneBackColor = Color.White;
+			testee.AxisBackColor = Color.LightGoldenrodYellow;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Axis Background Filled?" ) );
+			
+			testee.AxisBackColor = Color.White;
+
+			testee.IsShowTitle = true;
+			testee.FontSpec.FontColor = Color.Red;
+			testee.Title = "The Title";
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Title Added?" ) );
+			
+			testee.FontSpec.FontColor = Color.Black;
+
+			testee.Legend.IsVisible = true;
+			testee.Legend.FontSpec.FontColor = Color.Red;
+			
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Legend Added?" ) );
+			
+			testee.Legend.FontSpec.FontColor = Color.Black;
+
+			testee.Legend.IsFramed = true;
+			testee.Legend.FrameColor = Color.Red;
+			testee.Legend.FrameWidth = 3.0F;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Legend Frame Added?" ) );
+
+			testee.Legend.FrameColor = Color.Black;
+			testee.Legend.FrameWidth = 1.0F;
+
+			testee.Legend.IsFilled = true;
+			testee.Legend.FillColor = Color.LightGoldenrodYellow;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Legend Fill Added?" ) );
+
+			testee.Legend.Location = LegendLoc.InsideBotLeft;
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Legend Moved to Inside Bottom Left?" ) );
+
+			testee.Legend.Location = LegendLoc.InsideBotRight;
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Legend Moved to Inside Bottom Right?" ) );
+
+			testee.Legend.Location = LegendLoc.InsideTopLeft;
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Legend Moved to Inside Top Left?" ) );
+
+			testee.Legend.Location = LegendLoc.InsideTopRight;
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Legend Moved to Inside Top Right?" ) );
+
+			testee.Legend.Location = LegendLoc.Left;
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Legend Moved to Left?" ) );
+
+			testee.Legend.Location = LegendLoc.Right;
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Legend Moved to Right?" ) );
+
+			testee.Legend.Location = LegendLoc.Top;
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Legend Moved to Top?" ) );
+
+			testee.Legend.IsHStack = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Legend Horizontal Stacked?" ) );
+			testee.Legend.IsFilled = false;
+
+			/////////  X AXIS /////////////////////////////////////////////////////////////////////////
+
+			testee.XAxis.IsVisible = true;
+			testee.XAxis.Color = Color.Red;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis Visible?" ) );
+
+			testee.XAxis.Title = "X Axis Title";
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis Title Visible?" ) );
+
+			testee.XAxis.TicPenWidth = 3.0F;
+			testee.XAxis.IsZeroLine = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis ZeroLine Visible?" ) );
+
+			testee.XAxis.IsZeroLine = false;
+			testee.XAxis.TicPenWidth = 1.0F;
+			testee.XAxis.IsTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis major tics Visible?" ) );
+
+			testee.XAxis.IsMinorTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis minor tics Visible?" ) );
+
+			testee.XAxis.IsInsideTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis Inside tics Visible?" ) );
+
+			testee.XAxis.IsOppositeTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis Opposite tics Visible?" ) );
+
+			testee.XAxis.IsMinorInsideTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis Minor Inside tics Visible?" ) );
+
+			testee.XAxis.IsMinorOppositeTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis Minor Opposite tics Visible?" ) );
+
+			testee.XAxis.TicPenWidth = 1.0F;
+			testee.XAxis.Color = Color.Black;
+			testee.XAxis.IsShowGrid = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis Grid Visible?" ) );
+
+			testee.XAxis.GridPenWidth = 1.0F;
+			testee.XAxis.GridColor = Color.Black;
+			testee.XAxis.IsReverse = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis Reversed?" ) );
+
+			testee.XAxis.IsReverse = false;
+			testee.XAxis.Type = AxisType.Log;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "X Axis Log?" ) );
+
+			testee.XAxis.Type = AxisType.Linear;
+
+			///////////////////////////////////////////////////////////////////////////////
+
+			/////////  Y AXIS /////////////////////////////////////////////////////////////////////////
+
+			testee.YAxis.IsVisible = true;
+			testee.YAxis.Color = Color.Red;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis Visible?" ) );
+
+			testee.YAxis.Title = "Y Axis Title";
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis Title Visible?" ) );
+
+			testee.YAxis.TicPenWidth = 3.0F;
+			testee.YAxis.IsZeroLine = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis ZeroLine Visible?" ) );
+
+			testee.YAxis.IsZeroLine = false;
+			testee.YAxis.TicPenWidth = 1.0F;
+			testee.YAxis.IsTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis major tics Visible?" ) );
+
+			testee.YAxis.IsMinorTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis minor tics Visible?" ) );
+
+			testee.YAxis.IsInsideTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis Inside tics Visible?" ) );
+
+			testee.YAxis.IsOppositeTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis Opposite tics Visible?" ) );
+
+			testee.YAxis.IsMinorInsideTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis Minor Inside tics Visible?" ) );
+
+			testee.YAxis.IsMinorOppositeTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis Minor Opposite tics Visible?" ) );
+
+			testee.YAxis.TicPenWidth = 1.0F;
+			testee.YAxis.Color = Color.Black;
+			testee.YAxis.IsShowGrid = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis Grid Visible?" ) );
+
+			testee.YAxis.GridPenWidth = 1.0F;
+			testee.YAxis.GridColor = Color.Black;
+			testee.YAxis.IsReverse = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis Reversed?" ) );
+
+			testee.YAxis.IsReverse = false;
+			testee.YAxis.Type = AxisType.Log;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y Axis Log?" ) );
+
+			testee.YAxis.Type = AxisType.Linear;
+
+			///////////////////////////////////////////////////////////////////////////////
+
+			/////////  Y2 AXIS /////////////////////////////////////////////////////////////////////////
+
+			testee.Y2Axis.IsVisible = true;
+			testee.Y2Axis.Color = Color.Red;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis Visible?" ) );
+
+			testee.Y2Axis.Title = "Y2 Axis Title";
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis Title Visible?" ) );
+
+			testee.Y2Axis.TicPenWidth = 3.0F;
+			testee.Y2Axis.IsZeroLine = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis ZeroLine Visible?" ) );
+
+			testee.Y2Axis.IsZeroLine = false;
+			testee.Y2Axis.TicPenWidth = 1.0F;
+			testee.Y2Axis.IsTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis major tics Visible?" ) );
+
+			testee.Y2Axis.IsMinorTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis minor tics Visible?" ) );
+
+			testee.Y2Axis.IsInsideTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis Inside tics Visible?" ) );
+
+			testee.Y2Axis.IsOppositeTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis Opposite tics Visible?" ) );
+
+			testee.Y2Axis.IsMinorInsideTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis Minor Inside tics Visible?" ) );
+
+			testee.Y2Axis.IsMinorOppositeTic = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis Minor Opposite tics Visible?" ) );
+
+			testee.Y2Axis.TicPenWidth = 1.0F;
+			testee.Y2Axis.Color = Color.Black;
+			testee.Y2Axis.IsShowGrid = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis Grid Visible?" ) );
+
+			testee.Y2Axis.GridPenWidth = 1.0F;
+			testee.Y2Axis.GridColor = Color.Black;
+			testee.Y2Axis.IsReverse = true;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis Reversed?" ) );
+
+			testee.Y2Axis.IsReverse = false;
+			testee.Y2Axis.Type = AxisType.Log;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked( "Y2 Axis Log?" ) );
+
+			testee.Y2Axis.Type = AxisType.Linear;
+
+			///////////////////////////////////////////////////////////////////////////////
+
+			for ( float angle=0.0F; angle<=360.0F; angle+= 10.0F )
+			{
+				testee.XAxis.ScaleFontSpec.Angle = angle;
+				testee.YAxis.ScaleFontSpec.Angle = -angle + 90.0F;
+				testee.Y2Axis.ScaleFontSpec.Angle = -angle - 90.0F;
+				testee.XAxis.TitleFontSpec.Angle = -angle;
+				testee.YAxis.TitleFontSpec.Angle = angle + 180.0F;
+				testee.Y2Axis.TitleFontSpec.Angle = angle;
+				testee.Legend.FontSpec.Angle = angle;
+				testee.FontSpec.Angle = angle;
+				
+				form2.Refresh();
+				TestUtils.DelaySeconds( 50 );
+			}
+
+			Assertion.Assert( TestUtils.promptIfTestWorked(
+				"Did Fonts Rotate & Axes Accomodate them?" ) );
+					
+			testee.XAxis.ScaleFontSpec.Angle = 0;
+			testee.YAxis.ScaleFontSpec.Angle = 90.0F;
+			testee.Y2Axis.ScaleFontSpec.Angle = -90.0F;
+			testee.XAxis.TitleFontSpec.Angle = 0;
+			testee.YAxis.TitleFontSpec.Angle = 180.0F;
+			testee.Y2Axis.TitleFontSpec.Angle = 0;
+			testee.Legend.FontSpec.Angle = 0;
+			testee.FontSpec.Angle = 0;
+			
+			///////////////////////////////////////////////////////////////////////////////
+
+			TextItem text = new TextItem( "ZedGraph TextItem", 0.5F, 0.5F );
+			testee.TextList.Add( text );
+			
+			text.CoordinateFrame = CoordType.AxisFraction;
+			text.FontSpec.IsItalic = false;
+			text.FontSpec.IsUnderline = false;
+			text.FontSpec.Angle = 0.0F;
+			text.FontSpec.IsFramed = false;
+			text.FontSpec.IsFilled = false;
+			text.FontSpec.FontColor = Color.Red;
+			
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked(
+				"Is TextItem Centered on Graph?" ) );
+			
+			text.FontSpec.FontColor = Color.Black;
+			text.FontSpec.IsFramed = true;
+			text.FontSpec.FrameWidth = 3.0F;
+			text.FontSpec.FrameColor = Color.Red;
+			
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked(
+				"Does TextItem have a Frame?" ) );
+			
+			text.FontSpec.FrameWidth = 1.0F;
+			text.FontSpec.FrameColor = Color.Black;
+			
+			text.FontSpec.IsFilled = true;
+			text.FontSpec.FillColor = Color.LightGoldenrodYellow;
+
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked(
+				"Is TextItem background filled?" ) );
+			
+			text.FontSpec.Size = 20.0F;
+			text.FontSpec.Family = "Garamond";
+			
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked(
+				"Large Garamond Font?" ) );
+			
+			text.FontSpec.IsUnderline = true;
+			text.FontSpec.IsItalic = true;
+			
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked(
+				"Text Underlined & italic?" ) );
+			
+			text.FontSpec.IsItalic = false;
+			text.FontSpec.IsUnderline = false;
+			
+			text.X = 75.0F;
+			text.Y = 0.0F;
+			text.CoordinateFrame = CoordType.AxisXYScale;
+			
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked(
+				"Centered at (75, 0.0)?" ) );
+			
+			text.AlignH = FontAlignH.Right;
+			text.AlignV = FontAlignV.Top;
+			
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked(
+				"Top-Right at (75, 0.0)?" ) );
+			
+			text.AlignH = FontAlignH.Left;
+			text.AlignV = FontAlignV.Bottom;
+			
+			form2.Refresh();
+			Assertion.Assert( TestUtils.promptIfTestWorked(
+				"Bottom-Left at (75, 0.0)?" ) );
+					
+			for ( float angle=0.0F; angle<=360.0F; angle+= 10.0F )
+			{
+				text.FontSpec.Angle = angle;
+				
+				form2.Refresh();
+				TestUtils.DelaySeconds( 50 );
+			}
+
+			Assertion.Assert( TestUtils.promptIfTestWorked(
+				"Text Rotate with Bottom-Left at (75, 0.5)?" ) );
+
+			TestUtils.waitForUserOK = userOK;
+
+			Assertion.Assert(  TestUtils.promptIfTestWorked(
+				"Did Everything look ok?" ) );
+		}
+		#endregion
+	}
+	#endregion
+
 }

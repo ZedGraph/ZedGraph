@@ -218,33 +218,36 @@ namespace ZedGraphTest
 			double[] y2 = new double[36];
 			for ( int i=0; i<36; i++ )
 			{
-				x[i] = (double) new XDate( 1995, i+1, 1 );
-				y[i] = Math.Sin( (double) i * Math.PI / 15.0 );
-				y2[i] = y[i] * 3.6178;
+				// x[i] = (double) new XDate( 1995, i+1, 1 );
+				x[i] = (double) i * 5.0;
+				y[i] = Math.Sin( (double) i * Math.PI / 15.0 ) * 16.0;
+				y2[i] = y[i] * 10.5;
 			}
 			// Generate a red curve with diamond
 			// symbols, and "My Curve" in the legend
 			CurveItem myCurve = myPane.AddCurve( "My Curve",
 				x, y, Color.Red, SymbolType.Diamond );
 			// Set the XAxis to date type
-			myPane.XAxis.Type = AxisType.Date;
+			//myPane.XAxis.Type = AxisType.Date;
 
 			// Generate a blue curve with diamond
 			// symbols, and "My Curve" in the legend
 			myCurve = myPane.AddCurve( "My Curve 1",
 				x, y2, Color.Blue, SymbolType.Circle );
 			myCurve.IsY2Axis = true;
-			myPane.YAxis.IsVisible = false;
+			myPane.YAxis.IsVisible = true;
 			myPane.Y2Axis.IsVisible = true;
 			myPane.Y2Axis.IsShowGrid = true;
 			myPane.XAxis.IsShowGrid = true;
 			myPane.YAxis.IsOppositeTic = false;
 			myPane.YAxis.IsMinorOppositeTic = false;
 			myPane.YAxis.IsZeroLine = false;
-			
+
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
-			myPane.AxisChange();
+			myPane.AxisChange( this.CreateGraphics() );
+
+			//myPane.YAxis.Type = AxisType.Log;
 
 #endif
 

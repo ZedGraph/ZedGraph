@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.10 $ $Date: 2004-08-26 05:49:08 $ </version>
+	/// <version> $Revision: 1.11 $ $Date: 2004-08-27 04:35:16 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -63,7 +63,7 @@ namespace ZedGraph
 							scaleMag;
 		/// <summary> Private fields for the <see cref="Axis"/> attributes.
 		/// Use the public properties <see cref="IsVisible"/>, <see cref="IsShowGrid"/>,
-		/// <see cref="IsZeroLine"/>, 
+		/// <see cref="IsZeroLine"/>,  <see cref="IsShowTitle"/>,
 		/// <see cref="IsTic"/>, <see cref="IsInsideTic"/>, <see cref="IsOppositeTic"/>,
 		/// <see cref="IsMinorTic"/>, <see cref="IsMinorInsideTic"/>,
 		/// <see cref="IsMinorOppositeTic"/>, <see cref="IsTicsBetweenLabels"/>,
@@ -73,6 +73,7 @@ namespace ZedGraph
 		/// </summary>
 		private bool		isVisible,
 							isShowGrid,
+							isShowTitle,
 							isZeroLine,
 							isTic,
 							isInsideTic,
@@ -278,6 +279,13 @@ namespace ZedGraph
 			/// </summary>
 			public static bool ScaleFontUnderline = false;
 			
+			/// <summary>
+			/// The default display mode for the <see cref="Axis"/>
+			/// <see cref="Title"/> property
+			/// (<see cref="Axis.IsShowGrid"/> property). true
+			/// to show the title, false to hide it.
+			/// </summary>
+			public static bool IsShowTitle = true;
 			/// <summary>
 			/// The default font family for the <see cref="Axis"/> title text
 			/// font specification <see cref="Axis.TitleFontSpec"/>
@@ -556,6 +564,7 @@ namespace ZedGraph
 			this.gridPenWidth = Default.GridPenWidth;
 		
 			this.isVisible = true;
+			this.isShowTitle = Default.IsShowTitle;
 			this.isZeroLine = Default.IsZeroLine;
 			this.isShowGrid = Default.IsShowGrid;
 			this.isReverse = Default.IsReverse;
@@ -616,6 +625,7 @@ namespace ZedGraph
 			numDec = rhs.numDec;
 			scaleMag = rhs.scaleMag;
 			isVisible = rhs.IsVisible;
+			isShowTitle = rhs.IsShowTitle;
 			isShowGrid = rhs.IsShowGrid;
 			isZeroLine = rhs.IsZeroLine;
 			isTic = rhs.IsTic;
@@ -1252,14 +1262,30 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// The text title of this <see cref="Axis"/>.  This normally shows the basis and dimensions of
-		/// the scale range, such as "Time (Years)"
+		/// the scale range, such as "Time (Years)".  The title is only shown if the
+		/// <see cref="IsShowTitle"/> property is set to true.  If the Title text is empty,
+		/// then no title is shown, and no space is "reserved" for the title on the graph.
 		/// </summary>
 		/// <value>the title is a string value</value>
 		/// <seealso cref="IsOmitMag"/>
+		/// <seealso cref="IsShowTitle"/>
 		public string Title
 		{
 			get { return title; }
 			set { title = value; }
+		}
+		
+		/// <summary>
+		/// The display mode for the <see cref="Axis"/>
+		/// <see cref="Title"/> property.  The default
+		/// value comes from <see cref="Default.IsShowTitle"/>.
+		/// </summary>
+		/// <value> boolean value; true to show the title, false to hide it.</value>
+		/// <seealso cref="Title"/>
+		public bool IsShowTitle
+		{
+			get { return isShowTitle; }
+			set { isShowTitle = value; }
 		}
 		
 		/// <summary>
@@ -1626,7 +1652,7 @@ namespace ZedGraph
 		
 				// Only add space for the label if there is one
 				// Axis Title gets actual height plus 1x gap
-				if ( this.title.Length > 0 )
+				if ( this.title.Length > 0 && this.isShowTitle )
 				{
 					space += this.TitleFontSpec.MeasureString( g, this.title, scaleFactor ).Height
 						/* + charHeight / 2 */;
@@ -2380,7 +2406,7 @@ namespace ZedGraph
 				str = this.title;
 
 			// If the Axis is visible, draw the title
-			if ( this.isVisible && str.Length > 0 )
+			if ( this.isVisible && this.isShowTitle && str.Length > 0 )
 			{		
 				// Calculate the title position in screen coordinates
 				float x = ( this.maxPix - this.minPix ) / 2;

@@ -21,6 +21,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using System.Diagnostics;
+using System.IO;
 
 namespace ZedGraph
 {
@@ -39,7 +41,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 1.11 $ $Date: 2004-08-26 05:49:10 $ </version>
+	/// <version> $Revision: 1.12 $ $Date: 2004-08-27 04:35:17 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -811,7 +813,6 @@ namespace ZedGraph
 			this.minClusterGap = Default.MinClusterGap;
 			this.minBarGap = Default.MinBarGap;
 			this.clusterScaleWidth = Default.ClusterScaleWidth;
-
 		}
 
 		/// <summary>

@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+26-Aug-2004 (by Champion)
+    Fix problem with zero/negative values on Y Log scale
+    Add long unittest
+    clean up unit test code to three fixtures
+
 25-Aug-2004 (by Champion)
     Make constructors handle null values better
     Integrate multiple constructors so default usage is cleaner
