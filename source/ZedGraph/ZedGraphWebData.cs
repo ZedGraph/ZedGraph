@@ -1726,7 +1726,7 @@ namespace ZedGraph
 		{
 			Register('s',typeof(ZedGraphWebFontSpec));
 			Register('t',typeof(ZedGraphWebFontSpec));	
-		
+
 			this.ScaleFontSpec.Family = ZedGraph.Axis.Default.ScaleFontFamily;
 			this.ScaleFontSpec.Size = ZedGraph.Axis.Default.ScaleFontSize;
 			this.ScaleFontSpec.IsBold = ZedGraph.Axis.Default.ScaleFontBold;
@@ -1744,6 +1744,18 @@ namespace ZedGraph
 			this.TitleFontSpec.IsUnderline = ZedGraph.Axis.Default.TitleFontUnderline;
 			this.TitleFontSpec.Fill.Color = ZedGraph.Axis.Default.TitleFillColor;
 			this.TitleFontSpec.Fill.Type = ZedGraph.Axis.Default.TitleFillType;
+
+			/*
+			if ( item is YAxis )
+			{
+				this.ScaleFontSpec.Angle = 90.0F;
+				this.TitleFontSpec.Angle = -180F;
+			}
+			else if ( item is Y2Axis )
+			{
+				this.ScaleFontSpec.Angle = -90.0F;
+			}
+			*/
 		}	
 	
 		/// <summary>
@@ -1800,7 +1812,7 @@ namespace ZedGraph
 			item.NumDecAuto = this.NumDecAuto;
 			item.NumDec = this.NumDec;
 			item.ScaleMag = this.ScaleMag;
-			item.ScaleMagAuto = this.ScaleMagAuto;					
+			item.ScaleMagAuto = this.ScaleMagAuto;
 		}
 
 		#region Properties			
@@ -2700,6 +2712,7 @@ namespace ZedGraph
 
 			this.Border.Color = Legend.Default.BorderColor;
 			this.Border.PenWidth = Legend.Default.BorderWidth;
+			this.Border.IsVisible = Legend.Default.IsBorderVisible;
 			this.Fill.Brush = Legend.Default.FillBrush;
 			this.Fill.Color = Legend.Default.FillColor;
 			this.Fill.Type = Legend.Default.FillType;

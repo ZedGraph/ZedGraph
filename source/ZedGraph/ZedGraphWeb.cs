@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.20 $ $Date: 2005-03-16 04:04:06 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2005-03-17 04:32:12 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -79,12 +79,14 @@ namespace ZedGraph
 
 			this.AxisBorder.Color = ZedGraph.GraphPane.Default.AxisBorderColor;
 			this.AxisBorder.PenWidth = ZedGraph.GraphPane.Default.AxisBorderPenWidth;
+			this.AxisBorder.IsVisible = true;
 			this.AxisFill.Brush = ZedGraph.GraphPane.Default.AxisBackBrush;
 			this.AxisFill.Color = ZedGraph.GraphPane.Default.AxisBackColor;
-			this.AxisFill.Type  = ZedGraph.GraphPane.Default.AxisBackType;			
+			this.AxisFill.Type  = ZedGraph.GraphPane.Default.AxisBackType;
 		
 			this.PaneBorder.Color = ZedGraph.PaneBase.Default.BorderColor;
 			this.PaneBorder.PenWidth = ZedGraph.PaneBase.Default.BorderPenWidth;
+			this.PaneBorder.IsVisible = true;
 			this.PaneFill.Color = ZedGraph.PaneBase.Default.FillColor;
 
 			this.FontSpec.IsBold = ZedGraph.PaneBase.Default.FontBold;
@@ -93,6 +95,7 @@ namespace ZedGraph
 			this.FontSpec.IsItalic = ZedGraph.PaneBase.Default.FontItalic;
 			this.FontSpec.Size = ZedGraph.PaneBase.Default.FontSize;
 			this.FontSpec.IsUnderline = ZedGraph.PaneBase.Default.FontUnderline;
+			this.FontSpec.Fill.Type = FillType.None;	// no fill
 			
 			this.XAxis.IsVisible = ZedGraph.XAxis.Default.IsVisible;
 			this.XAxis.IsZeroLine = ZedGraph.XAxis.Default.IsZeroLine;
