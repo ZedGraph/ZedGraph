@@ -30,9 +30,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2004-08-31 15:15:59 $ </version>
 	public class ArrowList : CollectionBase, ICloneable
 	{
+	#region Constructors
 		/// <summary>
 		/// Default constructor for the collection class
 		/// </summary>
@@ -49,7 +50,9 @@ namespace ZedGraph
 			foreach ( ArrowItem item in rhs )
 				this.Add( new ArrowItem( item ) );
 		}
+	#endregion
 
+	#region Methods
 		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>
@@ -92,7 +95,9 @@ namespace ZedGraph
 		{
 			List.RemoveAt( index );
 		}
+	#endregion
 
+	#region Rendering Method
 		/// <summary>
 		/// Render all objects to the specified <see cref="Graphics"/> device
 		/// by calling the Draw method of each <see cref="ArrowItem"/> object in
@@ -118,6 +123,7 @@ namespace ZedGraph
 			foreach ( ArrowItem item in this )
 				item.Draw( g, pane, scaleFactor );
 		}
+	#endregion
 	}
 }
 

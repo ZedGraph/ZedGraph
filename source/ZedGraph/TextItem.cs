@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.3 $ $Date: 2004-08-31 05:26:20 $ </version>
+	/// <version> $Revision: 1.4 $ $Date: 2004-08-31 15:16:00 $ </version>
 	public class TextItem : ICloneable
 	{
 	#region Fields
@@ -72,6 +72,7 @@ namespace ZedGraph
 		/// </summary>
 		private FontSpec	fontSpec;
 	#endregion
+
 	#region Defaults
 		/// <summary>
 		/// A simple struct that defines the

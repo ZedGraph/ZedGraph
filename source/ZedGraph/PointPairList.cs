@@ -30,15 +30,18 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 1.3 $ $Date: 2004-08-31 05:26:20 $ </version>
+	/// <version> $Revision: 1.4 $ $Date: 2004-08-31 15:16:00 $ </version>
 	public class PointPairList : CollectionBase, ICloneable
 	{
+	#region Fields
 		/// <summary>Private field to maintain the sort status of this
 		/// <see cref="PointPairList"/>.  Use the public property
 		/// <see cref="Sorted"/> to access this value.
 		/// </summary>
 		private bool sorted = true;
+	#endregion
 
+	#region Properties
 		/// <summary>
 		/// true if the list is currently sorted.
 		/// </summary>
@@ -47,7 +50,9 @@ namespace ZedGraph
 		{
 			get { return sorted; }
 		}
+	#endregion
 
+	#region Constructors
 		/// <summary>
 		/// Default constructor for the collection class
 		/// </summary>
@@ -76,7 +81,9 @@ namespace ZedGraph
 
 			sorted = false;
 		}
+	#endregion
 
+	#region Methods
 		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>
@@ -256,7 +263,7 @@ namespace ZedGraph
 				}
 			}	
 		}
-
+	#endregion
 	}
 }
 

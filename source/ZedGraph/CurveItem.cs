@@ -32,11 +32,11 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 1.13 $ $Date: 2004-08-31 05:26:20 $ </version>
+	/// <version> $Revision: 1.14 $ $Date: 2004-08-31 15:16:00 $ </version>
 	public class CurveItem : ICloneable
 	{
 	
-		#region Fields
+	#region Fields
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="ZedGraph.Symbol"/>
 		/// class defined for this <see cref="CurveItem"/>.  Use the public
@@ -86,9 +86,9 @@ namespace ZedGraph
 		/// to indicate the values are missing.
 		/// </summary>
 		private PointPairList points;
-		#endregion
+	#endregion
 	
-		#region Constructors
+	#region Constructors
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label and the
 		/// x and y data values as double arrays.  All other properties of the curve are
@@ -242,9 +242,9 @@ namespace ZedGraph
 			return new CurveItem( this ); 
 		}
 
-		#endregion
+	#endregion
 	
-		#region Properties
+	#region Properties
 		/// <summary>
 		/// Gets a reference to the <see cref="ZedGraph.Symbol"/> class defined
 		/// for this <see cref="CurveItem"/>.

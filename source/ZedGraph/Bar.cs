@@ -29,9 +29,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-31 05:26:20 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2004-08-31 15:16:00 $ </version>
 	public class Bar
 	{
+	#region Fields
 		/// <summary>
 		/// Private field that stores the color of the frame around this
 		/// <see cref="Bar"/>.  Use the public
@@ -66,6 +67,7 @@ namespace ZedGraph
 		/// property <see cref="FrameWidth"/> to access this value.
 		/// </summary>
 		private float	frameWidth;
+	#endregion
 
 	#region Defaults
 		/// <summary>
@@ -103,6 +105,7 @@ namespace ZedGraph
 		}
 	#endregion
 
+	#region Constructors
 		/// <summary>
 		/// Default constructor that sets all <see cref="Bar"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
@@ -145,7 +148,9 @@ namespace ZedGraph
 			this.isFilled = rhs.IsFilled;
 			this.frameWidth = rhs.FrameWidth;
 		}
+	#endregion
 
+	#region Methods
 		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>
@@ -154,7 +159,9 @@ namespace ZedGraph
 		{ 
 			return new Bar( this ); 
 		}
+	#endregion
 
+	#region Properties
 		/// <summary>
 		/// The color of the frame around the <see cref="Bar"/>.
 		/// </summary>
@@ -210,7 +217,9 @@ namespace ZedGraph
 			get { return frameWidth; }
 			set { frameWidth = value; }
 		}
+	#endregion
 
+	#region Rendering Methods
 		/// <summary>
 		/// Draw the <see cref="Bar"/> to the specified <see cref="Graphics"/> device
 		/// at the specified location.  This routine draws a single bar.
@@ -262,5 +271,6 @@ namespace ZedGraph
 					g.DrawLine( pen, right, bottom, left, bottom );
 			}
 		}
+	#endregion
 	}
 }

@@ -27,9 +27,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos </author>
-	/// <version> $Revision: 1.1 $ $Date: 2004-08-23 20:33:59 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2004-08-31 15:16:00 $ </version>
 	public class ColorSymbolRotator
 	{
+	#region Static fields
 		/// <summary>
 		/// The <see cref="Color"/>s <see cref="ColorSymbolRotator"/> 
 		/// rotates through.
@@ -61,7 +62,9 @@ namespace ZedGraph
 		};		
 
 		private static ColorSymbolRotator staticInstance;
-		
+	#endregion
+	
+	#region Fields
 		/// <summary>
 		/// The index of the next color to be used. Note: may be 
 		/// > COLORS.Length, it is reset to 0 on the next call if it is.
@@ -73,8 +76,9 @@ namespace ZedGraph
 		/// > SYMBOLS.Length, it is reset to 0 on the next call if it is.
 		/// </summary>
 		protected int symbolIndex = 0;
+	#endregion
 
-
+	#region Properties
 		/// <summary>
 		/// Retrieves the next color in the rotation.
 		/// <seealso cref="NextSymbol"/>
@@ -173,5 +177,6 @@ namespace ZedGraph
 		{
 			get { return StaticInstance.NextSymbol; } 
 		}
+	#endregion
 	}
 }

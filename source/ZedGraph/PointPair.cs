@@ -28,9 +28,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 1.2 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.3 $ $Date: 2004-08-31 15:16:00 $ </version>
 	public struct PointPair
 	{
+	#region Member variables
 		/// <summary>
 		/// Missing values are represented internally using <see cref="System.Double.MaxValue"/>.
 		/// </summary>
@@ -45,7 +46,9 @@ namespace ZedGraph
 		/// This PointPair's Y coordinate
 		/// </summary>
 		public double Y;
-		
+	#endregion
+
+	#region Constructors
 		/// <summary>
 		/// Creates a point pair with the specified X and Y.
 		/// </summary>
@@ -66,7 +69,9 @@ namespace ZedGraph
 			this.X = rhs.X;
 			this.Y = rhs.Y;
 		}
-		
+	#endregion
+
+	#region Properties
 		/// <summary>
 		/// Readonly value that determines if either the X or the Y
 		/// coordinate in this PointPair is a missing value.
@@ -76,7 +81,9 @@ namespace ZedGraph
 		{
 			get { return this.X == PointPair.Missing || this.Y == PointPair.Missing; }
 		}
+	#endregion
 
+	#region Inner classes
 		/// <summary>
 		/// Compares points based on their x values.  Is setup to be used in an
 		/// ascending order sort.
@@ -116,7 +123,9 @@ namespace ZedGraph
 				return lX < rX ? -1 : 1;
 			}
 		}
+	#endregion
 
+	#region Methods
 		/// <summary>
 		/// Format this PointPair value using the default format.  Example:  "( 12.345, -16.876)".
 		/// The two double values are formatted with the "g" format type.
@@ -138,5 +147,6 @@ namespace ZedGraph
 		{
 			return "( " + this.X.ToString( format ) + ", " + this.Y.ToString( format ) + " )";
 		}
+	#endregion
 	}
 }

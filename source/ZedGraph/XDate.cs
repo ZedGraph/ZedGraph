@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.4 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2004-08-31 15:16:00 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -1051,6 +1051,5 @@ namespace ZedGraph
 			return resultStr;
 		}
 	#endregion
-	
 	}
 }

@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+31-Aug-2000 (by Vos)
+    Cleaned up some of the files, making the #region'ing more consistent (some files still need to be done)
+
 30-Aug-2004 (by Champion)
     Fix single point plotting (bug in validity checking code)
     Fix calls to Transform() so that Transform(i,x) is only called for bar charts

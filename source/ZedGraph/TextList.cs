@@ -29,9 +29,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2004-08-23 20:27:45 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2004-08-31 15:16:00 $ </version>
 	public class TextList : CollectionBase, ICloneable
 	{
+	#region Constructors
 		/// <summary>
 		/// Default constructor for the <see cref="TextList"/> collection class
 		/// </summary>
@@ -48,7 +49,9 @@ namespace ZedGraph
 			foreach ( TextItem item in rhs )
 				this.Add( new TextItem( item ) );
 		}
+	#endregion
 
+	#region Methods
 		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>
@@ -118,5 +121,6 @@ namespace ZedGraph
 			foreach ( TextItem item in this )
 				item.Draw( g, pane, scaleFactor );
 		}
+	#endregion
 	}
 }

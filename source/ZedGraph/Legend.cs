@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.8 $ $Date: 2004-08-31 05:26:20 $ </version>
+	/// <version> $Revision: 1.9 $ $Date: 2004-08-31 15:16:00 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -658,7 +658,6 @@ namespace ZedGraph
 			this.rect = newRect;
 		}
 	#endregion
-	
 	}
 }
 
