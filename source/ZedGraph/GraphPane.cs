@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace ZedGraph
 {
@@ -387,8 +388,10 @@ namespace ZedGraph
 			DrawAxisFrame( g );
 
 			// Draw the graph features only if there is at least one curve with data
-			if (	this.curveList.HasData() &&
-					this.xAxis.Min < this.xAxis.Max &&
+//			if (	this.curveList.HasData() &&
+			// Go ahead and draw the graph, even without data.  This makes the control
+			// version still look like a graph before it is fully set up
+			if ( 	this.xAxis.Min < this.xAxis.Max &&
 					this.yAxis.Min < this.yAxis.Max &&
 					this.y2Axis.Min < this.y2Axis.Max )
 			{
@@ -483,7 +486,7 @@ namespace ZedGraph
 			}
 			
 			// Calculate the legend rect, and back it out of the current axisRect
-			this.legend.CalcRect( g, this, scaleFactor,
+			this.legend.CalcRect( g, this, scaleFactor, ref this.axisRect,
 								out hStack, out legendWidth );
 		}
 
@@ -526,10 +529,14 @@ namespace ZedGraph
 			SolidBrush brush = new SolidBrush( this.paneBackColor );
 			g.FillRectangle( brush, this.paneRect );
 
+			RectangleF tempRect = this.paneRect;
+			tempRect.Width -= 1;
+			tempRect.Height -= 1;
+
 			if ( this.isPaneFramed )
 			{
 				Pen pen = new Pen( this.paneFrameColor, this.paneFramePenWidth );
-				g.DrawRectangle( pen, Rectangle.Round( this.paneRect ) );
+				g.DrawRectangle( pen, Rectangle.Round( tempRect ) );
 				
 				// FrameRect draws one pixel short of the bottom/right border, so
 				//  just draw it manually

@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+28-Nov-2003 (Release 1.2)
+    Fixed the Axis.IsMinorOppositeTic bug (it wasn't working) 
+    Changed over the ZedGraph code so that it can also be a UserControl 
+
 13-Nov-2003 (Release 1.1)
     Fixed a minor bug in FontSpec.BoundingBox() calculation 
 

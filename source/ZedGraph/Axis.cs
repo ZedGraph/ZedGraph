@@ -948,7 +948,7 @@ namespace ZedGraph
 
 			DrawLabels( g, pane, iStart, iEnd, topPix, scaleFactor );
 		
-			DrawMinorTics( g, iStart, scaleFactor );
+			DrawMinorTics( g, iStart, scaleFactor, topPix );
 		}
 	
 		/// <summary>
@@ -1076,7 +1076,12 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void DrawMinorTics( Graphics g, int iStart, double scaleFactor )
+		/// <param name="topPix">
+		/// The pixel location of the far side of the axisRect from this axis.
+		/// This value is the axisRect.Height for the XAxis, or the axisRect.Width
+		/// for the YAxis and Y2Axis.
+		/// </param>
+		public void DrawMinorTics( Graphics g, int iStart, double scaleFactor, float topPix )
 		{
 			if ( this.isMinorTic && this.isVisible )
 			{
@@ -1116,7 +1121,7 @@ namespace ZedGraph
 
 							// draw the opposite tic
 							if ( this.isMinorOppositeTic )
-								g.DrawLine( pen, pixVal, 0.0F, pixVal, 0.0F + minorScaledTic );
+								g.DrawLine( pen, pixVal, topPix, pixVal, topPix + minorScaledTic );
 						}
 
 						count++;  // a paranoid check to avoid infinite loops

@@ -249,11 +249,16 @@ namespace ZedGraph
 		/// <see cref="GraphPane.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
+		/// <param name="axisRect">
+		/// The rectangle that contains the area bounded by the axes, in pixel units.
+		/// <seealso cref="ZedGraph.AxisRect">AxisRect</seealso>
+		/// </param>
 		/// <param name="hStack">The number of columns (horizontal stacking) to be used
 		/// for drawing the legend</param>
 		/// <param name="legendWidth">The width of each column in the legend (pixels)</param>
 		public void CalcRect( Graphics g, GraphPane pane, double scaleFactor,
-								out int hStack, out float legendWidth )
+								ref RectangleF axisRect, out int hStack,
+								out float legendWidth )
 		{
 			// Start with an empty rectangle
 			this.rect = Rectangle.Empty;
@@ -367,45 +372,45 @@ namespace ZedGraph
 				{
 					case LegendLoc.Right:
 						this.rect.X = pane.PaneRect.Right - totLegWidth - gap;
-						this.rect.Y = pane.AxisRect.Top;
+						this.rect.Y = axisRect.Top;
 		
-						pane.axisRect.Width -= totLegWidth + halfCharHeight;
+						axisRect.Width -= totLegWidth + halfCharHeight;
 						break;
 					case LegendLoc.Top:
-						this.rect.X = pane.AxisRect.Left;
-						this.rect.Y = pane.AxisRect.Top;
+						this.rect.X = axisRect.Left;
+						this.rect.Y = axisRect.Top;
 						
-						pane.axisRect.Y += legHeight + halfCharHeight;
-						pane.axisRect.Height -= legHeight + halfCharHeight;
+						axisRect.Y += legHeight + halfCharHeight;
+						axisRect.Height -= legHeight + halfCharHeight;
 						break;
 					case LegendLoc.Bottom:
-						this.rect.X = pane.AxisRect.Left;
+						this.rect.X = axisRect.Left;
 						this.rect.Y = pane.PaneRect.Bottom - legHeight - gap;
 						
-						pane.axisRect.Height -= legHeight + halfCharHeight;
+						axisRect.Height -= legHeight + halfCharHeight;
 						break;
 					case LegendLoc.Left:
 						this.rect.X = pane.PaneRect.Left + gap;
-						this.rect.Y = pane.AxisRect.Top;
+						this.rect.Y = axisRect.Top;
 						
-						pane.axisRect.X += totLegWidth + halfCharHeight;
-						pane.axisRect.Width -= totLegWidth + halfCharHeight;
+						axisRect.X += totLegWidth + halfCharHeight;
+						axisRect.Width -= totLegWidth + halfCharHeight;
 						break;
 					case LegendLoc.InsideTopRight:
-						this.rect.X = pane.AxisRect.Right - totLegWidth;
-						this.rect.Y = pane.AxisRect.Top;
+						this.rect.X = axisRect.Right - totLegWidth;
+						this.rect.Y = axisRect.Top;
 						break;
 					case LegendLoc.InsideTopLeft:
-						this.rect.X = pane.AxisRect.Left;
-						this.rect.Y = pane.AxisRect.Top;
+						this.rect.X = axisRect.Left;
+						this.rect.Y = axisRect.Top;
 						break;
 					case LegendLoc.InsideBotRight:
-						this.rect.X = pane.AxisRect.Right - totLegWidth;
-						this.rect.Y = pane.AxisRect.Bottom - legHeight;
+						this.rect.X = axisRect.Right - totLegWidth;
+						this.rect.Y = axisRect.Bottom - legHeight;
 						break;
 					case LegendLoc.InsideBotLeft:
-						this.rect.X = pane.AxisRect.Left;
-						this.rect.Y = pane.AxisRect.Bottom - legHeight;
+						this.rect.X = axisRect.Left;
+						this.rect.Y = axisRect.Bottom - legHeight;
 						break;
 				}
 				
