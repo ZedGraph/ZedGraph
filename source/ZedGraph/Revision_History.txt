@@ -1,0 +1,6 @@
+ZedGraph Class Library Revision History
+
+13-Nov-2003 (Release 1.1)
+    Fixed a minor bug in FontSpec.BoundingBox() calculation 
+
+
