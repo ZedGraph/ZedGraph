@@ -27,6 +27,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.ComponentModel;
 
 namespace ZedGraph
 {
@@ -47,11 +48,11 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.24 $ $Date: 2005-01-09 03:52:20 $ </version>
+	/// <version> $Revision: 3.25 $ $Date: 2005-01-16 03:46:12 $ </version>
 	[Serializable]
 	public class GraphPane : ICloneable, ISerializable
 	{
-		#region Private Fields
+	#region Private Fields
 	
 		// Item subclasses ////////////////////////////////////////////////////////////////////
 		
@@ -232,9 +233,9 @@ namespace ZedGraph
 		/// </summary>
 		private RectangleF[]	miniPanes ;
 
-		#endregion
+	#endregion
 
-		#region Defaults
+	#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
 		/// default property values for the <see cref="GraphPane"/> class.
@@ -453,9 +454,9 @@ namespace ZedGraph
 			/// </summary>
 			public static double NearestTol = 7.0;
 		}
-		#endregion
+	#endregion
 
-		#region public Class Instance Properties
+	#region public Class Instance Properties
 		/// <summary>
 		/// Gets or sets the list of <see cref="GraphItem"/> items for this <see cref="GraphPane"/>
 		/// </summary>
@@ -476,7 +477,6 @@ namespace ZedGraph
 			set { miniPanes = value; }
 		}
 
-		
 		/// <summary>
 		/// Gets or sets the list of <see cref="CurveItem"/> items for this <see cref="GraphPane"/>
 		/// </summary>
@@ -518,9 +518,9 @@ namespace ZedGraph
 		{
 			get { return y2Axis; }
 		}
-		#endregion
+	#endregion
 	
-		#region General Properties
+	#region General Properties
 		/// <summary>
 		/// Gets or sets a boolean value that affects the data range that is considered
 		/// for the automatic scale ranging.
@@ -655,7 +655,7 @@ namespace ZedGraph
 		
 	#endregion
 	
-		#region PaneRect Properties
+	#region PaneRect Properties
 		/// <summary>
 		/// Gets or sets the rectangle that defines the full area into which the
 		/// <see cref="GraphPane"/> can be rendered.
@@ -687,9 +687,9 @@ namespace ZedGraph
 			get { return paneFill; }
 			set { paneFill = value; }
 		}
-		#endregion
+	#endregion
 	
-		#region AxisRect Properties
+	#region AxisRect Properties
 		/// <summary>
 		/// Gets or sets the rectangle that contains the area bounded by the axes
 		/// (<see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
@@ -746,7 +746,7 @@ namespace ZedGraph
 		}
 		#endregion
 	
-		#region Pane Scaling Properties
+	#region Pane Scaling Properties
 		/// <summary>
 		/// PaneGap is a float value that sets the margin area between the edge of the
 		/// <see cref="GraphPane"/> rectangle (<see cref="PaneRect"/>)
@@ -852,9 +852,9 @@ namespace ZedGraph
 			set { isPenWidthScaled = value; }
 		}
 
-		#endregion
+	#endregion
 	
-		#region Bar Properties
+	#region Bar Properties
 		/// <summary>
 		/// The minimum space between <see cref="Bar"/> clusters, expressed as a
 		/// fraction of the bar size.
@@ -914,7 +914,7 @@ namespace ZedGraph
 			get { return clusterScaleWidth; }
 			set { clusterScaleWidth = value; }
 		}
-		#endregion
+	#endregion
 	
 	#region Constructors
 
@@ -1521,12 +1521,20 @@ namespace ZedGraph
 		/// </param>		
 		public void DrawPaneFrame(Graphics g, GraphPane pane, double scaleFactor)
 		{
-			// Erase the pane background
-			Brush brush = this.paneFill.MakeBrush( this.paneRect );
-			//SolidBrush brush = new SolidBrush( this.paneBackColor );
-			g.FillRectangle( brush, this.paneRect );
+			// The Destination image is one pixel larger than the paneRect, because DrawRectangle() draws one
+			// pixel beyond the specified rectangle.  We have to clear out the full destination rect, just
+			// in case the paneBorder is turned off.
+
+			RectangleF rect = this.paneRect;
+			rect.Width = rect.Width + 1;
+			rect.Height = rect.Height + 1;
+
+			// Erase the pane background, filling it with the specified brush
+			Brush brush = this.paneFill.MakeBrush( rect );
+			g.FillRectangle( brush, rect );
 			brush.Dispose();
 
+			// Draw a border around the pane
 			this.paneBorder.Draw( g, pane, scaleFactor, paneRect );
 		}
 
@@ -1587,7 +1595,7 @@ namespace ZedGraph
 		}
 		#endregion
 	
-		#region AddCurve Methods
+	#region AddCurve Methods
 		/// <summary>
 		/// Add a curve (<see cref="CurveItem"/> object) to the plot with
 		/// the given data points (double arrays) and properties.
@@ -1858,9 +1866,9 @@ namespace ZedGraph
 			return curve;
 		}
 		
-		#endregion
+	#endregion
 
-		#region General Utility Methods
+	#region General Utility Methods
 		/// <summary>
 		/// Transform a data point from the specified coordinate type
 		/// (<see cref="CoordType"/>) to screen coordinates (pixels).
@@ -2348,7 +2356,7 @@ namespace ZedGraph
 			return barAxis;
 		}
 
-		#endregion
+	#endregion
 
 		public PieItem AddPie(string pieLabel, int slices)
 		{

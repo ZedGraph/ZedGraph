@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-01-16 03:46:12 $ </version>
 	[Serializable]
 	public class Fill : ISerializable
 	{
@@ -51,7 +51,7 @@ namespace ZedGraph
 		/// only applicable if the 
 		/// <see cref="Type"/> property is set to <see cref="ZedGraph.FillType.Brush"/>.
 		/// </summary>
-		private Brush		brush;
+		public Brush		brush;
 		/// <summary>
 		/// Private field that determines the type of color fill.  Use the public
 		/// property <see cref="Type"/> to access this value.  The fill color
@@ -542,7 +542,8 @@ namespace ZedGraph
 			int sch = info.GetInt32( "schema" );
 
 			color = (Color) info.GetValue( "color", typeof(Color) );
-//			brush = (Brush) info.GetValue( "brush", typeof(Brush) );
+			//brush = (Brush) info.GetValue( "brush", typeof(Brush) );
+			//brushHolder = (BrushHolder) info.GetValue( "brushHolder", typeof(BrushHolder) );
 			type = (FillType) info.GetValue( "type", typeof(FillType) );
 			isScaled = info.GetBoolean( "isScaled" );
 			alignH = (AlignH) info.GetValue( "alignH", typeof(AlignH) );
@@ -551,7 +552,7 @@ namespace ZedGraph
 			rangeMax = info.GetDouble( "rangeMax" );
 
 			//BrushHolder brushHolder = (BrushHolder) info.GetValue( "brushHolder", typeof( BrushHolder ) );
-			//brush = brushHolder.brush;
+			//brush = brush;
 
 			colorList = (Color[]) info.GetValue( "colorList", typeof(Color[]) );
 			positionList = (float[]) info.GetValue( "positionList", typeof(float[]) );
@@ -582,7 +583,8 @@ namespace ZedGraph
 
 			info.AddValue( "schema", schema );
 			info.AddValue( "color", color );
-//			info.AddValue( "brush", brush );
+			//info.AddValue( "brush", brush );
+			//info.AddValue( "brushHolder", brushHolder );
 			info.AddValue( "type", type );
 			info.AddValue( "isScaled", isScaled );
 			info.AddValue( "alignH", alignH );

@@ -210,7 +210,15 @@ namespace ZedGraph
 		/// Locate the <see cref="Legend"/> as a floating object above the graph at the
 		/// location specified by <see cref="Legend.Location"/>.
 		/// </summary>
-		Float
+		Float,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> centered above the <see cref="GraphPane.AxisRect"/>
+		/// </summary>
+		TopCenter,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> centered below the <see cref="GraphPane.AxisRect"/>
+		/// </summary>
+		BottomCenter
 	};
 
 	/// <summary>

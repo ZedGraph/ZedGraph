@@ -10,11 +10,13 @@ using System.Drawing.Printing;
 using System.Drawing.Text;
 using System.Data;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization.Formatters.Soap;
 using System.Xml;
 using System.Xml.Serialization;
 using System.IO;
 using GDIDB;
 using ZedGraph;
+using System.Diagnostics;
 
 namespace ZedGraph.Demo
 {
@@ -122,22 +124,29 @@ namespace ZedGraph.Demo
 
 		private void Form1_Load(object sender, System.EventArgs e)
 		{			
+			Trace.Listeners.Add(new TextWriterTraceListener( @"myTrace.txt" ) );
+			Trace.AutoFlush = true;
+
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
 
 #if false	// serialized data
 
-			BinaryFormatter mySerializer = new BinaryFormatter();
-			Stream myReader = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Open,
+			SoapFormatter mySerializer = new SoapFormatter();
+			Stream myReader = new FileStream( "myFileName.soap", FileMode.Open,
 						FileAccess.Read, FileShare.Read );
+
+			//BinaryFormatter mySerializer = new BinaryFormatter();
+			//Stream myReader = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Open,
+			//			FileAccess.Read, FileShare.Read );
 
 			myPane = (GraphPane) mySerializer.Deserialize( myReader );
 			myReader.Close();
 
 #endif
 
-#if false	// The main example
+#if true	// The main example
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -145,7 +154,7 @@ namespace ZedGraph.Demo
 				"Widget Production\n(units/hour)" );
 			SetSize();
 
-			myPane.XAxis.ScaleFontSpec.Size = 8;
+			//myPane.XAxis.ScaleFontSpec.Size = 8;
 
 			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
@@ -166,7 +175,14 @@ namespace ZedGraph.Demo
 			curve.Line.Width = 1.5F;
 			//curve.Line.IsSmooth = true;
 			curve.Symbol.Fill = new Fill( Color.White );
-			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 160, 230, 145, 205), 90F );
+			
+			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
+			Image image = Image.FromHbitmap( bm.GetHbitmap() );
+			//TextureBrush tBrush = new TextureBrush( image, WrapMode.Tile );
+			//LinearGradientBrush tBrush = new LinearGradientBrush( new Rectangle(0, 0, 100, 100), Color.Blue, Color.Red, 45.0F );
+			//curve.Line.Fill = new Fill( tBrush );
+			curve.Line.Fill = new Fill(image, WrapMode.Tile );
+			//curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 160, 230, 145, 205), 90F );
 			curve.Symbol.Size = 10;
 			
 			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
@@ -201,6 +217,7 @@ namespace ZedGraph.Demo
 						Color.FromArgb( 255, 255, 190), 90F );
 			
 			myPane.XAxis.IsShowGrid = true;
+			myPane.XAxis.Max = 1200;
 			//myPane.IsPenWidthScaled = false;
 			//myPane.XAxis.ScaleFontSpec.Angle = 90;
 			//myPane.XAxis.ScaleAlign = AlignP.Inside;
@@ -275,7 +292,7 @@ namespace ZedGraph.Demo
 			box.ZOrder = ZOrder.E_BehindAxis;
 			myPane.GraphItemList.Add( box );
 			
-			myText = new TextItem( "Peak Range", 1170, 105 );
+			TextItem myText = new TextItem( "Peak Range", 1170, 105 );
 			myText.Location.CoordinateFrame = CoordType.AxisXYScale;
 			myText.Location.AlignH = AlignH.Right;
 			myText.Location.AlignV = AlignV.Center;
@@ -310,7 +327,8 @@ namespace ZedGraph.Demo
 			*/
 
 #endif
-#if true//Pie Chart Example   
+
+#if false	//Pie Chart Example   
 			// Create a new graph with topLeft at (40,40) and size 600x400
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"2003 Regional Sales", "", "" );
@@ -340,8 +358,23 @@ namespace ZedGraph.Demo
 
 			PieItem myPie1 = myPane.AddPie ( "2002", values, colors, displacement, labels ) ;
 			myPie1.AddSlice	( values[0], Color.Coral, displacement[2], "SE" );
+			myPie1.AddSlice	( 10, Color.Coral, 0 , "x" );
+			myPie1.AddSlice	( 10, Color.Coral, 0 , "x" );
+			myPie1.AddSlice	( 10, Color.Coral, 0 , "x" );
+			myPie1.AddSlice	( 10, Color.Coral, 0 , "x" );
+			myPie1.AddSlice	( 10, Color.Coral, 0 , "x" );
+			myPie1.AddSlice	( 10, Color.Coral, 0 , "x" );
 			((PieSlice)myPie1.SliceList[3]).Border.Color = Color.Blue ;
 			((PieSlice)myPie1.SliceList[3]).Border.PenWidth = 2 ;
+			((PieSlice)myPie1.SliceList[2]).Fill = new Fill( Color.Red, Color.White, 45F );
+			
+			myPie1.IsVisible = false;
+			myPie1.Label = "JUnk";
+			myPie1.Color = Color.Red;
+			//MessageBox.Show( "Start" );
+			//for ( int i=0; i<10000000; i++ )
+			//	myPie1.RecalculateSliceAngles();
+			//MessageBox.Show( "Done" );
 
 //			((PieSlice)myPie1.SliceList[1]).Border.IsVisible = false ;
 //			((PieSlice)myPie1.SliceList[4]).IsVisible = false ;
@@ -357,6 +390,7 @@ namespace ZedGraph.Demo
 			 
 
 #endif
+
 #if false	// Test Line Stacking
 
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
@@ -2703,6 +2737,92 @@ namespace ZedGraph.Demo
 
 #endif
 
+#if false	// Nick Sutterton's test
+			/////////////////////////////
+			//
+			// MAKE THE GRAPH
+			//
+			/////////////////////////////
+			
+			MessageBox.Show( "Start" );
+			// Hardcoded Data
+			double[] x = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 
+							16, 17, 18, 19, 20, 21, 22, 23, 24};
+			double[] y = { 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000,
+							9000, 10000, 11000, 12000, 13000, 14000, 15000,
+							16000, 17000, 18000, 19000, 
+							20000, 21000, 22000, 23000, 24000};
+			double YMin = 1000;
+			double YMax = 24000;
+			
+			GraphPane pane;
+			myPane = new GraphPane( new Rectangle( 0, 0, 400, 200 ),
+									"Test",
+									"",
+									"" );
+			pane = myPane;
+
+			
+			// SET UP VIEWING PROPERTIES
+			
+			//pane.XAxis.Type = AxisType.Date;
+			
+			// VISIBILITY
+			pane.Legend.IsVisible = false;
+			pane.XAxis.IsShowGrid = true;
+			pane.YAxis.IsShowGrid = true;
+			pane.XAxis.IsVisible = true;
+			pane.YAxis.IsVisible = true;
+			
+			// FORMAT
+			pane.ClusterScaleWidth = 45;
+			pane.PaneGap = 10;
+			pane.MinBarGap = (float) 0.05;
+			pane.FontSpec.Size = 25;
+			pane.XAxis.ScaleFormat = "MMM-yy";
+			pane.XAxis.ScaleFontSpec.Size = 20;
+			pane.YAxis.ScaleFontSpec.Size = 20;
+			pane.XAxis.TitleFontSpec.Size = 20;
+			pane.YAxis.TitleFontSpec.Size = 20;
+			
+			// SCALE
+			pane.XAxis.Step = 3;
+			pane.XAxis.MajorUnit = DateUnit.Month;
+			pane.XAxis.MinorStep = 1;
+			pane.XAxis.MinorUnit = DateUnit.Month;
+			
+			pane.YAxis.Min = YMin - YMin*0.025;
+			pane.YAxis.Max = YMax + YMax*0.025;
+			pane.XAxis.Min = 1;
+			pane.XAxis.Max = 24;
+			
+			// COLOR
+			BarItem bar = pane.AddBar( "Test", x, y, Color.Black );
+			bar.Bar.Fill = new Fill( Color.SeaGreen, Color.MediumAquamarine, Color.SeaGreen);
+			pane.PaneFill = new Fill( Color.Lavender, Color.Lavender, 0F );
+			pane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
+			Color.FromArgb( 255, 255, 190), 90F );
+			
+			
+			///////////////////////
+			//
+			// SAVE THE GRAPH IMAGE
+			//
+			///////////////////////
+			
+			myPane.AxisChange( this.CreateGraphics() );
+			//System.Drawing.Graphics img = Graphics.FromImage( bmp );
+			//img.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+			//pane.AxisChange( img );
+			//pane.Draw( img );
+			Bitmap bmp = pane.Image;
+			//Response.ContentType = "image/jpeg";
+			//bmp.Save( Response.OutputStream, ImageFormat.Jpeg );
+			//img.Dispose();
+			//bmp.Dispose();
+
+			MessageBox.Show( "Done" );
+#endif
 			SetSize();
 
 			//			RectangleF myRect = myPane.CalcAxisRect( memGraphics.g );
@@ -2951,24 +3071,30 @@ namespace ZedGraph.Demo
 
 		private void Serialize( GraphPane myPane )
 		{
-			//XmlSerializer mySerializer = new XmlSerializer( typeof( GraphPane ) );
-			//StreamWriter myWriter = new StreamWriter( "c:\\temp\\myFileName.xml" );
+			XmlSerializer mySerializer = new XmlSerializer( typeof( GraphPane ) );
+			StreamWriter myWriter = new StreamWriter( @"myFileName.xml" );
 
-			BinaryFormatter mySerializer = new BinaryFormatter();
-			Stream myWriter = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Create,
-						FileAccess.Write, FileShare.None );
+			//SoapFormatter mySerializer = new SoapFormatter();
+			//FileStream myWriter = new FileStream( @"myFileName.soap", FileMode.Create );
+
+			//BinaryFormatter mySerializer = new BinaryFormatter();
+			//Stream myWriter = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Create,
+			//			FileAccess.Write, FileShare.None );
 
 			mySerializer.Serialize( myWriter, myPane );
 
 			MessageBox.Show( "Serialized output created" );
 
 			myWriter.Close();
+		}
 
 
+		private void DeSerialize( out GraphPane myPane )
+		{
+			BinaryFormatter mySerializer = new BinaryFormatter();
 			Stream myReader = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Open,
 						FileAccess.Read, FileShare.Read );
 
-			myPane = null;
 			myPane = (GraphPane) mySerializer.Deserialize( myReader );
 			Invalidate();
 
@@ -2978,7 +3104,8 @@ namespace ZedGraph.Demo
 #if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-//			Serialize( myPane );
+			Serialize( myPane );
+			//DeSerialize( out myPane );
 
 			//myPane.XAxis.PickScale( 250, 900, myPane, this.CreateGraphics(), myPane.CalcScaleFactor() );
 			//Invalidate();

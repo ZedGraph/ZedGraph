@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-01-09 03:51:29 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2005-01-16 03:46:11 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -265,25 +265,35 @@ namespace ZedGraph
 		{
 			get
 			{
-				if ( this.IsBar )
+				if ( this is BarItem )
 					return ((BarItem) this).Bar.Fill.Color;
-				else if ( ((LineItem) this).Line.IsVisible )
+				else if ( this is LineItem && ((LineItem) this).Line.IsVisible )
 					return ((LineItem) this).Line.Color;
-				else
+				else if ( this is LineItem )
 					return ((LineItem) this).Symbol.Border.Color;
+				else if ( this is ErrorBarItem )
+					return ((ErrorBarItem) this).ErrorBar.Color;
+				else if ( this is HiLowBarItem )
+					return ((HiLowBarItem) this).Bar.Fill.Color;
+				else
+					return Color.Empty;
 			}
 			set 
 			{
-				if ( this.IsBar )
+				if ( this is BarItem )
 				{
 					((BarItem) this).Bar.Fill.Color = value;
 				}
-				else
+				else if ( this is LineItem )
 				{
 					((LineItem) this).Line.Color			= value;
 					((LineItem) this).Symbol.Border.Color	= value;
 					((LineItem) this).Symbol.Fill.Color		= value;
 				}
+				else if ( this is ErrorBarItem )
+					((ErrorBarItem) this).ErrorBar.Color = value;
+				else if ( this is HiLowBarItem )
+					((HiLowBarItem) this).Bar.Fill.Color = value;
 			}
 		}
 

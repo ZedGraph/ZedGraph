@@ -30,7 +30,7 @@ namespace ZedGraph
 	///part of a <see cref="PieItem"/> object.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.1 $ $Date: 2005-01-09 04:52:54 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2005-01-16 03:46:12 $ </version>
 	public	class PieSlice
 	{
 	#region Fields
@@ -421,12 +421,13 @@ namespace ZedGraph
 		/// owner of this object.
 		/// </param>
 		/// <param name="baseRect">Bounding rectangle for this <see cref="PieSlice"/></param>
-		public void Draw( Graphics g, GraphPane pane, RectangleF baseRect  )
+		public void Draw( Graphics g, GraphPane pane, RectangleF baseRect, double scaleFactor  )
 		{
 			if ( !this.isVisible )
 				return ;
 			
-			SolidBrush brush = new SolidBrush(this.Fill.Color );
+			//SolidBrush brush = new SolidBrush(this.Fill.Color );
+			Brush brush = this.Fill.MakeBrush( baseRect );
 
 				if ( this.displacement == 0 )                                                     //this slice not exploded
 				{
@@ -434,7 +435,8 @@ namespace ZedGraph
 
 					if ( this.Border.IsVisible)
 					{
-						Pen borderPen = new Pen(this.Border.Color, this.Border.PenWidth);
+						//Pen borderPen = new Pen(this.Border.Color, this.Border.PenWidth);
+						Pen borderPen = this.Border.MakePen( pane, scaleFactor );
 						g.DrawPie (borderPen, baseRect.X,baseRect.Y,baseRect.Width,baseRect.Height, this.StartAngle, this.SweepAngle );
 						borderPen.Dispose () ;
 						

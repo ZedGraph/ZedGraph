@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.16 $ $Date: 2005-01-09 03:52:20 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2005-01-16 03:46:12 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -95,12 +95,15 @@ namespace ZedGraph
 		{
 			get
 			{
+				bool hasPie = false;
 				foreach ( CurveItem curve in this )
 				{
 					if ( !curve.IsPie )
 						return false;
+					else
+						hasPie = true;
 				}
-				return true;
+				return hasPie;
 			}
 		}
 

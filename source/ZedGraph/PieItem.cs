@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// <see cref="PieSlice"/>s.
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1 $ $Date: 2005-01-09 04:52:28 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2005-01-16 03:46:12 $ </version>
 	public class PieItem : ZedGraph.CurveItem , ICloneable	
 	{
 		
@@ -361,7 +361,7 @@ namespace ZedGraph
 		/// A method which recalculates the various angle fields in each <see cref="PieSlice"/> objects.  This
 		/// method is called when any sort of a change in <see cref="PieSlice.value"/> is experienced.
 		/// </summary>
-		private void RecalculateSliceAngles ()
+		public void RecalculateSliceAngles ()
 		{
 			for ( int x = 0 ; x < this.SliceList.Count ; x++ )
 			{
@@ -408,7 +408,7 @@ namespace ZedGraph
 			
 			//now gotta loop thru the slices and draw them
 			foreach ( PieSlice slice in this.sliceList)
-				slice.Draw (g, pane, nonExplRect ) ;
+				slice.Draw ( g, pane, nonExplRect, scaleFactor ) ;
 		}
 
 		

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-01-08 08:28:07 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-01-16 03:46:12 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -588,11 +588,11 @@ namespace ZedGraph
 					{
 						// Transform the current point from user scale units to
 						// screen coordinates
-						tmpX = pane.XAxis.Transform( curX );
+						tmpX = pane.XAxis.Transform( i, curX );
 						if ( isY2Axis )
-							tmpY = pane.Y2Axis.Transform( curY );
+							tmpY = pane.Y2Axis.Transform( i, curY );
 						else
-							tmpY = pane.YAxis.Transform( curY );
+							tmpY = pane.YAxis.Transform( i, curY );
 						
 						// off-scale values "break" the line
 						if ( tmpX < -100000 || tmpX > 100000 ||
@@ -687,11 +687,11 @@ namespace ZedGraph
 						}
 						
 						// Transform the user scale values to pixel locations
-						curX = pane.XAxis.Transform( x );
+						curX = pane.XAxis.Transform( i, x );
 						if ( isY2Axis )
-							curY = pane.Y2Axis.Transform( y );
+							curY = pane.Y2Axis.Transform( i, y );
 						else
-							curY = pane.YAxis.Transform( y );
+							curY = pane.YAxis.Transform( i, y );
 
 						// Add the pixel value pair into the points array
 						// Two points are added for step type curves
@@ -795,11 +795,11 @@ namespace ZedGraph
 						valueHandler.GetBarValues( curve, i, out x, out y, out hiVal );
 						
 						// Transform the user scale values to pixel locations
-						curX = pane.XAxis.Transform( x );
+						curX = pane.XAxis.Transform( i, x );
 						if ( isY2Axis )
-							curY = pane.Y2Axis.Transform( y );
+							curY = pane.Y2Axis.Transform( i, y );
 						else
-							curY = pane.YAxis.Transform( y );
+							curY = pane.YAxis.Transform( i, y );
 
 						// Add the pixel value pair into the points array
 						// Two points are added for step type curves

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-01-09 03:52:20 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-01-16 03:46:12 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -725,11 +725,11 @@ namespace ZedGraph
 							( !isY2Axis || !pane.Y2Axis.IsLog || curY > 0.0 ) )
 					{
 						// Transform the user scale values to pixel locations
-						tmpX = pane.XAxis.Transform( curX );
+						tmpX = pane.XAxis.Transform( i, curX );
 						if ( isY2Axis )
-							tmpY = pane.Y2Axis.Transform( curY );
+							tmpY = pane.Y2Axis.Transform( i, curY );
 						else
-							tmpY = pane.YAxis.Transform( curY );
+							tmpY = pane.YAxis.Transform( i, curY );
 
 						// If the fill type for this symbol is a Gradient by value type,
 						// the make a brush corresponding to the appropriate current value

@@ -21,6 +21,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Text;
+using System.ComponentModel;
 
 namespace ZedGraph
 {
@@ -33,7 +34,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-12-07 00:03:54 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2005-01-16 03:46:12 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 	#region Fields
@@ -145,6 +146,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.GraphPane"/> property for the control
 		/// </summary>
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public GraphPane GraphPane
 		{
 			get
@@ -193,15 +195,10 @@ namespace ZedGraph
 			{
 				lock( this )
 				{
-					if ( BeenDisposed )
+					if ( BeenDisposed || this.graphPane == null )
 						throw new ZedGraphException( "The control has been disposed" );
 
-					Bitmap bitmap = new Bitmap( this.Width+1, this.Height+1 );
-					Graphics bitmapGraphics = Graphics.FromImage( bitmap );
-					this.graphPane.Draw( bitmapGraphics );
-					bitmapGraphics.Dispose();
-
-					return bitmap;
+					return this.graphPane.Image;
 				}
 			}
 		}

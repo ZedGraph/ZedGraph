@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-01-09 03:52:20 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2005-01-16 03:46:12 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -609,7 +609,7 @@ namespace ZedGraph
 			this.rect = Rectangle.Empty;
 			hStack = 1;
 			legendWidth = 1;
-         legendHeight = 0;
+			legendHeight = 0;
 
             // If the legend is invisible, don't do anything
 			if ( !this.isVisible )
@@ -667,7 +667,7 @@ namespace ZedGraph
 		
 			// Is this legend horizontally stacked?
 			
-			  if ( this.isHStack )
+			if ( this.isHStack )
 			{
 				// Determine the available space for horizontal stacking
 				switch( this.position )
@@ -758,7 +758,14 @@ namespace ZedGraph
 						tAxisRect.Width -= totLegWidth + halfCharHeight;
 						break;
 					case LegendPos.Top:
-						newRect.X = tAxisRect.Left+ ( tAxisRect.Width - totLegWidth ) /2;
+						newRect.X = tAxisRect.Left;
+						newRect.Y = tAxisRect.Top;
+						
+						tAxisRect.Y += totLegHeight + halfCharHeight;
+						tAxisRect.Height -= totLegHeight + halfCharHeight;
+						break;
+					case LegendPos.TopCenter:
+						newRect.X = tAxisRect.Left + ( tAxisRect.Width - totLegWidth ) / 2;
 						newRect.Y = tAxisRect.Top;
 						
 						tAxisRect.Y += totLegHeight + halfCharHeight;
@@ -766,6 +773,12 @@ namespace ZedGraph
 						break;
 					case LegendPos.Bottom:
 						newRect.X = tAxisRect.Left + ( tAxisRect.Width - totLegWidth ) /2 ;
+						newRect.Y = pane.PaneRect.Bottom - totLegHeight - gap;
+						
+						tAxisRect.Height -= totLegHeight + halfCharHeight;
+						break;
+					case LegendPos.BottomCenter:
+						newRect.X = tAxisRect.Left;
 						newRect.Y = pane.PaneRect.Bottom - totLegHeight - gap;
 						
 						tAxisRect.Height -= totLegHeight + halfCharHeight;
