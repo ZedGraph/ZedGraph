@@ -864,7 +864,8 @@ namespace ZedGraphTest
 			}
 
 			// Generate a red bar with "Curve 1" in the legend
-			CurveItem myCurve = myPane.AddBar( "Curve 1", null, y, yBase, Color.Red );
+			BarItem myCurve = myPane.AddBar( "Curve 1", null, y, yBase, Color.Red );
+			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
 			
 			myPane.BarType = BarType.HiLow;
 			
@@ -1021,7 +1022,49 @@ namespace ZedGraphTest
 			myPane.YAxis.Max += myPane.YAxis.Step;
 
 
-//			GraphPane testPane = (GraphPane) myPane.Clone();
+			//			GraphPane testPane = (GraphPane) myPane.Clone();
+#endif
+
+#if false	// The sorted overlay bar graph sample
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"My Test Overlay Bar Graph", "Label", "My Y Axis" );
+			// Make up some random data points
+
+			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty" };
+			double[] y = { 100, 115, 75, -22, 98, 40, -10 };
+			double[] y2 = { 90, 100, 95, -35, 80, 35, 35 };
+			double[] y3 = { 80, 110, 65, -15, 104, 67, 18 };
+
+			// Generate a red bar with "Curve 1" in the legend
+			CurveItem myCurve = myPane.AddBar( "Curve 1",
+				null, y, Color.Red );
+			// Make it a bar
+
+			// Generate a blue bar with "Curve 2" in the legend
+			myCurve = myPane.AddBar( "Curve 2",
+				null, y2, Color.Blue );
+			// Make it a bar
+
+			// Generate a green bar with "Curve 3" in the legend
+			myCurve = myPane.AddBar( "Curve 3",
+				null, y3, Color.Green );
+			// Make it a bar
+
+			// Draw the X tics between the labels instead of at the labels
+			myPane.XAxis.IsTicsBetweenLabels = true;
+
+			// Set the XAxis labels
+			myPane.XAxis.TextLabels = labels;
+			// Set the XAxis to Text type
+			myPane.XAxis.Type = AxisType.Ordinal;
+			
+			myPane.BarBase = BarBase.X;
+			myPane.BarType = BarType.SortedOverlay;
+			
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			myPane.AxisChange( this.CreateGraphics() );
 #endif
 
 #if false	// The bar graph sample
@@ -1263,13 +1306,13 @@ namespace ZedGraphTest
 			double[] x2 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y2 = { 10, 15, 17, 20, 25, 27, 29, 26, 24, 18 };
 			BarItem bar = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
-			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue, 0F );
+			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
 			myPane.ClusterScaleWidth = 100;
 			
 			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y4 = { 30, 45, 53, 60, 75, 83, 84, 79, 71, 57 };
 			bar = myPane.AddBar( "Wheezy", x4, y4, Color.SteelBlue );
-			bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown, 0F );
+			bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown );
 			myPane.ClusterScaleWidth = 100;
 			myPane.BarType = BarType.Stack;
 			//curve.Bar.Fill = new Fill( Color.Blue );

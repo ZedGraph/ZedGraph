@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-11-05 19:11:17 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2004-11-06 02:16:51 $ </version>
 	public class PointPairList : CollectionBase, ICloneable
 	{
 	#region Fields
@@ -51,19 +51,7 @@ namespace ZedGraph
 		/// <value>A <see cref="PointPair"/> object reference.</value>
 		public PointPair this[ int index ]  
 		{
-			get
-			{
-				// This is ugly, but it's just for protection.  If you call the indexer
-				// with a PointPairList variable and the variable happens to be a
-				// PointTrioList, then this will make sure that the return struct from
-				// the List[index] is PointTrio, which is converted to a PointPair.
-				// Unfortunately, you can't make this indexer function virtual and
-				// override it in the PointTrioList, since they have different return types.
-				if ( this is PointTrioList )
-					return ((PointTrio) List[index]).PointPair;
-				else
-					return (PointPair) List[index];
-			}
+			get { return (PointPair) List[index]; }
 			set { List[index] = value; }
 		}
 
@@ -92,6 +80,17 @@ namespace ZedGraph
 		public PointPairList( double[] x, double[] y )
 		{
 			Add( x, y );
+			
+			sorted = false;
+		}
+
+		/// <summary>
+		/// Constructor to initialize the PointPairList from three arrays of
+		/// type double.
+		/// </summary>
+		public PointPairList( double[] x, double[] y, double[] baseVal )
+		{
+			Add( x, y, baseVal );
 			
 			sorted = false;
 		}
@@ -165,7 +164,7 @@ namespace ZedGraph
 		/// <seealso cref="IList.Add"/>
 		public int Add( double[] x, double[] y )
 		{
-			PointPair	point;
+			PointPair	point = new PointPair( 0, 0, 0 );
 			int 		len = 0,
 						rv = -1;
 			
@@ -198,7 +197,64 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Add a single point to the PointPairList from values of type double.
+		/// Add a set of points to the <see cref="PointPairList"/> from three arrays of type double.
+		/// If the X or Y array is null, then a set of ordinal values is automatically
+		/// generated in its place (see <see cref="AxisType.Ordinal"/>.  If the <see paramref="baseVal"/>
+		/// is null, then it is set to zero.
+		/// If the arrays are of different size, then the larger array prevails and the
+		/// smaller array is padded with <see cref="PointPair.Missing"/> values.
+		/// </summary>
+		/// <param name="x">A double[] array of X values</param>
+		/// <param name="y">A double[] array of Y values</param>
+		/// <param name="baseVal">A double[] array of "base" values</param>
+		/// <returns>The zero-based ordinal index where the last point was added in the list,
+		/// or -1 if no points were added.</returns>
+		/// <seealso cref="IList.Add"/>
+		public int Add( double[] x, double[] y, double[] baseVal )
+		{
+			PointPair	point;
+			int 		len = 0,
+						rv = -1;
+			
+			if ( x != null )
+				len = x.Length;
+			if ( y != null && y.Length > len )
+				len = y.Length;
+			if ( baseVal != null && baseVal.Length > len )
+				len = baseVal.Length;
+						
+			for ( int i=0; i<len; i++ )
+			{
+				if ( x == null )
+					point.X = (double) i + 1.0;
+				else if ( i < x.Length )
+					point.X = x[i];
+				else
+					point.X = PointPair.Missing;
+					
+				if ( y == null )
+					point.Y = (double) i + 1.0;
+				else if ( i < y.Length )
+					point.Y = y[i];
+				else
+					point.Y = PointPair.Missing;
+					
+				if ( baseVal == null )
+					point.BaseVal = (double) i + 1.0;
+				else if ( i < baseVal.Length )
+					point.BaseVal = baseVal[i];
+				else
+					point.BaseVal = PointPair.Missing;
+					
+				rv = List.Add( point );
+			}
+			
+			sorted = false;
+			return rv;
+		}
+
+		/// <summary>
+		/// Add a single point to the <see cref="PointPairList"/> from values of type double.
 		/// </summary>
 		/// <param name="x">The X value</param>
 		/// <param name="y">The Y value</param>
@@ -208,6 +264,21 @@ namespace ZedGraph
 		{
 			sorted = false;
 			PointPair	point = new PointPair( x, y );
+			return List.Add( point );
+		}
+
+		/// <summary>
+		/// Add a single point to the <see cref="PointPairList"/> from values of type double.
+		/// </summary>
+		/// <param name="x">The X value</param>
+		/// <param name="y">The Y value</param>
+		/// <param name="baseVal">The base (lower dependent) value</param>
+		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
+		/// <seealso cref="IList.Add"/>
+		public int Add( double x, double y, double baseVal )
+		{
+			sorted = false;
+			PointPair	point = new PointPair( x, y, baseVal );
 			return List.Add( point );
 		}
 
@@ -273,17 +344,17 @@ namespace ZedGraph
 			if ( sorted )
 				return true;
 
-			InnerList.Sort( new PointPair.PointPairComparerX() );
+			InnerList.Sort( new PointPair.PointPairComparer( SortType.XValues ) );
 			return false;
 		}
 		
-      /// <summary>
-      /// Sorts the list according to the point values . Will not sort the 
-      /// list if the list is already sorted.
-      /// </summary>
-      /// <param name="type"></param>  The <see cref = "SortType"/>
-      ///used to determine whether the X or Y values will be used to sort
-      ///the list
+		/// <summary>
+		/// Sorts the list according to the point values . Will not sort the 
+		/// list if the list is already sorted.
+		/// </summary>
+		/// <param name="type"></param>  The <see cref = "SortType"/>
+		///used to determine whether the X or Y values will be used to sort
+		///the list
 		/// <returns>If the list was sorted before sort was called</returns>
 		public bool Sort( SortType type)
 		{
@@ -291,10 +362,7 @@ namespace ZedGraph
 			if ( sorted )
 				return true;
 				
-         if( type == SortType.XValues)
-			   InnerList.Sort( new PointPair.PointPairComparerX() );
-			else
-            InnerList.Sort( new PointPair.PointPairComparerY() );
+			InnerList.Sort( new PointPair.PointPairComparer( type ) );
 			
 			return false;
 		}

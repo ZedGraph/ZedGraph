@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-11-05 19:11:16 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2004-11-06 02:16:51 $ </version>
 	public class Bar : ICloneable
 	{
 	#region Fields
@@ -481,8 +481,8 @@ namespace ZedGraph
 			// Get a base value for the bottom of the bar and verify validity
 			double curBase = 0;
             // Is this a high-low type bar, with a valid PointTrio set?
-			if ( ( pane.BarType == BarType.HiLow ) && ( points is PointTrioList ) )
-				curBase = ( (PointTrioList) points)[index].BaseVal;
+			if ( pane.BarType == BarType.HiLow )
+				curBase = points[index].BaseVal;
 				
 			if ( curBase == PointPair.Missing ||
 					System.Double.IsNaN( curBase ) ||

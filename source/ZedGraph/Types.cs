@@ -370,11 +370,22 @@ namespace ZedGraph
 		/// </summary>
 		Overlay,
 		/// <summary>
+		/// Draw the <see cref="BarItem"/> bars one on top of the other.  The bars will
+		/// be drawn such that the bars are sorted according to the maximum value, with
+		/// the tallest bar at each point at the back and the shortest bar at the front.
+		/// This is similar to the <see cref="Overlay"/> mode, but the bars are sorted at
+		/// each base value.
+		/// The data values must be summed before being passed
+		/// to <see cref="GraphPane.AddCurve"/>.  For example, if the first bar of
+		/// the first <see cref="BarItem"/> has a value of 100, and the first bar of
+		/// the second <see cref="BarItem"/> has a value of 120, then that bar will
+		/// appear to be 20 units on top of the first bar.
+		/// </summary>
+		SortedOverlay,
+		/// <summary>
 		/// Draw the <see cref="BarItem"/> bars in the same format as a <see cref="BarType.Cluster"/>,
-		/// except that the bottom of the bars is defined by the <see cref="PointTrio.BaseVal"/>
-		/// from the <see cref="PointTrio"/> struct.  For this mode to work properly,
-		/// <see cref="CurveItem.Points"/> must be a <see cref="PointTrioList"/>.  Otherwise,
-		/// the bottoms of the bars will default to zero base value.
+		/// except that the bottom of the bars is defined by the <see cref="PointPair.BaseVal"/>
+		/// from the <see cref="PointPair"/> struct.
 		/// </summary>
 		HiLow,
 		/// <summary>

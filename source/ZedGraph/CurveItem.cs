@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-11-03 04:17:45 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2004-11-06 02:16:51 $ </version>
 	abstract public class CurveItem
 	{
 	
@@ -117,26 +117,6 @@ namespace ZedGraph
 				this.points = new PointPairList();
 			else
 				this.points = (PointPairList) points.Clone();
-		}
-		
-		/// <summary>
-		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label, the
-		/// x, y, and base data values as a <see cref="PointTrioList"/>, the curve
-		/// type (Bar or Line/Symbol), the <see cref="Color"/>, and the
-		/// <see cref="SymbolType"/>. Other properties of the curve are
-		/// defaulted to the values in the <see cref="GraphPane.Default"/> class.
-		/// </summary>
-		/// <param name="label">A string label (legend entry) for this curve</param>
-		/// <param name="points">A <see cref="PointTrioList"/> of double precision value pairs that define
-		/// the X, Y, and Base values for this curve</param>
-		public CurveItem( string label, PointTrioList points )
-		{
-			Init( label );
-
-			if ( points == null )
-				this.points = new PointTrioList();
-			else
-				this.points = (PointTrioList) points.Clone();
 		}
 		
 		/// <summary>
@@ -439,6 +419,83 @@ namespace ZedGraph
 		}
 	
 	#endregion
+	
+	#region Inner classes	
+		/// <summary>
+		/// Compares <see cref="CurveItem"/>'s based on the point value at the specified
+		/// index and for the specified axis.
+		/// <seealso cref="System.Collections.ArrayList.Sort()"/>
+		/// </summary>
+		public class Comparer : IComparer 
+		{
+			private int index;
+			private SortType sortType;
+			
+			/// <summary>
+			/// Constructor for Comparer.
+			/// </summary>
+			/// <param name="type">The axis type on which to sort.</param>
+			/// <param name="index">The index number of the point on which to sort</param>
+			public Comparer( SortType type, int index )
+			{
+				this.sortType = type;
+				this.index = index;
+			}
+			
+			/// <summary>
+			/// Compares two <see cref="CurveItem"/>s using the previously specified index value
+			/// and axis.  Sorts in descending order.
+			/// </summary>
+			/// <param name="l">Curve to the left.</param>
+			/// <param name="r">Curve to the right.</param>
+			/// <returns>-1, 0, or 1 depending on l.X's relation to r.X</returns>
+			int IComparer.Compare( object l, object r ) 
+			{
+				if (l == null && r == null )
+					return 0;
+				else if (l == null && r != null ) 
+					return -1;
+				else if (l != null && r == null) 
+					return 1;
+
+				CurveItem lc = (CurveItem) l;
+				CurveItem rc = (CurveItem) r;
+				if ( rc != null && rc.NPts <= index )
+					r = null;
+				if ( lc != null && lc.NPts <= index )
+					l = null;
+						
+				double lVal, rVal;
+
+				if ( sortType == SortType.XValues )
+				{
+					lVal = System.Math.Abs( lc[index].X );
+					rVal = System.Math.Abs( rc[index].X );
+				}
+				else
+				{
+					lVal = System.Math.Abs( lc[index].Y );
+					rVal = System.Math.Abs( rc[index].Y );
+				}
+				
+				if ( lVal == PointPair.Missing || Double.IsInfinity( lVal ) || Double.IsNaN( lVal ) )
+					l = null;
+				if ( rVal == PointPair.Missing || Double.IsInfinity( rVal ) || Double.IsNaN( rVal ) )
+					r = null;
+					
+				if ( (l == null && r == null) || ( System.Math.Abs( lVal - rVal ) < 1e-10 ) )
+					return 0;
+				else if (l == null && r != null ) 
+					return -1;
+				else if (l != null && r == null) 
+					return 1;
+				else
+					return rVal < lVal ? -1 : 1;
+			}
+		}
+	
+	#endregion
+
 	}
 }
 

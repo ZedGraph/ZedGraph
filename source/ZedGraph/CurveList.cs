@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-11-05 19:11:17 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2004-11-06 02:16:51 $ </version>
 	public class CurveList : CollectionBase, ICloneable
 	{
 	#region Properties
@@ -190,6 +190,15 @@ namespace ZedGraph
 			return List.IndexOf( curve );
 		}
 
+		/// <summary>
+		/// Sorts the list according to the point values at the specified index and
+		/// for the specified axis.
+		/// </summary>
+		public void Sort( SortType type, int index )
+		{
+			InnerList.Sort( new CurveItem.Comparer( type, index ) );
+		}
+		
 		/// <summary>
 		/// Go through each <see cref="CurveItem"/> object in the collection,
 		/// calling the <see cref="PointPairList.GetRange"/> member to 
@@ -405,7 +414,25 @@ namespace ZedGraph
 
 			// Count the number of BarItems in the curvelist
 			int pos = this.NumBars;
+			float barWidth = pane.CalcBarWidth();
 			
+			if ( pane.BarType == BarType.SortedOverlay )
+			{
+				// First, create a new curveList with references (not clones) of the curves
+				CurveList tempList = new CurveList();
+				foreach ( CurveItem curve in this )
+					if ( curve.IsBar )
+						tempList.Add( (CurveItem) curve );
+				
+				for ( int i=0; i<this.maxPts; i++ )
+				{
+					tempList.Sort( pane.BarBase == BarBase.X ? SortType.YValues : SortType.XValues, i );
+					foreach ( BarItem curve in tempList )
+						curve.Bar.DrawSingleBar( g, pane, curve.Points, curve.IsY2Axis, barWidth,
+							0, i, scaleFactor );
+				}
+			}
+
 			// Loop for each curve in reverse order
 			for ( int i=this.Count-1; i>=0; i-- )
 			{
@@ -415,11 +442,13 @@ namespace ZedGraph
 					pos--;
 					
 				// Render the curve
-				curve.Draw( g, pane, pos, scaleFactor );
+				// if it's a bar type and a sorted overlay, it's already been done above
+				if ( !(pane.BarType == BarType.SortedOverlay) || !curve.IsBar )
+					curve.Draw( g, pane, pos, scaleFactor );
 			}
-			
 		}
 	#endregion
+
 	}
 }
 

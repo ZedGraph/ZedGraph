@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-11-03 04:17:45 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-11-06 02:16:51 $ </version>
 	public class Fill
 	{
 	#region Fields
@@ -192,6 +192,19 @@ namespace ZedGraph
 			this.alignV = Default.AlignV;
 		}
 		
+		/// <summary>
+		/// Constructor that creates a linear gradient color-fill, setting <see cref="Type"/> to
+		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill
+		/// consists of three colors.
+		/// </summary>
+		/// <param name="color1">The first color for the gradient fill</param>
+		/// <param name="color2">The second color for the gradient fill</param>
+		/// <param name="color3">The third color for the gradient fill</param>
+		public Fill( Color color1, Color color2, Color color3 ) :
+			this( color1, color2, color3, 0.0f )
+		{
+		}
+
 		/// <summary>
 		/// Constructor that creates a linear gradient color-fill, setting <see cref="Type"/> to
 		/// <see cref="FillType.Brush"/> using the specified colors.  This gradient fill

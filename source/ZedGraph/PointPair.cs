@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-11-05 19:11:17 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-11-06 02:16:51 $ </version>
 	public struct PointPair
 	{
 	#region Member variables
@@ -47,6 +47,11 @@ namespace ZedGraph
 		/// This PointPair's Y coordinate
 		/// </summary>
 		public double Y;
+		
+		/// <summary>
+		/// This PointPair's base (lower dependent) coordinate
+		/// </summary>
+		public double BaseVal;
 	#endregion
 
 	#region Constructors
@@ -59,6 +64,20 @@ namespace ZedGraph
 		{
 			this.X = x;
 			this.Y = y;
+			this.BaseVal = 0;
+		}
+
+		/// <summary>
+		/// Creates a point pair with the specified X, Y, and base value.
+		/// </summary>
+		/// <param name="x">This pair's x coordinate.</param>
+		/// <param name="y">This pair's y coordinate.</param>
+		/// <param name="baseVal">This pair's base coordinate.</param>
+		public PointPair( double x, double y, double baseVal )
+		{
+			this.X = x;
+			this.Y = y;
+			this.BaseVal = baseVal;
 		}
 
 		/// <summary>
@@ -70,6 +89,7 @@ namespace ZedGraph
 		{
 			this.X = pt.X;
 			this.Y = pt.Y;
+			this.BaseVal = 0;
 		}
 
 		/// <summary>
@@ -80,6 +100,7 @@ namespace ZedGraph
 		{
 			this.X = rhs.X;
 			this.Y = rhs.Y;
+			this.BaseVal = rhs.BaseVal;
 		}
 	#endregion
 
@@ -168,44 +189,67 @@ namespace ZedGraph
 			}
 		}
 	
-      /// <summary>
-      /// Compares points based on their x values.  Is setup to be used in an
-      /// ascending order sort.
-      /// <seealso cref="System.Collections.ArrayList.Sort()"/>
-      /// </summary>
-      public class PointPairComparerX : IComparer 
-      {
-		
-         /// <summary>
-         /// Compares two <see cref="PointPair"/>s.
-         /// </summary>
-         /// <param name="l">Point to the left.</param>
-         /// <param name="r">Point to the right.</param>
-         /// <returns>-1, 0, or 1 depending on l.X's relation to r.X</returns>
-         int IComparer.Compare( object l, object r ) 
-         {
-            if (l == null && r == null) 
-            {
-               return 0;
-            } 
-            else if (l == null && r != null) 
-            {
-               return -1;
-            } 
-            else if (l != null && r == null) 
-            {
-               return 1;
-            } 
+		/// <summary>
+		/// Compares points based on their x values.  Is setup to be used in an
+		/// ascending order sort.
+		/// <seealso cref="System.Collections.ArrayList.Sort()"/>
+		/// </summary>
+		public class PointPairComparer : IComparer 
+		{
+			private SortType sortType;
+			
+			/// <summary>
+			/// Constructor for PointPairComparer.
+			/// </summary>
+			/// <param name="type">The axis type on which to sort.</param>
+			public PointPairComparer( SortType type )
+			{
+				this.sortType = type;
+			}
+			
+			/// <summary>
+			/// Compares two <see cref="PointPair"/>s.
+			/// </summary>
+			/// <param name="l">Point to the left.</param>
+			/// <param name="r">Point to the right.</param>
+			/// <returns>-1, 0, or 1 depending on l.X's relation to r.X</returns>
+			int IComparer.Compare( object l, object r ) 
+			{				 
+				if ( l == null && r == null ) 
+					return 0;
+				else if ( l == null && r != null ) 
+					return -1;
+				else if ( l != null && r == null ) 
+					return 1;
 
-            double lX = ((PointPair) l).X;
-            double rX = ((PointPair) r).X;
-
-            if (System.Math.Abs(lX - rX) < .000000001)
-               return 0;
+				double lVal, rVal;
+			
+				if ( sortType == SortType.XValues )
+				{
+					lVal = ((PointPair) l).X;
+					rVal = ((PointPair) r).X;
+				}
+				else
+				{
+					lVal = ((PointPair) l).Y;
+					rVal = ((PointPair) r).Y;
+				}
 				
-            return lX < rX ? -1 : 1;
-         }
-      }
+				if ( lVal == PointPair.Missing || Double.IsInfinity( lVal ) || Double.IsNaN( lVal ) )
+					l = null;
+				if ( rVal == PointPair.Missing || Double.IsInfinity( rVal ) || Double.IsNaN( rVal ) )
+					r = null;
+
+				if ( ( l == null && r == null ) || ( System.Math.Abs( lVal - rVal ) < 1e-10 ) )
+					return 0;
+				else if ( l == null && r != null ) 
+					return -1;
+				else if ( l != null && r == null ) 
+					return 1;
+				else
+					return lVal < rVal ? -1 : 1;
+			}
+		}
 	
 	#endregion
 
