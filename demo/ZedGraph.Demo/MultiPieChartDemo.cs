@@ -15,10 +15,13 @@ namespace ZedGraph.Demo
 			"Multi-Pie Chart Demo", DemoType.General, DemoType.Special )
 		{
 			base.MasterPane.Title = "Multiple Pie Charts on a MasterPane";
+			base.MasterPane.IsShowTitle = true ;
 			base.MasterPane.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
 			base.MasterPane.MarginAll = 10;
 			base.MasterPane.InnerPaneGap = 10;
-			
+			base.MasterPane.Legend.Position = LegendPos.TopCenter ;
+			base.MasterPane.HasUniformLegendEntries = true ;
+			base.MasterPane.Legend.IsVisible = true ;
 			// Create a new graph with topLeft at (40,40) and size 600x400
 
 			double [] values =   { 15, 15, 40, 20 } ;
