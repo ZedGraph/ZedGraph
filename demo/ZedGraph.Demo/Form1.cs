@@ -2270,6 +2270,8 @@ namespace ZedGraphTest
 #if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+			myPane.CurveList[0].AddPoint( 1300, 150 );
+			Invalidate();
 /*
 			CurveItem curve;
 			int	iPt;
@@ -2280,6 +2282,7 @@ namespace ZedGraphTest
 			else
 				MessageBox.Show( "No Point Found" );
 */
+			/*
 			object	obj;
 			int		index;
 
@@ -2295,6 +2298,7 @@ namespace ZedGraphTest
 			}
 			else
 				MessageBox.Show( "No Object Found" );
+			*/
 		}
 #endif
 

@@ -1,16 +1,15 @@
 ZedGraph Class Library Revision History
 
-5-Dec-2004 (by Champion)
-  Fix FindNearestPoint for negative bars
-  Add Tag to GraphItem
-
+7-Dec-2004 (by Champion)
+  Add overloaded constructors to PointPair for Tag labels
+  Add ToolTip capability to ZedGraphControl to show point values
+  Make ZedGraphControl.Image have bitmap 1 pixel wider & taller
+  
 3-Dec-2004 (by Champion)
   Add BoxItem, EllipseItem types
   Add BarValueHandler to handle stacking calcs
   Add ZedGraphWeb asp control stuff
-  Fix FindNearestPoint for stacked bars
-  Add FindNearestPoint overloads
-  Add Tag to CurveItem & Pointpair
+  Fix FindNearestPoint
 
 17-Nov-2004 (by Champion)
   Add ImageItem

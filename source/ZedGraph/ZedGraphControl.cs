@@ -20,6 +20,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Text;
 
 namespace ZedGraph
 {
@@ -32,7 +33,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-11-10 04:36:52 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-12-07 00:03:54 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 	#region Fields
@@ -42,6 +43,12 @@ namespace ZedGraph
 		private System.ComponentModel.Container components = null;
 
 		/// <summary>
+		/// private variable for displaying point-by-point tooltips on
+		/// mouseover events.
+		/// </summary>
+		private System.Windows.Forms.ToolTip pointToolTip;
+
+		/// <summary>
 		/// This private field contains the instance for the GraphPane object of this control.
 		/// You can access the GraphPane object through the public property
 		/// <see cref="ZedGraphControl.GraphPane"/>. This is nulled when this Control is
@@ -49,7 +56,20 @@ namespace ZedGraph
 		/// </summary>
 		private GraphPane graphPane;
 
-		//private bool isTransparentBackground;
+		/// <summary>
+		/// private field that determines whether or not tooltips will be display
+		/// when the mouse hovers over data values.  Use the public property
+		/// <see cref="IsShowPointValues"/> to access this value.
+		/// </summary>
+		private bool isShowPointValues;
+		/// <summary>
+		/// private field that determines the format for displaying tooltip values.
+		/// This format is passed to <see cref="PointPair.ToString(string)"/>.
+		/// Use the public property <see cref="pointValueFormat"/> to access this
+		/// value.
+		/// </summary>
+		private string pointValueFormat;
+
 	#endregion
 
 	#region Component Designer generated code
@@ -59,12 +79,20 @@ namespace ZedGraph
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
+			this.pointToolTip = new System.Windows.Forms.ToolTip( this.components );
+			// 
+			// PointToolTip
+			// 
+			this.pointToolTip.AutoPopDelay = 50000;
+			this.pointToolTip.InitialDelay = 500;
+			this.pointToolTip.ReshowDelay = 0;
 			// 
 			// GraphPane
 			// 
-			this.Name = "GraphPane";
-			this.Resize += new System.EventHandler(this.ChangeSize);
-
+			this.Name = "ZedGraphControl";
+			this.Resize += new System.EventHandler( this.ChangeSize );
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseMove );
 		}
 	#endregion
 
@@ -87,6 +115,9 @@ namespace ZedGraph
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
 			graphPane = new GraphPane( rect, "Title", "X-Axis", "Y-Axis" );
 			graphPane.AxisChange( this.CreateGraphics() );
+
+			this.isShowPointValues = false;
+			this.pointValueFormat = PointPair.DefaultFormat;
 		}
 
 		/// <summary>
@@ -126,18 +157,29 @@ namespace ZedGraph
 				lock( this ) graphPane = value; 
 			}
 		}
-/*
-		public bool IsTransparentBackground
+
+		/// <summary>
+		/// Gets or sets a value that determines whether or not tooltips will be display
+		/// when the mouse hovers over data values.  The displayed values are taken
+		/// from <see cref="PointPair.Tag"/> if it is a <see cref="System.String"/> type,
+		/// or <see cref="PointPair.ToString()"/> otherwise.
+		/// </summary>
+		public bool IsShowPointValues
 		{
-			get { return isTransparentBackground; }
-			set
-			{
-				isTransparentBackground = value;
-				SetStyle( ControlStyles.Opaque, !isTransparentBackground );
-				SetStyle( ControlStyles.SupportsTransparentBackColor, isTransparentBackground );
-			}
+			get { return isShowPointValues; }
+			set { isShowPointValues = value; }
 		}
-*/
+
+		/// <summary>
+		/// Gets or sets the format for displaying tooltip values.
+		/// This format is passed to <see cref="PointPair.ToString(string)"/>.
+		/// </summary>
+		public string PointValueFormat
+		{
+			get { return pointValueFormat; }
+			set { pointValueFormat = value; }
+		}
+
 		/// <summary>
 		/// Gets the graph pane's current image.
 		/// <seealso cref="Bitmap"/>
@@ -154,7 +196,7 @@ namespace ZedGraph
 					if ( BeenDisposed )
 						throw new ZedGraphException( "The control has been disposed" );
 
-					Bitmap bitmap = new Bitmap( this.Width, this.Height );
+					Bitmap bitmap = new Bitmap( this.Width+1, this.Height+1 );
 					Graphics bitmapGraphics = Graphics.FromImage( bitmap );
 					this.graphPane.Draw( bitmapGraphics );
 					bitmapGraphics.Dispose();
@@ -237,6 +279,40 @@ namespace ZedGraph
 				graphPane.AxisChange( g );
 
 				g.Dispose();
+			}
+		}
+
+		/// <summary>
+		/// private method for handling MouseMove events to display tooltips over
+		/// individual datapoints.
+		/// </summary>
+		/// <param name="sender">
+		/// A reference to the control that has the MouseMove event.
+		/// </param>
+		/// <param name="e">
+		/// A MouseEventArgs object.
+		/// </param>
+		private void ZedGraphControl_MouseMove( object sender,
+				System.Windows.Forms.MouseEventArgs e )
+		{
+			if ( isShowPointValues )
+			{
+				CurveItem curve; 
+				int iPt; 
+	 
+				if ( graphPane.FindNearestPoint( new PointF( e.X, e.Y ),
+							out curve, out iPt ) )
+				{
+					if ( curve.Points[iPt].Tag is string )
+						this.pointToolTip.SetToolTip( this,
+								(string) curve.Points[iPt].Tag );
+					else
+						this.pointToolTip.SetToolTip( this,
+							curve.Points[iPt].ToString( this.pointValueFormat ) );
+					this.pointToolTip.Active = true;
+				}
+				else
+					this.pointToolTip.Active = false;
 			}
 		}
 	#endregion

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2004-12-07 00:03:54 $ </version>
 	public struct PointPair
 	{
 	#region Member variables
@@ -37,6 +37,12 @@ namespace ZedGraph
 		/// Missing values are represented internally using <see cref="System.Double.MaxValue"/>.
 		/// </summary>
 		public const double Missing = Double.MaxValue;
+
+		/// <summary>
+		/// The default format to be used for displaying point values via the
+		/// <see cref="ToString()"/> method.
+		/// </summary>
+		public const string DefaultFormat = "G";
 
 		/// <summary>
 		/// This PointPair's X coordinate
@@ -56,8 +62,10 @@ namespace ZedGraph
 
 		/// <summary>
 		/// A tag object for use by the user.  This can be used to store additional
-		/// information associated with the <see cref="PointPair"/>.  ZedGraph does
-		/// not use this value for any purpose.
+		/// information associated with the <see cref="PointPair"/>.  ZedGraph never
+		/// modifies this value, but if it is a <see cref="String"/> type, it
+		/// may be displayed in a <see cref="System.Windows.Forms.ToolTip"/>
+		/// within the <see cref="ZedGraphControl"/> object.
 		/// </summary>
 		public object Tag;
 
@@ -78,6 +86,21 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Creates a point pair with the specified X, Y, and
+		/// label (<see cref="Tag"/>).
+		/// </summary>
+		/// <param name="x">This pair's x coordinate.</param>
+		/// <param name="y">This pair's y coordinate.</param>
+		/// <param name="label">This pair's string label (<see cref="Tag"/>)</param>
+		public PointPair( double x, double y, string label )
+		{
+			this.X = x;
+			this.Y = y;
+			this.Z = 0;
+			this.Tag = label;
+		}
+
+		/// <summary>
 		/// Creates a point pair with the specified X, Y, and base value.
 		/// </summary>
 		/// <param name="x">This pair's x coordinate.</param>
@@ -89,6 +112,22 @@ namespace ZedGraph
 			this.Y = y;
 			this.Z = z;
 			this.Tag = null;
+		}
+
+		/// <summary>
+		/// Creates a point pair with the specified X, Y, base value, and
+		/// label (<see cref="Tag"/>).
+		/// </summary>
+		/// <param name="x">This pair's x coordinate.</param>
+		/// <param name="y">This pair's y coordinate.</param>
+		/// <param name="z">This pair's z or lower dependent coordinate.</param>
+		/// <param name="label">This pair's string label (<see cref="Tag"/>)</param>
+		public PointPair( double x, double y, double z, string label )
+		{
+			this.X = x;
+			this.Y = y;
+			this.Z = z;
+			this.Tag = label;
 		}
 
 		/// <summary>
@@ -113,7 +152,7 @@ namespace ZedGraph
 			this.X = rhs.X;
 			this.Y = rhs.Y;
 			this.Z = rhs.Z;
-			this.Tag = null;
+			this.Tag = rhs.Tag;
 		}
 	#endregion
 
@@ -322,7 +361,7 @@ namespace ZedGraph
 		/// <returns>A string representation of the PointPair</returns>
 		public override string ToString()
 		{
-			return this.ToString( "G", false );
+			return this.ToString( PointPair.DefaultFormat, false );
 		}
 
 		/// <summary>
@@ -333,7 +372,7 @@ namespace ZedGraph
 		/// <returns>A string representation of the PointPair</returns>
 		public string ToString( bool isShowZ )
 		{
-			return this.ToString( "G", isShowZ );
+			return this.ToString( PointPair.DefaultFormat, isShowZ );
 		}
 
 		/// <summary>

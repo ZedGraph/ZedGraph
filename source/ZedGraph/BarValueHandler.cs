@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-12-05 04:07:48 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-12-07 00:03:53 $ </version>
 	public class BarValueHandler
 	{
 		private GraphPane pane;
@@ -62,6 +62,31 @@ namespace ZedGraph
 		/// <see cref="PointPair.Missing"/>, invalid, etc. data.</returns>
 		public bool GetBarValues( CurveItem curve, int iPt, out double baseVal,
 							out double lowVal, out double hiVal )
+		{
+			return GetBarValues( this.pane, curve, iPt, out baseVal,
+									out lowVal, out hiVal );
+		}
+
+		/// <summary>
+		/// Get the user scale values associate with a particular point of a
+		/// particular curve.</summary>
+		/// <remarks>The main purpose of this method is to handle
+		/// stacked bars, in which case the stacked values are returned rather
+		/// than the individual data values.
+		/// </remarks>
+		/// <param name="pane">The parent <see cref="GraphPane"/> object.</param>
+		/// <param name="curve">A <see cref="CurveItem"/> object of interest.</param>
+		/// <param name="iPt">The zero-based point index for the point of interest.</param>
+		/// <param name="baseVal">A <see cref="Double"/> value representing the value
+		/// for the independent axis.</param>
+		/// <param name="lowVal">A <see cref="Double"/> value representing the lower
+		/// value for the dependent axis.</param>
+		/// <param name="hiVal">A <see cref="Double"/> value representing the upper
+		/// value for the dependent axis.</param>
+		/// <returns>true if the data point is value, false for
+		/// <see cref="PointPair.Missing"/>, invalid, etc. data.</returns>
+		public static bool GetBarValues( GraphPane pane, CurveItem curve, int iPt,
+							out double baseVal, out double lowVal, out double hiVal )
 		{
 			hiVal = PointPair.Missing;
 			lowVal = PointPair.Missing;
