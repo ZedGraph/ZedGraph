@@ -1,5 +1,14 @@
 ZedGraph Class Library Revision History
 
+12-Sep-2004 (by Champion)
+    Add new Fill class to handle gradient fills
+    Add "Area under curve" shading
+    Add gradient Fill class to paneRect, axisRect, legend, bar, line
+
+11-Sep-2004 (by Champion)
+    Fix space allocation for rotated Axis Labels
+    Add gradient fills for bars
+
 1-Sep-2004 (by Champion)
     Fix grace so that it won't extend across negative/positive boundary
     Finish up #region's
