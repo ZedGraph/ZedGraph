@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-14 04:06:01 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-10-15 05:11:30 $ </version>
 	public class CurveList : CollectionBase, ICloneable
 	{
 	#region Properties
@@ -124,6 +124,9 @@ namespace ZedGraph
 			}
 		}
 		
+	#endregion
+	
+	#region List Methods
 		/// <summary>
 		/// Indexer to access the specified <see cref="CurveItem"/> object by
 		/// its ordinal position in the list.
@@ -136,14 +139,13 @@ namespace ZedGraph
 			get { return( (CurveItem) List[index] ); }
 			set { List[index] = value; }
 		}
-	#endregion
-	
-	#region List Methods
+
 		/// <summary>
 		/// Add a <see cref="CurveItem"/> object to the collection at the end of the list.
 		/// </summary>
 		/// <param name="curve">A reference to the <see cref="CurveItem"/> object to
 		/// be added</param>
+		/// <seealso cref="IList.Add"/>
 		public void Add( CurveItem curve )
 		{
 			List.Add( curve );
@@ -155,6 +157,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="index">An ordinal position in the list at which
 		/// the object to be removed is located. </param>
+		/// <seealso cref="IList.Remove"/>
 		public void Remove( int index )
 		{
 			List.RemoveAt( index );
@@ -165,9 +168,34 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="curve">A reference to the <see cref="CurveItem"/> object that is to be
 		/// removed.</param>
+		/// <seealso cref="IList.Remove"/>
 		public void Remove( CurveItem curve )
 		{
 			List.Remove( curve );
+		}
+
+		/// <summary>
+		/// Insert a <see cref="CurveItem"/> object into the collection at the specified
+		/// zero-based index location.
+		/// </summary>
+		/// <param name="index">The zero-based index location for insertion.</param>
+		/// <param name="curve">A reference to the <see cref="CurveItem"/> object that is to be
+		/// inserted.</param>
+		/// <seealso cref="IList.Insert"/>
+		public void Insert( int index, CurveItem curve )
+		{
+			List.Insert( index, curve );
+		}
+
+		/// <summary>
+		/// Return the zero-based position index of the specified <see cref="CurveItem"/> in the collection.
+		/// </summary>
+		/// <returns>The zero-based index of the specified <see cref="CurveItem"/>, or -1 if the <see cref="CurveItem"/>
+		/// is not in the list</returns>
+		/// <seealso cref="IList.IndexOf"/>
+		public int IndexOf( CurveItem curve )
+		{
+			return List.IndexOf( curve );
 		}
 
 		/// <summary>

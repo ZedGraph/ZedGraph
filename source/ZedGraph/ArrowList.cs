@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-10-02 07:00:42 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-15 05:11:30 $ </version>
 	public class ArrowList : CollectionBase, ICloneable
 	{
 	#region Constructors
@@ -50,9 +50,7 @@ namespace ZedGraph
 			foreach ( ArrowItem item in rhs )
 				this.Add( new ArrowItem( item ) );
 		}
-	#endregion
 
-	#region Methods
 		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>
@@ -62,6 +60,9 @@ namespace ZedGraph
 			return new ArrowList( this ); 
 		}
 		
+	#endregion
+
+	#region Methods
 		/// <summary>
 		/// Indexer to access the specified <see cref="ZedGraph.ArrowItem"/> object by its ordinal
 		/// position in the list.
@@ -80,9 +81,12 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="item">A reference to the <see cref="ArrowItem"/> object to
 		/// be added</param>
-		public void Add( ArrowItem item )
+		/// <returns>The zero-based ordinal index where the <see cref="ArrowItem"/>
+		/// was added in the list.</returns>
+		/// <seealso cref="IList.Add"/>
+		public int Add( ArrowItem item )
 		{
-			List.Add( item );
+			return List.Add( item );
 		}
 
 		/// <summary>
@@ -91,10 +95,49 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="index">An ordinal position in the list at which
 		/// the object to be removed is located. </param>
+		/// <seealso cref="IList.Remove"/>
 		public void Remove( int index )
 		{
 			List.RemoveAt( index );
 		}
+
+		/// <summary>
+		/// Remove a <see cref="ArrowItem"/> object from the collection based on an object reference.
+		/// </summary>
+		/// <param name="arrow">A reference to the <see cref="ArrowItem"/> object that is to be
+		/// removed.</param>
+		/// <seealso cref="IList.Remove"/>
+		public void Remove( ArrowItem arrow )
+		{
+			List.Remove( arrow );
+		}
+
+		/// <summary>
+		/// Insert a <see cref="ArrowItem"/> object into the collection at the specified
+		/// zero-based index location.
+		/// </summary>
+		/// <param name="index">The zero-based index location for insertion.</param>
+		/// <param name="arrow">A reference to the <see cref="ArrowItem"/> object that is to be
+		/// inserted.</param>
+		/// <seealso cref="IList.Insert"/>
+		public void Insert( int index, ArrowItem arrow )
+		{
+			List.Insert( index, arrow );
+		}
+
+		/// <summary>
+		/// Return the zero-based position index of the specified <see cref="ArrowItem"/> in the collection.
+		/// </summary>
+		/// <param name="arrow">A reference to the <see cref="ArrowItem"/> object that is to be found.
+		/// </param>
+		/// <returns>The zero-based index of the specified <see cref="ArrowItem"/>, or -1 if the <see cref="ArrowItem"/>
+		/// is not in the list</returns>
+		/// <seealso cref="IList.IndexOf"/>
+		public int IndexOf( ArrowItem arrow )
+		{
+			return List.IndexOf( arrow );
+		}
+
 		/// <summary>
 		/// Determine if a mouse point is within any <see cref="ArrowItem"/>, and if so, 
 		/// return the index number of the the <see cref="ArrowItem"/>.

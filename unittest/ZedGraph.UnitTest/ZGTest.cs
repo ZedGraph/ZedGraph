@@ -71,7 +71,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-14 04:06:01 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-15 05:11:30 $ </version>
 	[TestFixture]
 	public class ControlTest
 	{
@@ -151,8 +151,8 @@ namespace ZedGraph.UnitTest
 			testee.YAxis.IsShowGrid = true;
 			
 			TextItem text = new TextItem("First Prod\n21-Oct-99", 100F, 50.0F );
-			text.AlignH = AlignH.Center;
-			text.AlignV = AlignV.Bottom;
+			text.Location.AlignH = AlignH.Center;
+			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Fill.Color = Color.LightBlue;
 			text.FontSpec.Fill.Type = FillType.Brush;
 			text.FontSpec.IsItalic = true;
@@ -165,8 +165,8 @@ namespace ZedGraph.UnitTest
 			text = new TextItem("Upgrade", 700F, 50.0F );
 			text.FontSpec.Angle = 90;
 			text.FontSpec.FontColor = Color.Black;
-			text.AlignH = AlignH.Right;
-			text.AlignV = AlignV.Center;
+			text.Location.AlignH = AlignH.Right;
+			text.Location.AlignV = AlignV.Center;
 			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
 			text.FontSpec.Fill.Type = FillType.Brush;
 			text.FontSpec.Border.IsVisible = false;
@@ -177,15 +177,15 @@ namespace ZedGraph.UnitTest
 			arrow.PenWidth = 2.0F;
 			testee.ArrowList.Add( arrow );
 			text = new TextItem("Confidential", 0.8F, -0.03F );
-			text.CoordinateFrame = CoordType.AxisFraction;
+			text.Location.CoordinateFrame = CoordType.AxisFraction;
 			text.FontSpec.Angle = 15.0F;
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.IsBold = true;
 			text.FontSpec.Size = 16;
 			text.FontSpec.Border.IsVisible = true;
 			text.FontSpec.Border.Color = Color.Red;
-			text.AlignH = AlignH.Left;
-			text.AlignV = AlignV.Bottom;
+			text.Location.AlignH = AlignH.Left;
+			text.Location.AlignV = AlignV.Bottom;
 			testee.TextList.Add( text );
 			
 			testee.AxisChange( control.CreateGraphics() );
@@ -206,7 +206,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-14 04:06:01 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-15 05:11:30 $ </version>
 	[TestFixture]
 	public class LibraryTest
 	{
@@ -324,10 +324,10 @@ namespace ZedGraph.UnitTest
 				// for negative bars, the label appears just above the zero value
 				TextItem text = new TextItem( lab, (float) (i+1), (float) (y[i] < 0 ? 0.0 : y[i]) + shift );
 				// tell Zedgraph to use user scale units for locating the TextItem
-				text.CoordinateFrame = CoordType.AxisXYScale;
+				text.Location.CoordinateFrame = CoordType.AxisXYScale;
 				// Align the left-center of the text to the specified point
-				text.AlignH = AlignH.Left;
-				text.AlignV = AlignV.Center;
+				text.Location.AlignH = AlignH.Left;
+				text.Location.AlignV = AlignV.Center;
 				text.FontSpec.Border.IsVisible = false;
 				// rotate the text 90 degrees
 				text.FontSpec.Angle = 90;
@@ -481,8 +481,8 @@ namespace ZedGraph.UnitTest
 			testee.YAxis.ScaleFontSpec.Angle = 90;
 
 			TextItem text = new TextItem("First Prod\n21-Oct-93", 100F, 50.0F );
-			text.AlignH = AlignH.Center;
-			text.AlignV = AlignV.Bottom;
+			text.Location.AlignH = AlignH.Center;
+			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Fill.Color = Color.PowderBlue;
 			text.FontSpec.Fill.Type = FillType.Brush;
 			testee.TextList.Add( text );
@@ -494,8 +494,8 @@ namespace ZedGraph.UnitTest
 			text = new TextItem("Upgrade", 700F, 50.0F );
 			text.FontSpec.Angle = 90;
 			text.FontSpec.FontColor = Color.Black;
-			text.AlignH = AlignH.Right;
-			text.AlignV = AlignV.Center;
+			text.Location.AlignH = AlignH.Right;
+			text.Location.AlignV = AlignV.Center;
 			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
 			text.FontSpec.Fill.Type = FillType.Brush;
 			text.FontSpec.Border.IsVisible = false;
@@ -507,7 +507,7 @@ namespace ZedGraph.UnitTest
 			testee.ArrowList.Add( arrow );
 
 			text = new TextItem("Confidential", 0.8F, -0.03F );
-			text.CoordinateFrame = CoordType.AxisFraction;
+			text.Location.CoordinateFrame = CoordType.AxisFraction;
 
 			text.FontSpec.Angle = 15.0F;
 			text.FontSpec.FontColor = Color.Red;
@@ -517,8 +517,8 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.Border.Color = Color.Red;
 			text.FontSpec.Fill.Type = FillType.None;
 
-			text.AlignH = AlignH.Left;
-			text.AlignV = AlignV.Bottom;
+			text.Location.AlignH = AlignH.Left;
+			text.Location.AlignV = AlignV.Bottom;
 			testee.TextList.Add( text );
 			
 			testee.AxisChange( form2.CreateGraphics() );
@@ -785,7 +785,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2004-10-14 04:06:01 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2004-10-15 05:11:30 $ </version>
 	[TestFixture]
 	public class LongFeatureTest
 	{
@@ -920,7 +920,7 @@ namespace ZedGraph.UnitTest
 			testee.Legend.IsVisible = false;
 			testee.Legend.Border.IsVisible = false;
 			testee.Legend.Fill.Type = FillType.None;
-			testee.Legend.Location = LegendLoc.Bottom;
+			testee.Legend.Position = LegendPos.Bottom;
 
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
@@ -989,31 +989,31 @@ namespace ZedGraph.UnitTest
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Fill Added?" ) );
 
-			testee.Legend.Location = LegendLoc.InsideBotLeft;
+			testee.Legend.Position = LegendPos.InsideBotLeft;
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Moved to Inside Bottom Left?" ) );
 
-			testee.Legend.Location = LegendLoc.InsideBotRight;
+			testee.Legend.Position = LegendPos.InsideBotRight;
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Moved to Inside Bottom Right?" ) );
 
-			testee.Legend.Location = LegendLoc.InsideTopLeft;
+			testee.Legend.Position = LegendPos.InsideTopLeft;
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Moved to Inside Top Left?" ) );
 
-			testee.Legend.Location = LegendLoc.InsideTopRight;
+			testee.Legend.Position = LegendPos.InsideTopRight;
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Moved to Inside Top Right?" ) );
 
-			testee.Legend.Location = LegendLoc.Left;
+			testee.Legend.Position = LegendPos.Left;
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Moved to Left?" ) );
 
-			testee.Legend.Location = LegendLoc.Right;
+			testee.Legend.Position = LegendPos.Right;
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Moved to Right?" ) );
 
-			testee.Legend.Location = LegendLoc.Top;
+			testee.Legend.Position = LegendPos.Top;
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Moved to Top?" ) );
 
@@ -1299,7 +1299,7 @@ namespace ZedGraph.UnitTest
 			TextItem text = new TextItem( "ZedGraph TextItem", 0.5F, 0.5F );
 			testee.TextList.Add( text );
 			
-			text.CoordinateFrame = CoordType.AxisFraction;
+			text.Location.CoordinateFrame = CoordType.AxisFraction;
 			text.FontSpec.IsItalic = false;
 			text.FontSpec.IsUnderline = false;
 			text.FontSpec.Angle = 0.0F;
@@ -1344,23 +1344,23 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.IsItalic = false;
 			text.FontSpec.IsUnderline = false;
 			
-			text.X = 75.0F;
-			text.Y = 0.0F;
-			text.CoordinateFrame = CoordType.AxisXYScale;
+			text.Location.X = 75.0F;
+			text.Location.Y = 0.0F;
+			text.Location.CoordinateFrame = CoordType.AxisXYScale;
 			
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
 				"Centered at (75, 0.0)?" ) );
 			
-			text.AlignH = AlignH.Right;
-			text.AlignV = AlignV.Top;
+			text.Location.AlignH = AlignH.Right;
+			text.Location.AlignV = AlignV.Top;
 			
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
 				"Top-Right at (75, 0.0)?" ) );
 			
-			text.AlignH = AlignH.Left;
-			text.AlignV = AlignV.Bottom;
+			text.Location.AlignH = AlignH.Left;
+			text.Location.AlignV = AlignV.Bottom;
 			
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked(

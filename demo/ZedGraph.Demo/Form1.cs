@@ -188,7 +188,7 @@ namespace ZedGraphTest
 
 #endif
 
-#if true	// 1000 values test
+#if false	// 1000 values test
 			// Create a new graph
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 				"My Test Graph\n(For CodeProject Sample)",
@@ -1203,7 +1203,7 @@ namespace ZedGraphTest
 //			GraphPane testPane = (GraphPane) myPane.Clone();
 #endif
 
-#if false	// The main example
+#if true	// The main example
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -1261,8 +1261,8 @@ namespace ZedGraphTest
 			//myPane.Y2Axis.ScaleAlign = AlignP.Outside;
 			
 			TextItem text = new TextItem("First Prod\n21-Oct-93", 175F, 80.0F );
-			text.AlignH = AlignH.Center;
-			text.AlignV = AlignV.Bottom;
+			text.Location.AlignH = AlignH.Center;
+			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
 			myPane.TextList.Add( text );
 
@@ -1273,8 +1273,8 @@ namespace ZedGraphTest
 			text = new TextItem("Upgrade", 700F, 50.0F );
 			text.FontSpec.Angle = 90;
 			text.FontSpec.FontColor = Color.Black;
-			text.AlignH = AlignH.Right;
-			text.AlignV = AlignV.Center;
+			text.Location.AlignH = AlignH.Right;
+			text.Location.AlignV = AlignV.Center;
 			text.FontSpec.Fill.IsVisible = false;
 			//text.FontSpec.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, -45F );
 			text.FontSpec.Border.IsVisible = false;
@@ -1286,7 +1286,7 @@ namespace ZedGraphTest
 			myPane.ArrowList.Add( arrow );
 
 			text = new TextItem("Confidential", 0.8F, -0.03F );
-			text.CoordinateFrame = CoordType.AxisFraction;
+			text.Location.CoordinateFrame = CoordType.AxisFraction;
 
 			text.FontSpec.Angle = 15.0F;
 			text.FontSpec.FontColor = Color.Red;
@@ -1296,8 +1296,8 @@ namespace ZedGraphTest
 			text.FontSpec.Border.Color = Color.Red;
 			text.FontSpec.Fill.IsVisible = false;
 
-			text.AlignH = AlignH.Left;
-			text.AlignV = AlignV.Bottom;
+			text.Location.AlignH = AlignH.Left;
+			text.Location.AlignV = AlignV.Bottom;
 			myPane.TextList.Add( text );
 #endif
 
@@ -1492,8 +1492,8 @@ namespace ZedGraphTest
 			//			myPane.AxisRect = myRect;
 			//			myPane.AxisChange( this.CreateGraphics() );
 
-			myPane.AxisChange( this.CreateGraphics() );
 			
+			myPane.AxisChange( this.CreateGraphics() );
 
 		}
 
@@ -1546,8 +1546,7 @@ namespace ZedGraphTest
 				e.Graphics.Transform = mat;
 			}
 		}
-
-
+		
 		private void CopyToEMF( GraphPane myPane )
 		{
 			Metafile metaFile;
@@ -1721,7 +1720,22 @@ namespace ZedGraphTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			DoPrint();
+			myPane.Legend.Position = LegendPos.Float;
+			myPane.Legend.Location.CoordinateFrame = CoordType.PaneFraction;
+			myPane.Legend.Location.AlignH = AlignH.Right;
+			myPane.Legend.Location.AlignV = AlignV.Bottom;
+			myPane.AxisChange( this.CreateGraphics() );
+			
+			this.Refresh();
+			for ( float j=0; j<100; j++ )
+			{
+				for ( int k=0; k<1000000; k++ );
+				myPane.Legend.Location.X = j / 100F;
+				myPane.Legend.Location.Y = j / 100F;
+				this.Refresh();
+			}
+
+			//DoPrint();
 			
 			/*
 			const int NUMITER = 100;

@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-09-30 05:03:42 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-10-15 05:11:30 $ </version>
 	public class TextList : CollectionBase, ICloneable
 	{
 	#region Constructors
@@ -49,9 +49,7 @@ namespace ZedGraph
 			foreach ( TextItem item in rhs )
 				this.Add( new TextItem( item ) );
 		}
-	#endregion
 
-	#region Methods
 		/// <summary>
 		/// Deep-copy clone routine
 		/// </summary>
@@ -61,6 +59,9 @@ namespace ZedGraph
 			return new TextList( this ); 
 		}
 		
+	#endregion
+
+	#region Methods
 		/// <summary>
 		/// Indexer to access the specified <see cref="TextItem"/> object by its ordinal
 		/// position in the list.
@@ -78,11 +79,12 @@ namespace ZedGraph
 		/// Add a <see cref="TextItem"/> object to the <see cref="TextList"/>
 		/// collection at the end of the list.
 		/// </summary>
-		/// <param name="item">A reference to the <see cref="TextItem"/> object to
+		/// <param name="text">A reference to the <see cref="TextItem"/> object to
 		/// be added</param>
-		public void Add( TextItem item )
+		/// <seealso cref="IList.Add"/>
+		public void Add( TextItem text )
 		{
-			List.Add( item );
+			List.Add( text );
 		}
 
 		/// <summary>
@@ -91,9 +93,47 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="index">An ordinal position in the list at which
 		/// the object to be removed is located. </param>
+		/// <seealso cref="IList.Remove"/>
 		public void Remove( int index )
 		{
 			List.RemoveAt( index );
+		}
+
+		/// <summary>
+		/// Remove a <see cref="TextItem"/> object from the collection based on an object reference.
+		/// </summary>
+		/// <param name="text">A reference to the <see cref="TextItem"/> object that is to be
+		/// removed.</param>
+		/// <seealso cref="IList.Remove"/>
+		public void Remove( TextItem text )
+		{
+			List.Remove( text );
+		}
+
+		/// <summary>
+		/// Insert a <see cref="TextItem"/> object into the collection at the specified
+		/// zero-based index location.
+		/// </summary>
+		/// <param name="index">The zero-based index location for insertion.</param>
+		/// <param name="text">A reference to the <see cref="TextItem"/> object that is to be
+		/// inserted.</param>
+		/// <seealso cref="IList.Insert"/>
+		public void Insert( int index, TextItem text )
+		{
+			List.Insert( index, text );
+		}
+
+		/// <summary>
+		/// Return the zero-based position index of the specified <see cref="TextItem"/> in the collection.
+		/// </summary>
+		/// <param name="text">A reference to the <see cref="TextItem"/> object that is to be found.
+		/// </param>
+		/// <returns>The zero-based index of the specified <see cref="TextItem"/>, or -1 if the <see cref="TextItem"/>
+		/// is not in the list</returns>
+		/// <seealso cref="IList.IndexOf"/>
+		public int IndexOf( TextItem text )
+		{
+			return List.IndexOf( text );
 		}
 
 		/// <summary>

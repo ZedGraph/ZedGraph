@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-10-14 04:06:01 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-10-15 05:11:30 $ </version>
 	public class GraphPane : ICloneable
 	{
 	#region Private Fields
@@ -950,9 +950,10 @@ namespace ZedGraph
 			//			if (	this.curveList.HasData() &&
 			// Go ahead and draw the graph, even without data.  This makes the control
 			// version still look like a graph before it is fully set up
-			if ( 	this.xAxis.Min < this.xAxis.Max &&
-				this.yAxis.Min < this.yAxis.Max &&
-				this.y2Axis.Min < this.y2Axis.Max )
+			bool showGraf = this.xAxis.Min < this.xAxis.Max &&
+							this.yAxis.Min < this.yAxis.Max &&
+							this.y2Axis.Min < this.y2Axis.Max;
+			if ( showGraf )
 			{
 				// Clip everything to the paneRect
 				g.SetClip( this.paneRect );
@@ -974,7 +975,13 @@ namespace ZedGraph
 				g.SetClip( this.axisRect );
 				this.curveList.Draw( g, this, scaleFactor );
 				g.SetClip( this.paneRect );
+			}
 				
+			// Border the axis itself
+			this.axisFrame.Draw( g, this.axisRect );
+			
+			if ( showGraf )
+			{
 				// Draw the Legend
 				this.legend.Draw( g, this, scaleFactor, hStack, legendWidth );
 				
@@ -988,8 +995,6 @@ namespace ZedGraph
 				g.ResetClip();
 			}
 			
-			// Border the axis itself
-			this.axisFrame.Draw( g, this.axisRect );
 
 		}
 

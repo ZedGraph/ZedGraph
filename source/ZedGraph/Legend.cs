@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2004-10-14 04:06:01 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2004-10-15 05:11:30 $ </version>
 	public class Legend : ICloneable
 	{
 	#region private Fields
@@ -41,12 +41,12 @@ namespace ZedGraph
 		/// </summary>
 		private RectangleF	rect;
 		/// <summary>Private field to hold the legend location setting.  This field
-		/// contains the <see cref="LegendLoc"/> enum type to specify the area of
+		/// contains the <see cref="LegendPos"/> enum type to specify the area of
 		/// the graph where the legend will be positioned.  Use the public property
-		/// <see cref="LegendLoc"/> to access this value.
+		/// <see cref="LegendPos"/> to access this value.
 		/// </summary>
-		/// <seealso cref="Default.Location"/>
-		private LegendLoc	location;
+		/// <seealso cref="Default.Position"/>
+		private LegendPos	position;
 		/// <summary>
 		/// Private field to enable/disable horizontal stacking of the legend entries.
 		/// If this value is false, then the legend entries will always be a single column.
@@ -78,6 +78,12 @@ namespace ZedGraph
 		/// the <see cref="FontSpec"/> property to access this class.
 		/// </summary>
 		private FontSpec	fontSpec;
+		/// <summary>
+		/// Private field to maintain the <see cref="Legend"/> location.  This object
+		/// is only applicable if the <see cref="Position"/> property is set to
+		/// <see cref="LegendPos.Float"/>.
+		/// </summary>
+		private Location	location;
 	#endregion
 
 	#region Defaults
@@ -116,9 +122,9 @@ namespace ZedGraph
 			/// <summary>
 			/// The default location for the <see cref="Legend"/> on the graph
 			/// (<see cref="Legend.Location"/> property).  This property is
-			/// defined as a <see cref="LegendLoc"/> enumeration.
+			/// defined as a <see cref="LegendPos"/> enumeration.
 			/// </summary>
-			public static LegendLoc Location = LegendLoc.Top;
+			public static LegendPos Position = LegendPos.Top;
 			/// <summary>
 			/// The default border mode for the <see cref="Legend"/>.
 			/// (<see cref="ZedGraph.Border.IsVisible"/> property). true
@@ -266,14 +272,25 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// Sets or gets the location of the <see cref="Legend"/> on the
-		/// <see cref="GraphPane"/> using the <see cref="LegendLoc"/> enum type
+		/// <see cref="GraphPane"/> using the <see cref="LegendPos"/> enum type
 		/// </summary>
-		/// <seealso cref="Default.Location"/>
-		public LegendLoc Location
+		/// <seealso cref="Default.Position"/>
+		public LegendPos Position
+		{
+			get { return position; }
+			set { position = value; }
+		}
+		/// <summary>
+		/// Gets or sets the <see cref="Location"/> data for the <see cref="Legend"/>.
+		/// This property is only applicable if <see cref="Position"/> is set
+		/// to <see cref="LegendPos.Float"/>.
+		/// </summary>
+		public Location Location
 		{
 			get { return location; }
 			set { location = value; }
 		}
+		
 	#endregion
 	
 	#region Constructors
@@ -283,9 +300,10 @@ namespace ZedGraph
 		/// </summary>
 		public Legend()
 		{
-			this.location = Default.Location;
+			this.position = Default.Position;
 			this.isHStack = Default.IsHStack;
 			this.isVisible = Default.IsVisible;
+			this.Location = new Location( 0, 0, CoordType.PaneFraction );
 			
 			this.fontSpec = new FontSpec( Default.FontFamily, Default.FontSize,
 									Default.FontColor, Default.FontBold,
@@ -305,10 +323,11 @@ namespace ZedGraph
 		public Legend( Legend rhs )
 		{
 			rect = rhs.Rect;
-			location = rhs.Location;
+			position = rhs.Position;
 			isHStack = rhs.IsHStack;
 			isVisible = rhs.IsVisible;
 			
+			this.location = (Location) rhs.Location;
 			this.border = (Border) rhs.Border.Clone();
 			this.fill = (Fill) rhs.Fill.Clone();
 			
@@ -381,9 +400,11 @@ namespace ZedGraph
 					//  charHeight/2 for the left margin, plus legendWidth for each
 					//    horizontal column
 					//  charHeight is the line spacing, with no extra margin above
+
 					x = this.rect.Left + halfCharHeight +
 								( iEntry % hStack ) * legendWidth;
 					y = this.rect.Top + (int)( iEntry / hStack ) * charHeight;
+					
 					// Draw the legend label for the current curve
 					this.FontSpec.Draw( g, curve.Label, x + 2.5F * charHeight, y,
 									AlignH.Left, AlignV.Top, scaleFactor );
@@ -391,22 +412,7 @@ namespace ZedGraph
 					RectangleF rect = new RectangleF( x, y + charHeight / 4.0F,
 											2 * charHeight, charHeight / 2.0F );
 					curve.DrawLegendKey( g, rect, scaleFactor );
-					/*
-					if ( curve.IsBar )
-					{
-						curve.Bar.Draw( g, x, x + 2 * charHeight, y + charHeight / 4.0F,
-									y + 3.0F * charHeight / 4.0F, scaleFactor, true );
-					}
-					else
-					{
-						// Draw a sample curve to the left of the label text
-						curve.Line.DrawSegment( g, x, y + charHeight / 2,
-							x + 2 * charHeight, y + halfCharHeight );
-						// Draw a sample symbol to the left of the label text				
-						curve.Symbol.DrawSymbol( g, x + charHeight, y + halfCharHeight,
-							scaleFactor );
-					}
-					*/				
+
 					// maintain a curve count for positioning
 					iEntry++;
 				}
@@ -550,25 +556,26 @@ namespace ZedGraph
 			if ( this.isHStack )
 			{
 				// Determine the available space for horizontal stacking
-				switch( this.location )
+				switch( this.position )
 				{
 					// Never stack if the legend is to the right or left
-					case LegendLoc.Right:
-					case LegendLoc.Left:
+					case LegendPos.Right:
+					case LegendPos.Left:
 						widthAvail = 0;
 						break;
 		
 					// for the top & bottom, the axis border width is available
-					case LegendLoc.Top:
-					case LegendLoc.Bottom:
+					case LegendPos.Top:
+					case LegendPos.Bottom:
 						widthAvail = tAxisRect.Width;
 						break;
 		
-					// for inside the axis area, use 1/2 of the axis border width
-					case LegendLoc.InsideTopRight:
-					case LegendLoc.InsideTopLeft:
-					case LegendLoc.InsideBotRight:
-					case LegendLoc.InsideBotLeft:
+					// for inside the axis area or Float, use 1/2 of the axis border width
+					case LegendPos.InsideTopRight:
+					case LegendPos.InsideTopLeft:
+					case LegendPos.InsideBotRight:
+					case LegendPos.InsideBotLeft:
+					case LegendPos.Float:
 						widthAvail = tAxisRect.Width / 2;
 						break;
 		
@@ -621,57 +628,58 @@ namespace ZedGraph
 			// Also, adjust the axisRect to reflect the space for the legend
 			if ( nCurve > 0 )
 			{
+				newRect = new RectangleF( 0, 0, totLegWidth, legHeight );
+				
 				// The switch statement assigns the left and top edges, and adjusts the axisRect
 				// as required.  The right and bottom edges are calculated at the bottom of the switch.
-				switch( this.location )
+				switch( this.position )
 				{
-					case LegendLoc.Right:
+					case LegendPos.Right:
 						newRect.X = pane.PaneRect.Right - totLegWidth - gap;
 						newRect.Y = tAxisRect.Top;
 		
 						tAxisRect.Width -= totLegWidth + halfCharHeight;
 						break;
-					case LegendLoc.Top:
+					case LegendPos.Top:
 						newRect.X = tAxisRect.Left;
 						newRect.Y = tAxisRect.Top;
 						
 						tAxisRect.Y += legHeight + halfCharHeight;
 						tAxisRect.Height -= legHeight + halfCharHeight;
 						break;
-					case LegendLoc.Bottom:
+					case LegendPos.Bottom:
 						newRect.X = tAxisRect.Left;
 						newRect.Y = pane.PaneRect.Bottom - legHeight - gap;
 						
 						tAxisRect.Height -= legHeight + halfCharHeight;
 						break;
-					case LegendLoc.Left:
+					case LegendPos.Left:
 						newRect.X = pane.PaneRect.Left + gap;
 						newRect.Y = tAxisRect.Top;
 						
 						tAxisRect.X += totLegWidth + halfCharHeight;
 						tAxisRect.Width -= totLegWidth + halfCharHeight;
 						break;
-					case LegendLoc.InsideTopRight:
+					case LegendPos.InsideTopRight:
 						newRect.X = tAxisRect.Right - totLegWidth;
 						newRect.Y = tAxisRect.Top;
 						break;
-					case LegendLoc.InsideTopLeft:
+					case LegendPos.InsideTopLeft:
 						newRect.X = tAxisRect.Left;
 						newRect.Y = tAxisRect.Top;
 						break;
-					case LegendLoc.InsideBotRight:
+					case LegendPos.InsideBotRight:
 						newRect.X = tAxisRect.Right - totLegWidth;
 						newRect.Y = tAxisRect.Bottom - legHeight;
 						break;
-					case LegendLoc.InsideBotLeft:
+					case LegendPos.InsideBotLeft:
 						newRect.X = tAxisRect.Left;
 						newRect.Y = tAxisRect.Bottom - legHeight;
+						break;
+					case LegendPos.Float:
+						newRect.Location = this.Location.TransformTopLeft( pane, totLegWidth, legHeight );
 						break;
 				}
-				
-				// Calculate the Right and Bottom edges of the rect
-				newRect.Width = totLegWidth;
-				newRect.Height = legHeight;
 			}
 			
 			this.rect = newRect;

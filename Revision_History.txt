@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+14-Oct-2004 (by Champion)
+  Add Location class
+  Add Legend Float mode
+  Add Expanded Collection object functions Remove(object), IndexOf(object), Insert()
+  
 13-Oct-2004 (by Champion)
   Change Frame class to Border
   Add CurveList.Remove( curve )

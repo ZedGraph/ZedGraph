@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-10-14 04:06:01 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-10-15 05:11:30 $ </version>
 	public class TextItem : ICloneable
 	{
 	#region Fields
@@ -39,32 +39,11 @@ namespace ZedGraph
 		/// to access this value.
 		/// </summary>
 		private string text;
-		/// <summary> Private field to store the vertical Font alignment property for
-		/// this <see cref="TextItem"/>.  Use the public property <see cref="TextItem.AlignV"/>
-		/// to access this value.  The value of this field is a <see cref="AlignV"/> enum.
-		/// </summary>
-		private AlignV	alignV;
-		/// <summary> Private field to store the horizontal Font alignment property for
-		/// this <see cref="TextItem"/>.  Use the public property <see cref="TextItem.AlignH"/>
-		/// to access this value.  The value of this field is a <see cref="AlignH"/> enum.
-		/// </summary>
-		private AlignH	alignH;
-
-		/// <summary> Private fields to store the X and Y coordinate positions for
-		/// this <see cref="TextItem"/>.  Use the public properties <see cref="X"/> and
-		/// <see cref="Y"/> to access these values.  The coordinate type stored here is
-		/// dependent upon the setting of <see cref="coordinateFrame"/>.
-		/// </summary>
-		private float		x,
-							y;
 		/// <summary>
-		/// Private field to store the coordinate system to be used for defining the
-		/// <see cref="TextItem"/> position.  Use the public property
-		/// <see cref="CoordinateFrame"/> to access this value. The coordinate system
-		/// is defined with the <see cref="CoordType"/> enum
+		/// Private field that stores the location of this <see cref="TextItem"/>.
+		/// Use the public property <see cref="Location"/> to access this value.
 		/// </summary>
-		/// <seealso cref="Default.CoordFrame"/>
-		private CoordType	coordinateFrame;
+		private Location location;
 		/// <summary>
 		/// Private field to store the <see cref="FontSpec"/> class used to render
 		/// this <see cref="TextItem"/>.  Use the public property <see cref="FontSpec"/>
@@ -83,14 +62,14 @@ namespace ZedGraph
 			// Default text item properties
 			/// <summary>
 			/// Default value for the vertical <see cref="TextItem"/>
-			/// text alignment (<see cref="TextItem.AlignV"/> property).
+			/// text alignment (<see cref="TextItem.Location"/> property).
 			/// This is specified
 			/// using the <see cref="AlignV"/> enum type.
 			/// </summary>
 			public static AlignV AlignV = AlignV.Center;
 			/// <summary>
 			/// Default value for the horizontal <see cref="TextItem"/>
-			/// text alignment (<see cref="TextItem.AlignH"/> property).
+			/// text alignment (<see cref="TextItem.Location"/> property).
 			/// This is specified
 			/// using the <see cref="AlignH"/> enum type.
 			/// </summary>
@@ -98,7 +77,7 @@ namespace ZedGraph
 			/// <summary>
 			/// The default coordinate system to be used for defining the
 			/// <see cref="TextItem"/> location coordinates
-			/// (<see cref="TextItem.CoordinateFrame"/> property).
+			/// (<see cref="TextItem.Location"/> property).
 			/// </summary>
 			/// <value> The coordinate system is defined with the <see cref="CoordType"/>
 			/// enum</value>
@@ -164,58 +143,15 @@ namespace ZedGraph
 		{
 			get { return fontSpec; }
 		}
+		
 		/// <summary>
-		/// A horizontal alignment parameter for this <see cref="TextItem"/> specified
-		/// using the <see cref="AlignH"/> enum type
+		/// The <see cref="ZedGraph.Location"/> struct that describes the location
+		/// for this <see cref="TextItem"/>.
 		/// </summary>
-		/// <seealso cref="Default.AlignH"/>
-		public AlignH AlignH
+		public Location Location
 		{
-			get { return alignH; }
-			set { alignH = value; }
-		}
-		/// <summary>
-		/// A vertical alignment parameter for this <see cref="TextItem"/> specified
-		/// using the <see cref="AlignV"/> enum type
-		/// </summary>
-		/// <seealso cref="Default.AlignV"/>
-		public AlignV AlignV
-		{
-			get { return alignV; }
-			set { alignV = value; }
-		}
-		/// <summary>
-		/// The x position of the <see cref="TextItem"/>.  The units of this position
-		/// are specified by the <see cref="CoordinateFrame"/> property.
-		/// The text will be aligned to this position based on the
-		/// <see cref="AlignH"/> property.
-		/// </summary>
-		public float X
-		{
-			get { return x; }
-			set { x = value; }
-		}
-		/// <summary>
-		/// The x position of the <see cref="TextItem"/>.  The units of this position
-		/// are specified by the <see cref="CoordinateFrame"/> property.
-		/// The text will be aligned to this position based on the
-		/// <see cref="AlignV"/> property.
-		/// </summary>
-		public float Y
-		{
-			get { return y; }
-			set { y = value; }
-		}
-		/// <summary>
-		/// The coordinate system to be used for defining the <see cref="TextItem"/> position
-		/// </summary>
-		/// <value> The coordinate system is defined with the <see cref="CoordType"/>
-		/// enum</value>
-		/// <seealso cref="Default.CoordFrame"/>
-		public CoordType CoordinateFrame
-		{
-			get { return coordinateFrame; }
-			set { coordinateFrame = value; }
+			get { return location; }
+			set { location = value; }
 		}
 	#endregion
 	
@@ -239,11 +175,7 @@ namespace ZedGraph
 		protected void Init()
 		{
 			text = "Text";
-			alignV = Default.AlignV;
-			alignH = Default.AlignH;
-			x = 0;
-			y = 0;
-			coordinateFrame = Default.CoordFrame;
+			this.location = new Location( 0, 0, Default.CoordFrame, Default.AlignH, Default.AlignV );
 
 			this.fontSpec = new FontSpec(
 				Default.FontFamily, Default.FontSize,
@@ -258,12 +190,12 @@ namespace ZedGraph
 		/// <param name="text">The text to be displayed.</param>
 		/// <param name="x">The x position of the text.  The units
 		/// of this position are specified by the
-		/// <see cref="CoordinateFrame"/> property.  The text will be
+		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
 		/// aligned to this position based on the <see cref="AlignH"/>
 		/// property.</param>
 		/// <param name="y">The y position of the text.  The units
 		/// of this position are specified by the
-		/// <see cref="CoordinateFrame"/> property.  The text will be
+		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
 		/// aligned to this position based on the
 		/// <see cref="AlignV"/> property.</param>
 		public TextItem( string text, float x, float y )
@@ -271,8 +203,7 @@ namespace ZedGraph
 			Init();
 			if ( text != null )
 				this.text = text;
-			this.x = x;
-			this.y = y;
+			this.location = new Location( x, y, Default.CoordFrame, Default.AlignH, Default.AlignV );
 		}
 
 		/// <summary>
@@ -282,12 +213,12 @@ namespace ZedGraph
 		/// <param name="text">The text to be displayed.</param>
 		/// <param name="x">The x position of the text.  The units
 		/// of this position are specified by the
-		/// <see cref="CoordinateFrame"/> property.  The text will be
+		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
 		/// aligned to this position based on the <see cref="AlignH"/>
 		/// property.</param>
 		/// <param name="y">The y position of the text.  The units
 		/// of this position are specified by the
-		/// <see cref="CoordinateFrame"/> property.  The text will be
+		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
 		/// aligned to this position based on the
 		/// <see cref="AlignV"/> property.</param>
 		/// <param name="coordType">The <see cref="CoordType"/> enum value that
@@ -298,9 +229,7 @@ namespace ZedGraph
 			Init();
 			if ( text != null )
 				this.text = text;
-			this.x = x;
-			this.y = y;
-			this.coordinateFrame = coordType;
+			this.location = new Location( x, y, coordType, Default.AlignH, Default.AlignV );
 		}
 
 		/// <summary>
@@ -310,11 +239,7 @@ namespace ZedGraph
 		public TextItem( TextItem rhs )
 		{
 			text = rhs.Text;
-			alignV = rhs.AlignV;
-			alignH = rhs.AlignH;
-			x = rhs.X;
-			y = rhs.Y;
-			coordinateFrame = rhs.CoordinateFrame;
+			this.location = rhs.Location;
 			fontSpec = new FontSpec( rhs.FontSpec );
 		}
 
@@ -352,14 +277,13 @@ namespace ZedGraph
 		{
 			// transform the x,y location from the user-defined
 			// coordinate frame to the screen pixel location
-			PointF pix = pane.GeneralTransform( new PointF(this.x, this.y),
-						this.coordinateFrame );
+			PointF pix = this.location.Transform( pane );
 			
 			// Draw the text on the screen, including any frame and background
 			// fill elements
 			if ( pix.X > -100000 && pix.X < 100000 && pix.Y > -100000 && pix.Y < 100000 )
 				this.FontSpec.Draw( g, this.text, pix.X, pix.Y,
-								this.alignH, this.alignV, scaleFactor );
+								this.location.AlignH, this.location.AlignV, scaleFactor );
 		}
 		
 		/// <summary>
@@ -387,11 +311,10 @@ namespace ZedGraph
 		{
 			// transform the x,y location from the user-defined
 			// coordinate frame to the screen pixel location
-			PointF pix = pane.GeneralTransform( new PointF(this.x, this.y),
-				this.coordinateFrame );
+			PointF pix = this.location.Transform( pane );
 			
-			return this.fontSpec.PointInBox( pt, g, this.text, pix.X, pix.Y, this.alignH,
-									this.alignV, scaleFactor );
+			return this.fontSpec.PointInBox( pt, g, this.text, pix.X, pix.Y,
+								this.location.AlignH, this.location.AlignV, scaleFactor );
 		}
 		
 	#endregion

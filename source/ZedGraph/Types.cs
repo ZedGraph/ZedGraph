@@ -124,8 +124,8 @@ namespace ZedGraph
 	/// <summary>
 	/// Enumeration type that defines the possible legend locations
 	/// </summary>
-	/// <seealso cref="Legend.Location"/>
-	public enum LegendLoc
+	/// <seealso cref="Legend.Position"/>
+	public enum LegendPos
 	{
 		/// <summary>
 		/// Locate the <see cref="Legend"/> above the <see cref="GraphPane.AxisRect"/>
@@ -162,7 +162,12 @@ namespace ZedGraph
 		/// Locate the <see cref="Legend"/> inside the <see cref="GraphPane.AxisRect"/> in the
 		/// bottom-right corner
 		/// </summary>
-		InsideBotRight
+		InsideBotRight,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> as a floating object above the graph at the
+		/// location specified by <see cref="Legend.Location"/>.
+		/// </summary>
+		Float
 	};
 
 	/// <summary>
@@ -253,7 +258,7 @@ namespace ZedGraph
 	/// These coordinate types are used the <see cref="ArrowItem"/> objects
 	/// and <see cref="TextItem"/> objects only.
 	/// </summary>
-	/// <seealso cref="TextItem.CoordinateFrame"/>
+	/// <seealso cref="ZedGraph.Location.CoordinateFrame"/>
 	/// <seealso cref="ArrowItem.CoordinateFrame"/>
 	public enum CoordType
 	{
