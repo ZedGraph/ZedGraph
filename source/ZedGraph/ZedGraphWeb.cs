@@ -36,10 +36,10 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2005-01-07 07:19:10 $ </version>
 	[
-//	ParseChildren(true),
-//	PersistChildren(false),
+	ParseChildren(true),
+	PersistChildren(false),
 	DefaultProperty("Title"),
 	ToolboxData("<{0}:ZedGraphWeb runat=server></{0}:ZedGraphWeb>")
 	]
@@ -60,6 +60,136 @@ namespace ZedGraph
 		public ZedGraphWeb()
 		{
 		}
+
+		#region Chart Item Collection
+		protected ZedGraphWebCurveCollection _curves = null;
+		[
+		Category("Data"),		
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebCurveCollection Curves
+		{
+			get 
+			{				
+				if ( null == _curves )
+				{
+					_curves = new ZedGraphWebCurveCollection();
+					if (IsTrackingViewState) 
+					{
+						((IStateManager)_curves).TrackViewState();
+					}					
+				}
+				return _curves;
+			}			
+		}
+		#endregion
+
+	#region Built in demo code
+		static public void RenderDemo( Graphics g, ZedGraph.GraphPane pane )
+		{
+			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
+			LineItem curve;
+			curve = pane.AddCurve( "Larry", x, y, Color.Green, SymbolType.Circle );
+			curve.Line.Width = 1.5F;
+			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 60, 190, 50), 90F );
+			curve.Line.IsSmooth = true;
+			curve.Line.SmoothTension = 0.6F;
+			curve.Symbol.Fill = new Fill( Color.White );
+			curve.Symbol.Size = 10;
+
+			double[] x3 = { 150, 250, 400, 520, 780, 940 };
+			double[] y3 = { 5.2, 49.0, 33.8, 88.57, 99.9, 36.8 };
+			curve = pane.AddCurve( "Moe", x3, y3, Color.FromArgb( 200, 55, 135), SymbolType.Triangle );
+			curve.Line.Width = 1.5F;
+			curve.Symbol.Fill = new Fill( Color.White );
+			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 160, 230, 145, 205), 90F );
+			curve.Symbol.Size = 10;
+
+			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y4 = { 30, 45, 53, 60, 75, 83, 84, 79, 71, 57 };
+			BarItem bar = pane.AddBar( "Wheezy", x4, y4, Color.SteelBlue );
+			bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown );
+			pane.ClusterScaleWidth = 100;
+			pane.BarType = BarType.Stack;
+
+			double[] x2 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y2 = { 10, 15, 17, 20, 25, 27, 29, 26, 24, 18 };
+			bar = pane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
+			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
+			pane.ClusterScaleWidth = 100;
+
+			pane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );			
+
+			pane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
+				Color.FromArgb( 255, 255, 190), 90F );
+
+			pane.XAxis.IsShowGrid = true;
+			pane.YAxis.IsShowGrid = true;
+			pane.YAxis.Max = 120;
+
+			TextItem text = new TextItem("First Prod\n21-Oct-93", 175F, 80.0F );
+			text.Location.AlignH = AlignH.Center;
+			text.Location.AlignV = AlignV.Bottom;
+			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
+			pane.GraphItemList.Add( text );
+
+			ArrowItem arrow = new ArrowItem( Color.Black, 12F, 175F, 77F, 100F, 45F );
+			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
+			pane.GraphItemList.Add( arrow );
+
+			text = new TextItem("Upgrade", 700F, 50.0F );
+			text.FontSpec.Angle = 90;
+			text.FontSpec.FontColor = Color.Black;
+			text.Location.AlignH = AlignH.Right;
+			text.Location.AlignV = AlignV.Center;
+			text.FontSpec.Fill.IsVisible = false;
+			text.FontSpec.Border.IsVisible = false;
+			pane.GraphItemList.Add( text );
+
+			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
+			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
+			arrow.PenWidth = 2.0F;
+			pane.GraphItemList.Add( arrow );
+
+			text = new TextItem("Confidential", 0.85F, -0.03F );
+			text.Location.CoordinateFrame = CoordType.AxisFraction;
+
+			text.FontSpec.Angle = 15.0F;
+			text.FontSpec.FontColor = Color.Red;
+			text.FontSpec.IsBold = true;
+			text.FontSpec.Size = 16;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Border.Color = Color.Red;
+			text.FontSpec.Fill.IsVisible = false;
+
+			text.Location.AlignH = AlignH.Left;
+			text.Location.AlignV = AlignV.Bottom;
+			pane.GraphItemList.Add( text );
+
+			BoxItem box = new BoxItem( new RectangleF( 0, 110, 1200, 10 ),
+				Color.Empty, Color.FromArgb( 225, 245, 225) );
+			box.Location.CoordinateFrame = CoordType.AxisXYScale;
+			box.Location.AlignH = AlignH.Left;
+			box.Location.AlignV = AlignV.Top;
+			box.ZOrder = ZOrder.E_BehindAxis;
+			pane.GraphItemList.Add( box );
+
+			text = new TextItem( "Peak Range", 1170, 105 );
+			text.Location.CoordinateFrame = CoordType.AxisXYScale;
+			text.Location.AlignH = AlignH.Right;
+			text.Location.AlignV = AlignV.Center;
+			text.FontSpec.IsItalic = true;
+			text.FontSpec.IsBold = false;
+			text.FontSpec.Fill.IsVisible = false;
+			text.FontSpec.Border.IsVisible = false;
+			pane.GraphItemList.Add( text );
+
+			pane.AxisChange( g );
+		}
+		#endregion
 	
 	#region Attributes
 		/// <summary>
@@ -205,6 +335,10 @@ namespace ZedGraph
 			{
 				handler( g, pane );
 			}
+			else
+			{// default with the sample graph if no callback provided
+				ZedGraphWeb.RenderDemo(g,pane);
+			}
 		}		
 	#endregion
 
@@ -236,6 +370,9 @@ namespace ZedGraph
 
 			Bitmap image = new Bitmap( this.Width, this.Height ); 			
 			Graphics g = Graphics.FromImage( image );
+
+			//TODO: add visual designer influences here - first!!
+
 			// Use callback to gather more settings
 			OnDrawPane( g, pane );			
 			
@@ -364,7 +501,67 @@ namespace ZedGraph
 		}
 	#endregion
 
+	#region Custom state management
+		protected override void LoadViewState(object savedState) 
+		{
+			object baseState = null;
+			object[] myState = null;
+
+			if (savedState != null) 
+			{
+				myState = (object[])savedState;
+
+				baseState = myState[0];
+			}
+
+			// Always call the base class, even if the saved state is null, so
+			// that the base class gets a chance implement its LoadViewState
+			// functionality.
+			base.LoadViewState(baseState);
+            
+			if (myState == null) 
+			{
+				return;
+			}
+
+			// NOTE: Accessing a style causes the style to be created if it
+			//       is null. For perf reasons, a style should be created 
+			//       only if there is saved state for that style.           
+
+			if (myState[1] != null)
+				((IStateManager)Curves).LoadViewState(myState[1]);			
+		}
+
+		protected override object SaveViewState() 
+		{
+			object[] myState = new object[2];
+
+			// NOTE: Styles are only saved only if they have been created.
+
+			myState[0] = base.SaveViewState();
+			myState[1] = (_curves != null) ? ((IStateManager)_curves).SaveViewState() : null;			
+
+			// NOTE: We don't check for all nulls, because the control is almost certain to
+			//       have some view state. Most data-bound controls save state information 
+			//       to recreate themselves without a live data source on postback.
+			return myState;
+		}
+
+		protected override void TrackViewState() 
+		{
+			base.TrackViewState();
+
+			// NOTE: Start tracking state on styles that have been created.
+			//       New styles created hereafter will start
+			//       tracking view state when they are demand created.
+
+			if (_curves != null)
+				((IStateManager)_curves).TrackViewState();			
+		}
+		#endregion Custom state management
 	}
+
+
 	
 	/// <summary>
 	/// A delegate to handle the rendering event for this control.
