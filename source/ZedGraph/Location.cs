@@ -25,7 +25,7 @@ namespace ZedGraph
 	/// <summary>
 	/// A class than contains information about the position of an object on the graph.
 	/// </summary>
-	public class Location
+	public class Location : ICloneable
 	{
 	#region Private Fields
 		/// <summary> Private field to store the vertical alignment property for
@@ -45,7 +45,9 @@ namespace ZedGraph
 		/// dependent upon the setting of <see cref="CoordinateFrame"/>.
 		/// </summary>
 		private float		x,
-							y;
+							y,
+							x2,
+							y2;
 							
 		/// <summary>
 		/// Private field to store the coordinate system to be used for defining the
@@ -87,7 +89,7 @@ namespace ZedGraph
 			set { x = value; }
 		}
 		/// <summary>
-		/// The x position of the object.  The units of this position
+		/// The y position of the object.  The units of this position
 		/// are specified by the <see cref="CoordinateFrame"/> property.
 		/// The object will be aligned to this position based on the
 		/// <see cref="AlignV"/> property.
@@ -96,6 +98,54 @@ namespace ZedGraph
 		{
 			get { return y; }
 			set { y = value; }
+		}
+		/// <summary>
+		/// The x1 position of the object (an alias for the x position).  The units of this position
+		/// are specified by the <see cref="CoordinateFrame"/> property.
+		/// The object will be aligned to this position based on the
+		/// <see cref="AlignH"/> property.
+		/// </summary>
+		public float X1
+		{
+			get { return x; }
+			set { x = value; }
+		}
+		/// <summary>
+		/// The y1 position of the object (an alias for the y position).  The units of this position
+		/// are specified by the <see cref="CoordinateFrame"/> property.
+		/// The object will be aligned to this position based on the
+		/// <see cref="AlignV"/> property.
+		/// </summary>
+		public float Y1
+		{
+			get { return y; }
+			set { y = value; }
+		}
+		/// <summary>
+		/// The x2 position of the object.  The units of this position
+		/// are specified by the <see cref="CoordinateFrame"/> property.
+		/// The object will be aligned to this position based on the
+		/// <see cref="AlignH"/> property.  This position is only used for
+		/// objects such as <see cref="ArrowItem"/>, where it makes sense
+		/// to have a second coordinate.
+		/// </summary>
+		public float X2
+		{
+			get { return x2; }
+			set { x2 = value; }
+		}
+		/// <summary>
+		/// The x position of the object.  The units of this position
+		/// are specified by the <see cref="CoordinateFrame"/> property.
+		/// The object will be aligned to this position based on the
+		/// <see cref="AlignV"/> property.  This position is only used for
+		/// objects such as <see cref="ArrowItem"/>, where it makes sense
+		/// to have a second coordinate.
+		/// </summary>
+		public float Y2
+		{
+			get { return y2; }
+			set { y2 = value; }
 		}
 		/// <summary>
 		/// The coordinate system to be used for defining the object position
@@ -117,7 +167,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="x">The x position, specified in units of <see paramref="coordType"/>.
 		/// </param>
-		/// <param name="y">The x position, specified in units of <see paramref="coordType"/>.
+		/// <param name="y">The y position, specified in units of <see paramref="coordType"/>.
 		/// </param>
 		/// <param name="coordType">The <see cref="CoordType"/> enum that specifies the
 		/// units for <see paramref="x"/> and <see paramref="y"/></param>
@@ -133,7 +183,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="x">The x position, specified in units of <see paramref="coordType"/>.
 		/// </param>
-		/// <param name="y">The x position, specified in units of <see paramref="coordType"/>.
+		/// <param name="y">The y position, specified in units of <see paramref="coordType"/>.
 		/// </param>
 		/// <param name="coordType">The <see cref="CoordType"/> enum that specifies the
 		/// units for <see paramref="x"/> and <see paramref="y"/></param>
@@ -145,11 +195,63 @@ namespace ZedGraph
 		{
 			this.x = x;
 			this.y = y;
+			this.x2 = 0;
+			this.y2 = 0;
 			this.coordinateFrame = coordType;
 			this.alignH = alignH;
 			this.alignV = alignV;
 		}
 		
+		/// <summary>
+		/// Constructor for the <see cref="Location"/> class that specifies the
+		/// (x, y) and (x2, y2) positions and the <see cref="CoordType"/>.  The (x,y) position
+		/// corresponds to the starting position, the (x2, y2) coorresponds to the ending position
+		/// (typically used for <see cref="ArrowItem"/>'s).
+		/// </summary>
+		/// <param name="x">The x position, specified in units of <see paramref="coordType"/>.
+		/// </param>
+		/// <param name="y">The y position, specified in units of <see paramref="coordType"/>.
+		/// </param>
+		/// <param name="x2">The x2 position, specified in units of <see paramref="coordType"/>.
+		/// </param>
+		/// <param name="y2">The y2 position, specified in units of <see paramref="coordType"/>.
+		/// </param>
+		/// <param name="coordType">The <see cref="CoordType"/> enum that specifies the
+		/// units for <see paramref="x"/> and <see paramref="y"/></param>
+		/// <param name="alignH">The <see cref="ZedGraph.AlignH"/> enum that specifies
+		/// the horizontal alignment of the object with respect to the (x,y) location</param>
+		/// <param name="alignV">The <see cref="ZedGraph.AlignV"/> enum that specifies
+		/// the vertical alignment of the object with respect to the (x,y) location</param>
+		public Location( float x, float y, float x2, float y2, CoordType coordType, AlignH alignH, AlignV alignV ) :
+			this( x, y, coordType, alignH, alignV )
+		{
+			this.x2 = x2;
+			this.y2 = y2;
+		}
+		
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The <see cref="Location"/> object from which to copy</param>
+		public Location( Location rhs )
+		{
+			this.x = rhs.x;
+			this.y = rhs.y;
+			this.x2 = rhs.x2;
+			this.y2 = rhs.y2;
+			this.coordinateFrame = rhs.CoordinateFrame;
+			this.alignH = rhs.AlignH;
+			this.alignV = rhs.AlignV;
+		}
+
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the <see cref="Location"/> object</returns>
+		public object Clone()
+		{ 
+			return new Location( this ); 
+		}
 	#endregion
 	
 	#region Methods
@@ -242,6 +344,6 @@ namespace ZedGraph
 		}
 
 	#endregion
-	
+
 	}
 }

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2004-11-17 04:38:08 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2004-11-17 05:19:54 $ </version>
 	abstract public class GraphItem
 	{
 	#region Fields
@@ -114,8 +114,27 @@ namespace ZedGraph
 		/// aligned to this position based on the
 		/// <see cref="AlignV"/> property.</param>
 		public GraphItem( float x, float y ) :
-				this( x, y, Default.CoordFrame, Default.AlignH, Default.AlignV )
+			this( x, y, Default.CoordFrame, Default.AlignH, Default.AlignV )
 		{
+		}
+
+		/// <summary>
+		/// Constructor that sets all <see cref="GraphItem"/> properties to default
+		/// values as defined in the <see cref="Default"/> class.
+		/// </summary>
+		/// <param name="x">The x position of the text.  The units
+		/// of this position are specified by the
+		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
+		/// aligned to this position based on the <see cref="AlignH"/>
+		/// property.</param>
+		/// <param name="y">The y position of the text.  The units
+		/// of this position are specified by the
+		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
+		/// aligned to this position based on the
+		/// <see cref="AlignV"/> property.</param>
+		public GraphItem( float x, float y, float x2, float y2 )
+		{
+			this.location = new Location( x, y, x2, y2, Default.CoordFrame, Default.AlignH, Default.AlignV );
 		}
 
 		/// <summary>

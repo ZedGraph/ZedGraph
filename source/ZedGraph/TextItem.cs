@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2004-11-17 04:38:08 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2004-11-17 05:19:54 $ </version>
 	public class TextItem : GraphItem, ICloneable
 	{
 	#region Fields
@@ -208,10 +208,9 @@ namespace ZedGraph
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The <see cref="TextItem"/> object from which to copy</param>
-		public TextItem( TextItem rhs )
+		public TextItem( TextItem rhs ) : base( rhs )
 		{
 			text = rhs.Text;
-			this.location = rhs.Location;
 			fontSpec = new FontSpec( rhs.FontSpec );
 		}
 

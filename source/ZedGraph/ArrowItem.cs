@@ -30,25 +30,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2004-11-17 04:38:08 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2004-11-17 05:19:54 $ </version>
 	public class ArrowItem : GraphItem, ICloneable
 	{
 	#region Fields
-		/// <summary>
-		/// Private field that stores the X location of the ending point
-		/// that defines the arrow segment.  Use the public property
-		/// <see cref="X2"/> to access this value.
-		/// </summary>
-		/// <value>The units are defined as per the <see cref="Location.CoordinateFrame"/> setting</value>
-		private float x2;
-		/// <summary>
-		/// Private field that stores the Y location of the ending point
-		/// that defines the arrow segment.  Use the public property
-		/// <see cref="Y2"/> to access this value.
-		/// </summary>
-		/// <value>The units are defined as per the <see cref="Location.CoordinateFrame"/> setting</value>
-		private float y2;
-
 		/// <summary>
 		/// Private field that stores the arrowhead size, measured in points.
 		/// Use the public property <see cref="Size"/> to access this value.
@@ -108,46 +93,6 @@ namespace ZedGraph
 	#endregion
 
 	#region Properties
-		/// <summary>
-		/// X1 is the X value of the starting point that defines the
-		/// <see cref="ArrowItem"/> segment </summary>
-		/// <value> The units are defined by the <see cref="Location.CoordinateFrame"/>
-		/// property </value>
-		public float X1
-		{
-			get { return this.Location.X; }
-			set { this.Location.X = value; }
-		}
-		/// <summary>
-		/// X2 is the X value of the ending point that defines the
-		/// <see cref="ArrowItem"/> segment </summary>
-		/// <value> The units are defined by the <see cref="Location.CoordinateFrame"/>
-		/// property </value>
-		public float X2
-		{
-			get { return x2; }
-			set { x2 = value; }
-		}
-		/// <summary>
-		/// Y1 is the Y value of the starting point that defines the
-		/// <see cref="ArrowItem"/> segment </summary>
-		/// <value> The units are defined by the <see cref="Location.CoordinateFrame"/>
-		/// property </value>
-		public float Y1
-		{
-			get { return this.Location.Y; }
-			set { this.Location.Y = value; }
-		}
-		/// <summary>
-		/// Y2 is the Y value of the ending point that defines the
-		/// <see cref="ArrowItem"/> segment </summary>
-		/// <value> The units are defined by the <see cref="Location.CoordinateFrame"/>
-		/// property </value>
-		public float Y2
-		{
-			get { return y2; }
-			set { y2 = value; }
-		}
 		/// <summary>
 		/// The size of the arrowhead.  The display of the arrowhead can be
 		/// enabled or disabled with the <see cref="IsArrowHead"/> property.
@@ -215,15 +160,13 @@ namespace ZedGraph
 		/// arrow.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		public ArrowItem( Color color, float size, float x1, float y1, float x2, float y2 ) :
-				base( x1, y1 )
+				base( x1, y1, x2, y2 )
 		{
 			this.penWidth = Default.PenWidth;
 			isArrowHead = Default.IsArrowHead;
 
 			this.color = color;
 			this.size = size;
-			this.x2 = x2;
-			this.y2 = y2;
 		}
 
 		/// <summary>
@@ -254,8 +197,6 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="ArrowItem"/> object from which to copy</param>
 		public ArrowItem( ArrowItem rhs ) : base( rhs )
 		{
-			x2 = rhs.X2;
-			y2 = rhs.Y2;
 			size = rhs.Size;
 			color = rhs.Color;
 			penWidth = rhs.PenWidth;
@@ -296,9 +237,11 @@ namespace ZedGraph
 		{
 			// Convert the arrow coordinates from the user coordinate system
 			// to the screen coordinate system
-			PointF pix1 = pane.GeneralTransform( new PointF(this.X1, this.Y1),
+			PointF pix1 = pane.GeneralTransform(
+				new PointF( this.location.X1, this.location.Y1 ),
 				this.location.CoordinateFrame );
-			PointF pix2 = pane.GeneralTransform( new PointF(this.x2, this.y2),
+			PointF pix2 = pane.GeneralTransform(
+				new PointF( this.location.X2, this.location.Y2 ),
 				this.location.CoordinateFrame );
 
 			if ( pix1.X > -10000 && pix1.X < 100000 && pix1.Y > -100000 && pix1.Y < 100000 &&
@@ -379,9 +322,11 @@ namespace ZedGraph
 		{
 			// transform the x,y location from the user-defined
 			// coordinate frame to the screen pixel location
-			PointF pix = pane.GeneralTransform( new PointF( this.X1, this.Y1 ),
+			PointF pix = pane.GeneralTransform(
+				new PointF( this.location.X1, this.location.Y1 ),
 				this.location.CoordinateFrame );
-			PointF pix2 = pane.GeneralTransform( new PointF( this.x2, this.y2 ),
+			PointF pix2 = pane.GeneralTransform(
+				new PointF( this.location.Y2, this.location.Y2 ),
 				this.location.CoordinateFrame );
 			
 			Pen pen = new Pen( Color.Black, (float) GraphPane.Default.NearestTol * 2.0F );
