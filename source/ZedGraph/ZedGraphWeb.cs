@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.23 $ $Date: 2005-03-18 22:37:31 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2005-04-02 23:06:12 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -262,6 +262,34 @@ namespace ZedGraph
 		#endregion
 
 	#region Attributes
+
+		/// <summary>
+		/// Number of graph panes to create for a compound graph
+		/// </summary>
+		[Category("Graph Panes")]
+		public int PaneCount
+		{
+			get
+			{
+				object x = ViewState["PaneCount"];
+				return (null == x) ? 1 : (int)x;
+			}
+			set 
+			{ 
+				ViewState["PaneCount"] = Math.Max(1,value); 
+			}
+		}
+
+		[Category("Graph Panes"),Bindable(true),NotifyParentProperty(true)]
+		public PaneLayout PaneLayout
+		{
+			get 
+			{ 
+				object x = ViewState["PaneLayout"]; 
+				return (null == x) ? PaneLayout.SquareRowPreferred : (PaneLayout)x;
+			}
+			set { ViewState["PaneLayout"] = value; }			
+		}
 
 		/// <summary>
 		/// 
@@ -830,7 +858,7 @@ namespace ZedGraph
 		/// stub method that passes control for the render event to the the registered
 		/// event handler.
 		/// </summary>
-		protected virtual void OnDrawPane( Graphics g, GraphPane pane )
+		protected virtual void OnDrawPane( Graphics g, MasterPane pane )
 		{
 			ZedGraphWebControlEventHandler handler;
 			handler = (ZedGraphWebControlEventHandler) Events[_eventRender];
@@ -838,17 +866,23 @@ namespace ZedGraph
 			if ( (handler == null) && (CurveList.Count == 0) && (GraphItemList.Count == 0) )
 			{
 				// default with the sample graph if no callback provided
-				ZedGraphWeb.RenderDemo(g,pane);
+				foreach( GraphPane p in pane.PaneList )
+				{
+					ZedGraphWeb.RenderDemo(g,p);
+				}
 			}
 			else
 			{
 				try
 				{
-					// Add visual designer influences here - first!!
-					MapWebContent(g,pane);
+					foreach( GraphPane p in pane.PaneList )
+					{
+						// Add visual designer influences here - first!!
+						MapWebContent(g,p);
 
-					// Add DataSource values if available before the callback
-					PopulateByDataSource(g,pane);
+						// Add DataSource values if available before the callback
+						PopulateByDataSource(g,p);
+					}
 
 					// Add custom callback tweeking next
 					handler( g, pane );
@@ -1090,21 +1124,32 @@ namespace ZedGraph
 		protected void CreateGraph( System.IO.Stream OutputStream, ImageFormat Format )
 		{			
 			RectangleF rect = new RectangleF( 0, 0, this.Width-1, this.Height-1 );
-			GraphPane pane = new GraphPane( rect, Title, string.Empty, string.Empty );
-												
+			MasterPane mp = new MasterPane( this.Title, rect );
+						
+			// create all required panes
+			for (int i=0; i<this.PaneCount; i++)
+			{
+				mp.Add( new GraphPane( rect, Title, string.Empty, string.Empty ) );
+			}			
+						
+			// create output bitmap container						
 			Bitmap image = new Bitmap( this.Width, this.Height ); 			
-			Graphics g = Graphics.FromImage( image );					
+			using (Graphics g = Graphics.FromImage( image ))
+			{
+				// Apply layout plan				
+				mp.AutoPaneLayout(g,this.PaneLayout);
 
-			// Use callback to gather more settings and data values
-			OnDrawPane( g, pane );			
+				// Use callback to gather more settings and data values
+				OnDrawPane( g, mp );
 
-			// Allow designer control of axischange
-			if ( this.AxisChanged ) pane.AxisChange(g);
+				// Allow designer control of axischange
+				if ( this.AxisChanged ) mp.AxisChange(g);
 			
-			// Render the graph to a bitmap
-			g.Clear(Color.FromArgb(255, 255, 255, 255)); 
-			pane.Draw( g ); 
-        
+				// Render the graph to a bitmap
+				g.Clear(Color.FromArgb(255, 255, 255, 255)); 
+				mp.Draw( g ); 
+			}
+			        
 			// Stream the graph out				
 			MemoryStream ms = new MemoryStream(); 
 			image.Save( ms, Format );							
@@ -1344,5 +1389,5 @@ namespace ZedGraph
 	/// <param name="g">A <see cref="Graphics"/> object for which the drawing will be done.</param>
 	/// <param name="pane">A reference to the <see cref="GraphPane"/>
 	/// class to be rendered.</param>
-	public delegate void ZedGraphWebControlEventHandler( Graphics g, GraphPane pane );
+	public delegate void ZedGraphWebControlEventHandler( Graphics g, MasterPane pane );
 }
