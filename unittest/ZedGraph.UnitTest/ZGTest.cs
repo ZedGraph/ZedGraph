@@ -99,7 +99,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos	revised by John Champion	</author>
-	/// <version>	$Revision: 3.8 $ $Date: 2004-12-09 01:41:18 $ </version>
+	/// <version>	$Revision: 3.9 $ $Date: 2004-12-09 01:44:45 $ </version>
 	[TestFixture]
 	public	class ControlTest
 	{
@@ -234,7 +234,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.8 $ $Date: 2004-12-09 01:41:18 $ </version>
+	/// <version>	$Revision: 3.9 $ $Date: 2004-12-09 01:44:45 $ </version>
 	[TestFixture]
 	public	class LibraryTest
 	{
@@ -1379,7 +1379,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.8 $ $Date: 2004-12-09 01:41:18 $ </version>
+	/// <version>	$Revision: 3.9 $ $Date: 2004-12-09 01:44:45 $ </version>
 	[TestFixture]
 	public	class LongFeatureTest
 	{
@@ -2003,7 +2003,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.8 $ $Date: 2004-12-09 01:41:18 $ </version>
+	/// <version>	$Revision: 3.9 $ $Date: 2004-12-09 01:44:45 $ </version>
 	[TestFixture]
 	public	class FindNearestTest
 	{
@@ -2066,7 +2066,8 @@ namespace ZedGraph.UnitTest
 		public void HandleFind( string msg, string tag, int index, Type theType )
 		{
 			TestUtils.clickDone = false;
-			TestUtils.ShowMessage( msg );
+			//TestUtils.ShowMessage( msg );
+			form2.Text = msg;
 			TestUtils.WaitForMouseClick( 5000 );
 			bool match = false;
 
@@ -2238,6 +2239,8 @@ namespace ZedGraph.UnitTest
 			testee.AxisChange( form2.CreateGraphics() );
 			SetSize();
 			form2.Refresh();
+
+			TestUtils.ShowMessage( "For each step, read the message in the Title Bar of the form" );
 
 			HandleFind( "Select the ellipse object", "Ellipse", 0, typeof(GraphItem) );
 			HandleFind( "Select the 'First Prod' text object", "First", 0, typeof(GraphItem) );
