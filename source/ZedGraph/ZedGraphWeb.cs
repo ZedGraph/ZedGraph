@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2005-01-07 07:19:10 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2005-01-07 20:21:39 $ </version>
 	[
 	ParseChildren(true),
 	PersistChildren(false),
@@ -335,7 +335,7 @@ namespace ZedGraph
 			{
 				handler( g, pane );
 			}
-			else
+			else if (_curves == null )
 			{// default with the sample graph if no callback provided
 				ZedGraphWeb.RenderDemo(g,pane);
 			}
@@ -343,6 +343,31 @@ namespace ZedGraph
 	#endregion
 
 	#region Render Methods
+
+		protected void AddDynamicContent( Graphics g, GraphPane pane )
+		{
+			ZedGraphWebCurveItem item;
+			for (int i=0; i<Curves.Count; i++)
+			{
+				item = Curves[i];
+				if ( item is ZedGraphWebBar )
+				{
+					pane.AddBar(item.Label,new PointPairList(),item.Color);
+				}
+				else if ( item is ZedGraphWebLine )
+				{
+					pane.AddCurve(item.Label,new PointPairList(),item.Color);
+				}
+				else if ( item is ZedGraphWebErrorBar )
+				{
+					pane.AddErrorBar(item.Label,new PointPairList(),item.Color);
+				}
+				else if ( item is ZedGraphWebHiLowBar )
+				{
+					pane.AddHiLowBar(item.Label,new PointPairList(),item.Color);
+				}
+			}
+		}
 
 		/// <summary>
 		/// Calls the Draw() method for the control.
@@ -371,7 +396,8 @@ namespace ZedGraph
 			Bitmap image = new Bitmap( this.Width, this.Height ); 			
 			Graphics g = Graphics.FromImage( image );
 
-			//TODO: add visual designer influences here - first!!
+			//add visual designer influences here - first!!
+			AddDynamicContent(g,pane);
 
 			// Use callback to gather more settings
 			OnDrawPane( g, pane );			
