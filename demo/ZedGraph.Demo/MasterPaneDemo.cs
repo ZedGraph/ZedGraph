@@ -80,7 +80,7 @@ namespace ZedGraph.Demo
 			text.FontSpec.Fill.IsVisible = false;
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Center;
-			text.ZOrder = ZOrder.A_InFront;
+			text.ZOrder = ZOrder.B_BehindLegend;
 			myMaster.GraphItemList.Add( text );
 
 			for ( int j=0; j<6; j++ )
