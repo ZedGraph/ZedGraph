@@ -592,6 +592,12 @@ namespace ZedGraph
 		Name_Percent,		
 
 		/// <summary>
+		/// Displays a <see cref="CurveItem.Label"/> containing the <see cref="PieItem.Value"/> both  
+		/// as an absolute number and as percentage of the total.
+		/// </summary>
+		Name_Value_Percent,		
+
+		/// <summary>
 		/// Displays <see cref="PieItem.Value"/> for
 		/// a slice in a Pie Chart.
 		/// </summary>

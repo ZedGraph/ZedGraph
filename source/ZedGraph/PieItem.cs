@@ -21,6 +21,7 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.Drawing.Drawing2D;
+using System.Globalization ;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
@@ -31,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.12 $ $Date: 2005-02-02 04:52:05 $ </version>
+	/// <version> $Revision: 1.13 $ $Date: 2005-02-05 11:24:28 $ </version>
 	[Serializable]
 	public class PieItem : ZedGraph.CurveItem , ICloneable, ISerializable
 	{
@@ -136,7 +137,17 @@ namespace ZedGraph
 		/// </summary>
 		private float midAngle;
 
+		/// <summary>
+		///Private field which determines the number of decimal digits displayed to 
+		///in a <see cref="PieItem"/> label containing a value. 
+		/// </summary>
+		private int valueDecimalDigits;
 
+		/// <summary>
+		///Private field which determines the number of decimal digits displayed 
+		///in a <see cref="PieItem"/> label containing a percent. 
+		/// </summary>
+		private int percentDecimalDigits;
 
 		private static ColorSymbolRotator rotator = new ColorSymbolRotator () ;
 
@@ -192,6 +203,25 @@ namespace ZedGraph
 			/// Default value for <see cref="PieItem.LabelType"/>.
 			/// </summary>
 			public static PieLabelType LabelType = PieLabelType.Name;
+
+			/// <summary>
+			/// The default font size for  <see cref="PieItem.LabelDetail"/> entries
+			/// (<see cref="ZedGraph.FontSpec.Size"/> property).  Units are
+			/// in points (1/72 inch).
+			/// </summary>
+			public static float FontSize = 10;
+
+			/// <summary>
+			/// Default value for the number of decimal digits  
+			/// to be displayed when <see cref="PieItem.labelType"/>  contains a value.
+			/// </summary>
+			public static int ValueDecimalDigits = 0 ;
+
+			/// <summary>
+			/// Default value for the number of decimal digits  
+			/// to be displayed where <see cref="PieItem.labelType"/> contains a percent.
+			/// </summary>
+			public static int PercentDecimalDigits = 2 ;
 		}
 	#endregion Defaults
 
@@ -287,7 +317,29 @@ namespace ZedGraph
 							this.LabelDetail.IsVisible = true ;
 					}  
 		}
-/*
+		
+		
+		/// <summary>
+		///Gets or sets the number of decimal digits to be displayed in a <see cref="PieItem"/> 
+		///value label.
+		/// </summary>
+		public int ValueDecimalDigits
+		{
+			get { return (this.valueDecimalDigits); }
+			set { this.valueDecimalDigits = value; } 
+		}
+
+		/// <summary>
+		///Gets or sets the number of decimal digits to be displayed in a <see cref="PieItem"/> 
+		///percent label.
+		/// </summary>
+		public int PercentDecimalDigits
+		{
+			get { return (this.percentDecimalDigits); }
+			set { this.percentDecimalDigits = value; } 
+		}
+
+		/*
 		/// <summary>
 		/// Getsor sets enum <see cref="PieType"/> to be used	for drawing this <see cref="PieItem"/>.
 		/// </summary>
@@ -302,13 +354,13 @@ namespace ZedGraph
 
 	#region Constructors
 		/// <summary>
-		/// Add a <see cref="PieItem"/> to an existing <see cref="PieItem"/>
+		/// Create a new <see cref="PieItem"/>.
 		/// </summary>
-		/// <param name="pieValue">The value associated with this <see cref="PieItem"/>item.</param>
-		/// <param name="color">The display color for this <see cref="PieItem"/>item.</param>
-		/// <param name="displacement">The amount this <see cref="PieItem"/>  will be 
+		/// <param name="pieValue">The value associated with this <see cref="PieItem"/> instance.</param>
+		/// <param name="color">The display color for this <see cref="PieItem"/> instance.</param>
+		/// <param name="displacement">The amount this <see cref="PieItem"/>  instance will be 
 		/// displaced from the center point.</param>
-		/// <param name="label">Text label for this <see cref="PieItem"/></param>
+		/// <param name="label">Text label for this <see cref="PieItem"/> instance.</param>
 		public PieItem ( double pieValue, Color color,  double displacement, string label ) : base( label )
 		{
 			this.pieValue = pieValue ;
@@ -316,14 +368,17 @@ namespace ZedGraph
 			this.border = new Border(Default.BorderColor, Default.BorderWidth ) ;
 			this.displacement = displacement ;
 			this.labelDetail = new TextItem();
+			this.labelDetail.FontSpec.Size = Default.FontSize ;
 			this.labelType = Default.LabelType;
+			this.valueDecimalDigits = Default.ValueDecimalDigits ;
+			this.percentDecimalDigits = Default.PercentDecimalDigits ;
 		}
 
 		/// <summary>
-		/// Add a <see cref="PieItem"/> to an existing <see cref="PieItem"/>
+		/// Create a  new <see cref="PieItem"/>.
 		/// </summary>
-		/// <param name="pieValue">The value associated with this <see cref="PieItem"/>item.</param>
-		/// <param name="label">Text label for this <see cref="PieItem"/></param>
+		/// <param name="pieValue">The value associated with this <see cref="PieItem"/> instance.</param>
+		/// <param name="label">Text label for this <see cref="PieItem"/> instance</param>
 		public PieItem ( double pieValue, string label ) : base( label )
 		{
 			this.pieValue = pieValue ;
@@ -331,7 +386,10 @@ namespace ZedGraph
 			this.border = new Border(Default.BorderColor, Default.BorderWidth ) ;
 			this.displacement =  Default.Displacement ;
 			this.labelDetail = new TextItem() ;
+			this.labelDetail.FontSpec.Size = Default.FontSize ;
 			this.labelType = Default.LabelType;
+			this.valueDecimalDigits = Default.ValueDecimalDigits ;
+			this.percentDecimalDigits = Default.PercentDecimalDigits ;
 		}
 
 		/// <summary>
@@ -346,6 +404,8 @@ namespace ZedGraph
 			this.displacement = rhs.displacement;
 			this.labelDetail = (TextItem) rhs.labelDetail.Clone();
 			this.labelType = rhs.labelType;
+			this.valueDecimalDigits =rhs.valueDecimalDigits ;
+			this.percentDecimalDigits = rhs.percentDecimalDigits ;
 		}
 
 		/// <summary>
@@ -393,6 +453,8 @@ namespace ZedGraph
 			sweepAngle = (float)info.GetDouble( "sweepAngle" );
 			midAngle = (float)info.GetDouble( "midAngle" );
 			labelStr = info.GetString ("labelStr") ;
+			valueDecimalDigits = info.GetInt32 ("valueDecimalDigits") ;
+			percentDecimalDigits = info.GetInt32 ("percentDecimalDigits") ;
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -419,6 +481,8 @@ namespace ZedGraph
 			info.AddValue( "sweepAngle", sweepAngle );
 			info.AddValue( "midAngle", midAngle );
 			info.AddValue( "labelStr", labelStr );
+			info.AddValue ("valueDecimalDigits", valueDecimalDigits ) ;
+			info.AddValue ("percentDecimalDigits", percentDecimalDigits ) ;
 		}
 	
 	#endregion
@@ -641,32 +705,19 @@ namespace ZedGraph
 				return;
 
 			Pen labelPen = this.Border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-			//label line will come off the explosion radius and then pivot to the horizontal right or left, dependent on position.. 
-			//text will be at the end of horizontal segment...
-			//get the center of the bounding rectangle
-			PointF rectCenter = new PointF( ( rect.X + rect.Width / 2 ), ( rect.Y + rect.Height / 2 ) );
 
-			//draw line from intersection point to pivot point - line to be 30 pixels long
+			//draw line from intersection point to pivot point -
 			g.DrawLine( labelPen, this.intersectionPoint, this.pivotPoint );
 
-			//draw 10 pixel horizontal	 line to move label away from pie...
-			//does line go to left or right....label alignment is to the opposite
-			if ( this.pivotPoint.X >= rectCenter.X )	//goes to right
-				this.labelDetail.Location.AlignH = AlignH.Left;
-			else
-				this.labelDetail.Location.AlignH = AlignH.Right;
+			//draw  horizontal	 line to move label away from pie...
 			g.DrawLine( labelPen, this.pivotPoint, this.endPoint );
 
 			//draw the label (TextItem)
-			//if ( !this.labelDetail.IsWrapped )
 				this.labelDetail.Draw( g, pane, scaleFactor );
-			//else
-			//	this.labelDetail.Draw( g, pane, scaleFactor );
 		}
 
 		/// <summary>
 		/// This method collects all the data relative to rendering this <see cref="PieItem"/>'s label.
-		/// It also limits the label's <see cref="FontSpec.Size"/> to 8.
 		/// </summary>
 		/// <param name="g">
 		///  A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -697,8 +748,6 @@ namespace ZedGraph
 			//text will be at the end of horizontal segment...
 			CalculateLinePoints( rect, this.midAngle );
 
-			//build the label string to be displayed - force the font to 8
-			//this.labelDetail.FontSpec.Size = 8;
 			//now get size of bounding rect for label
 			SizeF size = this.labelDetail.FontSpec.BoundingBox( g, labelStr, scaleFactor );
 
@@ -786,7 +835,7 @@ namespace ZedGraph
 			this.pivotPoint = new PointF( (float) ( intersectionPoint.X + .05 * rect.Width * Math.Cos( ( midAngle ) * Math.PI / 180 ) ),
 				(float) ( intersectionPoint.Y + .05 * rect.Width * Math.Sin( ( midAngle ) * Math.PI / 180 ) ) );
 
-			//add horizontal line to move label away from pie...
+			//add horizontal line to move label away from pie...length to be 5% of rect.Width
 			//does line go to left or right....label alignment is to the opposite
 			if ( pivotPoint.X >= rectCenter.X )		//goes to right
 			{
@@ -800,7 +849,7 @@ namespace ZedGraph
 			}
 			this.midAngle = (float) midAngle;
 		}
-
+		
 		/// <summary>
 		/// Build the string that will be displayed as the slice label as determined by 
 		/// <see cref="PieItem.labelType"/>.
@@ -808,21 +857,30 @@ namespace ZedGraph
 		/// <param name="curve">reference to the <see cref="PieItem"/></param>
 		private static void BuildLabelString( PieItem curve )
 		{
+												//set up label string formatting
+			NumberFormatInfo labelFormat = (NumberFormatInfo)NumberFormatInfo.CurrentInfo.Clone();
+			
+			labelFormat.NumberDecimalDigits = curve.valueDecimalDigits ;
+			labelFormat.PercentPositivePattern = 1 ;					//no space between number and % sign
+			labelFormat.PercentDecimalDigits = curve.percentDecimalDigits ;
+
 			switch ( curve.labelType )
 			{
 				case PieLabelType.Value:
-					curve.labelStr = curve.pieValue.ToString( "#.###" );
+					curve.labelStr = curve.pieValue.ToString( "F", labelFormat );
 					break;
 				case PieLabelType.Percent:
-					double pieValue = curve.sweepAngle / 360;
-					curve.labelStr = pieValue.ToString( "#.000%" );
+					curve.labelStr = (curve.sweepAngle / 360).ToString( "P", labelFormat );
 					break;
 				case PieLabelType.Name_Value:
-					curve.labelStr = curve.label + ": " + curve.pieValue.ToString( "#.###" );
+					curve.labelStr = curve.label + ": " + curve.pieValue.ToString( "F", labelFormat );
 					break;
 				case PieLabelType.Name_Percent:
-					pieValue = curve.sweepAngle / 360;
-					curve.labelStr = curve.label + ": " + pieValue.ToString( "#.###%" );
+					curve.labelStr = curve.label + ": " +  (curve.sweepAngle / 360).ToString( "P", labelFormat );
+					break;
+				case PieLabelType.Name_Value_Percent:
+					curve.labelStr = curve.label + ": " + curve.pieValue.ToString( "F", labelFormat ) + 
+						" (" + (curve.sweepAngle / 360).ToString ("P", labelFormat) + ")" ;
 					break;
 				case PieLabelType.Name:
 					curve.labelStr = curve.label;
