@@ -112,6 +112,7 @@ namespace ZedGraphTest
 		/// </summary>
 		protected GraphPane myPane, myPane2;
 
+		private bool isResizable = true;
 		double[] gx = new double[20];
 		double[] gy = new double[20];
 		//		int	nPts = 20;
@@ -291,6 +292,105 @@ namespace ZedGraphTest
 			imageItem.ZOrder = ZOrder.C_BehindAxisBorder;
 			myPane.GraphItemList.Add( imageItem );
 			*/
+
+#endif
+
+#if false	// The transparent example
+
+            myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+				"Desert Rainfall",
+				"Time, Years",
+				"Rainfall, mm/yr" );
+			SetSize();
+			
+			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y4 = { 30, 45, 53, 60, 75, 83, 84, 79, 71, 57 };
+			BarItem bar = myPane.AddBar( "Wheezy", x4, y4, Color.SteelBlue );
+			//bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown );
+			bar.Bar.Fill = new Fill( Color.FromArgb( 100, 130, 255, 130 ), Color.FromArgb( 100, 255, 255, 255 ),
+								Color.FromArgb( 100, 130, 255, 130 ) );
+			myPane.ClusterScaleWidth = 100;
+			myPane.BarType = BarType.Stack;
+			//myPane.PaneGap = 60F;
+			//curve.Bar.Fill = new Fill( Color.Blue );
+			//curve.Symbol.Size = 12;
+
+			double[] x2 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y2 = { 10, 15, 17, 20, 25, 27, 29, 26, 24, 18 };
+			bar = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
+			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
+			myPane.ClusterScaleWidth = 100;
+			//Brush brush = new HatchBrush( HatchStyle.Cross, Color.AliceBlue, Color.Red );
+			//GraphicsPath path = new GraphicsPath();
+			//path.AddLine( 10, 10, 20, 20 );
+			//path.AddLine( 20, 20, 30, 0 );
+			//path.AddLine( 30, 0, 10, 10 );
+			
+			//brush = new PathGradientBrush( path );
+			//bar.Bar.Fill = new Fill( brush );
+			
+			
+			//Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
+			Bitmap bm = new Bitmap( @"c:\mypic.jpg" );
+			//Image image = Image.FromHbitmap( bm.GetHbitmap() );
+			
+			TextureBrush texBrush = new TextureBrush( bm );
+			myPane.PaneFill = new Fill( texBrush );
+			//myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			
+			//myPane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
+			//			Color.FromArgb( 255, 255, 190), 90F );
+			myPane.AxisFill.IsVisible = false;
+			myPane.Legend.IsVisible = false;
+			
+			TextItem text = new TextItem( "Desert Rainfall", 0.5F, -0.05F, CoordType.AxisFraction,
+					AlignH.Center, AlignV.Bottom );
+			text.FontSpec.FontColor = Color.Black;
+			text.FontSpec.Size = 20F;
+			text.FontSpec.IsBold = true;
+			text.FontSpec.IsItalic = true;
+			text.FontSpec.Fill.IsVisible = false;
+			text.FontSpec.Border.IsVisible = false;
+			myPane.GraphItemList.Add( text );
+			myPane.IsShowTitle = false;
+			myPane.FontSpec.FontColor = Color.Black;
+			myPane.XAxis.Color = Color.White;
+			myPane.YAxis.Color = Color.White;
+			myPane.XAxis.ScaleFontSpec.FontColor = Color.White;
+			myPane.XAxis.TitleFontSpec.FontColor = Color.White;
+			myPane.YAxis.ScaleFontSpec.FontColor = Color.White;
+			myPane.YAxis.TitleFontSpec.FontColor = Color.White;
+			myPane.AxisBorder.Color = Color.White;
+			myPane.XAxis.GridColor = Color.White;
+			myPane.YAxis.GridColor = Color.White;
+			
+			myPane.XAxis.IsShowGrid = true;
+			//myPane.IsPenWidthScaled = false;
+			//myPane.XAxis.ScaleFontSpec.Angle = 90;
+			//myPane.XAxis.ScaleAlign = AlignP.Inside;
+			//myPane.XAxis.IsShowMinorGrid = true;
+			//myPane.XAxis.MinorGridColor = Color.Red;
+
+			myPane.YAxis.IsShowGrid = true;
+			//myPane.YAxis.ScaleFontSpec.Angle = 90;
+			myPane.YAxis.Max = 120;
+			//myPane.YAxis.ScaleAlign = AlignP.Center;
+			//myPane.YAxis.Type = AxisType.Log;
+			//myPane.YAxis.IsUseTenPower = false;
+			//myPane.YAxis.IsShowMinorGrid = true;
+			//myPane.YAxis.MinorGridColor = Color.Red;
+
+			//myPane.Y2Axis.IsVisible = true;
+			//myPane.Y2Axis.Max = 120;
+			//myPane.Y2Axis.ScaleAlign = AlignP.Outside;
+			
+			myPane.AxisChange( this.CreateGraphics() );
+			RectangleF axisRect = myPane.AxisRect;
+			//axisRect.X += axisRect.Width * 0.3F;
+			//axisRect.Width *= 0.7F;
+			axisRect.Y += axisRect.Height * 0.35F;
+			axisRect.Height *= 0.65F;
+			myPane.AxisRect = axisRect;
 
 #endif
 
@@ -2506,7 +2606,7 @@ namespace ZedGraphTest
 
 		private void SetSize()
 		{
-			if ( this.myPane != null )
+			if ( this.myPane != null && this.isResizable )
 			{
 				Rectangle paneRect = this.ClientRectangle;
 
@@ -2587,11 +2687,11 @@ namespace ZedGraphTest
 #if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			showTicks = true;
-			Invalidate();
+			//showTicks = true;
+			//Invalidate();
 
 			//DoPrint();
-			//CopyToPNG( myPane );
+			CopyToPNG( myPane );
 			
 			//Bitmap image = myPane.ScaledImage( 3000, 2400, 600 );
 			//image.Save( @"c:\zedgraph.jpg", ImageFormat.Jpeg );
