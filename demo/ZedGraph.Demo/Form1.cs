@@ -471,7 +471,7 @@ namespace ZedGraph.Demo
 
 #endif
 		
-#if true	// MasterPane Test
+#if false   // MasterPane Test
 
 			master = new MasterPane( "MASTER PANE TEST", new RectangleF( 0, 0, 600, 400 ) );
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
@@ -3282,7 +3282,9 @@ namespace ZedGraph.Demo
 		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
 		{
 			//clone the pane so the paneRect can be changed for printing
-			PaneBase printPane = (PaneBase) master.Clone();
+			//PaneBase printPane = (PaneBase) master.Clone();
+			GraphPane printPane = (GraphPane) myPane.Clone();
+			printPane.PaneRect = new RectangleF( 50, 50, 400, 300 );
 
 			//printPane.Legend.IsVisible = true;
 			//printPane.PaneRect = new RectangleF( 50, 50, 300, 300 );

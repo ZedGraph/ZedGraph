@@ -284,7 +284,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsVisible"]; 
-				return (null == x) ? Border.Default.IsVisible : (bool)x;
+				return (null == x) ? Border.Default.IsVisible : (bool) x;
 			}
 			set { ViewState["IsVisible"] = value; }
 		}
@@ -1594,6 +1594,10 @@ namespace ZedGraph
 			Schema[0].type = typeof(ZedGraphWebString);						
 		}		
 
+		/// <summary>
+		/// Add a <see cref="ZedGraphWebString"/> to the collection.
+		/// </summary>
+		/// <param name="item">The <see cref="ZedGraphWebString"/> object to be added</param>
 		public void Add(ZedGraphWebString item)
 		{
 			if ( null != item )
@@ -1702,8 +1706,8 @@ namespace ZedGraph
 		/// <param name="item">The destination <see cref="ZedGraph.Axis"/> object</param>
 		public void CopyTo(Axis item)
 		{				
-			this.ScaleFontSpec.CopyTo(item.ScaleFontSpec);
-			this.TitleFontSpec.CopyTo(item.TitleFontSpec);
+			this.ScaleFontSpec.CopyTo( item.ScaleFontSpec );
+			this.TitleFontSpec.CopyTo( item.TitleFontSpec );
 			item.Title = this.Title;
 			item.Color = this.Color;
 			item.GridColor = this.GridColor;

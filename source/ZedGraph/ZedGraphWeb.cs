@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-02-15 04:50:02 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-02-18 06:26:00 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -1214,7 +1214,10 @@ namespace ZedGraph
 
 	#region IDisposable Members
 
-		public void Dispose()
+		/// <summary>
+		/// Free up resources associated with the FileStream
+		/// </summary>
+		public override void Dispose()
 		{
 			try
 			{
