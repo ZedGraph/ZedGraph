@@ -361,12 +361,19 @@ namespace ZedGraph.Demo
 			myPane.Legend.Position = LegendPos.Right ;
 	//		myPane.Legend.IsVisible = false ;
 			
-			PieItem segment1 = myPane.AddPieSlice ( 20, Color.Blue, .0, "Northeast") ;
+			PieItem.Default.FontSize = 9 ;
+			PieItem.Default.PercentDecimalDigits = 4 ;
+
+			PieItem segment1 = myPane.AddPieSlice ( 20, Color.Blue, .40, "Northeast") ;
 			PieItem segment2 = myPane.AddPieSlice ( 40, Color.Red, .0, "South") ;
 			PieItem segment3 = myPane.AddPieSlice ( 30, Color.Yellow,.0, "East") ;
-			PieItem segment4 = myPane.AddPieSlice ( 10.21, Color.Green, .0, "West") ;
+			PieItem segment4 = myPane.AddPieSlice ( 10.21457, Color.Green, .0, "West") ;
 			PieItem segment5 = myPane.AddPieSlice ( 30.5, Color.Aquamarine, .0, "Canada") ;
-//			segment4.IsVisible = false ;
+			
+			segment5.ValueDecimalDigits = 1 ;
+			segment1.PercentDecimalDigits = 2 ;
+
+			//			segment4.IsVisible = false ;
 //				Trace.WriteLine ("Initiating pie")			 ;
 			
 			PieItem [] slices = new PieItem[values2.Length] ;
@@ -374,13 +381,16 @@ namespace ZedGraph.Demo
 			((PieItem)slices[3]).LabelType = PieLabelType.None ;
 //			((PieItem)slices[2]).Displacement = .5 ;
 			((PieItem)slices[0]).Displacement = .0 ;
-			((PieItem)slices[1]).Displacement = .0 ;
+			((PieItem)slices[1]).Displacement = .2 ;
 			((PieItem)slices[1]).LabelType = PieLabelType.Name_Percent;
+
 
 /*
 			foreach (PieItem segment in myPane.CurveList)
 			{
-				segment.Displacement = .1 ;			
+				segment.LabelDetail.FontSpec.Size = 8 ;	
+				segment.LabelDetail.FontSpec.IsBold = true ;
+				segment.DecimalDigits = 4 ;
 			}
 */
 
@@ -396,7 +406,7 @@ namespace ZedGraph.Demo
 
 //			myPane.IsAxisRectAuto = false ;
 
-			segment1.LabelType = PieLabelType.Name_Percent ;
+			segment1.LabelType = PieLabelType.Name_Value_Percent ;
 			segment2.LabelType = PieLabelType.Name_Value ;
 			segment3.LabelType = PieLabelType.Percent ;
 			segment4.LabelType = PieLabelType.Value ;
@@ -463,6 +473,7 @@ namespace ZedGraph.Demo
 
 			master = new MasterPane( "MASTER PANE TEST", new RectangleF( 0, 0, 600, 400 ) );
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+			master.HasMasterLegend = false ;
 			
 			master.Tag = "This is my tag";
 
@@ -2624,7 +2635,7 @@ namespace ZedGraph.Demo
 
 			master = new MasterPane( "MASTER PANE TEST", new RectangleF( 0, 0, 600, 400 ) );
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
-
+//			master.HasMasterLegend = true ;
          
 			
          string [] quarters = {"Q1", "Q2", "Q3", "Q4", "Q5" } ;          
@@ -2634,7 +2645,7 @@ namespace ZedGraph.Demo
  //        double[] y3 = { 2, 3, 3.5, 4 };
 
 
-			for (int x = 0 ; x < 1 ; x++ )
+			for (int x = 0 ; x < 4 ; x++ )
 			{
 
 				myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),"2003 Wacky Widget Sales\nBy Product",
@@ -2659,20 +2670,20 @@ namespace ZedGraph.Demo
 			myPane.XAxis.Type = AxisType.Text ;
 			myPane.XAxis.TextLabels=quarters ;         
 			myPane.BarBase=BarBase.X ;
-			myPane.BarType=BarType.Stack;
+	//		myPane.BarType=BarType.Stack;
 			//myPane.BarType=BarType.Cluster ;
 			//myPane.BarType=BarType.Overlay ;
 			//myPane.BarType = BarType.SortedOverlay ;
-			//myPane.BarType = BarType.PercentStack ;
+			myPane.BarType = BarType.PercentStack ;
 				myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
 				myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
 				myPane.XAxis.IsShowGrid = true;
 				myPane.YAxis.IsShowGrid = true;
 
-				myPane.AxisChange( this.CreateGraphics() );
+				myPane.AxisChange( this.CreateGraphics() );					
 				master.Add( myPane );
 			}
-			master.AutoPaneLayout( this.CreateGraphics(), paneLayout );
+			master.AutoPaneLayout( this.CreateGraphics(), paneLayout );					 //this is where the paneRect is allocated out*****
 #endif
 			
 			
@@ -3236,7 +3247,7 @@ namespace ZedGraph.Demo
 					this.ClientRectangle.Width, this.ClientRectangle.Height );
 
 				SetSize();
-				master.AxisChange( this.CreateGraphics() );
+				master.AxisChange( this.CreateGraphics() );													 //returns with panes allocated
 				master.AutoPaneLayout( this.CreateGraphics(), this.paneLayout );
 				Invalidate();
 			}
