@@ -7,25 +7,27 @@ using NUnit.Framework;
 
 namespace ZedGraph.UnitTest
 {
+	#region Test Utilities
 	class TestUtils
 	{
 		public	static bool waitForUserOK =	true;
-		public	static int delayTime	=	500;
-		static System.Windows.Forms.Timer	myTimer = new System.Windows.Forms.Timer();
+		public	static int delayTime = 500;
+		static System.Windows.Forms.Timer myTimer = new System.Windows.Forms.Timer();
 		static bool exitFlag;
+		public static bool clickDone;
 
-		public	static void SetUp()
+		public static void SetUp()
 		{
 			/*	Adds the event and	the	event handler for the method that will 
 				process	the timer event to the	timer. */
-			myTimer.Tick	+=	new	EventHandler( TimerEventProcessor );
+			myTimer.Tick += new	EventHandler( TimerEventProcessor );
 		}
 			
-		public	static bool promptIfTestWorked(string	msg)
+		public static bool promptIfTestWorked( string msg )
 		{
 			Console.WriteLine( msg );
 
-			//	just act like	the test	worked
+			//	just act like the test worked
 			if	( !waitForUserOK )
 			{
 				if	( delayTime > 0 )
@@ -33,35 +35,61 @@ namespace ZedGraph.UnitTest
 				return true;
 			}
 
-			if	(DialogResult.Yes	==	MessageBox.Show(msg,	"ZedGraph Test", MessageBoxButtons.YesNo))
+			if	( DialogResult.Yes == MessageBox.Show( msg, "ZedGraph Test",
+					MessageBoxButtons.YesNo ) )
 				return true;
 			else
 				return false;
 		}
 
-		//	This is	the method to run	when the timer	is raised.
-		private static	void TimerEventProcessor(	Object myObject,
-			EventArgs	myEventArgs	)	
+		public static void ShowMessage( string msg )
 		{
-			myTimer.Stop();
-			exitFlag	=	true;
+			Console.WriteLine( msg );
+
+			MessageBox.Show( msg, "ZedGraph Test", MessageBoxButtons.OK );
 		}
 
-		public	static void DelaySeconds( int sec	)
+		//	This is	the method to run when the timer	is raised.
+		private static void TimerEventProcessor( Object myObject,
+			EventArgs myEventArgs	)	
 		{
-			//	Sets	the	timer interval to 3	seconds.
-			myTimer.Interval	= sec;
+			myTimer.Stop();
+			exitFlag = true;
+		}
+
+		public static void DelaySeconds( int sec )
+		{
+			// Sets the timer interval to 3 seconds.
+			myTimer.Stop();
+			myTimer.Interval = sec;
 			myTimer.Start();
 
 			//	Runs the timer, and	raises	the event.
-			exitFlag	=	false;
-			while( exitFlag == false	) 
+			exitFlag = false;
+			while( exitFlag == false ) 
 			{
-				//	Processes all	the events in	the queue.
+				//	Processes all the events in	the queue.
+				Application.DoEvents();
+			}
+		}
+
+		public static void WaitForMouseClick( int maxSec )
+		{
+			// Sets the timer interval
+			myTimer.Stop();
+			myTimer.Interval = maxSec;
+			myTimer.Start();
+
+			// Runs the timer, and raises the event.
+			exitFlag = false;
+			while( exitFlag == false && clickDone == false ) 
+			{
+				// Processes all the events in the queue.
 				Application.DoEvents();
 			}
 		}
 	}
+	#endregion
 
 	#region ControlTest
 	/// <summary>
@@ -71,7 +99,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos	revised by John Champion	</author>
-	/// <version>	$Revision: 3.7 $ $Date: 2004-12-08 22:12:27 $ </version>
+	/// <version>	$Revision: 3.8 $ $Date: 2004-12-09 01:41:18 $ </version>
 	[TestFixture]
 	public	class ControlTest
 	{
@@ -206,7 +234,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.7 $ $Date: 2004-12-08 22:12:27 $ </version>
+	/// <version>	$Revision: 3.8 $ $Date: 2004-12-09 01:41:18 $ </version>
 	[TestFixture]
 	public	class LibraryTest
 	{
@@ -430,7 +458,6 @@ namespace ZedGraph.UnitTest
 		}
 		#endregion
 
-
 		#region Horizontal	Clustered  Bar	Graph
 		[Test]
 		public	void HorizClusteredBarGraph()
@@ -598,7 +625,7 @@ namespace ZedGraph.UnitTest
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
 				"Is a stack bar graph having three bars per x-Axis point visible ?  <Next Step: Fill one bar segment with a Textured Brush>")	) ;
 		                                                       
-			Bitmap bm = new Bitmap( @"C:\WINDOWS\clouds.bmp" );
+			Bitmap bm = new Bitmap( @"C:\WINDOWS\FeatherTexture.bmp" );
 			TextureBrush brush = new TextureBrush( bm );
 			
 			myCurve.Bar.Fill = new Fill( brush );
@@ -767,7 +794,6 @@ namespace ZedGraph.UnitTest
 		
 		}
 		#endregion
-
 
 		#region Horizontal	Stack	Bar Graph
 		[Test]
@@ -1130,7 +1156,7 @@ namespace ZedGraph.UnitTest
 				x, y, Color.Red, SymbolType.Diamond	);
 			//	Set the XAxis	to date type
 			testee.XAxis.Type =	AxisType.Date;
-			testee.XAxis.ScaleFormat = "&dd-&mmm-&yyyy";
+			testee.XAxis.ScaleFormat = "dd-MMM-yyyy";
 
 
 			//	Tell ZedGraph to	refigure	the
@@ -1353,7 +1379,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.7 $ $Date: 2004-12-08 22:12:27 $ </version>
+	/// <version>	$Revision: 3.8 $ $Date: 2004-12-09 01:41:18 $ </version>
 	[TestFixture]
 	public	class LongFeatureTest
 	{
@@ -1970,5 +1996,266 @@ namespace ZedGraph.UnitTest
 		#endregion
 	}
 	#endregion
+
+	#region FindNearest Test
+	/// <summary>
+	/// Test code	suite	for	the class library
+	/// </summary>
+	/// 
+	/// <author> John Champion </author>
+	/// <version>	$Revision: 3.8 $ $Date: 2004-12-09 01:41:18 $ </version>
+	[TestFixture]
+	public	class FindNearestTest
+	{
+		#region Setup
+		Form form2;
+		GraphPane	testee;
+		
+		[SetUp]
+		public void SetUp()
+		{
+			TestUtils.SetUp();
+
+			form2 =	new Form();
+			form2.Size = new Size( 800, 600	);
+			form2.Paint += new	System.Windows.Forms.PaintEventHandler( this.Form2_Paint );
+			form2.Resize += new	System.EventHandler( this.Form2_Resize );
+			form2.MouseDown += new System.Windows.Forms.MouseEventHandler(	this.Form2_MouseDown	);
+			form2.Show();
+
+		}
+
+		[TearDown]	
+		public void Terminate()
+		{
+			form2.Dispose();
+		}
+		
+		private void Form2_Paint( object sender, System.Windows.Forms.PaintEventArgs	e	)
+		{
+			SolidBrush brush = new SolidBrush( Color.Gray );
+			e.Graphics.FillRectangle( brush, form2.ClientRectangle );
+			testee.Draw( e.Graphics );
+		}
+
+		private void Form2_Resize(object sender, System.EventArgs e)
+		{
+			SetSize();
+			testee.AxisChange(	form2.CreateGraphics() );
+			form2.Refresh();
+		}
+
+		private void SetSize()
+		{
+			Rectangle paneRect = form2.ClientRectangle;
+			paneRect.Inflate( -10, -10	);
+			testee.PaneRect = paneRect;
+		}
+
+		object nearestObject;
+		int _index;
+		private void Form2_MouseDown( object sender,
+					System.Windows.Forms.MouseEventArgs e )
+		{
+			if ( testee.FindNearestObject( new PointF( e.X, e.Y ),
+					form2.CreateGraphics(),
+					out nearestObject, out _index ) )
+				TestUtils.clickDone = true;
+		}
+
+		public void HandleFind( string msg, string tag, int index, Type theType )
+		{
+			TestUtils.clickDone = false;
+			TestUtils.ShowMessage( msg );
+			TestUtils.WaitForMouseClick( 5000 );
+			bool match = false;
+
+			if ( theType == typeof(GraphItem) )
+			{
+				if (	nearestObject is GraphItem &&
+						(string) ((GraphItem)nearestObject).Tag == tag )
+					match = true;
+			}
+			else if ( theType == typeof(CurveItem) )
+			{
+				if (	nearestObject is CurveItem &&
+						(string) ((CurveItem)nearestObject).Tag == tag &&
+						_index == index )
+					match = true;
+			}
+			else if ( theType == typeof(Axis) )
+			{
+				if (	nearestObject is Axis &&
+						nearestObject.GetType().ToString() == tag )
+					match = true;
+			}
+			else if ( theType == typeof(Legend) )
+			{
+				if (	nearestObject is Legend &&
+						_index == index )
+					match = true;
+			}
+			else if ( theType == typeof(GraphPane) )
+			{
+				if ( nearestObject is GraphPane )
+					match = true;
+			}
+
+			if ( match )
+				Console.WriteLine( tag + " Found" );
+			else
+				Assert.Fail( "Failed to Find " + tag + "(Found " +
+								nearestObject.ToString() + ")" );
+		}
+
+		#endregion
+
+		#region FindNearestObject
+		[Test]
+		public	void FindNearestObject()
+		{
+            testee = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+				"Wacky Widget Company\nProduction Report",
+				"Time, Days\n(Since Plant Construction Startup)",
+				"Widget Production\n(units/hour)" );
+			SetSize();
+
+			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
+			LineItem curve;
+			curve = testee.AddCurve( "Larry", x, y, Color.Green, SymbolType.Circle );
+			curve.Line.Width = 1.5F;
+			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 60, 190, 50), 90F );
+			curve.Line.IsSmooth = true;
+			curve.Line.SmoothTension = 0.6F;
+			curve.Symbol.Fill = new Fill( Color.White );
+			curve.Symbol.Size = 10;
+			curve.Tag = "Larry";
+			
+			double[] x3 = { 150, 250, 400, 520, 780, 940 };
+			double[] y3 = { 5.2, 49.0, 33.8, 88.57, 99.9, 36.8 };
+			curve = testee.AddCurve( "Moe", x3, y3, Color.FromArgb( 200, 55, 135), SymbolType.Triangle );
+			curve.Line.Width = 1.5F;
+			//curve.Line.IsSmooth = true;
+			curve.Symbol.Fill = new Fill( Color.White );
+			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 160, 230, 145, 205), 90F );
+			curve.Symbol.Size = 10;
+			curve.Tag = "Moe";
+			
+			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y4 = { 30, 45, -13, 60, 75, 83, 84, 79, 71, 57 };
+			BarItem bar = testee.AddBar( "Wheezy", x4, y4, Color.SteelBlue );
+			bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown );
+			bar.Tag = "Wheezy";
+			//curve.Bar.Fill = new Fill( Color.Blue );
+			//curve.Symbol.Size = 12;
+
+			double[] x2 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y2 = { 10, 15, -7, 20, 25, 27, 29, 26, 24, 18 };
+			bar = testee.AddBar( "Curly", x2, y2, Color.RoyalBlue );
+			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
+			bar.Tag = "Curly";
+			//Brush brush = new HatchBrush( HatchStyle.Cross, Color.AliceBlue, Color.Red );
+			//GraphicsPath path = new GraphicsPath();
+			//path.AddLine( 10, 10, 20, 20 );
+			//path.AddLine( 20, 20, 30, 0 );
+			//path.AddLine( 30, 0, 10, 10 );
+			
+			//brush = new PathGradientBrush( path );
+			//bar.Bar.Fill = new Fill( brush );
+			
+			
+			testee.ClusterScaleWidth = 100;
+			testee.BarType = BarType.Stack;
+
+			testee.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			testee.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
+			
+			testee.XAxis.IsShowGrid = true;
+			testee.YAxis.IsShowGrid = true;
+			testee.YAxis.Max = 120;
+			testee.Y2Axis.IsVisible = true;
+			testee.Y2Axis.Max = 120;
+			
+			TextItem text = new TextItem("First Prod\n21-Oct-93", 175F, 80.0F );
+			text.Location.AlignH = AlignH.Center;
+			text.Location.AlignV = AlignV.Bottom;
+			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
+			text.Tag = "First";
+			testee.GraphItemList.Add( text );
+
+			ArrowItem arrow = new ArrowItem( Color.Black, 12F, 175F, 77F, 100F, 45F );
+			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
+			testee.GraphItemList.Add( arrow );
+
+			text = new TextItem("Upgrade", 700F, 50.0F );
+			text.FontSpec.Angle = 90;
+			text.FontSpec.FontColor = Color.Black;
+			text.Location.AlignH = AlignH.Right;
+			text.Location.AlignV = AlignV.Center;
+			text.FontSpec.Fill.IsVisible = false;
+			text.FontSpec.Border.IsVisible = false;
+			testee.GraphItemList.Add( text );
+
+			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
+			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
+			arrow.PenWidth = 2.0F;
+			arrow.Tag = "Arrow";
+			testee.GraphItemList.Add( arrow );
+
+			text = new TextItem("Confidential", 0.8F, -0.03F );
+			text.Location.CoordinateFrame = CoordType.AxisFraction;
+
+			text.FontSpec.Angle = 15.0F;
+			text.FontSpec.FontColor = Color.Red;
+			text.FontSpec.IsBold = true;
+			text.FontSpec.Size = 16;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Border.Color = Color.Red;
+			text.FontSpec.Fill.IsVisible = false;
+
+			text.Location.AlignH = AlignH.Left;
+			text.Location.AlignV = AlignV.Bottom;
+			testee.GraphItemList.Add( text );
+			
+			testee.IsPenWidthScaled = false ;
+
+			RectangleF rect = new RectangleF( 500, 50, 200, 20 );
+			EllipseItem ellipse = new EllipseItem( rect, Color.Blue, 
+				Color.Goldenrod );
+			ellipse.Location.CoordinateFrame = CoordType.AxisXYScale;
+			ellipse.Tag = "Ellipse";
+			testee.GraphItemList.Add( ellipse );
+
+//			Bitmap bm = new Bitmap( @"c:\temp\sunspot.jpg" );
+			//Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
+			//Image image = Image.FromHbitmap( bm.GetHbitmap() );
+			//ImageItem imageItem = new ImageItem( image, new RectangleF( 0.8F, 0.8F, 0.2F, 0.2F ),
+			//	CoordType.AxisFraction, AlignH.Left, AlignV.Top );
+			//imageItem.IsScaled = false;
+			//myPane.GraphItemList.Add( imageItem );
+
+			testee.AxisChange( form2.CreateGraphics() );
+			SetSize();
+			form2.Refresh();
+
+			HandleFind( "Select the ellipse object", "Ellipse", 0, typeof(GraphItem) );
+			HandleFind( "Select the 'First Prod' text object", "First", 0, typeof(GraphItem) );
+			HandleFind( "Select the upgrade arrow object", "Arrow", 0, typeof(GraphItem) );
+			HandleFind( "Select the Graph Title", "", 0, typeof(GraphPane) );
+			HandleFind( "Select the X Axis", "ZedGraph.XAxis", 0, typeof(Axis) );
+			HandleFind( "Select the Y Axis", "ZedGraph.YAxis", 0, typeof(Axis) );
+			HandleFind( "Select the Y2 Axis", "ZedGraph.Y2Axis", 0, typeof(Axis) );
+			HandleFind( "Select the second curve in the legend", "", 1, typeof(Legend) );
+			HandleFind( "Select the tallest blue bar", "Curly", 6, typeof(CurveItem) );
+			HandleFind( "Select the negative brown bar", "Wheezy", 2, typeof(CurveItem) );
+			HandleFind( "Select the negative blue bar", "Curly", 2, typeof(CurveItem) );
+			HandleFind( "Select the highest green circle symbol", "Larry", 6, typeof(CurveItem) );
+
+		}
+		#endregion
+	}
+	#endregion
+
 
 }

@@ -489,14 +489,16 @@ namespace ZedGraphTest
 			CurveItem myCurve = myPane.AddCurve( "My Curve",
 				x, y, Color.Red, SymbolType.Diamond );
 
+			myPane.YAxis.Min = 100;
+			myPane.YAxis.Max = 150;
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed
-			myPane.AxisChange( CreateGraphics() );
+			//myPane.AxisChange( CreateGraphics() );
 		
-			myPane.YAxis.Type = AxisType.Text;
-			myPane.YAxis.TextLabels = labels;
-			myPane.YAxis.ScaleAlign = AlignP.Inside;
-			myPane.YAxis.ScaleFontSpec.StringAlignment = StringAlignment.Far;
+			//myPane.YAxis.Type = AxisType.Text;
+			//myPane.YAxis.TextLabels = labels;
+			//myPane.YAxis.ScaleAlign = AlignP.Inside;
+			//myPane.YAxis.ScaleFontSpec.StringAlignment = StringAlignment.Far;
 			
 			//myPane.YAxis.MaxAuto = false;
 			//myPane.YAxis.MinAuto = false;
@@ -509,10 +511,11 @@ namespace ZedGraphTest
 			//myCurve.Line.Fill = new Fill( Color.White, Color.Blue );
 			//myCurve.Line.IsVisible = false;
 			//myCurve.Symbol.IsVisible = false;
+/*
 			// First set up your main curve, etc.
 			//<your code goes here>
-									// Have ZedGraph pick the scales
-									myPane.AxisChange( CreateGraphics() );
+			// Have ZedGraph pick the scales
+			myPane.AxisChange( CreateGraphics() );
 									
 			// Now lock down the Y axis range so it does not get modified by the fake curves that follow
 			myPane.YAxis.MaxAuto = false;
@@ -523,7 +526,7 @@ namespace ZedGraphTest
 			// Make a curve for the first band
 			double[] xBand = { 100, 200 };
 			double[] yBand = { yVal, yVal };
-			CurveItem bandCurve = myPane.AddCurve( "", xBand, yBand, Color.Black );
+			LineItem bandCurve = myPane.AddCurve( "", xBand, yBand, Color.Black );
 			// Fill the curve with the band color
 			bandCurve.Line.Fill = new Fill( Color.PaleGreen );
 			// Make another band from X=50 to 78
@@ -531,9 +534,7 @@ namespace ZedGraphTest
 			xBand[1] = 500;
 			bandCurve = myPane.AddCurve( "", xBand, yBand, Color.Black );
 			bandCurve.Line.Fill = new Fill( Color.Green );
-
-
-			
+*/		
 #endif
 
 #if false	// the modified initial sample
@@ -2023,6 +2024,49 @@ namespace ZedGraphTest
 
 #endif
 
+#if false	// Frank Bergmans bug test
+			//class variable 
+			//private System.Windows.Forms.Panel m_oPlotPane; // 
+			//the pane I’m drawing on
+			//private DBGraphics memGraphics; // init in constructor
+			//private ZedGraphControl m_oControl =
+			//			new ZedGraphControl.ZedGraph.ZedGraphControl();
+
+			// in form load: 
+			//m_oMemGraphics.CreateDoubleBuffer( this.m_oPlotPane.CreateGraphics(),
+			//		this.m_oPlotPane.ClientRectangle.Width, 
+			//		this.m_oPlotPane.ClientRectangle.Height );
+
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ), "Fitness", "Iteration", "Fitness" );
+
+			myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );		
+				
+			SetSize();
+			this.TransparencyKey = Color.Empty;
+
+
+
+			//The problems occur when the user scaled to an area 
+			//where there are no data-points and new data points are 
+			//added. 
+
+			//To change the scale I use:
+
+			myPane.YAxis.MaxAuto= false;
+			myPane.YAxis.Max *= 2;
+
+			//or
+			//
+			//	m_oControl.GraphPane.YAxis.MaxAuto = false;
+			//	if (m_oControl.GraphPane.YAxis.Max != 0.0)
+			//		m_oControl.GraphPane.YAxis.Max /= 2;
+
+			//The problem does not occur, when 
+			//m_oControl.GraphPane.YAxis.MaxAuto is set to true;
+
+#endif
+
 			SetSize();
 
 			//			RectangleF myRect = myPane.CalcAxisRect( memGraphics.g );
@@ -2270,8 +2314,45 @@ namespace ZedGraphTest
 #if true
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			myPane.CurveList[0].AddPoint( 1300, 150 );
-			Invalidate();
+			double dFitness = 150;
+			double nIteration = 1300;
+			//myPane.CurveList[0].AddPoint( 1300, 94 );
+			//myPane.AxisChange( this.CreateGraphics() );
+			//Invalidate();
+			//Since the application needs only one curve here the code 
+			//for adding points:
+
+			// if a curve exists ... add a new point to that curve
+			if ( myPane.CurveList.Count > 0 )
+			{
+				dFitness = 1;
+				CurveItem oCurve  = myPane.CurveList[0];
+				oCurve.AddPoint( new PointPair( nIteration, dFitness ) );
+			}
+			// otherwise just create a new one
+			else
+			{
+				LineItem oCurve = myPane.AddCurve( "fitness",
+					new double[] { nIteration }, new double[] { dFitness },
+					Color.Blue, SymbolType.Circle);
+				oCurve.Symbol.Fill.IsVisible = true;
+				oCurve.Line.IsVisible = false;                    
+			}
+
+
+			//To display the new item afterwards I use:
+			try
+			{
+				if ( dFitness < myPane.YAxis.Max )
+				{ 
+					myPane.AxisChange( this.CreateGraphics() );
+					Invalidate();
+				}
+			}
+			catch( Exception )
+			{
+			}
+
 /*
 			CurveItem curve;
 			int	iPt;

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.10 $ $Date: 2004-12-03 13:31:28 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2004-12-09 01:41:18 $ </version>
 	public class PointPairList : CollectionBase, ICloneable
 	{
 	#region Fields
@@ -321,9 +321,10 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Return the zero-based position index of the specified <see cref="PointPair"/> in the collection.
+		/// Return the zero-based position index of the specified
+		/// <see cref="PointPair"/> in the collection.
 		/// </summary>
-		/// <param name="pt">A reference to the <see cref="PointPair"/> object that is to be found.
+		/// <param name="pt">The <see cref="PointPair"/> object that is to be found.
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="PointPair"/>, or -1 if the <see cref="PointPair"/>
 		/// is not in the list</returns>
@@ -331,6 +332,30 @@ namespace ZedGraph
 		public int IndexOf( PointPair pt )
 		{
 			return List.IndexOf( pt );
+		}
+
+		/// <summary>
+		/// Return the zero-based position index of the
+		/// <see cref="PointPair"/> with the specified label <see cref="PointPair.Tag"/>.
+		/// </summary>
+		/// <remarks>The <see cref="PointPair.Tag"/> object must be of type <see cref="String"/>
+		/// for this method to find it.</remarks>
+		/// <param name="label">The <see cref="String"/> label that is in the
+		/// <see cref="PointPair.Tag"/> attribute of the item to be found.
+		/// </param>
+		/// <returns>The zero-based index of the specified <see cref="PointPair"/>,
+		/// or -1 if the <see cref="PointPair"/> is not in the list</returns>
+		/// <seealso cref="IList.IndexOf"/>
+		public int IndexOf( string label )
+		{
+			int iPt = 0;
+			foreach ( PointPair p in this )
+			{
+				if ( p.Tag is string && String.Compare( (string) p.Tag, label, true ) == 0 )
+					return iPt;
+			}
+
+			return -1;
 		}
 
 		/// <summary>
