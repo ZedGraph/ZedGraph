@@ -1176,12 +1176,18 @@ namespace ZedGraphTest
 			myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
 			
 			myPane.XAxis.IsShowGrid = true;
-			myPane.XAxis.ScaleFontSpec.Angle = 0;
+			//myPane.XAxis.ScaleFontSpec.Angle = 90;
+			//myPane.XAxis.ScaleAlign = AlignP.Inside;
 
 			myPane.YAxis.IsShowGrid = true;
-			myPane.YAxis.ScaleFontSpec.Angle = 90;
+			//myPane.YAxis.ScaleFontSpec.Angle = 90;
 			myPane.YAxis.Max = 120;
+			//myPane.YAxis.ScaleAlign = AlignP.Center;
 
+			//myPane.Y2Axis.IsVisible = true;
+			//myPane.Y2Axis.Max = 120;
+			//myPane.Y2Axis.ScaleAlign = AlignP.Outside;
+			
 			TextItem text = new TextItem("First Prod\n21-Oct-93", 175F, 80.0F );
 			text.AlignH = AlignH.Center;
 			text.AlignV = AlignV.Bottom;

@@ -188,6 +188,36 @@ namespace ZedGraph
 	};
 	
 	/// <summary>
+	/// Enumeration type for the different proximal alignment options
+	/// </summary>
+	/// <seealso cref="FontSpec"/>
+	/// <seealso cref="Axis.ScaleAlign"/>
+	public enum AlignP
+	{
+		/// <summary>
+		/// Position the text so that its "inside" edge (the edge that is
+		/// nearest to the alignment reference point or object) is aligned.
+		/// Used by the <see cref="Axis.ScaleAlign"/> method to align text
+		/// to the axis.
+		/// </summary>
+		Inside,
+		/// <summary>
+		/// Position the text so that its center is aligned with the
+		/// reference object or point.
+		/// Used by the <see cref="Axis.ScaleAlign"/> method to align text
+		/// to the axis.
+		/// </summary>
+		Center,
+		/// <summary>
+		/// Position the text so that its right edge (the edge that is
+		/// farthest from the alignment reference point or object) is aligned.
+		/// Used by the <see cref="Axis.ScaleAlign"/> method to align text
+		/// to the axis.
+		/// </summary>
+		Outside
+	};
+	
+	/// <summary>
 	/// Enumeration type for the different vertical text alignment options
 	/// </summary>
 	/// specified X,Y location.  Used by the

@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+23-Sep-2004 (by Champion)
+    Add AlignP type, and Axis.ScaleAlign property
+    
 22-Sep-2004 (by Champion)
     Eliminate legend entries for curves with blank labels
     

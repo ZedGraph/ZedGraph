@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.0 $ $Date: 2004-09-22 02:18:07 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2004-09-24 04:51:19 $ </version>
 	abstract public class Axis
 	{
 	#region Class Fields
@@ -107,6 +107,12 @@ namespace ZedGraph
 		/// for access to this value. </summary>
 		/// <seealso cref="ScaleFormatAuto"/>
 		private		 string	scaleFormat;
+		/// <summary> Private field for the alignment of the <see cref="Axis"/> tic labels.
+		/// This fields controls whether the inside, center, or outside edges of the text labels are aligned.
+		/// Use the public property <see cref="ScaleAlign"/>
+		/// for access to this value. </summary>
+		/// <seealso cref="ScaleFormatAuto"/>
+		private		 AlignP	scaleAlign;
 		/// <summary> Private <see cref="System.Collections.ArrayList"/> field for the <see cref="Axis"/> array of text labels.
 		/// This property is only used if <see cref="Type"/> is set to
 		/// <see cref="AxisType.Text"/> </summary>
@@ -273,6 +279,11 @@ namespace ZedGraph
 			/// <see cref="Default"/> class, and cannot be changed after compilation.
 			/// </summary>
 			public static double TargetMinorYSteps = 5.0;
+			/// <summary> The default alignment of the <see cref="Axis"/> tic labels.
+			/// This value controls whether the inside, center, or outside edges of the text labels are aligned.
+			/// </summary>
+			/// <seealso cref="Axis.ScaleAlign"/>
+			public static AlignP ScaleAlign = AlignP.Center;
 			/// <summary>
 			/// The default font family for the <see cref="Axis"/> scale values
 			/// font specification <see cref="Axis.ScaleFontSpec"/>
@@ -660,6 +671,7 @@ namespace ZedGraph
 			this.title = "";
 			this.TextLabels = null;
 			this.scaleFormat = null;
+			this.scaleAlign = Default.ScaleAlign;
 			
 			this.majorUnit = DateUnit.Year;
 			this.minorUnit = DateUnit.Year;
@@ -736,6 +748,7 @@ namespace ZedGraph
 				TextLabels = null;
 
 			scaleFormat = rhs.scaleFormat;
+			scaleAlign = rhs.scaleAlign;
 
 			titleFontSpec = (FontSpec) rhs.TitleFontSpec.Clone();
 			scaleFontSpec = (FontSpec) rhs.ScaleFontSpec.Clone();
@@ -1464,6 +1477,14 @@ namespace ZedGraph
 			get { return scaleFormat; }
 			set { scaleFormat = value; this.ScaleFormatAuto = false; }
 		}
+		/// <summary> Controls the alignment of the <see cref="Axis"/> tic labels.
+		/// This property controls whether the inside, center, or outside edges of the text labels are aligned.
+		/// </summary>
+		public AlignP ScaleAlign
+		{
+			get { return scaleAlign; }
+			set { scaleAlign = value; }
+		}
 		/// <summary>
 		/// Determines whether or not the number of decimal places for value
 		/// labels <see cref="NumDec"/> is determined automatically based
@@ -1812,16 +1833,17 @@ namespace ZedGraph
 			// Account for the Axis
 			if ( this.isVisible )
 			{
-				// value text gets actual width, gap gets charHeight / 4, tic gets ticSize
+				// tic takes up 1x tic
+				// space between tic and scale label is 0.5 tic
+				// scale label is GetScaleMaxSpace()
+				// space between scale label and axis label is 0.5 tic
 				space += this.GetScaleMaxSpace( g, pane, scaleFactor ).Height +
-					/* charHeight / 4 + */ ticSize * 1.5F;
+							ticSize * 2.0F;
 		
 				// Only add space for the label if there is one
 				// Axis Title gets actual height plus 1x gap
 				if ( this.title.Length > 0 && this.isShowTitle )
 				{
-					//space += this.TitleFontSpec.MeasureString( g, this.title, scaleFactor ).Height
-					//	/* + charHeight / 2 */;
 					space += this.TitleFontSpec.BoundingBox( g, this.title, scaleFactor ).Height;
 				}
 			}
@@ -2070,8 +2092,10 @@ namespace ZedGraph
 
 			// get the Y position of the center of the axis labels
 			// (the axis itself is referenced at zero)
-			float textCenter = ticSize * 1.5F +
-				this.GetScaleMaxSpace( g, pane, scaleFactor ).Height / 2.0F;
+			float maxSpace = this.GetScaleMaxSpace( g, pane, scaleFactor ).Height;
+			
+			float textTop = ticSize * 1.5F;
+			float textCenter;
 
 			double rangeTol = ( this.maxScale - this.minScale ) * 0.00001;
 			
@@ -2121,14 +2145,23 @@ namespace ZedGraph
 					// draw the label
 					MakeLabel( i, dVal, out tmpStr );
 					
+					float height = ScaleFontSpec.BoundingBox( g, tmpStr, scaleFactor ).Height;
+					if ( this.ScaleAlign == AlignP.Center )
+						textCenter = textTop + maxSpace / 2.0F;
+					else if ( this.ScaleAlign == AlignP.Outside )
+						textCenter = textTop + maxSpace - height / 2.0F;
+					else	// inside
+						textCenter = textTop + height / 2.0F;
+					
+					
 					if ( this.IsLog )
 						this.ScaleFontSpec.DrawTenPower( g, tmpStr,
-							pixVal, 0.0F + textCenter,
+							pixVal, textCenter,
 							AlignH.Center, AlignV.Center,
 							scaleFactor );
 					else
 						this.ScaleFontSpec.Draw( g, tmpStr,
-							pixVal, 0.0F + textCenter,
+							pixVal, textCenter,
 							AlignH.Center, AlignV.Center,
 							scaleFactor );
 
@@ -2582,7 +2615,7 @@ namespace ZedGraph
 			{		
 				// Calculate the title position in screen coordinates
 				float x = ( this.maxPix - this.minPix ) / 2;
-				float y = ScaledTic( scaleFactor ) * 1.5F +
+				float y = ScaledTic( scaleFactor ) * 2.0F +
 							GetScaleMaxSpace( g, pane, scaleFactor ).Height
 							+ this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
 
