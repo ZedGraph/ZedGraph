@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+22-Oct-2004 (by Champion)
+  Add PointTrio + PointTrioList
+  Add Sum() to PointPairList
+  
 14-Oct-2004 (by Champion)
   Add Location class
   Add Legend Float mode
