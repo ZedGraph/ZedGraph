@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+11-Apr-2005 (by Martz)
+  Fix missing min/max properties on Axis proxy
+
 02-Apr-2005 (by Martz)
   Added multiple pane support to web control
 
