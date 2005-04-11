@@ -2049,9 +2049,40 @@ namespace ZedGraph
 			item.NumDec = this.NumDec;
 			item.ScaleMag = this.ScaleMag;
 			item.ScaleMagAuto = this.ScaleMagAuto;
+			item.Min = this.Min;
+			item.Max = this.Max;
 		}
 
-		#region Properties			
+		#region Properties	
+		
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Min"/>.
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public double Min
+		{
+			get 
+			{ 
+				object x = ViewState["Min"]; 
+				return (null == x) ? 0.0 : (double)x;
+			}
+			set { ViewState["Min"] = value; }
+		}
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Max"/>.
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public double Max
+		{
+			get 
+			{ 
+				object x = ViewState["Max"]; 
+				return (null == x) ? 0.0 : (double)x;
+			}
+			set { ViewState["Max"] = value; }
+		}
+
 		
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Title"/>.
