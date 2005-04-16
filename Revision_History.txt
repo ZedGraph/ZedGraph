@@ -1,11 +1,18 @@
 ZedGraph Class Library Revision History
 
+15-Apr-2005 (by Champion)
+  Fix XDate roundoff bug
+  
 11-Apr-2005 (by Martz)
   Fix missing min/max properties on Axis proxy
 
 02-Apr-2005 (by Martz)
   Added multiple pane support to web control
 
+29-Mar-2005 (by Champion) v4.0.4
+  Fix zeroline for filled curves
+  Add SetX(), SetY(), SetZ() methods to PointPairList
+  
 25-Mar-2005 (by Champion) v4.0.3
   Fix Gradient by Value for Bars
   

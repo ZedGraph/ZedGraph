@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-02-11 05:20:43 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-04-16 07:51:39 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -561,7 +561,10 @@ namespace ZedGraph
 		public static void JulianDayToCalendarDate( double jDay, out int year, out int month,
 						out int day, out int hour, out int minute, out int second )
 		{
-			double z = Math.Floor( jDay + 0.5 );
+			// add 5 thousandths of a second to the day fraction to avoid roundoff errors
+			jDay += 0.005 / SecondsPerDay;
+
+			double z = Math.Floor( jDay + 0.5);
 			double f = jDay + 0.5 - z;
 		
 			double alpha = Math.Floor( ( z - 1867216.25 ) / 36524.25 );
@@ -575,8 +578,7 @@ namespace ZedGraph
 			month = (int) ( ( E < 14.0 ) ? E - 1.0 : E - 13.0 );
 			year = (int) ( ( month > 2 ) ? C - 4716 : C - 4715 );
 		
-			// add a half-second to the time fraction to avoid roundoff errors
-			double fday =  ( jDay - 0.5 ) - Math.Floor( jDay - 0.5 ) + 0.5 / SecondsPerDay;
+			double fday =  ( jDay - 0.5 ) - Math.Floor( jDay - 0.5 );
 		
 			fday = ( fday - (long) fday ) * HoursPerDay;
 			hour = (int) fday;

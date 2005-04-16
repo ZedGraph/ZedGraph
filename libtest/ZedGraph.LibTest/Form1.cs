@@ -134,8 +134,11 @@ namespace ZedGraph.LibTest
 				"Widget Production\n(units/hour)" );
 			SetSize();
 
-			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
-			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
+			string[] ystr = { "one", "two", "three", "four", "five" };
+
+			double[] x = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+			double[] y = { 1, 2, 3, 4, 5, 4, 3, 2, 1, 2 };
+			//double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
 			double[] z = { 1, 2, 3, 4, 5, 5, 4, 3, 2, 1 };
 			PointPairList list = new PointPairList( x, y, z );
 
@@ -148,7 +151,10 @@ namespace ZedGraph.LibTest
 
 			BarItem myBar = myPane.AddBar( "My Bar", list, Color.Tomato );
 			myBar.Bar.Fill = fill;
-			myPane.ClusterScaleWidth = 75;
+			myPane.XAxis.Type = AxisType.Ordinal;
+			myPane.YAxis.Type = AxisType.Text;
+			myPane.YAxis.TextLabels = ystr;
+			//myPane.ClusterScaleWidth = 1;
 
 			myPane.AxisChange( this.CreateGraphics() );
 

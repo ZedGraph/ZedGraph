@@ -234,11 +234,12 @@ namespace ZedGraph.ControlTest
 			double x, y1, y2;
 			PointPairList list1 = new PointPairList();
 			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
 
 			for( int i = 0; i < 18; i++ )
 			{
-				//x = new XDate( -325, i, i+5, i, i*2, i*3 );
-				x = (double) i;
+				x = new XDate( 1995, i, i+5, i, i*2, i*3 );
+				//x = (double) i;
 				
 				y1 = Math.Sin( i / 9.0 * Math.PI );
 				y2 = Math.Cos( i / 9.0 * Math.PI );
@@ -253,7 +254,7 @@ namespace ZedGraph.ControlTest
 			zedGraphControl6.MasterPane.Add( (GraphPane) testPane.Clone() );
 
 			LineItem myCurve = zedGraphControl4.GraphPane.AddCurve("Sine", list1, Color.Red, SymbolType.Circle);
-			LineItem myCurve2 = zedGraphControl5.GraphPane.AddCurve("Cosine", list2, Color.Blue, SymbolType.Circle);
+			LineItem myCurve2 = zedGraphControl5.GraphPane.AddCurve("Cosine", list3, Color.Blue, SymbolType.Circle);
 			LineItem myCurve3 = zedGraphControl6.GraphPane.AddCurve("Sine", list1, Color.Blue, SymbolType.Circle);
 			LineItem myCurve4 = zedGraphControl6.GraphPane.AddCurve("Cosine", list2, Color.Red, SymbolType.Circle);
 			myCurve3.Line.StepType = StepType.ForwardStep;
@@ -265,7 +266,7 @@ namespace ZedGraph.ControlTest
 			zedGraphControl6.GraphPane.AxisBorder.IsVisible = false;
 			zedGraphControl6.GraphPane.XAxis.Type = AxisType.Date;
 			zedGraphControl6.IsShowPointValues = true;
-			zedGraphControl6.PointDateFormat = "hh:MM";
+			zedGraphControl6.PointDateFormat = "hh:MM:ss";
 			zedGraphControl6.PointValueFormat = "f4";
 			zedGraphControl4.AxisChange();
 			zedGraphControl5.AxisChange();

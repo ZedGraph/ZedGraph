@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.23 $ $Date: 2005-03-11 17:24:37 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2005-04-16 07:51:39 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -487,7 +487,7 @@ namespace ZedGraph
 				else
 				{
 					yMinVal = 0;
-					yMaxVal = 1;
+					yMaxVal = 0.01;
 				}
 			}
 		
