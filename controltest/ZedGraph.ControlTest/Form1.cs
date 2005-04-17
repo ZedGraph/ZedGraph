@@ -236,16 +236,20 @@ namespace ZedGraph.ControlTest
 			PointPairList list2 = new PointPairList();
 			PointPairList list3 = new PointPairList();
 
+			zedGraphControl4.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler( poop );
+
 			for( int i = 0; i < 18; i++ )
 			{
 				x = new XDate( 1995, i, i+5, i, i*2, i*3 );
 				//x = (double) i;
 				
-				y1 = Math.Sin( i / 9.0 * Math.PI );
+				y1 = (Math.Sin( i / 9.0 * Math.PI ) + 1.0 ) * 1000.0;
 				y2 = Math.Cos( i / 9.0 * Math.PI );
 				list1.Add(x, y1);
 				list2.Add(x, y2);
 			}
+
+			list2[0].Tag = "hello";
 
 			GraphPane testPane = new GraphPane( new RectangleF( 0, 0, 100, 100 ), "Second Test Pane", "X", "Y" );
 			testPane.AddCurve( "Another", list1, Color.Green, SymbolType.Diamond );
@@ -259,10 +263,13 @@ namespace ZedGraph.ControlTest
 			LineItem myCurve4 = zedGraphControl6.GraphPane.AddCurve("Cosine", list2, Color.Red, SymbolType.Circle);
 			myCurve3.Line.StepType = StepType.ForwardStep;
 			myCurve4.Line.StepType = StepType.RearwardStep;
+			myCurve4.Points[2].Tag = "third";
 			
-			zedGraphControl4.GraphPane.XAxis.IsReverse = true;
-			zedGraphControl4.GraphPane.YAxis.IsReverse = true;
+			//zedGraphControl4.GraphPane.XAxis.IsReverse = true;
+			//zedGraphControl4.GraphPane.YAxis.IsReverse = true;
 			//zedGraphControl4.IsShowContextMenu = false;
+			zedGraphControl4.GraphPane.YAxis.Type = AxisType.Log;
+			//zedGraphControl4.GraphPane.XAxis.Type = AxisType.Log;
 			zedGraphControl6.GraphPane.AxisBorder.IsVisible = false;
 			zedGraphControl6.GraphPane.XAxis.Type = AxisType.Date;
 			zedGraphControl6.IsShowPointValues = true;
@@ -275,6 +282,18 @@ namespace ZedGraph.ControlTest
 			SetSize();
 			
 			propertyGrid1.SelectedObject = zedGraphControl4.GraphPane;
+		}
+
+		private void poop( object sender, ContextMenu menu )
+		{
+			MenuItem menuItem;
+			int index = menu.MenuItems.Count;
+
+			menuItem = new MenuItem();
+			menuItem.Index = index++;
+			menuItem.Text = "My New Item";
+			menu.MenuItems.Add( menuItem );
+			//menuItem.Click += new System.EventHandler( this.MenuClick_Copy );
 		}
 
 		private void tabPage1_Paint(object sender, PaintEventArgs e)

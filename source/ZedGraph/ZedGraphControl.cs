@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.16 $ $Date: 2005-03-19 09:49:23 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2005-04-17 05:30:21 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -126,6 +126,25 @@ namespace ZedGraph
 		/// </summary>
 		private ZoomState	zoomState;
 
+		private double		zoomStepFraction = 0.1;
+
+		private bool		isZoomOnMouseCenter = false;
+
+		/// <summary>
+		/// A delegate that allows subscribing methods to append or modify the context menu.
+		/// </summary>
+		/// <remarks>
+		/// The context menu is built on the fly after a right mouse click.  You can add menu items
+		/// to this menu by simply modifying the <see paramref="menu"/> parameter.
+		/// </remarks>
+		public delegate void ContextMenuBuilderEventHandler( object sender, ContextMenu menu );
+		/// <summary>
+		/// Subscribe to this event to be able to modify the ZedGraph context menu.
+		/// </summary>
+		/// <seealso cref="ContextMenuBuilderEventHandler"/>
+		public event ContextMenuBuilderEventHandler ContextMenuBuilder;
+
+
 	#endregion
 
 	#region Component Designer generated code
@@ -160,7 +179,7 @@ namespace ZedGraph
 			this.MouseUp += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseUp );
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseDown );
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler( this.ZedGraphControl_KeyDown );
-
+			this.MouseWheel += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseWheel );
 		}
 	#endregion
 
@@ -333,6 +352,26 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Gets or sets the step size fraction for zooming with the mouse wheel.
+		/// A value of 0.1 will result in a 10% zoom step for each mouse wheel movement.
+		/// </summary>
+		public double ZoomStepFraction
+		{
+			get { return zoomStepFraction; }
+			set { zoomStepFraction = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a boolean value that determines if zooming with the wheel mouse
+		/// is centered on the mouse location, or centered on the existing graph.
+		/// </summary>
+		public bool IsZoomOnMouseCenter
+		{
+			get { return isZoomOnMouseCenter; }
+			set { isZoomOnMouseCenter = value; }
+		}
+
+		/// <summary>
 		/// Gets the graph pane's current image.
 		/// <seealso cref="Bitmap"/>
 		/// </summary>
@@ -464,6 +503,57 @@ namespace ZedGraph
 			}
 		}
 
+		private void ZoomScale( Axis axis, int delta, double centerVal )
+		{
+			if ( axis.IsLog )
+			{
+				double ratio = Math.Sqrt( axis.Max / axis.Min *
+					( 1 + (delta < 0 ? 1.0 : -1.0) * ZoomStepFraction ) );
+
+				if ( !this.isZoomOnMouseCenter )
+					centerVal = Math.Sqrt( axis.Max * axis.Min );
+
+				axis.Min = centerVal / ratio;
+				axis.Max = centerVal * ratio;
+			}
+			else
+			{
+				double range = ( axis.Max - axis.Min ) *
+					( 1 + (delta < 0 ? 1.0 : -1.0) * ZoomStepFraction ) / 2.0;
+
+				if ( !this.isZoomOnMouseCenter )
+					centerVal = ( axis.Max + axis.Min ) / 2.0;
+
+				axis.Min = centerVal - range;
+				axis.Max = centerVal + range;
+			}
+		}
+
+		private void ZedGraphControl_MouseWheel( object sender, MouseEventArgs e )
+		{
+			if ( this.isEnableZoom )
+			{
+				GraphPane pane = this.MasterPane.FindAxisRect( new PointF( e.X, e.Y ) );
+				if ( pane != null && this.isEnableZoom && e.Delta != 0 )
+				{
+					pane.zoomStack.Push( pane, ZoomState.StateType.Zoom );
+
+					PointF centerPoint = new PointF(e.X, e.Y);
+					double x, y, y2;
+					pane.ReverseTransform( centerPoint, out x, out y, out y2 );
+
+					ZoomScale( pane.XAxis, e.Delta, x );
+					ZoomScale( pane.YAxis, e.Delta, y );
+					ZoomScale( pane.Y2Axis, e.Delta, y2 );
+
+					Graphics g = this.CreateGraphics();
+					pane.AxisChange( g );
+					g.Dispose();
+					Refresh();
+				}
+			}
+		}
+
 		private void ZedGraphControl_MouseUp( object sender, MouseEventArgs e )
 		{
 			if ( this.dragPane != null )
@@ -516,6 +606,31 @@ namespace ZedGraph
 
 		}
 
+		private void PanScale( Axis axis, double startVal, double endVal )
+		{
+			if ( axis.Type == AxisType.Log )
+			{
+				axis.Min *= startVal/endVal;
+				axis.Max *= startVal/endVal;
+			}
+			else
+			{
+				axis.Min += startVal - endVal;
+				axis.Max += startVal - endVal;
+			}
+		}
+
+		private string MakeValueLabel( Axis axis, double val, int iPt )
+		{
+			if ( axis.IsDate )
+				return XDate.ToString( val, this.pointDateFormat );
+			else if ( axis.IsText && axis.TextLabels != null &&
+						iPt >= 0 && iPt < axis.TextLabels.Length )
+				return axis.TextLabels[iPt];
+			else
+				return val.ToString( this.pointValueFormat );
+		}
+
 		/// <summary>
 		/// private method for handling MouseMove events to display tooltips over
 		/// individual datapoints.
@@ -560,10 +675,10 @@ namespace ZedGraph
 				this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
 				this.dragPane.ReverseTransform( endPoint, out x2, out y2, out yy2 );
 
-				this.dragPane.XAxis.Min += x1 - x2;
-				this.dragPane.XAxis.Max += x1 - x2;
-				this.dragPane.YAxis.Min += y1 - y2;
-				this.dragPane.YAxis.Max += y1 - y2;
+				PanScale( this.dragPane.XAxis, x1, x2 );
+				PanScale( this.dragPane.YAxis, y1, y2 );
+				PanScale( this.dragPane.Y2Axis, yy1, yy2 );
+
 				Refresh();
 				
 				this.dragRect.Location = ((Control)sender).PointToScreen( mousePt );
@@ -596,8 +711,11 @@ namespace ZedGraph
 								this.pointToolTip.SetToolTip( this, (string) pt.Tag );
 							else
 							{
-								string xStr, yStr;
-
+								string xStr = MakeValueLabel( pane.XAxis, pt.X, iPt );
+								string yStr = MakeValueLabel(
+												curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis,
+												pt.Y, iPt );
+								/*
 								if ( pane.XAxis.IsDate )
 									xStr = XDate.ToString( pt.X, this.pointDateFormat );
 								else if ( pane.XAxis.IsText && pane.XAxis.TextLabels != null &&
@@ -615,6 +733,7 @@ namespace ZedGraph
 									yStr = yAxis.TextLabels[iPt];
 								else
 									yStr = pt.Y.ToString( this.pointValueFormat );
+								*/
 
 								this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
 
@@ -717,9 +836,17 @@ namespace ZedGraph
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
 				menuItem.Text = "Un-" + ( ( pane == null || pane.zoomStack.IsEmpty ) ?
-											"Zoom" : pane.zoomStack.Top.TypeString );
+					"Zoom" : pane.zoomStack.Top.TypeString );
 				this.contextMenu.MenuItems.Add( menuItem );
 				menuItem.Click += new EventHandler( this.MenuClick_ZoomOut );
+				if ( pane == null || pane.zoomStack.IsEmpty )
+					menuItem.Enabled = false;
+
+				menuItem = new MenuItem();
+				menuItem.Index = index++;
+				menuItem.Text = "Undo All Zoom/Pan";
+				this.contextMenu.MenuItems.Add( menuItem );
+				menuItem.Click += new EventHandler( this.MenuClick_ZoomOutAll );
 				if ( pane == null || pane.zoomStack.IsEmpty )
 					menuItem.Enabled = false;
 
@@ -730,6 +857,9 @@ namespace ZedGraph
 				menuItem.Click += new EventHandler( this.MenuClick_RestoreScale );
 				if ( pane == null )
 					menuItem.Enabled = false;
+
+				// Provide Callback for User to edit the context menu
+				this.ContextMenuBuilder( this, this.contextMenu );
 			}
 
 		}
@@ -773,20 +903,6 @@ namespace ZedGraph
 				else if ( saveDlg.FilterIndex == 5 )
 					format = ImageFormat.Bmp;
 				
-				/*
-				string fileName = saveDlg.FileName.Trim();
-				if ( fileName.EndsWith( "jpg", true, System.Globalization.CultureInfo.CurrentCulture ) ||
-						fileName.EndsWith( "jpg", true, System.Globalization.CultureInfo.CurrentCulture ) )
-					format = ImageFormat.Jpeg;
-				else if ( fileName.EndsWith( "bmp", true, System.Globalization.CultureInfo.CurrentCulture ) )
-					format = ImageFormat.Bmp;
-				else if ( fileName.EndsWith( "gif", true, System.Globalization.CultureInfo.CurrentCulture ) )
-					format = ImageFormat.Gif;
-				else if ( fileName.EndsWith( "tif", true, System.Globalization.CultureInfo.CurrentCulture ) ||
-						fileName.EndsWith( "tiff", true, System.Globalization.CultureInfo.CurrentCulture ) )
-					format = ImageFormat.Tiff;
-				*/
-
 				Stream myStream = saveDlg.OpenFile();
 				if ( myStream != null)
 				{
@@ -845,7 +961,23 @@ namespace ZedGraph
 			}
 		}
 
-	#endregion
+		/// <summary>
+		/// Handler for the "Undo All Zoom/Pan" context menu item.  Restores the scale ranges to the values
+		/// before all zoom and pan operations
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		protected void MenuClick_ZoomOutAll( System.Object sender, System.EventArgs e )
+		{
+			GraphPane pane = this.MasterPane.FindPane( this.PointToClient( Control.MousePosition ) );
+			if ( pane != null && !pane.zoomStack.IsEmpty )
+			{
+				pane.zoomStack.PopAll( pane );
+				Refresh();
+			}
+		}
+
+		#endregion
 
 	}
 }

@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.MinorStepAuto"/>,
 	/// and <see cref="Axis.StepAuto"/>.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2005-03-05 07:24:10 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2005-04-17 05:30:21 $ </version>
 	public class ScaleState
 	{
 		/// <summary>
@@ -181,7 +181,7 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2005-03-05 07:24:10 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2005-04-17 05:30:21 $ </version>
 	public class ZoomState
 	{
 		/// <summary>
@@ -281,7 +281,7 @@ namespace ZedGraph
 	/// states (of scale range settings).
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2005-03-05 07:24:10 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2005-04-17 05:30:21 $ </version>
 	public class ZoomStateStack : CollectionBase
 	{
 		/// <summary>
@@ -348,6 +348,23 @@ namespace ZedGraph
 			{
 				ZoomState state = (ZoomState) this.List[ this.List.Count - 1 ];
 				this.List.RemoveAt( this.List.Count - 1 );
+
+				state.ApplyState( pane );
+			}
+		}
+
+		/// <summary>
+		/// Pop the <see cref="ZoomState"/> entry from the bottom of the stack, and apply the properties
+		/// to the specified <see cref="GraphPane"/> object.  Clear the stack completely.
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane"/> object to which the scale range
+		/// information should be copied.</param>
+		public void PopAll( GraphPane pane )
+		{
+			if ( !this.IsEmpty )
+			{
+				ZoomState state = (ZoomState) this.List[ 0 ];
+				this.List.Clear();
 
 				state.ApplyState( pane );
 			}

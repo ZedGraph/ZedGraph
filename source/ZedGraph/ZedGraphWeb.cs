@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.24 $ $Date: 2005-04-02 23:06:12 $ </version>
+	/// <version> $Revision: 3.25 $ $Date: 2005-04-17 05:30:21 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -280,6 +280,9 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// The layout format for the compound graph.
+		/// </summary>
 		[Category("Graph Panes"),Bindable(true),NotifyParentProperty(true)]
 		public PaneLayout PaneLayout
 		{

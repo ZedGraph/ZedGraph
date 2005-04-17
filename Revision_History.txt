@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+16-Apr-2005 (by Champion)
+  Fix panning for log scales
+  Add wheel mouse zoom
+  Add Context Menu event/delegate
+  
 15-Apr-2005 (by Champion)
   Fix XDate roundoff bug
   
