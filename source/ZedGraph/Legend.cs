@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.23 $ $Date: 2005-03-01 01:27:27 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2005-04-19 04:29:37 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -470,7 +470,7 @@ namespace ZedGraph
 				// Loop for each curve in the CurveList collection
 				foreach ( CurveItem curve in tmpPane.CurveList )
 				{
-					if ( curve.Label != "" )
+					if ( curve.Label != "" && curve.IsLegendLabelVisible )
 					{
 						// Calculate the x,y (TopLeft) location of the current
 						// curve legend label

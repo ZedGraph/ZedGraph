@@ -2,6 +2,7 @@ ZedGraph Class Library Revision History
 
 18-Apr-2005 (by Champion) v4.0.7
   Fix context menu event for null case
+  Fix CurveItem.IsLegendLabelVisible
   
 16-Apr-2005 (by Champion) v4.0.6
   Fix panning for log scales

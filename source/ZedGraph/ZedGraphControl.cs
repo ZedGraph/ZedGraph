@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.18 $ $Date: 2005-04-19 04:10:49 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2005-04-19 04:29:37 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -583,6 +583,8 @@ namespace ZedGraph
 						this.dragPane.XAxis.Max = Math.Max( x1, x2 );
 						this.dragPane.YAxis.Min = Math.Min( y1, y2 );
 						this.dragPane.YAxis.Max = Math.Max( y1, y2 );
+						this.dragPane.Y2Axis.Min = Math.Min( y1, y2 );
+						this.dragPane.Y2Axis.Max = Math.Max( y1, y2 );
 
 						Graphics g = this.CreateGraphics();
 						this.dragPane.AxisChange( g );

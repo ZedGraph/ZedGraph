@@ -126,7 +126,7 @@ namespace ZedGraph.LibTest
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
-#if true
+#if false
 
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -160,7 +160,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if false
+#if true
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -180,6 +180,7 @@ namespace ZedGraph.LibTest
 			curve.Line.SmoothTension = 0.6F;
 			curve.Symbol.Fill = new Fill( Color.White );
 			curve.Symbol.Size = 10;
+			curve.IsLegendLabelVisible = false;
 			
 			//MessageBox.Show( curve.Points.InterpolateX( 450 ).ToString() );
 
@@ -189,6 +190,7 @@ namespace ZedGraph.LibTest
 			curve.Line.Width = 1.5F;
 			//curve.Line.IsSmooth = true;
 			curve.Symbol.Fill = new Fill( Color.White );
+			curve.IsLegendLabelVisible = false;
 			
 			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
 			Image image = Image.FromHbitmap( bm.GetHbitmap() );
