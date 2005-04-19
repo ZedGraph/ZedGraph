@@ -220,14 +220,7 @@ namespace ZedGraph.ControlTest
 		}
 
 		private void Form1_Load( object sender, System.EventArgs e )
-		{
-			//XDate junk = new XDate( 1, 1, 1 );
-			//junk.AddDays( -1 );
-			//int year, month, day;
-			//junk.GetDate( out year, out month, out day );
-			//MessageBox.Show( year + "/" + month + "/" + day );
-			//MessageBox.Show( junk.JulianDay + " " + junk.XLDate );
-			
+		{			
 			zedGraphControl4.GraphPane.Title = "Test Graph for Tab 2";
 			zedGraphControl5.GraphPane.Title = "Test Graph for Tab 3";
 			zedGraphControl6.GraphPane.Title = "Test Graph for Tab 1";
@@ -325,6 +318,14 @@ namespace ZedGraph.ControlTest
 
 		private void zedGraphControl4_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+			if ( zedGraphControl4.GraphPane.YAxis.Type == AxisType.Linear )
+				zedGraphControl4.GraphPane.YAxis.Type = AxisType.Log;
+			else
+				zedGraphControl4.GraphPane.YAxis.Type = AxisType.Linear;
+
+			zedGraphControl4.AxisChange();
+			Refresh();
+
 			/*
 			double rangeX = zedGraphControl4.GraphPane.XAxis.Max - zedGraphControl4.GraphPane.XAxis.Min;
 			zedGraphControl4.GraphPane.XAxis.Max -= rangeX/20.0;

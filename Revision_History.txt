@@ -1,11 +1,14 @@
 ZedGraph Class Library Revision History
 
-16-Apr-2005 (by Champion)
+18-Apr-2005 (by Champion) v4.0.7
+  Fix context menu event for null case
+  
+16-Apr-2005 (by Champion) v4.0.6
   Fix panning for log scales
   Add wheel mouse zoom
   Add Context Menu event/delegate
   
-15-Apr-2005 (by Champion)
+15-Apr-2005 (by Champion) v4.0.5
   Fix XDate roundoff bug
   
 11-Apr-2005 (by Martz)

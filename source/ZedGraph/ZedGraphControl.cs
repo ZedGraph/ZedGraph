@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.17 $ $Date: 2005-04-17 05:30:21 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2005-04-19 04:10:49 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -859,7 +859,8 @@ namespace ZedGraph
 					menuItem.Enabled = false;
 
 				// Provide Callback for User to edit the context menu
-				this.ContextMenuBuilder( this, this.contextMenu );
+				if ( this.ContextMenuBuilder != null )
+					this.ContextMenuBuilder( this, this.contextMenu );
 			}
 
 		}
