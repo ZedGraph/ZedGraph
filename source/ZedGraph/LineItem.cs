@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-03-31 23:43:00 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2005-04-20 04:18:37 $ </version>
 	[Serializable]
 	public class LineItem : CurveItem, ICloneable, ISerializable
 	{
@@ -92,7 +92,30 @@ namespace ZedGraph
 		/// the <see cref="Line"/> and <see cref="Symbol"/> properties.
 		/// </param>
 		/// <param name="symbolType">A <see cref="SymbolType"/> enum specifying the
-		/// type of symbol to use for this <see cref="LineItem"/> </param>
+		/// type of symbol to use for this <see cref="LineItem"/>.  Use <see cref="SymbolType.None"/>
+		/// to hide the symbols.</param>
+		/// <param name="lineWidth">The width (in points) to be used for the <see cref="Line"/>.  This
+		/// width is scaled based on <see cref="PaneBase.CalcScaleFactor"/>.  Use a value of zero to
+		/// hide the line (see <see cref="Line.IsVisible"/>).</param>
+		public LineItem( string label, double[] x, double[] y, Color color, SymbolType symbolType, float lineWidth )
+			: this( label, new PointPairList( x, y ), color, symbolType, lineWidth )
+		{
+		}
+
+		/// <summary>
+		/// Create a new <see cref="LineItem"/> using the specified properties.
+		/// </summary>
+		/// <param name="label">The label that will appear in the legend.</param>
+		/// <param name="x">An array of double precision values that define
+		/// the independent (X axis) values for this curve</param>
+		/// <param name="y">An array of double precision values that define
+		/// the dependent (Y axis) values for this curve</param>
+		/// <param name="color">A <see cref="Color"/> value that will be applied to
+		/// the <see cref="Line"/> and <see cref="Symbol"/> properties.
+		/// </param>
+		/// <param name="symbolType">A <see cref="SymbolType"/> enum specifying the
+		/// type of symbol to use for this <see cref="LineItem"/>.  Use <see cref="SymbolType.None"/>
+		/// to hide the symbols.</param>
 		public LineItem( string label, double[] x, double[] y, Color color, SymbolType symbolType )
 			: this( label, new PointPairList( x, y ), color, symbolType )
 		{
@@ -108,12 +131,38 @@ namespace ZedGraph
 		/// the <see cref="Line"/> and <see cref="Symbol"/> properties.
 		/// </param>
 		/// <param name="symbolType">A <see cref="SymbolType"/> enum specifying the
-		/// type of symbol to use for this <see cref="LineItem"/> </param>
-		public LineItem( string label, PointPairList points, Color color, SymbolType symbolType )
+		/// type of symbol to use for this <see cref="LineItem"/>.  Use <see cref="SymbolType.None"/>
+		/// to hide the symbols.</param>
+		/// <param name="lineWidth">The width (in points) to be used for the <see cref="Line"/>.  This
+		/// width is scaled based on <see cref="PaneBase.CalcScaleFactor"/>.  Use a value of zero to
+		/// hide the line (see <see cref="Line.IsVisible"/>).</param>
+		public LineItem( string label, PointPairList points, Color color, SymbolType symbolType, float lineWidth )
 			: base( label, points )
 		{
 			line = new Line( color );
+			if ( lineWidth == 0 )
+				line.IsVisible = false;
+			else
+				line.Width = lineWidth;
+
 			this.symbol = new Symbol( symbolType, color );
+		}
+
+		/// <summary>
+		/// Create a new <see cref="LineItem"/> using the specified properties.
+		/// </summary>
+		/// <param name="label">The label that will appear in the legend.</param>
+		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// the X and Y values for this curve</param>
+		/// <param name="color">A <see cref="Color"/> value that will be applied to
+		/// the <see cref="Line"/> and <see cref="Symbol"/> properties.
+		/// </param>
+		/// <param name="symbolType">A <see cref="SymbolType"/> enum specifying the
+		/// type of symbol to use for this <see cref="LineItem"/>.  Use <see cref="SymbolType.None"/>
+		/// to hide the symbols.</param>
+		public LineItem( string label, PointPairList points, Color color, SymbolType symbolType )
+			: this( label, points, color, symbolType, ZedGraph.Line.Default.Width )
+		{
 		}
 
 		/// <summary>

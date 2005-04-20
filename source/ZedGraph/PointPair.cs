@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-04-20 04:18:37 $ </version>
 	[Serializable]
 	public class PointPair : ISerializable
 	{
@@ -419,6 +419,27 @@ namespace ZedGraph
 	#endregion
 
 	#region Methods
+		/// <summary>
+		/// Compare two <see cref="PointPair"/> objects for equality.  To be equal, X, Y, and Z
+		/// must be exactly the same between the two objects.
+		/// </summary>
+		/// <param name="obj">The <see cref="PointPair"/> object to be compared with.</param>
+		/// <returns>true if the <see cref="PointPair"/> objects are equal, false otherwise</returns>
+		public override bool Equals( object obj )
+		{
+			PointPair rhs = obj as PointPair;
+			return this.X == rhs.X && this.Y == rhs.Y && this.Z == rhs.Z;
+		}
+
+		/// <summary>
+		/// Return the HashCode from the base class.
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode()
+		{
+			return base.GetHashCode ();
+		}
+
 		/// <summary>
 		/// Format this PointPair value using the default format.  Example:  "( 12.345, -16.876 )".
 		/// The two double values are formatted with the "g" format type.

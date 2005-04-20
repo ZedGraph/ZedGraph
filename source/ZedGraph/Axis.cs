@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.28 $ $Date: 2005-03-31 23:42:55 $ </version>
+	/// <version> $Revision: 3.29 $ $Date: 2005-04-20 04:18:36 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -103,7 +103,8 @@ namespace ZedGraph
 							isReverse,
 							isOmitMag,
 							isUseTenPower,
-							isPreventLabelOverlap;
+							isPreventLabelOverlap,
+							isScaleVisible;
 		/// <summary> Private field for the <see cref="Axis"/> type.  This can be one of the
 		/// types as defined in the <see cref="AxisType"/> enumeration.
 		/// Use the public property <see cref="Type"/>
@@ -485,6 +486,11 @@ namespace ZedGraph
 			/// </summary>
 			public static Color Color = Color.Black;
 			/// <summary>
+			/// The default value for <see cref="Axis.IsScaleVisible"/>, which determines
+			/// whether or not the scale values are displayed.
+			/// </summary>
+			public static bool IsScaleVisible = true;
+			/// <summary>
 			/// The default display mode for the <see cref="Axis"/> grid lines
 			/// (<see cref="Axis.IsShowGrid"/> property). true
 			/// to show the grid lines, false to hide them.
@@ -838,6 +844,7 @@ namespace ZedGraph
 		
 			this.minSpace = Default.MinSpace;
 			this.isVisible = true;
+			this.isScaleVisible = Default.IsScaleVisible;
 			this.isShowTitle = Default.IsShowTitle;
 			this.isShowGrid = Default.IsShowGrid;
 			this.isShowMinorGrid = Default.IsShowMinorGrid;
@@ -913,6 +920,7 @@ namespace ZedGraph
 			numDec = rhs.numDec;
 			scaleMag = rhs.scaleMag;
 			isVisible = rhs.IsVisible;
+			isScaleVisible = rhs.isScaleVisible;
 			isShowTitle = rhs.IsShowTitle;
 			isShowGrid = rhs.IsShowGrid;
 			isShowMinorGrid = rhs.IsShowMinorGrid;
@@ -969,7 +977,8 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		// Schema was changed to 2 when IsScaleVisible was added
+		public const int schema = 2;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -1051,6 +1060,9 @@ namespace ZedGraph
 
 			majorUnit = (DateUnit) info.GetValue( "majorUnit", typeof(DateUnit) );
 			minorUnit = (DateUnit) info.GetValue( "minorUnit", typeof(DateUnit) );
+
+			if ( schema > 1 )
+				isScaleVisible = info.GetBoolean( "isScaleVisible" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -1126,6 +1138,9 @@ namespace ZedGraph
 
 			info.AddValue( "majorUnit", majorUnit );
 			info.AddValue( "minorUnit", minorUnit );
+
+			// New for Schema = 2
+			info.AddValue( "isScaleVisible", isScaleVisible );
 		}
 	#endregion
 
@@ -1886,6 +1901,7 @@ namespace ZedGraph
 		/// graph, it will just be invisible to the user
 		/// </remarks>
 		/// <value>true to show the axis, false to disable all drawing of this axis</value>
+		/// <seealso cref="Axis.IsScaleVisible"/>.
 		/// <seealso cref="XAxis.Default.IsVisible"/>.
 		/// <seealso cref="YAxis.Default.IsVisible"/>.
 		/// <seealso cref="Y2Axis.Default.IsVisible"/>.
@@ -1894,6 +1910,18 @@ namespace ZedGraph
 			get { return isVisible; }
 			set { isVisible = value; }
 		}
+
+		/// <summary>
+		/// Gets or sets a property that determines whether or not the scale values will be shown.
+		/// </summary>
+		/// <value>true to show the scale values, false otherwise</value>
+		/// <seealso cref="Axis.IsVisible"/>.
+		public bool IsScaleVisible
+		{
+			get { return isScaleVisible; }
+			set { isScaleVisible = value; }
+		}
+
 		/// <summary>
 		/// Determines if the scale values are reversed for this <see cref="Axis"/>
 		/// </summary>
@@ -2540,7 +2568,7 @@ namespace ZedGraph
 				// calculate that actual shift amount at this point, because the AxisRect rect has not yet been
 				// calculated, and the cross value is determined using a transform of scale values (which
 				// rely on AxisRect).
-				if ( !IsCrossed( pane ) )
+				if ( !IsCrossed( pane ) && this.isScaleVisible )
 					space += this.GetScaleMaxSpace( g, pane, scaleFactor ).Height +
 							ticSize * 2.0F;
 		
@@ -2556,7 +2584,7 @@ namespace ZedGraph
 
 			// for the Y axes, make sure that enough space is left to fit the first
 			// and last X axis scale label
-			if ( ( ( this is YAxis ) || ( this is Y2Axis ) ) && pane.XAxis.IsVisible )
+			if ( ( ( this is YAxis ) || ( this is Y2Axis ) ) && pane.XAxis.IsVisible && pane.XAxis.IsScaleVisible )
 			{
 				// half the width of the widest item, plus a gap of 1/2 the charheight
 				float tmpSpace =
@@ -2894,7 +2922,7 @@ namespace ZedGraph
 							pixVal > this.maxPix - this.minPix - edgeTolerance  ) )
 					isOverlapZone = true;
 
-				if ( this.isVisible && !isOverlapZone )
+				if ( this.isVisible && this.isScaleVisible && !isOverlapZone )
 				{
 					// draw the label
 					MakeLabel( pane, i, dVal, out tmpStr );
@@ -3473,9 +3501,10 @@ namespace ZedGraph
 		/// <returns>The width of each bar cluster, in pixel units</returns>
 		public float GetClusterWidth( GraphPane pane )
 		{
-			return Math.Abs( this.Transform( 1.0 +
+			double basisVal = this.Min;
+			return Math.Abs( this.Transform( basisVal +
 					((this.IsOrdinal || this.IsText) ? 1.0 : pane.ClusterScaleWidth ) ) -
-					this.Transform( 1.0 ) );
+					this.Transform( basisVal ) );
 		}
 	#endregion
 	

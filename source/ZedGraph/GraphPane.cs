@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.40 $ $Date: 2005-03-21 06:15:46 $ </version>
+	/// <version> $Revision: 3.41 $ $Date: 2005-04-20 04:18:36 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1603,7 +1603,7 @@ namespace ZedGraph
 			foreach ( CurveItem curve in targetCurveList )
 			{
 				//test for pie first...if it's a pie rest of method superfluous
-				if ( curve is PieItem )
+				if ( curve is PieItem && curve.IsVisible )
 				{
 					if ( ((PieItem)curve).SlicePath.IsVisible (mousePt) )
 					{
@@ -1613,7 +1613,7 @@ namespace ZedGraph
 
 					continue;
 				}
-				else
+				else if ( curve.IsVisible )
 				{
 					if ( curve.IsY2Axis )
 					{

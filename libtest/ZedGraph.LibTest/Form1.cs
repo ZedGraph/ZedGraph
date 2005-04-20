@@ -161,6 +161,41 @@ namespace ZedGraph.LibTest
 #endif
 
 #if true
+			Random rand = new Random();
+
+			myPane = new GraphPane();
+			myPane.Title = "My Title";
+			myPane.XAxis.Title = "X Axis";
+			myPane.YAxis.Title = "Y Axis";
+			myPane.XAxis.Type = AxisType.Date;
+			myPane.ClusterScaleWidth = 0.75 / 1440.0;
+			myPane.XAxis.MinorStep = 1;
+			myPane.XAxis.MinorUnit = DateUnit.Minute;
+
+			PointPairList list1 = new PointPairList();
+			PointPairList list2 = new PointPairList();
+
+			for ( int i=0; i<80; i++ )
+			{
+				double x = new XDate( 1995, 5, 10, 12, i+1, 0 );
+				double y1 = rand.NextDouble() * 100.0;
+				double y2 = rand.NextDouble() * 100.0;
+
+				list1.Add( x, y1 );
+				list2.Add( x, y2 );
+			}
+
+			BarItem bar1 = myPane.AddBar( "Bar 1", list1, Color.Red );
+			bar1.Bar.Border.IsVisible = false;
+			bar1.Bar.Fill = new Fill( Color.Red );
+			BarItem bar2 = myPane.AddBar( "Bar 2", list2, Color.Blue );
+			bar2.Bar.Border.IsVisible = false;
+			bar2.Bar.Fill = new Fill( Color.Blue );
+
+			myPane.AxisChange( this.CreateGraphics() );
+#endif
+
+#if false
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",

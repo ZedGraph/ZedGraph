@@ -1,5 +1,13 @@
 ZedGraph Class Library Revision History
 
+19-Apr-2005 (by Champion) v4.0.8
+  Fix roundoff bug for bar width (when scale has large values like dates)
+  Add PointPairList.Equals & PointPair.Equals
+  Add AddCurve methods with lineWidth
+  Make ToolTips disappear if mouse moves away from point
+  Don't show tooltips for invisible curves
+  Add Axis.IsScaleVisible
+  
 18-Apr-2005 (by Champion) v4.0.7
   Fix context menu event for null case
   Fix CurveItem.IsLegendLabelVisible

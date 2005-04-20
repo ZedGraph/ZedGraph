@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.21 $ $Date: 2005-03-31 23:43:08 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2005-04-20 04:18:38 $ </version>
 	[Serializable]
 	public class PointPairList : CollectionPlus, ICloneable
 	{
@@ -269,23 +269,22 @@ namespace ZedGraph
 			PointPair	point = new PointPair( x, y );
 			return List.Add( point );
 		}
-/*
+
 		/// <summary>
-		/// Add a single point to the <see cref="PointPairList"/> from a single value of type double.
-		/// The value will be stored in <see cref="PointPair.X"/>, while <see cref="PointPair.Y"/>
-		/// will be set to <see cref="PointPair.Missing"/>.	Normally used to assign a value to
-		/// <see cref="PieItem.pieValue"/>.
+		/// Add a single point to the <see cref="PointPairList"/> from values of type double.
 		/// </summary>
 		/// <param name="x">The X value</param>
+		/// <param name="y">The Y value</param>
+		/// <param name="tag">The Tag value for the PointPair</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
 		/// <seealso cref="IList.Add"/>
-		public int Add( double x )
+		public int Add( double x, double y, string tag )
 		{
 			sorted = false;
-			PointPair	point = new PointPair( x, PointPair.Missing );
+			PointPair	point = new PointPair( x, y, tag );
 			return List.Add( point );
 		}
-*/
+
 		/// <summary>
 		/// Add a single point to the <see cref="PointPairList"/> from values of type double.
 		/// </summary>
@@ -299,6 +298,23 @@ namespace ZedGraph
 		{
 			sorted = false;
 			PointPair point = new PointPair( x, y, z );
+			return List.Add( point );
+		}
+
+		/// <summary>
+		/// Add a single point to the <see cref="PointPairList"/> from values of type double.
+		/// </summary>
+		/// <param name="x">The X value</param>
+		/// <param name="y">The Y value</param>
+		/// <param name="z">The Z or lower dependent axis value</param>
+		/// <param name="tag">The Tag value for the PointPair</param>
+		/// <returns>The zero-based ordinal index where the point was added
+		/// in the list.</returns>
+		/// <seealso cref="IList.Add"/>
+		public int Add( double x, double y, double z, string tag )
+		{
+			sorted = false;
+			PointPair point = new PointPair( x, y, z, tag );
 			return List.Add( point );
 		}
 
@@ -352,6 +368,38 @@ namespace ZedGraph
 			}
 
 			return -1;
+		}
+
+		/// <summary>
+		/// Compare two <see cref="PointPairList"/> objects to see if they are equal.
+		/// </summary>
+		/// <remarks>Equality is based on equal count of <see cref="PointPair"/> items, and
+		/// each individual <see cref="PointPair"/> must be equal (as per the
+		/// <see cref="PointPair.Equals"/> method.</remarks>
+		/// <param name="obj">The <see cref="PointPairList"/> to be compared with for equality.</param>
+		/// <returns>true if the <see cref="PointPairList"/> objects are equal, false otherwise.</returns>
+		public override bool Equals( object obj )
+		{
+			PointPairList rhs = obj as PointPairList;
+			if( List.Count != rhs.Count )
+				return false;
+
+			for( int i=0; i<List.Count; i++ )
+			{
+				if( !List[i].Equals(rhs[i]) )
+					return false;
+			}
+
+			return true;
+		}
+		
+		/// <summary>
+		/// Return the HashCode from the base class.
+		/// </summary>
+		/// <returns></returns>
+		public override int GetHashCode()
+		{
+			return base.GetHashCode ();
 		}
 
 		/// <summary>

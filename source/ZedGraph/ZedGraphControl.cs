@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.19 $ $Date: 2005-04-19 04:29:37 $ </version>
+	/// <version> $Revision: 3.20 $ $Date: 2005-04-20 04:18:38 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -749,6 +749,8 @@ namespace ZedGraph
 					else
 						this.pointToolTip.Active = false;
 				}
+				else
+					this.pointToolTip.Active = false;
 				
 				g.Dispose();
 			}
