@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.29 $ $Date: 2005-04-20 04:18:36 $ </version>
+	/// <version> $Revision: 3.30 $ $Date: 2005-05-06 20:23:31 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -2781,7 +2781,7 @@ namespace ZedGraph
 						nTics = (int) ( ( this.max - this.min ) * XDate.SecondsPerDay + 1.0 );
 						break;
 				}
-					}
+			}
 			else if ( this.IsLog )  // log scale
 			{
 				//iStart = (int) ( Math.Ceiling( SafeLog( this.min ) - 1.0e-12 ) );

@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.20 $ $Date: 2005-04-20 04:18:38 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2005-05-06 20:23:43 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -127,6 +127,8 @@ namespace ZedGraph
 		private ZoomState	zoomState;
 
 		private double		zoomStepFraction = 0.1;
+		private System.Windows.Forms.HScrollBar hScrollBar1;
+		private System.Windows.Forms.VScrollBar vScrollBar1;
 
 		private bool		isZoomOnMouseCenter = false;
 
@@ -155,31 +157,51 @@ namespace ZedGraph
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.pointToolTip = new System.Windows.Forms.ToolTip( this.components );
+			this.pointToolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.contextMenu = new System.Windows.Forms.ContextMenu();
-// 
-// pointToolTip
-// 
+			this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
+			this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
+			this.SuspendLayout();
+			// 
+			// pointToolTip
+			// 
 			this.pointToolTip.AutoPopDelay = 5000;
 			this.pointToolTip.InitialDelay = 500;
 			this.pointToolTip.ReshowDelay = 0;
-// 
-// contextMenu
-// 
-			//this.contextMenu.Name = "contextMenu";
-			this.contextMenu.Popup += new System.EventHandler( this.ContextMenu_Popup );
-// 
-// ZedGraphControl
-// 
+			// 
+			// contextMenu
+			// 
+			this.contextMenu.Popup += new System.EventHandler(this.ContextMenu_Popup);
+			// 
+			// hScrollBar1
+			// 
+			this.hScrollBar1.Location = new System.Drawing.Point(0, 128);
+			this.hScrollBar1.Name = "hScrollBar1";
+			this.hScrollBar1.Size = new System.Drawing.Size(128, 17);
+			this.hScrollBar1.TabIndex = 0;
+			// 
+			// vScrollBar1
+			// 
+			this.vScrollBar1.Location = new System.Drawing.Point(128, 0);
+			this.vScrollBar1.Name = "vScrollBar1";
+			this.vScrollBar1.Size = new System.Drawing.Size(17, 128);
+			this.vScrollBar1.TabIndex = 1;
+			// 
+			// ZedGraphControl
+			// 
 			this.ContextMenu = this.contextMenu;
+			this.Controls.Add(this.vScrollBar1);
+			this.Controls.Add(this.hScrollBar1);
 			this.Name = "ZedGraphControl";
-			this.Resize += new System.EventHandler( this.ChangeSize );
-			this.MouseMove += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseMove );
-			this.KeyUp += new System.Windows.Forms.KeyEventHandler( this.ZedGraphControl_KeyUp );
-			this.MouseUp += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseUp );
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseDown );
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler( this.ZedGraphControl_KeyDown );
-			this.MouseWheel += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseWheel );
+			this.Resize += new System.EventHandler(this.ChangeSize);
+			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseUp);
+			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ZedGraphControl_KeyUp);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ZedGraphControl_KeyDown);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseMove);
+			this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseWheel);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseDown);
+			this.ResumeLayout(false);
+
 		}
 	#endregion
 
@@ -444,8 +466,22 @@ namespace ZedGraph
 				if ( BeenDisposed )
 					return;
 
+				Size newSize = this.Size;
+				//if ( this.vScrollBar1.Visible )
+					newSize.Width -= this.vScrollBar1.Size.Width;
+				//if ( this.hScrollBar1.Visible )
+					newSize.Height -= this.hScrollBar1.Size.Height;
+
+				//this.vScrollBar1.Visible = true;
+
+				hScrollBar1.Location = new Point( 0, newSize.Height );
+				hScrollBar1.Size = new Size( newSize.Width, hScrollBar1.Height );
+
+				vScrollBar1.Location = new Point( newSize.Width, 0 );
+				vScrollBar1.Size = new Size( vScrollBar1.Width, newSize.Height );
+
 				Graphics g = this.CreateGraphics();
-				this.masterPane.ReSize( g, new RectangleF( 0, 0, this.Size.Width, this.Size.Height ) );
+				this.masterPane.ReSize( g, new RectangleF( 0, 0, newSize.Width, newSize.Height ) );
 				g.Dispose();
 				this.Invalidate();
 			}
