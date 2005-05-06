@@ -319,7 +319,7 @@ namespace ZedGraph
 		/// is at the right edge of the AxisRect. A value less
 		/// than zero is left of the AxisRect and a value
 		/// greater than 1.0 is right of the AxisRect.  For the Y coordinate, 0.0
-		/// is the bottom and 1.0 is the top.
+		/// is the top and 1.0 is the bottom.
 		/// </summary>
 		AxisFraction,
 		/// <summary>
@@ -329,7 +329,7 @@ namespace ZedGraph
 		/// is at the right edge of the PaneRect. A value less
 		/// than zero is left of the PaneRect and a value
 		/// greater than 1.0 is right of the PaneRect.  For the Y coordinate, 0.0
-		/// is the bottom and 1.0 is the top.  Note that
+		/// is the top and 1.0 is the bottom.  Note that
 		/// any value less than zero or greater than 1.0 will be outside
 		/// the PaneRect, and therefore clipped.
 		/// </summary>
