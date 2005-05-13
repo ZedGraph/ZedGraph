@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2005-03-31 23:43:08 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2005-05-13 23:59:39 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -274,46 +274,6 @@ namespace ZedGraph
 
 	#region Rendering Methods
 
-/*
-		/// <summary>
-		/// Draw the <see cref="Symbol"/> to the specified <see cref="Graphics"/> device
-		/// at the specified location.  This routine draws a single symbol.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="x">The x position of the center of the symbol in
-		/// pixel units</param>
-		/// <param name="y">The y position of the center of the symbol in
-		/// pixel units</param>
-		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
-		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-		/// </param>
-		/// <param name="pen">A <see cref="Pen"/> class representing the standard pen for this symbol</param>
-		/// <param name="brush">A <see cref="Brush"/> class representing a default solid brush for this symbol
-		/// If this symbol uses a <see cref="LinearGradientBrush"/>, it will be created on the fly for
-		/// each point, since it has to be scaled to the individual point coordinates.</param>
-		public void DrawSymbol( Graphics g, float x, float y, float scaleFactor,
-						Pen pen, Brush brush, int junk )
-		{
-			// Only draw if the symbol is visible
-			if (	this.isVisible &&
-					this.Type != SymbolType.None &&
-					x < 100000 && x > -100000 &&
-					y < 100000 && y > -100000 )
-			{
-				// Fill or draw the symbol as required
-				if ( this.fill.IsVisible)
-					FillPoint( g, x, y, scaleFactor, pen, brush );
-				
-				if ( this.border.IsVisible )
-					DrawPoint( g, x, y, scaleFactor, pen );
-			}
-		}
-*/
 		/// <summary>
 		/// Draw the <see cref="Symbol"/> to the specified <see cref="Graphics"/> device
 		/// at the specified location.  This routine draws a single symbol.
@@ -390,94 +350,15 @@ namespace ZedGraph
 					x < 100000 && x > -100000 &&
 					y < 100000 && y > -100000 )
 			{
-				SolidBrush	brush = new SolidBrush( this.fill.Color );
+				//SolidBrush	brush = new SolidBrush( this.fill.Color );
                 Pen pen = border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-                //Pen pen = new Pen(this.border.Color, pane.ScaledPenWidth(border.PenWidth * scaleFactor));
+				GraphicsPath path = this.MakePath( g, scaleFactor );
+				Brush brush = this.Fill.MakeBrush( path.GetBounds(), dataValue );
 
-                // Fill or draw the symbol as required
-				if ( this.fill.IsVisible )
-					FillPoint( g, x, y, scaleFactor, pen, brush, dataValue );
-				
-				if ( this.border.IsVisible )
-					DrawPoint( g, x, y, scaleFactor, pen );
+				DrawSymbol( g, x, y, path, pen, brush );
 			}
 		}
 
-		/// <summary>
-		/// Draw the <see cref="Symbol"/> (outline only) to the specified <see cref="Graphics"/>
-		/// device at the specified location.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="x">The x position of the center of the symbol in
-		/// pixel units</param>
-		/// <param name="y">The y position of the center of the symbol in
-		/// pixel units</param>
-		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
-		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.</param>
-		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
-		/// <see cref="ZedGraph.Border.PenWidth"/> for this symbol</param>
-		
-		public void DrawPoint( Graphics g, float x, float y, float scaleFactor, Pen pen )
-		{
-			float	scaledSize = (float) ( this.size * scaleFactor );
-			float	hsize = scaledSize / 2,
-				hsize1 = hsize + 1;
-			
-			switch( this.type == SymbolType.Default ? Default.Type : this.type )
-			{
-				case SymbolType.Square:
-					g.DrawLine( pen, x-hsize, y-hsize, x+hsize, y-hsize );
-					g.DrawLine( pen, x+hsize, y-hsize, x+hsize, y+hsize );
-					g.DrawLine( pen, x+hsize, y+hsize, x-hsize, y+hsize );
-					g.DrawLine( pen, x-hsize, y+hsize, x-hsize, y-hsize );
-					break;
-				case SymbolType.Diamond:
-					g.DrawLine( pen, x, y-hsize, x+hsize, y );
-					g.DrawLine( pen, x+hsize, y, x, y+hsize );
-					g.DrawLine( pen, x, y+hsize, x-hsize, y );
-					g.DrawLine( pen, x-hsize, y, x, y-hsize );
-					break;
-				case SymbolType.Triangle:
-					g.DrawLine( pen, x, y-hsize, x+hsize, y+hsize );
-					g.DrawLine( pen, x+hsize, y+hsize, x-hsize, y+hsize );
-					g.DrawLine( pen, x-hsize, y+hsize, x, y-hsize );
-					break;
-				case SymbolType.Circle:
-					g.DrawEllipse( pen, x-hsize, y-hsize, scaledSize, scaledSize );
-					break;
-				case SymbolType.XCross:
-					g.DrawLine( pen, x-hsize, y-hsize, x+hsize1, y+hsize1 );
-					g.DrawLine( pen, x+hsize, y-hsize, x-hsize1, y+hsize1 );
-					break;
-				case SymbolType.Plus:
-					g.DrawLine( pen, x, y-hsize, x, y+hsize1 );
-					g.DrawLine( pen, x-hsize, y, x+hsize1, y );
-					break;
-				case SymbolType.Star:
-					g.DrawLine( pen, x, y-hsize, x, y+hsize1 );
-					g.DrawLine( pen, x-hsize, y, x+hsize1, y );
-					g.DrawLine( pen, x-hsize, y-hsize, x+hsize1, y+hsize1 );
-					g.DrawLine( pen, x+hsize, y-hsize, x-hsize1, y+hsize1 );
-					break;
-				case SymbolType.TriangleDown:
-					g.DrawLine( pen, x, y+hsize, x+hsize, y-hsize );
-					g.DrawLine( pen, x+hsize, y-hsize, x-hsize, y-hsize );
-					g.DrawLine( pen, x-hsize, y-hsize, x, y+hsize );
-					break;
-				case SymbolType.HDash:
-					pen.Width = 1 ;
-					g.DrawLine( pen, x-hsize, y, x+hsize1, y );
-					break;
-				case SymbolType.VDash:
-					g.DrawLine( pen, x, y-hsize, x, y+hsize1 );
-					break;
-			}
-		}
 		/// <summary>
 		/// Create a <see cref="GraphicsPath"/> struct for the current symbol based on the
 		/// specified scaleFactor and assuming the symbol will be centered at position 0,0.
@@ -549,110 +430,6 @@ namespace ZedGraph
 			}
 			
 			return path;
-		}
-
-		/// <summary>
-		/// Render the filled <see cref="Symbol"/> to the specified <see cref="Graphics"/>
-		/// device at the specified location.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="x">The x position of the center of the symbol in
-		/// pixel units</param>
-		/// <param name="y">The y position of the center of the symbol in
-		/// pixel units</param>
-		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
-		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-		/// </param>		
-		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
-		/// <see cref="ZedGraph.Border.PenWidth"/> for this symbol</param>
-		/// <param name="brush">A brush with the <see cref="Color"/> attribute
-		/// for this symbol</param>
-		/// <param name="dataValue">The data value to be used for a value-based
-		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
-		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
-		public void FillPoint( Graphics g, float x, float y, float scaleFactor,
-			Pen pen, Brush brush, PointPair dataValue )
-		{
-			float	scaledSize = (float) ( this.size * scaleFactor ),
-				hsize = scaledSize / 2,
-				hsize4 = scaledSize / 3,
-				hsize41 = hsize4 + 1,
-				hsize1 = hsize + 1;
-
-			PointF[]	polyPt = new PointF[5];
-			RectangleF	rect = new RectangleF( x-hsize, y-hsize, scaledSize, scaledSize );
-			if ( this.fill.Type == FillType.Brush )
-				brush = this.fill.MakeBrush( rect, dataValue );
-			
-			switch( this.type == SymbolType.Default ? Default.Type : this.type )
-			{
-				case SymbolType.Square:
-					g.FillRectangle( brush, rect );
-					break;
-				case SymbolType.Diamond:
-					polyPt[0].X = x;
-					polyPt[0].Y = y-hsize;
-					polyPt[1].X = x+hsize;
-					polyPt[1].Y = y;
-					polyPt[2].X = x;
-					polyPt[2].Y = y+hsize;
-					polyPt[3].X = x-hsize;
-					polyPt[3].Y = y;
-					polyPt[4] = polyPt[0];
-					g.FillPolygon( brush, polyPt );
-					break;
-				case SymbolType.Triangle:
-					polyPt[0].X = x;
-					polyPt[0].Y = y-hsize;
-					polyPt[1].X = x+hsize;
-					polyPt[1].Y = y+hsize;
-					polyPt[2].X = x-hsize;
-					polyPt[2].Y = y+hsize;
-					polyPt[3] = polyPt[0];
-					g.FillPolygon( brush, polyPt );
-					break;
-				case SymbolType.Circle:
-					g.FillEllipse( brush, rect );
-					break;
-				case SymbolType.XCross:
-					g.FillRectangle( brush, x-hsize4, y-hsize4,
-						hsize4+hsize41, hsize4+hsize41 );
-					g.DrawLine( pen, x-hsize, y-hsize, x+hsize1, y+hsize1 );
-					g.DrawLine( pen, x+hsize, y-hsize, x-hsize1, y+hsize1 );
-					break;
-				case SymbolType.Plus:
-					g.FillRectangle( brush, x-hsize4, y-hsize4,
-						hsize4+hsize41, hsize4+hsize41 );
-					g.DrawLine( pen, x, y-hsize, x, y+hsize1 );
-					g.DrawLine( pen, x-hsize, y, x+hsize1, y );
-					break;
-				case SymbolType.Star:
-					g.FillRectangle( brush, x-hsize4, y-hsize4,
-						hsize4+hsize41, hsize4+hsize41 );
-					g.DrawLine( pen, x, y-hsize, x, y+hsize1 );
-					g.DrawLine( pen, x-hsize, y, x+hsize1, y );
-					g.DrawLine( pen, x-hsize, y-hsize, x+hsize1, y+hsize1 );
-					g.DrawLine( pen, x+hsize, y-hsize, x-hsize1, y+hsize1 );
-					break;
-				case SymbolType.TriangleDown:
-					polyPt[0].X = x;
-					polyPt[0].Y = y+hsize;
-					polyPt[1].X = x+hsize;
-					polyPt[1].Y = y-hsize;
-					polyPt[2].X = x-hsize;
-					polyPt[2].Y = y-hsize;
-					polyPt[3] = polyPt[0];
-					g.FillPolygon( brush, polyPt );
-					break;
-			}
-			
-			if ( this.fill.Type == FillType.Brush )
-				brush.Dispose();
 		}
 
 		/// <summary>

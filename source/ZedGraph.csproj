@@ -103,10 +103,7 @@
         </Build>
         <Files>
             <Include>
-                <File
-                    RelPath = "ModelSupport\ZedGraph\ZedGraph.txvpck"
-                    BuildAction = "None"
-                />
+                <Folder RelPath = "ModelSupport\ZedGraph\" />
                 <File
                     RelPath = "ZedGraph\ArrowItem.cs"
                     SubType = "Code"

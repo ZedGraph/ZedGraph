@@ -100,7 +100,8 @@ namespace ZedGraph.ControlTest
 			// 
 			// zedGraphControl4
 			// 
-			this.zedGraphControl4.IsEnablePan = true;
+			this.zedGraphControl4.IsEnableHPan = true;
+			this.zedGraphControl4.IsEnableVPan = true;
 			this.zedGraphControl4.IsEnableZoom = true;
 			this.zedGraphControl4.IsShowContextMenu = true;
 			this.zedGraphControl4.IsShowPointValues = false;
@@ -125,7 +126,8 @@ namespace ZedGraph.ControlTest
 			// 
 			// zedGraphControl6
 			// 
-			this.zedGraphControl6.IsEnablePan = true;
+			this.zedGraphControl6.IsEnableHPan = true;
+			this.zedGraphControl6.IsEnableVPan = true;
 			this.zedGraphControl6.IsEnableZoom = true;
 			this.zedGraphControl6.IsShowContextMenu = true;
 			this.zedGraphControl6.IsShowPointValues = false;
@@ -156,7 +158,8 @@ namespace ZedGraph.ControlTest
 			// 
 			// zedGraphControl5
 			// 
-			this.zedGraphControl5.IsEnablePan = true;
+			this.zedGraphControl5.IsEnableHPan = true;
+			this.zedGraphControl5.IsEnableVPan = true;
 			this.zedGraphControl5.IsEnableZoom = true;
 			this.zedGraphControl5.IsShowContextMenu = true;
 			this.zedGraphControl5.IsShowPointValues = false;
@@ -251,26 +254,54 @@ namespace ZedGraph.ControlTest
 			zedGraphControl6.MasterPane.Add( (GraphPane) testPane.Clone() );
 
 			LineItem myCurve = zedGraphControl4.GraphPane.AddCurve("Sine", list1, Color.Red, SymbolType.Circle);
-			LineItem myCurve2 = zedGraphControl5.GraphPane.AddCurve("Cosine", list3, Color.Blue, SymbolType.Circle);
+//			LineItem myCurve2 = zedGraphControl5.GraphPane.AddCurve("Cosine", list3, Color.Blue, SymbolType.Circle);
 			LineItem myCurve3 = zedGraphControl6.GraphPane.AddCurve("Sine", list1, Color.Blue, SymbolType.Circle);
 			LineItem myCurve4 = zedGraphControl6.GraphPane.AddCurve("Cosine", list2, Color.Red, SymbolType.Circle);
 			myCurve3.Line.StepType = StepType.ForwardStep;
 			myCurve4.Line.StepType = StepType.RearwardStep;
 			myCurve4.Points[2].Tag = "third";
 			
-			//zedGraphControl4.GraphPane.XAxis.IsReverse = true;
-			//zedGraphControl4.GraphPane.YAxis.IsReverse = true;
-			//zedGraphControl4.IsShowContextMenu = false;
 			zedGraphControl4.GraphPane.YAxis.Type = AxisType.Log;
-			//zedGraphControl4.GraphPane.XAxis.Type = AxisType.Log;
+			//zedGraphControl4.GraphPane.YAxis.IsReverse = true;
 			zedGraphControl6.GraphPane.AxisBorder.IsVisible = false;
 			zedGraphControl6.GraphPane.XAxis.Type = AxisType.Date;
 			zedGraphControl6.IsShowPointValues = true;
 			zedGraphControl6.PointDateFormat = "hh:MM:ss";
 			zedGraphControl6.PointValueFormat = "f4";
+
+			double[] xx = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+			double[] yy = { 1, 2, 3, 4, 5, 4, 3, 2, 1, 2 };
+			double[] zz = { 1, 2, 3, 4, 5, 5, 4, 3, 2, 1 };
+			PointPairList list = new PointPairList( xx, yy, zz );
+
+			Color[] colors = { Color.Red, Color.Green, Color.Blue,
+								Color.Yellow, Color.Orange };
+			Fill fill = new Fill( colors );
+			fill.Type = FillType.GradientByZ;
+			fill.RangeMin = 1;
+			fill.RangeMax = 5;
+
+			BarItem myBar = zedGraphControl5.GraphPane.AddBar( "My Bar", list, Color.Tomato );
+			myBar.Bar.Fill = fill;
+			zedGraphControl5.GraphPane.XAxis.Type = AxisType.Ordinal;
+
+			//zedGraphControl4.GraphPane.XAxis.ScaleFormat = "n1";
+			//zedGraphControl4.GraphPane.XAxis.ScaleMag = 0;
+			//zedGraphControl4.GraphPane.XAxis.Type = AxisType.Date;
+
 			zedGraphControl4.AxisChange();
 			zedGraphControl5.AxisChange();
 			zedGraphControl6.AxisChange();
+
+			zedGraphControl4.IsEnableVPan = false;
+			zedGraphControl4.IsShowHScrollBar = true;
+			zedGraphControl4.ScrollMinX = 33000;
+			zedGraphControl4.ScrollMaxX = 37000;
+
+			zedGraphControl4.IsShowVScrollBar = true;
+			zedGraphControl4.ScrollMinY = 0.1;
+			zedGraphControl4.ScrollMaxY = 1000000;
+
 
 			SetSize();
 			
@@ -287,6 +318,8 @@ namespace ZedGraph.ControlTest
 			menuItem.Text = "My New Item";
 			menu.MenuItems.Add( menuItem );
 			//menuItem.Click += new System.EventHandler( this.MenuClick_Copy );
+
+			//menu.MenuItems.RemoveAt(2);
 		}
 
 		private void tabPage1_Paint(object sender, PaintEventArgs e)
@@ -318,6 +351,7 @@ namespace ZedGraph.ControlTest
 
 		private void zedGraphControl4_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+			/*
 			if ( zedGraphControl4.GraphPane.YAxis.Type == AxisType.Linear )
 				zedGraphControl4.GraphPane.YAxis.Type = AxisType.Log;
 			else
@@ -325,6 +359,7 @@ namespace ZedGraph.ControlTest
 
 			zedGraphControl4.AxisChange();
 			Refresh();
+			*/
 
 			/*
 			double rangeX = zedGraphControl4.GraphPane.XAxis.Max - zedGraphControl4.GraphPane.XAxis.Min;

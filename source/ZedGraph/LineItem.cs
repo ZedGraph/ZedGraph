@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-04-20 04:18:37 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-05-13 23:59:39 $ </version>
 	[Serializable]
 	public class LineItem : CurveItem, ICloneable, ISerializable
 	{
@@ -96,7 +96,7 @@ namespace ZedGraph
 		/// to hide the symbols.</param>
 		/// <param name="lineWidth">The width (in points) to be used for the <see cref="Line"/>.  This
 		/// width is scaled based on <see cref="PaneBase.CalcScaleFactor"/>.  Use a value of zero to
-		/// hide the line (see <see cref="Line.IsVisible"/>).</param>
+		/// hide the line (see <see cref="ZedGraph.Line.IsVisible"/>).</param>
 		public LineItem( string label, double[] x, double[] y, Color color, SymbolType symbolType, float lineWidth )
 			: this( label, new PointPairList( x, y ), color, symbolType, lineWidth )
 		{
@@ -135,7 +135,7 @@ namespace ZedGraph
 		/// to hide the symbols.</param>
 		/// <param name="lineWidth">The width (in points) to be used for the <see cref="Line"/>.  This
 		/// width is scaled based on <see cref="PaneBase.CalcScaleFactor"/>.  Use a value of zero to
-		/// hide the line (see <see cref="Line.IsVisible"/>).</param>
+		/// hide the line (see <see cref="ZedGraph.Line.IsVisible"/>).</param>
 		public LineItem( string label, PointPairList points, Color color, SymbolType symbolType, float lineWidth )
 			: base( label, points )
 		{

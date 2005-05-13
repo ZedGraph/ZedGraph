@@ -36,13 +36,12 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.21 $ $Date: 2005-05-06 20:23:43 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2005-05-13 23:59:39 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
 		
 	#region Fields
-
 
 		/// <summary>
 		/// private variable for displaying point-by-point tooltips on
@@ -106,10 +105,17 @@ namespace ZedGraph
 		/// </summary>
 		private bool isEnableZoom = true;
 		/// <summary>
-		/// Private value that determines whether or not panning is allowed for the control.  Use the
-		/// public property <see cref="IsEnablePan"/> to access this value.
+		/// Private value that determines whether or not panning is allowed for the control in the
+		/// horizontal direction.  Use the
+		/// public property <see cref="IsEnableHPan"/> to access this value.
 		/// </summary>
-		private bool isEnablePan = true;
+		private bool isEnableHPan = true;
+		/// <summary>
+		/// Private value that determines whether or not panning is allowed for the control in the
+		/// vertical direction.  Use the
+		/// public property <see cref="IsEnableVPan"/> to access this value.
+		/// </summary>
+		private bool isEnableVPan = true;
 		
 		/// <summary>
 		/// Internal variable that stores the <see cref="GraphPane"/> reference for the Pane that is
@@ -127,8 +133,18 @@ namespace ZedGraph
 		private ZoomState	zoomState;
 
 		private double		zoomStepFraction = 0.1;
+
+		private double		scrollMinX = 0;
+		private double		scrollMaxX = 0;
+		private double		scrollMinY = 0;
+		private double		scrollMaxY = 0;
+		private bool		isShowHScrollBar = false;
+		private bool		isShowVScrollBar = false;
+
 		private System.Windows.Forms.HScrollBar hScrollBar1;
 		private System.Windows.Forms.VScrollBar vScrollBar1;
+
+		private const int	ScrollRange = 1000;
 
 		private bool		isZoomOnMouseCenter = false;
 
@@ -139,13 +155,30 @@ namespace ZedGraph
 		/// The context menu is built on the fly after a right mouse click.  You can add menu items
 		/// to this menu by simply modifying the <see paramref="menu"/> parameter.
 		/// </remarks>
+		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="menu">A reference to the <see cref="ContextMenu"/> object that contains
+		/// the context menu.</param>
 		public delegate void ContextMenuBuilderEventHandler( object sender, ContextMenu menu );
 		/// <summary>
 		/// Subscribe to this event to be able to modify the ZedGraph context menu.
 		/// </summary>
-		/// <seealso cref="ContextMenuBuilderEventHandler"/>
 		public event ContextMenuBuilderEventHandler ContextMenuBuilder;
 
+		/// <summary>
+		/// A delegate that allows notification of zoom and pan events.
+		/// </summary>
+		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="oldState">A <see cref="ZoomState"/> object that corresponds to the state of the
+		/// <see cref="GraphPane"/> before the zoom or pan event.</param>
+		/// <param name="newState">A <see cref="ZoomState"/> object that corresponds to the state of the
+		/// <see cref="GraphPane"/> after the zoom or pan event</param>
+		public delegate void ZoomEventHandler( object sender, ZoomState oldState, ZoomState newState );
+
+		/// <summary>
+		/// Subscribe to this event to be notified when the <see cref="GraphPane"/> is zoomed or panned by the user,
+		/// either via a mouse drag operation or by the context menu commands.
+		/// </summary>
+		public event ZoomEventHandler ZoomEvent;
 
 	#endregion
 
@@ -157,50 +190,53 @@ namespace ZedGraph
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.pointToolTip = new System.Windows.Forms.ToolTip(this.components);
+			this.pointToolTip = new System.Windows.Forms.ToolTip( this.components );
 			this.contextMenu = new System.Windows.Forms.ContextMenu();
 			this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
 			this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
 			this.SuspendLayout();
-			// 
-			// pointToolTip
-			// 
+// 
+// pointToolTip
+// 
 			this.pointToolTip.AutoPopDelay = 5000;
 			this.pointToolTip.InitialDelay = 500;
 			this.pointToolTip.ReshowDelay = 0;
-			// 
-			// contextMenu
-			// 
-			this.contextMenu.Popup += new System.EventHandler(this.ContextMenu_Popup);
-			// 
-			// hScrollBar1
-			// 
-			this.hScrollBar1.Location = new System.Drawing.Point(0, 128);
+// 
+// contextMenu
+// 
+			//this.contextMenu.Name = "contextMenu";
+			this.contextMenu.Popup += new System.EventHandler( this.ContextMenu_Popup );
+// 
+// hScrollBar1
+// 
+			this.hScrollBar1.Location = new System.Drawing.Point( 0, 128 );
 			this.hScrollBar1.Name = "hScrollBar1";
-			this.hScrollBar1.Size = new System.Drawing.Size(128, 17);
+			this.hScrollBar1.Size = new System.Drawing.Size( 128, 17 );
 			this.hScrollBar1.TabIndex = 0;
-			// 
-			// vScrollBar1
-			// 
-			this.vScrollBar1.Location = new System.Drawing.Point(128, 0);
+			this.hScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler( this.hScrollBar1_Scroll );
+// 
+// vScrollBar1
+// 
+			this.vScrollBar1.Location = new System.Drawing.Point( 128, 0 );
 			this.vScrollBar1.Name = "vScrollBar1";
-			this.vScrollBar1.Size = new System.Drawing.Size(17, 128);
+			this.vScrollBar1.Size = new System.Drawing.Size( 17, 128 );
 			this.vScrollBar1.TabIndex = 1;
-			// 
-			// ZedGraphControl
-			// 
+			this.vScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler( this.vScrollBar1_Scroll );
+// 
+// ZedGraphControl
+// 
 			this.ContextMenu = this.contextMenu;
-			this.Controls.Add(this.vScrollBar1);
-			this.Controls.Add(this.hScrollBar1);
+			this.Controls.Add( this.vScrollBar1 );
+			this.Controls.Add( this.hScrollBar1 );
 			this.Name = "ZedGraphControl";
-			this.Resize += new System.EventHandler(this.ChangeSize);
-			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseUp);
-			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ZedGraphControl_KeyUp);
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ZedGraphControl_KeyDown);
-			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseMove);
-			this.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseWheel);
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ZedGraphControl_MouseDown);
-			this.ResumeLayout(false);
+			this.Resize += new System.EventHandler( this.ChangeSize );
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseMove );
+			this.KeyUp += new System.Windows.Forms.KeyEventHandler( this.ZedGraphControl_KeyUp );
+			this.MouseWheel += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseWheel );
+			this.MouseUp += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseUp );
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseDown );
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler( this.ZedGraphControl_KeyDown );
+			this.ResumeLayout( false );
 
 		}
 	#endregion
@@ -325,17 +361,34 @@ namespace ZedGraph
 			set { isEnableZoom = value; }
 		}
 		/// <summary>
-		/// Gets or sets a value that determines whether or not panning is allowed for the control.
+		/// Gets or sets a value that determines whether or not panning is allowed for the control in
+		/// the horizontal direction.
 		/// </summary>
 		/// <remarks>
 		/// Panning is done by clicking the middle mouse button (or holding down the shift key
 		/// while clicking the left mouse button) inside the <see cref="ZedGraph.GraphPane.AxisRect"/> and
 		/// dragging the mouse around to shift the scale ranges as desired.
 		/// </remarks>
-		public bool IsEnablePan
+		/// <seealso cref="IsEnableVPan"/>
+		public bool IsEnableHPan
 		{
-			get { return isEnablePan; }
-			set { isEnablePan = value; }
+			get { return isEnableHPan; }
+			set { isEnableHPan = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines whether or not panning is allowed for the control in
+		/// the vertical direction.
+		/// </summary>
+		/// <remarks>
+		/// Panning is done by clicking the middle mouse button (or holding down the shift key
+		/// while clicking the left mouse button) inside the <see cref="ZedGraph.GraphPane.AxisRect"/> and
+		/// dragging the mouse around to shift the scale ranges as desired.
+		/// </remarks>
+		/// <seealso cref="IsEnableHPan"/>
+		public bool IsEnableVPan
+		{
+			get { return isEnableVPan; }
+			set { isEnableVPan = value; }
 		}
 		
 		/// <summary>
@@ -350,6 +403,101 @@ namespace ZedGraph
 		{
 			get { return isShowContextMenu; }
 			set { isShowContextMenu = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines if the horizontal scroll bar will be visible.
+		/// </summary>
+		/// <remarks>This scroll bar allows the display to be scrolled in the horizontal direction.
+		/// Another option is display panning, in which the user can move the display around by
+		/// clicking directly on it and dragging (see <see cref="IsEnableHPan"/> and <see cref="IsEnableVPan"/>).
+		/// You can control the available range of scrolling with the <see cref="ScrollMinX"/> and
+		/// <see cref="ScrollMaxX"/> properties.
+		/// </remarks>
+		/// <value>A boolean value.  true to display a horizontal scrollbar, false otherwise.</value>
+		public bool IsShowHScrollBar
+		{
+			get { return isShowHScrollBar; }
+			set { isShowHScrollBar = value; ChangeSize( this, new EventArgs() ); }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines if the vertical scroll bar will be visible.
+		/// </summary>
+		/// <remarks>This scroll bar allows the display to be scrolled in the vertical direction.
+		/// Another option is display panning, in which the user can move the display around by
+		/// clicking directly on it and dragging (see <see cref="IsEnableHPan"/> and <see cref="IsEnableVPan"/>).
+		/// You can control the available range of scrolling with the <see cref="ScrollMinY"/> and
+		/// <see cref="ScrollMaxY"/> properties.
+		/// Note that the vertical scroll bar only affects the <see cref="YAxis"/>; it has no impact on
+		/// the <see cref="Y2Axis"/>.  The panning options affect both the <see cref="YAxis"/> and
+		/// <see cref="Y2Axis"/>.
+		/// </remarks>
+		/// <value>A boolean value.  true to display a vertical scrollbar, false otherwise.</value>
+		public bool IsShowVScrollBar
+		{
+			get { return isShowVScrollBar; }
+			set { isShowVScrollBar = value; ChangeSize( this, new EventArgs() ); }
+		}
+
+		/// <summary>
+		/// The minimum value for the X axis scroll range.
+		/// </summary>
+		/// <remarks>
+		/// Effectively, the minimum endpoint of the scroll range will cause the
+		/// <see cref="Axis.Min"/> value to be set to <see cref="ScrollMinX"/>.  Note that this
+		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableHPan"/>)
+		/// is not affected by this value.
+		/// </remarks>
+		/// <value>A double value indicating the minimum axis value</value>
+		public double ScrollMinX
+		{
+			get { return scrollMinX; }
+			set { scrollMinX = value; }
+		}
+		/// <summary>
+		/// The maximum value for the X axis scroll range.
+		/// </summary>
+		/// <remarks>
+		/// Effectively, the maximum endpoint of the scroll range will cause the
+		/// <see cref="Axis.Max"/> value to be set to <see cref="ScrollMaxX"/>.  Note that this
+		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableHPan"/>)
+		/// is not affected by this value.
+		/// </remarks>
+		/// <value>A double value indicating the maximum axis value</value>
+		public double ScrollMaxX
+		{
+			get { return scrollMaxX; }
+			set { scrollMaxX = value; }
+		}
+		/// <summary>
+		/// The minimum value for the Y axis scroll range.
+		/// </summary>
+		/// <remarks>
+		/// Effectively, the minimum endpoint of the scroll range will cause the
+		/// <see cref="Axis.Min"/> value to be set to <see cref="ScrollMinY"/>.  Note that this
+		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableVPan"/>)
+		/// is not affected by this value.
+		/// </remarks>
+		/// <value>A double value indicating the minimum axis value</value>
+		public double ScrollMinY
+		{
+			get { return scrollMinY; }
+			set { scrollMinY = value; }
+		}
+		/// <summary>
+		/// The maximum value for the Y axis scroll range.
+		/// </summary>
+		/// <remarks>
+		/// Effectively, the maximum endpoint of the scroll range will cause the
+		/// <see cref="Axis.Max"/> value to be set to <see cref="ScrollMaxY"/>.  Note that this
+		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableVPan"/>)
+		/// is not affected by this value.
+		/// </remarks>
+		/// <value>A double value indicating the maximum axis value</value>
+		public double ScrollMaxY
+		{
+			get { return scrollMaxY; }
+			set { scrollMaxY = value; }
 		}
 		
 
@@ -429,6 +577,46 @@ namespace ZedGraph
 	#endregion
 
 	#region Methods
+
+		private void SetScroll( ScrollBar scrollBar, Axis axis, double scrollMin, double scrollMax )
+		{
+			int value = 0;
+			double scrollMin2;
+
+			if ( axis.IsLog )
+				scrollMin2 = scrollMax / ( axis.Max / axis.Min );
+			else
+				scrollMin2 = scrollMax - ( axis.Max - axis.Min );
+
+			if ( scrollMin >= scrollMin2 )
+			{
+				scrollBar.Enabled = false;
+				scrollBar.Value = 0;
+				scrollBar.Minimum = 0;
+				scrollBar.Maximum = 0;
+			}
+			else
+			{
+				scrollBar.Minimum = 0;
+				scrollBar.Maximum = ScrollRange + scrollBar.LargeChange - 1;
+				if ( axis.IsLog )
+					value = (int) ( ( Math.Log( axis.Min ) - Math.Log( scrollMin ) ) / ( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) * ScrollRange );
+				else
+					value = (int) ( ( axis.Min - scrollMin ) / ( scrollMin2 - scrollMin ) * ScrollRange );
+
+				if ( value < 0 )
+					value = 0;
+				else if ( value > ScrollRange )
+					value = ScrollRange;
+
+				//if ( ( axis is XAxis && axis.IsReverse ) || ( ( ! axis is XAxis ) && ! axis.IsReverse ) )
+				if ( (axis is XAxis) == axis.IsReverse )
+					value = ScrollRange - value;
+
+				scrollBar.Value = value;
+			}
+		}
+
 		/// <summary>
 		/// Called by the system to update the control on-screen
 		/// </summary>
@@ -442,6 +630,9 @@ namespace ZedGraph
 			{
 				if ( BeenDisposed )
 					return;
+
+				SetScroll( hScrollBar1, this.GraphPane.XAxis, scrollMinX, scrollMaxX );
+				SetScroll( vScrollBar1, this.GraphPane.YAxis, scrollMinY, scrollMaxY );
 
 				base.OnPaint( e );
 
@@ -468,17 +659,29 @@ namespace ZedGraph
 
 				Size newSize = this.Size;
 				//if ( this.vScrollBar1.Visible )
-					newSize.Width -= this.vScrollBar1.Size.Width;
 				//if ( this.hScrollBar1.Visible )
-					newSize.Height -= this.hScrollBar1.Size.Height;
 
 				//this.vScrollBar1.Visible = true;
 
-				hScrollBar1.Location = new Point( 0, newSize.Height );
-				hScrollBar1.Size = new Size( newSize.Width, hScrollBar1.Height );
+				if ( isShowHScrollBar )
+				{
+					hScrollBar1.Visible = true;
+					newSize.Height -= this.hScrollBar1.Size.Height;
+					hScrollBar1.Location = new Point( 0, newSize.Height );
+					hScrollBar1.Size = new Size( newSize.Width, hScrollBar1.Height );
+				}
+				else
+					hScrollBar1.Visible = false;
 
-				vScrollBar1.Location = new Point( newSize.Width, 0 );
-				vScrollBar1.Size = new Size( vScrollBar1.Width, newSize.Height );
+				if ( isShowVScrollBar )
+				{
+					vScrollBar1.Visible = true;
+					newSize.Width -= this.vScrollBar1.Size.Width;
+					vScrollBar1.Location = new Point( newSize.Width, 0 );
+					vScrollBar1.Size = new Size( vScrollBar1.Width, newSize.Height );
+				}
+				else
+					vScrollBar1.Visible = false;
 
 				Graphics g = this.CreateGraphics();
 				this.masterPane.ReSize( g, new RectangleF( 0, 0, newSize.Width, newSize.Height ) );
@@ -516,7 +719,7 @@ namespace ZedGraph
 			
 			GraphPane pane = this.MasterPane.FindAxisRect( new PointF( e.X, e.Y ) );
 			
-			if ( pane != null && this.isEnablePan &&
+			if ( pane != null && ( this.isEnableHPan || this.isEnableVPan ) &&
 					( e.Button == MouseButtons.Middle || ( e.Button == MouseButtons.Left &&
 							( Control.ModifierKeys == Keys.Shift ) ) ) )
 			{
@@ -613,14 +816,18 @@ namespace ZedGraph
 						this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
 						this.dragPane.ReverseTransform( endPoint, out x2, out y2, out yy2 );
 
-						this.dragPane.zoomStack.Push( this.dragPane, ZoomState.StateType.Zoom );
+						ZoomState oldState = this.dragPane.zoomStack.Push( this.dragPane, ZoomState.StateType.Zoom );
 
 						this.dragPane.XAxis.Min = Math.Min( x1, x2 );
 						this.dragPane.XAxis.Max = Math.Max( x1, x2 );
 						this.dragPane.YAxis.Min = Math.Min( y1, y2 );
 						this.dragPane.YAxis.Max = Math.Max( y1, y2 );
-						this.dragPane.Y2Axis.Min = Math.Min( y1, y2 );
-						this.dragPane.Y2Axis.Max = Math.Max( y1, y2 );
+						this.dragPane.Y2Axis.Min = Math.Min( yy1, yy2 );
+						this.dragPane.Y2Axis.Max = Math.Max( yy1, yy2 );
+
+						// Provide Callback to notify the user of zoom events
+						if ( this.ZoomEvent != null )
+							this.ZoomEvent( this, oldState, new ZoomState( this.dragPane, ZoomState.StateType.Zoom ) );
 
 						Graphics g = this.CreateGraphics();
 						this.dragPane.AxisChange( g );
@@ -629,10 +836,18 @@ namespace ZedGraph
 					}
 				}
 				else if ( this.isPanning )
+				{
 					// push the prior saved zoomstate, since the scale ranges have already been changed on
 					// the fly during the panning operation
 					if ( this.zoomState.IsChanged( this.dragPane ) )
+					{
 						this.dragPane.zoomStack.Push( this.zoomState );
+
+						// Provide Callback to notify the user of pan events
+						if ( this.ZoomEvent != null )
+							this.ZoomEvent( this, this.zoomState, new ZoomState( this.dragPane, ZoomState.StateType.Pan ) );
+					}
+				}
 			}
 
 			// Reset the rectangle.
@@ -713,9 +928,13 @@ namespace ZedGraph
 				this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
 				this.dragPane.ReverseTransform( endPoint, out x2, out y2, out yy2 );
 
-				PanScale( this.dragPane.XAxis, x1, x2 );
-				PanScale( this.dragPane.YAxis, y1, y2 );
-				PanScale( this.dragPane.Y2Axis, yy1, yy2 );
+				if ( this.isEnableHPan )
+					PanScale( this.dragPane.XAxis, x1, x2 );
+				if ( this.isEnableVPan )
+				{
+					PanScale( this.dragPane.YAxis, y1, y2 );
+					PanScale( this.dragPane.Y2Axis, yy1, yy2 );
+				}
 
 				Refresh();
 				
@@ -753,25 +972,6 @@ namespace ZedGraph
 								string yStr = MakeValueLabel(
 												curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis,
 												pt.Y, iPt );
-								/*
-								if ( pane.XAxis.IsDate )
-									xStr = XDate.ToString( pt.X, this.pointDateFormat );
-								else if ( pane.XAxis.IsText && pane.XAxis.TextLabels != null &&
-												iPt >= 0 && iPt < pane.XAxis.TextLabels.Length )
-									xStr = pane.XAxis.TextLabels[iPt];
-								else
-									xStr = pt.X.ToString( this.pointValueFormat );
-
-								Axis yAxis = curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis;
-									
-								if ( yAxis.IsDate )
-									yStr = XDate.ToString( pt.Y, this.pointDateFormat );
-								else if ( yAxis.IsText && yAxis.TextLabels != null &&
-												iPt >= 0 && iPt < yAxis.TextLabels.Length )
-									yStr = yAxis.TextLabels[iPt];
-								else
-									yStr = pt.Y.ToString( this.pointValueFormat );
-								*/
 
 								this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
 
@@ -800,7 +1000,7 @@ namespace ZedGraph
 		private void SetCursor( Point mousePt )
 		{
 			GraphPane pane = this.MasterPane.FindAxisRect( mousePt );
-			if ( isEnablePan && ( Control.ModifierKeys == Keys.Shift || isPanning ) &&
+			if ( ( isEnableHPan || isEnableVPan ) && ( Control.ModifierKeys == Keys.Shift || isPanning ) &&
 								( pane != null || isPanning ) )
 				Cursor.Current = Cursors.Hand;
 			else if ( isEnableZoom && ( pane != null || isZooming ) )
@@ -975,14 +1175,23 @@ namespace ZedGraph
 			GraphPane pane = this.MasterPane.FindPane( this.PointToClient( Control.MousePosition ) );
 			if ( pane != null )
 			{
+				//Go ahead and save the old zoomstates, which provides an "undo"-like capability
+				ZoomState oldState = pane.zoomStack.Push( pane, ZoomState.StateType.Zoom );
+				//ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
+
 				Graphics g = this.CreateGraphics();
 				pane.XAxis.ResetAutoScale( pane, g );
 				pane.YAxis.ResetAutoScale( pane, g );
 				pane.Y2Axis.ResetAutoScale( pane, g );
+
+				// Provide Callback to notify the user of zoom events
+				if ( this.ZoomEvent != null )
+					this.ZoomEvent( this, oldState, new ZoomState( pane, ZoomState.StateType.Zoom ) );
+
 				g.Dispose();
 				Refresh();
 
-				pane.zoomStack.Clear();
+				//pane.zoomStack.Clear();
 			}
 		}
 
@@ -997,7 +1206,13 @@ namespace ZedGraph
 			GraphPane pane = this.MasterPane.FindPane( this.PointToClient( Control.MousePosition ) );
 			if ( pane != null && !pane.zoomStack.IsEmpty )
 			{
-				pane.zoomStack.Pop( pane );
+				ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
+				ZoomState newState = pane.zoomStack.Pop( pane );
+
+				// Provide Callback to notify the user of zoom events
+				if ( this.ZoomEvent != null )
+					this.ZoomEvent( this, oldState, newState );
+
 				Refresh();
 			}
 		}
@@ -1013,12 +1228,55 @@ namespace ZedGraph
 			GraphPane pane = this.MasterPane.FindPane( this.PointToClient( Control.MousePosition ) );
 			if ( pane != null && !pane.zoomStack.IsEmpty )
 			{
-				pane.zoomStack.PopAll( pane );
+				ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
+				ZoomState newState = pane.zoomStack.PopAll( pane );
+
+				// Provide Callback to notify the user of zoom events
+				if ( this.ZoomEvent != null )
+					this.ZoomEvent( this, oldState, newState );
+
 				Refresh();
 			}
 		}
 
 		#endregion
+
+		private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
+		{
+			HandleScroll( this.GraphPane.YAxis, e.NewValue, scrollMinY, scrollMaxY, !this.GraphPane.YAxis.IsReverse );
+		}
+
+		private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
+		{
+			HandleScroll( this.GraphPane.XAxis, e.NewValue, scrollMinX, scrollMaxX, this.GraphPane.XAxis.IsReverse );
+		}
+
+		private void HandleScroll( Axis axis, int newValue, double scrollMin, double scrollMax, bool reverse )
+		{
+			if ( reverse )
+				newValue = ScrollRange - newValue;
+
+			if ( axis.IsLog )
+			{
+				double ratio = axis.Max / axis.Min;
+				double scrollMin2 = scrollMax / ratio;
+
+				double value = scrollMin * Math.Exp( (double) newValue / (double) ScrollRange * ( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) );
+				axis.Min = value;
+				axis.Max = value * ratio;
+			}
+			else
+			{
+				double delta = axis.Max - axis.Min;
+				double scrollMin2 = scrollMax - delta;
+
+				double value = scrollMin + (double) newValue / (double) ScrollRange * ( scrollMin2 - scrollMin );
+				axis.Min = value;
+				axis.Max = value + delta;
+			}
+
+			this.Invalidate();
+		}
 
 	}
 }

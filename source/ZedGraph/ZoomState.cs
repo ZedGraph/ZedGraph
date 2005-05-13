@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.MinorStepAuto"/>,
 	/// and <see cref="Axis.StepAuto"/>.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-04-17 05:30:21 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-05-13 23:59:39 $ </version>
 	public class ScaleState
 	{
 		/// <summary>
@@ -52,7 +52,7 @@ namespace ZedGraph
 		/// and <see cref="Axis.StepAuto"/>
 		/// </summary>
 		private bool	minAuto, minorStepAuto, stepAuto, maxAuto,
-						scaleFormatAuto, numDecAuto, scaleMagAuto;
+						scaleFormatAuto, scaleMagAuto;
 
 		/// <summary>
 		/// The status of <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/>
@@ -60,7 +60,7 @@ namespace ZedGraph
 		private DateUnit minorUnit, majorUnit;
 
 		private string	scaleFormat;
-		private int		numDec, scaleMag;
+		private int		scaleMag;
 
 		/// <summary>
 		/// Construct a <see cref="ScaleState"/> from the specified <see cref="Axis"/>
@@ -78,7 +78,7 @@ namespace ZedGraph
 
 			this.scaleFormat = axis.ScaleFormat;
 			this.scaleMag = axis.ScaleMag;
-			this.numDec = axis.NumDec;
+			//this.numDec = axis.NumDec;
 
 			this.minAuto = axis.MinAuto;
 			this.stepAuto = axis.StepAuto;
@@ -87,7 +87,6 @@ namespace ZedGraph
 
 			this.scaleFormatAuto = axis.ScaleFormatAuto;
 			this.scaleMagAuto = axis.ScaleMagAuto;
-			this.numDecAuto = axis.NumDecAuto;
 		}
 
 		/// <summary>
@@ -105,7 +104,6 @@ namespace ZedGraph
 
 			this.scaleFormat = rhs.scaleFormat;
 			this.scaleMag = rhs.scaleMag;
-			this.numDec = rhs.numDec;
 
 			this.minAuto = rhs.minAuto;
 			this.stepAuto = rhs.stepAuto;
@@ -114,7 +112,6 @@ namespace ZedGraph
 
 			this.scaleFormatAuto = rhs.scaleFormatAuto;
 			this.scaleMagAuto = rhs.scaleMagAuto;
-			this.numDecAuto = rhs.numDecAuto;
 		}
 
 		/// <summary>
@@ -133,7 +130,6 @@ namespace ZedGraph
 
 			axis.ScaleFormat = this.scaleFormat;
 			axis.ScaleMag = this.scaleMag;
-			axis.NumDec = this.numDec;
 
 			// The auto settings must be made after the min/step/max settings, since setting those
 			// properties actually affects the auto settings.
@@ -144,7 +140,6 @@ namespace ZedGraph
 
 			axis.ScaleFormatAuto = this.scaleFormatAuto;
 			axis.ScaleMagAuto = this.scaleMagAuto;
-			axis.NumDecAuto = this.numDecAuto;
 
 		}
 
@@ -181,7 +176,7 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-04-17 05:30:21 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-05-13 23:59:39 $ </version>
 	public class ZoomState
 	{
 		/// <summary>
@@ -281,7 +276,7 @@ namespace ZedGraph
 	/// states (of scale range settings).
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2005-04-17 05:30:21 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2005-05-13 23:59:39 $ </version>
 	public class ZoomStateStack : CollectionBase
 	{
 		/// <summary>
@@ -320,10 +315,12 @@ namespace ZedGraph
 		/// information should be copied.</param>
 		/// <param name="type">A <see cref="ZoomState.StateType"/> enumeration that indicates whether this
 		/// state is the result of a zoom or pan operation.</param>
-		public void Push( GraphPane pane, ZoomState.StateType type )
+		/// <returns>The resultant <see cref="ZoomState"/> object that was pushed on the stack.</returns>
+		public ZoomState Push( GraphPane pane, ZoomState.StateType type )
 		{
 			ZoomState state = new ZoomState( pane, type );
 			this.List.Add( state );
+			return state;
 		}
 
 		/// <summary>
@@ -331,9 +328,12 @@ namespace ZedGraph
 		/// new <see cref="ZoomState"/> entry on the stack.
 		/// </summary>
 		/// <param name="state">The <see cref="ZoomState"/> object to be placed on the stack.</param>
-		public void Push( ZoomState state )
+		/// <returns>The <see cref="ZoomState"/> object (same as the <see paramref="state"/>
+		/// parameter).</returns>
+		public ZoomState Push( ZoomState state )
 		{
 			this.List.Add( state );
+			return state;
 		}
 
 		/// <summary>
@@ -342,7 +342,10 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="pane">The <see cref="GraphPane"/> object to which the scale range
 		/// information should be copied.</param>
-		public void Pop( GraphPane pane )
+		/// <returns>The <see cref="ZoomState"/> object that was "popped" from the stack and applied
+		/// to the specified <see cref="GraphPane"/>.  null if no <see cref="ZoomState"/> was
+		/// available (the stack was empty).</returns>
+		public ZoomState Pop( GraphPane pane )
 		{
 			if ( !this.IsEmpty )
 			{
@@ -350,7 +353,10 @@ namespace ZedGraph
 				this.List.RemoveAt( this.List.Count - 1 );
 
 				state.ApplyState( pane );
+				return state;
 			}
+			else
+				return null;
 		}
 
 		/// <summary>
@@ -359,7 +365,10 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="pane">The <see cref="GraphPane"/> object to which the scale range
 		/// information should be copied.</param>
-		public void PopAll( GraphPane pane )
+		/// <returns>The <see cref="ZoomState"/> object at the bottom of the stack that was applied
+		/// to the specified <see cref="GraphPane"/>.  null if no <see cref="ZoomState"/> was
+		/// available (the stack was empty).</returns>
+		public ZoomState PopAll( GraphPane pane )
 		{
 			if ( !this.IsEmpty )
 			{
@@ -367,7 +376,11 @@ namespace ZedGraph
 				this.List.Clear();
 
 				state.ApplyState( pane );
+
+				return state;
 			}
+			else
+				return null;
 		}
 
 		/// <summary>

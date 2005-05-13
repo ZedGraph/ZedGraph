@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.30 $ $Date: 2005-05-06 20:23:31 $ </version>
+	/// <version> $Revision: 3.31 $ $Date: 2005-05-13 23:59:38 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -54,14 +54,14 @@ namespace ZedGraph
 		/// <summary> Private fields for the <see cref="Axis"/> automatic scaling modes.
 		/// Use the public properties <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
 		/// <see cref="StepAuto"/>, <see cref="MinorStepAuto"/>, <see cref="MinorStepAuto"/>,
-		/// <see cref="NumDecAuto"/>, <see cref="ScaleMagAuto"/>, , <see cref="ScaleFormatAuto"/>
+		/// <see cref="ScaleMagAuto"/>, , <see cref="ScaleFormatAuto"/>
 		/// for access to these values.
 		/// </summary>
 		protected bool		minAuto,
 							maxAuto,
 							stepAuto,
 							minorStepAuto,
-							numDecAuto,
+							//numDecAuto,
 							scaleMagAuto,
 							scaleFormatAuto,
 							crossAuto;
@@ -73,11 +73,9 @@ namespace ZedGraph
 		/// </summary>
 		private double		minGrace,
 							maxGrace;
-		/// <summary> Private fields for the <see cref="Axis"/> scale value display.
-		/// Use the public properties <see cref="NumDec"/> and <see cref="ScaleMag"/>
-		/// for access to these values. </summary>
-		private	 int		numDec,
-							scaleMag;
+		/// <summary> Private field for the <see cref="Axis"/> scale value display.
+		/// Use the public property <see cref="ScaleMag"/> for access to this value. </summary>
+		private	 int		scaleMag;
 		/// <summary> Private fields for the <see cref="Axis"/> attributes.
 		/// Use the public properties <see cref="IsVisible"/>, <see cref="IsShowGrid"/>,
 		/// <see cref="IsShowMinorGrid"/>, <see cref="IsZeroLine"/>,  <see cref="IsShowTitle"/>,
@@ -115,9 +113,7 @@ namespace ZedGraph
 		/// for access to this value. </summary>
 		protected	string	title;
 		/// <summary> Private field for the format of the <see cref="Axis"/> tic labels.
-		/// This field is only used if the <see cref="Type"/> is set to <see cref="AxisType.Date"/>.
-		/// Use the public property <see cref="ScaleFormat"/>
-		/// for access to this value. </summary>
+		/// Use the public property <see cref="ScaleFormat"/> for access to this value. </summary>
 		/// <seealso cref="ScaleFormatAuto"/>
 		private		 string	scaleFormat;
 		/// <summary> Private field for the alignment of the <see cref="Axis"/> tic labels.
@@ -571,9 +567,10 @@ namespace ZedGraph
 			/// </summary>
 			public static AxisType Type = AxisType.Linear;
 			/// <summary>
-			/// The default setting for the <see cref="Axis"/> scale date format string
-			/// (<see cref="Axis.ScaleFormat"/> property).  This value is set as per
-			/// the <see cref="XDate.ToString()"/> function.
+			/// The default setting for the <see cref="Axis"/> scale format string
+			/// (<see cref="Axis.ScaleFormat"/> property).  For numeric values, this value is
+			/// setting according to the <see cref="String.Format"/> format strings.  For date
+			/// type values, this value is set as per the <see cref="XDate.ToString()"/> function.
 			/// </summary>
 			//public static string ScaleFormat = "&dd-&mmm-&yy &hh:&nn";
 			public static string ScaleFormat = "g";
@@ -826,11 +823,11 @@ namespace ZedGraph
 			this.stepAuto = true;
 			this.minorStepAuto = true;
 			this.crossAuto = true;
-			this.numDecAuto = true;
+			//this.numDecAuto = true;
 			this.scaleMagAuto = true;
 			this.scaleFormatAuto = true;
 		
-			this.numDec = 0;
+			//this.numDec = 0;
 			this.scaleMag = 0;
 
 			this.ticSize = Default.TicSize;
@@ -910,14 +907,14 @@ namespace ZedGraph
 			stepAuto = rhs.StepAuto;
 			minorStepAuto = rhs.MinorStepAuto;
 			crossAuto = rhs.crossAuto;
-			numDecAuto = rhs.NumDecAuto;
+			//numDecAuto = rhs.NumDecAuto;
 			scaleMagAuto = rhs.ScaleMagAuto;
 			scaleFormatAuto = rhs.ScaleFormatAuto;
 
 			minGrace = rhs.MinGrace;
 			maxGrace = rhs.MaxGrace;
 
-			numDec = rhs.numDec;
+			//numDec = rhs.numDec;
 			scaleMag = rhs.scaleMag;
 			isVisible = rhs.IsVisible;
 			isScaleVisible = rhs.isScaleVisible;
@@ -1006,14 +1003,16 @@ namespace ZedGraph
 			minorStepAuto = info.GetBoolean( "minorStepAuto" );
 			crossAuto = info.GetBoolean( "crossAuto" );
 
-			numDecAuto = info.GetBoolean( "numDecAuto" );
+			// numDecAuto is now a dummy variable
+			bool numDecAuto = info.GetBoolean( "numDecAuto" );
 			scaleMagAuto = info.GetBoolean( "scaleMagAuto" );
 			scaleFormatAuto = info.GetBoolean( "scaleFormatAuto" );
 			
 			minGrace = info.GetDouble( "minGrace" );
 			maxGrace = info.GetDouble( "maxGrace" );
 
-			numDec = info.GetInt32( "numDec" );
+			// numDec is now a dummy variable
+			int numDec = info.GetInt32( "numDec" );
 			scaleMag = info.GetInt32( "scaleMag" );
 
 			isVisible = info.GetBoolean( "isVisible" );
@@ -1086,6 +1085,8 @@ namespace ZedGraph
 			info.AddValue( "minorStepAuto", minorStepAuto );
 			info.AddValue( "crossAuto", crossAuto );
 
+			// numDecAuto is now a dummy variable
+			bool numDecAuto = true;
 			info.AddValue( "numDecAuto", numDecAuto );
 			info.AddValue( "scaleMagAuto", scaleMagAuto );
 			info.AddValue( "scaleFormatAuto", scaleFormatAuto );
@@ -1093,6 +1094,8 @@ namespace ZedGraph
 			info.AddValue( "minGrace", minGrace );
 			info.AddValue( "maxGrace", maxGrace );
 
+			// numDec is now a dummy variable
+			int numDec = 0;
 			info.AddValue( "numDec", numDec );
 			info.AddValue( "scaleMag", scaleMag );
 
@@ -2041,7 +2044,7 @@ namespace ZedGraph
 		/// <seealso cref="Title"/>
 		/// <seealso cref="ScaleMag"/>
 		/// <seealso cref="ScaleFormat"/>
-		/// <seealso cref="NumDec"/>
+		// /// <seealso cref="NumDec"/>
 		public bool IsOmitMag
 		{
 			get { return isOmitMag; }
@@ -2135,7 +2138,7 @@ namespace ZedGraph
 		/// <seealso cref="ScaleMag"/>
 		/// <seealso cref="ScaleFormat"/>
 		/// <seealso cref="ScaleFontSpec"/>
-		/// <seealso cref="NumDec"/>
+		// /// <seealso cref="NumDec"/>
 		public bool ScaleFormatAuto
 		{
 			get { return scaleFormatAuto; }
@@ -2153,7 +2156,7 @@ namespace ZedGraph
 		/// <seealso cref="ScaleMag"/>
 		/// <seealso cref="ScaleFormatAuto"/>
 		/// <seealso cref="ScaleFontSpec"/>
-		/// <seealso cref="NumDec"/>
+		// /// <seealso cref="NumDec"/>
 		public string ScaleFormat
 		{
 			get { return scaleFormat; }
@@ -2170,6 +2173,7 @@ namespace ZedGraph
 			get { return scaleAlign; }
 			set { scaleAlign = value; }
 		}
+/*
 		/// <summary>
 		/// Determines whether or not the number of decimal places for value
 		/// labels <see cref="NumDec"/> is determined automatically based
@@ -2189,6 +2193,8 @@ namespace ZedGraph
 			get { return numDecAuto; }
 			set { numDecAuto = value; }
 		}
+
+
 		/// <summary>
 		/// The number of decimal places displayed for axis value labels.
 		/// </summary>
@@ -2208,6 +2214,8 @@ namespace ZedGraph
 			get { return numDec; }
 			set { numDec = value; this.numDecAuto = false; }
 		}
+*/
+		
 		/// <summary>
 		/// The magnitude multiplier for scale values.
 		/// </summary>
@@ -2226,7 +2234,7 @@ namespace ZedGraph
 		/// <seealso cref="Title"/>
 		/// <seealso cref="ScaleFormat"/>
 		/// <seealso cref="ScaleFontSpec"/>
-		/// <seealso cref="NumDec"/>
+		// /// <seealso cref="NumDec"/>
 		public int ScaleMag
 		{
 			get { return scaleMag; }
@@ -2298,7 +2306,7 @@ namespace ZedGraph
 		/// <seealso cref="StepAuto"/>
 		/// <seealso cref="ScaleMagAuto"/>
 		/// <seealso cref="ScaleFormatAuto"/>
-		/// <seealso cref="NumDecAuto"/>
+		// /// <seealso cref="NumDecAuto"/>
 		public void ResetAutoScale( GraphPane pane, Graphics g )
 		{
 			this.minAuto = true;
@@ -2307,7 +2315,7 @@ namespace ZedGraph
 			this.minorStepAuto = true;
 			this.crossAuto = true;
 			this.scaleMagAuto = true;
-			this.numDecAuto = true;
+			//this.numDecAuto = true;
 			this.scaleFormatAuto = true;
 			pane.AxisChange( g );
 		}
@@ -3160,6 +3168,9 @@ namespace ZedGraph
 		/// </param>
 		private void MakeLabel( GraphPane pane, int index, double dVal, out string label )
 		{
+			if ( this.scaleFormat == null )
+				this.scaleFormat = Default.ScaleFormat;
+
 			// draw the label
 			if ( this.IsText )
 			{
@@ -3171,8 +3182,6 @@ namespace ZedGraph
 			}
 			else if ( this.IsDate )
 			{
-				if ( this.scaleFormat == null )
-					this.scaleFormat = Default.ScaleFormat;
 				label = XDate.ToString( dVal, this.scaleFormat );
 			}
 			else if ( this.IsLog && this.isUseTenPower )
@@ -3181,30 +3190,33 @@ namespace ZedGraph
 			}
 			else if ( this.IsLog )
 			{
-				int tmpNum = 0;
-				if ( dVal < 0 )
-					tmpNum = (int) Math.Abs( dVal );
+				//int tmpNum = 0;
+				//if ( dVal < 0 )
+				//	tmpNum = (int) Math.Abs( dVal );
 					
-				string tmpStr = "{0:F*}";
-				
-				tmpStr = tmpStr.Replace("*", tmpNum.ToString("D") );
+				//string tmpStr = "{0:F*}";
+				//tmpStr = tmpStr.Replace("*", tmpNum.ToString("D") );
+
+				label = Math.Pow( 10.0, dVal ).ToString( this.scaleFormat );
 								
-				label = String.Format( tmpStr, Math.Pow( 10.0, dVal ) );
+				//label = String.Format( this.scaleFormat, Math.Pow( 10.0, dVal ) );
 			}
 			else // linear or ordinal
 			{
 				double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
 
-				string tmpStr = "{0:F*}";
-				tmpStr = tmpStr.Replace("*", this.numDec.ToString("D") );
-				label = String.Format( tmpStr, dVal / scaleMult );
+				//string tmpStr = "{0:F*}";
+				//tmpStr = tmpStr.Replace("*", this.numDec.ToString("D") );
+				//label = String.Format( this.scaleFormat, dVal / scaleMult );
 
-				if ( pane.BarType == BarType.PercentStack )															//rpk
-				{
-					if (( this is YAxis && pane.BarBase == BarBase.X  ) ||
-						( this is XAxis && pane.BarBase == BarBase.Y ) )
-						label = label + "%" ;
-				}
+				label = (dVal / scaleMult).ToString( this.scaleFormat );
+
+				//if ( pane.BarType == BarType.PercentStack )															//rpk
+				//{
+				//	if (( this is YAxis && pane.BarBase == BarBase.X  ) ||
+				//		( this is XAxis && pane.BarBase == BarBase.Y ) )
+				//		label = label + "%" ;
+				//}
 			}
 		}
 
@@ -3264,7 +3276,7 @@ namespace ZedGraph
 					
 					double	dVal = first;
 					float	pixVal;
-                    Pen pen = new Pen(this.color, pane.ScaledPenWidth(ticPenWidth, scaleFactor));
+                    Pen		pen = new Pen(this.color, pane.ScaledPenWidth(ticPenWidth, scaleFactor));
                     Pen		minorGridPen = new Pen( this.minorGridColor,
                                     pane.ScaledPenWidth(minorGridPenWidth, scaleFactor));
 
@@ -3288,8 +3300,8 @@ namespace ZedGraph
 							majorVal = CalcMajorTicValue( baseVal, ++majorTic );
 						
 						// Make sure that the current value does not match up with a major tic
-						if ( ( Math.Abs(dVal) < 1e-20 && Math.Abs( dVal - majorVal ) > 1e-20 ) ||
-							( Math.Abs(dVal) > 1e-20 && Math.Abs( (dVal - majorVal) / dVal ) > 1e-10 ) &&
+						if ( ( ( Math.Abs(dVal) < 1e-20 && Math.Abs( dVal - majorVal ) > 1e-20 ) ||
+							( Math.Abs(dVal) > 1e-20 && Math.Abs( (dVal - majorVal) / dVal ) > 1e-10 ) ) &&
 							( dVal >= first && dVal <= last ) )
 						{
 							pixVal = this.LocalTransform( dVal );
@@ -3530,7 +3542,8 @@ namespace ZedGraph
 		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
 		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
 		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="NumDec"/> is set to the number of decimal places to display (if <see cref="NumDecAuto"/> = true)</para>
+		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
+		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="minVal">The minimum value of the data range for setting this
 		/// <see cref="Axis"/> scale range</param>
@@ -3625,7 +3638,8 @@ namespace ZedGraph
 		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
 		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
 		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="NumDec"/> is set to the number of decimal places to display (if <see cref="NumDecAuto"/> = true)</para>
+		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
+		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
 		/// associated with this <see cref="Axis"/></param>
@@ -3698,7 +3712,7 @@ namespace ZedGraph
 		
 			if ( this.minorStepAuto )
 				this.minorStep = 1;
-			this.numDec = 0;
+			//this.numDec = 0;
 			this.scaleMag = 0;
 		}
 		
@@ -3786,7 +3800,8 @@ namespace ZedGraph
 		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
 		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
 		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="NumDec"/> is set to the number of decimal places to display (if <see cref="NumDecAuto"/> = true)</para>
+		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
+		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
 		/// associated with this <see cref="Axis"/></param>
@@ -3871,14 +3886,15 @@ namespace ZedGraph
 		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
 		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
 		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="NumDec"/> is set to the number of decimal places to display (if <see cref="NumDecAuto"/> = true)</para>
+		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
+		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <seealso cref="PickScale"/>
 		/// <seealso cref="AxisType.Log"/>
 		public void PickLogScale()
 		{
 			this.scaleMag = 0;		// Never use a magnitude shift for log scales
-			this.numDec = 0;		// The number of decimal places to display is not used
+			//this.numDec = 0;		// The number of decimal places to display is not used
 	
 			// Check for bad data range
 			if ( this.min <= 0.0 && this.max <= 0.0 )
@@ -3939,7 +3955,8 @@ namespace ZedGraph
 		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
 		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
 		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="NumDec"/> is set to the number of decimal places to display (if <see cref="NumDecAuto"/> = true)</para>
+		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
+		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
 		/// associated with this <see cref="Axis"/></param>
@@ -3996,7 +4013,7 @@ namespace ZedGraph
 				this.max = CalcEvenStepDate( this.max, 1 );
 
 			this.scaleMag = 0;		// Never use a magnitude shift for date scales
-			this.numDec = 0;		// The number of decimal places to display is not used
+			//this.numDec = 0;		// The number of decimal places to display is not used
 	
 		}
 
@@ -4022,7 +4039,8 @@ namespace ZedGraph
 		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
 		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
 		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="NumDec"/> is set to the number of decimal places to display (if <see cref="NumDecAuto"/> = true)</para>
+		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
+		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
 		/// associated with this <see cref="Axis"/></param>
@@ -4117,12 +4135,21 @@ namespace ZedGraph
 			}
 			
 			// Calculate the appropriate number of dec places to display if required
+			if ( this.scaleFormatAuto )
+			{
+				int numDec = 0 - (int) ( Math.Floor( Math.Log10( this.step ) ) - this.scaleMag );
+				if ( numDec < 0 )
+					numDec = 0;
+				this.scaleFormat = "f" + numDec.ToString();
+			}
+/*
 			if ( this.numDecAuto )
 			{
 				this.numDec = 0 - (int) ( Math.Floor( Math.Log10( this.step ) ) - this.scaleMag );
 				if ( this.numDec < 0 )
 					this.numDec = 0;
 			}
+*/
 		}
 
 		/// <summary>

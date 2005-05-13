@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.18 $ $Date: 2005-03-25 16:19:56 $ </version>
+   /// <version> $Revision: 3.19 $ $Date: 2005-05-13 23:59:38 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -251,6 +251,23 @@ namespace ZedGraph
 				right = left;
 				left = junk;
 			}
+
+			if ( top < -10000 )
+				top = -10000;
+			else if ( top > 10000 )
+				top = 10000;
+			if ( left < -10000 )
+				left = -10000;
+			else if ( left > 10000 )
+				left = 10000;
+			if ( right < -10000 )
+				right = -10000;
+			else if ( right > 10000 )
+				right = 10000;
+			if ( bottom < -10000 )
+				bottom = -10000;
+			else if ( bottom > 10000 )
+				bottom = 10000;
 
 			// Make a rectangle for the bar and draw it
 			RectangleF rect = new RectangleF( left, top, right - left, bottom - top );

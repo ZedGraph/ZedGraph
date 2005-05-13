@@ -1,0 +1,51 @@
+TODO for ZedGraph:
+
+Multiple Y axes (add Y3, Y4, etc.)
+
+PolyItem for polygons, not necessarily closed.
+
+Add a drawing tool to the usercontrol that lets you add polyitems via the mouse.
+Also add the capability to select items for deletion, etc.
+
+
+ToolTips:
+When I have 'show point values' turned on for a graph with multiple
+line items point values are shown whether a line item is visible or
+not. I guess the logic does not check whether the line item is visible
+hence a minor issue.
+
+Publish/Subscribe:
+The bigger things I am looking forward to is some publish/subsribe
+mechanism (to notify interested parties of events taking place such as
+zoom/unzoom, pan/unpan, x/y min/max changed, scroll bars (to stabilize
+the panning).
+
+crosshairs:
+Another feature would be a cross of a horizontal and vertical line
+rendered in some color from x/y min/max respectively. The cross would
+be movable with the mouse that drags the point where the lines cross.
+It would then provide the coordinates of the cross preferable by means
+of a notification as well as a 'show point value' like way. Such a
+cross could be used to know the location and values of items on that
+location if any. Another use for such a cross is for defining a
+quadrant cut to zoom to or to create a rectangle by selecting two
+locations in this manner, the latter is an alternative way of creating
+a zoom rectangle with the mouse as currently exists and a allows for a
+bit more precision).
+Sometimes these lines are called 'hair lines'. With two of these lines
+you can select a first point in 2d space and after that select another
+point to create a rectangle. Sometimes a single point defined this way
+is all that's needed, sometimes two.
+
+Extensible menu:
+And finally, are the popup menu's extensible, i.e. when right-clicking
+on a graph a menu pops up, can I add my own commands to that menu?
+
+Scrollbars:
+Given the recently added panning feature, a logical addition to the control would be to use scroll bars as an alternative to panning by dragging (but dragging and scrolling would keep one another in sync of course so alternative does not equal an exclusive or). Scroll bars would give a clue as to the position (where does the thumb start?) and the relative amount (the width of the thumb) of the view shown (the view being defined as per example the subrange [1067..7528] of range [0..1000000]).
+Just a thought.
+
+More Symbol Types:
+
+Line Segment coloration by X/Y/Z
+

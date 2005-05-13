@@ -2045,8 +2045,8 @@ namespace ZedGraph
 			item.ScaleFormatAuto = this.ScaleFormatAuto;
 			item.ScaleFormat = this.ScaleFormat;
 			item.ScaleAlign = this.ScaleAlign;
-			item.NumDecAuto = this.NumDecAuto;
-			item.NumDec = this.NumDec;
+			//item.NumDecAuto = this.NumDecAuto;
+			//item.NumDec = this.NumDec;
 			item.ScaleMag = this.ScaleMag;
 			item.ScaleMagAuto = this.ScaleMagAuto;
 			item.Min = this.Min;
@@ -2832,7 +2832,7 @@ namespace ZedGraph
 			}
 			set { ViewState["ScaleAlign"] = value; }
 		}
-
+/*
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.NumDecAuto"/>.
 		/// </summary>
@@ -2869,7 +2869,7 @@ namespace ZedGraph
 			}
 			set { ViewState["NumDec"] = value; ViewState["NumDecAuto"] = false; }
 		}
-
+*/
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.ScaleMag"/>.
 		/// </summary>

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-04-20 04:18:37 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2005-05-13 23:59:39 $ </version>
 	[Serializable]
 	public class PointPair : ISerializable
 	{
@@ -489,6 +489,42 @@ namespace ZedGraph
 					", " + this.Y.ToString( format ) + 
 					( isShowZ ? ( ", " + this.Z.ToString( format ) ) : "" )
 					+ " )";
+		}
+
+		/// <summary>
+		/// Format this PointPair value using different general format strings for the X and Y values.
+		/// Example:  a format string of "e2" would give "( 1.23e+001, -1.69e+001 )".
+		/// The Z value is not displayed (see <see cref="ToString( string, string, string )"/>).
+		/// </summary>
+		/// <param name="formatX">A format string that will be used to format the X
+		/// double type value (see <see cref="System.Double.ToString()"/>).</param>
+		/// <param name="formatY">A format string that will be used to format the Y
+		/// double type value (see <see cref="System.Double.ToString()"/>).</param>
+		/// <returns>A string representation of the PointPair</returns>
+		public string ToString( string formatX, string formatY )
+		{
+			return "( " + this.X.ToString( formatX ) +
+					", " + this.Y.ToString( formatY ) + 
+					" )";
+		}
+
+		/// <summary>
+		/// Format this PointPair value using different general format strings for the X, Y, and Z values.
+		/// Example:  a format string of "e2" would give "( 1.23e+001, -1.69e+001 )".
+		/// </summary>
+		/// <param name="formatX">A format string that will be used to format the X
+		/// double type value (see <see cref="System.Double.ToString()"/>).</param>
+		/// <param name="formatY">A format string that will be used to format the Y
+		/// double type value (see <see cref="System.Double.ToString()"/>).</param>
+		/// <param name="formatZ">A format string that will be used to format the Z
+		/// double type value (see <see cref="System.Double.ToString()"/>).</param>
+		/// <returns>A string representation of the PointPair</returns>
+		public string ToString( string formatX, string formatY, string formatZ )
+		{
+			return "( " + this.X.ToString( formatX ) +
+					", " + this.Y.ToString( formatY ) + 
+					", " + this.Z.ToString( formatZ ) + 
+					" )";
 		}
 	#endregion
 	}

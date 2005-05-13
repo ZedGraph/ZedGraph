@@ -48,6 +48,7 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionItems) = postSolution
 		Revision_History.txt = Revision_History.txt
+		ToDo.txt = ToDo.txt
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
