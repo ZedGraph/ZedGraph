@@ -160,7 +160,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true
+#if false
 			Random rand = new Random();
 
 			myPane = new GraphPane();
@@ -195,7 +195,7 @@ namespace ZedGraph.LibTest
 			myPane.AxisChange( this.CreateGraphics() );
 #endif
 
-#if false
+#if true
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -215,7 +215,7 @@ namespace ZedGraph.LibTest
 			curve.Line.SmoothTension = 0.6F;
 			curve.Symbol.Fill = new Fill( Color.White );
 			curve.Symbol.Size = 10;
-			curve.IsLegendLabelVisible = false;
+			//curve.IsLegendLabelVisible = false;
 			
 			//MessageBox.Show( curve.Points.InterpolateX( 450 ).ToString() );
 
@@ -225,7 +225,7 @@ namespace ZedGraph.LibTest
 			curve.Line.Width = 1.5F;
 			//curve.Line.IsSmooth = true;
 			curve.Symbol.Fill = new Fill( Color.White );
-			curve.IsLegendLabelVisible = false;
+			//curve.IsLegendLabelVisible = false;
 			
 			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
 			Image image = Image.FromHbitmap( bm.GetHbitmap() );
@@ -242,6 +242,7 @@ namespace ZedGraph.LibTest
 			bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown );
 			myPane.ClusterScaleWidth = 100;
 			myPane.BarType = BarType.Stack;
+			bar.IsY2Axis = true;
 			//curve.Bar.Fill = new Fill( Color.Blue );
 			//curve.Symbol.Size = 12;
 
@@ -251,6 +252,7 @@ namespace ZedGraph.LibTest
 			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
 			bar.Bar.Border.IsVisible = false;
 			myPane.ClusterScaleWidth = 100;
+			bar.IsY2Axis = true;
 			//Brush brush = new HatchBrush( HatchStyle.Cross, Color.AliceBlue, Color.Red );
 			//GraphicsPath path = new GraphicsPath();
 			//path.AddLine( 10, 10, 20, 20 );
@@ -294,6 +296,8 @@ namespace ZedGraph.LibTest
 			//myPane.Y2Axis.Cross = 50;
 			//myPane.Y2Axis.Max = 120;
 			//myPane.Y2Axis.ScaleAlign = AlignP.Outside;
+			myPane.Y2Axis.IsVisible = true;
+			myPane.Y2Axis.Max = 80;
 			
 			TextItem text = new TextItem("First Prod\n21-Oct-93", 175F, 80.0F );
 			text.Location.AlignH = AlignH.Center;
@@ -805,21 +809,18 @@ namespace ZedGraph.LibTest
 			
 			//showTicks = true;
 			//Invalidate();
-			/*			
-						if ( myText != null )
-						{
-							CurveItem curve;
-							int		iPt;
-							if ( myPane.FindNearestPoint( new PointF( e.X, e.Y ), out curve, out iPt ) )
-								myText.Text = String.Format( "label = {0}  X = {1}",
-									curve.Label, curve.Points[iPt].ToString("e2") );
-							else
-								myText.Text = "none";
-				
-							if ( curve is LineItem )
-								((LineItem) curve).Line.IsVisible = false;
-							Invalidate();
-						}
+
+			CurveItem curve;
+			int		iPt;
+			if ( myPane.FindNearestPoint( new PointF( e.X, e.Y ), out curve, out iPt ) )
+			{
+				MessageBox.Show( curve.Label + ": " + curve[iPt].ToString() );
+			}
+			/*
+				myText.Text = String.Format( "label = {0}  X = {1}",
+					curve.Label, curve.Points[iPt].ToString("e2") );
+			else
+				myText.Text = "none";
 			*/
 			//DoPrint();
 			CopyToPNG( master );

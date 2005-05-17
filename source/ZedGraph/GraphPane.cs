@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.41 $ $Date: 2005-04-20 04:18:36 $ </version>
+	/// <version> $Revision: 3.42 $ $Date: 2005-05-17 04:24:16 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1643,20 +1643,20 @@ namespace ZedGraph
 					{
 						for ( int iPt=0; iPt<curve.NPts; iPt++ )
 						{
+							// xVal is the user scale X value of the current point
 							if ( xAxis.IsOrdinal )
 								xVal = (double) iPt + 1.0;
 							else
 								xVal = points[iPt].X;
 
+							// yVal is the user scale Y value of the current point
 							if ( yAxis.IsOrdinal )
 								yVal = (double) iPt + 1.0;
 							else
 								yVal = points[iPt].Y;
 
 							if (	xVal != PointPair.Missing &&
-								xVal >= xAxis.Min && xVal <= xAxis.Max &&
-								yVal != PointPair.Missing &&
-								yVal >= yMinAct && yVal <= yMaxAct )
+									yVal != PointPair.Missing )
 							{
 
 								if ( curve.IsBar || curve is ErrorBarItem ||
@@ -1664,7 +1664,7 @@ namespace ZedGraph
 								{
 									double baseVal, lowVal, hiVal;
 									valueHandler.GetValues( curve, iPt, out baseVal,
-										out lowVal, out hiVal );
+											out lowVal, out hiVal );
 
 									if ( lowVal > hiVal )
 									{
@@ -1679,17 +1679,17 @@ namespace ZedGraph
 										double centerVal = valueHandler.BarCenterValue( curve, barWidth, iPt, xVal, iBar );
 										
 										if (	x < centerVal - barWidthUserHalf ||
-											x > centerVal + barWidthUserHalf ||
-											y < lowVal || y > hiVal )
+												x > centerVal + barWidthUserHalf ||
+												yAct < lowVal || yAct > hiVal )
 											continue;
 									}
 									else
 									{
 										double centerVal = valueHandler.BarCenterValue( curve, barWidth, iPt, yVal, iBar );
 										
-										if (	y < centerVal - barWidthUserHalf ||
-											y > centerVal + barWidthUserHalf ||
-											x < lowVal || x > hiVal )
+										if (	yAct < centerVal - barWidthUserHalf ||
+												yAct > centerVal + barWidthUserHalf ||
+												x < lowVal || x > hiVal )
 											continue;
 									}
 
@@ -1699,7 +1699,9 @@ namespace ZedGraph
 										nearestBar = curve;
 									}
 								}
-								else
+								else if (	xVal >= xAxis.Min && xVal <= xAxis.Max &&
+											yVal >= yMinAct && yVal <= yMaxAct )
+
 								{
 									distX = (xVal - x) * xPixPerUnit;
 									distY = (yVal - yAct) * yPixPerUnitAct;

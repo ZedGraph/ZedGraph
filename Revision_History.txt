@@ -1,5 +1,17 @@
 ZedGraph Class Library Revision History
 
+16-Apr-2005 (by Champion) v4.1.1
+  Fix FindNearestPoint() for Y2Axis curves
+  Fix FindNearestPoint() for bars that extend beyond axis range
+
+15-Apr-2005 (by Champion) v4.1.0
+	Add scrollbars to ZedGraphControl (IsShowHScrollBar, IsShowVScrollBar)
+	ScrollMinX & ScrollMaxX control the X bounds 
+	ScrollMinY & ScrollMaxY control the Y bounds
+	Use ScaleFormat for numeric labels and dates.
+	Remove NumDec and NumDecAuto 
+	Subscription event for zoom/pan notification (see ZoomEvent)
+ 
 19-Apr-2005 (by Champion) v4.0.8
   Fix roundoff bug for bar width (when scale has large values like dates)
   Add PointPairList.Equals & PointPair.Equals
