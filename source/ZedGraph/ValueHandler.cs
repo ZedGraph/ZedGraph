@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.1 $ $Date: 2005-03-05 07:24:10 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2005-05-20 16:32:28 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane pane;
@@ -237,7 +237,7 @@ namespace ZedGraph
 			// otherwise, the curve is not a stacked type (not a stacked bar or stacked line)
 			else
 			{
-				if ( curve is BarItem )
+				if ( curve is BarItem && pane.BarType != BarType.ClusterHiLow )
 					lowVal = 0;
 				else
 					lowVal = curve.Points[iPt].LowValue;
@@ -282,12 +282,12 @@ namespace ZedGraph
 			float clusterGap = pane.MinClusterGap * barWidth;
 			float barGap = barWidth * pane.MinBarGap;
 
-			if ( ( curve.IsBar && !( pane.BarType == BarType.Cluster ) ) ||
+			if ( ( curve.IsBar && !( pane.BarType == BarType.Cluster || pane.BarType == BarType.ClusterHiLow ) ) ||
 				   curve is ErrorBarItem || curve is HiLowBarItem )
 				iOrdinal = 0;
 
 			Axis baseAxis = curve.BaseAxis( pane );
-			float centerPix = baseAxis.Transform( iCluster, val )
+			float centerPix = baseAxis.Transform( curve.IsOverrideOrdinal, iCluster, val )
 					 - clusterWidth / 2.0F + clusterGap / 2.0F +
 					 iOrdinal * ( barWidth + barGap ) + 0.5F * barWidth;
 			return baseAxis.ReverseTransform( centerPix );

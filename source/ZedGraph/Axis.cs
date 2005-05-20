@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.31 $ $Date: 2005-05-13 23:59:38 $ </version>
+	/// <version> $Revision: 3.32 $ $Date: 2005-05-20 16:32:26 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -2855,11 +2855,14 @@ namespace ZedGraph
 
 			float edgeTolerance = Default.EdgeTolerance * scaleFactor;
 
-            dottedPen.DashStyle = DashStyle.Custom;
-			float[] pattern = new float[2];
-			pattern[0] = this.gridDashOn;
-			pattern[1] = this.gridDashOff;
-			dottedPen.DashPattern = pattern;
+			if ( this.gridDashOff > 1e-10 && this.gridDashOn > 1e-10 )
+			{
+				dottedPen.DashStyle = DashStyle.Custom;
+				float[] pattern = new float[2];
+				pattern[0] = this.gridDashOn;
+				pattern[1] = this.gridDashOff;
+				dottedPen.DashPattern = pattern;
+			}
 
 			// get the Y position of the center of the axis labels
 			// (the axis itself is referenced at zero)
@@ -4598,16 +4601,18 @@ namespace ZedGraph
 		/// current configuration before using this method (this is called everytime
 		/// the graph is drawn (i.e., <see cref="GraphPane.Draw"/> is called).
 		/// </remarks>
+		/// <param name="isOverrideOrdinal">true to force the axis to honor the data
+		/// value, rather than replacing it with the ordinal value</param>
 		/// <param name="i">The ordinal value of this point, just in case
 		/// this is an <see cref="AxisType.Ordinal"/> axis</param>
 		/// <param name="x">The coordinate value, in user scale units, to
 		/// be transformed</param>
 		/// <returns>the coordinate value transformed to screen coordinates
 		/// for use in calling the <see cref="Graphics"/> draw routines</returns>
-		public float Transform( int i, double x )
+		public float Transform( bool isOverrideOrdinal, int i, double x )
 		{
 			// ordinal types ignore the X value, and just use the ordinal position
-			if ( ( this.IsOrdinal || this.IsText ) && i >= 0 )
+			if ( ( this.IsOrdinal || this.IsText ) && i >= 0 && !isOverrideOrdinal )
 				x = (double) i + 1.0;
 			return Transform( x );
 

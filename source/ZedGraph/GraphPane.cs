@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.42 $ $Date: 2005-05-17 04:24:16 $ </version>
+	/// <version> $Revision: 3.43 $ $Date: 2005-05-20 16:32:27 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1644,13 +1644,13 @@ namespace ZedGraph
 						for ( int iPt=0; iPt<curve.NPts; iPt++ )
 						{
 							// xVal is the user scale X value of the current point
-							if ( xAxis.IsOrdinal )
+							if ( xAxis.IsOrdinal && ! curve.IsOverrideOrdinal )
 								xVal = (double) iPt + 1.0;
 							else
 								xVal = points[iPt].X;
 
 							// yVal is the user scale Y value of the current point
-							if ( yAxis.IsOrdinal )
+							if ( yAxis.IsOrdinal && ! curve.IsOverrideOrdinal )
 								yVal = (double) iPt + 1.0;
 							else
 								yVal = points[iPt].Y;

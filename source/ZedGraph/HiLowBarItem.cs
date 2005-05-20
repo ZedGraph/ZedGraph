@@ -54,7 +54,7 @@ namespace ZedGraph
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-03-25 16:19:57 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-05-20 16:32:27 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -296,7 +296,7 @@ namespace ZedGraph
 										double xLBound, double xUBound,
 										double yLBound, double yUBound, GraphPane pane )
 		{
-			// Call a default GetRange() that does not include Z data points
+			// Call GetRange() that includes Z data points
 			this.points.GetRange( ref xMin, ref xMax, ref yMin, ref yMax, bIgnoreInitial,
 									true, barBase == BarBase.X,
 									xLBound, xUBound, yLBound, yUBound );

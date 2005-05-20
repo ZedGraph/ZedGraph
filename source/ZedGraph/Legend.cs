@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.24 $ $Date: 2005-04-19 04:29:37 $ </version>
+	/// <version> $Revision: 3.25 $ $Date: 2005-05-20 16:32:27 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -777,7 +777,7 @@ namespace ZedGraph
 						break;
 					case LegendPos.BottomCenter:
 						newRect.X = tAxisRect.Left + ( tAxisRect.Width - totLegWidth ) / 2;
-						newRect.Y = tAxisRect.Bottom;
+						newRect.Y = pane.PaneRect.Bottom - totLegHeight - pane.MarginBottom * (float) scaleFactor;
 						
 						tAxisRect.Height -= totLegHeight + halfCharHeight;
 						break;

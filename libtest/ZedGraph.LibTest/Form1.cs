@@ -137,7 +137,7 @@ namespace ZedGraph.LibTest
 			string[] ystr = { "one", "two", "three", "four", "five" };
 
 			double[] x = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-			double[] y = { 1, 2, 3, 4, 5, 4, 3, 2, 1, 2 };
+			double[] y = { .1, .2, .3, .4, .5, .4, .3, .2, .1, .2 };
 			//double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
 			double[] z = { 1, 2, 3, 4, 5, 5, 4, 3, 2, 1 };
 			PointPairList list = new PointPairList( x, y, z );
@@ -152,10 +152,32 @@ namespace ZedGraph.LibTest
 			BarItem myBar = myPane.AddBar( "My Bar", list, Color.Tomato );
 			myBar.Bar.Fill = fill;
 			myPane.XAxis.Type = AxisType.Ordinal;
-			myPane.YAxis.Type = AxisType.Text;
-			myPane.YAxis.TextLabels = ystr;
+			//myPane.YAxis.Type = AxisType.Text;
+			//myPane.YAxis.TextLabels = ystr;
 			//myPane.ClusterScaleWidth = 1;
 
+			//myPane.AxisChange( this.CreateGraphics() );
+
+#endif
+
+#if true
+			myPane = new GraphPane( new RectangleF(0,0,300,400), "Title", "X Label", "Y Label" );
+
+			double[] xx = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }; 
+			double[] yy = { 1, 2, 3, 4, 5, 4, 3, 2, 1, 2 }; 
+			double[] zz = { 1, 2, 3, 4, 5, 5, 4, 3, 2, 1 }; 
+			PointPairList list = new PointPairList( xx, yy, zz ); 
+ 
+			Color[] colors = { Color.Red, Color.Green, Color.Blue,  
+								 Color.Yellow, Color.Orange }; 
+			Fill fill = new Fill( colors ); 
+			fill.Type = FillType.GradientByZ; 
+			fill.RangeMin = 1; 
+			fill.RangeMax = 5; 
+ 
+			BarItem myBar = myPane.AddBar( "My Bar", list, Color.Tomato ); 
+			myBar.Bar.Fill = fill;
+			myPane.XAxis.Type = AxisType.Ordinal;
 			myPane.AxisChange( this.CreateGraphics() );
 
 #endif
@@ -195,7 +217,7 @@ namespace ZedGraph.LibTest
 			myPane.AxisChange( this.CreateGraphics() );
 #endif
 
-#if true
+#if false
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -526,6 +548,97 @@ namespace ZedGraph.LibTest
 			myPane.GraphItemList.Add( text2 );
 			 
 			myPane.AxisChange( this.CreateGraphics() );
+#endif
+
+#if false
+			myPane = new GraphPane( new RectangleF(0,0,10,10),
+						"Sales Growth Compared to\nActual Sales by Store Size - Rank Order Low to High",
+						"", "" );
+			myPane.MarginAll = 20;
+			myPane.FontSpec.Size = 10;
+			myPane.Legend.Position = LegendPos.BottomCenter;
+			myPane.Legend.FontSpec.Size = 7;
+
+			Random rand = new Random();
+			double y1 = 184;
+			PointPairList list1 = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList trendList = new PointPairList();
+			PointPairList projList = new PointPairList();
+			string[] labels = new string[26];
+
+			for ( int i=0; i<26; i++ )
+			{
+				double h1 = rand.NextDouble() * 10 - 2;
+				double h2 = rand.NextDouble() * 10 - 2;
+				double h3 = rand.NextDouble() * 8;
+				double y2 = y1 + ( rand.NextDouble() * 2 - 1 );
+
+				trendList.Add( i + 1.0 - 0.2, y1 );
+				trendList.Add( i + 1.0 + 0.2, y2 );
+				list1.Add( (double) i, y1+h1, y1 );
+				list2.Add( (double) i, y2+h2, y2 );
+				projList.Add( (double) i + 1.0 - 0.35, y1 + h3 );
+				projList.Add( (double) i + 1.0 + 0.35, y1 + h3 );
+				projList.Add( PointPair.Missing, PointPair.Missing );
+
+				labels[i] = "Store " + (i+1).ToString();
+
+				y1 += rand.NextDouble() * 4.0;
+			}
+
+			PointPairList minTargList = new PointPairList();
+			minTargList.Add( 0.7, 218 );
+			minTargList.Add( 26.3, 218 );
+			PointPairList prefTargList = new PointPairList();
+			prefTargList.Add( 0.7, 228 );
+			prefTargList.Add( 26.3, 228 );
+			
+			LineItem minCurve = myPane.AddCurve("Minimum Target", minTargList, Color.Green, SymbolType.None );
+			minCurve.Line.Width = 3.0f;
+			minCurve.IsOverrideOrdinal = true;
+			LineItem prefCurve = myPane.AddCurve("Preferred Target", prefTargList, Color.Blue, SymbolType.None );
+			prefCurve.Line.Width = 3.0f;
+			prefCurve.IsOverrideOrdinal = true;
+
+			LineItem projCurve = myPane.AddCurve( "Projected Sales", projList, Color.Orange, SymbolType.None );
+			projCurve.IsOverrideOrdinal = true;
+			projCurve.Line.Width = 3.0f;
+
+			LineItem myCurve = myPane.AddCurve( "Trendline", trendList,
+							Color.FromArgb( 50, 50, 50 ), SymbolType.None );
+			myCurve.Line.Width = 2.5f;
+			myCurve.Line.IsSmooth = true;
+			myCurve.Line.SmoothTension = 0.3f;
+			myCurve.IsOverrideOrdinal = true;
+
+			BarItem myBar = myPane.AddBar( "Store Growth", list1, Color.Black );
+			//myBar.Bar.Fill = new Fill( Color.Black );
+			BarItem myBar2 = myPane.AddBar( "Average Growth", list2, Color.LightGray );
+			//myBar2.Bar.Fill = new Fill( Color.LightGray );
+
+			myPane.XAxis.Type = AxisType.Text;
+			myPane.XAxis.TextLabels = labels;
+			myPane.XAxis.ScaleFontSpec.Angle = -90;
+			myPane.XAxis.ScaleFontSpec.Size = 8;
+			myPane.XAxis.ScaleFontSpec.IsBold = true;
+			myPane.XAxis.IsTicsBetweenLabels = true;
+			myPane.XAxis.IsInsideTic = false;
+			myPane.XAxis.IsOppositeTic = false;
+			myPane.XAxis.IsMinorInsideTic = false;
+			myPane.XAxis.IsMinorOppositeTic = false;
+
+			myPane.YAxis.ScaleFontSpec.Size = 8;
+			myPane.YAxis.ScaleFontSpec.IsBold = true;
+			myPane.YAxis.IsShowGrid = true;
+			myPane.YAxis.GridDashOn = 1.0f;
+			myPane.YAxis.GridDashOff = 0.0f;
+
+			myPane.BarType = BarType.ClusterHiLow;
+
+			myPane.AxisChange( this.CreateGraphics() );
+			myPane.YAxis.MinorStep = myPane.YAxis.Step;
+
 #endif
 
 			SetSize();

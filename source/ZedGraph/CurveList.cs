@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.24 $ $Date: 2005-04-16 07:51:39 $ </version>
+	/// <version> $Revision: 3.25 $ $Date: 2005-05-20 16:32:27 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -410,10 +410,13 @@ namespace ZedGraph
 				{
 					if ( pane.BarBase == BarBase.X )
 					{
-						if ( tYMinVal > 0 )
-							tYMinVal = 0;
-						else if ( tYMaxVal < 0 )
-							tYMaxVal = 0;
+						if ( pane.BarType != BarType.ClusterHiLow )
+						{
+							if ( tYMinVal > 0 )
+								tYMinVal = 0;
+							else if ( tYMaxVal < 0 )
+								tYMaxVal = 0;
+						}
    					
 						// for non-ordinal axes, expand the data range slightly for bar charts to
 						// account for the fact that the bar clusters have a width
@@ -425,10 +428,13 @@ namespace ZedGraph
 					}
 					else
 					{
-						if ( tXMinVal > 0 )
-							tXMinVal = 0;
-						else if ( tXMaxVal < 0 )
-							tXMaxVal = 0;
+						if ( pane.BarType != BarType.ClusterHiLow )
+						{
+							if ( tXMinVal > 0 )
+								tXMinVal = 0;
+							else if ( tXMaxVal < 0 )
+								tXMaxVal = 0;
+						}
    						
 						// for non-ordinal axes, expand the data range slightly for bar charts to
 						// account for the fact that the bar clusters have a width

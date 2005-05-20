@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.20 $ $Date: 2005-03-11 17:24:37 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2005-05-20 16:32:27 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -61,6 +61,12 @@ namespace ZedGraph
 		/// have to set <see cref="IsLegendLabelVisible"/> to false.
 		/// </summary>
 		protected bool		isVisible;
+		/// <summary>
+		/// protected field that stores a boolean value which allows you to override the normal
+		/// ordinal axis behavior.  Use the public property <see cref="IsOverrideOrdinal"/> to
+		/// access this value.
+		/// </summary>
+		protected bool		isOverrideOrdinal;
 		/// <summary>
 		/// protected field that stores the boolean value that determines whether the label
 		/// for this <see cref="CurveItem"/> is visible in the legend.
@@ -149,6 +155,7 @@ namespace ZedGraph
 			this.isY2Axis = false;
 			this.isVisible = true;
 			this.isLegendLabelVisible = true;
+			this.isOverrideOrdinal = false;
 			this.Tag = null;
 		}
 			
@@ -166,11 +173,7 @@ namespace ZedGraph
 		 /// </summary>
 		public CurveItem(  )
 		{
-			this.label = "";
-			this.isY2Axis = false;
-			this.isVisible = true;
-			this.isLegendLabelVisible = true;
-			this.Tag = null;
+			Init( null );
 		}
 		/// <summary>
 		/// The Copy Constructor
@@ -182,6 +185,8 @@ namespace ZedGraph
 			isY2Axis = rhs.IsY2Axis;
 			isVisible = rhs.IsVisible;
 			isLegendLabelVisible = rhs.IsLegendLabelVisible;
+			isOverrideOrdinal = rhs.isOverrideOrdinal;
+
 			if ( rhs.Tag is ICloneable )
 				this.Tag = ((ICloneable) rhs.Tag).Clone();
 			else
@@ -202,7 +207,8 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		// Increased schema to 2 when IsOverrideOrdinal was added.
+		public const int schema = 2;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -221,8 +227,13 @@ namespace ZedGraph
 			isY2Axis = info.GetBoolean( "isY2Axis" );
 			isVisible = info.GetBoolean( "isVisible" );
 			isLegendLabelVisible = info.GetBoolean( "isLegendLabelVisible" );
+
+			if ( sch >= 2 )
+				isOverrideOrdinal = info.GetBoolean( "isOverrideOrdinal" );
+
 			points = (PointPairList) info.GetValue( "points", typeof(PointPairList) );
 			Tag = info.GetValue( "Tag", typeof(object) );
+
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -237,6 +248,7 @@ namespace ZedGraph
 			info.AddValue( "isY2Axis", isY2Axis );
 			info.AddValue( "isVisible", isVisible );
 			info.AddValue( "isLegendLabelVisible", isLegendLabelVisible );
+			info.AddValue( "isOverrideOrdinal", isOverrideOrdinal );
 			info.AddValue( "points", points );
 			info.AddValue( "Tag", Tag );
 		}
@@ -317,6 +329,25 @@ namespace ZedGraph
 		{
 			get { return isLegendLabelVisible; }
 			set { isLegendLabelVisible = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value which allows you to override the normal
+		/// ordinal axis behavior.
+		/// </summary>
+		/// <remarks>
+		/// Normally for an ordinal axis type, the actual data values corresponding to the ordinal
+		/// axis will be ignored (essentially they are replaced by ordinal values, e.g., 1, 2, 3, etc).
+		/// If IsOverrideOrdinal is true, then the user data values will be used (even if they don't
+		/// make sense).  Fractional values are allowed, such that a value of 1.5 is between the first and
+		/// second ordinal position, etc.
+		/// </remarks>
+		/// <seealso cref="AxisType.Ordinal"/>
+		/// <seealso cref="AxisType.Text"/>
+		public bool IsOverrideOrdinal
+		{
+			get { return isOverrideOrdinal; }
+			set { isOverrideOrdinal = value; }
 		}
 
 		/// <summary>
@@ -562,7 +593,8 @@ namespace ZedGraph
 										double yLBound, double yUBound, GraphPane pane )
 		{
 			// Call a default GetRange() that does not include Z data points
-			this.points.GetRange( ref xMin, ref xMax, ref yMin, ref yMax, bIgnoreInitial, false, true,
+			this.points.GetRange( ref xMin, ref xMax, ref yMin, ref yMax, bIgnoreInitial, 
+								this.IsBar && pane.BarType == BarType.ClusterHiLow, true,
 								xLBound, xUBound, yLBound, yUBound );
 		}
 
@@ -663,7 +695,7 @@ namespace ZedGraph
 			{
 				// For stacked bar types, the bar width will be based on a single bar
 				float numBars = 1.0F;
-				if ( pane.BarType == BarType.Cluster )
+				if ( pane.BarType == BarType.Cluster || pane.BarType == BarType.ClusterHiLow )
 					numBars = pane.CurveList.NumBars;
 					
 				float denom = numBars * ( 1.0F + pane.MinBarGap ) - pane.MinBarGap + pane.MinClusterGap;

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-03-31 23:42:58 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2005-05-20 16:32:27 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -587,8 +587,8 @@ namespace ZedGraph
 					{
 						// Transform the current point from user scale units to
 						// screen coordinates
-						tmpX = pane.XAxis.Transform( i, curX );
-						tmpY = yAxis.Transform( i, curY );
+						tmpX = pane.XAxis.Transform( curve.IsOverrideOrdinal, i, curX );
+						tmpY = yAxis.Transform( curve.IsOverrideOrdinal, i, curY );
 						
 						// off-scale values "break" the line
 						if ( tmpX < -1000000 || tmpX > 1000000 ||
@@ -681,11 +681,11 @@ namespace ZedGraph
 						}
 						
 						// Transform the user scale values to pixel locations
-						curX = pane.XAxis.Transform( i, x );
+						curX = pane.XAxis.Transform( curve.IsOverrideOrdinal, i, x );
 						if ( curve.IsY2Axis )
-							curY = pane.Y2Axis.Transform( i, y );
+							curY = pane.Y2Axis.Transform( curve.IsOverrideOrdinal, i, y );
 						else
-							curY = pane.YAxis.Transform( i, y );
+							curY = pane.YAxis.Transform( curve.IsOverrideOrdinal, i, y );
 
 						if ( curX < -1000000 || curY < -1000000 || curX > 1000000 || curY > 1000000 )
 							continue;
@@ -790,11 +790,11 @@ namespace ZedGraph
 						valueHandler.GetValues( curve, i, out x, out y, out hiVal );
 						
 						// Transform the user scale values to pixel locations
-						curX = pane.XAxis.Transform( i, x );
+						curX = pane.XAxis.Transform( curve.IsOverrideOrdinal, i, x );
 						if ( curve.IsY2Axis )
-							curY = pane.Y2Axis.Transform( i, y );
+							curY = pane.Y2Axis.Transform( curve.IsOverrideOrdinal, i, y );
 						else
-							curY = pane.YAxis.Transform( i, y );
+							curY = pane.YAxis.Transform( curve.IsOverrideOrdinal, i, y );
 
 						// Add the pixel value pair into the points array
 						// Two points are added for step type curves

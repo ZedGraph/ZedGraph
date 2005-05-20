@@ -1,5 +1,11 @@
 ZedGraph Class Library Revision History
 
+19-Apr-2005 (by Champion) v4.1.2
+  Add BarType.ClusterHiLow
+  Add Curve.IsOverrideOrdinal
+  Fix bug with LegendPos.BottomCenter
+  Fix bug that allows crash if gridDash on/off is zero
+
 16-Apr-2005 (by Champion) v4.1.1
   Fix FindNearestPoint() for Y2Axis curves
   Fix FindNearestPoint() for bars that extend beyond axis range
