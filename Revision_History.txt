@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+29-Apr-2005 (by Champion) v4.1.3
+  Fix IsShowTitle so it does not get set to false if title is blank
+  
 19-Apr-2005 (by Champion) v4.1.2
   Add BarType.ClusterHiLow
   Add Curve.IsOverrideOrdinal

@@ -126,7 +126,7 @@ namespace ZedGraph.LibTest
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
-#if false
+#if false	// GradientByZ
 
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
@@ -160,13 +160,16 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true
+#if true	// GradientByZ dual bars
 			myPane = new GraphPane( new RectangleF(0,0,300,400), "Title", "X Label", "Y Label" );
 
 			double[] xx = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }; 
-			double[] yy = { 1, 2, 3, 4, 5, 4, 3, 2, 1, 2 }; 
+			double[] yy = { 1, 2, 3, 4, 5, 4, 3, 2, 1, 2 };
+			double[] yy2 = { 4, 5, 7, 8, 1, 3, 5, 2, 4, 9 };
 			double[] zz = { 1, 2, 3, 4, 5, 5, 4, 3, 2, 1 }; 
+			double[] zz2 = { 5, 1, 4, 2, 3, 4, 2, 1, 5, 5 }; 
 			PointPairList list = new PointPairList( xx, yy, zz ); 
+			PointPairList list2 = new PointPairList( xx, yy2, zz2 ); 
  
 			Color[] colors = { Color.Red, Color.Green, Color.Blue,  
 								 Color.Yellow, Color.Orange }; 
@@ -177,12 +180,16 @@ namespace ZedGraph.LibTest
  
 			BarItem myBar = myPane.AddBar( "My Bar", list, Color.Tomato ); 
 			myBar.Bar.Fill = fill;
+			BarItem myBar2 = myPane.AddBar( "My Bar 2", list2, Color.Tomato ); 
+			myBar2.Bar.Fill = fill;
 			myPane.XAxis.Type = AxisType.Ordinal;
+			myPane.MinBarGap = 0.1f;
+			//myPane.MinClusterGap = 0;
 			myPane.AxisChange( this.CreateGraphics() );
 
 #endif
 
-#if false
+#if false	// Bars and Dates
 			Random rand = new Random();
 
 			myPane = new GraphPane();
@@ -217,7 +224,7 @@ namespace ZedGraph.LibTest
 			myPane.AxisChange( this.CreateGraphics() );
 #endif
 
-#if false
+#if false	// Standard Sample Graph
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -418,8 +425,8 @@ namespace ZedGraph.LibTest
 			newArrow.Size = 10;
 			myPane.GraphItemList.Add( newArrow );
 #endif
-
-#if false
+	
+#if false	// MasterPane
 			master = new MasterPane( "ZedGraph MasterPane Example", new Rectangle( 10, 10, 10, 10 ) );
 
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
@@ -499,7 +506,7 @@ namespace ZedGraph.LibTest
 			g.Dispose();
 #endif
 
-#if false
+#if false	// Pie
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"2004 ZedGraph Sales by Region\n($M)",
 				"",
@@ -550,7 +557,7 @@ namespace ZedGraph.LibTest
 			myPane.AxisChange( this.CreateGraphics() );
 #endif
 
-#if false
+#if false	// Commerical Sales Graph
 			myPane = new GraphPane( new RectangleF(0,0,10,10),
 						"Sales Growth Compared to\nActual Sales by Store Size - Rank Order Low to High",
 						"", "" );
@@ -639,6 +646,27 @@ namespace ZedGraph.LibTest
 			myPane.AxisChange( this.CreateGraphics() );
 			myPane.YAxis.MinorStep = myPane.YAxis.Step;
 
+#endif
+
+#if false	// Basic curve test
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList list = new PointPairList();
+
+			for ( int i=0; i<100; i++ )
+			{
+				double x = (double) i;
+				double y = Math.Sin( i / 8.0 );
+				list.Add( x, y );
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			//myPane.XAxis.BaseTic = 1;
+			myPane.XAxis.Step = 5;
+
+			myPane.AxisChange( this.CreateGraphics() );
+			MessageBox.Show
 #endif
 
 			SetSize();
