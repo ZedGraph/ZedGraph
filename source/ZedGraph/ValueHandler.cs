@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2005-05-20 16:32:28 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2005-06-07 04:21:42 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane pane;
@@ -278,20 +278,28 @@ namespace ZedGraph
 		public double BarCenterValue( CurveItem curve, float barWidth, int iCluster,
 										  double val, int iOrdinal )
 		{
-			float clusterWidth = pane.GetClusterWidth();
-			float clusterGap = pane.MinClusterGap * barWidth;
-			float barGap = barWidth * pane.MinBarGap;
-
-			if ( ( curve.IsBar && !( pane.BarType == BarType.Cluster || pane.BarType == BarType.ClusterHiLow ) ) ||
-				   curve is ErrorBarItem || curve is HiLowBarItem )
-				iOrdinal = 0;
-
 			Axis baseAxis = curve.BaseAxis( pane );
-			float centerPix = baseAxis.Transform( curve.IsOverrideOrdinal, iCluster, val )
-					 - clusterWidth / 2.0F + clusterGap / 2.0F +
-					 iOrdinal * ( barWidth + barGap ) + 0.5F * barWidth;
-			return baseAxis.ReverseTransform( centerPix );
-		}
+			if ( curve is ErrorBarItem || curve is HiLowBarItem )
+			{
+				if ( ( baseAxis.IsOrdinal || baseAxis.IsText ) && iCluster >= 0 && !curve.IsOverrideOrdinal )
+					return (double) iCluster + 1.0;
+				else
+					return val;
+			}
+			else
+			{
+				float clusterWidth = pane.GetClusterWidth();
+				float clusterGap = pane.MinClusterGap * barWidth;
+				float barGap = barWidth * pane.MinBarGap;
 
+				if ( ( curve.IsBar && !( pane.BarType == BarType.Cluster || pane.BarType == BarType.ClusterHiLow ) ) )
+					iOrdinal = 0;
+
+				float centerPix = baseAxis.Transform( curve.IsOverrideOrdinal, iCluster, val )
+					- clusterWidth / 2.0F + clusterGap / 2.0F +
+					iOrdinal * ( barWidth + barGap ) + 0.5F * barWidth;
+				return baseAxis.ReverseTransform( centerPix );
+			}
+		}
 	}
 }

@@ -160,7 +160,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// GradientByZ dual bars
+#if false	// GradientByZ dual bars
 			myPane = new GraphPane( new RectangleF(0,0,300,400), "Title", "X Label", "Y Label" );
 
 			double[] xx = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }; 
@@ -224,7 +224,7 @@ namespace ZedGraph.LibTest
 			myPane.AxisChange( this.CreateGraphics() );
 #endif
 
-#if false	// Standard Sample Graph
+#if true	// Standard Sample Graph
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -401,6 +401,12 @@ namespace ZedGraph.LibTest
 			ellipse.Location.CoordinateFrame = CoordType.PaneFraction;
 			ellipse.ZOrder = ZOrder.G_BehindAll;
 			myPane.GraphItemList.Add( ellipse );
+
+			RectangleF rectx = new RectangleF( 1000, 20, 400, 40 );
+			EllipseItem ellipsex = new EllipseItem( rectx, Color.Black, Color.Red );
+			ellipsex.ZOrder = ZOrder.E_BehindAxis;
+			ellipsex.IsClippedToAxisRect = true;
+			myPane.GraphItemList.Add( ellipsex );
 
 			//myPane.CurveList.Remove( myPane.CurveList.IndexOf( bar ) );
 

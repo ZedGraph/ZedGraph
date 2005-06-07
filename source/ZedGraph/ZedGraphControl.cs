@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.22 $ $Date: 2005-05-13 23:59:39 $ </version>
+	/// <version> $Revision: 3.23 $ $Date: 2005-06-07 04:21:42 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -180,6 +180,21 @@ namespace ZedGraph
 		/// </summary>
 		public event ZoomEventHandler ZoomEvent;
 
+		/// <summary>
+		/// A delegate that allows custom formatting of the point value tooltips
+		/// </summary>
+		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="pane">The <see cref="GraphPane"/> object that contains the point value of interest</param>
+		/// <param name="curve">The <see cref="CurveItem"/> object that contains the point value of interest</param>
+		/// <param name="iPt">The integer index of the selected <see cref="PointPair"/> within the
+		/// <see cref="PointPairList"/> of the selected <see cref="CurveItem"/></param>
+		public delegate string PointValueHandler( object sender, GraphPane pane, CurveItem curve, int iPt );
+
+		/// <summary>
+		/// Subscribe to this event to provide custom formatting for the tooltips
+		/// </summary>
+		public event PointValueHandler PointValueEvent;
+
 	#endregion
 
 	#region Component Designer generated code
@@ -199,7 +214,7 @@ namespace ZedGraph
 // pointToolTip
 // 
 			this.pointToolTip.AutoPopDelay = 5000;
-			this.pointToolTip.InitialDelay = 500;
+			this.pointToolTip.InitialDelay = 100;
 			this.pointToolTip.ReshowDelay = 0;
 // 
 // contextMenu
@@ -950,44 +965,60 @@ namespace ZedGraph
 				Graphics g = this.CreateGraphics();
 				
 				if ( masterPane.FindNearestPaneObject( new PointF( e.X, e.Y ),
-							g, out pane, out nearestObj, out iPt ) )
+					g, out pane, out nearestObj, out iPt ) )
 				{
 					if ( nearestObj is CurveItem && iPt >= 0 )
 					{
 						CurveItem curve = (CurveItem) nearestObj;
-						if ( curve is PieItem )
+						// Provide Callback for User to customize the tooltips
+						if ( this.PointValueEvent != null )
 						{
-							this.pointToolTip.SetToolTip( this,
-									((PieItem)curve).Value.ToString( this.pointValueFormat ) );
+							string label = this.PointValueEvent( this, pane, curve, iPt );
+							if ( label != null && label.Length > 0 )
+							{
+								this.pointToolTip.SetToolTip( this, label );
+								this.pointToolTip.Active = true;
+							}
+							else
+								this.pointToolTip.Active = false;
 						}
 						else
 						{
-							PointPair pt = curve.Points[iPt];
 							
-							if ( pt.Tag is string )
-								this.pointToolTip.SetToolTip( this, (string) pt.Tag );
+							if ( curve is PieItem )
+							{
+								this.pointToolTip.SetToolTip( this,
+									((PieItem)curve).Value.ToString( this.pointValueFormat ) );
+							}
 							else
 							{
-								string xStr = MakeValueLabel( pane.XAxis, pt.X, iPt );
-								string yStr = MakeValueLabel(
-												curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis,
-												pt.Y, iPt );
+								PointPair pt = curve.Points[iPt];
+								
+								if ( pt.Tag is string )
+									this.pointToolTip.SetToolTip( this, (string) pt.Tag );
+								else
+								{
+									string xStr = MakeValueLabel( pane.XAxis, pt.X, iPt );
+									string yStr = MakeValueLabel(
+										curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis,
+										pt.Y, iPt );
 
-								this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
+									this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
 
-								//this.pointToolTip.SetToolTip( this,
-								//	curve.Points[iPt].ToString( this.pointValueFormat ) );
+									//this.pointToolTip.SetToolTip( this,
+									//	curve.Points[iPt].ToString( this.pointValueFormat ) );
+								}
 							}
-						}
 
-						this.pointToolTip.Active = true;
+							this.pointToolTip.Active = true;
+						}
 					}
 					else
 						this.pointToolTip.Active = false;
 				}
 				else
 					this.pointToolTip.Active = false;
-				
+
 				g.Dispose();
 			}
 		}
@@ -1241,6 +1272,8 @@ namespace ZedGraph
 
 		#endregion
 
+	#region Scrolling
+
 		private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
 		{
 			HandleScroll( this.GraphPane.YAxis, e.NewValue, scrollMinY, scrollMaxY, !this.GraphPane.YAxis.IsReverse );
@@ -1277,6 +1310,8 @@ namespace ZedGraph
 
 			this.Invalidate();
 		}
+
+	#endregion
 
 	}
 }

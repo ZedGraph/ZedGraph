@@ -249,25 +249,17 @@ namespace ZedGraph.ControlTest
 
 			GraphPane testPane = new GraphPane( new RectangleF( 0, 0, 100, 100 ), "Second Test Pane", "X", "Y" );
 			testPane.AddCurve( "Another", list1, Color.Green, SymbolType.Diamond );
-			zedGraphControl6.MasterPane.Add( testPane );
-			zedGraphControl6.MasterPane.Add( (GraphPane) testPane.Clone() );
-			zedGraphControl6.MasterPane.Add( (GraphPane) testPane.Clone() );
 
 			LineItem myCurve = zedGraphControl4.GraphPane.AddCurve("Sine", list1, Color.Red, SymbolType.Circle);
 //			LineItem myCurve2 = zedGraphControl5.GraphPane.AddCurve("Cosine", list3, Color.Blue, SymbolType.Circle);
 			LineItem myCurve3 = zedGraphControl6.GraphPane.AddCurve("Sine", list1, Color.Blue, SymbolType.Circle);
-			LineItem myCurve4 = zedGraphControl6.GraphPane.AddCurve("Cosine", list2, Color.Red, SymbolType.Circle);
 			myCurve3.Line.StepType = StepType.ForwardStep;
-			myCurve4.Line.StepType = StepType.RearwardStep;
-			myCurve4.Points[2].Tag = "third";
 			
 			zedGraphControl4.GraphPane.YAxis.Type = AxisType.Log;
 			//zedGraphControl4.GraphPane.YAxis.IsReverse = true;
-			zedGraphControl6.GraphPane.AxisBorder.IsVisible = false;
-			zedGraphControl6.GraphPane.XAxis.Type = AxisType.Date;
-			zedGraphControl6.IsShowPointValues = true;
-			zedGraphControl6.PointDateFormat = "hh:MM:ss";
-			zedGraphControl6.PointValueFormat = "f4";
+			//zedGraphControl6.IsShowPointValues = true;
+			//zedGraphControl6.PointDateFormat = "hh:MM:ss";
+			//zedGraphControl6.PointValueFormat = "f4";
 
 			double[] xx = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 			double[] yy = { 1, 2, 3, 4, 5, 4, 3, 2, 1, 2 };
@@ -285,13 +277,15 @@ namespace ZedGraph.ControlTest
 			myBar.Bar.Fill = fill;
 			zedGraphControl5.GraphPane.XAxis.Type = AxisType.Ordinal;
 
+			zedGraphControl5.PointValueEvent += new ZedGraph.ZedGraphControl.PointValueHandler( MyPointValueHandler );
+			zedGraphControl5.IsShowPointValues = true;
+
 			//zedGraphControl4.GraphPane.XAxis.ScaleFormat = "n1";
 			//zedGraphControl4.GraphPane.XAxis.ScaleMag = 0;
 			//zedGraphControl4.GraphPane.XAxis.Type = AxisType.Date;
 
 			zedGraphControl4.AxisChange();
 			zedGraphControl5.AxisChange();
-			zedGraphControl6.AxisChange();
 
 			zedGraphControl4.IsEnableVPan = false;
 			zedGraphControl4.IsShowHScrollBar = true;
@@ -302,10 +296,55 @@ namespace ZedGraph.ControlTest
 			zedGraphControl4.ScrollMinY = 0.1;
 			zedGraphControl4.ScrollMaxY = 1000000;
 
+			this.zedGraphControl6.GraphPane.Title = "ZedgroSoft, International\nHi-Low-Close Daily Stock Chart"; 
+ 
+			this.zedGraphControl6.GraphPane.XAxis.Title = ""; 
+			this.zedGraphControl6.GraphPane.YAxis.Title = "Trading Price, $US"; 
+			this.zedGraphControl6.GraphPane.FontSpec.Family = "Arial"; 
+			this.zedGraphControl6.GraphPane.FontSpec.IsItalic = true; 
+			this.zedGraphControl6.GraphPane.FontSpec.Size = 18; 
+ 
+			PointPairList hList = new PointPairList(); 
+ 
+			PointPairList cList = new PointPairList(); 
+			Random rand = new Random(); 
+ 
+			double x0 = 10; 
+			double hi0 = 5; 
+			double low0 = 6; 
+ 
+			hList.Add( x0, hi0, low0 ); 
+ 
+			HiLowBarItem myCurve0 = this.zedGraphControl6.GraphPane.AddHiLowBar( "Price Range", hList,Color.Blue ); 
+ 
+			this.zedGraphControl6.GraphPane.XAxis.Type = AxisType.Linear; 
+			this.zedGraphControl6.GraphPane.XAxis.ScaleFontSpec.Angle = 65 ; 
+ 
+			this.zedGraphControl6.GraphPane.XAxis.ScaleFontSpec.IsBold = true ; 
+			this.zedGraphControl6.GraphPane.XAxis.ScaleFontSpec.Size = 12 ; 
+ 
+			this.zedGraphControl6.GraphPane.XAxis.Min = 0; 
+			this.zedGraphControl6.GraphPane.XAxis.Max= 20; 
+ 
+			this.zedGraphControl6.GraphPane.YAxis.IsShowGrid = true ; 
+ 
+			this.zedGraphControl6.GraphPane.YAxis.MinorStep = 0.5; 
+ 
+			this.zedGraphControl6.GraphPane.AxisFill = new Fill( Color.White,Color.FromArgb( 255, 255, 166), 90F ); 
+  
+			this.zedGraphControl6.AxisChange(); 
+			this.zedGraphControl6.IsShowPointValues = true;
+ 
 
 			SetSize();
 			
 			propertyGrid1.SelectedObject = zedGraphControl4.GraphPane;
+		}
+
+		private string MyPointValueHandler( object sender, GraphPane pane, CurveItem curve, int iPt )
+		{
+			PointPair pt = curve[iPt];
+			return "This value is " + pt.Y.ToString() + " gallons";
 		}
 
 		private void poop( object sender, ContextMenu menu )

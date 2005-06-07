@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-05-30 16:47:45 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-06-07 04:21:42 $ </version>
 	public class PaneBase : ICloneable
 	{
 
@@ -565,10 +565,7 @@ namespace ZedGraph
 			else
 				this.title = title;
 				
-//			if ( this.title.Length == 0 )
-//				this.IsShowTitle = false;
-//			else
-//				this.IsShowTitle = true;
+			this.IsShowTitle = true;
 
 			this.baseDimension = Default.BaseDimension;
 			this.marginLeft = Default.MarginLeft;

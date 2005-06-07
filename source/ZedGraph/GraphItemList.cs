@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-02-02 04:52:05 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2005-06-07 04:21:42 $ </version>
 	[Serializable]
 	public class GraphItemList : CollectionPlus, ICloneable
 	{
@@ -184,7 +184,19 @@ namespace ZedGraph
 			{
 				GraphItem item = this[i];
 				if ( item.ZOrder == zOrder && item.IsVisible )
+				{
+					Region region = null;
+					if ( item.IsClippedToAxisRect && pane is GraphPane )
+					{
+						region = g.Clip.Clone();
+						g.SetClip( ((GraphPane)pane).AxisRect );
+					}
+
 					item.Draw( g, pane, scaleFactor );
+
+					if ( item.IsClippedToAxisRect && pane is GraphPane )
+						g.Clip = region;
+				}
 			}
 		}
 
