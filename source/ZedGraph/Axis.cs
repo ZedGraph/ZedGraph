@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.32 $ $Date: 2005-05-20 16:32:26 $ </version>
+	/// <version> $Revision: 3.33 $ $Date: 2005-06-27 03:11:09 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -3255,7 +3255,8 @@ namespace ZedGraph
 		public void DrawMinorTics( Graphics g, GraphPane pane, double baseVal, float shift,
 								float scaleFactor, float topPix )
 		{
-			if ( this.isMinorTic && this.isVisible )
+			if ( ( this.isMinorTic || this.IsMinorOppositeTic || this.isMinorInsideTic || this.isShowMinorGrid )
+					&& this.isVisible )
 			{
 				double tMajor = this.step * ( IsDate ? GetUnitMultiple( majorUnit ) : 1.0 ),
 					tMinor = this.minorStep * ( IsDate ? GetUnitMultiple( minorUnit ) : 1.0 );

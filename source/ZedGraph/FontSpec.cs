@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-02-02 04:52:04 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2005-06-27 03:11:09 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -517,7 +517,12 @@ namespace ZedGraph
 			float newSize = size * scaleFactor;
 			
 			// Regenerate the font only if the size has changed significantly
-			if ( font == null || Math.Abs( newSize - scaledSize ) > 0.1 )
+			if (	font == null ||
+					Math.Abs( newSize - scaledSize ) > 0.1 ||
+					font.Name != this.Family ||
+					font.Bold != this.isBold ||
+					font.Italic != this.isItalic ||
+					font.Underline != this.isUnderline )
 			{
 				FontStyle style = FontStyle.Regular;
 				style = ( this.isBold ? FontStyle.Bold : style ) |

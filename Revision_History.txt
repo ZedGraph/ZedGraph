@@ -1,13 +1,17 @@
 ZedGraph Class Library Revision History
 
-6-Jun-2004 (by Champion) v4.1.5
+26-Jun-2005 (by Champion)
+  Fix bug to Remake fonts when family, italic, bold, or underline changes
+  Show MinorInsideTics, MinorOutsideTics, and MinorGrids even if MinorTics are not shown
+
+6-Jun-2005 (by Champion) v4.1.5
   Add GraphItem.IsClippedToAxisRect
   Fix isShowTitle problem (was not being initialized at all)
 
-4-Jun-2004 (by Champion)
+4-Jun-2005 (by Champion)
   Fix BarCenterValue() to properly handle ErrorBars and HiLowBars
 
-3-Jun-2004 (by Champion) v4.1.4
+3-Jun-2005 (by Champion) v4.1.4
   Add PointValueEvent
   
 29-Apr-2005 (by Champion) v4.1.3
