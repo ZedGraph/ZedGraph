@@ -224,7 +224,7 @@ namespace ZedGraph.LibTest
 			myPane.AxisChange( this.CreateGraphics() );
 #endif
 
-#if true	// Standard Sample Graph
+#if false	// Standard Sample Graph
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -673,6 +673,22 @@ namespace ZedGraph.LibTest
 
 			myPane.AxisChange( this.CreateGraphics() );
 			MessageBox.Show
+#endif
+
+#if true	// repetitive points
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			double[] Track_DateTime_Xaxis = {1};
+			double[] Y_processed_axis = {10};
+
+			LineItem myCurve = myPane.AddCurve( "Curve Legend", Track_DateTime_Xaxis, Y_processed_axis,
+				Color.DarkRed );
+			myCurve.Symbol.Fill = new Fill( Color.Red );
+			myPane.XAxis.Max = 1;
+			myPane.YAxis.IsShowGrid = true;
+			myPane.YAxis.IsShowMinorGrid = true;
+			//myPane.AxisChange( g );
+
 #endif
 
 			SetSize();

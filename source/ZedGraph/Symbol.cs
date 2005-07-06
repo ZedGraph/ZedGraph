@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.19 $ $Date: 2005-05-20 16:32:28 $ </version>
+	/// <version> $Revision: 3.20 $ $Date: 2005-07-06 06:37:01 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -404,16 +404,21 @@ namespace ZedGraph
 				break;
 			case SymbolType.XCross:
 				path.AddLine( -hsize, -hsize, hsize1, hsize1 );
+				path.StartFigure();
 				path.AddLine( hsize, -hsize, -hsize1, hsize1 );
 				break;
 			case SymbolType.Plus:
 				path.AddLine( 0, -hsize, 0, hsize1 );
+				path.StartFigure();
 				path.AddLine( -hsize, 0, hsize1, 0 );
 				break;
 			case SymbolType.Star:
 				path.AddLine( 0, -hsize, 0, hsize1 );
+				path.StartFigure();
 				path.AddLine( -hsize, 0, hsize1, 0 );
+				path.StartFigure();
 				path.AddLine( -hsize, -hsize, hsize1, hsize1 );
+				path.StartFigure();
 				path.AddLine( hsize, -hsize, -hsize1, hsize1 );
 				break;
 			case SymbolType.TriangleDown:

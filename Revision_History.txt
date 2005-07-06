@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+5-Jul-2005 (by Champion) v4.1.6
+  Fix GraphicsPath bug (using StartFigure) for X-Cross, Plus, and Star Symbols
+  Initialize MasterPane in ZedGraphControl to IsShowTitle = false
+
 26-Jun-2005 (by Champion)
   Fix bug to Remake fonts when family, italic, bold, or underline changes
   Show MinorInsideTics, MinorOutsideTics, and MinorGrids even if MinorTics are not shown

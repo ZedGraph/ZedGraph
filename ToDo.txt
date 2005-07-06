@@ -1,5 +1,8 @@
 TODO for ZedGraph:
 
+Stick item for stick charts, sticks go to X axis (or base axis)
+Expose Line Style for ArrowItem, StickItem
+
 Multiple Y axes (add Y3, Y4, etc.)
 
 PolyItem for polygons, not necessarily closed.

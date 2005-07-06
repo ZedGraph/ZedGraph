@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.23 $ $Date: 2005-06-07 04:21:42 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2005-07-06 06:37:01 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -274,10 +274,8 @@ namespace ZedGraph
 
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
 			masterPane = new MasterPane( "", rect );
-			masterPane.MarginLeft = 0;
-			masterPane.MarginRight = 0;
-			masterPane.MarginTop = 0;
-			masterPane.MarginBottom = 0;
+			masterPane.MarginAll = 0;
+			masterPane.IsShowTitle = false;
 
 			GraphPane graphPane = new GraphPane( rect, "Title", "X-Axis", "Y-Axis" );
 			Graphics g = this.CreateGraphics();
@@ -746,7 +744,7 @@ namespace ZedGraph
 				this.dragPane = pane;
 				this.zoomState = new ZoomState( this.dragPane, ZoomState.StateType.Pan );
 			}
-			else if ( pane != null && this.isEnableZoom && e.Button == MouseButtons.Left )
+			else if ( pane != null && this.isEnableZoom && e.Button == MouseButtons.Left && Control.ModifierKeys == 0 )
 			{
 				isZooming = true;
 				// Calculate the startPoint by using the PointToScreen

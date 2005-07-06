@@ -104,13 +104,23 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl4.IsEnableVPan = true;
 			this.zedGraphControl4.IsEnableZoom = true;
 			this.zedGraphControl4.IsShowContextMenu = true;
+			this.zedGraphControl4.IsShowHScrollBar = false;
 			this.zedGraphControl4.IsShowPointValues = false;
+			this.zedGraphControl4.IsShowVScrollBar = false;
+			this.zedGraphControl4.IsZoomOnMouseCenter = false;
 			this.zedGraphControl4.Location = new System.Drawing.Point(8, 8);
 			this.zedGraphControl4.Name = "zedGraphControl4";
 			this.zedGraphControl4.PointDateFormat = "g";
 			this.zedGraphControl4.PointValueFormat = "G";
+			this.zedGraphControl4.ScrollMaxX = 0;
+			this.zedGraphControl4.ScrollMaxY = 0;
+			this.zedGraphControl4.ScrollMinX = 0;
+			this.zedGraphControl4.ScrollMinY = 0;
 			this.zedGraphControl4.Size = new System.Drawing.Size(400, 296);
 			this.zedGraphControl4.TabIndex = 0;
+			this.zedGraphControl4.ZoomStepFraction = 0.1;
+			this.zedGraphControl4.MouseUp += new System.Windows.Forms.MouseEventHandler(this.zedGraphControl4_MouseUp);
+			this.zedGraphControl4.MouseMove += new System.Windows.Forms.MouseEventHandler(this.zedGraphControl4_MouseMove);
 			this.zedGraphControl4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.zedGraphControl4_MouseDown);
 			// 
 			// tabPage1
@@ -130,13 +140,21 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl6.IsEnableVPan = true;
 			this.zedGraphControl6.IsEnableZoom = true;
 			this.zedGraphControl6.IsShowContextMenu = true;
+			this.zedGraphControl6.IsShowHScrollBar = false;
 			this.zedGraphControl6.IsShowPointValues = false;
+			this.zedGraphControl6.IsShowVScrollBar = false;
+			this.zedGraphControl6.IsZoomOnMouseCenter = false;
 			this.zedGraphControl6.Location = new System.Drawing.Point(8, 8);
 			this.zedGraphControl6.Name = "zedGraphControl6";
 			this.zedGraphControl6.PointDateFormat = "g";
 			this.zedGraphControl6.PointValueFormat = "G";
+			this.zedGraphControl6.ScrollMaxX = 0;
+			this.zedGraphControl6.ScrollMaxY = 0;
+			this.zedGraphControl6.ScrollMinX = 0;
+			this.zedGraphControl6.ScrollMinY = 0;
 			this.zedGraphControl6.Size = new System.Drawing.Size(400, 296);
 			this.zedGraphControl6.TabIndex = 1;
+			this.zedGraphControl6.ZoomStepFraction = 0.1;
 			this.zedGraphControl6.Paint += new System.Windows.Forms.PaintEventHandler(this.zedGraphControl6_Paint);
 			this.zedGraphControl6.MouseDown += new System.Windows.Forms.MouseEventHandler(this.zedGraphControl6_MouseDown);
 			// 
@@ -162,13 +180,21 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl5.IsEnableVPan = true;
 			this.zedGraphControl5.IsEnableZoom = true;
 			this.zedGraphControl5.IsShowContextMenu = true;
+			this.zedGraphControl5.IsShowHScrollBar = false;
 			this.zedGraphControl5.IsShowPointValues = false;
+			this.zedGraphControl5.IsShowVScrollBar = false;
+			this.zedGraphControl5.IsZoomOnMouseCenter = false;
 			this.zedGraphControl5.Location = new System.Drawing.Point(8, 8);
 			this.zedGraphControl5.Name = "zedGraphControl5";
 			this.zedGraphControl5.PointDateFormat = "g";
 			this.zedGraphControl5.PointValueFormat = "G";
+			this.zedGraphControl5.ScrollMaxX = 0;
+			this.zedGraphControl5.ScrollMaxY = 0;
+			this.zedGraphControl5.ScrollMinX = 0;
+			this.zedGraphControl5.ScrollMinY = 0;
 			this.zedGraphControl5.Size = new System.Drawing.Size(400, 296);
 			this.zedGraphControl5.TabIndex = 0;
+			this.zedGraphControl5.ZoomStepFraction = 0.1;
 			// 
 			// tabPage4
 			// 
@@ -255,7 +281,7 @@ namespace ZedGraph.ControlTest
 			LineItem myCurve3 = zedGraphControl6.GraphPane.AddCurve("Sine", list1, Color.Blue, SymbolType.Circle);
 			myCurve3.Line.StepType = StepType.ForwardStep;
 			
-			zedGraphControl4.GraphPane.YAxis.Type = AxisType.Log;
+			//zedGraphControl4.GraphPane.YAxis.Type = AxisType.Log;
 			//zedGraphControl4.GraphPane.YAxis.IsReverse = true;
 			//zedGraphControl6.IsShowPointValues = true;
 			//zedGraphControl6.PointDateFormat = "hh:MM:ss";
@@ -388,8 +414,29 @@ namespace ZedGraph.ControlTest
 			
 		}
 
+		PointF		startPt;
+		double		startX, startY, startY2;
+		bool		isDragPoint = false;
+		CurveItem	dragCurve;
+		int			dragIndex;
+		PointPair	startPair;
+
 		private void zedGraphControl4_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+			if ( Control.ModifierKeys == Keys.Alt )
+			{
+				GraphPane myPane = zedGraphControl4.GraphPane;
+				PointF mousePt = new PointF( e.X, e.Y );
+
+				if ( myPane.FindNearestPoint( mousePt, out dragCurve, out dragIndex ) )
+				{
+					startPt = mousePt;
+					startPair = dragCurve.Points[dragIndex];
+					isDragPoint = true;
+					myPane.ReverseTransform( mousePt, out startX, out startY, out startY2 );
+				}
+			}
+
 			/*
 			if ( zedGraphControl4.GraphPane.YAxis.Type == AxisType.Linear )
 				zedGraphControl4.GraphPane.YAxis.Type = AxisType.Log;
@@ -411,6 +458,30 @@ namespace ZedGraph.ControlTest
 			zedGraphControl4.Refresh();
 			//Invalidate();
 			*/
+		}
+
+		private void zedGraphControl4_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			if ( isDragPoint )
+			{
+				// move the point
+				double curX, curY, curY2;
+				GraphPane myPane = zedGraphControl4.GraphPane;
+				PointF mousePt = new PointF( e.X, e.Y );
+				myPane.ReverseTransform( mousePt, out curX, out curY, out curY2 );
+				PointPair newPt = new PointPair( startPair.X + curX - startX, startPair.Y + curY - startY );
+				dragCurve.Points[dragIndex] = newPt;
+				zedGraphControl4.Refresh();
+			}
+		}
+
+		private void zedGraphControl4_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
+		{
+			if ( isDragPoint )
+			{
+				// finalize the move
+				isDragPoint = false;
+			}
 		}
 
 		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
@@ -463,5 +534,6 @@ namespace ZedGraph.ControlTest
 		{
 			Refresh();
 		}
+
 	}
 }
