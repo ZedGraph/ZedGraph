@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.33 $ $Date: 2005-06-27 03:11:09 $ </version>
+	/// <version> $Revision: 3.34 $ $Date: 2005-07-07 04:45:34 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -102,7 +102,8 @@ namespace ZedGraph
 							isOmitMag,
 							isUseTenPower,
 							isPreventLabelOverlap,
-							isScaleVisible;
+							isScaleVisible,
+							isAxisSegmentVisible;
 		/// <summary> Private field for the <see cref="Axis"/> type.  This can be one of the
 		/// types as defined in the <see cref="AxisType"/> enumeration.
 		/// Use the public property <see cref="Type"/>
@@ -487,6 +488,11 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsScaleVisible = true;
 			/// <summary>
+			/// The default value for <see cref="Axis.IsAxisSegmentVisible"/>, which determines
+			/// whether or not the scale segment itself is visible
+			/// </summary>
+			public static bool IsAxisSegmentVisible = true;
+			/// <summary>
 			/// The default display mode for the <see cref="Axis"/> grid lines
 			/// (<see cref="Axis.IsShowGrid"/> property). true
 			/// to show the grid lines, false to hide them.
@@ -856,6 +862,7 @@ namespace ZedGraph
 			this.isTicsBetweenLabels = false;
 			this.isUseTenPower = true;
 			this.isPreventLabelOverlap = true;
+			this.isAxisSegmentVisible = Default.IsAxisSegmentVisible;
 		
 			this.type = Default.Type;
 			this.title = "";
@@ -931,6 +938,7 @@ namespace ZedGraph
 			isTicsBetweenLabels = rhs.IsTicsBetweenLabels;
 			isUseTenPower = rhs.IsUseTenPower;
 			isPreventLabelOverlap = rhs.isPreventLabelOverlap;
+			isAxisSegmentVisible = rhs.isAxisSegmentVisible;
 
 			isReverse = rhs.IsReverse;
 			isOmitMag = rhs.IsOmitMag;
@@ -975,7 +983,8 @@ namespace ZedGraph
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
 		// Schema was changed to 2 when IsScaleVisible was added
-		public const int schema = 2;
+		// Schema was changed to 3 when IsAxisSegmentVisible was added
+		public const int schema = 3;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -1062,6 +1071,9 @@ namespace ZedGraph
 
 			if ( schema > 1 )
 				isScaleVisible = info.GetBoolean( "isScaleVisible" );
+
+			if ( schema > 2 )
+				isAxisSegmentVisible = info.GetBoolean( "isAxisSegmentVisible" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -1144,6 +1156,9 @@ namespace ZedGraph
 
 			// New for Schema = 2
 			info.AddValue( "isScaleVisible", isScaleVisible );
+
+			// New for schema = 3
+			info.AddValue( "isAxisSegmentVisible", isAxisSegmentVisible );
 		}
 	#endregion
 
@@ -1926,6 +1941,22 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Gets or sets a property that determines whether or not the axis segment (the line that
+		/// represents the axis itself) is drawn.
+		/// </summary>
+		/// <remarks>
+		/// Under normal circumstances, this value won't affect the appearance of the display because
+		/// the Axis segment is overlain by the Axis border (see <see cref="Axis.AxisBorder"/>).
+		/// However, when the border is not visible, or when <see cref="Axis.CrossAuto"/> is set to
+		/// false, this value will make a difference.
+		/// </remarks>
+		public bool IsAxisSegmentVisible
+		{
+			get { return isAxisSegmentVisible; }
+			set { isAxisSegmentVisible = value; }
+		}
+
+		/// <summary>
 		/// Determines if the scale values are reversed for this <see cref="Axis"/>
 		/// </summary>
 		/// <value>true for the X values to decrease to the right or the Y values to
@@ -2577,8 +2608,14 @@ namespace ZedGraph
 				// calculated, and the cross value is determined using a transform of scale values (which
 				// rely on AxisRect).
 				if ( !IsCrossed( pane ) && this.isScaleVisible )
-					space += this.GetScaleMaxSpace( g, pane, scaleFactor ).Height +
-							ticSize * 2.0F;
+				{
+					space += ticSize * 0.5F;
+					if ( this.isTic )
+						space += ticSize;
+					if ( this.IsScaleVisible )
+						space += this.GetScaleMaxSpace( g, pane, scaleFactor ).Height +
+							ticSize * 0.5F;
+				}
 		
 				string str = MakeTitle();
 
@@ -2592,7 +2629,8 @@ namespace ZedGraph
 
 			// for the Y axes, make sure that enough space is left to fit the first
 			// and last X axis scale label
-			if ( ( ( this is YAxis ) || ( this is Y2Axis ) ) && pane.XAxis.IsVisible && pane.XAxis.IsScaleVisible )
+			if ( ( this is YAxis || this is Y2Axis ) &&
+					pane.XAxis.IsVisible && pane.XAxis.IsScaleVisible )
 			{
 				// half the width of the widest item, plus a gap of 1/2 the charheight
 				float tmpSpace =
@@ -2668,6 +2706,7 @@ namespace ZedGraph
 
 			// calculate the total number of major tics required
 			int nTics = CalcNumTics();
+
 			// get the first major tic value
 			double baseVal = CalcBaseTic();
 
@@ -2675,10 +2714,11 @@ namespace ZedGraph
 			{
 				float shift = this.CalcCrossShift( pane );
 
-                Pen pen = new Pen(this.color, pane.ScaledPenWidth(ticPenWidth, scaleFactor));
+                Pen pen = new Pen( this.color, pane.ScaledPenWidth( ticPenWidth, scaleFactor ));
 
                 // redraw the axis border
-				g.DrawLine( pen, 0.0F, shift, rightPix, shift );
+				if ( this.isAxisSegmentVisible )
+					g.DrawLine( pen, 0.0F, shift, rightPix, shift );
 
 				// Draw a zero-value line if needed
 				if ( this.isZeroLine && this.min < 0.0 && this.max > 0.0 )
@@ -2868,8 +2908,11 @@ namespace ZedGraph
 			// (the axis itself is referenced at zero)
 			float maxSpace = this.GetScaleMaxSpace( g, pane, scaleFactor ).Height;
 			
-			float textTop = (float) scaleFactor * ( ticSize * 1.5F );
-			float textCenter;
+			float textTop, textCenter;
+			if ( this.isTic )
+				textTop = scaledTic * 1.5F;
+			else
+				textTop = scaledTic * 0.5F;
 
 			double rangeTol = ( this.maxScale - this.minScale ) * 0.00001;
 

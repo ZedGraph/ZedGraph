@@ -309,6 +309,20 @@ namespace ZedGraph.ControlTest
 			//zedGraphControl4.GraphPane.XAxis.ScaleFormat = "n1";
 			//zedGraphControl4.GraphPane.XAxis.ScaleMag = 0;
 			//zedGraphControl4.GraphPane.XAxis.Type = AxisType.Date;
+			zedGraphControl4.GraphPane.YAxis.Max = 2499.9;
+			zedGraphControl4.GraphPane.YAxis.IsScaleVisible = false;
+			zedGraphControl4.GraphPane.YAxis.IsTic = false;
+			zedGraphControl4.GraphPane.YAxis.IsMinorTic = false;
+
+
+			zedGraphControl4.GraphPane.Y2Axis.IsVisible = true;
+			zedGraphControl4.GraphPane.Y2Axis.IsInsideTic = false;
+			zedGraphControl4.GraphPane.Y2Axis.IsMinorInsideTic = false;
+			zedGraphControl4.GraphPane.Y2Axis.BaseTic = 500;
+			zedGraphControl4.GraphPane.Y2Axis.Max = 2499.9;
+			zedGraphControl4.GraphPane.Y2Axis.Cross = 34601;
+			zedGraphControl4.GraphPane.Y2Axis.IsAxisSegmentVisible = false;
+			//zedGraphControl4.GraphPane.YAxis.Is
 
 			zedGraphControl4.AxisChange();
 			zedGraphControl5.AxisChange();

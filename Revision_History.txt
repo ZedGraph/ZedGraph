@@ -1,4 +1,7 @@
 ZedGraph Class Library Revision History
+6-Jul-2005 (by Champion) v4.1.7
+  Add Axis.IsAxisSegmentVisible
+  Fix axis space code to not have space when tics false, scalevisible false, etc.
 
 5-Jul-2005 (by Champion) v4.1.6
   Fix GraphicsPath bug (using StartFigure) for X-Cross, Plus, and Star Symbols
