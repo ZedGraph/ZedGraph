@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.22 $ $Date: 2005-04-20 04:18:38 $ </version>
+	/// <version> $Revision: 3.23 $ $Date: 2005-07-15 16:50:37 $ </version>
 	[Serializable]
 	public class PointPairList : CollectionPlus, ICloneable
 	{
@@ -123,7 +123,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Add a <see cref="PointPair"/> object to the collection at the end of the list.
 		/// </summary>
-		/// <param name="point">A reference to the <see cref="PointPair"/> object to
+		/// <param name="point">The <see cref="PointPair"/> object to
 		/// be added</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
 		/// <seealso cref="IList.Add"/>
@@ -316,6 +316,53 @@ namespace ZedGraph
 			sorted = false;
 			PointPair point = new PointPair( x, y, z, tag );
 			return List.Add( point );
+		}
+
+		/// <summary>
+		/// Add a <see cref="PointPair"/> object to the collection at the specified,
+		/// zero-based, index location.
+		/// </summary>
+		/// <param name="index">
+		/// The zero-based ordinal index where the point is to be added in the list.
+		/// </param>
+		/// <param name="point">
+		/// The <see cref="PointPair"/> object to be added.
+		/// </param>
+		public void Insert( int index, PointPair point )
+		{
+			sorted = false;
+			List.Insert( index, point );
+		}
+
+		/// <summary>
+		/// Add a single point (from values of type double ) to the <see cref="PointPairList"/> at the specified,
+		/// zero-based, index location.
+		/// </summary>
+		/// <param name="index">
+		/// The zero-based ordinal index where the point is to be added in the list.
+		/// </param>
+		/// <param name="x">The X value</param>
+		/// <param name="y">The Y value</param>
+		public void Insert( int index, double x, double y )
+		{
+			sorted = false;
+			List.Insert( index, new PointPair( x, y ) );
+		}
+
+		/// <summary>
+		/// Add a single point (from values of type double ) to the <see cref="PointPairList"/> at the specified,
+		/// zero-based, index location.
+		/// </summary>
+		/// <param name="index">
+		/// The zero-based ordinal index where the point is to be added in the list.
+		/// </param>
+		/// <param name="x">The X value</param>
+		/// <param name="y">The Y value</param>
+		/// <param name="z">The Z or lower dependent axis value</param>
+		public void Insert( int index, double x, double y, double z )
+		{
+			sorted = false;
+			List.Insert( index, new PointPair( x, y, z ) );
 		}
 
 		/// <summary>

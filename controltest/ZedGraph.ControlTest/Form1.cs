@@ -277,7 +277,9 @@ namespace ZedGraph.ControlTest
 			testPane.AddCurve( "Another", list1, Color.Green, SymbolType.Diamond );
 
 			LineItem myCurve = zedGraphControl4.GraphPane.AddCurve("Sine", list1, Color.Red, SymbolType.Circle);
-//			LineItem myCurve2 = zedGraphControl5.GraphPane.AddCurve("Cosine", list3, Color.Blue, SymbolType.Circle);
+			LineItem myCurve2 = zedGraphControl4.GraphPane.AddCurve("Cos", list2, Color.Blue, SymbolType.Circle);
+			myCurve2.IsY2Axis = true;
+			//			LineItem myCurve2 = zedGraphControl5.GraphPane.AddCurve("Cosine", list3, Color.Blue, SymbolType.Circle);
 			LineItem myCurve3 = zedGraphControl6.GraphPane.AddCurve("Sine", list1, Color.Blue, SymbolType.Circle);
 			myCurve3.Line.StepType = StepType.ForwardStep;
 			
@@ -309,19 +311,19 @@ namespace ZedGraph.ControlTest
 			//zedGraphControl4.GraphPane.XAxis.ScaleFormat = "n1";
 			//zedGraphControl4.GraphPane.XAxis.ScaleMag = 0;
 			//zedGraphControl4.GraphPane.XAxis.Type = AxisType.Date;
-			zedGraphControl4.GraphPane.YAxis.Max = 2499.9;
-			zedGraphControl4.GraphPane.YAxis.IsScaleVisible = false;
-			zedGraphControl4.GraphPane.YAxis.IsTic = false;
-			zedGraphControl4.GraphPane.YAxis.IsMinorTic = false;
+			//zedGraphControl4.GraphPane.YAxis.Max = 2499.9;
+			//zedGraphControl4.GraphPane.YAxis.IsScaleVisible = false;
+			//zedGraphControl4.GraphPane.YAxis.IsTic = false;
+			//zedGraphControl4.GraphPane.YAxis.IsMinorTic = false;
 
 
 			zedGraphControl4.GraphPane.Y2Axis.IsVisible = true;
-			zedGraphControl4.GraphPane.Y2Axis.IsInsideTic = false;
-			zedGraphControl4.GraphPane.Y2Axis.IsMinorInsideTic = false;
-			zedGraphControl4.GraphPane.Y2Axis.BaseTic = 500;
-			zedGraphControl4.GraphPane.Y2Axis.Max = 2499.9;
-			zedGraphControl4.GraphPane.Y2Axis.Cross = 34601;
-			zedGraphControl4.GraphPane.Y2Axis.IsAxisSegmentVisible = false;
+			//zedGraphControl4.GraphPane.Y2Axis.IsInsideTic = false;
+			//zedGraphControl4.GraphPane.Y2Axis.IsMinorInsideTic = false;
+			//zedGraphControl4.GraphPane.Y2Axis.BaseTic = 500;
+			//zedGraphControl4.GraphPane.Y2Axis.Max = 2499.9;
+			//zedGraphControl4.GraphPane.Y2Axis.Cross = 34601;
+			//zedGraphControl4.GraphPane.Y2Axis.IsAxisSegmentVisible = false;
 			//zedGraphControl4.GraphPane.YAxis.Is
 
 			zedGraphControl4.AxisChange();
@@ -333,8 +335,12 @@ namespace ZedGraph.ControlTest
 			zedGraphControl4.ScrollMaxX = 37000;
 
 			zedGraphControl4.IsShowVScrollBar = true;
-			zedGraphControl4.ScrollMinY = 0.1;
-			zedGraphControl4.ScrollMaxY = 1000000;
+			zedGraphControl4.ScrollMinY = -5000;
+			zedGraphControl4.ScrollMaxY = 5000;
+
+			zedGraphControl4.ScrollMinY2 = -2;
+			zedGraphControl4.ScrollMaxY2 = 2;
+			zedGraphControl4.IsScrollY2 = true;
 
 			this.zedGraphControl6.GraphPane.Title = "ZedgroSoft, International\nHi-Low-Close Daily Stock Chart"; 
  

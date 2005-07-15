@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+15-Jul-2005 (by Champion)
+  Add PointPairList.Insert overloads
+
 14-Jul-2005 (by Champion) v4.1.8beta
   Add Axis.IsScaleLabelsInside
   Add Axis.IsSkipFirstLabel

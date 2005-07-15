@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.25 $ $Date: 2005-07-15 05:18:12 $ </version>
+	/// <version> $Revision: 3.26 $ $Date: 2005-07-15 16:50:37 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -158,7 +158,7 @@ namespace ZedGraph
 		private double		scrollMaxY2 = 0;
 		private bool		isShowHScrollBar = false;
 		private bool		isShowVScrollBar = false;
-		private bool		isScrollY2 = true;
+		private bool		isScrollY2 = false;
 
 		private System.Windows.Forms.HScrollBar hScrollBar1;
 		private System.Windows.Forms.VScrollBar vScrollBar1;
