@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.43 $ $Date: 2005-05-20 16:32:27 $ </version>
+	/// <version> $Revision: 3.44 $ $Date: 2005-07-15 05:18:12 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -888,31 +888,131 @@ namespace ZedGraph
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>
 		/// <returns>The calculated axis rect, in pixel coordinates.</returns>
+        
 		public RectangleF CalcAxisRect( Graphics g, float scaleFactor )
-		{
-			// get scaled values for the paneGap and character height
-			//float topGap = this.marginTop * (float) scaleFactor;
-			//float charHeight = this.FontSpec.GetHeight( scaleFactor );
-				
+		{				
 			// Axis rect starts out at the full pane rect less the margins
-			RectangleF tmpRect = this.CalcClientRect( g, scaleFactor );
+            //   and less space for the Pane title
+			RectangleF clientRect = this.CalcClientRect( g, scaleFactor );
 
-			float space = this.xAxis.CalcSpace( g, this, scaleFactor );
-			tmpRect.Height -= space;
-			space = this.yAxis.CalcSpace( g, this, scaleFactor );
-			tmpRect.X += space;
-			tmpRect.Width -= space;
-			space = this.y2Axis.CalcSpace( g, this, scaleFactor );
-			tmpRect.Width -= space;
+            float minSpaceX, minSpaceY, minSpaceY2;
+
+			float spaceX = this.xAxis.CalcSpace( g, this, scaleFactor, out minSpaceX );
+			float spaceY = this.yAxis.CalcSpace( g, this, scaleFactor, out minSpaceY );
+			float spaceY2 = this.y2Axis.CalcSpace( g, this, scaleFactor, out minSpaceY2 );
+
+			// actual axis space for the left side of the Axis rect
+			float spaceL = minSpaceY;
+			// actual axis space for the right side of the Axis rect
+			float spaceR = minSpaceY2;
+			// actual axis space for the top side of the Axis rect
+			float spaceT = 0;
+			// actual axis space for the bottom side of the Axis rect
+			float spaceB = minSpaceX;
+
+            SetSpace( this.xAxis, clientRect.Height - spaceX, spaceX, ref spaceB, ref spaceT );
+            SetSpace( this.yAxis, clientRect.Width - spaceY - spaceY2, spaceY, ref spaceL, ref spaceR );
+            SetSpace( this.y2Axis, clientRect.Width - spaceY - spaceY2, spaceY2, ref spaceR, ref spaceL );
+
+            /*
+            float crossFracX = this.xAxis.CalcCrossFraction( this );
+            float crossFracY = this.yAxis.CalcCrossFraction( this );
+            float crossFracY2 = this.y2Axis.CalcCrossFraction( this );
+
+			float crossPixX = crossFracX * (1 + crossFracX)*(1 + crossFracX * crossFracX) *
+				( clientRect.Height - spaceX );
+			float crossPixY = crossFracY * (1 + crossFracY)*(1 + crossFracY * crossFracY) *
+				( clientRect.Width - spaceY - spaceY2 );
+			float crossPixY2 = crossFracY2 * (1 + crossFracY2) * (1 + crossFracY2 * crossFracY2) *
+				( clientRect.Width - spaceY - spaceY2 );
+
+            if ( spaceX < crossPixX )
+				spaceX = 0;
+			else if ( crossPixX > 0 )
+				spaceX -= crossPixX;
+
+			if ( spaceY < crossPixY )
+				spaceY = 0;
+			else if ( crossPixY > 0 )
+				spaceY -= crossPixY;
+
+			if ( spaceY2 < crossPixY2 )
+				spaceY2 = 0;
+			else if ( crossPixY2 > 0 )
+				spaceY2 -= crossPixY2;
+
+			if ( this.xAxis.IsScaleLabelsInside )
+            {
+				if ( spaceX > spaceT ) spaceT = spaceX;
+            }
+			else
+            {
+				if ( spaceX > spaceB ) spaceB = spaceX;
+            }
+
+			if ( this.yAxis.IsScaleLabelsInside )
+            {
+				if ( spaceY > spaceR ) spaceR = spaceY;
+            }
+			else
+            {
+				if ( spaceY > spaceL ) spaceL = spaceY;
+            }
+
+			if ( this.y2Axis.IsScaleLabelsInside )
+			{
+				if ( spaceY2 > spaceL ) spaceL = spaceY2;
+			}
+			else
+			{
+				if ( spaceY2 > spaceR ) spaceR = spaceY2;
+			}
+
+            */
+
+			RectangleF tmpRect = clientRect;
+			tmpRect.Width -= spaceL + spaceR;
+			tmpRect.X += spaceL;
+			tmpRect.Height -= spaceT + spaceB;
+			tmpRect.Y += spaceT;
+
+			//SizeF axisSize = new SizeF( tmpRect.Size );
+
+            this.legend.CalcRect( g, this, scaleFactor, ref tmpRect );
+/*
+			tmpRect.Width -= spaceLegend.Width;
+			tmpRect.Height -= spaceLegend.Height;
+			tmpRect.X += spaceLegend.X;
+			tmpRect.Y += spaceLegend.Y;
 	
-			// Always leave a gap on top, even with no title
-			//tmpRect.Y += topGap;
-			//tmpRect.Height -= topGap;
-
-			this.legend.CalcRect( g, this, scaleFactor, ref tmpRect );
-
+			this.legend.SetLocation( this, tmpRect, scaleFactor );
+*/
 			return tmpRect;
 		}
+
+		private void SetSpace( Axis axis, float clientSize, float spaceReq,
+							ref float spaceNorm, ref float spaceAlt )
+		{
+			float crossFrac = axis.CalcCrossFraction( this );
+			float crossPix = crossFrac * ( 1 + crossFrac ) * ( 1 + crossFrac * crossFrac ) * clientSize;
+
+			if ( spaceReq < crossPix )
+				spaceReq = 0;
+			else if ( crossPix > 0 )
+				spaceReq -= crossPix;
+
+			if ( axis.IsScaleLabelsInside )
+			{
+				if ( spaceReq > spaceAlt )
+					spaceAlt = spaceReq;
+			}
+			else
+			{
+				if ( spaceReq > spaceNorm )
+					spaceNorm = spaceReq;
+			}
+		}
+
 		/// <summary>
 		/// This method will set the <see cref="Axis.MinSpace"/> property for all three axes;
 		/// <see cref="XAxis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>.

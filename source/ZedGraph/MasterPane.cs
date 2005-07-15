@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-03-11 17:24:38 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-07-15 05:18:12 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -414,6 +414,7 @@ namespace ZedGraph
 			// innerRect is the area for the GraphPane's
 			RectangleF innerRect = CalcClientRect( g, scaleFactor );
 			this.legend.CalcRect( g, this, scaleFactor, ref innerRect );
+			//this.legend.SetLocation( this, 
 			
 			this.legend.Draw( g, this, scaleFactor );
 

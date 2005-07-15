@@ -1,4 +1,12 @@
 ZedGraph Class Library Revision History
+
+14-Jul-2005 (by Champion) v4.1.8beta
+  Add Axis.IsScaleLabelsInside
+  Add Axis.IsSkipFirstLabel
+  Add Axis.IsSkipLastLabel
+  Add ZedGraphControl.ScrollMinY2, ScrollMaxY2, IsScrollY2
+  Revamp Axis.Cross logic, GraphPane.CalcAxisRect, and Axis.CalcSpace
+  
 6-Jul-2005 (by Champion) v4.1.7
   Add Axis.IsAxisSegmentVisible
   Fix axis space code to not have space when tics false, scalevisible false, etc.

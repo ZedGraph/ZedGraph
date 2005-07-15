@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.24 $ $Date: 2005-07-06 06:37:01 $ </version>
+	/// <version> $Revision: 3.25 $ $Date: 2005-07-15 05:18:12 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -116,7 +116,23 @@ namespace ZedGraph
 		/// public property <see cref="IsEnableVPan"/> to access this value.
 		/// </summary>
 		private bool isEnableVPan = true;
-		
+
+        /// <summary>
+        /// Private values that determine which mouse button and key combinations trigger pan and zoom
+        /// events.  Use the public properties <see cref="ZoomButtons"/>, <see cref="ZoomButtons2"/>,
+        /// <see cref="PanButtons2"/>, <see cref="PanButtons2"/>, <see cref="ZoomModifierKeys"/>,
+        /// <see cref="ZoomModifierKeys2"/>, <see cref="PanModifierKeys"/>, and
+        /// <see cref="ZoomModifierKeys2"/> to access these values.
+        /// </summary>
+        private MouseButtons zoomButtons = MouseButtons.Left;
+        private Keys zoomModifierKeys = Keys.None;
+        private MouseButtons zoomButtons2 = MouseButtons.None;
+        private Keys zoomModifierKeys2 = Keys.None;
+        private MouseButtons panButtons = MouseButtons.Left;
+        private Keys panModifierKeys = Keys.Shift;
+        private MouseButtons panButtons2 = MouseButtons.Middle;
+        private Keys panModifierKeys2 = Keys.None;
+
 		/// <summary>
 		/// Internal variable that stores the <see cref="GraphPane"/> reference for the Pane that is
 		/// currently being zoomed or panned.
@@ -138,8 +154,11 @@ namespace ZedGraph
 		private double		scrollMaxX = 0;
 		private double		scrollMinY = 0;
 		private double		scrollMaxY = 0;
+		private double		scrollMinY2 = 0;
+		private double		scrollMaxY2 = 0;
 		private bool		isShowHScrollBar = false;
 		private bool		isShowVScrollBar = false;
+		private bool		isScrollY2 = true;
 
 		private System.Windows.Forms.HScrollBar hScrollBar1;
 		private System.Windows.Forms.VScrollBar vScrollBar1;
@@ -388,6 +407,129 @@ namespace ZedGraph
 			get { return isEnableHPan; }
 			set { isEnableHPan = value; }
 		}
+
+        /// <summary>
+        /// Gets or sets a value that determines which mouse button will be used as a primary option
+        /// to trigger a zoom event.
+        /// </summary>
+        /// <remarks>
+        /// This value is combined with <see cref="ZoomModifierKeys"/> to determine the actual zoom combination.
+        /// A secondary zoom button/key combination option is available via <see cref="ZoomButtons2"/> and
+        /// <see cref="ZoomModifierKeys2"/>.  To not use this button/key combination, set the value
+        /// of <see cref="ZoomButtons"/> to <see cref="MouseButtons.None"/>.
+        /// </remarks>
+        public MouseButtons ZoomButtons
+        {
+            get { return zoomButtons; }
+            set { zoomButtons = value; }
+        }
+        /// <summary>
+        /// Gets or sets a value that determines which mouse button will be used as the secondary option
+        /// to trigger a zoom event.
+        /// </summary>
+        /// <remarks>
+        /// This value is combined with <see cref="ZoomModifierKeys2"/> to determine the actual zoom combination.
+        /// The primary zoom button/key combination option is available via <see cref="ZoomButtons"/> and
+        /// <see cref="ZoomModifierKeys"/>.  To not use this button/key combination, set the value
+        /// of <see cref="ZoomButtons2"/> to <see cref="MouseButtons.None"/>.
+        /// </remarks>
+        public MouseButtons ZoomButtons2
+        {
+            get { return zoomButtons2; }
+            set { zoomButtons2 = value; }
+        }
+        /// <summary>
+        /// Gets or sets a value that determines which modifier keys will be used as a primary option
+        /// to trigger a zoom event.
+        /// </summary>
+        /// <remarks>
+        /// This value is combined with <see cref="ZoomButtons"/> to determine the actual zoom combination.
+        /// A secondary zoom button/key combination option is available via <see cref="ZoomButtons2"/> and
+        /// <see cref="ZoomModifierKeys2"/>.  To not use this button/key combination, set the value
+        /// of <see cref="ZoomButtons"/> to <see cref="MouseButtons.None"/>.
+        /// </remarks>
+        public Keys ZoomModifierKeys
+        {
+            get { return zoomModifierKeys; }
+            set { zoomModifierKeys = value; }
+        }
+        /// <summary>
+        /// Gets or sets a value that determines which modifier keys will be used as a secondary option
+        /// to trigger a zoom event.
+        /// </summary>
+        /// <remarks>
+        /// This value is combined with <see cref="ZoomButtons2"/> to determine the actual zoom combination.
+        /// A primary zoom button/key combination option is available via <see cref="ZoomButtons"/> and
+        /// <see cref="ZoomModifierKeys"/>.  To not use this button/key combination, set the value
+        /// of <see cref="ZoomButtons2"/> to <see cref="MouseButtons.None"/>.
+        /// </remarks>
+        public Keys ZoomModifierKeys2
+        {
+            get { return zoomModifierKeys2; }
+            set { zoomModifierKeys2 = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value that determines which mouse button will be used as a primary option
+        /// to trigger a pan event.
+        /// </summary>
+        /// <remarks>
+        /// This value is combined with <see cref="PanModifierKeys"/> to determine the actual pan combination.
+        /// A secondary pan button/key combination option is available via <see cref="PanButtons2"/> and
+        /// <see cref="PanModifierKeys2"/>.  To not use this button/key combination, set the value
+        /// of <see cref="PanButtons"/> to <see cref="MouseButtons.None"/>.
+        /// </remarks>
+        public MouseButtons PanButtons
+        {
+            get { return panButtons; }
+            set { panButtons = value; }
+        }
+        /// <summary>
+        /// Gets or sets a value that determines which mouse button will be used as the secondary option
+        /// to trigger a pan event.
+        /// </summary>
+        /// <remarks>
+        /// This value is combined with <see cref="PanModifierKeys2"/> to determine the actual pan combination.
+        /// The primary pan button/key combination option is available via <see cref="PanButtons"/> and
+        /// <see cref="PanModifierKeys"/>.  To not use this button/key combination, set the value
+        /// of <see cref="PanButtons2"/> to <see cref="MouseButtons.None"/>.
+        /// </remarks>
+        public MouseButtons PanButtons2
+        {
+            get { return panButtons2; }
+            set { panButtons2 = value; }
+        }
+        /// <summary>
+        /// Gets or sets a value that determines which modifier keys will be used as a primary option
+        /// to trigger a pan event.
+        /// </summary>
+        /// <remarks>
+        /// This value is combined with <see cref="PanButtons"/> to determine the actual pan combination.
+        /// A secondary pan button/key combination option is available via <see cref="PanButtons2"/> and
+        /// <see cref="PanModifierKeys2"/>.  To not use this button/key combination, set the value
+        /// of <see cref="PanButtons"/> to <see cref="MouseButtons.None"/>.
+        /// </remarks>
+        public Keys PanModifierKeys
+        {
+            get { return panModifierKeys; }
+            set { panModifierKeys = value; }
+        }
+        /// <summary>
+        /// Gets or sets a value that determines which modifier keys will be used as a secondary option
+        /// to trigger a pan event.
+        /// </summary>
+        /// <remarks>
+        /// This value is combined with <see cref="PanButtons2"/> to determine the actual pan combination.
+        /// A primary pan button/key combination option is available via <see cref="PanButtons"/> and
+        /// <see cref="PanModifierKeys"/>.  To not use this button/key combination, set the value
+        /// of <see cref="PanButtons2"/> to <see cref="MouseButtons.None"/>.
+        /// </remarks>
+        public Keys PanModifierKeys2
+        {
+            get { return panModifierKeys2; }
+            set { panModifierKeys2 = value; }
+        }
+
 		/// <summary>
 		/// Gets or sets a value that determines whether or not panning is allowed for the control in
 		/// the vertical direction.
@@ -452,6 +594,27 @@ namespace ZedGraph
 			set { isShowVScrollBar = value; ChangeSize( this, new EventArgs() ); }
 		}
 
+        /// <summary>
+        /// Gets or sets a value that determines if the vertical scroll bar will affect the Y2 axis.
+        /// </summary>
+        /// <remarks>
+        /// The vertical scroll bar is automatically associated with the Y axis.  With this value, you
+        /// can choose to include or exclude the Y2 axis with the scrolling.  Note that the Y2 axis
+        /// scrolling is handled as a secondary.  The vertical scroll bar position always reflects
+        /// the status of the Y axis.  This can cause the Y2 axis to "jump" when first scrolled if
+        /// the <see cref="ScrollMinY2" /> and <see cref="ScrollMaxY2" /> values are not set to the
+        /// same proportions as <see cref="ScrollMinY" /> and <see cref="ScrollMaxY" /> with respect
+        /// to the actual <see cref="Axis.Min"/> and <see cref="Axis.Max" />.
+        /// </remarks>
+        /// <seealso cref="IsShowVScrollBar"/>
+        /// <seealso cref="ScrollMinY2"/>
+        /// <seealso cref="ScrollMaxY2"/>
+        public bool IsScrollY2
+        {
+            get { return isScrollY2; }
+            set { isScrollY2 = value; }
+        }
+
 		/// <summary>
 		/// The minimum value for the X axis scroll range.
 		/// </summary>
@@ -511,6 +674,36 @@ namespace ZedGraph
 		{
 			get { return scrollMaxY; }
 			set { scrollMaxY = value; }
+		}
+		/// <summary>
+		/// The minimum value for the Y2 axis scroll range.
+		/// </summary>
+		/// <remarks>
+		/// Effectively, the minimum endpoint of the scroll range will cause the
+		/// <see cref="Axis.Min"/> value to be set to <see cref="ScrollMinY2"/>.  Note that this
+		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableVPan"/>)
+		/// is not affected by this value.
+		/// </remarks>
+		/// <value>A double value indicating the minimum axis value</value>
+		public double ScrollMinY2
+		{
+			get { return scrollMinY2; }
+			set { scrollMinY2 = value; }
+		}
+		/// <summary>
+		/// The maximum value for the Y2 axis scroll range.
+		/// </summary>
+		/// <remarks>
+		/// Effectively, the maximum endpoint of the scroll range will cause the
+		/// <see cref="Axis.Max"/> value to be set to <see cref="ScrollMaxY2"/>.  Note that this
+		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableVPan"/>)
+		/// is not affected by this value.
+		/// </remarks>
+		/// <value>A double value indicating the maximum axis value</value>
+		public double ScrollMaxY2
+		{
+			get { return scrollMaxY2; }
+			set { scrollMaxY2 = value; }
 		}
 		
 
@@ -590,45 +783,6 @@ namespace ZedGraph
 	#endregion
 
 	#region Methods
-
-		private void SetScroll( ScrollBar scrollBar, Axis axis, double scrollMin, double scrollMax )
-		{
-			int value = 0;
-			double scrollMin2;
-
-			if ( axis.IsLog )
-				scrollMin2 = scrollMax / ( axis.Max / axis.Min );
-			else
-				scrollMin2 = scrollMax - ( axis.Max - axis.Min );
-
-			if ( scrollMin >= scrollMin2 )
-			{
-				scrollBar.Enabled = false;
-				scrollBar.Value = 0;
-				scrollBar.Minimum = 0;
-				scrollBar.Maximum = 0;
-			}
-			else
-			{
-				scrollBar.Minimum = 0;
-				scrollBar.Maximum = ScrollRange + scrollBar.LargeChange - 1;
-				if ( axis.IsLog )
-					value = (int) ( ( Math.Log( axis.Min ) - Math.Log( scrollMin ) ) / ( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) * ScrollRange );
-				else
-					value = (int) ( ( axis.Min - scrollMin ) / ( scrollMin2 - scrollMin ) * ScrollRange );
-
-				if ( value < 0 )
-					value = 0;
-				else if ( value > ScrollRange )
-					value = ScrollRange;
-
-				//if ( ( axis is XAxis && axis.IsReverse ) || ( ( ! axis is XAxis ) && ! axis.IsReverse ) )
-				if ( (axis is XAxis) == axis.IsReverse )
-					value = ScrollRange - value;
-
-				scrollBar.Value = value;
-			}
-		}
 
 		/// <summary>
 		/// Called by the system to update the control on-screen
@@ -732,9 +886,10 @@ namespace ZedGraph
 			
 			GraphPane pane = this.MasterPane.FindAxisRect( new PointF( e.X, e.Y ) );
 			
-			if ( pane != null && ( this.isEnableHPan || this.isEnableVPan ) &&
-					( e.Button == MouseButtons.Middle || ( e.Button == MouseButtons.Left &&
-							( Control.ModifierKeys == Keys.Shift ) ) ) )
+			if ( pane != null &&
+                    ( this.isEnableHPan || this.isEnableVPan ) &&
+					( ( e.Button == this.panButtons && Control.ModifierKeys == this.panModifierKeys ) ||
+                      ( e.Button == this.panButtons2 && Control.ModifierKeys == this.panModifierKeys2 ) ) )
 			{
 				isPanning = true;
 				// Calculate the startPoint by using the PointToScreen
@@ -744,8 +899,10 @@ namespace ZedGraph
 				this.dragPane = pane;
 				this.zoomState = new ZoomState( this.dragPane, ZoomState.StateType.Pan );
 			}
-			else if ( pane != null && this.isEnableZoom && e.Button == MouseButtons.Left && Control.ModifierKeys == 0 )
-			{
+			else if ( pane != null && this.isEnableZoom &&
+                    ( (e.Button == this.zoomButtons && Control.ModifierKeys == this.zoomModifierKeys) ||
+                      (e.Button == this.zoomButtons2 && Control.ModifierKeys == this.zoomModifierKeys2)))
+            {
 				isZooming = true;
 				// Calculate the startPoint by using the PointToScreen
 				// method.
@@ -1270,12 +1427,14 @@ namespace ZedGraph
 
 		#endregion
 
-	#region Scrolling
+	#region ScrollBars
 
 		private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
 		{
-			HandleScroll( this.GraphPane.YAxis, e.NewValue, scrollMinY, scrollMaxY, !this.GraphPane.YAxis.IsReverse );
-		}
+            HandleScroll(this.GraphPane.YAxis, e.NewValue, scrollMinY, scrollMaxY, !this.GraphPane.YAxis.IsReverse);
+            if ( this.isScrollY2 )
+                HandleScroll(this.GraphPane.Y2Axis, e.NewValue, scrollMinY2, scrollMaxY2, !this.GraphPane.Y2Axis.IsReverse);
+        }
 
 		private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
 		{
@@ -1307,6 +1466,46 @@ namespace ZedGraph
 			}
 
 			this.Invalidate();
+		}
+
+		private void SetScroll( ScrollBar scrollBar, Axis axis, double scrollMin, double scrollMax )
+		{
+			int value = 0;
+			double scrollMin2;
+
+			if ( axis.IsLog )
+				scrollMin2 = scrollMax / ( axis.Max / axis.Min );
+			else
+				scrollMin2 = scrollMax - ( axis.Max - axis.Min );
+
+			if ( scrollMin >= scrollMin2 )
+			{
+				scrollBar.Enabled = false;
+				scrollBar.Value = 0;
+				scrollBar.Minimum = 0;
+				scrollBar.Maximum = 0;
+			}
+			else
+			{
+				scrollBar.Enabled = true;
+				scrollBar.Minimum = 0;
+				scrollBar.Maximum = ScrollRange + scrollBar.LargeChange - 1;
+				if ( axis.IsLog )
+					value = (int) ( ( Math.Log( axis.Min ) - Math.Log( scrollMin ) ) / ( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) * ScrollRange );
+				else
+					value = (int) ( ( axis.Min - scrollMin ) / ( scrollMin2 - scrollMin ) * ScrollRange );
+
+				if ( value < 0 )
+					value = 0;
+				else if ( value > ScrollRange )
+					value = ScrollRange;
+
+				//if ( ( axis is XAxis && axis.IsReverse ) || ( ( ! axis is XAxis ) && ! axis.IsReverse ) )
+				if ( (axis is XAxis) == axis.IsReverse )
+					value = ScrollRange - value;
+
+				scrollBar.Value = value;
+			}
 		}
 
 	#endregion

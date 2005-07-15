@@ -26,9 +26,11 @@ namespace ZedGraph.LibTest
 	{
 		private IContainer components;
 		private DBGraphics memGraphics;
-		private System.Windows.Forms.MainMenu mainMenu1;
-		private System.Windows.Forms.MenuItem menuFile;
-		private System.Windows.Forms.MenuItem menuItemHowdy;
+		private TrackBar trackBar1;
+		private CheckBox ReverseBox;
+		private CheckBox LabelsInsideBox;
+		private ComboBox AxisSelection;
+		private CheckBox CrossAutoBox;
 
 		/// <summary>
 		/// 
@@ -65,40 +67,79 @@ namespace ZedGraph.LibTest
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.mainMenu1 = new System.Windows.Forms.MainMenu();
-			this.menuFile = new System.Windows.Forms.MenuItem();
-			this.menuItemHowdy = new System.Windows.Forms.MenuItem();
+			this.trackBar1 = new System.Windows.Forms.TrackBar();
+			this.ReverseBox = new System.Windows.Forms.CheckBox();
+			this.LabelsInsideBox = new System.Windows.Forms.CheckBox();
+			this.AxisSelection = new System.Windows.Forms.ComboBox();
+			this.CrossAutoBox = new System.Windows.Forms.CheckBox();
+			( (System.ComponentModel.ISupportInitialize)( this.trackBar1 ) ).BeginInit();
+			this.SuspendLayout();
 			// 
-			// mainMenu1
+			// trackBar1
 			// 
-			this.mainMenu1.MenuItems.AddRange( new System.Windows.Forms.MenuItem[] {
-																					   this.menuFile
-																				   } );
+			this.trackBar1.Location = new System.Drawing.Point( 2, 1 );
+			this.trackBar1.Name = "trackBar1";
+			this.trackBar1.Size = new System.Drawing.Size( 311, 45 );
+			this.trackBar1.TabIndex = 0;
+			this.trackBar1.Scroll += new System.EventHandler( this.trackBar1_Scroll );
 			// 
-			// menuFile
+			// ReverseBox
 			// 
-			this.menuFile.Index = 0;
-			this.menuFile.MenuItems.AddRange( new System.Windows.Forms.MenuItem[] {
-																					  this.menuItemHowdy
-																				  } );
-			this.menuFile.Text = "File";
+			this.ReverseBox.Location = new System.Drawing.Point( 320, 1 );
+			this.ReverseBox.Name = "ReverseBox";
+			this.ReverseBox.Size = new System.Drawing.Size( 70, 17 );
+			this.ReverseBox.TabIndex = 1;
+			this.ReverseBox.Text = "IsReverse";
+			this.ReverseBox.CheckedChanged += new System.EventHandler( this.ReverseBox_CheckedChanged );
 			// 
-			// menuItemHowdy
+			// LabelsInsideBox
 			// 
-			this.menuItemHowdy.Index = 0;
-			this.menuItemHowdy.Text = "Howdy";
+			this.LabelsInsideBox.Location = new System.Drawing.Point( 320, 24 );
+			this.LabelsInsideBox.Name = "LabelsInsideBox";
+			this.LabelsInsideBox.Size = new System.Drawing.Size( 84, 17 );
+			this.LabelsInsideBox.TabIndex = 2;
+			this.LabelsInsideBox.Text = "Labels Inside";
+			this.LabelsInsideBox.CheckedChanged += new System.EventHandler( this.LabelsInsideBox_CheckedChanged );
+			// 
+			// AxisSelection
+			// 
+			this.AxisSelection.Items.AddRange( new object[] {
+            "X Axis",
+            "Y Axis",
+            "Y2 Axis"} );
+			this.AxisSelection.Location = new System.Drawing.Point( 421, 20 );
+			this.AxisSelection.Name = "AxisSelection";
+			this.AxisSelection.Size = new System.Drawing.Size( 121, 21 );
+			this.AxisSelection.TabIndex = 4;
+			this.AxisSelection.SelectedIndexChanged += new System.EventHandler( this.AxisSelection_SelectedIndexChanged );
+			// 
+			// CrossAutoBox
+			// 
+			this.CrossAutoBox.Location = new System.Drawing.Point( 420, 1 );
+			this.CrossAutoBox.Name = "CrossAutoBox";
+			this.CrossAutoBox.Size = new System.Drawing.Size( 69, 17 );
+			this.CrossAutoBox.TabIndex = 5;
+			this.CrossAutoBox.Text = "crossAuto";
+			this.CrossAutoBox.CheckedChanged += new System.EventHandler( this.CrossAutoBox_CheckedChanged );
 			// 
 			// Form1
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size( 5, 13 );
-			this.ClientSize = new System.Drawing.Size( 507, 342 );
-			this.Menu = this.mainMenu1;
+			this.ClientSize = new System.Drawing.Size( 608, 435 );
+			this.Controls.Add( this.CrossAutoBox );
+			this.Controls.Add( this.AxisSelection );
+			this.Controls.Add( this.LabelsInsideBox );
+			this.Controls.Add( this.ReverseBox );
+			this.Controls.Add( this.trackBar1 );
 			this.Name = "Form1";
 			this.Text = "Form1";
-			this.Paint += new System.Windows.Forms.PaintEventHandler( this.Form1_Paint );
-			this.Resize += new System.EventHandler( this.Form1_Resize );
 			this.Load += new System.EventHandler( this.Form1_Load );
+			this.Paint += new System.Windows.Forms.PaintEventHandler( this.Form1_Paint );
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form1_MouseDown );
+			this.Resize += new System.EventHandler( this.Form1_Resize );
+			( (System.ComponentModel.ISupportInitialize)( this.trackBar1 ) ).EndInit();
+			this.ResumeLayout( false );
+			this.PerformLayout();
 
 		}
 		#endregion
@@ -117,6 +158,8 @@ namespace ZedGraph.LibTest
 		/// </summary>
 		protected GraphPane		myPane, myPane2;
 		protected MasterPane	master = null;
+		private Axis _crossAxis;
+
 
 		private void Form1_Load(object sender, System.EventArgs e)
 		{			
@@ -654,7 +697,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if false	// Basic curve test
+#if true	// Basic curve test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
 			PointPairList list = new PointPairList();
@@ -667,15 +710,33 @@ namespace ZedGraph.LibTest
 			}
 
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
-
+			myCurve.IsY2Axis = true;
+			myPane.Y2Axis.IsVisible = true;
+			//myPane.YAxis.IsVisible = false;
+			myPane.Y2Axis.Title = "Y2 Axis";
 			//myPane.XAxis.BaseTic = 1;
-			myPane.XAxis.Step = 5;
+			//myPane.XAxis.Step = 5;
+			//myPane.Y2Axis.Cross = 60;
+            //myPane.YAxis.IsScaleLabelsInside = true;
+			myPane.Y2Axis.IsShowGrid = true;
+			myPane.XAxis.IsShowGrid = true;
+			//myPane.YAxis.IsSkipFirstLabel = true;
+			myPane.XAxis.IsSkipLastLabel = true;
+			//myPane.XAxis.IsSkipLastLabel = true;
+			//myPane.XAxis.IsReverse = true;
+			//myPane.AxisBorder.IsVisible = false;
+			//myPane.XAxis.Type = AxisType.Log;
+
 
 			myPane.AxisChange( this.CreateGraphics() );
-			MessageBox.Show
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
 #endif
 
-#if true	// repetitive points
+#if false	// repetitive points
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
 			double[] Track_DateTime_Xaxis = {1};
@@ -691,6 +752,8 @@ namespace ZedGraph.LibTest
 
 #endif
 
+			_crossAxis = myPane.XAxis;
+			UpdateControls();
 			SetSize();
 
 			//this.WindowState = FormWindowState.Maximized ;
@@ -845,6 +908,8 @@ namespace ZedGraph.LibTest
 		{
 			Rectangle paneRect = this.ClientRectangle;
 			paneRect.Inflate( -20, -20 );
+			paneRect.Y += 30;
+			paneRect.Height -= 30;
 
 			Graphics g = this.CreateGraphics();
 			memGraphics.CreateDoubleBuffer( g, this.ClientRectangle.Width, this.ClientRectangle.Height );
@@ -1078,6 +1143,60 @@ namespace ZedGraph.LibTest
 
 			//CopyToGif( myPane );
 			//CopyToEMF( myPane );
+		}
+
+		private void trackBar1_Scroll( object sender, EventArgs e )
+		{
+			Axis controlAxis = myPane.XAxis;
+			if ( _crossAxis is XAxis )
+				controlAxis = myPane.YAxis;
+
+			_crossAxis.Cross = (double) trackBar1.Value / 100.0 * (controlAxis.Max - controlAxis.Min) +
+							controlAxis.Min;
+			Invalidate();
+		}
+
+		private void ReverseBox_CheckedChanged( object sender, EventArgs e )
+		{
+			_crossAxis.IsReverse = ReverseBox.Checked;
+			Invalidate();
+		}
+
+		private void LabelsInsideBox_CheckedChanged( object sender, EventArgs e )
+		{
+			_crossAxis.IsScaleLabelsInside = LabelsInsideBox.Checked;
+			Invalidate();
+		}
+
+		private void AxisSelection_SelectedIndexChanged( object sender, EventArgs e )
+		{
+			if ( AxisSelection.SelectedIndex == 0 )
+				_crossAxis = myPane.XAxis;
+			else if ( AxisSelection.SelectedIndex == 1 )
+				_crossAxis = myPane.YAxis;
+			else
+				_crossAxis = myPane.Y2Axis;
+
+			UpdateControls();
+		}
+
+		private void UpdateControls()
+		{
+			Axis controlAxis = myPane.XAxis;
+			if ( _crossAxis is XAxis )
+				controlAxis = myPane.YAxis;
+
+			ReverseBox.Checked = _crossAxis.IsReverse;
+			LabelsInsideBox.Checked = _crossAxis.IsScaleLabelsInside;
+			CrossAutoBox.Checked = _crossAxis.CrossAuto;
+			double ratio = (_crossAxis.Cross - controlAxis.Min) / (controlAxis.Max - controlAxis.Min);
+			trackBar1.Value = (int) (100 * ratio);
+		}
+
+		private void CrossAutoBox_CheckedChanged( object sender, EventArgs e )
+		{
+			_crossAxis.CrossAuto = CrossAutoBox.Checked;
+			Invalidate();
 		}
 
 	}

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-02-11 05:20:43 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-07-15 05:18:12 $ </version>
 	[Serializable]
 	public class Y2Axis : Axis, ICloneable, ISerializable
 	{
@@ -174,17 +174,23 @@ namespace ZedGraph
 		/// <returns>The shift amount measured in pixels</returns>
 		internal override float CalcCrossShift( GraphPane pane )
 		{
-			if ( IsCrossed( pane ) )
-				return pane.XAxis.Transform( this.cross ) - pane.XAxis.MaxPix;
+			double effCross = EffectiveCrossValue( pane );
+
+			if ( !this.crossAuto )
+				return pane.XAxis.Transform( effCross ) - pane.XAxis.MaxPix;
 			else
 				return 0;
 		}
-
+/*
 		override internal bool IsCrossed( GraphPane pane )
 		{
 			return !this.crossAuto && this.cross > pane.XAxis.Min && this.cross < pane.XAxis.Max;
 		}
-
+*/
+        override internal Axis GetCrossAxis( GraphPane pane )
+        {
+            return pane.XAxis;
+        }
 
 	#endregion
 

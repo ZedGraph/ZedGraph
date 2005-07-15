@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-06-07 04:21:42 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2005-07-15 05:18:12 $ </version>
 	public class PaneBase : ICloneable
 	{
 
@@ -766,10 +766,10 @@ namespace ZedGraph
 			// Axis rect starts out at the full pane rect.  It gets reduced to make room for the legend,
 			// scales, titles, etc.
 			RectangleF innerRect = new RectangleF(
-							this.paneRect.Left + this.marginLeft * (float) scaleFactor,
-							this.paneRect.Top + this.marginTop * (float) scaleFactor,
-							this.paneRect.Width - (float) scaleFactor * ( this.marginLeft + this.marginRight ),
-							this.paneRect.Height - (float) scaleFactor * ( this.marginTop + this.marginBottom ) );
+							this.paneRect.Left + this.marginLeft * scaleFactor,
+							this.paneRect.Top + this.marginTop * scaleFactor,
+							this.paneRect.Width - scaleFactor * ( this.marginLeft + this.marginRight ),
+							this.paneRect.Height - scaleFactor * ( this.marginTop + this.marginBottom ) );
 
 			// Leave room for the title
 			if ( this.isShowTitle )
