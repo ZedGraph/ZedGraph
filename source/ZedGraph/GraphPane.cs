@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.44 $ $Date: 2005-07-15 05:18:12 $ </version>
+	/// <version> $Revision: 3.45 $ $Date: 2005-07-21 07:31:04 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1493,8 +1493,8 @@ namespace ZedGraph
 
 			// Make sure that the axes & data are being drawn
 			if ( 	this.xAxis.Min < this.xAxis.Max &&
-				this.yAxis.Min < this.yAxis.Max &&
-				this.y2Axis.Min < this.y2Axis.Max )
+					this.yAxis.Min < this.yAxis.Max &&
+					this.y2Axis.Min < this.y2Axis.Max )
 			{
 				float		scaleFactor = CalcScaleFactor();
 				//int			hStack;

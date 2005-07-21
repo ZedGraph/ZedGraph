@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.26 $ $Date: 2005-07-15 16:50:37 $ </version>
+	/// <version> $Revision: 3.27 $ $Date: 2005-07-21 07:31:04 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -167,20 +167,25 @@ namespace ZedGraph
 
 		private bool		isZoomOnMouseCenter = false;
 
+	#endregion
+
+	#region Events
+
 		/// <summary>
 		/// A delegate that allows subscribing methods to append or modify the context menu.
+		/// </summary>
+		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="menu">A reference to the <see cref="ContextMenu"/> object that contains
+		/// the context menu.</param>
+		/// <seealso cref="ContextMenuBuilder" />
+		public delegate void ContextMenuBuilderEventHandler( object sender, ContextMenu menu );
+		/// <summary>
+		/// Subscribe to this event to be able to modify the ZedGraph context menu.
 		/// </summary>
 		/// <remarks>
 		/// The context menu is built on the fly after a right mouse click.  You can add menu items
 		/// to this menu by simply modifying the <see paramref="menu"/> parameter.
 		/// </remarks>
-		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
-		/// <param name="menu">A reference to the <see cref="ContextMenu"/> object that contains
-		/// the context menu.</param>
-		public delegate void ContextMenuBuilderEventHandler( object sender, ContextMenu menu );
-		/// <summary>
-		/// Subscribe to this event to be able to modify the ZedGraph context menu.
-		/// </summary>
 		public event ContextMenuBuilderEventHandler ContextMenuBuilder;
 
 		/// <summary>
@@ -191,6 +196,7 @@ namespace ZedGraph
 		/// <see cref="GraphPane"/> before the zoom or pan event.</param>
 		/// <param name="newState">A <see cref="ZoomState"/> object that corresponds to the state of the
 		/// <see cref="GraphPane"/> after the zoom or pan event</param>
+		/// <seealso cref="ZoomEvent" />
 		public delegate void ZoomEventHandler( object sender, ZoomState oldState, ZoomState newState );
 
 		/// <summary>
@@ -207,12 +213,55 @@ namespace ZedGraph
 		/// <param name="curve">The <see cref="CurveItem"/> object that contains the point value of interest</param>
 		/// <param name="iPt">The integer index of the selected <see cref="PointPair"/> within the
 		/// <see cref="PointPairList"/> of the selected <see cref="CurveItem"/></param>
+		/// <seealso cref="PointValueEvent" />
 		public delegate string PointValueHandler( object sender, GraphPane pane, CurveItem curve, int iPt );
 
 		/// <summary>
 		/// Subscribe to this event to provide custom formatting for the tooltips
 		/// </summary>
 		public event PointValueHandler PointValueEvent;
+
+		/// <summary>
+		/// A delegate that allows notification of MouseDown click events on Graph objects.
+		/// </summary>
+		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="pane">The <see cref="GraphPane"/> object that was clicked</param>
+		/// <param name="nearestObj">A reference to the nearest object to the
+		/// specified screen point.  This can be any of <see cref="Axis"/>,
+		/// <see cref="Legend"/>, <see cref="PaneBase.Title"/>,
+		/// <see cref="TextItem"/>, <see cref="ArrowItem"/>, or <see cref="CurveItem"/>.
+		/// Note: If the pane title is selected, then the <see cref="GraphPane"/> object
+		/// will be returned.
+		/// </param>
+		/// <param name="index">The index number of the item within the selected object
+		/// (where applicable).  For example, for a <see cref="CurveItem"/> object,
+		/// <see paramref="index"/> will be the index number of the nearest data point,
+		/// accessible via <see cref="CurveItem.Points">CurveItem.Points[index]</see>.
+		/// index will be -1 if no data points are available.</param>
+		/// <seealso cref="MouseDownEvent" />
+		/// <returns>
+		/// Return true if you have handled the MouseDown event entirely, and you do not
+		/// want the <see cref="ZedGraphControl"/> to do any further action (e.g., starting
+		/// a zoom operation).  Return false if ZedGraph should go ahead and process the
+		/// MouseDown event.
+		/// </returns>
+		public delegate bool MouseDownEventHandler( object sender, GraphPane pane,
+			object nearestObj, int index );
+
+		/// <summary>
+		/// Subscribe to this event to provide notification of MouseDown clicks on graph
+		/// objects
+		/// </summary>
+		/// <remarks>
+		/// This event provides for a notification when the mouse is clicked on an object
+		/// within any <see cref="GraphPane"/> of the <see cref="MasterPane"/> associated
+		/// with this <see cref="ZedGraphControl" />.  This event will use the
+		/// <see cref="ZedGraph.MasterPane.FindNearestPaneObject"/> method to determine which object
+		/// was clicked.  The boolean value that you return from this handler determines whether
+		/// or not the <see cref="ZedGraphControl"/> will do any further handling of the
+		/// MouseDown event (see <see cref="MouseDownEventHandler" />).
+		/// </remarks>
+		public event MouseDownEventHandler MouseDownEvent;
 
 	#endregion
 
@@ -884,6 +933,25 @@ namespace ZedGraph
 			this.isZooming = false;
 			this.dragPane = null;
 			
+			// Provide Callback for MouseDown events
+			if ( this.MouseDownEvent != null )
+			{
+				GraphPane	clickPane;
+				object		nearestObj;
+				int			index;
+				Graphics	g = this.CreateGraphics();
+
+				if ( this.MasterPane.FindNearestPaneObject( new PointF( e.X, e.Y ), g,
+							out clickPane, out nearestObj, out index ) &&
+						this.MouseDownEvent( this, clickPane, nearestObj, index ) )
+				{
+					g.Dispose();
+					return;
+				}
+
+				g.Dispose();
+			}
+
 			GraphPane pane = this.MasterPane.FindAxisRect( new PointF( e.X, e.Y ) );
 			
 			if ( pane != null &&

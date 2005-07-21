@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+19-Jul-2005 (by Champion) v4.1.9
+  Add IsCrossTic, IsInsideCrossTic, IsMinorCrossTic, IsMinorInsideCrossTic
+  
 15-Jul-2005 (by Champion)
   Add PointPairList.Insert overloads
 

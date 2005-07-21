@@ -697,7 +697,34 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test
+#if true	// Text / Date Graph
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList list = new PointPairList();
+			string[] textLabels = new string[10];
+
+			for ( int i=0; i<10; i++ )
+			{
+				textLabels[i] = "Label " + i.ToString();
+				double y = (double) i+1;
+				double x = new XDate( 2005, i+1, i*5+1 );
+				list.Add( x, y );
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			myPane.XAxis.Type = AxisType.Date;
+			myPane.YAxis.Type = AxisType.Text;
+			myPane.YAxis.TextLabels = textLabels;
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
+
+#if false	// Basic curve test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
 			PointPairList list = new PointPairList();
@@ -753,7 +780,7 @@ namespace ZedGraph.LibTest
 #endif
 
 			_crossAxis = myPane.XAxis;
-			UpdateControls();
+			//UpdateControls();
 			SetSize();
 
 			//this.WindowState = FormWindowState.Maximized ;

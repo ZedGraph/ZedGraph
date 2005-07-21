@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.35 $ $Date: 2005-07-15 05:18:12 $ </version>
+	/// <version> $Revision: 3.36 $ $Date: 2005-07-21 07:31:03 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -61,7 +61,6 @@ namespace ZedGraph
 							maxAuto,
 							stepAuto,
 							minorStepAuto,
-							//numDecAuto,
 							scaleMagAuto,
 							scaleFormatAuto,
 							crossAuto;
@@ -97,6 +96,10 @@ namespace ZedGraph
 							isShowMinorGrid,
 							isMinorInsideTic,
 							isMinorOppositeTic,
+							isCrossTic,
+							isInsideCrossTic,
+							isMinorCrossTic,
+							isMinorInsideCrossTic,
 							isTicsBetweenLabels,
 							isReverse,
 							isOmitMag,
@@ -565,6 +568,76 @@ namespace ZedGraph
 			/// (inside the axis on the opposite side),
 			/// false otherwise</value>
 			public static bool IsMinorOppositeTic = true;
+
+			/// <summary>
+			/// The default display mode for the <see cref="Axis"/> major outside 
+			/// "cross" tic marks (<see cref="Axis.IsCrossTic"/> property).
+			/// </summary>
+			/// <remarks>
+			/// The "cross" tics are a special, additional set of tic marks that
+			/// always appear on the actual axis, even if it has been shifted due
+			/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
+			/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
+			/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
+			/// they will exactly overlay the "normal" and "inside" tics.  If
+			/// <see cref="CrossAuto"/> is false, then you will most likely want to
+			/// enable the cross tics.
+			/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
+			/// </remarks>
+			/// <value>true to show the major cross tic marks, false otherwise</value>
+			public static bool IsCrossTic = false;
+			/// <summary>
+			/// The default display mode for the <see cref="Axis"/> major inside 
+			/// "cross" tic marks (<see cref="Axis.IsInsideCrossTic"/> property).
+			/// </summary>
+			/// <remarks>
+			/// The "cross" tics are a special, additional set of tic marks that
+			/// always appear on the actual axis, even if it has been shifted due
+			/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
+			/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
+			/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
+			/// they will exactly overlay the "normal" and "inside" tics.  If
+			/// <see cref="CrossAuto"/> is false, then you will most likely want to
+			/// enable the cross tics.
+			/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
+			/// </remarks>
+			/// <value>true to show the major cross tic marks, false otherwise</value>
+			public static bool IsInsideCrossTic = false;
+			/// <summary>
+			/// The default display mode for the <see cref="Axis"/> minor outside 
+			/// "cross" tic marks (<see cref="Axis.IsMinorCrossTic"/> property).
+			/// </summary>
+			/// <remarks>
+			/// The "cross" tics are a special, additional set of tic marks that
+			/// always appear on the actual axis, even if it has been shifted due
+			/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
+			/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
+			/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
+			/// they will exactly overlay the "normal" and "inside" tics.  If
+			/// <see cref="CrossAuto"/> is false, then you will most likely want to
+			/// enable the cross tics.
+			/// The minor tic spacing is controlled by <see cref="Axis.MinorStep"/>.
+			/// </remarks>
+			/// <value>true to show the major cross tic marks, false otherwise</value>
+			public static bool IsMinorCrossTic = false;
+			/// <summary>
+			/// The default display mode for the <see cref="Axis"/> minor inside 
+			/// "cross" tic marks (<see cref="Axis.IsMinorInsideCrossTic"/> property).
+			/// </summary>
+			/// <remarks>
+			/// The "cross" tics are a special, additional set of tic marks that
+			/// always appear on the actual axis, even if it has been shifted due
+			/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
+			/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
+			/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
+			/// they will exactly overlay the "normal" and "inside" tics.  If
+			/// <see cref="CrossAuto"/> is false, then you will most likely want to
+			/// enable the cross tics.
+			/// The major tic spacing is controlled by <see cref="Axis.MinorStep"/>.
+			/// </remarks>
+			/// <value>true to show the major cross tic marks, false otherwise</value>
+			public static bool IsMinorInsideCrossTic = false;
+
 			/// <summary>
 			/// The default logarithmic mode for the <see cref="Axis"/> scale
 			/// (<see cref="Axis.IsLog"/> property). true for a logarithmic scale,
@@ -864,12 +937,18 @@ namespace ZedGraph
 			this.isShowMinorGrid = Default.IsShowMinorGrid;
 			this.isReverse = Default.IsReverse;
 			this.isOmitMag = false;
+
 			this.isTic = Default.IsTic;
 			this.isInsideTic = Default.IsInsideTic;
 			this.isOppositeTic = Default.IsOppositeTic;
+			this.isCrossTic = Default.IsCrossTic;
+			this.isInsideCrossTic = Default.IsInsideCrossTic;
 			this.isMinorTic = Default.IsMinorTic;
 			this.isMinorInsideTic = Default.IsMinorInsideTic;
 			this.isMinorOppositeTic = Default.IsMinorOppositeTic;
+			this.isMinorCrossTic = Default.IsMinorCrossTic;
+			this.isMinorInsideCrossTic = Default.IsMinorInsideCrossTic;
+
 			this.isTicsBetweenLabels = false;
 			this.isUseTenPower = true;
 			this.isPreventLabelOverlap = true;
@@ -943,12 +1022,19 @@ namespace ZedGraph
 			isShowGrid = rhs.IsShowGrid;
 			isShowMinorGrid = rhs.IsShowMinorGrid;
 			isZeroLine = rhs.IsZeroLine;
+
 			isTic = rhs.IsTic;
 			isInsideTic = rhs.IsInsideTic;
 			isOppositeTic = rhs.IsOppositeTic;
+			isCrossTic = rhs.IsCrossTic;
+			isInsideCrossTic = rhs.IsInsideCrossTic;
+
 			isMinorTic = rhs.IsMinorTic;
 			isMinorInsideTic = rhs.IsMinorInsideTic;
 			isMinorOppositeTic = rhs.IsMinorOppositeTic;
+			isMinorCrossTic = rhs.IsMinorCrossTic;
+			isMinorInsideCrossTic = rhs.IsMinorInsideCrossTic;
+
 			isTicsBetweenLabels = rhs.IsTicsBetweenLabels;
 			isUseTenPower = rhs.IsUseTenPower;
 			isPreventLabelOverlap = rhs.isPreventLabelOverlap;
@@ -1002,7 +1088,8 @@ namespace ZedGraph
 		// Schema was changed to 2 when IsScaleVisible was added
 		// Schema was changed to 3 when IsAxisSegmentVisible was added
 		// Schema was changed to 4 when IsScaleLabelsInside, isSkipFirstLabel, isSkipLastLabel were added
-		public const int schema = 4;
+		// Schema was changed to 5 with IsCrossTic, IsInsideCrossTic, IsMinorCrossTic, IsMinorInsideCrossTic
+		public const int schema = 5;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -1099,6 +1186,14 @@ namespace ZedGraph
 				isSkipFirstLabel = info.GetBoolean( "isSkipFirstLabel" );
 				isSkipLastLabel = info.GetBoolean( "isSkipLastLabel" );
 			}
+
+			if ( schema > 4 )
+			{
+				isCrossTic = info.GetBoolean( "isCrossTic" );
+				isInsideCrossTic = info.GetBoolean( "isInsideCrossTic" );
+				isMinorCrossTic = info.GetBoolean( "isMinorCrossTic" );
+				isMinorInsideCrossTic = info.GetBoolean( "isMinorInsideCrossTic" );
+			}
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -1189,6 +1284,12 @@ namespace ZedGraph
 			info.AddValue( "isScaleLabelsInside", isScaleLabelsInside );
 			info.AddValue( "isSkipFirstLabel", isSkipFirstLabel );
 			info.AddValue( "isSkipLastLabel", isSkipLastLabel );
+
+			// New for schema = 5
+			info.AddValue( "isCrossTic", isCrossTic );
+			info.AddValue( "isInsideCrossTic", isInsideCrossTic );
+			info.AddValue( "isMinorCrossTic", isMinorCrossTic );
+			info.AddValue( "isMinorInsideCrossTic", isMinorInsideCrossTic );
 		}
 	#endregion
 
@@ -1721,6 +1822,92 @@ namespace ZedGraph
 			get { return isMinorOppositeTic; }
 			set { isMinorOppositeTic = value; }
 		}
+
+		/// <summary>
+		/// Gets or sets the display mode for the <see cref="Axis"/> major outside 
+		/// "cross" tic marks.
+		/// </summary>
+		/// <remarks>
+		/// The "cross" tics are a special, additional set of tic marks that
+		/// always appear on the actual axis, even if it has been shifted due
+		/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
+		/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
+		/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
+		/// they will exactly overlay the "normal" and "inside" tics.  If
+		/// <see cref="CrossAuto"/> is false, then you will most likely want to
+		/// enable the cross tics.
+		/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
+		/// </remarks>
+		/// <value>true to show the major cross tic marks, false otherwise</value>
+		public bool IsCrossTic
+		{
+			get { return isCrossTic; }
+			set { isCrossTic = value; }
+		}
+		/// <summary>
+		/// Gets or sets the display mode for the <see cref="Axis"/> major inside 
+		/// "cross" tic marks.
+		/// </summary>
+		/// <remarks>
+		/// The "cross" tics are a special, additional set of tic marks that
+		/// always appear on the actual axis, even if it has been shifted due
+		/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
+		/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
+		/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
+		/// they will exactly overlay the "normal" and "inside" tics.  If
+		/// <see cref="CrossAuto"/> is false, then you will most likely want to
+		/// enable the cross tics.
+		/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
+		/// </remarks>
+		/// <value>true to show the major cross tic marks, false otherwise</value>
+		public bool IsInsideCrossTic
+		{
+			get { return isInsideCrossTic; }
+			set { isInsideCrossTic = value; }
+		}
+		/// <summary>
+		/// Gets or sets the display mode for the <see cref="Axis"/> minor outside 
+		/// "cross" tic marks.
+		/// </summary>
+		/// <remarks>
+		/// The "cross" tics are a special, additional set of tic marks that
+		/// always appear on the actual axis, even if it has been shifted due
+		/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
+		/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
+		/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
+		/// they will exactly overlay the "normal" and "inside" tics.  If
+		/// <see cref="CrossAuto"/> is false, then you will most likely want to
+		/// enable the cross tics.
+		/// The minor tic spacing is controlled by <see cref="Axis.MinorStep"/>.
+		/// </remarks>
+		/// <value>true to show the major cross tic marks, false otherwise</value>
+		public bool IsMinorCrossTic
+		{
+			get { return isMinorCrossTic; }
+			set { isMinorCrossTic = value; }
+		}
+		/// <summary>
+		/// Gets or sets the display mode for the <see cref="Axis"/> minor inside 
+		/// "cross" tic marks.
+		/// </summary>
+		/// <remarks>
+		/// The "cross" tics are a special, additional set of tic marks that
+		/// always appear on the actual axis, even if it has been shifted due
+		/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
+		/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
+		/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
+		/// they will exactly overlay the "normal" and "inside" tics.  If
+		/// <see cref="CrossAuto"/> is false, then you will most likely want to
+		/// enable the cross tics.
+		/// The major tic spacing is controlled by <see cref="Axis.MinorStep"/>.
+		/// </remarks>
+		/// <value>true to show the major cross tic marks, false otherwise</value>
+		public bool IsMinorInsideCrossTic
+		{
+			get { return isMinorInsideCrossTic; }
+			set { isMinorInsideCrossTic = value; }
+		}
+
 		/// <summary>
 		/// Gets or sets a property that determines whether or not the major tics will be drawn
 		/// inbetween the labels, rather than right at the labels.
@@ -2724,60 +2911,50 @@ namespace ZedGraph
 		/// paneRect and axisRect)</returns>
 		public float CalcSpace( Graphics g, GraphPane pane, float scaleFactor, out float minSpace )
 		{
+			//Typical character height for the scale font
 			float charHeight = this.ScaleFontSpec.GetHeight( scaleFactor );
-			//float gap = pane.ScaledGap( scaleFactor );
+			// Scaled size (pixels) of a tic
 			float ticSize = this.ScaledTic( scaleFactor );
+
+			// The minimum allowable space between the axis rect and the pane margin for this axis
             minSpace = 0;
 		
-			// axisRect is the actual area of the plot as bounded by the axes
-			
-			// Always leave 1xgap space, even if no axis is displayed
+			// The actual space needed for this axis
 			float space = 0;
-			//if ( this is XAxis )
-			//	space = pane.MarginBottom * scaleFactor;
-			//else if ( this is YAxis )
-			//	space = pane.MarginLeft * scaleFactor;
-			//else
-			//	space = pane.MarginRight * scaleFactor;
 
 			// Account for the Axis
 			if ( this.isVisible )
 			{
+				bool hasTic = ( this.isScaleLabelsInside ?
+						(this.isInsideTic || this.isInsideCrossTic ||
+								this.isMinorInsideTic || this.isMinorInsideCrossTic) :
+						(this.isTic || this.isCrossTic || this.isMinorTic || this.isMinorCrossTic) );
+
 				// tic takes up 1x tic
 				// space between tic and scale label is 0.5 tic
 				// scale label is GetScaleMaxSpace()
 				// space between scale label and axis label is 0.5 tic
-
-				// The space for the scale labels is only reserved if the axis is not shifted due to the
-				// cross value.  Note that this could be a problem if the axis is only shifted slightly,
-				// since the scale value labels may overlap the axis title.  However, it's not possible to
-				// calculate that actual shift amount at this point, because the AxisRect rect has not yet been
-				// calculated, and the cross value is determined using a transform of scale values (which
-				// rely on AxisRect).
-				//if ( !IsCrossed( pane ) && this.isScaleVisible )
 				if ( this.isScaleVisible )
 				{
-                    // minimum gap is always 1/2 tic
-					space += ticSize * 0.5F;
-                    // account for the outside tic
-					if ( ( this.isScaleLabelsInside ? this.isTic : this.isInsideTic ) )
+                    // account for the tic space.  Leave the tic space for any type of tic.
+					if ( hasTic )
 						space += ticSize;
+
                     // account for the tic labels + 1/2 tic gap between the tic and the label
-					if ( this.IsScaleVisible )
-						space += this.GetScaleMaxSpace( g, pane, scaleFactor ).Height +
+					space += this.GetScaleMaxSpace( g, pane, scaleFactor ).Height +
 							ticSize * 0.5F;
 				}
 		
 				string str = MakeTitle();
 
 				// Only add space for the label if there is one
-				// Axis Title gets actual height plus 1x gap
+				// Axis Title gets actual height
 				if ( str.Length > 0 && this.isShowTitle )
 				{
 					space += this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height;
 				}
 
-				if ( this.isTic || this.IsMinorTic )
+				if ( hasTic )
 					minSpace = ticSize * 1.5F;
 			}
 
@@ -3213,19 +3390,19 @@ namespace ZedGraph
 			{
 				// draw the outside tic
 				if ( this.isTic )
-				{
 					g.DrawLine( pen, pixVal, shift, pixVal, shift + scaledTic );
-					if ( pane.AxisBorder.IsVisible && shift != 0 )
-						g.DrawLine( pen, pixVal, 0.0f, pixVal, scaledTic );
-				}
+
+				// draw the cross tic
+				if ( this.isCrossTic )
+					g.DrawLine( pen, pixVal, 0.0f, pixVal, scaledTic );
 
 				// draw the inside tic
 				if ( this.isInsideTic )
-				{
 					g.DrawLine( pen, pixVal, shift, pixVal, shift - scaledTic );
-					if ( pane.AxisBorder.IsVisible && shift != 0 )
-						g.DrawLine( pen, pixVal, 0.0f, pixVal, -scaledTic );
-				}
+
+				// draw the inside cross tic
+				if ( this.isInsideCrossTic )
+					g.DrawLine( pen, pixVal, 0.0f, pixVal, -scaledTic );
 
 				// draw the opposite tic
 				if ( this.isOppositeTic )
@@ -3411,7 +3588,7 @@ namespace ZedGraph
 			if ( this.scaleFormat == null )
 				this.scaleFormat = Default.ScaleFormat;
 
-			// draw the label
+			// create the label
 			if ( this.IsText )
 			{
 				index *= (int) this.step;
@@ -3430,33 +3607,13 @@ namespace ZedGraph
 			}
 			else if ( this.IsLog )
 			{
-				//int tmpNum = 0;
-				//if ( dVal < 0 )
-				//	tmpNum = (int) Math.Abs( dVal );
-					
-				//string tmpStr = "{0:F*}";
-				//tmpStr = tmpStr.Replace("*", tmpNum.ToString("D") );
-
 				label = Math.Pow( 10.0, dVal ).ToString( this.scaleFormat );
-								
-				//label = String.Format( this.scaleFormat, Math.Pow( 10.0, dVal ) );
 			}
 			else // linear or ordinal
 			{
 				double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
 
-				//string tmpStr = "{0:F*}";
-				//tmpStr = tmpStr.Replace("*", this.numDec.ToString("D") );
-				//label = String.Format( this.scaleFormat, dVal / scaleMult );
-
 				label = (dVal / scaleMult).ToString( this.scaleFormat );
-
-				//if ( pane.BarType == BarType.PercentStack )															//rpk
-				//{
-				//	if (( this is YAxis && pane.BarBase == BarBase.X  ) ||
-				//		( this is XAxis && pane.BarBase == BarBase.Y ) )
-				//		label = label + "%" ;
-				//}
 			}
 		}
 
@@ -3492,7 +3649,8 @@ namespace ZedGraph
 		public void DrawMinorTics( Graphics g, GraphPane pane, double baseVal, float shift,
 								float scaleFactor, float topPix )
 		{
-			if ( ( this.isMinorTic || this.IsMinorOppositeTic || this.isMinorInsideTic || this.isShowMinorGrid )
+			if ( ( this.isMinorTic || this.IsMinorOppositeTic || this.isMinorInsideTic || 
+					this.isMinorCrossTic || this.isMinorInsideCrossTic || this.isShowMinorGrid )
 					&& this.isVisible )
 			{
 				double tMajor = this.step * ( IsDate ? GetUnitMultiple( majorUnit ) : 1.0 ),
@@ -3553,19 +3711,19 @@ namespace ZedGraph
 								
 							// draw the outside tic
 							if ( this.isMinorTic )
-							{
 								g.DrawLine( pen, pixVal, shift, pixVal, shift + minorScaledTic );
-								if ( pane.AxisBorder.IsVisible && shift != 0 )
-									g.DrawLine( pen, pixVal, 0.0f, pixVal, minorScaledTic );
-							}
+
+							// draw the minor outside cross tic
+							if ( this.isMinorCrossTic )
+								g.DrawLine( pen, pixVal, 0.0f, pixVal, minorScaledTic );
 
 							// draw the inside tic
 							if ( this.isMinorInsideTic )
-							{
 								g.DrawLine( pen, pixVal, shift, pixVal, shift - minorScaledTic );
-								if ( pane.AxisBorder.IsVisible && shift != 0 )
-									g.DrawLine( pen, pixVal, 0.0f, pixVal, -minorScaledTic );
-							}
+
+							// draw the minor inside cross tic
+							if ( this.isMinorInsideCrossTic )
+								g.DrawLine( pen, pixVal, 0.0f, pixVal, -minorScaledTic );
 
 							// draw the opposite tic
 							if ( this.isMinorOppositeTic )
@@ -3719,6 +3877,11 @@ namespace ZedGraph
 			// If the Axis is visible, draw the title
 			if ( this.isVisible && this.isShowTitle && str.Length > 0 )
 			{
+				bool hasTic = ( this.isScaleLabelsInside ?
+						(this.isInsideTic || this.isInsideCrossTic ||
+								this.isMinorInsideTic || this.isMinorInsideCrossTic) :
+						(this.isTic || this.isCrossTic || this.isMinorTic || this.isMinorCrossTic) );
+
 				// Calculate the title position in screen coordinates
 				float x = ( this.maxPix - this.minPix ) / 2;
 
@@ -3728,9 +3891,7 @@ namespace ZedGraph
 				// calculate that actual shift amount at this point, because the AxisRect rect has not yet been
 				// calculated, and the cross value is determined using a transform of scale values (which
 				// rely on AxisRect).
-				float y = ScaledTic( scaleFactor ) *
-                            ( ( this.isScaleLabelsInside ? this.isTic : this.isInsideTic ) ? 2.0f : 0.5f ) +
-							//( IsCrossed( pane ) ? 0 : GetScaleMaxSpace( g, pane, scaleFactor ).Height ) +
+				float y = ScaledTic( scaleFactor ) * ( hasTic ? 1.5f : 0.5f ) +
 							GetScaleMaxSpace( g, pane, scaleFactor ).Height +
 							this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
 
@@ -3740,9 +3901,6 @@ namespace ZedGraph
                     y = shift + y;
 
 				AlignV alignV = AlignV.Center;
-				//				AlignV alignV = AlignV.Top;
-				//if ( this is YAxis )
-				//	alignV = AlignV.Bottom;
 
 				// Draw the title
 				this.TitleFontSpec.Draw( g, pane.IsPenWidthScaled, str, x, y,
