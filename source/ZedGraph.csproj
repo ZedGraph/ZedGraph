@@ -265,6 +265,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\PolyItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\StickItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\Symbol.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

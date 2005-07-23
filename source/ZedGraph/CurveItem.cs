@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.21 $ $Date: 2005-05-20 16:32:27 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2005-07-23 00:52:04 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -46,6 +46,14 @@ namespace ZedGraph
 		/// property <see cref="Label"/> to access this value.
 		/// </summary>
 		protected string	label;
+
+		/// <summary>
+		/// protected field that stores the special <see cref="FontSpec" /> to be used for
+		/// the <see cref="Legend" /> entry of this <see cref="CurveItem" />.  Use the public
+		/// property <see cref="FontSpec" /> to access this value;
+		/// </summary>
+		protected FontSpec	fontSpec;
+
 		/// <summary>
 		/// protected field that stores the boolean value that determines whether this
 		/// <see cref="CurveItem"/> is on the left Y axis or the right Y axis (Y2).
@@ -142,7 +150,8 @@ namespace ZedGraph
 			if ( points == null )
 				this.points = new PointPairList();
 			else
-				this.points = (PointPairList) points.Clone();
+				//this.points = (PointPairList) points.Clone();
+				this.points = points;
 		}
 		
 		/// <summary>
@@ -152,6 +161,7 @@ namespace ZedGraph
 		private void Init( string label )
 		{
 			this.label = label == null ? "" : label;
+			this.fontSpec = null;
 			this.isY2Axis = false;
 			this.isVisible = true;
 			this.isLegendLabelVisible = true;
@@ -187,6 +197,11 @@ namespace ZedGraph
 			isLegendLabelVisible = rhs.IsLegendLabelVisible;
 			isOverrideOrdinal = rhs.isOverrideOrdinal;
 
+			if ( rhs.fontSpec != null )
+				this.fontSpec = (FontSpec) rhs.fontSpec.Clone();
+			else
+				this.fontSpec = null;
+
 			if ( rhs.Tag is ICloneable )
 				this.Tag = ((ICloneable) rhs.Tag).Clone();
 			else
@@ -208,7 +223,8 @@ namespace ZedGraph
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
 		// Increased schema to 2 when IsOverrideOrdinal was added.
-		public const int schema = 2;
+		// Increased schema to 3 when FontSpec was added.
+		public const int schema = 3;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -234,6 +250,9 @@ namespace ZedGraph
 			points = (PointPairList) info.GetValue( "points", typeof(PointPairList) );
 			Tag = info.GetValue( "Tag", typeof(object) );
 
+			if ( sch >= 3 )
+				fontSpec = (FontSpec) info.GetValue( "fontSpec", typeof(FontSpec) );
+
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -251,6 +270,7 @@ namespace ZedGraph
 			info.AddValue( "isOverrideOrdinal", isOverrideOrdinal );
 			info.AddValue( "points", points );
 			info.AddValue( "Tag", Tag );
+			info.AddValue( "fontSpec", fontSpec );
 		}
 	#endregion
 	
@@ -260,10 +280,27 @@ namespace ZedGraph
 		/// entry for the this
 		/// <see cref="CurveItem"/> object
 		/// </summary>
+		/// <seealso cref="CurveItem.FontSpec" />
 		public string Label
 		{
 			get { return label; }
 			set { label = value;}
+		}
+
+		/// <summary>
+		/// Gets or sets the special <see cref="FontSpec" /> to be used for
+		/// the <see cref="Legend" /> entry of this <see cref="CurveItem" />.
+		/// </summary>
+		/// <remarks>
+		/// This property defaults to null, indicating that the legend entry will use the
+		/// default <see cref="FontSpec" /> as defined for the <see cref="Legend" /> object.
+		/// If this property is non-null, then the special font will be used to draw the
+		/// legend label for this <see cref="CurveItem" />.
+		/// </remarks>
+		public FontSpec	FontSpec
+		{
+			get { return fontSpec; }
+			set { fontSpec = value; }
 		}
 
 		/// <summary>

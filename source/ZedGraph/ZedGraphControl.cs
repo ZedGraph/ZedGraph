@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.27 $ $Date: 2005-07-21 07:31:04 $ </version>
+	/// <version> $Revision: 3.28 $ $Date: 2005-07-23 00:52:04 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;

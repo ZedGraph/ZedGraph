@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.20 $ $Date: 2005-07-06 06:37:01 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2005-07-23 00:52:04 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -496,7 +496,10 @@ namespace ZedGraph
 					else
 					{
 						curX = points[i].X;
-						curY = points[i].Y;
+						if ( curve is StickItem )
+							curY = points[i].Z;
+						else
+							curY = points[i].Y;
 					}
 				
 					// Any value set to double max is invalid and should be skipped

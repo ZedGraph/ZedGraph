@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15 $ $Date: 2005-06-27 03:11:09 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2005-07-23 00:52:04 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -122,6 +122,31 @@ namespace ZedGraph
 		private Font font;
 
 		/// <summary>
+		/// Private field that determines if the <see cref="FontSpec" /> will be
+		/// displayed with a drop shadow.
+		/// Use the public property <see cref="IsDropShadow" /> to access this value.
+		/// </summary>
+		private bool isDropShadow;
+		/// <summary>
+		/// Private field that determines the color of the dropshadow for this
+		/// <see cref="FontSpec" />.
+		/// Use the public property <see cref="DropShadowColor" /> to access this value.
+		/// </summary>
+		private Color dropShadowColor;
+		/// <summary>
+		/// Private field that determines the offset angle of the dropshadow for this
+		/// <see cref="FontSpec" />.
+		/// Use the public property <see cref="DropShadowAngle" /> to access this value.
+		/// </summary>
+		private float dropShadowAngle;
+		/// <summary>
+		/// Private field that determines the offset distance of the dropshadow for this
+		/// <see cref="FontSpec" />.
+		/// Use the public property <see cref="DropShadowOffset" /> to access this value.
+		/// </summary>
+		private float dropShadowOffset;
+
+		/// <summary>
 		/// Private field that stores a reference to the <see cref="Font"/>
 		/// object that will be used for superscripts.  This font object will be a
 		/// fraction of the <see cref="FontSpec"/> <see cref="scaledSize"/>,
@@ -182,6 +207,27 @@ namespace ZedGraph
 			/// </summary>
 			/// <value>A <see cref="StringAlignment"/> enumeration.</value>
 			public static StringAlignment StringAlignment = StringAlignment.Center;
+
+			/// <summary>
+			/// Default value for <see cref="FontSpec.IsDropShadow"/>, which determines
+			/// if the drop shadow is displayed for this <see cref="FontSpec" />.
+			/// </summary>
+			public static bool IsDropShadow = false;
+			/// <summary>
+			/// Default value for <see cref="FontSpec.DropShadowColor"/>, which determines
+			/// the color of the drop shadow for this <see cref="FontSpec" />.
+			/// </summary>
+			public static Color DropShadowColor = Color.Black;
+			/// <summary>
+			/// Default value for <see cref="FontSpec.DropShadowAngle"/>, which determines
+			/// the offset angle of the drop shadow for this <see cref="FontSpec" />.
+			/// </summary>
+			public static float DropShadowAngle = 45f;
+			/// <summary>
+			/// Default value for <see cref="FontSpec.DropShadowOffset"/>, which determines
+			/// the offset distance of the drop shadow for this <see cref="FontSpec" />.
+			/// </summary>
+			public static float DropShadowOffset = 0.05f;
 		
 		}
 	#endregion
@@ -327,6 +373,64 @@ namespace ZedGraph
 			set { fill = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a value that determines if the <see cref="FontSpec" /> will be
+		/// displayed with a drop shadow.
+		/// </summary>
+		/// <seealso cref="DropShadowColor" />
+		/// <seealso cref="DropShadowAngle" />
+		/// <seealso cref="DropShadowOffset" />
+		public bool IsDropShadow
+		{
+			get { return isDropShadow; }
+			set { isDropShadow = value; }
+		}
+		/// <summary>
+		/// Gets or sets the color of the drop shadow for this <see cref="FontSpec" />.
+		/// </summary>
+		/// <remarks>
+		/// This value only applies if <see cref="IsDropShadow" /> is true.
+		/// </remarks>
+		/// <seealso cref="IsDropShadow" />
+		/// <seealso cref="DropShadowAngle" />
+		/// <seealso cref="DropShadowOffset" />
+		public Color DropShadowColor
+		{
+			get { return dropShadowColor; }
+			set { dropShadowColor = value; }
+		}
+		/// <summary>
+		/// Gets or sets the offset angle of the drop shadow for this <see cref="FontSpec" />.
+		/// </summary>
+		/// <remarks>
+		/// This value only applies if <see cref="IsDropShadow" /> is true.
+		/// </remarks>
+		/// <value>The angle, measured in anti-clockwise degrees from
+		/// horizontal.  Negative values are permitted.</value>
+		/// <seealso cref="IsDropShadow" />
+		/// <seealso cref="DropShadowColor" />
+		/// <seealso cref="DropShadowOffset" />
+		public float DropShadowAngle
+		{
+			get { return dropShadowAngle; }
+			set { dropShadowAngle = value; }
+		}
+		/// <summary>
+		/// Gets or sets the offset distance of the drop shadow for this <see cref="FontSpec" />.
+		/// </summary>
+		/// <remarks>
+		/// This value only applies if <see cref="IsDropShadow" /> is true.
+		/// </remarks>
+		/// <value>The offset distance, measured as a fraction of the scaled font height.</value>
+		/// <seealso cref="IsDropShadow" />
+		/// <seealso cref="DropShadowColor" />
+		/// <seealso cref="DropShadowAngle" />
+		public float DropShadowOffset
+		{
+			get { return dropShadowOffset; }
+			set { dropShadowOffset = value; }
+		}
+
 	#endregion
 	
 	#region Constructors
@@ -355,20 +459,8 @@ namespace ZedGraph
 		public FontSpec( string family, float size, Color color, bool isBold,
 			bool isItalic, bool isUnderline )
 		{
-			this.fontColor = color;
-			this.family = family;
-			this.isBold = isBold;
-			this.isItalic = isItalic;
-			this.isUnderline = isUnderline;
-			this.size = size;
-			this.angle = 0F;
-			this.stringAlignment = Default.StringAlignment;
-
-			this.border = new Border( true, Color.Black, 1.0F );
-			this.fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
-
-			this.scaledSize = -1;
-			Remake( 1.0F, this.size, ref this.scaledSize, ref this.font );
+			Init( family, size, color, isBold, isItalic, isUnderline,
+					Default.FillColor, Default.FillBrush, Default.FillType );
 		}
 
 		/// <summary>
@@ -390,6 +482,14 @@ namespace ZedGraph
 		/// <param name="fillType">The <see cref="ZedGraph.FillType"/> to use for the
 		/// text background</param>
 		public FontSpec( string family, float size, Color color, bool isBold,
+							bool isItalic, bool isUnderline, Color fillColor, Brush fillBrush,
+							FillType fillType )
+		{
+			Init( family, size, color, isBold, isItalic, isUnderline,
+					fillColor, fillBrush, fillType );
+		}
+
+		private void Init( string family, float size, Color color, bool isBold,
 			bool isItalic, bool isUnderline, Color fillColor, Brush fillBrush,
 			FillType fillType )
 		{
@@ -400,8 +500,12 @@ namespace ZedGraph
 			this.isUnderline = isUnderline;
 			this.size = size;
 			this.angle = 0F;
-			this.stringAlignment = Default.StringAlignment;
 
+			this.stringAlignment = Default.StringAlignment;
+			this.isDropShadow = Default.IsDropShadow;
+			this.dropShadowColor = Default.DropShadowColor;
+			this.dropShadowAngle = Default.DropShadowAngle;
+			this.dropShadowOffset = Default.DropShadowOffset;
 
 			this.fill = new Fill( fillColor, fillBrush, fillType );
 			this.border = new Border( true, Color.Black, 1.0F );
@@ -427,6 +531,11 @@ namespace ZedGraph
 			stringAlignment = rhs.StringAlignment;
 			angle = rhs.Angle;
 			size = rhs.Size;
+
+			isDropShadow = rhs.isDropShadow;
+			dropShadowColor = rhs.dropShadowColor;
+			dropShadowAngle = rhs.dropShadowAngle;
+			dropShadowOffset = rhs.dropShadowOffset;
 		
 			scaledSize = rhs.scaledSize;
 			Remake( 1.0F, this.size, ref this.scaledSize, ref this.font );
@@ -446,7 +555,8 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		// Change to 2 with addition of isDropShadow, dropShadowColor, dropShadowAngle, dropShadowOffset
+		public const int schema = 2;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -472,6 +582,14 @@ namespace ZedGraph
 			stringAlignment = (StringAlignment) info.GetValue( "stringAlignment", typeof(StringAlignment) );
 			size = info.GetSingle( "size" );
 
+			if ( sch >= 2 )
+			{
+				isDropShadow = info.GetBoolean( "isDropShadow" );
+				dropShadowColor = (Color) info.GetValue( "dropShadowColor", typeof(Color) );
+				dropShadowAngle = info.GetSingle( "dropShadowAngle" );
+				dropShadowOffset = info.GetSingle( "dropShadowOffset" );
+			}
+
 			scaledSize = -1;
 			Remake( 1.0F, this.size, ref this.scaledSize, ref this.font );
 		}
@@ -494,6 +612,11 @@ namespace ZedGraph
 			info.AddValue( "angle", angle );
 			info.AddValue( "stringAlignment", stringAlignment );
 			info.AddValue( "size", size );
+
+			info.AddValue( "isDropShadow", isDropShadow );
+			info.AddValue( "dropShadowColor", dropShadowColor );
+			info.AddValue( "dropShadowAngle", dropShadowAngle );
+			info.AddValue( "dropShadowOffset", dropShadowOffset );
 		}
 	#endregion
 
@@ -634,13 +757,13 @@ namespace ZedGraph
 			float scaleFactor, SizeF layoutArea )
 		{
 			// make sure the font size is properly scaled
-			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
+			//Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
 			
 			SizeF sizeF;
 			if ( layoutArea.IsEmpty )
-				sizeF = g.MeasureString( text, this.font );
+				sizeF = MeasureString( g, text, scaleFactor );
 			else
-				sizeF = g.MeasureString( text, this.font, layoutArea );
+				sizeF = MeasureString( g, text, scaleFactor, layoutArea );
 
 			// Save the old transform matrix for later restoration
 			Matrix matrix = g.Transform;
@@ -706,6 +829,24 @@ namespace ZedGraph
 //			else if ( this.stringAlignment == StringAlignment.Near )
 //				g.TranslateTransform( -sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
 			
+
+			// Draw the drop shadow text.  Note that the coordinate system
+			// is set up such that 0,0 is at the location where the
+			// CenterTop of the text needs to be.
+			if ( isDropShadow )
+			{
+				// make a solid brush for rendering the font itself
+				SolidBrush brushD = new SolidBrush( this.dropShadowColor );
+				float xShift = (float) ( Math.Cos( this.dropShadowAngle ) *
+							this.dropShadowOffset * this.font.Height );
+				float yShift = (float) ( Math.Sin( this.dropShadowAngle ) *
+							this.dropShadowOffset * this.font.Height );
+				RectangleF rectD = rectF;
+				rectD.Offset( xShift, yShift );
+				g.DrawString( text, this.font, brushD, rectD, strFormat  );
+				brushD.Dispose();
+			}
+
 			// Draw the actual text.  Note that the coordinate system
 			// is set up such that 0,0 is at the location where the
 			// CenterTop of the text needs to be.
@@ -1104,7 +1245,10 @@ namespace ZedGraph
 		public float GetHeight( float scaleFactor )
 		{
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
-			return this.font.Height;
+			float height = this.font.Height;
+			if ( isDropShadow )
+				height += (float) ( Math.Sin( this.dropShadowAngle ) * this.dropShadowOffset * this.font.Height );
+			return height;
 		}
 		/// <summary>
 		/// Get the average character width of the scaled font.  The average width is
@@ -1146,7 +1290,10 @@ namespace ZedGraph
 		public float GetWidth( Graphics g, string text, float scaleFactor )
 		{
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
-			return g.MeasureString( text, this.font ).Width;
+			float width = g.MeasureString( text, this.font ).Width;
+			if ( isDropShadow )
+				width += (float) ( Math.Cos( this.dropShadowAngle ) * this.dropShadowOffset * this.font.Height );
+			return width;
 		}
 		/// <summary>
 		/// Get a <see cref="SizeF"/> struct representing the width and height
@@ -1169,7 +1316,15 @@ namespace ZedGraph
 		public SizeF MeasureString( Graphics g, string text, float scaleFactor )
 		{
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
-			return g.MeasureString( text, this.font );
+			SizeF size = g.MeasureString( text, this.font );
+			if ( isDropShadow )
+			{
+				size.Width += (float) ( Math.Cos( this.dropShadowAngle ) *
+								this.dropShadowOffset * this.font.Height );
+				size.Height += (float) ( Math.Sin( this.dropShadowAngle ) *
+								this.dropShadowOffset * this.font.Height );
+			}
+			return size;
 		}
 		
 		/// <summary>
@@ -1201,7 +1356,15 @@ namespace ZedGraph
 		public SizeF MeasureString( Graphics g, string text, float scaleFactor, SizeF layoutArea )
 		{
 			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
-			return g.MeasureString( text, this.font, layoutArea );
+			SizeF size = g.MeasureString( text, this.font, layoutArea );
+			if ( isDropShadow )
+			{
+				size.Width += (float) ( Math.Cos( this.dropShadowAngle ) *
+								this.dropShadowOffset * this.font.Height );
+				size.Height += (float) ( Math.Sin( this.dropShadowAngle ) *
+								this.dropShadowOffset * this.font.Height );
+			}
+			return size;
 		}
 		
 		/// <summary>
@@ -1260,12 +1423,12 @@ namespace ZedGraph
 		/// a <see cref="SizeF"/> struct</returns>
 		public SizeF BoundingBox( Graphics g, string text, float scaleFactor, SizeF layoutArea )
 		{
-			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
+			//Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
 			SizeF s;
 			if ( layoutArea.IsEmpty )
-				s = g.MeasureString( text, this.font );
+				s = MeasureString( g, text, scaleFactor );
 			else
-				s = g.MeasureString( text, this.font, layoutArea );
+				s = MeasureString( g, text, scaleFactor, layoutArea );
 			
 			float cs = (float) Math.Abs( Math.Cos( this.angle * Math.PI / 180.0 ) );
 			float sn = (float) Math.Abs( Math.Sin( this.angle * Math.PI / 180.0 ) );
@@ -1304,14 +1467,23 @@ namespace ZedGraph
 		/// a <see cref="SizeF"/> struct</returns>
 		public SizeF BoundingBoxTenPower( Graphics g, string text, float scaleFactor )
 		{
-			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
+			//Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
 			float scaledSuperSize = this.scaledSize * Default.SuperSize;
 			Remake( scaleFactor, this.Size * Default.SuperSize, ref scaledSuperSize,
 				ref this.superScriptFont );
 
 			// Get the width and height of the text
-			SizeF size10 = g.MeasureString( "10", this.font );
+			SizeF size10 = MeasureString( g, "10", scaleFactor );
 			SizeF sizeText = g.MeasureString( text, this.superScriptFont );
+
+			if ( isDropShadow )
+			{
+				sizeText.Width += (float) ( Math.Cos( this.dropShadowAngle ) *
+							this.dropShadowOffset * this.superScriptFont.Height );
+				sizeText.Height += (float) ( Math.Sin( this.dropShadowAngle ) *
+							this.dropShadowOffset * this.superScriptFont.Height );
+			}
+			
 			SizeF totSize = new SizeF( size10.Width + sizeText.Width,
 				size10.Height + sizeText.Height * Default.SuperShift );
 

@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.45 $ $Date: 2005-07-21 07:31:04 $ </version>
+	/// <version> $Revision: 3.46 $ $Date: 2005-07-23 00:52:04 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1148,6 +1148,58 @@ namespace ZedGraph
 			Color color, SymbolType symbolType )
 		{
 			LineItem curve = new LineItem( label, points, color, symbolType );
+			this.curveList.Add( curve );
+			
+			return curve;
+		}
+
+		/// <summary>
+		/// Add a stick graph (<see cref="StickItem"/> object) to the plot with
+		/// the given data points (double arrays) and properties.
+		/// This is simplified way to add curves without knowledge of the
+		/// <see cref="CurveList"/> class.  An alternative is to use
+		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// </summary>
+		/// <param name="label">The text label (string) for the curve that will be
+		/// used as a <see cref="Legend"/> entry.</param>
+		/// <param name="x">An array of double precision X values (the
+		/// independent values) that define the curve.</param>
+		/// <param name="y">An array of double precision Y values (the
+		/// dependent values) that define the curve.</param>
+		/// <param name="color">The color to used for the curve line,
+		/// symbols, etc.</param>
+		/// <returns>A <see cref="StickItem"/> class for the newly created curve.
+		/// This can then be used to access all of the curve properties that
+		/// are not defined as arguments to the
+		/// <see cref="AddStick(string,double[],double[],Color)"/> method.</returns>
+		public StickItem AddStick( string label, double[] x, double[] y, Color color )
+		{
+			StickItem curve = new StickItem( label, x, y, color );
+			this.curveList.Add( curve );
+			
+			return curve;
+		}
+
+		/// <summary>
+		/// Add a stick graph (<see cref="StickItem"/> object) to the plot with
+		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// This is simplified way to add curves without knowledge of the
+		/// <see cref="CurveList"/> class.  An alternative is to use
+		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// </summary>
+		/// <param name="label">The text label (string) for the curve that will be
+		/// used as a <see cref="Legend"/> entry.</param>
+		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// the X and Y values for this curve</param>
+		/// <param name="color">The color to used for the curve line,
+		/// symbols, etc.</param>
+		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
+		/// This can then be used to access all of the curve properties that
+		/// are not defined as arguments to the
+		/// <see cref="AddStick(string,PointPairList,Color)"/> method.</returns>
+		public StickItem AddStick( string label, PointPairList points, Color color )
+		{
+			StickItem curve = new StickItem( label, points, color );
 			this.curveList.Add( curve );
 			
 			return curve;

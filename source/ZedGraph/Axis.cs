@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.36 $ $Date: 2005-07-21 07:31:03 $ </version>
+	/// <version> $Revision: 3.37 $ $Date: 2005-07-23 00:52:04 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{

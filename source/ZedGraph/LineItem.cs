@@ -31,47 +31,53 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-05-13 23:59:39 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-07-23 00:52:04 $ </version>
 	[Serializable]
 	public class LineItem : CurveItem, ICloneable, ISerializable
 	{
 	#region Fields
+
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="ZedGraph.Symbol"/>
 		/// class defined for this <see cref="LineItem"/>.  Use the public
 		/// property <see cref="Symbol"/> to access this value.
 		/// </summary>
-		private Symbol		symbol;
+		protected Symbol	symbol;
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="ZedGraph.Line"/>
 		/// class defined for this <see cref="LineItem"/>.  Use the public
 		/// property <see cref="Line"/> to access this value.
 		/// </summary>
-		private Line		line;
+		protected Line		line;
+
 	#endregion
 
 	#region Properties
+
 		/// <summary>
-		/// Gets a reference to the <see cref="ZedGraph.Symbol"/> class defined
+		/// Gets or sets the <see cref="ZedGraph.Symbol"/> class instance defined
 		/// for this <see cref="LineItem"/>.
 		/// </summary>
 		public Symbol Symbol
 		{
 			get { return symbol; }
+			set { symbol = value; }
 		}
 		/// <summary>
-		/// Gets a reference to the <see cref="ZedGraph.Line"/> class defined
+		/// Gets or sets the <see cref="ZedGraph.Line"/> class instance defined
 		/// for this <see cref="LineItem"/>.
 		/// </summary>
 		public Line Line
 		{
 			get { return line; }
+			set { line = value; }
 		}
+
 	#endregion
 	
 	#region Constructors
 		/// <summary>
-		/// Create a new <see cref="LineItem"/>, specifying only the legend label for the bar.
+		/// Create a new <see cref="LineItem"/>, specifying only the legend <see cref="CurveItem.Label" />.
 		/// </summary>
 		/// <param name="label">The label that will appear in the legend.</param>
 		public LineItem( string label ) : base( label )

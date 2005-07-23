@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15 $ $Date: 2005-05-20 16:32:27 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2005-07-23 00:52:04 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -393,12 +393,14 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="curve">A <see cref="LineItem"/> representing this
 		/// curve.</param>
-		public void Draw( Graphics g, GraphPane pane, LineItem curve, float scaleFactor )
+		public void Draw( Graphics g, GraphPane pane, CurveItem curve, float scaleFactor )
         {
 			// If the line is being shown, draw it
 			if ( this.IsVisible )
 			{
-				if ( this.IsSmooth || this.Fill.IsVisible )
+				if ( curve is StickItem )
+					DrawSticks( g, pane, curve, scaleFactor );
+				else if ( this.IsSmooth || this.Fill.IsVisible )
                     DrawSmoothFilledCurve( g, pane, curve, scaleFactor );
                 else
                     DrawCurve( g, pane, curve, scaleFactor );
@@ -436,9 +438,56 @@ namespace ZedGraph
         {
 			if ( this.isVisible && !this.Color.IsEmpty )
 			{
-                Pen pen = new Pen( this.color, pane.ScaledPenWidth(width, scaleFactor) );
-                pen.DashStyle = this.Style;
+				Pen pen = new Pen( this.color, pane.ScaledPenWidth(width, scaleFactor) );
+				pen.DashStyle = this.Style;
 				g.DrawLine( pen, x1, y1, x2, y2 );
+			}
+		}
+
+		/// <summary>
+		/// Render the <see cref="Line"/>'s as vertical sticks (from a <see cref="StickItem" />) to
+		/// the specified <see cref="Graphics"/> device.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+        /// <param name="pane">
+        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+        /// owner of this object.
+        /// </param>
+		/// <param name="curve">A <see cref="CurveItem"/> representing this
+		/// curve.</param>
+        /// <param name="scaleFactor">
+        /// The scaling factor to be used for rendering objects.  This is calculated and
+        /// passed down by the parent <see cref="GraphPane"/> object using the
+        /// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+        /// font sizes, etc. according to the actual size of the graph.
+        /// </param>
+		public void DrawSticks( Graphics g, GraphPane pane, CurveItem curve, float scaleFactor )
+		{
+			Axis yAxis = curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis;
+			float basePix = yAxis.Transform( 0.0 );
+			Pen pen = new Pen( this.color, pane.ScaledPenWidth(width, scaleFactor) );
+			pen.DashStyle = this.Style;
+
+			for ( int i=0; i<curve.Points.Count; i++ )
+			{
+				PointPair pt = curve.Points[i];
+
+				if ( 	pt.X != PointPair.Missing &&
+						pt.Y != PointPair.Missing &&
+						!System.Double.IsNaN( pt.X ) &&
+						!System.Double.IsNaN( pt.Y ) &&
+						!System.Double.IsInfinity( pt.X ) &&
+						!System.Double.IsInfinity( pt.Y ) &&
+						( !pane.XAxis.IsLog || pt.X > 0.0 ) &&
+						( !yAxis.IsLog || pt.Y > 0.0 ) )
+				{
+					float pixY = yAxis.Transform( curve.IsOverrideOrdinal, i, pt.Y );
+					float pixX = pane.XAxis.Transform( curve.IsOverrideOrdinal, i, pt.X );
+					g.DrawLine( pen, pixX, pixY, pixX, basePix );
+				}
 			}
 		}
 
@@ -468,7 +517,7 @@ namespace ZedGraph
 		/// <param name="curve">A <see cref="LineItem"/> representing this
 		/// curve.</param>
 		public void DrawSmoothFilledCurve( Graphics g, GraphPane pane,
-                                LineItem curve, float scaleFactor )
+                                CurveItem curve, float scaleFactor )
         {
 			PointF[]	arrPoints;
 			int			count;
@@ -535,7 +584,7 @@ namespace ZedGraph
 		/// <param name="curve">A <see cref="LineItem"/> representing this
 		/// curve.</param>
 		public void DrawCurve( Graphics g, GraphPane pane,
-                                LineItem curve, float scaleFactor)
+                                CurveItem curve, float scaleFactor)
         {
 			float	tmpX, tmpY,
 					lastX = 0,
@@ -638,7 +687,7 @@ namespace ZedGraph
 		/// <param name="count">The number of points contained in the "arrPoints"
 		/// parameter.</param>
 		/// <returns>true for a successful points array build, false for data problems</returns>
-		public bool BuildPointsArray( GraphPane pane, LineItem curve,
+		public bool BuildPointsArray( GraphPane pane, CurveItem curve,
 			out PointF[] arrPoints, out int count )
 		{
 			arrPoints = null;
@@ -756,7 +805,7 @@ namespace ZedGraph
 		/// <param name="count">The number of points contained in the "arrPoints"
 		/// parameter.</param>
 		/// <returns>true for a successful points array build, false for data problems</returns>
-		public bool BuildLowPointsArray( GraphPane pane, LineItem curve,
+		public bool BuildLowPointsArray( GraphPane pane, CurveItem curve,
 						out PointF[] arrPoints, out int count )
 		{
 			arrPoints = null;
@@ -859,7 +908,7 @@ namespace ZedGraph
 		/// parameter.</param>
 		/// <param name="yMin">The Y axis value location where the X axis crosses.</param>
 		/// <param name="path">The <see cref="GraphicsPath"/> class that represents the curve.</param>
-		public void CloseCurve( GraphPane pane, LineItem curve, PointF[] arrPoints,
+		public void CloseCurve( GraphPane pane, CurveItem curve, PointF[] arrPoints,
 									int count, double yMin, GraphicsPath path )
 		{
 			// For non-stacked lines, the fill area is just the area between the curve and the X axis

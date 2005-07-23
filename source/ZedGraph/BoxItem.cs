@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-02-13 17:31:41 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-07-23 00:52:04 $ </version>
 	[Serializable]
 	public class BoxItem : GraphItem, ICloneable, ISerializable
 	{
@@ -109,9 +109,9 @@ namespace ZedGraph
 		/// for the box border</param>
 		/// <param name="fillColor">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the box fill (will be a solid color fill)</param>
-		/// <param name="rect"/>The <see cref="RectangleF"/> struct that defines
+		/// <param name="rect">The <see cref="RectangleF" /> struct that defines
 		/// the box.  This will be in units determined by
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
 		public BoxItem( RectangleF rect, Color borderColor, Color fillColor ) :
 				base( rect.Left, rect.Top, rect.Width, rect.Height )
 		{
@@ -123,9 +123,10 @@ namespace ZedGraph
 		/// A constructor that allows the position
 		/// of the <see cref="BoxItem"/> to be pre-specified.  Other properties are defaulted.
 		/// </summary>
-		/// <param name="rect"/>The <see cref="RectangleF"/> struct that defines
+		/// <param name="rect">The <see cref="RectangleF"/> struct that defines
 		/// the box.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
+		/// </param>
 		public BoxItem( RectangleF rect ) :
 			base( rect.Left, rect.Top, rect.Width, rect.Height )
 		{
@@ -152,9 +153,10 @@ namespace ZedGraph
 		/// for the start of the box gradient fill</param>
 		/// <param name="fillColor2">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the end of the box gradient fill</param>
-		/// <param name="rect"/>The <see cref="RectangleF"/> struct that defines
+		/// <param name="rect">The <see cref="RectangleF"/> struct that defines
 		/// the box.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
+		/// </param>
 		public BoxItem( RectangleF rect, Color borderColor,
 							Color fillColor1, Color fillColor2 ) :
 				base( rect.Left, rect.Top, rect.Width, rect.Height )

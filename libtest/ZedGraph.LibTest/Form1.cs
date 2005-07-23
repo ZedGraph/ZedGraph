@@ -281,6 +281,8 @@ namespace ZedGraph.LibTest
 			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
 			LineItem curve;
 			curve = myPane.AddCurve( "Larry", x, y, Color.Green, SymbolType.Circle );
+			curve.FontSpec = new FontSpec( "Arial", 16, Color.Green, true, false, false );
+			curve.FontSpec.Border.IsVisible = false;
 			curve.Line.Width = 1.5F;
 			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 60, 190, 50), 90F );
 			curve.Line.IsSmooth = true;
@@ -294,6 +296,8 @@ namespace ZedGraph.LibTest
 			double[] x3 = { 150, 250, 400, 520, 780, 940 };
 			double[] y3 = { 5.2, 49.0, 33.8, 88.57, 99.9, 36.8 };
 			curve = myPane.AddCurve( "Moe", x3, y3, Color.FromArgb( 200, 55, 135), SymbolType.Triangle );
+			curve.FontSpec = new FontSpec( "Times", 12, Color.FromArgb( 200, 55, 135), true, false, false );
+			curve.FontSpec.Border.IsVisible = false;
 			curve.Line.Width = 1.5F;
 			//curve.Line.IsSmooth = true;
 			curve.Symbol.Fill = new Fill( Color.White );
@@ -311,6 +315,8 @@ namespace ZedGraph.LibTest
 			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y4 = { 30, 45, 53, 60, 75, 83, 84, 79, 71, 57 };
 			BarItem bar = myPane.AddBar( "Wheezy", x4, y4, Color.SteelBlue );
+			bar.FontSpec = new FontSpec( "Courier", 20, Color.SteelBlue, false, true, false );
+			bar.FontSpec.Border.IsVisible = false;
 			bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown );
 			myPane.ClusterScaleWidth = 100;
 			myPane.BarType = BarType.Stack;
@@ -697,34 +703,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Text / Date Graph
-			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
-
-			PointPairList list = new PointPairList();
-			string[] textLabels = new string[10];
-
-			for ( int i=0; i<10; i++ )
-			{
-				textLabels[i] = "Label " + i.ToString();
-				double y = (double) i+1;
-				double x = new XDate( 2005, i+1, i*5+1 );
-				list.Add( x, y );
-			}
-
-			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
-			myPane.XAxis.Type = AxisType.Date;
-			myPane.YAxis.Type = AxisType.Text;
-			myPane.YAxis.TextLabels = textLabels;
-
-			myPane.AxisChange( this.CreateGraphics() );
-
-			trackBar1.Minimum = 0;
-			trackBar1.Maximum = 100;
-			trackBar1.Value = 50;
-
-#endif
-
-#if false	// Basic curve test
+#if true	// Basic curve test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
 			PointPairList list = new PointPairList();
@@ -733,10 +712,13 @@ namespace ZedGraph.LibTest
 			{
 				double x = (double) i;
 				double y = Math.Sin( i / 8.0 );
-				list.Add( x, y );
+				double z = Math.Abs(Math.Cos( i / 8.0 )) * y;
+				list.Add( x, y, z );
 			}
 
-			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			//LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			StickItem myCurve = myPane.AddStick( "curve", list, Color.Blue );
+			//myCurve.Symbol.IsVisible = true;
 			myCurve.IsY2Axis = true;
 			myPane.Y2Axis.IsVisible = true;
 			//myPane.YAxis.IsVisible = false;
@@ -754,8 +736,23 @@ namespace ZedGraph.LibTest
 			//myPane.AxisBorder.IsVisible = false;
 			//myPane.XAxis.Type = AxisType.Log;
 
+			PointF[] polyPts = new PointF[7];
+			polyPts[0] = new PointF( 30f, 0.2f );
+			polyPts[1] = new PointF( 25f, 0.4f );
+			polyPts[2] = new PointF( 27f, 0.6f );
+			polyPts[3] = new PointF( 30f, 0.8f );
+			polyPts[4] = new PointF( 35f, 0.6f );
+			polyPts[5] = new PointF( 37f, 0.4f );
+			polyPts[6] = new PointF( 30f, 0.2f );
+			PolyItem poly = new PolyItem( polyPts, Color.Red, Color.LightSeaGreen, Color.White );
+			myPane.GraphItemList.Add( poly );
 
 			myPane.AxisChange( this.CreateGraphics() );
+
+			myPane.FontSpec.IsDropShadow = true;
+			myPane.FontSpec.DropShadowColor = Color.Red;
+			myPane.FontSpec.Border.IsVisible = true;
+			myPane.FontSpec.Fill = new Fill( Color.White, Color.LightGoldenrodYellow );
 
 			trackBar1.Minimum = 0;
 			trackBar1.Maximum = 100;
@@ -780,7 +777,7 @@ namespace ZedGraph.LibTest
 #endif
 
 			_crossAxis = myPane.XAxis;
-			//UpdateControls();
+			UpdateControls();
 			SetSize();
 
 			//this.WindowState = FormWindowState.Maximized ;

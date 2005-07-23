@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-02-13 17:31:41 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-07-23 00:52:03 $ </version>
 	[Serializable]
 	public class ArrowItem : GraphItem, ICloneable, ISerializable
 	{
@@ -62,6 +62,13 @@ namespace ZedGraph
 		/// </summary>
 		/// <value> true if an arrowhead is to be drawn, false otherwise </value>
 		private bool		isArrowHead;
+
+		/// <summary>
+		/// Private field that stores the <see cref="DashStyle"/> for this
+		/// <see cref="ArrowItem"/>.  Use the public
+		/// property <see cref="Style"/> to access this value.
+		/// </summary>
+		private DashStyle style;
 	#endregion
 
 	#region Defaults
@@ -92,6 +99,11 @@ namespace ZedGraph
 			/// and arrowhead (<see cref="ArrowItem.Color"/> property).
 			/// </summary>
 			public static Color Color = Color.Red;
+			/// <summary>
+			/// The default drawing style for the line (<see cref="ArrowItem.Style"/> property).
+			/// This is defined with the <see cref="DashStyle"/> enumeration.
+			/// </summary>
+			public static DashStyle Style = DashStyle.Solid;
 		}
 	#endregion
 
@@ -141,6 +153,16 @@ namespace ZedGraph
 			get { return isArrowHead; }
 			set { isArrowHead = value; }
 		}
+		/// <summary>
+		/// The style of the <see cref="ArrowItem"/> line, defined as a <see cref="DashStyle"/> enum.
+		/// This allows the line to be solid, dashed, or dotted.
+		/// </summary>
+		/// <seealso cref="Default.Style"/>
+		public DashStyle Style
+		{
+			get { return style; }
+			set { style = value;}
+		}
 	#endregion
 	
 	#region Constructors
@@ -175,6 +197,8 @@ namespace ZedGraph
 			this.size = size;
 			this.Location.AlignH = AlignH.Left;
 			this.Location.AlignV = AlignV.Top;
+
+			this.style = Default.Style;
 		}
 
 		/// <summary>
@@ -218,6 +242,7 @@ namespace ZedGraph
 			color = rhs.Color;
 			penWidth = rhs.PenWidth;
 			isArrowHead = rhs.IsArrowHead;
+			style = rhs.style;
 		}
 
 		/// <summary>
@@ -234,7 +259,8 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		// changed to 2 with addition of Style property
+		public const int schema2 = 2;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -253,6 +279,8 @@ namespace ZedGraph
 			color = (Color) info.GetValue( "color", typeof(Color) );
 			penWidth = info.GetSingle( "penWidth" );
 			isArrowHead = info.GetBoolean( "isArrowHead" );
+			if ( sch >= 2 )
+				style = (DashStyle) info.GetValue( "style", typeof(DashStyle) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -268,6 +296,7 @@ namespace ZedGraph
 			info.AddValue( "color", color );
 			info.AddValue( "penWidth", penWidth );
 			info.AddValue( "isArrowHead", isArrowHead );
+			info.AddValue( "style", style );
 		}
 	#endregion
 	
@@ -323,6 +352,7 @@ namespace ZedGraph
 
 				// get a pen according to this arrow properties
 				Pen pen = new Pen( this.color, pane.ScaledPenWidth( penWidth,scaleFactor) );
+                pen.DashStyle = this.style;
 				
 				// Only show the arrowhead if required
 				if ( this.isArrowHead )

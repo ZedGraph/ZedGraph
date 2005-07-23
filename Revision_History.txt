@@ -1,6 +1,15 @@
 ZedGraph Class Library Revision History
 
-19-Jul-2005 (by Champion) v4.1.9
+21-Jul-2005 (by Champion)
+  Add PolyItem
+  Add ArrowItem.Style
+  Add CurveItem.FontSpec
+  Make LineItem.Symbol & LineItem.Line modifiable
+  Add StickItem
+  Don't clone the PointPairList on AddCurve()
+  Add DropShadow to FontSpec
+
+19-Jul-2005 (by Champion)
   Add IsCrossTic, IsInsideCrossTic, IsMinorCrossTic, IsMinorInsideCrossTic
   
 15-Jul-2005 (by Champion)
