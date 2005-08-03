@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.46 $ $Date: 2005-07-23 00:52:04 $ </version>
+	/// <version> $Revision: 3.47 $ $Date: 2005-08-03 02:53:52 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -535,7 +535,7 @@ namespace ZedGraph
 		{
 			xAxis = new XAxis( xTitle );
 			yAxis = new YAxis( yTitle );
-			y2Axis = new Y2Axis( "" );
+			y2Axis = new Y2Axis( string.Empty );
 			curveList = new CurveList();
 			zoomStack = new ZoomStateStack();
 								

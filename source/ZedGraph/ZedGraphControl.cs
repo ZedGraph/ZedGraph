@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.28 $ $Date: 2005-07-23 00:52:04 $ </version>
+	/// <version> $Revision: 3.29 $ $Date: 2005-08-03 02:53:52 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -1559,9 +1559,11 @@ namespace ZedGraph
 				scrollBar.Minimum = 0;
 				scrollBar.Maximum = ScrollRange + scrollBar.LargeChange - 1;
 				if ( axis.IsLog )
-					value = (int) ( ( Math.Log( axis.Min ) - Math.Log( scrollMin ) ) / ( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) * ScrollRange );
+					value = (int) ( ( Math.Log( axis.Min ) - Math.Log( scrollMin ) ) /
+							( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) * ScrollRange + 0.5 );
 				else
-					value = (int) ( ( axis.Min - scrollMin ) / ( scrollMin2 - scrollMin ) * ScrollRange );
+					value = (int) ( ( axis.Min - scrollMin ) / ( scrollMin2 - scrollMin ) *
+							ScrollRange + 0.5 );
 
 				if ( value < 0 )
 					value = 0;

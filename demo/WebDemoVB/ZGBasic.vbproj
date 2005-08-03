@@ -78,11 +78,6 @@
                     AssemblyName = "System.Xml"
                 />
                 <Reference
-                    Name = "ZedGraph"
-                    Project = "{998CE547-E905-4931-91B6-5E0439177E7E}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-                <Reference
                     Name = "System.Windows.Forms"
                     AssemblyName = "System.Windows.Forms"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
@@ -91,6 +86,11 @@
                     Name = "System.Design"
                     AssemblyName = "System.Design"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Design.dll"
+                />
+                <Reference
+                    Name = "ZedGraph"
+                    AssemblyName = "ZedGraph"
+                    HintPath = "bin\ZedGraph.dll"
                 />
             </References>
             <Imports>
@@ -159,18 +159,18 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "Graph2.aspx"
+                    RelPath = "graph2.aspx"
                     BuildAction = "Content"
                 />
                 <File
-                    RelPath = "Graph2.aspx.vb"
-                    DependentUpon = "Graph2.aspx"
+                    RelPath = "graph2.aspx.vb"
+                    DependentUpon = "graph2.aspx"
                     SubType = "ASPXCodeBehind"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Graph2.aspx.resx"
-                    DependentUpon = "Graph2.aspx.vb"
+                    RelPath = "graph2.aspx.resx"
+                    DependentUpon = "graph2.aspx.vb"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.37 $ $Date: 2005-07-23 00:52:04 $ </version>
+	/// <version> $Revision: 3.38 $ $Date: 2005-08-03 02:53:52 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -987,6 +987,17 @@ namespace ZedGraph
 				Default.ScaleFillColor, Default.ScaleFillBrush,
 				Default.ScaleFillType );
 			this.scaleFontSpec.Border.IsVisible = false;
+		}
+
+		/// <summary>
+		/// Constructor for <see cref="Axis"/> that sets all axis properties
+		/// to default values as defined in the <see cref="Default"/> class,
+		/// except for the <see cref="Title"/>.
+		/// </summary>
+		/// <param name="title">A string containing the axis title</param>
+		public Axis( string title ) : this()
+		{
+			this.title = title;
 		}
 
 		/// <summary>

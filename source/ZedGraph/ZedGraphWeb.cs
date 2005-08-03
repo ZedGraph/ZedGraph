@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.25 $ $Date: 2005-04-17 05:30:21 $ </version>
+	/// <version> $Revision: 3.26 $ $Date: 2005-08-03 02:53:52 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -1140,7 +1140,7 @@ namespace ZedGraph
 			using (Graphics g = Graphics.FromImage( image ))
 			{
 				// Apply layout plan				
-				mp.AutoPaneLayout(g,this.PaneLayout);
+				mp.AutoPaneLayout( g, this.PaneLayout );
 
 				// Use callback to gather more settings and data values
 				OnDrawPane( g, mp );

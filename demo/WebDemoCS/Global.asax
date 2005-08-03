@@ -1,1 +1,1 @@
-<%@ Application Codebehind="Global.asax.cs" Inherits="ZG1.Global" %>
+<%@ Application Codebehind="Global.asax.cs" Inherits="mywebtest2.Global" %>

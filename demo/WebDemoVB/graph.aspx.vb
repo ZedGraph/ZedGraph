@@ -44,9 +44,12 @@ Public Class graph
         'Put user code to initialize the page here
     End Sub
 
-    Private Sub ZedGraphWeb1_RenderGraph(ByVal g As System.Drawing.Graphics, ByVal pane As ZedGraph.GraphPane) Handles ZedGraphWeb1.RenderGraph
+    Private Sub ZedGraphWeb1_RenderGraph(ByVal g As System.Drawing.Graphics, ByVal mpane As ZedGraph.MasterPane) Handles ZedGraphWeb1.RenderGraph
         Dim Val As String
         Val = Page.Request.Params.Get("graph")
+
+        Dim pane As ZedGraph.GraphPane
+        pane = mpane(0)
         If (Val = "2") Then
             ZedGraph.ZedGraphWeb.RenderDemo(g, pane)
             pane.Title = "Graph Number 2"

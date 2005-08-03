@@ -38,7 +38,7 @@ namespace ZG1
 	public class Graph3 : System.Web.UI.Page
 	{
 		protected ZedGraph.ZedGraphWeb ZedGraphWeb1;
-	
+
 		private void Page_Load(object sender, System.EventArgs e)
 		{
 			// Put user code to initialize the page here
@@ -53,22 +53,23 @@ namespace ZG1
 			InitializeComponent();
 			base.OnInit(e);
 		}
-		
+
 		/// <summary>
 		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
-		{    
+		{
 			this.ZedGraphWeb1.RenderGraph += new ZedGraph.ZedGraphWebControlEventHandler(this.OnRenderGraph);
 			this.Load += new System.EventHandler(this.Page_Load);
 
 		}
 		#endregion
 
-		private void OnRenderGraph(System.Drawing.Graphics g, ZedGraph.GraphPane pane)
+		private void OnRenderGraph(System.Drawing.Graphics g, ZedGraph.MasterPane mPane)
 		{
-        pane.AxisChange(g);
+            //mPane[0] = new GraphPane();
+            mPane.AxisChange(g);
 		}
 	}
 }

@@ -1,157 +1,80 @@
+<%@ Page Language="c#" autoeventwireup="false" Inherits="ZG1.Graph2" CodeBehind="Graph2.aspx.cs" %>
 <%@ Register TagPrefix="zgw" Namespace="ZedGraph" Assembly="ZedGraph" %>
-<%@ Page language="c#" Codebehind="Graph2.aspx.cs" AutoEventWireup="false" Inherits="ZG1.Graph2" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
-<HTML>
-	<HEAD>
-		<title>Graph2</title>
-		<meta name="GENERATOR" Content="Microsoft Visual Studio .NET 7.1">
-		<meta name="CODE_LANGUAGE" Content="C#">
-		<meta name="vs_defaultClientScript" content="JavaScript">
-		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
-	</HEAD>
-	<body MS_POSITIONING="GridLayout">
-		<form id="Form1" method="post" runat="server">
-			<zgw:ZedGraphWeb id="ZedGraphWeb1" runat="server" width="500" Height="375" BarType="Overlay" BarBase="X"
-				title="Sample Pie Chart">
-				<AxisFill RangeMax="0" Type="Brush" AlignH="Center" IsScaled="True" Color="Salmon" RangeMin="0"
-					IsVisible="True" AlignV="Center"></AxisFill>
-				<Y2Axis IsOmitMag="False" MinGrace="0.1" MinSpace="0" CrossAuto="False" IsUseTenPower="False"
-					IsShowTitle="True" MinorStepAuto="True" MinorGridDashOff="10" MaxAuto="True" MinorGridPenWidth="1"
-					IsTic="True" MinorGridColor="Gray" IsReverse="False" IsMinorTic="True" IsMinorInsideTic="True"
-					Cross="0" IsTicsBetweenLabels="True" ScaleMag="0" IsOppositeTic="True" TicPenWidth="1"
-					GridDashOff="5" IsShowMinorGrid="False" NumDec="0" ScaleAlign="Center" MinAuto="True"
-					Type="Linear" IsInsideTic="True" MinorGridDashOn="1" IsVisible="False" ScaleFormatAuto="False"
-					IsShowGrid="False" Title="" MaxGrace="0.1" Color="Black" GridPenWidth="1" ScaleMagAuto="True"
-					IsPreventLabelOverlap="False" IsMinorOppositeTic="True" ScaleFormat="g" StepAuto="True"
-					TicSize="5" IsZeroLine="True" GridDashOn="1" GridColor="Black" NumDecAuto="True" MinorTicSize="2.5">
-					<ScaleFontSpec Size="14" IsUnderline="False" IsItalic="False" Family="Arial" Angle="0" FontColor="Black"
-						StringAlignment="Center" IsBold="False">
-						<Fill RangeMax="0" Type="None" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-							IsVisible="True" AlignV="Center"></Fill>
-						<Border IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-					</ScaleFontSpec>
-					<TitleFontSpec Size="14" IsUnderline="False" IsItalic="False" Family="Arial" Angle="0" FontColor="Black"
-						StringAlignment="Center" IsBold="True">
-						<Fill RangeMax="0" Type="None" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-							IsVisible="True" AlignV="Center"></Fill>
-						<Border IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-					</TitleFontSpec>
-				</Y2Axis>
-				<PaneBorder IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></PaneBorder>
-				<FontSpec Size="16" IsUnderline="False" IsItalic="False" Family="Arial" Angle="0" FontColor="Black"
-					StringAlignment="Center" IsBold="True">
-					<Fill RangeMax="0" Type="Solid" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-						IsVisible="True" AlignV="Center"></Fill>
-					<Border IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-				</FontSpec>
-				<AxisBorder IsVisible="True" PenWidth="1" InflateFactor="0" Color="Black"></AxisBorder>
-				<Legend IsHStack="True" Position="Top" IsVisible="False">
-					<Fill RangeMax="0" Type="Brush" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-						IsVisible="True" AlignV="Center"></Fill>
-					<Rect Y="0" Height="0" Width="0" X="0"></Rect>
-					<Border IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-					<FontSpec Size="12" IsUnderline="False" IsItalic="False" Family="Arial" Angle="0" FontColor="Black"
-						StringAlignment="Center" IsBold="False">
-						<Fill RangeMax="0" Type="Solid" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-							IsVisible="True" AlignV="Center"></Fill>
-						<Border IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-					</FontSpec>
-					<Location CoordinateFrame="AxisFraction" Height="0" AlignH="Left" X1="0" Y1="0" X="0" Y="0"
-						Width="0" AlignV="Center">
-						<BottomRight Y="0" X="0"></BottomRight>
-						<Rect Y="0" Height="0" Width="0" X="0"></Rect>
-						<TopLeft Y="0" X="0"></TopLeft>
-					</Location>
-				</Legend>
-				<YAxis IsOmitMag="False" MinGrace="0.1" MinSpace="0" CrossAuto="False" IsUseTenPower="False"
-					IsShowTitle="True" MinorStepAuto="True" MinorGridDashOff="10" MaxAuto="True" MinorGridPenWidth="1"
-					IsTic="True" MinorGridColor="Gray" IsReverse="False" IsMinorTic="True" IsMinorInsideTic="True"
-					Cross="0" IsTicsBetweenLabels="True" ScaleMag="0" IsOppositeTic="True" TicPenWidth="1"
-					GridDashOff="5" IsShowMinorGrid="False" NumDec="0" ScaleAlign="Center" MinAuto="True"
-					Type="Linear" IsInsideTic="True" MinorGridDashOn="1" IsVisible="False" ScaleFormatAuto="False"
-					IsShowGrid="False" Title="" MaxGrace="0.1" Color="Black" GridPenWidth="1" ScaleMagAuto="True"
-					IsPreventLabelOverlap="False" IsMinorOppositeTic="True" ScaleFormat="g" StepAuto="True"
-					TicSize="5" IsZeroLine="True" GridDashOn="1" GridColor="Black" NumDecAuto="True" MinorTicSize="2.5">
-					<ScaleFontSpec Size="14" IsUnderline="False" IsItalic="False" Family="Arial" Angle="0" FontColor="Black"
-						StringAlignment="Center" IsBold="False">
-						<Fill RangeMax="0" Type="None" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-							IsVisible="True" AlignV="Center"></Fill>
-						<Border IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-					</ScaleFontSpec>
-					<TitleFontSpec Size="14" IsUnderline="False" IsItalic="False" Family="Arial" Angle="0" FontColor="Black"
-						StringAlignment="Center" IsBold="True">
-						<Fill RangeMax="0" Type="None" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-							IsVisible="True" AlignV="Center"></Fill>
-						<Border IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-					</TitleFontSpec>
-				</YAxis>
-				<AxisRect Y="0" Height="0" Width="0" X="0"></AxisRect>
-				<PaneFill RangeMax="0" Type="Solid" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-					IsVisible="True" AlignV="Center"></PaneFill>
-				<CurveList>
-					<zgw:ZedGraphWebPieItem Displacement="0.3" DataMember="" IsLegendLabelVisible="True" Value="80" PercentDecimalDigits="0"
-						LabelType="Name_Percent" Label="Red" Color="Red" ValueDecimalDigits="0" IsY2Axis="False" IsVisible="True">
-						<Border IsVisible="True" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-						<LabelDetail IsVisible="True" ZOrder="A_InFront" Text="">
-							<Location CoordinateFrame="AxisFraction" Height="0" AlignH="Left" X1="0" Y1="0" X="0" Y="0"
-								Width="0" AlignV="Center">
-								<BottomRight Y="0" X="0"></BottomRight>
-								<Rect Y="0" Height="0" Width="0" X="0"></Rect>
-								<TopLeft Y="0" X="0"></TopLeft>
-							</Location>
-							<FontSpec Size="10" IsUnderline="False" IsItalic="False" Family="Arial" Angle="0" FontColor="Black"
-								StringAlignment="Center" IsBold="False">
-								<Fill RangeMax="0" Type="Solid" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-									IsVisible="True" AlignV="Center"></Fill>
-								<Border IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-							</FontSpec>
-							<LayoutArea Height="0" Width="0"></LayoutArea>
-						</LabelDetail>
-					</zgw:ZedGraphWebPieItem>
-					<zgw:ZedGraphWebPieItem Displacement="0" DataMember="" IsLegendLabelVisible="True" Value="20" PercentDecimalDigits="0"
-						LabelType="Name_Percent" Label="Blue" Color="RoyalBlue" ValueDecimalDigits="0" IsY2Axis="False" IsVisible="True">
-						<Border IsVisible="True" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-						<LabelDetail IsVisible="True" ZOrder="A_InFront" Text="">
-							<Location CoordinateFrame="AxisFraction" Height="0" AlignH="Left" X1="0" Y1="0" X="0" Y="0"
-								Width="0" AlignV="Center">
-								<BottomRight Y="0" X="0"></BottomRight>
-								<Rect Y="0" Height="0" Width="0" X="0"></Rect>
-								<TopLeft Y="0" X="0"></TopLeft>
-							</Location>
-							<FontSpec Size="10" IsUnderline="False" IsItalic="False" Family="Arial" Angle="0" FontColor="Black"
-								StringAlignment="Center" IsBold="False">
-								<Fill RangeMax="0" Type="Solid" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-									IsVisible="True" AlignV="Center"></Fill>
-								<Border IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-							</FontSpec>
-							<LayoutArea Height="0" Width="0"></LayoutArea>
-						</LabelDetail>
-					</zgw:ZedGraphWebPieItem>
-				</CurveList>
-				<XAxis IsOmitMag="False" MinGrace="0.1" MinSpace="0" CrossAuto="False" IsUseTenPower="False"
-					IsShowTitle="False" MinorStepAuto="True" MinorGridDashOff="10" MaxAuto="True" MinorGridPenWidth="1"
-					IsTic="False" MinorGridColor="Gray" IsReverse="False" IsMinorTic="True" IsMinorInsideTic="True"
-					Cross="0" IsTicsBetweenLabels="False" ScaleMag="0" IsOppositeTic="True" TicPenWidth="1"
-					GridDashOff="5" IsShowMinorGrid="False" NumDec="0" ScaleAlign="Center" MinAuto="True"
-					Type="Linear" IsInsideTic="False" MinorGridDashOn="1" IsVisible="False" ScaleFormatAuto="False"
-					IsShowGrid="False" Title="" MaxGrace="0.1" Color="Black" GridPenWidth="1" ScaleMagAuto="True"
-					IsPreventLabelOverlap="False" IsMinorOppositeTic="True" ScaleFormat="g" StepAuto="True"
-					TicSize="5" IsZeroLine="False" GridDashOn="1" GridColor="Black" NumDecAuto="True" MinorTicSize="2.5">
-					<ScaleFontSpec Size="14" IsUnderline="False" IsItalic="False" Family="Arial" Angle="0" FontColor="Black"
-						StringAlignment="Center" IsBold="False">
-						<Fill RangeMax="0" Type="None" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-							IsVisible="True" AlignV="Center"></Fill>
-						<Border IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-					</ScaleFontSpec>
-					<TitleFontSpec Size="14" IsUnderline="False" IsItalic="False" Family="Arial" Angle="0" FontColor="Black"
-						StringAlignment="Center" IsBold="True">
-						<Fill RangeMax="0" Type="None" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-							IsVisible="True" AlignV="Center"></Fill>
-						<Border IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-					</TitleFontSpec>
-				</XAxis>
-				<PieRect Y="0" Height="0" Width="0" X="0"></PieRect>
-			</zgw:ZedGraphWeb>
-		</form>
-	</body>
-</HTML>
+<html>
+<head>
+    <title>Graph2</title>
+    <meta content="Microsoft Visual Studio .NET 7.1" name="GENERATOR" />
+    <meta content="C#" name="CODE_LANGUAGE" />
+    <meta content="JavaScript" name="vs_defaultClientScript" />
+    <meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema" />
+</head>
+<body ms_positioning="GridLayout">
+    <form id="Form1" method="post" runat="server">
+        <ZGW:ZEDGRAPHWEB id="ZedGraphWeb1" title="Sample Pie Chart" runat="server" BarBase="X" BarType="Overlay" Height="375" width="500" AxisChanged="True" >
+            <AXISFILL alignv="Center" isvisible="True" rangemin="0" color="Salmon" isscaled="True" alignh="Center" type="Brush" rangemax="0"></AXISFILL>
+            <Y2AXIS title="" isvisible="False" color="Black" type="Linear" minorticsize="2.5" gridcolor="Black" griddashon="1" iszeroline="True" ticsize="5" stepauto="True" scaleformat="g" isminoroppositetic="True" ispreventlabeloverlap="False" scalemagauto="True" gridpenwidth="1" maxgrace="0.1" isshowgrid="False" scaleformatauto="False" minorgriddashon="1" isinsidetic="True" minauto="True" scalealign="Center" isshowminorgrid="False" griddashoff="5" ticpenwidth="1" isoppositetic="True" scalemag="0" isticsbetweenlabels="True" cross="0" isminorinsidetic="True" isminortic="True" isreverse="False" minorgridcolor="Gray" istic="True" minorgridpenwidth="1" maxauto="True" minorgriddashoff="10" minorstepauto="True" isshowtitle="True" isusetenpower="False" crossauto="False" minspace="0" mingrace="0.1" isomitmag="False">
+            </Y2AXIS>
+            <PANEBORDER isvisible="False" color="Black" inflatefactor="0" penwidth="1"></PANEBORDER>
+            <FONTSPEC isbold="True" stringalignment="Center" fontcolor="Black" angle="0" family="Arial" isitalic="False" isunderline="False" size="16">
+                <FILL alignv="Center" isvisible="True" rangemin="0" color="White" isscaled="True" alignh="Center" type="Solid" rangemax="0"></FILL>
+                <BORDER isvisible="False" color="Black" inflatefactor="0" penwidth="1"></BORDER>
+            </FONTSPEC>
+            <AXISBORDER isvisible="True" color="Black" inflatefactor="0" penwidth="1"></AXISBORDER>
+            <legend isvisible="False" position="Top" ishstack="True">
+                <FILL alignv="Center" isvisible="True" rangemin="0" color="White" isscaled="True" alignh="Center" type="Brush" rangemax="0"></FILL>
+                <RECT height="0" x="0" width="0" y="0"></RECT>
+                <BORDER isvisible="False" color="Black" inflatefactor="0" penwidth="1"></BORDER>
+                <FONTSPEC isbold="False" stringalignment="Center" fontcolor="Black" angle="0" family="Arial" isitalic="False" isunderline="False" size="12">
+                    <FILL alignv="Center" isvisible="True" rangemin="0" color="White" isscaled="True" alignh="Center" type="Solid" rangemax="0"></FILL>
+                    <BORDER isvisible="False" color="Black" inflatefactor="0" penwidth="1"></BORDER>
+                </FONTSPEC>
+                <LOCATION height="0" alignv="Center" alignh="Left" x="0" width="0" y="0" y1="0" x1="0" coordinateframe="AxisFraction">
+                    <BOTTOMRIGHT x="0" y="0"></BOTTOMRIGHT>
+                    <RECT height="0" x="0" width="0" y="0"></RECT>
+                    <TOPLEFT x="0" y="0"></TOPLEFT>
+                </LOCATION>
+            </legend>
+            <YAXIS title="" isvisible="False" color="Black" type="Linear" minorticsize="2.5" gridcolor="Black" griddashon="1" iszeroline="True" ticsize="5" stepauto="True" scaleformat="g" isminoroppositetic="True" ispreventlabeloverlap="False" scalemagauto="True" gridpenwidth="1" maxgrace="0.1" isshowgrid="False" scaleformatauto="False" minorgriddashon="1" isinsidetic="True" minauto="True" scalealign="Center" isshowminorgrid="False" griddashoff="5" ticpenwidth="1" isoppositetic="True" scalemag="0" isticsbetweenlabels="True" cross="0" isminorinsidetic="True" isminortic="True" isreverse="False" minorgridcolor="Gray" istic="True" minorgridpenwidth="1" maxauto="True" minorgriddashoff="10" minorstepauto="True" isshowtitle="True" isusetenpower="False" crossauto="False" minspace="0" mingrace="0.1" isomitmag="False">
+            </YAXIS>
+            <AXISRECT height="0" x="0" width="0" y="0"></AXISRECT>
+            <PANEFILL alignv="Center" isvisible="True" rangemin="0" color="White" isscaled="True" alignh="Center" type="Solid" rangemax="0"></PANEFILL>
+            <CURVELIST>
+                <ZGW:ZEDGRAPHWEBPIEITEM IsVisible="True" Color="Red" IsY2Axis="False" ValueDecimalDigits="0" Label="Red" LabelType="Name_Percent" PercentDecimalDigits="0" Value="80" IsLegendLabelVisible="True" DataMember="" Displacement="0.3">
+                    <BORDER isvisible="True" color="Black" inflatefactor="0" penwidth="1"></BORDER>
+                    <LABELDETAIL isvisible="True" text="" zorder="A_InFront">
+                        <LOCATION height="0" alignv="Center" alignh="Left" x="0" width="0" y="0" y1="0" x1="0" coordinateframe="AxisFraction">
+                            <BOTTOMRIGHT x="0" y="0"></BOTTOMRIGHT>
+                            <RECT height="0" x="0" width="0" y="0"></RECT>
+                            <TOPLEFT x="0" y="0"></TOPLEFT>
+                        </LOCATION>
+                        <FONTSPEC isbold="False" stringalignment="Center" fontcolor="Black" angle="0" family="Arial" isitalic="False" isunderline="False" size="10">
+                            <FILL alignv="Center" isvisible="True" rangemin="0" color="White" isscaled="True" alignh="Center" type="Solid" rangemax="0"></FILL>
+                            <BORDER isvisible="False" color="Black" inflatefactor="0" penwidth="1"></BORDER>
+                        </FONTSPEC>
+                        <LAYOUTAREA height="0" width="0"></LAYOUTAREA>
+                    </LABELDETAIL>
+                </ZGW:ZEDGRAPHWEBPIEITEM>
+                <ZGW:ZEDGRAPHWEBPIEITEM IsVisible="True" Color="RoyalBlue" IsY2Axis="False" ValueDecimalDigits="0" Label="Blue" LabelType="Name_Percent" PercentDecimalDigits="0" Value="20" IsLegendLabelVisible="True" DataMember="" Displacement="0">
+                    <BORDER isvisible="True" color="Black" inflatefactor="0" penwidth="1"></BORDER>
+                    <LABELDETAIL isvisible="True" text="" zorder="A_InFront">
+                        <LOCATION height="0" alignv="Center" alignh="Left" x="0" width="0" y="0" y1="0" x1="0" coordinateframe="AxisFraction">
+                            <BOTTOMRIGHT x="0" y="0"></BOTTOMRIGHT>
+                            <RECT height="0" x="0" width="0" y="0"></RECT>
+                            <TOPLEFT x="0" y="0"></TOPLEFT>
+                        </LOCATION>
+                        <FONTSPEC isbold="False" stringalignment="Center" fontcolor="Black" angle="0" family="Arial" isitalic="False" isunderline="False" size="10">
+                            <FILL alignv="Center" isvisible="True" rangemin="0" color="White" isscaled="True" alignh="Center" type="Solid" rangemax="0"></FILL>
+                            <BORDER isvisible="False" color="Black" inflatefactor="0" penwidth="1"></BORDER>
+                        </FONTSPEC>
+                        <LAYOUTAREA height="0" width="0"></LAYOUTAREA>
+                    </LABELDETAIL>
+                </ZGW:ZEDGRAPHWEBPIEITEM>
+            </CURVELIST>
+            <XAXIS title="" isvisible="False" color="Black" type="Linear" minorticsize="2.5" gridcolor="Black" griddashon="1" iszeroline="False" ticsize="5" stepauto="True" scaleformat="g" isminoroppositetic="True" ispreventlabeloverlap="False" scalemagauto="True" gridpenwidth="1" maxgrace="0.1" isshowgrid="False" scaleformatauto="False" minorgriddashon="1" isinsidetic="False" minauto="True" scalealign="Center" isshowminorgrid="False" griddashoff="5" ticpenwidth="1" isoppositetic="True" scalemag="0" isticsbetweenlabels="False" cross="0" isminorinsidetic="True" isminortic="True" isreverse="False" minorgridcolor="Gray" istic="False" minorgridpenwidth="1" maxauto="True" minorgriddashoff="10" minorstepauto="True" isshowtitle="False" isusetenpower="False" crossauto="False" minspace="0" mingrace="0.1" isomitmag="False">
+            </XAXIS>
+            <PIERECT height="0" x="0" width="0" y="0"></PIERECT>
+        </ZGW:ZEDGRAPHWEB>
+    </form>
+</body>
+</html>

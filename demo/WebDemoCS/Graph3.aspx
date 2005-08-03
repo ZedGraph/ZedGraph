@@ -1,42 +1,42 @@
-<%@ Page language="c#" codebehind="graph3.aspx.cs" AutoEventWireup="false" Inherits="ZG1.Graph3" %>
 <%@ Register TagPrefix="zgw" Namespace="ZedGraph" Assembly="ZedGraph" %>
+<%@ Page Language="c#" autoeventwireup="false" Inherits="ZG1.Graph3" CodeBehind="Graph3.aspx.cs" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <HTML>
 	<HEAD>
 		<title>Graph2</title>
-		<meta name="GENERATOR" Content="Microsoft Visual Studio .NET 7.1">
-		<meta name="CODE_LANGUAGE" Content="C#">
-		<meta name="vs_defaultClientScript" content="JavaScript">
-		<meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
+		<meta content="Microsoft Visual Studio .NET 7.1" name="GENERATOR">
+		<meta content="C#" name="CODE_LANGUAGE">
+		<meta content="JavaScript" name="vs_defaultClientScript">
+		<meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
 	</HEAD>
 	<body>
 		<form id="Form1" method="post" runat="server">
-			<zgw:ZedGraphWeb id="ZedGraphWeb1" runat="server" Height="375" Width="500" title="Simple Bar Demo">
-				<AxisFill Type="Brush" IsScaled="True" Color="LightGray" IsVisible="True"></AxisFill>
-				<PaneBorder IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></PaneBorder>
-				<FontSpec Size="16" IsUnderline="False" IsItalic="False" Family="Arial" Angle="0" FontColor="Black"
-					StringAlignment="Center" IsBold="True">
-					<Fill RangeMax="0" Type="Solid" AlignH="Center" IsScaled="True" Color="White" RangeMin="0"
-						IsVisible="True" AlignV="Center"></Fill>
-					<Border IsVisible="False" PenWidth="1" InflateFactor="0" Color="Black"></Border>
-				</FontSpec>
-				<PaneFill Type="Solid" Color="White"></PaneFill>
-				<CurveList>
-					<zgw:ZedGraphWebBarItem Label="Some Data" Color="Green" IsVisible="True">
-					    <Points>
-					        <zgw:ZedGraphWebPointPair X="10" Y="40"></zgw:ZedGraphWebPointPair>
-					        <zgw:ZedGraphWebPointPair X="20" Y="50"></zgw:ZedGraphWebPointPair>
-					        <zgw:ZedGraphWebPointPair X="30" Y="30"></zgw:ZedGraphWebPointPair>
-					        <zgw:ZedGraphWebPointPair X="40" Y="80"></zgw:ZedGraphWebPointPair>
-					        <zgw:ZedGraphWebPointPair X="50" Y="60"></zgw:ZedGraphWebPointPair>
-					        <zgw:ZedGraphWebPointPair X="60" Y="10"></zgw:ZedGraphWebPointPair>
-					    </Points>
-					    <Fill Color="Green"></Fill>
-					</zgw:ZedGraphWebBarItem>
-				</CurveList>
-				<XAxis IsTicsBetweenLabels="True" Type="Ordinal" Title="Run Number"></XAxis>
-				<YAxis Title="Quality Coefficient"></YAxis>
-			</zgw:ZedGraphWeb>
+			<ZGW:ZEDGRAPHWEB id="ZedGraphWeb1" title="Simple Bar Demo" runat="server" Width="500" Height="375">
+				<AXISFILL isvisible="True" color="LightGray" isscaled="True" type="Brush"></AXISFILL>
+				<PANEBORDER isvisible="False" color="Black" inflatefactor="0" penwidth="1"></PANEBORDER>
+				<FONTSPEC isbold="True" stringalignment="Center" fontcolor="Black" angle="0" family="Arial"
+					isitalic="False" isunderline="False" size="16">
+					<FILL isvisible="True" color="White" isscaled="True" type="Solid" alignv="Center" rangemin="0"
+						alignh="Center" rangemax="0"></FILL>
+					<BORDER isvisible="False" color="Black" inflatefactor="0" penwidth="1"></BORDER>
+				</FONTSPEC>
+				<PANEFILL color="White" type="Solid"></PANEFILL>
+				<CURVELIST>
+					<ZGW:ZEDGRAPHWEBBARITEM IsVisible="True" Color="Green" Label="Some Data">
+						<POINTS>
+							<ZGW:ZEDGRAPHWEBPOINTPAIR Y="40" X="10"></ZGW:ZEDGRAPHWEBPOINTPAIR>
+							<ZGW:ZEDGRAPHWEBPOINTPAIR Y="50" X="20"></ZGW:ZEDGRAPHWEBPOINTPAIR>
+							<ZGW:ZEDGRAPHWEBPOINTPAIR Y="30" X="30"></ZGW:ZEDGRAPHWEBPOINTPAIR>
+							<ZGW:ZEDGRAPHWEBPOINTPAIR Y="80" X="40"></ZGW:ZEDGRAPHWEBPOINTPAIR>
+							<ZGW:ZEDGRAPHWEBPOINTPAIR Y="60" X="50"></ZGW:ZEDGRAPHWEBPOINTPAIR>
+							<ZGW:ZEDGRAPHWEBPOINTPAIR Y="10" X="60"></ZGW:ZEDGRAPHWEBPOINTPAIR>
+						</POINTS>
+						<FILL color="Green"></FILL>
+					</ZGW:ZEDGRAPHWEBBARITEM>
+				</CURVELIST>
+				<XAXIS title="Run Number" type="Ordinal" isticsbetweenlabels="True"></XAXIS>
+				<YAXIS title="Quality Coefficient"></YAXIS>
+			</ZGW:ZEDGRAPHWEB>
 		</form>
 	</body>
 </HTML>

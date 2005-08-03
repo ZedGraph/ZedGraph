@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+2-Aug-2005 (by Champion) v 4.2
+  Fix roundoff problem on scrollbars
+  Fix Auto flags in ZedGraphWeb
+  Fix the web demos to work properly
+
 21-Jul-2005 (by Champion)
   Add PolyItem
   Add ArrowItem.Style

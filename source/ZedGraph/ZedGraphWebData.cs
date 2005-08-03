@@ -2007,11 +2007,6 @@ namespace ZedGraph
 			item.Color = this.Color;
 			item.GridColor = this.GridColor;
 			item.Cross = this.Cross;
-			item.MinAuto = this.MinAuto;
-			item.MaxAuto = this.MaxAuto;
-			item.StepAuto = this.StepAuto;
-			item.MinorStepAuto = this.MinorStepAuto;
-			item.CrossAuto = this.CrossAuto;
 			item.MinGrace = this.MinGrace;
 			item.MaxGrace = this.MaxGrace;
 			item.MinSpace = this.MinSpace;
@@ -2042,15 +2037,21 @@ namespace ZedGraph
 			item.IsShowTitle = this.IsShowTitle;
 			item.IsUseTenPower = this.IsUseTenPower;
 			item.IsPreventLabelOverlap = this.IsPreventLabelOverlap;
-			item.ScaleFormatAuto = this.ScaleFormatAuto;
 			item.ScaleFormat = this.ScaleFormat;
 			item.ScaleAlign = this.ScaleAlign;
 			//item.NumDecAuto = this.NumDecAuto;
 			//item.NumDec = this.NumDec;
 			item.ScaleMag = this.ScaleMag;
-			item.ScaleMagAuto = this.ScaleMagAuto;
 			item.Min = this.Min;
 			item.Max = this.Max;
+
+			item.MinAuto = this.MinAuto;
+			item.MaxAuto = this.MaxAuto;
+			item.StepAuto = this.StepAuto;
+			item.MinorStepAuto = this.MinorStepAuto;
+			item.CrossAuto = this.CrossAuto;
+			item.ScaleMagAuto = this.ScaleMagAuto;
+			item.ScaleFormatAuto = this.ScaleFormatAuto;
 		}
 
 		#region Properties	

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-07-15 05:18:12 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-08-03 02:53:52 $ </version>
 	[Serializable]
 	public class YAxis : Axis, ICloneable, ISerializable
 	{
@@ -76,9 +76,8 @@ namespace ZedGraph
 		/// for the axis title
 		/// </summary>
 		/// <param name="title">The <see cref="Axis.Title"/> for this axis</param>
-		public YAxis( string title )
+		public YAxis( string title ) : base( title )
 		{
-			this.title = title;
 			this.isVisible = Default.IsVisible;
 			this.isZeroLine = Default.IsZeroLine;
 			this.scaleFontSpec.Angle = 90.0F;
