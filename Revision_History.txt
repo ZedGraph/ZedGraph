@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+8-Aug-2005 (by Champion)
+  Add strong name key to assembly
+  
 2-Aug-2005 (by Champion) v 4.2
   Fix roundoff problem on scrollbars
   Fix Auto flags in ZedGraphWeb

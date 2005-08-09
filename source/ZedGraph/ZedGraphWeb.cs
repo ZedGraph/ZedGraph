@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.26 $ $Date: 2005-08-03 02:53:52 $ </version>
+	/// <version> $Revision: 3.27 $ $Date: 2005-08-09 06:10:32 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -1126,7 +1126,7 @@ namespace ZedGraph
 		/// <param name="Format">The <see cref="ImageFormat"/> type to be output.</param>
 		protected void CreateGraph( System.IO.Stream OutputStream, ImageFormat Format )
 		{			
-			RectangleF rect = new RectangleF( 0, 0, this.Width-1, this.Height-1 );
+			RectangleF rect = new RectangleF( 0, 0, this.Width, this.Height );
 			MasterPane mp = new MasterPane( this.Title, rect );
 						
 			// create all required panes
