@@ -27,10 +27,12 @@ namespace ZedGraph
 	/// A collection class containing a list of <see cref="PointPair"/> objects
 	/// that define the set of points to be displayed on the curve.
 	/// </summary>
+	/// <seealso cref="BasicArrayPointList" />
+	/// <seealso cref="IPointList" />
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.24 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.25 $ $Date: 2005-08-11 07:35:53 $ </version>
 	[Serializable]
 	public class PointPairList : CollectionPlus, IPointList
 	{

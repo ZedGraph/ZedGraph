@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.28 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.29 $ $Date: 2005-08-11 07:35:53 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -114,7 +114,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="g">A <see cref="Graphics"/> object for which the drawing will be done.</param>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/></param>
-		static public void RenderDemo( Graphics g, ZedGraph.GraphPane pane )
+		static public void RenderDemo( Graphics g, GraphPane pane )
 		{
 			// Set the titles and axis labels
 			pane.Title = "Wacky Widget Company\nProduction Report";

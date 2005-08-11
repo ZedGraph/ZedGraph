@@ -30,9 +30,11 @@ namespace ZedGraph
 	/// collection class is <see cref="PointPairList" />, however, you can define your own
 	/// data collection class using the <see cref="IPointList" /> interface.
 	/// </remarks>
+	/// <seealso cref="PointPairList" />
+	/// <seealso cref="BasicArrayPointList" />
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 1.1 $ $Date: 2005-08-11 02:57:16 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2005-08-11 07:35:53 $ </version>
 	public interface IPointList : ICloneable
 	{
 		/// <summary>

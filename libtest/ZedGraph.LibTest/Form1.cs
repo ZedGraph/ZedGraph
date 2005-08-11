@@ -706,15 +706,16 @@ namespace ZedGraph.LibTest
 #if true	// Basic curve test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
-			PointPairList list = new PointPairList();
+			double[] x = new double[100];
+			double[] y = new double[100];
 
 			for ( int i=0; i<100; i++ )
 			{
-				double x = (double) i;
-				double y = Math.Sin( i / 8.0 );
-				double z = Math.Abs(Math.Cos( i / 8.0 )) * y;
-				list.Add( x, y, z );
+				x[i] = (double) i;
+				y[i] = Math.Sin( i / 8.0 );
+				double z = Math.Abs(Math.Cos( i / 8.0 )) * y[i];
 			}
+			BasicArrayPointList list = new BasicArrayPointList( x, y );
 
 			//LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 			StickItem myCurve = myPane.AddStick( "curve", list, Color.Blue );
