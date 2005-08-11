@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.47 $ $Date: 2005-08-03 02:53:52 $ </version>
+	/// <version> $Revision: 3.48 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -472,9 +472,11 @@ namespace ZedGraph
 			set { minBarGap = value; }
 		}
 		/// <summary>Determines the base axis from which <see cref="Bar"/>
-		/// graphs will be displayed.  The base axis is the axis from which the bars grow with
-		/// increasing value. The value is of the enumeration type <see cref="ZedGraph.BarBase"/>.
+		/// graphs will be displayed.
 		/// </summary>
+		/// <remarks>The base axis is the axis from which the bars grow with
+		/// increasing value. The value is of the enumeration type <see cref="ZedGraph.BarBase"/>.
+		/// </remarks>
 		/// <seealso cref="Default.BarBase"/>
 		public BarBase BarBase
 		{
@@ -1072,22 +1074,22 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Add a curve (<see cref="CurveItem"/> object) to the plot with
-		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
 		/// the <see cref="ZedGraph.CurveList.Add"/> method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">The color to used for the curve line,
 		/// symbols, etc.</param>
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the
-		/// <see cref="AddCurve(string,PointPairList,Color)"/> method.</returns>
-		public LineItem AddCurve( string label, PointPairList points, Color color )
+		/// <see cref="AddCurve(string,IPointList,Color)"/> method.</returns>
+		public LineItem AddCurve( string label, IPointList points, Color color )
 		{
 			LineItem curve = new LineItem( label, points, color, SymbolType.Default );
 			this.curveList.Add( curve );
@@ -1127,14 +1129,14 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Add a curve (<see cref="CurveItem"/> object) to the plot with
-		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
 		/// the <see cref="ZedGraph.CurveList.Add"/> method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">The color to used for the curve line,
 		/// symbols, etc.</param>
@@ -1143,8 +1145,8 @@ namespace ZedGraph
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the
-		/// <see cref="AddCurve(string,PointPairList,Color,SymbolType)"/> method.</returns>
-		public LineItem AddCurve( string label, PointPairList points,
+		/// <see cref="AddCurve(string,IPointList,Color,SymbolType)"/> method.</returns>
+		public LineItem AddCurve( string label, IPointList points,
 			Color color, SymbolType symbolType )
 		{
 			LineItem curve = new LineItem( label, points, color, symbolType );
@@ -1182,22 +1184,22 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Add a stick graph (<see cref="StickItem"/> object) to the plot with
-		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
 		/// the <see cref="ZedGraph.CurveList.Add"/> method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">The color to used for the curve line,
 		/// symbols, etc.</param>
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the
-		/// <see cref="AddStick(string,PointPairList,Color)"/> method.</returns>
-		public StickItem AddStick( string label, PointPairList points, Color color )
+		/// <see cref="AddStick(string,IPointList,Color)"/> method.</returns>
+		public StickItem AddStick( string label, IPointList points, Color color )
 		{
 			StickItem curve = new StickItem( label, points, color );
 			this.curveList.Add( curve );
@@ -1207,7 +1209,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Add an error bar set (<see cref="ErrorBarItem"/> object) to the plot with
-		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
 		/// the <see cref="ZedGraph.CurveList.Add"/> method.
@@ -1226,7 +1228,7 @@ namespace ZedGraph
 		/// <returns>An <see cref="ErrorBarItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the
-		/// <see cref="AddErrorBar(string,PointPairList,Color)"/> method.</returns>
+		/// <see cref="AddErrorBar(string,IPointList,Color)"/> method.</returns>
 		public ErrorBarItem AddErrorBar( string label, double[] x, double[] y,
 			double[] baseValue, Color color )
 		{
@@ -1238,22 +1240,22 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// Add an error bar set (<see cref="ErrorBarItem"/> object) to the plot with
-		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
 		/// the <see cref="ZedGraph.CurveList.Add"/> method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">The color to used for the curve line,
 		/// symbols, etc.</param>
 		/// <returns>An <see cref="ErrorBarItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the
-		/// <see cref="AddErrorBar(string,PointPairList,Color)"/> method.</returns>
-		public ErrorBarItem AddErrorBar( string label, PointPairList points, Color color )
+		/// <see cref="AddErrorBar(string,IPointList,Color)"/> method.</returns>
+		public ErrorBarItem AddErrorBar( string label, IPointList points, Color color )
 		{
 			ErrorBarItem curve = new ErrorBarItem( label, points, color );
 			this.curveList.Add( curve );
@@ -1263,21 +1265,21 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Add a bar type curve (<see cref="CurveItem"/> object) to the plot with
-		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
 		/// the <see cref="ZedGraph.CurveList.Add"/> method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">The color to used to fill the bars</param>
 		/// <returns>A <see cref="CurveItem"/> class for the newly created bar curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the
-		/// <see cref="AddBar(string,PointPairList,Color)"/> method.</returns>
-		public BarItem AddBar( string label, PointPairList points, Color color )
+		/// <see cref="AddBar(string,IPointList,Color)"/> method.</returns>
+		public BarItem AddBar( string label, IPointList points, Color color )
 		{
 			BarItem curve = new BarItem( label, points, color );
 			this.curveList.Add( curve );
@@ -1343,21 +1345,21 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Add a hi-low bar type curve (<see cref="CurveItem"/> object) to the plot with
-		/// the given data points (<see cref="PointPairList"/>) and properties.
+		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
 		/// the <see cref="ZedGraph.CurveList.Add"/> method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value Trio's that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value Trio's that define
 		/// the X, Y, and lower dependent values for this curve</param>
 		/// <param name="color">The color to used to fill the bars</param>
 		/// <returns>A <see cref="HiLowBarItem"/> class for the newly created bar curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the
-		/// <see cref="AddHiLowBar(string,PointPairList,Color)"/> method.</returns>
-		public HiLowBarItem AddHiLowBar( string label, PointPairList points, Color color )
+		/// <see cref="AddHiLowBar(string,IPointList,Color)"/> method.</returns>
+		public HiLowBarItem AddHiLowBar( string label, IPointList points, Color color )
 		{
 			HiLowBarItem curve = new HiLowBarItem( label, points, color );
 			this.curveList.Add( curve );
@@ -1782,7 +1784,7 @@ namespace ZedGraph
 						yPixPerUnitAct = yPixPerUnit;
 					}
 
-					PointPairList points = curve.Points;
+					IPointList points = curve.Points;
 					float barWidth = curve.GetBarWidth( this );
 					double barWidthUserHalf;
 					bool isXBaseAxis = ( curve.BaseAxis( this ) == XAxis );

@@ -426,7 +426,7 @@ namespace ZedGraph
 		Cluster,
 		/// <summary>
 		/// Draw each <see cref="BarItem"/> side by side in clusters, also use the "Z" value from the
-		/// <see cref="PointPairList"/> to define the bottom of each bar.  This is very similar to
+		/// <see cref="IPointList"/> to define the bottom of each bar.  This is very similar to
 		/// a <see cref="HiLowBarItem"/>, except that multiple bars will be automatically clustered, and
 		/// the bar width is defined according to available space rather than as a fixed width setting.
 		/// </summary>
@@ -436,7 +436,7 @@ namespace ZedGraph
 		/// be drawn such that the last bar in the <see cref="CurveList"/> will be behind
 		/// all other bars.  Note that the bar values are not summed up for the overlay
 		/// mode.  The data values must be summed before being passed
-		/// to <see cref="GraphPane.AddBar(string,PointPairList,Color)"/>.
+		/// to <see cref="GraphPane.AddBar(string,IPointList,Color)"/>.
 		/// For example, if the first bar of
 		/// the first <see cref="BarItem"/> has a value of 100, and the first bar of
 		/// the second <see cref="BarItem"/> has a value of 120, then that bar will
@@ -450,7 +450,7 @@ namespace ZedGraph
 		/// This is similar to the <see cref="Overlay"/> mode, but the bars are sorted at
 		/// each base value.
 		/// The data values must be summed before being passed
-		/// to <see cref="GraphPane.AddBar(string,PointPairList,Color)"/>.  For example, if the first bar of
+		/// to <see cref="GraphPane.AddBar(string,IPointList,Color)"/>.  For example, if the first bar of
 		/// the first <see cref="BarItem"/> has a value of 100, and the first bar of
 		/// the second <see cref="BarItem"/> has a value of 120, then that bar will
 		/// appear to be 20 units on top of the first bar.

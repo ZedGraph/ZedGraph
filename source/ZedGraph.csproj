@@ -215,6 +215,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\IPointList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\Legend.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

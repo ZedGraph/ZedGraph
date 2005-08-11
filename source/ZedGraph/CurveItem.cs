@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.22 $ $Date: 2005-07-23 00:52:04 $ </version>
+	/// <version> $Revision: 3.23 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -86,7 +86,7 @@ namespace ZedGraph
 		protected bool		isLegendLabelVisible;
 		
 		/// <summary>
-		/// The <see cref="PointPairList"/> of value sets that
+		/// The <see cref="IPointList"/> of value sets that
 		/// represent this <see cref="CurveItem"/>.
 		/// The size of this list determines the number of points that are
 		/// plotted.  Note that values defined as
@@ -95,7 +95,7 @@ namespace ZedGraph
 		/// and are not plotted.  The curve will have a break at these points
 		/// to indicate the values are missing.
 		/// </summary>
-		protected PointPairList points;
+		protected IPointList points;
 
 		/// <summary>
 		/// A tag object for use by the user.  This can be used to store additional
@@ -114,7 +114,7 @@ namespace ZedGraph
 	#region Constructors
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label, the
-		/// x and y data values as a <see cref="PointPairList"/>, the curve
+		/// x and y data values as a <see cref="IPointList"/>, the curve
 		/// type (Bar or Line/Symbol), the <see cref="Color"/>, and the
 		/// <see cref="SymbolType"/>. Other properties of the curve are
 		/// defaulted to the values in the <see cref="GraphPane.Default"/> class.
@@ -129,28 +129,28 @@ namespace ZedGraph
 		{
 		}
 /*	
-		public CurveItem( string label, int  y ) : this(  label, new PointPairList( ) )
+		public CurveItem( string label, int  y ) : this(  label, new IPointList( ) )
 		{
 		}
 */
 		/// <summary>
 		/// <see cref="CurveItem"/> constructor the pre-specifies the curve label, the
-		/// x and y data values as a <see cref="PointPairList"/>, the curve
+		/// x and y data values as a <see cref="IPointList"/>, the curve
 		/// type (Bar or Line/Symbol), the <see cref="Color"/>, and the
 		/// <see cref="SymbolType"/>. Other properties of the curve are
 		/// defaulted to the values in the <see cref="GraphPane.Default"/> class.
 		/// </summary>
 		/// <param name="label">A string label (legend entry) for this curve</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
-		public CurveItem( string label, PointPairList points )
+		public CurveItem( string label, IPointList points )
 		{
 			Init( label );
 
 			if ( points == null )
 				this.points = new PointPairList();
 			else
-				//this.points = (PointPairList) points.Clone();
+				//this.points = (IPointList) points.Clone();
 				this.points = points;
 		}
 		
@@ -207,7 +207,7 @@ namespace ZedGraph
 			else
 				this.Tag = rhs.Tag;
 			
-			this.points = (PointPairList) rhs.Points.Clone();
+			this.points = (IPointList) rhs.Points.Clone();
 		}
 		
 		/// <summary>
@@ -247,7 +247,7 @@ namespace ZedGraph
 			if ( sch >= 2 )
 				isOverrideOrdinal = info.GetBoolean( "isOverrideOrdinal" );
 
-			points = (PointPairList) info.GetValue( "points", typeof(PointPairList) );
+			points = (IPointList) info.GetValue( "points", typeof(IPointList) );
 			Tag = info.GetValue( "Tag", typeof(object) );
 
 			if ( sch >= 3 )
@@ -432,6 +432,22 @@ namespace ZedGraph
 		{
 			get { return this is LineItem; }
 		}
+
+		/// <summary>
+		/// Gets a flag indicating if the Z data range should be included in the axis scaling calculations.
+		/// </summary>
+		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
+		/// </param>
+		/// <value>true if the Z data are included, false otherwise</value>
+		abstract internal bool IsZIncluded( GraphPane pane );
+		
+		/// <summary>
+		/// Gets a flag indicating if the X axis is the independent axis for this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
+		/// </param>
+		/// <value>true if the X axis is independent, false otherwise</value>
+		abstract internal bool IsXIndependent( GraphPane pane );
 		
 		/// <summary>
 		/// Readonly property that gives the number of points that define this
@@ -450,10 +466,10 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// The <see cref="PointPairList"/> of X,Y point sets that represent this
+		/// The <see cref="IPointList"/> of X,Y point sets that represent this
 		/// <see cref="CurveItem"/>.
 		/// </summary>
-		public PointPairList Points
+		public IPointList Points
 		{
 			get { return points; }
 			set { points = value; }
@@ -526,7 +542,7 @@ namespace ZedGraph
 	#endregion
 
 	#region Utility Methods
-
+/*
 		/// <summary>
 		/// Add a single x,y coordinate point to the end of the points collection for this curve.
 		/// </summary>
@@ -558,6 +574,7 @@ namespace ZedGraph
 		{
 			points.Clear();
 		}
+*/
 
 		/// <summary>
 		/// Loads some pseudo unique colors/symbols into this CurveItem.  This
@@ -594,7 +611,7 @@ namespace ZedGraph
 		/// <param name="xMax">The maximum X value in the range of data</param>
 		/// <param name="yMin">The minimum Y value in the range of data</param>
 		/// <param name="yMax">The maximum Y value in the range of data</param>
-		/// <param name="bIgnoreInitial">ignoreInitial is a boolean value that
+		/// <param name="ignoreInitial">ignoreInitial is a boolean value that
 		/// affects the data range that is considered for the automatic scale
 		/// ranging (see <see cref="GraphPane.IsIgnoreInitial"/>).  If true, then initial
 		/// data points where the Y value is zero are not included when
@@ -625,24 +642,75 @@ namespace ZedGraph
 		/// <seealso cref="GraphPane.IsBoundedRanges"/>
 		virtual public void GetRange( 	ref double xMin, ref double xMax,
 										ref double yMin, ref double yMax,
-										bool bIgnoreInitial,
+										bool ignoreInitial,
 										double xLBound, double xUBound,
 										double yLBound, double yUBound, GraphPane pane )
 		{
-			// Call a default GetRange() that does not include Z data points
-			this.points.GetRange( ref xMin, ref xMax, ref yMin, ref yMax, bIgnoreInitial, 
-								this.IsBar && pane.BarType == BarType.ClusterHiLow, true,
-								xLBound, xUBound, yLBound, yUBound );
+			bool isZIncluded = this.IsZIncluded( pane );
+			bool isXIndependent = this.IsXIndependent( pane );
+
+			// initialize the values to outrageous ones to start
+			xMin = yMin = Double.MaxValue;
+			xMax = yMax = Double.MinValue;
+		
+			// Loop over each point in the arrays
+			//foreach ( PointPair point in this.Points )
+			for ( int i=0; i<this.Points.Count; i++ )
+			{
+				PointPair point = this.Points[i];
+
+				double curX = point.X;
+				double curY = point.Y;
+				double curZ = point.Z;
+
+				bool outOfBounds = curX < xLBound || curX > xUBound ||
+					curY < yLBound || curY > yUBound ||
+					( isZIncluded && isXIndependent && ( curZ < yLBound || curZ > yUBound ) ) ||
+					( isZIncluded && !isXIndependent && ( curZ < xLBound || curZ > xUBound ) );
+			
+				// ignoreInitial becomes false at the first non-zero
+				// Y value
+				if (	ignoreInitial && curY != 0 &&
+					curY != PointPair.Missing )
+					ignoreInitial = false;
+			
+				if ( 	!ignoreInitial && !outOfBounds &&
+					curX != PointPair.Missing &&
+					curY != PointPair.Missing )
+				{
+					if ( curX < xMin )
+						xMin = curX;
+					if ( curX > xMax )
+						xMax = curX;
+					if ( curY < yMin )
+						yMin = curY;
+					if ( curY > yMax )
+						yMax = curY;
+
+					if ( isZIncluded && isXIndependent && curZ != PointPair.Missing )
+					{
+						if ( curZ < yMin )
+							yMin = curZ;
+						if ( curZ > yMax )
+							yMax = curZ;
+					}
+					else if ( isZIncluded && curZ != PointPair.Missing )
+					{
+						if ( curZ < xMin )
+							xMin = curZ;
+						if ( curZ > xMax )
+							xMax = curZ;
+					}
+				}
+			}	
 		}
 
 		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "base"
 		/// (independent axis) from which the values are drawn. </summary>
 		/// <remarks>
 		/// This property is determined by the value of <see cref="GraphPane.BarBase"/> for
-		/// <see cref="BarItem"/> types.  It is determined by <see cref="ErrorBarItem.BarBase"/>
-		/// for <see cref="ErrorBarItem"/> types, and by <see cref="HiLowBarItem.BarBase"/>
-		/// for <see cref="HiLowBarItem"/> types (in these cases it can vary for each
-		/// curve.  It is always the X axis for regular <see cref="LineItem"/> types.
+		/// <see cref="BarItem"/>, <see cref="ErrorBarItem"/>, and <see cref="HiLowBarItem"/>
+		/// types.  It is always the X axis for regular <see cref="LineItem"/> types.
 		/// </remarks>
 		/// <seealso cref="BarBase"/>
 		/// <seealso cref="ValueAxis"/>
@@ -650,12 +718,12 @@ namespace ZedGraph
 		{
 			BarBase barBase;
 
-			if ( this is BarItem )
+			if ( this is BarItem || this is ErrorBarItem || this is HiLowBarItem )
 				barBase = pane.BarBase;
-			else if ( this is ErrorBarItem )
-				barBase = ((ErrorBarItem)this).BarBase;
-			else if ( this is HiLowBarItem )
-				barBase = ((HiLowBarItem)this).BarBase;
+//			else if ( this is ErrorBarItem )
+//				barBase = ((ErrorBarItem)this).BarBase;
+//			else if ( this is HiLowBarItem )
+//				barBase = ((HiLowBarItem)this).BarBase;
 			else
 				barBase = BarBase.X;
 
@@ -671,10 +739,8 @@ namespace ZedGraph
 		/// (dependent axis) from which the points are drawn. </summary>
 		/// <remarks>
 		/// This property is determined by the value of <see cref="GraphPane.BarBase"/> for
-		/// <see cref="BarItem"/> types.  It is determined by <see cref="ErrorBarItem.BarBase"/>
-		/// for <see cref="ErrorBarItem"/> types, and by <see cref="HiLowBarItem.BarBase"/>
-		/// for <see cref="HiLowBarItem"/> types (in these cases it can vary for each
-		/// curve.  It is always the Y axis for regular <see cref="LineItem"/> types.
+		/// <see cref="BarItem"/>, <see cref="ErrorBarItem"/>, and <see cref="HiLowBarItem"/>
+		/// types.  It is always the Y axis for regular <see cref="LineItem"/> types.
 		/// </remarks>
 		/// <seealso cref="BarBase"/>
 		/// <seealso cref="BaseAxis"/>
@@ -682,12 +748,12 @@ namespace ZedGraph
 		{
 			BarBase barBase;
 
-			if ( this is BarItem )
+			if ( this is BarItem || this is ErrorBarItem || this is HiLowBarItem )
 				barBase = pane.BarBase;
-			else if ( this is ErrorBarItem )
-				barBase = ((ErrorBarItem)this).BarBase;
-			else if ( this is HiLowBarItem )
-				barBase = ((HiLowBarItem)this).BarBase;
+//			else if ( this is ErrorBarItem )
+//				barBase = ((ErrorBarItem)this).BarBase;
+//			else if ( this is HiLowBarItem )
+//				barBase = ((HiLowBarItem)this).BarBase;
 			else
 				barBase = BarBase.X;
 

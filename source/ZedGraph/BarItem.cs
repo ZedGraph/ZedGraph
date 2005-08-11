@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="GraphPane.BarType"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-03-25 16:19:57 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -57,6 +57,28 @@ namespace ZedGraph
 			get { return bar; }
 		}
 
+		/// <summary>
+		/// Gets a flag indicating if the Z data range should be included in the axis scaling calculations.
+		/// </summary>
+		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
+		/// </param>
+		/// <value>true if the Z data are included, false otherwise</value>
+		override internal bool IsZIncluded( GraphPane pane )
+		{
+			return pane.BarType == BarType.ClusterHiLow;
+		}
+
+		/// <summary>
+		/// Gets a flag indicating if the X axis is the independent axis for this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
+		/// </param>
+		/// <value>true if the X axis is independent, false otherwise</value>
+		override internal bool IsXIndependent( GraphPane pane )
+		{
+			return pane.BarBase == BarBase.X;
+		}
+		
 	#endregion
 	
 	#region Constructors
@@ -88,12 +110,12 @@ namespace ZedGraph
 		/// Create a new <see cref="BarItem"/> using the specified properties.
 		/// </summary>
 		/// <param name="label">The label that will appear in the legend.</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">A <see cref="Color"/> value that will be applied to
 		/// the <see cref="ZedGraph.Bar.Fill"/> and <see cref="ZedGraph.Bar.Border"/> properties.
 		/// </param>
-		public BarItem( string label, PointPairList points, Color color )
+		public BarItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
 			bar = new Bar( color );

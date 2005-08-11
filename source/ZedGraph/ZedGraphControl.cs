@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.29 $ $Date: 2005-08-03 02:53:52 $ </version>
+	/// <version> $Revision: 3.30 $ $Date: 2005-08-11 02:56:37 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -212,7 +212,7 @@ namespace ZedGraph
 		/// <param name="pane">The <see cref="GraphPane"/> object that contains the point value of interest</param>
 		/// <param name="curve">The <see cref="CurveItem"/> object that contains the point value of interest</param>
 		/// <param name="iPt">The integer index of the selected <see cref="PointPair"/> within the
-		/// <see cref="PointPairList"/> of the selected <see cref="CurveItem"/></param>
+		/// <see cref="IPointList"/> of the selected <see cref="CurveItem"/></param>
 		/// <seealso cref="PointValueEvent" />
 		public delegate string PointValueHandler( object sender, GraphPane pane, CurveItem curve, int iPt );
 

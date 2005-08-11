@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-07-23 00:52:04 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[Serializable]
 	public class LineItem : CurveItem, ICloneable, ISerializable
 	{
@@ -73,6 +73,28 @@ namespace ZedGraph
 			set { line = value; }
 		}
 
+		/// <summary>
+		/// Gets a flag indicating if the Z data range should be included in the axis scaling calculations.
+		/// </summary>
+		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
+		/// </param>
+		/// <value>true if the Z data are included, false otherwise</value>
+		override internal bool IsZIncluded( GraphPane pane )
+		{
+			return false;
+		}
+
+		/// <summary>
+		/// Gets a flag indicating if the X axis is the independent axis for this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
+		/// </param>
+		/// <value>true if the X axis is independent, false otherwise</value>
+		override internal bool IsXIndependent( GraphPane pane )
+		{
+			return true;
+		}
+		
 	#endregion
 	
 	#region Constructors
@@ -131,7 +153,7 @@ namespace ZedGraph
 		/// Create a new <see cref="LineItem"/> using the specified properties.
 		/// </summary>
 		/// <param name="label">The label that will appear in the legend.</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">A <see cref="Color"/> value that will be applied to
 		/// the <see cref="Line"/> and <see cref="Symbol"/> properties.
@@ -142,7 +164,7 @@ namespace ZedGraph
 		/// <param name="lineWidth">The width (in points) to be used for the <see cref="Line"/>.  This
 		/// width is scaled based on <see cref="PaneBase.CalcScaleFactor"/>.  Use a value of zero to
 		/// hide the line (see <see cref="ZedGraph.Line.IsVisible"/>).</param>
-		public LineItem( string label, PointPairList points, Color color, SymbolType symbolType, float lineWidth )
+		public LineItem( string label, IPointList points, Color color, SymbolType symbolType, float lineWidth )
 			: base( label, points )
 		{
 			line = new Line( color );
@@ -158,7 +180,7 @@ namespace ZedGraph
 		/// Create a new <see cref="LineItem"/> using the specified properties.
 		/// </summary>
 		/// <param name="label">The label that will appear in the legend.</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">A <see cref="Color"/> value that will be applied to
 		/// the <see cref="Line"/> and <see cref="Symbol"/> properties.
@@ -166,7 +188,7 @@ namespace ZedGraph
 		/// <param name="symbolType">A <see cref="SymbolType"/> enum specifying the
 		/// type of symbol to use for this <see cref="LineItem"/>.  Use <see cref="SymbolType.None"/>
 		/// to hide the symbols.</param>
-		public LineItem( string label, PointPairList points, Color color, SymbolType symbolType )
+		public LineItem( string label, IPointList points, Color color, SymbolType symbolType )
 			: this( label, points, color, symbolType, ZedGraph.Line.Default.Width )
 		{
 		}

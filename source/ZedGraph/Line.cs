@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.16 $ $Date: 2005-07-23 00:52:04 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -521,7 +521,7 @@ namespace ZedGraph
         {
 			PointF[]	arrPoints;
 			int			count;
-			PointPairList points = curve.Points;
+			IPointList points = curve.Points;
 
 			if ( this.IsVisible && !this.Color.IsEmpty && points != null &&
 				BuildPointsArray( pane, curve, out arrPoints, out count ) &&
@@ -591,7 +591,7 @@ namespace ZedGraph
 					lastY = 0;
 			double	curX, curY, lowVal;
 			bool	broke = true;
-			PointPairList points = curve.Points;
+			IPointList points = curve.Points;
 			ValueHandler valueHandler = new ValueHandler( pane, false );
 			Axis yAxis = curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis;
 
@@ -692,7 +692,7 @@ namespace ZedGraph
 		{
 			arrPoints = null;
 			count = 0;
-			PointPairList points = curve.Points;
+			IPointList points = curve.Points;
 
 			if ( this.IsVisible && !this.Color.IsEmpty && points != null )
 			{
@@ -810,7 +810,7 @@ namespace ZedGraph
 		{
 			arrPoints = null;
 			count = 0;
-			PointPairList points = curve.Points;
+			IPointList points = curve.Points;
 
 			if ( this.IsVisible && !this.Color.IsEmpty && points != null )
 			{

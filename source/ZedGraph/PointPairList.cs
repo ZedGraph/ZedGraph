@@ -30,9 +30,9 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.23 $ $Date: 2005-07-15 16:50:37 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[Serializable]
-	public class PointPairList : CollectionPlus, ICloneable
+	public class PointPairList : CollectionPlus, IPointList
 	{
 	#region Fields
 		/// <summary>Private field to maintain the sort status of this
@@ -827,103 +827,6 @@ namespace ZedGraph
 
 		}
 
-		/// <summary>
-		/// Go through the list of <see cref="PointPair"/> data values
-		/// and determine the minimum and maximum values in the data.
-		/// </summary>
-		/// <param name="xMin">The minimum X value in the range of data</param>
-		/// <param name="xMax">The maximum X value in the range of data</param>
-		/// <param name="yMin">The minimum Y value in the range of data</param>
-		/// <param name="yMax">The maximum Y value in the range of data</param>
-		/// <param name="ignoreInitial">ignoreInitial is a boolean value that
-		/// affects the data range that is considered for the automatic scale
-		/// ranging (see <see cref="GraphPane.IsIgnoreInitial"/>).  If true, then initial
-		/// data points where the Y value is zero are not included when
-		/// automatically determining the scale <see cref="Axis.Min"/>,
-		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.  All data after
-		/// the first non-zero Y value are included.
-		/// </param>
-		/// <param name="isZIncluded">true to include the Z data in the data range for
-		/// the dependent axis</param>
-		/// <param name="isXIndependent">true if X is the independent axis, false
-		/// if Y or Y2 is the independent axis.</param>
-		/// <param name="xLBound">The lower bound of allowable data for the X values.  This
-		/// value allows you to subset the data values.  If the X range is bounded, then
-		/// the resulting range for Y will reflect the Y values for the points within the X
-		/// bounds.  Use <see cref="System.Double.MinValue"/> to have no bound.</param>
-		/// <param name="xUBound">The upper bound of allowable data for the X values.  This
-		/// value allows you to subset the data values.  If the X range is bounded, then
-		/// the resulting range for Y will reflect the Y values for the points within the X
-		/// bounds.  Use <see cref="System.Double.MaxValue"/> to have no bound.</param>
-		/// <param name="yLBound">The lower bound of allowable data for the Y values.  This
-		/// value allows you to subset the data values.  If the Y range is bounded, then
-		/// the resulting range for X will reflect the X values for the points within the Y
-		/// bounds.  Use <see cref="System.Double.MinValue"/> to have no bound.</param>
-		/// <param name="yUBound">The upper bound of allowable data for the Y values.  This
-		/// value allows you to subset the data values.  If the Y range is bounded, then
-		/// the resulting range for X will reflect the X values for the points within the Y
-		/// bounds.  Use <see cref="System.Double.MaxValue"/> to have no bound.</param>
-		/// <seealso cref="GraphPane.IsBoundedRanges"/>
-		virtual public void GetRange(	ref double xMin, ref double xMax,
-										ref double yMin, ref double yMax,
-										bool ignoreInitial,
-										bool isZIncluded,
-										bool isXIndependent,
-										double xLBound, double xUBound,
-										double yLBound, double yUBound )
-		{
-			// initialize the values to outrageous ones to start
-			xMin = yMin = Double.MaxValue;
-			xMax = yMax = Double.MinValue;
-			
-			// Loop over each point in the arrays
-			foreach ( PointPair point in this )
-			{
-				double curX = point.X;
-				double curY = point.Y;
-				double curZ = point.Z;
-
-				bool outOfBounds = curX < xLBound || curX > xUBound ||
-									curY < yLBound || curY > yUBound ||
-									( isZIncluded && isXIndependent && ( curZ < yLBound || curZ > yUBound ) ) ||
-									( isZIncluded && !isXIndependent && ( curZ < xLBound || curZ > xUBound ) );
-				
-				// ignoreInitial becomes false at the first non-zero
-				// Y value
-				if (	ignoreInitial && curY != 0 &&
-						curY != PointPair.Missing )
-					ignoreInitial = false;
-				
-				if ( 	!ignoreInitial && !outOfBounds &&
-						curX != PointPair.Missing &&
-						curY != PointPair.Missing )
-				{
-					if ( curX < xMin )
-						xMin = curX;
-					if ( curX > xMax )
-						xMax = curX;
-					if ( curY < yMin )
-						yMin = curY;
-					if ( curY > yMax )
-						yMax = curY;
-
-					if ( isZIncluded && isXIndependent && curZ != PointPair.Missing )
-					{
-						if ( curZ < yMin )
-							yMin = curZ;
-						if ( curZ > yMax )
-							yMax = curZ;
-					}
-					else if ( isZIncluded && curZ != PointPair.Missing )
-					{
-						if ( curZ < xMin )
-							xMin = curZ;
-						if ( curZ > xMax )
-							xMax = curZ;
-					}
-				}
-			}	
-		}
 	#endregion
 	}
 }

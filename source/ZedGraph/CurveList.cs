@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.25 $ $Date: 2005-05-20 16:32:27 $ </version>
+	/// <version> $Revision: 3.26 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -289,17 +289,18 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Go through each <see cref="CurveItem"/> object in the collection,
-		/// calling the <see cref="PointPairList.GetRange"/> member to 
+		/// calling the <see cref="CurveItem.GetRange"/> member to 
 		/// determine the minimum and maximum values in the
-		/// <see cref="CurveItem.Points"/> list of data value pairs.  If the curves include 
-		/// a stack bar, handle within the current GetRange method. In the event that no
+		/// <see cref="CurveItem.Points"/> list of data value pairs.
+		/// </summary>
+		/// <remarks>If the curves include 
+		/// a stack bar, use the <see cref="GetStackRange" /> method to determine the
+		/// stacked values. In the event that no
 		/// data are available, a default range of min=0.0 and max=1.0 are returned.
 		/// If the Y axis has a valid data range and the Y2 axis not, then the Y2
 		/// range will be a duplicate of the Y range.  Vice-versa for the Y2 axis
 		/// having valid data when the Y axis does not.
-		/// If any <see cref="CurveItem"/> in the list has a missing
-		/// <see cref="PointPairList"/>, a new empty one will be generated.
-		/// </summary>
+		/// </remarks>
 		/// <param name="xMinVal">The minimun X value in the data range for all curves
 		/// in this collection</param>
 		/// <param name="xMaxVal">The maximun X value in the data range for all curves

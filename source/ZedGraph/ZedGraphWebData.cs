@@ -815,7 +815,7 @@ namespace ZedGraph
 		{
 			base.CopyTo(item);
 			this.Symbol.CopyTo(item.ErrorBar.Symbol);
-			item.BarBase = this.BarBase;
+			//item.BarBase = this.BarBase;
 			item.ErrorBar.PenWidth = this.PenWidth;
 		}
 
@@ -841,24 +841,6 @@ namespace ZedGraph
 
 		#region Properties
 		
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ErrorBarItem.BarBase"/>.
-		/// </summary>
-		/// <remarks> Determines which <see cref="Axis"/> is the independent axis
-		/// for this <see cref="ErrorBarItem"/>.
-		/// </remarks>
-		/// <seealso cref="ErrorBarItem.BarBase"/>
-		[NotifyParentProperty(true)]
-		public BarBase BarBase
-		{
-			get 
-			{ 
-				object x = ViewState["BarBase"]; 
-				return (null == x) ? BarBase.X : (BarBase)x;
-			}
-			set { ViewState["BarBase"] = value; }
-		}
- 		
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.ErrorBar.PenWidth"/>.
 		/// </summary>
@@ -922,24 +904,6 @@ namespace ZedGraph
 		#region Properties
 		
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="HiLowBarItem.BarBase"/>.
-		/// </summary>
-		/// <remarks> Determines which <see cref="Axis"/> is the independent axis
-		/// for this <see cref="HiLowBarItem"/>.
-		/// </remarks>
-		/// <seealso cref="HiLowBarItem.BarBase"/>
-		[NotifyParentProperty(true)]
-		public BarBase BarBase
-		{
-			get 
-			{ 
-				object x = ViewState["BarBase"]; 
-				return (null == x) ? BarBase.X : (BarBase)x;
-			}
-			set { ViewState["BarBase"] = value; }
-		} 
-
-		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.HiLowBar.IsMaximumWidth"/>.
 		/// </summary>
 		/// <remarks> Determines whether the bar width will be based on
@@ -950,7 +914,6 @@ namespace ZedGraph
 		/// of <see cref="Size"/> is ignored.  If this value is true, then
 		/// <see cref="GraphPane.MinClusterGap"/> will be used to determine the total space between each bar.
 		/// </value>
-		/// <seealso cref="HiLowBarItem.BarBase"/>
 		[NotifyParentProperty(true)]
 		public bool IsMaximumWidth
 		{

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// <remarks>
 	/// The sticks run from the zero value of the Y axis, to the Y point defined in each
-	/// <see cref="PointPair"/> of the <see cref="PointPairList" /> (see <see cref="CurveItem.Points"/>).
+	/// <see cref="PointPair"/> of the <see cref="IPointList" /> (see <see cref="CurveItem.Points"/>).
 	/// The properties of the sticks are defined in the <see cref="Line"/> property.
 	/// Normally, the <see cref="Symbol"/> is not visible.  However, if you manually enable the
 	/// <see cref="Symbol"/> using the <see cref="ZedGraph.Symbol.IsVisible"/> property, the
@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1 $ $Date: 2005-07-23 00:53:30 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[Serializable]
 	public class StickItem : LineItem, ICloneable, ISerializable
 	{
@@ -50,6 +50,27 @@ namespace ZedGraph
 
 	#region Properties
 
+		/// <summary>
+		/// Gets a flag indicating if the Z data range should be included in the axis scaling calculations.
+		/// </summary>
+		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
+		/// </param>
+		/// <value>true if the Z data are included, false otherwise</value>
+		override internal bool IsZIncluded( GraphPane pane )
+		{
+			return this.symbol.IsVisible;
+		}
+
+		/// <summary>
+		/// Gets a flag indicating if the X axis is the independent axis for this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
+		/// </param>
+		/// <value>true if the X axis is independent, false otherwise</value>
+		override internal bool IsXIndependent( GraphPane pane )
+		{
+			return true;
+		}
 	#endregion
 	
 	#region Constructors
@@ -101,12 +122,12 @@ namespace ZedGraph
 		/// Create a new <see cref="StickItem"/> using the specified properties.
 		/// </summary>
 		/// <param name="label">The label that will appear in the legend.</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">A <see cref="Color"/> value that will be applied to
 		/// the <see cref="Line"/> and <see cref="Symbol"/> properties.
 		/// </param>
-		public StickItem( string label, PointPairList points, Color color )
+		public StickItem( string label, IPointList points, Color color )
 			: this( label, points, color, ZedGraph.Line.Default.Width )
 		{
 		}
@@ -115,7 +136,7 @@ namespace ZedGraph
 		/// Create a new <see cref="StickItem"/> using the specified properties.
 		/// </summary>
 		/// <param name="label">The label that will appear in the legend.</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value pairs that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">A <see cref="Color"/> value that will be applied to
 		/// the <see cref="Line"/> and <see cref="Symbol"/> properties.
@@ -123,7 +144,7 @@ namespace ZedGraph
 		/// <param name="lineWidth">The width (in points) to be used for the <see cref="Line"/>.  This
 		/// width is scaled based on <see cref="PaneBase.CalcScaleFactor"/>.  Use a value of zero to
 		/// hide the line (see <see cref="ZedGraph.Line.IsVisible"/>).</param>
-		public StickItem( string label, PointPairList points, Color color, float lineWidth )
+		public StickItem( string label, IPointList points, Color color, float lineWidth )
 			: base( label, points, color, Symbol.Default.Type, lineWidth )
 		{
 			this.symbol.IsVisible = false;

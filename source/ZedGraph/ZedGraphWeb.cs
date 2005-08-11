@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.27 $ $Date: 2005-08-09 06:10:32 $ </version>
+	/// <version> $Revision: 3.28 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -1053,7 +1053,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Provides binding between <see cref="DataSource"/> and the specified pane.  Extracts the
 		/// data from <see cref="DataSource"/> and copies it into the appropriate
-		/// <see cref="ZedGraph.PointPairList"/> for each <see cref="ZedGraph.CurveItem"/> in the
+		/// <see cref="ZedGraph.IPointList"/> for each <see cref="ZedGraph.CurveItem"/> in the
 		/// specified <see cref="ZedGraph.GraphPane"/>.
 		/// </summary>
 		/// <param name="g">The <see cref="Graphics"/> object to be used for rendering the data.</param>

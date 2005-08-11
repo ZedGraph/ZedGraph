@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+10-Aug-2005 (by Champion)
+  Add IPointList interface
+  Remove ErrorBarItem.BarBase and HiLowBarItem.BarBase -- use GraphPane.BarBase instead
+  
 8-Aug-2005 (by Champion)
   Add strong name key to assembly
   

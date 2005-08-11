@@ -63,6 +63,7 @@ namespace ZedGraph.Demo
 			myPane.XAxis.IsMinorOppositeTic = false;
 			myPane.YAxis.IsOppositeTic = false;
 			myPane.YAxis.IsMinorOppositeTic = false;
+			myPane.YAxis.IsSkipFirstLabel = true;
 			
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed

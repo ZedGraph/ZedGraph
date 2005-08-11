@@ -99,7 +99,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion	</author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-01-22 06:20:51 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[TestFixture]
 	public	class ControlTest
 	{
@@ -234,7 +234,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.12 $ $Date: 2005-01-22 06:20:51 $ </version>
+	/// <version>	$Revision: 3.13 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[TestFixture]
 	public	class LibraryTest
 	{
@@ -890,7 +890,7 @@ namespace ZedGraph.UnitTest
 				double x = (double)	new XDate(	1995,	i+1,	1	);
 				double y = Math.Sin( (double)	i *	Math.PI	/ 30.0 );
 				
-				myCurve.AddPoint( x,	y	);
+				(myCurve.Points as PointPairList).Add( x,	y	);
 				testee.AxisChange(	form2.CreateGraphics() );
 				form2.Refresh();
 				
@@ -901,7 +901,7 @@ namespace ZedGraph.UnitTest
 			while (	myCurve.Points.Count >	0	)
 			{
 				//	remove the	first point	in the list
-				myCurve.Points.RemoveAt( 0 );
+				(myCurve.Points as PointPairList).RemoveAt( 0 );
 				testee.AxisChange(	form2.CreateGraphics() );
 				form2.Refresh();
 				
@@ -1355,9 +1355,9 @@ namespace ZedGraph.UnitTest
 
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did you	get	an	X	Text axis?"	)	);
 			
-			myCurve.Points.Clear();
+			(myCurve.Points as PointPairList).Clear();
 			for ( double	i=0;	i<100; i++ )
-				myCurve.AddPoint( i / 10.0, Math.Sin( i	/ 10.0 * Math.PI /	2.0 )	);
+				(myCurve.Points as PointPairList).Add( i / 10.0, Math.Sin( i	/ 10.0 * Math.PI /	2.0 )	);
 				
 			testee.AxisChange(	form2.CreateGraphics() );
 			form2.Refresh();
@@ -1379,7 +1379,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.12 $ $Date: 2005-01-22 06:20:51 $ </version>
+	/// <version>	$Revision: 3.13 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[TestFixture]
 	public	class LongFeatureTest
 	{
@@ -2009,7 +2009,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.12 $ $Date: 2005-01-22 06:20:51 $ </version>
+	/// <version>	$Revision: 3.13 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[TestFixture]
 	public	class FindNearestTest
 	{

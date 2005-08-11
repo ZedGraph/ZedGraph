@@ -92,7 +92,7 @@ namespace ZedGraph.Demo
 
 				if ( bar != null )
 				{
-					PointPairList points = curve.Points;
+					IPointList points = curve.Points;
 
 					for ( int i=0; i<points.Count; i++ )
 					{

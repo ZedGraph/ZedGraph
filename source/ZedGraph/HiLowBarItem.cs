@@ -48,33 +48,27 @@ namespace ZedGraph
 	/// a cluster less the clustergap (see <see cref="GraphPane.GetClusterWidth"/>
 	/// and <see cref="GraphPane.MinClusterGap"/>). The position of each bar is set
 	/// according to the <see cref="PointPair"/> values.  The independent axis
-	/// is assigned with <see cref="HiLowBarItem.BarBase"/>, and is a
-	/// <see cref="BarBase"/> enum type.  If <see cref="HiLowBarItem.BarBase"/>
+	/// is assigned with <see cref="GraphPane.BarBase"/>, and is a
+	/// <see cref="BarBase"/> enum type.  If <see cref="GraphPane.BarBase"/>
 	/// is set to <see cref="ZedGraph.BarBase.Y"/> or <see cref="ZedGraph.BarBase.Y2"/>, then
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-05-20 16:32:27 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
 
-	#region Fields
+		#region Fields
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="ZedGraph.HiLowBar"/>
 		/// class defined for this <see cref="HiLowBarItem"/>.  Use the public
 		/// property <see cref="Bar"/> to access this value.
 		/// </summary>
 		private HiLowBar bar;
+		#endregion
 
-		/// <summary>
-		/// Private field that determines which <see cref="Axis"/> is the independent axis
-		/// for this <see cref="HiLowBarItem"/>.
-		/// </summary>
-		protected BarBase	barBase;
-	#endregion
-
-	#region Constructors
+		#region Constructors
 		/// <summary>
 		/// Create a new <see cref="HiLowBarItem"/> using the specified properties.
 		/// </summary>
@@ -90,7 +84,7 @@ namespace ZedGraph
 		/// the <see cref="ZedGraph.Bar.Fill"/> and <see cref="ZedGraph.Bar.Border"/> properties.
 		/// </param>
 		public HiLowBarItem( string label, double[] x, double[] y, double[] baseVal, Color color ) :
-					this( label, new PointPairList( x, y, baseVal ), color )
+			this( label, new PointPairList( x, y, baseVal ), color )
 		{
 		}
 		
@@ -98,12 +92,12 @@ namespace ZedGraph
 		/// Create a new <see cref="HiLowBarItem"/> using the specified properties.
 		/// </summary>
 		/// <param name="label">The label that will appear in the legend.</param>
-		/// <param name="points">A <see cref="PointPairList"/> of double precision value trio's that define
+		/// <param name="points">A <see cref="IPointList"/> of double precision value trio's that define
 		/// the X, Y, and lower dependent values for this curve</param>
 		/// <param name="color">A <see cref="Color"/> value that will be applied to
 		/// the <see cref="ZedGraph.Bar.Fill"/> and <see cref="ZedGraph.Bar.Border"/> properties.
 		/// </param>
-		public HiLowBarItem( string label, PointPairList points, Color color )
+		public HiLowBarItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
 			bar = new HiLowBar( color );
@@ -125,9 +119,9 @@ namespace ZedGraph
 		{ 
 			return new HiLowBarItem( this ); 
 		}
-	#endregion
+		#endregion
 
-	#region Serialization
+		#region Serialization
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
@@ -147,7 +141,9 @@ namespace ZedGraph
 			int sch = info.GetInt32( "schema2" );
 
 			bar = (HiLowBar) info.GetValue( "bar", typeof(HiLowBar) );
-			barBase = (BarBase) info.GetValue( "barBase", typeof(BarBase) );
+
+			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
+			BarBase barBase = (BarBase) info.GetValue( "barBase", typeof(BarBase) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -160,11 +156,13 @@ namespace ZedGraph
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
 			info.AddValue( "bar", bar );
-			info.AddValue( "barBase", barBase );
-		}
-	#endregion
 
-	#region Properties
+			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
+			info.AddValue( "barBase", BarBase.X );
+		}
+		#endregion
+
+		#region Properties
 		/// <summary>
 		/// Gets a reference to the <see cref="HiLowBar"/> class defined
 		/// for this <see cref="HiLowBarItem"/>.
@@ -175,27 +173,27 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Determines which <see cref="Axis"/> is the independent axis
-		/// for this <see cref="HiLowBarItem"/>.
+		/// Gets a flag indicating if the Z data range should be included in the axis scaling calculations.
 		/// </summary>
-		/// <remarks>Typically this is set to <see cref="ZedGraph.BarBase.X"/> for
-		/// vertical bars.  If it is set to <see cref="ZedGraph.BarBase.Y"/> or
-		/// <see cref="ZedGraph.BarBase.Y2"/>, then the bars will be horizontal.
-		/// Note that for <see cref="HiLowBarItem"/>'s, the <see cref="BarBase"/>
-		/// is set individually for each curve.  You can have one
-		/// <see cref="HiLowBarItem"/> aligned vertically, and the next
-		/// horizontally.  This is in contrast to <see cref="BarItem"/>'s, in
-		/// which the <see cref="ZedGraph.BarBase"/> is set according to
-		/// the global <see cref="GraphPane.BarBase"/>, so all
-		/// <see cref="BarItem"/>'s on a <see cref="GraphPane"/> will have the
-		/// same alignment.
-		/// </remarks>
-		public BarBase	BarBase
+		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
+		/// </param>
+		/// <value>true if the Z data are included, false otherwise</value>
+		override internal bool IsZIncluded( GraphPane pane )
 		{
-			get { return barBase; }
-			set { barBase = value; }
+			return true;
 		}
 
+		/// <summary>
+		/// Gets a flag indicating if the X axis is the independent axis for this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
+		/// </param>
+		/// <value>true if the X axis is independent, false otherwise</value>
+		override internal bool IsXIndependent( GraphPane pane )
+		{
+			return pane.BarBase == BarBase.X;
+		}
+			
 	#endregion
 
 	#region Methods
@@ -251,55 +249,6 @@ namespace ZedGraph
 									float scaleFactor )
 		{
 			this.bar.Draw( g, pane, rect, scaleFactor, true, null );
-		}
-
-		/// <summary>
-		/// Go through the list of <see cref="PointPair"/> data values for this
-		/// <see cref="HiLowBarItem"/> and determine the minimum and maximum values in the data.
-		/// </summary>
-		/// <param name="xMin">The minimum X value in the range of data</param>
-		/// <param name="xMax">The maximum X value in the range of data</param>
-		/// <param name="yMin">The minimum Y value in the range of data</param>
-		/// <param name="yMax">The maximum Y value in the range of data</param>
-		/// <param name="bIgnoreInitial">ignoreInitial is a boolean value that
-		/// affects the data range that is considered for the automatic scale
-		/// ranging (see <see cref="GraphPane.IsIgnoreInitial"/>).  If true, then initial
-		/// data points where the Y value is zero are not included when
-		/// automatically determining the scale <see cref="Axis.Min"/>,
-		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.  All data after
-		/// the first non-zero Y value are included.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="xLBound">The lower bound of allowable data for the X values.  This
-		/// value allows you to subset the data values.  If the X range is bounded, then
-		/// the resulting range for Y will reflect the Y values for the points within the X
-		/// bounds.  Use <see cref="System.Double.MinValue"/> to have no bound.</param>
-		/// <param name="xUBound">The upper bound of allowable data for the X values.  This
-		/// value allows you to subset the data values.  If the X range is bounded, then
-		/// the resulting range for Y will reflect the Y values for the points within the X
-		/// bounds.  Use <see cref="System.Double.MaxValue"/> to have no bound.</param>
-		/// <param name="yLBound">The lower bound of allowable data for the Y values.  This
-		/// value allows you to subset the data values.  If the Y range is bounded, then
-		/// the resulting range for X will reflect the X values for the points within the Y
-		/// bounds.  Use <see cref="System.Double.MinValue"/> to have no bound.</param>
-		/// <param name="yUBound">The upper bound of allowable data for the Y values.  This
-		/// value allows you to subset the data values.  If the Y range is bounded, then
-		/// the resulting range for X will reflect the X values for the points within the Y
-		/// bounds.  Use <see cref="System.Double.MaxValue"/> to have no bound.</param>
-		/// <seealso cref="GraphPane.IsBoundedRanges"/>
-		override public void GetRange( 	ref double xMin, ref double xMax,
-										ref double yMin, ref double yMax,
-										bool bIgnoreInitial,
-										double xLBound, double xUBound,
-										double yLBound, double yUBound, GraphPane pane )
-		{
-			// Call GetRange() that includes Z data points
-			this.points.GetRange( ref xMin, ref xMax, ref yMin, ref yMax, bIgnoreInitial,
-									true, barBase == BarBase.X,
-									xLBound, xUBound, yLBound, yUBound );
 		}
 
 	#endregion

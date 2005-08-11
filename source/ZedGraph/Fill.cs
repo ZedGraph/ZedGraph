@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-03-25 16:19:57 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[Serializable]
 	public class Fill : ISerializable
 	{
@@ -709,7 +709,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// The gradient by value fill method allows the fill color for each point or bar to
-		/// be based on a value for that point (either X, Y, or Z in the <see cref="PointPairList"/>.
+		/// be based on a value for that point (either X, Y, or Z in the <see cref="IPointList"/>.
 		/// For example, assume a <see cref="Fill"/> class is defined with a linear gradient ranging from
 		/// <see cref="System.Drawing.Color.Blue"/> to <see cref="System.Drawing.Color.Red"/> and the <see cref="Fill.Type"/>
 		/// is set to <see cref="FillType.GradientByY"/>.  If <see cref="RangeMin"/> is set to 
@@ -717,7 +717,7 @@ namespace ZedGraph
 		/// 100 or less will be colored blue, a point with a Y value of 200 or more will be
 		/// colored red, and a point between 100 and 200 will have a color based on a linear scale
 		/// between blue and red.  Note that the fill color is always solid for any given point.
-		/// You can use the Z value from <see cref="PointPairList"/> along with
+		/// You can use the Z value from <see cref="IPointList"/> along with
 		/// <see cref="FillType.GradientByZ"/> to color individual points according to some
 		/// property that is independent of the X,Y point pair.
 		/// </remarks>

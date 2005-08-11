@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.21 $ $Date: 2005-07-23 00:52:04 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2005-08-11 02:56:37 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -465,7 +465,7 @@ namespace ZedGraph
 		{
 			float	tmpX, tmpY;
 			double	curX, curY, lowVal;
-			PointPairList points = curve.Points;
+			IPointList points = curve.Points;
 		
 			if ( points != null && ( this.border.IsVisible || this.fill.IsVisible ) )
 			{

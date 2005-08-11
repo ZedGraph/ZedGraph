@@ -55,5 +55,4 @@ using System.Runtime.CompilerServices;
 //
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("zedgraphkey.snk")]
-//[assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
