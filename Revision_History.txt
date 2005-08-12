@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+11-Aug-2005 (by Champion)
+  Fix rotated scale spacing logic to allow lapping at angles
+
 10-Aug-2005 (by Champion)
   Add IPointList interface
   Remove ErrorBarItem.BarBase and HiLowBarItem.BarBase -- use GraphPane.BarBase instead

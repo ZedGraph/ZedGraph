@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.38 $ $Date: 2005-08-03 02:53:52 $ </version>
+	/// <version> $Revision: 3.39 $ $Date: 2005-08-12 06:00:42 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -2853,13 +2853,22 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
+		/// <param name="applyAngle">
+		/// true to get the bounding box of the text using the <see cref="FontSpec.Angle" />,
+		/// false to just get the bounding box without rotation
+		/// </param>
 		/// <returns>the maximum width of the text in pixel units</returns>
-		protected SizeF GetScaleMaxSpace( Graphics g, GraphPane pane, float scaleFactor )
+		protected SizeF GetScaleMaxSpace( Graphics g, GraphPane pane, float scaleFactor,
+							bool applyAngle )
 		{
 			string tmpStr;
 			double	dVal,
 				scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
 			int		i;
+
+			float saveAngle = this.scaleFontSpec.Angle;
+			if ( !applyAngle )
+				this.scaleFontSpec.Angle = 0;
 
 			int nTics = CalcNumTics();
 			
@@ -2889,7 +2898,7 @@ namespace ZedGraph
 					maxSpace.Width = sizeF.Width;
 			}
 
-
+			this.scaleFontSpec.Angle = saveAngle;
 			return maxSpace;
 		}
 
@@ -2952,7 +2961,7 @@ namespace ZedGraph
 						space += ticSize;
 
                     // account for the tic labels + 1/2 tic gap between the tic and the label
-					space += this.GetScaleMaxSpace( g, pane, scaleFactor ).Height +
+					space += this.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height +
 							ticSize * 0.5F;
 				}
 		
@@ -2982,7 +2991,7 @@ namespace ZedGraph
 			{
 				// half the width of the widest item, plus a gap of 1/2 the charheight
 				float tmpSpace =
-					pane.XAxis.GetScaleMaxSpace( g, pane, scaleFactor ).Width / 2.0F +
+					pane.XAxis.GetScaleMaxSpace( g, pane, scaleFactor, true ).Width / 2.0F +
 							charHeight / 2.0F;
 				if ( tmpSpace > space )
 					space = tmpSpace;
@@ -3258,7 +3267,7 @@ namespace ZedGraph
 
 			// get the Y position of the center of the axis labels
 			// (the axis itself is referenced at zero)
-			float maxSpace = this.GetScaleMaxSpace( g, pane, scaleFactor ).Height;
+			float maxSpace = this.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height;
 			
 			float textTop, textCenter;
 			if ( this.isTic )
@@ -3903,7 +3912,7 @@ namespace ZedGraph
 				// calculated, and the cross value is determined using a transform of scale values (which
 				// rely on AxisRect).
 				float y = ScaledTic( scaleFactor ) * ( hasTic ? 1.5f : 0.5f ) +
-							GetScaleMaxSpace( g, pane, scaleFactor ).Height +
+							GetScaleMaxSpace( g, pane, scaleFactor, true ).Height +
 							this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
 
                 if ( this.isScaleLabelsInside )
@@ -4164,8 +4173,7 @@ namespace ZedGraph
 		/// </param>
 		public int CalcMaxLabels( Graphics g, GraphPane pane, float scaleFactor )
 		{
-			SizeF size = this.GetScaleMaxSpace( g, pane, scaleFactor );
-			double maxWidth;
+			SizeF size = this.GetScaleMaxSpace( g, pane, scaleFactor, false );
 			
 			// The font angles are already set such that the Width is parallel to the appropriate (X or Y)
 			// axis.  Therefore, we always use size.Width.
@@ -4174,7 +4182,21 @@ namespace ZedGraph
 //			if ( allowance > size.Width / 4 )
 //				allowance = size.Width / 4;
 
-			maxWidth = size.Width;
+
+			float maxWidth = 1000;
+			float temp = 1000;
+			float costh = (float) Math.Abs( Math.Cos( this.scaleFontSpec.Angle * Math.PI / 180.0 ) );
+			float sinth = (float) Math.Abs( Math.Sin( this.scaleFontSpec.Angle * Math.PI / 180.0 ) );
+
+			if ( costh > 0.001 )
+				maxWidth = size.Width / costh;
+			if ( sinth > 0.001 )
+				temp = size.Height / sinth;
+			if ( temp < maxWidth )
+				maxWidth = temp;
+
+
+			//maxWidth = size.Width;
 /*
 			if ( this is XAxis )
 				// Add an extra character width to leave a minimum of 1 character space between labels

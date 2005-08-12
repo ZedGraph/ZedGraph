@@ -703,7 +703,65 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test
+#if true	// Basic curve test - Text Axis
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			double[] x = new double[20];
+			double[] y = new double[20];
+			string[] labels = new string[20];
+
+			for ( int i=0; i<20; i++ )
+			{
+				x[i] = (double) i;
+				y[i] = Math.Sin( i / 8.0 );
+				double z = Math.Abs(Math.Cos( i / 8.0 )) * y[i];
+				labels[i] = "Label" + i.ToString();
+			}
+			BasicArrayPointList list = new BasicArrayPointList( x, y );
+
+			//LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			StickItem myCurve = myPane.AddStick( "curve", list, Color.Blue );
+			//myCurve.Symbol.IsVisible = true;
+			myCurve.IsY2Axis = true;
+			myPane.Y2Axis.IsVisible = true;
+			//myPane.YAxis.IsVisible = false;
+			myPane.Y2Axis.Title = "Y2 Axis";
+			myPane.Y2Axis.IsShowGrid = true;
+			myPane.XAxis.IsShowGrid = true;
+			//myPane.YAxis.IsSkipFirstLabel = true;
+			myPane.XAxis.IsSkipLastLabel = true;
+			//myPane.XAxis.IsSkipLastLabel = true;
+			//myPane.XAxis.IsReverse = true;
+			//myPane.AxisBorder.IsVisible = false;
+			myPane.XAxis.Type = AxisType.Text;
+			myPane.XAxis.TextLabels = labels;
+			myPane.XAxis.ScaleFontSpec.Angle = 30;
+
+			PointF[] polyPts = new PointF[7];
+			polyPts[0] = new PointF( 30f, 0.2f );
+			polyPts[1] = new PointF( 25f, 0.4f );
+			polyPts[2] = new PointF( 27f, 0.6f );
+			polyPts[3] = new PointF( 30f, 0.8f );
+			polyPts[4] = new PointF( 35f, 0.6f );
+			polyPts[5] = new PointF( 37f, 0.4f );
+			polyPts[6] = new PointF( 30f, 0.2f );
+			PolyItem poly = new PolyItem( polyPts, Color.Red, Color.LightSeaGreen, Color.White );
+			myPane.GraphItemList.Add( poly );
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+			myPane.FontSpec.IsDropShadow = true;
+			myPane.FontSpec.DropShadowColor = Color.Red;
+			myPane.FontSpec.Border.IsVisible = true;
+			myPane.FontSpec.Fill = new Fill( Color.White, Color.LightGoldenrodYellow );
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 359;
+			trackBar1.Value = 0;
+
+#endif
+
+#if false	// Basic curve test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
 			double[] x = new double[100];
@@ -1176,9 +1234,11 @@ namespace ZedGraph.LibTest
 			if ( _crossAxis is XAxis )
 				controlAxis = myPane.YAxis;
 
-			_crossAxis.Cross = (double) trackBar1.Value / 100.0 * (controlAxis.Max - controlAxis.Min) +
-							controlAxis.Min;
-			Invalidate();
+			//_crossAxis.Cross = (double) trackBar1.Value / 100.0 * (controlAxis.Max - controlAxis.Min) +
+			//				controlAxis.Min;
+			_crossAxis.ScaleFontSpec.Angle = trackBar1.Value;
+			myPane.AxisChange( this.CreateGraphics() );
+			Refresh();
 		}
 
 		private void ReverseBox_CheckedChanged( object sender, EventArgs e )
@@ -1214,8 +1274,14 @@ namespace ZedGraph.LibTest
 			ReverseBox.Checked = _crossAxis.IsReverse;
 			LabelsInsideBox.Checked = _crossAxis.IsScaleLabelsInside;
 			CrossAutoBox.Checked = _crossAxis.CrossAuto;
+
+			/*
 			double ratio = (_crossAxis.Cross - controlAxis.Min) / (controlAxis.Max - controlAxis.Min);
-			trackBar1.Value = (int) (100 * ratio);
+			if ( ratio >= 0 && ratio <= 1 )
+				trackBar1.Value = (int) (100 * ratio);
+			*/
+
+			trackBar1.Value = (int) ( Math.Abs( _crossAxis.ScaleFontSpec.Angle ) + 0.5 ) % 360;
 		}
 
 		private void CrossAutoBox_CheckedChanged( object sender, EventArgs e )
