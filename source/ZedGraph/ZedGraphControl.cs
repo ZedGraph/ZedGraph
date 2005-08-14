@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.30 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.31 $ $Date: 2005-08-14 03:17:28 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -129,6 +129,10 @@ namespace ZedGraph
         private MouseButtons zoomButtons2 = MouseButtons.None;
         private Keys zoomModifierKeys2 = Keys.None;
         private MouseButtons panButtons = MouseButtons.Left;
+
+		// Setting this field to Keys.Shift here
+		// causes an apparent bug to crop up in VS 2003, by which it will have the value:
+		// "System.Windows.Forms.Keys.Shift+None", which won't compile
         private Keys panModifierKeys = Keys.Shift;
         private MouseButtons panButtons2 = MouseButtons.Middle;
         private Keys panModifierKeys2 = Keys.None;
@@ -548,6 +552,11 @@ namespace ZedGraph
             get { return panButtons2; }
             set { panButtons2 = value; }
         }
+#if false // NOTE: The default value of PanModifierKeys is Keys.Shift. Because of an apparent bug in
+		  // VS 2003, the initial value set in InitializeComponent by the code wizard is "Keys.Shift+None"
+		  // which will not compile.  As a temporary workaround, I've hidden the value so that it won't
+		  // have compile errors.  This problem does not exist in VS 2005.
+
         /// <summary>
         /// Gets or sets a value that determines which modifier keys will be used as a primary option
         /// to trigger a pan event.
@@ -563,6 +572,7 @@ namespace ZedGraph
             get { return panModifierKeys; }
             set { panModifierKeys = value; }
         }
+#endif
         /// <summary>
         /// Gets or sets a value that determines which modifier keys will be used as a secondary option
         /// to trigger a pan event.

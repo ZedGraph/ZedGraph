@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+13-Aug-2005 (by Champion)
+  Disable the ZedGraphControl.PanModifierKeys due to a bug in VS2003 causing compiler error
+  
 11-Aug-2005 (by Champion)
   Fix rotated scale spacing logic to allow lapping at angles
 
