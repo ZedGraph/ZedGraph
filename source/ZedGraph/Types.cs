@@ -343,7 +343,79 @@ namespace ZedGraph
 		/// Coordinates are specified according to the user axis scales
 		/// for the <see cref="GraphPane.XAxis"/> and <see cref="GraphPane.Y2Axis"/>.
 		/// </summary>
-		AxisXY2Scale
+		AxisXY2Scale,
+		/// <summary>
+		/// The X coordinate is specified as a fraction of the <see cref="GraphPane.AxisRect"/>,
+		/// and the Y coordinate is specified as a fraction of the <see cref="PaneBase.PaneRect" />.
+		/// </summary>
+		/// <remarks>
+		/// For the X coordinate, 0.0
+		/// is at the left edge of the AxisRect and 1.0
+		/// is at the right edge of the AxisRect. A value less
+		/// than zero is left of the AxisRect and a value
+		/// greater than 1.0 is right of the AxisRect.  For the Y coordinate, a value of zero is at
+		/// the left side of the pane, and a value of 1.0 is at the right side of the pane.
+		/// </remarks>
+		XAxisFractionYPaneFraction,
+		/// <summary>
+		/// The X coordinate is specified as a fraction of the <see cref="PaneBase.PaneRect"/>,
+		/// and the Y coordinate is specified as a fraction of the <see cref="GraphPane.AxisRect" />.
+		/// </summary>
+		/// <remarks>
+		/// For the X coordinate, a value of zero is at
+		/// the left side of the pane, and a value of 1.0 is at the right side of the pane.
+		/// For the Y coordinate, 0.0
+		/// is at the top edge of the AxisRect and 1.0
+		/// is at the bottom edge of the AxisRect. A value less
+		/// than zero is above the AxisRect and a value
+		/// greater than 1.0 is below the AxisRect.
+		/// </remarks>
+		XPaneFractionYAxisFraction,
+		/// <summary>
+		/// The X coordinate is specified as an X Scale value, and the Y coordinate
+		/// is specified as a fraction of the <see cref="GraphPane.AxisRect"/>.
+		/// </summary>
+		/// <remarks>
+		/// For the X coordinate, the value just corresponds to the values of the X scale.
+		/// Values outside the scale range will be
+		/// outside the <see cref="GraphPane.AxisRect" />.  For the Y coordinate, 0.0
+		/// is at the top edge of the AxisRect and 1.0
+		/// is at the bottom edge of the AxisRect. A value less
+		/// than zero is above the AxisRect and a value
+		/// greater than 1.0 is below the AxisRect.
+		/// </remarks>
+		XScaleYAxisFraction,
+		/// <summary>
+		/// The X coordinate is specified as a fraction of the
+		/// <see cref="GraphPane.AxisRect"/> and the Y coordinate is specified as
+		/// a Y scale value.
+		/// </summary>
+		/// <remarks>
+		/// For the X coordinate, 0.0
+		/// is at the left edge of the AxisRect and 1.0
+		/// is at the right edge of the AxisRect. A value less
+		/// than zero is left of the AxisRect and a value
+		/// greater than 1.0 is right of the AxisRect.  For the Y coordinate, the value just
+		/// corresponds to the values of the Y scale.  Values outside the scale range will be
+		/// outside the <see cref="GraphPane.AxisRect" />.
+		/// </remarks>
+		XAxisFractionYScale,
+		/// <summary>
+		/// The X coordinate is specified as a fraction of the
+		/// <see cref="GraphPane.AxisRect"/> and the Y coordinate is specified as
+		/// a Y2 scale value.
+		/// </summary>
+		/// <remarks>
+		/// For the X coordinate, 0.0
+		/// is at the left edge of the AxisRect and 1.0
+		/// is at the right edge of the AxisRect. A value less
+		/// than zero is left of the AxisRect and a value
+		/// greater than 1.0 is right of the AxisRect.  For the Y coordinate, the value just
+		/// corresponds to the values of the Y2 scale.  Values outside the scale range will be
+		/// outside the <see cref="GraphPane.AxisRect" />.
+		/// </remarks>
+		XAxisFractionY2Scale
+
 	};
 	
 	/// <summary>

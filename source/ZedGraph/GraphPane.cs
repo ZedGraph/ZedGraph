@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.48 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.49 $ $Date: 2005-08-18 05:16:55 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1448,32 +1448,10 @@ namespace ZedGraph
 			this.xAxis.SetupScaleData( this );
 			this.yAxis.SetupScaleData( this );
 			this.y2Axis.SetupScaleData( this );
-
-			PointF ptPix = new PointF();
-
-			if ( coord == CoordType.AxisFraction )
-			{
-				ptPix.X = this.axisRect.Left + ptF.X * this.axisRect.Width;
-				ptPix.Y = this.axisRect.Top + ptF.Y * this.axisRect.Height;
-			}
-			else if ( coord == CoordType.AxisXYScale )
-			{
-				ptPix.X = this.xAxis.Transform( ptF.X );
-				ptPix.Y = this.yAxis.Transform( ptF.Y );
-			}
-			else if ( coord == CoordType.AxisXY2Scale )
-			{
-				ptPix.X = this.xAxis.Transform( ptF.X );
-				ptPix.Y = this.y2Axis.Transform( ptF.Y );
-			}
-			else	// PaneFraction
-			{
-				ptPix.X = this.paneRect.Left + ptF.X * this.paneRect.Width;
-				ptPix.Y = this.paneRect.Top + ptF.Y * this.paneRect.Height;
-			}
-
-			return ptPix;
+		
+			return this.TransformCoord( ptF, coord );
 		}
+	
 
 		/// <summary>
 		/// Return the user scale values that correspond to the specified screen

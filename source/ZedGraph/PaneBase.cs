@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-07-15 05:18:12 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2005-08-18 05:16:55 $ </version>
 	public class PaneBase : ICloneable
 	{
 
@@ -954,6 +954,71 @@ namespace ZedGraph
 			bitmapGraphics.Dispose();
 
 			return bitmap;
+		}
+
+		internal PointF TransformCoord( PointF ptF, CoordType coord )
+		{
+			// If the Transformation is an illegal type, just stick it in the middle
+			if ( !(this is GraphPane) && !( coord == CoordType.PaneFraction ) )
+			{
+				coord = CoordType.PaneFraction;
+				ptF = new PointF( 0.5F, 0.5F );
+			}
+
+			// Just to save some casts
+			GraphPane tPane = null;
+			if ( this is GraphPane )
+				tPane = (GraphPane) this;
+
+			PointF ptPix = new PointF();
+
+			if ( coord == CoordType.AxisFraction )
+			{
+				ptPix.X = tPane.AxisRect.Left + ptF.X * tPane.AxisRect.Width;
+				ptPix.Y = tPane.AxisRect.Top + ptF.Y * tPane.AxisRect.Height;
+			}
+			else if ( coord == CoordType.AxisXYScale )
+			{
+				ptPix.X = tPane.XAxis.Transform( ptF.X );
+				ptPix.Y = tPane.YAxis.Transform( ptF.Y );
+			}
+			else if ( coord == CoordType.AxisXY2Scale )
+			{
+				ptPix.X = tPane.XAxis.Transform( ptF.X );
+				ptPix.Y = tPane.Y2Axis.Transform( ptF.Y );
+			}
+			else if ( coord == CoordType.XScaleYAxisFraction )
+			{
+				ptPix.X = tPane.XAxis.Transform( ptF.X );
+				ptPix.Y = tPane.AxisRect.Top + ptF.Y * tPane.AxisRect.Height;
+			}
+			else if ( coord == CoordType.XAxisFractionYScale )
+			{
+				ptPix.X = tPane.AxisRect.Left + ptF.X * tPane.AxisRect.Width;
+				ptPix.Y = tPane.YAxis.Transform( ptF.Y );
+			}
+			else if ( coord == CoordType.XAxisFractionY2Scale )
+			{
+				ptPix.X = tPane.AxisRect.Left + ptF.X * tPane.AxisRect.Width;
+				ptPix.Y = tPane.Y2Axis.Transform( ptF.Y );
+			}
+			else if ( coord == CoordType.XAxisFractionYPaneFraction )
+			{
+				ptPix.X = tPane.AxisRect.Left + ptF.X * tPane.AxisRect.Width;
+				ptPix.Y = tPane.PaneRect.Top + ptF.Y * tPane.paneRect.Height;
+			}
+			else if ( coord == CoordType.XPaneFractionYAxisFraction )
+			{
+				ptPix.X = tPane.PaneRect.Left + ptF.X * tPane.paneRect.Width;
+				ptPix.Y = tPane.AxisRect.Top + ptF.Y * tPane.AxisRect.Height;
+			}
+			else	// PaneFraction
+			{
+				ptPix.X = tPane.paneRect.Left + ptF.X * tPane.paneRect.Width;
+				ptPix.Y = tPane.paneRect.Top + ptF.Y * tPane.paneRect.Height;
+			}
+
+			return ptPix;
 		}
 
 	#endregion

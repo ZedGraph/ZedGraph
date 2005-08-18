@@ -703,7 +703,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test - Text Axis
+#if false	// Basic curve test - Text Axis
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
 			double[] x = new double[20];
@@ -761,7 +761,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if false	// Basic curve test
+#if true	// Basic curve test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
 			double[] x = new double[100];
@@ -770,7 +770,7 @@ namespace ZedGraph.LibTest
 			for ( int i=0; i<100; i++ )
 			{
 				x[i] = (double) i;
-				y[i] = Math.Sin( i / 8.0 );
+				y[i] = Math.Sin( i / 8.0 ) * 100000 + 100001;
 				double z = Math.Abs(Math.Cos( i / 8.0 )) * y[i];
 			}
 			BasicArrayPointList list = new BasicArrayPointList( x, y );
@@ -778,16 +778,33 @@ namespace ZedGraph.LibTest
 			//LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 			StickItem myCurve = myPane.AddStick( "curve", list, Color.Blue );
 			//myCurve.Symbol.IsVisible = true;
-			myCurve.IsY2Axis = true;
-			myPane.Y2Axis.IsVisible = true;
+			//myCurve.IsY2Axis = true;
+			//myPane.Y2Axis.IsVisible = true;
+			myPane.YAxis.Type = AxisType.Log;
+			myPane.YAxis.IsScaleVisible = false;
+			myPane.YAxis.IsShowTitle = false;
+			myPane.MarginLeft = 50;
+
+			TextItem text = new TextItem("5000", -0.01f, 5000f, CoordType.XAxisFractionYScale, AlignH.Right, AlignV.Center );
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Fill.IsVisible = false;
+			myPane.GraphItemList.Add( text );
+
+			TextItem text2 = new TextItem( "My Title", 0.01f, 0.5f, CoordType.XPaneFractionYAxisFraction,
+				AlignH.Center, AlignV.Top );
+			text2.FontSpec.Border.IsVisible = false;
+			text2.FontSpec.Fill.IsVisible = false;
+			text2.FontSpec.Angle = 90f;
+			myPane.GraphItemList.Add( text2 );
+
 			//myPane.YAxis.IsVisible = false;
-			myPane.Y2Axis.Title = "Y2 Axis";
+			//myPane.Y2Axis.Title = "Y2 Axis";
 			//myPane.XAxis.BaseTic = 1;
 			//myPane.XAxis.Step = 5;
 			//myPane.Y2Axis.Cross = 60;
             //myPane.YAxis.IsScaleLabelsInside = true;
-			myPane.Y2Axis.IsShowGrid = true;
-			myPane.XAxis.IsShowGrid = true;
+			//myPane.Y2Axis.IsShowGrid = true;
+			//myPane.XAxis.IsShowGrid = true;
 			//myPane.YAxis.IsSkipFirstLabel = true;
 			myPane.XAxis.IsSkipLastLabel = true;
 			//myPane.XAxis.IsSkipLastLabel = true;

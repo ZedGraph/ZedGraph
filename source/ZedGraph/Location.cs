@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-08-18 05:16:55 $ </version>
 	[Serializable]
 	public class Location : ICloneable, ISerializable
 	{
@@ -442,42 +442,7 @@ namespace ZedGraph
 		/// specified user point.</returns>
 		public static PointF Transform( PaneBase pane, PointF ptF, CoordType coord )
 		{
-			PointF ptPix = new PointF();
-
-			// If the Transformation is an illegal type, just stick it in the middle
-			if ( !(pane is GraphPane) && !( coord == CoordType.PaneFraction ) )
-			{
-				coord = CoordType.PaneFraction;
-				ptF = new PointF( 0.5F, 0.5F );
-			}
-
-			// Just to save some casts
-			GraphPane tPane = null;
-			if ( pane is GraphPane )
-				tPane = (GraphPane) pane;
-
-			if ( pane is GraphPane && coord == CoordType.AxisFraction )
-			{
-				ptPix.X = tPane.AxisRect.Left + ptF.X * tPane.AxisRect.Width;
-				ptPix.Y = tPane.AxisRect.Top + ptF.Y * tPane.AxisRect.Height;
-			}
-			else if ( pane is GraphPane && coord == CoordType.AxisXYScale )
-			{
-				ptPix.X = tPane.XAxis.Transform( ptF.X );
-				ptPix.Y = tPane.YAxis.Transform( ptF.Y );
-			}
-			else if ( pane is GraphPane && coord == CoordType.AxisXY2Scale )
-			{
-				ptPix.X = tPane.XAxis.Transform( ptF.X );
-				ptPix.Y = tPane.Y2Axis.Transform( ptF.Y );
-			}
-			else	// PaneFraction
-			{
-				ptPix.X = pane.PaneRect.Left + ptF.X * pane.PaneRect.Width;
-				ptPix.Y = pane.PaneRect.Top + ptF.Y * pane.PaneRect.Height;
-			}
-
-			return ptPix;
+			return pane.TransformCoord( ptF, coord );
 		}
 		
 		/// <summary>

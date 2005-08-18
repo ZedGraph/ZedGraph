@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+17-Aug-2005 (by Champion)
+  Add new CoordTypes to allow mixed coordinate systems.
+  Move Transform for the Coord system up to the PaneBase so there is only a single function
+  
 13-Aug-2005 (by Champion)
   Disable the ZedGraphControl.PanModifierKeys due to a bug in VS2003 causing compiler error
   

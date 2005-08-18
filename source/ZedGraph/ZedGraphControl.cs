@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.31 $ $Date: 2005-08-14 03:17:28 $ </version>
+	/// <version> $Revision: 3.32 $ $Date: 2005-08-18 05:16:55 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -121,7 +121,7 @@ namespace ZedGraph
         /// Private values that determine which mouse button and key combinations trigger pan and zoom
         /// events.  Use the public properties <see cref="ZoomButtons"/>, <see cref="ZoomButtons2"/>,
         /// <see cref="PanButtons2"/>, <see cref="PanButtons2"/>, <see cref="ZoomModifierKeys"/>,
-        /// <see cref="ZoomModifierKeys2"/>, <see cref="PanModifierKeys"/>, and
+        /// <see cref="ZoomModifierKeys2"/>, <see cref="panModifierKeys"/>, and
         /// <see cref="ZoomModifierKeys2"/> to access these values.
         /// </summary>
         private MouseButtons zoomButtons = MouseButtons.Left;
@@ -527,7 +527,7 @@ namespace ZedGraph
         /// to trigger a pan event.
         /// </summary>
         /// <remarks>
-        /// This value is combined with <see cref="PanModifierKeys"/> to determine the actual pan combination.
+        /// This value is combined with <see cref="panModifierKeys"/> to determine the actual pan combination.
         /// A secondary pan button/key combination option is available via <see cref="PanButtons2"/> and
         /// <see cref="PanModifierKeys2"/>.  To not use this button/key combination, set the value
         /// of <see cref="PanButtons"/> to <see cref="MouseButtons.None"/>.
@@ -542,9 +542,9 @@ namespace ZedGraph
         /// to trigger a pan event.
         /// </summary>
         /// <remarks>
-        /// This value is combined with <see cref="PanModifierKeys2"/> to determine the actual pan combination.
+        /// This value is combined with <see cref="panModifierKeys2"/> to determine the actual pan combination.
         /// The primary pan button/key combination option is available via <see cref="PanButtons"/> and
-        /// <see cref="PanModifierKeys"/>.  To not use this button/key combination, set the value
+        /// <see cref="panModifierKeys"/>.  To not use this button/key combination, set the value
         /// of <see cref="PanButtons2"/> to <see cref="MouseButtons.None"/>.
         /// </remarks>
         public MouseButtons PanButtons2
@@ -580,7 +580,7 @@ namespace ZedGraph
         /// <remarks>
         /// This value is combined with <see cref="PanButtons2"/> to determine the actual pan combination.
         /// A primary pan button/key combination option is available via <see cref="PanButtons"/> and
-        /// <see cref="PanModifierKeys"/>.  To not use this button/key combination, set the value
+        /// <see cref="panModifierKeys"/>.  To not use this button/key combination, set the value
         /// of <see cref="PanButtons2"/> to <see cref="MouseButtons.None"/>.
         /// </remarks>
         public Keys PanModifierKeys2
