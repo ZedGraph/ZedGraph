@@ -50,7 +50,29 @@ namespace ZedGraph
 		/// ordinal type, then all X values associated with the curves are ignored. </summary>
 		/// <seealso cref="AxisType.Text"/>
 		/// <seealso cref="Axis.IsOrdinal"/>
-		Ordinal
+		Ordinal,
+		/// <summary> An ordinal axis that will have labels formatted with dates from the actual data
+		/// values of the first <see cref="CurveItem" /> in the <see cref="CurveList" />.
+		/// </summary>
+		/// <remarks>
+		/// Although the tics are labeled with real data values, the actual points will be
+		/// evenly-spaced in spite of the data values.  For example, if the X values of the first curve
+		/// are 1, 5, and 100, then the tic labels will show 1, 5, and 100, but they will be equal
+		/// distance from each other. </remarks>
+		/// <seealso cref="AxisType.Text"/>
+		/// <seealso cref="Axis.IsOrdinal"/>
+		DateAsOrdinal,
+		/// <summary> An ordinal axis that will have labels formatted with values from the actual data
+		/// values of the first <see cref="CurveItem" /> in the <see cref="CurveList" />.
+		/// </summary>
+		/// <remarks>
+		/// Although the tics are labeled with real data values, the actual points will be
+		/// evenly-spaced in spite of the data values.  For example, if the X values of the first curve
+		/// are 1, 5, and 100, then the tic labels will show 1, 5, and 100, but they will be equal
+		/// distance from each other. </remarks>
+		/// <seealso cref="AxisType.Text"/>
+		/// <seealso cref="Axis.IsOrdinal"/>
+		LinearAsOrdinal
 	};
 
 	/// <summary>

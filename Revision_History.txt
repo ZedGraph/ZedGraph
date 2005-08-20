@@ -1,5 +1,12 @@
 ZedGraph Class Library Revision History
 
+19-Aug-2005 (by Champion)
+  Fix Pie.SlicePath access in FindNearestPoint
+  Fix y position calc for axis title when IsScaleVisible=false
+
+18-Aug-2005 (by Champion)
+  Add new AxisType's LinearAsOrdinal and DateAsOrdinal
+
 17-Aug-2005 (by Champion)
   Add new CoordTypes to allow mixed coordinate systems.
   Move Transform for the Coord system up to the PaneBase so there is only a single function

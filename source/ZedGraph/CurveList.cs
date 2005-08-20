@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.26 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.27 $ $Date: 2005-08-20 07:05:53 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -389,10 +389,10 @@ namespace ZedGraph
 				}
    				
 				// isYOrd is true if the Y axis is an ordinal type
-				bool isYOrd = ( ( pane.Y2Axis.IsOrdinal || pane.Y2Axis.IsText ) && curve.IsY2Axis ) ||
-								( ( pane.YAxis.IsOrdinal || pane.YAxis.IsText ) && ! curve.IsY2Axis );
+				bool isYOrd = ( pane.Y2Axis.IsAnyOrdinal && curve.IsY2Axis ) ||
+								( pane.YAxis.IsAnyOrdinal && ! curve.IsY2Axis );
 				// isXOrd is true if the X axis is an ordinal type
-				bool isXOrd = pane.XAxis.IsOrdinal || pane.XAxis.IsText;
+				bool isXOrd = pane.XAxis.IsAnyOrdinal;
    							
 				// For ordinal Axes, the data range is just 1 to Npts
 				if ( isYOrd )

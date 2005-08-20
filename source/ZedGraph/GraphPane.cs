@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.49 $ $Date: 2005-08-18 05:16:55 $ </version>
+	/// <version> $Revision: 3.50 $ $Date: 2005-08-20 07:05:53 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1737,7 +1737,8 @@ namespace ZedGraph
 				//test for pie first...if it's a pie rest of method superfluous
 				if ( curve is PieItem && curve.IsVisible )
 				{
-					if ( ((PieItem)curve).SlicePath.IsVisible (mousePt) )
+					if ( ((PieItem)curve).SlicePath != null &&
+							((PieItem)curve).SlicePath.IsVisible (mousePt) )
 					{
 						nearestBar = curve;
 						iNearestBar = 0;

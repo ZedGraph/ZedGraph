@@ -267,7 +267,7 @@ namespace ZedGraph.LibTest
 			myPane.AxisChange( this.CreateGraphics() );
 #endif
 
-#if false	// Standard Sample Graph
+#if true	// Standard Sample Graph
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -277,8 +277,8 @@ namespace ZedGraph.LibTest
 			//myPane.IsFontsScaled = true;
 			//myPane.XAxis.ScaleFontSpec.Size = 8;
 
-			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
-			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
+			double[] x = { 100, 400, 500, 600, 900, 1000 };
+			double[] y = { 20, 25, 35, 75, 33, 50 };
 			LineItem curve;
 			curve = myPane.AddCurve( "Larry", x, y, Color.Green, SymbolType.Circle );
 			curve.FontSpec = new FontSpec( "Arial", 16, Color.Green, true, false, false );
@@ -318,7 +318,6 @@ namespace ZedGraph.LibTest
 			bar.FontSpec = new FontSpec( "Courier", 20, Color.SteelBlue, false, true, false );
 			bar.FontSpec.Border.IsVisible = false;
 			bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown );
-			myPane.ClusterScaleWidth = 100;
 			myPane.BarType = BarType.Stack;
 			bar.IsY2Axis = true;
 			//curve.Bar.Fill = new Fill( Color.Blue );
@@ -329,7 +328,7 @@ namespace ZedGraph.LibTest
 			bar = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
 			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
 			bar.Bar.Border.IsVisible = false;
-			myPane.ClusterScaleWidth = 100;
+			myPane.ClusterScaleWidth = 1;
 			bar.IsY2Axis = true;
 			//Brush brush = new HatchBrush( HatchStyle.Cross, Color.AliceBlue, Color.Red );
 			//GraphicsPath path = new GraphicsPath();
@@ -351,7 +350,8 @@ namespace ZedGraph.LibTest
 			//myPane.PaneBorder.InflateFactor = -4.0f;
 
 			myPane.XAxis.IsShowGrid = true;
-			myPane.XAxis.Max = 1200;
+			//myPane.XAxis.Max = 1200;
+			myPane.XAxis.Type = AxisType.LinearAsOrdinal;
 			//myPane.XAxis.Cross = 80;
 			//myPane.IsPenWidthScaled = false;
 			//myPane.XAxis.ScaleFontSpec.Angle = 90;
@@ -761,7 +761,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test
+#if false	// Basic curve test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
 			double[] x = new double[100];
@@ -776,26 +776,26 @@ namespace ZedGraph.LibTest
 			BasicArrayPointList list = new BasicArrayPointList( x, y );
 
 			//LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
-			StickItem myCurve = myPane.AddStick( "curve", list, Color.Blue );
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 			//myCurve.Symbol.IsVisible = true;
 			//myCurve.IsY2Axis = true;
 			//myPane.Y2Axis.IsVisible = true;
-			myPane.YAxis.Type = AxisType.Log;
-			myPane.YAxis.IsScaleVisible = false;
-			myPane.YAxis.IsShowTitle = false;
-			myPane.MarginLeft = 50;
+			//myPane.YAxis.Type = AxisType.Log;
+			//myPane.YAxis.IsScaleVisible = false;
+			//myPane.YAxis.IsShowTitle = false;
+			//myPane.MarginLeft = 50;
 
-			TextItem text = new TextItem("5000", -0.01f, 5000f, CoordType.XAxisFractionYScale, AlignH.Right, AlignV.Center );
-			text.FontSpec.Border.IsVisible = false;
-			text.FontSpec.Fill.IsVisible = false;
-			myPane.GraphItemList.Add( text );
+			//TextItem text = new TextItem("5000", -0.01f, 5000f, CoordType.XAxisFractionYScale, AlignH.Right, AlignV.Center );
+			//text.FontSpec.Border.IsVisible = false;
+			//text.FontSpec.Fill.IsVisible = false;
+			//myPane.GraphItemList.Add( text );
 
-			TextItem text2 = new TextItem( "My Title", 0.01f, 0.5f, CoordType.XPaneFractionYAxisFraction,
-				AlignH.Center, AlignV.Top );
-			text2.FontSpec.Border.IsVisible = false;
-			text2.FontSpec.Fill.IsVisible = false;
-			text2.FontSpec.Angle = 90f;
-			myPane.GraphItemList.Add( text2 );
+			//TextItem text2 = new TextItem( "My Title", 0.01f, 0.5f, CoordType.XPaneFractionYAxisFraction,
+			//	AlignH.Center, AlignV.Top );
+			//text2.FontSpec.Border.IsVisible = false;
+			//text2.FontSpec.Fill.IsVisible = false;
+			//text2.FontSpec.Angle = 90f;
+			//myPane.GraphItemList.Add( text2 );
 
 			//myPane.YAxis.IsVisible = false;
 			//myPane.Y2Axis.Title = "Y2 Axis";

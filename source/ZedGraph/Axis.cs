@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.39 $ $Date: 2005-08-12 06:00:42 $ </version>
+	/// <version> $Revision: 3.40 $ $Date: 2005-08-20 07:05:53 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -2284,6 +2284,22 @@ namespace ZedGraph
 			get { return type; }
 			set { type = value; }
 		}
+
+		/// <summary>
+		/// Gets a value that indicates if this <see cref="Axis" /> is of any of the
+		/// ordinal types in the <see cref="AxisType" /> enumeration.
+		/// </summary>
+		/// <seealso cref="Type" />
+		public bool IsAnyOrdinal
+		{
+			get
+			{
+				return type == AxisType.Ordinal ||
+						type == AxisType.Text ||
+						type == AxisType.LinearAsOrdinal ||
+						type == AxisType.DateAsOrdinal;
+			}
+		}
 	#endregion
 
 	#region Label Properties
@@ -2950,16 +2966,16 @@ namespace ZedGraph
 								this.isMinorInsideTic || this.isMinorInsideCrossTic) :
 						(this.isTic || this.isCrossTic || this.isMinorTic || this.isMinorCrossTic) );
 
+                // account for the tic space.  Leave the tic space for any type of tic.
+				if ( hasTic )
+					space += ticSize;
+
 				// tic takes up 1x tic
 				// space between tic and scale label is 0.5 tic
 				// scale label is GetScaleMaxSpace()
 				// space between scale label and axis label is 0.5 tic
 				if ( this.isScaleVisible )
 				{
-                    // account for the tic space.  Leave the tic space for any type of tic.
-					if ( hasTic )
-						space += ticSize;
-
                     // account for the tic labels + 1/2 tic gap between the tic and the label
 					space += this.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height +
 							ticSize * 0.5F;
@@ -3629,6 +3645,30 @@ namespace ZedGraph
 			{
 				label = Math.Pow( 10.0, dVal ).ToString( this.scaleFormat );
 			}
+			else if ( this.Type == AxisType.LinearAsOrdinal )
+			{
+				double val;
+
+				if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > index )
+					val = pane.CurveList[0].Points[index].X;
+				else
+					val = index + 1.0;
+
+				double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
+
+				label = (val / scaleMult).ToString( this.scaleFormat );
+			}
+			else if ( this.Type == AxisType.DateAsOrdinal )
+			{
+				double val;
+
+				if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > index )
+					val = pane.CurveList[0].Points[index].X;
+				else
+					val = index + 1.0;
+
+				label = XDate.ToString( val, this.scaleFormat );
+			}
 			else // linear or ordinal
 			{
 				double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
@@ -3905,14 +3945,16 @@ namespace ZedGraph
 				// Calculate the title position in screen coordinates
 				float x = ( this.maxPix - this.minPix ) / 2;
 
+				float scaledTic = ScaledTic( scaleFactor );
+
 				// The space for the scale labels is only reserved if the axis is not shifted due to the
 				// cross value.  Note that this could be a problem if the axis is only shifted slightly,
 				// since the scale value labels may overlap the axis title.  However, it's not possible to
 				// calculate that actual shift amount at this point, because the AxisRect rect has not yet been
 				// calculated, and the cross value is determined using a transform of scale values (which
 				// rely on AxisRect).
-				float y = ScaledTic( scaleFactor ) * ( hasTic ? 1.5f : 0.5f ) +
-							GetScaleMaxSpace( g, pane, scaleFactor, true ).Height +
+				float y = scaledTic * ( hasTic ? 1.0f : 0.0f ) +
+					( isScaleVisible ? GetScaleMaxSpace( g, pane, scaleFactor, true ).Height + scaledTic * 0.5f : 0 ) +
 							this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
 
                 if ( this.isScaleLabelsInside )
@@ -4041,6 +4083,12 @@ namespace ZedGraph
 					break;
 				case AxisType.Linear:
 					PickLinearScale( g, pane, scaleFactor );
+					break;
+				case AxisType.DateAsOrdinal:
+					PickDateAsOrdinalScale( g, pane, scaleFactor );
+					break;
+				case AxisType.LinearAsOrdinal:
+					PickLinearAsOrdinalScale( g, pane, scaleFactor );
 					break;
 			}
 		}
@@ -4314,6 +4362,138 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
+		/// Select a reasonable ordinal axis scale given a range of data values, with the expectation that
+		/// dates will be displayed.
+		/// </summary>
+		/// <remarks>
+		/// This method only applies to <see cref="AxisType.DateAsOrdinal"/> type axes, and it
+		/// is called by the general <see cref="PickScale"/> method.  For this type,
+		/// the first curve is the "master", which contains the dates to be applied.
+		/// <para>On Exit:</para>
+		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
+		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
+		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
+		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
+		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
+		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
+		/// </remarks>
+		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
+		/// associated with this <see cref="Axis"/></param>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <seealso cref="PickScale"/>
+		/// <seealso cref="AxisType.Ordinal"/>
+		public void PickDateAsOrdinalScale( Graphics g, GraphPane pane, float scaleFactor )
+		{
+			// First, get the date ranges from the first curve in the list
+			double xMin = Double.MaxValue;
+			double xMax = Double.MinValue;
+			double yMin = Double.MaxValue;
+			double yMax = Double.MinValue;
+			double range = 1;
+
+			foreach ( CurveItem curve in pane.CurveList )
+			{
+				if (	( this is Y2Axis && curve.IsY2Axis ) ||
+						( this is YAxis && !curve.IsY2Axis ) ||
+						( this is XAxis ) )
+				{
+					curve.GetRange( ref xMin, ref xMax, ref yMin, ref yMax, false, Double.MinValue,
+							Double.MaxValue, Double.MinValue, Double.MaxValue, pane );
+					if ( this is XAxis )
+						range = xMax - xMin;
+					else
+						range = yMax - yMin;
+				}
+			}
+
+			// Set the DateFormat by calling CalcDateStepSize
+			CalcDateStepSize( range, Default.TargetXSteps );
+
+			// Now, set the axis range based on a ordinal scale
+			PickOrdinalScale( g, pane, scaleFactor );
+		}
+
+		/// <summary>
+		/// Select a reasonable ordinal axis scale given a range of data values, with the expectation that
+		/// linear values will be displayed.
+		/// </summary>
+		/// <remarks>
+		/// This method only applies to <see cref="AxisType.DateAsOrdinal"/> type axes, and it
+		/// is called by the general <see cref="PickScale"/> method.  For this type,
+		/// the first curve is the "master", which contains the dates to be applied.
+		/// <para>On Exit:</para>
+		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
+		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
+		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
+		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
+		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
+		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
+		/// </remarks>
+		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
+		/// associated with this <see cref="Axis"/></param>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <seealso cref="PickScale"/>
+		/// <seealso cref="AxisType.Ordinal"/>
+		public void PickLinearAsOrdinalScale( Graphics g, GraphPane pane, float scaleFactor )
+		{
+			// First, get the date ranges from the first curve in the list
+			double xMin = Double.MaxValue;
+			double xMax = Double.MinValue;
+			double yMin = Double.MaxValue;
+			double yMax = Double.MinValue;
+			double tMin = 0;
+			double tMax = 1;
+
+			foreach ( CurveItem curve in pane.CurveList )
+			{
+				if (	( this is Y2Axis && curve.IsY2Axis ) ||
+						( this is YAxis && !curve.IsY2Axis ) ||
+						( this is XAxis ) )
+				{
+					curve.GetRange( ref xMin, ref xMax, ref yMin, ref yMax, false, Double.MinValue,
+							Double.MaxValue, Double.MinValue, Double.MaxValue, pane );
+					if ( this is XAxis )
+					{
+						tMin = xMin;
+						tMax = xMax;
+					}
+					else
+					{
+						tMin = yMin;
+						tMax = yMax;
+					}
+				}
+			}
+
+			double range = Math.Abs( tMax - tMin );
+
+			// Now, set the axis range based on a ordinal scale
+			PickOrdinalScale( g, pane, scaleFactor );
+
+			SetScaleMag( tMin, tMax, range / Default.TargetXSteps );
+		}
+
+		/// <summary>
 		/// Select a reasonable base 10 logarithmic axis scale given a range of data values.
 		/// </summary>
 		/// <remarks>
@@ -4557,7 +4737,12 @@ namespace ZedGraph
 			if ( this.maxAuto )
 				this.max = MyMod( this.max, this.step ) == 0.0 ? this.max :
 					this.max + this.step - MyMod( this.max, this.step );
-	
+
+			SetScaleMag( this.min, this.max, this.step );
+		}
+
+		internal void SetScaleMag( double min, double max, double step )
+		{
 			// set the scale magnitude if required
 			if ( this.scaleMagAuto )
 			{
@@ -4588,14 +4773,6 @@ namespace ZedGraph
 					numDec = 0;
 				this.scaleFormat = "f" + numDec.ToString();
 			}
-/*
-			if ( this.numDecAuto )
-			{
-				this.numDec = 0 - (int) ( Math.Floor( Math.Log10( this.step ) ) - this.scaleMag );
-				if ( this.numDec < 0 )
-					this.numDec = 0;
-			}
-*/
 		}
 
 		/// <summary>
@@ -5055,7 +5232,7 @@ namespace ZedGraph
 		public float Transform( bool isOverrideOrdinal, int i, double x )
 		{
 			// ordinal types ignore the X value, and just use the ordinal position
-			if ( ( this.IsOrdinal || this.IsText ) && i >= 0 && !isOverrideOrdinal )
+			if ( this.IsAnyOrdinal && i >= 0 && !isOverrideOrdinal )
 				x = (double) i + 1.0;
 			return Transform( x );
 

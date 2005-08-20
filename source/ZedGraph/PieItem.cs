@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.17 $ $Date: 2005-08-11 07:35:53 $ </version>
+	/// <version> $Revision: 1.18 $ $Date: 2005-08-20 07:05:53 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem , ICloneable, ISerializable
 	{
@@ -405,13 +405,14 @@ namespace ZedGraph
 		{
 			this.pieValue = pieValue ;
 			this.fill = new Fill( color.IsEmpty ? rotator.NextColor : color ) ;
-			this.border = new Border(Default.BorderColor, Default.BorderWidth ) ;
 			this.displacement = displacement ;
-			this.labelDetail = new TextItem();
+			this.border = new Border(Default.BorderColor, Default.BorderWidth ) ;
+			this.labelDetail = new TextItem() ;
 			this.labelDetail.FontSpec.Size = Default.FontSize ;
 			this.labelType = Default.LabelType;
 			this.valueDecimalDigits = Default.ValueDecimalDigits ;
 			this.percentDecimalDigits = Default.PercentDecimalDigits ;
+			this.slicePath = null;
 		}
 
 		/// <summary>
@@ -419,17 +420,9 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="pieValue">The value associated with this <see cref="PieItem"/> instance.</param>
 		/// <param name="label">Text label for this <see cref="PieItem"/> instance</param>
-		public PieItem ( double pieValue, string label ) : base( label )
+		public PieItem ( double pieValue, string label ) :
+			this( pieValue, rotator.NextColor, Default.Displacement, label )
 		{
-			this.pieValue = pieValue ;
-			this.fill = new Fill( rotator.NextColor  ) ;
-			this.border = new Border(Default.BorderColor, Default.BorderWidth ) ;
-			this.displacement =  Default.Displacement ;
-			this.labelDetail = new TextItem() ;
-			this.labelDetail.FontSpec.Size = Default.FontSize ;
-			this.labelType = Default.LabelType;
-			this.valueDecimalDigits = Default.ValueDecimalDigits ;
-			this.percentDecimalDigits = Default.PercentDecimalDigits ;
 		}
 
 		/// <summary>
@@ -444,7 +437,7 @@ namespace ZedGraph
 			this.displacement = rhs.displacement;
 			this.labelDetail = (TextItem) rhs.labelDetail.Clone();
 			this.labelType = rhs.labelType;
-			this.valueDecimalDigits =rhs.valueDecimalDigits ;
+			this.valueDecimalDigits = rhs.valueDecimalDigits ;
 			this.percentDecimalDigits = rhs.percentDecimalDigits ;
 		}
 
