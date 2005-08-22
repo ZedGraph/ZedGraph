@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="BasicArrayPointList" />
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 1.2 $ $Date: 2005-08-11 07:35:53 $ </version>
+	/// <version> $Revision: 1.3 $ $Date: 2005-08-22 03:08:51 $ </version>
 	public interface IPointList : ICloneable
 	{
 		/// <summary>
@@ -49,7 +49,7 @@ namespace ZedGraph
 		/// data point to be accessed.</param>
 		/// <value>A <see cref="PointPair"/> object instance.  Note that <see cref="PointPair" />
 		/// is a struct, so this a value object.</value>
-		PointPair this[ int index ]  { get; set; }
+		PointPair this[ int index ]  { get; }
 		/// <summary>
 		/// Gets the number of points available in the list.
 		/// </summary>

@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+21-Aug-2005 (by Champion)
+  remove set requirement from IPointList
+
 19-Aug-2005 (by Champion)
   Fix Pie.SlicePath access in FindNearestPoint
   Fix y position calc for axis title when IsScaleVisible=false

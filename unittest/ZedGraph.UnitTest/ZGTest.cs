@@ -99,7 +99,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion	</author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-08-22 03:08:51 $ </version>
 	[TestFixture]
 	public	class ControlTest
 	{
@@ -234,7 +234,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.13 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version>	$Revision: 3.14 $ $Date: 2005-08-22 03:08:51 $ </version>
 	[TestFixture]
 	public	class LibraryTest
 	{
@@ -635,17 +635,21 @@ namespace ZedGraph.UnitTest
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Was the red segment replaced with one having a bitmap fill?<Next: Disappearing segments" )	);
  
 			for ( int iCurve=0; iCurve<2; iCurve++ )
+			{
+				PointPairList ppList = testee.CurveList[iCurve].Points as PointPairList;
+
 				for ( int i=0;	i<testee.CurveList[iCurve].Points.Count; i++ )
 				{
-					PointPair pt = testee.CurveList[iCurve].Points[i];
+					PointPair pt = ppList[i];
 					pt.Y = 0 ;
-					testee.CurveList[iCurve].Points[i] =	pt;
+					ppList[i] =	pt;
 
 					form2.Refresh();
 					
 					//	delay 
 					TestUtils.DelaySeconds( 500 );
 				}
+			}
 			TestUtils.DelaySeconds( 1000 );
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the segments disappear uniformly while the total height stayed at +/-100%?" )	);
 		}
@@ -1027,9 +1031,12 @@ namespace ZedGraph.UnitTest
 			form2.Show();
 
 			for ( int iCurve=0; iCurve<3; iCurve++ )
-				for ( int i=0;	i<testee.CurveList[iCurve].Points.Count; i++ )
+			{
+				PointPairList ppList = testee.CurveList[iCurve].Points as PointPairList;
+
+				for ( int i=0;	i<ppList.Count; i++ )
 				{
-					PointPair pt = testee.CurveList[iCurve].Points[i];
+					PointPair pt = ppList[i];
 
 					if	( i %	3	==	0 )
 						pt.Y = PointPair.Missing;
@@ -1038,13 +1045,14 @@ namespace ZedGraph.UnitTest
 					else if ( i % 3	==	2	)
 						pt.Y = System.Double.PositiveInfinity;
 
-					testee.CurveList[iCurve].Points[i] =	pt;
+					ppList[i] =	pt;
 
 					form2.Refresh();
 					
 					//	delay for 10 ms
 					TestUtils.DelaySeconds( 300 );
 				}
+			}
 
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did you see an initial graph, with points disappearing one by one?" )	);
 			
@@ -1379,7 +1387,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.13 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version>	$Revision: 3.14 $ $Date: 2005-08-22 03:08:51 $ </version>
 	[TestFixture]
 	public	class LongFeatureTest
 	{
@@ -2009,7 +2017,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.13 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version>	$Revision: 3.14 $ $Date: 2005-08-22 03:08:51 $ </version>
 	[TestFixture]
 	public	class FindNearestTest
 	{
