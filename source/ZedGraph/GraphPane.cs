@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.50 $ $Date: 2005-08-20 07:05:53 $ </version>
+	/// <version> $Revision: 3.51 $ $Date: 2005-08-22 05:21:07 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -701,7 +701,7 @@ namespace ZedGraph
 			// Get the scale range of the data (all curves)
 			this.curveList.GetRange( out xMin, out xMax, out yMin,
 				out yMax, out y2Min, out y2Max,
-				this.isIgnoreInitial, this );
+				this.isIgnoreInitial, this.isBoundedRanges, this );
 
 			// Determine the scale factor
 			float	scaleFactor = this.CalcScaleFactor();

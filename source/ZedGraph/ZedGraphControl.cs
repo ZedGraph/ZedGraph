@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.32 $ $Date: 2005-08-18 05:16:55 $ </version>
+	/// <version> $Revision: 3.33 $ $Date: 2005-08-22 05:21:07 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -163,6 +163,7 @@ namespace ZedGraph
 		private bool		isShowHScrollBar = false;
 		private bool		isShowVScrollBar = false;
 		private bool		isScrollY2 = false;
+		private bool		isAutoScrollRange = false;
 
 		private System.Windows.Forms.HScrollBar hScrollBar1;
 		private System.Windows.Forms.VScrollBar vScrollBar1;
@@ -620,13 +621,35 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Gets or sets a value that controls whether or not the axis value range for the scroll
+		/// bars will be set automatically.
+		/// </summary>
+		/// <remarks>
+		/// If this value is set to true, then the range of the scroll bars will be set automatically
+		/// to the actual range of the data as returned by <see cref="CurveList.GetRange" /> at the
+		/// time that <see cref="AxisChange" /> was last called.  Note that a value of true
+		/// can override any setting of <see cref="ScrollMinX" />, <see cref="ScrollMaxX" />,
+		/// <see cref="ScrollMinY" />, <see cref="ScrollMaxY" />, 
+		/// <see cref="ScrollMinY2" />, and <see cref="ScrollMaxY2" />.  Note also that you must
+		/// call <see cref="AxisChange" /> from the <see cref="ZedGraphControl" /> for this to
+		/// work properly (e.g., don't call it directly from the <see cref="GraphPane" />.  Alternatively,
+		/// you can call <see cref="SetScrollRangeFromData" /> at anytime to set the scroll bar range.
+		/// </remarks>
+		public bool IsAutoScrollRange
+		{
+			get { return isAutoScrollRange; }
+			set { isAutoScrollRange = value; }
+		}
+
+		/// <summary>
 		/// Gets or sets a value that determines if the horizontal scroll bar will be visible.
 		/// </summary>
 		/// <remarks>This scroll bar allows the display to be scrolled in the horizontal direction.
 		/// Another option is display panning, in which the user can move the display around by
 		/// clicking directly on it and dragging (see <see cref="IsEnableHPan"/> and <see cref="IsEnableVPan"/>).
 		/// You can control the available range of scrolling with the <see cref="ScrollMinX"/> and
-		/// <see cref="ScrollMaxX"/> properties.
+		/// <see cref="ScrollMaxX"/> properties.  Note that the scroll range can be set automatically by
+		/// <see cref="IsAutoScrollRange" />.
 		/// </remarks>
 		/// <value>A boolean value.  true to display a horizontal scrollbar, false otherwise.</value>
 		public bool IsShowHScrollBar
@@ -644,7 +667,8 @@ namespace ZedGraph
 		/// <see cref="ScrollMaxY"/> properties.
 		/// Note that the vertical scroll bar only affects the <see cref="YAxis"/>; it has no impact on
 		/// the <see cref="Y2Axis"/>.  The panning options affect both the <see cref="YAxis"/> and
-		/// <see cref="Y2Axis"/>.
+		/// <see cref="Y2Axis"/>.  Note also that the scroll range can be set automatically by
+		/// <see cref="IsAutoScrollRange" />.
 		/// </remarks>
 		/// <value>A boolean value.  true to display a vertical scrollbar, false otherwise.</value>
 		public bool IsShowVScrollBar
@@ -681,7 +705,8 @@ namespace ZedGraph
 		/// Effectively, the minimum endpoint of the scroll range will cause the
 		/// <see cref="Axis.Min"/> value to be set to <see cref="ScrollMinX"/>.  Note that this
 		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableHPan"/>)
-		/// is not affected by this value.
+		/// is not affected by this value.  Note that this value can be overridden by
+		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.
 		/// </remarks>
 		/// <value>A double value indicating the minimum axis value</value>
 		public double ScrollMinX
@@ -696,7 +721,8 @@ namespace ZedGraph
 		/// Effectively, the maximum endpoint of the scroll range will cause the
 		/// <see cref="Axis.Max"/> value to be set to <see cref="ScrollMaxX"/>.  Note that this
 		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableHPan"/>)
-		/// is not affected by this value.
+		/// is not affected by this value.  Note that this value can be overridden by
+		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.
 		/// </remarks>
 		/// <value>A double value indicating the maximum axis value</value>
 		public double ScrollMaxX
@@ -711,7 +737,8 @@ namespace ZedGraph
 		/// Effectively, the minimum endpoint of the scroll range will cause the
 		/// <see cref="Axis.Min"/> value to be set to <see cref="ScrollMinY"/>.  Note that this
 		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableVPan"/>)
-		/// is not affected by this value.
+		/// is not affected by this value.  Note that this value can be overridden by
+		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.
 		/// </remarks>
 		/// <value>A double value indicating the minimum axis value</value>
 		public double ScrollMinY
@@ -726,7 +753,8 @@ namespace ZedGraph
 		/// Effectively, the maximum endpoint of the scroll range will cause the
 		/// <see cref="Axis.Max"/> value to be set to <see cref="ScrollMaxY"/>.  Note that this
 		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableVPan"/>)
-		/// is not affected by this value.
+		/// is not affected by this value.  Note that this value can be overridden by
+		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.
 		/// </remarks>
 		/// <value>A double value indicating the maximum axis value</value>
 		public double ScrollMaxY
@@ -741,7 +769,8 @@ namespace ZedGraph
 		/// Effectively, the minimum endpoint of the scroll range will cause the
 		/// <see cref="Axis.Min"/> value to be set to <see cref="ScrollMinY2"/>.  Note that this
 		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableVPan"/>)
-		/// is not affected by this value.
+		/// is not affected by this value.  Note that this value can be overridden by
+		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.
 		/// </remarks>
 		/// <value>A double value indicating the minimum axis value</value>
 		public double ScrollMinY2
@@ -756,7 +785,8 @@ namespace ZedGraph
 		/// Effectively, the maximum endpoint of the scroll range will cause the
 		/// <see cref="Axis.Max"/> value to be set to <see cref="ScrollMaxY2"/>.  Note that this
 		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableVPan"/>)
-		/// is not affected by this value.
+		/// is not affected by this value.  Note that this value can be overridden by
+		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.
 		/// </remarks>
 		/// <value>A double value indicating the maximum axis value</value>
 		public double ScrollMaxY2
@@ -916,10 +946,14 @@ namespace ZedGraph
 			}
 		}
 
-		/// <summary>This performs an axis change command on the graphPane.  
-		/// This is the same as 
-		/// <c>ZedGraphControl.GraphPane.AxisChange( ZedGraphControl.CreateGraphics() )</c>.
+		/// <summary>This performs an axis change command on the graphPane.
 		/// </summary>
+		/// <remarks>
+		/// This is the same as
+		/// <c>ZedGraphControl.GraphPane.AxisChange( ZedGraphControl.CreateGraphics() )</c>, however,
+		/// this method also calls <see cref="SetScrollRangeFromData" /> if <see cref="IsAutoScrollRange" />
+		/// is true.
+		/// </remarks>
 		public virtual void AxisChange()
 		{
 			lock( this )
@@ -932,6 +966,9 @@ namespace ZedGraph
 				masterPane.AxisChange( g );
 
 				g.Dispose();
+
+				if ( isAutoScrollRange )
+					SetScrollRangeFromData();
 			}
 		}
 	#endregion
@@ -1014,6 +1051,7 @@ namespace ZedGraph
 				axis.Min = centerVal - range;
 				axis.Max = centerVal + range;
 			}
+
 		}
 
 		private void ZedGraphControl_MouseWheel( object sender, MouseEventArgs e )
@@ -1036,6 +1074,11 @@ namespace ZedGraph
 					Graphics g = this.CreateGraphics();
 					pane.AxisChange( g );
 					g.Dispose();
+
+
+					this.SetScroll( this.hScrollBar1, pane.XAxis, scrollMinX, scrollMaxX );
+					this.SetScroll( this.vScrollBar1, pane.YAxis, scrollMinY, scrollMaxY );
+
 					Refresh();
 				}
 			}
@@ -1072,6 +1115,8 @@ namespace ZedGraph
 						this.dragPane.YAxis.Max = Math.Max( y1, y2 );
 						this.dragPane.Y2Axis.Min = Math.Min( yy1, yy2 );
 						this.dragPane.Y2Axis.Max = Math.Max( yy1, yy2 );
+						this.SetScroll( this.hScrollBar1, dragPane.XAxis, scrollMinX, scrollMaxX );
+						this.SetScroll( this.vScrollBar1, dragPane.YAxis, scrollMinY, scrollMaxY );
 
 						// Provide Callback to notify the user of zoom events
 						if ( this.ZoomEvent != null )
@@ -1177,11 +1222,15 @@ namespace ZedGraph
 				this.dragPane.ReverseTransform( endPoint, out x2, out y2, out yy2 );
 
 				if ( this.isEnableHPan )
+				{
 					PanScale( this.dragPane.XAxis, x1, x2 );
+					this.SetScroll( this.hScrollBar1, dragPane.XAxis, scrollMinX, scrollMaxX );
+				}
 				if ( this.isEnableVPan )
 				{
 					PanScale( this.dragPane.YAxis, y1, y2 );
 					PanScale( this.dragPane.Y2Axis, yy1, yy2 );
+					this.SetScroll( this.vScrollBar1, dragPane.YAxis, scrollMinY, scrollMaxY );
 				}
 
 				Refresh();
@@ -1521,6 +1570,11 @@ namespace ZedGraph
 
 		private void HandleScroll( Axis axis, int newValue, double scrollMin, double scrollMax, bool reverse )
 		{
+			if ( scrollMin > axis.Min )
+				scrollMin = axis.Min;
+			if ( scrollMax < axis.Max )
+				scrollMax = axis.Max;
+
 			if ( reverse )
 				newValue = ScrollRange - newValue;
 
@@ -1546,9 +1600,31 @@ namespace ZedGraph
 			this.Invalidate();
 		}
 
+		/// <summary>
+		/// Sets the value of <see cref="ScrollMinX" />, <see cref="ScrollMaxX" />, <see cref="ScrollMinY" />,
+		/// <see cref="ScrollMaxY" />, <see cref="ScrollMinY2" />, and <see cref="ScrollMaxY2" /> based on the
+		/// actual range of the data.
+		/// </summary>
+		/// <remarks>
+		/// This method is called automatically by <see cref="AxisChange" /> if <see cref="IsAutoScrollRange" />
+		/// is true.  Note that this will not be called if you call AxisChange directly from the
+		/// <see cref="GraphPane" />.  For example, zedGraphControl1.AxisChange() works properly, but
+		/// zedGraphControl1.GraphPane.AxisChange() does not.</remarks>
+		public void SetScrollRangeFromData()
+		{
+			this.GraphPane.CurveList.GetRange( out scrollMinX, out scrollMaxX,
+					out scrollMinY, out scrollMaxY, out scrollMinY2, out scrollMaxY2, false, false,
+					this.GraphPane );
+		}
+
 		private void SetScroll( ScrollBar scrollBar, Axis axis, double scrollMin, double scrollMax )
 		{
-			int value = 0;
+			if ( scrollMin > axis.Min )
+				scrollMin = axis.Min;
+			if ( scrollMax < axis.Max )
+				scrollMax = axis.Max;
+
+			int val = 0;
 			double scrollMin2;
 
 			if ( axis.IsLog )
@@ -1558,33 +1634,35 @@ namespace ZedGraph
 
 			if ( scrollMin >= scrollMin2 )
 			{
+				//scrollBar.Visible = false;
 				scrollBar.Enabled = false;
 				scrollBar.Value = 0;
 				scrollBar.Minimum = 0;
-				scrollBar.Maximum = 0;
+				scrollBar.Maximum = ScrollRange;
 			}
 			else
 			{
-				scrollBar.Enabled = true;
 				scrollBar.Minimum = 0;
 				scrollBar.Maximum = ScrollRange + scrollBar.LargeChange - 1;
 				if ( axis.IsLog )
-					value = (int) ( ( Math.Log( axis.Min ) - Math.Log( scrollMin ) ) /
+					val = (int) ( ( Math.Log( axis.Min ) - Math.Log( scrollMin ) ) /
 							( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) * ScrollRange + 0.5 );
 				else
-					value = (int) ( ( axis.Min - scrollMin ) / ( scrollMin2 - scrollMin ) *
+					val = (int) ( ( axis.Min - scrollMin ) / ( scrollMin2 - scrollMin ) *
 							ScrollRange + 0.5 );
 
-				if ( value < 0 )
-					value = 0;
-				else if ( value > ScrollRange )
-					value = ScrollRange;
+				if ( val < 0 )
+					val = 0;
+				else if ( val > ScrollRange )
+					val = ScrollRange;
 
 				//if ( ( axis is XAxis && axis.IsReverse ) || ( ( ! axis is XAxis ) && ! axis.IsReverse ) )
 				if ( (axis is XAxis) == axis.IsReverse )
-					value = ScrollRange - value;
+					val = ScrollRange - val;
 
-				scrollBar.Value = value;
+				scrollBar.Value = val;
+				scrollBar.Enabled = true;
+				//scrollBar.Visible = true;
 			}
 		}
 

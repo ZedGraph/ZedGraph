@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.23 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2005-08-22 05:21:07 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -644,7 +644,8 @@ namespace ZedGraph
 										ref double yMin, ref double yMax,
 										bool ignoreInitial,
 										double xLBound, double xUBound,
-										double yLBound, double yUBound, GraphPane pane )
+										double yLBound, double yUBound,
+										GraphPane pane )
 		{
 			bool isZIncluded = this.IsZIncluded( pane );
 			bool isXIndependent = this.IsXIndependent( pane );
@@ -671,12 +672,13 @@ namespace ZedGraph
 				// ignoreInitial becomes false at the first non-zero
 				// Y value
 				if (	ignoreInitial && curY != 0 &&
-					curY != PointPair.Missing )
+						curY != PointPair.Missing )
 					ignoreInitial = false;
 			
-				if ( 	!ignoreInitial && !outOfBounds &&
-					curX != PointPair.Missing &&
-					curY != PointPair.Missing )
+				if ( 	!ignoreInitial &&
+						!outOfBounds &&
+						curX != PointPair.Missing &&
+						curY != PointPair.Missing )
 				{
 					if ( curX < xMin )
 						xMin = curX;

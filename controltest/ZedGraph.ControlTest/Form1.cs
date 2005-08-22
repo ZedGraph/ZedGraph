@@ -136,6 +136,8 @@ namespace ZedGraph.ControlTest
 			PointPairList list2 = new PointPairList();
 
 			zedGraphControl1.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler( MyContextMenuHandler );
+			zedGraphControl1.PointValueEvent += new ZedGraphControl.PointValueHandler( MyPointValueHandler );
+			zedGraphControl1.IsShowPointValues = true;
 
 			for( int i = 0; i < 18; i++ )
 			{
@@ -201,6 +203,8 @@ namespace ZedGraph.ControlTest
 			zedGraphControl1.ScrollMaxY2 = 2;
 			zedGraphControl1.IsScrollY2 = true; 
 
+			zedGraphControl1.IsAutoScrollRange = true;
+
 			zedGraphControl1.AxisChange();
 
 			SetSize();
@@ -211,7 +215,7 @@ namespace ZedGraph.ControlTest
 		private string MyPointValueHandler( object sender, GraphPane pane, CurveItem curve, int iPt )
 		{
 			PointPair pt = curve[iPt];
-			return "This value is " + pt.Y.ToString() + " gallons";
+			return "This value is " + pt.Y.ToString("f2") + " gallons";
 		}
 
 		private void MyContextMenuHandler( object sender, ContextMenu menu )
@@ -246,6 +250,7 @@ namespace ZedGraph.ControlTest
 			//menu.MenuItems.RemoveAt(2);
 			 */
 		}
+
 
 		private void Form1_Resize(object sender, EventArgs e)
 		{

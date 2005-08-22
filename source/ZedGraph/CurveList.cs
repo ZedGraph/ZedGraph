@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.27 $ $Date: 2005-08-20 07:05:53 $ </version>
+	/// <version> $Revision: 3.28 $ $Date: 2005-08-22 05:21:07 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -321,6 +321,10 @@ namespace ZedGraph
 		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.  All data after
 		/// the first non-zero Y value are included.
 		/// </param>
+		/// <param name="isBoundedRanges">
+		/// A boolean value that determines if the auto-scaled axis ranges will
+		/// subset the data points based on any manually set scale range values.
+		/// </param>
 		/// <param name="pane">
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
@@ -329,7 +333,8 @@ namespace ZedGraph
 		public void GetRange( 	out double xMinVal, out double xMaxVal,
 								out double yMinVal, out double yMaxVal,
 								out double y2MinVal, out double y2MaxVal,
-								bool bIgnoreInitial, GraphPane pane )
+								bool bIgnoreInitial, bool isBoundedRanges,
+								GraphPane pane )
 		{
 			double	tXMinVal,
 					tXMaxVal,
@@ -352,7 +357,7 @@ namespace ZedGraph
 			double	y2LBound = System.Double.MinValue;
 			double	y2UBound = System.Double.MaxValue;
 
-			if ( pane.IsBoundedRanges )
+			if ( isBoundedRanges )
 			{
 				xLBound = pane.XAxis.MinAuto ? xLBound : pane.XAxis.Min;
 				xUBound = pane.XAxis.MaxAuto ? xUBound : pane.XAxis.Max;
