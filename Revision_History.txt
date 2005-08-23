@@ -1,8 +1,12 @@
 ZedGraph Class Library Revision History
 
+22-Aug-2005 (by Champion)
+  Add Localization to ZedGraphControl
+  Fix ContextMenu mouse location issue
+
 21-Aug-2005 (by Champion)
   remove set requirement from IPointList
-  Add ZedGraphControl.IsAutoScrollRange
+  Add ZedGraphControl.IsAutoScrollRange and SetScrollRangeFromData()
 
 19-Aug-2005 (by Champion)
   Fix Pie.SlicePath access in FindNearestPoint

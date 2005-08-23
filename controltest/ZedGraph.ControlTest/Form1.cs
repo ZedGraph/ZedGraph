@@ -8,6 +8,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Data;
+using System.Globalization;
 using ZedGraph;
 
 namespace ZedGraph.ControlTest
@@ -60,15 +61,22 @@ namespace ZedGraph.ControlTest
 			// 
 			// propertyGrid1
 			// 
+			this.propertyGrid1.CommandsVisibleIfAvailable = true;
+			this.propertyGrid1.LargeButtons = false;
 			this.propertyGrid1.LineColor = System.Drawing.SystemColors.ScrollBar;
-			this.propertyGrid1.Location = new System.Drawing.Point( 593, 12 );
+			this.propertyGrid1.Location = new System.Drawing.Point(593, 12);
 			this.propertyGrid1.Name = "propertyGrid1";
-			this.propertyGrid1.Size = new System.Drawing.Size( 259, 432 );
+			this.propertyGrid1.Size = new System.Drawing.Size(259, 432);
 			this.propertyGrid1.TabIndex = 2;
-			this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler( this.propertyGrid1_PropertyValueChanged );
+			this.propertyGrid1.Text = "PropertyGrid";
+			this.propertyGrid1.ViewBackColor = System.Drawing.SystemColors.Window;
+			this.propertyGrid1.ViewForeColor = System.Drawing.SystemColors.WindowText;
+			this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
 			// 
 			// zedGraphControl1
 			// 
+			this.zedGraphControl1.CultureInfo = new System.Globalization.CultureInfo("en-US");
+			this.zedGraphControl1.IsAutoScrollRange = false;
 			this.zedGraphControl1.IsEnableHPan = true;
 			this.zedGraphControl1.IsEnableVPan = true;
 			this.zedGraphControl1.IsEnableZoom = true;
@@ -78,11 +86,10 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.IsShowPointValues = false;
 			this.zedGraphControl1.IsShowVScrollBar = false;
 			this.zedGraphControl1.IsZoomOnMouseCenter = false;
-			this.zedGraphControl1.Location = new System.Drawing.Point( 12, 12 );
+			this.zedGraphControl1.Location = new System.Drawing.Point(12, 12);
 			this.zedGraphControl1.Name = "zedGraphControl1";
 			this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
-			//this.zedGraphControl1.PanModifierKeys = ( (System.Windows.Forms.Keys)( ( System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None ) ) );
 			this.zedGraphControl1.PanModifierKeys2 = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.PointDateFormat = "g";
 			this.zedGraphControl1.PointValueFormat = "G";
@@ -92,27 +99,28 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ScrollMinX = 0;
 			this.zedGraphControl1.ScrollMinY = 0;
 			this.zedGraphControl1.ScrollMinY2 = 0;
-			this.zedGraphControl1.Size = new System.Drawing.Size( 567, 432 );
+			this.zedGraphControl1.Size = new System.Drawing.Size(564, 432);
 			this.zedGraphControl1.TabIndex = 3;
 			this.zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
 			this.zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomStepFraction = 0.1;
+			this.zedGraphControl1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.zedGraphControl1_MouseDown);
 			// 
 			// Form1
 			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size( 5, 13 );
-			this.ClientSize = new System.Drawing.Size( 862, 461 );
-			this.Controls.Add( this.zedGraphControl1 );
-			this.Controls.Add( this.propertyGrid1 );
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.ClientSize = new System.Drawing.Size(862, 461);
+			this.Controls.Add(this.zedGraphControl1);
+			this.Controls.Add(this.propertyGrid1);
 			this.Name = "Form1";
 			this.Text = "Form1";
-			this.Load += new System.EventHandler( this.Form1_Load );
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form1_MouseDown );
-			this.Resize += new System.EventHandler( this.Form1_Resize );
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler( this.Form1_KeyDown );
-			this.ResumeLayout( false );
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+			this.Resize += new System.EventHandler(this.Form1_Resize);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+			this.Load += new System.EventHandler(this.Form1_Load);
+			this.ResumeLayout(false);
 
 		}
 #endregion
@@ -128,6 +136,7 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_Load( object sender, System.EventArgs e )
 		{
+			zedGraphControl1.CultureInfo = new CultureInfo( "fr-fr" );
 			GraphPane myPane = zedGraphControl1.GraphPane;
 
 			myPane.Title = "Test Graph";
@@ -275,6 +284,17 @@ namespace ZedGraph.ControlTest
 
 		private void zedGraphControl1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+			LineItem curve = zedGraphControl1.GraphPane.CurveList[0] as LineItem;
+			for ( int i=0; i<500; i++ )
+			{
+				double x = new XDate( 1997, i, i );
+				double y = (Math.Sin( i / 9.0 * Math.PI ) + 1.1 ) * 1000.0;
+				(curve.Points as PointPairList).Add( x, y );
+				zedGraphControl1.AxisChange();
+
+				this.Refresh();
+			}
+
 			if ( Control.ModifierKeys == Keys.Alt )
 			{
 				GraphPane myPane = zedGraphControl1.GraphPane;
@@ -377,6 +397,11 @@ namespace ZedGraph.ControlTest
 			Refresh();
 		}
 
+		private void zedGraphControl1_Load( object sender, EventArgs e )
+		{
+
+		}
+
 	}
 }
 
@@ -436,7 +461,7 @@ namespace ZedGraph.ControlTest
 		private System.Windows.Forms.RadioButton everyDay; 
 		private System.Windows.Forms.RadioButton everyWeek; 
 		private System.Windows.Forms.ProgressBar progressBar1;
-		private ZedGraph.ZedGraphControl zedGraphControl2; 
+		private ZedGraph.ZedGraphControl zedGraphControl1; 
  
 		/// <summary> 
 		/// This is an estimated value of the amount of data entries which will be added to the graph. 
@@ -470,7 +495,7 @@ namespace ZedGraph.ControlTest
 			this.everyWeek = new System.Windows.Forms.RadioButton();
 			this.diagramPanel = new System.Windows.Forms.Panel();
 			this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
-			this.zedGraphControl2 = new ZedGraph.ZedGraphControl();
+			this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
 			this.optionsPanel.SuspendLayout();
 			this.buttomPanel.SuspendLayout();
 			this.topPanel.SuspendLayout();
@@ -634,7 +659,7 @@ namespace ZedGraph.ControlTest
 			// 
 			// diagramPanel
 			// 
-			this.diagramPanel.Controls.Add(this.zedGraphControl2);
+			this.diagramPanel.Controls.Add(this.zedGraphControl1);
 			this.diagramPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.diagramPanel.Location = new System.Drawing.Point(0, 0);
 			this.diagramPanel.Name = "diagramPanel";
@@ -674,37 +699,37 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomStepFraction = 0.1;
 			// 
-			// zedGraphControl2
+			// zedGraphControl1
 			// 
-			this.zedGraphControl2.IsEnableHPan = true;
-			this.zedGraphControl2.IsEnableVPan = true;
-			this.zedGraphControl2.IsEnableZoom = true;
-			this.zedGraphControl2.IsScrollY2 = false;
-			this.zedGraphControl2.IsShowContextMenu = true;
-			this.zedGraphControl2.IsShowHScrollBar = false;
-			this.zedGraphControl2.IsShowPointValues = false;
-			this.zedGraphControl2.IsShowVScrollBar = false;
-			this.zedGraphControl2.IsZoomOnMouseCenter = false;
-			this.zedGraphControl2.Location = new System.Drawing.Point(8, 8);
-			this.zedGraphControl2.Name = "zedGraphControl2";
-			this.zedGraphControl2.PanButtons = System.Windows.Forms.MouseButtons.Left;
-			this.zedGraphControl2.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
-			this.zedGraphControl2.PanModifierKeys2 = System.Windows.Forms.Keys.None;
-			this.zedGraphControl2.PointDateFormat = "g";
-			this.zedGraphControl2.PointValueFormat = "G";
-			this.zedGraphControl2.ScrollMaxX = 0;
-			this.zedGraphControl2.ScrollMaxY = 0;
-			this.zedGraphControl2.ScrollMaxY2 = 0;
-			this.zedGraphControl2.ScrollMinX = 0;
-			this.zedGraphControl2.ScrollMinY = 0;
-			this.zedGraphControl2.ScrollMinY2 = 0;
-			this.zedGraphControl2.Size = new System.Drawing.Size(904, 432);
-			this.zedGraphControl2.TabIndex = 0;
-			this.zedGraphControl2.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
-			this.zedGraphControl2.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
-			this.zedGraphControl2.ZoomModifierKeys = System.Windows.Forms.Keys.None;
-			this.zedGraphControl2.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
-			this.zedGraphControl2.ZoomStepFraction = 0.1;
+			this.zedGraphControl1.IsEnableHPan = true;
+			this.zedGraphControl1.IsEnableVPan = true;
+			this.zedGraphControl1.IsEnableZoom = true;
+			this.zedGraphControl1.IsScrollY2 = false;
+			this.zedGraphControl1.IsShowContextMenu = true;
+			this.zedGraphControl1.IsShowHScrollBar = false;
+			this.zedGraphControl1.IsShowPointValues = false;
+			this.zedGraphControl1.IsShowVScrollBar = false;
+			this.zedGraphControl1.IsZoomOnMouseCenter = false;
+			this.zedGraphControl1.Location = new System.Drawing.Point(8, 8);
+			this.zedGraphControl1.Name = "zedGraphControl1";
+			this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
+			this.zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
+			this.zedGraphControl1.PanModifierKeys2 = System.Windows.Forms.Keys.None;
+			this.zedGraphControl1.PointDateFormat = "g";
+			this.zedGraphControl1.PointValueFormat = "G";
+			this.zedGraphControl1.ScrollMaxX = 0;
+			this.zedGraphControl1.ScrollMaxY = 0;
+			this.zedGraphControl1.ScrollMaxY2 = 0;
+			this.zedGraphControl1.ScrollMinX = 0;
+			this.zedGraphControl1.ScrollMinY = 0;
+			this.zedGraphControl1.ScrollMinY2 = 0;
+			this.zedGraphControl1.Size = new System.Drawing.Size(904, 432);
+			this.zedGraphControl1.TabIndex = 0;
+			this.zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
+			this.zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
+			this.zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
+			this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
+			this.zedGraphControl1.ZoomStepFraction = 0.1;
 			// 
 			// DiagramDialogRandom
 			// 

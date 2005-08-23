@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.MinorStepAuto"/>,
 	/// and <see cref="Axis.StepAuto"/>.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-05-13 23:59:39 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-08-23 01:52:46 $ </version>
 	public class ScaleState
 	{
 		/// <summary>
@@ -176,7 +176,7 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-05-13 23:59:39 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-08-23 01:52:46 $ </version>
 	public class ZoomState
 	{
 		/// <summary>
@@ -204,6 +204,15 @@ namespace ZedGraph
 		/// scale range state.
 		/// </summary>
 		private StateType	type;
+
+		/// <summary>
+		/// Gets a <see cref="StateType" /> value indicating the type of action (zoom or pan)
+		/// saved by this <see cref="ZoomState" />.
+		/// </summary>
+		public StateType Type
+		{
+			get { return type; }
+		}
 
 		/// <summary>
 		/// Gets a string representing the type of adjustment that was made when this scale
@@ -276,7 +285,7 @@ namespace ZedGraph
 	/// states (of scale range settings).
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-05-13 23:59:39 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-08-23 01:52:46 $ </version>
 	public class ZoomStateStack : CollectionBase
 	{
 		/// <summary>

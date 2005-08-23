@@ -232,22 +232,23 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if false	// Bars and Dates
+#if true	// Bars and Dates
 			Random rand = new Random();
 
 			myPane = new GraphPane();
 			myPane.Title = "My Title";
 			myPane.XAxis.Title = "X Axis";
 			myPane.YAxis.Title = "Y Axis";
-			myPane.XAxis.Type = AxisType.Date;
+			//myPane.XAxis.Type = AxisType.Ordinal;
+			//myPane.XAxis.Type = AxisType.Date;
 			myPane.ClusterScaleWidth = 0.75 / 1440.0;
-			myPane.XAxis.MinorStep = 1;
-			myPane.XAxis.MinorUnit = DateUnit.Minute;
+			//myPane.XAxis.MinorStep = 1;
+			//myPane.XAxis.MinorUnit = DateUnit.Minute;
 
 			PointPairList list1 = new PointPairList();
 			PointPairList list2 = new PointPairList();
 
-			for ( int i=0; i<80; i++ )
+			for ( int i=0; i<10; i++ )
 			{
 				double x = new XDate( 1995, 5, 10, 12, i+1, 0 );
 				double y1 = rand.NextDouble() * 100.0;
@@ -257,6 +258,8 @@ namespace ZedGraph.LibTest
 				list2.Add( x, y2 );
 			}
 
+			//myPane.AddCurve( "junk", list1, Color.Green );
+
 			BarItem bar1 = myPane.AddBar( "Bar 1", list1, Color.Red );
 			bar1.Bar.Border.IsVisible = false;
 			bar1.Bar.Fill = new Fill( Color.Red );
@@ -264,10 +267,15 @@ namespace ZedGraph.LibTest
 			bar2.Bar.Border.IsVisible = false;
 			bar2.Bar.Fill = new Fill( Color.Blue );
 
+			MasterPane mPane = new MasterPane();
+			mPane.Add( myPane );
+
 			myPane.AxisChange( this.CreateGraphics() );
+
+			this.CreateBarLabels(mPane);
 #endif
 
-#if true	// Standard Sample Graph
+#if false	// Standard Sample Graph
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -862,6 +870,57 @@ namespace ZedGraph.LibTest
       
 		}
 
+		private void CreateBarLabels( MasterPane pane )
+		{
+			const int labelOffset	= 5;
+			GraphPane graphPane		= pane.PaneList[ 0 ];
+
+			foreach ( CurveItem curve in graphPane.CurveList )
+			{
+				BarItem bar = curve as BarItem;
+
+				if ( bar != null )
+				{
+					IPointList points = curve.Points;
+
+					for ( int i = 0; i < points.Count; i++ )
+					{
+						ValueHandler valueHandler		= 
+							new ValueHandler( graphPane, true );
+
+						int curveIndex					=
+							graphPane.CurveList.IndexOf( curve );
+
+						double labelXCoordintate			= 
+							valueHandler.BarCenterValue( bar, 
+							bar.GetBarWidth( graphPane ), i, points[ i ].X, 
+							curveIndex );
+
+						float labelYCoordinate				= 
+							( float ) points[ i ].Y + labelOffset;
+
+						string barLabelText				= 
+							( points[ i ].Y / 1000 ).ToString( "N2" );
+
+						TextItem label					= 
+							new TextItem( barLabelText, ( float ) labelXCoordintate, 
+							labelYCoordinate );
+
+						label.Location.CoordinateFrame	= CoordType.AxisXYScale;
+						label.FontSpec.Size				= 10;
+						label.FontSpec.FontColor		= Color.Black;
+						label.Location.AlignH			= AlignH.Left;
+						label.Location.AlignV			= AlignV.Center;
+						label.FontSpec.Border.IsVisible	= false;
+						label.FontSpec.Fill.IsVisible	= false;
+
+						graphPane.GraphItemList.Add( label );
+					}
+				}
+			}
+		}
+		
+		
 		/// <summary>
 		/// 
 		/// </summary>

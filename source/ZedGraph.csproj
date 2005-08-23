@@ -340,6 +340,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\ZedGraphLocale.resx"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "ZedGraph\ZedGraphWeb.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

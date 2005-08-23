@@ -24,6 +24,9 @@ using System.Windows.Forms;
 using System.Text;
 using System.ComponentModel;
 using System.IO;
+using System.Resources;
+using System.Globalization;
+using System.Reflection;
 
 namespace ZedGraph
 {
@@ -36,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.33 $ $Date: 2005-08-22 05:21:07 $ </version>
+	/// <version> $Revision: 3.34 $ $Date: 2005-08-23 01:52:46 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -171,6 +174,15 @@ namespace ZedGraph
 		private const int	ScrollRange = 1000;
 
 		private bool		isZoomOnMouseCenter = false;
+
+		//temporarily save the location of a context menu click so we can use it for reference
+		// Note that Control.MousePosition ends up returning the position after the mouse has
+		// moved to the menu item within the context menu.  Therefore, this point is saved so
+		// that we have the point at which the context menu was first right-clicked
+		internal Point		menuClickPt;
+
+		private CultureInfo cultureInfo;
+		private ResourceManager resourceManager;
 
 	#endregion
 
@@ -345,12 +357,20 @@ namespace ZedGraph
 			SetStyle( ControlStyles.Opaque, false );
 			SetStyle( ControlStyles.SupportsTransparentBackColor, true );
 
+			this.cultureInfo = CultureInfo.CurrentCulture;
+			resourceManager = new ResourceManager( "ZedGraph.ZedGraph.ZedGraphLocale", Assembly.GetExecutingAssembly() );
+
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
 			masterPane = new MasterPane( "", rect );
 			masterPane.MarginAll = 0;
 			masterPane.IsShowTitle = false;
 
-			GraphPane graphPane = new GraphPane( rect, "Title", "X-Axis", "Y-Axis" );
+			string titleStr = resourceManager.GetString( "title_def", cultureInfo );
+			string xStr = resourceManager.GetString( "x_title_def", cultureInfo );
+			string yStr = resourceManager.GetString( "y_title_def", cultureInfo );
+
+			GraphPane graphPane = new GraphPane( rect, "Title", "X Axis", "Y Axis" );
+			//GraphPane graphPane = new GraphPane( rect, titleStr, xStr, yStr );
 			Graphics g = this.CreateGraphics();
 			graphPane.AxisChange( g );
 			g.Dispose();
@@ -869,6 +889,22 @@ namespace ZedGraph
 				lock( this ) return masterPane == null; 
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="CultureInfo" /> instance to be used for this
+		/// <see cref="ZedGraphControl" />.
+		/// </summary>
+		/// <remarks>
+		/// Use this value to used a localized version of the context menu strings.  The
+		/// default CultureInfo is always the default of installation on which the
+		/// ZedGraphControl is being used.
+		/// </remarks>
+		public CultureInfo CultureInfo
+		{
+			get { return cultureInfo; }
+			set { cultureInfo = value; }
+		}
+
 	#endregion
 
 	#region Methods
@@ -1190,6 +1226,9 @@ namespace ZedGraph
 		private void ZedGraphControl_MouseMove( object sender, MouseEventArgs e )
 		{
 			Point mousePt = new Point( e.X, e.Y );
+
+			Point tempPt = this.PointToClient( Control.MousePosition );
+
 			SetCursor( mousePt );
 
 			// If the mouse is being dragged,
@@ -1360,7 +1399,9 @@ namespace ZedGraph
 			this.isZooming = false;
 			this.isPanning = false;
 			Cursor.Current = Cursors.Default;
-			GraphPane pane = this.MasterPane.FindPane( this.PointToClient( Control.MousePosition ) );
+
+			this.menuClickPt = this.PointToClient( Control.MousePosition );
+			GraphPane pane = this.MasterPane.FindPane( menuClickPt );
 			
 			if ( this.isShowContextMenu )
 			{
@@ -1369,27 +1410,37 @@ namespace ZedGraph
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
-				menuItem.Text = "Copy";
+				string menuStr = resourceManager.GetString( "copy", cultureInfo );
+				menuItem.Text = menuStr;
 				this.contextMenu.MenuItems.Add( menuItem );
 				menuItem.Click += new System.EventHandler( this.MenuClick_Copy );
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
-				menuItem.Text = "Save Image As...";
+				menuStr = resourceManager.GetString( "save_as", cultureInfo );
+				menuItem.Text = menuStr;
 				this.contextMenu.MenuItems.Add( menuItem );
 				menuItem.Click += new System.EventHandler( this.MenuClick_SaveAs );
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
-				menuItem.Text = "Show Point Values";
+				menuStr = resourceManager.GetString( "show_val", cultureInfo );
+				menuItem.Text = menuStr;
 				menuItem.Checked = this.IsShowPointValues;
 				this.contextMenu.MenuItems.Add( menuItem );
 				menuItem.Click += new System.EventHandler( this.MenuClick_ShowValues );
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
-				menuItem.Text = "Un-" + ( ( pane == null || pane.zoomStack.IsEmpty ) ?
-					"Zoom" : pane.zoomStack.Top.TypeString );
+
+				if ( pane == null || pane.zoomStack.IsEmpty ||
+							pane.zoomStack.Top.Type == ZoomState.StateType.Zoom )
+					menuStr = resourceManager.GetString( "unzoom", cultureInfo );
+				else
+					menuStr = resourceManager.GetString( "unpan", cultureInfo );
+				//menuItem.Text = "Un-" + ( ( pane == null || pane.zoomStack.IsEmpty ) ?
+				//	"Zoom" : pane.zoomStack.Top.TypeString );
+				menuItem.Text = menuStr;
 				this.contextMenu.MenuItems.Add( menuItem );
 				menuItem.Click += new EventHandler( this.MenuClick_ZoomOut );
 				if ( pane == null || pane.zoomStack.IsEmpty )
@@ -1397,7 +1448,8 @@ namespace ZedGraph
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
-				menuItem.Text = "Undo All Zoom/Pan";
+				menuStr = resourceManager.GetString( "undo_all", cultureInfo );
+				menuItem.Text = menuStr;
 				this.contextMenu.MenuItems.Add( menuItem );
 				menuItem.Click += new EventHandler( this.MenuClick_ZoomOutAll );
 				if ( pane == null || pane.zoomStack.IsEmpty )
@@ -1405,7 +1457,8 @@ namespace ZedGraph
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
-				menuItem.Text = "Set Scale to Default";
+				menuStr = resourceManager.GetString( "set_default", cultureInfo );
+				menuItem.Text = menuStr;
 				this.contextMenu.MenuItems.Add( menuItem );
 				menuItem.Click += new EventHandler( this.MenuClick_RestoreScale );
 				if ( pane == null )
@@ -1485,7 +1538,7 @@ namespace ZedGraph
 		/// <param name="e"></param>
 		protected void MenuClick_RestoreScale( System.Object sender, EventArgs e )
 		{
-			GraphPane pane = this.MasterPane.FindPane( this.PointToClient( Control.MousePosition ) );
+			GraphPane pane = this.MasterPane.FindPane( this.menuClickPt );
 			if ( pane != null )
 			{
 				//Go ahead and save the old zoomstates, which provides an "undo"-like capability
@@ -1516,7 +1569,7 @@ namespace ZedGraph
 		/// <param name="e"></param>
 		protected void MenuClick_ZoomOut( System.Object sender, System.EventArgs e )
 		{
-			GraphPane pane = this.MasterPane.FindPane( this.PointToClient( Control.MousePosition ) );
+			GraphPane pane = this.MasterPane.FindPane( this.menuClickPt );
 			if ( pane != null && !pane.zoomStack.IsEmpty )
 			{
 				ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
@@ -1538,7 +1591,7 @@ namespace ZedGraph
 		/// <param name="e"></param>
 		protected void MenuClick_ZoomOutAll( System.Object sender, System.EventArgs e )
 		{
-			GraphPane pane = this.MasterPane.FindPane( this.PointToClient( Control.MousePosition ) );
+			GraphPane pane = this.MasterPane.FindPane( this.menuClickPt );
 			if ( pane != null && !pane.zoomStack.IsEmpty )
 			{
 				ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
