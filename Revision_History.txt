@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
-
+26-Aug-2005 (by Champion)
+  Add HSBColor struct
+  Add French (thanks to Fred Thomas) localization file
+  Add Deutsch and Spanish (thanks to codemeier) localization files
+  
 22-Aug-2005 (by Champion)
   Add Localization to ZedGraphControl
   Fix ContextMenu mouse location issue

@@ -162,7 +162,13 @@ namespace ZedGraph.LibTest
 
 
 		private void Form1_Load(object sender, System.EventArgs e)
-		{			
+		{
+			Color color = Color.FromArgb( 123, 45, 67, 89 );
+			HSBColor hsbColor = HSBColor.FromRGB( color );
+			//HSBColor hsbColor2 = HSBColor.FromRGBX( color );
+			Color color2 = HSBColor.ToRGB( hsbColor );
+			//Color color3 = HSBColor.ToRGBX( hsbColor );
+
 			Trace.Listeners.Add(new TextWriterTraceListener( @"myTrace.txt" ) );
 			Trace.AutoFlush = true;
 
