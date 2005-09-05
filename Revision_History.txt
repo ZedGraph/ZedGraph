@@ -1,6 +1,6 @@
 ZedGraph Class Library Revision History
 
-4-Sep-2005 (by Champion)
+4-Sep-2005 (by Champion) v4.2.2
   Fix problem with copy constructor on HiLowBar.cs, HiLowBarItem.cs, MasterPane.cs
   
 26-Aug-2005 (by Champion)
