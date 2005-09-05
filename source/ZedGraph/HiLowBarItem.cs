@@ -54,7 +54,7 @@ namespace ZedGraph
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-09-05 18:34:50 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -109,6 +109,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="HiLowBarItem"/> object from which to copy</param>
 		public HiLowBarItem( HiLowBarItem rhs ) : base( rhs )
 		{
+			this.bar = new HiLowBar( rhs.Bar );
 		}
 
 		/// <summary>

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Data;
 using System.Globalization;
 using ZedGraph;
+using System.Drawing.Imaging;
 
 namespace ZedGraph.ControlTest
 {
@@ -214,6 +215,12 @@ namespace ZedGraph.ControlTest
 
 			zedGraphControl1.IsAutoScrollRange = true;
 
+			GraphPane myPane2 = new GraphPane( myPane );
+			zedGraphControl1.MasterPane.Add( myPane2 );
+			zedGraphControl1.MasterPane.MarginAll = 20;
+			zedGraphControl1.MasterPane.Title = "Master Pane Title";
+			zedGraphControl1.MasterPane.AutoPaneLayout( this.CreateGraphics(), 2, 1 );
+
 			zedGraphControl1.AxisChange();
 
 			SetSize();
@@ -284,6 +291,10 @@ namespace ZedGraph.ControlTest
 
 		private void zedGraphControl1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+			Image image = zedGraphControl1.MasterPane.ScaledImage( 300, 200, 72 );
+			image.Save( @"c:\zedgraph.png", ImageFormat.Png );
+			return;
+
 			LineItem curve = zedGraphControl1.GraphPane.CurveList[0] as LineItem;
 			for ( int i=0; i<500; i++ )
 			{

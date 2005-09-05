@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-07-15 05:18:12 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-09-05 18:34:50 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -203,7 +203,7 @@ namespace ZedGraph
 			this.paneLayout = rhs.paneLayout;
 			this.innerPaneGap = rhs.innerPaneGap;
 			this.rows = rhs.rows;
-			this.columns = rhs.rows;
+			this.columns = rhs.columns;
 			this.isColumnSpecified = rhs.isColumnSpecified;
 			this.countList = rhs.countList;
 			this.hasUniformLegendEntries = rhs.hasUniformLegendEntries ;

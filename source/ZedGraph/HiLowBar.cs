@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-05-20 16:32:27 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-09-05 18:34:50 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -126,6 +126,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="HiLowBar"/> object from which to copy</param>
 		public HiLowBar( HiLowBar rhs ) : base( rhs )
 		{
+			this.size = rhs.size;
 		}
 
 		/// <summary>

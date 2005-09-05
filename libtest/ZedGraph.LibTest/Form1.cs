@@ -162,13 +162,7 @@ namespace ZedGraph.LibTest
 
 
 		private void Form1_Load(object sender, System.EventArgs e)
-		{
-			Color color = Color.FromArgb( 123, 45, 67, 89 );
-			HSBColor hsbColor = HSBColor.FromRGB( color );
-			//HSBColor hsbColor2 = HSBColor.FromRGBX( color );
-			Color color2 = HSBColor.ToRGB( hsbColor );
-			//Color color3 = HSBColor.ToRGBX( hsbColor );
-
+		{			
 			Trace.Listeners.Add(new TextWriterTraceListener( @"myTrace.txt" ) );
 			Trace.AutoFlush = true;
 
@@ -238,7 +232,14 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Bars and Dates
+#if false	// Bars and Dates
+
+//			Color color = Color.FromArgb( 123, 45, 67, 89 );
+//			HSBColor hsbColor = new HSBColor( color );
+//			Color color2 = hsbColor;
+
+
+
 			Random rand = new Random();
 
 			myPane = new GraphPane();
@@ -247,38 +248,77 @@ namespace ZedGraph.LibTest
 			myPane.YAxis.Title = "Y Axis";
 			//myPane.XAxis.Type = AxisType.Ordinal;
 			//myPane.XAxis.Type = AxisType.Date;
-			myPane.ClusterScaleWidth = 0.75 / 1440.0;
+			//myPane.ClusterScaleWidth = 0.75 / 1440.0;
 			//myPane.XAxis.MinorStep = 1;
 			//myPane.XAxis.MinorUnit = DateUnit.Minute;
 
 			PointPairList list1 = new PointPairList();
 			PointPairList list2 = new PointPairList();
 
-			for ( int i=0; i<10; i++ )
+			for ( int i=1; i<10; i++ )
 			{
-				double x = new XDate( 1995, 5, 10, 12, i+1, 0 );
+				//double x = new XDate( 1995, 5, 10, 12, i+1, 0 );
+				double x = (double) i;
 				double y1 = rand.NextDouble() * 100.0;
 				double y2 = rand.NextDouble() * 100.0;
 
-				list1.Add( x, y1 );
-				list2.Add( x, y2 );
+				list1.Add( x-0.25, y1, 0 );
+				list2.Add( x+0.17, y2, 0 );
 			}
 
 			//myPane.AddCurve( "junk", list1, Color.Green );
 
-			BarItem bar1 = myPane.AddBar( "Bar 1", list1, Color.Red );
-			bar1.Bar.Border.IsVisible = false;
-			bar1.Bar.Fill = new Fill( Color.Red );
-			BarItem bar2 = myPane.AddBar( "Bar 2", list2, Color.Blue );
-			bar2.Bar.Border.IsVisible = false;
-			bar2.Bar.Fill = new Fill( Color.Blue );
+			HiLowBarItem bar1 = myPane.AddHiLowBar( "Bar 1", list1, Color.Red );
+			//bar1.Bar.Border.IsVisible = false;
+			bar1.Bar.Size = 15;
+			//bar1.Bar.Fill = new Fill( Color.Red );
+			HiLowBarItem bar2 = myPane.AddHiLowBar( "Bar 2", list2, Color.Blue );
+			//bar2.Bar.Border.IsVisible = false;
+			//bar2.Bar.Fill = new Fill( Color.Blue );
+			bar2.Bar.Size = 10;
 
 			MasterPane mPane = new MasterPane();
 			mPane.Add( myPane );
 
 			myPane.AxisChange( this.CreateGraphics() );
 
-			this.CreateBarLabels(mPane);
+			//this.CreateBarLabels(mPane);
+#endif
+
+#if false
+			myPane = new GraphPane( new Rectangle( 40, 40, 600, 300 ),
+				"Score Report", "", "" );
+			// Make up some random data points
+			string[] labels = { "" };
+			double[] y = { 800, 900 };
+			double[] y2 = { 500 };
+
+			// Generate a red bar with "Curve 1" in the legend
+			BarItem myBar = myPane.AddBar( null, y, null, Color.RoyalBlue );
+			
+			// Generate a blue bar with "Curve 2" in the legend
+			myBar = myPane.AddBar( null, y2, null, Color.Red );
+			
+			// Draw the X tics between the labels instead of at the labels
+			myPane.YAxis.IsTicsBetweenLabels = true;
+
+			// Set the XAxis labels
+			myPane.YAxis.TextLabels = labels;
+			// Set the XAxis to Text type
+			myPane.YAxis.Type = AxisType.Text;
+			// Fill the Axis and Pane backgrounds
+			myPane.AxisFill = new Fill( Color.White,
+				Color.FromArgb( 255, 255, 166), 90F );
+			myPane.PaneFill = new Fill( Color.FromArgb( 250, 250, 255) );
+
+			myPane.BarBase = BarBase.Y;
+
+			myPane.MinBarGap = 0;
+			myPane.MinClusterGap = 1;
+    
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			myPane.AxisChange( CreateGraphics() );
 #endif
 
 #if false	// Standard Sample Graph
@@ -495,7 +535,7 @@ namespace ZedGraph.LibTest
 			myPane.GraphItemList.Add( newArrow );
 #endif
 	
-#if false	// MasterPane
+#if true	// MasterPane
 			master = new MasterPane( "ZedGraph MasterPane Example", new Rectangle( 10, 10, 10, 10 ) );
 
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
@@ -542,13 +582,13 @@ namespace ZedGraph.LibTest
 			for ( int j=0; j<5; j++ )
 			{
 				// Create a new graph with topLeft at (40,40) and size 600x400
-				GraphPane myPane = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				GraphPane myPaneT = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
 					"Case #" + (j+1).ToString(),
 					"Time, Days",
 					"Rate, m/s" );
 
-				myPane.PaneFill = new Fill( Color.White, Color.LightYellow, 45.0F );
-				myPane.BaseDimension = 6.0F;
+				myPaneT.PaneFill = new Fill( Color.White, Color.LightYellow, 45.0F );
+				myPaneT.BaseDimension = 6.0F;
 
 				// Make up some data arrays based on the Sine function
 				double x, y;
@@ -560,12 +600,14 @@ namespace ZedGraph.LibTest
 					list.Add( x, y );
 				}
 
-				LineItem myCurve = myPane.AddCurve( "Type " + j.ToString(),
+				LineItem myCurve = myPaneT.AddCurve( "Type " + j.ToString(),
 					list, rotator.NextColor, rotator.NextSymbol );
 				myCurve.Symbol.Fill = new Fill( Color.White );
 
-				master.Add( myPane );
+				master.Add( myPaneT );
 			}
+
+			myPane = master[0];
 
 			Graphics g = this.CreateGraphics();
 			
@@ -1104,15 +1146,34 @@ namespace ZedGraph.LibTest
 			printPane.Draw( e.Graphics );
 		}
 
-		private void DoPrint()
+		private void DoPrintPreview()
 		{
 			PrintDocument pd = new PrintDocument();
+
 			PrintPreviewDialog ppd = new
 				PrintPreviewDialog();
 			pd.PrintPage += new
 				PrintPageEventHandler( Graph_PrintPage );
 			ppd.Document = pd;
 			ppd.Show();
+		}
+
+		private void DoPrint()
+		{
+			PrintDocument pd = new PrintDocument();
+			pd.PrintPage += new
+				PrintPageEventHandler( Graph_PrintPage );
+			pd.Print();
+		}
+
+		private void DoPageSetup()
+		{
+			PrintDocument pd = new PrintDocument();
+			pd.PrintPage += new
+				PrintPageEventHandler( Graph_PrintPage );
+			PageSetupDialog setupDlg = new PageSetupDialog();
+			setupDlg.Document = pd;
+			setupDlg.ShowDialog();
 		}
 
 		private void Serialize( GraphPane myPane )
@@ -1185,7 +1246,14 @@ namespace ZedGraph.LibTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+			Image image = master.ScaledImage( 300, 200, 72 );
+			image.Save( @"c:\zedgraph.png", ImageFormat.Png );
+
 			//DoPrint();
+			//DoPageSetup();
+			//DoPrintPreview();
+			return;
+
 			//Serialize( master );
 			//DeSerialize( out master );
 

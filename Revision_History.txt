@@ -1,4 +1,8 @@
 ZedGraph Class Library Revision History
+
+4-Sep-2005 (by Champion)
+  Fix problem with copy constructor on HiLowBar.cs, HiLowBarItem.cs, MasterPane.cs
+  
 26-Aug-2005 (by Champion)
   Add HSBColor struct
   Add French (thanks to Fred Thomas) localization file
