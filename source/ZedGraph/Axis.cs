@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.41 $ $Date: 2005-08-22 05:21:07 $ </version>
+	/// <version> $Revision: 3.42 $ $Date: 2005-09-10 04:18:00 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -4876,8 +4876,6 @@ namespace ZedGraph
 					this.scaleFormat = Default.FormatYearYear;					
 					
 				tempStep = Math.Ceiling( tempStep / 365.0 );
-				if ( tempStep < 1.0 )
-					tempStep = 1.0;
 
 				if ( minorStepAuto )
 				{
@@ -4893,7 +4891,7 @@ namespace ZedGraph
 				majorUnit = DateUnit.Year;
 				if ( this.scaleFormatAuto )
 					this.scaleFormat = Default.FormatYearMonth;
-				tempStep = 1.0;
+				tempStep = Math.Ceiling( tempStep / 365.0 );
 
 				if ( minorStepAuto )
 				{
@@ -4914,12 +4912,11 @@ namespace ZedGraph
 				if ( this.scaleFormatAuto )
 					this.scaleFormat = Default.FormatMonthMonth;
 				tempStep = Math.Ceiling( tempStep / 30.0 );
-				if ( tempStep < 1.0 )
-					tempStep = 1.0;
+
 				if ( minorStepAuto )
 				{
 					minorUnit = DateUnit.Month;
-					minorStep = 0.25;
+					minorStep = tempStep * 0.25;
 				}
 			}
 			else if ( range > Default.RangeDayDay )
@@ -4928,12 +4925,12 @@ namespace ZedGraph
 				if ( this.scaleFormatAuto )
 					this.scaleFormat = Default.FormatDayDay;
 				tempStep = Math.Ceiling( tempStep );
-				if ( tempStep < 1.0 )
-					tempStep = 1.0;
+
 				if ( minorStepAuto )
 				{
 					minorUnit = DateUnit.Day;
-					minorStep = 1.0;
+					minorStep = tempStep * 0.25;
+					// make sure the minorStep is 1, 2, 3, 6, or 12 hours
 				}
 			}
 			else if ( range > Default.RangeDayHour )
@@ -4941,7 +4938,7 @@ namespace ZedGraph
 				majorUnit = DateUnit.Day;
 				if ( this.scaleFormatAuto )
 					this.scaleFormat = Default.FormatDayHour;
-				tempStep = 1.0;
+				tempStep = Math.Ceiling( tempStep );
 
 				if ( minorStepAuto )
 				{
@@ -4954,7 +4951,7 @@ namespace ZedGraph
 						minorStep = 12;
 					else if ( minorStep > 3 )
 						minorStep = 6;
-					else if ( minorStep < 1 )
+					else
 						minorStep = 1;
 				}
 			}
@@ -4969,21 +4966,31 @@ namespace ZedGraph
 					tempStep = 24.0;
 				else if ( tempStep > 6.0 )
 					tempStep = 12.0;
-				else if ( tempStep > 3.0 )
+				else if ( tempStep > 2.0 )
 					tempStep = 6.0;
-				else if ( tempStep < 1.0 )
+				else if ( tempStep > 1.0 )
+					tempStep = 2.0;
+				else
 					tempStep = 1.0;
 
 				if ( minorStepAuto )
 				{
 					minorUnit = DateUnit.Hour;
-					minorStep = 0.25;
+					if ( tempStep <= 1.0 )
+						minorStep = 0.25;
+					else if ( tempStep <= 6.0 )
+						minorStep = 1.0;
+					else if ( tempStep <= 12.0 )
+						minorStep = 2.0;
+					else
+						minorStep = 4.0;
 				}
 			}
 			else if ( range > Default.RangeHourMinute )
 			{
 				majorUnit = DateUnit.Hour;
-				tempStep = 1.0;
+				tempStep = Math.Ceiling( tempStep * XDate.HoursPerDay );
+
 				if ( this.scaleFormatAuto )
 					this.scaleFormat = Default.FormatHourMinute;
 
@@ -5000,7 +5007,7 @@ namespace ZedGraph
 						minorStep = 15.0;
 					else if ( minorStep > 1.0 )
 						minorStep = 5.0;
-					else if ( minorStep < 1.0 )
+					else
 						minorStep = 1.0;
 				}
 			}
@@ -5018,19 +5025,25 @@ namespace ZedGraph
 					tempStep = 15.0;
 				else if ( tempStep > 1.0 )
 					tempStep = 5.0;
-				else if ( tempStep < 1.0 )
+				else
 					tempStep = 1.0;
 
 				if ( minorStepAuto )
 				{
 					minorUnit = DateUnit.Minute;
-					minorStep = 0.25;
+					if ( tempStep <= 1.0 )
+						minorStep = 0.25;
+					else if ( tempStep <= 5.0 )
+						minorStep = 1.0;
+					else
+						minorStep = 5.0;
 				}
 			}
 			else if ( range > Default.RangeMinuteSecond )
 			{
 				majorUnit = DateUnit.Minute;
-				tempStep = 1.0;
+				tempStep = Math.Ceiling( tempStep * XDate.MinutesPerDay );
+
 				if ( this.scaleFormatAuto )
 					this.scaleFormat = Default.FormatMinuteSecond;
 
@@ -5047,7 +5060,7 @@ namespace ZedGraph
 						minorStep = 15.0;
 					else if ( minorStep > 1.0 )
 						minorStep = 5.0;
-					else if ( minorStep < 1.0 )
+					else
 						minorStep = 1.0;
 				}
 			}
@@ -5065,13 +5078,18 @@ namespace ZedGraph
 					tempStep = 15.0;
 				else if ( tempStep > 1.0 )
 					tempStep = 5.0;
-				else if ( tempStep < 1.0 )
+				else
 					tempStep = 1.0;
 
 				if ( minorStepAuto )
 				{
 					minorUnit = DateUnit.Second;
-					minorStep = 0.25;
+					if ( tempStep <= 1.0 )
+						minorStep = 0.25;
+					else if ( tempStep <= 5.0 )
+						minorStep = 1.0;
+					else
+						minorStep = 5.0;
 				}
 			}
 

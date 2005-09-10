@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+9-Sep-2005 (by Champion) v4.2.3
+  Fix issue with CalcDateStepSize() for max label calcs where the step number is only a target, not a max
+
 4-Sep-2005 (by Champion) v4.2.2
   Fix problem with copy constructor on HiLowBar.cs, HiLowBarItem.cs, MasterPane.cs
   

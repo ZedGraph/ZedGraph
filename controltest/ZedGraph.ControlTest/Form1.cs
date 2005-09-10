@@ -182,9 +182,9 @@ namespace ZedGraph.ControlTest
 			//fill.RangeMin = 1;
 			//fill.RangeMax = 5;
 
-			//myPane.XAxis.ScaleFormat = "n1";
+			myPane.XAxis.ScaleFormat = "yyyy-MM-dd HH:MM";
 			//myPane.XAxis.ScaleMag = 0;
-			//myPane.XAxis.Type = AxisType.Date;
+			myPane.XAxis.Type = AxisType.Date;
 			//myPane.YAxis.Max = 2499.9;
 			//myPane.YAxis.IsScaleVisible = false;
 			//myPane.YAxis.IsTic = false;
