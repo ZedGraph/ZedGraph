@@ -54,7 +54,7 @@ namespace ZedGraph
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-09-05 18:34:50 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2005-09-24 09:13:32 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -223,7 +223,7 @@ namespace ZedGraph
 		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
 			if ( this.isVisible )
-				bar.DrawBars( g, pane, this, BaseAxis(pane), ValueAxis(pane,isY2Axis),
+				bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
 								GetBarWidth( pane ), pos, scaleFactor );
 		}		
 

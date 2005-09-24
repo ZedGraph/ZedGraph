@@ -120,6 +120,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\AxisList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\Bar.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -285,6 +290,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\ScrollRange.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\ScrollRangeList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\StickItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -325,7 +340,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\Y2AxisList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\YAxis.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\YAxisList.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

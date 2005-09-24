@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2005-09-24 09:13:32 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -466,7 +466,7 @@ namespace ZedGraph
         /// </param>
 		public void DrawSticks( Graphics g, GraphPane pane, CurveItem curve, float scaleFactor )
 		{
-			Axis yAxis = curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis;
+			Axis yAxis = curve.GetYAxis( pane );
 			float basePix = yAxis.Transform( 0.0 );
 			Pen pen = new Pen( this.color, pane.ScaledPenWidth(width, scaleFactor) );
 			pen.DashStyle = this.Style;
@@ -534,7 +534,7 @@ namespace ZedGraph
 				// Fill the curve if needed
 				if ( this.Fill.IsVisible )
 				{
-					Axis yAxis = curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis;
+					Axis yAxis = curve.GetYAxis( pane );
 
 					GraphicsPath path = new GraphicsPath( FillMode.Winding );
 					path.AddCurve( arrPoints, 0, count-2, tension );
@@ -593,7 +593,7 @@ namespace ZedGraph
 			bool	broke = true;
 			IPointList points = curve.Points;
 			ValueHandler valueHandler = new ValueHandler( pane, false );
-			Axis yAxis = curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis;
+			Axis yAxis = curve.GetYAxis( pane );
 
             Pen pen = new Pen( this.color, pane.ScaledPenWidth( width, scaleFactor ) );
             pen.DashStyle = this.Style;
@@ -731,10 +731,8 @@ namespace ZedGraph
 						
 						// Transform the user scale values to pixel locations
 						curX = pane.XAxis.Transform( curve.IsOverrideOrdinal, i, x );
-						if ( curve.IsY2Axis )
-							curY = pane.Y2Axis.Transform( curve.IsOverrideOrdinal, i, y );
-						else
-							curY = pane.YAxis.Transform( curve.IsOverrideOrdinal, i, y );
+						Axis yAxis = curve.GetYAxis( pane );
+						curY = yAxis.Transform( curve.IsOverrideOrdinal, i, y );
 
 						if ( curX < -1000000 || curY < -1000000 || curX > 1000000 || curY > 1000000 )
 							continue;
@@ -840,10 +838,8 @@ namespace ZedGraph
 						
 						// Transform the user scale values to pixel locations
 						curX = pane.XAxis.Transform( curve.IsOverrideOrdinal, i, x );
-						if ( curve.IsY2Axis )
-							curY = pane.Y2Axis.Transform( curve.IsOverrideOrdinal, i, y );
-						else
-							curY = pane.YAxis.Transform( curve.IsOverrideOrdinal, i, y );
+						Axis yAxis = curve.GetYAxis( pane );
+						curY = yAxis.Transform( curve.IsOverrideOrdinal, i, y );
 
 						// Add the pixel value pair into the points array
 						// Two points are added for step type curves
@@ -917,10 +913,8 @@ namespace ZedGraph
 				// Determine the current value for the bottom of the curve (usually the Y value where
 				// the X axis crosses)
 				float yBase;
-				if ( curve.IsY2Axis )
-					yBase = pane.Y2Axis.Transform( yMin );
-				else
-					yBase = pane.YAxis.Transform( yMin );
+				Axis yAxis = curve.GetYAxis( pane );
+				yBase = yAxis.Transform( yMin );
 
 				// Add three points to the path to move from the end of the curve (as defined by
 				// arrPoints) to the X axis, from there to the start of the curve at the X axis,

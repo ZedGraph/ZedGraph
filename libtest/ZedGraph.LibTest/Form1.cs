@@ -535,7 +535,7 @@ namespace ZedGraph.LibTest
 			myPane.GraphItemList.Add( newArrow );
 #endif
 	
-#if true	// MasterPane
+#if false	// MasterPane
 			master = new MasterPane( "ZedGraph MasterPane Example", new Rectangle( 10, 10, 10, 10 ) );
 
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
@@ -817,6 +817,41 @@ namespace ZedGraph.LibTest
 
 #endif
 
+#if true	// Basic curve test - Multi-Y axes
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			myPane.AddYAxis( "Another Y Axis" );
+			myPane.AddY2Axis( "Another Y2 Axis" );
+			myPane.Y2Axis.Title = "My Y2 Axis";
+			myPane.Y2AxisList[0].IsVisible = true;
+			myPane.Y2AxisList[1].IsVisible = true;
+
+			PointPairList list = new PointPairList();
+
+			for ( int i=0; i<100; i++ )
+			{
+				double x = (double) i;
+				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				list.Add( x, y );
+				double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			myCurve.YAxisIndex = 1;
+
+			myPane.XAxis.IsSkipLastLabel = true;
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
+
+
 #if false	// Basic curve test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -908,7 +943,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-			_crossAxis = myPane.XAxis;
+			_crossAxis = myPane.Y2AxisList[1];
 			UpdateControls();
 			SetSize();
 
@@ -1246,23 +1281,25 @@ namespace ZedGraph.LibTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			Image image = master.ScaledImage( 300, 200, 72 );
-			image.Save( @"c:\zedgraph.png", ImageFormat.Png );
+			//Image image = master.ScaledImage( 300, 200, 72 );
+			//image.Save( @"c:\zedgraph.png", ImageFormat.Png );
 
 			//DoPrint();
 			//DoPageSetup();
 			//DoPrintPreview();
-			return;
+			//return;
 
 			//Serialize( master );
 			//DeSerialize( out master );
 
-			//object obj;
-			//int index;
-			//if ( myPane.FindNearestObject( new PointF( e.X, e.Y ), this.CreateGraphics(), out obj, out index ) )
-			//	MessageBox.Show( obj.ToString() + " index=" + index );
-			//else
-			//	MessageBox.Show( "No Object Found" );
+			object obj;
+			int index;
+			if ( myPane.FindNearestObject( new PointF( e.X, e.Y ), this.CreateGraphics(), out obj, out index ) )
+				MessageBox.Show( obj.ToString() + " index=" + index );
+			else
+				MessageBox.Show( "No Object Found" );
+
+			return;
 
 
 			//myPane.XAxis.PickScale( 250, 900, myPane, this.CreateGraphics(), myPane.CalcScaleFactor() );
@@ -1384,9 +1421,9 @@ namespace ZedGraph.LibTest
 			if ( _crossAxis is XAxis )
 				controlAxis = myPane.YAxis;
 
-			//_crossAxis.Cross = (double) trackBar1.Value / 100.0 * (controlAxis.Max - controlAxis.Min) +
-			//				controlAxis.Min;
-			_crossAxis.ScaleFontSpec.Angle = trackBar1.Value;
+			_crossAxis.Cross = (double) trackBar1.Value / 100.0 * (controlAxis.Max - controlAxis.Min) +
+							controlAxis.Min;
+			//_crossAxis.ScaleFontSpec.Angle = trackBar1.Value;
 			myPane.AxisChange( this.CreateGraphics() );
 			Refresh();
 		}

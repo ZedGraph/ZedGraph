@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.MinorStepAuto"/>,
 	/// and <see cref="Axis.StepAuto"/>.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-08-23 01:52:46 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-09-24 09:13:32 $ </version>
 	public class ScaleState
 	{
 		/// <summary>
@@ -166,6 +166,102 @@ namespace ZedGraph
 	}
 
 	/// <summary>
+	/// A collection class that maintains a list of <see cref="ScaleState" />
+	/// objects, corresponding to the list of <see cref="Axis" /> objects
+	/// from <see cref="GraphPane.YAxisList" /> or <see cref="GraphPane.Y2AxisList" />.
+	/// </summary>
+	public class ScaleStateList : CollectionPlus
+	{
+		/// <summary>
+		/// Construct a new <see cref="ScaleStateList" /> automatically from an
+		/// existing <see cref="AxisList" />.
+		/// </summary>
+		/// <param name="list">The <see cref="AxisList" /> (a list of Y axes),
+		/// from which to retrieve the state and create the <see cref="ScaleState" />
+		/// objects.</param>
+		public ScaleStateList( AxisList list )
+		{
+			foreach( Axis axis in list )
+				this.Add( new ScaleState( axis ) );
+		}
+
+		/// <summary>
+		/// The Copy Constructor
+		/// </summary>
+		/// <param name="rhs">The <see cref="ScaleStateList"/> object from which to copy</param>
+		public ScaleStateList( ScaleStateList rhs )
+		{
+			foreach ( ScaleState item in rhs )
+			{
+				this.Add( new ScaleState( item ) );
+			}
+		}
+				
+		/// <summary>
+		/// Deep-copy clone routine
+		/// </summary>
+		/// <returns>A new, independent copy of the <see cref="ScaleStateList"/>.</returns>
+		public object Clone()
+		{ 
+			return new ScaleStateList( this ); 
+		}
+
+		/// <summary>
+		/// Iterate through the list of <see cref="ScaleState" /> objects, comparing them
+		/// to the state of the specified <see cref="AxisList" /> <see cref="Axis" />
+		/// objects.
+		/// </summary>
+		/// <param name="list">An <see cref="AxisList" /> object specifying a list of
+		/// <see cref="Axis" /> objects to be compared with this <see cref="ScaleStateList" />.
+		/// </param>
+		/// <returns>true if a difference is found, false otherwise</returns>
+		public bool IsChanged( AxisList list )
+		{
+			int count = Math.Min( list.Count, this.Count );
+			for ( int i=0; i<count; i++ )
+				if ( this[i].IsChanged( list[i] ) )
+					return true;
+
+			return false;
+		}
+
+		/// <summary>
+		/// Indexer to access the specified <see cref="ScaleState"/> object by
+		/// its ordinal position in the list.
+		/// </summary>
+		/// <param name="index">The ordinal position (zero-based) of the
+		/// <see cref="ScaleState"/> object to be accessed.</param>
+		/// <value>A <see cref="ScaleState"/> object reference.</value>
+		public ScaleState this[ int index ]  
+		{
+			get { return (ScaleState) List[index]; }
+			set { List[index] = value; }
+		}
+
+		/// <summary>
+		/// Add a <see cref="ScaleState"/> object to the collection at the end of the list.
+		/// </summary>
+		/// <param name="state">A reference to the <see cref="ScaleState"/> object to
+		/// be added</param>
+		/// <seealso cref="IList.Add"/>
+		public void Add( ScaleState state )
+		{
+			List.Add( state );
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="list"></param>
+		public void ApplyScale( AxisList list )
+		{
+			int count = Math.Min( list.Count, this.Count );
+			for ( int i=0; i<count; i++ )
+				this[i].ApplyScale( list[i] );
+		}
+	}
+
+	/// <summary>
 	/// A class that captures all the scale range settings for a <see cref="GraphPane"/>.
 	/// </summary>
 	/// <remarks>
@@ -176,7 +272,7 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-08-23 01:52:46 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-09-24 09:13:32 $ </version>
 	public class ZoomState
 	{
 		/// <summary>
@@ -198,7 +294,8 @@ namespace ZedGraph
 		/// <summary>
 		/// <see cref="ScaleState"/> objects to store the state data from the axes.
 		/// </summary>
-		private ScaleState	xAxis, yAxis, y2Axis;
+		private ScaleState	xAxis;
+		private ScaleStateList yAxis, y2Axis;
 		/// <summary>
 		/// An enum value indicating the type of adjustment being made to the
 		/// scale range state.
@@ -236,9 +333,10 @@ namespace ZedGraph
 		/// this saved state is from a pan or zoom.</param>
 		public ZoomState( GraphPane pane, StateType type )
 		{
+
 			this.xAxis = new ScaleState( pane.XAxis );
-			this.yAxis = new ScaleState( pane.YAxis );
-			this.y2Axis = new ScaleState( pane.Y2Axis );
+			this.yAxis = new ScaleStateList( pane.YAxisList );
+			this.y2Axis = new ScaleStateList( pane.Y2AxisList );
 			this.type = type;
 		}
 
@@ -249,8 +347,8 @@ namespace ZedGraph
 		public ZoomState( ZoomState rhs )
 		{
 			this.xAxis = new ScaleState( rhs.xAxis );
-			this.yAxis = new ScaleState( rhs.yAxis );
-			this.y2Axis = new ScaleState( rhs.y2Axis );
+			this.yAxis = new ScaleStateList( rhs.yAxis );
+			this.y2Axis = new ScaleStateList( rhs.y2Axis );
 		}
 
 		/// <summary>
@@ -261,8 +359,8 @@ namespace ZedGraph
 		public void ApplyState( GraphPane pane )
 		{
 			this.xAxis.ApplyScale( pane.XAxis );
-			this.yAxis.ApplyScale( pane.YAxis );
-			this.y2Axis.ApplyScale( pane.Y2Axis );
+			this.yAxis.ApplyScale( pane.YAxisList );
+			this.y2Axis.ApplyScale( pane.Y2AxisList );
 		}
 
 		/// <summary>
@@ -274,8 +372,8 @@ namespace ZedGraph
 		public bool IsChanged( GraphPane pane )
 		{
 			return	this.xAxis.IsChanged( pane.XAxis ) ||
-					this.yAxis.IsChanged( pane.YAxis ) ||
-					this.y2Axis.IsChanged( pane.Y2Axis );
+					this.yAxis.IsChanged( pane.YAxisList ) ||
+					this.y2Axis.IsChanged( pane.Y2AxisList );
 		}
 
 	}
@@ -285,7 +383,7 @@ namespace ZedGraph
 	/// states (of scale range settings).
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-08-23 01:52:46 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-09-24 09:13:32 $ </version>
 	public class ZoomStateStack : CollectionBase
 	{
 		/// <summary>

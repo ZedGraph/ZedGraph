@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.22 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.23 $ $Date: 2005-09-24 09:13:32 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -479,7 +479,7 @@ namespace ZedGraph
 				RectangleF rect = path.GetBounds();
 				Brush brush = this.Fill.MakeBrush( rect );
 				ValueHandler valueHandler = new ValueHandler( pane, false );
-				Axis yAxis = curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis;
+				Axis yAxis = curve.GetYAxis( pane );
 
 				// Loop over each defined point							
 				for ( int i=0; i<points.Count; i++ )

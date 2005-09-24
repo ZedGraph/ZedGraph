@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="GraphPane.BarType"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-09-24 09:13:32 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -203,7 +203,7 @@ namespace ZedGraph
 		{
 			// Pass the drawing onto the bar class
 			if ( this.isVisible )
-				bar.DrawBars( g, pane, this, BaseAxis(pane), ValueAxis(pane,isY2Axis),
+				bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
 								this.GetBarWidth( pane ), pos, scaleFactor );
 		}
 		

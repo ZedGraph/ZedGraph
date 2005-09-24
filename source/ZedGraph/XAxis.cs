@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-08-03 02:53:52 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-09-24 09:13:32 $ </version>
 	[Serializable]
 	public class XAxis : Axis, ICloneable, ISerializable
 	{
@@ -159,6 +159,28 @@ namespace ZedGraph
 			g.TranslateTransform( pane.AxisRect.Left, pane.AxisRect.Bottom );
 		}
 
+		/// <summary>
+		/// Determines if this <see cref="Axis" /> object is a "primary" one.
+		/// </summary>
+		/// <remarks>
+		/// The primary axes are the <see cref="XAxis" /> (always), the first
+		/// <see cref="YAxis" /> in the <see cref="GraphPane.YAxisList" /> 
+		/// (<see cref="CurveItem.YAxisIndex" /> = 0),  and the first
+		/// <see cref="Y2Axis" /> in the <see cref="GraphPane.Y2AxisList" /> 
+		/// (<see cref="CurveItem.YAxisIndex" /> = 0).  Note that
+		/// <see cref="GraphPane.YAxis" /> and <see cref="GraphPane.Y2Axis" />
+		/// always reference the primary axes.
+		/// </remarks>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <returns>true for a primary <see cref="Axis" /> (for the <see cref="XAxis" />,
+		/// this is always true), false otherwise</returns>
+		override internal bool IsPrimary( GraphPane pane )
+		{
+			return this == pane.XAxis;
+		}
 
 		/// <summary>
 		/// Calculate the "shift" size, in pixels, in order to shift the axis from its default

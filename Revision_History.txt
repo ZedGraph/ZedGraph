@@ -1,5 +1,11 @@
 ZedGraph Class Library Revision History
 
+22-Sep-2005 (by Champion)
+  Add support for multiple Y and Y2 axes (major mods throughout)
+  Add Axis.IsAllTics property
+  Fix FindNearestPoint bug for text type axes
+  Add ZedGraphControl.IsShowCursorValues
+  
 9-Sep-2005 (by Champion) v4.2.3
   Fix issue with CalcDateStepSize() for max label calcs where the step number is only a target, not a max
 

@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.24 $ $Date: 2005-08-22 05:21:07 $ </version>
+	/// <version> $Revision: 3.25 $ $Date: 2005-09-24 09:13:32 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -60,6 +60,14 @@ namespace ZedGraph
 		/// Use the public property <see cref="IsY2Axis"/> to access this value.
 		/// </summary>
 		protected bool		isY2Axis;
+
+		/// <summary>
+		/// protected field that stores the index number of the Y Axis to which this
+		/// <see cref="CurveItem" /> belongs.  Use the public property <see cref="YAxisIndex" />
+		/// to access this value.
+		/// </summary>
+		protected int		yAxisIndex;
+
 		/// <summary>
 		/// protected field that stores the boolean value that determines whether this
 		/// <see cref="CurveItem"/> is visible on the graph.
@@ -167,6 +175,7 @@ namespace ZedGraph
 			this.isLegendLabelVisible = true;
 			this.isOverrideOrdinal = false;
 			this.Tag = null;
+			this.yAxisIndex = 0;
 		}
 			
 		/// <summary>
@@ -196,6 +205,7 @@ namespace ZedGraph
 			isVisible = rhs.IsVisible;
 			isLegendLabelVisible = rhs.IsLegendLabelVisible;
 			isOverrideOrdinal = rhs.isOverrideOrdinal;
+			yAxisIndex = rhs.yAxisIndex;
 
 			if ( rhs.fontSpec != null )
 				this.fontSpec = (FontSpec) rhs.fontSpec.Clone();
@@ -224,7 +234,8 @@ namespace ZedGraph
 		/// </summary>
 		// Increased schema to 2 when IsOverrideOrdinal was added.
 		// Increased schema to 3 when FontSpec was added.
-		public const int schema = 3;
+		// Increased schema to 4 when YAxisIndex was added.
+		public const int schema = 4;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -253,6 +264,9 @@ namespace ZedGraph
 			if ( sch >= 3 )
 				fontSpec = (FontSpec) info.GetValue( "fontSpec", typeof(FontSpec) );
 
+			if ( sch >= 4 )
+				yAxisIndex = info.GetInt32( "yAxisIndex" );
+
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -271,6 +285,7 @@ namespace ZedGraph
 			info.AddValue( "points", points );
 			info.AddValue( "Tag", Tag );
 			info.AddValue( "fontSpec", fontSpec );
+			info.AddValue( "yAxisIndex", yAxisIndex );
 		}
 	#endregion
 	
@@ -388,12 +403,17 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Determines which Y axis this <see cref="CurveItem"/>
-		/// is assigned to.  The
+		/// Gets or sets a value that determines which Y axis this <see cref="CurveItem"/>
+		/// is assigned to.
+		/// </summary>
+		/// <remarks>
+		/// The
 		/// <see cref="ZedGraph.YAxis"/> is on the left side of the graph and the
 		/// <see cref="ZedGraph.Y2Axis"/> is on the right side.  Assignment to an axis
-		/// determines the scale that is used to draw the curve on the graph.
-		/// </summary>
+		/// determines the scale that is used to draw the curve on the graph.  Note that
+		/// this value is used in combination with the <see cref="YAxisIndex" /> to determine
+		/// which of the Y Axes (if there are multiples) this curve belongs to.
+		/// </remarks>
 		/// <value>true to assign the curve to the <see cref="ZedGraph.Y2Axis"/>,
 		/// false to assign the curve to the <see cref="ZedGraph.YAxis"/></value>
 		public bool IsY2Axis
@@ -402,6 +422,21 @@ namespace ZedGraph
 			set { isY2Axis = value; }
 		}
 		
+		/// <summary>
+		/// Gets or sets the index number of the Y Axis to which this
+		/// <see cref="CurveItem" /> belongs.
+		/// </summary>
+		/// <remarks>
+		/// This value is essentially an index number into the <see cref="GraphPane.YAxisList" />
+		/// or <see cref="GraphPane.Y2AxisList" />, depending on the setting of
+		/// <see cref="IsY2Axis" />.
+		/// </remarks>
+		public int YAxisIndex
+		{
+			get { return yAxisIndex; }
+			set { yAxisIndex = value; }
+		}
+
 		/// <summary>
 		/// Determines whether this <see cref="CurveItem"/>
 		/// is a <see cref="BarItem"/>.  This does not include <see cref="HiLowBarItem"/>'s
@@ -577,6 +612,51 @@ namespace ZedGraph
 */
 
 		/// <summary>
+		/// Get the Y Axis instance (either <see cref="YAxis" /> or <see cref="Y2Axis" />) to
+		/// which this <see cref="CurveItem" /> belongs.
+		/// </summary>
+		/// <remarks>
+		/// This method safely retrieves a Y Axis instance from either the <see cref="GraphPane.YAxisList" />
+		/// or the <see cref="GraphPane.Y2AxisList" /> using the values of <see cref="YAxisIndex" /> and
+		/// <see cref="IsY2Axis" />.  If the value of <see cref="YAxisIndex" /> is out of bounds, the
+		/// default <see cref="YAxis" /> or <see cref="Y2Axis" /> is used.
+		/// </remarks>
+		/// <param name="pane">The <see cref="GraphPane" /> object to which this curve belongs.</param>
+		/// <returns>Either a <see cref="YAxis" /> or <see cref="Y2Axis" /> to which this
+		/// <see cref="CurveItem" /> belongs.
+		/// </returns>
+		public Axis GetYAxis( GraphPane pane )
+		{
+			if ( this.isY2Axis )
+				return pane.Y2AxisList[ yAxisIndex ];
+			else
+				return pane.YAxisList[ yAxisIndex ];
+		}
+
+		/// <summary>
+		/// Get the index of the Y Axis in the <see cref="YAxis" /> or <see cref="Y2Axis" /> list to
+		/// which this <see cref="CurveItem" /> belongs.
+		/// </summary>
+		/// <remarks>
+		/// This method safely retrieves a Y Axis index into either the <see cref="GraphPane.YAxisList" />
+		/// or the <see cref="GraphPane.Y2AxisList" /> using the values of <see cref="YAxisIndex" /> and
+		/// <see cref="IsY2Axis" />.  If the value of <see cref="YAxisIndex" /> is out of bounds, the
+		/// default <see cref="YAxis" /> or <see cref="Y2Axis" /> is used, which is index zero.
+		/// </remarks>
+		/// <param name="pane">The <see cref="GraphPane" /> object to which this curve belongs.</param>
+		/// <returns>An integer value indicating which index position in the list applies to this
+		/// <see cref="CurveItem" />
+		/// </returns>
+		public int GetYAxisIndex( GraphPane pane )
+		{
+			if ( yAxisIndex >= 0 &&
+					yAxisIndex < ( this.isY2Axis ? pane.Y2AxisList.Count : pane.YAxisList.Count ) )
+				return yAxisIndex;
+			else
+				return 0;
+		}
+
+		/// <summary>
 		/// Loads some pseudo unique colors/symbols into this CurveItem.  This
 		/// is the same as <c>MakeUnique(ColorSymbolRotator.StaticInstance)</c>.
 		/// <seealso cref="ColorSymbolRotator.StaticInstance"/>
@@ -619,34 +699,40 @@ namespace ZedGraph
 		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.  All data after
 		/// the first non-zero Y value are included.
 		/// </param>
+		/// <param name="isBoundedRanges">
+		/// Determines if the auto-scaled axis ranges will subset the
+		/// data points based on any manually set scale range values.
+		/// </param>
 		/// <param name="pane">
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <param name="xLBound">The lower bound of allowable data for the X values.  This
-		/// value allows you to subset the data values.  If the X range is bounded, then
-		/// the resulting range for Y will reflect the Y values for the points within the X
-		/// bounds.  Use <see cref="System.Double.MinValue"/> to have no bound.</param>
-		/// <param name="xUBound">The upper bound of allowable data for the X values.  This
-		/// value allows you to subset the data values.  If the X range is bounded, then
-		/// the resulting range for Y will reflect the Y values for the points within the X
-		/// bounds.  Use <see cref="System.Double.MaxValue"/> to have no bound.</param>
-		/// <param name="yLBound">The lower bound of allowable data for the Y values.  This
-		/// value allows you to subset the data values.  If the Y range is bounded, then
-		/// the resulting range for X will reflect the X values for the points within the Y
-		/// bounds.  Use <see cref="System.Double.MinValue"/> to have no bound.</param>
-		/// <param name="yUBound">The upper bound of allowable data for the Y values.  This
-		/// value allows you to subset the data values.  If the Y range is bounded, then
-		/// the resulting range for X will reflect the X values for the points within the Y
-		/// bounds.  Use <see cref="System.Double.MaxValue"/> to have no bound.</param>
 		/// <seealso cref="GraphPane.IsBoundedRanges"/>
-		virtual public void GetRange( 	ref double xMin, ref double xMax,
-										ref double yMin, ref double yMax,
+		virtual public void GetRange( 	out double xMin, out double xMax,
+										out double yMin, out double yMax,
 										bool ignoreInitial,
-										double xLBound, double xUBound,
-										double yLBound, double yUBound,
+										bool isBoundedRanges,
 										GraphPane pane )
 		{
+			// The lower and upper bounds of allowable data for the X values.  These
+			// values allow you to subset the data values.  If the X range is bounded, then
+			// the resulting range for Y will reflect the Y values for the points within the X
+			// bounds.
+			double xLBound = double.MinValue;
+			double xUBound = double.MaxValue;
+			double yLBound = double.MinValue;
+			double yUBound = double.MaxValue;
+
+			if ( isBoundedRanges )
+			{
+				Axis yAxis = this.GetYAxis( pane );
+				xLBound = pane.XAxis.lBound;
+				xUBound = pane.XAxis.uBound;
+				yLBound = yAxis.lBound;
+				yUBound = yAxis.uBound;
+			}
+
+
 			bool isZIncluded = this.IsZIncluded( pane );
 			bool isXIndependent = this.IsXIndependent( pane );
 
@@ -713,6 +799,10 @@ namespace ZedGraph
 		/// This property is determined by the value of <see cref="GraphPane.BarBase"/> for
 		/// <see cref="BarItem"/>, <see cref="ErrorBarItem"/>, and <see cref="HiLowBarItem"/>
 		/// types.  It is always the X axis for regular <see cref="LineItem"/> types.
+		/// Note that the <see cref="GraphPane.BarBase" /> setting can override the
+		/// <see cref="IsY2Axis" /> and <see cref="YAxisIndex" /> settings for bar types
+		/// (this is because all the bars that are clustered together must share the
+		/// same base axis).
 		/// </remarks>
 		/// <seealso cref="BarBase"/>
 		/// <seealso cref="ValueAxis"/>
@@ -722,10 +812,6 @@ namespace ZedGraph
 
 			if ( this is BarItem || this is ErrorBarItem || this is HiLowBarItem )
 				barBase = pane.BarBase;
-//			else if ( this is ErrorBarItem )
-//				barBase = ((ErrorBarItem)this).BarBase;
-//			else if ( this is HiLowBarItem )
-//				barBase = ((HiLowBarItem)this).BarBase;
 			else
 				barBase = BarBase.X;
 
@@ -746,25 +832,22 @@ namespace ZedGraph
 		/// </remarks>
 		/// <seealso cref="BarBase"/>
 		/// <seealso cref="BaseAxis"/>
-		public virtual Axis ValueAxis( GraphPane pane, bool isY2Axis )
+		public virtual Axis ValueAxis( GraphPane pane )
 		{
 			BarBase barBase;
 
 			if ( this is BarItem || this is ErrorBarItem || this is HiLowBarItem )
 				barBase = pane.BarBase;
-//			else if ( this is ErrorBarItem )
-//				barBase = ((ErrorBarItem)this).BarBase;
-//			else if ( this is HiLowBarItem )
-//				barBase = ((HiLowBarItem)this).BarBase;
 			else
 				barBase = BarBase.X;
 
 			if ( barBase == BarBase.X )
 			{
-				if ( isY2Axis )
-					return pane.Y2Axis;
-				else
-					return pane.YAxis;
+				return GetYAxis( pane );
+				//if ( isY2Axis )
+				//	return pane.Y2Axis;
+				//else
+				//	return pane.YAxis;
 			}
 			else
 				return pane.XAxis;

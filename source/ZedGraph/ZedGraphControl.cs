@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.34 $ $Date: 2005-08-23 01:52:46 $ </version>
+	/// <version> $Revision: 3.35 $ $Date: 2005-09-24 09:13:32 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -61,11 +61,17 @@ namespace ZedGraph
 		private MasterPane masterPane;
 
 		/// <summary>
-		/// private field that determines whether or not tooltips will be display
+		/// private field that determines whether or not tooltips will be displayed
 		/// when the mouse hovers over data values.  Use the public property
 		/// <see cref="IsShowPointValues"/> to access this value.
 		/// </summary>
 		private bool isShowPointValues;
+		/// <summary>
+		/// private field that determines whether or not tooltips will be displayed
+		/// showing the scale values while the mouse is located within the AxisRect.
+		/// Use the public property <see cref="IsShowCursorValues"/> to access this value.
+		/// </summary>
+		private bool isShowCursorValues;
 		/// <summary>
 		/// private field that determines the format for displaying tooltip values.
 		/// This format is passed to <see cref="PointPair.ToString(string)"/>.
@@ -96,11 +102,11 @@ namespace ZedGraph
 		/// <summary>
 		/// Internal variable that indicates the control is currently being zoomed. 
 		/// </summary>
-		private bool		isZooming = false;
+		private bool isZooming = false;
 		/// <summary>
 		/// Internal variable that indicates the control is currently being panned.
 		/// </summary>
-		private bool		isPanning = false;
+		private bool isPanning = false;
 		
 		/// <summary>
 		/// Private value that determines whether or not zooming is allowed for the control.  Use the
@@ -157,15 +163,21 @@ namespace ZedGraph
 
 		private double		zoomStepFraction = 0.1;
 
-		private double		scrollMinX = 0;
-		private double		scrollMaxX = 0;
-		private double		scrollMinY = 0;
-		private double		scrollMaxY = 0;
-		private double		scrollMinY2 = 0;
-		private double		scrollMaxY2 = 0;
+		private ScrollRange xScrollRange;
+		//private double		scrollMinX = 0;
+		//private double		scrollMaxX = 0;
+
+		private ScrollRangeList yScrollRangeList;
+		private ScrollRangeList y2ScrollRangeList;
+
+		//private double		scrollMinY = 0;
+		//private double		scrollMaxY = 0;
+		//private double		scrollMinY2 = 0;
+		//private double		scrollMaxY2 = 0;
+
 		private bool		isShowHScrollBar = false;
 		private bool		isShowVScrollBar = false;
-		private bool		isScrollY2 = false;
+		//private bool		isScrollY2 = false;
 		private bool		isAutoScrollRange = false;
 
 		private System.Windows.Forms.HScrollBar hScrollBar1;
@@ -181,7 +193,6 @@ namespace ZedGraph
 		// that we have the point at which the context menu was first right-clicked
 		internal Point		menuClickPt;
 
-		private CultureInfo cultureInfo;
 		private ResourceManager resourceManager;
 
 	#endregion
@@ -357,7 +368,6 @@ namespace ZedGraph
 			SetStyle( ControlStyles.Opaque, false );
 			SetStyle( ControlStyles.SupportsTransparentBackColor, true );
 
-			this.cultureInfo = CultureInfo.CurrentCulture;
 			resourceManager = new ResourceManager( "ZedGraph.ZedGraph.ZedGraphLocale", Assembly.GetExecutingAssembly() );
 
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
@@ -365,9 +375,9 @@ namespace ZedGraph
 			masterPane.MarginAll = 0;
 			masterPane.IsShowTitle = false;
 
-			string titleStr = resourceManager.GetString( "title_def", cultureInfo );
-			string xStr = resourceManager.GetString( "x_title_def", cultureInfo );
-			string yStr = resourceManager.GetString( "y_title_def", cultureInfo );
+			string titleStr = resourceManager.GetString( "title_def" );
+			string xStr = resourceManager.GetString( "x_title_def" );
+			string yStr = resourceManager.GetString( "y_title_def" );
 
 			GraphPane graphPane = new GraphPane( rect, "Title", "X Axis", "Y Axis" );
 			//GraphPane graphPane = new GraphPane( rect, titleStr, xStr, yStr );
@@ -377,9 +387,17 @@ namespace ZedGraph
 			masterPane.Add( graphPane );
 
 			this.isShowPointValues = false;
+			this.isShowCursorValues = false;
 			this.isShowContextMenu = true;
 			this.pointValueFormat = PointPair.DefaultFormat;
 			this.pointDateFormat = XDate.DefaultFormatStr;
+
+			this.xScrollRange = new ScrollRange( true );
+			this.yScrollRangeList = new ScrollRangeList();
+			this.y2ScrollRangeList = new ScrollRangeList();
+
+			this.yScrollRangeList.Add( new ScrollRange( true ) );
+			this.y2ScrollRangeList.Add( new ScrollRange( false ) );
 		}
 
 		/// <summary>
@@ -443,15 +461,34 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Gets or sets a value that determines whether or not tooltips will be display
-		/// when the mouse hovers over data values.  The displayed values are taken
-		/// from <see cref="PointPair.Tag"/> if it is a <see cref="System.String"/> type,
-		/// or <see cref="PointPair.ToString()"/> otherwise.
+		/// Gets or sets a value that determines whether or not tooltips will be displayed
+		/// when the mouse hovers over data values.
 		/// </summary>
+		/// <remarks>The displayed values are taken from <see cref="PointPair.Tag"/>
+		/// if it is a <see cref="System.String"/> type, or <see cref="PointPair.ToString()"/>
+		/// otherwise (using the <see cref="PointValueFormat" /> as a format string).
+		/// Additionally, the user can custom format the values using the
+		/// <see cref="PointValueEvent" /> event.  Note that <see cref="IsShowPointValues" />
+		/// may be overridden by <see cref="IsShowCursorValues" />.
+		/// </remarks>
 		public bool IsShowPointValues
 		{
 			get { return isShowPointValues; }
 			set { isShowPointValues = value; }
+		}
+		
+		/// <summary>
+		/// Gets or sets a value that determines whether or not tooltips will be displayed
+		/// showing the current scale values when the mouse is within the <see cref="ZedGraph.GraphPane.AxisRect" />.
+		/// </summary>
+		/// <remarks>The displayed values are taken from the current mouse position, and formatted
+		/// according to <see cref="PointValueFormat" /> and/or <see cref="PointDateFormat" />.  If this
+		/// value is set to true, it overrides the <see cref="IsShowPointValues" /> setting.
+		/// </remarks>
+		public bool IsShowCursorValues
+		{
+			get { return isShowCursorValues; }
+			set { isShowCursorValues = value; }
 		}
 		
 		/// <summary>
@@ -707,16 +744,57 @@ namespace ZedGraph
         /// the status of the Y axis.  This can cause the Y2 axis to "jump" when first scrolled if
         /// the <see cref="ScrollMinY2" /> and <see cref="ScrollMaxY2" /> values are not set to the
         /// same proportions as <see cref="ScrollMinY" /> and <see cref="ScrollMaxY" /> with respect
-        /// to the actual <see cref="Axis.Min"/> and <see cref="Axis.Max" />.
+        /// to the actual <see cref="Axis.Min"/> and <see cref="Axis.Max" />.  Also note that
+        /// this property is actually just an alias to the <see cref="ScrollRange.IsScrollable" />
+        /// property of the first element of <see cref="YScrollRangeList" />.
         /// </remarks>
         /// <seealso cref="IsShowVScrollBar"/>
         /// <seealso cref="ScrollMinY2"/>
         /// <seealso cref="ScrollMaxY2"/>
-        public bool IsScrollY2
+		/// <seealso cref="YScrollRangeList" />
+		/// <seealso cref="Y2ScrollRangeList" />
+		public bool IsScrollY2
         {
-            get { return isScrollY2; }
-            set { isScrollY2 = value; }
+            get { return Y2ScrollRangeList[0].IsScrollable; }
+            set
+			{
+				ScrollRange tmp = y2ScrollRangeList[0];
+				tmp.IsScrollable = value;
+				y2ScrollRangeList[0] = tmp;
+			}
         }
+
+		/// <summary>
+		/// Access the <see cref="ScrollRangeList" /> for the Y axes.
+		/// </summary>
+		/// <remarks>
+		/// This list maintains the user scale ranges for the scroll bars for each axis
+		/// in the <see cref="GraphPane.YAxisList" />.  Each ordinal location in
+		/// <see cref="YScrollRangeList" /> corresponds to an equivalent ordinal location
+		/// in <see cref="GraphPane.YAxisList" />.
+		/// </remarks>
+		/// <seealso cref="ScrollMinY" />
+		/// <seealso cref="ScrollMaxY" />
+		public ScrollRangeList YScrollRangeList
+		{
+			get { return yScrollRangeList; }
+		}
+
+		/// <summary>
+		/// Access the <see cref="ScrollRangeList" /> for the Y2 axes.
+		/// </summary>
+		/// <remarks>
+		/// This list maintains the user scale ranges for the scroll bars for each axis
+		/// in the <see cref="GraphPane.Y2AxisList" />.  Each ordinal location in
+		/// <see cref="Y2ScrollRangeList" /> corresponds to an equivalent ordinal location
+		/// in <see cref="GraphPane.Y2AxisList" />.
+		/// </remarks>
+		/// <seealso cref="ScrollMinY2" />
+		/// <seealso cref="ScrollMaxY2" />
+		public ScrollRangeList Y2ScrollRangeList
+		{
+			get { return y2ScrollRangeList; }
+		}
 
 		/// <summary>
 		/// The minimum value for the X axis scroll range.
@@ -731,8 +809,8 @@ namespace ZedGraph
 		/// <value>A double value indicating the minimum axis value</value>
 		public double ScrollMinX
 		{
-			get { return scrollMinX; }
-			set { scrollMinX = value; }
+			get { return xScrollRange.Min; }
+			set { xScrollRange.Min = value; }
 		}
 		/// <summary>
 		/// The maximum value for the X axis scroll range.
@@ -747,8 +825,8 @@ namespace ZedGraph
 		/// <value>A double value indicating the maximum axis value</value>
 		public double ScrollMaxX
 		{
-			get { return scrollMaxX; }
-			set { scrollMaxX = value; }
+			get { return xScrollRange.Max; }
+			set { xScrollRange.Max = value; }
 		}
 		/// <summary>
 		/// The minimum value for the Y axis scroll range.
@@ -758,13 +836,21 @@ namespace ZedGraph
 		/// <see cref="Axis.Min"/> value to be set to <see cref="ScrollMinY"/>.  Note that this
 		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableVPan"/>)
 		/// is not affected by this value.  Note that this value can be overridden by
-		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.
+		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.  Also note that
+		/// this property is actually just an alias to the <see cref="ScrollRange.Min" />
+		/// property of the first element of <see cref="YScrollRangeList" />.
 		/// </remarks>
 		/// <value>A double value indicating the minimum axis value</value>
+		/// <seealso cref="YScrollRangeList" />
 		public double ScrollMinY
 		{
-			get { return scrollMinY; }
-			set { scrollMinY = value; }
+			get { return yScrollRangeList[0].Min; }
+			set
+			{
+				ScrollRange tmp = yScrollRangeList[0];
+				tmp.Min = value;
+				yScrollRangeList[0] = tmp;
+			}
 		}
 		/// <summary>
 		/// The maximum value for the Y axis scroll range.
@@ -774,13 +860,21 @@ namespace ZedGraph
 		/// <see cref="Axis.Max"/> value to be set to <see cref="ScrollMaxY"/>.  Note that this
 		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableVPan"/>)
 		/// is not affected by this value.  Note that this value can be overridden by
-		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.
+		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.  Also note that
+		/// this property is actually just an alias to the <see cref="ScrollRange.Max" />
+		/// property of the first element of <see cref="YScrollRangeList" />.
 		/// </remarks>
 		/// <value>A double value indicating the maximum axis value</value>
+		/// <seealso cref="YScrollRangeList" />
 		public double ScrollMaxY
 		{
-			get { return scrollMaxY; }
-			set { scrollMaxY = value; }
+			get { return yScrollRangeList[0].Max; }
+			set
+			{
+				ScrollRange tmp = yScrollRangeList[0];
+				tmp.Max = value;
+				yScrollRangeList[0] = tmp;
+			}
 		}
 		/// <summary>
 		/// The minimum value for the Y2 axis scroll range.
@@ -790,13 +884,21 @@ namespace ZedGraph
 		/// <see cref="Axis.Min"/> value to be set to <see cref="ScrollMinY2"/>.  Note that this
 		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableVPan"/>)
 		/// is not affected by this value.  Note that this value can be overridden by
-		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.
+		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.  Also note that
+		/// this property is actually just an alias to the <see cref="ScrollRange.Min" />
+		/// property of the first element of <see cref="Y2ScrollRangeList" />.
 		/// </remarks>
 		/// <value>A double value indicating the minimum axis value</value>
+		/// <seealso cref="Y2ScrollRangeList" />
 		public double ScrollMinY2
 		{
-			get { return scrollMinY2; }
-			set { scrollMinY2 = value; }
+			get { return y2ScrollRangeList[0].Min; }
+			set
+			{
+				ScrollRange tmp = y2ScrollRangeList[0];
+				tmp.Min = value;
+				y2ScrollRangeList[0] = tmp;
+			}
 		}
 		/// <summary>
 		/// The maximum value for the Y2 axis scroll range.
@@ -806,13 +908,21 @@ namespace ZedGraph
 		/// <see cref="Axis.Max"/> value to be set to <see cref="ScrollMaxY2"/>.  Note that this
 		/// value applies only to the scroll bar settings.  Axis panning (see <see cref="IsEnableVPan"/>)
 		/// is not affected by this value.  Note that this value can be overridden by
-		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.
+		/// <see cref="IsAutoScrollRange" /> and <see cref="SetScrollRangeFromData" />.  Also note that
+		/// this property is actually just an alias to the <see cref="ScrollRange.Max" />
+		/// property of the first element of <see cref="Y2ScrollRangeList" />.
 		/// </remarks>
 		/// <value>A double value indicating the maximum axis value</value>
+		/// <seealso cref="Y2ScrollRangeList" />
 		public double ScrollMaxY2
 		{
-			get { return scrollMaxY2; }
-			set { scrollMaxY2 = value; }
+			get { return y2ScrollRangeList[0].Max; }
+			set
+			{
+				ScrollRange tmp = y2ScrollRangeList[0];
+				tmp.Max = value;
+				y2ScrollRangeList[0] = tmp;
+			}
 		}
 		
 
@@ -890,21 +1000,6 @@ namespace ZedGraph
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets the <see cref="CultureInfo" /> instance to be used for this
-		/// <see cref="ZedGraphControl" />.
-		/// </summary>
-		/// <remarks>
-		/// Use this value to used a localized version of the context menu strings.  The
-		/// default CultureInfo is always the default of installation on which the
-		/// ZedGraphControl is being used.
-		/// </remarks>
-		public CultureInfo CultureInfo
-		{
-			get { return cultureInfo; }
-			set { cultureInfo = value; }
-		}
-
 	#endregion
 
 	#region Methods
@@ -923,8 +1018,9 @@ namespace ZedGraph
 				if ( BeenDisposed )
 					return;
 
-				SetScroll( hScrollBar1, this.GraphPane.XAxis, scrollMinX, scrollMaxX );
-				SetScroll( vScrollBar1, this.GraphPane.YAxis, scrollMinY, scrollMaxY );
+				SetScroll( hScrollBar1, this.GraphPane.XAxis, xScrollRange.Min, xScrollRange.Max );
+				SetScroll( vScrollBar1, this.GraphPane.YAxis, yScrollRangeList[0].Min,
+							yScrollRangeList[0].Max );
 
 				base.OnPaint( e );
 
@@ -1100,20 +1196,26 @@ namespace ZedGraph
 					pane.zoomStack.Push( pane, ZoomState.StateType.Zoom );
 
 					PointF centerPoint = new PointF(e.X, e.Y);
-					double x, y, y2;
+					double x;
+					double[] y;
+					double[] y2;
+
 					pane.ReverseTransform( centerPoint, out x, out y, out y2 );
 
 					ZoomScale( pane.XAxis, e.Delta, x );
-					ZoomScale( pane.YAxis, e.Delta, y );
-					ZoomScale( pane.Y2Axis, e.Delta, y2 );
+					for ( int i=0; i<pane.YAxisList.Count; i++ )
+						ZoomScale( pane.YAxisList[i], e.Delta, y[i] );
+					for ( int i=0; i<pane.Y2AxisList.Count; i++ )
+						ZoomScale( pane.Y2AxisList[i], e.Delta, y2[i] );
 
 					Graphics g = this.CreateGraphics();
 					pane.AxisChange( g );
 					g.Dispose();
 
 
-					this.SetScroll( this.hScrollBar1, pane.XAxis, scrollMinX, scrollMaxX );
-					this.SetScroll( this.vScrollBar1, pane.YAxis, scrollMinY, scrollMaxY );
+					this.SetScroll( this.hScrollBar1, pane.XAxis, xScrollRange.Min, xScrollRange.Max );
+					this.SetScroll( this.vScrollBar1, pane.YAxis, yScrollRangeList[0].Min,
+										yScrollRangeList[0].Max );
 
 					Refresh();
 				}
@@ -1136,7 +1238,8 @@ namespace ZedGraph
 						ControlPaint.DrawReversibleFrame( this.dragRect,
 							this.BackColor, FrameStyle.Dashed );
 
-						double x1, x2, y1, y2, yy1, yy2;
+						double x1, x2;
+						double[] y1, y2, yy1, yy2;
 						PointF endPoint = new PointF(e.X, e.Y); // ((Control)sender).PointToScreen( new Point(e.X, e.Y) );
 						PointF startPoint =((Control)sender).PointToClient( this.dragRect.Location );
 
@@ -1147,12 +1250,20 @@ namespace ZedGraph
 
 						this.dragPane.XAxis.Min = Math.Min( x1, x2 );
 						this.dragPane.XAxis.Max = Math.Max( x1, x2 );
-						this.dragPane.YAxis.Min = Math.Min( y1, y2 );
-						this.dragPane.YAxis.Max = Math.Max( y1, y2 );
-						this.dragPane.Y2Axis.Min = Math.Min( yy1, yy2 );
-						this.dragPane.Y2Axis.Max = Math.Max( yy1, yy2 );
-						this.SetScroll( this.hScrollBar1, dragPane.XAxis, scrollMinX, scrollMaxX );
-						this.SetScroll( this.vScrollBar1, dragPane.YAxis, scrollMinY, scrollMaxY );
+						for ( int i=0; i<y1.Length; i++ )
+						{
+							this.dragPane.YAxisList[i].Min = Math.Min( y1[i], y2[i] );
+							this.dragPane.YAxisList[i].Max = Math.Max( y1[i], y2[i] );
+						}
+						for ( int i=0; i<yy1.Length; i++ )
+						{
+							this.dragPane.Y2AxisList[i].Min = Math.Min( yy1[i], yy2[i] );
+							this.dragPane.Y2AxisList[i].Max = Math.Max( yy1[i], yy2[i] );
+						}
+
+						this.SetScroll( this.hScrollBar1, dragPane.XAxis, xScrollRange.Min, xScrollRange.Max );
+						this.SetScroll( this.vScrollBar1, dragPane.YAxis, yScrollRangeList[0].Min,
+											yScrollRangeList[0].Max );
 
 						// Provide Callback to notify the user of zoom events
 						if ( this.ZoomEvent != null )
@@ -1253,8 +1364,9 @@ namespace ZedGraph
 			}
 			else if ( this.isPanning )
 			{
-				double x1, x2, y1, y2, yy1, yy2;
-				PointF endPoint = new PointF(e.X, e.Y);
+				double x1, x2;
+				double[] y1, y2, yy1, yy2;
+				PointF endPoint = mousePt;
 				PointF startPoint =((Control)sender).PointToClient( this.dragRect.Location );
 
 				this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
@@ -1263,19 +1375,39 @@ namespace ZedGraph
 				if ( this.isEnableHPan )
 				{
 					PanScale( this.dragPane.XAxis, x1, x2 );
-					this.SetScroll( this.hScrollBar1, dragPane.XAxis, scrollMinX, scrollMaxX );
+					this.SetScroll( this.hScrollBar1, dragPane.XAxis, xScrollRange.Min, xScrollRange.Max );
 				}
 				if ( this.isEnableVPan )
 				{
-					PanScale( this.dragPane.YAxis, y1, y2 );
-					PanScale( this.dragPane.Y2Axis, yy1, yy2 );
-					this.SetScroll( this.vScrollBar1, dragPane.YAxis, scrollMinY, scrollMaxY );
+					for ( int i=0; i<y1.Length; i++ )
+						PanScale( this.dragPane.YAxisList[i], y1[i], y2[i] );
+					for ( int i=0; i<yy1.Length; i++ )
+						PanScale( this.dragPane.Y2AxisList[i], yy1[i], yy2[i] );
+					this.SetScroll( this.vScrollBar1, dragPane.YAxis, yScrollRangeList[0].Min,
+						yScrollRangeList[0].Max );
 				}
 
 				Refresh();
 				
 				this.dragRect.Location = ((Control)sender).PointToScreen( mousePt );
 				
+			}
+			else if ( isShowCursorValues )
+			{
+				GraphPane pane = masterPane.FindPane( mousePt );
+				if ( pane != null && pane.AxisRect.Contains( mousePt ) )
+				{
+					double x, y, y2;
+					pane.ReverseTransform( mousePt, out x, out y, out y2 );
+					string xStr = MakeValueLabel( pane.XAxis, x, -1 );
+					string yStr = MakeValueLabel( pane.YAxis, y, -1 );
+					string y2Str = MakeValueLabel( pane.Y2Axis, y2, -1 );
+
+					this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + ", " + y2Str + " )" );
+					this.pointToolTip.Active = true;
+				}
+				else
+					this.pointToolTip.Active = false;
 			}
 			else if ( isShowPointValues )
 			{
@@ -1285,7 +1417,7 @@ namespace ZedGraph
 	 
 				Graphics g = this.CreateGraphics();
 				
-				if ( masterPane.FindNearestPaneObject( new PointF( e.X, e.Y ),
+				if ( masterPane.FindNearestPaneObject( mousePt,
 					g, out pane, out nearestObj, out iPt ) )
 				{
 					if ( nearestObj is CurveItem && iPt >= 0 )
@@ -1321,7 +1453,7 @@ namespace ZedGraph
 								{
 									string xStr = MakeValueLabel( pane.XAxis, pt.X, iPt );
 									string yStr = MakeValueLabel(
-										curve.IsY2Axis ? (Axis) pane.Y2Axis : (Axis) pane.YAxis,
+										curve.GetYAxis( pane ),
 										pt.Y, iPt );
 
 									this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
@@ -1410,21 +1542,21 @@ namespace ZedGraph
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
-				string menuStr = resourceManager.GetString( "copy", cultureInfo );
+				string menuStr = resourceManager.GetString( "copy" );
 				menuItem.Text = menuStr;
 				this.contextMenu.MenuItems.Add( menuItem );
 				menuItem.Click += new System.EventHandler( this.MenuClick_Copy );
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
-				menuStr = resourceManager.GetString( "save_as", cultureInfo );
+				menuStr = resourceManager.GetString( "save_as" );
 				menuItem.Text = menuStr;
 				this.contextMenu.MenuItems.Add( menuItem );
 				menuItem.Click += new System.EventHandler( this.MenuClick_SaveAs );
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
-				menuStr = resourceManager.GetString( "show_val", cultureInfo );
+				menuStr = resourceManager.GetString( "show_val" );
 				menuItem.Text = menuStr;
 				menuItem.Checked = this.IsShowPointValues;
 				this.contextMenu.MenuItems.Add( menuItem );
@@ -1435,9 +1567,9 @@ namespace ZedGraph
 
 				if ( pane == null || pane.zoomStack.IsEmpty ||
 							pane.zoomStack.Top.Type == ZoomState.StateType.Zoom )
-					menuStr = resourceManager.GetString( "unzoom", cultureInfo );
+					menuStr = resourceManager.GetString( "unzoom" );
 				else
-					menuStr = resourceManager.GetString( "unpan", cultureInfo );
+					menuStr = resourceManager.GetString( "unpan" );
 				//menuItem.Text = "Un-" + ( ( pane == null || pane.zoomStack.IsEmpty ) ?
 				//	"Zoom" : pane.zoomStack.Top.TypeString );
 				menuItem.Text = menuStr;
@@ -1448,7 +1580,7 @@ namespace ZedGraph
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
-				menuStr = resourceManager.GetString( "undo_all", cultureInfo );
+				menuStr = resourceManager.GetString( "undo_all" );
 				menuItem.Text = menuStr;
 				this.contextMenu.MenuItems.Add( menuItem );
 				menuItem.Click += new EventHandler( this.MenuClick_ZoomOutAll );
@@ -1457,7 +1589,7 @@ namespace ZedGraph
 
 				menuItem = new MenuItem();
 				menuItem.Index = index++;
-				menuStr = resourceManager.GetString( "set_default", cultureInfo );
+				menuStr = resourceManager.GetString( "set_default" );
 				menuItem.Text = menuStr;
 				this.contextMenu.MenuItems.Add( menuItem );
 				menuItem.Click += new EventHandler( this.MenuClick_RestoreScale );
@@ -1547,8 +1679,10 @@ namespace ZedGraph
 
 				Graphics g = this.CreateGraphics();
 				pane.XAxis.ResetAutoScale( pane, g );
-				pane.YAxis.ResetAutoScale( pane, g );
-				pane.Y2Axis.ResetAutoScale( pane, g );
+				foreach ( YAxis axis in pane.YAxisList )
+					axis.ResetAutoScale( pane, g );
+				foreach ( Y2Axis axis in pane.Y2AxisList )
+					axis.ResetAutoScale( pane, g );
 
 				// Provide Callback to notify the user of zoom events
 				if ( this.ZoomEvent != null )
@@ -1611,14 +1745,31 @@ namespace ZedGraph
 
 		private void vScrollBar1_Scroll(object sender, ScrollEventArgs e)
 		{
-            HandleScroll(this.GraphPane.YAxis, e.NewValue, scrollMinY, scrollMaxY, !this.GraphPane.YAxis.IsReverse);
-            if ( this.isScrollY2 )
-                HandleScroll(this.GraphPane.Y2Axis, e.NewValue, scrollMinY2, scrollMaxY2, !this.GraphPane.Y2Axis.IsReverse);
+			for (int i=0; i<this.GraphPane.YAxisList.Count; i++ )
+			{
+				ScrollRange scroll = this.yScrollRangeList[i];
+				if ( scroll.IsScrollable )
+				{
+					Axis axis = this.GraphPane.YAxisList[i];
+					HandleScroll( axis, e.NewValue, scroll.Min, scroll.Max, !axis.IsReverse );
+				}
+			}
+
+			for (int i=0; i<this.GraphPane.Y2AxisList.Count; i++ )
+			{
+				ScrollRange scroll = this.y2ScrollRangeList[i];
+				if ( scroll.IsScrollable )
+				{
+					Axis axis = this.GraphPane.Y2AxisList[i];
+					HandleScroll( axis, e.NewValue, scroll.Min, scroll.Max, !axis.IsReverse );
+				}
+			}
         }
 
 		private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
 		{
-			HandleScroll( this.GraphPane.XAxis, e.NewValue, scrollMinX, scrollMaxX, this.GraphPane.XAxis.IsReverse );
+			HandleScroll( this.GraphPane.XAxis, e.NewValue, xScrollRange.Min, xScrollRange.Max,
+							this.GraphPane.XAxis.IsReverse );
 		}
 
 		private void HandleScroll( Axis axis, int newValue, double scrollMin, double scrollMax, bool reverse )
@@ -1654,9 +1805,10 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Sets the value of <see cref="ScrollMinX" />, <see cref="ScrollMaxX" />, <see cref="ScrollMinY" />,
-		/// <see cref="ScrollMaxY" />, <see cref="ScrollMinY2" />, and <see cref="ScrollMaxY2" /> based on the
-		/// actual range of the data.
+		/// Sets the value of the scroll range properties (see <see cref="ScrollMinX" />,
+		/// <see cref="ScrollMaxX" />, <see cref="YScrollRangeList" />, and 
+		/// <see cref="Y2ScrollRangeList" /> based on the actual range of the data for
+		/// each corresponding <see cref="Axis" />.
 		/// </summary>
 		/// <remarks>
 		/// This method is called automatically by <see cref="AxisChange" /> if <see cref="IsAutoScrollRange" />
@@ -1665,9 +1817,35 @@ namespace ZedGraph
 		/// zedGraphControl1.GraphPane.AxisChange() does not.</remarks>
 		public void SetScrollRangeFromData()
 		{
-			this.GraphPane.CurveList.GetRange( out scrollMinX, out scrollMaxX,
-					out scrollMinY, out scrollMaxY, out scrollMinY2, out scrollMaxY2, false, false,
-					this.GraphPane );
+			xScrollRange.Min = this.GraphPane.XAxis.rangeMin;
+			xScrollRange.Max = this.GraphPane.XAxis.rangeMax;
+			xScrollRange.IsScrollable = true;
+
+			for ( int i=0; i<this.GraphPane.YAxisList.Count; i++ )
+			{
+				Axis axis = this.GraphPane.YAxisList[i];
+				ScrollRange range = new ScrollRange( axis.rangeMin, axis.rangeMax,
+														yScrollRangeList[i].IsScrollable );
+				if ( i >= yScrollRangeList.Count )
+					yScrollRangeList.Add( range );
+				else
+					yScrollRangeList[i] = range;
+			}
+
+			for ( int i=0; i<this.GraphPane.Y2AxisList.Count; i++ )
+			{
+				Axis axis = this.GraphPane.Y2AxisList[i];
+				ScrollRange range = new ScrollRange( axis.rangeMin, axis.rangeMax,
+														y2ScrollRangeList[i].IsScrollable );
+				if ( i >= y2ScrollRangeList.Count )
+					y2ScrollRangeList.Add( range );
+				else
+					y2ScrollRangeList[i] = range;
+			}
+
+			//this.GraphPane.CurveList.GetRange( out scrollMinX, out scrollMaxX,
+			//		out scrollMinY, out scrollMaxY, out scrollMinY2, out scrollMaxY2, false, false,
+			//		this.GraphPane );
 		}
 
 		private void SetScroll( ScrollBar scrollBar, Axis axis, double scrollMin, double scrollMax )
