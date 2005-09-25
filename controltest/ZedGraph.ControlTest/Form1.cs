@@ -153,6 +153,30 @@ namespace ZedGraph.ControlTest
 		{
 			GraphPane myPane = zedGraphControl1.GraphPane;
 
+#if true // masterpane with pies
+
+			GraphPane pane = new GraphPane();
+
+			pane.Title = "Test Pie";
+
+			PieItem myPie = pane.AddPieSlice( 10, Color.Red, 0.0, "First" ); 
+			myPie = pane.AddPieSlice( 20, Color.Blue, 0.0, "Second" ); 
+			myPie = pane.AddPieSlice( 15, Color.Green, 0.0, "Third" ); 
+			myPie = pane.AddPieSlice( 40, Color.Purple, 0.0, "Fourth" ); 
+			myPie = pane.AddPieSlice( 27, Color.Pink, 0.0, "Fifth" );
+
+			zedGraphControl1.MasterPane[0] = pane;
+			zedGraphControl1.MasterPane.Add( pane.Clone() as GraphPane );
+			zedGraphControl1.MasterPane.Add( pane.Clone() as GraphPane );
+			zedGraphControl1.MasterPane.Add( pane.Clone() as GraphPane );
+			zedGraphControl1.MasterPane.Add( pane.Clone() as GraphPane );
+
+			zedGraphControl1.MasterPane.AutoPaneLayout( this.CreateGraphics(), PaneLayout.ExplicitRow32 );
+
+
+#endif
+
+#if false // Normal pane
 			myPane.Title = "Test Graph";
 			double x, y1, y2;
 			PointPairList list1 = new PointPairList();
@@ -259,6 +283,7 @@ namespace ZedGraph.ControlTest
 			zedGraphControl1.MasterPane.Add( myPane5 );
 			zedGraphControl1.MasterPane.AutoPaneLayout( this.CreateGraphics(), PaneLayout.ExplicitRow32 );
 			*/
+#endif
 
 			zedGraphControl1.AxisChange();
 			SetSize();

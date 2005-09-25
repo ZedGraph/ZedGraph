@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.18 $ $Date: 2005-08-20 07:05:53 $ </version>
+	/// <version> $Revision: 1.19 $ $Date: 2005-09-25 23:17:15 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem , ICloneable, ISerializable
 	{
@@ -544,7 +544,12 @@ namespace ZedGraph
 		/// </param>				
 		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
-			 pane.PieRect = CalcPieRect (g, pane, scaleFactor, pane.AxisRect ) ;
+			if ( pane.AxisRect.Width < 20 )
+			{
+				int j = 5;
+			}
+
+			pane.PieRect = CalcPieRect (g, pane, scaleFactor, pane.AxisRect ) ;
 
 			this.slicePath = new GraphicsPath() ;
 
@@ -556,27 +561,30 @@ namespace ZedGraph
 			
 			Brush brush = this.fill.MakeBrush(this.boundingRectangle);
 
-			RectangleF tRect = this.boundingRectangle ; 
+			RectangleF tRect = this.boundingRectangle; 
 
-			g.FillPie( brush, tRect.X, tRect.Y, tRect.Width, tRect.Height, this.StartAngle, this.SweepAngle );
-
-			//add GraphicsPath for hit testing
-			this.slicePath.AddPie( tRect.X, tRect.Y, tRect.Width, tRect.Height, 
-				this.StartAngle, this.SweepAngle);
-
-			if ( this.Border.IsVisible)
+			if ( tRect.Width >= 1 && tRect.Height >= 1 )
 			{
-				Pen borderPen = this.border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-				g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height, 
-					this.StartAngle, this.SweepAngle );
-				borderPen.Dispose();
+				g.FillPie( brush, tRect.X, tRect.Y, tRect.Width, tRect.Height, this.StartAngle, this.SweepAngle );
+
+				//add GraphicsPath for hit testing
+				this.slicePath.AddPie( tRect.X, tRect.Y, tRect.Width, tRect.Height, 
+					this.StartAngle, this.SweepAngle);
+
+				if ( this.Border.IsVisible)
+				{
+					Pen borderPen = this.border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+					g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height, 
+						this.StartAngle, this.SweepAngle );
+					borderPen.Dispose();
+				}
+
+				if ( this.labelType != PieLabelType.None )
+					DrawLabel( g, pane, tRect, scaleFactor  );
 			}
 
-			if ( this.labelType != PieLabelType.None )
-				DrawLabel( g, pane, tRect, scaleFactor  ) ;
-
-			brush.Dispose () ;
-			g.SmoothingMode = sMode ;	
+			brush.Dispose();
+			g.SmoothingMode = sMode;	
 		}
 
 		/// <summary>

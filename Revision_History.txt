@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+25-Sep-2005 (by Champion)
+  Fix crash when drawing pie charts that get too small (AxisRect dimensions less than zero)
+  
 22-Sep-2005 (by Champion)
   Add support for multiple Y and Y2 axes (major mods throughout)
   Add Axis.IsAllTics property
