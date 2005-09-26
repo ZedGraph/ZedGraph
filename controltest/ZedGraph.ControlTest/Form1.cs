@@ -153,7 +153,7 @@ namespace ZedGraph.ControlTest
 		{
 			GraphPane myPane = zedGraphControl1.GraphPane;
 
-#if true // masterpane with pies
+#if false // masterpane with pies
 
 			GraphPane pane = new GraphPane();
 
@@ -176,7 +176,7 @@ namespace ZedGraph.ControlTest
 
 #endif
 
-#if false // Normal pane
+#if true // Normal pane
 			myPane.Title = "Test Graph";
 			double x, y1, y2;
 			PointPairList list1 = new PointPairList();
@@ -355,6 +355,12 @@ namespace ZedGraph.ControlTest
 
 		private void zedGraphControl1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+			if ( e.Button == MouseButtons.Left && e.Clicks == 2 )
+			{
+				MessageBox.Show( "Howdy" );
+			}
+			return;
+
 			Image image = zedGraphControl1.MasterPane.ScaledImage( 300, 200, 72 );
 			image.Save( @"c:\zedgraph.png", ImageFormat.Png );
 			return;

@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.35 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.36 $ $Date: 2005-09-26 04:14:00 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -1112,7 +1112,10 @@ namespace ZedGraph
 			this.isZooming = false;
 			this.dragPane = null;
 			
-			// Provide Callback for MouseDown events
+			if ( e.Clicks > 1)
+				return;
+
+				// Provide Callback for MouseDown events
 			if ( this.MouseDownEvent != null )
 			{
 				GraphPane	clickPane;
