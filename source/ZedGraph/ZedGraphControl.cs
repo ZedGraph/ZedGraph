@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.36 $ $Date: 2005-09-26 04:14:00 $ </version>
+	/// <version> $Revision: 3.37 $ $Date: 2005-09-26 04:15:37 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -1266,7 +1266,7 @@ namespace ZedGraph
 
 						this.SetScroll( this.hScrollBar1, dragPane.XAxis, xScrollRange.Min, xScrollRange.Max );
 						this.SetScroll( this.vScrollBar1, dragPane.YAxis, yScrollRangeList[0].Min,
-											yScrollRangeList[0].Max );
+							yScrollRangeList[0].Max );
 
 						// Provide Callback to notify the user of zoom events
 						if ( this.ZoomEvent != null )
@@ -1275,8 +1275,9 @@ namespace ZedGraph
 						Graphics g = this.CreateGraphics();
 						this.dragPane.AxisChange( g );
 						g.Dispose();
-						Refresh();
 					}
+
+					Refresh();
 				}
 				else if ( this.isPanning )
 				{
