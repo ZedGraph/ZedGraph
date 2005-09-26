@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.19 $ $Date: 2005-09-25 23:17:15 $ </version>
+	/// <version> $Revision: 1.20 $ $Date: 2005-09-26 03:51:31 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem , ICloneable, ISerializable
 	{
@@ -544,47 +544,50 @@ namespace ZedGraph
 		/// </param>				
 		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
-			if ( pane.AxisRect.Width < 20 )
+			if ( pane.AxisRect.Width <= 0 && pane.AxisRect.Height <= 0 )
 			{
-				int j = 5;
+				pane.PieRect = RectangleF.Empty;
+				this.slicePath = null;
 			}
-
-			pane.PieRect = CalcPieRect (g, pane, scaleFactor, pane.AxisRect ) ;
-
-			this.slicePath = new GraphicsPath() ;
-
-			if ( !this.isVisible )
-				return ;
-			
-			SmoothingMode sMode = g.SmoothingMode ;
-			g.SmoothingMode = SmoothingMode.AntiAlias ;	
-			
-			Brush brush = this.fill.MakeBrush(this.boundingRectangle);
-
-			RectangleF tRect = this.boundingRectangle; 
-
-			if ( tRect.Width >= 1 && tRect.Height >= 1 )
+			else
 			{
-				g.FillPie( brush, tRect.X, tRect.Y, tRect.Width, tRect.Height, this.StartAngle, this.SweepAngle );
+				pane.PieRect = CalcPieRect( g, pane, scaleFactor, pane.AxisRect );
 
-				//add GraphicsPath for hit testing
-				this.slicePath.AddPie( tRect.X, tRect.Y, tRect.Width, tRect.Height, 
-					this.StartAngle, this.SweepAngle);
+				this.slicePath = new GraphicsPath() ;
 
-				if ( this.Border.IsVisible)
+				if ( !this.isVisible )
+					return ;
+				
+				RectangleF tRect = this.boundingRectangle; 
+
+				if ( tRect.Width >= 1 && tRect.Height >= 1 )
 				{
-					Pen borderPen = this.border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-					g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height, 
-						this.StartAngle, this.SweepAngle );
-					borderPen.Dispose();
+					SmoothingMode sMode = g.SmoothingMode ;
+					g.SmoothingMode = SmoothingMode.AntiAlias ;	
+				
+					Brush brush = this.fill.MakeBrush( this.boundingRectangle );
+
+					g.FillPie( brush, tRect.X, tRect.Y, tRect.Width, tRect.Height, this.StartAngle, this.SweepAngle );
+
+					//add GraphicsPath for hit testing
+					this.slicePath.AddPie( tRect.X, tRect.Y, tRect.Width, tRect.Height, 
+						this.StartAngle, this.SweepAngle);
+
+					if ( this.Border.IsVisible)
+					{
+						Pen borderPen = this.border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+						g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height, 
+							this.StartAngle, this.SweepAngle );
+						borderPen.Dispose();
+					}
+
+					if ( this.labelType != PieLabelType.None )
+						DrawLabel( g, pane, tRect, scaleFactor  );
+
+					brush.Dispose();
+					g.SmoothingMode = sMode;	
 				}
-
-				if ( this.labelType != PieLabelType.None )
-					DrawLabel( g, pane, tRect, scaleFactor  );
 			}
-
-			brush.Dispose();
-			g.SmoothingMode = sMode;	
 		}
 
 		/// <summary>

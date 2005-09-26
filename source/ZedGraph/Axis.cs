@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.43 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.44 $ $Date: 2005-09-26 03:51:31 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -3808,10 +3808,12 @@ namespace ZedGraph
 			{
 				double val;
 
-				if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > index )
-					val = pane.CurveList[0].Points[index].X;
+				int tmpIndex = (int) dVal;
+
+				if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > tmpIndex )
+					val = pane.CurveList[0].Points[tmpIndex].X;
 				else
-					val = index + 1.0;
+					val = tmpIndex + 1.0;
 
 				double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
 
@@ -3821,10 +3823,12 @@ namespace ZedGraph
 			{
 				double val;
 
-				if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > index )
-					val = pane.CurveList[0].Points[index].X;
+				int tmpIndex = (int) dVal;
+
+				if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > tmpIndex )
+					val = pane.CurveList[0].Points[tmpIndex].X;
 				else
-					val = index + 1.0;
+					val = tmpIndex + 1.0;
 
 				label = XDate.ToString( val, this.scaleFormat );
 			}

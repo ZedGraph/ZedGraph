@@ -831,7 +831,8 @@ namespace ZedGraph.LibTest
 
 			for ( int i=0; i<100; i++ )
 			{
-				double x = (double) i;
+				//double x = (double) i;
+				double x = new XDate( 2001, 1, i*3 );
 				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
 				list.Add( x, y );
 				double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
@@ -842,7 +843,7 @@ namespace ZedGraph.LibTest
 			myCurve.YAxisIndex = 1;
 
 			myPane.XAxis.IsSkipLastLabel = true;
-
+			myPane.XAxis.Type = AxisType.DateAsOrdinal;
 			myPane.AxisChange( this.CreateGraphics() );
 
 			trackBar1.Minimum = 0;
