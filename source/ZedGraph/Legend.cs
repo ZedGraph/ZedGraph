@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.27 $ $Date: 2005-07-23 00:52:04 $ </version>
+	/// <version> $Revision: 3.28 $ $Date: 2005-10-07 21:08:26 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -645,6 +645,8 @@ namespace ZedGraph
 			this.legendItemWidth = 1;
 			this.legendItemHeight = 0;
 
+			RectangleF clientRect = pane.CalcClientRect( g, scaleFactor );
+				
 			// If the legend is invisible, don't do anything
 			if ( !this.isVisible )
 				return;
@@ -707,6 +709,12 @@ namespace ZedGraph
 					case LegendPos.Bottom:
 					case LegendPos.BottomCenter :
 						widthAvail = tAxisRect.Width;
+						break;
+		
+						// for the top & bottom flush left, the panerect less margins is available
+					case LegendPos.TopFlushLeft:
+					case LegendPos.BottomFlushLeft:
+						widthAvail = clientRect.Width;
 						break;
 		
 						// for inside the axis area or Float, use 1/2 of the axis border width
@@ -772,8 +780,6 @@ namespace ZedGraph
 			{
 				newRect = new RectangleF( 0, 0, totLegWidth, totLegHeight );
 
-				RectangleF clientRect = pane.CalcClientRect( g, scaleFactor );
-				
 				// The switch statement assigns the left and top edges, and adjusts the axisRect
 				// as required.  The right and bottom edges are calculated at the bottom of the switch.
 				switch( this.position )
@@ -791,6 +797,13 @@ namespace ZedGraph
 						tAxisRect.Y += totLegHeight + halfGap;
 						tAxisRect.Height -= totLegHeight + halfGap;
 						break;
+					case LegendPos.TopFlushLeft:
+						newRect.X = clientRect.Left;
+						newRect.Y = clientRect.Top;
+						
+						tAxisRect.Y += totLegHeight + halfGap * 1.5f;
+						tAxisRect.Height -= totLegHeight + halfGap * 1.5f;
+						break;
 					case LegendPos.TopCenter:
 						newRect.X = tAxisRect.Left + ( tAxisRect.Width - totLegWidth ) / 2;
 						newRect.Y = tAxisRect.Top;
@@ -799,7 +812,13 @@ namespace ZedGraph
 						tAxisRect.Height -= totLegHeight + halfGap;
 						break;
 					case LegendPos.Bottom:
-						newRect.X = tAxisRect.Left + ( tAxisRect.Width - totLegWidth ) /2 ;
+						newRect.X = tAxisRect.Left;
+						newRect.Y = clientRect.Bottom - totLegHeight;
+						
+						tAxisRect.Height -= totLegHeight + halfGap;
+						break;
+					case LegendPos.BottomFlushLeft:
+						newRect.X = clientRect.Left;
 						newRect.Y = clientRect.Bottom - totLegHeight;
 						
 						tAxisRect.Height -= totLegHeight + halfGap;

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.44 $ $Date: 2005-09-26 03:51:31 $ </version>
+	/// <version> $Revision: 3.45 $ $Date: 2005-10-07 21:08:26 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -3808,29 +3808,31 @@ namespace ZedGraph
 			{
 				double val;
 
-				int tmpIndex = (int) dVal;
+				int tmpIndex = (int) dVal - 1;
 
 				if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > tmpIndex )
+				{
 					val = pane.CurveList[0].Points[tmpIndex].X;
+					double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
+					label = (val / scaleMult).ToString( this.scaleFormat );
+				}
 				else
-					val = tmpIndex + 1.0;
-
-				double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
-
-				label = (val / scaleMult).ToString( this.scaleFormat );
+					label = string.Empty;
 			}
 			else if ( this.Type == AxisType.DateAsOrdinal )
 			{
 				double val;
 
-				int tmpIndex = (int) dVal;
+				int tmpIndex = (int) dVal - 1;
 
 				if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > tmpIndex )
+				{
 					val = pane.CurveList[0].Points[tmpIndex].X;
+					label = XDate.ToString( val, this.scaleFormat );
+				}
 				else
-					val = tmpIndex + 1.0;
+					label = string.Empty;
 
-				label = XDate.ToString( val, this.scaleFormat );
 			}
 			else // linear or ordinal
 			{

@@ -20,8 +20,8 @@ namespace ZedGraph.ControlTest
 	public class Form1 : System.Windows.Forms.Form
 	{
 		private PropertyGrid propertyGrid1;
-		private ZedGraphControl zedGraphControl1;
 		private System.Windows.Forms.Splitter splitter1;
+		private ZedGraphControl zedGraphControl1;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -58,8 +58,8 @@ namespace ZedGraph.ControlTest
 		private void InitializeComponent()
 		{
 			this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-			this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
 			this.splitter1 = new System.Windows.Forms.Splitter();
+			this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
 			this.SuspendLayout();
 			// 
 			// propertyGrid1
@@ -77,9 +77,17 @@ namespace ZedGraph.ControlTest
 			this.propertyGrid1.ViewForeColor = System.Drawing.SystemColors.WindowText;
 			this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
 			// 
-			// zedGraphControl1
+			// splitter1
 			// 
-			this.zedGraphControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitter1.Dock = System.Windows.Forms.DockStyle.Right;
+			this.splitter1.Location = new System.Drawing.Point(617, 0);
+			this.splitter1.Name = "splitter1";
+			this.splitter1.Size = new System.Drawing.Size(5, 461);
+			this.splitter1.TabIndex = 4;
+			this.splitter1.TabStop = false;
+			// 
+			// zedGraphControl2
+			// 
 			this.zedGraphControl1.IsAutoScrollRange = false;
 			this.zedGraphControl1.IsEnableHPan = true;
 			this.zedGraphControl1.IsEnableVPan = true;
@@ -91,7 +99,7 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.IsShowPointValues = false;
 			this.zedGraphControl1.IsShowVScrollBar = false;
 			this.zedGraphControl1.IsZoomOnMouseCenter = false;
-			this.zedGraphControl1.Location = new System.Drawing.Point(0, 0);
+			this.zedGraphControl1.Location = new System.Drawing.Point(8, 8);
 			this.zedGraphControl1.Name = "zedGraphControl1";
 			this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
@@ -104,30 +112,20 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ScrollMinX = 0;
 			this.zedGraphControl1.ScrollMinY = 0;
 			this.zedGraphControl1.ScrollMinY2 = 0;
-			this.zedGraphControl1.Size = new System.Drawing.Size(622, 461);
-			this.zedGraphControl1.TabIndex = 3;
+			this.zedGraphControl1.Size = new System.Drawing.Size(600, 448);
+			this.zedGraphControl1.TabIndex = 5;
 			this.zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
 			this.zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomStepFraction = 0.1;
-			this.zedGraphControl1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.zedGraphControl1_MouseDown);
-			// 
-			// splitter1
-			// 
-			this.splitter1.Dock = System.Windows.Forms.DockStyle.Right;
-			this.splitter1.Location = new System.Drawing.Point(617, 0);
-			this.splitter1.Name = "splitter1";
-			this.splitter1.Size = new System.Drawing.Size(5, 461);
-			this.splitter1.TabIndex = 4;
-			this.splitter1.TabStop = false;
 			// 
 			// Form1
 			// 
 			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
 			this.ClientSize = new System.Drawing.Size(862, 461);
-			this.Controls.Add(this.splitter1);
 			this.Controls.Add(this.zedGraphControl1);
+			this.Controls.Add(this.splitter1);
 			this.Controls.Add(this.propertyGrid1);
 			this.Name = "Form1";
 			this.Text = "Form1";
@@ -239,6 +237,8 @@ namespace ZedGraph.ControlTest
 
 			myPane.Y2Axis.IsVisible = true;
 			myPane.Y2Axis.Title = "Y2 Axis";
+
+			myPane.Legend.Position = LegendPos.TopFlushLeft;
 
 			//myPane.Y2Axis.IsInsideTic = false;
 			//myPane.Y2Axis.IsMinorInsideTic = false;

@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+7-Oct-2005
+  Fix LinearAsOrdinal and DateAsOrdinal off-by-one error and use blank label for out of range condition
+  Add GraphPane.IsZoomed Property
+  Add LegendPos.TopFlushLeft and BottomFlushLeft
+
 25-Sep-2005 (by Champion)
   Fix crash when drawing pie charts that get too small (AxisRect dimensions less than zero)
   Fix DateAsOrdinal & LinearAsOrdinal indexing problem

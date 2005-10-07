@@ -240,7 +240,18 @@ namespace ZedGraph
 		/// <summary>
 		/// Locate the <see cref="Legend"/> centered below the <see cref="GraphPane.AxisRect"/>
 		/// </summary>
-		BottomCenter
+		BottomCenter,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> above the <see cref="GraphPane.AxisRect"/>, but flush
+		/// against the left margin of the <see cref="PaneBase.PaneRect" />.
+		/// </summary>
+		TopFlushLeft,
+		/// <summary>
+		/// Locate the <see cref="Legend"/> below the <see cref="GraphPane.AxisRect"/>, but flush
+		/// against the left margin of the <see cref="PaneBase.PaneRect" />.
+		/// </summary>
+		BottomFlushLeft
+
 	};
 
 	/// <summary>

@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.37 $ $Date: 2005-09-26 04:15:37 $ </version>
+	/// <version> $Revision: 3.38 $ $Date: 2005-10-07 21:08:26 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -183,7 +183,7 @@ namespace ZedGraph
 		private System.Windows.Forms.HScrollBar hScrollBar1;
 		private System.Windows.Forms.VScrollBar vScrollBar1;
 
-		private const int	ScrollRange = 1000;
+		private const int	ScrollControlSpan = 1000;
 
 		private bool		isZoomOnMouseCenter = false;
 
@@ -769,9 +769,9 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// This list maintains the user scale ranges for the scroll bars for each axis
-		/// in the <see cref="GraphPane.YAxisList" />.  Each ordinal location in
+		/// in the <see cref="ZedGraph.GraphPane.YAxisList" />.  Each ordinal location in
 		/// <see cref="YScrollRangeList" /> corresponds to an equivalent ordinal location
-		/// in <see cref="GraphPane.YAxisList" />.
+		/// in <see cref="ZedGraph.GraphPane.YAxisList" />.
 		/// </remarks>
 		/// <seealso cref="ScrollMinY" />
 		/// <seealso cref="ScrollMaxY" />
@@ -785,9 +785,9 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// This list maintains the user scale ranges for the scroll bars for each axis
-		/// in the <see cref="GraphPane.Y2AxisList" />.  Each ordinal location in
+		/// in the <see cref="ZedGraph.GraphPane.Y2AxisList" />.  Each ordinal location in
 		/// <see cref="Y2ScrollRangeList" /> corresponds to an equivalent ordinal location
-		/// in <see cref="GraphPane.Y2AxisList" />.
+		/// in <see cref="ZedGraph.GraphPane.Y2AxisList" />.
 		/// </remarks>
 		/// <seealso cref="ScrollMinY2" />
 		/// <seealso cref="ScrollMaxY2" />
@@ -1784,14 +1784,15 @@ namespace ZedGraph
 				scrollMax = axis.Max;
 
 			if ( reverse )
-				newValue = ScrollRange - newValue;
+				newValue = ScrollControlSpan - newValue;
 
 			if ( axis.IsLog )
 			{
 				double ratio = axis.Max / axis.Min;
 				double scrollMin2 = scrollMax / ratio;
 
-				double value = scrollMin * Math.Exp( (double) newValue / (double) ScrollRange * ( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) );
+				double value = scrollMin * Math.Exp( (double) newValue / (double) ScrollControlSpan *
+							( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) );
 				axis.Min = value;
 				axis.Max = value * ratio;
 			}
@@ -1800,7 +1801,8 @@ namespace ZedGraph
 				double delta = axis.Max - axis.Min;
 				double scrollMin2 = scrollMax - delta;
 
-				double value = scrollMin + (double) newValue / (double) ScrollRange * ( scrollMin2 - scrollMin );
+				double value = scrollMin + (double) newValue / (double) ScrollControlSpan *
+							( scrollMin2 - scrollMin );
 				axis.Min = value;
 				axis.Max = value + delta;
 			}
@@ -1873,27 +1875,27 @@ namespace ZedGraph
 				scrollBar.Enabled = false;
 				scrollBar.Value = 0;
 				scrollBar.Minimum = 0;
-				scrollBar.Maximum = ScrollRange;
+				scrollBar.Maximum = ScrollControlSpan;
 			}
 			else
 			{
 				scrollBar.Minimum = 0;
-				scrollBar.Maximum = ScrollRange + scrollBar.LargeChange - 1;
+				scrollBar.Maximum = ScrollControlSpan + scrollBar.LargeChange - 1;
 				if ( axis.IsLog )
 					val = (int) ( ( Math.Log( axis.Min ) - Math.Log( scrollMin ) ) /
-							( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) * ScrollRange + 0.5 );
+							( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) * ScrollControlSpan + 0.5 );
 				else
 					val = (int) ( ( axis.Min - scrollMin ) / ( scrollMin2 - scrollMin ) *
-							ScrollRange + 0.5 );
+							ScrollControlSpan + 0.5 );
 
 				if ( val < 0 )
 					val = 0;
-				else if ( val > ScrollRange )
-					val = ScrollRange;
+				else if ( val > ScrollControlSpan )
+					val = ScrollControlSpan;
 
 				//if ( ( axis is XAxis && axis.IsReverse ) || ( ( ! axis is XAxis ) && ! axis.IsReverse ) )
 				if ( (axis is XAxis) == axis.IsReverse )
-					val = ScrollRange - val;
+					val = ScrollControlSpan - val;
 
 				scrollBar.Value = val;
 				scrollBar.Enabled = true;

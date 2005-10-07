@@ -759,6 +759,37 @@ namespace ZedGraph.LibTest
 
 #endif
 
+#if false	// Basic curve test - Images as symbols
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList list = new PointPairList();
+
+			for ( int i=0; i<10; i++ )
+			{
+				double x = (double) i;
+				double y = Math.Sin( x / 8.0 );
+				list.Add( x, y );
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
+			Image image = Image.FromHbitmap( bm.GetHbitmap() );
+
+			myCurve.Line.IsVisible = false;
+			myCurve.Symbol.Type = SymbolType.Square;
+			myCurve.Symbol.Size = 16;
+			myCurve.Symbol.Border.IsVisible = false;
+			myCurve.Symbol.Fill = new Fill( image, WrapMode.Clamp );
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 359;
+			trackBar1.Value = 0;
+
+#endif
+
 #if false	// Basic curve test - Text Axis
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -817,7 +848,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test - Multi-Y axes
+#if false	// Basic curve test - Multi-Y axes
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -842,7 +873,7 @@ namespace ZedGraph.LibTest
 
 			myCurve.YAxisIndex = 1;
 
-			myPane.XAxis.IsSkipLastLabel = true;
+			myPane.XAxis.IsSkipLastLabel = false;
 			myPane.XAxis.Type = AxisType.DateAsOrdinal;
 			myPane.AxisChange( this.CreateGraphics() );
 
@@ -852,6 +883,74 @@ namespace ZedGraph.LibTest
 
 #endif
 
+#if false	// Basic curve test - DateAsOrdinal
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList list = new PointPairList();
+
+			for ( int i=0; i<100; i++ )
+			{
+				//double x = (double) i;
+				double x = new XDate( 2001, 1, i*3 );
+				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				list.Add( x, y );
+				double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			myPane.XAxis.IsSkipLastLabel = false;
+			myPane.XAxis.IsPreventLabelOverlap = false;
+			myPane.XAxis.ScaleFormat = ZedGraph.Axis.Default.FormatDayDay;
+			myPane.XAxis.Type = AxisType.DateAsOrdinal;
+			myPane.AxisChange( this.CreateGraphics() );
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
+
+#if true	// Bars - different colors thru IsOverrideOrdinal
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+/*			PointPairList list1 = new PointPairList();
+			list1.Add(1,13);
+			HiLowBarItem bar1 = myPane.AddHiLowBar( "First", list1, Color.Blue );
+			PointPairList list2 = new PointPairList();
+			list2.Add(2,22);
+			HiLowBarItem bar2 = myPane.AddHiLowBar( "Second", list2, Color.Red );
+
+			bar1.Bar.Size = 30;
+			bar1.IsOverrideOrdinal = true;
+			bar2.Bar.Size = 30;
+			bar2.IsOverrideOrdinal = true;
+*/
+			PointPairList list1 = new PointPairList();
+			list1.Add(1,13);
+			BarItem bar1 = myPane.AddBar( "First", list1, Color.Blue );
+			PointPairList list2 = new PointPairList();
+			list2.Add(2,22);
+			BarItem bar2 = myPane.AddBar( "Second", list2, Color.Red );
+
+			bar1.IsOverrideOrdinal = true;
+			bar2.IsOverrideOrdinal = true;
+
+			myPane.Legend.Position = LegendPos.TopFlushLeft;
+
+			myPane.BarType = BarType.Overlay;
+			myPane.XAxis.Type = AxisType.Text;
+			string[] labels = { "Label1", "Label2" };
+			myPane.XAxis.TextLabels = labels;
+			myPane.AxisChange( this.CreateGraphics() );
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
 
 #if false	// Basic curve test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );

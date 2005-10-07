@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.52 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.53 $ $Date: 2005-10-07 21:08:26 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -393,7 +393,17 @@ namespace ZedGraph
 			get { return lineType; }
 			set { lineType = value; }
 		}
-		
+
+		/// <summary>
+		/// Gets a value that indicates whether or not the <see cref="ZoomStateStack" /> for
+		/// this <see cref="GraphPane" /> is empty.  Note that this value is only used for
+		/// the <see cref="ZedGraphControl" />.
+		/// </summary>
+		public bool IsZoomed
+		{
+			get { return !zoomStack.IsEmpty; }
+		}
+
 	#endregion
 		
 	#region AxisRect Properties
