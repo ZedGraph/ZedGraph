@@ -912,7 +912,48 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Bars - different colors thru IsOverrideOrdinal
+#if true	// Gantt Chart
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Gantt Chart", "Date", "Project" );
+
+			myPane.XAxis.Type = AxisType.Date; 
+			myPane.YAxis.Type = AxisType.Text;
+			myPane.BarBase = BarBase.Y;
+			
+
+			string[] labels = { "Project 1", "Project 2" };
+			myPane.YAxis.TextLabels = labels;
+			myPane.YAxis.IsTicsBetweenLabels = true;
+
+			PointPairList ppl = new PointPairList();
+			XDate start = new XDate( 2005, 10, 31 );
+			XDate end = new XDate( 2005, 11, 15 );
+			// x is start of bar, y is project number, z is end of bar
+			ppl.Add( start, 1.0, end );
+			HiLowBarItem myBar = myPane.AddHiLowBar( "job 1", ppl, Color.Red ); 
+			myBar.IsOverrideOrdinal = true;
+			myBar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 90.0f );
+			myBar.Bar.Size = 20f;
+
+			ppl = new PointPairList();
+			start = new XDate( 2005, 11,16 );
+			end = new XDate( 2005, 11, 26 );
+			ppl.Add( start, 2.0, end );
+			myBar = myPane.AddHiLowBar( "job 2", ppl, Color.Green ); 
+			myBar.IsOverrideOrdinal = true;
+			myBar.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 90.0f );
+			myBar.Bar.Size = 20f;
+
+			ppl = new PointPairList();
+			start = new XDate( 2005, 11, 27 );
+			end = new XDate( 2005, 12, 15 );
+			ppl.Add( start, 1.0, end );
+			myBar = myPane.AddHiLowBar( "job 3", ppl, Color.Blue );
+			myBar.IsOverrideOrdinal = true;
+			myBar.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 90.0f );
+			myBar.Bar.Size = 20f;
+#endif
+
+#if false	// Bars - different colors thru IsOverrideOrdinal
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -1044,6 +1085,9 @@ namespace ZedGraph.LibTest
 #endif
 
 			_crossAxis = myPane.Y2AxisList[1];
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
 			UpdateControls();
 			SetSize();
 

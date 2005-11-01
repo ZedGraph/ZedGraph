@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.38 $ $Date: 2005-10-07 21:08:26 $ </version>
+	/// <version> $Revision: 3.39 $ $Date: 2005-11-01 02:48:14 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -379,8 +379,8 @@ namespace ZedGraph
 			string xStr = resourceManager.GetString( "x_title_def" );
 			string yStr = resourceManager.GetString( "y_title_def" );
 
-			GraphPane graphPane = new GraphPane( rect, "Title", "X Axis", "Y Axis" );
-			//GraphPane graphPane = new GraphPane( rect, titleStr, xStr, yStr );
+			//GraphPane graphPane = new GraphPane( rect, "Title", "X Axis", "Y Axis" );
+			GraphPane graphPane = new GraphPane( rect, titleStr, xStr, yStr );
 			Graphics g = this.CreateGraphics();
 			graphPane.AxisChange( g );
 			g.Dispose();
@@ -1615,8 +1615,23 @@ namespace ZedGraph
 		/// <param name="e"></param>
 		protected void MenuClick_Copy( System.Object sender, System.EventArgs e )
 		{
+			Copy( true );
+		}
+		
+		/// <summary>
+		/// Handler for the "Copy" context menu item.  Copies the current image to a bitmap on the
+		/// clipboard.
+		/// </summary>
+		/// <param name="isShowMessage">boolean value that determines whether or not a prompt will be
+		/// displayed.  true to show a message of "Image Copied to ClipBoard".</param>
+		public void Copy( bool isShowMessage )
+		{
 			Clipboard.SetDataObject( this.MasterPane.Image, true );
-			MessageBox.Show( "Image Copied to ClipBoard" );
+			if ( isShowMessage )
+			{
+				string str = resourceManager.GetString( "copied_to_clip" );
+				MessageBox.Show( "Image Copied to ClipBoard" );
+			}
 		}
 
 		/// <summary>
@@ -1626,6 +1641,15 @@ namespace ZedGraph
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		protected void MenuClick_SaveAs( System.Object sender, System.EventArgs e )
+		{
+			SaveAs();
+		}
+		
+		/// <summary>
+		/// Handler for the "Save Image As" context menu item.  Copies the current image to the selected
+		/// file.
+		/// </summary>
+		public void SaveAs()
 		{
 			SaveFileDialog saveDlg = new SaveFileDialog();
 			saveDlg.Filter = "PNG Format (*.png)|*.png|" +
@@ -1670,11 +1694,31 @@ namespace ZedGraph
 		/// Handler for the "Set Scale to Default" context menu item.  Sets the scale ranging to
 		/// full auto mode for all axes.
 		/// </summary>
+		/// <remarks>
+		/// This method differs from the <see cref="ZoomOutAll" /> method in that it sets the scales
+		/// to full auto mode.  The <see cref="ZoomOutAll" /> method sets the scales to their initial
+		/// setting prior to any user actions (which may or may not be full auto mode).
+		/// </remarks>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		protected void MenuClick_RestoreScale( System.Object sender, EventArgs e )
 		{
 			GraphPane pane = this.MasterPane.FindPane( this.menuClickPt );
+			RestoreScale( pane );
+		}
+		
+		/// <summary>
+		/// Handler for the "Set Scale to Default" context menu item.  Sets the scale ranging to
+		/// full auto mode for all axes.
+		/// </summary>
+		/// <remarks>
+		/// This method differs from the <see cref="ZoomOutAll" /> method in that it sets the scales
+		/// to full auto mode.  The <see cref="ZoomOutAll" /> method sets the scales to their initial
+		/// setting prior to any user actions (which may or may not be full auto mode).
+		/// </remarks>
+		/// <param name="pane">The <see cref="GraphPane" /> object which is to have the scale restored</param>
+		public void RestoreScale( GraphPane pane )
+		{
 			if ( pane != null )
 			{
 				//Go ahead and save the old zoomstates, which provides an "undo"-like capability
@@ -1708,6 +1752,16 @@ namespace ZedGraph
 		protected void MenuClick_ZoomOut( System.Object sender, System.EventArgs e )
 		{
 			GraphPane pane = this.MasterPane.FindPane( this.menuClickPt );
+			ZoomOut( pane );
+		}
+		
+		/// <summary>
+		/// Handler for the "UnZoom/UnPan" context menu item.  Restores the scale ranges to the values
+		/// before the last zoom or pan operation.
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> object which is to be zoomed out</param>
+		public void ZoomOut( GraphPane pane )
+		{
 			if ( pane != null && !pane.zoomStack.IsEmpty )
 			{
 				ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
@@ -1725,11 +1779,31 @@ namespace ZedGraph
 		/// Handler for the "Undo All Zoom/Pan" context menu item.  Restores the scale ranges to the values
 		/// before all zoom and pan operations
 		/// </summary>
+		/// <remarks>
+		/// This method differs from the <see cref="RestoreScale" /> method in that it sets the scales
+		/// to their initial setting prior to any user actions.  The <see cref="RestoreScale" /> method
+		/// sets the scales to full auto mode (regardless of what the initial setting may have been).
+		/// </remarks>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		protected void MenuClick_ZoomOutAll( System.Object sender, System.EventArgs e )
 		{
 			GraphPane pane = this.MasterPane.FindPane( this.menuClickPt );
+			ZoomOutAll( pane );
+		}
+		
+		/// <summary>
+		/// Handler for the "Undo All Zoom/Pan" context menu item.  Restores the scale ranges to the values
+		/// before all zoom and pan operations
+		/// </summary>
+		/// <remarks>
+		/// This method differs from the <see cref="RestoreScale" /> method in that it sets the scales
+		/// to their initial setting prior to any user actions.  The <see cref="RestoreScale" /> method
+		/// sets the scales to full auto mode (regardless of what the initial setting may have been).
+		/// </remarks>
+		/// <param name="pane">The <see cref="GraphPane" /> object which is to be zoomed out</param>
+		public void ZoomOutAll( GraphPane pane )
+		{
 			if ( pane != null && !pane.zoomStack.IsEmpty )
 			{
 				ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );

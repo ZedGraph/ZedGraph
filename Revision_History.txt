@@ -1,6 +1,10 @@
 ZedGraph Class Library Revision History
 
-7-Oct-2005
+31-Oct-2005 (by Champion)
+  Add Swedish Translation, fix Spanish translation, add "Image copied to clipboard" to localization
+  Split out context menu actions into public methods
+
+7-Oct-2005 (by Champion)
   Fix LinearAsOrdinal and DateAsOrdinal off-by-one error and use blank label for out of range condition
   Add GraphPane.IsZoomed Property
   Add LegendPos.TopFlushLeft and BottomFlushLeft

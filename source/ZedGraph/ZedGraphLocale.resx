@@ -39,34 +39,37 @@
 	<resheader name="Writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-  <data name="copy">
-    <value xml:space="preserve">Copy</value>
-  </data>
-  <data name="save_as">
-    <value xml:space="preserve">Save Image As...</value>
-  </data>
-  <data name="set_default">
-    <value xml:space="preserve">Set Scale to Default</value>
-  </data>
-  <data name="show_val">
-    <value xml:space="preserve">Show Point Values</value>
-  </data>
-  <data name="title_def">
-    <value xml:space="preserve">Title</value>
-  </data>
-  <data name="undo_all">
-    <value xml:space="preserve">Undo All Zoom/Pan</value>
-  </data>
-  <data name="unpan">
-    <value xml:space="preserve">Un-Pan</value>
-  </data>
-  <data name="unzoom">
-    <value xml:space="preserve">Un-Zoom</value>
-  </data>
-  <data name="x_title_def">
-    <value xml:space="preserve">X Axis</value>
-  </data>
-  <data name="y_title_def">
-    <value xml:space="preserve">Y Axis</value>
-  </data>
+	<data name="copy">
+		<value xml:space="preserve">Copy</value>
+	</data>
+	<data name="copied_to_clip">
+		<value xml:space="preserve">Image copied to clipboard</value>
+	</data>
+	<data name="save_as">
+		<value xml:space="preserve">Save Image As...</value>
+	</data>
+	<data name="set_default">
+		<value xml:space="preserve">Set Scale to Default</value>
+	</data>
+	<data name="show_val">
+		<value xml:space="preserve">Show Point Values</value>
+	</data>
+	<data name="title_def">
+		<value xml:space="preserve">Title</value>
+	</data>
+	<data name="undo_all">
+		<value xml:space="preserve">Undo All Zoom/Pan</value>
+	</data>
+	<data name="unpan">
+		<value xml:space="preserve">Un-Pan</value>
+	</data>
+	<data name="unzoom">
+		<value xml:space="preserve">Un-Zoom</value>
+	</data>
+	<data name="x_title_def">
+		<value xml:space="preserve">X Axis</value>
+	</data>
+	<data name="y_title_def">
+		<value xml:space="preserve">Y Axis</value>
+	</data>
 </root>

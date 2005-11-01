@@ -39,34 +39,37 @@
 	<resheader name="Writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
-  <data name="copy">
-    <value xml:space="preserve">Copier</value>
-  </data>
-  <data name="save_as">
-    <value xml:space="preserve">Enregistrer l'image sous...</value>
-  </data>
-  <data name="set_default">
-    <value xml:space="preserve">Réinitialiser l'échelle</value>
-  </data>
-  <data name="show_val">
-    <value xml:space="preserve">Visualiser les valeurs</value>
-  </data>
-  <data name="title_def">
-    <value xml:space="preserve">Titre</value>
-  </data>
-  <data name="undo_all">
-    <value xml:space="preserve">Annuler tous les déplacements et les zooms</value>
-  </data>
-  <data name="unpan">
-    <value xml:space="preserve">Annuler les déplacements</value>
-  </data>
-  <data name="unzoom">
-    <value xml:space="preserve">Annuler les zooms</value>
-  </data>
-  <data name="x_title_def">
-    <value xml:space="preserve">Axe X</value>
-  </data>
-  <data name="y_title_def">
-    <value xml:space="preserve">Axe Y</value>
-  </data>
+	<data name="copy">
+		<value xml:space="preserve">Copier</value>
+	</data>
+	<data name="copied_to_clip">
+		<value xml:space="preserve">Image copie dans le presse-papiers</value>
+	</data>
+	<data name="save_as">
+		<value xml:space="preserve">Enregistrer l'image sous...</value>
+	</data>
+	<data name="set_default">
+		<value xml:space="preserve">Réinitialiser l'échelle</value>
+	</data>
+	<data name="show_val">
+		<value xml:space="preserve">Visualiser les valeurs</value>
+	</data>
+	<data name="title_def">
+		<value xml:space="preserve">Titre</value>
+	</data>
+	<data name="undo_all">
+		<value xml:space="preserve">Annuler tous les déplacements et les zooms</value>
+	</data>
+	<data name="unpan">
+		<value xml:space="preserve">Annuler les déplacements</value>
+	</data>
+	<data name="unzoom">
+		<value xml:space="preserve">Annuler les zooms</value>
+	</data>
+	<data name="x_title_def">
+		<value xml:space="preserve">Axe X</value>
+	</data>
+	<data name="y_title_def">
+		<value xml:space="preserve">Axe Y</value>
+	</data>
 </root>

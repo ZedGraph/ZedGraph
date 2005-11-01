@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.3 $ $Date: 2005-06-07 04:21:42 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2005-11-01 02:48:14 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane pane;
@@ -281,7 +281,7 @@ namespace ZedGraph
 			Axis baseAxis = curve.BaseAxis( pane );
 			if ( curve is ErrorBarItem || curve is HiLowBarItem )
 			{
-				if ( ( baseAxis.IsOrdinal || baseAxis.IsText ) && iCluster >= 0 && !curve.IsOverrideOrdinal )
+				if ( baseAxis.IsAnyOrdinal && iCluster >= 0 && !curve.IsOverrideOrdinal )
 					return (double) iCluster + 1.0;
 				else
 					return val;
