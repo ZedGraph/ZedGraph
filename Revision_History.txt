@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+4-Nov-2005 (by Champion)
+  Fix Thumb size for scrollbars
+  Add Deutsch translation for "Image copied to clipboard" phrase
+  Add protection against manually set axis limits that exclude all data
+  
 31-Oct-2005 (by Champion)
   Add Swedish Translation, fix Spanish translation, add "Image copied to clipboard" to localization
   Split out context menu actions into public methods

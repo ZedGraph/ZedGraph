@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.39 $ $Date: 2005-11-01 02:48:14 $ </version>
+	/// <version> $Revision: 3.40 $ $Date: 2005-11-04 18:42:26 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -183,7 +183,7 @@ namespace ZedGraph
 		private System.Windows.Forms.HScrollBar hScrollBar1;
 		private System.Windows.Forms.VScrollBar vScrollBar1;
 
-		private const int	ScrollControlSpan = 1000;
+		private const int	ScrollControlSpan = 100;
 
 		private bool		isZoomOnMouseCenter = false;
 
@@ -1829,7 +1829,8 @@ namespace ZedGraph
 				if ( scroll.IsScrollable )
 				{
 					Axis axis = this.GraphPane.YAxisList[i];
-					HandleScroll( axis, e.NewValue, scroll.Min, scroll.Max, !axis.IsReverse );
+					HandleScroll( axis, e.NewValue, scroll.Min, scroll.Max, vScrollBar1.LargeChange,
+									!axis.IsReverse );
 				}
 			}
 
@@ -1839,7 +1840,8 @@ namespace ZedGraph
 				if ( scroll.IsScrollable )
 				{
 					Axis axis = this.GraphPane.Y2AxisList[i];
-					HandleScroll( axis, e.NewValue, scroll.Min, scroll.Max, !axis.IsReverse );
+					HandleScroll( axis, e.NewValue, scroll.Min, scroll.Max, vScrollBar1.LargeChange,
+									!axis.IsReverse );
 				}
 			}
         }
@@ -1847,38 +1849,43 @@ namespace ZedGraph
 		private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
 		{
 			HandleScroll( this.GraphPane.XAxis, e.NewValue, xScrollRange.Min, xScrollRange.Max,
-							this.GraphPane.XAxis.IsReverse );
+							hScrollBar1.LargeChange, this.GraphPane.XAxis.IsReverse );
 		}
 
-		private void HandleScroll( Axis axis, int newValue, double scrollMin, double scrollMax, bool reverse )
+		private void HandleScroll( Axis axis, int newValue, double scrollMin, double scrollMax,
+									int largeChange, bool reverse )
 		{
 			if ( scrollMin > axis.Min )
 				scrollMin = axis.Min;
 			if ( scrollMax < axis.Max )
 				scrollMax = axis.Max;
 
+			int span = ScrollControlSpan - largeChange;
+			if ( span <= 0 )
+				return;
+
 			if ( reverse )
-				newValue = ScrollControlSpan - newValue;
+				newValue = span - newValue;
 
 			if ( axis.IsLog )
 			{
 				double ratio = axis.Max / axis.Min;
 				double scrollMin2 = scrollMax / ratio;
 
-				double value = scrollMin * Math.Exp( (double) newValue / (double) ScrollControlSpan *
+				double val = scrollMin * Math.Exp( (double) newValue / (double) span *
 							( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) );
-				axis.Min = value;
-				axis.Max = value * ratio;
+				axis.Min = val;
+				axis.Max = val * ratio;
 			}
 			else
 			{
 				double delta = axis.Max - axis.Min;
 				double scrollMin2 = scrollMax - delta;
 
-				double value = scrollMin + (double) newValue / (double) ScrollControlSpan *
+				double val = scrollMin + (double) newValue / (double) span *
 							( scrollMin2 - scrollMin );
-				axis.Min = value;
-				axis.Max = value + delta;
+				axis.Min = val;
+				axis.Max = val + delta;
 			}
 
 			this.Invalidate();
@@ -1930,6 +1937,9 @@ namespace ZedGraph
 
 		private void SetScroll( ScrollBar scrollBar, Axis axis, double scrollMin, double scrollMax )
 		{
+			scrollBar.Minimum = 0;
+			scrollBar.Maximum = ScrollControlSpan - 1;
+
 			if ( scrollMin > axis.Min )
 				scrollMin = axis.Min;
 			if ( scrollMax < axis.Max )
@@ -1948,32 +1958,50 @@ namespace ZedGraph
 				//scrollBar.Visible = false;
 				scrollBar.Enabled = false;
 				scrollBar.Value = 0;
-				scrollBar.Minimum = 0;
-				scrollBar.Maximum = ScrollControlSpan;
 			}
 			else
 			{
-				scrollBar.Minimum = 0;
-				scrollBar.Maximum = ScrollControlSpan + scrollBar.LargeChange - 1;
+				double ratio;
+				if ( axis.IsLog )
+					ratio = ( Math.Log( axis.Max ) - Math.Log( axis.Min ) ) /
+								( Math.Log( scrollMax ) - Math.Log( scrollMin ) );
+				else
+					ratio = ( axis.Max - axis.Min ) / ( scrollMax - scrollMin );
+
+				int largeChange = (int) ( ratio * ScrollControlSpan + 0.5 );
+				if ( largeChange < 1 )
+					largeChange = 1;
+
+				scrollBar.LargeChange = largeChange;
+
+				int span = ScrollControlSpan - largeChange;
+
 				if ( axis.IsLog )
 					val = (int) ( ( Math.Log( axis.Min ) - Math.Log( scrollMin ) ) /
-							( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) * ScrollControlSpan + 0.5 );
+							( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) * span + 0.5 );
 				else
 					val = (int) ( ( axis.Min - scrollMin ) / ( scrollMin2 - scrollMin ) *
-							ScrollControlSpan + 0.5 );
+							span + 0.5 );
 
 				if ( val < 0 )
 					val = 0;
-				else if ( val > ScrollControlSpan )
-					val = ScrollControlSpan;
+				else if ( val > span )
+					val = span;
 
 				//if ( ( axis is XAxis && axis.IsReverse ) || ( ( ! axis is XAxis ) && ! axis.IsReverse ) )
 				if ( (axis is XAxis) == axis.IsReverse )
-					val = ScrollControlSpan - val;
+					val = span - val;
+
+				if ( val < scrollBar.Minimum )
+					val = scrollBar.Minimum;
+				if ( val > scrollBar.Maximum )
+					val = scrollBar.Maximum;
 
 				scrollBar.Value = val;
 				scrollBar.Enabled = true;
 				//scrollBar.Visible = true;
+
+
 			}
 		}
 

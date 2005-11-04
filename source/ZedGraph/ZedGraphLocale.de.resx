@@ -43,7 +43,7 @@
 		<value xml:space="preserve">Kopieren</value>
 	</data>
 	<data name="copied_to_clip">
-		<value xml:space="preserve">Image copied to clipboard</value>
+		<value xml:space="preserve">Bild in Zwischenablage kopiert</value>
 	</data>
 	<data name="save_as">
 		<value xml:space="preserve">Bild speichern als...</value>

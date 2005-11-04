@@ -174,7 +174,7 @@ namespace ZedGraph.ControlTest
 
 #endif
 
-#if true // Normal pane
+#if false // Normal pane
 			myPane.Title = "Test Graph";
 			double x, y1, y2;
 			PointPairList list1 = new PointPairList();
@@ -283,6 +283,49 @@ namespace ZedGraph.ControlTest
 			zedGraphControl1.MasterPane.Add( myPane5 );
 			zedGraphControl1.MasterPane.AutoPaneLayout( this.CreateGraphics(), PaneLayout.ExplicitRow32 );
 			*/
+#endif
+
+
+#if false	// Basic curve test - Date Axis
+
+			PointPairList list = new PointPairList();
+
+			for ( int i=0; i<100; i++ )
+			{
+				double x = new XDate( 2001, 1, i*3 );
+				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				list.Add( x, y );
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			myPane.XAxis.ScaleFormat = "dd/MM HH:mm";
+			myPane.XAxis.Type = AxisType.Date;
+
+			zedGraphControl1.IsAutoScrollRange = true;
+			zedGraphControl1.IsShowHScrollBar = true;
+#endif
+
+#if true	// Basic curve test - Linear Axis
+
+			PointPairList list = new PointPairList();
+
+			for ( int i=1; i<100; i++ )
+			{
+				double x = i;
+				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				list.Add( x, y );
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			zedGraphControl1.GraphPane.XAxis.Min = 1;
+			zedGraphControl1.GraphPane.XAxis.Max = 100;
+			zedGraphControl1.GraphPane.XAxis.IsReverse = true;
+			zedGraphControl1.GraphPane.XAxis.Type = AxisType.Log;
+			//zedGraphControl1.IsAutoScrollRange = true;
+			zedGraphControl1.ScrollMinX = 1;
+			zedGraphControl1.ScrollMaxX = 100;
+			zedGraphControl1.IsShowHScrollBar = true;
 #endif
 
 			zedGraphControl1.AxisChange();

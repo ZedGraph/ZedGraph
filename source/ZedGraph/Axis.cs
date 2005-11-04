@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.45 $ $Date: 2005-10-07 21:08:26 $ </version>
+	/// <version> $Revision: 3.46 $ $Date: 2005-11-04 18:42:26 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -4230,7 +4230,15 @@ namespace ZedGraph
 				if ( numType && ( this.max > 0 || maxVal + this.MaxGrace * range <= 0.0 ) )
 					this.max = maxVal + this.MaxGrace * range;
 			}
-				
+			
+			if ( this.max <= this.min )
+			{
+				if ( this.maxAuto )
+					this.max = this.min + 1.0;
+				else if ( this.minAuto )
+					this.min = this.max - 1.0;
+			}
+
 			switch( this.type )
 			{
 				case AxisType.Text:
