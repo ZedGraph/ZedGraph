@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.40 $ $Date: 2005-11-04 18:42:26 $ </version>
+	/// <version> $Revision: 3.41 $ $Date: 2005-11-07 04:24:04 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -183,7 +183,10 @@ namespace ZedGraph
 		private System.Windows.Forms.HScrollBar hScrollBar1;
 		private System.Windows.Forms.VScrollBar vScrollBar1;
 
-		private const int	ScrollControlSpan = 100;
+		// The range of values to use the scroll control bars
+		private const int	ScrollControlSpan = int.MaxValue;
+		// The ratio of the largeChange to the smallChange for the scroll bars
+		private const int	ScrollSmallRatio = 10;
 
 		private bool		isZoomOnMouseCenter = false;
 
@@ -1971,8 +1974,12 @@ namespace ZedGraph
 				int largeChange = (int) ( ratio * ScrollControlSpan + 0.5 );
 				if ( largeChange < 1 )
 					largeChange = 1;
-
 				scrollBar.LargeChange = largeChange;
+
+				int smallChange = largeChange / ScrollSmallRatio;
+				if ( smallChange < 1 )
+					smallChange = 1;
+				scrollBar.SmallChange = smallChange;
 
 				int span = ScrollControlSpan - largeChange;
 

@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+6-Nov-2005 (by Champion)
+  Make ScrollBar SmallChange proportional to LargeChange (thanks to tafkat)
+  
 4-Nov-2005 (by Champion)
   Fix Thumb size for scrollbars
   Add Deutsch translation for "Image copied to clipboard" phrase

@@ -320,8 +320,8 @@ namespace ZedGraph.ControlTest
 
 			zedGraphControl1.GraphPane.XAxis.Min = 1;
 			zedGraphControl1.GraphPane.XAxis.Max = 100;
-			zedGraphControl1.GraphPane.XAxis.IsReverse = true;
-			zedGraphControl1.GraphPane.XAxis.Type = AxisType.Log;
+			//zedGraphControl1.GraphPane.XAxis.IsReverse = true;
+			//zedGraphControl1.GraphPane.XAxis.Type = AxisType.Log;
 			//zedGraphControl1.IsAutoScrollRange = true;
 			zedGraphControl1.ScrollMinX = 1;
 			zedGraphControl1.ScrollMaxX = 100;
