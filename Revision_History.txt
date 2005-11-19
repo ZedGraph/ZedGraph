@@ -1,5 +1,15 @@
 ZedGraph Class Library Revision History
 
+19-nov-2005 (by softlion)
+  Major changes to the web interface:
+  DataSource property works. Optional DataSource are also available on each curve, by default it uses the main DataSource. DataMember property is available as a main property for the base axis (x axis) and as a property on each curve (y axis).
+  New RenderMode property to render as an IMG tag instead of generating and returning an image on the fly. A temporary image file is created and saved in the folder specified by the new RenderedImagePath property. The file name is the control ID (may change in a near future).
+  Comments uptdated and added on properties
+  Property categories change for readability (ASP.NET pages made with previous version will need to upgrade)
+  Major and minor grid properties for all axis are now grouped into a child item
+  minor bug fix: image generated on the fly also sends HTML IMG tag
+
+
 6-Nov-2005 (by Champion)
   Make ScrollBar SmallChange proportional to LargeChange (thanks to tafkat)
   

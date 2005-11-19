@@ -24,12 +24,20 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Collections;
 using ZedGraph;
 
 [assembly: TagPrefix("ZedGraph","zgw")]
 
 namespace ZedGraph
 {
+	public enum RenderModeType
+	{
+		ImageTag, //Renders as an IMG tag referencing a local generated image. ContentType stays text.
+		RawImage  //Renders the binary image. ContentType is changed accordingly.
+	}
+
+
 	/// <summary>
 	/// The ZedGraphWeb class provides a web control interface to the
 	/// <see cref="ZedGraph"/> class library.  This allows ZedGraph to be used
@@ -38,7 +46,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.29 $ $Date: 2005-08-11 07:35:53 $ </version>
+	/// <version> $Revision: 3.30 $ $Date: 2005-11-19 01:01:55 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -68,14 +76,15 @@ namespace ZedGraph
 			vsassist.Register('z',typeof(ZedGraphWebY2Axis));
 			vsassist.Register('l',typeof(ZedGraphWebLegend));
 			vsassist.Register('b',typeof(ZedGraphWebBorder));
-			vsassist.Register('f',typeof(ZedGraphWebFill));
 			vsassist.Register('B',typeof(ZedGraphWebBorder));
+			vsassist.Register('f',typeof(ZedGraphWebFill));
 			vsassist.Register('F',typeof(ZedGraphWebFill));
 			vsassist.Register('s',typeof(ZedGraphWebFontSpec));
 			vsassist.Register('c',typeof(ZedGraphWebCurveCollection));
 			vsassist.Register('g',typeof(ZedGraphWebGraphItemCollection));
 			vsassist.Register('r',typeof(ZedGraphWebRect));
-			vsassist.Register('R',typeof(ZedGraphWebRect));	
+			vsassist.Register('R',typeof(ZedGraphWebRect));
+			vsassist.Register('m',typeof(ZedGraphWebRect2));	
 
 			this.AxisBorder.Color = ZedGraph.GraphPane.Default.AxisBorderColor;
 			this.AxisBorder.PenWidth = ZedGraph.GraphPane.Default.AxisBorderPenWidth;
@@ -105,6 +114,12 @@ namespace ZedGraph
 
 			this.Y2Axis.IsVisible = ZedGraph.Y2Axis.Default.IsVisible;
 			this.Y2Axis.IsZeroLine = ZedGraph.Y2Axis.Default.IsZeroLine;
+
+			ZedGraphWebRect2 margins = this.Margins;
+			margins.Left = ZedGraph.PaneBase.Default.MarginLeft;
+			margins.Right = ZedGraph.PaneBase.Default.MarginRight;
+			margins.Top = ZedGraph.PaneBase.Default.MarginTop;
+			margins.Bottom = ZedGraph.PaneBase.Default.MarginBottom;
 		}
 		#endregion
 
@@ -266,7 +281,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Number of graph panes to create for a compound graph
 		/// </summary>
-		[Category("Graph Panes")]
+		[Category("Layout of panes")]
 		public int PaneCount
 		{
 			get
@@ -283,7 +298,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The layout format for the compound graph.
 		/// </summary>
-		[Category("Graph Panes"),Bindable(true),NotifyParentProperty(true)]
+		[Category("Layout of panes"),Bindable(true),NotifyParentProperty(true)]
 		public PaneLayout PaneLayout
 		{
 			get 
@@ -298,8 +313,8 @@ namespace ZedGraph
 		/// 
 		/// </summary>
 		/// <value></value>
-		[Category("Page Cache"),NotifyParentProperty(true),
-		Description("Optional output caching parameter in seconds. A zero value ignores cache settings. " +
+		[Category("Behavior"),NotifyParentProperty(true),
+		Description("Optional output caching parameter in seconds. A zero value disables internal caching. " +
 			"For more advanced caching see microsoft documentation")]
 		public int CacheDuration
 		{
@@ -316,7 +331,7 @@ namespace ZedGraph
 		/// bound to the graph.
 		/// </summary>
 		[Category("Data"),NotifyParentProperty(true),
-		Description("Optional binding member name for populating curve items with values")]
+		Description("Optional. Binding member name for populating the base axis (X axis) with values.")]
 		public string DataMember
 		{
 			get 
@@ -331,6 +346,7 @@ namespace ZedGraph
 		/// The object reference that points to a data source from which to bind curve data.
 		/// </summary>
 		[Bindable(true),Category("Data"),NotifyParentProperty(true)]
+		[Description("Data source containing data for the base axis and the curves (can be overriden by curve's DataSource property)")]
 		public object DataSource
 		{
 			get 
@@ -344,7 +360,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Proxy property that gets or sets the value of the <see cref="PaneBase.BaseDimension"/>.
 		/// </summary>
-		[Bindable(true),Category("Layout"),NotifyParentProperty(true)]
+		[Bindable(true),Category("Layout of container"),NotifyParentProperty(true)]
 		public float BaseDimension
 		{
 			get 
@@ -359,7 +375,7 @@ namespace ZedGraph
 		/// Proxy property that gets or sets the width of the <see cref="PaneBase.PaneRect"/>.
 		/// </summary>
 		/// <value>The width in output device pixels</value>
-		[Bindable(true),Category("Layout"),NotifyParentProperty(true),DefaultValue(400)]
+		[Bindable(true),Category("Layout of container"),NotifyParentProperty(true),DefaultValue(400)]
 		public int Width
 		{
 			get 
@@ -374,7 +390,7 @@ namespace ZedGraph
 		/// Proxy property that gets or sets the height of the <see cref="PaneBase.PaneRect"/>.
 		/// </summary>
 		/// <value>The height in output device pixels</value>
-		[Bindable(true),Category("Layout"),NotifyParentProperty(true),DefaultValue(250)]
+		[Bindable(true),Category("Layout of container"),NotifyParentProperty(true),DefaultValue(250)]
 		public int Height
 		{
 			get 
@@ -405,7 +421,7 @@ namespace ZedGraph
 		/// determines if the <see cref="ZedGraph.PaneBase.Title"/> is visible.
 		/// </summary>
 		/// <value>true to show the pane title, false otherwise</value>
-		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
+		[Bindable(true),Category("Appearance"),NotifyParentProperty(true)]
 		public bool IsShowTitle
 		{
 			get 
@@ -420,6 +436,7 @@ namespace ZedGraph
 		/// Proxy property that gets or sets the value of <see cref="GraphPane.IsIgnoreInitial"/>.
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
+		[Description("If true, initial zero values will be excluded when determining the Y or Y2 axis scale range.")]
 		public bool IsIgnoreInitial
 		{
 			get 
@@ -447,7 +464,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="PaneBase.IsFontsScaled"/>.
 		/// </summary>
-		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
+		[Bindable(true),Category("Appearance"),NotifyParentProperty(true)]
 		public bool IsFontsScaled
 		{
 			get 
@@ -475,7 +492,9 @@ namespace ZedGraph
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="GraphPane.IsAxisRectAuto"/>.
 		/// </summary>
-		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
+		[Bindable(true)]
+		[Category("Axis")]
+		[NotifyParentProperty(true)]
 		public bool IsAxisRectAuto
 		{
 			get 
@@ -489,7 +508,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="PaneBase.IsPenWidthScaled"/>.
 		/// </summary>
-		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
+		[Bindable(true),Category("Appearance"),NotifyParentProperty(true)]
 		public bool IsPenWidthScaled
 		{
 			get 
@@ -523,13 +542,13 @@ namespace ZedGraph
 		/// Png, or Icon.
 		/// </summary>
 		/// <value>A <see cref="ZedGraphWebFormat"/> enumeration.</value>
-		[Bindable(true),Category("Behavior"),NotifyParentProperty(true),DefaultValue("Jpeg")]
+		[Bindable(true),Category("Behavior"),NotifyParentProperty(true),DefaultValue(ZedGraphWebFormat.Png)]
 		public ZedGraphWebFormat OutputFormat
 		{
 			get 
 			{ 
 				object x = ViewState["OutputFormat"]; 
-				return (null == x) ? ZedGraphWebFormat.Jpeg : (ZedGraphWebFormat)x;
+				return (null == x) ? ZedGraphWebFormat.Png : (ZedGraphWebFormat)x;
 			}
 			set { ViewState["OutputFormat"] = value; }						
 		}	
@@ -548,10 +567,55 @@ namespace ZedGraph
 			set { ViewState["ClusterScaleWidth"] = value; }
 		} 
 
+		
+		/// <summary>
+		/// What to return ?
+		/// A raw image or an IMG tag referencing a generated image ?
+		/// </summary>
+		[Category("Behavior")]
+		[DefaultValue(RenderModeType.ImageTag)]
+		[Description("What to return ? A raw image or an IMG tag referencing the generated image ?")]
+		public RenderModeType RenderMode
+		{
+			get 
+			{ 
+				RenderModeType retVal = RenderModeType.ImageTag;
+				try
+				{
+					retVal = (RenderModeType)RenderModeType.Parse( typeof(RenderModeType), ViewState["RenderMode"].ToString() );
+				}
+				catch( System.Exception )
+				{
+				}
+
+				return retVal;
+			}
+
+			set { ViewState["RenderMode"] = value; }
+		} 
+
+		/// <summary>
+		/// What to return ?
+		/// A raw image or an IMG tag referencing a generated image ?
+		/// </summary>
+		[Category("Behavior")]
+		[DefaultValue("~/ZedGraphImages/")]
+		[Description("Web path of the folder which will contain images when RenderMode is ImageTag. Don't forget to set this folder to writable !")]
+		public string RenderedImagePath
+		{
+			get 
+			{ 
+				string x = ViewState["RenderedImagePath"] as string;
+				return (x == null) ? "~/ZedGraphImages/" : x;
+			}
+			set { ViewState["RenderedImagePath"] = value; }
+		} 
+
+
 		/// <summary>
 		/// Proxy property that gets or sets the value of the <see cref="GraphPane.BarType"/>.
 		/// </summary>
-		[NotifyParentProperty(true),Category("Appearance")]
+		[NotifyParentProperty(true),Category("Data Appearance")]
 		public BarType BarType
 		{
 			get 
@@ -565,7 +629,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Proxy property that gets or sets the value of the <see cref="GraphPane.LineType"/>.
 		/// </summary>
-		[NotifyParentProperty(true),Category("Appearance")]
+		[NotifyParentProperty(true),Category("Data Appearance")]
 		public LineType LineType
 		{
 			get 
@@ -579,7 +643,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Proxy property that gets or sets the value of the <see cref="GraphPane.MinClusterGap"/>.
 		/// </summary>
-		[NotifyParentProperty(true),Category("Appearance")]
+		[NotifyParentProperty(true),Category("Data Appearance")]
 		public float MinClusterGap
 		{
 			get 
@@ -593,7 +657,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Proxy property that gets or sets the value of the <see cref="GraphPane.MinBarGap"/>.
 		/// </summary>
-		[NotifyParentProperty(true),Category("Appearance")]
+		[NotifyParentProperty(true),Category("Data Appearance")]
 		public float MinBarGap
 		{
 			get 
@@ -604,62 +668,22 @@ namespace ZedGraph
 			set { ViewState["MinBarGap"] = value; }
 		} 
 
-		/// <summary>
-		/// Proxy property that gets or sets the value of the <see cref="PaneBase.MarginLeft"/>.
-		/// </summary>
-		[NotifyParentProperty(true),Category("Pane")]
-		public float MarginLeft
-		{
-			get 
-			{ 
-				object x = ViewState["MarginLeft"]; 
-				return (null == x) ? ZedGraph.PaneBase.Default.MarginLeft : (float)x;
-			}
-			set { ViewState["MarginLeft"] = value; }
-		} 
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of the <see cref="PaneBase.MarginRight"/>.
+		/// Proxy property that gets the value of the <see cref="GraphPane.MarginXXXX"/>.
 		/// </summary>
-		[NotifyParentProperty(true),Category("Pane")]
-		public float MarginRight
+		[
+		Category("Layout of panes"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebRect2 Margins
 		{
-			get 
-			{ 
-				object x = ViewState["MarginRight"]; 
-				return (null == x) ? ZedGraph.PaneBase.Default.MarginRight : (float)x;
-			}
-			set { ViewState["MarginRight"] = value; }
-		} 
+			get { return (ZedGraphWebRect2)vsassist.GetValue('m',this.IsTrackingViewState); }
+		}		
 
-		/// <summary>
-		/// Proxy property that gets or sets the value of the <see cref="PaneBase.MarginTop"/>.
-		/// </summary>
-		[NotifyParentProperty(true),Category("Pane")]
-		public float MarginTop
-		{
-			get 
-			{ 
-				object x = ViewState["MarginTop"]; 
-				return (null == x) ? ZedGraph.PaneBase.Default.MarginTop : (float)x;
-			}
-			set { ViewState["MarginTop"] = value; }
-		} 
 
-		/// <summary>
-		/// Proxy property that gets or sets the value of the <see cref="PaneBase.MarginBottom"/>.
-		/// </summary>
-		[NotifyParentProperty(true),Category("Pane")]
-		public float MarginBottom
-		{
-			get 
-			{ 
-				object x = ViewState["MarginBottom"]; 
-				return (null == x) ? ZedGraph.PaneBase.Default.MarginBottom : (float)x;
-			}
-			set { ViewState["MarginBottom"] = value; }
-		} 
-	
 		/// <summary>
 		/// Proxy property that gets the value of the <see cref="GraphPane.CurveList"/>.
 		/// </summary>
@@ -706,7 +730,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="GraphPane.PieRect"/>.
 		/// </summary>
 		[
-		Category("Appearance"),
+		Category("Data Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -720,7 +744,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="PaneBase.FontSpec"/>.
 		/// </summary>
 		[
-		Category("Pane"),
+		Category("Layout of panes"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -762,7 +786,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="PaneBase.PaneBorder"/>.
 		/// </summary>
 		[		
-		Category("Pane"),
+		Category("Layout of panes"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -776,7 +800,7 @@ namespace ZedGraph
 		/// Proxy property that gets the value of the <see cref="PaneBase.PaneFill"/>.
 		/// </summary>
 		[
-		Category("Pane"),
+		Category("Layout of panes"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
@@ -876,24 +900,22 @@ namespace ZedGraph
 			}
 			else
 			{
-				try
+				foreach( GraphPane p in pane.PaneList )
 				{
-					foreach( GraphPane p in pane.PaneList )
-					{
-						// Add visual designer influences here - first!!
-						MapWebContent(g,p);
+					// Add visual designer influences here - first!!
+					SetWebProperties(g,p);
 
-						// Add DataSource values if available before the callback
-						PopulateByDataSource(g,p);
-					}
+					// Add DataSource values if available before the callback
+					PopulateByDataSource(g,p);
 
-					// Add custom callback tweeking next
+					//Add Graph Items
+					AddWebGraphItems(g,p);
+				}
+
+				//TODO: verify callback regression test
+				// Add custom callback tweeking next
+				if( handler != null )
 					handler( g, pane );
-				}
-				catch(Exception)
-				{
-					//TODO: what now, callback for errors? ;)
-				}
 			}
 		}		
 	#endregion
@@ -907,7 +929,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="g"><see cref="Graphics"/></param>
 		/// <param name="pane"><see cref="GraphPane"/></param>
-		protected void MapWebContent( Graphics g, GraphPane pane )
+		protected void SetWebProperties( Graphics g, GraphPane pane )
 		{
 			try 
 			{
@@ -933,71 +955,21 @@ namespace ZedGraph
 				pane.Title = this.Title;
 				this.PaneBorder.CopyTo(pane.PaneBorder);
 				this.PaneFill.CopyTo(pane.PaneFill);
-				pane.MarginLeft = this.MarginLeft;
-				pane.MarginRight = this.MarginRight;
-				pane.MarginTop = this.MarginTop;
-				pane.MarginBottom = this.MarginBottom;
+				pane.MarginLeft = this.Margins.Left;
+				pane.MarginRight = this.Margins.Right;
+				pane.MarginTop = this.Margins.Top;
+				pane.MarginBottom = this.Margins.Bottom;
 				pane.BaseDimension = this.BaseDimension;
 				pane.IsFontsScaled = this.IsFontsScaled;
 				pane.IsPenWidthScaled = this.IsPenWidthScaled;
 			}
 			catch(Exception)
 			{
-				//base mapping
 			}
+		}
 
-			try
-			{
-				ZedGraphWebCurveItem curve;
-				for (int i=0; i<CurveList.Count; i++)
-				{
-					curve = CurveList[i];
-
-					PointPairList points = new PointPairList();
-					PointPair pair = new PointPair();
-					for ( int j=0; j<curve.Points.Count; j++ )
-					{
-						curve.Points[j].CopyTo( pair );
-						points.Add( pair );
-					}
-
-					if ( curve is ZedGraphWebBarItem )
-					{
-						ZedGraphWebBarItem item = (ZedGraphWebBarItem)curve;
-						BarItem x = pane.AddBar(item.Label,points,item.Color);
-						item.CopyTo(x);					
-					}
-					else if ( curve is ZedGraphWebLineItem )
-					{
-						ZedGraphWebLineItem item = (ZedGraphWebLineItem)curve;
-						LineItem x = pane.AddCurve(item.Label,points,item.Color);
-						item.CopyTo(x);
-					}
-					else if ( curve is ZedGraphWebErrorBarItem )
-					{
-						ZedGraphWebErrorBarItem item = (ZedGraphWebErrorBarItem)curve;
-						ErrorBarItem x = pane.AddErrorBar(item.Label,points,item.Color);
-						item.CopyTo(x);
-					}
-					else if ( curve is ZedGraphWebHiLowBarItem )
-					{
-						ZedGraphWebHiLowBarItem item = (ZedGraphWebHiLowBarItem)curve;
-						HiLowBarItem x = pane.AddHiLowBar(item.Label,points,item.Color);
-						item.CopyTo(x);
-					}
-					else if ( curve is ZedGraphWebPieItem )
-					{
-						ZedGraphWebPieItem item = (ZedGraphWebPieItem)curve;
-						PieItem x = pane.AddPieSlice(item.Value, item.Color, item.Displacement, item.Label);					
-						item.CopyTo(x);
-					}				
-				}
-			}
-			catch(Exception)
-			{
-				//curveitems
-			}
-						
+		protected void AddWebGraphItems( Graphics g, GraphPane pane )
+		{
 			try
 			{
 				ZedGraphWebGraphItem draw;
@@ -1043,7 +1015,6 @@ namespace ZedGraph
 			}
 			catch(Exception)
 			{
-				//graphitems
 			}						
 		}
 		#endregion
@@ -1060,7 +1031,149 @@ namespace ZedGraph
 		/// <param name="pane">The <see cref="ZedGraph.GraphPane"/> object which will receive the data.</param>
 		protected void PopulateByDataSource( Graphics g, GraphPane pane )
 		{
-			if ( this.DataSource == null ) return;
+			if( this.CurveList.Count == 0 ) 
+				return;
+
+			//If the Datasource column names are available we can bind them 
+			// correctly to their corresponding DataMember.
+			if( this.DataMember != null && this.DataMember != String.Empty 
+				&& this.DataSource != null
+				&& this.DataSource is ITypedList 
+				&& this.DataSource is IListSource
+				)
+			{
+				ITypedList tlist = this.DataSource as ITypedList;
+				IListSource listSource = this.DataSource as IListSource;
+				IList list = listSource.GetList();
+				PropertyDescriptorCollection pdc = tlist.GetItemProperties( null );
+				bool bListContainsList = listSource.ContainsListCollection;
+
+				//Get the DataMember and Type of the base axis in the DataSource
+				string baseDataMember = this.DataMember;
+				PropertyDescriptor basePd = pdc.Find( baseDataMember, true );
+				if( basePd == null )
+					throw new System.Exception( "Can't find DataMember '"+baseDataMember+"' in DataSource for the base axis." );
+				baseDataMember = basePd.Name;
+				Type baseDataType = basePd.PropertyType;
+				int indexBaseColumn = pdc.IndexOf(basePd);
+
+				//Foreach bar/curve
+				//  Get its DataMember and Type in the DataSource
+				//	Add the curve to the pane
+				//  Add all corresponding points(baseAxis,valueAxis,0)
+				//Note: Z axis is not supported
+				foreach( ZedGraphWebCurveItem curveItem in this.CurveList )
+				{
+					//Axis valueAxis = curveItem.ValueAxis;
+					PropertyDescriptorCollection pdcValue = pdc;
+					IList valueList = list;
+					bool bValueListContainsList = bListContainsList;
+
+					//If present, use DataSource of Curve instead of main DataSource
+					if( curveItem.DataSource != null 
+						&& curveItem.DataSource is ITypedList 
+						&& curveItem.DataSource is IListSource )
+					{
+						ITypedList valueTlist = curveItem.DataSource as ITypedList;
+						pdcValue = valueTlist.GetItemProperties( null );
+						IListSource valueListSource = curveItem.DataSource as IListSource;
+						valueList = valueListSource.GetList();
+						bValueListContainsList = valueListSource.ContainsListCollection;
+					}
+
+					string valueDataMember = curveItem.DataMember;
+					PropertyDescriptor pd = pdcValue.Find( valueDataMember, true );
+					if( pd == null )
+						throw new System.Exception( "Can't find DataMember '" + valueDataMember + "' in DataSource for the " + curveItem.Label + " axis." );
+					valueDataMember = pd.Name; //Get the exact case-dependent name
+					Type valueDataType = pd.PropertyType;
+					int indexValueColumn = pdcValue.IndexOf(pd);
+
+					//Add points
+					PointPairList points = new PointPairList();
+					PointPair pair = new PointPair();
+					object oColumnValue;
+
+					int nRow = 0;
+					foreach( object row in list )
+					{
+						//
+						// Value axis binding (Y axis)
+						//
+						object valueRow = valueList[nRow];
+
+						//Get item value in 'row'
+						if( bValueListContainsList )
+						{
+							if( !(valueRow is IList ) )
+								throw new System.InvalidCastException( "The DataSource contains a list which declares its items as lists, but these don't support the IList interface." );
+							oColumnValue = (valueRow as IList)[indexValueColumn];
+						}
+						else
+						{
+							oColumnValue = pd.GetValue(valueRow);
+						}
+
+						//Convert value to double (always double)
+						double v = 0;
+						switch( oColumnValue.GetType().ToString() )
+						{
+							case "System.DateTime":
+								v = new XDate(Convert.ToDateTime(oColumnValue)).XLDate;
+								break;
+							default:
+								try
+								{
+									v = Convert.ToDouble(oColumnValue);
+								}
+								catch
+								{
+									throw new NotImplementedException( "Conversion from " + oColumnValue.GetType() + " to double not implemented."  );
+								}
+								break;
+						}
+
+						//
+						// Base axis binding (X axis)
+						//
+						pair.Tag = oColumnValue; //Original typed value
+						pair.Y = v;
+						if( this.XAxis.Type == AxisType.DateAsOrdinal
+							|| this.XAxis.Type == AxisType.Date )
+						{
+							pair.X = new XDate(Convert.ToDateTime(basePd.GetValue(row))).XLDate;
+						}
+						else
+							pair.X = Convert.ToDouble(basePd.GetValue(row));
+
+						points.Add(pair);
+
+						nRow++;
+					}
+
+					//Create curve in pane with its points
+					curveItem.CreateInPane( pane, points );
+				}
+			}
+			else
+			{
+				//Add curves and values set in designer
+				ZedGraphWebCurveItem curve;
+				for (int i=0; i<CurveList.Count; i++)
+				{
+					curve = CurveList[i];
+
+					PointPairList points = new PointPairList();
+					PointPair pair = new PointPair();
+					for ( int j=0; j<curve.Points.Count; j++ )
+					{
+						curve.Points[j].CopyTo( pair );
+						points.Add( pair );
+					}
+
+					curve.CreateInPane( pane, points );
+				}
+			}
 
 			//TODO: verify datasource type and count
 			//TODO: match column names to curveitems
@@ -1080,14 +1193,6 @@ namespace ZedGraph
 				pane.CurveList[0].Points.Add(x,y,z);
 			}
 			*/
-
-			try
-			{
-			}
-			catch(Exception)
-			{
-				//databinding
-			}
 		}
 
 	#endregion
@@ -1101,21 +1206,6 @@ namespace ZedGraph
 		protected override void OnPreRender( EventArgs e )
 		{
 			base.OnPreRender( e );
-				
-			if ( this.CacheDuration > 0 )
-			{
-				System.Web.HttpContext context = System.Web.HttpContext.Current;
-				if ( context != null )
-				{
-					System.Web.HttpCachePolicy policy = context.Response.Cache;
-					if ( policy != null )
-					{
-						policy.SetExpires( DateTime.Now.AddSeconds(this.CacheDuration) );
-					}
-				}
-			}
-			
-			Draw( true );
 		}
 		
 		/// <summary>
@@ -1169,57 +1259,112 @@ namespace ZedGraph
 		/// <param name="output"></param>
 		protected override void Render( HtmlTextWriter output )
 		{	
-			try
-			{
-				if ( null == DesignTimeFileStream )
-				{					
-					string path = Path.GetTempPath();
-					string name = string.Empty;
-					int pid = System.Diagnostics.Process.GetCurrentProcess().Id;
-					string test;
+			bool bDesignMode = ( this.Page.Site != null && this.Page.Site.DesignMode );
 
-					for ( int i=0; i<100; i++ )
+			if( !bDesignMode && this.RenderMode == RenderModeType.RawImage )
+			{
+				if ( this.CacheDuration > 0 )
+				{
+					System.Web.HttpContext context = System.Web.HttpContext.Current;
+					System.Web.HttpCachePolicy policy = context.Response.Cache;
+					if ( policy != null )
 					{
-						test = string.Format("{0:X}-{1:X}.jpg",i,pid);
-						test = Path.Combine(path,test);
-						if ( !File.Exists(test) )
+						policy.SetExpires( DateTime.Now.AddSeconds(this.CacheDuration) );
+					}
+				}
+			
+				Draw( true );
+			}
+			else
+			{
+				try
+				{
+					string tempFileName;
+
+					if( bDesignMode )
+					{
+						//Create temporary file if it does not exists
+						if ( DesignTimeFileStream == null )
 						{
-							name = test;
-							break;
+							string tempFilePathName = Path.GetTempFileName();
+							DesignTimeFileStream = new FileStream( tempFilePathName,FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite );
+							tempFileName = Path.GetFileName(tempFilePathName);
+						}
+						else
+						{
+							tempFileName = Path.GetFileName(DesignTimeFileStream.Name);
+							DesignTimeFileStream.SetLength(0);
+							DesignTimeFileStream.Seek(0,SeekOrigin.Begin);
 						}
 					}
-					if ( name == string.Empty ) 
+					else
 					{
-						throw new Exception("unable to create temp file for ZedGraph rendering");
+						//System.Guid.NewGuid().ToString()
+						tempFileName = this.UniqueID + "." + this.ImageFormatFileExtension;
+						string tempFilePathName = Context.Server.MapPath( this.RenderedImagePath );
+						tempFilePathName = Path.Combine( tempFilePathName, tempFileName );
+						
+						if ( this.CacheDuration == 0 ||
+							 (	File.Exists(tempFilePathName) 
+								&& File.GetCreationTimeUtc(tempFilePathName).AddSeconds(this.CacheDuration)
+									> DateTime.Now.ToUniversalTime()
+							 ) 
+						   )
+						{
+							DesignTimeFileStream = new FileStream( tempFilePathName,FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite );
+							DesignTimeFileStream.SetLength(0);
+							DesignTimeFileStream.Seek(0,SeekOrigin.Begin);
+						}
+
+					}
+
+					if( DesignTimeFileStream != null ) //Not cached
+					{
+						CreateGraph( DesignTimeFileStream, this.ImageFormat );
+						DesignTimeFileStream.Flush();
+						if( !bDesignMode ) //Production mode: close files !
+						{
+							DesignTimeFileStream.Close();
+							DesignTimeFileStream = null;
+						}
 					}
 					
-					DesignTimeFileStream = new FileStream(name,FileMode.CreateNew,
-						FileAccess.ReadWrite, FileShare.ReadWrite, 512);
+					//Write <IMG width="" height="" src="" alt=""> tag
+					string src;
+
+					if( bDesignMode )
+						src = "file://" + DesignTimeFileStream.Name;
+					else
+					{
+						src = this.RenderedImagePath;
+						
+						if( !src.EndsWith( "/" ) )
+							src += '/';
+						
+						if( src.StartsWith( "~/" ) )
+							src = src.Substring( 2 );
+						else if( src.StartsWith( "~" ) )
+							src = src.Substring( 1 );
+						
+						src += tempFileName;
+					}
+
+					output.AddAttribute(HtmlTextWriterAttribute.Width,this.Width.ToString());
+					output.AddAttribute(HtmlTextWriterAttribute.Height,this.Height.ToString());
+					output.AddAttribute(HtmlTextWriterAttribute.Src,src);
+					output.AddAttribute(HtmlTextWriterAttribute.Alt,String.Empty);
+					output.RenderBeginTag(HtmlTextWriterTag.Img);
+					output.RenderEndTag();
 				}
-
-				DesignTimeFileStream.SetLength(0);
-				DesignTimeFileStream.Seek(0,SeekOrigin.Begin);
-				CreateGraph( DesignTimeFileStream, ImageFormat.Jpeg );			
-				DesignTimeFileStream.Flush();
-				
-				string url = "file://" + DesignTimeFileStream.Name;
-				output.AddAttribute(HtmlTextWriterAttribute.Width,this.Width.ToString());
-				output.AddAttribute(HtmlTextWriterAttribute.Height,this.Height.ToString());
-				output.AddAttribute(HtmlTextWriterAttribute.Src,url);
-				output.AddAttribute(HtmlTextWriterAttribute.Alt,url);
-				output.RenderBeginTag(HtmlTextWriterTag.Img);
-				output.RenderEndTag();
+				catch(Exception e)
+				{				
+					output.AddAttribute(HtmlTextWriterAttribute.Width,this.Width.ToString());
+					output.AddAttribute(HtmlTextWriterAttribute.Height,this.Height.ToString());				
+					output.RenderBeginTag(HtmlTextWriterTag.Span);
+					output.Write( e.ToString() );
+					output.RenderEndTag();
+				}
 			}
-			catch(Exception e)
-			{				
-				output.AddAttribute(HtmlTextWriterAttribute.Width,this.Width.ToString());
-				output.AddAttribute(HtmlTextWriterAttribute.Height,this.Height.ToString());				
-				output.RenderBeginTag(HtmlTextWriterTag.Span);
-				output.Write(e.ToString());
-				output.RenderEndTag();
-			}
-
-			
 		}
 
 		/// <summary>
@@ -1302,6 +1447,29 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Gets the current image format file extension
+		/// </summary>
+		protected string ImageFormatFileExtension
+		{
+			get
+			{
+				switch( OutputFormat )
+				{
+					case ZedGraphWebFormat.Gif:
+						return "gif";
+					case ZedGraphWebFormat.Jpeg:
+						return "jpg";
+					case ZedGraphWebFormat.Icon:
+						return "ico";
+					case ZedGraphWebFormat.Png:
+						return "png";
+				}
+
+				throw new System.NotImplementedException( OutputFormat.ToString() + " format is not implemented in ImageFormatFileExtension !" );
+			}
+		}
+
+		/// <summary>
 		/// Gets the <see cref="OutputFormat"/> property, translated to an
 		/// html content type string (such as "image/png").
 		/// </summary>
@@ -1379,6 +1547,16 @@ namespace ZedGraph
 			catch(Exception)
 			{
 			}
+		}
+
+		#endregion
+
+		#region IServiceProvider Members
+
+		public object GetService(Type serviceType)
+		{
+			// TODO:  Add ZedGraphWeb.GetService implementation
+			return null;
 		}
 
 		#endregion

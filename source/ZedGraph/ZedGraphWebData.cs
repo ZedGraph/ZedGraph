@@ -19,11 +19,7 @@
 
 using System;
 using System.Web.UI;
-using System.Web.UI.Design;
 using System.ComponentModel;
-using System.Collections;
-using System.ComponentModel.Design;
-using System.Drawing.Design;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
@@ -44,7 +40,7 @@ namespace ZedGraph
 	/// </summary>
 	/// <author>Darren Martz</author>
 	[DefaultProperty("Label")]
-	public class ZedGraphWebCurveItem : GenericItem
+	public abstract class ZedGraphWebCurveItem : GenericItem
 	{
 		/// <summary>
 		/// Identifies curve item by the labels value
@@ -74,6 +70,7 @@ namespace ZedGraph
 			Label = label;
 		}
 
+		#region Web specific Methods
 		/// <summary>
 		/// Copy the properties of this <see cref="ZedGraphWebCurveItem"/> to the specified
 		/// <see cref="CurveItem"/> object.
@@ -88,8 +85,33 @@ namespace ZedGraph
 			item.IsVisible = this.IsVisible;
 		}
 
-		#region Properties
-		
+		/// <summary>
+		/// Creates a new CurveItem using the PointPairList and add it the the given pane.
+		/// </summary>
+		/// <param name="pane">the GraphPane object to which to add the new curve</param>
+		/// <param name="points">a PointPairList collection defining the points for this curve</param>
+		/// <returns>the newly created CurveItem added to the given GraphPane</returns>
+		/// <remarks>This method must be overriden by childs</remarks>
+		public abstract CurveItem CreateInPane( GraphPane pane, PointPairList points );
+		#endregion
+
+		#region Web Specific Properties
+
+		/// <summary>
+		/// The object reference that points to a data source from which to bind curve data.
+		/// </summary>
+		[Bindable(true),Category("Data"),NotifyParentProperty(true)]
+		[Description("Overrides the main DataSource. This data source contains the data for this curve.")]
+		public object DataSource
+		{
+			get 
+			{ 
+				object x = ViewState["DataSource"]; 
+				return (null == x) ? null : (object)x;
+			}
+			set { ViewState["DataSource"] = value; }
+		}
+
 		/// <summary>
 		/// The <see cref="String"/> name of the data member that contains the data to be
 		/// bound to this <see cref="ZedGraph.CurveItem"/>.
@@ -113,9 +135,9 @@ namespace ZedGraph
 		/// entry for the the <see cref="CurveItem"/> object.
 		/// </remarks>
 		/// <seealso cref="CurveItem.Label"/>
-		[Category("Curve Details"),NotifyParentProperty(true),
-		Description("A text string that represents the Legend entry for the "+
-			"this CurveItem object")]
+		[Category("Curve Details")]
+		[NotifyParentProperty(true)]
+		[Description("A text string that represents the Legend entry for this CurveItem object")]
 		public string Label
 		{
 			get 
@@ -255,7 +277,12 @@ namespace ZedGraph
 		/// <returns>Always returns "Border"</returns>
 		public override string ToString()
 		{
-			return "Border";
+			string text;
+			if( !this.IsVisible )
+				text = "none";
+			else
+				text = Color.Name;
+			return text;
 		}
 
 		/// <summary>
@@ -355,7 +382,10 @@ namespace ZedGraph
 		/// <returns>Always returns "Fill"</returns>
 		public override string ToString()
 		{
-			return "Fill";
+			string text = this.Type.ToString();
+			if( this.Type != ZedGraph.FillType.None )
+				text += " (" + this.Color.Name + ")";
+			return text;
 		}
 
 		/// <summary>
@@ -735,6 +765,20 @@ namespace ZedGraph
 			this.Fill.CopyTo( item.Bar.Fill );
 		}
 
+		/// <summary>
+		/// Creates a new CurveItem using the PointPairList and add it the the given pane.
+		/// </summary>
+		/// <param name="pane">the GraphPane object to which to add the new curve</param>
+		/// <param name="points">a PointPairList collection defining the points for this curve</param>
+		/// <returns>the newly created CurveItem added to the given GraphPane</returns>
+		/// <remarks>This method must be overriden by childs</remarks>
+		public override CurveItem CreateInPane( GraphPane pane, PointPairList points )
+		{
+			BarItem x = pane.AddBar(this.Label,points,this.Color);
+			this.CopyTo(x);
+			return x;
+		}
+
 		#region Border
 		
 		/// <summary>
@@ -819,6 +863,20 @@ namespace ZedGraph
 			item.ErrorBar.PenWidth = this.PenWidth;
 		}
 
+		/// <summary>
+		/// Creates a new CurveItem using the PointPairList and add it the the given pane.
+		/// </summary>
+		/// <param name="pane">the GraphPane object to which to add the new curve</param>
+		/// <param name="points">a PointPairList collection defining the points for this curve</param>
+		/// <returns>the newly created CurveItem added to the given GraphPane</returns>
+		/// <remarks>This method must be overriden by childs</remarks>
+		public override CurveItem CreateInPane( GraphPane pane, PointPairList points )
+		{
+			ErrorBarItem x = pane.AddErrorBar(this.Label,points,this.Color);
+			this.CopyTo(x);
+			return x;
+		}
+
 		#region Symbol
 		
 		/// <summary>
@@ -900,6 +958,21 @@ namespace ZedGraph
 		{
 			base.CopyTo(item);
 		}
+
+		/// <summary>
+		/// Creates a new CurveItem using the PointPairList and add it the the given pane.
+		/// </summary>
+		/// <param name="pane">the GraphPane object to which to add the new curve</param>
+		/// <param name="points">a PointPairList collection defining the points for this curve</param>
+		/// <returns>the newly created CurveItem added to the given GraphPane</returns>
+		/// <remarks>This method must be overriden by childs</remarks>
+		public override CurveItem CreateInPane( GraphPane pane, PointPairList points )
+		{
+			HiLowBarItem x = pane.AddHiLowBar(this.Label,points,this.Color);
+			this.CopyTo(x);
+			return x;
+		}
+
 
 		#region Properties
 		
@@ -1041,7 +1114,21 @@ namespace ZedGraph
 			item.Line.Style = this.Style;
 			item.Line.StepType = this.StepType;
 		}
-	
+
+		/// <summary>
+		/// Creates a new CurveItem using the PointPairList and add it the the given pane.
+		/// </summary>
+		/// <param name="pane">the GraphPane object to which to add the new curve</param>
+		/// <param name="points">a PointPairList collection defining the points for this curve</param>
+		/// <returns>the newly created CurveItem added to the given GraphPane</returns>
+		/// <remarks>This method must be overriden by childs</remarks>
+		public override CurveItem CreateInPane( GraphPane pane, PointPairList points )
+		{
+			LineItem x = pane.AddCurve(this.Label,points,this.Color);
+			this.CopyTo(x);
+			return x;
+		}
+
 		#region Properties
 		
 		/// <summary>
@@ -1237,6 +1324,21 @@ namespace ZedGraph
 			item.PercentDecimalDigits = this.PercentDecimalDigits;
 			item.ValueDecimalDigits = this.ValueDecimalDigits;			
 		}
+
+		/// <summary>
+		/// Creates a new CurveItem using the PointPairList and add it the the given pane.
+		/// </summary>
+		/// <param name="pane">the GraphPane object to which to add the new curve</param>
+		/// <param name="points">a PointPairList collection defining the points for this curve</param>
+		/// <returns>the newly created CurveItem added to the given GraphPane</returns>
+		/// <remarks>This method must be overriden by childs</remarks>
+		public override CurveItem CreateInPane( GraphPane pane, PointPairList points )
+		{
+			PieItem x = pane.AddPieSlice(this.Value, this.Color, this.Displacement, this.Label);
+			this.CopyTo(x);
+			return x;
+		}
+
 
 		#region Properties
 		
@@ -1911,6 +2013,280 @@ namespace ZedGraph
 	}
 	#endregion
 
+	#region ZedGraphWebGrid
+	public class ZedGraphWebGrid : GenericItem
+	{
+		public override string ToString()
+		{
+			return "";
+		}
+
+		public ZedGraphWebGrid() : base()
+		{
+			this.StepUnit = DateUnit.Day;
+		}
+
+		public void SetDefaultsForMajorGrid()
+		{
+		}
+
+		public void SetDefaultsForMinorGrid()
+		{
+			this.GridColor = ZedGraph.Axis.Default.MinorGridColor;
+			this.TicSize = ZedGraph.Axis.Default.MinorTicSize;
+			this.IsTicsOutside = ZedGraph.Axis.Default.IsMinorTic;
+			this.IsTicsInside = ZedGraph.Axis.Default.IsMinorInsideTic;
+			this.IsTicsOpposite = ZedGraph.Axis.Default.IsMinorOppositeTic;
+			this.TicPenWidth = ZedGraph.Axis.Default.TicPenWidth;
+			this.IsGridVisible = ZedGraph.Axis.Default.IsShowMinorGrid;
+			this.GridDashOn = ZedGraph.Axis.Default.MinorGridDashOn;
+			this.GridDashOff = ZedGraph.Axis.Default.MinorGridDashOff;
+			this.GridPenWidth = ZedGraph.Axis.Default.MinorGridPenWidth;
+		}
+
+		#region properties
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Color"/>.
+		/// </summary>
+		/// <remarks> This affects only the grid lines, since the <see cref="Axis.TitleFontSpec"/> and
+		/// <see cref="Axis.ScaleFontSpec"/> both have their own color specification.
+		/// </remarks>
+		[Category("Appearance")]
+		[NotifyParentProperty(true)]
+		public Color GridColor
+		{
+			get 
+			{ 
+				object x = ViewState["GridColor"]; 
+				return (null == x) ? ZedGraph.Axis.Default.GridColor : (Color)x;
+			}
+			set { ViewState["GridColor"] = value; }
+		}
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.StepAuto"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the scale major step size value <see cref="ZedGraph.Axis.Step"/>
+		/// is set automatically.
+		/// </remarks>
+		[Category("Behaviour")]
+		[NotifyParentProperty(true)]
+		public bool StepAuto
+		{
+			get 
+			{ 
+				object x = ViewState["StepAuto"]; 
+				return (null == x) ? true : (bool)x;
+			}
+			set { ViewState["StepAuto"] = value; }
+		}
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.StepAuto"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the scale major step size value <see cref="ZedGraph.Axis.Step"/>
+		/// is set automatically.
+		/// </remarks>
+		[Category("Behaviour")]
+		[NotifyParentProperty(true)]
+		public double Step
+		{
+			get 
+			{ 
+				object x = ViewState["Step"]; 
+				return (null == x) ? 1.0 : (double)x;
+			}
+			set 
+			{ 
+				ViewState["Step"] = value; 
+				ViewState["StepAuto"] = false;
+			}
+		}
+		
+		[Category("Behaviour")]
+		[NotifyParentProperty(true)]
+		[Description("Defines in which unit the Step property is. Applies to AxisType.Date only.")]
+		public DateUnit StepUnit
+		{
+			get { return (DateUnit)ViewState["DateUnit"]; }
+			set { ViewState["DateUnit"] = value; }
+		}
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.TicSize"/>.
+		/// </summary>
+		/// <remarks> The length of the <see cref="ZedGraph.Axis"/> major tic marks, expressed in points
+		/// (1/72nd inch).
+		/// </remarks>
+		[Category("Appearance")]
+		[NotifyParentProperty(true)]
+		public float TicSize
+		{
+			get 
+			{ 
+				object x = ViewState["TicSize"]; 
+				return (null == x) ? ZedGraph.Axis.Default.TicSize : (float)x;
+			}
+			set { ViewState["TicSize"] = value; }
+		}
+
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsTic"/>.
+		/// </summary>
+		/// <remarks> Determines whether or not the <see cref="ZedGraph.Axis"/> major tics (where the
+		/// scale labels are located) will be displayed.
+		/// </remarks>
+		[Category("Appearance")]
+		[NotifyParentProperty(true)]
+		[Description("Show tics outside")]
+		public bool IsTicsOutside
+		{
+			get 
+			{ 
+				object x = ViewState["IsTicsOutside"]; 
+				return (null == x) ? ZedGraph.Axis.Default.IsTic : (bool)x;
+			}
+			set { ViewState["IsTicsOutside"] = value; }
+		}
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsInsideTic"/>.
+		/// </summary>
+		/// <remarks> This value determines whether or not the major inside tic marks
+		/// are shown.  These are the tic marks on the inside of the <see cref="ZedGraph.Axis"/> border.
+		/// The major tic spacing is controlled by <see cref="ZedGraph.Axis.Step"/>.
+		/// </remarks>
+		[Category("Appearance")]
+		[NotifyParentProperty(true)]
+		[Description("Show tics inside")]
+		public bool IsTicsInside
+		{
+			get 
+			{ 
+				object x = ViewState["IsTicsInside"]; 
+				return (null == x) ? ZedGraph.Axis.Default.IsInsideTic : (bool)x;
+			}
+			set { ViewState["IsTicsInside"] = value; }
+		}
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsOppositeTic"/>.
+		/// </summary>
+		/// <remarks> This value determines whether or not the major opposite tic marks
+		/// are shown.  These are the tic marks on the inside of the <see cref="ZedGraph.Axis"/> border on
+		/// the opposite side from the axis.
+		/// The major tic spacing is controlled by <see cref="ZedGraph.Axis.Step"/>.
+		/// </remarks>
+		[Category("Appearance")]
+		[NotifyParentProperty(true)]
+		public bool IsTicsOpposite
+		{
+			get 
+			{ 
+				object x = ViewState["IsTicsOpposite"]; 
+				return (null == x) ? ZedGraph.Axis.Default.IsOppositeTic : (bool)x;
+			}
+			set { ViewState["IsTicsOpposite"] = value; }
+		}
+		
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.TicPenWidth"/>.
+		/// </summary>
+		/// <remarks> This property determines the pen width to be used when drawing the tic marks for
+		/// this <see cref="ZedGraph.Axis"/>.  The pen width is expressed in points (1/72nd inch).
+		/// </remarks>
+		[Category("Appearance")]
+		[NotifyParentProperty(true)]
+		public float TicPenWidth
+		{
+			get 
+			{ 
+				object x = ViewState["TicPenWidth"]; 
+				return (null == x) ? ZedGraph.Axis.Default.TicPenWidth : (float)x;
+			}
+			set { ViewState["TicPenWidth"] = value; }
+		}
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsShowGrid"/>.
+		/// </summary>
+		/// <remarks> This property determines if the major <see cref="Axis"/> gridlines
+		/// (at each labeled value) will be visible.
+		/// </remarks>
+		[Category("Appearance")]
+		[NotifyParentProperty(true)]
+		public bool IsGridVisible
+		{
+			get 
+			{ 
+				object x = ViewState["IsShowGrid"]; 
+				return (null == x) ? ZedGraph.Axis.Default.IsShowGrid : (bool)x;
+			}
+			set { ViewState["IsShowGrid"] = value; }
+		}
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.GridDashOn"/>.
+		/// </summary>
+		/// <remarks> This is the distance,
+		/// in points (1/72 inch), of the dash segments that make up the dashed grid lines.
+		/// </remarks>
+		[Category("Appearance")]
+		[NotifyParentProperty(true)]
+		public float GridDashOn
+		{
+			get 
+			{ 
+				object x = ViewState["GridDashOn"]; 
+				return (null == x) ? ZedGraph.Axis.Default.GridDashOn : (float)x;
+			}
+			set { ViewState["GridDashOn"] = value; }
+		}
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.GridDashOff"/>.
+		/// </summary>
+		/// <remarks> This is the distance,
+		/// in points (1/72 inch), of the spaces between the dash segments that make up
+		/// the dashed grid lines.
+		/// </remarks>
+		[Category("Appearance")]
+		[NotifyParentProperty(true)]
+		public float GridDashOff
+		{
+			get 
+			{ 
+				object x = ViewState["GridDashOff"]; 
+				return (null == x) ? ZedGraph.Axis.Default.GridDashOff : (float)x;
+			}
+			set { ViewState["GridDashOff"] = value; }
+		}
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.GridPenWidth"/>.
+		/// </summary>
+		/// <remarks> The pen width used for drawing the grid lines, expressed in points (1/72nd inch).
+		/// </remarks>
+		[Category("Appearance")]
+		[NotifyParentProperty(true)]
+		public float GridPenWidth
+		{
+			get 
+			{ 
+				object x = ViewState["GridPenWidth"]; 
+				return (null == x) ? ZedGraph.Axis.Default.GridPenWidth : (float)x;
+			}
+			set { ViewState["GridPenWidth"] = value; }
+		}
+		#endregion
+
+	}	
+	
+	#endregion
+
+
 	#region ZedGraphWebAxis
 	/// <summary>
 	/// Web control state management class for a <see cref="ZedGraph.Axis"/> object
@@ -1935,8 +2311,13 @@ namespace ZedGraph
 		/// </summary>
 		public ZedGraphWebAxis() : base()
 		{
-			Register('s',typeof(ZedGraphWebFontSpec));
-			Register('t',typeof(ZedGraphWebFontSpec));	
+			Register('z',typeof(ZedGraphWebFontSpec));
+			Register('Z',typeof(ZedGraphWebFontSpec));
+			Register('y',typeof(ZedGraphWebGrid));
+			Register('Y',typeof(ZedGraphWebGrid));
+
+			this.MajorGrid.SetDefaultsForMajorGrid();
+			this.MinorGrid.SetDefaultsForMinorGrid();
 
 			this.ScaleFontSpec.Family = ZedGraph.Axis.Default.ScaleFontFamily;
 			this.ScaleFontSpec.Size = ZedGraph.Axis.Default.ScaleFontSize;
@@ -1966,59 +2347,85 @@ namespace ZedGraph
 		{				
 			this.ScaleFontSpec.CopyTo( item.ScaleFontSpec );
 			this.TitleFontSpec.CopyTo( item.TitleFontSpec );
-			item.Title = this.Title;
-			item.Color = this.Color;
-			item.GridColor = this.GridColor;
-			item.Cross = this.Cross;
-			item.MinGrace = this.MinGrace;
-			item.MaxGrace = this.MaxGrace;
-			item.MinSpace = this.MinSpace;
-			item.TicSize = this.TicSize;
-			item.MinorTicSize = this.MinorTicSize;
-			item.IsTic = this.IsTic;
-			item.IsMinorTic = this.IsMinorTic;
-			item.IsInsideTic = this.IsInsideTic;
-			item.IsOppositeTic = this.IsOppositeTic;
-			item.IsMinorInsideTic = this.IsMinorInsideTic;
-			item.IsMinorOppositeTic = this.IsMinorOppositeTic;
-			item.IsTicsBetweenLabels = this.IsTicsBetweenLabels;
-			item.TicPenWidth = this.TicPenWidth;
-			item.IsShowGrid = this.IsShowGrid;
-			item.IsZeroLine = this.IsZeroLine;
-			item.GridDashOn = this.GridDashOn;
-			item.GridDashOff = this.GridDashOff;
-			item.GridPenWidth = this.GridPenWidth;
-			item.IsShowMinorGrid = this.IsShowMinorGrid;
-			item.MinorGridDashOn = this.MinorGridDashOn;
-			item.MinorGridDashOff = this.MinorGridDashOff;
-			item.MinorGridPenWidth = this.MinorGridPenWidth;
-			item.MinorGridColor = this.MinorGridColor;
+
 			item.IsVisible = this.IsVisible;
 			item.IsReverse = this.IsReverse;
 			item.Type = this.Type;
-			item.IsOmitMag = this.IsOmitMag;
+			item.Color = this.AxisColor;
+			item.Title = this.Title;
 			item.IsShowTitle = this.IsShowTitle;
+			item.IsOmitMag = this.IsOmitMag;
 			item.IsUseTenPower = this.IsUseTenPower;
 			item.IsPreventLabelOverlap = this.IsPreventLabelOverlap;
 			item.ScaleFormat = this.ScaleFormat;
 			item.ScaleAlign = this.ScaleAlign;
-			//item.NumDecAuto = this.NumDecAuto;
-			//item.NumDec = this.NumDec;
 			item.ScaleMag = this.ScaleMag;
 			item.Min = this.Min;
 			item.Max = this.Max;
-
+			item.MinGrace = this.MinGrace;
+			item.MaxGrace = this.MaxGrace;
 			item.MinAuto = this.MinAuto;
 			item.MaxAuto = this.MaxAuto;
-			item.StepAuto = this.StepAuto;
-			item.MinorStepAuto = this.MinorStepAuto;
+			//item.NumDecAuto = this.NumDecAuto;
+			//item.NumDec = this.NumDec;
 			item.CrossAuto = this.CrossAuto;
 			item.ScaleMagAuto = this.ScaleMagAuto;
 			item.ScaleFormatAuto = this.ScaleFormatAuto;
+
+			item.Cross = this.Cross;
+			item.IsZeroLine = this.IsZeroLine;
+			item.MinSpace = this.MinSpace;
+			item.IsTicsBetweenLabels = this.IsTicsBetweenLabels;
+			
+			item.IsShowGrid = this.MajorGrid.IsGridVisible;
+			item.GridColor = this.MajorGrid.GridColor;
+			item.TicSize = this.MajorGrid.TicSize;
+			item.IsTic = this.MajorGrid.IsTicsOutside;
+			item.IsInsideTic = this.MajorGrid.IsTicsInside;
+			item.IsOppositeTic = this.MajorGrid.IsTicsOpposite;
+			item.TicPenWidth = this.MajorGrid.TicPenWidth;
+			item.GridDashOn = this.MajorGrid.GridDashOn;
+			item.GridDashOff = this.MajorGrid.GridDashOff;
+			item.GridPenWidth = this.MajorGrid.GridPenWidth;
+			item.MajorUnit = this.MajorGrid.StepUnit;
+			item.Step = this.MajorGrid.Step;
+			item.StepAuto = this.MajorGrid.StepAuto;
+			
+			item.IsShowMinorGrid = this.MinorGrid.IsGridVisible;
+			item.MinorGridColor = this.MinorGrid.GridColor;
+			item.MinorTicSize = this.MinorGrid.TicSize;
+			item.IsMinorTic = this.MinorGrid.IsTicsOutside;
+			item.IsMinorInsideTic = this.MinorGrid.IsTicsInside;
+			item.IsMinorOppositeTic = this.MinorGrid.IsTicsOpposite;
+			item.MinorGridDashOn = this.MinorGrid.GridDashOn;
+			item.MinorGridDashOff = this.MinorGrid.GridDashOff;
+			item.MinorGridPenWidth = this.MinorGrid.GridPenWidth;
+			item.MinorUnit = this.MinorGrid.StepUnit;
+			item.MinorStep = this.MinorGrid.Step;
+			item.MinorStepAuto = this.MinorGrid.StepAuto;
 		}
 
 		#region Properties	
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Color"/>.
+		/// </summary>
+		/// <remarks> This affects only the grid lines, since the <see cref="Axis.TitleFontSpec"/> and
+		/// <see cref="Axis.ScaleFontSpec"/> both have their own color specification.
+		/// </remarks>
+		[Category("Appearance")]
+		[NotifyParentProperty(true)]
+		public Color AxisColor
+		{
+			get 
+			{ 
+				object x = ViewState["AxisColor"]; 
+				return (null == x) ? ZedGraph.Axis.Default.Color : (Color)x;
+			}
+			set { ViewState["AxisColor"] = value; }
+		}
 		
+
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Min"/>.
 		/// </summary>
@@ -2030,7 +2437,11 @@ namespace ZedGraph
 				object x = ViewState["Min"]; 
 				return (null == x) ? 0.0 : (double)x;
 			}
-			set { ViewState["Min"] = value; }
+			set 
+			{ 
+				ViewState["Min"] = value; 
+				ViewState["MinAuto"] = false; 
+			}
 		}
 
 		/// <summary>
@@ -2044,7 +2455,11 @@ namespace ZedGraph
 				object x = ViewState["Max"]; 
 				return (null == x) ? 0.0 : (double)x;
 			}
-			set { ViewState["Max"] = value; }
+			set 
+			{ 
+				ViewState["Max"] = value; 
+				ViewState["MaxAuto"] = false; 
+			}
 		}
 
 		
@@ -2065,42 +2480,6 @@ namespace ZedGraph
 				return (null == x) ? String.Empty : (string)x;
 			}
 			set { ViewState["Title"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Color"/>.
-		/// </summary>
-		/// <remarks> This affects only the tic
-		/// marks, since the <see cref="Axis.TitleFontSpec"/> and
-		/// <see cref="Axis.ScaleFontSpec"/> both have their own color specification.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public Color Color
-		{
-			get 
-			{ 
-				object x = ViewState["Color"]; 
-				return (null == x) ? ZedGraph.Axis.Default.Color : (Color)x;
-			}
-			set { ViewState["Color"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Color"/>.
-		/// </summary>
-		/// <remarks> This affects only the grid
-		/// lines, since the <see cref="Axis.TitleFontSpec"/> and
-		/// <see cref="Axis.ScaleFontSpec"/> both have their own color specification.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public Color GridColor
-		{
-			get 
-			{ 
-				object x = ViewState["GridColor"]; 
-				return (null == x) ? ZedGraph.Axis.Default.GridColor : (Color)x;
-			}
-			set { ViewState["GridColor"] = value; }
 		}
 
 		/// <summary>
@@ -2161,39 +2540,6 @@ namespace ZedGraph
 			set { ViewState["MaxAuto"] = value; }
 		}
 
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.StepAuto"/>.
-		/// </summary>
-		/// <remarks> Determines whether or not the scale major step size value <see cref="ZedGraph.Axis.Step"/>
-		/// is set automatically.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public bool StepAuto
-		{
-			get 
-			{ 
-				object x = ViewState["StepAuto"]; 
-				return (null == x) ? true : (bool)x;
-			}
-			set { ViewState["StepAuto"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinorStepAuto"/>.
-		/// </summary>
-		/// <remarks> Determines whether or not the scale minor step size value <see cref="ZedGraph.Axis.MinorStep"/>
-		/// is set automatically.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public bool MinorStepAuto
-		{
-			get 
-			{ 
-				object x = ViewState["MinorStepAuto"]; 
-				return (null == x) ? true : (bool)x;
-			}
-			set { ViewState["MinorStepAuto"] = value; }
-		}
 
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.CrossAuto"/>.
@@ -2222,11 +2568,12 @@ namespace ZedGraph
 		/// The scale will then be ranged to cover at least 2.8 to 16.0.
 		/// </remarks>
 		[NotifyParentProperty(true)]
+		[Description("Fraction of data range to substract to Min. For example 0.1 means 10% of (Max-Min).")]
 		public double MinGrace
 		{
 			get 
 			{ 
-				object x = ViewState["MinGrace"]; 
+				object x = ViewState["MinGrace"];
 				return (null == x) ? ZedGraph.Axis.Default.MinGrace : (double)x;
 			}
 			set { ViewState["MinGrace"] = value; }
@@ -2242,6 +2589,7 @@ namespace ZedGraph
 		/// The scale will then be ranged to cover at least 4.0 to 17.2.
 		/// </remarks>
 		[NotifyParentProperty(true)]
+		[Description("Fraction of data range to add to Max. For example 0.1 means 10% of (Max-Min).")]
 		public double MaxGrace
 		{
 			get 
@@ -2257,12 +2605,13 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks> This is the minimum axis space allocation.
 		/// This term, expressed in points (1/72 inch) and scaled according to <see cref="PaneBase.CalcScaleFactor"/>
-        /// for the <see cref="ZedGraph.GraphPane"/>, determines the minimum amount of space
+		/// for the <see cref="ZedGraph.GraphPane"/>, determines the minimum amount of space
 		/// an axis must have between the <see cref="ZedGraph.GraphPane.AxisRect"/> and the
 		/// <see cref="PaneBase.PaneRect"/>.  This minimum space
 		/// applies whether <see cref="ZedGraph.Axis.IsVisible"/> is true or false.
 		/// </remarks>
 		[NotifyParentProperty(true)]
+		[Description("Minimum amount of space in points between this axis and the pane border. Applies even if IsVisible is false.")]
 		public float MinSpace
 		{
 			get 
@@ -2273,147 +2622,7 @@ namespace ZedGraph
 			set { ViewState["MinSpace"] = value; }
 		}
 
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.TicSize"/>.
-		/// </summary>
-		/// <remarks> The length of the <see cref="ZedGraph.Axis"/> major tic marks, expressed in points
-		/// (1/72nd inch).
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public float TicSize
-		{
-			get 
-			{ 
-				object x = ViewState["TicSize"]; 
-				return (null == x) ? ZedGraph.Axis.Default.TicSize : (float)x;
-			}
-			set { ViewState["TicSize"] = value; }
-		}
 
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinorTicSize"/>.
-		/// </summary>
-		/// <remarks> The length of the <see cref="ZedGraph.Axis"/> minor tic marks, expressed in points
-		/// (1/72nd inch).
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public float MinorTicSize
-		{
-			get 
-			{ 
-				object x = ViewState["MinorTicSize"]; 
-				return (null == x) ? ZedGraph.Axis.Default.MinorTicSize : (float)x;
-			}
-			set { ViewState["MinorTicSize"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsTic"/>.
-		/// </summary>
-		/// <remarks> Determines whether or not the <see cref="ZedGraph.Axis"/> major tics (where the
-		/// scale labels are located) will be displayed.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public bool IsTic
-		{
-			get 
-			{ 
-				object x = ViewState["IsTic"]; 
-				return (null == x) ? ZedGraph.Axis.Default.IsTic : (bool)x;
-			}
-			set { ViewState["IsTic"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsMinorTic"/>.
-		/// </summary>
-		/// <remarks> Determines whether or not the <see cref="ZedGraph.Axis"/> minor tics
-		/// will be displayed.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public bool IsMinorTic
-		{
-			get 
-			{ 
-				object x = ViewState["IsMinorTic"]; 
-				return (null == x) ? ZedGraph.Axis.Default.IsMinorTic : (bool)x;
-			}
-			set { ViewState["IsMinorTic"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsInsideTic"/>.
-		/// </summary>
-		/// <remarks> This value determines whether or not the major inside tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="ZedGraph.Axis"/> border.
-		/// The major tic spacing is controlled by <see cref="ZedGraph.Axis.Step"/>.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public bool IsInsideTic
-		{
-			get 
-			{ 
-				object x = ViewState["IsInsideTic"]; 
-				return (null == x) ? ZedGraph.Axis.Default.IsInsideTic : (bool)x;
-			}
-			set { ViewState["IsInsideTic"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsOppositeTic"/>.
-		/// </summary>
-		/// <remarks> This value determines whether or not the major opposite tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="ZedGraph.Axis"/> border on
-		/// the opposite side from the axis.
-		/// The major tic spacing is controlled by <see cref="ZedGraph.Axis.Step"/>.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public bool IsOppositeTic
-		{
-			get 
-			{ 
-				object x = ViewState["IsOppositeTic"]; 
-				return (null == x) ? ZedGraph.Axis.Default.IsOppositeTic : (bool)x;
-			}
-			set { ViewState["IsOppositeTic"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsMinorInsideTic"/>.
-		/// </summary>
-		/// <remarks> This value determines whether or not the minor inside tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="ZedGraph.Axis"/> border.
-		/// The minor tic spacing is controlled by <see cref="ZedGraph.Axis.MinorStep"/>.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public bool IsMinorInsideTic
-		{
-			get 
-			{ 
-				object x = ViewState["IsMinorInsideTic"]; 
-				return (null == x) ? ZedGraph.Axis.Default.IsMinorInsideTic : (bool)x;
-			}
-			set { ViewState["IsMinorInsideTic"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsMinorOppositeTic"/>.
-		/// </summary>
-		/// <remarks> This value determines whether or not the minor opposite tic marks
-		/// are shown.  These are the tic marks on the inside of the <see cref="ZedGraph.Axis"/> border on
-		/// the opposite side from the axis.
-		/// The minor tic spacing is controlled by <see cref="ZedGraph.Axis.MinorStep"/>.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public bool IsMinorOppositeTic
-		{
-			get 
-			{ 
-				object x = ViewState["IsMinorOppositeTic"]; 
-				return (null == x) ? ZedGraph.Axis.Default.IsMinorOppositeTic : (bool)x;
-			}
-			set { ViewState["IsMinorOppositeTic"] = value; }
-		}
 
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsTicsBetweenLabels"/>.
@@ -2423,6 +2632,7 @@ namespace ZedGraph
 		/// applicable if <see cref="ZedGraph.Axis.Type"/> = <see cref="AxisType.Text"/>.
 		/// </remarks>
 		[NotifyParentProperty(true)]
+		[Description("If true, draws major tics inbetween labels rather than right at the labels. Only for AxisType.Text.")]
 		public bool IsTicsBetweenLabels
 		{
 			get 
@@ -2433,44 +2643,11 @@ namespace ZedGraph
 			set { ViewState["IsTicsBetweenLabels"] = value; }
 		}
 
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.TicPenWidth"/>.
-		/// </summary>
-		/// <remarks> This property determines the pen width to be used when drawing the tic marks for
-		/// this <see cref="ZedGraph.Axis"/>.  The pen width is expressed in points (1/72nd inch).
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public float TicPenWidth
-		{
-			get 
-			{ 
-				object x = ViewState["TicPenWidth"]; 
-				return (null == x) ? ZedGraph.Axis.Default.TicPenWidth : (float)x;
-			}
-			set { ViewState["TicPenWidth"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsShowGrid"/>.
-		/// </summary>
-		/// <remarks> This property determines if the major <see cref="Axis"/> gridlines
-		/// (at each labeled value) will be visible.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public bool IsShowGrid
-		{
-			get 
-			{ 
-				object x = ViewState["IsShowGrid"]; 
-				return (null == x) ? ZedGraph.Axis.Default.IsShowGrid : (bool)x;
-			}
-			set { ViewState["IsShowGrid"] = value; }
-		}
 
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsZeroLine"/>.
 		/// </summary>
-		/// <remarks> This boolean value that determines if a line will be drawn at the
+		/// <remarks> This boolean value determines if a line will be drawn at the
 		/// zero value for the axis.
 		/// </remarks>
 		[NotifyParentProperty(true)]
@@ -2482,142 +2659,6 @@ namespace ZedGraph
 				return (null == x) ? false : (bool)x;
 			}
 			set { ViewState["IsZeroLine"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.GridDashOn"/>.
-		/// </summary>
-		/// <remarks> This is the distance,
-        /// in points (1/72 inch), of the dash segments that make up the dashed grid lines.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public float GridDashOn
-		{
-			get 
-			{ 
-				object x = ViewState["GridDashOn"]; 
-				return (null == x) ? ZedGraph.Axis.Default.GridDashOn : (float)x;
-			}
-			set { ViewState["GridDashOn"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.GridDashOff"/>.
-		/// </summary>
-		/// <remarks> This is the distance,
-        /// in points (1/72 inch), of the spaces between the dash segments that make up
-        /// the dashed grid lines.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public float GridDashOff
-		{
-			get 
-			{ 
-				object x = ViewState["GridDashOff"]; 
-				return (null == x) ? ZedGraph.Axis.Default.GridDashOff : (float)x;
-			}
-			set { ViewState["GridDashOff"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.GridPenWidth"/>.
-		/// </summary>
-		/// <remarks> The pen width used for drawing the grid lines, expressed in points (1/72nd inch).
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public float GridPenWidth
-		{
-			get 
-			{ 
-				object x = ViewState["GridPenWidth"]; 
-				return (null == x) ? ZedGraph.Axis.Default.GridPenWidth : (float)x;
-			}
-			set { ViewState["GridPenWidth"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.IsShowMinorGrid"/>.
-		/// </summary>
-		/// <remarks> Determines if the minor <see cref="ZedGraph.Axis"/> gridlines
-		/// (in between each labeled value) will be visible
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public bool IsShowMinorGrid
-		{
-			get 
-			{ 
-				object x = ViewState["IsShowMinorGrid"]; 
-				return (null == x) ? ZedGraph.Axis.Default.IsShowMinorGrid : (bool)x;
-			}
-			set { ViewState["IsShowMinorGrid"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinorGridDashOn"/>.
-		/// </summary>
-		/// <remarks> This is the distance,
-        /// in points (1/72 inch), of the dash segments that make up the dashed minor grid lines.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public float MinorGridDashOn
-		{
-			get 
-			{ 
-				object x = ViewState["MinorGridDashOn"]; 
-				return (null == x) ? ZedGraph.Axis.Default.MinorGridDashOn : (float)x;
-			}
-			set { ViewState["MinorGridDashOn"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinorGridDashOff"/>.
-		/// </summary>
-		/// <remarks> This is the distance,
-        /// in points (1/72 inch), of the spaces between the dash segments that make up
-        /// the dashed minor grid lines.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public float MinorGridDashOff
-		{
-			get 
-			{ 
-				object x = ViewState["MinorGridDashOff"]; 
-				return (null == x) ? ZedGraph.Axis.Default.MinorGridDashOff : (float)x;
-			}
-			set { ViewState["MinorGridDashOff"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinorGridPenWidth"/>.
-		/// </summary>
-		/// <remarks> The pen width used for drawing the minor grid lines, expressed in points (1/72nd inch).
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public float MinorGridPenWidth
-		{
-			get 
-			{ 
-				object x = ViewState["MinorGridPenWidth"]; 
-				return (null == x) ? ZedGraph.Axis.Default.MinorGridPenWidth : (float)x;
-			}
-			set { ViewState["MinorGridPenWidth"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.MinorGridColor"/>.
-		/// </summary>
-		/// <remarks> The <see cref="System.Drawing.Color"/> to use for drawing this
-		/// <see cref="ZedGraph.Axis"/> minor grid.
-		/// </remarks>
-		[NotifyParentProperty(true)]
-		public Color MinorGridColor
-		{
-			get 
-			{ 
-				object x = ViewState["MinorGridColor"]; 
-				return (null == x) ? ZedGraph.Axis.Default.MinorGridColor : (Color)x;
-			}
-			set { ViewState["MinorGridColor"] = value; }
 		}
 
 		/// <summary>
@@ -2770,6 +2811,7 @@ namespace ZedGraph
 		/// This property may be set automatically by ZedGraph, depending on the state of
 		/// <see cref="ZedGraph.Axis.ScaleFormatAuto"/>.
 		/// </remarks>
+		[Description("Date format for labels. Only for AxisType.Date.")]
 		[NotifyParentProperty(true)]
 		public string ScaleFormat
 		{
@@ -2787,6 +2829,7 @@ namespace ZedGraph
 		/// <remarks> Controls the alignment of the <see cref="ZedGraph.Axis"/> tic labels.
 		/// </remarks>
 		[NotifyParentProperty(true)]
+		[Description("Controls the aligment of the tic labels")]
 		public AlignP ScaleAlign
 		{
 			get 
@@ -2890,7 +2933,7 @@ namespace ZedGraph
 		]
 		public ZedGraphWebFontSpec ScaleFontSpec
 		{
-			get { return (ZedGraphWebFontSpec)base.GetValue('s'); }
+			get { return (ZedGraphWebFontSpec)base.GetValue('z'); }
 		}
 
 		/// <summary>
@@ -2907,7 +2950,33 @@ namespace ZedGraph
 		]
 		public ZedGraphWebFontSpec TitleFontSpec
 		{
-			get { return (ZedGraphWebFontSpec)base.GetValue('t'); }
+			get { return (ZedGraphWebFontSpec)base.GetValue('Z'); }
+		}
+
+		/// <summary>
+		/// </remarks>
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebGrid MinorGrid
+		{
+			get { return (ZedGraphWebGrid)base.GetValue('y'); }
+		}
+
+		/// <summary>
+		/// </remarks>
+		[	
+		Category("Appearance"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebGrid MajorGrid
+		{
+			get { return (ZedGraphWebGrid)base.GetValue('Y'); }
 		}
 
 		#endregion		
@@ -3336,7 +3405,7 @@ namespace ZedGraph
 	}
 	#endregion
 
-	#region ZedGraphWebRect
+	#region ZedGraphWebRect (X,Y,Width,Height)
 	/// <summary>
 	/// Rectangle class for a <see cref="ZedGraph.FontSpec"/> object
 	/// </summary>
@@ -3349,9 +3418,7 @@ namespace ZedGraph
 		/// <returns></returns>
 		public override string ToString()
 		{		
-			if ( X==0 && Y==0 && Height==0 && Width==0 ) return string.Empty;
-			return string.Format("Rect({0},{1},{2},{3})",
-				X,Y,Height,Width);
+			return string.Format("Rect({0},{1},{2},{3})", X,Y,Height,Width);
 		}
 
 		/// <summary>
@@ -3430,6 +3497,99 @@ namespace ZedGraph
 				return (null == x) ? 0 : (float)x;
 			}
 			set { ViewState["X"] = value; }
+		}
+		#endregion
+	}
+	#endregion
+
+	#region ZedGraphWebRect2 (Left, Top, Right, Bottom)
+	/// <summary>
+	/// Rectangle class for margins
+	/// </summary>
+	/// <author>Benjamin Mayrargue</author>
+	public class ZedGraphWebRect2 : GenericItem
+	{
+		/// <summary>
+		/// Override ToString
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{		
+			return string.Format("Rect({0},{1},{2},{3})", Left, Top, Right, Bottom);
+		}
+
+		/// <summary>
+		/// Default constructor
+		/// </summary>
+		public ZedGraphWebRect2() : base()
+		{				
+		}
+
+		/// <summary>
+		/// Copy the properties of this <see cref="ZedGraphWebRect2"/> to the specified
+		/// <see cref="RectangleF"/> object.
+		/// </summary>
+		/// <param name="item">The destination <see cref="RectangleF"/> object</param>
+		public void CopyTo( RectangleF item )
+		{
+			item.X = this.Left;
+			item.Y = this.Top;
+			item.Width = this.Right - this.Left;
+			item.Height = this.Bottom - this.Top;
+		}
+		
+	#region Properties
+
+		/// <summary>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public float Left
+		{
+			get 
+			{ 
+				object x = ViewState["Left"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Left"] = value; }
+		}
+
+		/// <summary>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public float Top
+		{
+			get 
+			{ 
+				object x = ViewState["Top"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Top"] = value; }
+		}
+
+		/// <summary>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public float Right
+		{
+			get 
+			{ 
+				object x = ViewState["Right"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Right"] = value; }
+		}
+
+		/// <summary>
+		/// </summary>
+		[NotifyParentProperty(true)]
+		public float Bottom
+		{
+			get 
+			{ 
+				object x = ViewState["Bottom"]; 
+				return (null == x) ? 0 : (float)x;
+			}
+			set { ViewState["Bottom"] = value; }
 		}
 		#endregion
 	}
