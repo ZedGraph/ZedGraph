@@ -1,6 +1,6 @@
 ZedGraph Class Library Revision History
 
-21-Nov-2005 (bu softlion)
+21-Nov-2005 (by softlion)
 [FIX] Caching with new rendering mode was not working as expected.
 [NEW] The generated image tag has now a querystring to defeat browser caching mechanism when an update is needed.
 [NEW] ColorOpacity property in "Fill" structures. We should created a new Color selector designer with the ability to set the color alpha channel instead, but this is a quick start.
