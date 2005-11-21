@@ -46,7 +46,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.30 $ $Date: 2005-11-19 01:01:55 $ </version>
+	/// <version> $Revision: 3.31 $ $Date: 2005-11-21 16:33:49 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -1175,24 +1175,10 @@ namespace ZedGraph
 				}
 			}
 
-			//TODO: verify datasource type and count
-			//TODO: match column names to curveitems
-			//TODO: foreach row populate columns
-			
-			//NOTE: ZedGraphWeb.DataMember = X (or Y if reversed?)
-			//NOTE: ZedGraphCurveItem.DataMember = Y (or X if reversed?)
-			//NOTE: Z values are only supported via the callback
-
-			//TODO: cache the data-map table before processing rows
-
-			/*
-			while ( false == true )
-			{
-				double x,y,z = 0;
-				//TODO: match incoming datatype with expected datatype
-				pane.CurveList[0].Points.Add(x,y,z);
-			}
-			*/
+			//NOTE: ZedGraphWeb.DataMember = base axis
+			//NOTE: ZedGraphCurveItem.DataMember = Y
+			//NOTE: Z values are only supported via the callback (???)
+			//TODO: cache the data-map table before processing rows (???)
 		}
 
 	#endregion
@@ -1263,6 +1249,7 @@ namespace ZedGraph
 
 			if( !bDesignMode && this.RenderMode == RenderModeType.RawImage )
 			{
+				//Render on the fly
 				if ( this.CacheDuration > 0 )
 				{
 					System.Web.HttpContext context = System.Web.HttpContext.Current;
@@ -1277,22 +1264,24 @@ namespace ZedGraph
 			}
 			else
 			{
+				//Render as a file and an IMG tag
 				try
 				{
-					string tempFileName;
+					string tempFileName, tempFilePathName;
 
 					if( bDesignMode )
 					{
 						//Create temporary file if it does not exists
 						if ( DesignTimeFileStream == null )
 						{
-							string tempFilePathName = Path.GetTempFileName();
+							tempFilePathName = Path.GetTempFileName();
 							DesignTimeFileStream = new FileStream( tempFilePathName,FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite );
 							tempFileName = Path.GetFileName(tempFilePathName);
 						}
 						else
 						{
-							tempFileName = Path.GetFileName(DesignTimeFileStream.Name);
+							tempFilePathName = DesignTimeFileStream.Name;
+							tempFileName = Path.GetFileName(tempFilePathName);
 							DesignTimeFileStream.SetLength(0);
 							DesignTimeFileStream.Seek(0,SeekOrigin.Begin);
 						}
@@ -1300,25 +1289,26 @@ namespace ZedGraph
 					else
 					{
 						//System.Guid.NewGuid().ToString()
-						tempFileName = this.UniqueID + "." + this.ImageFormatFileExtension;
-						string tempFilePathName = Context.Server.MapPath( this.RenderedImagePath );
+						tempFileName = this.ClientID + "." + this.ImageFormatFileExtension;
+						tempFilePathName = Context.Server.MapPath( this.RenderedImagePath );
 						tempFilePathName = Path.Combine( tempFilePathName, tempFileName );
 						
-						if ( this.CacheDuration == 0 ||
-							 (	File.Exists(tempFilePathName) 
-								&& File.GetCreationTimeUtc(tempFilePathName).AddSeconds(this.CacheDuration)
-									> DateTime.Now.ToUniversalTime()
+						//Must use the cached image ?
+						if ( this.CacheDuration == 0 || !File.Exists(tempFilePathName) ||
+							 File.GetCreationTimeUtc(tempFilePathName).AddSeconds(this.CacheDuration)
+									< DateTime.Now.ToUniversalTime()
 							 ) 
-						   )
 						{
+							//Recreate image file
+							System.IO.File.Delete( tempFilePathName );
 							DesignTimeFileStream = new FileStream( tempFilePathName,FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite );
 							DesignTimeFileStream.SetLength(0);
 							DesignTimeFileStream.Seek(0,SeekOrigin.Begin);
 						}
-
 					}
 
-					if( DesignTimeFileStream != null ) //Not cached
+					//Recreate image if needed (caching expired or no caching)
+					if( DesignTimeFileStream != null )
 					{
 						CreateGraph( DesignTimeFileStream, this.ImageFormat );
 						DesignTimeFileStream.Flush();
@@ -1328,8 +1318,11 @@ namespace ZedGraph
 							DesignTimeFileStream = null;
 						}
 					}
+
+					//The file should exist at this point
+					DateTime tempFileDate = File.GetCreationTimeUtc(tempFilePathName);
 					
-					//Write <IMG width="" height="" src="" alt=""> tag
+					//Write HTML tag: <IMG width="" height="" src="" alt="">
 					string src;
 
 					if( bDesignMode )
@@ -1346,7 +1339,8 @@ namespace ZedGraph
 						else if( src.StartsWith( "~" ) )
 							src = src.Substring( 1 );
 						
-						src += tempFileName;
+						//Add a querystring to defeat browsers cache when our image is recreated
+						src += tempFileName + "?" + tempFileDate.ToString("yyyyMMddhhmmss");
 					}
 
 					output.AddAttribute(HtmlTextWriterAttribute.Width,this.Width.ToString());

@@ -395,7 +395,7 @@ namespace ZedGraph
 		/// <param name="item">The destination <see cref="ZedGraph.Fill"/> object</param>
 		public void CopyTo( Fill item )
 		{
-			item.Color = this.Color;
+			item.Color = System.Drawing.Color.FromArgb( (int)Math.Floor(this.ColorOpacity*2.55+.5), this.Color );
 			item.IsVisible = this.IsVisible;
 			item.RangeMax = this.RangeMax;
 			item.RangeMin = this.RangeMin;
@@ -424,6 +424,25 @@ namespace ZedGraph
 				return (null == x) ? Color.Empty : (Color)x;
 			}
 			set { ViewState["Color"] = value; }
+		} 
+
+		/// <summary>
+		/// Opacity of <see cref="Color"/>, range from 0 to 100.
+		/// 100 is opaque, 0 is invisible.
+		/// </summary>
+		/// <remarks>
+		/// To be replaced by a best color designer which enables the selection of a transparency level.
+		/// </remarks>
+		[NotifyParentProperty(true)]
+		[Description("Color Opacity between 0 and 100. 100 is opaque. 0 is invisible.")]
+		public float ColorOpacity
+		{
+			get 
+			{ 
+				object x = ViewState["ColorOpacity"];
+				return (null == x) ? 100 : (float)x;
+			}
+			set { ViewState["ColorOpacity"] = Math.Max(0,Math.Min(100,(float)value)); }
 		} 
 
 		/// <summary>
@@ -1095,7 +1114,7 @@ namespace ZedGraph
 
 			this.Fill.Color = Line.Default.FillColor;
 			this.Fill.Brush = Line.Default.FillBrush;
-			this.Fill.Type  = Line.Default.FillType;			
+			this.Fill.Type  = Line.Default.FillType;
 		}
 
 		/// <summary>
