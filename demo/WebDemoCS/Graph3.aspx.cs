@@ -31,9 +31,7 @@ using ZedGraph;
 
 namespace ZG1
 {
-
 	/// <summary>
-	/// Summary description for graph.
 	/// </summary>
 	public class Graph3 : System.Web.UI.Page
 	{
@@ -42,6 +40,7 @@ namespace ZG1
 		private void Page_Load(object sender, System.EventArgs e)
 		{
 			// Put user code to initialize the page here
+			Response.ContentType = "image/png";
 		}
 
 		#region Web Form Designer generated code
