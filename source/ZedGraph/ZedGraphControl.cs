@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.41 $ $Date: 2005-11-07 04:24:04 $ </version>
+	/// <version> $Revision: 3.42 $ $Date: 2005-11-21 06:39:09 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -482,7 +482,8 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Gets or sets a value that determines whether or not tooltips will be displayed
-		/// showing the current scale values when the mouse is within the <see cref="ZedGraph.GraphPane.AxisRect" />.
+		/// showing the current scale values when the mouse is within the
+		/// <see cref="ZedGraph.GraphPane.AxisRect" />.
 		/// </summary>
 		/// <remarks>The displayed values are taken from the current mouse position, and formatted
 		/// according to <see cref="PointValueFormat" /> and/or <see cref="PointDateFormat" />.  If this

@@ -883,7 +883,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test - Date Axis
+#if false	// Basic curve test - Date Axis
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -912,6 +912,99 @@ namespace ZedGraph.LibTest
 
 #endif
 
+#if true	// Basic curve test - two text axes
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			double[] y = { 2, 4, 1, 5, 3 };
+
+			LineItem myCurve = myPane.AddCurve( "curve 1", null, y, Color.Blue, SymbolType.Diamond );
+			myCurve.IsOverrideOrdinal = true;
+			myPane.XAxis.Type = AxisType.Text;
+			myPane.YAxis.Type = AxisType.Text;
+
+			string[] xLabels = { "one", "two", "three", "four", "five" };
+			string[] yLabels = { "alpha", "bravo", "charlie", "delta", "echo" };
+			myPane.XAxis.TextLabels = xLabels;
+			myPane.YAxis.TextLabels = yLabels;
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
+
+
+#if false	// Basic bar test
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList list = new PointPairList();
+
+			for ( int i=0; i<5; i++ )
+			{
+				double y = (double) i;
+				//double x = new XDate( 2001, 1, i*3 );
+				double x = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				list.Add( x, y );
+				//double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
+			}
+
+			PointPairList list2 = new PointPairList( list );
+			PointPairList list3 = new PointPairList( list );
+			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
+			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
+			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
+
+			//myPane.XAxis.IsSkipLastLabel = false;
+			//myPane.XAxis.IsPreventLabelOverlap = false;
+			//myPane.XAxis.ScaleFormat = "dd/MM HH:mm";
+			//myPane.XAxis.Type = AxisType.Date;
+			myPane.BarType = BarType.PercentStack;
+			myPane.BarBase = BarBase.Y;
+			myPane.AxisChange( this.CreateGraphics() );
+
+			ValueHandler valueHandler = new ValueHandler(myPane, true);
+			const float shift = 0;
+			int iOrd = 0;
+			foreach (CurveItem oCurveItem in myPane.CurveList)
+			{
+				BarItem oBarItem = oCurveItem as BarItem;
+				if (oBarItem != null)
+				{
+					PointPairList oPointPairList = oCurveItem.Points as PointPairList;
+					for (int i=0; i<oPointPairList.Count; i++)
+					{
+						double xVal = oPointPairList[i].X;
+						string sLabel = string.Concat(xVal.ToString("F0"), "%");
+
+						double yVal = valueHandler.BarCenterValue(oCurveItem, oCurveItem.GetBarWidth(myPane), i, oPointPairList[i].Y, iOrd);
+						double x1, x2, y;
+						valueHandler.GetValues( oCurveItem, i, out y, out x1, out x2 );
+
+						xVal = ( x1 + x2 ) / 2.0;
+
+						TextItem oTextItem = new TextItem(sLabel, (float) xVal + (xVal > 0 ? shift : -shift ), (float) yVal);
+						oTextItem.Location.CoordinateFrame = CoordType.AxisXYScale;
+						oTextItem.Location.AlignH =  AlignH.Center;
+						oTextItem.Location.AlignV = AlignV.Center;
+						oTextItem.FontSpec.Border.IsVisible = true;
+						oTextItem.FontSpec.Angle = 0;
+						oTextItem.FontSpec.Fill.IsVisible = false;
+						myPane.GraphItemList.Add(oTextItem);
+					}
+				}
+
+				iOrd++;
+			}
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
 
 #if false	// Basic curve test - DateAsOrdinal
 
