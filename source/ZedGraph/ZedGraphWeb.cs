@@ -46,7 +46,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.31 $ $Date: 2005-11-21 16:33:49 $ </version>
+	/// <version> $Revision: 3.32 $ $Date: 2005-11-21 23:16:20 $ </version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -1300,7 +1300,8 @@ namespace ZedGraph
 							 ) 
 						{
 							//Recreate image file
-							System.IO.File.Delete( tempFilePathName );
+							if( File.Exists(tempFilePathName) )
+								System.IO.File.Delete( tempFilePathName );
 							DesignTimeFileStream = new FileStream( tempFilePathName,FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite );
 							DesignTimeFileStream.SetLength(0);
 							DesignTimeFileStream.Seek(0,SeekOrigin.Begin);

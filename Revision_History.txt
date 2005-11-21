@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+22-Nov-2005 (by softlion)
+[UPD] Updated Web sample in C# to work with new RenderMode option
+[FIX] Minor bug fix introduced in 21-nov-2005 version
+
 21-Nov-2005 (by softlion)
 [FIX] Caching with new rendering mode was not working as expected.
 [NEW] The generated image tag has now a querystring to defeat browser caching mechanism when an update is needed.
