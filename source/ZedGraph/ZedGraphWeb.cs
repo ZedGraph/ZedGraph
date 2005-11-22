@@ -27,7 +27,7 @@ using System.IO;
 using System.Collections;
 using ZedGraph;
 
-[assembly: TagPrefix("ZedGraph","zgw")]
+[assembly:TagPrefix("ZedGraph","zgw")]
 
 namespace ZedGraph
 {
@@ -45,8 +45,8 @@ namespace ZedGraph
 	/// attributes are accessible via the <see cref="ZedGraphControl.GraphPane"/>
 	/// property.
 	/// </summary>
-	/// <author> Darren Martz  revised by John Champion </author>
-	/// <version> $Revision: 3.32 $ $Date: 2005-11-21 23:16:20 $ </version>
+	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
+	/// <version>$Revision: 3.33 $ $Date: 2005-11-22 13:05:07 $</version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -1094,61 +1094,69 @@ namespace ZedGraph
 					PointPair pair = new PointPair();
 					object oColumnValue;
 
-					int nRow = 0;
-					foreach( object row in list )
+					try
 					{
-						//
-						// Value axis binding (Y axis)
-						//
-						object valueRow = valueList[nRow];
-
-						//Get item value in 'row'
-						if( bValueListContainsList )
+						int nRow = 0;
+						foreach( object row in list )
 						{
-							if( !(valueRow is IList ) )
-								throw new System.InvalidCastException( "The DataSource contains a list which declares its items as lists, but these don't support the IList interface." );
-							oColumnValue = (valueRow as IList)[indexValueColumn];
-						}
-						else
-						{
-							oColumnValue = pd.GetValue(valueRow);
-						}
+							//
+							// Value axis binding (Y axis)
+							//
+							object valueRow = valueList[nRow];
 
-						//Convert value to double (always double)
-						double v = 0;
-						switch( oColumnValue.GetType().ToString() )
-						{
-							case "System.DateTime":
-								v = new XDate(Convert.ToDateTime(oColumnValue)).XLDate;
-								break;
-							default:
-								try
-								{
-									v = Convert.ToDouble(oColumnValue);
-								}
-								catch
-								{
-									throw new NotImplementedException( "Conversion from " + oColumnValue.GetType() + " to double not implemented."  );
-								}
-								break;
+							//Get item value in 'row'
+							if( bValueListContainsList )
+							{
+								if( !(valueRow is IList ) )
+									throw new System.InvalidCastException( "The DataSource contains a list which declares its items as lists, but these don't support the IList interface." );
+								oColumnValue = (valueRow as IList)[indexValueColumn];
+							}
+							else
+							{
+								oColumnValue = pd.GetValue(valueRow);
+							}
+
+							//Convert value to double (always double)
+							double v = 0;
+							switch( oColumnValue.GetType().ToString() )
+							{
+								case "System.DateTime":
+									v = new XDate(Convert.ToDateTime(oColumnValue)).XLDate;
+									break;
+								default:
+									try
+									{
+										v = Convert.ToDouble(oColumnValue);
+									}
+									catch
+									{
+										throw new NotImplementedException( "Conversion from " + oColumnValue.GetType() + " to double not implemented."  );
+									}
+									break;
+							}
+
+							//
+							// Base axis binding (X axis)
+							//
+							pair.Tag = oColumnValue; //Original typed value
+							pair.Y = v;
+							if( this.XAxis.Type == AxisType.DateAsOrdinal
+								|| this.XAxis.Type == AxisType.Date )
+							{
+								pair.X = new XDate(Convert.ToDateTime(basePd.GetValue(row))).XLDate;
+							}
+							else
+								pair.X = Convert.ToDouble(basePd.GetValue(row));
+
+							points.Add(pair);
+
+							nRow++;
 						}
-
-						//
-						// Base axis binding (X axis)
-						//
-						pair.Tag = oColumnValue; //Original typed value
-						pair.Y = v;
-						if( this.XAxis.Type == AxisType.DateAsOrdinal
-							|| this.XAxis.Type == AxisType.Date )
-						{
-							pair.X = new XDate(Convert.ToDateTime(basePd.GetValue(row))).XLDate;
-						}
-						else
-							pair.X = Convert.ToDouble(basePd.GetValue(row));
-
-						points.Add(pair);
-
-						nRow++;
+					}
+					catch( System.ArgumentOutOfRangeException )
+					{
+						//A local datasource was set on this curve but it has fewer rows than the axis datasource.
+						//So we stop feeding this curve.
 					}
 
 					//Create curve in pane with its points
@@ -1269,6 +1277,7 @@ namespace ZedGraph
 				{
 					string tempFileName, tempFilePathName;
 
+					//In design mode, we always recreate the file. No caching is allowed.
 					if( bDesignMode )
 					{
 						//Create temporary file if it does not exists
@@ -1293,18 +1302,19 @@ namespace ZedGraph
 						tempFilePathName = Context.Server.MapPath( this.RenderedImagePath );
 						tempFilePathName = Path.Combine( tempFilePathName, tempFileName );
 						
-						//Must use the cached image ?
+						//Should we use the cached image ?
 						if ( this.CacheDuration == 0 || !File.Exists(tempFilePathName) ||
 							 File.GetCreationTimeUtc(tempFilePathName).AddSeconds(this.CacheDuration)
 									< DateTime.Now.ToUniversalTime()
 							 ) 
 						{
-							//Recreate image file
-							if( File.Exists(tempFilePathName) )
-								System.IO.File.Delete( tempFilePathName );
+							//No: so recreate the image file
 							DesignTimeFileStream = new FileStream( tempFilePathName,FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite );
 							DesignTimeFileStream.SetLength(0);
 							DesignTimeFileStream.Seek(0,SeekOrigin.Begin);
+							//Because of a bug in .NET (deleting a file and creating a file with the same name results in the deleted file's CreationTime being returned)
+							// we need to explicitely set the creation time.
+							File.SetCreationTimeUtc( tempFilePathName, DateTime.Now.ToUniversalTime() );
 						}
 					}
 
