@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ZedGraph Library")]
-[assembly: AssemblyCopyright("Copyright 2003-2005 John Champion")]
+[assembly: AssemblyCopyright("Copyright 2003-2005 John Champion. Some parts are copyright Benjamin Mayrargue.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]		
 
@@ -26,7 +26,7 @@ using System.Runtime.CompilerServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("4.2.3.*")]
+[assembly: AssemblyVersion("4.2.3.2211")]
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 
