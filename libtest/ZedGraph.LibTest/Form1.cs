@@ -169,7 +169,7 @@ namespace ZedGraph.LibTest
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
-#if true	// Multi Y Axis demo
+#if false	// Multi Y Axis demo
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Demonstration of Multi Y Graph",
 				"Time, s",
@@ -986,57 +986,24 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if false	// Basic curve test - Text Axis
+#if false	// Stick Item Test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
-			double[] x = new double[20];
-			double[] y = new double[20];
-			string[] labels = new string[20];
-
-			for ( int i=0; i<20; i++ )
+			PointPairList list = new PointPairList();
+			for ( int i=0; i<100; i++ )
 			{
-				x[i] = (double) i;
-				y[i] = Math.Sin( i / 8.0 );
-				double z = Math.Abs(Math.Cos( i / 8.0 )) * y[i];
-				labels[i] = "Label" + i.ToString();
+				double x = (double) i;
+				double y = Math.Sin( i / 8.0 );
+				double z = Math.Abs(Math.Cos( i / 8.0 )) * y;
+				list.Add( x, y, z );
 			}
-			BasicArrayPointList list = new BasicArrayPointList( x, y );
 
-			//LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 			StickItem myCurve = myPane.AddStick( "curve", list, Color.Blue );
-			//myCurve.Symbol.IsVisible = true;
-			myCurve.IsY2Axis = true;
-			myPane.Y2Axis.IsVisible = true;
-			//myPane.YAxis.IsVisible = false;
-			myPane.Y2Axis.Title = "Y2 Axis";
-			myPane.Y2Axis.IsShowGrid = true;
+			myCurve.Line.Width = 2.0f;
 			myPane.XAxis.IsShowGrid = true;
-			//myPane.YAxis.IsSkipFirstLabel = true;
-			myPane.XAxis.IsSkipLastLabel = true;
-			//myPane.XAxis.IsSkipLastLabel = true;
-			//myPane.XAxis.IsReverse = true;
-			//myPane.AxisBorder.IsVisible = false;
-			myPane.XAxis.Type = AxisType.Text;
-			myPane.XAxis.TextLabels = labels;
-			myPane.XAxis.ScaleFontSpec.Angle = 30;
-
-			PointF[] polyPts = new PointF[7];
-			polyPts[0] = new PointF( 30f, 0.2f );
-			polyPts[1] = new PointF( 25f, 0.4f );
-			polyPts[2] = new PointF( 27f, 0.6f );
-			polyPts[3] = new PointF( 30f, 0.8f );
-			polyPts[4] = new PointF( 35f, 0.6f );
-			polyPts[5] = new PointF( 37f, 0.4f );
-			polyPts[6] = new PointF( 30f, 0.2f );
-			PolyItem poly = new PolyItem( polyPts, Color.Red, Color.LightSeaGreen, Color.White );
-			myPane.GraphItemList.Add( poly );
+			myPane.XAxis.Max = 100;
 
 			myPane.AxisChange( this.CreateGraphics() );
-
-			myPane.FontSpec.IsDropShadow = true;
-			myPane.FontSpec.DropShadowColor = Color.Red;
-			myPane.FontSpec.Border.IsVisible = true;
-			myPane.FontSpec.Fill = new Fill( Color.White, Color.LightGoldenrodYellow );
 
 			trackBar1.Minimum = 0;
 			trackBar1.Maximum = 359;
@@ -1312,8 +1279,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-
-#if false	// vertical bars with labels
+#if true	// vertical bars with labels
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 

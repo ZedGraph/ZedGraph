@@ -8,8 +8,7 @@ ZedGraph Class Library Revision History
 [FIX] modify XDate docs to explain Excel date bug
 [NEW] add SampleMultiPointList class to illustrate IPointList usage
 [NEW] demo pane with four y axes
-
-
+[NEW] StickItemDemo, several Bars with Labels demos
 
 22-Nov-2005 (by Champion)
 [FIX] minor fix for cross axes with IsScaleLabelsInside

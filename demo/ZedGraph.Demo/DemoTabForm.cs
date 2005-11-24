@@ -25,7 +25,7 @@ namespace ZedGraph.Demo
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos </author>
-	/// <version> $Revision: 1.7 $ $Date: 2005-11-24 03:17:53 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2005-11-24 05:01:27 $ </version>
 	public class DemoTabForm : ChartTabForm
 	{
 	#region Constructor
@@ -49,10 +49,12 @@ namespace ZedGraph.Demo
 			loadDemo(new GradientByValueDemo());
 			loadDemo(new HiLowCloseDemo());
 			loadDemo(new HiLowBarDemo());
+			loadDemo(new StickItemDemo());
 			loadDemo(new HorizontalBarDemo());
 			loadDemo(new MultiYDemo());
 			loadDemo(new DualYDemo());
 			loadDemo(new FilledCurveDemo());
+			loadDemo(new SampleMultiPointListDemo());
 			loadDemo(new ErrorBarDemo());
 			loadDemo(new OverlayBarDemo());
 			loadDemo(new SortedOverlayBarDemo());
@@ -61,6 +63,9 @@ namespace ZedGraph.Demo
 			loadDemo(new SmoothChartDemo());
 			loadDemo(new BaseTicDemo());
 			loadDemo(new HorizontalStackedBarDemo());
+			loadDemo(new VerticalBarsWithLabelsDemo());
+			loadDemo(new HorizontalBarsWithLabelsDemo());
+			loadDemo(new StackedBarsWithLabelsDemo());
 			
 			loadDemo(new InitialSampleDemo());
 			loadDemo(new ModInitialSampleDemo());
