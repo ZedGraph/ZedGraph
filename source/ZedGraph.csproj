@@ -320,6 +320,10 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\transparency.png"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "ZedGraph\Types.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

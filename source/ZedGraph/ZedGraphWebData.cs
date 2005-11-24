@@ -367,6 +367,16 @@ namespace ZedGraph
 		}
 	}
 
+	/// <summary>
+	/// Todo: idem ZedGraphWebFill2
+	/// </summary>
+	public class ZedGraphWebBorder2 : ZedGraphWebBorder
+	{
+		public ZedGraphWebBorder2() : base()
+		{
+			this.IsVisible = true;
+		}
+	}
 	#endregion
 
 	#region ZedGraphWebFill
@@ -597,6 +607,19 @@ namespace ZedGraph
 		/// </summary>
 		[Browsable(false)]
 		public Brush Brush = null;			
+	}
+
+
+	/// <summary>
+	/// TODO: change the vsassist system so different default constructors or initializers can be called,
+	/// or to be able to know if a the object is already initialized or not (new).
+	/// </summary>
+	public class ZedGraphWebFill2 : ZedGraphWebFill
+	{
+		public ZedGraphWebFill2()
+		{
+			this.Color = Color.White;
+		}
 	}
 
 	#endregion
@@ -3197,8 +3220,20 @@ namespace ZedGraph
 		/// </summary>
 		/// <returns>Always returns the string "FontSpec".</returns>
 		public override string ToString()
-		{			
-			return "FontSpec";
+		{
+			string color = this.FontColor.Name + " " + this.Size + "pts";
+			string fill;
+			if( !this.Fill.IsVisible || this.Fill.Type == FillType.None )
+				fill = "none";
+			else
+				fill = this.Fill.Color.Name;
+			string border;
+			if( !this.Border.IsVisible )
+				border = "none";
+			else
+				border = this.Border.Color.Name;
+
+			return color + " " + fill + " " + border;
 		}
 
 		/// <summary>
@@ -3760,6 +3795,17 @@ namespace ZedGraph
 	/// <seealso cref="ZedGraph.GraphItem"/>
 	/// </summary>
 	/// <author>Darren Martz</author>
+	/// <remarks>
+	/// A TextItem uses only:
+	///		FontSpec
+	///		Location
+	///			.CoordinateFrame (<see cref="CoordType"/>)
+	///			.X (between 0 and 1 for fraction CoordTypes) 0=left, 1=right
+	///			.Y (between 0 and 1 for fraction CoordTypes) 0=top, 1=bottom
+	///			.AlignH
+	///			.AlignV
+	///			.layoutArea
+	/// </remarks>
 	public class ZedGraphWebTextItem : ZedGraphWebGraphItem
 	{
 		/// <summary>
@@ -3795,7 +3841,7 @@ namespace ZedGraph
 		public void CopyTo( TextItem item )
 		{
 			base.CopyTo(item);
-			this.LayoutArea.CopyTo(item.LayoutArea);
+			this.LayoutArea.CopyTo(item.LayoutArea); //Width, height
 			item.Text = this.Text;
 			this.FontSpec.CopyTo(item.FontSpec);
 		}
@@ -4242,8 +4288,6 @@ namespace ZedGraph
 		{
 			item.X = this.X;
 			item.Y = this.Y;
-			item.X1 = this.X1;
-			item.Y1 = this.Y1;			
 			item.Width = this.Width;
 			item.Height = this.Height;
 			item.AlignH = this.AlignH;
@@ -4353,34 +4397,6 @@ namespace ZedGraph
 			}
 			set { ViewState["X"] = value; }
 		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.Y1"/>
-		/// </summary>
-		[NotifyParentProperty(true)]
-		public float Y1
-		{
-			get 
-			{ 
-				object x = ViewState["Y1"]; 
-				return (null == x) ? 0 : (float)x;
-			}
-			set { ViewState["Y1"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.X1"/>
-		/// </summary>
-		[NotifyParentProperty(true)]
-		public float X1
-		{
-			get 
-			{ 
-				object x = ViewState["X1"]; 
-				return (null == x) ? 0 : (float)x;
-			}
-			set { ViewState["X1"] = value; }
-		}		
 
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.AlignH"/>

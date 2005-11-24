@@ -46,7 +46,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 3.33 $ $Date: 2005-11-22 13:05:07 $</version>
+	/// <version>$Revision: 3.34 $ $Date: 2005-11-24 17:30:06 $</version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -79,6 +79,8 @@ namespace ZedGraph
 			vsassist.Register('B',typeof(ZedGraphWebBorder));
 			vsassist.Register('f',typeof(ZedGraphWebFill));
 			vsassist.Register('F',typeof(ZedGraphWebFill));
+			vsassist.Register('E',typeof(ZedGraphWebFill2));
+			vsassist.Register('C',typeof(ZedGraphWebBorder2));
 			vsassist.Register('s',typeof(ZedGraphWebFontSpec));
 			vsassist.Register('c',typeof(ZedGraphWebCurveCollection));
 			vsassist.Register('g',typeof(ZedGraphWebGraphItemCollection));
@@ -86,12 +88,12 @@ namespace ZedGraph
 			vsassist.Register('R',typeof(ZedGraphWebRect));
 			vsassist.Register('m',typeof(ZedGraphWebRect2));	
 
-			this.AxisBorder.Color = ZedGraph.GraphPane.Default.AxisBorderColor;
-			this.AxisBorder.PenWidth = ZedGraph.GraphPane.Default.AxisBorderPenWidth;
-			this.AxisBorder.IsVisible = true;
-			this.AxisFill.Brush = ZedGraph.GraphPane.Default.AxisBackBrush;
-			this.AxisFill.Color = ZedGraph.GraphPane.Default.AxisBackColor;
-			this.AxisFill.Type  = ZedGraph.GraphPane.Default.AxisBackType;
+			this.GraphBorder.Color = ZedGraph.GraphPane.Default.AxisBorderColor;
+			this.GraphBorder.PenWidth = ZedGraph.GraphPane.Default.AxisBorderPenWidth;
+			this.GraphBorder.IsVisible = true;
+			this.GraphFill.Brush = ZedGraph.GraphPane.Default.AxisBackBrush;
+			this.GraphFill.Color = ZedGraph.GraphPane.Default.AxisBackColor;
+			this.GraphFill.Type  = ZedGraph.GraphPane.Default.AxisBackType;
 		
 			this.PaneBorder.Color = ZedGraph.PaneBase.Default.BorderColor;
 			this.PaneBorder.PenWidth = ZedGraph.PaneBase.Default.BorderPenWidth;
@@ -360,7 +362,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Proxy property that gets or sets the value of the <see cref="PaneBase.BaseDimension"/>.
 		/// </summary>
-		[Bindable(true),Category("Layout of container"),NotifyParentProperty(true)]
+		[Bindable(true),Category("Layout of master pane"),NotifyParentProperty(true)]
 		public float BaseDimension
 		{
 			get 
@@ -370,12 +372,57 @@ namespace ZedGraph
 			}
 			set { ViewState["BaseDimension"] = value; }
 		}
+
+		/// <summary>
+		/// </summary>
+		[Bindable(true),Category("Layout of master pane"),NotifyParentProperty(true)]
+		[Description("Main background color")]
+		public Color BackgroundColor
+		{
+			get 
+			{ 
+				object x = ViewState["BackgroundColor"]; 
+				return (null == x) ? Color.White : (Color)x;
+			}
+			set { ViewState["BackgroundColor"] = value; }
+		}
+
+
 		
+		/// <summary>
+		/// Proxy property that gets the value of the <see cref="PaneBase.PaneFill"/>.
+		/// </summary>
+		[
+		Category("Layout of master pane"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebFill2 MasterPaneFill
+		{
+			get { return (ZedGraphWebFill2)vsassist.GetValue('E',this.IsTrackingViewState); }
+		}
+
+		/// <summary>
+		/// Proxy property that gets the value of the <see cref="GraphPane.AxisBorder"/>.
+		/// </summary>
+		[		
+		Category("Layout of master pane"),
+		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+		NotifyParentProperty(true),
+		PersistenceMode(PersistenceMode.InnerProperty)
+		]
+		public ZedGraphWebBorder2 MasterPaneBorder
+		{
+			get { return (ZedGraphWebBorder2)vsassist.GetValue('C',this.IsTrackingViewState); }
+		}
+
+
 		/// <summary>
 		/// Proxy property that gets or sets the width of the <see cref="PaneBase.PaneRect"/>.
 		/// </summary>
 		/// <value>The width in output device pixels</value>
-		[Bindable(true),Category("Layout of container"),NotifyParentProperty(true),DefaultValue(400)]
+		[Bindable(true),Category("Layout of master pane"),NotifyParentProperty(true),DefaultValue(400)]
 		public int Width
 		{
 			get 
@@ -390,7 +437,7 @@ namespace ZedGraph
 		/// Proxy property that gets or sets the height of the <see cref="PaneBase.PaneRect"/>.
 		/// </summary>
 		/// <value>The height in output device pixels</value>
-		[Bindable(true),Category("Layout of container"),NotifyParentProperty(true),DefaultValue(250)]
+		[Bindable(true),Category("Layout of master pane"),NotifyParentProperty(true),DefaultValue(250)]
 		public int Height
 		{
 			get 
@@ -495,14 +542,14 @@ namespace ZedGraph
 		[Bindable(true)]
 		[Category("Axis")]
 		[NotifyParentProperty(true)]
-		public bool IsAxisRectAuto
+		public bool IsGraphRectAuto
 		{
 			get 
 			{ 
-				object x = ViewState["IsAxisRectAuto"]; 
+				object x = ViewState["IsGraphRectAuto"]; 
 				return (null == x) ? true : (bool)x;
 			}
-			set { ViewState["IsAxisRectAuto"] = value; }			
+			set { ViewState["IsGraphRectAuto"] = value; }			
 		}
 
 		/// <summary>
@@ -721,7 +768,7 @@ namespace ZedGraph
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
-		public ZedGraphWebRect AxisRect
+		public ZedGraphWebRect GraphRect
 		{
 			get { return (ZedGraphWebRect)vsassist.GetValue('r',this.IsTrackingViewState); }
 		}
@@ -763,7 +810,7 @@ namespace ZedGraph
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
-		public ZedGraphWebBorder AxisBorder
+		public ZedGraphWebBorder GraphBorder
 		{
 			get { return (ZedGraphWebBorder)vsassist.GetValue('b',this.IsTrackingViewState); }
 		}
@@ -777,7 +824,7 @@ namespace ZedGraph
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
-		public ZedGraphWebFill AxisFill
+		public ZedGraphWebFill GraphFill
 		{
 			get { return (ZedGraphWebFill)vsassist.GetValue('f',this.IsTrackingViewState); }
 		}
@@ -885,22 +932,25 @@ namespace ZedGraph
 		/// stub method that passes control for the render event to the the registered
 		/// event handler.
 		/// </summary>
-		protected virtual void OnDrawPane( Graphics g, MasterPane pane )
+		protected virtual void OnDrawPane( Graphics g, MasterPane mp )
 		{
 			ZedGraphWebControlEventHandler handler;
 			handler = (ZedGraphWebControlEventHandler) Events[_eventRender];
 
+			MasterPaneFill.CopyTo(mp.PaneFill);
+			MasterPaneBorder.CopyTo(mp.PaneBorder);
+
 			if ( (handler == null) && (CurveList.Count == 0) && (GraphItemList.Count == 0) )
 			{
 				// default with the sample graph if no callback provided
-				foreach( GraphPane p in pane.PaneList )
+				foreach( GraphPane p in mp.PaneList )
 				{
 					ZedGraphWeb.RenderDemo(g,p);
 				}
 			}
 			else
 			{
-				foreach( GraphPane p in pane.PaneList )
+				foreach( GraphPane p in mp.PaneList )
 				{
 					// Add visual designer influences here - first!!
 					SetWebProperties(g,p);
@@ -915,7 +965,7 @@ namespace ZedGraph
 				//TODO: verify callback regression test
 				// Add custom callback tweeking next
 				if( handler != null )
-					handler( g, pane );
+					handler( g, mp );
 			}
 		}		
 	#endregion
@@ -942,11 +992,11 @@ namespace ZedGraph
 				pane.IsIgnoreInitial = this.IsIgnoreInitial;
 				pane.IsIgnoreMissing = this.IsIgnoreMissing;
 				pane.LineType = this.LineType;
-				this.AxisRect.CopyTo(pane.AxisRect);
-				pane.IsAxisRectAuto = this.IsAxisRectAuto;
+				this.GraphRect.CopyTo(pane.AxisRect);
+				pane.IsAxisRectAuto = this.IsGraphRectAuto;
 				this.PieRect.CopyTo(pane.PieRect);
-				this.AxisBorder.CopyTo(pane.AxisBorder);
-				this.AxisFill.CopyTo(pane.AxisFill);
+				this.GraphBorder.CopyTo(pane.AxisBorder);
+				this.GraphFill.CopyTo(pane.AxisFill);
 				pane.MinClusterGap = this.MinClusterGap;
 				pane.MinBarGap = this.MinBarGap;
 				pane.BarBase = this.BarBase;				
@@ -965,6 +1015,7 @@ namespace ZedGraph
 			}
 			catch(Exception)
 			{
+				throw;
 			}
 		}
 
@@ -1201,7 +1252,7 @@ namespace ZedGraph
 		{
 			base.OnPreRender( e );
 		}
-		
+
 		/// <summary>
 		/// Method to create a <see cref="ZedGraph.GraphPane"/> class for the control.
 		/// </summary>
@@ -1209,7 +1260,21 @@ namespace ZedGraph
 		/// <see cref="System.Drawing.Image"/>.</param>
 		/// <param name="Format">The <see cref="ImageFormat"/> type to be output.</param>
 		protected void CreateGraph( System.IO.Stream OutputStream, ImageFormat Format )
-		{			
+		{
+			CreateGraph( OutputStream, Format, false );
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="OutputStream"></param>
+		/// <param name="Format"></param>
+		/// <param name="bShowTransparency">if true, draw squares instead of leaving the background transparent</param>
+		/// <remarks>
+		/// bShowTransparency is set to true in design mode, to false otherwise.
+		/// </remarks>
+		protected void CreateGraph( System.IO.Stream OutputStream, ImageFormat Format, bool bShowTransparency )
+		{
 			RectangleF rect = new RectangleF( 0, 0, this.Width, this.Height );
 			MasterPane mp = new MasterPane( this.Title, rect );
 						
@@ -1233,10 +1298,27 @@ namespace ZedGraph
 				if ( this.AxisChanged ) mp.AxisChange(g);
 			
 				// Render the graph to a bitmap
-				g.Clear(Color.FromArgb(255, 255, 255, 255)); 
-				mp.Draw( g ); 
+				if( bShowTransparency && mp.PaneFill.Color.A != 255 )
+				{
+					//Show the transparency as white/gray filled squares
+					// We need to add the resource namespace to its name
+					//string resourceName = string.Format( "{0}.transparency.png", GetType().Namespace );
+					string resourceName = "ZedGraph.ZedGraph.transparency.png";
+					Stream stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream( resourceName );
+
+					if ( stream == null )
+						throw new Exception( "Does the Build Action of the resource "+resourceName+" is set to Embedded Resource ?" );
+
+					System.Drawing.Image brushImage = new Bitmap( stream );
+					TextureBrush brush = new TextureBrush( brushImage, System.Drawing.Drawing2D.WrapMode.Tile );
+					g.FillRectangle( brush, 0, 0, this.Width, this.Height );
+					brush.Dispose();
+					brushImage.Dispose();
+					stream.Close();
+				}
+				mp.Draw( g );
 			}
-			        
+
 			// Stream the graph out				
 			MemoryStream ms = new MemoryStream(); 
 			image.Save( ms, Format );							
@@ -1321,7 +1403,10 @@ namespace ZedGraph
 					//Recreate image if needed (caching expired or no caching)
 					if( DesignTimeFileStream != null )
 					{
-						CreateGraph( DesignTimeFileStream, this.ImageFormat );
+						ImageFormat imageFormat = this.ImageFormat;
+						if( bDesignMode )
+							imageFormat = ImageFormat.Png;
+						CreateGraph( DesignTimeFileStream, imageFormat, bDesignMode );
 						DesignTimeFileStream.Flush();
 						if( !bDesignMode ) //Production mode: close files !
 						{
