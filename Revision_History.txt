@@ -1,5 +1,19 @@
 ZedGraph Class Library Revision History
 
+23-Nov-2005 (by Champion)
+[FIX] Ten Power placement for scale labels
+[FIX] ShowPointValues with Text Axes and IsOverrideOrdinal
+[FIX] Center data when range is zero for PickScale()
+[FIX] remake font based on actual prior font size instead of persistent field
+[FIX] modify XDate docs to explain Excel date bug
+[NEW] add SampleMultiPointList class to illustrate IPointList usage
+[NEW] demo pane with four y axes
+
+
+
+22-Nov-2005 (by Champion)
+[FIX] minor fix for cross axes with IsScaleLabelsInside
+
 22-Nov-2005 (by softlion)
 [UPD] Updated Web sample in C# to work with new RenderMode option
 [FIX] Minor bug fix introduced in 21-nov-2005 version

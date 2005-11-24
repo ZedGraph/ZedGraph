@@ -305,7 +305,7 @@ namespace ZedGraph.ControlTest
 			zedGraphControl1.IsShowHScrollBar = true;
 #endif
 
-#if true	// Basic curve test - Linear Axis
+#if false	// Basic curve test - Linear Axis
 
 			PointPairList list = new PointPairList();
 
@@ -326,6 +326,28 @@ namespace ZedGraph.ControlTest
 			zedGraphControl1.ScrollMinX = 1;
 			zedGraphControl1.ScrollMaxX = 100;
 			zedGraphControl1.IsShowHScrollBar = true;
+#endif
+
+#if true	// Basic curve test - two text axes
+
+			double[] y = { 2, 4, 1, 5, 3 };
+
+			LineItem myCurve = myPane.AddCurve( "curve 1", null, y, Color.Blue, SymbolType.Diamond );
+			myCurve.IsOverrideOrdinal = true;
+			myPane.XAxis.Type = AxisType.Text;
+			myPane.YAxis.Type = AxisType.Text;
+
+			//string[] xLabels = { "one", "two", "three", "four", "five" };
+			string[] yLabels = { "alpha", "bravo", "charlie", "delta", "echo" };
+			string[] xLabels = { "one", "two" };
+			myPane.XAxis.Max = 5;
+			myPane.XAxis.TextLabels = xLabels;
+			myPane.YAxis.TextLabels = yLabels;
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+			zedGraphControl1.IsShowPointValues = true;
+
 #endif
 
 			zedGraphControl1.AxisChange();

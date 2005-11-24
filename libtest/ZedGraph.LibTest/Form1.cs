@@ -162,12 +162,166 @@ namespace ZedGraph.LibTest
 
 
 		private void Form1_Load(object sender, System.EventArgs e)
-		{			
+		{
 			Trace.Listeners.Add(new TextWriterTraceListener( @"myTrace.txt" ) );
 			Trace.AutoFlush = true;
 
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
+
+#if true	// Multi Y Axis demo
+			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+				"Demonstration of Multi Y Graph",
+				"Time, s",
+				"Velocity, m/s" );
+			
+			// Set the titles and axis labels
+			myPane.Y2Axis.Title = "Acceleration, m/s2";
+
+			// Make up some data points based on the Sine function
+			PointPairList vList = new PointPairList();
+			PointPairList aList = new PointPairList();
+			PointPairList dList = new PointPairList();
+			PointPairList eList = new PointPairList();
+
+			for ( int i=0; i<30; i++ )
+			{
+				double time = (double) i;
+				double acceleration = 2.0;
+				double velocity = acceleration * time;
+				double distance = acceleration * time * time / 2.0;
+				double energy = 100.0 * velocity * velocity / 2.0;
+				aList.Add( time, acceleration );
+				vList.Add( time, velocity );
+				eList.Add( time, energy );
+				dList.Add( time, distance );
+			}
+
+			// Generate a red curve with diamond symbols, and "Velocity" in the legend
+			LineItem myCurve = myPane.AddCurve( "Velocity",
+				vList, Color.Red, SymbolType.Diamond );
+			// Fill the symbols with white
+			myCurve.Symbol.Fill = new Fill( Color.White );
+
+			// Generate a blue curve with circle symbols, and "Acceleration" in the legend
+			myCurve = myPane.AddCurve( "Acceleration",
+				aList, Color.Blue, SymbolType.Circle );
+			// Fill the symbols with white
+			myCurve.Symbol.Fill = new Fill( Color.White );
+			// Associate this curve with the Y2 axis
+			myCurve.IsY2Axis = true;
+
+			// Generate a green curve with square symbols, and "Distance" in the legend
+			myCurve = myPane.AddCurve( "Distance",
+				dList, Color.Green, SymbolType.Square );
+			// Fill the symbols with white
+			myCurve.Symbol.Fill = new Fill( Color.White );
+			// Associate this curve with the second Y axis
+			myCurve.YAxisIndex = 1;
+
+			// Generate a Black curve with triangle symbols, and "Energy" in the legend
+			myCurve = myPane.AddCurve( "Energy",
+				eList, Color.Black, SymbolType.Triangle );
+			// Fill the symbols with white
+			myCurve.Symbol.Fill = new Fill( Color.White );
+			// Associate this curve with the Y2 axis
+			myCurve.IsY2Axis = true;
+			// Associate this curve with the second Y2 axis
+			myCurve.YAxisIndex = 1;
+
+			// Show the x axis grid
+			myPane.XAxis.IsShowGrid = true;
+
+			// Make the Y axis scale red
+			myPane.YAxis.ScaleFontSpec.FontColor = Color.Red;
+			myPane.YAxis.TitleFontSpec.FontColor = Color.Red;
+			// turn off the opposite tics so the Y tics don't show up on the Y2 axis
+			myPane.YAxis.IsOppositeTic = false;
+			myPane.YAxis.IsMinorOppositeTic = false;
+			// Don't display the Y zero line
+			myPane.YAxis.IsZeroLine = false;
+			// Align the Y axis labels so they are flush to the axis
+			myPane.YAxis.ScaleAlign = AlignP.Inside;
+			myPane.YAxis.Max = 100;
+
+			// Enable the Y2 axis display
+			myPane.Y2Axis.IsVisible = true;
+			// Make the Y2 axis scale blue
+			myPane.Y2Axis.ScaleFontSpec.FontColor = Color.Blue;
+			myPane.Y2Axis.TitleFontSpec.FontColor = Color.Blue;
+			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
+			myPane.Y2Axis.IsOppositeTic = false;
+			myPane.Y2Axis.IsMinorOppositeTic = false;
+			// Display the Y2 axis grid lines
+			myPane.Y2Axis.IsShowGrid = true;
+			// Align the Y2 axis labels so they are flush to the axis
+			myPane.Y2Axis.ScaleAlign = AlignP.Inside;
+			myPane.Y2Axis.Min = 1.5;
+			myPane.Y2Axis.Max = 3;
+
+			// Create a second Y Axis, green
+			YAxis yAxis3 = new YAxis( "Distance, m" );
+			myPane.YAxisList.Add( yAxis3 );
+			yAxis3.ScaleFontSpec.FontColor = Color.Green;
+			yAxis3.TitleFontSpec.FontColor = Color.Green;
+			yAxis3.Color = Color.Green;
+			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
+			yAxis3.IsInsideTic = false;
+			yAxis3.IsMinorInsideTic = false;
+			yAxis3.IsOppositeTic = false;
+			yAxis3.IsMinorOppositeTic = false;
+			// Align the Y2 axis labels so they are flush to the axis
+			yAxis3.ScaleAlign = AlignP.Inside;
+
+			Y2Axis yAxis4 = new Y2Axis( "Energy" );
+			yAxis4.IsVisible = true;
+			myPane.Y2AxisList.Add( yAxis4 );
+			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
+			yAxis4.IsInsideTic = false;
+			yAxis4.IsMinorInsideTic = false;
+			yAxis4.IsOppositeTic = false;
+			yAxis4.IsMinorOppositeTic = false;
+			// Align the Y2 axis labels so they are flush to the axis
+			yAxis4.ScaleAlign = AlignP.Inside;
+			yAxis4.Type = AxisType.Log;
+			yAxis4.Min = 100;
+			
+
+			// Fill the axis background with a gradient
+			myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+#endif
+
+#if false	// SampleMultiPointList Demo
+			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+				"Demo for SampleMultiPointList",
+				"Time",
+				"Distance Traveled" );
+			SetSize();
+
+			SampleMultiPointList myList = new SampleMultiPointList();
+			myList.YData = PerfDataType.Distance;
+
+			// note how it does not matter that we created the second list before actually
+			// adding the data -- this is because the cloned list shares data with the
+			// original
+			SampleMultiPointList myList2 = new SampleMultiPointList( myList );
+			myList2.YData = PerfDataType.Velocity;
+
+			for ( int i=0; i<20; i++ )
+			{
+				double time = (double) i;
+				double acceleration = 1.0;
+				double velocity = acceleration * time;
+				double distance = acceleration * time * time / 2.0;
+				PerformanceData perfData = new PerformanceData( time, distance, velocity, acceleration );
+				myList.Add( perfData );
+			}
+
+
+			myPane.AddCurve( "Distance", myList, Color.Blue );
+			myPane.AddCurve( "Velocity", myList2, Color.Red );
+
+#endif
 
 #if false	// GradientByZ
 
@@ -232,6 +386,48 @@ namespace ZedGraph.LibTest
 
 #endif
 
+#if false	// stacked bars
+
+			Random rand = new Random();
+
+			myPane = new GraphPane();
+//			myPane.Title = "My Title";
+//			myPane.XAxis.Title = "X Axis";
+//			myPane.YAxis.Title = "Y Axis";
+
+			PointPairList list1 = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+			PointPairList list4 = new PointPairList();
+
+			for ( int i=1; i<5; i++ )
+			{
+				double y = (double) i;
+				double x1 = 100.0 + rand.NextDouble() * 100.0;
+				double x2 = 100.0 + rand.NextDouble() * 100.0;
+				double x3 = 100.0 + rand.NextDouble() * 100.0;
+				double x4 = 100.0 + rand.NextDouble() * 100.0;
+
+				list1.Add( x1, y );
+				list2.Add( x2, y );
+				list3.Add( x3, y );
+				list4.Add( x4, y );
+			}
+
+
+			BarItem bar1 = myPane.AddBar( "Bar 1", list1, Color.Red );
+			BarItem bar2 = myPane.AddBar( "Bar 2", list2, Color.Blue );
+			BarItem bar3 = myPane.AddBar( "Bar 3", list3, Color.Green );
+			BarItem bar4 = myPane.AddBar( "Bar 4", list4, Color.Beige );
+
+			myPane.BarBase = BarBase.Y;
+			myPane.BarType = BarType.Stack;
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+			this.CreateStackBarLabels( myPane );
+#endif
+
 #if false	// Bars and Dates
 
 //			Color color = Color.FromArgb( 123, 45, 67, 89 );
@@ -285,7 +481,7 @@ namespace ZedGraph.LibTest
 			//this.CreateBarLabels(mPane);
 #endif
 
-#if false
+#if false	// bar test with no gap
 			myPane = new GraphPane( new Rectangle( 40, 40, 600, 300 ),
 				"Score Report", "", "" );
 			// Make up some random data points
@@ -912,100 +1108,6 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test - two text axes
-
-			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
-
-			double[] y = { 2, 4, 1, 5, 3 };
-
-			LineItem myCurve = myPane.AddCurve( "curve 1", null, y, Color.Blue, SymbolType.Diamond );
-			myCurve.IsOverrideOrdinal = true;
-			myPane.XAxis.Type = AxisType.Text;
-			myPane.YAxis.Type = AxisType.Text;
-
-			string[] xLabels = { "one", "two", "three", "four", "five" };
-			string[] yLabels = { "alpha", "bravo", "charlie", "delta", "echo" };
-			myPane.XAxis.TextLabels = xLabels;
-			myPane.YAxis.TextLabels = yLabels;
-
-			myPane.AxisChange( this.CreateGraphics() );
-
-			trackBar1.Minimum = 0;
-			trackBar1.Maximum = 100;
-			trackBar1.Value = 50;
-
-#endif
-
-
-#if false	// Basic bar test
-
-			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
-
-			PointPairList list = new PointPairList();
-
-			for ( int i=0; i<5; i++ )
-			{
-				double y = (double) i;
-				//double x = new XDate( 2001, 1, i*3 );
-				double x = Math.Sin( i / 8.0 ) * 100000 + 100001;
-				list.Add( x, y );
-				//double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
-			}
-
-			PointPairList list2 = new PointPairList( list );
-			PointPairList list3 = new PointPairList( list );
-			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
-			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
-			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
-
-			//myPane.XAxis.IsSkipLastLabel = false;
-			//myPane.XAxis.IsPreventLabelOverlap = false;
-			//myPane.XAxis.ScaleFormat = "dd/MM HH:mm";
-			//myPane.XAxis.Type = AxisType.Date;
-			myPane.BarType = BarType.PercentStack;
-			myPane.BarBase = BarBase.Y;
-			myPane.AxisChange( this.CreateGraphics() );
-
-			ValueHandler valueHandler = new ValueHandler(myPane, true);
-			const float shift = 0;
-			int iOrd = 0;
-			foreach (CurveItem oCurveItem in myPane.CurveList)
-			{
-				BarItem oBarItem = oCurveItem as BarItem;
-				if (oBarItem != null)
-				{
-					PointPairList oPointPairList = oCurveItem.Points as PointPairList;
-					for (int i=0; i<oPointPairList.Count; i++)
-					{
-						double xVal = oPointPairList[i].X;
-						string sLabel = string.Concat(xVal.ToString("F0"), "%");
-
-						double yVal = valueHandler.BarCenterValue(oCurveItem, oCurveItem.GetBarWidth(myPane), i, oPointPairList[i].Y, iOrd);
-						double x1, x2, y;
-						valueHandler.GetValues( oCurveItem, i, out y, out x1, out x2 );
-
-						xVal = ( x1 + x2 ) / 2.0;
-
-						TextItem oTextItem = new TextItem(sLabel, (float) xVal + (xVal > 0 ? shift : -shift ), (float) yVal);
-						oTextItem.Location.CoordinateFrame = CoordType.AxisXYScale;
-						oTextItem.Location.AlignH =  AlignH.Center;
-						oTextItem.Location.AlignV = AlignV.Center;
-						oTextItem.FontSpec.Border.IsVisible = true;
-						oTextItem.FontSpec.Angle = 0;
-						oTextItem.FontSpec.Fill.IsVisible = false;
-						myPane.GraphItemList.Add(oTextItem);
-					}
-				}
-
-				iOrd++;
-			}
-
-			trackBar1.Minimum = 0;
-			trackBar1.Maximum = 100;
-			trackBar1.Value = 50;
-
-#endif
-
 #if false	// Basic curve test - DateAsOrdinal
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
@@ -1116,6 +1218,137 @@ namespace ZedGraph.LibTest
 
 #endif
 
+#if false	// Basic curve test - two text axes
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			double[] y = { 2, 4, 1, 5, 3 };
+
+			LineItem myCurve = myPane.AddCurve( "curve 1", null, y, Color.Blue, SymbolType.Diamond );
+			myCurve.IsOverrideOrdinal = true;
+			myPane.XAxis.Type = AxisType.Text;
+			myPane.YAxis.Type = AxisType.Text;
+
+			string[] xLabels = { "one", "two", "three", "four", "five" };
+			string[] yLabels = { "alpha", "bravo", "charlie", "delta", "echo" };
+			//myPane.XAxis.TextLabels = xLabels;
+			//myPane.YAxis.TextLabels = yLabels;
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
+
+#if false	// Basic horizontal bar test
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList list = new PointPairList();
+
+			for ( int i=0; i<5; i++ )
+			{
+				double y = (double) i;
+				//double x = new XDate( 2001, 1, i*3 );
+				double x = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				list.Add( x, y );
+				//double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
+			}
+
+			PointPairList list2 = new PointPairList( list );
+			PointPairList list3 = new PointPairList( list );
+			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
+			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
+			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
+
+			//myPane.XAxis.IsSkipLastLabel = false;
+			//myPane.XAxis.IsPreventLabelOverlap = false;
+			//myPane.XAxis.ScaleFormat = "dd/MM HH:mm";
+			//myPane.XAxis.Type = AxisType.Date;
+			myPane.BarType = BarType.PercentStack;
+			myPane.BarBase = BarBase.Y;
+			myPane.AxisChange( this.CreateGraphics() );
+
+			ValueHandler valueHandler = new ValueHandler(myPane, true);
+			const float shift = 0;
+			int iOrd = 0;
+			foreach (CurveItem oCurveItem in myPane.CurveList)
+			{
+				BarItem oBarItem = oCurveItem as BarItem;
+				if (oBarItem != null)
+				{
+					PointPairList oPointPairList = oCurveItem.Points as PointPairList;
+					for (int i=0; i<oPointPairList.Count; i++)
+					{
+						double xVal = oPointPairList[i].X;
+						string sLabel = string.Concat(xVal.ToString("F0"), "%");
+
+						double yVal = valueHandler.BarCenterValue(oCurveItem, oCurveItem.GetBarWidth(myPane), i, oPointPairList[i].Y, iOrd);
+						double x1, x2, y;
+						valueHandler.GetValues( oCurveItem, i, out y, out x1, out x2 );
+
+						xVal = ( x1 + x2 ) / 2.0;
+
+						TextItem oTextItem = new TextItem(sLabel, (float) xVal + (xVal > 0 ? shift : -shift ), (float) yVal);
+						oTextItem.Location.CoordinateFrame = CoordType.AxisXYScale;
+						oTextItem.Location.AlignH =  AlignH.Center;
+						oTextItem.Location.AlignV = AlignV.Center;
+						oTextItem.FontSpec.Border.IsVisible = true;
+						oTextItem.FontSpec.Angle = 0;
+						oTextItem.FontSpec.Fill.IsVisible = false;
+						myPane.GraphItemList.Add(oTextItem);
+					}
+				}
+
+				iOrd++;
+			}
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
+
+
+#if false	// vertical bars with labels
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+			Random rand = new Random();
+
+			for ( int i=0; i<5; i++ )
+			{
+				double x = (double) i;
+				double y = rand.NextDouble() * 1000;
+				double y2 = rand.NextDouble() * 1000;
+				double y3 = rand.NextDouble() * 1000;
+				list.Add( x, y );
+				list2.Add( x, y2 );
+				list3.Add( x, y3 );
+			}
+
+			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
+			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
+			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
+
+			myPane.XAxis.IsReverse = true;
+			myPane.AxisChange( this.CreateGraphics() );
+
+
+			CreateBarLabels( myPane );
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
+
 #if false	// Basic curve test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -1207,7 +1440,83 @@ namespace ZedGraph.LibTest
 
 #endif
 
-			_crossAxis = myPane.Y2AxisList[1];
+#if false	// masterpane test
+
+			master = new MasterPane( "ZedGraph MasterPane Example", 
+				new Rectangle( 10, 10, this.Width-20, this.Height-100 ) );
+
+			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+
+			master.Legend.IsVisible = true;
+			master.Legend.Position = LegendPos.TopCenter;
+
+			TextItem text = new TextItem( "Priority", 0.88F, 0.12F );
+			text.Location.CoordinateFrame = CoordType.PaneFraction;
+			text.FontSpec.Angle = 15.0F;
+			text.FontSpec.FontColor = Color.Red;
+			text.FontSpec.IsBold = true;
+			text.FontSpec.Size = 16;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Border.Color = Color.Red;
+			text.FontSpec.Fill.IsVisible = false;
+			text.Location.AlignH = AlignH.Left;
+			text.Location.AlignV = AlignV.Bottom;
+			master.GraphItemList.Add( text );
+
+			text = new TextItem( "DRAFT", 0.5F, 0.5F );
+			text.Location.CoordinateFrame = CoordType.PaneFraction;
+			text.FontSpec.Angle = 30.0F;
+			text.FontSpec.FontColor = Color.FromArgb( 70, 255, 100, 100 );
+			text.FontSpec.IsBold = true;
+			text.FontSpec.Size = 100;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Fill.IsVisible = false;
+			text.Location.AlignH = AlignH.Center;
+			text.Location.AlignV = AlignV.Center;
+			text.ZOrder = ZOrder.A_InFront;
+			master.GraphItemList.Add( text );
+
+			ColorSymbolRotator rotator = new ColorSymbolRotator();
+
+			for ( int j=0; j<8; j++ )
+			{
+				// Create a new graph - rect dimensions do not matter here, since it
+				// will be resized by MasterPane.AutoPaneLayout()
+				GraphPane newPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+					"Case #" + (j+1).ToString(),
+					"Time, Days",
+					"Rate, m/s" );
+
+				newPane.PaneFill = new Fill( Color.PowderBlue, Color.LightYellow, 45.0F );
+				newPane.BaseDimension = 6.0F;
+
+				// Make up some data arrays based on the Sine function
+				double x, y;
+				PointPairList list = new PointPairList();
+				for ( int i=0; i<36; i++ )
+				{
+					x = (double) i + 5;
+					y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 + (double) j ) );
+					list.Add( x, y );
+				}
+
+				LineItem myCurve = newPane.AddCurve( "Type " + j.ToString(),
+					list, rotator.NextColor, rotator.NextSymbol );
+				myCurve.Symbol.Fill = new Fill( Color.White );
+
+				master.Add( newPane );
+			}
+
+			Graphics g = this.CreateGraphics();
+
+			master.AutoPaneLayout( g, PaneLayout.SquareRowPreferred);
+			master.AxisChange( g );
+#endif
+
+			if ( master != null )
+				_crossAxis = master[0].Y2Axis;
+			else
+				_crossAxis = myPane.Y2AxisList[1];
 			trackBar1.Minimum = 0;
 			trackBar1.Maximum = 100;
 			trackBar1.Value = 50;
@@ -1220,12 +1529,58 @@ namespace ZedGraph.LibTest
       
 		}
 
-		private void CreateBarLabels( MasterPane pane )
+		// Call this method only after calling AxisChange()
+		private void CreateStackBarLabels( GraphPane graphPane )
 		{
-			const int labelOffset	= 5;
-			GraphPane graphPane		= pane.PaneList[ 0 ];
+			float labelOffset = (float)( 0.02 * ( graphPane.XAxis.Max - graphPane.XAxis.Min ) );
+			ValueHandler valueHandler = new ValueHandler( graphPane, true );
+			int barIndex = -1;
 
 			foreach ( CurveItem curve in graphPane.CurveList )
+			{
+				if ( curve is BarItem )
+				{
+					BarItem bar = curve as BarItem;
+					barIndex++;
+					float barWidth = bar.GetBarWidth( graphPane );
+
+					IPointList points = bar.Points;
+
+					for ( int i = 0; i < points.Count; i++ )
+					{
+						double labelYCoordinate = valueHandler.BarCenterValue( bar, barWidth, i, points[i].Y, barIndex );
+
+						double baseVal, lowVal, hiVal;
+
+						valueHandler.GetValues( bar, i, out baseVal, out lowVal, out hiVal );
+
+						float labelXCoordinate = (float)( lowVal + hiVal ) / 2.0f;
+
+						string barLabelText = ( points[i].X ).ToString( "N2" );
+
+						TextItem label = new TextItem( barLabelText, (float)labelXCoordinate, (float)labelYCoordinate );
+
+						label.Location.CoordinateFrame = CoordType.AxisXYScale;
+						label.FontSpec.Size = 10;
+						label.FontSpec.FontColor = Color.Black;
+						label.Location.AlignH = AlignH.Left;
+						label.Location.AlignV = AlignV.Center;
+						label.FontSpec.Border.IsVisible = false;
+						label.FontSpec.Fill.IsVisible = false;
+
+						graphPane.GraphItemList.Add( label );
+					}
+				}
+			}
+		}
+
+		// Call this method after calling AxisChange()
+		private void CreateBarLabels( GraphPane pane )
+		{
+			// Make the gap between the bars and the labels = 2% of the axis range
+			float labelOffset = (float) ( pane.YAxis.Max - pane.YAxis.Min ) * 0.02f;
+
+			foreach ( CurveItem curve in pane.CurveList )
 			{
 				BarItem bar = curve as BarItem;
 
@@ -1236,14 +1591,14 @@ namespace ZedGraph.LibTest
 					for ( int i = 0; i < points.Count; i++ )
 					{
 						ValueHandler valueHandler		= 
-							new ValueHandler( graphPane, true );
+							new ValueHandler( pane, true );
 
 						int curveIndex					=
-							graphPane.CurveList.IndexOf( curve );
+							pane.CurveList.IndexOf( curve );
 
 						double labelXCoordintate			= 
 							valueHandler.BarCenterValue( bar, 
-							bar.GetBarWidth( graphPane ), i, points[ i ].X, 
+							bar.GetBarWidth( pane ), i, points[ i ].X, 
 							curveIndex );
 
 						float labelYCoordinate				= 
@@ -1259,12 +1614,13 @@ namespace ZedGraph.LibTest
 						label.Location.CoordinateFrame	= CoordType.AxisXYScale;
 						label.FontSpec.Size				= 10;
 						label.FontSpec.FontColor		= Color.Black;
+						label.FontSpec.Angle = 90;
 						label.Location.AlignH			= AlignH.Left;
 						label.Location.AlignV			= AlignV.Center;
 						label.FontSpec.Border.IsVisible	= false;
 						label.FontSpec.Fill.IsVisible	= false;
 
-						graphPane.GraphItemList.Add( label );
+						pane.GraphItemList.Add( label );
 					}
 				}
 			}
@@ -1550,6 +1906,8 @@ namespace ZedGraph.LibTest
 		{
 			//Image image = master.ScaledImage( 300, 200, 72 );
 			//image.Save( @"c:\zedgraph.png", ImageFormat.Png );
+			master.Image.Save( @"c:\zedgraph.png", ImageFormat.Png );
+			return;
 
 			//DoPrint();
 			//DoPageSetup();
@@ -1721,9 +2079,13 @@ namespace ZedGraph.LibTest
 
 		private void UpdateControls()
 		{
-			Axis controlAxis = myPane.XAxis;
+			GraphPane pane = myPane;
+			if ( master != null )
+				pane = master[0];
+
+			Axis controlAxis = pane.XAxis;
 			if ( _crossAxis is XAxis )
-				controlAxis = myPane.YAxis;
+				controlAxis = pane.YAxis;
 
 			ReverseBox.Checked = _crossAxis.IsReverse;
 			LabelsInsideBox.Checked = _crossAxis.IsScaleLabelsInside;

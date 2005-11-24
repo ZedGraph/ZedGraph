@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.46 $ $Date: 2005-11-04 18:42:26 $ </version>
+	/// <version> $Revision: 3.47 $ $Date: 2005-11-24 03:17:53 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -2923,7 +2923,7 @@ namespace ZedGraph
         internal float CalcCrossFraction( GraphPane pane )
         {
 			if ( this.crossAuto )
-				return 0.0f;
+				return isScaleLabelsInside ? 1.0f : 0.0f;
 
             double effCross = EffectiveCrossValue( pane );
             Axis crossAxis = GetCrossAxis( pane );
@@ -3529,7 +3529,12 @@ namespace ZedGraph
 					// draw the label
 					MakeLabel( pane, i, dVal, out tmpStr );
 					
-					float height = ScaleFontSpec.BoundingBox( g, tmpStr, scaleFactor ).Height;
+					float height;
+					if ( this.IsLog && this.isUseTenPower )
+						height = ScaleFontSpec.BoundingBoxTenPower( g, tmpStr, scaleFactor ).Height;
+					else
+						height = ScaleFontSpec.BoundingBox( g, tmpStr, scaleFactor ).Height;
+
 					if ( this.ScaleAlign == AlignP.Center )
 						textCenter = textTop + maxSpace / 2.0F;
 					else if ( this.ScaleAlign == AlignP.Outside )
@@ -4231,7 +4236,7 @@ namespace ZedGraph
 					this.max = maxVal + this.MaxGrace * range;
 			}
 			
-			if ( this.max <= this.min )
+			if ( this.max < this.min )
 			{
 				if ( this.maxAuto )
 					this.max = this.min + 1.0;

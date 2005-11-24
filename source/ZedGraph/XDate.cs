@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-04-16 07:51:39 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2005-11-24 03:17:53 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -39,13 +39,22 @@ namespace ZedGraph
 		/// <summary>
 		/// The actual date value in MS Excel format.  This is the only data field in
 		/// the <see cref="XDate"/> struct.
+		/// </summary>
+		/// <remarks>
 		/// This format is in days since a reference date
-		/// (XL date 1.0 is Jan 1, 1900 at 00:00 hrs).  Negative values are permissible, and the
+		/// (XL date 0.0 is December 30, 1899 at 00:00 hrs).
+		/// Negative values are permissible, and the
 		/// range of valid dates is from noon on January 1st, 4713 B.C. forward.  Internally, the
 		/// date calculations are done using Astronomical Julian Day numbers.  The Astronomical Julian
 		/// Day number is defined as the number of days since noon on January 1st, 4713 B.C.
 		/// (also referred to as 12:00 on January 1, -4712).
-		/// </summary>
+		/// NOTE: MS Excel actually has an error in the Serial Date calculations because it
+		/// errantly assumes 1900 is a leap year.  The XDate calculations do not have this same
+		/// error.  Therefore, XDate and Excel Date Serial values are 1 day different up until
+		/// the date value of 60 (in Excel, this is February 29th, 1900, and in XDate, this is
+		/// February 28th, 1900).  At a value of 61 (March 1st, 1900) or greater, they agree with
+		/// eachother.
+		/// </remarks>
 		private double xlDate;
 		
 		/// <summary>

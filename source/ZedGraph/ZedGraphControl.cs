@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.42 $ $Date: 2005-11-21 06:39:09 $ </version>
+	/// <version> $Revision: 3.43 $ $Date: 2005-11-24 03:17:53 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -1321,13 +1321,27 @@ namespace ZedGraph
 			}
 		}
 
-		private string MakeValueLabel( Axis axis, double val, int iPt )
+		private string MakeValueLabel( Axis axis, double val, int iPt, bool isOverrideOrdinal )
 		{
 			if ( axis.IsDate )
+			{
 				return XDate.ToString( val, this.pointDateFormat );
-			else if ( axis.IsText && axis.TextLabels != null &&
-						iPt >= 0 && iPt < axis.TextLabels.Length )
-				return axis.TextLabels[iPt];
+			}
+			else if ( axis.IsText && axis.TextLabels != null )
+			{
+				int i = iPt;
+				if ( isOverrideOrdinal )
+					i = (int) ( val - 0.5 );
+
+				if ( i >= 0 && i < axis.TextLabels.Length )
+					return axis.TextLabels[i];
+				else
+					return (i+1).ToString();
+			}
+			else if ( axis.IsAnyOrdinal && !isOverrideOrdinal )
+			{
+				return iPt.ToString( this.pointValueFormat );
+			}
 			else
 				return val.ToString( this.pointValueFormat );
 		}
@@ -1407,9 +1421,9 @@ namespace ZedGraph
 				{
 					double x, y, y2;
 					pane.ReverseTransform( mousePt, out x, out y, out y2 );
-					string xStr = MakeValueLabel( pane.XAxis, x, -1 );
-					string yStr = MakeValueLabel( pane.YAxis, y, -1 );
-					string y2Str = MakeValueLabel( pane.Y2Axis, y2, -1 );
+					string xStr = MakeValueLabel( pane.XAxis, x, -1, true );
+					string yStr = MakeValueLabel( pane.YAxis, y, -1, true );
+					string y2Str = MakeValueLabel( pane.Y2Axis, y2, -1, true );
 
 					this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + ", " + y2Str + " )" );
 					this.pointToolTip.Active = true;
@@ -1459,10 +1473,11 @@ namespace ZedGraph
 									this.pointToolTip.SetToolTip( this, (string) pt.Tag );
 								else
 								{
-									string xStr = MakeValueLabel( pane.XAxis, pt.X, iPt );
+									string xStr = MakeValueLabel( pane.XAxis, pt.X, iPt,
+										curve.IsOverrideOrdinal );
 									string yStr = MakeValueLabel(
 										curve.GetYAxis( pane ),
-										pt.Y, iPt );
+										pt.Y, iPt, curve.IsOverrideOrdinal );
 
 									this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
 
