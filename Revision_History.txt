@@ -1,7 +1,7 @@
 ZedGraph Class Library Revision History
 
-24-Nov-2005 (by softlion)
-[FIX] Big bug, positioning of graph items was not working at all. Action: removed X1 and Y1 (redundant, described as alias of X and Y). Their 0 value were overriding the original X and Y values.
+24-Nov-2005 (by softlion, concern the webcontrol only)
+[FIX] major bug, positioning of graph items was not working at all. Action: removed X1 and Y1 (redundant, described as alias of X and Y). Their 0 value were overriding the original X and Y values.
 [UPD] Renamed AxisFill to GraphFill, AxisBorder to GraphBorder, AxisRect to GraphRect so axis and graph space becomes two correctly separated things.
 [NEW] MasterPaneFill and MasterPaneBorder properties
 [NEW] Transparency is shown as squares in the designer.
