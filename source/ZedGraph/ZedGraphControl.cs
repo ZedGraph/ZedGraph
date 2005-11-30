@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.43 $ $Date: 2005-11-24 03:17:53 $ </version>
+	/// <version> $Revision: 3.44 $ $Date: 2005-11-30 03:36:12 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -112,7 +112,20 @@ namespace ZedGraph
 		/// Private value that determines whether or not zooming is allowed for the control.  Use the
 		/// public property <see cref="IsEnableZoom"/> to access this value.
 		/// </summary>
-		private bool isEnableZoom = true;
+//		private bool isEnableZoom = true;
+		/// <summary>
+		/// Private value that determines whether or not zooming is enabled for the control in the
+		/// vertical direction.  Use the public property <see cref="IsEnableVZoom"/> to access this
+		/// value.
+		/// </summary>
+		private bool isEnableVZoom = true;
+		/// <summary>
+		/// Private value that determines whether or not zooming is enabled for the control in the
+		/// horizontal direction.  Use the public property <see cref="IsEnableHZoom"/> to access this
+		/// value.
+		/// </summary>
+		private bool isEnableHZoom = true;
+
 		/// <summary>
 		/// Private value that determines whether or not panning is allowed for the control in the
 		/// horizontal direction.  Use the
@@ -504,8 +517,33 @@ namespace ZedGraph
 		/// </remarks>
 		public bool IsEnableZoom
 		{
-			get { return isEnableZoom; }
-			set { isEnableZoom = value; }
+			set { isEnableHZoom = value;  isEnableVZoom = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines whether or not zooming is allowed for the control in
+		/// the horizontal direction.
+		/// </summary>
+		/// <remarks>
+		/// Zooming is done by left-clicking inside the <see cref="ZedGraph.GraphPane.AxisRect"/> to drag
+		/// out a rectangle, indicating the new scale ranges that will be part of the graph.
+		/// </remarks>
+		public bool IsEnableHZoom
+		{
+			get { return IsEnableHZoom; }
+			set { isEnableHZoom = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines whether or not zooming is allowed for the control in
+		/// the vertical direction.
+		/// </summary>
+		/// <remarks>
+		/// Zooming is done by left-clicking inside the <see cref="ZedGraph.GraphPane.AxisRect"/> to drag
+		/// out a rectangle, indicating the new scale ranges that will be part of the graph.
+		/// </remarks>
+		public bool IsEnableVZoom
+		{
+			get { return IsEnableVZoom; }
+			set { isEnableVZoom = value; }
 		}
 		/// <summary>
 		/// Gets or sets a value that determines whether or not panning is allowed for the control in
@@ -1153,7 +1191,7 @@ namespace ZedGraph
 				this.dragPane = pane;
 				this.zoomState = new ZoomState( this.dragPane, ZoomState.StateType.Pan );
 			}
-			else if ( pane != null && this.isEnableZoom &&
+			else if ( pane != null && ( this.isEnableHZoom || this.isEnableVZoom ) &&
                     ( (e.Button == this.zoomButtons && Control.ModifierKeys == this.zoomModifierKeys) ||
                       (e.Button == this.zoomButtons2 && Control.ModifierKeys == this.zoomModifierKeys2)))
             {
@@ -1162,6 +1200,7 @@ namespace ZedGraph
 				// method.
 				this.dragRect = new Rectangle( ((Control)sender).PointToScreen( new Point(e.X, e.Y) ),
 					new Size( 1, 1 ) );
+
 				this.dragPane = pane;
 			}
 		}
@@ -1195,10 +1234,10 @@ namespace ZedGraph
 
 		private void ZedGraphControl_MouseWheel( object sender, MouseEventArgs e )
 		{
-			if ( this.isEnableZoom )
+			if ( this.isEnableVZoom || isEnableHZoom )
 			{
 				GraphPane pane = this.MasterPane.FindAxisRect( new PointF( e.X, e.Y ) );
-				if ( pane != null && this.isEnableZoom && e.Delta != 0 )
+				if ( pane != null && e.Delta != 0 )
 				{
 					pane.zoomStack.Push( pane, ZoomState.StateType.Zoom );
 
@@ -1209,11 +1248,15 @@ namespace ZedGraph
 
 					pane.ReverseTransform( centerPoint, out x, out y, out y2 );
 
-					ZoomScale( pane.XAxis, e.Delta, x );
-					for ( int i=0; i<pane.YAxisList.Count; i++ )
-						ZoomScale( pane.YAxisList[i], e.Delta, y[i] );
-					for ( int i=0; i<pane.Y2AxisList.Count; i++ )
-						ZoomScale( pane.Y2AxisList[i], e.Delta, y2[i] );
+					if ( isEnableHZoom )
+						ZoomScale( pane.XAxis, e.Delta, x );
+					if ( isEnableVZoom )
+					{
+						for ( int i=0; i<pane.YAxisList.Count; i++ )
+							ZoomScale( pane.YAxisList[i], e.Delta, y[i] );
+						for ( int i=0; i<pane.Y2AxisList.Count; i++ )
+							ZoomScale( pane.Y2AxisList[i], e.Delta, y2[i] );
+					}
 
 					Graphics g = this.CreateGraphics();
 					pane.AxisChange( g );
@@ -1255,17 +1298,23 @@ namespace ZedGraph
 
 						ZoomState oldState = this.dragPane.zoomStack.Push( this.dragPane, ZoomState.StateType.Zoom );
 
-						this.dragPane.XAxis.Min = Math.Min( x1, x2 );
-						this.dragPane.XAxis.Max = Math.Max( x1, x2 );
-						for ( int i=0; i<y1.Length; i++ )
+						if ( isEnableHZoom )
 						{
-							this.dragPane.YAxisList[i].Min = Math.Min( y1[i], y2[i] );
-							this.dragPane.YAxisList[i].Max = Math.Max( y1[i], y2[i] );
+							this.dragPane.XAxis.Min = Math.Min( x1, x2 );
+							this.dragPane.XAxis.Max = Math.Max( x1, x2 );
 						}
-						for ( int i=0; i<yy1.Length; i++ )
+						if ( isEnableVZoom )
 						{
-							this.dragPane.Y2AxisList[i].Min = Math.Min( yy1[i], yy2[i] );
-							this.dragPane.Y2AxisList[i].Max = Math.Max( yy1[i], yy2[i] );
+							for ( int i=0; i<y1.Length; i++ )
+							{
+								this.dragPane.YAxisList[i].Min = Math.Min( y1[i], y2[i] );
+								this.dragPane.YAxisList[i].Max = Math.Max( y1[i], y2[i] );
+							}
+							for ( int i=0; i<yy1.Length; i++ )
+							{
+								this.dragPane.Y2AxisList[i].Min = Math.Min( yy1[i], yy2[i] );
+								this.dragPane.Y2AxisList[i].Max = Math.Max( yy1[i], yy2[i] );
+							}
 						}
 
 						this.SetScroll( this.hScrollBar1, dragPane.XAxis, xScrollRange.Min, xScrollRange.Max );
@@ -1378,6 +1427,17 @@ namespace ZedGraph
 				Point curPt = ((Control)sender).PointToScreen( mousePt );
 				this.dragRect.Width = curPt.X - this.dragRect.X;
 				this.dragRect.Height = curPt.Y - this.dragRect.Y;
+
+				if ( !isEnableVZoom )
+				{
+					this.dragRect.Y = (int) ( this.dragPane.AxisRect.Y + 0.5 ) + curPt.Y - mousePt.Y;
+					this.dragRect.Height = (int) ( this.dragPane.AxisRect.Height + 0.5 );
+				}
+				else if ( !isEnableHZoom )
+				{
+					this.dragRect.X = (int) ( this.dragPane.AxisRect.X + 0.5 ) + curPt.X - mousePt.X;
+					this.dragRect.Width = (int) ( this.dragPane.AxisRect.Width + 0.5 );
+				}
 
 				// Draw the new rectangle by calling DrawReversibleFrame
 				// again.
@@ -1510,7 +1570,7 @@ namespace ZedGraph
 			if ( ( isEnableHPan || isEnableVPan ) && ( Control.ModifierKeys == Keys.Shift || isPanning ) &&
 								( pane != null || isPanning ) )
 				Cursor.Current = Cursors.Hand;
-			else if ( isEnableZoom && ( pane != null || isZooming ) )
+			else if ( ( isEnableVZoom || isEnableHZoom ) && ( pane != null || isZooming ) )
 				Cursor.Current = Cursors.Cross;
 				
 //			else if ( isZoomMode || isPanMode )

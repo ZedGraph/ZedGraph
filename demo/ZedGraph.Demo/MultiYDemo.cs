@@ -47,6 +47,7 @@ namespace ZedGraph.Demo
 			PointPairList dList = new PointPairList();
 			PointPairList eList = new PointPairList();
 
+			// Fabricate some data values
 			for ( int i=0; i<30; i++ )
 			{
 				double time = (double) i;

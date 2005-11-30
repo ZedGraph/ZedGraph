@@ -44,15 +44,19 @@ namespace ZedGraph.Demo
 			myPane.XAxis.Title = "Time, seconds";
 			myPane.YAxis.Title = "Distance (m), or Velocity (m/s)";
 			
+			// Create a new SampleMultiPointList (see SampleMultiPointList.cs for details)
 			SampleMultiPointList myList = new SampleMultiPointList();
+			// For the first list, specify that the Y data to be plotted will be the distance
 			myList.YData = PerfDataType.Distance;
 
 			// note how it does not matter that we created the second list before actually
 			// adding the data -- this is because the cloned list shares data with the
 			// original
 			SampleMultiPointList myList2 = new SampleMultiPointList( myList );
+			// For the second list, specify that the Y data to be plotted will be the velocity
 			myList2.YData = PerfDataType.Velocity;
 
+			// Populate the dataset using some calculated values
 			for ( int i=0; i<20; i++ )
 			{
 				double time = (double) i;
@@ -63,6 +67,7 @@ namespace ZedGraph.Demo
 				myList.Add( perfData );
 			}
 
+			// Add two curves to the graph
 			myPane.AddCurve( "Distance", myList, Color.Blue );
 			myPane.AddCurve( "Velocity", myList2, Color.Red );
 			

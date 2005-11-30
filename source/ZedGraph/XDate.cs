@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2005-11-24 03:17:53 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2005-11-30 03:36:12 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -904,6 +904,16 @@ namespace ZedGraph
 		public static implicit operator double( XDate xDate )
 		{
 			return xDate.xlDate;
+		}
+		
+		/// <summary>
+		/// Implicit conversion from XDate to float (an XL Date).
+		/// </summary>
+		/// <param name="xDate">The XDate struct on which to operate</param>
+		/// <returns>A double floating point value representing the XL Date</returns>
+		public static implicit operator float( XDate xDate )
+		{
+			return (float) xDate.xlDate;
 		}
 		
 		/// <summary>

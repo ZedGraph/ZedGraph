@@ -305,7 +305,7 @@ namespace ZedGraph.ControlTest
 			zedGraphControl1.IsShowHScrollBar = true;
 #endif
 
-#if false	// Basic curve test - Linear Axis
+#if true	// Basic curve test - Linear Axis
 
 			PointPairList list = new PointPairList();
 
@@ -326,9 +326,10 @@ namespace ZedGraph.ControlTest
 			zedGraphControl1.ScrollMinX = 1;
 			zedGraphControl1.ScrollMaxX = 100;
 			zedGraphControl1.IsShowHScrollBar = true;
+			zedGraphControl1.IsEnableHZoom = false;
 #endif
 
-#if true	// Basic curve test - two text axes
+#if false	// Basic curve test - two text axes
 
 			double[] y = { 2, 4, 1, 5, 3 };
 

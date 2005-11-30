@@ -864,6 +864,30 @@ namespace ZedGraph.LibTest
 			myPane.AxisChange( this.CreateGraphics() );
 #endif
 
+#if false	// simple pie
+            myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+				"People Signed Up",
+				"",
+				"" );
+			// Create some pie slices 
+			PieItem segment1 = myPane.AddPieSlice(8, Color.Green, .3, "Signed Up"); 
+			PieItem segment2 = myPane.AddPieSlice(5,Color.Red, 0.0, "Still Needed"); 
+			 
+			//segment1.FontSpec = new FontSpec("GenericSansSerif", 35, Color.Black, true, false, false); 
+			// Sum up the values  
+			CurveList curves = myPane.CurveList; 
+			double total = 0; 
+			for (int x = 0; x < curves.Count; x++) 
+				total += ((PieItem)curves[x]).Value;
+
+			myPane.PaneBorder.IsVisible = false;
+			myPane.Legend.Border.IsVisible = false;
+			myPane.Legend.Position = LegendPos.TopCenter;
+			
+//			ArrowItem arrow = new ArrowItem( (float) new XDate(2007,1,1), 0, (float) new XDate(2007,1,1), 50 );
+
+#endif
+
 #if false	// Commerical Sales Graph
 			myPane = new GraphPane( new RectangleF(0,0,10,10),
 						"Sales Growth Compared to\nActual Sales by Store Size - Rank Order Low to High",
@@ -1046,7 +1070,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if false	// Basic curve test - Date Axis
+#if true	// Basic curve test - Date Axis
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -1056,7 +1080,7 @@ namespace ZedGraph.LibTest
 			{
 				//double x = (double) i;
 				double x = new XDate( 2001, 1, i*3 );
-				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				double y = Math.Sin( i / 8.0 ) * 1 + 1;
 				list.Add( x, y );
 				double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
 			}
@@ -1069,6 +1093,7 @@ namespace ZedGraph.LibTest
 			myPane.XAxis.Type = AxisType.Date;
 			myPane.AxisChange( this.CreateGraphics() );
 
+			myPane.YAxis.ScaleFormat = "0.0'%'";
 			trackBar1.Minimum = 0;
 			trackBar1.Maximum = 100;
 			trackBar1.Value = 50;
@@ -1279,7 +1304,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// vertical bars with labels
+#if false	// vertical bars with labels
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 

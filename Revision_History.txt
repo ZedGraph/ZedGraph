@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+29-Nov-2005 (by Champion)
+[NEW] Add IsEnableVZoom and IsEnableHZoom to constrain zoom in ZedGraphControl
+[NEW] Add implicit float cast in XDate
+
 24-Nov-2005 (by softlion, concern the webcontrol only)
 [FIX] major bug, positioning of graph items was not working at all. Action: removed X1 and Y1 (redundant, described as alias of X and Y). Their 0 value were overriding the original X and Y values.
 [UPD] Renamed AxisFill to GraphFill, AxisBorder to GraphBorder, AxisRect to GraphRect so axis and graph space becomes two correctly separated things.
@@ -10,7 +14,6 @@ ZedGraph Class Library Revision History
 	window.IE7_PNG_SUFFIX = "\\.png(?:\\?.*?)";
 	</script>
 	<script src="ie7/ie7-standard-p.js" type="text/javascript"></script>
-
 
 23-Nov-2005 (by Champion)
 [FIX] Ten Power placement for scale labels
