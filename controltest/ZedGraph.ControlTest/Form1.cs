@@ -305,7 +305,7 @@ namespace ZedGraph.ControlTest
 			zedGraphControl1.IsShowHScrollBar = true;
 #endif
 
-#if true	// Basic curve test - Linear Axis
+#if false	// Basic curve test - Linear Axis
 
 			PointPairList list = new PointPairList();
 
@@ -326,8 +326,91 @@ namespace ZedGraph.ControlTest
 			zedGraphControl1.ScrollMinX = 1;
 			zedGraphControl1.ScrollMaxX = 100;
 			zedGraphControl1.IsShowHScrollBar = true;
-			zedGraphControl1.IsEnableHZoom = false;
+			//zedGraphControl1.IsEnableVZoom = false;
 #endif
+
+#if true // raita test
+			PointPairList list1 = new PointPairList();
+ 
+			list1.Add( 67.741935483871, 0.2 );
+			list1.Add( 135.483870967742, -0.199999999999999 );
+			list1.Add( 203.225806451613, 0.2 );
+			list1.Add( 270.967741935484, 0.2 );
+			list1.Add( 338.709677419355, -0.399999999999999 );
+			list1.Add( 406.451612903226, 0.100000000000001 );
+			list1.Add( 474.193548387097, -0.199999999999999 );
+			list1.Add( 541.935483870968, -0.600000000000001 );
+			list1.Add( 609.677419354839, -0.399999999999999 );
+			list1.Add( 677.41935483871, 0.199999999999999 );
+			list1.Add( 745.161290322581, -0.199999999999999 );
+			list1.Add( 812.903225806452, 0.2 );
+			list1.Add( 880.645161290323, -0.199999999999999 );
+			list1.Add( 948.387096774194, 0.199999999999999 );
+			list1.Add( 1016.12903225806, -0.199999999999999 );
+			list1.Add( 1083.87096774194, -0.5 );
+			list1.Add( 1151.61290322581, 0.199999999999999 );
+			list1.Add( 1219.35483870968, -0.399999999999999 );
+			list1.Add( 1287.09677419355, 0.2 );
+			list1.Add( 1354.83870967742, 0.2 );
+			list1.Add( 1422.58064516129, -0.5 );
+			list1.Add( 1490.32258064516, -0.5 );
+			list1.Add( 1558.06451612903, -0.399999999999999 );
+			list1.Add( 1625.8064516129, -0.199999999999999 );
+			list1.Add( 1693.54838709677, 0.2 );
+			list1.Add( 1761.29032258065, -0.199999999999999 );
+			list1.Add( 1829.03225806452, 0.2 );
+			list1.Add( 1896.77419354839, -0.199999999999999 );
+			list1.Add( 1964.51612903226, -0.399999999999999 );
+			list1.Add( 2032.25806451613, 0.2 );
+			list1.Add( 2100, -0.300000000000001 );
+			 
+			 
+			PointPairList list2 = new PointPairList();
+			 
+			list2.Add( 67.741935483871, 0.3 );
+			list2.Add( 203.225806451613, 0.100000000000001 );
+			list2.Add( 270.967741935484, 0.100000000000001 );
+			list2.Add( 812.903225806452, 0.100000000000001 );
+			list2.Add( 1287.09677419355, 0.199999999999999 );
+			list2.Add( 1354.83870967742, 0.199999999999999 );
+			list2.Add( 1693.54838709677, 0.249999999999999 );
+			list2.Add( 1829.03225806452, 0.3 );
+			list2.Add( 2032.25806451613, 0.150000000000001 );
+
+			GraphPane raita1 = zedGraphControl1.GraphPane;
+			//GraphPane raita1 = new GraphPane( new Rectangle( 10, 10, 10, 10 ), "Title", "X", "Y" );
+
+			raita1.GraphItemList.Clear(); 
+			raita1.CurveList.Clear(); 
+			raita1.GraphItemList.Clear(); 
+			raita1.MinBarGap = 0; 
+			BarItem bar0 = raita1.AddBar("Raita1", list1, Color.Blue); 
+			bar0.Bar.Fill = new Fill( Color.SeaGreen, Color.SkyBlue, Color.SeaGreen ); 
+			BarItem bar1 = raita1.AddBar("halytysraja",list2, Color.Red); 
+			bar1.Bar.Fill = new Fill( Color.Plum, Color.Red, Color.Yellow ); 
+			 
+			raita1.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F ); 
+			// Fill the axis background with a gradient 
+			raita1.AxisFill = new Fill( Color.FromArgb( 255, 255, 245), 
+			Color.FromArgb( 255, 255, 190), 90F ); 
+			//raita1.BarType = BarType.Cluster; 
+			raita1.BarType = BarType.Stack; 
+			raita1.ClusterScaleWidth = 120; 
+			 
+			//raita1.XAxis.BaseTic=(xvali); 
+			//raita1.XAxis.Max=(nomlength); 
+			//raita1.YAxis.Max = maxtol2 + 0.1; 
+			//raita1.YAxis.Min = -mintol2 - 0.1; 
+			 
+			//this.zedGraphControl1.GraphPane = raita1;
+
+			zedGraphControl1.IsShowPointValues = true;
+			 
+			raita1.AxisChange( CreateGraphics() ); 
+
+			this.zedGraphControl1.Refresh();  
+#endif
+
 
 #if false	// Basic curve test - two text axes
 

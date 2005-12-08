@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-11-24 03:17:53 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2005-12-08 04:03:44 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane pane;
@@ -126,15 +126,38 @@ namespace ZedGraph
 				// for the current ordinal position iPt)
 				foreach ( CurveItem tmpCurve in pane.CurveList )
 				{
-					// Sum the value for the current curve only if it is a bar, and only if
-					// it has a point for this ordinal position
-					if ( tmpCurve.IsBar && iPt < tmpCurve.Points.Count )
+					// Sum the value for the current curve only if it is a bar
+					if ( tmpCurve.IsBar )
 					{
-						// Get the value for the appropriate value axis
-						if ( baseAxis is XAxis )
-							curVal = tmpCurve.Points[iPt].Y;
-						else
-							curVal = tmpCurve.Points[iPt].X;
+						curVal = PointPair.Missing;
+						// For non-ordinal curves, find a matching base value (must match exactly)
+						if ( curve.IsOverrideOrdinal || !baseAxis.IsAnyOrdinal )
+						{
+							IPointList points = tmpCurve.Points;
+
+							for ( int i=0; i<points.Count; i++ )
+							{
+								if ( baseAxis is XAxis && points[i].X == baseVal )
+								{
+									curVal = points[i].Y;
+									break;
+								}
+								else if ( !(baseAxis is XAxis) && points[i].Y == baseVal )
+								{
+									curVal = points[i].X;
+									break;
+								}
+							}
+						}
+						// otherwise, it's an ordinal type so use the value at the same ordinal position
+						else if ( iPt < tmpCurve.Points.Count )
+						{
+							// Get the value for the appropriate value axis
+							if ( baseAxis is XAxis )
+								curVal = tmpCurve.Points[iPt].Y;
+							else
+								curVal = tmpCurve.Points[iPt].X;
+						}
 
 						// If it's a missing value, skip it
 						if ( curVal == PointPair.Missing )
@@ -204,12 +227,30 @@ namespace ZedGraph
 				// for the current ordinal position iPt)
 				foreach ( CurveItem tmpCurve in pane.CurveList )
 				{
-					// make sure the curve is a Line type, and that it has a value for the
-					// current ordinal position iPt.
-					if ( tmpCurve is LineItem && iPt < tmpCurve.Points.Count )
+					// make sure the curve is a Line type
+					if ( tmpCurve is LineItem )
 					{
-						// For line types, the Y axis is always the value axis
-						curVal = tmpCurve.Points[iPt].Y;
+						curVal = PointPair.Missing;
+						// For non-ordinal curves, find a matching base value (must match exactly)
+						if ( curve.IsOverrideOrdinal || !baseAxis.IsAnyOrdinal )
+						{
+							IPointList points = tmpCurve.Points;
+
+							for ( int i = 0; i < points.Count; i++ )
+							{
+								if ( points[i].X == baseVal )
+								{
+									curVal = points[i].Y;
+									break;
+								}
+							}
+						}
+						// otherwise, it's an ordinal type so use the value at the same ordinal position
+						else if ( iPt < tmpCurve.Points.Count )
+						{
+							// For line types, the Y axis is always the value axis
+							curVal = tmpCurve.Points[iPt].Y;
+						}
 
 						// if the current value is missing, skip it
 						if ( curVal == PointPair.Missing )

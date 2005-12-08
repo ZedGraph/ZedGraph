@@ -16,6 +16,7 @@ using System.IO;
 using GDIDB;
 using ZedGraph;
 using System.Diagnostics;
+using System.Threading;
 
 namespace ZedGraph.LibTest
 {
@@ -1070,7 +1071,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test - Date Axis
+#if false	// Basic curve test - Date Axis
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -1128,6 +1129,38 @@ namespace ZedGraph.LibTest
 			trackBar1.Value = 50;
 
 #endif
+
+#if true	// Basic curve test - Linear Axis
+
+			XDate xd = new XDate( 2002, 10, 17 );
+			xd.AddDays( -731520 );
+			MessageBox.Show( xd.ToString() );
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList list = new PointPairList();
+
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			//myPane.XAxis.Min = 1;
+			//myPane.XAxis.Max = 100;
+			//myPane.XAxis.IsReverse = true;
+			//myPane.XAxis.Type = AxisType.Log;
+
+/*
+ *			for ( int i=1; i<100; i++ )
+			{
+				double x = i;
+				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				list.Add( x, y );
+				myPane.AxisChange( this.CreateGraphics() );
+				Invalidate();
+				Thread.Sleep( 300 );
+			}
+*/
+#endif
+
 
 #if false	// Gantt Chart
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Gantt Chart", "Date", "Project" );
@@ -1893,8 +1926,28 @@ namespace ZedGraph.LibTest
 			myReader.Close();
 		}
 
+		private void DoAddPoints()
+		{
+			PointPairList list = myPane.CurveList[0].Points as PointPairList;
+
+			for ( int i=1; i<30; i++ )
+			{
+				double x = i;
+				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				list.Add( x, y );
+				myPane.AxisChange( this.CreateGraphics() );
+				//this.Refresh();
+				Invalidate();
+				Application.DoEvents();
+				Thread.Sleep( 300 );
+			}
+		}
+
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+			DoAddPoints();
+			return;
+
 			//Image image = master.ScaledImage( 300, 200, 72 );
 			//image.Save( @"c:\zedgraph.png", ImageFormat.Png );
 			master.Image.Save( @"c:\zedgraph.png", ImageFormat.Png );

@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+7-Dec-2005 (by Champion)
+[FIX] Make stack bar & stack line work with non-ordinal axes
+
+
 29-Nov-2005 (by Champion)
 [NEW] Add IsEnableVZoom and IsEnableHZoom to constrain zoom in ZedGraphControl
 [NEW] Add implicit float cast in XDate
