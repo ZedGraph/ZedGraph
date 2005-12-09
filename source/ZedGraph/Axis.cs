@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.48 $ $Date: 2005-12-09 05:09:42 $ </version>
+	/// <version> $Revision: 3.49 $ $Date: 2005-12-09 06:47:14 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -3140,7 +3140,7 @@ namespace ZedGraph
 				// space between scale label and axis label is 0.5 tic
 				if ( this.isScaleVisible )
 				{
-                    // account for the tic labels + 1/2 tic gap between the tic and the label
+					// account for the tic labels + 1/2 tic gap between the tic and the label
 					tmpSpace += this.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height +
 							ticSize * 0.5F;
 				}
@@ -3170,19 +3170,18 @@ namespace ZedGraph
 					pane.XAxis.IsVisible && pane.XAxis.IsScaleVisible ) )
 			{
 				// half the width of the widest item, plus a gap of 1/2 the charheight
-				float tmp =
-					pane.XAxis.GetScaleMaxSpace( g, pane, scaleFactor, true ).Width / 2.0F +
-							charHeight / 2.0F;
-				if ( tmp > tmpSpace )
-					tmpSpace = tmp;
+				float tmp = pane.XAxis.GetScaleMaxSpace( g, pane, scaleFactor, true ).Width / 2.0F;
+								//+ charHeight / 2.0F;
+				//if ( tmp > tmpSpace )
+				//	tmpSpace = tmp;
 
-                tmpMinSpace = Math.Max( tmp, tmpMinSpace );
+				tmpMinSpace = Math.Max( tmp, tmpMinSpace );
 			}
 			
 			// Verify that the minSpace property was satisfied
 			tmpSpace = Math.Max( tmpSpace, this.minSpace * (float) scaleFactor );
 
-            tmpMinSpace = Math.Max( tmpMinSpace, this.minSpace * (float) scaleFactor );
+         tmpMinSpace = Math.Max( tmpMinSpace, this.minSpace * (float) scaleFactor );
 
 			return tmpSpace;
 		}
