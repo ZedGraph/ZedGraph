@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.53 $ $Date: 2005-10-07 21:08:26 $ </version>
+	/// <version> $Revision: 3.54 $ $Date: 2005-12-09 05:09:42 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1067,7 +1067,7 @@ namespace ZedGraph
 			else if ( crossPix > 0 )
 				axis.tmpSpace -= crossPix;
 
-			if ( axis.IsScaleLabelsInside )
+			if ( axis.IsScaleLabelsInside && ( axis.IsPrimary(this) || ( crossFrac != 0.0 && crossFrac != 1.0 ) ) )
 				spaceAlt = axis.tmpSpace;
 			else
 				spaceNorm = axis.tmpSpace;

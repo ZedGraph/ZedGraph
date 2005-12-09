@@ -170,7 +170,7 @@ namespace ZedGraph.LibTest
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
-#if false	// Multi Y Axis demo
+#if true	// Multi Y Axis demo
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Demonstration of Multi Y Graph",
 				"Time, s",
@@ -260,6 +260,24 @@ namespace ZedGraph.LibTest
 			myPane.Y2Axis.Min = 1.5;
 			myPane.Y2Axis.Max = 3;
 
+			myPane.YAxis.IsVisible = false;
+			myPane.YAxis.IsTic = false;
+			myPane.YAxis.IsMinorTic = false;
+			myPane.YAxis.IsCrossTic = false;
+			myPane.YAxis.IsMinorCrossTic = false;
+
+			// Create a second Y Axis, green
+			YAxis yAxis3b = new YAxis( "Test Axis" );
+			myPane.YAxisList.Add( yAxis3b );
+			yAxis3b.ScaleFontSpec.FontColor = Color.Brown;
+			yAxis3b.TitleFontSpec.FontColor = Color.Brown;
+			yAxis3b.Color = Color.Brown;
+			yAxis3b.IsTic = false;
+			yAxis3b.IsMinorTic = false;
+			yAxis3b.IsOppositeTic = false;
+			yAxis3b.IsMinorOppositeTic = false;
+			yAxis3b.IsScaleLabelsInside = true;
+
 			// Create a second Y Axis, green
 			YAxis yAxis3 = new YAxis( "Distance, m" );
 			myPane.YAxisList.Add( yAxis3 );
@@ -273,6 +291,7 @@ namespace ZedGraph.LibTest
 			yAxis3.IsMinorOppositeTic = false;
 			// Align the Y2 axis labels so they are flush to the axis
 			yAxis3.ScaleAlign = AlignP.Inside;
+			yAxis3.AxisGap = 0;
 
 			Y2Axis yAxis4 = new Y2Axis( "Energy" );
 			yAxis4.IsVisible = true;
@@ -1130,7 +1149,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test - Linear Axis
+#if false	// Basic curve test - Linear Axis
 
 			XDate xd = new XDate( 2002, 10, 17 );
 			xd.AddDays( -731520 );
@@ -1160,7 +1179,6 @@ namespace ZedGraph.LibTest
 			}
 */
 #endif
-
 
 #if false	// Gantt Chart
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Gantt Chart", "Date", "Project" );
@@ -1541,6 +1559,9 @@ namespace ZedGraph.LibTest
 				_crossAxis = master[0].Y2Axis;
 			else
 				_crossAxis = myPane.Y2AxisList[1];
+
+			_crossAxis = myPane.Y2AxisList[1];
+
 			trackBar1.Minimum = 0;
 			trackBar1.Maximum = 100;
 			trackBar1.Value = 50;

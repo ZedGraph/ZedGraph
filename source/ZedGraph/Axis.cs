@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.47 $ $Date: 2005-11-24 03:17:53 $ </version>
+	/// <version> $Revision: 3.48 $ $Date: 2005-12-09 05:09:42 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -166,7 +166,8 @@ namespace ZedGraph
 							gridPenWidth,
 							minorGridDashOn,
 							minorGridDashOff,
-							minorGridPenWidth;
+							minorGridPenWidth,
+							axisGap;
 		
 		/// <summary>
 		/// Private field for the <see cref="Axis"/> minimum allowable space allocation.
@@ -264,6 +265,11 @@ namespace ZedGraph
             /// (<see cref="Axis.TicPenWidth"/> property). Units are in points (1/72 inch).
             /// </summary>
 			public static float TicPenWidth = 1.0F;
+			/// <summary>
+			/// The default size for the gap between multiple axes
+			/// (<see cref="Axis.AxisGap"/> property). Units are in points (1/72 inch).
+			/// </summary>
+			public static float AxisGap = 5;
 			/// <summary>
 			/// The default "zero lever" for automatically selecting the axis
 			/// scale range (see <see cref="Axis.PickScale"/>). This number is
@@ -956,6 +962,8 @@ namespace ZedGraph
 			this.minorGridDashOn = Default.MinorGridDashOn;
 			this.minorGridDashOff = Default.MinorGridDashOff;
 			this.minorGridPenWidth = Default.MinorGridPenWidth;
+
+			this.axisGap = Default.AxisGap;
 		
 			this.minSpace = Default.MinSpace;
 			this.isVisible = true;
@@ -1111,6 +1119,8 @@ namespace ZedGraph
 			minorGridDashOn = rhs.MinorGridDashOn;
 			minorGridDashOff = rhs.MinorGridDashOff;
 			minorGridPenWidth = rhs.MinorGridPenWidth;
+
+			axisGap = rhs.axisGap;
 			
 			minSpace = rhs.MinSpace;
 
@@ -1129,7 +1139,8 @@ namespace ZedGraph
 		// Schema was changed to 3 when IsAxisSegmentVisible was added
 		// Schema was changed to 4 when IsScaleLabelsInside, isSkipFirstLabel, isSkipLastLabel were added
 		// Schema was changed to 5 with IsCrossTic, IsInsideCrossTic, IsMinorCrossTic, IsMinorInsideCrossTic
-		public const int schema = 5;
+		// Schema was changed to 6 with AxisGap
+		public const int schema = 6;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -1234,6 +1245,9 @@ namespace ZedGraph
 				isMinorCrossTic = info.GetBoolean( "isMinorCrossTic" );
 				isMinorInsideCrossTic = info.GetBoolean( "isMinorInsideCrossTic" );
 			}
+
+			if ( schema > 5 )
+				axisGap = info.GetSingle( "axisGap" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -1330,6 +1344,9 @@ namespace ZedGraph
 			info.AddValue( "isInsideCrossTic", isInsideCrossTic );
 			info.AddValue( "isMinorCrossTic", isMinorCrossTic );
 			info.AddValue( "isMinorInsideCrossTic", isMinorInsideCrossTic );
+
+			// new for schema = 6
+			info.AddValue( "axisGap", axisGap );
 		}
 	#endregion
 
@@ -1678,8 +1695,8 @@ namespace ZedGraph
 		/// according to the <see cref="PaneBase.CalcScaleFactor"/> for the
 		/// <see cref="GraphPane"/>
 		/// </remarks>
-        /// <value>The tic size is measured in points (1/72 inch)</value>
-        /// <seealso cref="Default.TicSize"/>.
+		/// <value>The tic size is measured in points (1/72 inch)</value>
+		/// <seealso cref="Default.TicSize"/>.
 		/// <seealso cref="IsTic"/>
 		/// <seealso cref="IsVisible"/>
 		/// <seealso cref="Color"/>
@@ -1721,7 +1738,7 @@ namespace ZedGraph
 		/// <seealso cref="PaneBase.CalcScaleFactor"/>
 		public float ScaledTic( float scaleFactor )
 		{
-			return (float) ( this.ticSize * scaleFactor + 0.5 );
+			return (float) ( this.ticSize * scaleFactor );
 		}
 		/// <summary>
 		/// Calculate the scaled minor tic size for this <see cref="Axis"/>
@@ -1737,7 +1754,7 @@ namespace ZedGraph
 		/// <seealso cref="PaneBase.CalcScaleFactor"/>
 		public float ScaledMinorTic( float scaleFactor )
 		{
-			return (float) ( this.minorTicSize * scaleFactor + 0.5 );
+			return (float) ( this.minorTicSize * scaleFactor );
 		}
 
 		/// <summary>
@@ -2689,6 +2706,22 @@ namespace ZedGraph
 			set { isSkipLastLabel = value; }
 		}
 
+		/// <summary>
+		/// The size of the gap between multiple axes (see <see cref="GraphPane.YAxisList" /> and
+		/// <see cref="GraphPane.Y2AxisList" />).
+		/// </summary>
+		/// <remarks>
+		/// This size will be scaled
+		/// according to the <see cref="PaneBase.CalcScaleFactor"/> for the
+		/// <see cref="GraphPane"/>
+		/// </remarks>
+		/// <value>The axis gap is measured in points (1/72 inch)</value>
+		/// <seealso cref="Default.AxisGap"/>.
+		public float AxisGap
+		{
+			get { return axisGap; }
+			set { axisGap = value; }
+		}
 	#endregion
 
 	#region Rendering Methods
@@ -2922,8 +2955,20 @@ namespace ZedGraph
 
         internal float CalcCrossFraction( GraphPane pane )
         {
-			if ( this.crossAuto )
-				return isScaleLabelsInside ? 1.0f : 0.0f;
+			//if ( this.crossAuto )
+			//	return ( isScaleLabelsInside && IsPrimary( pane ) ) ? 1.0f : 0.0f;
+
+			// if this axis is not shifted due to the Cross value
+			if ( !this.IsCrossShifted( pane ) )
+			{
+				// if it's the primary axis and the scale labels are on the inside, then we
+				// don't need to save any room for the axis labels (they will be inside the axis rect)
+				if ( IsPrimary( pane ) && isScaleLabelsInside )
+					return 1.0f;
+				// otherwise, it's a secondary (outboard) axis and we always save room for the axis and labels.
+				else
+					return 0.0f;
+			}
 
             double effCross = EffectiveCrossValue( pane );
             Axis crossAxis = GetCrossAxis( pane );
@@ -2944,6 +2989,7 @@ namespace ZedGraph
                 frac = 0.0f;
             if ( frac > 1.0f )
                 frac = 1.0f;
+
             return frac;
         }
 
@@ -3050,6 +3096,8 @@ namespace ZedGraph
 			float charHeight = this.ScaleFontSpec.GetHeight( scaleFactor );
 			// Scaled size (pixels) of a tic
 			float ticSize = this.ScaledTic( scaleFactor );
+			// Scaled size (pixels) of the axis gap
+			float gap = this.axisGap * scaleFactor;
 
 			// The minimum amount of space to reserve for the NORMAL position of the axis.  This would
 			// be the left side of the axis rect for the Y axis, the right side for the Y2 axis, etc.
@@ -3063,24 +3111,27 @@ namespace ZedGraph
 			// Account for the Axis
 			if ( this.isVisible )
 			{
-				bool hasTic = ( this.isScaleLabelsInside ?
-						(this.isInsideTic || this.isInsideCrossTic ||
-								this.isMinorInsideTic || this.isMinorInsideCrossTic) :
-						(this.isTic || this.isCrossTic || this.isMinorTic || this.isMinorCrossTic) );
+				//bool hasTic = ( this.isScaleLabelsInside ?
+				//		(this.isInsideTic || this.isInsideCrossTic ||
+				//				this.isMinorInsideTic || this.isMinorInsideCrossTic) :
+				//		(this.isTic || this.isCrossTic || this.isMinorTic || this.isMinorCrossTic) );
 
-                // account for the tic space.  Leave the tic space for any type of tic.
+				bool hasTic = this.isTic || this.isCrossTic || this.isMinorTic || this.isMinorCrossTic;
+
+                // account for the tic space.  Leave the tic space for any type of outside tic (Outside Tic Space)
 				if ( hasTic )
 					tmpSpace += ticSize;
 
 				// if this is not the primary axis
 				if ( !IsPrimary( pane ) )
 				{
-					// always leave an extra tic space for the space between the multi-axes
-					tmpSpace += ticSize;
-					// if it has inside tics, leave another tic space
+					// always leave an extra tic space for the space between the multi-axes (Axis Gap)
+					tmpSpace += gap;
+
+					// if it has inside tics, leave another tic space (Inside Tic Space)
 					if ( this.isInsideTic || this.isInsideCrossTic ||
 							this.isMinorInsideTic || this.isMinorInsideCrossTic )
-					tmpSpace += ticSize;
+						tmpSpace += ticSize;
 				}
 
 				// tic takes up 1x tic
@@ -3238,16 +3289,32 @@ namespace ZedGraph
 						// Scaled size (pixels) of a tic
 						float ticSize = this.ScaledTic( scaleFactor );
 
-						// if it's not the primary axis, add a tic space for the spacing between axes
-						shiftPos += ticSize;
+						// if the scalelabels are on the inside, shift everything so the axis is drawn,
+						// for example, to the left side of the available space for a YAxis type
+						if ( isScaleLabelsInside )
+						{
+							shiftPos += this.tmpSpace;
 
-						// if it has inside tics, leave another tic space
-						if ( this.isInsideTic || this.isInsideCrossTic ||
-								this.isMinorInsideTic || this.isMinorInsideCrossTic )
-							shiftPos += ticSize;
+							// shift the axis to leave room for the outside tics
+							if ( this.isTic || this.isCrossTic || this.isMinorTic || this.isMinorCrossTic )
+								shiftPos -= ticSize;
+						}
+						else
+						{
+							// if it's not the primary axis, add a tic space for the spacing between axes
+							shiftPos += this.axisGap * scaleFactor;
+
+							// if it has inside tics, leave another tic space
+							if ( this.isInsideTic || this.isInsideCrossTic ||
+									this.isMinorInsideTic || this.isMinorInsideCrossTic )
+								shiftPos += ticSize;
+						}
+						
 					}
 				}
 
+				// shift is the position of the actual axis line itself
+				// everything else is based on that position.
 				float shift = this.CalcCrossShift( pane ) + shiftPos;
 
                 Pen pen = new Pen( this.color, pane.ScaledPenWidth( ticPenWidth, scaleFactor ));

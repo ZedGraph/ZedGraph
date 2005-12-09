@@ -405,7 +405,7 @@ namespace ZedGraph.ControlTest
 			//this.zedGraphControl1.GraphPane = raita1;
 
 			zedGraphControl1.IsShowPointValues = true;
-			 
+			zedGraphControl1.IsShowContextMenu = false;
 			raita1.AxisChange( CreateGraphics() ); 
 
 			this.zedGraphControl1.Refresh();  
