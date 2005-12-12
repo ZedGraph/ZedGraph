@@ -98,6 +98,9 @@ namespace ZedGraph
 		/// data value makes no sense (<see cref="PaneBase.PaneFill"/>, <see cref="Legend.Fill"/>,
 		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
 		/// </remarks>
+		/// <seealso cref="Fill.RangeMin"/>
+		/// <seealso cref="Fill.RangeMax"/>
+		/// <seealso cref="Fill.RangeDefault"/>
 		GradientByX,
 		/// <summary>
 		/// Fill with a single solid color based on the Z value of the data.</summary>
@@ -109,6 +112,9 @@ namespace ZedGraph
 		/// data value makes no sense (<see cref="PaneBase.PaneFill"/>, <see cref="Legend.Fill"/>,
 		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
 		/// </remarks>
+		/// <seealso cref="Fill.RangeMin"/>
+		/// <seealso cref="Fill.RangeMax"/>
+		/// <seealso cref="Fill.RangeDefault"/>
 		GradientByY,
 		/// <summary>
 		/// Fill with a single solid color based on the Z value of the data.</summary>
@@ -120,6 +126,9 @@ namespace ZedGraph
 		/// data value makes no sense (<see cref="PaneBase.PaneFill"/>, <see cref="Legend.Fill"/>,
 		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
 		/// </remarks>
+		/// <seealso cref="Fill.RangeMin"/>
+		/// <seealso cref="Fill.RangeMax"/>
+		/// <seealso cref="Fill.RangeDefault"/>
 		GradientByZ
 	};
 

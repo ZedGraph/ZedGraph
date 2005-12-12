@@ -148,6 +148,8 @@ namespace ZedGraph.Demo
 			myCurve.Symbol.Fill.Type = FillType.GradientByZ;
 			myCurve.Symbol.Fill.RangeMin = 19;
 			myCurve.Symbol.Fill.RangeMax = 34;
+			//myCurve.Symbol.Fill.RangeDefault = 19;
+
 			// Turn off the line, so the curve will by symbols only
 			myCurve.Line.IsVisible = false;
 
@@ -167,7 +169,6 @@ namespace ZedGraph.Demo
 			text.FontSpec.Size = 14;
 			myPane.GraphItemList.Add( text );
 			
-
 			// Show the X and Y grids
 			myPane.XAxis.IsShowGrid = true;
 			myPane.YAxis.IsShowGrid = true;

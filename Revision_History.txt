@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+11-Dec-2005 (by Champion)
+[NEW] Add Fill.RangeDefault
+
 8-Dec-2005 (by Champion)
 [FIX] Make cross logic work properly for isScaleLabels inside on secondary axes
 [NEW] Add AxisGap property to control space between secondary axes

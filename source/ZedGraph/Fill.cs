@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-12-12 03:06:30 $ </version>
 	[Serializable]
 	public class Fill : ISerializable
 	{
@@ -87,6 +87,7 @@ namespace ZedGraph
 
 		private double	rangeMin;
 		private double	rangeMax;
+		private double rangeDefault;
 		private Bitmap	gradientBM;
 
 		/// <summary>
@@ -159,6 +160,7 @@ namespace ZedGraph
 			this.alignV = Default.AlignV;
 			this.rangeMin = 0.0;
 			this.rangeMax = 1.0;
+			this.rangeDefault = double.MaxValue;
 			gradientBM = null;
 
 			colorList = null;
@@ -473,8 +475,9 @@ namespace ZedGraph
 			alignH = rhs.AlignH;
 			alignV = rhs.AlignV;
             isScaled = rhs.IsScaled;
-			rangeMin = rhs.RangeMin;
-			rangeMax = rhs.RangeMax;
+			rangeMin = rhs.rangeMin;
+			rangeMax = rhs.rangeMax;
+			rangeDefault = rhs.rangeDefault;
 			gradientBM = null;
 
 			if ( rhs.colorList != null )
@@ -524,7 +527,8 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		public const int schema = 2;
+		// schema changed to 2 with addition of rangeDefault
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -571,6 +575,9 @@ namespace ZedGraph
 			{
 				this.brush = new TextureBrush( image, wrapMode );
 			}
+
+			if ( sch >= 2 )
+				rangeDefault = info.GetDouble( "rangeDefault" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -602,6 +609,7 @@ namespace ZedGraph
 			info.AddValue( "image", image );
 			info.AddValue( "wrapMode", wrapMode );
 
+			info.AddValue( "rangeDefault", rangeDefault );
 		}
 	#endregion
 
@@ -739,6 +747,8 @@ namespace ZedGraph
 		/// <seealso cref="FillType.GradientByY"/>
 		/// <seealso cref="FillType.GradientByZ"/>
 		/// <seealso cref="IsGradientValueType"/>
+		/// <seealso cref="RangeMax"/>
+		/// <seealso cref="RangeDefault"/>
 		/// <value>A double value, in user scale unit</value>
 		public double RangeMin
 		{
@@ -753,11 +763,37 @@ namespace ZedGraph
 		/// <seealso cref="FillType.GradientByY"/>
 		/// <seealso cref="FillType.GradientByZ"/>
 		/// <seealso cref="IsGradientValueType"/>
+		/// <seealso cref="RangeMin"/>
+		/// <seealso cref="RangeDefault"/>
 		/// <value>A double value, in user scale unit</value>
 		public double RangeMax
 		{
 			get { return rangeMax; }
 			set { rangeMax = value; }
+		}
+
+		/// <summary>
+		/// The default user-scale value for the gradient-by-value determination.  This defines the
+		/// value that will be used when there is no point value available, or the actual point value
+		/// is invalid.
+		/// </summary>
+		/// <remarks>
+		/// Note that this value, when defined, will determine the color that is used in the legend.
+		/// If this value is set to double.MaxValue, then it remains "undefined."  In this case, the
+		/// legend symbols will actually be filled with a color gradient representing the range of
+		/// colors.
+		/// </remarks>
+		/// <seealso cref="FillType.GradientByX"/>
+		/// <seealso cref="FillType.GradientByY"/>
+		/// <seealso cref="FillType.GradientByZ"/>
+		/// <seealso cref="IsGradientValueType"/>
+		/// <seealso cref="RangeMin"/>
+		/// <seealso cref="RangeMax"/>
+		/// <value>A double value, in user scale unit</value>
+		public double RangeDefault
+		{
+			get { return rangeDefault; }
+			set { rangeDefault = value; }
 		}
 
 	#endregion
@@ -817,6 +853,8 @@ namespace ZedGraph
 				{
 					if ( dataValue != null )
 						return new SolidBrush( GetGradientColor( dataValue ) );
+					else if ( rangeDefault != double.MaxValue )
+						return new SolidBrush( GetGradientColor( rangeDefault ) );
 					else
 						return ScaleBrush( rect, this.brush, true );
 				}
@@ -830,7 +868,7 @@ namespace ZedGraph
 
 		private Color GetGradientColor( PointPair dataValue )
 		{
-			double val, valueFraction;
+			double val;
 
 			if ( this.type == FillType.GradientByZ )
 				val = dataValue.Z;
@@ -839,10 +877,19 @@ namespace ZedGraph
 			else
 				val = dataValue.X;
 
-			if ( Double.IsInfinity( val ) || double.IsNaN( val ) || val == PointPair.Missing ||
-					this.rangeMax - this.rangeMin < 1e-20 )
+			return GetGradientColor( val );
+		}
+
+		private Color GetGradientColor( double val )
+		{
+			double valueFraction;
+
+			if ( Double.IsInfinity( val ) || double.IsNaN( val ) || val == PointPair.Missing )
+				val = this.rangeDefault;
+
+			if ( this.rangeMax - this.rangeMin < 1e-20 || val == double.MaxValue )
 				valueFraction = 0.5;
-			else
+			else			
 				valueFraction = ( val - this.rangeMin ) / ( rangeMax - rangeMin );
 
 			if ( valueFraction < 0.0 )
