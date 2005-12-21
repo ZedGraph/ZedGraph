@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-11-30 03:36:12 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-12-21 06:21:56 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -1094,6 +1094,31 @@ namespace ZedGraph
 				fmtStr = fmtStr + " (BC)";
 			}
 			//DateTime dt = XLDateToDateTime( xlDate );
+
+			if ( fmtStr.IndexOf("[d]") >= 0 )
+			{
+				fmtStr = fmtStr.Replace( "[d]", ((int) xlDate).ToString() );
+				xlDate -= (int) xlDate;
+			}
+			if ( fmtStr.IndexOf("[h]") >= 0 || fmtStr.IndexOf("[hh]") >= 0 )
+			{
+				fmtStr = fmtStr.Replace( "[h]", ((int) (xlDate * 24)).ToString("d") );
+				fmtStr = fmtStr.Replace( "[hh]", ((int) (xlDate * 24)).ToString("d2") );
+				xlDate = ( xlDate * 24 - (int) (xlDate * 24) ) / 24.0;
+			}
+			if ( fmtStr.IndexOf("[m]") >= 0 || fmtStr.IndexOf("[mm]") >= 0 )
+			{
+				fmtStr = fmtStr.Replace( "[m]", ((int) (xlDate * 1440)).ToString("d") );
+				fmtStr = fmtStr.Replace( "[mm]", ((int) (xlDate * 1440)).ToString("d2") );
+				xlDate = ( xlDate * 1440 - (int) (xlDate * 1440) ) / 1440.0;
+			}
+			if ( fmtStr.IndexOf("[s]") >= 0 || fmtStr.IndexOf("[ss]") >= 0 )
+			{
+				fmtStr = fmtStr.Replace( "[s]", ((int) (xlDate * 86400)).ToString("d") );
+				fmtStr = fmtStr.Replace( "[ss]", ((int) (xlDate * 86400)).ToString("d2") );
+				xlDate = ( xlDate * 86400 - (int) (xlDate * 86400) ) / 86400.0;
+			}
+
 			DateTime dt = new DateTime( year, month, day, hour, minute, second );
 			return dt.ToString( fmtStr );
 		}

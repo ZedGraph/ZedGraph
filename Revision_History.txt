@@ -1,5 +1,14 @@
 ZedGraph Class Library Revision History
 
+20-Dec-2005 (by Champion)
+[FIX] ZedGraphControl.cs IsEnableVZoom/IsEnableHZoom properties referenced themselves, causing stack overflow
+[NEW] Add MouseUpEvent, MouseMoveEvent and change MouseDownEvent to just use (object sender, MouseEventArgs)
+[UPD] Add lots of paranoid tests in ZedGraphControl.cs to avoid null object references
+[NEW] Add code from jackply to add exponential axis option
+
+15-Dec-2005 (by Champion)
+[NEW] Add TimeSpan options to XDate.ToString()
+
 11-Dec-2005 (by Champion)
 [NEW] Add Fill.RangeDefault
 

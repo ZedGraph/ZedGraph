@@ -72,7 +72,9 @@ namespace ZedGraph
 		/// distance from each other. </remarks>
 		/// <seealso cref="AxisType.Text"/>
 		/// <seealso cref="Axis.IsOrdinal"/>
-		LinearAsOrdinal
+		LinearAsOrdinal,
+		/// <summary> An exponential axis </summary>
+		Exponent
 	};
 
 	/// <summary>

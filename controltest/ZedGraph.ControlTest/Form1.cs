@@ -285,6 +285,31 @@ namespace ZedGraph.ControlTest
 			*/
 #endif
 
+#if true	// Basic curve test - Date Axis w/ Time Span
+
+			PointPairList list = new PointPairList();
+
+			for ( int i=0; i<100; i++ )
+			{
+				double x = (double) i/123.0;
+				//double x = new XDate( 0, 0, i, i*3, i*2, i );
+				double y = Math.Sin( i / 8.0 ) * 1 + 1;
+				list.Add( x, y );
+				double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			myPane.XAxis.IsSkipLastLabel = false;
+			//myPane.XAxis.IsPreventLabelOverlap = false;
+			myPane.XAxis.ScaleFormat = "[d].[h]:[m]:[s]";
+			zedGraphControl1.PointDateFormat = "[d].[hh]:[mm]:[ss]";
+			myPane.XAxis.Type = AxisType.Date;
+			myPane.AxisChange( this.CreateGraphics() );
+
+			myPane.YAxis.ScaleFormat = "0.0'%'";
+
+#endif
 
 #if false	// Basic curve test - Date Axis
 
@@ -329,7 +354,7 @@ namespace ZedGraph.ControlTest
 			//zedGraphControl1.IsEnableVZoom = false;
 #endif
 
-#if true // raita test
+#if false // raita test
 			PointPairList list1 = new PointPairList();
  
 			list1.Add( 67.741935483871, 0.2 );

@@ -170,7 +170,7 @@ namespace ZedGraph.LibTest
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
-#if true	// Multi Y Axis demo
+#if false	// Multi Y Axis demo
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Demonstration of Multi Y Graph",
 				"Time, s",
@@ -1120,6 +1120,36 @@ namespace ZedGraph.LibTest
 
 #endif
 
+#if true	// Basic curve test - Date Axis w/ Time Span
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList list = new PointPairList();
+
+			for ( int i=0; i<100; i++ )
+			{
+				double x = (double) i/123.0;
+				//double x = new XDate( 0, 0, i, i*3, i*2, i );
+				double y = Math.Sin( i / 8.0 ) * 1 + 1;
+				list.Add( x, y );
+				double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			myPane.XAxis.IsSkipLastLabel = false;
+			//myPane.XAxis.IsPreventLabelOverlap = false;
+			myPane.XAxis.ScaleFormat = "[d].[h]:[m]:[s]";
+			myPane.XAxis.Type = AxisType.Date;
+			myPane.AxisChange( this.CreateGraphics() );
+
+			myPane.YAxis.ScaleFormat = "0.0'%'";
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
+
 #if false	// Basic curve test - DateAsOrdinal
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
@@ -1966,13 +1996,13 @@ namespace ZedGraph.LibTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			DoAddPoints();
-			return;
+			//DoAddPoints();
+			//return;
 
 			//Image image = master.ScaledImage( 300, 200, 72 );
 			//image.Save( @"c:\zedgraph.png", ImageFormat.Png );
-			master.Image.Save( @"c:\zedgraph.png", ImageFormat.Png );
-			return;
+			//master.Image.Save( @"c:\zedgraph.png", ImageFormat.Png );
+			//return;
 
 			//DoPrint();
 			//DoPageSetup();

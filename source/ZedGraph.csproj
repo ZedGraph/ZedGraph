@@ -379,11 +379,11 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ZedGraph\ZedGraphLocal.es.resx"
+                    RelPath = "ZedGraph\ZedGraphLocale.de.resx"
                     BuildAction = "EmbeddedResource"
                 />
                 <File
-                    RelPath = "ZedGraph\ZedGraphLocale.de.resx"
+                    RelPath = "ZedGraph\ZedGraphLocale.es.resx"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

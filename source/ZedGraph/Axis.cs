@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.49 $ $Date: 2005-12-09 06:47:14 $ </version>
+	/// <version> $Revision: 3.50 $ $Date: 2005-12-21 06:21:56 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -50,7 +50,8 @@ namespace ZedGraph
 							step,
 							minorStep,
 							cross,
-							baseTic;
+							baseTic,
+							exponent;
 		/// <summary> Private fields for the <see cref="Axis"/> automatic scaling modes.
 		/// Use the public properties <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
 		/// <see cref="StepAuto"/>, <see cref="MinorStepAuto"/>, <see cref="MinorStepAuto"/>,
@@ -938,6 +939,7 @@ namespace ZedGraph
 			this.minorStep = 0.1;
 			this.cross = 0.0;
 			this.baseTic = PointPair.Missing;
+			this.exponent = 1.0;
 
 			this.minGrace = Default.MinGrace;
 			this.maxGrace = Default.MaxGrace;
@@ -1048,6 +1050,7 @@ namespace ZedGraph
 			minorStep = rhs.MinorStep;
 			cross = rhs.cross;
 			baseTic = rhs.baseTic;
+			exponent = rhs.exponent;
 
 			minAuto = rhs.MinAuto;
 			maxAuto = rhs.MaxAuto;
@@ -1140,7 +1143,8 @@ namespace ZedGraph
 		// Schema was changed to 4 when IsScaleLabelsInside, isSkipFirstLabel, isSkipLastLabel were added
 		// Schema was changed to 5 with IsCrossTic, IsInsideCrossTic, IsMinorCrossTic, IsMinorInsideCrossTic
 		// Schema was changed to 6 with AxisGap
-		public const int schema = 6;
+		// Schema was changed to 7 with Exponent
+		public const int schema = 7;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -1225,20 +1229,20 @@ namespace ZedGraph
 			majorUnit = (DateUnit) info.GetValue( "majorUnit", typeof(DateUnit) );
 			minorUnit = (DateUnit) info.GetValue( "minorUnit", typeof(DateUnit) );
 
-			if ( schema > 1 )
+			if ( schema >= 2 )
 				isScaleVisible = info.GetBoolean( "isScaleVisible" );
 
-			if ( schema > 2 )
+			if ( schema >= 3 )
 				isAxisSegmentVisible = info.GetBoolean( "isAxisSegmentVisible" );
 
-			if ( schema > 3 )
+			if ( schema >= 4 )
 			{
 				isScaleLabelsInside = info.GetBoolean( "isScaleLabelsInside" );
 				isSkipFirstLabel = info.GetBoolean( "isSkipFirstLabel" );
 				isSkipLastLabel = info.GetBoolean( "isSkipLastLabel" );
 			}
 
-			if ( schema > 4 )
+			if ( schema >= 5 )
 			{
 				isCrossTic = info.GetBoolean( "isCrossTic" );
 				isInsideCrossTic = info.GetBoolean( "isInsideCrossTic" );
@@ -1246,8 +1250,11 @@ namespace ZedGraph
 				isMinorInsideCrossTic = info.GetBoolean( "isMinorInsideCrossTic" );
 			}
 
-			if ( schema > 5 )
+			if ( schema >= 6 )
 				axisGap = info.GetSingle( "axisGap" );
+
+			if ( schema >= 7 )
+				exponent = info.GetDouble( "exponent" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -1347,6 +1354,9 @@ namespace ZedGraph
 
 			// new for schema = 6
 			info.AddValue( "axisGap", axisGap );
+
+			// new for schema = 7
+			info.AddValue( "exponent", exponent );
 		}
 	#endregion
 
@@ -1423,6 +1433,22 @@ namespace ZedGraph
 		{
 			get { return step; }
 			set { step = value; this.stepAuto = false; }
+		}
+		/// <summary>
+		/// Gets or sets the scale exponent value.  This only applies to <see cref="AxisType.Exponent" />. 
+		/// </summary>
+		/// <seealso cref="Min"/>
+		/// <seealso cref="Max"/>
+		/// <seealso cref="MinorStep"/>
+		/// <seealso cref="StepAuto"/>
+		/// <seealso cref="Default.TargetXSteps"/>
+		/// <seealso cref="Default.TargetYSteps"/>
+		/// <seealso cref="Default.ZeroLever"/>
+		/// <seealso cref="Default.MaxTextLabels"/>
+		public double Exponent
+		{
+			get { return exponent; }
+			set { exponent = value; }
 		}
 		/// <summary>
 		/// Gets or sets the type of units used for the major step size (<see cref="Step"/>).
@@ -2289,8 +2315,7 @@ namespace ZedGraph
 		/// Gets a property that indicates if this <see cref="Axis"/> is logarithmic (base 10).
 		/// </summary>
 		/// <remarks>
-		/// To make this property
-		/// true, set <see cref="Type"/> to <see cref="AxisType.Log"/>.
+		/// To make this property true, set <see cref="Type"/> to <see cref="AxisType.Log"/>.
 		/// </remarks>
 		/// <value>true for a logarithmic axis, false for a linear, date, or text axis</value>
 		/// <seealso cref="Type"/>
@@ -2298,6 +2323,19 @@ namespace ZedGraph
 		public bool IsLog
 		{
 			get { return type == AxisType.Log; }
+		}
+		/// <summary>
+		/// Gets a property that indicates if this <see cref="Axis"/> is exponential.
+		/// </summary>
+		/// <remarks>
+		/// To make this property true, set <see cref="Type"/> to <see cref="AxisType.Exponent"/>.
+		/// </remarks>
+		/// <value>true for an exponential axis, false for a linear, date, log, or text axis</value>
+		/// <seealso cref="Type"/>
+		/// <seealso cref="AxisType"/>
+		public bool IsExponent
+		{
+			get { return type == AxisType.Exponent; }
 		}
 		/// <summary>
 		/// Determines if this <see cref="Axis"/> is of the date-time type.
@@ -2830,6 +2868,16 @@ namespace ZedGraph
 			{
 				this.minScale = SafeLog( this.min );
 				this.maxScale = SafeLog( this.max );
+			}
+			else if ( this.type == AxisType.Exponent && this.exponent > 0 )
+			{
+				this.minScale = Math.Pow( this.min, exponent );
+				this.maxScale = Math.Pow( this.max, exponent );
+			}
+			else if ( this.type == AxisType.Exponent && this.exponent < 0 )
+			{
+				this.minScale = Math.Pow( this.max, exponent );
+				this.maxScale = Math.Pow( this.min, exponent );
 			}
 			else
 			{
@@ -3821,6 +3869,17 @@ namespace ZedGraph
 			{
 				return baseVal + (double) tic;
 			}
+			else if ( this.IsExponent && this.exponent > 0.0 )
+			{
+				//return baseVal + Math.Pow ( (double) this.step * tic, exp );
+				//baseVal is got from CalBase..., and it is exp..
+				return Math.Pow( Math.Pow( baseVal, 1 / exponent ) + this.step * tic, exponent );
+			}
+			else if ( this.IsExponent && this.exponent < 0.0 )
+			{
+				//baseVal is got from CalBase..., and it is exp..
+				return Math.Pow( Math.Pow( baseVal, 1 / exponent ) + this.step * tic, exponent );
+			}
 			else // regular linear scale
 			{
 				return baseVal + (double) this.step * tic;
@@ -3874,6 +3933,10 @@ namespace ZedGraph
 			else if ( this.IsLog )
 			{
 				label = Math.Pow( 10.0, dVal ).ToString( this.scaleFormat );
+			}
+			else if ( this.IsExponent )
+			{
+				label = Math.Pow( dVal, 1 / exponent ).ToString( this.scaleFormat );
 			}
 			else if ( this.Type == AxisType.LinearAsOrdinal )
 			{
@@ -4089,6 +4152,10 @@ namespace ZedGraph
 			{
 				return baseVal + Math.Floor( (double) iTic / 9.0 ) + dLogVal[ ( iTic + 9 ) % 9 ];
 			}
+			else if ( this.IsExponent )
+			{
+				return baseVal + Math.Pow( (double) this.Step * (double) iTic, exponent );
+			}
 			else // regular linear scale
 			{
 				return baseVal + (double) this.minorStep * (double) iTic;
@@ -4135,6 +4202,10 @@ namespace ZedGraph
 			else if ( this.IsLog )  // log scale
 			{
 				return -9;
+			}
+			else if ( this.IsExponent )
+			{
+				return (int) ( ( Math.Pow( this.min, exponent ) - baseVal ) / Math.Pow( this.minorStep, exponent ) );
 			}
 			else  // regular linear scale
 			{
@@ -4320,6 +4391,9 @@ namespace ZedGraph
 					break;
 				case AxisType.Log:
 					PickLogScale();
+					break;
+				case AxisType.Exponent:
+					PickExponentScale( g, pane, scaleFactor );
 					break;
 				case AxisType.Date:
 					PickDateScale( g, pane, scaleFactor );
@@ -4795,6 +4869,118 @@ namespace ZedGraph
 				this.max = Math.Pow( (double) 10.0,
 					Math.Ceiling( Math.Log10( this.max ) ) );
 	
+		}
+
+		/// <summary>
+		/// Select a reasonable exponential axis scale given a range of data values.
+		/// </summary>
+		/// <remarks>
+		/// This method only applies to <see cref="AxisType.Exponent"/> type axes, and it
+		/// is called by the general <see cref="PickScale"/> method.  The exponential scale
+		/// relies on the <see cref="Exponent" /> property to set the scaling exponent.  This
+		/// method honors the <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
+		/// and <see cref="StepAuto"/> autorange settings.
+		/// In the event that any of the autorange settings are false, the
+		/// corresponding <see cref="Min"/>, <see cref="Max"/>, or <see cref="Step"/>
+		/// setting is explicitly honored, and the remaining autorange settings (if any) will
+		/// be calculated to accomodate the non-autoranged values.  For log axes, the MinorStep
+		/// value is not used.
+		/// <para>On Exit:</para>
+		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
+		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
+		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
+		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
+		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
+		/// </remarks>
+		/// <seealso cref="PickScale"/>
+		/// <seealso cref="AxisType.Exponent"/>
+		public void PickExponentScale( Graphics g, GraphPane pane, float scaleFactor )
+		{
+			// Test for trivial condition of range = 0 and pick a suitable default
+			if ( this.max - this.min < 1.0e-20 )
+			{
+				if ( this.maxAuto )
+					this.max = this.max + 0.2 * ( this.max == 0 ? 1.0 : Math.Abs( this.max ) );
+				if ( this.minAuto )
+					this.min = this.min - 0.2 * ( this.min == 0 ? 1.0 : Math.Abs( this.min ) );
+			}
+
+			// This is the zero-lever test.  If minVal is within the zero lever fraction
+			// of the data range, then use zero.
+
+			if ( this.minAuto && this.min > 0 &&
+				this.min / ( this.max - this.min ) < Default.ZeroLever )
+				this.min = 0;
+
+			// Repeat the zero-lever test for cases where the maxVal is less than zero
+			if ( this.maxAuto && this.max < 0 &&
+				Math.Abs( this.max / ( this.max - this.min ) ) <
+				Default.ZeroLever )
+				this.max = 0;
+
+			// Calculate the new step size
+			if ( this.stepAuto )
+			{
+				double targetSteps = ( this is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
+
+				// Calculate the step size based on target steps
+				this.step = CalcStepSize( this.max - this.min, targetSteps );
+
+				if ( this.isPreventLabelOverlap )
+				{
+					// Calculate the maximum number of labels
+					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
+
+					if ( maxLabels < ( this.max - this.min ) / this.step )
+						this.step = CalcBoundedStepSize( this.max - this.min, maxLabels );
+				}
+			}
+
+			// Calculate the new step size
+			if ( this.minorStepAuto )
+				this.minorStep = CalcStepSize( this.step,
+					( this is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
+
+			// Calculate the scale minimum
+			if ( this.minAuto )
+				this.min = this.min - MyMod( this.min, this.step );
+
+			// Calculate the scale maximum
+			if ( this.maxAuto )
+				this.max = MyMod( this.max, this.step ) == 0.0 ? this.max :
+					this.max + this.step - MyMod( this.max, this.step );
+
+			// set the scale magnitude if required
+			if ( this.scaleMagAuto )
+			{
+				// Find the optimal scale display multiple
+				double mag = 0;
+				double mag2 = 0;
+
+				if ( Math.Abs( this.min ) > 1.0e-10 )
+					mag = Math.Floor( Math.Log10( Math.Abs( this.min ) ) );
+				if ( Math.Abs( this.max ) > 1.0e-10 )
+					mag2 = Math.Floor( Math.Log10( Math.Abs( this.max ) ) );
+				if ( Math.Abs( mag2 ) > Math.Abs( mag ) )
+					mag = mag2;
+
+				// Do not use scale multiples for magnitudes below 4
+				if ( Math.Abs( mag ) <= 3 )
+					mag = 0;
+
+				// Use a power of 10 that is a multiple of 3 (engineering scale)
+				this.scaleMag = (int) ( Math.Floor( mag / 3.0 ) * 3.0 );
+			}
+
+			// Calculate the appropriate number of dec places to display if required
+			if ( this.scaleFormatAuto )
+			{
+				int numDec = 0 - (int) ( Math.Floor( Math.Log10( this.step ) ) - this.scaleMag );
+				if ( numDec < 0 )
+					numDec = 0;
+				this.scaleFormat = "f" + numDec.ToString();
+			}
 		}
 
 		/// <summary>
@@ -5452,6 +5638,8 @@ namespace ZedGraph
 			double ratio;
 			if ( this.IsLog )
 				ratio = ( SafeLog( x ) - this.minScale ) / ( this.maxScale  - this.minScale );
+			else if ( this.IsExponent )
+				ratio = ( SafeExp( x ) - this.minScale ) / ( this.maxScale - this.minScale );
 			else
 				ratio = ( x - this.minScale ) / ( this.maxScale - this.minScale );
 				
@@ -5531,6 +5719,8 @@ namespace ZedGraph
 			
 			if ( this.IsLog )
 				val = Math.Pow( 10.0, val );
+			else if ( this.IsExponent )
+				val = Math.Pow( val, 1.0 / exponent );
 			
 			return val;
 		}
@@ -5586,6 +5776,18 @@ namespace ZedGraph
 		{
 			if ( x > 1.0e-20 )
 				return Math.Log10( x );
+			else
+				return 0.0;
+		}
+
+		///<summary>
+		///Calculate an exponential in a safe manner to avoid math exceptions
+		///</summary> 
+		/// <param name="x">The value for which the exponential is to be calculated</param>
+		public double SafeExp( double x )
+		{
+			if ( x > 1.0e-20 )
+				return Math.Pow( x, exponent );
 			else
 				return 0.0;
 		}
