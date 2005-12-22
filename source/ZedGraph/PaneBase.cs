@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.13 $ $Date: 2005-08-20 07:05:53 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2005-12-22 07:30:51 $ </version>
 	public class PaneBase : ICloneable
 	{
 
@@ -801,9 +801,7 @@ namespace ZedGraph
 		public void DrawPaneFrame( Graphics g, float scaleFactor )
 		{
 			// Erase the pane background, filling it with the specified brush
-			Brush brush = this.paneFill.MakeBrush( this.paneRect );
-			g.FillRectangle( brush, this.paneRect );
-			brush.Dispose();
+			this.paneFill.Draw( g, this.paneRect );
 
 			// Reduce the paneRect width and height by 1 pixel so that for a paneRect of
 			// new RectangleF( 0, 0, 100, 100 ), which should be 100 pixels wide, we cover

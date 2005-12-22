@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+21-Dec-2005 (by Champion)
+[FIX] panebase draws fill even if PaneFill.IsVisible is false -- fixed
+[UPD] Avoid overlap by checking actual spacing (particular useful for Exponential scales)
+[UPD] Make scale labels apply scaleMult for Exponential scales
+
 20-Dec-2005 (by Champion)
 [FIX] ZedGraphControl.cs IsEnableVZoom/IsEnableHZoom properties referenced themselves, causing stack overflow
 [NEW] Add MouseUpEvent, MouseMoveEvent and change MouseDownEvent to just use (object sender, MouseEventArgs)

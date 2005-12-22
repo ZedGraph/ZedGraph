@@ -1120,7 +1120,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test - Date Axis w/ Time Span
+#if false	// Basic curve test - Date Axis w/ Time Span
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -1147,6 +1147,8 @@ namespace ZedGraph.LibTest
 			trackBar1.Minimum = 0;
 			trackBar1.Maximum = 100;
 			trackBar1.Value = 50;
+
+			myPane.PaneFill = new Fill( Color.FromArgb( 100, Color.Blue ), Color.FromArgb( 100, Color.White ), 45.0f );
 
 #endif
 
@@ -1409,8 +1411,19 @@ namespace ZedGraph.LibTest
 			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
 			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
 
-			myPane.XAxis.IsReverse = true;
+			//myPane.XAxis.IsReverse = true;
 			myPane.AxisChange( this.CreateGraphics() );
+			myPane.XAxis.IsTicsBetweenLabels = true;
+			string[] labels = { "one", "two", "three", "four", "five" };
+			myPane.XAxis.TextLabels = labels;
+			myPane.XAxis.Type = AxisType.Text;
+			//myPane.XAxis.Step = 3;
+			myPane.XAxis.IsAllTics = false;
+
+			ArrowItem tic = new ArrowItem( Color.Black, 1.0f, 2.5f, 0.99f, 2.5f, 1.01f );
+			tic.IsArrowHead = false;
+			tic.Location.CoordinateFrame = CoordType.XScaleYAxisFraction;
+			myPane.GraphItemList.Add( tic );
 
 
 			CreateBarLabels( myPane );
@@ -1420,6 +1433,38 @@ namespace ZedGraph.LibTest
 			trackBar1.Value = 50;
 
 #endif
+
+#if true	// Basic curve test - log/exponential axis
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList ppl1 = new PointPairList();
+			PointPairList ppl2 = new PointPairList();
+
+			for ( int i=0; i<100; i++ )
+			{
+				double x = (double) i * 1.52 + 0.001;
+				double x2 = x*10000;
+				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				double y2 = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
+				ppl1.Add( x, y, z );
+				ppl2.Add( x2, y2, z );
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", ppl1, Color.Blue, SymbolType.Diamond );
+			LineItem myCurve2 = myPane.AddCurve( "curve2", ppl2, Color.Red, SymbolType.Triangle );
+
+			myPane.XAxis.Type = AxisType.Exponent;
+			myPane.XAxis.Exponent = 0.3;
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
+
 
 #if false	// Basic curve test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
@@ -1729,6 +1774,11 @@ namespace ZedGraph.LibTest
 				// Do our drawing using memGraphics.g instead e.Graphics
 		     
 				memGraphics.g.FillRectangle( brush, this.ClientRectangle );
+
+				Rectangle rect = new Rectangle( 2, 2, 100, 100 );
+				LinearGradientBrush brush2 = new LinearGradientBrush( rect, Color.Red, Color.White, 45.0f );
+				memGraphics.g.FillRectangle( brush2, rect );
+
 				Matrix mat = memGraphics.g.Transform;
 
 				if ( master != null )

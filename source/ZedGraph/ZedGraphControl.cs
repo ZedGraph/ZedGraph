@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.45 $ $Date: 2005-12-21 06:21:56 $ </version>
+	/// <version> $Revision: 3.46 $ $Date: 2005-12-22 07:30:51 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -416,11 +416,14 @@ namespace ZedGraph
 			InitializeComponent();
 
 			// Use double-buffering for flicker-free updating:
+			//SetStyle( ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint
+			//	| ControlStyles.DoubleBuffer | ControlStyles.ResizeRedraw, true );
 			SetStyle( ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint
-				| ControlStyles.DoubleBuffer | ControlStyles.ResizeRedraw, true );
+				| ControlStyles.ResizeRedraw, true );
 			//isTransparentBackground = false;
-			SetStyle( ControlStyles.Opaque, false );
+			//SetStyle( ControlStyles.Opaque, false );
 			SetStyle( ControlStyles.SupportsTransparentBackColor, true );
+			//this.BackColor = Color.Transparent;
 
 			resourceManager = new ResourceManager( "ZedGraph.ZedGraph.ZedGraphLocale", Assembly.GetExecutingAssembly() );
 

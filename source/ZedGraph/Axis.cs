@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.50 $ $Date: 2005-12-21 06:21:56 $ </version>
+	/// <version> $Revision: 3.51 $ $Date: 2005-12-22 07:30:50 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -3556,7 +3556,8 @@ namespace ZedGraph
 
 			// get the Y position of the center of the axis labels
 			// (the axis itself is referenced at zero)
-			float maxSpace = this.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height;
+			SizeF maxLabelSize = this.GetScaleMaxSpace( g, pane, scaleFactor, true );
+			float maxSpace = maxLabelSize.Height;
 			
 			float textTop, textCenter;
 			if ( this.isTic )
@@ -3569,7 +3570,10 @@ namespace ZedGraph
 			int firstTic = (int) ( ( this.minScale - baseVal ) / this.step + 0.99 );
 			if ( firstTic < 0 )
 				firstTic = 0;
-			
+
+			// save the position of the previous tic
+			float lastPixVal = -10000;
+
 			// loop for each major tic
 			for ( int i=firstTic; i<nTics+firstTic; i++ )
 			{
@@ -3640,6 +3644,12 @@ namespace ZedGraph
 
 				if ( this.isVisible && this.isScaleVisible && !isSkipZone )
 				{
+					// For exponential scales, just skip any label that would overlap with the previous one
+					// This is because exponential scales have varying label spacing
+					if ( this.isPreventLabelOverlap &&
+							Math.Abs( pixVal - lastPixVal ) < maxLabelSize.Width )
+						continue;
+					
 					// draw the label
 					MakeLabel( pane, i, dVal, out tmpStr );
 					
@@ -3673,6 +3683,7 @@ namespace ZedGraph
 							AlignH.Center, AlignV.Center,
 							scaleFactor );
 
+					lastPixVal = pixVal;
 				}
 			}
 		}
@@ -3936,7 +3947,9 @@ namespace ZedGraph
 			}
 			else if ( this.IsExponent )
 			{
-				label = Math.Pow( dVal, 1 / exponent ).ToString( this.scaleFormat );
+				double scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
+				double val = Math.Pow( dVal, 1 / exponent ) / scaleMult;
+				label = val.ToString( this.scaleFormat );
 			}
 			else if ( this.Type == AxisType.LinearAsOrdinal )
 			{
