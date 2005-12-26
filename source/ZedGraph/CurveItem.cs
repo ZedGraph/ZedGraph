@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.25 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.26 $ $Date: 2005-12-26 11:09:10 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -726,10 +726,10 @@ namespace ZedGraph
 			if ( isBoundedRanges )
 			{
 				Axis yAxis = this.GetYAxis( pane );
-				xLBound = pane.XAxis.lBound;
-				xUBound = pane.XAxis.uBound;
-				yLBound = yAxis.lBound;
-				yUBound = yAxis.uBound;
+				xLBound = pane.XAxis.scale.lBound;
+				xUBound = pane.XAxis.scale.uBound;
+				yLBound = yAxis.scale.lBound;
+				yUBound = yAxis.scale.uBound;
 			}
 
 

@@ -170,6 +170,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\DateAsOrdinalScale.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\DateScale.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\EllipseItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -181,6 +191,11 @@
                 />
                 <File
                     RelPath = "ZedGraph\ErrorBarItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\ExponentScale.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -245,6 +260,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\LinearAsOrdinalScale.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\LinearScale.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\LineItem.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -255,7 +280,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\LogScale.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\MasterPane.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\OrdinalScale.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -295,6 +330,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\Scale.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\ScrollRange.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -316,6 +356,11 @@
                 />
                 <File
                     RelPath = "ZedGraph\TextItem.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\TextScale.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

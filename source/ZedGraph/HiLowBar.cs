@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-09-05 18:34:50 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-12-26 11:09:10 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -283,11 +283,11 @@ namespace ZedGraph
 			if ( !curve.Points[index].IsInvalid )
 			{
 				// calculate a pixel value for the top of the bar on value axis
-				pixHiVal = valueAxis.Transform( curve.IsOverrideOrdinal, index, curHiVal );
+				pixHiVal = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, index, curHiVal );
 				// calculate a pixel value for the center of the bar on the base axis
-				pixBase = baseAxis.Transform( curve.IsOverrideOrdinal, index, curBase );
+				pixBase = baseAxis.Scale.Transform( curve.IsOverrideOrdinal, index, curBase );
 
-				pixLowVal = valueAxis.Transform( curve.IsOverrideOrdinal, index, curLowVal );
+				pixLowVal = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, index, curLowVal );
 
 				// Calculate the pixel location for the side of the bar (on the base axis)
 				float pixSide = pixBase - scaledSize / 2.0F;

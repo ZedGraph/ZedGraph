@@ -35,56 +35,37 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.51 $ $Date: 2005-12-22 07:30:50 $ </version>
+	/// <version> $Revision: 3.52 $ $Date: 2005-12-26 11:09:10 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
 	#region Class Fields
-		/// <summary> Private fields for the <see cref="Axis"/> scale definitions.
-		/// Use the public properties <see cref="Min"/>, <see cref="Max"/>,
-		/// <see cref="Step"/>, <see cref="MinorStep"/>, <see cref="Cross"/>,
-		/// and <see cref="BaseTic"/> for access to these values.
+
+		/// <summary>
+		/// private field that stores the <see cref="ZedGraph.Scale" /> class, which implements all the
+		/// calculations and methods associated with the numeric scale for this
+		/// <see cref="Axis" />.  See the public property <see cref="Scale" /> to access this class.
 		/// </summary>
-		protected double	min,
-							max,
-							step,
-							minorStep,
-							cross,
-							baseTic,
-							exponent;
-		/// <summary> Private fields for the <see cref="Axis"/> automatic scaling modes.
-		/// Use the public properties <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
-		/// <see cref="StepAuto"/>, <see cref="MinorStepAuto"/>, <see cref="MinorStepAuto"/>,
-		/// <see cref="ScaleMagAuto"/>, , <see cref="ScaleFormatAuto"/>
+		internal Scale		scale;
+
+		/// <summary> Private fields for the <see cref="Axis"/> scale rendering properties.
+		/// Use the public properties <see cref="Cross"/> and <see cref="BaseTic"/>
 		/// for access to these values.
 		/// </summary>
-		protected bool		minAuto,
-							maxAuto,
-							stepAuto,
-							minorStepAuto,
-							scaleMagAuto,
-							scaleFormatAuto,
-							crossAuto;
-		/// <summary> Private fields for the <see cref="Axis"/> "grace" settings.
-		/// These values determine how much extra space is left before the first data value
-		/// and after the last data value.
-		/// Use the public properties <see cref="MinGrace"/> and <see cref="MaxGrace"/>
-		/// for access to these values.
+		protected double	cross;
+
+		/// <summary> Private field for the <see cref="Axis"/> automatic cross position mode.
+		/// Use the public property <see cref="CrossAuto"/> for access to this value.
 		/// </summary>
-		private double		minGrace,
-							maxGrace;
-		/// <summary> Private field for the <see cref="Axis"/> scale value display.
-		/// Use the public property <see cref="ScaleMag"/> for access to this value. </summary>
-		private	 int		scaleMag;
+		protected bool		crossAuto;
+
 		/// <summary> Private fields for the <see cref="Axis"/> attributes.
 		/// Use the public properties <see cref="IsVisible"/>, <see cref="IsShowGrid"/>,
 		/// <see cref="IsShowMinorGrid"/>, <see cref="IsZeroLine"/>,  <see cref="IsShowTitle"/>,
 		/// <see cref="IsTic"/>, <see cref="IsInsideTic"/>, <see cref="IsOppositeTic"/>,
 		/// <see cref="IsMinorTic"/>, <see cref="IsMinorInsideTic"/>,
-		/// <see cref="IsMinorOppositeTic"/>, <see cref="IsTicsBetweenLabels"/>,
-		/// <see cref="IsLog"/>, <see cref="IsReverse"/>,
-		/// <see cref="IsOmitMag"/>, <see cref="IsText"/>, <see cref="IsUseTenPower"/>,
-		/// and <see cref="IsDate"/> for access to these values.
+		/// <see cref="IsMinorOppositeTic"/>, <see cref="IsTicsBetweenLabels"/> and
+		/// <see cref="IsOmitMag"/> for access to these values.
 		/// </summary>
 		protected bool		isVisible,
 							isShowGrid,
@@ -102,20 +83,13 @@ namespace ZedGraph
 							isMinorCrossTic,
 							isMinorInsideCrossTic,
 							isTicsBetweenLabels,
-							isReverse,
 							isOmitMag,
-							isUseTenPower,
-							isPreventLabelOverlap,
 							isScaleVisible,
 							isAxisSegmentVisible,
 							isScaleLabelsInside,
 							isSkipFirstLabel,
 							isSkipLastLabel;
-		/// <summary> Private field for the <see cref="Axis"/> type.  This can be one of the
-		/// types as defined in the <see cref="AxisType"/> enumeration.
-		/// Use the public property <see cref="Type"/>
-		/// for access to this value. </summary>
-		private AxisType	type;
+
 		/// <summary> Private field for the <see cref="Axis"/> title string.
 		/// Use the public property <see cref="Title"/>
 		/// for access to this value. </summary>
@@ -133,25 +107,19 @@ namespace ZedGraph
 		/// </remarks>
 		public object Tag;
 
-		/// <summary> Private field for the format of the <see cref="Axis"/> tic labels.
-		/// Use the public property <see cref="ScaleFormat"/> for access to this value. </summary>
-		/// <seealso cref="ScaleFormatAuto"/>
-		private		 string	scaleFormat;
 		/// <summary> Private field for the alignment of the <see cref="Axis"/> tic labels.
 		/// This fields controls whether the inside, center, or outside edges of the text labels are aligned.
 		/// Use the public property <see cref="ScaleAlign"/>
 		/// for access to this value. </summary>
 		/// <seealso cref="ScaleFormatAuto"/>
 		private		 AlignP	scaleAlign;
-		/// <summary> Private <see cref="System.Collections.ArrayList"/> field for the <see cref="Axis"/> array of text labels.
-		/// This property is only used if <see cref="Type"/> is set to
-		/// <see cref="AxisType.Text"/> </summary>
-		private		 string[]	textLabels = null;
+
 		/// <summary> Private fields for the <see cref="Axis"/> font specificatios.
 		/// Use the public properties <see cref="TitleFontSpec"/> and
 		/// <see cref="ScaleFontSpec"/> for access to these values. </summary>
 		protected FontSpec	titleFontSpec,
 							scaleFontSpec;
+
 		/// <summary> Private fields for the <see cref="Axis"/> drawing dimensions.
 		/// Use the public properties <see cref="TicPenWidth"/>, <see cref="TicSize"/>,
 		/// <see cref="MinorTicSize"/>,
@@ -185,60 +153,10 @@ namespace ZedGraph
 						minorGridColor;
 		
 		/// <summary>
-		/// Private fields for Unit types to be used for the major and minor tics.
-		/// See <see cref="MajorUnit"/> and <see cref="MinorUnit"/> for the corresponding
-		/// public properties.
-		/// These types only apply for date-time scales (<see cref="IsDate"/>).
-		/// </summary>
-		/// <value>The value of these types is of enumeration type <see cref="DateUnit"/>
-		/// </value>
-		private DateUnit	majorUnit,
-							minorUnit;
-
-		/// <summary>
-		/// Scale values for calculating transforms.  These are temporary values
-		/// used only during the Draw process.
-		/// </summary>
-		private float	minPix,
-						maxPix;
-
-		/// <summary>
 		/// Temporary values for axis space calculations (see <see cref="CalcSpace" />).
 		/// </summary>
 		internal float	tmpMinSpace,
 						tmpSpace;
-
-		/// <summary>
-		/// Data range temporary values, used by GetRange().
-		/// </summary>
-		internal double	rangeMin,
-						rangeMax,
-						lBound,
-						uBound;
-
-		/// <summary>
-		/// The pixel position at the minimum value for this axis.  This read-only
-		/// value is used/valid only during the Draw process.
-		/// </summary>
-		public float	MinPix
-		{
-			get { return minPix; }
-		}
-		/// <summary>
-		/// The pixel position at the maximum value for this axis.  This read-only
-		/// value is used/valid only during the Draw process.
-		/// </summary>
-		public float	MaxPix
-		{
-			get { return maxPix; }
-		}
-
-		/// <summary>
-		/// Scale values for calculating transforms.  These are temporary values
-		/// used only during the Draw process.
-		/// </summary>
-		private double	minScale,
-						maxScale;
 
 		
 	#endregion
@@ -272,33 +190,6 @@ namespace ZedGraph
 			/// </summary>
 			public static float AxisGap = 5;
 			/// <summary>
-			/// The default "zero lever" for automatically selecting the axis
-			/// scale range (see <see cref="Axis.PickScale"/>). This number is
-			/// used to determine when an axis scale range should be extended to
-			/// include the zero value.  This value is maintained only in the
-			/// <see cref="Default"/> class, and cannot be changed after compilation.
-			/// </summary>
-			public static double ZeroLever = 0.25;
-			/// <summary> The default "grace" value applied to the minimum data range.
-			/// This value is
-			/// expressed as a fraction of the total data range.  For example, assume the data
-			/// range is from 4.0 to 16.0, leaving a range of 12.0.  If MinGrace is set to
-			/// 0.1, then 10% of the range, or 1.2 will be subtracted from the minimum data value.
-			/// The scale will then be ranged to cover at least 2.8 to 16.0.
-			/// </summary>
-			/// <seealso cref="Axis.MinGrace"/>
-			public static double MinGrace = 0.1;
-			/// <summary> The default "grace" value applied to the maximum data range.
-			/// This value is
-			/// expressed as a fraction of the total data range.  For example, assume the data
-			/// range is from 4.0 to 16.0, leaving a range of 12.0.  If MaxGrace is set to
-			/// 0.1, then 10% of the range, or 1.2 will be added to the maximum data value.
-			/// The scale will then be ranged to cover at least 4.0 to 17.2.
-			/// </summary>
-			/// <seealso cref="Axis.MinGrace"/>
-			/// <seealso cref="MaxGrace"/>
-			public static double MaxGrace = 0.1;
-			/// <summary>
 			/// Determines the size of the band at the beginning and end of the axis that will have labels
 			/// omitted if the axis is shifted due to a non-default location using the <see cref="Axis.Cross"/>
 			/// property.
@@ -311,46 +202,6 @@ namespace ZedGraph
 			/// parameter to zero to turn off the effect.
 			/// </remarks>
 			public static float EdgeTolerance = 6;
-			/// <summary>
-			/// The maximum number of text labels (major tics) that will be allowed on the plot by
-			/// the automatic scaling logic.  This value applies only to <see cref="AxisType.Text"/>
-			/// axes.  If there are more than MaxTextLabels on the plot, then
-			/// <see cref="Axis.Step"/> will be increased to reduce the number of labels.  That is,
-			/// the step size might be increased to 2.0 to show only every other label.
-			/// </summary>
-			public static double MaxTextLabels = 12.0;
-			/// <summary>
-			/// The default target number of steps for automatically selecting the X axis
-			/// scale step size (see <see cref="Axis.PickScale"/>).
-			/// This number is an initial target value for the number of major steps
-			/// on an axis.  This value is maintained only in the
-			/// <see cref="Default"/> class, and cannot be changed after compilation.
-			/// </summary>
-			public static double TargetXSteps = 7.0;
-			/// <summary>
-			/// The default target number of steps for automatically selecting the Y or Y2 axis
-			/// scale step size (see <see cref="Axis.PickScale"/>).
-			/// This number is an initial target value for the number of major steps
-			/// on an axis.  This value is maintained only in the
-			/// <see cref="Default"/> class, and cannot be changed after compilation.
-			/// </summary>
-			public static double TargetYSteps = 7.0;
-			/// <summary>
-			/// The default target number of minor steps for automatically selecting the X axis
-			/// scale minor step size (see <see cref="Axis.PickScale"/>).
-			/// This number is an initial target value for the number of minor steps
-			/// on an axis.  This value is maintained only in the
-			/// <see cref="Default"/> class, and cannot be changed after compilation.
-			/// </summary>
-			public static double TargetMinorXSteps = 5.0;
-			/// <summary>
-			/// The default target number of minor steps for automatically selecting the Y or Y2 axis
-			/// scale minor step size (see <see cref="Axis.PickScale"/>).
-			/// This number is an initial target value for the number of minor steps
-			/// on an axis.  This value is maintained only in the
-			/// <see cref="Default"/> class, and cannot be changed after compilation.
-			/// </summary>
-			public static double TargetMinorYSteps = 5.0;
 			/// <summary> The default alignment of the <see cref="Axis"/> tic labels.
 			/// This value controls whether the inside, center, or outside edges of the text labels are aligned.
 			/// </summary>
@@ -674,245 +525,11 @@ namespace ZedGraph
 			public static bool IsMinorInsideCrossTic = false;
 
 			/// <summary>
-			/// The default logarithmic mode for the <see cref="Axis"/> scale
-			/// (<see cref="Axis.IsLog"/> property). true for a logarithmic scale,
-			/// false for a cartesian scale.
-			/// </summary>
-			public static bool IsLog = false;
-			/// <summary>
-			/// The default reverse mode for the <see cref="Axis"/> scale
-			/// (<see cref="Axis.IsReverse"/> property). true for a reversed scale
-			/// (X decreasing to the left, Y/Y2 decreasing upwards), false otherwise.
-			/// </summary>
-			public static bool IsReverse = false;
-			/// <summary>
 			/// The default setting for the <see cref="Axis"/> scale axis type
 			/// (<see cref="Axis.Type"/> property).  This value is set as per
 			/// the <see cref="AxisType"/> enumeration
 			/// </summary>
 			public static AxisType Type = AxisType.Linear;
-			/// <summary>
-			/// The default setting for the <see cref="Axis"/> scale format string
-			/// (<see cref="Axis.ScaleFormat"/> property).  For numeric values, this value is
-			/// setting according to the <see cref="String.Format(string,object)"/> format strings.  For date
-			/// type values, this value is set as per the <see cref="XDate.ToString()"/> function.
-			/// </summary>
-			//public static string ScaleFormat = "&dd-&mmm-&yy &hh:&nn";
-			public static string ScaleFormat = "g";
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// If the total span of data exceeds this number (in days), then the auto-range
-			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Year"/>
-			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Year"/>.
-			/// This value normally defaults to 1825 days (5 years).
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			public static double RangeYearYear = 1825;  // 5 years
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// If the total span of data exceeds this number (in days), then the auto-range
-			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Year"/>
-			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Month"/>.
-			/// This value normally defaults to 365 days (1 year).
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			public static double RangeYearMonth = 365;  // 1 year
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// If the total span of data exceeds this number (in days), then the auto-range
-			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Month"/>
-			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Month"/>.
-			/// This value normally defaults to 90 days (3 months).
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			public static double RangeMonthMonth = 90;  // 3 months
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// If the total span of data exceeds this number (in days), then the auto-range
-			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Day"/>
-			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Day"/>.
-			/// This value normally defaults to 10 days.
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			public static double RangeDayDay = 10;  // 10 days
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// If the total span of data exceeds this number (in days), then the auto-range
-			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Day"/>
-			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Hour"/>.
-			/// This value normally defaults to 3 days.
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			public static double RangeDayHour = 3;  // 3 days
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// If the total span of data exceeds this number (in days), then the auto-range
-			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Hour"/>
-			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Hour"/>.
-			/// This value normally defaults to 0.4167 days (10 hours).
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			public static double RangeHourHour = 0.4167;  // 10 hours
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// If the total span of data exceeds this number (in days), then the auto-range
-			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Hour"/>
-			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Minute"/>.
-			/// This value normally defaults to 0.125 days (3 hours).
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			public static double RangeHourMinute = 0.125;  // 3 hours
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// If the total span of data exceeds this number (in days), then the auto-range
-			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Minute"/>
-			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Minute"/>.
-			/// This value normally defaults to 6.94e-3 days (10 minutes).
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			public static double RangeMinuteMinute = 6.94e-3;  // 10 Minutes
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// If the total span of data exceeds this number (in days), then the auto-range
-			/// code will select <see cref="Axis.MajorUnit"/> = <see cref="DateUnit.Minute"/>
-			/// and <see cref="Axis.MinorUnit"/> = <see cref="DateUnit.Second"/>.
-			/// This value normally defaults to 2.083e-3 days (3 minutes).
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			public static double RangeMinuteSecond = 2.083e-3;  // 3 Minutes
-			
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// This is the format used for the scale values when auto-ranging code
-			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Year"/>
-			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Year"/> for 
-			/// for <see cref="Axis.MinorUnit"/>.
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatYearYear = "yyyy";
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// This is the format used for the scale values when auto-ranging code
-			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Year"/>
-			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Month"/> for 
-			/// for <see cref="Axis.MinorUnit"/>.
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatYearMonth = "MMM-yyyy";
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// This is the format used for the scale values when auto-ranging code
-			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Month"/>
-			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Month"/> for 
-			/// for <see cref="Axis.MinorUnit"/>.
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatMonthMonth = "MMM-yyyy";
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// This is the format used for the scale values when auto-ranging code
-			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Day"/>
-			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Day"/> for 
-			/// for <see cref="Axis.MinorUnit"/>.
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatDayDay = "d-MMM";
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// This is the format used for the scale values when auto-ranging code
-			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Day"/>
-			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Hour"/> for 
-			/// for <see cref="Axis.MinorUnit"/>.
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatDayHour = "d-MMM HH:mm";
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// This is the format used for the scale values when auto-ranging code
-			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Hour"/>
-			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Hour"/> for 
-			/// for <see cref="Axis.MinorUnit"/>.
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatHourHour = "HH:mm";
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// This is the format used for the scale values when auto-ranging code
-			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Hour"/>
-			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Minute"/> for 
-			/// for <see cref="Axis.MinorUnit"/>.
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatHourMinute = "HH:mm";
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// This is the format used for the scale values when auto-ranging code
-			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Minute"/>
-			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Minute"/> for 
-			/// for <see cref="Axis.MinorUnit"/>.
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatMinuteMinute = "HH:mm";
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// This is the format used for the scale values when auto-ranging code
-			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Minute"/>
-			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Second"/> for 
-			/// for <see cref="Axis.MinorUnit"/>.
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatMinuteSecond = "mm:ss";
-			/// <summary>
-			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
-			/// This values applies only to Date-Time type axes.
-			/// This is the format used for the scale values when auto-ranging code
-			/// selects a <see cref="Axis.ScaleFormat"/> of <see cref="DateUnit.Second"/>
-			/// for <see cref="Axis.MajorUnit"/> and <see cref="DateUnit.Second"/> for 
-			/// for <see cref="Axis.MinorUnit"/>.
-			/// This value is used by the <see cref="Axis.CalcDateStepSize"/> method.
-			/// </summary>
-			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
-			public static string FormatSecondSecond = "mm:ss";
-
-			/*  Prior format assignments using original XDate.ToString()
-					this.scaleFormat = "&yyyy";
-					this.scaleFormat = "&mmm-&yy";
-					this.scaleFormat = "&mmm-&yy";
-					scaleFormat = "&d-&mmm";
-					this.scaleFormat = "&d-&mmm &hh:&nn";
-					scaleFormat = "&hh:&nn";
-					scaleFormat = "&hh:&nn";
-					scaleFormat = "&hh:&nn";
-					scaleFormat = "&nn:&ss";
-					scaleFormat = "&nn:&ss";
-			*/
 
 			/// <summary>
 			/// The default setting for the axis space allocation.  This term, expressed in
@@ -933,28 +550,11 @@ namespace ZedGraph
 		/// </summary>
 		public Axis()
 		{
-			this.min = 0.0;
-			this.max = 1.0;
-			this.step = 0.1;
-			this.minorStep = 0.1;
-			this.cross = 0.0;
-			this.baseTic = PointPair.Missing;
-			this.exponent = 1.0;
+			this.scale = new LinearScale( this );
 
-			this.minGrace = Default.MinGrace;
-			this.maxGrace = Default.MaxGrace;
-		
-			this.minAuto = true;
-			this.maxAuto = true;
-			this.stepAuto = true;
-			this.minorStepAuto = true;
+			this.cross = 0.0;
+
 			this.crossAuto = true;
-			//this.numDecAuto = true;
-			this.scaleMagAuto = true;
-			this.scaleFormatAuto = true;
-		
-			//this.numDec = 0;
-			this.scaleMag = 0;
 
 			this.ticSize = Default.TicSize;
 			this.minorTicSize = Default.MinorTicSize;
@@ -973,7 +573,6 @@ namespace ZedGraph
 			this.isShowTitle = Default.IsShowTitle;
 			this.isShowGrid = Default.IsShowGrid;
 			this.isShowMinorGrid = Default.IsShowMinorGrid;
-			this.isReverse = Default.IsReverse;
 			this.isOmitMag = false;
 
 			this.isTic = Default.IsTic;
@@ -988,22 +587,15 @@ namespace ZedGraph
 			this.isMinorInsideCrossTic = Default.IsMinorInsideCrossTic;
 
 			this.isTicsBetweenLabels = false;
-			this.isUseTenPower = true;
-			this.isPreventLabelOverlap = true;
 			this.isAxisSegmentVisible = Default.IsAxisSegmentVisible;
 			this.isScaleLabelsInside = Default.IsScaleLabelsInside;
 			this.isSkipFirstLabel = false;
 			this.isSkipLastLabel = false;
 		
-			this.type = Default.Type;
 			this.title = "";
 			this.TextLabels = null;
-			this.scaleFormat = null;
 			this.scaleAlign = Default.ScaleAlign;
 			
-			this.majorUnit = DateUnit.Year;
-			this.minorUnit = DateUnit.Year;
-
 			this.ticPenWidth = Default.TicPenWidth;
 			this.color = Default.Color;
 			this.gridColor = Default.GridColor;
@@ -1044,28 +636,12 @@ namespace ZedGraph
 		/// <param name="rhs">The Axis object from which to copy</param>
 		public Axis( Axis rhs )
 		{
-			min = rhs.Min;
-			max = rhs.Max;
-			step = rhs.Step;
-			minorStep = rhs.MinorStep;
 			cross = rhs.cross;
-			baseTic = rhs.baseTic;
-			exponent = rhs.exponent;
 
-			minAuto = rhs.MinAuto;
-			maxAuto = rhs.MaxAuto;
-			stepAuto = rhs.StepAuto;
-			minorStepAuto = rhs.MinorStepAuto;
 			crossAuto = rhs.crossAuto;
 			//numDecAuto = rhs.NumDecAuto;
-			scaleMagAuto = rhs.ScaleMagAuto;
-			scaleFormatAuto = rhs.ScaleFormatAuto;
-
-			minGrace = rhs.MinGrace;
-			maxGrace = rhs.MaxGrace;
 
 			//numDec = rhs.numDec;
-			scaleMag = rhs.scaleMag;
 			isVisible = rhs.IsVisible;
 			isScaleVisible = rhs.isScaleVisible;
 			isShowTitle = rhs.IsShowTitle;
@@ -1086,28 +662,19 @@ namespace ZedGraph
 			isMinorInsideCrossTic = rhs.IsMinorInsideCrossTic;
 
 			isTicsBetweenLabels = rhs.IsTicsBetweenLabels;
-			isUseTenPower = rhs.IsUseTenPower;
-			isPreventLabelOverlap = rhs.isPreventLabelOverlap;
 			isAxisSegmentVisible = rhs.isAxisSegmentVisible;
 			isScaleLabelsInside = rhs.isScaleLabelsInside;
 			isSkipFirstLabel = rhs.isSkipFirstLabel;
 			isSkipLastLabel = rhs.isSkipLastLabel;
 
-			isReverse = rhs.IsReverse;
 			isOmitMag = rhs.IsOmitMag;
 			title = rhs.Title;
-			
-			type = rhs.Type;
-			
-			majorUnit = rhs.MajorUnit;
-			minorUnit = rhs.MinorUnit;
-			
+						
 			if ( rhs.TextLabels != null )
 				TextLabels = (string[]) rhs.TextLabels.Clone();
 			else
 				TextLabels = null;
 
-			scaleFormat = rhs.scaleFormat;
 			scaleAlign = rhs.scaleAlign;
 
 			titleFontSpec = (FontSpec) rhs.TitleFontSpec.Clone();
@@ -1144,7 +711,8 @@ namespace ZedGraph
 		// Schema was changed to 5 with IsCrossTic, IsInsideCrossTic, IsMinorCrossTic, IsMinorInsideCrossTic
 		// Schema was changed to 6 with AxisGap
 		// Schema was changed to 7 with Exponent
-		public const int schema = 7;
+		// Schema was changed to 8 when "Scale" class was added
+		public const int schema = 8;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -1159,30 +727,36 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			min = info.GetDouble( "min" );
-			max = info.GetDouble( "max" );
-			step = info.GetDouble( "step" );
-			minorStep = info.GetDouble( "minorStep" );
+			if ( sch < 8 )
+			{
+				this.scale.Min = info.GetDouble( "min" );
+				this.scale.Max = info.GetDouble( "max" );
+				this.scale.Step = info.GetDouble( "step" );
+				this.scale.MinorStep = info.GetDouble( "minorStep" );
+			}
 			cross = info.GetDouble( "cross" );
-			baseTic = info.GetDouble( "baseTic" );
+			//baseTic = info.GetDouble( "baseTic" );
 
-			minAuto = info.GetBoolean( "minAuto" );
-			maxAuto = info.GetBoolean( "maxAuto" );
-			stepAuto = info.GetBoolean( "stepAuto" );
-			minorStepAuto = info.GetBoolean( "minorStepAuto" );
+			if ( sch < 8 )
+			{
+				this.scale.MinAuto = info.GetBoolean( "minAuto" );
+				this.scale.MaxAuto = info.GetBoolean( "maxAuto" );
+				this.scale.StepAuto = info.GetBoolean( "stepAuto" );
+				this.scale.MinorStepAuto = info.GetBoolean( "minorStepAuto" );
+			}
 			crossAuto = info.GetBoolean( "crossAuto" );
 
 			// numDecAuto is now a dummy variable
 			bool numDecAuto = info.GetBoolean( "numDecAuto" );
-			scaleMagAuto = info.GetBoolean( "scaleMagAuto" );
-			scaleFormatAuto = info.GetBoolean( "scaleFormatAuto" );
+			//scaleMagAuto = info.GetBoolean( "scaleMagAuto" );
+			//scaleFormatAuto = info.GetBoolean( "scaleFormatAuto" );
 			
-			minGrace = info.GetDouble( "minGrace" );
-			maxGrace = info.GetDouble( "maxGrace" );
+			//minGrace = info.GetDouble( "minGrace" );
+			//maxGrace = info.GetDouble( "maxGrace" );
 
 			// numDec is now a dummy variable
 			int numDec = info.GetInt32( "numDec" );
-			scaleMag = info.GetInt32( "scaleMag" );
+			//scaleMag = info.GetInt32( "scaleMag" );
 
 			isVisible = info.GetBoolean( "isVisible" );
 			isShowGrid = info.GetBoolean( "isShowGrid" );
@@ -1196,17 +770,17 @@ namespace ZedGraph
 			isMinorInsideTic = info.GetBoolean( "isMinorInsideTic" );
 			isMinorOppositeTic = info.GetBoolean( "isMinorOppositeTic" );
 			isTicsBetweenLabels = info.GetBoolean( "isTicsBetweenLabels" );
-			isReverse = info.GetBoolean( "isReverse" );
+			//isReverse = info.GetBoolean( "isReverse" );
 			isOmitMag = info.GetBoolean( "isOmitMag" );
-			isUseTenPower = info.GetBoolean( "isUseTenPower" );
-			isPreventLabelOverlap = info.GetBoolean( "isPreventLabelOverlap" );
+			//isUseTenPower = info.GetBoolean( "isUseTenPower" );
+			//isPreventLabelOverlap = info.GetBoolean( "isPreventLabelOverlap" );
 
-			type = (AxisType) info.GetValue( "type", typeof(AxisType) );
+			//type = (AxisType) info.GetValue( "type", typeof(AxisType) );
 			title = info.GetString( "title" );
-			scaleFormat = info.GetString( "scaleFormat" );
+			//scaleFormat = info.GetString( "scaleFormat" );
 
 			scaleAlign = (AlignP) info.GetValue( "scaleAlign", typeof(AlignP) );
-			textLabels = (string[]) info.GetValue( "textLabels", typeof(string[]) );
+			//textLabels = (string[]) info.GetValue( "textLabels", typeof(string[]) );
 
 			titleFontSpec = (FontSpec) info.GetValue( "titleFontSpec", typeof(FontSpec) );
 			scaleFontSpec = (FontSpec) info.GetValue( "scaleFontSpec", typeof(FontSpec) );
@@ -1226,8 +800,8 @@ namespace ZedGraph
 			gridColor = (Color) info.GetValue( "gridColor", typeof(Color) );
 			minorGridColor = (Color) info.GetValue( "minorGridColor", typeof(Color) );
 
-			majorUnit = (DateUnit) info.GetValue( "majorUnit", typeof(DateUnit) );
-			minorUnit = (DateUnit) info.GetValue( "minorUnit", typeof(DateUnit) );
+			//majorUnit = (DateUnit) info.GetValue( "majorUnit", typeof(DateUnit) );
+			//minorUnit = (DateUnit) info.GetValue( "minorUnit", typeof(DateUnit) );
 
 			if ( schema >= 2 )
 				isScaleVisible = info.GetBoolean( "isScaleVisible" );
@@ -1253,8 +827,8 @@ namespace ZedGraph
 			if ( schema >= 6 )
 				axisGap = info.GetSingle( "axisGap" );
 
-			if ( schema >= 7 )
-				exponent = info.GetDouble( "exponent" );
+			//if ( schema >= 7 )
+				//exponent = info.GetDouble( "exponent" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -1265,32 +839,32 @@ namespace ZedGraph
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
-			info.AddValue( "min", min );
-			info.AddValue( "max", max );
-			info.AddValue( "step", step );
-			info.AddValue( "minorStep", minorStep );
+			//info.AddValue( "min", min );
+			//info.AddValue( "max", max );
+			//info.AddValue( "step", step );
+			//info.AddValue( "minorStep", minorStep );
 			info.AddValue( "cross", cross );
-			info.AddValue( "baseTic", baseTic );
+			//info.AddValue( "baseTic", baseTic );
 
-			info.AddValue( "minAuto", minAuto );
-			info.AddValue( "maxAuto", maxAuto );
-			info.AddValue( "stepAuto", stepAuto );
-			info.AddValue( "minorStepAuto", minorStepAuto );
+			//info.AddValue( "minAuto", minAuto );
+			//info.AddValue( "maxAuto", maxAuto );
+			//info.AddValue( "stepAuto", stepAuto );
+			//info.AddValue( "minorStepAuto", minorStepAuto );
 			info.AddValue( "crossAuto", crossAuto );
 
 			// numDecAuto is now a dummy variable
 			bool numDecAuto = true;
 			info.AddValue( "numDecAuto", numDecAuto );
-			info.AddValue( "scaleMagAuto", scaleMagAuto );
-			info.AddValue( "scaleFormatAuto", scaleFormatAuto );
+			//info.AddValue( "scaleMagAuto", scaleMagAuto );
+			//info.AddValue( "scaleFormatAuto", scaleFormatAuto );
 
-			info.AddValue( "minGrace", minGrace );
-			info.AddValue( "maxGrace", maxGrace );
+			//info.AddValue( "minGrace", minGrace );
+			//info.AddValue( "maxGrace", maxGrace );
 
 			// numDec is now a dummy variable
 			int numDec = 0;
 			info.AddValue( "numDec", numDec );
-			info.AddValue( "scaleMag", scaleMag );
+			//info.AddValue( "scaleMag", scaleMag );
 
 			info.AddValue( "isVisible", isVisible );
 			info.AddValue( "isShowGrid", isShowGrid );
@@ -1304,16 +878,16 @@ namespace ZedGraph
 			info.AddValue( "isMinorInsideTic", isMinorInsideTic );
 			info.AddValue( "isMinorOppositeTic", isMinorOppositeTic );
 			info.AddValue( "isTicsBetweenLabels", isTicsBetweenLabels );
-			info.AddValue( "isReverse", isReverse );
+			//info.AddValue( "isReverse", isReverse );
 			info.AddValue( "isOmitMag", isOmitMag );
-			info.AddValue( "isUseTenPower", isUseTenPower );
-			info.AddValue( "isPreventLabelOverlap", isPreventLabelOverlap );
+			//info.AddValue( "isUseTenPower", isUseTenPower );
+			//info.AddValue( "isPreventLabelOverlap", isPreventLabelOverlap );
 
-			info.AddValue( "type", type );
+			//info.AddValue( "type", type );
 			info.AddValue( "title", title );
-			info.AddValue( "scaleFormat", scaleFormat );
+			//info.AddValue( "scaleFormat", scaleFormat );
 			info.AddValue( "scaleAlign", scaleAlign );
-			info.AddValue( "textLabels", textLabels );
+			//info.AddValue( "textLabels", textLabels );
 			info.AddValue( "titleFontSpec", titleFontSpec );
 			info.AddValue( "scaleFontSpec", scaleFontSpec );
 
@@ -1332,8 +906,8 @@ namespace ZedGraph
 			info.AddValue( "gridColor", gridColor );
 			info.AddValue( "minorGridColor", minorGridColor );
 
-			info.AddValue( "majorUnit", majorUnit );
-			info.AddValue( "minorUnit", minorUnit );
+			//info.AddValue( "majorUnit", majorUnit );
+			//info.AddValue( "minorUnit", minorUnit );
 
 			// New for Schema = 2
 			info.AddValue( "isScaleVisible", isScaleVisible );
@@ -1356,11 +930,20 @@ namespace ZedGraph
 			info.AddValue( "axisGap", axisGap );
 
 			// new for schema = 7
-			info.AddValue( "exponent", exponent );
+			//info.AddValue( "exponent", exponent );
 		}
 	#endregion
 
 	#region Scale Properties
+
+		/// <summary>
+		/// Gets the <see cref="Scale" /> instance associated with this <see cref="Axis" />.
+		/// </summary>
+		public Scale Scale
+		{
+			get { return this.scale; }
+		}
+
 		/// <summary>
 		/// Gets or sets the minimum scale value for this axis.
 		/// </summary>
@@ -1381,8 +964,8 @@ namespace ZedGraph
 		/// <seealso cref="MinAuto"/>
 		public double Min
 		{
-			get { return min; }
-			set { min = value; this.minAuto = false; }
+			get { return scale.Min; }
+			set { scale.Min = value;  scale.MinAuto = false; }
 		}
 		/// <summary>
 		/// Gets or sets the maximum scale value for this axis.
@@ -1405,8 +988,8 @@ namespace ZedGraph
 		/// <seealso cref="MaxAuto"/>
 		public double Max
 		{
-			get { return max; }
-			set { max = value; this.maxAuto = false; }
+			get { return scale.Max; }
+			set { scale.Max = value;  scale.MaxAuto = false; }
 		}
 		/// <summary>
 		/// Gets or sets the scale step size for this axis (the increment between
@@ -1425,14 +1008,14 @@ namespace ZedGraph
 		/// <seealso cref="Max"/>
 		/// <seealso cref="MinorStep"/>
 		/// <seealso cref="StepAuto"/>
-		/// <seealso cref="Default.TargetXSteps"/>
-		/// <seealso cref="Default.TargetYSteps"/>
-		/// <seealso cref="Default.ZeroLever"/>
-		/// <seealso cref="Default.MaxTextLabels"/>
+		/// <seealso cref="ZedGraph.Scale.Default.TargetXSteps"/>
+		/// <seealso cref="ZedGraph.Scale.Default.TargetYSteps"/>
+		/// <seealso cref="ZedGraph.Scale.Default.ZeroLever"/>
+		/// <seealso cref="ZedGraph.Scale.Default.MaxTextLabels"/>
 		public double Step
 		{
-			get { return step; }
-			set { step = value; this.stepAuto = false; }
+			get { return scale.Step; }
+			set { scale.Step = value;  scale.StepAuto = false; }
 		}
 		/// <summary>
 		/// Gets or sets the scale exponent value.  This only applies to <see cref="AxisType.Exponent" />. 
@@ -1441,14 +1024,14 @@ namespace ZedGraph
 		/// <seealso cref="Max"/>
 		/// <seealso cref="MinorStep"/>
 		/// <seealso cref="StepAuto"/>
-		/// <seealso cref="Default.TargetXSteps"/>
-		/// <seealso cref="Default.TargetYSteps"/>
-		/// <seealso cref="Default.ZeroLever"/>
-		/// <seealso cref="Default.MaxTextLabels"/>
+		/// <seealso cref="ZedGraph.Scale.Default.TargetXSteps"/>
+		/// <seealso cref="ZedGraph.Scale.Default.TargetYSteps"/>
+		/// <seealso cref="ZedGraph.Scale.Default.ZeroLever"/>
+		/// <seealso cref="ZedGraph.Scale.Default.MaxTextLabels"/>
 		public double Exponent
 		{
-			get { return exponent; }
-			set { exponent = value; }
+			get { return scale.Exponent; }
+			set { scale.Exponent = value; }
 		}
 		/// <summary>
 		/// Gets or sets the type of units used for the major step size (<see cref="Step"/>).
@@ -1466,8 +1049,8 @@ namespace ZedGraph
 		/// <seealso cref="StepAuto"/>
 		public DateUnit MajorUnit
 		{
-			get { return majorUnit; }
-			set { majorUnit = value; }
+			get { return scale.MajorUnit; }
+			set { scale.MajorUnit = value; }
 		}
 		/// <summary>
 		/// Gets or sets the type of units used for the minor step size (<see cref="MinorStep"/>).
@@ -1485,8 +1068,8 @@ namespace ZedGraph
 		/// <seealso cref="MinorStepAuto"/>
 		public DateUnit MinorUnit
 		{
-			get { return minorUnit; }
-			set { minorUnit = value; }
+			get { return scale.MinorUnit; }
+			set { scale.MinorUnit = value; }
 		}
 		/// <summary>
 		/// Gets or sets the scale minor step size for this axis (the spacing between
@@ -1506,8 +1089,8 @@ namespace ZedGraph
 		/// <seealso cref="MinorStepAuto"/>
 		public double MinorStep
 		{
-			get { return minorStep; }
-			set { minorStep = value; this.minorStepAuto = false; }
+			get { return scale.MinorStep; }
+			set { scale.MinorStep = value;  scale.MinorStepAuto = false; }
 		}
 		/// <summary>
 		/// Gets or sets the scale value at which this axis should cross the "other" axis.
@@ -1557,8 +1140,8 @@ namespace ZedGraph
 		/// <seealso cref="Cross"/>
 		public double BaseTic
 		{
-			get { return baseTic; }
-			set { baseTic = value; }
+			get { return this.scale.BaseTic; }
+			set { this.scale.BaseTic = value; }
 		}
 
 		//abstract internal bool IsCrossed( GraphPane pane );
@@ -1575,8 +1158,8 @@ namespace ZedGraph
 		/// <seealso cref="Min"/>
 		public bool MinAuto
 		{
-			get { return minAuto; }
-			set { minAuto = value; }
+			get { return scale.MinAuto; }
+			set { scale.MinAuto = value; }
 		}
 		/// <summary>
 		/// Gets or sets a value that determines whether or not the maximum scale value <see cref="Max"/>
@@ -1590,8 +1173,8 @@ namespace ZedGraph
 		/// <seealso cref="Max"/>
 		public bool MaxAuto
 		{
-			get { return maxAuto; }
-			set { maxAuto = value; }
+			get { return scale.MaxAuto; }
+			set { scale.MaxAuto = value; }
 		}
 		/// <summary>
 		/// Gets or sets a value that determines whether or not the scale step size <see cref="Step"/>
@@ -1605,8 +1188,8 @@ namespace ZedGraph
 		/// <seealso cref="Step"/>
 		public bool StepAuto
 		{
-			get { return stepAuto; }
-			set { stepAuto = value; }
+			get { return scale.StepAuto; }
+			set { scale.StepAuto = value; }
 		}
 		/// <summary>
 		/// Gets or sets a value that determines whether or not the minor scale step size <see cref="MinorStep"/>
@@ -1620,8 +1203,8 @@ namespace ZedGraph
 		/// <seealso cref="MinorStep"/>
 		public bool MinorStepAuto
 		{
-			get { return minorStepAuto; }
-			set { minorStepAuto = value; }
+			get { return scale.MinorStepAuto; }
+			set { scale.MinorStepAuto = value; }
 		}
 		/// <summary>
 		/// Gets or sets a value that determines whether or not the <see cref="Cross"/> value
@@ -1649,12 +1232,12 @@ namespace ZedGraph
 		/// The scale will then be ranged to cover at least 2.8 to 16.0.
 		/// </remarks>
 		/// <seealso cref="Min"/>
-		/// <seealso cref="Default.MinGrace"/>
+		/// <seealso cref="ZedGraph.Scale.Default.MinGrace"/>
 		/// <seealso cref="MaxGrace"/>
 		public double MinGrace
 		{
-			get { return minGrace; }
-			set { minGrace = value; }
+			get { return scale.MinGrace; }
+			set { scale.MinGrace = value; }
 		}
 		/// <summary> Gets or sets the "grace" value applied to the maximum data range.
 		/// </summary>
@@ -1667,12 +1250,12 @@ namespace ZedGraph
 		/// The scale will then be ranged to cover at least 4.0 to 17.2.
 		/// </remarks>
 		/// <seealso cref="Max"/>
-		/// <seealso cref="Default.MaxGrace"/>
+		/// <seealso cref="ZedGraph.Scale.Default.MaxGrace"/>
 		/// <seealso cref="MinGrace"/>
 		public double MaxGrace
 		{
-			get { return maxGrace; }
-			set { maxGrace = value; }
+			get { return scale.MaxGrace; }
+			set { scale.MaxGrace = value; }
 		}
 		
 		/// <summary>
@@ -2305,11 +1888,11 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>true for the X values to decrease to the right or the Y values to
 		/// decrease upwards, false otherwise</value>
-		/// <seealso cref="Default.IsReverse"/>.
+		/// <seealso cref="ZedGraph.Scale.Default.IsReverse"/>.
 		public bool IsReverse
 		{
-			get { return isReverse; }
-			set { isReverse = value; }
+			get { return scale.IsReverse; }
+			set { scale.IsReverse = value; }
 		}
 		/// <summary>
 		/// Gets a property that indicates if this <see cref="Axis"/> is logarithmic (base 10).
@@ -2322,7 +1905,7 @@ namespace ZedGraph
 		/// <seealso cref="AxisType"/>
 		public bool IsLog
 		{
-			get { return type == AxisType.Log; }
+			get { return scale.IsLog; }
 		}
 		/// <summary>
 		/// Gets a property that indicates if this <see cref="Axis"/> is exponential.
@@ -2335,7 +1918,7 @@ namespace ZedGraph
 		/// <seealso cref="AxisType"/>
 		public bool IsExponent
 		{
-			get { return type == AxisType.Exponent; }
+			get { return scale.IsExponent; }
 		}
 		/// <summary>
 		/// Determines if this <see cref="Axis"/> is of the date-time type.
@@ -2349,7 +1932,7 @@ namespace ZedGraph
 		/// <seealso cref="AxisType"/>
 		public bool IsDate
 		{
-			get { return type == AxisType.Date; }
+			get { return scale.IsDate; }
 		}
 		/// <summary>
 		/// Tests if this <see cref="Axis"/> is labeled with user provided text
@@ -2370,7 +1953,7 @@ namespace ZedGraph
 		/// <seealso cref="AxisType"/>
 		public bool IsText
 		{
-			get { return type == AxisType.Text; }
+			get { return scale.IsText; }
 		}
 		/// <summary>
 		/// Tests if this <see cref="Axis"/> is an <see cref="AxisType.Ordinal"/> type axis
@@ -2391,7 +1974,7 @@ namespace ZedGraph
 		/// <seealso cref="AxisType"/>
 		public bool IsOrdinal
 		{
-			get { return type == AxisType.Ordinal; }
+			get { return scale.IsOrdinal; }
 		}
 		/// <summary>
 		/// Gets or sets the <see cref="AxisType"/> for this <see cref="Axis"/>.
@@ -2401,7 +1984,6 @@ namespace ZedGraph
 		/// <see cref="AxisType.Log"/>, <see cref="AxisType.Date"/>,
 		/// or <see cref="AxisType.Text"/>.
 		/// </remarks>
-		/// <seealso cref="Default.Type"/>.
 		/// <seealso cref="IsLog"/>
 		/// <seealso cref="IsText"/>
 		/// <seealso cref="IsOrdinal"/>
@@ -2409,8 +1991,8 @@ namespace ZedGraph
 		/// <seealso cref="IsReverse"/>
 		public AxisType Type
 		{
-			get { return type; }
-			set { type = value; }
+			get { return scale.Type; }
+			set { this.scale = Scale.MakeNewScale( this.scale, value ); }
 		}
 
 		/// <summary>
@@ -2418,16 +2000,8 @@ namespace ZedGraph
 		/// ordinal types in the <see cref="AxisType" /> enumeration.
 		/// </summary>
 		/// <seealso cref="Type" />
-		public bool IsAnyOrdinal
-		{
-			get
-			{
-				return type == AxisType.Ordinal ||
-						type == AxisType.Text ||
-						type == AxisType.LinearAsOrdinal ||
-						type == AxisType.DateAsOrdinal;
-			}
-		}
+		public bool IsAnyOrdinal { get { return this.scale.IsAnyOrdinal; } }
+
 	#endregion
 
 	#region Label Properties
@@ -2495,8 +2069,8 @@ namespace ZedGraph
 		/// show a regular numeric value (e.g., "0.01", "10", "1000")</value>
 		public bool IsUseTenPower
 		{
-			get { return isUseTenPower; }
-			set { isUseTenPower = value; }
+			get { return this.scale.IsUseTenPower; }
+			set { this.scale.IsUseTenPower = value; }
 		}
 		
 		/// <summary>
@@ -2511,8 +2085,8 @@ namespace ZedGraph
 		/// <value> boolean value; true to check for overlap, false otherwise</value>
 		public bool IsPreventLabelOverlap
 		{
-			get { return isPreventLabelOverlap; }
-			set { isPreventLabelOverlap = value; }
+			get { return this.scale.IsPreventLabelOverlap; }
+			set { this.scale.IsPreventLabelOverlap = value; }
 		}
 		
 		/// <summary>
@@ -2524,8 +2098,8 @@ namespace ZedGraph
 		/// </remarks>
 		public string[] TextLabels
 		{
-			get { return textLabels; }
-			set { textLabels = value; }
+			get { return scale.TextLabels; }
+			set { scale.TextLabels = value; }
 		}
 
 		/// <summary>
@@ -2544,8 +2118,8 @@ namespace ZedGraph
 		// /// <seealso cref="NumDec"/>
 		public bool ScaleFormatAuto
 		{
-			get { return scaleFormatAuto; }
-			set { scaleFormatAuto = value; }
+			get { return this.scale.ScaleFormatAuto; }
+			set { this.scale.ScaleFormatAuto = value; }
 		}
 		/// <summary>
 		/// The format of the <see cref="Axis"/> tic labels.
@@ -2562,8 +2136,8 @@ namespace ZedGraph
 		// /// <seealso cref="NumDec"/>
 		public string ScaleFormat
 		{
-			get { return scaleFormat; }
-			set { scaleFormat = value; this.ScaleFormatAuto = false; }
+			get { return this.scale.ScaleFormat; }
+			set { this.scale.ScaleFormat = value; this.scale.ScaleFormatAuto = false; }
 		}
 		/// <summary> Controls the alignment of the <see cref="Axis"/> tic labels.
 		/// </summary>
@@ -2640,8 +2214,8 @@ namespace ZedGraph
 		// /// <seealso cref="NumDec"/>
 		public int ScaleMag
 		{
-			get { return scaleMag; }
-			set { scaleMag = value; this.scaleMagAuto = false; }
+			get { return this.scale.ScaleMag; }
+			set { this.scale.ScaleMag = value; this.scale.ScaleMagAuto = false; }
 		}
 		/// <summary>
 		/// Determines whether the <see cref="ScaleMag"/> value will be set
@@ -2658,8 +2232,8 @@ namespace ZedGraph
 		/// <seealso cref="ScaleMag"/>
 		public bool ScaleMagAuto
 		{
-			get { return scaleMagAuto; }
-			set { scaleMagAuto = value; }
+			get { return this.scale.ScaleMagAuto; }
+			set { this.scale.ScaleMagAuto = value; }
 		}
 		/// <summary>
 		/// Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
@@ -2783,14 +2357,14 @@ namespace ZedGraph
 		// /// <seealso cref="NumDecAuto"/>
 		public void ResetAutoScale( GraphPane pane, Graphics g )
 		{
-			this.minAuto = true;
-			this.maxAuto = true;
-			this.stepAuto = true;
-			this.minorStepAuto = true;
+			this.scale.MinAuto = true;
+			this.scale.MaxAuto = true;
+			this.scale.StepAuto = true;
+			this.scale.MinorStepAuto = true;
 			this.crossAuto = true;
-			this.scaleMagAuto = true;
+			this.scale.ScaleMagAuto = true;
 			//this.numDecAuto = true;
-			this.scaleFormatAuto = true;
+			this.scale.ScaleFormatAuto = true;
 			pane.AxisChange( g );
 		}
 
@@ -2824,7 +2398,7 @@ namespace ZedGraph
 		{
 			Matrix saveMatrix = g.Transform;
 
-			SetupScaleData( pane );
+			this.scale.SetupScaleData( pane, this );
 
 			SetTransformMatrix( g, pane, scaleFactor );
 
@@ -2834,58 +2408,7 @@ namespace ZedGraph
 
 			g.Transform = saveMatrix;
 		}
-		
-		/// <summary>
-		/// Setup some temporary transform values in preparation for rendering the
-		/// <see cref="Axis"/>.
-		/// </summary>
-		/// <remarks>
-		/// This method is typically called by the parent <see cref="GraphPane"/>
-		/// object as part of the <see cref="GraphPane.Draw"/> method.  It is also
-		/// called by <see cref="GraphPane.GeneralTransform"/> and
-		/// <see cref="GraphPane.ReverseTransform( PointF, out double, out double, out double )"/>
-		/// methods to setup for coordinate transformations.
-		/// </remarks>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		public void SetupScaleData( GraphPane pane )
-		{
-			// save the axisRect data for transforming scale values to pixels
-			if ( this is XAxis )
-			{
-				this.minPix = pane.AxisRect.Left;
-				this.maxPix = pane.AxisRect.Right;
-			}
-			else
-			{
-				this.minPix = pane.AxisRect.Top;
-				this.maxPix = pane.AxisRect.Bottom;
-			}
 
-			if ( this.type == AxisType.Log )
-			{
-				this.minScale = SafeLog( this.min );
-				this.maxScale = SafeLog( this.max );
-			}
-			else if ( this.type == AxisType.Exponent && this.exponent > 0 )
-			{
-				this.minScale = Math.Pow( this.min, exponent );
-				this.maxScale = Math.Pow( this.max, exponent );
-			}
-			else if ( this.type == AxisType.Exponent && this.exponent < 0 )
-			{
-				this.minScale = Math.Pow( this.max, exponent );
-				this.maxScale = Math.Pow( this.min, exponent );
-			}
-			else
-			{
-				this.minScale = this.min;
-				this.maxScale = this.max;
-			}
-		}
-		
 		/// <summary>
 		/// This method will set the <see cref="MinSpace"/> property for this <see cref="Axis"/>
 		/// using the currently required space multiplied by a fraction (<paramref>bufferFraction</paramref>).
@@ -2985,8 +2508,8 @@ namespace ZedGraph
 			else
 			{
 				Axis crossAxis = GetCrossAxis( pane );
-				if ( ( ( this is XAxis || this is YAxis ) && !crossAxis.isReverse ) ||
-					( this is Y2Axis && crossAxis.isReverse ) )
+				if ( ( ( this is XAxis || this is YAxis ) && !crossAxis.scale.IsReverse ) ||
+					( this is Y2Axis && crossAxis.scale.IsReverse ) )
 				{
 					if ( this.cross <= crossAxis.Min )
 						return false;
@@ -3021,14 +2544,14 @@ namespace ZedGraph
             double effCross = EffectiveCrossValue( pane );
             Axis crossAxis = GetCrossAxis( pane );
 			if ( crossAxis.IsLog )
-				effCross = SafeLog( effCross );
+				effCross = Scale.SafeLog( effCross );
 
-            double max = crossAxis.maxScale;
-            double min = crossAxis.minScale;
+			double max = crossAxis.scale.maxScale;
+			double min = crossAxis.scale.minScale;
             float frac;
 
-            if ( ( ( this is XAxis || this is YAxis ) && isScaleLabelsInside == crossAxis.isReverse ) ||
-                 ( this is Y2Axis && isScaleLabelsInside != crossAxis.isReverse ) )
+			if ( ( ( this is XAxis || this is YAxis ) && isScaleLabelsInside == crossAxis.scale.IsReverse ) ||
+				 ( this is Y2Axis && isScaleLabelsInside != crossAxis.scale.IsReverse ) )
                 frac = (float) ( ( effCross - min ) / ( max - min ) );
             else
                 frac = (float) ( ( max - effCross ) / ( max - min ) );
@@ -3040,76 +2563,6 @@ namespace ZedGraph
 
             return frac;
         }
-
-
-		/// <summary>
-		/// Get the maximum width of the scale value text that is required to label this
-		/// <see cref="Axis"/>.
-		/// The results of this method are used to determine how much space is required for
-		/// the axis labels.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <param name="applyAngle">
-		/// true to get the bounding box of the text using the <see cref="FontSpec.Angle" />,
-		/// false to just get the bounding box without rotation
-		/// </param>
-		/// <returns>the maximum width of the text in pixel units</returns>
-		protected SizeF GetScaleMaxSpace( Graphics g, GraphPane pane, float scaleFactor,
-							bool applyAngle )
-		{
-			string tmpStr;
-			double	dVal,
-				scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
-			int		i;
-
-			float saveAngle = this.scaleFontSpec.Angle;
-			if ( !applyAngle )
-				this.scaleFontSpec.Angle = 0;
-
-			int nTics = CalcNumTics();
-			
-			double startVal = CalcBaseTic();
-
-			SizeF maxSpace = new SizeF( 0, 0 );
-
-			// Repeat for each tic
-			for ( i=0; i<nTics; i++)
-			{
-				dVal = CalcMajorTicValue( startVal, i );
-
-				// draw the label
-				MakeLabel( pane, i, dVal, out tmpStr );
-
-				SizeF sizeF;
-				if ( this.IsLog && this.isUseTenPower )
-					sizeF = this.ScaleFontSpec.BoundingBoxTenPower( g, tmpStr,
-						scaleFactor );
-				else
-					sizeF = this.ScaleFontSpec.BoundingBox( g, tmpStr,
-						scaleFactor );
-
-				if ( sizeF.Height > maxSpace.Height )
-					maxSpace.Height = sizeF.Height;
-				if ( sizeF.Width > maxSpace.Width )
-					maxSpace.Width = sizeF.Width;
-			}
-
-			this.scaleFontSpec.Angle = saveAngle;
-			return maxSpace;
-		}
 
 		/// <summary>
 		/// Calculate the space required (pixels) for this <see cref="Axis"/> object.
@@ -3189,7 +2642,7 @@ namespace ZedGraph
 				if ( this.isScaleVisible )
 				{
 					// account for the tic labels + 1/2 tic gap between the tic and the label
-					tmpSpace += this.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height +
+					tmpSpace += this.scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height +
 							ticSize * 0.5F;
 				}
 		
@@ -3218,7 +2671,7 @@ namespace ZedGraph
 					pane.XAxis.IsVisible && pane.XAxis.IsScaleVisible ) )
 			{
 				// half the width of the widest item, plus a gap of 1/2 the charheight
-				float tmp = pane.XAxis.GetScaleMaxSpace( g, pane, scaleFactor, true ).Width / 2.0F;
+				float tmp = pane.XAxis.scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Width / 2.0F;
 								//+ charHeight / 2.0F;
 				//if ( tmp > tmpSpace )
 				//	tmpSpace = tmp;
@@ -3293,22 +2746,22 @@ namespace ZedGraph
 			}
 
 			// sanity check
-			if ( this.min >= this.max )
+			if ( this.scale.Min >= this.scale.Max )
 				return;
 
 			// if the step size is outrageous, then quit
 			// (step size not used for log scales)
 			if ( !this.IsLog  )
 			{
-				if ( this.step <= 0 || this.minorStep <= 0 )
+				if ( this.scale.Step <= 0 || this.scale.MinorStep <= 0 )
 					return;
 
-				double tMajor = ( this.max - this.min ) / this.step,
-						tMinor = ( this.max - this.min ) / this.minorStep;
+				double tMajor = ( this.scale.Max - this.scale.Min ) / this.scale.Step,
+						tMinor = ( this.scale.Max - this.scale.Min ) / this.scale.MinorStep;
 				if ( IsDate )
 				{
-					tMajor /= GetUnitMultiple( majorUnit );
-					tMinor /= GetUnitMultiple( minorUnit );
+					tMajor /= GetUnitMultiple( scale.MajorUnit );
+					tMinor /= GetUnitMultiple( scale.MinorUnit );
 				}
 				if ( tMajor > 1000 ||
 					( ( this.isMinorTic || this.isMinorInsideTic || this.isMinorOppositeTic )
@@ -3317,10 +2770,10 @@ namespace ZedGraph
 			}
 
 			// calculate the total number of major tics required
-			int nTics = CalcNumTics();
+			int nTics = this.scale.CalcNumTics();
 
 			// get the first major tic value
-			double baseVal = CalcBaseTic();
+			double baseVal = this.scale.CalcBaseTic();
 
 			if ( this.IsVisible )
 			{
@@ -3371,9 +2824,9 @@ namespace ZedGraph
 					g.DrawLine( pen, 0.0F, shift, rightPix, shift );
 
 				// Draw a zero-value line if needed
-				if ( this.isZeroLine && this.min < 0.0 && this.max > 0.0 )
+				if ( this.isZeroLine && this.scale.Min < 0.0 && this.scale.Max > 0.0 )
 				{
-					float zeroPix = LocalTransform( 0.0 );
+					float zeroPix = this.scale.LocalTransform( 0.0 );
 					g.DrawLine( pen, zeroPix, 0.0F, zeroPix, topPix );
 				}
 
@@ -3393,7 +2846,7 @@ namespace ZedGraph
 			if ( this.isVisible && this.isZeroLine &&
 					this.Min < 0.0 && this.Max > 0.0 )
 			{
-				float zeroPix = this.Transform( 0.0 );
+				float zeroPix = this.scale.Transform( 0.0 );
 
 				Pen zeroPen = new Pen( this.Color,
 						pane.ScaledPenWidth( this.TicPenWidth, scaleFactor ) );
@@ -3428,76 +2881,6 @@ namespace ZedGraph
 				case DateUnit.Second:
 					return 1.0 / XDate.SecondsPerDay;
 			}
-		}
-
-		/// <summary>
-		/// Internal routine to determine the ordinals of the first and last major axis label.
-		/// </summary>
-		/// <returns>
-		/// This is the total number of major tics for this axis.
-		/// </returns>
-		private int CalcNumTics()
-		{
-			int nTics = 1;
-			
-			if ( this.IsText ) // text labels (ordinal scale)
-			{
-				// If no array of labels is available, just assume 10 labels so we don't blow up.
-				if ( this.TextLabels == null )
-					nTics = 10;
-				else
-					nTics = this.TextLabels.Length;
-			}
-			else if ( this.IsDate )  // Date-Time scale
-			{
-				int year1, year2, month1, month2, day1, day2, hour1, hour2, minute1, minute2, second1, second2;
-
-				XDate.XLDateToCalendarDate( this.min, out year1, out month1, out day1,
-											out hour1, out minute1, out second1 );
-				XDate.XLDateToCalendarDate( this.max, out year2, out month2, out day2,
-											out hour2, out minute2, out second2 );
-				
-				switch ( this.majorUnit )
-				{
-					case DateUnit.Year:
-					default:
-						nTics = (int) ( ( year2 - year1 ) / this.step + 1.0 );
-						break;
-					case DateUnit.Month:
-						nTics = (int) ( ( month2 - month1 + 12.0 * (year2 - year1) ) / this.step + 1.0 );
-						break;
-					case DateUnit.Day:
-						nTics = (int) ( ( this.max - this.min ) / this.step + 1.0 );
-						break;
-					case DateUnit.Hour:
-						nTics = (int) ( ( this.max - this.min ) * XDate.HoursPerDay + 1.0 );
-						break;
-					case DateUnit.Minute:
-						nTics = (int) ( ( this.max - this.min ) * XDate.MinutesPerDay + 1.0 );
-						break;
-					case DateUnit.Second:
-						nTics = (int) ( ( this.max - this.min ) * XDate.SecondsPerDay + 1.0 );
-						break;
-				}
-			}
-			else if ( this.IsLog )  // log scale
-			{
-				//iStart = (int) ( Math.Ceiling( SafeLog( this.min ) - 1.0e-12 ) );
-				//iEnd = (int) ( Math.Floor( SafeLog( this.max ) + 1.0e-12 ) );
-				nTics = (int) ( Math.Floor( SafeLog( this.max ) + 1.0e-12 ) ) -
-						(int) ( Math.Ceiling( SafeLog( this.min ) - 1.0e-12 ) ) + 1;
-			}
-			else  // regular linear or ordinal scale
-			{
-				nTics = (int) (( this.max - this.min ) / this.step + 0.01) + 1;
-			}
-			
-			if ( nTics < 1 )
-				nTics = 1;
-			else if ( nTics > 500 )
-				nTics = 500;
-
-			return nTics;
 		}
 
 		/// <summary>
@@ -3539,7 +2922,7 @@ namespace ZedGraph
 			float	pixVal, pixVal2;
 			string	tmpStr;
 			float	scaledTic = this.ScaledTic( scaleFactor );
-			double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
+			double scaleMult = Math.Pow( (double) 10.0, this.scale.ScaleMag );
             Pen pen = new Pen(this.color, pane.ScaledPenWidth(ticPenWidth, scaleFactor));
             Pen dottedPen = new Pen(this.gridColor, pane.ScaledPenWidth(gridPenWidth, scaleFactor));
 
@@ -3556,7 +2939,7 @@ namespace ZedGraph
 
 			// get the Y position of the center of the axis labels
 			// (the axis itself is referenced at zero)
-			SizeF maxLabelSize = this.GetScaleMaxSpace( g, pane, scaleFactor, true );
+			SizeF maxLabelSize = this.scale.GetScaleMaxSpace( g, pane, scaleFactor, true );
 			float maxSpace = maxLabelSize.Height;
 			
 			float textTop, textCenter;
@@ -3565,9 +2948,9 @@ namespace ZedGraph
 			else
 				textTop = scaledTic * 0.5F;
 
-			double rangeTol = ( this.maxScale - this.minScale ) * 0.00001;
+			double rangeTol = ( this.scale.maxScale - this.scale.minScale ) * 0.001;
 
-			int firstTic = (int) ( ( this.minScale - baseVal ) / this.step + 0.99 );
+			int firstTic = (int) ( ( this.scale.minScale - baseVal ) / this.scale.Step + 0.99 );
 			if ( firstTic < 0 )
 				firstTic = 0;
 
@@ -3577,30 +2960,30 @@ namespace ZedGraph
 			// loop for each major tic
 			for ( int i=firstTic; i<nTics+firstTic; i++ )
 			{
-				dVal = CalcMajorTicValue( baseVal, i );
+				dVal = this.scale.CalcMajorTicValue( baseVal, i );
 				
 				// If we're before the start of the scale, just go to the next tic
-				if ( dVal < this.minScale )
+				if ( dVal < this.scale.minScale )
 					continue;
 				// if we've already past the end of the scale, then we're done
-				if ( dVal > this.maxScale + rangeTol )
+				if ( dVal > this.scale.maxScale + rangeTol )
 					break;
 
 				// convert the value to a pixel position
-				pixVal = this.LocalTransform( dVal );
+				pixVal = this.scale.LocalTransform( dVal );
 
 				// see if the tic marks will be draw between the labels instead of at the labels
 				// (this applies only to AxisType.Text
-				if ( this.isTicsBetweenLabels && this.type == AxisType.Text )
+				if ( this.isTicsBetweenLabels && this.IsText )
 				{
 					// We need one extra tic in order to draw the tics between labels
 					// so provide an exception here
 					if ( i == 0 )
 					{
-						dVal2 = CalcMajorTicValue( baseVal, -0.5 );
-						if ( dVal2 >= this.minScale )
+						dVal2 = this.scale.CalcMajorTicValue( baseVal, -0.5 );
+						if ( dVal2 >= this.scale.minScale )
 						{
-							pixVal2 = this.LocalTransform( dVal2 );
+							pixVal2 = this.scale.LocalTransform( dVal2 );
 							DrawATic( g, pane, pen, pixVal2, topPix, shift, scaledTic );
 							// draw the grid
 							if ( this.isVisible && this.isShowGrid )
@@ -3608,10 +2991,10 @@ namespace ZedGraph
 						}
 					}
 
-					dVal2 = CalcMajorTicValue( baseVal, (double) i + 0.5 );
-					if ( dVal2 > this.maxScale )
+					dVal2 = this.scale.CalcMajorTicValue( baseVal, (double) i + 0.5 );
+					if ( dVal2 > this.scale.maxScale )
 						break;
-					pixVal2 = this.LocalTransform( dVal2 );
+					pixVal2 = this.scale.LocalTransform( dVal2 );
 				}
 				else
 					pixVal2 = pixVal;
@@ -3632,29 +3015,29 @@ namespace ZedGraph
 					isOverlapZone = true;
 				*/
 
-				bool isMaxValueAtMaxPix = ( ( this is XAxis || this is Y2Axis ) && ! this.isReverse ) ||
-											( this is Y2Axis && this.isReverse );
+				bool isMaxValueAtMaxPix = ( ( this is XAxis || this is Y2Axis ) && !this.scale.IsReverse ) ||
+											( this is Y2Axis && this.scale.IsReverse );
 
 				bool isSkipZone = ( (	( this.isSkipFirstLabel && isMaxValueAtMaxPix ) ||
 										( isSkipLastLabel && !isMaxValueAtMaxPix ) ) &&
 											pixVal < edgeTolerance ) ||
 									( (	( this.isSkipLastLabel && isMaxValueAtMaxPix ) ||
 										( isSkipFirstLabel && !isMaxValueAtMaxPix ) ) &&
-											pixVal > this.maxPix - this.minPix - edgeTolerance );
+											pixVal > this.scale.MaxPix - this.scale.MinPix - edgeTolerance );
 
 				if ( this.isVisible && this.isScaleVisible && !isSkipZone )
 				{
 					// For exponential scales, just skip any label that would overlap with the previous one
 					// This is because exponential scales have varying label spacing
-					if ( this.isPreventLabelOverlap &&
+					if ( this.scale.IsPreventLabelOverlap &&
 							Math.Abs( pixVal - lastPixVal ) < maxLabelSize.Width )
 						continue;
 					
 					// draw the label
-					MakeLabel( pane, i, dVal, out tmpStr );
+					this.scale.MakeLabel( pane, i, dVal, out tmpStr );
 					
 					float height;
-					if ( this.IsLog && this.isUseTenPower )
+					if ( this.IsLog && this.scale.IsUseTenPower )
 						height = ScaleFontSpec.BoundingBoxTenPower( g, tmpStr, scaleFactor ).Height;
 					else
 						height = ScaleFontSpec.BoundingBox( g, tmpStr, scaleFactor ).Height;
@@ -3672,7 +3055,7 @@ namespace ZedGraph
                         textCenter = shift + textCenter;
 
 
-					if ( this.IsLog && this.isUseTenPower )
+					if ( this.IsLog && this.scale.IsUseTenPower )
 						this.ScaleFontSpec.DrawTenPower( g, pane, tmpStr,
 							pixVal, textCenter,
 							AlignH.Center, AlignV.Center,
@@ -3736,260 +3119,6 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Determine the value for the first major tic.
-		/// </summary>
-		/// <remarks>
-		/// This is done by finding the first possible value that is an integral multiple of
-		/// the step size, taking into account the date/time units if appropriate.
-		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
-		/// and other axis format settings.
-		/// </remarks>
-		/// <returns>
-		/// First major tic value (floating point double).
-		/// </returns>
-		private double CalcBaseTic()
-		{
-			if ( this.baseTic != PointPair.Missing )
-				return this.baseTic;
-			else if ( this.IsDate )
-			{
-				int year, month, day, hour, minute, second;
-				XDate.XLDateToCalendarDate( this.min, out year, out month, out day, out hour, out minute,
-											out second );
-				switch ( this.majorUnit )
-				{
-					case DateUnit.Year:
-					default:
-						month = 1; day = 1; hour = 0; minute = 0; second = 0;
-						break;
-					case DateUnit.Month:
-						day = 1; hour = 0; minute = 0; second = 0;
-						break;
-					case DateUnit.Day:
-						hour = 0; minute = 0; second = 0;
-						break;
-					case DateUnit.Hour:
-						minute = 0; second = 0;
-						break;
-					case DateUnit.Minute:
-						second = 0;
-						break;
-					case DateUnit.Second:
-						break;
-						
-				}
-				
-				double xlDate = XDate.CalendarDateToXLDate( year, month, day, hour, minute, second );
-				if ( xlDate < this.min )
-				{
-					switch ( this.majorUnit )
-					{
-						case DateUnit.Year:
-						default:
-							year++;
-							break;
-						case DateUnit.Month:
-							month++;
-							break;
-						case DateUnit.Day:
-							day++;
-							break;
-						case DateUnit.Hour:
-							hour++;
-							break;
-						case DateUnit.Minute:
-							minute++;
-							break;
-						case DateUnit.Second:
-							second++;
-							break;
-							
-					}
-					
-					xlDate = XDate.CalendarDateToXLDate( year, month, day, hour, minute, second );
-				}
-				
-				return xlDate;
-			}
-			else if ( this.IsLog )
-			{
-				// go to the nearest even multiple of the step size
-				return Math.Ceiling( SafeLog( this.min ) - 0.00000001 );
-			}
-			else if ( this.IsText )
-			{
-				return 1.0;
-			}
-			else
-			{
-				// go to the nearest even multiple of the step size
-				return Math.Ceiling( (double) this.min / (double) this.step - 0.00000001 )
-														* (double) this.step;
-			}
-
-		}
-		
-		/// <summary>
-		/// Determine the value for any major tic.
-		/// </summary>
-		/// <remarks>
-		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
-		/// and other axis format settings.
-		/// </remarks>
-		/// <param name="baseVal">
-		/// The value of the first major tic (floating point double)
-		/// </param>
-		/// <param name="tic">
-		/// The major tic number (0 = first major tic).  For log scales, this is the actual power of 10.
-		/// </param>
-		/// <returns>
-		/// The specified major tic value (floating point double).
-		/// </returns>
-		private double CalcMajorTicValue( double baseVal, double tic )
-		{
-			if ( this.IsDate ) // date scale
-			{
-				XDate xDate = new XDate( baseVal );
-				
-				switch ( this.majorUnit )
-				{
-					case DateUnit.Year:
-					default:
-						xDate.AddYears( tic * this.step );
-						break;
-					case DateUnit.Month:
-						xDate.AddMonths( tic * this.step );
-						break;
-					case DateUnit.Day:
-						xDate.AddDays( tic * this.step );
-						break;
-					case DateUnit.Hour:
-						xDate.AddHours( tic * this.step );
-						break;
-					case DateUnit.Minute:
-						xDate.AddMinutes( tic * this.step );
-						break;
-					case DateUnit.Second:
-						xDate.AddSeconds( tic * this.step );
-						break;	
-				}
-				
-				return xDate.XLDate;
-			}
-			else if ( this.IsLog ) // log scale
-			{
-				return baseVal + (double) tic;
-			}
-			else if ( this.IsExponent && this.exponent > 0.0 )
-			{
-				//return baseVal + Math.Pow ( (double) this.step * tic, exp );
-				//baseVal is got from CalBase..., and it is exp..
-				return Math.Pow( Math.Pow( baseVal, 1 / exponent ) + this.step * tic, exponent );
-			}
-			else if ( this.IsExponent && this.exponent < 0.0 )
-			{
-				//baseVal is got from CalBase..., and it is exp..
-				return Math.Pow( Math.Pow( baseVal, 1 / exponent ) + this.step * tic, exponent );
-			}
-			else // regular linear scale
-			{
-				return baseVal + (double) this.step * tic;
-			}
-		}
-		
-		/// <summary>
-		/// Make a value label for the axis at the specified ordinal position.
-		/// </summary>
-		/// <remarks>
-		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
-		/// and other axis format settings.
-		/// </remarks>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="index">
-		/// The zero-based, ordinal index of the label to be generated.  For example, a value of 2 would
-		/// cause the third value label on the axis to be generated.
-		/// </param>
-		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="IsLog"/>)
-		/// and text (<see cref="IsText"/>) type axes.
-		/// </param>
-		/// <param name="label">
-		/// Output only.  The resulting value label.
-		/// </param>
-		private void MakeLabel( GraphPane pane, int index, double dVal, out string label )
-		{
-			if ( this.scaleFormat == null )
-				this.scaleFormat = Default.ScaleFormat;
-
-			// create the label
-			if ( this.IsText )
-			{
-				index *= (int) this.step;
-				if ( this.TextLabels == null || index < 0 || index >= TextLabels.Length )
-					label = "";
-				else
-					label = TextLabels[index];
-			}
-			else if ( this.IsDate )
-			{
-				label = XDate.ToString( dVal, this.scaleFormat );
-			}
-			else if ( this.IsLog && this.isUseTenPower )
-			{
-				label = string.Format( "{0:F0}", dVal );
-			}
-			else if ( this.IsLog )
-			{
-				label = Math.Pow( 10.0, dVal ).ToString( this.scaleFormat );
-			}
-			else if ( this.IsExponent )
-			{
-				double scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
-				double val = Math.Pow( dVal, 1 / exponent ) / scaleMult;
-				label = val.ToString( this.scaleFormat );
-			}
-			else if ( this.Type == AxisType.LinearAsOrdinal )
-			{
-				double val;
-
-				int tmpIndex = (int) dVal - 1;
-
-				if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > tmpIndex )
-				{
-					val = pane.CurveList[0].Points[tmpIndex].X;
-					double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
-					label = (val / scaleMult).ToString( this.scaleFormat );
-				}
-				else
-					label = string.Empty;
-			}
-			else if ( this.Type == AxisType.DateAsOrdinal )
-			{
-				double val;
-
-				int tmpIndex = (int) dVal - 1;
-
-				if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > tmpIndex )
-				{
-					val = pane.CurveList[0].Points[tmpIndex].X;
-					label = XDate.ToString( val, this.scaleFormat );
-				}
-				else
-					label = string.Empty;
-
-			}
-			else // linear or ordinal
-			{
-				double	scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
-
-				label = (dVal / scaleMult).ToString( this.scaleFormat );
-			}
-		}
-
-		/// <summary>
 		/// Draw the minor tic marks as required for this <see cref="Axis"/>.
 		/// </summary>
 		/// <param name="g">
@@ -4025,8 +3154,8 @@ namespace ZedGraph
 					this.isMinorCrossTic || this.isMinorInsideCrossTic || this.isShowMinorGrid )
 					&& this.isVisible )
 			{
-				double tMajor = this.step * ( IsDate ? GetUnitMultiple( majorUnit ) : 1.0 ),
-					tMinor = this.minorStep * ( IsDate ? GetUnitMultiple( minorUnit ) : 1.0 );
+				double tMajor = this.scale.Step * ( IsDate ? GetUnitMultiple( scale.MajorUnit ) : 1.0 ),
+					tMinor = this.scale.MinorStep * ( IsDate ? GetUnitMultiple( scale.MinorUnit ) : 1.0 );
 
 				if ( this.IsLog || tMinor < tMajor )
 				{
@@ -4036,13 +3165,13 @@ namespace ZedGraph
 					// the full scale.  This means that if the minor step size is not
 					// an even division of the major step size, the minor tics won't
 					// line up with all of the scale labels and major tics.
-					double	first = this.min,
-							last = this.max;
+					double first = this.scale.Min,
+							last = this.scale.Max;
 					
 					if ( this.IsLog )
 					{
-						first = SafeLog( this.min );
-						last = SafeLog( this.max );
+						first = Scale.SafeLog( this.scale.Min );
+						last = Scale.SafeLog( this.scale.Max );
 					}
 					
 					double	dVal = first;
@@ -4057,25 +3186,25 @@ namespace ZedGraph
 					pattern[1] = this.minorGridDashOff;
 					minorGridPen.DashPattern = pattern;
 					
-					int iTic = CalcMinorStart( baseVal );
+					int iTic = this.scale.CalcMinorStart( baseVal );
 					int majorTic = 0;
-					double majorVal = CalcMajorTicValue( baseVal, majorTic );
+					double majorVal = this.scale.CalcMajorTicValue( baseVal, majorTic );
 
 					// Draw the minor tic marks
 					while ( dVal < last && iTic < 5000 )
 					{
 						// Calculate the scale value for the current tic
-						dVal = CalcMinorTicValue( baseVal, iTic );
+						dVal = this.scale.CalcMinorTicValue( baseVal, iTic );
 						// Maintain a value for the current major tic
 						if ( dVal > majorVal )
-							majorVal = CalcMajorTicValue( baseVal, ++majorTic );
+							majorVal = this.scale.CalcMajorTicValue( baseVal, ++majorTic );
 						
 						// Make sure that the current value does not match up with a major tic
 						if ( ( ( Math.Abs(dVal) < 1e-20 && Math.Abs( dVal - majorVal ) > 1e-20 ) ||
 							( Math.Abs(dVal) > 1e-20 && Math.Abs( (dVal - majorVal) / dVal ) > 1e-10 ) ) &&
 							( dVal >= first && dVal <= last ) )
 						{
-							pixVal = this.LocalTransform( dVal );
+							pixVal = this.scale.LocalTransform( dVal );
 
 							// draw the minor grid
 							if ( this.isShowMinorGrid )
@@ -4105,124 +3234,6 @@ namespace ZedGraph
 						iTic++;
 					}
 				}
-			}
-		}
-
-		/// <summary>
-		/// Determine the value for any minor tic.
-		/// </summary>
-		/// <remarks>
-		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
-		/// and other axis format settings.
-		/// </remarks>
-		/// <param name="baseVal">
-		/// The value of the first major tic (floating point double).  This tic value is the base
-		/// reference for all tics (including minor ones).
-		/// </param>
-		/// <param name="iTic">
-		/// The major tic number (0 = first major tic).  For log scales, this is the actual power of 10.
-		/// </param>
-		/// <returns>
-		/// The specified minor tic value (floating point double).
-		/// </returns>
-		private double CalcMinorTicValue( double baseVal, int iTic )
-		{
-			double[] dLogVal = { 0, 0.301029995663981, 0.477121254719662, 0.602059991327962,
-									0.698970004336019, 0.778151250383644, 0.845098040014257,
-									0.903089986991944, 0.954242509439325, 1 };
-
-
-			if ( this.IsDate ) // date scale
-			{
-				XDate xDate= new XDate( baseVal );
-				
-				switch ( this.minorUnit )
-				{
-					case DateUnit.Year:
-					default:
-						xDate.AddYears( (double) iTic * this.minorStep );
-						break;
-					case DateUnit.Month:
-						xDate.AddMonths( (double) iTic * this.minorStep );
-						break;
-					case DateUnit.Day:
-						xDate.AddDays( (double) iTic * this.minorStep );
-						break;
-					case DateUnit.Hour:
-						xDate.AddHours( (double) iTic * this.minorStep );
-						break;
-					case DateUnit.Minute:
-						xDate.AddMinutes( (double) iTic * this.minorStep );
-						break;
-					case DateUnit.Second:
-						xDate.AddSeconds( (double) iTic * this.minorStep );
-						break;	
-				}
-				
-				return xDate.XLDate;
-			}
-			else if ( this.IsLog ) // log scale
-			{
-				return baseVal + Math.Floor( (double) iTic / 9.0 ) + dLogVal[ ( iTic + 9 ) % 9 ];
-			}
-			else if ( this.IsExponent )
-			{
-				return baseVal + Math.Pow( (double) this.Step * (double) iTic, exponent );
-			}
-			else // regular linear scale
-			{
-				return baseVal + (double) this.minorStep * (double) iTic;
-			}
-		}
-		
-		/// <summary>
-		/// Internal routine to determine the ordinals of the first minor tic mark
-		/// </summary>
-		/// <param name="baseVal">
-		/// The value of the first major tic for the axis.
-		/// </param>
-		/// <returns>
-		/// The ordinal position of the first minor tic, relative to the first major tic.
-		/// This value can be negative (e.g., -3 means the first minor tic is 3 minor step
-		/// increments before the first major tic.
-		/// </returns>
-		private int CalcMinorStart( double baseVal )
-		{
-			if ( this.IsText ) // text labels (ordinal scale)
-			{
-				// This should never happen (no minor tics for text labels)
-				return 0;
-			}
-			else if ( this.IsDate )  // Date-Time scale
-			{
-				switch ( this.minorUnit )
-				{
-					case DateUnit.Year:
-					default:
-						return (int) ( ( this.min - baseVal ) / ( 365.0 * this.minorStep ) );
-					case DateUnit.Month:
-						return (int) ( ( this.min - baseVal ) / ( 28.0 * this.minorStep ) );
-					case DateUnit.Day:
-						return (int) ( ( this.min - baseVal ) / this.minorStep );
-					case DateUnit.Hour:
-						return (int) ( ( this.min - baseVal ) * XDate.HoursPerDay / this.minorStep );
-					case DateUnit.Minute:
-						return (int) ( ( this.min - baseVal ) * XDate.MinutesPerDay / this.minorStep );
-					case DateUnit.Second:
-						return (int) ( ( this.min - baseVal ) * XDate.SecondsPerDay / this.minorStep );
-				}				
-			}
-			else if ( this.IsLog )  // log scale
-			{
-				return -9;
-			}
-			else if ( this.IsExponent )
-			{
-				return (int) ( ( Math.Pow( this.min, exponent ) - baseVal ) / Math.Pow( this.minorStep, exponent ) );
-			}
-			else  // regular linear scale
-			{
-				return (int) ( ( this.min - baseVal ) / this.minorStep );
 			}
 		}
 
@@ -4263,7 +3274,7 @@ namespace ZedGraph
 						(this.isTic || this.isCrossTic || this.isMinorTic || this.isMinorCrossTic) );
 
 				// Calculate the title position in screen coordinates
-				float x = ( this.maxPix - this.minPix ) / 2;
+				float x = ( this.scale.MaxPix - this.scale.MinPix ) / 2;
 
 				float scaledTic = ScaledTic( scaleFactor );
 
@@ -4274,7 +3285,7 @@ namespace ZedGraph
 				// calculated, and the cross value is determined using a transform of scale values (which
 				// rely on AxisRect).
 				float y = scaledTic * ( hasTic ? 1.0f : 0.0f ) +
-					( isScaleVisible ? GetScaleMaxSpace( g, pane, scaleFactor, true ).Height + scaledTic * 0.5f : 0 ) +
+					( isScaleVisible ? this.scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height + scaledTic * 0.5f : 0 ) +
 							this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
 
                 if ( this.isScaleLabelsInside )
@@ -4292,8 +3303,8 @@ namespace ZedGraph
 
 		private string MakeTitle()
 		{
-			if ( this.scaleMag != 0 && ! this.isOmitMag && ! this.IsLog )
-				return this.title + String.Format( " (10^{0})", this.scaleMag );
+			if ( this.scale.ScaleMag != 0 && !this.isOmitMag && !this.IsLog )
+				return this.title + String.Format( " (10^{0})", this.scale.ScaleMag );
 			else
 				return this.title;
 
@@ -4309,1502 +3320,12 @@ namespace ZedGraph
 		public float GetClusterWidth( GraphPane pane )
 		{
 			double basisVal = this.Min;
-			return Math.Abs( this.Transform( basisVal +
+			return Math.Abs( this.scale.Transform( basisVal +
 					((this.IsOrdinal || this.IsText) ? 1.0 : pane.ClusterScaleWidth ) ) -
-					this.Transform( basisVal ) );
+					this.scale.Transform( basisVal ) );
 		}
 	#endregion
-	
-	#region Scale Picker Methods
-		/// <summary>
-		/// Select a reasonable scale given a range of data values.
-		/// </summary>
-		/// <remarks>
-		/// The scale range is chosen
-		/// based on increments of 1, 2, or 5 (because they are even divisors of 10).  This
-		/// routine honors the <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
-		/// and <see cref="StepAuto"/> autorange settings as well as the <see cref="IsLog"/>
-		/// setting.  In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Min"/>, <see cref="Max"/>, or <see cref="Step"/>
-		/// setting is explicitly honored, and the remaining autorange settings (if any) will
-		/// be calculated to accomodate the non-autoranged values.  The basic defaults for
-		/// scale selection are defined using <see cref="Default.ZeroLever"/>,
-		/// <see cref="Default.TargetXSteps"/>, and <see cref="Default.TargetYSteps"/>
-		/// from the <see cref="Default"/> default class.
-		/// <para>On Exit:</para>
-		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
-		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
-		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
-		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
-		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
-		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
-		/// </remarks>
-		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
-		/// associated with this <see cref="Axis"/></param>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		public void PickScale( GraphPane pane, Graphics g, float scaleFactor )
-		{
-			double minVal = this.rangeMin;
-			double maxVal = this.rangeMax;
 
-			// Make sure that minVal and maxVal are legitimate values
-			if ( Double.IsInfinity( minVal ) || Double.IsNaN( minVal ) || minVal == Double.MaxValue )
-				minVal = 0.0;
-			if ( Double.IsInfinity( maxVal ) || Double.IsNaN( maxVal ) || maxVal == Double.MaxValue )
-				maxVal = 0.0;
-
-			// if the scales are autoranged, use the actual data values for the range
-			double range = maxVal - minVal;
-
-			// "Grace" is applied to the numeric axis types only
-			bool numType = (type == AxisType.Log || type == AxisType.Date || type == AxisType.Linear );
-
-			// For autoranged values, assign the value.  If appropriate, adjust the value by the
-			// "Grace" value.
-			if ( this.minAuto )
-			{
-				this.min = minVal;
-				// Do not let the grace value extend the axis below zero when all the values were positive
-				if ( numType && ( this.min < 0 || minVal - this.MinGrace * range >= 0.0 ) )
-						this.min = minVal - this.MinGrace * range;
-			}
-			if ( this.maxAuto )
-			{
-				this.max = maxVal;
-				// Do not let the grace value extend the axis above zero when all the values were negative
-				if ( numType && ( this.max > 0 || maxVal + this.MaxGrace * range <= 0.0 ) )
-					this.max = maxVal + this.MaxGrace * range;
-			}
-			
-			if ( this.max < this.min )
-			{
-				if ( this.maxAuto )
-					this.max = this.min + 1.0;
-				else if ( this.minAuto )
-					this.min = this.max - 1.0;
-			}
-
-			switch( this.type )
-			{
-				case AxisType.Text:
-					PickTextScale( g, pane, scaleFactor );
-					break;
-				case AxisType.Ordinal:
-					PickOrdinalScale( g, pane, scaleFactor );
-					break;
-				case AxisType.Log:
-					PickLogScale();
-					break;
-				case AxisType.Exponent:
-					PickExponentScale( g, pane, scaleFactor );
-					break;
-				case AxisType.Date:
-					PickDateScale( g, pane, scaleFactor );
-					break;
-				case AxisType.Linear:
-					PickLinearScale( g, pane, scaleFactor );
-					break;
-				case AxisType.DateAsOrdinal:
-					PickDateAsOrdinalScale( g, pane, scaleFactor );
-					break;
-				case AxisType.LinearAsOrdinal:
-					PickLinearAsOrdinalScale( g, pane, scaleFactor );
-					break;
-			}
-		}
-		
-		/// <summary>
-		/// Select a reasonable text axis scale given a range of data values.
-		/// </summary>
-		/// <remarks>
-		/// This method only applies to <see cref="AxisType.Text"/> type axes, and it
-		/// is called by the general <see cref="PickScale"/> method.  This is an ordinal
-		/// type, such that the labeled values start at 1.0 and increment by 1.0 for
-		/// each successive label.  The maximum number of labels on the graph is
-		/// determined by <see cref="Default.MaxTextLabels"/>.  If necessary, this method will
-		/// set the <see cref="Step"/> value to greater than 1.0 in order to keep the total
-		/// labels displayed below <see cref="Default.MaxTextLabels"/>.  For example, a
-		/// <see cref="Step"/> size of 2.0 would only display every other label on the
-		/// axis.  The <see cref="Step"/> value calculated by this routine is always
-		/// an integral value.  This
-		/// method honors the <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
-		/// and <see cref="StepAuto"/> autorange settings.
-		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Min"/>, <see cref="Max"/>, or <see cref="Step"/>
-		/// setting is explicitly honored, and the remaining autorange settings (if any) will
-		/// be calculated to accomodate the non-autoranged values.
-		/// <para>On Exit:</para>
-		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
-		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
-		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
-		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
-		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
-		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
-		/// </remarks>
-		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
-		/// associated with this <see cref="Axis"/></param>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <seealso cref="PickScale"/>
-		/// <seealso cref="AxisType.Text"/>
-		public void PickTextScale( Graphics g, GraphPane pane, float scaleFactor )
-		{
-			// if text labels are provided, then autorange to the number of labels
-			if ( this.TextLabels != null )
-			{
-				if ( this.minAuto )
-					this.min = 0.5;
-				if ( this.maxAuto )
-					this.max = this.TextLabels.Length + 0.5;
-			}
-			else
-			{
-				if ( this.minAuto )
-					this.min -= 0.5;
-				if ( this.maxAuto )
-					this.max += 0.5;
-			}
-			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < .1 )
-			{
-				if ( this.maxAuto )
-					this.max = this.min + 10.0;
-				else
-					this.min = this.max - 10.0;
-			}
-		
-			if ( this.stepAuto )
-			{
-				if ( ! this.isPreventLabelOverlap )
-				{
-					this.step = 1;
-				}
-				else if ( this.TextLabels != null )
-				{
-					// Calculate the maximum number of labels
-					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
-
-					// Calculate a step size based on the width of the labels
-					double tmpStep = Math.Ceiling( ( this.max - this.min ) / maxLabels );
-
-					// Use the lesser of the two step sizes
-					//if ( tmpStep < this.step )
-					this.step = tmpStep;
-				}
-				else
-					this.step = (int) ( ( this.max - this.min - 1.0 ) / Default.MaxTextLabels ) + 1.0;
-				
-			}
-			else
-			{
-				this.step = (int) this.step;
-				if ( this.step <= 0 )
-					this.step = 1.0;
-			}
-		
-			if ( this.minorStepAuto )
-				this.minorStep = 1;
-			//this.numDec = 0;
-			this.scaleMag = 0;
-		}
-		
-		/// <summary>
-		/// Calculate the maximum number of labels that will fit on this axis.
-		/// </summary>
-		/// <remarks>
-		/// This method works for
-		/// both X and Y direction axes, and it works for angled text (assuming that a bounding box
-		/// is an appropriate measure).  Technically, labels at 45 degree angles could fit better than
-		/// the return value of this method since the bounding boxes can overlap without the labels actually
-		/// overlapping.
-		/// </remarks>
-		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
-		/// associated with this <see cref="Axis"/></param>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		public int CalcMaxLabels( Graphics g, GraphPane pane, float scaleFactor )
-		{
-			SizeF size = this.GetScaleMaxSpace( g, pane, scaleFactor, false );
-			
-			// The font angles are already set such that the Width is parallel to the appropriate (X or Y)
-			// axis.  Therefore, we always use size.Width.
-			// use the minimum of 1/4 the max Width or 1 character space
-//			double allowance = this.ScaleFontSpec.GetWidth( g, scaleFactor );
-//			if ( allowance > size.Width / 4 )
-//				allowance = size.Width / 4;
-
-
-			float maxWidth = 1000;
-			float temp = 1000;
-			float costh = (float) Math.Abs( Math.Cos( this.scaleFontSpec.Angle * Math.PI / 180.0 ) );
-			float sinth = (float) Math.Abs( Math.Sin( this.scaleFontSpec.Angle * Math.PI / 180.0 ) );
-
-			if ( costh > 0.001 )
-				maxWidth = size.Width / costh;
-			if ( sinth > 0.001 )
-				temp = size.Height / sinth;
-			if ( temp < maxWidth )
-				maxWidth = temp;
-
-
-			//maxWidth = size.Width;
-/*
-			if ( this is XAxis )
-				// Add an extra character width to leave a minimum of 1 character space between labels
-				maxWidth = size.Width + this.ScaleFontSpec.GetWidth( g, scaleFactor );
-			else
-				// For vertical spacing, we only need 1/2 character
-				maxWidth = size.Width + this.ScaleFontSpec.GetWidth( g, scaleFactor ) / 2.0;
-*/
-			if ( maxWidth <= 0 )
-				maxWidth = 1;
-				
-
-			// Calculate the maximum number of labels
-			double width;
-			if ( this is XAxis )
-				width = ( pane.AxisRect.Width == 0 ) ? pane.PaneRect.Width * 0.75 : pane.AxisRect.Width;
-			else
-				width = ( pane.AxisRect.Height == 0 ) ? pane.PaneRect.Height * 0.75 : pane.AxisRect.Height;
-
-			int maxLabels = (int) ( width / maxWidth );
-			if ( maxLabels <= 0 )
-				maxLabels = 1;
-
-			return maxLabels;
-		}
-
-		/// <summary>
-		/// Select a reasonable ordinal axis scale given a range of data values.
-		/// </summary>
-		/// <remarks>
-		/// This method only applies to <see cref="AxisType.Ordinal"/> type axes, and it
-		/// is called by the general <see cref="PickScale"/> method.  The scale range is chosen
-		/// based on increments of 1, 2, or 5 (because they are even divisors of 10).
-		/// Being an ordinal axis type, the <see cref="Step"/> value will always be integral.  This
-		/// method honors the <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
-		/// and <see cref="StepAuto"/> autorange settings.
-		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Min"/>, <see cref="Max"/>, or <see cref="Step"/>
-		/// setting is explicitly honored, and the remaining autorange settings (if any) will
-		/// be calculated to accomodate the non-autoranged values.  The basic defaults for
-		/// scale selection are defined using <see cref="Default.ZeroLever"/>,
-		/// <see cref="Default.TargetXSteps"/>, and <see cref="Default.TargetYSteps"/>
-		/// from the <see cref="Default"/> default class.
-		/// <para>On Exit:</para>
-		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
-		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
-		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
-		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
-		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
-		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
-		/// </remarks>
-		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
-		/// associated with this <see cref="Axis"/></param>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <seealso cref="PickScale"/>
-		/// <seealso cref="AxisType.Ordinal"/>
-		public void PickOrdinalScale( Graphics g, GraphPane pane, float scaleFactor )
-		{
-			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < 1.0 )
-			{
-				if ( this.maxAuto )
-					this.max = this.min + 0.5;
-				else
-					this.min = this.max - 0.5;
-			}
-			else
-			{
-				// Calculate the new step size
-				if ( this.stepAuto )
-				{
-					// Calculate the step size based on targetSteps
-					this.step = CalcStepSize( this.max - this.min,
-						(this is XAxis) ? Default.TargetXSteps : Default.TargetYSteps );
-
-					if ( this.isPreventLabelOverlap )
-					{
-						// Calculate the maximum number of labels
-						double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
-
-						// Calculate a step size based on the width of the labels
-						double tmpStep = Math.Ceiling( ( this.max - this.min ) / maxLabels );
-
-						// Use the greater of the two step sizes
-						if ( tmpStep > this.step )
-							this.step = tmpStep;
-					}
-
-				}
-	
-				this.step = (int) this.Step;
-				if ( this.step < 1.0 )
-					this.step = 1.0;
-
-				// Calculate the new minor step size
-				if ( this.minorStepAuto )
-					this.minorStep = CalcStepSize( this.step, 
-						(this is XAxis) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
-
-				if ( this.minAuto )
-					this.min -= 0.5;
-				if ( this.maxAuto )
-					this.max += 0.5;
-			}
-		}
-		
-		/// <summary>
-		/// Select a reasonable ordinal axis scale given a range of data values, with the expectation that
-		/// dates will be displayed.
-		/// </summary>
-		/// <remarks>
-		/// This method only applies to <see cref="AxisType.DateAsOrdinal"/> type axes, and it
-		/// is called by the general <see cref="PickScale"/> method.  For this type,
-		/// the first curve is the "master", which contains the dates to be applied.
-		/// <para>On Exit:</para>
-		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
-		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
-		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
-		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
-		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
-		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
-		/// </remarks>
-		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
-		/// associated with this <see cref="Axis"/></param>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <seealso cref="PickScale"/>
-		/// <seealso cref="AxisType.Ordinal"/>
-		public void PickDateAsOrdinalScale( Graphics g, GraphPane pane, float scaleFactor )
-		{
-			// First, get the date ranges from the first curve in the list
-			double xMin; // = Double.MaxValue;
-			double xMax; // = Double.MinValue;
-			double yMin; // = Double.MaxValue;
-			double yMax; // = Double.MinValue;
-			double range = 1;
-
-			foreach ( CurveItem curve in pane.CurveList )
-			{
-				if (	( this is Y2Axis && curve.IsY2Axis ) ||
-						( this is YAxis && !curve.IsY2Axis ) ||
-						( this is XAxis ) )
-				{
-					curve.GetRange( out xMin, out xMax, out yMin, out yMax, false, false, pane );
-					if ( this is XAxis )
-						range = xMax - xMin;
-					else
-						range = yMax - yMin;
-				}
-			}
-
-			// Set the DateFormat by calling CalcDateStepSize
-			CalcDateStepSize( range, Default.TargetXSteps );
-
-			// Now, set the axis range based on a ordinal scale
-			PickOrdinalScale( g, pane, scaleFactor );
-		}
-
-		/// <summary>
-		/// Select a reasonable ordinal axis scale given a range of data values, with the expectation that
-		/// linear values will be displayed.
-		/// </summary>
-		/// <remarks>
-		/// This method only applies to <see cref="AxisType.DateAsOrdinal"/> type axes, and it
-		/// is called by the general <see cref="PickScale"/> method.  For this type,
-		/// the first curve is the "master", which contains the dates to be applied.
-		/// <para>On Exit:</para>
-		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
-		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
-		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
-		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
-		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
-		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
-		/// </remarks>
-		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
-		/// associated with this <see cref="Axis"/></param>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <seealso cref="PickScale"/>
-		/// <seealso cref="AxisType.Ordinal"/>
-		public void PickLinearAsOrdinalScale( Graphics g, GraphPane pane, float scaleFactor )
-		{
-			// First, get the date ranges from the first curve in the list
-			double xMin; // = Double.MaxValue;
-			double xMax; // = Double.MinValue;
-			double yMin; // = Double.MaxValue;
-			double yMax; // = Double.MinValue;
-			double tMin = 0;
-			double tMax = 1;
-
-			foreach ( CurveItem curve in pane.CurveList )
-			{
-				if (	( this is Y2Axis && curve.IsY2Axis ) ||
-						( this is YAxis && !curve.IsY2Axis ) ||
-						( this is XAxis ) )
-				{
-					curve.GetRange( out xMin, out xMax, out yMin, out yMax, false, false, pane );
-					if ( this is XAxis )
-					{
-						tMin = xMin;
-						tMax = xMax;
-					}
-					else
-					{
-						tMin = yMin;
-						tMax = yMax;
-					}
-				}
-			}
-
-			double range = Math.Abs( tMax - tMin );
-
-			// Now, set the axis range based on a ordinal scale
-			PickOrdinalScale( g, pane, scaleFactor );
-
-			SetScaleMag( tMin, tMax, range / Default.TargetXSteps );
-		}
-
-		/// <summary>
-		/// Select a reasonable base 10 logarithmic axis scale given a range of data values.
-		/// </summary>
-		/// <remarks>
-		/// This method only applies to <see cref="AxisType.Log"/> type axes, and it
-		/// is called by the general <see cref="PickScale"/> method.  The scale range is chosen
-		/// based always on powers of 10 (full log cycles).  This
-		/// method honors the <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
-		/// and <see cref="StepAuto"/> autorange settings.
-		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Min"/>, <see cref="Max"/>, or <see cref="Step"/>
-		/// setting is explicitly honored, and the remaining autorange settings (if any) will
-		/// be calculated to accomodate the non-autoranged values.  For log axes, the MinorStep
-		/// value is not used.
-		/// <para>On Exit:</para>
-		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
-		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
-		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
-		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
-		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
-		/// </remarks>
-		/// <seealso cref="PickScale"/>
-		/// <seealso cref="AxisType.Log"/>
-		public void PickLogScale()
-		{
-			this.scaleMag = 0;		// Never use a magnitude shift for log scales
-			//this.numDec = 0;		// The number of decimal places to display is not used
-	
-			// Check for bad data range
-			if ( this.min <= 0.0 && this.max <= 0.0 )
-			{
-				this.min = 1.0;
-				this.max = 10.0;
-			}
-			else if ( this.min <= 0.0 )
-			{
-				this.min = this.max / 10.0;
-			}
-			else if ( this.max <= 0.0 )
-			{
-				this.max = this.min * 10.0;
-			}
-	
-			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < 1.0e-20 )
-			{
-				if ( this.maxAuto )
-					this.max = this.max * 2.0;
-				if ( this.minAuto )
-					this.min = this.min / 2.0;
-			}
-			
-			// Get the nearest power of 10 (no partial log cycles allowed)
-			if ( this.minAuto )
-				this.min = Math.Pow( (double) 10.0,
-					Math.Floor( Math.Log10( this.min ) ) );
-			if ( this.maxAuto )
-				this.max = Math.Pow( (double) 10.0,
-					Math.Ceiling( Math.Log10( this.max ) ) );
-	
-		}
-
-		/// <summary>
-		/// Select a reasonable exponential axis scale given a range of data values.
-		/// </summary>
-		/// <remarks>
-		/// This method only applies to <see cref="AxisType.Exponent"/> type axes, and it
-		/// is called by the general <see cref="PickScale"/> method.  The exponential scale
-		/// relies on the <see cref="Exponent" /> property to set the scaling exponent.  This
-		/// method honors the <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
-		/// and <see cref="StepAuto"/> autorange settings.
-		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Min"/>, <see cref="Max"/>, or <see cref="Step"/>
-		/// setting is explicitly honored, and the remaining autorange settings (if any) will
-		/// be calculated to accomodate the non-autoranged values.  For log axes, the MinorStep
-		/// value is not used.
-		/// <para>On Exit:</para>
-		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
-		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
-		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
-		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
-		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
-		/// </remarks>
-		/// <seealso cref="PickScale"/>
-		/// <seealso cref="AxisType.Exponent"/>
-		public void PickExponentScale( Graphics g, GraphPane pane, float scaleFactor )
-		{
-			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < 1.0e-20 )
-			{
-				if ( this.maxAuto )
-					this.max = this.max + 0.2 * ( this.max == 0 ? 1.0 : Math.Abs( this.max ) );
-				if ( this.minAuto )
-					this.min = this.min - 0.2 * ( this.min == 0 ? 1.0 : Math.Abs( this.min ) );
-			}
-
-			// This is the zero-lever test.  If minVal is within the zero lever fraction
-			// of the data range, then use zero.
-
-			if ( this.minAuto && this.min > 0 &&
-				this.min / ( this.max - this.min ) < Default.ZeroLever )
-				this.min = 0;
-
-			// Repeat the zero-lever test for cases where the maxVal is less than zero
-			if ( this.maxAuto && this.max < 0 &&
-				Math.Abs( this.max / ( this.max - this.min ) ) <
-				Default.ZeroLever )
-				this.max = 0;
-
-			// Calculate the new step size
-			if ( this.stepAuto )
-			{
-				double targetSteps = ( this is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
-
-				// Calculate the step size based on target steps
-				this.step = CalcStepSize( this.max - this.min, targetSteps );
-
-				if ( this.isPreventLabelOverlap )
-				{
-					// Calculate the maximum number of labels
-					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
-
-					if ( maxLabels < ( this.max - this.min ) / this.step )
-						this.step = CalcBoundedStepSize( this.max - this.min, maxLabels );
-				}
-			}
-
-			// Calculate the new step size
-			if ( this.minorStepAuto )
-				this.minorStep = CalcStepSize( this.step,
-					( this is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
-
-			// Calculate the scale minimum
-			if ( this.minAuto )
-				this.min = this.min - MyMod( this.min, this.step );
-
-			// Calculate the scale maximum
-			if ( this.maxAuto )
-				this.max = MyMod( this.max, this.step ) == 0.0 ? this.max :
-					this.max + this.step - MyMod( this.max, this.step );
-
-			// set the scale magnitude if required
-			if ( this.scaleMagAuto )
-			{
-				// Find the optimal scale display multiple
-				double mag = 0;
-				double mag2 = 0;
-
-				if ( Math.Abs( this.min ) > 1.0e-10 )
-					mag = Math.Floor( Math.Log10( Math.Abs( this.min ) ) );
-				if ( Math.Abs( this.max ) > 1.0e-10 )
-					mag2 = Math.Floor( Math.Log10( Math.Abs( this.max ) ) );
-				if ( Math.Abs( mag2 ) > Math.Abs( mag ) )
-					mag = mag2;
-
-				// Do not use scale multiples for magnitudes below 4
-				if ( Math.Abs( mag ) <= 3 )
-					mag = 0;
-
-				// Use a power of 10 that is a multiple of 3 (engineering scale)
-				this.scaleMag = (int) ( Math.Floor( mag / 3.0 ) * 3.0 );
-			}
-
-			// Calculate the appropriate number of dec places to display if required
-			if ( this.scaleFormatAuto )
-			{
-				int numDec = 0 - (int) ( Math.Floor( Math.Log10( this.step ) ) - this.scaleMag );
-				if ( numDec < 0 )
-					numDec = 0;
-				this.scaleFormat = "f" + numDec.ToString();
-			}
-		}
-
-		/// <summary>
-		/// Select a reasonable date-time axis scale given a range of data values.
-		/// </summary>
-		/// <remarks>
-		/// This method only applies to <see cref="AxisType.Date"/> type axes, and it
-		/// is called by the general <see cref="PickScale"/> method.  The scale range is chosen
-		/// based on increments of 1, 2, or 5 (because they are even divisors of 10).
-		/// Note that the <see cref="Step"/> property setting can have multiple unit
-		/// types (<see cref="DateUnit"/>), but the <see cref="Min"/> and
-		/// <see cref="Max"/> units are always days (<see cref="XDate"/>).  This
-		/// method honors the <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
-		/// and <see cref="StepAuto"/> autorange settings.
-		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Min"/>, <see cref="Max"/>, or <see cref="Step"/>
-		/// setting is explicitly honored, and the remaining autorange settings (if any) will
-		/// be calculated to accomodate the non-autoranged values.  The basic default for
-		/// scale selection is defined with
-		/// <see cref="Default.TargetXSteps"/> and <see cref="Default.TargetYSteps"/>
-		/// from the <see cref="Default"/> default class.
-		/// <para>On Exit:</para>
-		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
-		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
-		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
-		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
-		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
-		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
-		/// </remarks>
-		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
-		/// associated with this <see cref="Axis"/></param>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <seealso cref="PickScale"/>
-		/// <seealso cref="AxisType.Date"/>
-		/// <seealso cref="MajorUnit"/>
-		/// <seealso cref="MinorUnit"/>
-		public void PickDateScale( Graphics g, GraphPane pane, float scaleFactor )
-		{
-			
-			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < 1.0e-20 )
-			{
-				if ( this.maxAuto )
-					this.max = this.max + 0.2 * ( this.max == 0 ? 1.0 : Math.Abs( this.max ) );
-				if ( this.minAuto )
-					this.min = this.min - 0.2 * ( this.min == 0 ? 1.0 : Math.Abs( this.min ) );
-			}
-	
-			// Calculate the new step size
-			if ( this.stepAuto )
-			{
-				double targetSteps = (this is XAxis) ? Default.TargetXSteps : Default.TargetYSteps;
-
-				// Calculate the step size based on target steps
-				this.step = CalcDateStepSize( this.max - this.min, targetSteps );
-
-				if ( this.isPreventLabelOverlap )
-				{
-					// Calculate the maximum number of labels
-					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
-
-					if ( maxLabels < this.CalcNumTics() )
-						this.step = CalcDateStepSize( this.max - this.min, maxLabels );
-				}
-			}
-			
-			// Calculate the scale minimum
-			if ( this.minAuto )
-				this.min = CalcEvenStepDate( this.min, -1 );
-	
-			// Calculate the scale maximum
-			if ( this.maxAuto )
-				this.max = CalcEvenStepDate( this.max, 1 );
-
-			this.scaleMag = 0;		// Never use a magnitude shift for date scales
-			//this.numDec = 0;		// The number of decimal places to display is not used
-	
-		}
-
-		/// <summary>
-		/// Select a reasonable linear axis scale given a range of data values.
-		/// </summary>
-		/// <remarks>
-		/// This method only applies to <see cref="AxisType.Linear"/> type axes, and it
-		/// is called by the general <see cref="PickScale"/> method.  The scale range is chosen
-		/// based on increments of 1, 2, or 5 (because they are even divisors of 10).  This
-		/// method honors the <see cref="MinAuto"/>, <see cref="MaxAuto"/>,
-		/// and <see cref="StepAuto"/> autorange settings.
-		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Min"/>, <see cref="Max"/>, or <see cref="Step"/>
-		/// setting is explicitly honored, and the remaining autorange settings (if any) will
-		/// be calculated to accomodate the non-autoranged values.  The basic defaults for
-		/// scale selection are defined using <see cref="Default.ZeroLever"/>,
-		/// <see cref="Default.TargetXSteps"/>, and <see cref="Default.TargetYSteps"/>
-		/// from the <see cref="Default"/> default class.
-		/// <para>On Exit:</para>
-		/// <para><see cref="Min"/> is set to scale minimum (if <see cref="MinAuto"/> = true)</para>
-		/// <para><see cref="Max"/> is set to scale maximum (if <see cref="MaxAuto"/> = true)</para>
-		/// <para><see cref="Step"/> is set to scale step size (if <see cref="StepAuto"/> = true)</para>
-		/// <para><see cref="MinorStep"/> is set to scale minor step size (if <see cref="MinorStepAuto"/> = true)</para>
-		/// <para><see cref="ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="ScaleFormat"/> is set to the display format for the values (this controls the
-		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
-		/// </remarks>
-		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
-		/// associated with this <see cref="Axis"/></param>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <seealso cref="PickScale"/>
-		/// <seealso cref="AxisType.Linear"/>
-		public void PickLinearScale( Graphics g, GraphPane pane, float scaleFactor )
-		{
-			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < 1.0e-20 )
-			{
-				if ( this.maxAuto )
-					this.max = this.max + 0.2 * ( this.max == 0 ? 1.0 : Math.Abs( this.max ) );
-				if ( this.minAuto )
-					this.min = this.min - 0.2 * ( this.min == 0 ? 1.0 : Math.Abs( this.min ) );
-			}
-	
-			// This is the zero-lever test.  If minVal is within the zero lever fraction
-			// of the data range, then use zero.
-	
-			if ( this.minAuto && this.min > 0 &&
-				this.min / ( this.max - this.min ) < Default.ZeroLever )
-				this.min = 0;
-	
-			// Repeat the zero-lever test for cases where the maxVal is less than zero
-			if ( this.maxAuto && this.max < 0 &&
-				Math.Abs( this.max / ( this.max - this.min )) <
-				Default.ZeroLever )
-				this.max = 0;
-	
-			// Calculate the new step size
-			if ( this.stepAuto )
-			{
-				double targetSteps = (this is XAxis) ? Default.TargetXSteps : Default.TargetYSteps;
-
-				// Calculate the step size based on target steps
-				this.step = CalcStepSize( this.max - this.min, targetSteps );
-
-				if ( this.isPreventLabelOverlap )
-				{
-					// Calculate the maximum number of labels
-					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
-
-					if ( maxLabels < ( this.max - this.min ) / this.step )
-						this.step = CalcBoundedStepSize( this.max - this.min, maxLabels );
-				}
-			}
-	
-			// Calculate the new step size
-			if ( this.minorStepAuto )
-				this.minorStep = CalcStepSize( this.step, 
-					(this is XAxis) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
-	
-			// Calculate the scale minimum
-			if ( this.minAuto )
-				this.min = this.min - MyMod( this.min, this.step );
-	
-			// Calculate the scale maximum
-			if ( this.maxAuto )
-				this.max = MyMod( this.max, this.step ) == 0.0 ? this.max :
-					this.max + this.step - MyMod( this.max, this.step );
-
-			SetScaleMag( this.min, this.max, this.step );
-		}
-
-		internal void SetScaleMag( double min, double max, double step )
-		{
-			// set the scale magnitude if required
-			if ( this.scaleMagAuto )
-			{
-				// Find the optimal scale display multiple
-				double mag = 0;
-				double mag2 = 0;
-
-				if ( Math.Abs( this.min ) > 1.0e-10 )
-					mag = Math.Floor( Math.Log10( Math.Abs( this.min ) ) );
-				if ( Math.Abs( this.max ) > 1.0e-10 )
-					mag2 = Math.Floor( Math.Log10( Math.Abs( this.max ) ) );
-				if ( Math.Abs( mag2 ) > Math.Abs( mag ) )
-					mag = mag2;
-		
-				// Do not use scale multiples for magnitudes below 4
-				if ( Math.Abs( mag ) <= 3 )
-					mag = 0;
-		
-				// Use a power of 10 that is a multiple of 3 (engineering scale)
-				this.scaleMag = (int) ( Math.Floor( mag / 3.0 ) * 3.0 );
-			}
-			
-			// Calculate the appropriate number of dec places to display if required
-			if ( this.scaleFormatAuto )
-			{
-				int numDec = 0 - (int) ( Math.Floor( Math.Log10( this.step ) ) - this.scaleMag );
-				if ( numDec < 0 )
-					numDec = 0;
-				this.scaleFormat = "f" + numDec.ToString();
-			}
-		}
-
-		/// <summary>
-		/// Calculate a step size based on a data range.
-		/// </summary>
-		/// <remarks>
-		/// This utility method
-		/// will try to honor the <see cref="Default.TargetXSteps"/> and
-		/// <see cref="Default.TargetYSteps"/> number of
-		/// steps while using a rational increment (1, 2, or 5 -- which are
-		/// even divisors of 10).  This method is used by <see cref="PickScale"/>.
-		/// </remarks>
-		/// <param name="range">The range of data in user scale units.  This can
-		/// be a full range of the data for the major step size, or just the
-		/// value of the major step size to calculate the minor step size</param>
-		/// <param name="targetSteps">The desired "typical" number of steps
-		/// to divide the range into</param>
-		/// <returns>The calculated step size for the specified data range.</returns>
-		protected double CalcStepSize( double range, double targetSteps )
-		{
-			// Calculate an initial guess at step size
-			double tempStep = range / targetSteps;
-
-			// Get the magnitude of the step size
-			double mag = Math.Floor( Math.Log10( tempStep ) );
-			double magPow = Math.Pow( (double) 10.0, mag );
-	
-			// Calculate most significant digit of the new step size
-			double magMsd =  ( (int) (tempStep / magPow + .5) );
-	
-			// promote the MSD to either 1, 2, or 5
-			if ( magMsd > 5.0 )
-				magMsd = 10.0;
-			else if ( magMsd > 2.0 )
-				magMsd = 5.0;
-			else if ( magMsd > 1.0 )
-				magMsd = 2.0;
-
-			return magMsd * magPow;
-		}
-
-		/// <summary>
-		/// Calculate a step size based on a data range, limited to a maximum number of steps.
-		/// </summary>
-		/// <remarks>
-		/// This utility method
-		/// will calculate a step size, of no more than maxSteps,
-		/// using a rational increment (1, 2, or 5 -- which are
-		/// even divisors of 10).  This method is used by <see cref="PickScale"/>.
-		/// </remarks>
-		/// <param name="range">The range of data in user scale units.  This can
-		/// be a full range of the data for the major step size, or just the
-		/// value of the major step size to calculate the minor step size</param>
-		/// <param name="maxSteps">The maximum allowable number of steps
-		/// to divide the range into</param>
-		/// <returns>The calculated step size for the specified data range.</returns>
-		protected double CalcBoundedStepSize( double range, double maxSteps )
-		{
-			// Calculate an initial guess at step size
-			double tempStep = range / maxSteps;
-
-			// Get the magnitude of the step size
-			double mag = Math.Floor( Math.Log10( tempStep ) );
-			double magPow = Math.Pow( (double) 10.0, mag );
-	
-			// Calculate most significant digit of the new step size
-			double magMsd =  Math.Ceiling( tempStep / magPow );
-	
-			// promote the MSD to either 1, 2, or 5
-			if ( magMsd > 5.0 )
-				magMsd = 10.0;
-			else if ( magMsd > 2.0 )
-				magMsd = 5.0;
-			else if ( magMsd > 1.0 )
-				magMsd = 2.0;
-
-			return magMsd * magPow;
-		}
-
-		/// <summary>
-		/// Calculate a step size for a <see cref="AxisType.Date"/> scale.
-		/// This method is used by <see cref="PickScale"/>.
-		/// </summary>
-		/// <param name="range">The range of data in units of days</param>
-		/// <param name="targetSteps">The desired "typical" number of steps
-		/// to divide the range into</param>
-		/// <returns>The calculated step size for the specified data range.  Also
-		/// calculates and sets the values for <see cref="MajorUnit"/>,
-		/// <see cref="MinorUnit"/>, <see cref="MinorStep"/>, and
-		/// <see cref="ScaleFormat"/></returns>
-		protected double CalcDateStepSize( double range, double targetSteps )
-		{
-			// Calculate an initial guess at step size
-			double tempStep = range / targetSteps;
-
-			if ( range > Default.RangeYearYear )
-			{
-				majorUnit = DateUnit.Year;
-				if ( this.scaleFormatAuto )
-					this.scaleFormat = Default.FormatYearYear;					
-					
-				tempStep = Math.Ceiling( tempStep / 365.0 );
-
-				if ( minorStepAuto )
-				{
-					minorUnit = DateUnit.Year;
-					if ( tempStep == 1.0 )
-						minorStep = 0.25;
-					else
-						minorStep = CalcStepSize( tempStep, targetSteps );
-				}
-			}
-			else if ( range > Default.RangeYearMonth )
-			{
-				majorUnit = DateUnit.Year;
-				if ( this.scaleFormatAuto )
-					this.scaleFormat = Default.FormatYearMonth;
-				tempStep = Math.Ceiling( tempStep / 365.0 );
-
-				if ( minorStepAuto )
-				{
-					minorUnit = DateUnit.Month;
-					// Calculate the minor steps to give an estimated 4 steps
-					// per major step.
-					minorStep = Math.Ceiling( range / ( targetSteps * 3 ) / 30.0 );
-					// make sure the minorStep is 1, 2, 3, 6, or 12 months
-					if ( minorStep > 6 )
-						minorStep = 12;
-					else if ( minorStep > 3 )
-						minorStep = 6;
-				}
-			}
-			else if ( range > Default.RangeMonthMonth )
-			{
-				majorUnit = DateUnit.Month;
-				if ( this.scaleFormatAuto )
-					this.scaleFormat = Default.FormatMonthMonth;
-				tempStep = Math.Ceiling( tempStep / 30.0 );
-
-				if ( minorStepAuto )
-				{
-					minorUnit = DateUnit.Month;
-					minorStep = tempStep * 0.25;
-				}
-			}
-			else if ( range > Default.RangeDayDay )
-			{
-				majorUnit = DateUnit.Day;
-				if ( this.scaleFormatAuto )
-					this.scaleFormat = Default.FormatDayDay;
-				tempStep = Math.Ceiling( tempStep );
-
-				if ( minorStepAuto )
-				{
-					minorUnit = DateUnit.Day;
-					minorStep = tempStep * 0.25;
-					// make sure the minorStep is 1, 2, 3, 6, or 12 hours
-				}
-			}
-			else if ( range > Default.RangeDayHour )
-			{
-				majorUnit = DateUnit.Day;
-				if ( this.scaleFormatAuto )
-					this.scaleFormat = Default.FormatDayHour;
-				tempStep = Math.Ceiling( tempStep );
-
-				if ( minorStepAuto )
-				{
-					minorUnit = DateUnit.Hour;
-					// Calculate the minor steps to give an estimated 4 steps
-					// per major step.
-					minorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.HoursPerDay );
-					// make sure the minorStep is 1, 2, 3, 6, or 12 hours
-					if ( minorStep > 6 )
-						minorStep = 12;
-					else if ( minorStep > 3 )
-						minorStep = 6;
-					else
-						minorStep = 1;
-				}
-			}
-			else if ( range > Default.RangeHourHour )
-			{
-				majorUnit = DateUnit.Hour;
-				tempStep = Math.Ceiling( tempStep * XDate.HoursPerDay );
-				if ( this.scaleFormatAuto )
-					this.scaleFormat = Default.FormatHourHour;
-
-				if ( tempStep > 12.0 )
-					tempStep = 24.0;
-				else if ( tempStep > 6.0 )
-					tempStep = 12.0;
-				else if ( tempStep > 2.0 )
-					tempStep = 6.0;
-				else if ( tempStep > 1.0 )
-					tempStep = 2.0;
-				else
-					tempStep = 1.0;
-
-				if ( minorStepAuto )
-				{
-					minorUnit = DateUnit.Hour;
-					if ( tempStep <= 1.0 )
-						minorStep = 0.25;
-					else if ( tempStep <= 6.0 )
-						minorStep = 1.0;
-					else if ( tempStep <= 12.0 )
-						minorStep = 2.0;
-					else
-						minorStep = 4.0;
-				}
-			}
-			else if ( range > Default.RangeHourMinute )
-			{
-				majorUnit = DateUnit.Hour;
-				tempStep = Math.Ceiling( tempStep * XDate.HoursPerDay );
-
-				if ( this.scaleFormatAuto )
-					this.scaleFormat = Default.FormatHourMinute;
-
-				if ( minorStepAuto )
-				{
-					minorUnit = DateUnit.Minute;
-					// Calculate the minor steps to give an estimated 4 steps
-					// per major step.
-					minorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.MinutesPerDay );
-					// make sure the minorStep is 1, 5, 15, or 30 minutes
-					if ( minorStep > 15.0 )
-						minorStep = 30.0;
-					else if ( minorStep > 5.0 )
-						minorStep = 15.0;
-					else if ( minorStep > 1.0 )
-						minorStep = 5.0;
-					else
-						minorStep = 1.0;
-				}
-			}
-			else if ( range > Default.RangeMinuteMinute )
-			{
-				majorUnit = DateUnit.Minute;
-				if ( this.scaleFormatAuto )
-					this.scaleFormat = Default.FormatMinuteMinute;
-
-				tempStep = Math.Ceiling( tempStep * XDate.MinutesPerDay );
-				// make sure the minute step size is 1, 5, 15, or 30 minutes
-				if ( tempStep > 15.0 )
-					tempStep = 30.0;
-				else if ( tempStep > 5.0 )
-					tempStep = 15.0;
-				else if ( tempStep > 1.0 )
-					tempStep = 5.0;
-				else
-					tempStep = 1.0;
-
-				if ( minorStepAuto )
-				{
-					minorUnit = DateUnit.Minute;
-					if ( tempStep <= 1.0 )
-						minorStep = 0.25;
-					else if ( tempStep <= 5.0 )
-						minorStep = 1.0;
-					else
-						minorStep = 5.0;
-				}
-			}
-			else if ( range > Default.RangeMinuteSecond )
-			{
-				majorUnit = DateUnit.Minute;
-				tempStep = Math.Ceiling( tempStep * XDate.MinutesPerDay );
-
-				if ( this.scaleFormatAuto )
-					this.scaleFormat = Default.FormatMinuteSecond;
-
-				if ( minorStepAuto )
-				{
-					minorUnit = DateUnit.Second;
-					// Calculate the minor steps to give an estimated 4 steps
-					// per major step.
-					minorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.SecondsPerDay );
-					// make sure the minorStep is 1, 5, 15, or 30 seconds
-					if ( minorStep > 15.0 )
-						minorStep = 30.0;
-					else if ( minorStep > 5.0 )
-						minorStep = 15.0;
-					else if ( minorStep > 1.0 )
-						minorStep = 5.0;
-					else
-						minorStep = 1.0;
-				}
-			}
-			else // SecondSecond
-			{
-				majorUnit = DateUnit.Second;
-				if ( this.scaleFormatAuto )
-					this.scaleFormat = Default.FormatSecondSecond;
-
-				tempStep = Math.Ceiling( tempStep * XDate.SecondsPerDay );
-				// make sure the second step size is 1, 5, 15, or 30 seconds
-				if ( tempStep > 15.0 )
-					tempStep = 30.0;
-				else if ( tempStep > 5.0 )
-					tempStep = 15.0;
-				else if ( tempStep > 1.0 )
-					tempStep = 5.0;
-				else
-					tempStep = 1.0;
-
-				if ( minorStepAuto )
-				{
-					minorUnit = DateUnit.Second;
-					if ( tempStep <= 1.0 )
-						minorStep = 0.25;
-					else if ( tempStep <= 5.0 )
-						minorStep = 1.0;
-					else
-						minorStep = 5.0;
-				}
-			}
-
-			return tempStep;
-		}
-
-		/// <summary>
-		/// Calculate a date that is close to the specified date and an
-		/// even multiple of the selected
-		/// <see cref="MajorUnit"/> for a <see cref="AxisType.Date"/> scale.
-		/// This method is used by <see cref="PickScale"/>.
-		/// </summary>
-		/// <param name="date">The date which the calculation should be close to</param>
-		/// <param name="direction">The desired direction for the date to take.
-		/// 1 indicates the result date should be greater than the specified
-		/// date parameter.  -1 indicates the other direction.</param>
-		/// <returns>The calculated date</returns>
-		protected double CalcEvenStepDate( double date, int direction )
-		{
-			int year, month, day, hour, minute, second;
-
-			XDate.XLDateToCalendarDate( date, out year, out month, out day,
-										out hour, out minute, out second );
-
-			// If the direction is -1, then it is sufficient to go to the beginning of
-			// the current time period, .e.g., for 15-May-95, and monthly steps, we
-			// can just back up to 1-May-95
-			if ( direction < 0 )
-				direction = 0;
-
-			switch ( majorUnit )
-			{
-				case DateUnit.Year:
-				default:
-					// If the date is already an exact year, then don't step to the next year
-					if ( direction == 1 && month == 1 && day == 1 && hour == 0
-						&& minute == 0 && second == 0 )
-						return date;
-					else
-						return XDate.CalendarDateToXLDate( year+direction, 1, 1,
-														0, 0, 0 );
-				case DateUnit.Month:
-					// If the date is already an exact month, then don't step to the next month
-					if ( direction == 1 && day == 1 && hour == 0
-						&& minute == 0 && second == 0 )
-						return date;
-					else
-						return XDate.CalendarDateToXLDate( year, month+direction, 1,
-												0, 0, 0 );
-				case DateUnit.Day:
-					// If the date is already an exact Day, then don't step to the next day
-					if ( direction == 1 && hour == 0 && minute == 0 && second == 0 )
-						return date;
-					else
-						return XDate.CalendarDateToXLDate( year, month,
-											day+direction, 0, 0, 0 );
-				case DateUnit.Hour:
-					// If the date is already an exact hour, then don't step to the next hour
-					if ( direction == 1 && minute == 0 && second == 0 )
-						return date;
-					else
-						return XDate.CalendarDateToXLDate( year, month, day,
-													hour+direction, 0, 0 );
-				case DateUnit.Minute:
-					// If the date is already an exact minute, then don't step to the next minute
-					if ( direction == 1 && second == 0 )
-						return date;
-					else
-						return XDate.CalendarDateToXLDate( year, month, day, hour,
-													minute+direction, 0 );
-				case DateUnit.Second:
-					return XDate.CalendarDateToXLDate( year, month, day, hour,
-													minute, second+direction );
-
-			}
-		}
-
-		/// <summary>
-		/// Calculate the modulus (remainder) in a safe manner so that divide
-		/// by zero errors are avoided
-		/// </summary>
-		/// <param name="x">The divisor</param>
-		/// <param name="y">The dividend</param>
-		/// <returns>the value of the modulus, or zero for the divide-by-zero
-		/// case</returns>
-		protected double MyMod( double x, double y )
-		{
-			double temp;
-			
-			if ( y == 0 )
-				return 0;
-		
-			temp = x/y;
-			return y*(temp - Math.Floor(temp));
-		}
-	#endregion
-	
-	#region Coordinate Transform Methods
-		/// <summary>
-		/// Transform the coordinate value from user coordinates (scale value)
-		/// to graphics device coordinates (pixels).
-		/// </summary>
-		/// <remarks>This method takes into
-		/// account the scale range (<see cref="Min"/> and <see cref="Max"/>),
-		/// logarithmic state (<see cref="IsLog"/>), scale reverse state
-		/// (<see cref="IsReverse"/>) and axis type (<see cref="XAxis"/>,
-		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).
-		/// Note that the <see cref="GraphPane.AxisRect"/> must be valid, and
-		/// <see cref="SetupScaleData"/> must be called for the
-		/// current configuration before using this method (this is called everytime
-		/// the graph is drawn (i.e., <see cref="GraphPane.Draw"/> is called).
-		/// </remarks>
-		/// <param name="x">The coordinate value, in user scale units, to
-		/// be transformed</param>
-		/// <returns>the coordinate value transformed to screen coordinates
-		/// for use in calling the <see cref="Graphics"/> draw routines</returns>
-		public float Transform( double x )
-		{
-			// Must take into account Log, and Reverse Axes
-			double ratio;
-			if ( this.IsLog )
-				ratio = ( SafeLog( x ) - this.minScale ) / ( this.maxScale  - this.minScale );
-			else if ( this.IsExponent )
-				ratio = ( SafeExp( x ) - this.minScale ) / ( this.maxScale - this.minScale );
-			else
-				ratio = ( x - this.minScale ) / ( this.maxScale - this.minScale );
-				
-			if ( this.isReverse && (this is XAxis)  )
-				return (float) ( this.maxPix - ( this.maxPix - this.minPix ) * ratio );
-			else if ( this is XAxis )
-				return (float) ( this.minPix +  ( this.maxPix - this.minPix ) * ratio );
-			else if ( this.isReverse )
-				return (float) ( this.minPix + ( this.maxPix - this.minPix ) * ratio );
-			else
-				return (float) ( this.maxPix - ( this.maxPix - this.minPix ) * ratio );
-		}
-
-		/// <summary>
-		/// Transform the coordinate value from user coordinates (scale value)
-		/// to graphics device coordinates (pixels).
-		/// </summary>
-		/// <remarks>
-		/// This method takes into
-		/// account the scale range (<see cref="Min"/> and <see cref="Max"/>),
-		/// logarithmic state (<see cref="IsLog"/>), scale reverse state
-		/// (<see cref="IsReverse"/>) and axis type (<see cref="XAxis"/>,
-		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).
-		/// Note that the <see cref="GraphPane.AxisRect"/> must be valid, and
-		/// <see cref="SetupScaleData"/> must be called for the
-		/// current configuration before using this method (this is called everytime
-		/// the graph is drawn (i.e., <see cref="GraphPane.Draw"/> is called).
-		/// </remarks>
-		/// <param name="isOverrideOrdinal">true to force the axis to honor the data
-		/// value, rather than replacing it with the ordinal value</param>
-		/// <param name="i">The ordinal value of this point, just in case
-		/// this is an <see cref="AxisType.Ordinal"/> axis</param>
-		/// <param name="x">The coordinate value, in user scale units, to
-		/// be transformed</param>
-		/// <returns>the coordinate value transformed to screen coordinates
-		/// for use in calling the <see cref="Graphics"/> draw routines</returns>
-		public float Transform( bool isOverrideOrdinal, int i, double x )
-		{
-			// ordinal types ignore the X value, and just use the ordinal position
-			if ( this.IsAnyOrdinal && i >= 0 && !isOverrideOrdinal )
-				x = (double) i + 1.0;
-			return Transform( x );
-
-		}
-
-		/// <summary>
-		/// Reverse transform the user coordinates (scale value)
-		/// given a graphics device coordinate (pixels).
-		/// </summary>
-		/// <remarks>
-		/// This method takes into
-		/// account the scale range (<see cref="Min"/> and <see cref="Max"/>),
-		/// logarithmic state (<see cref="IsLog"/>), scale reverse state
-		/// (<see cref="IsReverse"/>) and axis type (<see cref="XAxis"/>,
-		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).
-		/// Note that the <see cref="GraphPane.AxisRect"/> must be valid, and
-		/// <see cref="SetupScaleData"/> must be called for the
-		/// current configuration before using this method (this is called everytime
-		/// the graph is drawn (i.e., <see cref="GraphPane.Draw"/> is called).
-		/// </remarks>
-		/// <param name="pixVal">The screen pixel value, in graphics device coordinates to
-		/// be transformed</param>
-		/// <returns>The user scale value that corresponds to the screen pixel location</returns>
-		public double ReverseTransform( float pixVal )
-		{
-			double val;
-			
-			// see if the sign of the equation needs to be reversed
-			if ( (this.isReverse) == (this is XAxis) )
-				val = (double) ( pixVal - this.maxPix )
-						/ (double) ( this.minPix - this.maxPix )
-						* ( this.maxScale - this.minScale ) + this.minScale;
-			else
-				val = (double) ( pixVal - this.minPix )
-						/ (double) ( this.maxPix - this.minPix )
-						* ( this.maxScale - this.minScale ) + this.minScale;
-			
-			if ( this.IsLog )
-				val = Math.Pow( 10.0, val );
-			else if ( this.IsExponent )
-				val = Math.Pow( val, 1.0 / exponent );
-			
-			return val;
-		}
-				
-
-		/// <summary>
-		/// Transform the coordinate value from user coordinates (scale value)
-		/// to graphics device coordinates (pixels).
-		/// </summary>
-		/// <remarks>Assumes that the origin
-		/// has been set to the "left" of this axis, facing from the label side.
-		/// Note that the left side corresponds to the scale minimum for the X and
-		/// Y2 axes, but it is the scale maximum for the Y axis.
-		/// This method takes into
-		/// account the scale range (<see cref="Min"/> and <see cref="Max"/>),
-		/// logarithmic state (<see cref="IsLog"/>), scale reverse state
-		/// (<see cref="IsReverse"/>) and axis type (<see cref="XAxis"/>,
-		/// <see cref="YAxis"/>, or <see cref="Y2Axis"/>).  Note that
-		/// the <see cref="GraphPane.AxisRect"/> must be valid, and
-		/// <see cref="SetupScaleData"/> must be called for the
-		/// current configuration before using this method.
-		/// </remarks>
-		/// <param name="x">The coordinate value, in user scale units, to
-		/// be transformed</param>
-		/// <returns>the coordinate value transformed to screen coordinates
-		/// for use in calling the <see cref="DrawScale"/> method</returns>
-		public float LocalTransform( double x )
-		{
-			// Must take into account Log, and Reverse Axes
-			double	ratio;
-			float	rv;
-
-			// Coordinate values for log scales are already in exponent form, so no need
-			// to take the log here
-			ratio = ( x - this.minScale ) / ( this.maxScale - this.minScale );
-			
-			if ( ( this.isReverse && !(this is YAxis) ) ||
-				( !this.isReverse && (this is YAxis ) ) )
-				rv = (float) ( ( this.maxPix - this.minPix ) * ( 1.0F - ratio ) );
-			else
-				rv = (float) ( ( this.maxPix - this.minPix ) * ratio );
-
-			return rv;
-		}
-
-		/// <summary>
-		/// Calculate a base 10 logarithm in a safe manner to avoid math exceptions
-		/// </summary>
-		/// <param name="x">The value for which the logarithm is to be calculated</param>
-		/// <returns>The value of the logarithm, or 0 if the <paramref name="x"/>
-		/// argument was negative or zero</returns>
-		public double SafeLog( double x )
-		{
-			if ( x > 1.0e-20 )
-				return Math.Log10( x );
-			else
-				return 0.0;
-		}
-
-		///<summary>
-		///Calculate an exponential in a safe manner to avoid math exceptions
-		///</summary> 
-		/// <param name="x">The value for which the exponential is to be calculated</param>
-		public double SafeExp( double x )
-		{
-			if ( x > 1.0e-20 )
-				return Math.Pow( x, exponent );
-			else
-				return 0.0;
-		}
-	#endregion
 	}
 }
 

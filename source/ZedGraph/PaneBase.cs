@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-12-22 07:30:51 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2005-12-26 11:09:10 $ </version>
 	public class PaneBase : ICloneable
 	{
 
@@ -977,28 +977,28 @@ namespace ZedGraph
 			}
 			else if ( coord == CoordType.AxisXYScale )
 			{
-				ptPix.X = gPane.XAxis.Transform( ptF.X );
-				ptPix.Y = gPane.YAxis.Transform( ptF.Y );
+				ptPix.X = gPane.XAxis.Scale.Transform( ptF.X );
+				ptPix.Y = gPane.YAxis.Scale.Transform( ptF.Y );
 			}
 			else if ( coord == CoordType.AxisXY2Scale )
 			{
-				ptPix.X = gPane.XAxis.Transform( ptF.X );
-				ptPix.Y = gPane.Y2Axis.Transform( ptF.Y );
+				ptPix.X = gPane.XAxis.Scale.Transform( ptF.X );
+				ptPix.Y = gPane.Y2Axis.Scale.Transform( ptF.Y );
 			}
 			else if ( coord == CoordType.XScaleYAxisFraction )
 			{
-				ptPix.X = gPane.XAxis.Transform( ptF.X );
+				ptPix.X = gPane.XAxis.Scale.Transform( ptF.X );
 				ptPix.Y = gPane.AxisRect.Top + ptF.Y * gPane.AxisRect.Height;
 			}
 			else if ( coord == CoordType.XAxisFractionYScale )
 			{
 				ptPix.X = gPane.AxisRect.Left + ptF.X * gPane.AxisRect.Width;
-				ptPix.Y = gPane.YAxis.Transform( ptF.Y );
+				ptPix.Y = gPane.YAxis.Scale.Transform( ptF.Y );
 			}
 			else if ( coord == CoordType.XAxisFractionY2Scale )
 			{
 				ptPix.X = gPane.AxisRect.Left + ptF.X * gPane.AxisRect.Width;
-				ptPix.Y = gPane.Y2Axis.Transform( ptF.Y );
+				ptPix.Y = gPane.Y2Axis.Scale.Transform( ptF.Y );
 			}
 			else if ( coord == CoordType.XAxisFractionYPaneFraction )
 			{

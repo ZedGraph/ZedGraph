@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.6 $ $Date: 2005-12-08 04:03:44 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2005-12-26 11:09:10 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane pane;
@@ -336,10 +336,10 @@ namespace ZedGraph
 				if ( ( curve.IsBar && !( pane.BarType == BarType.Cluster || pane.BarType == BarType.ClusterHiLow ) ) )
 					iOrdinal = 0;
 
-				float centerPix = baseAxis.Transform( curve.IsOverrideOrdinal, iCluster, val )
+				float centerPix = baseAxis.Scale.Transform( curve.IsOverrideOrdinal, iCluster, val )
 					- clusterWidth / 2.0F + clusterGap / 2.0F +
 					iOrdinal * ( barWidth + barGap ) + 0.5F * barWidth;
-				return baseAxis.ReverseTransform( centerPix );
+				return baseAxis.Scale.ReverseTransform( centerPix );
 			}
 		}
 	}

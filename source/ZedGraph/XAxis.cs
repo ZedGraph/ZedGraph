@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2005-12-26 11:09:10 $ </version>
 	[Serializable]
 	public class XAxis : Axis, ICloneable, ISerializable
 	{
@@ -196,7 +196,7 @@ namespace ZedGraph
 			double effCross = EffectiveCrossValue( pane );
 
 			if ( !this.crossAuto )
-				return pane.YAxis.Transform( effCross ) - pane.YAxis.MaxPix;
+				return pane.YAxis.Scale.Transform( effCross ) - pane.YAxis.Scale.MaxPix;
 			else
 				return 0;
 		}

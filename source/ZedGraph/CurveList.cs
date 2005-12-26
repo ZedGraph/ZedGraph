@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.29 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.30 $ $Date: 2005-12-26 11:09:10 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -324,28 +324,31 @@ namespace ZedGraph
 					tYMinVal,
 					tYMaxVal;
 
-			pane.XAxis.rangeMin = double.MaxValue;
-			pane.XAxis.rangeMax = double.MinValue;
-			pane.XAxis.lBound = ( isBoundedRanges && pane.XAxis.MinAuto ) ?
+			Scale scale = pane.XAxis.Scale;
+			scale.rangeMin = double.MaxValue;
+			scale.rangeMax = double.MinValue;
+			scale.lBound = ( isBoundedRanges && pane.XAxis.MinAuto ) ?
 					double.MinValue : pane.XAxis.Min;
-			pane.XAxis.uBound = ( isBoundedRanges && pane.XAxis.MaxAuto ) ?
+			scale.uBound = ( isBoundedRanges && pane.XAxis.MaxAuto ) ?
 					double.MaxValue : pane.XAxis.Max;
 
 			
 			foreach ( YAxis axis in pane.YAxisList )
 			{
-				axis.rangeMin = double.MaxValue;
-				axis.rangeMax = double.MinValue;
-				axis.lBound = ( isBoundedRanges && axis.MinAuto ) ? double.MinValue : axis.Min;
-				axis.uBound = ( isBoundedRanges && axis.MaxAuto ) ? double.MaxValue : axis.Max;
+				scale = axis.Scale;
+				scale.rangeMin = double.MaxValue;
+				scale.rangeMax = double.MinValue;
+				scale.lBound = ( isBoundedRanges && scale.MinAuto ) ? double.MinValue : scale.Min;
+				scale.uBound = ( isBoundedRanges && scale.MaxAuto ) ? double.MaxValue : scale.Max;
 			}
 
 			foreach ( Y2Axis axis in pane.Y2AxisList )
 			{
-				axis.rangeMin = double.MaxValue;
-				axis.rangeMax = double.MinValue;
-				axis.lBound = ( isBoundedRanges && axis.MinAuto ) ? double.MinValue : axis.Min;
-				axis.uBound = ( isBoundedRanges && axis.MaxAuto ) ? double.MaxValue : axis.Max;
+				scale = axis.Scale;
+				scale.rangeMin = double.MaxValue;
+				scale.rangeMax = double.MinValue;
+				scale.lBound = ( isBoundedRanges && scale.MinAuto ) ? double.MinValue : scale.Min;
+				scale.uBound = ( isBoundedRanges && scale.MaxAuto ) ? double.MaxValue : scale.Max;
 			}
 
 			// initialize the values to outrageous ones to start
@@ -392,10 +395,11 @@ namespace ZedGraph
 				}
    				
 				// isYOrd is true if the Y axis is an ordinal type
-				Axis yAxis = curve.GetYAxis( pane );
-				bool isYOrd = yAxis.IsAnyOrdinal;
+				Scale yScale = curve.GetYAxis( pane ).Scale;
+				Scale xScale = pane.XAxis.Scale;
+				bool isYOrd = yScale.IsAnyOrdinal;
 				// isXOrd is true if the X axis is an ordinal type
-				bool isXOrd = pane.XAxis.IsAnyOrdinal;
+				bool isXOrd = xScale.IsAnyOrdinal;
    							
 				// For ordinal Axes, the data range is just 1 to Npts
 				if ( isYOrd )
@@ -458,16 +462,16 @@ namespace ZedGraph
 				// are the absolute min and/or max, then save the values
 				// Also, differentiate between Y and Y2 values
 				
-				if ( tYMinVal < yAxis.rangeMin )
-					yAxis.rangeMin = tYMinVal;
-				if ( tYMaxVal > yAxis.rangeMax )
-					yAxis.rangeMax = tYMaxVal;
+				if ( tYMinVal < yScale.rangeMin )
+					yScale.rangeMin = tYMinVal;
+				if ( tYMaxVal > yScale.rangeMax )
+					yScale.rangeMax = tYMaxVal;
 					
 				
-				if ( tXMinVal < pane.XAxis.rangeMin )
-					pane.XAxis.rangeMin = tXMinVal;
-				if ( tXMaxVal > pane.XAxis.rangeMax )
-					pane.XAxis.rangeMax = tXMaxVal;
+				if ( tXMinVal < xScale.rangeMin )
+					xScale.rangeMin = tXMinVal;
+				if ( tXMaxVal > xScale.rangeMax )
+					xScale.rangeMax = tXMaxVal;
 					
 				/*	
 				if ( curve.IsY2Axis )
@@ -492,73 +496,14 @@ namespace ZedGraph
 				*/
 			}
 		
-			SetRange( pane, pane.XAxis );
+			pane.XAxis.Scale.SetRange( pane, pane.XAxis );
 			foreach ( YAxis axis in pane.YAxisList )
-				SetRange( pane, axis );
+				axis.Scale.SetRange( pane, axis );
 			foreach ( Y2Axis axis in pane.Y2AxisList )
-				SetRange( pane, axis );
+				axis.Scale.SetRange( pane, axis );
 
 		}
 		
-		private void SetRange( GraphPane pane, Axis axis )
-		{
-			// Define suitable default ranges in the event that
-			// no data were available
-			if ( axis.rangeMin >= Double.MaxValue || axis.rangeMax <= Double.MinValue )
-			{
-				// If this is a Y axis, and the main Y axis is valid, use it for defaults
-				if ( axis != pane.XAxis &&
-					pane.YAxis.rangeMin < double.MaxValue && pane.YAxis.rangeMax > double.MinValue )
-				{
-					axis.rangeMin = pane.YAxis.rangeMin;
-					axis.rangeMax = pane.YAxis.rangeMax;
-				}
-					// Otherwise, if this is a Y axis, and the main Y2 axis is valid, use it for defaults
-				else if ( axis != pane.XAxis &&
-					pane.Y2Axis.rangeMin < double.MaxValue && pane.Y2Axis.rangeMax > double.MinValue )
-				{
-					axis.rangeMin = pane.Y2Axis.rangeMin;
-					axis.rangeMax = pane.Y2Axis.rangeMax;
-				}
-					// Otherwise, just use 0 and 1
-				else
-				{
-					axis.rangeMin = 0;
-					axis.rangeMax = 1;
-				}
-					
-			}
-				
-			/*
-				if ( yMinVal >= Double.MaxValue || yMaxVal <= Double.MinValue )
-				{
-					if ( y2MinVal < Double.MaxValue && y2MaxVal > Double.MinValue )
-					{
-						yMinVal = y2MinVal;
-						yMaxVal = y2MaxVal;
-					}
-					else
-					{
-						yMinVal = 0;
-						yMaxVal = 0.01;
-					}
-				}
-			
-				if ( y2MinVal >= Double.MaxValue || y2MaxVal <= Double.MinValue )
-				{
-					if ( yMinVal < Double.MaxValue && yMaxVal > Double.MinValue )
-					{
-						y2MinVal = yMinVal;
-						y2MaxVal = yMaxVal;
-					}
-					else
-					{
-						y2MinVal = 0;
-						y2MaxVal = 1;
-					}
-				}
-				*/
-		}
 
 		/// <summary>
 		/// Calculate the range for stacked bars and lines.

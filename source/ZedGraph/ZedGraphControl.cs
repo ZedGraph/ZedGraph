@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.46 $ $Date: 2005-12-22 07:30:51 $ </version>
+	/// <version> $Revision: 3.47 $ $Date: 2005-12-26 11:09:10 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -2218,14 +2218,14 @@ namespace ZedGraph
 		{
 			if ( this.GraphPane != null )
 			{
-				xScrollRange.Min = this.GraphPane.XAxis.rangeMin;
-				xScrollRange.Max = this.GraphPane.XAxis.rangeMax;
+				xScrollRange.Min = this.GraphPane.XAxis.Scale.rangeMin;
+				xScrollRange.Max = this.GraphPane.XAxis.Scale.rangeMax;
 				xScrollRange.IsScrollable = true;
 
 				for ( int i = 0; i < this.GraphPane.YAxisList.Count; i++ )
 				{
 					Axis axis = this.GraphPane.YAxisList[i];
-					ScrollRange range = new ScrollRange( axis.rangeMin, axis.rangeMax,
+					ScrollRange range = new ScrollRange( axis.Scale.rangeMin, axis.Scale.rangeMax,
 															yScrollRangeList[i].IsScrollable );
 					if ( i >= yScrollRangeList.Count )
 						yScrollRangeList.Add( range );
@@ -2236,7 +2236,7 @@ namespace ZedGraph
 				for ( int i = 0; i < this.GraphPane.Y2AxisList.Count; i++ )
 				{
 					Axis axis = this.GraphPane.Y2AxisList[i];
-					ScrollRange range = new ScrollRange( axis.rangeMin, axis.rangeMax,
+					ScrollRange range = new ScrollRange( axis.Scale.rangeMin, axis.Scale.rangeMax,
 															y2ScrollRangeList[i].IsScrollable );
 					if ( i >= y2ScrollRangeList.Count )
 						y2ScrollRangeList.Add( range );

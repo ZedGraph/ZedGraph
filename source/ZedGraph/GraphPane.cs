@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.54 $ $Date: 2005-12-09 05:09:42 $ </version>
+	/// <version> $Revision: 3.55 $ $Date: 2005-12-26 11:09:10 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -776,22 +776,22 @@ namespace ZedGraph
 			// then let the scales re-calculate to make sure that the assumption was ok
 			if ( this.isAxisRectAuto )
 			{
-				this.xAxis.PickScale( this, g, scaleFactor );
+				this.xAxis.Scale.PickScale( this, g, scaleFactor );
 				foreach ( Axis axis in yAxisList )
-					axis.PickScale( this, g, scaleFactor );
+					axis.Scale.PickScale( this, g, scaleFactor );
 				foreach ( Axis axis in y2AxisList )
-					axis.PickScale( this, g, scaleFactor );
+					axis.Scale.PickScale( this, g, scaleFactor );
 	  
 				this.axisRect = CalcAxisRect( g );
 				this.pieRect = PieItem.CalcPieRect( g, this, scaleFactor, this.axisRect );
 			}
  
 			// Pick new scales based on the range
-			this.xAxis.PickScale( this, g, scaleFactor );
+			this.xAxis.Scale.PickScale( this, g, scaleFactor );
 			foreach ( Axis axis in yAxisList )
-				axis.PickScale( this, g, scaleFactor );
+				axis.Scale.PickScale( this, g, scaleFactor );
 			foreach ( Axis axis in y2AxisList )
-				axis.PickScale( this, g, scaleFactor );
+				axis.Scale.PickScale( this, g, scaleFactor );
 		}
 		
 		/// <summary>
@@ -851,11 +851,11 @@ namespace ZedGraph
 			// the GraphItem's are drawn so that the Transform functions are
 			// ready.  Also, this should be done before CalcAxisRect so that the
 			// Axis.Cross - shift parameter can be calculated.
-			this.xAxis.SetupScaleData( this );
+			this.xAxis.Scale.SetupScaleData( this, this.xAxis );
 			foreach ( Axis axis in yAxisList )
-				axis.SetupScaleData( this );
+				axis.Scale.SetupScaleData( this, axis );
 			foreach ( Axis axis in y2AxisList )
-				axis.SetupScaleData( this );
+				axis.Scale.SetupScaleData( this, axis );
 
 			// Draw the GraphItems that are behind the Axis objects
 			if ( showGraf )
@@ -1505,11 +1505,11 @@ namespace ZedGraph
 		public PointF GeneralTransform( PointF ptF, CoordType coord )
 		{
 			// Setup the scaling data based on the axis rect
-			this.xAxis.SetupScaleData( this );
+			this.xAxis.Scale.SetupScaleData( this, this.xAxis );
 			foreach ( Axis axis in yAxisList )
-				axis.SetupScaleData( this );
+				axis.Scale.SetupScaleData( this, axis );
 			foreach ( Axis axis in y2AxisList )
-				axis.SetupScaleData( this );
+				axis.Scale.SetupScaleData( this, axis );
 		
 			return this.TransformCoord( ptF, coord );
 		}
@@ -1535,13 +1535,13 @@ namespace ZedGraph
 			out double y2 )
 		{
 			// Setup the scaling data based on the axis rect
-			this.xAxis.SetupScaleData( this );
-			this.YAxis.SetupScaleData( this );
-			this.Y2Axis.SetupScaleData( this );
+			this.xAxis.Scale.SetupScaleData( this, this.xAxis );
+			this.YAxis.Scale.SetupScaleData( this, this.YAxis );
+			this.Y2Axis.Scale.SetupScaleData( this, this.Y2Axis );
 
-			x = this.XAxis.ReverseTransform( ptF.X );
-			y = this.YAxis.ReverseTransform( ptF.Y );
-			y2 = this.Y2Axis.ReverseTransform( ptF.Y );
+			x = this.XAxis.Scale.ReverseTransform( ptF.X );
+			y = this.YAxis.Scale.ReverseTransform( ptF.Y );
+			y2 = this.Y2Axis.Scale.ReverseTransform( ptF.Y );
 		}
 
 		/// <summary>
@@ -1568,21 +1568,23 @@ namespace ZedGraph
 			out double[] y2 )
 		{
 			// Setup the scaling data based on the axis rect
-			this.xAxis.SetupScaleData( this );
-			x = this.XAxis.ReverseTransform( ptF.X );
+			this.xAxis.Scale.SetupScaleData( this, xAxis );
+			x = this.XAxis.Scale.ReverseTransform( ptF.X );
 
 			y = new double[ this.yAxisList.Count ];
 			y2 = new double[ this.y2AxisList.Count ];
 
 			for ( int i=0; i<this.yAxisList.Count; i++ )
 			{
-				this.yAxisList[i].SetupScaleData( this );
-				y[i] = this.yAxisList[i].ReverseTransform( ptF.Y );
+				Axis axis = this.yAxisList[i];
+				axis.Scale.SetupScaleData( this, axis  );
+				y[i] = axis.Scale.ReverseTransform( ptF.Y );
 			}
 			for ( int i=0; i<this.y2AxisList.Count; i++ )
 			{
-				this.y2AxisList[i].SetupScaleData( this );
-				y2[i] = this.y2AxisList[i].ReverseTransform( ptF.Y );
+				Axis axis = this.y2AxisList[i];
+				axis.Scale.SetupScaleData( this, axis );
+				y2[i] = axis.Scale.ReverseTransform( ptF.Y );
 			}
 		}
 

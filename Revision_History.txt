@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+26-Dec-2005 (by Champion)
+[UPD] Add Scale class and one subtype for each AxisType
+[FIX] CalcNumTics was whacked for MajorUnit of Hours, Minutes, or Seconds
+[UPD] Improve XDate to work with fractional seconds and/or milliseconds
+
 21-Dec-2005 (by Champion)
 [FIX] panebase draws fill even if PaneFill.IsVisible is false -- fixed
 [UPD] Avoid overlap by checking actual spacing (particular useful for Exponential scales)

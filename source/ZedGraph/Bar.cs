@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.20 $ $Date: 2005-05-20 16:32:27 $ </version>
+   /// <version> $Revision: 3.21 $ $Date: 2005-12-26 11:09:10 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -476,10 +476,10 @@ namespace ZedGraph
 			if ( !curve.Points[index].IsInvalid )
 			{
 				// calculate a pixel value for the top of the bar on value axis
-				pixLowVal = valueAxis.Transform( curve.IsOverrideOrdinal, index, curLowVal );
-				pixHiVal = valueAxis.Transform( curve.IsOverrideOrdinal, index, curHiVal );
+				pixLowVal = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, index, curLowVal );
+				pixHiVal = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, index, curHiVal );
 				// calculate a pixel value for the center of the bar on the base axis
-				pixBase = baseAxis.Transform( curve.IsOverrideOrdinal, index, curBase );
+				pixBase = baseAxis.Scale.Transform( curve.IsOverrideOrdinal, index, curBase );
 
 				// Calculate the pixel location for the side of the bar (on the base axis)
 				float pixSide = pixBase - clusterWidth / 2.0F + clusterGap / 2.0F +

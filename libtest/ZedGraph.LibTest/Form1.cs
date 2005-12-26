@@ -1055,6 +1055,42 @@ namespace ZedGraph.LibTest
 
 #endif
 
+#if false	// Basic curve test - Dual Y axes
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			myPane.Y2Axis.Title = "My Y2 Axis";
+
+			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
+
+			for ( int i=0; i<100; i++ )
+			{
+				double x = (double) i;
+				double y = Math.Sin( i / 8.0 ) * 100000 + 150000;
+				double y2 = Math.Sin( i / 3.0 ) * 300 - 400;
+				list.Add( x, y );
+				list2.Add( x, y2 );
+				//double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			LineItem myCurve2 = myPane.AddCurve( "curve2", list2, Color.Red, SymbolType.Diamond );
+			myCurve2.IsY2Axis = true;
+
+			myPane.Y2Axis.IsVisible = true;
+
+			AlignYZeroLines( myPane, 12 );
+			myPane.YAxis.IsMinorOppositeTic = false;
+			myPane.Y2Axis.IsMinorOppositeTic = false;
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
+
+
 #if false	// Basic curve test - Multi-Y axes
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
@@ -1090,7 +1126,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if false	// Basic curve test - Date Axis
+#if true	// Basic curve test - Date Axis
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -1099,7 +1135,7 @@ namespace ZedGraph.LibTest
 			for ( int i=0; i<100; i++ )
 			{
 				//double x = (double) i;
-				double x = new XDate( 2001, 1, i*3 );
+				double x = new XDate( 2005, 12, 25, 4, 5, 6, i );
 				double y = Math.Sin( i / 8.0 ) * 1 + 1;
 				list.Add( x, y );
 				double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
@@ -1109,8 +1145,14 @@ namespace ZedGraph.LibTest
 
 			myPane.XAxis.IsSkipLastLabel = false;
 			//myPane.XAxis.IsPreventLabelOverlap = false;
-			myPane.XAxis.ScaleFormat = "dd/MM HH:mm";
+			myPane.XAxis.ScaleFormat = "dd/MM HH:mm:ss.ff";
 			myPane.XAxis.Type = AxisType.Date;
+			myPane.XAxis.Min = new XDate( 2005, 12, 25, 4, 5, 6, 0 );
+			myPane.XAxis.Max = new XDate( 2005, 12, 25, 4, 5, 6, 100 );
+			myPane.XAxis.Step = 0.025;
+			myPane.XAxis.MinorStep = 0.005;
+			myPane.XAxis.MajorUnit = DateUnit.Second;
+			myPane.XAxis.MinorUnit = DateUnit.Second;
 			myPane.AxisChange( this.CreateGraphics() );
 
 			myPane.YAxis.ScaleFormat = "0.0'%'";
@@ -1434,7 +1476,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test - log/exponential axis
+#if false	// Basic curve test - log/exponential axis
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
 			PointPairList ppl1 = new PointPairList();
@@ -1464,7 +1506,6 @@ namespace ZedGraph.LibTest
 			trackBar1.Value = 50;
 
 #endif
-
 
 #if false	// Basic curve test
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
@@ -1647,6 +1688,70 @@ namespace ZedGraph.LibTest
 			if ( this.myPane != null )
 				this.myPane.AxisChange( this.CreateGraphics() );
       
+		}
+
+		/// <summary>
+		/// Align the zero lines and major tics of the Y and Y2 axes.
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> that contains the axes to be aligned</param>
+		/// <param name="maxSteps">The maximum allowable number of steps.  This is provided to make sure
+		/// that the number of steps does not get ridiculous, which can happen if the data values are small
+		/// spans which lie a large distance away from the zero line.</param>
+		public void AlignYZeroLines( GraphPane pane, int maxSteps )
+		{
+			Graphics g = this.CreateGraphics();
+
+			// Get references to the Y axes to save some typing
+			Axis yAxis = pane.YAxis;
+			Axis y2Axis = pane.Y2Axis;
+
+			// Reset both Y axes to autoscaling mode (this also calls AxisChange())
+			yAxis.ResetAutoScale( pane, g );
+			y2Axis.ResetAutoScale( pane, g );
+
+			g.Dispose();
+
+			//Calculate the number of steps for the Y axis in both directions
+			int plusYSteps = (int) ( yAxis.Max > 0 ? yAxis.Max / yAxis.Step : 0 );
+			int minusYSteps = (int) ( yAxis.Min < 0 ? -yAxis.Min / yAxis.Step : 0 );
+
+			//Calculate the number of steps for the Y2 axis in both directions
+			int plusY2Steps = (int) ( y2Axis.Max > 0 ? y2Axis.Max / y2Axis.Step : 0 );
+			int minusY2Steps = (int) ( y2Axis.Min < 0 ? -y2Axis.Min / y2Axis.Step : 0 );
+
+			//Make the number of steps above the zero line match
+			if ( plusYSteps > plusY2Steps )
+				y2Axis.Max += y2Axis.Step * ( plusYSteps - plusY2Steps );
+			else if ( plusY2Steps > plusYSteps )
+				yAxis.Max += yAxis.Step * ( plusY2Steps - plusYSteps );
+
+			//Make the number of steps below the zero line match
+			if ( minusYSteps > minusY2Steps )
+				y2Axis.Min -= y2Axis.Step * ( minusYSteps - minusY2Steps );
+			else if ( minusY2Steps > minusYSteps )
+				yAxis.Min -= yAxis.Step * ( minusY2Steps - minusYSteps );
+
+			//Calculate the total number of steps
+			int nSteps = (int) ( ( yAxis.Max - yAxis.Min ) / yAxis.Step );
+
+			//If the total steps is outrageous (more than maxSteps), then correct it
+			//Note that this may cause the graph to include fractional steps such that
+			//Axis.Min and/or Axis.Max values do not lie on a even step boundary
+			double factor = Math.Ceiling( (double) nSteps / (double) maxSteps );
+			if ( factor > 1 )
+			{
+				yAxis.Step *= factor;
+				y2Axis.Step *= factor;
+			}
+
+
+			// Make sure that subsequent calls to AxisChange() don't change things
+			yAxis.MinAuto = false;
+			yAxis.MaxAuto = false;
+			yAxis.StepAuto = false;
+			y2Axis.MinAuto = false;
+			y2Axis.MaxAuto = false;
+			y2Axis.StepAuto = false;
 		}
 
 		// Call this method only after calling AxisChange()

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.23 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2005-12-26 11:09:10 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -479,7 +479,8 @@ namespace ZedGraph
 				RectangleF rect = path.GetBounds();
 				Brush brush = this.Fill.MakeBrush( rect );
 				ValueHandler valueHandler = new ValueHandler( pane, false );
-				Axis yAxis = curve.GetYAxis( pane );
+				Scale xScale = pane.XAxis.Scale;
+				Scale yScale = curve.GetYAxis( pane ).Scale;
 
 				// Loop over each defined point							
 				for ( int i=0; i<points.Count; i++ )
@@ -514,11 +515,11 @@ namespace ZedGraph
 							!System.Double.IsInfinity( curX ) &&
 							!System.Double.IsInfinity( curY ) &&
 							( curX > 0 || !pane.XAxis.IsLog ) &&
-							( !yAxis.IsLog || curY > 0.0 ) )
+							( !yScale.IsLog || curY > 0.0 ) )
 					{
 						// Transform the user scale values to pixel locations
-						tmpX = pane.XAxis.Transform( curve.IsOverrideOrdinal, i, curX );
-						tmpY = yAxis.Transform( curve.IsOverrideOrdinal, i, curY );
+						tmpX = xScale.Transform( curve.IsOverrideOrdinal, i, curX );
+						tmpY = yScale.Transform( curve.IsOverrideOrdinal, i, curY );
 
 						// If the fill type for this symbol is a Gradient by value type,
 						// the make a brush corresponding to the appropriate current value

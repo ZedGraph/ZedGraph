@@ -2616,7 +2616,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["MinGrace"];
-				return (null == x) ? ZedGraph.Axis.Default.MinGrace : (double)x;
+				return (null == x) ? ZedGraph.Scale.Default.MinGrace : (double)x;
 			}
 			set { ViewState["MinGrace"] = value; }
 		}
@@ -2637,7 +2637,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["MaxGrace"]; 
-				return (null == x) ? ZedGraph.Axis.Default.MaxGrace : (double)x;
+				return (null == x) ? ZedGraph.Scale.Default.MaxGrace : (double)x;
 			}
 			set { ViewState["MaxGrace"] = value; }
 		}
@@ -2730,7 +2730,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["IsReverse"]; 
-				return (null == x) ? ZedGraph.Axis.Default.IsReverse : (bool)x;
+				return (null == x) ? ZedGraph.Scale.Default.IsReverse : (bool)x;
 			}
 			set { ViewState["IsReverse"] = value; }
 		}
@@ -2860,7 +2860,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["ScaleFormat"]; 
-				return (null == x) ? ZedGraph.Axis.Default.ScaleFormat : (string)x;
+				return (null == x) ? ZedGraph.Scale.Default.ScaleFormat : (string)x;
 			}
 			set { ViewState["ScaleFormat"] = value; ViewState["ScaleFormatAuto"] = false; }
 		}
