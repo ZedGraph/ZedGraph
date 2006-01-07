@@ -1126,7 +1126,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test - Date Axis
+#if false	// Basic curve test - Date Axis
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -1223,16 +1223,20 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if false	// Basic curve test - Linear Axis
-
-			XDate xd = new XDate( 2002, 10, 17 );
-			xd.AddDays( -731520 );
-			MessageBox.Show( xd.ToString() );
+#if true	// Basic curve test - Linear Axis
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
 			PointPairList list = new PointPairList();
 
+			for ( int i=0; i<20; i++ )
+			{
+				double x = (double) i;
+				double y = Math.Sin( x / 8.0 );
+				double z = Math.Abs(Math.Cos( i / 8.0 )) * y;
+
+				list.Add( x, y, z );
+			}
 
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 
@@ -1241,17 +1245,33 @@ namespace ZedGraph.LibTest
 			//myPane.XAxis.IsReverse = true;
 			//myPane.XAxis.Type = AxisType.Log;
 
-/*
- *			for ( int i=1; i<100; i++ )
-			{
-				double x = i;
-				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
-				list.Add( x, y );
-				myPane.AxisChange( this.CreateGraphics() );
-				Invalidate();
-				Thread.Sleep( 300 );
-			}
-*/
+			//RectangleF rect = new RectangleF( 3, 0.7, 8, 0.2 );
+			myPane.AxisChange( this.CreateGraphics() );
+
+			BoxItem m_selectionBox = new BoxItem(); // rect );
+			m_selectionBox.Border.Color = Color.Orange;
+			m_selectionBox.Border.IsVisible = true;
+			m_selectionBox.Fill.Color = Color.LightYellow;
+			m_selectionBox.Fill.Type = FillType.Solid;
+			m_selectionBox.Fill.RangeMin = 1.0;
+			m_selectionBox.Fill.RangeMax = 1.0;
+			m_selectionBox.Fill.IsVisible = true;
+
+			m_selectionBox.Location = new Location(
+				(float)3,
+				(float)myPane.YAxis.Max,
+				(float)(8 - 3),
+				(float)myPane.YAxis.Max - (float)myPane.YAxis.Min,
+				CoordType.AxisXYScale,
+				AlignH.Left,
+				AlignV.Top);
+			    
+			m_selectionBox.IsClippedToAxisRect = true;
+			m_selectionBox.ZOrder = ZOrder.E_BehindAxis;
+			m_selectionBox.IsVisible = true;
+
+			myPane.GraphItemList.Add( m_selectionBox );
+
 #endif
 
 #if false	// Gantt Chart

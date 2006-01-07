@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.26 $ $Date: 2005-12-26 11:09:10 $ </version>
+	/// <version> $Revision: 3.27 $ $Date: 2006-01-07 19:15:15 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -723,9 +723,10 @@ namespace ZedGraph
 			double yLBound = double.MinValue;
 			double yUBound = double.MaxValue;
 
+			Axis yAxis = this.GetYAxis( pane );
+
 			if ( isBoundedRanges )
 			{
-				Axis yAxis = this.GetYAxis( pane );
 				xLBound = pane.XAxis.scale.lBound;
 				xUBound = pane.XAxis.scale.uBound;
 				yLBound = yAxis.scale.lBound;
@@ -735,6 +736,8 @@ namespace ZedGraph
 
 			bool isZIncluded = this.IsZIncluded( pane );
 			bool isXIndependent = this.IsXIndependent( pane );
+			bool isXLog = pane.XAxis.IsLog;
+			bool isYLog = yAxis.IsLog;
 
 			// initialize the values to outrageous ones to start
 			xMin = yMin = Double.MaxValue;
@@ -753,7 +756,8 @@ namespace ZedGraph
 				bool outOfBounds = curX < xLBound || curX > xUBound ||
 					curY < yLBound || curY > yUBound ||
 					( isZIncluded && isXIndependent && ( curZ < yLBound || curZ > yUBound ) ) ||
-					( isZIncluded && !isXIndependent && ( curZ < xLBound || curZ > xUBound ) );
+					( isZIncluded && !isXIndependent && ( curZ < xLBound || curZ > xUBound ) ) ||
+					( curX <= 0 && isXLog ) || ( curY <= 0 && isYLog );
 			
 				// ignoreInitial becomes false at the first non-zero
 				// Y value

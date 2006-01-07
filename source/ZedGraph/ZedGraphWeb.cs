@@ -31,10 +31,19 @@ using ZedGraph;
 
 namespace ZedGraph
 {
+	/// <summary>
+	/// Enum for specifying the type of data to be returned by the ZedGraphWeb Render() method.
+	/// </summary>
 	public enum RenderModeType
 	{
-		ImageTag, //Renders as an IMG tag referencing a local generated image. ContentType stays text.
-		RawImage  //Renders the binary image. ContentType is changed accordingly.
+		/// <summary>
+		/// Renders as an IMG tag referencing a local generated image. ContentType stays text.
+		/// </summary>
+		ImageTag,
+		/// <summary>
+		/// Renders the binary image. ContentType is changed accordingly.
+		/// </summary>
+		RawImage
 	}
 
 
@@ -46,7 +55,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 3.34 $ $Date: 2005-11-24 17:30:06 $</version>
+	/// <version>$Revision: 3.35 $ $Date: 2006-01-07 19:15:15 $</version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -717,7 +726,9 @@ namespace ZedGraph
 
 
 		/// <summary>
-		/// Proxy property that gets the value of the <see cref="GraphPane.MarginXXXX"/>.
+		/// Proxy property that gets the value of the <see cref="GraphPane" /> Margin
+		/// properties (<see cref="PaneBase.MarginLeft" />, <see cref="PaneBase.MarginRight" />,
+		/// <see cref="PaneBase.MarginTop" /> and <see cref="PaneBase.MarginBottom" />).
 		/// </summary>
 		[
 		Category("Layout of panes"),
@@ -1019,6 +1030,13 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Add the <see cref="ZedGraphWebGraphItem" /> objects defined in the webcontrol to
+		/// the <see cref="GraphPane" /> as <see cref="GraphItem" /> objects.
+		/// </summary>
+		/// <param name="g">The <see cref="Graphics" /> instance of interest.</param>
+		/// <param name="pane">The <see cref="GraphPane" /> object to receive the
+		/// <see cref="GraphItem" /> objects.</param>
 		protected void AddWebGraphItems( Graphics g, GraphPane pane )
 		{
 			try
@@ -1641,15 +1659,20 @@ namespace ZedGraph
 
 		#endregion
 
-		#region IServiceProvider Members
+	#region IServiceProvider Members
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="serviceType"></param>
+		/// <returns></returns>
 		public object GetService(Type serviceType)
 		{
 			// TODO:  Add ZedGraphWeb.GetService implementation
 			return null;
 		}
 
-		#endregion
+	#endregion
 	}
 
 

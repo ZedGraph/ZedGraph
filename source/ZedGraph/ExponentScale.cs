@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion with contributions by jackply </author>
-	/// <version> $Revision: 1.1 $ $Date: 2005-12-26 11:34:14 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2006-01-07 19:15:15 $ </version>
 	class ExponentScale : Scale
 	{
 
@@ -307,8 +307,8 @@ namespace ZedGraph
 		/// cause the third value label on the axis to be generated.
 		/// </param>
 		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="IsLog"/>)
-		/// and text (<see cref="IsText"/>) type axes.
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Axis.IsLog"/>)
+		/// and text (<see cref="Axis.IsText"/>) type axes.
 		/// </param>
 		/// <param name="label">
 		/// Output only.  The resulting value label.

@@ -285,7 +285,9 @@ namespace ZedGraph.ControlTest
 			*/
 #endif
 
-#if true	// Basic curve test - Date Axis w/ Time Span
+#if false	// Basic curve test - Date Axis w/ Time Span
+
+
 
 			PointPairList list = new PointPairList();
 
@@ -311,13 +313,13 @@ namespace ZedGraph.ControlTest
 
 #endif
 
-#if false	// Basic curve test - Date Axis
+#if true	// Basic curve test - Date Axis
 
 			PointPairList list = new PointPairList();
 
 			for ( int i=0; i<100; i++ )
 			{
-				double x = new XDate( 2001, 1, i*3 );
+				double x = new XDate( 2005, 12, i );
 				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
 				list.Add( x, y );
 			}
@@ -328,6 +330,14 @@ namespace ZedGraph.ControlTest
 
 			zedGraphControl1.IsAutoScrollRange = true;
 			zedGraphControl1.IsShowHScrollBar = true;
+
+			XDate now = new XDate( DateTime.Now );
+			ArrowItem arrow = new ArrowItem( Color.Black,
+					2.0f, (float) now.XLDate, 0.0f, (float) now.XLDate, 1.0f );
+			arrow.IsArrowHead = false;
+			arrow.Location.CoordinateFrame = CoordType.XScaleYAxisFraction;
+			myPane.GraphItemList.Add( arrow );
+
 #endif
 
 #if false	// Basic curve test - Linear Axis

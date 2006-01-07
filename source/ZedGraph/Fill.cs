@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-12-12 03:06:30 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2006-01-07 19:15:15 $ </version>
 	[Serializable]
 	public class Fill : ISerializable
 	{
@@ -671,7 +671,7 @@ namespace ZedGraph
 		public bool IsVisible
 		{
 			get { return type != FillType.None; }
-			set { type = value ? FillType.Brush : FillType.None; }
+			set { type = value ? ( type == FillType.None ? FillType.Brush : type ) : FillType.None; }
 		}
 
 		/// <summary>

@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.47 $ $Date: 2005-12-26 11:09:10 $ </version>
+	/// <version> $Revision: 3.48 $ $Date: 2006-01-07 19:15:15 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -260,6 +260,18 @@ namespace ZedGraph
 		/// <summary>
 		/// Subscribe to this event to provide custom formatting for the tooltips
 		/// </summary>
+		/// <example>
+		/// <para>To subscribe to this event, use the following in your Form_Load method:</para>
+		/// <code>zedGraphControl1.PointValueEvent +=
+		/// new ZedGraphControl.PointValueHandler( MyPointValueHandler );</code>
+		/// <para>Add this method to your Form1.cs:</para>
+		/// <code>
+		///    private string MyPointValueHandler( object sender, GraphPane pane, CurveItem curve, int iPt )
+		///    {
+		///        PointPair pt = curve[iPt];
+		///        return "This value is " + pt.Y.ToString("f2") + " gallons";
+		///    }</code>
+		/// </example>
 		public event PointValueHandler PointValueEvent;
 
 		/// <summary>

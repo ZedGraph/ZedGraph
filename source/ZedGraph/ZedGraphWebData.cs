@@ -372,6 +372,9 @@ namespace ZedGraph
 	/// </summary>
 	public class ZedGraphWebBorder2 : ZedGraphWebBorder
 	{
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public ZedGraphWebBorder2() : base()
 		{
 			this.IsVisible = true;
@@ -616,6 +619,9 @@ namespace ZedGraph
 	/// </summary>
 	public class ZedGraphWebFill2 : ZedGraphWebFill
 	{
+		/// <summary>
+		/// Default Constructor
+		/// </summary>
 		public ZedGraphWebFill2()
 		{
 			this.Color = Color.White;
@@ -2056,22 +2062,39 @@ namespace ZedGraph
 	#endregion
 
 	#region ZedGraphWebGrid
+
+	/// <summary>
+	/// Proxy class to manage all properties associated with a grid
+	/// </summary>
 	public class ZedGraphWebGrid : GenericItem
 	{
+		/// <summary>
+		/// Returns a string description of the class
+		/// </summary>
 		public override string ToString()
 		{
-			return "";
+			return "ZedGraphWebGrid";
 		}
 
+		/// <summary>
+		/// Default constructor
+		/// </summary>
 		public ZedGraphWebGrid() : base()
 		{
 			this.StepUnit = DateUnit.Day;
 		}
 
+		/// <summary>
+		/// Set the default properties associated with the major grid.
+		/// </summary>
 		public void SetDefaultsForMajorGrid()
 		{
+			
 		}
 
+		/// <summary>
+		/// Set the default properties associated with the minor grid.
+		/// </summary>
 		public void SetDefaultsForMinorGrid()
 		{
 			this.GridColor = ZedGraph.Axis.Default.MinorGridColor;
@@ -2145,6 +2168,10 @@ namespace ZedGraph
 			}
 		}
 		
+		/// <summary>
+		/// Proxy property to handle the units for the <see cref="Axis.Step" /> or <see cref="Axis.MinorStep" />
+		/// properties.
+		/// </summary>
 		[Category("Behaviour")]
 		[NotifyParentProperty(true)]
 		[Description("Defines in which unit the Step property is. Applies to AxisType.Date only.")]
@@ -2996,7 +3023,8 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// </remarks>
+		/// Proxy property to get or set the values for the <see cref="GraphPane" /> major grid.
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
@@ -3009,7 +3037,8 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// </remarks>
+		/// Proxy property to get or set the values for the <see cref="GraphPane" /> minor grid.
+		/// </summary>
 		[	
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),

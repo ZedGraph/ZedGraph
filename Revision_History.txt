@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+7-Jan-2006 (by Champion)
+[UPD] Exclude points from GetRange() that are <= 0 for log scales
+[FIX] Make Fill.IsVisible retain original FillType when set to true
+
 26-Dec-2005 (by Champion)
 [UPD] Add Scale class and one subtype for each AxisType
 [FIX] CalcNumTics was whacked for MajorUnit of Hours, Minutes, or Seconds

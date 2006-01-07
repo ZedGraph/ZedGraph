@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-12-26 11:09:10 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2006-01-07 19:15:15 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -211,7 +211,7 @@ namespace ZedGraph
 		/// <param name="second">An integer value for the second, e.g. 35.
 		/// It is permissible to have second values outside the 0-59 range, which
 		/// will rollover to the previous or next minute.</param>
-		/// <param name="second">An integer value for the millisecond, e.g. 632.
+		/// <param name="millisecond">An integer value for the millisecond, e.g. 632.
 		/// It is permissible to have millisecond values outside the 0-999 range, which
 		/// will rollover to the previous or next second.</param>
 		public XDate( int year, int month, int day, int hour, int minute, int second, int millisecond )
