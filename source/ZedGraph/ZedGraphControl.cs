@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.48 $ $Date: 2006-01-07 19:15:15 $ </version>
+	/// <version> $Revision: 3.49 $ $Date: 2006-01-13 06:51:43 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -1330,6 +1330,7 @@ namespace ZedGraph
 			}
 		}
 
+		/*
 		/// <summary>
 		/// Zoom the specified axis by the specified amount, with the center of the zoom at the
 		/// (optionally) specified point.
@@ -1368,6 +1369,50 @@ namespace ZedGraph
 				}
 			}
 		}
+*/
+
+		/// <summary>
+		/// Zoom the specified axis by the specified amount, with the center of the zoom at the
+		/// (optionally) specified point.
+		/// </summary>
+		/// <remarks>
+		/// This method is used for MouseWheel zoom operations</remarks>
+		/// <param name="axis">The <see cref="Axis" /> to be zoomed.</param>
+		/// <param name="zoomFraction">The zoom fraction, less than 1.0 to zoom in, greater than 1.0 to
+		/// zoom out.  That is, a value of 0.9 will zoom in such that the scale length is 90% of what
+		/// it previously was.</param>
+		/// <param name="centerVal">The location for the center of the zoom.  This is only used if
+		/// <see paramref="IsZoomOnMouseCenter" /> is true.</param>
+		/// <param name="isZoomOnCenter">true if the zoom is to be centered at the
+		/// <see paramref="centerVal" /> screen position, false for the zoom to be centered within
+		/// the <see cref="ZedGraph.GraphPane.AxisRect" />.
+		/// </param>
+		protected void ZoomScale( Axis axis, double zoomFraction, double centerVal, bool isZoomOnCenter )
+		{
+			if ( axis != null && zoomFraction > 0.0001 && zoomFraction < 1000.0 )
+			{
+				if ( axis.IsLog )
+				{
+					double ratio = Math.Sqrt( axis.Max / axis.Min * zoomFraction );
+
+					if ( !isZoomOnCenter )
+						centerVal = Math.Sqrt( axis.Max * axis.Min );
+
+					axis.Min = centerVal / ratio;
+					axis.Max = centerVal * ratio;
+				}
+				else
+				{
+					double range = ( axis.Max - axis.Min ) * zoomFraction / 2.0;
+
+					if ( !isZoomOnCenter )
+						centerVal = ( axis.Max + axis.Min ) / 2.0;
+
+					axis.Min = centerVal - range;
+					axis.Max = centerVal + range;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Handle a MouseWheel event in the <see cref="ZedGraphControl" />
@@ -1382,37 +1427,64 @@ namespace ZedGraph
 				if ( pane != null && e.Delta != 0 )
 				{
 					pane.zoomStack.Push( pane, ZoomState.StateType.Zoom );
-
+					
 					PointF centerPoint = new PointF(e.X, e.Y);
-					double x;
-					double[] y;
-					double[] y2;
+					double zoomFraction = ( 1 + ( e.Delta < 0 ? 1.0 : -1.0 ) * ZoomStepFraction );
 
-					pane.ReverseTransform( centerPoint, out x, out y, out y2 );
-
-					if ( isEnableHZoom )
-						ZoomScale( pane.XAxis, e.Delta, x );
-					if ( isEnableVZoom )
-					{
-						for ( int i=0; i<pane.YAxisList.Count; i++ )
-							ZoomScale( pane.YAxisList[i], e.Delta, y[i] );
-						for ( int i=0; i<pane.Y2AxisList.Count; i++ )
-							ZoomScale( pane.Y2AxisList[i], e.Delta, y2[i] );
-					}
-
-					Graphics g = this.CreateGraphics();
-					pane.AxisChange( g );
-					g.Dispose();
-
-
-					this.SetScroll( this.hScrollBar1, pane.XAxis, xScrollRange.Min, xScrollRange.Max );
-					this.SetScroll( this.vScrollBar1, pane.YAxis, yScrollRangeList[0].Min,
-										yScrollRangeList[0].Max );
-
-					Refresh();
+					ZoomPane( pane, zoomFraction, centerPoint, this.isZoomOnMouseCenter );
 				}
 			}
 		}
+
+		/// <summary>
+		/// Zoom a specified pane in or out according to the specified zoom fraction.
+		/// </summary>
+		/// <remarks>
+		/// The zoom will occur on the <see cref="XAxis" />, <see cref="YAxis" />, and
+		/// <see cref="Y2Axis" /> only if the corresponding flag, <see cref="IsEnableHZoom" /> or
+		/// <see cref="IsEnableVZoom" />, is true.  Note that if there are multiple Y or Y2 axes, all of
+		/// them will be zoomed.
+		/// </remarks>
+		/// <param name="pane">The <see cref="GraphPane" /> instance to be zoomed.</param>
+		/// <param name="zoomFraction">The fraction by which to zoom, less than 1 to zoom in, greater than
+		/// 1 to zoom out.  For example, 0.9 will zoom in such that the scale is 90% of what it was
+		/// originally.</param>
+		/// <param name="centerPt">The screen position about which the zoom will be centered.  This
+		/// value is only used if <see paramref="isZoomOnCenter" /> is true.
+		/// </param>
+		/// <param name="isZoomOnCenter">true to cause the zoom to be centered on the point
+		/// <see paramref="centerPt" />, false to center on the <see cref="ZedGraph.GraphPane.AxisRect" />.
+		/// </param>
+		public void ZoomPane( GraphPane pane, double zoomFraction, PointF centerPt, bool isZoomOnCenter )
+		{
+			double x;
+			double[] y;
+			double[] y2;
+
+			pane.ReverseTransform( centerPt, out x, out y, out y2 );
+
+			if ( isEnableHZoom )
+				ZoomScale( pane.XAxis, zoomFraction, x, isZoomOnCenter );
+			if ( isEnableVZoom )
+			{
+				for ( int i=0; i<pane.YAxisList.Count; i++ )
+					ZoomScale( pane.YAxisList[i], zoomFraction, y[i], isZoomOnCenter );
+				for ( int i=0; i<pane.Y2AxisList.Count; i++ )
+					ZoomScale( pane.Y2AxisList[i], zoomFraction, y2[i], isZoomOnCenter );
+			}
+
+			Graphics g = this.CreateGraphics();
+			pane.AxisChange( g );
+			g.Dispose();
+
+
+			this.SetScroll( this.hScrollBar1, pane.XAxis, xScrollRange.Min, xScrollRange.Max );
+			this.SetScroll( this.vScrollBar1, pane.YAxis, yScrollRangeList[0].Min,
+				yScrollRangeList[0].Max );
+
+			Refresh();
+		}
+
 
 		/// <summary>
 		/// Handle a MouseUp event in the <see cref="ZedGraphControl" />

@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+12-Jan-2006 (by Champion)
+[NEW] Add ZedGraphControl.ZoomPane()
+
 7-Jan-2006 (by Champion)
 [UPD] Exclude points from GetRange() that are <= 0 for log scales
 [FIX] Make Fill.IsVisible retain original FillType when set to true

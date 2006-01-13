@@ -151,6 +151,8 @@ namespace ZedGraph.ControlTest
 		{
 			GraphPane myPane = zedGraphControl1.GraphPane;
 
+			this.zedGraphControl1.MouseDownEvent += new ZedGraphControl.MouseDownEventHandler( MyMouseDownEventHandler );
+
 #if false // masterpane with pies
 
 			GraphPane pane = new GraphPane();
@@ -530,6 +532,20 @@ namespace ZedGraph.ControlTest
 			propertyGrid1.Height = Size.Height - 50;
 		}
 
+		private bool MyMouseDownEventHandler( object sender, MouseEventArgs e )
+		{
+			if ( e.Button == MouseButtons.Left && Control.ModifierKeys == Keys.Control )
+			{
+				this.zedGraphControl1.ZoomPane( this.zedGraphControl1.GraphPane, 0.5,
+					new PointF( e.X, e.Y ), true );
+
+				return true;
+			}
+
+			return false;
+		}
+
+
 		PointF		startPt;
 		double		startX, startY, startY2;
 		bool		isDragPoint = false;
@@ -539,9 +555,10 @@ namespace ZedGraph.ControlTest
 
 		private void zedGraphControl1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			if ( e.Button == MouseButtons.Left && e.Clicks == 2 )
+			if ( e.Button == MouseButtons.Left && Control.ModifierKeys == Keys.Control )
 			{
-				MessageBox.Show( "Howdy" );
+				this.zedGraphControl1.ZoomPane( this.zedGraphControl1.GraphPane, 0.5,
+					new PointF( e.X, e.Y ), true );
 			}
 			return;
 
