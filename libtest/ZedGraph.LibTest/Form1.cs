@@ -1223,7 +1223,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic curve test - Linear Axis
+#if false	// Basic curve test - Linear Axis
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -1313,6 +1313,33 @@ namespace ZedGraph.LibTest
 			myBar.IsOverrideOrdinal = true;
 			myBar.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 90.0f );
 			myBar.Bar.Size = 20f;
+#endif
+
+#if true	// Basic bar test - Linear
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 10, 10 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList list1 = new PointPairList();
+			Random rand = new Random();
+
+			for ( int i = 0; i < 10; i++ )
+			{
+				double x = (double)i;
+				double y1 = rand.NextDouble() * 1.0 + .00001;
+				double ylow = 1e-1;
+
+				list1.Add( x, y1, ylow );
+			}
+
+			BarItem bar1 = myPane.AddBar( "First", list1, Color.Blue );
+			myPane.YAxis.Type = AxisType.Log;
+			//myPane.BarType = BarType.ClusterHiLow;
+			myPane.AxisChange( this.CreateGraphics() );
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
 #endif
 
 #if false	// Bars - different colors thru IsOverrideOrdinal

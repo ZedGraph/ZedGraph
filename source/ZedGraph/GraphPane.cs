@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.55 $ $Date: 2005-12-26 11:09:10 $ </version>
+	/// <version> $Revision: 3.56 $ $Date: 2006-01-26 05:46:03 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -77,7 +77,7 @@ namespace ZedGraph
 		/// <see cref="ZoomState"/> objects containing scale range information.  This enables
 		/// zooming and panning functionality for the <see cref="ZedGraphControl"/>.
 		/// </summary>
-		internal ZoomStateStack zoomStack;
+		private ZoomStateStack zoomStack;
 		
 		// Axis Border Properties //////////////////////////////////////////////////////////////
 		
@@ -402,6 +402,14 @@ namespace ZedGraph
 		public bool IsZoomed
 		{
 			get { return !zoomStack.IsEmpty; }
+		}
+
+		/// <summary>
+		/// Gets a reference to the <see cref="ZoomStateStack" /> for this <see cref="GraphPane" />.
+		/// </summary>
+		public ZoomStateStack ZoomStack
+		{
+			get { return zoomStack; }
 		}
 
 	#endregion

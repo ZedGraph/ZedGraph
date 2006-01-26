@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.MinorStepAuto"/>,
 	/// and <see cref="Axis.StepAuto"/>.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2006-01-26 05:46:04 $ </version>
 	public class ScaleState
 	{
 		/// <summary>
@@ -272,7 +272,7 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2006-01-26 05:46:04 $ </version>
 	public class ZoomState
 	{
 		/// <summary>
@@ -288,7 +288,11 @@ namespace ZedGraph
 			/// <summary>
 			/// Indicates the <see cref="ZoomState"/> object is from a Pan operation
 			/// </summary>
-			Pan
+			Pan,
+			/// <summary>
+			/// Indicates the <see cref="ZoomState"/> object is from a Scroll operation
+			/// </summary>
+			Scroll
 		}
 
 		/// <summary>
@@ -316,10 +320,22 @@ namespace ZedGraph
 		/// state was saved.
 		/// </summary>
 		/// <value>A string representation for the state change type; typically
-		/// "Pan" or "Zoom".</value>
+		/// "Pan", "Zoom", or "Scroll".</value>
 		public string TypeString
 		{
-			get { return type == StateType.Pan ? "Pan" : "Zoom"; }
+			get
+			{
+				switch ( type )
+				{
+					case StateType.Pan:
+						return "Pan";
+					case StateType.Zoom:
+					default:
+						return "Zoom";
+					case StateType.Scroll:
+						return "Scroll";
+				}
+			}
 		}
 
 		/// <summary>
@@ -383,7 +399,7 @@ namespace ZedGraph
 	/// states (of scale range settings).
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2006-01-26 05:46:04 $ </version>
 	public class ZoomStateStack : CollectionBase
 	{
 		/// <summary>

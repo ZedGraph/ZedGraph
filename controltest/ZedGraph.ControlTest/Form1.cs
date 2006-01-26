@@ -21,7 +21,7 @@ namespace ZedGraph.ControlTest
 	{
 		private PropertyGrid propertyGrid1;
 		private System.Windows.Forms.Splitter splitter1;
-		private ZedGraphControl zedGraphControl1;
+		private ZedGraph.ZedGraphControl zedGraphControl1;
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -86,12 +86,14 @@ namespace ZedGraph.ControlTest
 			this.splitter1.TabIndex = 4;
 			this.splitter1.TabStop = false;
 			// 
-			// zedGraphControl2
+			// zedGraphControl1
 			// 
+			this.zedGraphControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.zedGraphControl1.IsAutoScrollRange = false;
 			this.zedGraphControl1.IsEnableHPan = true;
+			this.zedGraphControl1.IsEnableHZoom = true;
 			this.zedGraphControl1.IsEnableVPan = true;
-			this.zedGraphControl1.IsEnableZoom = true;
+			this.zedGraphControl1.IsEnableVZoom = true;
 			this.zedGraphControl1.IsScrollY2 = false;
 			this.zedGraphControl1.IsShowContextMenu = true;
 			this.zedGraphControl1.IsShowCursorValues = false;
@@ -99,7 +101,7 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.IsShowPointValues = false;
 			this.zedGraphControl1.IsShowVScrollBar = false;
 			this.zedGraphControl1.IsZoomOnMouseCenter = false;
-			this.zedGraphControl1.Location = new System.Drawing.Point(8, 8);
+			this.zedGraphControl1.Location = new System.Drawing.Point(0, 0);
 			this.zedGraphControl1.Name = "zedGraphControl1";
 			this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
@@ -112,8 +114,8 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ScrollMinX = 0;
 			this.zedGraphControl1.ScrollMinY = 0;
 			this.zedGraphControl1.ScrollMinY2 = 0;
-			this.zedGraphControl1.Size = new System.Drawing.Size(600, 448);
-			this.zedGraphControl1.TabIndex = 5;
+			this.zedGraphControl1.Size = new System.Drawing.Size(617, 461);
+			this.zedGraphControl1.TabIndex = 0;
 			this.zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
 			this.zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
@@ -315,7 +317,7 @@ namespace ZedGraph.ControlTest
 
 #endif
 
-#if true	// Basic curve test - Date Axis
+#if false	// Basic curve test - Date Axis
 
 			PointPairList list = new PointPairList();
 
@@ -332,17 +334,19 @@ namespace ZedGraph.ControlTest
 
 			zedGraphControl1.IsAutoScrollRange = true;
 			zedGraphControl1.IsShowHScrollBar = true;
+			zedGraphControl1.IsShowVScrollBar = true;
 
 			XDate now = new XDate( DateTime.Now );
 			ArrowItem arrow = new ArrowItem( Color.Black,
 					2.0f, (float) now.XLDate, 0.0f, (float) now.XLDate, 1.0f );
 			arrow.IsArrowHead = false;
 			arrow.Location.CoordinateFrame = CoordType.XScaleYAxisFraction;
+			arrow.IsClippedToAxisRect = true;
 			myPane.GraphItemList.Add( arrow );
 
 #endif
 
-#if false	// Basic curve test - Linear Axis
+#if true	// Basic curve test - Linear Axis
 
 			PointPairList list = new PointPairList();
 
@@ -532,7 +536,7 @@ namespace ZedGraph.ControlTest
 			propertyGrid1.Height = Size.Height - 50;
 		}
 
-		private bool MyMouseDownEventHandler( object sender, MouseEventArgs e )
+		private bool MyMouseDownEventHandler( ZedGraphControl sender, MouseEventArgs e )
 		{
 			if ( e.Button == MouseButtons.Left && Control.ModifierKeys == Keys.Control )
 			{

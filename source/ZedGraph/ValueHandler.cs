@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-12-26 11:09:10 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2006-01-26 05:46:03 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane pane;
@@ -108,6 +108,7 @@ namespace ZedGraph
 				return false;
 
 			Axis baseAxis = curve.BaseAxis( pane );
+			Axis valueAxis = curve.ValueAxis( pane );
 
 			if ( baseAxis is XAxis )
 				baseVal = curve.Points[iPt].X;
@@ -288,6 +289,11 @@ namespace ZedGraph
 				else
 					hiVal = curve.Points[iPt].X;
 			}
+
+			// Special Exception: Bars on log scales should always plot from the Min value upwards,
+			// since they can never be zero
+			if ( curve is BarItem  && valueAxis.IsLog && lowVal == 0 )
+				lowVal = valueAxis.Min;
 
 			if ( baseVal == PointPair.Missing || hiVal == PointPair.Missing ||
 					( lowVal == PointPair.Missing && ( curve is ErrorBarItem ||

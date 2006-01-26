@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.49 $ $Date: 2006-01-13 06:51:43 $ </version>
+	/// <version> $Revision: 3.50 $ $Date: 2006-01-26 05:46:03 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -232,13 +232,13 @@ namespace ZedGraph
 		/// <summary>
 		/// A delegate that allows notification of zoom and pan events.
 		/// </summary>
-		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="control">The source <see cref="ZedGraphControl"/> object</param>
 		/// <param name="oldState">A <see cref="ZoomState"/> object that corresponds to the state of the
 		/// <see cref="GraphPane"/> before the zoom or pan event.</param>
 		/// <param name="newState">A <see cref="ZoomState"/> object that corresponds to the state of the
 		/// <see cref="GraphPane"/> after the zoom or pan event</param>
 		/// <seealso cref="ZoomEvent" />
-		public delegate void ZoomEventHandler( object sender, ZoomState oldState, ZoomState newState );
+		public delegate void ZoomEventHandler( ZedGraphControl control, ZoomState oldState, ZoomState newState );
 
 		/// <summary>
 		/// Subscribe to this event to be notified when the <see cref="GraphPane"/> is zoomed or panned by the user,
@@ -247,15 +247,35 @@ namespace ZedGraph
 		public event ZoomEventHandler ZoomEvent;
 
 		/// <summary>
+		/// A delegate that allows notification of scroll events.
+		/// </summary>
+		/// <param name="control">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="scrollBar">The source <see cref="ScrollBar"/> object</param>
+		/// <param name="oldState">A <see cref="ZoomState"/> object that corresponds to the state of the
+		/// <see cref="GraphPane"/> before the scroll event.</param>
+		/// <param name="newState">A <see cref="ZoomState"/> object that corresponds to the state of the
+		/// <see cref="GraphPane"/> after the scroll event</param>
+		/// <seealso cref="ZoomEvent" />
+		public delegate void ScrollEventHandler( ZedGraphControl control, ScrollBar scrollBar,
+							ZoomState oldState, ZoomState newState );
+
+		/// <summary>
+		/// Subscribe to this event to be notified when the <see cref="GraphPane"/> is scrolled by the user
+		/// using the scrollbars.
+		/// </summary>
+		public event ScrollEventHandler ScrollEvent;
+
+		/// <summary>
 		/// A delegate that allows custom formatting of the point value tooltips
 		/// </summary>
-		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="control">The source <see cref="ZedGraphControl"/> object</param>
 		/// <param name="pane">The <see cref="GraphPane"/> object that contains the point value of interest</param>
 		/// <param name="curve">The <see cref="CurveItem"/> object that contains the point value of interest</param>
 		/// <param name="iPt">The integer index of the selected <see cref="PointPair"/> within the
 		/// <see cref="IPointList"/> of the selected <see cref="CurveItem"/></param>
 		/// <seealso cref="PointValueEvent" />
-		public delegate string PointValueHandler( object sender, GraphPane pane, CurveItem curve, int iPt );
+		public delegate string PointValueHandler( ZedGraphControl control, GraphPane pane,
+							CurveItem curve, int iPt );
 
 		/// <summary>
 		/// Subscribe to this event to provide custom formatting for the tooltips
@@ -277,7 +297,7 @@ namespace ZedGraph
 		/// <summary>
 		/// A delegate that allows notification of MouseDown click events on Graph objects.
 		/// </summary>
-		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="control">The source <see cref="ZedGraphControl"/> object</param>
 		/// <param name="e">A <see cref="MouseEventArgs" /> corresponding to this event</param>
 		/// <seealso cref="MouseDownEvent" />
 		/// <returns>
@@ -286,7 +306,7 @@ namespace ZedGraph
 		/// a zoom operation).  Return false if ZedGraph should go ahead and process the
 		/// MouseDown event.
 		/// </returns>
-		public delegate bool MouseDownEventHandler( object sender, MouseEventArgs e );
+		public delegate bool MouseDownEventHandler( ZedGraphControl control, MouseEventArgs e );
 
 		/// <summary>
 		/// Subscribe to this event to provide notification of MouseDown clicks on graph
@@ -299,14 +319,18 @@ namespace ZedGraph
 		/// <see cref="ZedGraph.MasterPane.FindNearestPaneObject"/> method to determine which object
 		/// was clicked.  The boolean value that you return from this handler determines whether
 		/// or not the <see cref="ZedGraphControl"/> will do any further handling of the
-		/// MouseDown event (see <see cref="MouseDownEventHandler" />).
+		/// MouseDown event (see <see cref="MouseDownEventHandler" />).  Return true if you have
+		/// handled the MouseDown event entirely, and you do not
+		/// want the <see cref="ZedGraphControl"/> to do any further action (e.g., starting
+		/// a zoom operation).  Return false if ZedGraph should go ahead and process the
+		/// MouseDown event.
 		/// </remarks>
 		public event MouseDownEventHandler MouseDownEvent;
 
 		/// <summary>
 		/// A delegate that allows notification of MouseUp click events on Graph objects.
 		/// </summary>
-		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="control">The source <see cref="ZedGraphControl"/> object</param>
 		/// <param name="e">A <see cref="MouseEventArgs" /> corresponding to this event</param>
 		/// <seealso cref="MouseDownEvent" />
 		/// <returns>
@@ -315,7 +339,7 @@ namespace ZedGraph
 		/// a zoom operation).  Return false if ZedGraph should go ahead and process the
 		/// MouseUp event.
 		/// </returns>
-		public delegate bool MouseUpEventHandler( object sender, MouseEventArgs e );
+		public delegate bool MouseUpEventHandler( ZedGraphControl control, MouseEventArgs e );
 
 		/// <summary>
 		/// Subscribe to this event to provide notification of MouseUp clicks on graph
@@ -328,14 +352,18 @@ namespace ZedGraph
 		/// <see cref="ZedGraph.MasterPane.FindNearestPaneObject"/> method to determine which object
 		/// was clicked.  The boolean value that you return from this handler determines whether
 		/// or not the <see cref="ZedGraphControl"/> will do any further handling of the
-		/// MouseUp event (see <see cref="MouseUpEventHandler" />).
+		/// MouseUp event (see <see cref="MouseUpEventHandler" />).  Return true if you have
+		/// handled the MouseUp event entirely, and you do not
+		/// want the <see cref="ZedGraphControl"/> to do any further action (e.g., starting
+		/// a zoom operation).  Return false if ZedGraph should go ahead and process the
+		/// MouseUp event.
 		/// </remarks>
 		public event MouseUpEventHandler MouseUpEvent;
 
 		/// <summary>
 		/// A delegate that allows notification of MouseMove events over Graph objects.
 		/// </summary>
-		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="control">The source <see cref="ZedGraphControl"/> object</param>
 		/// <param name="e">A <see cref="MouseEventArgs"/> instance, corresponding to the
 		/// MouseMove event.
 		/// </param>
@@ -344,7 +372,7 @@ namespace ZedGraph
 		/// want the <see cref="ZedGraphControl"/> to do any further action.
 		/// Return false if ZedGraph should go ahead and process the MouseMove event.
 		/// </returns>
-		public delegate bool MouseMoveEventHandler( object sender, MouseEventArgs e );
+		public delegate bool MouseMoveEventHandler( ZedGraphControl control, MouseEventArgs e );
 
 		/// <summary>
 		/// Subscribe to this event to provide notification of MouseMove events over graph
@@ -354,7 +382,10 @@ namespace ZedGraph
 		/// This event provides for a notification when the mouse is moving over on the control.
 		/// The boolean value that you return from this handler determines whether
 		/// or not the <see cref="ZedGraphControl"/> will do any further handling of the
-		/// MouseMove event (see <see cref="MouseMoveEventHandler" />).
+		/// MouseMove event (see <see cref="MouseMoveEventHandler" />).  Return true if you
+		/// have handled the MouseMove event entirely, and you do not
+		/// want the <see cref="ZedGraphControl"/> to do any further action.
+		/// Return false if ZedGraph should go ahead and process the MouseMove event.
 		/// </remarks>
 		public event MouseMoveEventHandler MouseMoveEvent;
 
@@ -373,48 +404,48 @@ namespace ZedGraph
 			this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
 			this.vScrollBar1 = new System.Windows.Forms.VScrollBar();
 			this.SuspendLayout();
-// 
-// pointToolTip
-// 
+			// 
+			// pointToolTip
+			// 
 			this.pointToolTip.AutoPopDelay = 5000;
 			this.pointToolTip.InitialDelay = 100;
 			this.pointToolTip.ReshowDelay = 0;
-// 
-// contextMenu
-// 
-			//this.contextMenu.Name = "contextMenu";
+			// 
+			// contextMenu
+			// 
 			this.contextMenu.Popup += new System.EventHandler( this.ContextMenu_Popup );
-// 
-// hScrollBar1
-// 
+			// 
+			// hScrollBar1
+			// 
 			this.hScrollBar1.Location = new System.Drawing.Point( 0, 128 );
 			this.hScrollBar1.Name = "hScrollBar1";
 			this.hScrollBar1.Size = new System.Drawing.Size( 128, 17 );
 			this.hScrollBar1.TabIndex = 0;
 			this.hScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler( this.hScrollBar1_Scroll );
-// 
-// vScrollBar1
-// 
+			// 
+			// vScrollBar1
+			// 
 			this.vScrollBar1.Location = new System.Drawing.Point( 128, 0 );
 			this.vScrollBar1.Name = "vScrollBar1";
 			this.vScrollBar1.Size = new System.Drawing.Size( 17, 128 );
 			this.vScrollBar1.TabIndex = 1;
 			this.vScrollBar1.Scroll += new System.Windows.Forms.ScrollEventHandler( this.vScrollBar1_Scroll );
-// 
-// ZedGraphControl
-// 
+			// 
+			// ZedGraphControl
+			// 
 			this.ContextMenu = this.contextMenu;
 			this.Controls.Add( this.vScrollBar1 );
 			this.Controls.Add( this.hScrollBar1 );
 			this.Name = "ZedGraphControl";
-			this.Resize += new System.EventHandler( this.ChangeSize );
-			this.MouseMove += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseMove );
-			this.KeyUp += new System.Windows.Forms.KeyEventHandler( this.ZedGraphControl_KeyUp );
 			this.MouseWheel += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseWheel );
-			this.MouseUp += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseUp );
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseDown );
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseMove );
+			this.Resize += new System.EventHandler( this.ChangeSize );
+			this.KeyUp += new System.Windows.Forms.KeyEventHandler( this.ZedGraphControl_KeyUp );
+			this.MouseUp += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseUp );
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler( this.ZedGraphControl_KeyDown );
 			this.ResumeLayout( false );
+
 		}
 	#endregion
 
@@ -427,11 +458,16 @@ namespace ZedGraph
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
+			// Enable the following two calls to allow ScrollBar events in .Net 2.0
+			// pre-2.0 versions of .Net lack the MouseCaptureChanged event
+			//this.hScrollBar1.MouseCaptureChanged += new System.EventHandler( this.ScrollBarMouseCaptureChanged );
+			//this.vScrollBar1.MouseCaptureChanged += new System.EventHandler( this.ScrollBarMouseCaptureChanged );
+
 			// Use double-buffering for flicker-free updating:
-			//SetStyle( ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint
-			//	| ControlStyles.DoubleBuffer | ControlStyles.ResizeRedraw, true );
 			SetStyle( ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint
-				| ControlStyles.ResizeRedraw, true );
+				| ControlStyles.DoubleBuffer | ControlStyles.ResizeRedraw, true );
+			//SetStyle( ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint
+			//	| ControlStyles.ResizeRedraw, true );
 			//isTransparentBackground = false;
 			//SetStyle( ControlStyles.Opaque, false );
 			SetStyle( ControlStyles.SupportsTransparentBackColor, true );
@@ -1278,7 +1314,7 @@ namespace ZedGraph
 			// Provide Callback for MouseDown events
 			if ( this.masterPane != null && this.MouseDownEvent != null )
 			{
-				if ( this.MouseDownEvent( sender, e ) )
+				if ( this.MouseDownEvent( this, e ) )
 					return;
 				/*
 				GraphPane clickPane;
@@ -1426,7 +1462,7 @@ namespace ZedGraph
 				GraphPane pane = this.MasterPane.FindAxisRect( new PointF( e.X, e.Y ) );
 				if ( pane != null && e.Delta != 0 )
 				{
-					pane.zoomStack.Push( pane, ZoomState.StateType.Zoom );
+					pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
 					
 					PointF centerPoint = new PointF(e.X, e.Y);
 					double zoomFraction = ( 1 + ( e.Delta < 0 ? 1.0 : -1.0 ) * ZoomStepFraction );
@@ -1496,7 +1532,7 @@ namespace ZedGraph
 			// Provide Callback for MouseUp events
 			if ( this.masterPane != null && this.MouseUpEvent != null )
 			{
-				if ( this.MouseUpEvent( sender, e ) )
+				if ( this.MouseUpEvent( this, e ) )
 					return;
 				/*
 				GraphPane clickPane;
@@ -1521,8 +1557,10 @@ namespace ZedGraph
 				// If the MouseUp event occurs, the user is done dragging.
 				if ( this.isZooming )
 				{
+					PointF mousePt = BoundPointToRect( new PointF( e.X, e.Y ), dragPane.AxisRect );
+
 					// Only accept a drag if it covers at least 5 pixels in each direction
-					Point curPt = ((Control)sender).PointToScreen( new Point(e.X, e.Y) );
+					Point curPt = ((Control)sender).PointToScreen( Point.Round( mousePt ) );
 					if ( Math.Abs( curPt.X - this.dragRect.X ) > 4 && Math.Abs( curPt.Y - this.dragRect.Y ) > 4 )
 					{
 						// Draw the rectangle to be evaluated. Set a dashed frame style
@@ -1532,13 +1570,12 @@ namespace ZedGraph
 
 						double x1, x2;
 						double[] y1, y2, yy1, yy2;
-						PointF endPoint = new PointF(e.X, e.Y); // ((Control)sender).PointToScreen( new Point(e.X, e.Y) );
 						PointF startPoint =((Control)sender).PointToClient( this.dragRect.Location );
 
 						this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
-						this.dragPane.ReverseTransform( endPoint, out x2, out y2, out yy2 );
+						this.dragPane.ReverseTransform( mousePt, out x2, out y2, out yy2 );
 
-						ZoomState oldState = this.dragPane.zoomStack.Push( this.dragPane, ZoomState.StateType.Zoom );
+						ZoomState oldState = this.dragPane.ZoomStack.Push( this.dragPane, ZoomState.StateType.Zoom );
 
 						if ( isEnableHZoom )
 						{
@@ -1578,13 +1615,16 @@ namespace ZedGraph
 				{
 					// push the prior saved zoomstate, since the scale ranges have already been changed on
 					// the fly during the panning operation
-					if ( this.zoomState.IsChanged( this.dragPane ) )
+					if ( this.zoomState != null && this.zoomState.IsChanged( this.dragPane ) )
 					{
-						this.dragPane.zoomStack.Push( this.zoomState );
+						this.dragPane.ZoomStack.Push( this.zoomState );
 
 						// Provide Callback to notify the user of pan events
 						if ( this.ZoomEvent != null )
-							this.ZoomEvent( this, this.zoomState, new ZoomState( this.dragPane, ZoomState.StateType.Pan ) );
+							this.ZoomEvent( this, this.zoomState,
+								new ZoomState( this.dragPane, ZoomState.StateType.Pan ) );
+
+						this.zoomState = null;
 					}
 				}
 			}
@@ -1700,9 +1740,12 @@ namespace ZedGraph
 					ControlPaint.DrawReversibleFrame( this.dragRect,
 						this.BackColor, FrameStyle.Dashed );
 
+					// Bound the zoom to the AxisRect
+					PointF endPt = BoundPointToRect( new PointF( e.X, e.Y ), Rectangle.Round( dragPane.AxisRect ) );
+
 					// Calculate the endpoint and dimensions for the new
 					// rectangle, again using the PointToScreen method.
-					Point curPt = ( (Control) sender ).PointToScreen( mousePt );
+					Point curPt = ( (Control) sender ).PointToScreen( Point.Round( endPt ) );
 					this.dragRect.Width = curPt.X - this.dragRect.X;
 					this.dragRect.Height = curPt.Y - this.dragRect.Y;
 
@@ -1837,7 +1880,17 @@ namespace ZedGraph
 				}
 			}
 		}
-		
+
+		private PointF BoundPointToRect( PointF mousePt, RectangleF rect )
+		{
+			if ( mousePt.X < rect.X ) mousePt.X = rect.X;
+			if ( mousePt.X > rect.Right ) mousePt.X = rect.Right;
+			if ( mousePt.Y < rect.Y ) mousePt.Y = rect.Y;
+			if ( mousePt.Y > rect.Bottom ) mousePt.Y = rect.Bottom;
+
+			return mousePt;
+		}
+
 		/// <summary>
 		/// Set the cursor according to the current mouse location.
 		/// </summary>
@@ -1943,17 +1996,30 @@ namespace ZedGraph
 					menuItem = new MenuItem();
 					menuItem.Index = index++;
 
-					if ( pane == null || pane.zoomStack.IsEmpty ||
-								pane.zoomStack.Top.Type == ZoomState.StateType.Zoom )
+					if ( pane == null || pane.ZoomStack.IsEmpty )
 						menuStr = resourceManager.GetString( "unzoom" );
 					else
-						menuStr = resourceManager.GetString( "unpan" );
+					{
+						switch ( pane.ZoomStack.Top.Type )
+						{
+							case ZoomState.StateType.Zoom:
+								menuStr = resourceManager.GetString( "unzoom" );
+								break;
+							case ZoomState.StateType.Pan:
+								menuStr = resourceManager.GetString( "unpan" );
+								break;
+							case ZoomState.StateType.Scroll:
+								menuStr = resourceManager.GetString( "unscroll" );
+								break;
+						}
+					}
+
 					//menuItem.Text = "Un-" + ( ( pane == null || pane.zoomStack.IsEmpty ) ?
 					//	"Zoom" : pane.zoomStack.Top.TypeString );
 					menuItem.Text = menuStr;
 					this.contextMenu.MenuItems.Add( menuItem );
 					menuItem.Click += new EventHandler( this.MenuClick_ZoomOut );
-					if ( pane == null || pane.zoomStack.IsEmpty )
+					if ( pane == null || pane.ZoomStack.IsEmpty )
 						menuItem.Enabled = false;
 
 					menuItem = new MenuItem();
@@ -1962,7 +2028,7 @@ namespace ZedGraph
 					menuItem.Text = menuStr;
 					this.contextMenu.MenuItems.Add( menuItem );
 					menuItem.Click += new EventHandler( this.MenuClick_ZoomOutAll );
-					if ( pane == null || pane.zoomStack.IsEmpty )
+					if ( pane == null || pane.ZoomStack.IsEmpty )
 						menuItem.Enabled = false;
 
 					menuItem = new MenuItem();
@@ -2006,7 +2072,8 @@ namespace ZedGraph
 				if ( isShowMessage )
 				{
 					string str = resourceManager.GetString( "copied_to_clip" );
-					MessageBox.Show( "Image Copied to ClipBoard" );
+					//MessageBox.Show( "Image Copied to ClipBoard" );
+					MessageBox.Show( str );
 				}
 			}
 		}
@@ -2105,7 +2172,7 @@ namespace ZedGraph
 			if ( pane != null )
 			{
 				//Go ahead and save the old zoomstates, which provides an "undo"-like capability
-				ZoomState oldState = pane.zoomStack.Push( pane, ZoomState.StateType.Zoom );
+				ZoomState oldState = pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
 				//ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
 
 				Graphics g = this.CreateGraphics();
@@ -2148,10 +2215,10 @@ namespace ZedGraph
 		/// <param name="pane">The <see cref="GraphPane" /> object which is to be zoomed out</param>
 		public void ZoomOut( GraphPane pane )
 		{
-			if ( pane != null && !pane.zoomStack.IsEmpty )
+			if ( pane != null && !pane.ZoomStack.IsEmpty )
 			{
 				ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
-				ZoomState newState = pane.zoomStack.Pop( pane );
+				ZoomState newState = pane.ZoomStack.Pop( pane );
 
 				// Provide Callback to notify the user of zoom events
 				if ( this.ZoomEvent != null )
@@ -2193,10 +2260,10 @@ namespace ZedGraph
 		/// <param name="pane">The <see cref="GraphPane" /> object which is to be zoomed out</param>
 		public void ZoomOutAll( GraphPane pane )
 		{
-			if ( pane != null && !pane.zoomStack.IsEmpty )
+			if ( pane != null && !pane.ZoomStack.IsEmpty )
 			{
 				ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
-				ZoomState newState = pane.zoomStack.PopAll( pane );
+				ZoomState newState = pane.ZoomStack.PopAll( pane );
 
 				// Provide Callback to notify the user of zoom events
 				if ( this.ZoomEvent != null )
@@ -2236,13 +2303,48 @@ namespace ZedGraph
 					}
 				}
 			}
-        }
+      }
 
 		private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
 		{
 			if ( this.GraphPane != null )
+			{
 				HandleScroll( this.GraphPane.XAxis, e.NewValue, xScrollRange.Min, xScrollRange.Max,
 							hScrollBar1.LargeChange, this.GraphPane.XAxis.IsReverse );
+			}
+		}
+
+		/// <summary>
+		/// Use the MouseCaptureChanged as an indicator for the start and end of a scrolling operation
+		/// </summary>
+		private void ScrollBarMouseCaptureChanged( object sender, EventArgs e )
+		{
+			ScrollBar scrollBar = sender as ScrollBar;
+			if ( scrollBar != null )
+			{
+				// If this is the start of a new scroll, then Capture will be true
+				if ( scrollBar.Capture )
+				{
+					// save the original zoomstate
+					this.zoomState = new ZoomState( this.GraphPane, ZoomState.StateType.Scroll );
+				}
+				else
+				{
+					// push the prior saved zoomstate, since the scale ranges have already been changed on
+					// the fly during the scrolling operation
+					if ( this.zoomState != null && this.zoomState.IsChanged( this.GraphPane ) )
+					{
+						this.GraphPane.ZoomStack.Push( this.zoomState );
+
+						// Provide Callback to notify the user of pan events
+						if ( this.ScrollEvent != null )
+							this.ScrollEvent( this, scrollBar, this.zoomState,
+										new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
+
+						this.zoomState = null;
+					}
+				}
+			}
 		}
 
 		private void HandleScroll( Axis axis, int newValue, double scrollMin, double scrollMax,
