@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-12-26 11:09:10 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2006-02-03 05:25:34 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -352,9 +352,9 @@ namespace ZedGraph
 							( scaleBase > 0 || !baseAxis.IsLog ) &&
 							( ( scaleValue > 0 && scaleLowValue > 0 ) || !valueAxis.IsLog ) )
 					{
-						pixBase = baseAxis.Scale.Transform( scaleBase );
-						pixValue = valueAxis.Scale.Transform( scaleValue );
-						pixLowValue = valueAxis.Scale.Transform( scaleLowValue );
+						pixBase = baseAxis.Scale.Transform( curve.IsOverrideOrdinal, i, scaleBase );
+						pixValue = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, scaleValue );
+						pixLowValue = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, scaleLowValue );
 
 						//if ( this.fill.IsGradientValueType )
 						//	brush = fill.MakeBrush( rect, points[i] );

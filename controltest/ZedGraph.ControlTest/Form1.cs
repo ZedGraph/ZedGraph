@@ -21,7 +21,9 @@ namespace ZedGraph.ControlTest
 	{
 		private PropertyGrid propertyGrid1;
 		private System.Windows.Forms.Splitter splitter1;
-		private ZedGraph.ZedGraphControl zedGraphControl1;
+		private ZedGraphControl zedGraphControl1;
+		private bool _isShowPropertyGrid = false;
+
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
@@ -86,14 +88,12 @@ namespace ZedGraph.ControlTest
 			this.splitter1.TabIndex = 4;
 			this.splitter1.TabStop = false;
 			// 
-			// zedGraphControl1
+			// zedGraphControl2
 			// 
-			this.zedGraphControl1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.zedGraphControl1.IsAutoScrollRange = false;
 			this.zedGraphControl1.IsEnableHPan = true;
-			this.zedGraphControl1.IsEnableHZoom = true;
 			this.zedGraphControl1.IsEnableVPan = true;
-			this.zedGraphControl1.IsEnableVZoom = true;
+			this.zedGraphControl1.IsEnableZoom = true;
 			this.zedGraphControl1.IsScrollY2 = false;
 			this.zedGraphControl1.IsShowContextMenu = true;
 			this.zedGraphControl1.IsShowCursorValues = false;
@@ -101,7 +101,7 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.IsShowPointValues = false;
 			this.zedGraphControl1.IsShowVScrollBar = false;
 			this.zedGraphControl1.IsZoomOnMouseCenter = false;
-			this.zedGraphControl1.Location = new System.Drawing.Point(0, 0);
+			this.zedGraphControl1.Location = new System.Drawing.Point(8, 8);
 			this.zedGraphControl1.Name = "zedGraphControl1";
 			this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
@@ -114,8 +114,8 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ScrollMinX = 0;
 			this.zedGraphControl1.ScrollMinY = 0;
 			this.zedGraphControl1.ScrollMinY2 = 0;
-			this.zedGraphControl1.Size = new System.Drawing.Size(617, 461);
-			this.zedGraphControl1.TabIndex = 0;
+			this.zedGraphControl1.Size = new System.Drawing.Size(600, 448);
+			this.zedGraphControl1.TabIndex = 5;
 			this.zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
 			this.zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
@@ -346,7 +346,7 @@ namespace ZedGraph.ControlTest
 
 #endif
 
-#if true	// Basic curve test - Linear Axis
+#if false	// Basic curve test - Linear Axis
 
 			PointPairList list = new PointPairList();
 
@@ -452,6 +452,58 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.Refresh();  
 #endif
 
+#if false		// scroll test
+
+			zedGraphControl1.IsAutoScrollRange = true;
+			zedGraphControl1.IsEnableHPan = false;
+			zedGraphControl1.IsEnableHZoom = true;
+			zedGraphControl1.IsEnableVPan = false;
+			zedGraphControl1.IsEnableVZoom = false;
+			zedGraphControl1.IsScrollY2 = false;
+			zedGraphControl1.IsShowContextMenu = true;
+			zedGraphControl1.IsShowCursorValues = false;
+			zedGraphControl1.IsShowHScrollBar = true;
+			zedGraphControl1.IsShowPointValues = false;
+			zedGraphControl1.IsShowVScrollBar = false;
+			zedGraphControl1.IsZoomOnMouseCenter = false;
+			zedGraphControl1.Location = new System.Drawing.Point( 3, 18 );
+			zedGraphControl1.Name = "countGraph";
+			zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
+			zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
+			zedGraphControl1.PanModifierKeys2 = System.Windows.Forms.Keys.None;
+			zedGraphControl1.PointDateFormat = "g";
+			zedGraphControl1.PointValueFormat = "G";
+			zedGraphControl1.ScrollMaxX = 0;
+			zedGraphControl1.ScrollMaxY = 0;
+			zedGraphControl1.ScrollMaxY2 = 0;
+			zedGraphControl1.ScrollMinX = 0;
+			zedGraphControl1.ScrollMinY = 0;
+			zedGraphControl1.ScrollMinY2 = 0;
+			zedGraphControl1.Size = new System.Drawing.Size( 559, 350 );
+			zedGraphControl1.TabIndex = 0;
+			zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
+			zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
+			zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
+			zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
+			zedGraphControl1.ZoomStepFraction = 0.1;
+
+			string[] labels = new string[60];
+			double[] y = new double[labels.Length];
+			Random random = new Random();
+			for ( int i = 0; i < labels.Length; i++ )
+			{
+				labels[i] = "A";
+				y[i] = random.NextDouble() * 50;
+			}
+			BarItem myBar = myPane.AddBar( "Testing", null, y, Color.Red );
+			myBar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red );
+			myPane.XAxis.IsTicsBetweenLabels = true;
+			myPane.XAxis.Type = AxisType.Text;
+			myPane.XAxis.TextLabels = labels;
+			myPane.MinClusterGap = 2;
+			myPane.AxisChange( CreateGraphics() );
+			//this.Refresh();
+#endif
 
 #if false	// Basic curve test - two text axes
 
@@ -474,6 +526,42 @@ namespace ZedGraph.ControlTest
 			zedGraphControl1.IsShowPointValues = true;
 
 #endif
+
+#if true		// test
+			PointPairList hList = new PointPairList();
+			PointPairList cList = new PointPairList();
+			string[] labels = new string[11];
+
+			for ( int i=0; i<10; i++ )
+			{
+				labels[i] = "Non Renseigné";
+			 
+				double min = 100;
+				double max = 200;
+				double mediane = (min + max) / 2;
+
+				hList.Add(i + 5, min, max);
+				cList.Add(i+50, mediane);
+			}
+			 
+
+			LineItem curve = myPane.AddCurve("Mediane", cList, Color.Black, ZedGraph.SymbolType.Diamond);
+			//Turn off the line display, symbols only 
+			curve.Line.IsVisible = false;
+			//Fill the symbols with solid red color 
+			curve.Symbol.Fill = new ZedGraph.Fill(Color.Red) ;
+			curve.Symbol.Size = 7;
+			 
+			//Add a blue error bar to the graph 
+			ErrorBarItem myCurve = myPane.AddErrorBar("SAT", hList, Color.Blue);
+			myCurve.ErrorBar.PenWidth = 3;
+			myCurve.ErrorBar.Symbol.IsVisible = false;
+			 
+			myPane.XAxis.Type = ZedGraph.AxisType.Ordinal;			 
+			myPane.XAxis.TextLabels = labels;
+ 
+#endif
+
 
 			zedGraphControl1.AxisChange();
 			SetSize();
@@ -529,11 +617,22 @@ namespace ZedGraph.ControlTest
 		private void SetSize()
 		{
 			Size size2 = this.ClientRectangle.Size;
-			Size size = new Size( this.Size.Width - propertyGrid1.Width - zedGraphControl1.Left - 20,
-									this.Size.Height - zedGraphControl1.Top - 40 );
-			zedGraphControl1.Size = size;
-			propertyGrid1.Left = this.Size.Width - 10 - propertyGrid1.Width;
-			propertyGrid1.Height = Size.Height - 50;
+			if ( _isShowPropertyGrid )
+			{
+				propertyGrid1.Show();
+				Size size = new Size( this.Size.Width - propertyGrid1.Width - zedGraphControl1.Left - 20,
+										this.Size.Height - zedGraphControl1.Top - 40 );
+				zedGraphControl1.Size = size;
+				propertyGrid1.Left = this.Size.Width - 10 - propertyGrid1.Width;
+				propertyGrid1.Height = Size.Height - 50;
+			}
+			else
+			{
+				propertyGrid1.Hide();
+				Size size = new Size( this.Size.Width - zedGraphControl1.Left - 10,
+										this.Size.Height - zedGraphControl1.Top - 40 );
+				zedGraphControl1.Size = size;
+			}
 		}
 
 		private bool MyMouseDownEventHandler( ZedGraphControl sender, MouseEventArgs e )
@@ -646,8 +745,8 @@ namespace ZedGraph.ControlTest
 		{
 			//clone the pane so the paneRect can be changed for printing
 			//PaneBase printPane = (PaneBase) master.Clone();
-			GraphPane printPane = (GraphPane) zedGraphControl1.GraphPane.Clone();
-			printPane.PaneRect = new RectangleF( 50, 50, 400, 300 );
+			//GraphPane printPane = (GraphPane) zedGraphControl1.GraphPane.Clone();
+			//printPane.PaneRect = new RectangleF( 50, 50, 400, 300 );
 
 			//printPane.Legend.IsVisible = true;
 			//printPane.PaneRect = new RectangleF( 50, 50, 300, 300 );
@@ -655,27 +754,45 @@ namespace ZedGraph.ControlTest
 				
 			//e.Graphics.PageScale = 1.0F;
 			//printPane.BaseDimension = 2.0F;
-			printPane.Draw( e.Graphics );
+			zedGraphControl1.MasterPane.Draw( e.Graphics );
+		}
+
+		private void DoPageSetup()
+		{
+			PrintDocument pd = new PrintDocument();
+			pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+			PageSetupDialog setupDlg = new PageSetupDialog();
+			setupDlg.Document = pd;
+			setupDlg.ShowDialog();
 		}
 
 		private void DoPrint()
 		{
 			PrintDocument pd = new PrintDocument();
-			//PrintPreviewDialog ppd = new PrintPreviewDialog();
 			pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
-			//ppd.Document = pd;
-			//ppd.Show();
-			pd.Print();
+			PrintDialog pDlg = new PrintDialog();
+			pDlg.Document = pd;
+			if ( pDlg.ShowDialog() == DialogResult.OK )
+				pd.Print();
 		}
 
-		private void Form1_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+		private void DoPrintPreview()
+		{
+			PrintDocument pd = new PrintDocument();
+
+			PrintPreviewDialog ppd = new PrintPreviewDialog();
+			pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+			ppd.Document = pd;
+			ppd.Show();
+		}
+
+		private void Form1_KeyDown( object sender, System.Windows.Forms.KeyEventArgs e )
 		{
 		}
 
 		private void Form1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			//MessageBox.Show( "Howdy" );
-			//DoPrint();
+			DoPrint();
 		}
 
 		private void propertyGrid1_PropertyValueChanged(object s, System.Windows.Forms.PropertyValueChangedEventArgs e)

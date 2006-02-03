@@ -2069,8 +2069,8 @@ namespace ZedGraph.LibTest
 		{
 			//clone the pane so the paneRect can be changed for printing
 			//PaneBase printPane = (PaneBase) master.Clone();
-			GraphPane printPane = (GraphPane) myPane.Clone();
-			printPane.PaneRect = new RectangleF( 50, 50, 400, 300 );
+			//GraphPane printPane = (GraphPane) myPane.Clone();
+			//printPane.PaneRect = new RectangleF( 50, 50, 400, 300 );
 
 			//printPane.Legend.IsVisible = true;
 			//printPane.PaneRect = new RectangleF( 50, 50, 300, 300 );
@@ -2078,7 +2078,7 @@ namespace ZedGraph.LibTest
 				
 			//e.Graphics.PageScale = 1.0F;
 			//printPane.BaseDimension = 2.0F;
-			printPane.Draw( e.Graphics );
+			myPane.Draw( e.Graphics );
 		}
 
 		private void DoPrintPreview()

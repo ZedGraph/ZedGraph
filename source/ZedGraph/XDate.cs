@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2006-01-07 19:15:15 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2006-02-03 05:25:34 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -1322,9 +1322,11 @@ namespace ZedGraph
 		/// Format this XDate value using the default format string (see cref="DefaultFormatStr"/>).
 		/// </summary>
 		/// <remarks>
-		/// The formatting is done using the <see cref="DateTime"/> <see cref="System.DateTime.ToString(String)"/>
+		/// The formatting is done using the <see cref="DateTime" />
+		/// <see cref="System.DateTime.ToString(String)" />
 		/// method in order to provide full localization capability.  The DateTime struct is limited to
-		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate"/> and <see cref="DateTime"/>
+		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate" /> and
+		/// <see cref="DateTime" />
 		/// are projected Gregorian calendar dates.  Since the Gregorian calendar was not implemented
 		/// until October 4, 1582 (or later in some countries), Gregorian dates prior to that time are
 		/// really dates that would have been, had the Gregorian calendar existed.  In order to avoid
@@ -1343,9 +1345,11 @@ namespace ZedGraph
 		/// string is specified according to the <see cref="DateTime"/> class.
 		/// </summary>
 		/// <remarks>
-		/// The formatting is done using the <see cref="DateTime"/> <see cref="System.DateTime.ToString(String)"/>
+		/// The formatting is done using the <see cref="DateTime" />
+		/// <see cref="System.DateTime.ToString(String)" />
 		/// method in order to provide full localization capability.  The DateTime struct is limited to
-		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate"/> and <see cref="DateTime"/>
+		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate" /> and
+		/// <see cref="DateTime" />
 		/// are projected Gregorian calendar dates.  Since the Gregorian calendar was not implemented
 		/// until October 4, 1582 (or later in some countries), Gregorian dates prior to that time are
 		/// really dates that would have been, had the Gregorian calendar existed.  In order to avoid
@@ -1355,7 +1359,7 @@ namespace ZedGraph
 		/// </remarks>
 		/// <param name="fmtStr">
 		/// The formatting string to be used for the date.  See
-		/// <see cref="System.Globalization.DateTimeFormatInfo"/>
+		/// <see cref="System.Globalization.DateTimeFormatInfo" />
 		/// class for a list of the format types available.</param>
 		/// <returns>A string representation of the date</returns>
 		public string ToString( string fmtStr )
@@ -1365,12 +1369,14 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Format the specified XL Date value using the specified format string.  The format
-		/// string is specified according to the <see cref="DateTime"/> class.
+		/// string is specified according to the <see cref="DateTime" /> class.
 		/// </summary>
 		/// <remarks>
-		/// The formatting is done using the <see cref="DateTime"/> <see cref="System.DateTime.ToString(String)"/>
+		/// The formatting is done using the <see cref="DateTime" />
+		/// <see cref="System.DateTime.ToString(String)" />
 		/// method in order to provide full localization capability.  The DateTime struct is limited to
-		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate"/> and <see cref="DateTime"/>
+		/// dates from 1 AD onward.  However, all calendar dates in <see cref="XDate" /> and
+		/// <see cref="DateTime" />
 		/// are projected Gregorian calendar dates.  Since the Gregorian calendar was not implemented
 		/// until October 4, 1582 (or later in some countries), Gregorian dates prior to that time are
 		/// really dates that would have been, had the Gregorian calendar existed.  In order to avoid
@@ -1383,7 +1389,7 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="fmtStr">
 		/// The formatting string to be used for the date.  See
-		/// <see cref="System.Globalization.DateTimeFormatInfo"/>
+		/// <see cref="System.Globalization.DateTimeFormatInfo" />
 		/// for a list of the format types available.</param>
 		/// <returns>A string representation of the date</returns>
 		public static string ToString( double xlDate, string fmtStr )

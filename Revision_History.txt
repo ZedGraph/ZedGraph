@@ -1,13 +1,14 @@
 ZedGraph Class Library Revision History
 
-25-Jan-2006 (by Champion)
+2-Feb-2006 (by Champion)
+[FIX] ErrorBar was not honoring ordinal type axes
+
+24-Jan-2006 (by Champion)
 [FIX] Turn on double buffer for control (inadvertantly disabled)
 [NEW] Add ScrollEvent, and Add ZoomStates for scrolls
 [UPD] Change MouseEventHandler delegates to pass ZedGraphControl type instead of object
 [FIX] Handle bar low value for log scales properly (use Min instead of zero in ValueHandler)
 [FIX] Bound zoom rect to AxisRect
-[UPD] Add call to ZoomEvent from MouseWheel action
-[UPD] Add public property to access GraphPane.ZoomStack
 
 12-Jan-2006 (by Champion)
 [NEW] Add ZedGraphControl.ZoomPane()

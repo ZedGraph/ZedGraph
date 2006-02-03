@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.52 $ $Date: 2005-12-26 11:09:10 $ </version>
+	/// <version> $Revision: 3.53 $ $Date: 2006-02-03 05:25:34 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -2129,7 +2129,8 @@ namespace ZedGraph
 		/// This property may be set automatically by ZedGraph, depending on the state of
 		/// <see cref="ScaleFormatAuto"/>.
 		/// </remarks>
-		/// <value>This format string is as defined for the <see cref="XDate.ToString()"/> function</value>
+		/// <value>This format string is as defined for the <see cref="XDate.ToString()"/> function,
+		/// which uses the <see cref="System.Globalization.DateTimeFormatInfo" /> class for format strings.</value>
 		/// <seealso cref="ScaleMag"/>
 		/// <seealso cref="ScaleFormatAuto"/>
 		/// <seealso cref="ScaleFontSpec"/>
