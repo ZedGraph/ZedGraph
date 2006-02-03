@@ -32,9 +32,9 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.25 $ $Date: 2005-08-11 07:35:53 $ </version>
+	/// <version> $Revision: 3.26 $ $Date: 2006-02-03 05:48:36 $ </version>
 	[Serializable]
-	public class PointPairList : CollectionPlus, IPointList
+	public class PointPairList : CollectionPlus, IPointList, IPointListEdit
 	{
 	#region Fields
 		/// <summary>Private field to maintain the sort status of this

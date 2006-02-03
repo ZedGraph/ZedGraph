@@ -2,6 +2,7 @@ ZedGraph Class Library Revision History
 
 2-Feb-2006 (by Champion)
 [FIX] ErrorBar was not honoring ordinal type axes
+[NEW] Add IPointListEdit interface, and enable the CurveItem.AddPoint(), RemovePoint(), and Clear().
 
 24-Jan-2006 (by Champion)
 [FIX] Turn on double buffer for control (inadvertantly disabled)

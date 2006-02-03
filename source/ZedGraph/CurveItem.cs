@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.27 $ $Date: 2006-01-07 19:15:15 $ </version>
+	/// <version> $Revision: 3.28 $ $Date: 2006-02-03 05:48:36 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -577,7 +577,7 @@ namespace ZedGraph
 	#endregion
 
 	#region Utility Methods
-/*
+
 		/// <summary>
 		/// Add a single x,y coordinate point to the end of the points collection for this curve.
 		/// </summary>
@@ -591,6 +591,11 @@ namespace ZedGraph
 		/// <summary>
 		/// Add a <see cref="PointPair"/> object to the end of the points collection for this curve.
 		/// </summary>
+		/// <remarks>
+		/// This method will only work if the <see cref="IPointList" /> instance reference
+		/// at <see cref="Points" /> supports the <see cref="IPointListEdit" /> interface.
+		/// Otherwise, it does nothing.
+		/// </remarks>
 		/// <param name="point">A reference to the <see cref="PointPair"/> object to
 		/// be added</param>
 		public void AddPoint( PointPair point )
@@ -598,18 +603,40 @@ namespace ZedGraph
 			if ( this.points == null )
 				this.Points = new PointPairList();
 			
-			this.points.Add( point );
+			if ( this.points is IPointListEdit )
+				(points as IPointListEdit).Add( point );
 		}
 
 		/// <summary>
 		/// Clears the points from this <see cref="CurveItem"/>.  This is the same
 		/// as <c>CurveItem.Points.Clear()</c>.
 		/// </summary>
+		/// <remarks>
+		/// This method will only work if the <see cref="IPointList" /> instance reference
+		/// at <see cref="Points" /> supports the <see cref="IPointListEdit" /> interface.
+		/// Otherwise, it does nothing.
+		/// </remarks>
 		public void Clear()
 		{
-			points.Clear();
+			if ( this.points is IPointListEdit )
+				(points as IPointListEdit).Clear();
 		}
-*/
+
+		/// <summary>
+		/// Removes a single point from this <see cref="CurveItem" />.
+		/// </summary>
+		/// <remarks>
+		/// This method will only work if the <see cref="IPointList" /> instance reference
+		/// at <see cref="Points" /> supports the <see cref="IPointListEdit" /> interface.
+		/// Otherwise, it does nothing.
+		/// </remarks>
+		/// <param name="index">The ordinal position of the point to be removed.</param>
+		public void RemovePoint( int index )
+		{
+			if ( this.points is IPointListEdit )
+				(points as IPointListEdit).Remove( index );
+		}
+
 
 		/// <summary>
 		/// Get the Y Axis instance (either <see cref="YAxis" /> or <see cref="Y2Axis" />) to
