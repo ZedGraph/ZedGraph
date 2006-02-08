@@ -31,14 +31,14 @@ namespace ZedGraph
 	/// data collection class using the <see cref="IPointList" /> interface.  This
 	/// <see cref="IPointListEdit" /> interface adds the ability to remove and add points
 	/// to the list, and so is used by the <see cref="CurveItem" /> class for the
-	/// <see cref="CurveItem.Add" />, <see cref="CurveItem.Remove" />, and
+	/// <see cref="CurveItem.AddPoint" />, <see cref="CurveItem.RemovePoint" />, and
 	/// <see cref="CurveItem.Clear" /> methods.
 	/// </remarks>
 	/// <seealso cref="PointPairList" />
 	/// <seealso cref="BasicArrayPointList" />
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-02-08 05:35:12 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-02-08 06:22:58 $ </version>
 	public interface IPointListEdit
 	{
 		/// <summary>

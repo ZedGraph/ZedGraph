@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.15 $ $Date: 2005-12-26 11:09:10 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2006-02-08 06:22:58 $ </version>
 	public class PaneBase : ICloneable
 	{
 
@@ -617,7 +617,6 @@ namespace ZedGraph
 				this.tag = ((ICloneable) rhs.tag).Clone();
 			else
 				this.tag = rhs.tag;
-					
 		}
 		
 		/// <summary>
@@ -809,7 +808,7 @@ namespace ZedGraph
 			// actually 101 pixels wide.
 			RectangleF rect = new RectangleF( paneRect.X, paneRect.Y, paneRect.Width - 1, paneRect.Height - 1 );
 
-			this.paneBorder.Draw( g, isPenWidthScaled, scaleFactor, rect );
+			this.paneBorder.Draw( g, IsPenWidthScaled, scaleFactor, rect );
 		}
 
 		/// <summary>

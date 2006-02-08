@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.51 $ $Date: 2006-02-08 05:35:12 $ </version>
+	/// <version> $Revision: 3.52 $ $Date: 2006-02-08 06:22:58 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -93,12 +93,29 @@ namespace ZedGraph
 		private bool isShowContextMenu;
 
 		/// <summary>
+		/// private field that determines whether the settings of
+		/// <see cref="ZedGraph.PaneBase.IsFontsScaled" /> and <see cref="PaneBase.IsPenWidthScaled" />
+		/// will be overridden to true during printing operations.
+		/// </summary>
+		/// <remarks>
+		/// Printing involves pixel maps that are typically of a dramatically different dimension
+		/// than on-screen pixel maps.  Therefore, it becomes more important to scale the fonts and
+		/// lines to give a printed image that looks like what is shown on-screen.  The default
+		/// setting for <see cref="ZedGraph.PaneBase.IsFontsScaled" /> is true, but the default
+		/// setting for <see cref="PaneBase.IsPenWidthScaled" /> is false.
+		/// </remarks>
+		/// <value>
+		/// A value of true will cause both <see cref="ZedGraph.PaneBase.IsFontsScaled" /> and
+		/// <see cref="PaneBase.IsPenWidthScaled" /> to be temporarily set to true during
+		/// printing operations.
+		/// </value>
+		bool isPrintScaleAll;
+		/// <summary>
 		/// private field that determines whether or not the visible aspect ratio of the
 		/// <see cref="MasterPane" /> <see cref="PaneBase.PaneRect" /> will be preserved
 		/// when printing this <see cref="ZedGraphControl" />.
 		/// </summary>
 		bool isPrintKeepAspectRatio;
-
 		/// <summary>
 		/// private field that determines whether or not the <see cref="MasterPane" />
 		/// <see cref="PaneBase.PaneRect" /> dimensions will be expanded to fill the
@@ -534,6 +551,7 @@ namespace ZedGraph
 			this.isShowContextMenu = true;
 			this.isPrintFillPage = true;
 			this.isPrintKeepAspectRatio = true;
+			this.isPrintScaleAll = true;
 
 			this.pointValueFormat = PointPair.DefaultFormat;
 			this.pointDateFormat = XDate.DefaultFormatStr;
@@ -883,6 +901,28 @@ namespace ZedGraph
 		{
 			get { return isPrintFillPage; }
 			set { isPrintFillPage = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines whether the settings of
+		/// <see cref="ZedGraph.PaneBase.IsFontsScaled" /> and <see cref="PaneBase.IsPenWidthScaled" />
+		/// will be overridden to true during printing operations.
+		/// </summary>
+		/// <remarks>
+		/// Printing involves pixel maps that are typically of a dramatically different dimension
+		/// than on-screen pixel maps.  Therefore, it becomes more important to scale the fonts and
+		/// lines to give a printed image that looks like what is shown on-screen.  The default
+		/// setting for <see cref="ZedGraph.PaneBase.IsFontsScaled" /> is true, but the default
+		/// setting for <see cref="PaneBase.IsPenWidthScaled" /> is false.
+		/// </remarks>
+		/// <value>
+		/// A value of true will cause both <see cref="ZedGraph.PaneBase.IsFontsScaled" /> and
+		/// <see cref="PaneBase.IsPenWidthScaled" /> to be temporarily set to true during
+		/// printing operations.
+		/// </value>
+		bool IsPrintScaleAll
+		{
+			get { return isPrintScaleAll; }
+			set { isPrintScaleAll = value; }
 		}
 
 		/// <summary>
@@ -2267,8 +2307,20 @@ namespace ZedGraph
 			PrintDocument pd = sender as PrintDocument;
 
 			MasterPane mPane = this.MasterPane;
-			bool isScaleLineWidth = mPane[0].IsPenWidthScaled;
-			mPane[0].IsPenWidthScaled = true;
+			bool[] isPenSave = new bool[mPane.PaneList.Count + 1];
+			bool[] isFontSave = new bool[mPane.PaneList.Count + 1];
+			isPenSave[0] = mPane.IsPenWidthScaled;
+			isFontSave[0] = mPane.IsFontsScaled;
+			for ( int i=0; i<mPane.PaneList.Count; i++ )
+			{
+				isPenSave[i+1] = mPane[i].IsPenWidthScaled;
+				isFontSave[i+1] = mPane[i].IsFontsScaled;
+				if ( this.isPrintScaleAll )
+				{
+					mPane[i].IsPenWidthScaled = true;
+					mPane[i].IsFontsScaled = true;
+				}
+			}
 
 			RectangleF saveRect = mPane.PaneRect;
 			SizeF newSize = mPane.PaneRect.Size;
@@ -2291,6 +2343,14 @@ namespace ZedGraph
 			Graphics g = this.CreateGraphics();
 			mPane.ReSize( g, saveRect );
 			g.Dispose();
+
+			mPane.IsPenWidthScaled = isPenSave[0];
+			mPane.IsFontsScaled = isFontSave[0];
+			for ( int i=0; i<mPane.PaneList.Count; i++ )
+			{
+				mPane[i].IsPenWidthScaled = isPenSave[i+1];
+				mPane[i].IsFontsScaled = isFontSave[i+1];
+			}
 		}
 
 		/// <summary>

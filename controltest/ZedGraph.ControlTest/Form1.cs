@@ -93,7 +93,8 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.IsAutoScrollRange = false;
 			this.zedGraphControl1.IsEnableHPan = true;
 			this.zedGraphControl1.IsEnableVPan = true;
-			this.zedGraphControl1.IsEnableZoom = true;
+			this.zedGraphControl1.IsEnableVZoom = true;
+			this.zedGraphControl1.IsEnableHZoom = true;
 			this.zedGraphControl1.IsScrollY2 = false;
 			this.zedGraphControl1.IsShowContextMenu = true;
 			this.zedGraphControl1.IsShowCursorValues = false;

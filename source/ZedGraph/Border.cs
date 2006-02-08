@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2005-01-22 06:20:50 $ </version>
+	/// <version> $Revision: 3.11 $ $Date: 2006-02-08 06:22:58 $ </version>
 	[Serializable]
 	public class Border : ISerializable
 	{
@@ -244,19 +244,19 @@ namespace ZedGraph
 		/// scaleFactor.
 		/// </param>
 		/// <param name="scaleFactor">
-        /// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
-        /// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
-        /// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-        /// </param>
-        /// <returns>A <see cref="Pen"/> object with the proper color and pen width.</returns>
-        public Pen MakePen( bool isPenWidthScaled, float scaleFactor )
+		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
+		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+		/// </param>
+		/// <returns>A <see cref="Pen"/> object with the proper color and pen width.</returns>
+		public Pen MakePen( bool isPenWidthScaled, float scaleFactor )
 		{
 			float scaledPenWidth = penWidth;
 			if ( isPenWidthScaled )
 				scaledPenWidth = (float)(penWidth * scaleFactor);
 			
 			return new Pen( color, scaledPenWidth );
-        }
+		}
 				
 		/// <summary>
 		/// Draw the specified Border (<see cref="RectangleF"/>) using the properties of
@@ -271,25 +271,25 @@ namespace ZedGraph
 		/// scaleFactor.
 		/// </param>
 		/// <param name="scaleFactor">
-        /// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
-        /// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
-        /// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
-        /// </param>
-        /// <param name="rect">A <see cref="RectangleF"/> struct to be drawn.</param>
-        public void Draw( Graphics g, bool isPenWidthScaled, float scaleFactor, RectangleF rect )
+		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
+		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
+		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
+		/// </param>
+		/// <param name="rect">A <see cref="RectangleF"/> struct to be drawn.</param>
+		public void Draw( Graphics g, bool isPenWidthScaled, float scaleFactor, RectangleF rect )
 		{
-            // Need to use the RectangleF props since rounding it can cause the axisFrame to
-            // not line up properly with the last tic mark
-            if ( this.isVisible )
+			// Need to use the RectangleF props since rounding it can cause the axisFrame to
+			// not line up properly with the last tic mark
+			if ( this.isVisible )
 			{
 				RectangleF tRect = rect;
 
 				float		scaledInflate = (float) ( this.inflateFactor * scaleFactor );
 				tRect.Inflate( scaledInflate, scaledInflate );
 
-                g.DrawRectangle( MakePen(isPenWidthScaled, scaleFactor), tRect.X, tRect.Y, tRect.Width, tRect.Height );
+				g.DrawRectangle( MakePen(isPenWidthScaled, scaleFactor), tRect.X, tRect.Y, tRect.Width, tRect.Height );
 			}
-        }
+		}
 
 	#endregion
 	}
