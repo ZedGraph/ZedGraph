@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.2 $ $Date: 2006-01-07 19:15:15 $ </version>
+	/// <version> $Revision: 1.3 $ $Date: 2006-02-08 05:35:12 $ </version>
 	class DateScale : Scale
 	{
 
@@ -68,11 +68,42 @@ namespace ZedGraph
 
 	#region properties
 
+		/// <summary>
+		/// Return the <see cref="AxisType" /> for this <see cref="Scale" />, which is
+		/// <see cref="AxisType.Date" />.
+		/// </summary>
 		public override AxisType Type
 		{
 			get { return AxisType.Date; }
 		}
 
+		/// <summary>
+		/// Gets or sets the minimum value for this scale.
+		/// </summary>
+		/// <remarks>
+		/// The set property is specifically adapted for <see cref="AxisType.Date" /> scales,
+		/// in that it automatically limits the value to the range of valid dates for the
+		/// <see cref="XDate" /> struct.
+		/// </remarks>
+		public override double Min
+		{
+			get { return this.min; }
+			set { this.min = XDate.MakeValidDate( value ); }
+		}
+
+		/// <summary>
+		/// Gets or sets the maximum value for this scale.
+		/// </summary>
+		/// <remarks>
+		/// The set property is specifically adapted for <see cref="AxisType.Date" /> scales,
+		/// in that it automatically limits the value to the range of valid dates for the
+		/// <see cref="XDate" /> struct.
+		/// </remarks>
+		public override double Max
+		{
+			get { return this.max; }
+			set { this.max = XDate.MakeValidDate( value ); }
+		}
 	#endregion
 
 	#region methods

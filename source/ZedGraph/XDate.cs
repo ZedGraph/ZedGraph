@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2006-02-03 05:25:34 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2006-02-08 05:35:12 $ </version>
 	public struct XDate : ICloneable
 	{
 	#region Fields & Constants
@@ -61,6 +61,24 @@ namespace ZedGraph
 		/// The Astronomical Julian Day number that corresponds to XL Date 0.0
 		/// </summary>
 		public const double XLDay1 = 2415018.5;
+
+		/// <summary>
+		/// The minimum valid Julian Day, which corresponds to January 1st, 4713 B.C.
+		/// </summary>
+		public const double JulDayMin = 0.0;
+		/// <summary>
+		/// The maximum valid Julian Day, which corresponds to December 31st, 9999 A.D.
+		/// </summary>
+		public const double JulDayMax = 5373483.5;
+		/// <summary>
+		/// The minimum valid Excel Day, which corresponds to January 1st, 4713 B.C.
+		/// </summary>
+		public const double XLDayMin = JulDayMin - XLDay1;
+		/// <summary>
+		/// The maximum valid Excel Day, which corresponds to December 31st, 9999 A.D.
+		/// </summary>
+		public const double XLDayMax = JulDayMax - XLDay1;
+
 		/// <summary>
 		/// The number of months in a year
 		/// </summary>
@@ -97,9 +115,9 @@ namespace ZedGraph
 		public const string DefaultFormatStr = "g";
 	#endregion
 	
-	#region Construtors
+	#region Constructors
 		// =========================================================================
-		// Construtors
+		// Constructors
 		// =========================================================================
 
 		/// <summary>
@@ -251,6 +269,14 @@ namespace ZedGraph
 			get { return xlDate; }
 			set { xlDate = value; }
 		}
+
+		/// <summary>
+		/// Returns true if this <see cref="XDate" /> struct is in the valid date range
+		/// </summary>
+		public bool IsValidDate
+		{
+			get { return xlDate >= XLDayMin && xlDate <= XLDayMax; }
+		}
 		
 		/// <summary>
 		/// Gets or sets the date value for this item in .Net DateTime format.
@@ -284,6 +310,32 @@ namespace ZedGraph
 	#endregion
 	
 	#region Get/Set Date Methods
+
+		/// <summary>
+		/// Returns true if the specified date value is in the valid range
+		/// </summary>
+		/// <param name="xlDate">The XL date value to be verified for validity</param>
+		/// <returns>true for a valid date, false otherwise</returns>
+		private static bool CheckValidDate( double xlDate )
+		{
+			return xlDate >= XLDayMin && xlDate <= XLDayMax;
+		}
+
+		/// <summary>
+		/// Take the specified date, and bound it to the valid date range for the XDate struct.
+		/// </summary>
+		/// <param name="xlDate">The date to be bounded</param>
+		/// <returns>An XLDate value that lies between the minimum and maximum valid date ranges
+		/// (see <see cref="XLDayMin" /> and <see cref="XLDayMax" />)</returns>
+		public static double MakeValidDate( double xlDate )
+		{
+			if ( xlDate < XLDayMin )
+				xlDate = XLDayMin;
+			if ( xlDate > XLDayMax )
+				xlDate = XLDayMax;
+			return xlDate;
+		}
+
 		/// <summary>
 		/// Get the calendar date (year, month, day) corresponding to this instance.
 		/// </summary>
@@ -1396,6 +1448,9 @@ namespace ZedGraph
 		{
 			int		year, month, day, hour, minute, second, millisecond;
 
+			if ( !CheckValidDate( xlDate ) )
+				return "Date Error";
+
 			XLDateToCalendarDate( xlDate, out year, out month, out day, out hour, out minute,
 											out second, out millisecond );
 			if ( year <= 0 )
@@ -1439,6 +1494,8 @@ namespace ZedGraph
 				fmtStr = fmtStr.Replace( "[fffff]", ((int) (xlDate * 8640000000)).ToString("d") );
 
 			//DateTime dt = XLDateToDateTime( xlDate );
+			if ( year > 9999 )
+				year = 9999;
 			DateTime dt = new DateTime( year, month, day, hour, minute, second, millisecond );
 			return dt.ToString( fmtStr );
 		}

@@ -20,6 +20,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Printing;
 using System.Windows.Forms;
 using System.Text;
 using System.ComponentModel;
@@ -39,7 +40,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.50 $ $Date: 2006-01-26 05:46:03 $ </version>
+	/// <version> $Revision: 3.51 $ $Date: 2006-02-08 05:35:12 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -90,7 +91,26 @@ namespace ZedGraph
 		/// public property <see cref="IsShowContextMenu"/> to access this value.
 		/// </summary>
 		private bool isShowContextMenu;
-		
+
+		/// <summary>
+		/// private field that determines whether or not the visible aspect ratio of the
+		/// <see cref="MasterPane" /> <see cref="PaneBase.PaneRect" /> will be preserved
+		/// when printing this <see cref="ZedGraphControl" />.
+		/// </summary>
+		bool isPrintKeepAspectRatio;
+
+		/// <summary>
+		/// private field that determines whether or not the <see cref="MasterPane" />
+		/// <see cref="PaneBase.PaneRect" /> dimensions will be expanded to fill the
+		/// available space when printing this <see cref="ZedGraphControl" />.
+		/// </summary>
+		/// <remarks>
+		/// If <see cref="IsPrintKeepAspectRatio" /> is also true, then the <see cref="MasterPane" />
+		/// <see cref="PaneBase.PaneRect" /> dimensions will be expanded to fit as large
+		/// a space as possible while still honoring the visible aspect ratio.
+		/// </remarks>
+		bool isPrintFillPage;
+
 		/// <summary>
 		/// private field that determines the format for displaying tooltip date values.
 		/// This format is passed to <see cref="XDate.ToString(string)"/>.
@@ -205,6 +225,16 @@ namespace ZedGraph
 		internal Point		menuClickPt;
 
 		private ResourceManager resourceManager;
+
+		/// <summary>
+		/// private field that stores a <see cref="PrintDocument" /> instance, which maintains
+		/// a persistent selection of printer options.
+		/// </summary>
+		/// <remarks>
+		/// This is needed so that a "Print" action utilizes the settings from a prior
+		/// "Page Setup" action.</remarks>
+		private PrintDocument pdSave = new PrintDocument();
+
 
 	#endregion
 
@@ -502,6 +532,9 @@ namespace ZedGraph
 			this.isShowPointValues = false;
 			this.isShowCursorValues = false;
 			this.isShowContextMenu = true;
+			this.isPrintFillPage = true;
+			this.isPrintKeepAspectRatio = true;
+
 			this.pointValueFormat = PointPair.DefaultFormat;
 			this.pointDateFormat = XDate.DefaultFormatStr;
 
@@ -823,6 +856,33 @@ namespace ZedGraph
 		{
 			get { return isShowContextMenu; }
 			set { isShowContextMenu = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines whether or not the visible aspect ratio of the
+		/// <see cref="MasterPane" /> <see cref="PaneBase.PaneRect" /> will be preserved
+		/// when printing this <see cref="ZedGraphControl" />.
+		/// </summary>
+		public bool IsPrintKeepAspectRatio
+		{
+			get { return isPrintKeepAspectRatio; }
+			set { isPrintKeepAspectRatio = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines whether or not the <see cref="MasterPane" />
+		/// <see cref="PaneBase.PaneRect" /> dimensions will be expanded to fill the
+		/// available space when printing this <see cref="ZedGraphControl" />.
+		/// </summary>
+		/// <remarks>
+		/// If <see cref="IsPrintKeepAspectRatio" /> is also true, then the <see cref="MasterPane" />
+		/// <see cref="PaneBase.PaneRect" /> dimensions will be expanded to fit as large
+		/// a space as possible while still honoring the visible aspect ratio.
+		/// </remarks>
+		public bool IsPrintFillPage
+		{
+			get { return isPrintFillPage; }
+			set { isPrintFillPage = value; }
 		}
 
 		/// <summary>
@@ -1462,16 +1522,23 @@ namespace ZedGraph
 				GraphPane pane = this.MasterPane.FindAxisRect( new PointF( e.X, e.Y ) );
 				if ( pane != null && e.Delta != 0 )
 				{
-					pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
+					ZoomState oldState = pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
 					
 					PointF centerPoint = new PointF(e.X, e.Y);
 					double zoomFraction = ( 1 + ( e.Delta < 0 ? 1.0 : -1.0 ) * ZoomStepFraction );
 
-					ZoomPane( pane, zoomFraction, centerPoint, this.isZoomOnMouseCenter );
+					ZoomPane( pane, zoomFraction, centerPoint, this.isZoomOnMouseCenter, false );
+
+					// Provide Callback to notify the user of zoom events
+					if ( this.ZoomEvent != null )
+						this.ZoomEvent( this, oldState, new ZoomState( pane, ZoomState.StateType.WheelZoom ) );
+					
+					Refresh();
+
 				}
 			}
 		}
-
+		
 		/// <summary>
 		/// Zoom a specified pane in or out according to the specified zoom fraction.
 		/// </summary>
@@ -1491,7 +1558,9 @@ namespace ZedGraph
 		/// <param name="isZoomOnCenter">true to cause the zoom to be centered on the point
 		/// <see paramref="centerPt" />, false to center on the <see cref="ZedGraph.GraphPane.AxisRect" />.
 		/// </param>
-		public void ZoomPane( GraphPane pane, double zoomFraction, PointF centerPt, bool isZoomOnCenter )
+		/// <param name="isRefresh">true to force a refresh of the control, false to leave it unrefreshed</param>
+		protected void ZoomPane( GraphPane pane, double zoomFraction, PointF centerPt, bool isZoomOnCenter,
+											bool isRefresh )
 		{
 			double x;
 			double[] y;
@@ -1518,9 +1587,33 @@ namespace ZedGraph
 			this.SetScroll( this.vScrollBar1, pane.YAxis, yScrollRangeList[0].Min,
 				yScrollRangeList[0].Max );
 
-			Refresh();
+			if ( isRefresh )
+				Refresh();
 		}
 
+		/// <summary>
+		/// Zoom a specified pane in or out according to the specified zoom fraction.
+		/// </summary>
+		/// <remarks>
+		/// The zoom will occur on the <see cref="XAxis" />, <see cref="YAxis" />, and
+		/// <see cref="Y2Axis" /> only if the corresponding flag, <see cref="IsEnableHZoom" /> or
+		/// <see cref="IsEnableVZoom" />, is true.  Note that if there are multiple Y or Y2 axes, all of
+		/// them will be zoomed.
+		/// </remarks>
+		/// <param name="pane">The <see cref="GraphPane" /> instance to be zoomed.</param>
+		/// <param name="zoomFraction">The fraction by which to zoom, less than 1 to zoom in, greater than
+		/// 1 to zoom out.  For example, 0.9 will zoom in such that the scale is 90% of what it was
+		/// originally.</param>
+		/// <param name="centerPt">The screen position about which the zoom will be centered.  This
+		/// value is only used if <see paramref="isZoomOnCenter" /> is true.
+		/// </param>
+		/// <param name="isZoomOnCenter">true to cause the zoom to be centered on the point
+		/// <see paramref="centerPt" />, false to center on the <see cref="ZedGraph.GraphPane.AxisRect" />.
+		/// </param>
+		public void ZoomPane( GraphPane pane, double zoomFraction, PointF centerPt, bool isZoomOnCenter )
+		{
+			ZoomPane( pane, zoomFraction, centerPt, isZoomOnCenter, true );
+		}
 
 		/// <summary>
 		/// Handle a MouseUp event in the <see cref="ZedGraphControl" />
@@ -1987,6 +2080,20 @@ namespace ZedGraph
 
 					menuItem = new MenuItem();
 					menuItem.Index = index++;
+					menuStr = resourceManager.GetString( "page_setup" );
+					menuItem.Text = menuStr;
+					this.contextMenu.MenuItems.Add( menuItem );
+					menuItem.Click += new System.EventHandler( this.MenuClick_PageSetup );
+
+					menuItem = new MenuItem();
+					menuItem.Index = index++;
+					menuStr = resourceManager.GetString( "print" );
+					menuItem.Text = menuStr;
+					this.contextMenu.MenuItems.Add( menuItem );
+					menuItem.Click += new System.EventHandler( this.MenuClick_Print );
+
+					menuItem = new MenuItem();
+					menuItem.Index = index++;
 					menuStr = resourceManager.GetString( "show_val" );
 					menuItem.Text = menuStr;
 					menuItem.Checked = this.IsShowPointValues;
@@ -2127,6 +2234,114 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Handler for the "Page Setup..." context menu item.   Displays a
+		/// <see cref="PageSetupDialog" />.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		protected void MenuClick_PageSetup( object sender, EventArgs e )
+		{
+			DoPageSetup( pdSave );
+		}
+
+		/// <summary>
+		/// Handler for the "Print..." context menu item.   Displays a
+		/// <see cref="PrintDialog" />.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		protected void MenuClick_Print( object sender, EventArgs e )
+		{
+			DoPrint( pdSave );
+		}
+
+		/// <summary>
+		/// Rendering method used by the print context menu items
+		/// </summary>
+		/// <param name="sender">The applicable <see cref="PrintDocument" />.</param>
+		/// <param name="e">A <see cref="PrintPageEventArgs" /> instance providing
+		/// page bounds, margins, and a Graphics instance for this printed output.
+		/// </param>
+		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
+		{
+			PrintDocument pd = sender as PrintDocument;
+
+			MasterPane mPane = this.MasterPane;
+			bool isScaleLineWidth = mPane[0].IsPenWidthScaled;
+			mPane[0].IsPenWidthScaled = true;
+
+			RectangleF saveRect = mPane.PaneRect;
+			SizeF newSize = mPane.PaneRect.Size;
+			if ( isPrintFillPage && isPrintKeepAspectRatio )
+			{
+				float xRatio = (float)e.MarginBounds.Width / (float)newSize.Width;
+				float yRatio = (float)e.MarginBounds.Height / (float)newSize.Height;
+				float ratio = Math.Min( xRatio, yRatio );
+
+				newSize.Width *= ratio;
+				newSize.Height *= ratio;
+			}
+			else if ( isPrintFillPage )
+				newSize = e.MarginBounds.Size;
+
+			mPane.ReSize( e.Graphics, new RectangleF( e.MarginBounds.Left,
+								e.MarginBounds.Top, newSize.Width, newSize.Height ) );
+			mPane.Draw( e.Graphics );
+
+			Graphics g = this.CreateGraphics();
+			mPane.ReSize( g, saveRect );
+			g.Dispose();
+		}
+
+		/// <summary>
+		/// Display a <see cref="PageSetupDialog" /> to the user, allowing them to modify
+		/// the print settings for this <see cref="ZedGraphControl" />.
+		/// </summary>
+		public void DoPageSetup( PrintDocument pd )
+		{
+			if ( pd != null )
+			{
+				pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+				PageSetupDialog setupDlg = new PageSetupDialog();
+				setupDlg.Document = pd;
+				setupDlg.ShowDialog();
+			}
+		}
+
+		/// <summary>
+		/// Display a <see cref="PrintDialog" /> to the user, allowing them to select a
+		/// printer and print the <see cref="MasterPane" /> contained in this
+		/// <see cref="ZedGraphControl" />.
+		/// </summary>
+		public void DoPrint( PrintDocument pd )
+		{
+			if ( pd != null )
+			{
+				pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+				PrintDialog pDlg = new PrintDialog();
+				pDlg.Document = pd;
+				if ( pDlg.ShowDialog() == DialogResult.OK )
+					pd.Print();
+			}
+		}
+
+		/// <summary>
+		/// Display a <see cref="PrintPreviewDialog" />, allowing the user to preview and
+		/// subsequently print the <see cref="MasterPane" /> contained in this
+		/// <see cref="ZedGraphControl" />.
+		/// </summary>
+		public void DoPrintPreview( PrintDocument pd )
+		{
+			if ( pd != null )
+			{
+				PrintPreviewDialog ppd = new PrintPreviewDialog();
+				pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+				ppd.Document = pd;
+				ppd.Show();
+			}
+		}
+
+		/// <summary>
 		/// Handler for the "Show Values" context menu item.  Toggles the <see cref="IsShowPointValues"/>
 		/// property, which activates the point value tooltips.
 		/// </summary>
@@ -2134,7 +2349,7 @@ namespace ZedGraph
 		/// <param name="e"></param>
 		protected void MenuClick_ShowValues( System.Object sender, System.EventArgs e )
 		{
-			this.IsShowPointValues = ! ((MenuItem)sender).Checked;
+			this.IsShowPointValues = !( (MenuItem)sender ).Checked;
 		}
 
 		/// <summary>

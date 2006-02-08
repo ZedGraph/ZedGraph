@@ -29,12 +29,13 @@ namespace ZedGraph
 	/// the features specific to <see cref="AxisType.Log" />.
 	/// </summary>
 	/// <remarks>
-	/// LogScale is a non-linear axis in which the values are scaled using the base 10 <see cref="Math.Log" />
+	/// LogScale is a non-linear axis in which the values are scaled using the base 10
+	/// <see cref="Math.Log(double)" />
 	/// function.
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.2 $ $Date: 2006-01-07 19:15:15 $ </version>
+	/// <version> $Revision: 1.3 $ $Date: 2006-02-08 05:35:12 $ </version>
 	class LogScale : Scale
 	{
 
@@ -65,12 +66,42 @@ namespace ZedGraph
 
 	#endregion
 
-
 	#region properties
 
+		/// <summary>
+		/// Return the <see cref="AxisType" /> for this <see cref="Scale" />, which is
+		/// <see cref="AxisType.Log" />.
+		/// </summary>
 		public override AxisType Type
 		{
 			get { return AxisType.Log; }
+		}
+
+		/// <summary>
+		/// Gets or sets the minimum value for this scale.
+		/// </summary>
+		/// <remarks>
+		/// The set property is specifically adapted for <see cref="AxisType.Log" /> scales,
+		/// in that it automatically limits the setting to values greater than zero.
+		/// </remarks>
+		public override double Min
+		{
+			get { return this.min; }
+			set { if ( value > 0 ) this.min = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the maximum value for this scale.
+		/// </summary>
+		/// <remarks>
+		/// The set property is specifically adapted for <see cref="AxisType.Log" /> scales,
+		/// in that it automatically limits the setting to values greater than zero.
+		/// <see cref="XDate" /> struct.
+		/// </remarks>
+		public override double Max
+		{
+			get { return this.max; }
+			set { if ( value > 0 ) this.max = value; }
 		}
 
 	#endregion

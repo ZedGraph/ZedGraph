@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.MinorStepAuto"/>,
 	/// and <see cref="Axis.StepAuto"/>.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2006-01-26 05:46:04 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2006-02-08 05:35:12 $ </version>
 	public class ScaleState
 	{
 		/// <summary>
@@ -272,7 +272,7 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2006-01-26 05:46:04 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2006-02-08 05:35:12 $ </version>
 	public class ZoomState
 	{
 		/// <summary>
@@ -285,6 +285,10 @@ namespace ZedGraph
 			/// Indicates the <see cref="ZoomState"/> object is from a Zoom operation
 			/// </summary>
 			Zoom,
+			/// <summary>
+			/// Indicates the <see cref="ZoomState"/> object is from a Wheel Zoom operation
+			/// </summary>
+			WheelZoom,
 			/// <summary>
 			/// Indicates the <see cref="ZoomState"/> object is from a Pan operation
 			/// </summary>
@@ -329,6 +333,8 @@ namespace ZedGraph
 				{
 					case StateType.Pan:
 						return "Pan";
+					case StateType.WheelZoom:
+						return "WheelZoom";
 					case StateType.Zoom:
 					default:
 						return "Zoom";
@@ -399,7 +405,7 @@ namespace ZedGraph
 	/// states (of scale range settings).
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.8 $ $Date: 2006-01-26 05:46:04 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2006-02-08 05:35:12 $ </version>
 	public class ZoomStateStack : CollectionBase
 	{
 		/// <summary>

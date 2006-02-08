@@ -55,7 +55,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 3.35 $ $Date: 2006-01-07 19:15:15 $</version>
+	/// <version>$Revision: 3.36 $ $Date: 2006-02-08 05:35:12 $</version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -578,7 +578,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Gets or sets a boolean flag value that, if true, will cause the
 		/// <see cref="ZedGraph.GraphPane.AxisChange"/> method to be called when
-		/// <see cref="CreateGraph"/> is called.
+		/// <see cref="CreateGraph( Stream, ImageFormat )"/> is called.
 		/// </summary>
 		/// <value>A boolean value, true to call <see cref="GraphPane.AxisChange"/>, false otherwise</value>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true),DefaultValue("false")]

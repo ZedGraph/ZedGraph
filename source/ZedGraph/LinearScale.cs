@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.1 $ $Date: 2005-12-26 11:34:14 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2006-02-08 05:35:12 $ </version>
 	class LinearScale : Scale
 	{
 
@@ -66,6 +66,10 @@ namespace ZedGraph
 
 	#region properties
 
+		/// <summary>
+		/// Return the <see cref="AxisType" /> for this <see cref="Scale" />, which is
+		/// <see cref="AxisType.Linear" />.
+		/// </summary>
 		public override AxisType Type
 		{
 			get { return AxisType.Linear; }

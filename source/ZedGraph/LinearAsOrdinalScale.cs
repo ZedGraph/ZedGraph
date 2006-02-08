@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.2 $ $Date: 2006-01-07 19:15:15 $ </version>
+	/// <version> $Revision: 1.3 $ $Date: 2006-02-08 05:35:12 $ </version>
 	class LinearAsOrdinalScale : Scale
 	{
 
@@ -71,6 +71,10 @@ namespace ZedGraph
 
 	#region properties
 
+		/// <summary>
+		/// Return the <see cref="AxisType" /> for this <see cref="Scale" />, which is
+		/// <see cref="AxisType.LinearAsOrdinal" />.
+		/// </summary>
 		public override AxisType Type
 		{
 			get { return AxisType.LinearAsOrdinal; }

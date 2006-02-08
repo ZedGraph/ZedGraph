@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.1 $ $Date: 2005-12-26 11:34:14 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2006-02-08 05:35:12 $ </version>
 	abstract public class Scale //: ISerializable
 	{
 	#region Fields
@@ -939,7 +939,7 @@ namespace ZedGraph
 		/// <seealso cref="Step"/>
 		/// <seealso cref="MinorStep"/>
 		/// <seealso cref="MinAuto"/>
-		public double Min
+		public virtual double Min
 		{
 			get { return min; }
 			set { min = value; }
@@ -963,7 +963,7 @@ namespace ZedGraph
 		/// <seealso cref="Step"/>
 		/// <seealso cref="MinorStep"/>
 		/// <seealso cref="MaxAuto"/>
-		public double Max
+		public virtual double Max
 		{
 			get { return max; }
 			set { max = value; }

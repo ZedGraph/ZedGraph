@@ -153,4 +153,10 @@
   <data name="unscroll" xml:space="preserve">
     <value>Undo Scroll</value>
   </data>
+  <data name="page_setup" xml:space="preserve">
+    <value>Page Setup...</value>
+  </data>
+  <data name="print" xml:space="preserve">
+    <value>Print...</value>
+  </data>
 </root>

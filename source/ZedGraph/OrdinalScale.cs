@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.1 $ $Date: 2005-12-26 11:34:14 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2006-02-08 05:35:12 $ </version>
 	class OrdinalScale : Scale
 	{
 
@@ -70,6 +70,10 @@ namespace ZedGraph
 
 	#region properties
 
+		/// <summary>
+		/// Return the <see cref="AxisType" /> for this <see cref="Scale" />, which is
+		/// <see cref="AxisType.Ordinal" />.
+		/// </summary>
 		public override AxisType Type
 		{
 			get { return AxisType.Ordinal; }
@@ -117,7 +121,6 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		/// <seealso cref="PickScale"/>
 		/// <seealso cref="AxisType.Ordinal"/>
 		override public void PickScale( GraphPane pane, Graphics g, float scaleFactor )
 		{

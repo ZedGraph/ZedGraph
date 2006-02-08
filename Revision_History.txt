@@ -1,5 +1,11 @@
 ZedGraph Class Library Revision History
 
+7-Feb-2006
+[UPD] Add bounds checking for Min/Max on Date Scales
+[UPD] Add bounds checking for XDate.ToString()
+[UPD] MouseWheel actions now trigger a ZoomEvent
+[NEW] Add Print and PageSetup options to ZedGraphControl
+
 2-Feb-2006 (by Champion)
 [FIX] ErrorBar was not honoring ordinal type axes
 [NEW] Add IPointListEdit interface, and enable the CurveItem.AddPoint(), RemovePoint(), and Clear().
