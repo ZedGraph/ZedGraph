@@ -21,6 +21,8 @@ using System;
 using System.Collections;
 using System.Text;
 using System.Drawing;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace ZedGraph
 {
@@ -36,10 +38,10 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.2 $ $Date: 2006-02-08 05:35:12 $ </version>
-	class OrdinalScale : Scale
+	/// <version> $Revision: 1.3 $ $Date: 2006-02-09 05:09:56 $ </version>
+	[Serializable]
+	class OrdinalScale : Scale, ISerializable
 	{
-
 
 	#region constructors
 
@@ -181,6 +183,39 @@ namespace ZedGraph
 		}
 
 
+	#endregion
+
+	#region Serialization
+		/// <summary>
+		/// Current schema value that defines the version of the serialized file
+		/// </summary>
+		public const int schema2 = 1;
+
+		/// <summary>
+		/// Constructor for deserializing objects
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// </param>
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
+		/// </param>
+		protected OrdinalScale( SerializationInfo info, StreamingContext context ) : base( info, context )
+		{
+			// The schema value is just a file version parameter.  You can use it to make future versions
+			// backwards compatible as new member variables are added to classes
+			int sch = info.GetInt32( "schema2" );
+
+		}
+		/// <summary>
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
+		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		public override void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			base.GetObjectData( info, context );
+			info.AddValue( "schema2", schema2 );
+		}
 	#endregion
 
 	}

@@ -1315,7 +1315,16 @@ namespace ZedGraph.LibTest
 			myBar.Bar.Size = 20f;
 #endif
 
-#if true	// Basic bar test - Linear
+#if true		// DeSerialize
+				DeSerialize( out myPane );
+				myPane.AxisChange( this.CreateGraphics() );
+
+				trackBar1.Minimum = 0;
+				trackBar1.Maximum = 100;
+				trackBar1.Value = 50;
+#endif
+
+#if false	// Basic bar test - Linear
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 10, 10 ), "Title", "XAxis", "YAxis" );
 
@@ -1332,7 +1341,7 @@ namespace ZedGraph.LibTest
 			}
 
 			BarItem bar1 = myPane.AddBar( "First", list1, Color.Blue );
-			myPane.YAxis.Type = AxisType.Log;
+			//myPane.YAxis.Type = AxisType.Log;
 			//myPane.BarType = BarType.ClusterHiLow;
 			myPane.AxisChange( this.CreateGraphics() );
 
@@ -2196,10 +2205,44 @@ namespace ZedGraph.LibTest
 			}
 		}
 
+		private static bool isFirst = true;
+		private static PointF startPt;
+
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+			Serialize( myPane);
+			//DeSerialize( out master );
+
+			object obj;
+			int index;
+			PointF mousePt = new PointF( e.X, e.Y );
+			//if ( myPane.FindNearestObject( mousePt, this.CreateGraphics(), out obj, out index ) &&
+			//		obj is GraphPane )
+			{
+				if ( isFirst )
+				{
+					startPt = mousePt;
+					isFirst = false;
+				}
+				else
+				{
+					double x1, x2, y1, y2, y3, y4;
+					myPane.ReverseTransform( startPt, out x1, out y1, out y3 );
+					myPane.ReverseTransform( mousePt, out x2, out y2, out y4 );
+					float width = (float)Math.Abs( x1 - x2 );
+					float height = (float)Math.Abs( y1 - y2 );
+					x1 = Math.Min( x1, x2 );
+					y1 = Math.Max( y1, y2 );
+
+					RectangleF rect = new RectangleF( (float)x1, (float)y1, width, height );
+					BoxItem box = new BoxItem( rect, Color.Red, Color.Red );
+					myPane.GraphItemList.Add( box );
+					isFirst = true;
+					Invalidate();
+				}
+			}
 			//DoAddPoints();
-			//return;
+			return;
 
 			//Image image = master.ScaledImage( 300, 200, 72 );
 			//image.Save( @"c:\zedgraph.png", ImageFormat.Png );
@@ -2214,8 +2257,6 @@ namespace ZedGraph.LibTest
 			//Serialize( master );
 			//DeSerialize( out master );
 
-			object obj;
-			int index;
 			if ( myPane.FindNearestObject( new PointF( e.X, e.Y ), this.CreateGraphics(), out obj, out index ) )
 				MessageBox.Show( obj.ToString() + " index=" + index );
 			else

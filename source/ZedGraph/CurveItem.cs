@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.28 $ $Date: 2006-02-03 05:48:36 $ </version>
+	/// <version> $Revision: 3.29 $ $Date: 2006-02-09 05:09:56 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable
 	{
@@ -258,7 +258,10 @@ namespace ZedGraph
 			if ( sch >= 2 )
 				isOverrideOrdinal = info.GetBoolean( "isOverrideOrdinal" );
 
-			points = (IPointList) info.GetValue( "points", typeof(IPointList) );
+			// Data Points are always stored as a PointPairList, regardless of the
+			// actual original type (which could be anything that supports IPointList).
+			points = (PointPairList) info.GetValue( "points", typeof(PointPairList) );
+
 			Tag = info.GetValue( "Tag", typeof(object) );
 
 			if ( sch >= 3 )
@@ -282,7 +285,16 @@ namespace ZedGraph
 			info.AddValue( "isVisible", isVisible );
 			info.AddValue( "isLegendLabelVisible", isLegendLabelVisible );
 			info.AddValue( "isOverrideOrdinal", isOverrideOrdinal );
-			info.AddValue( "points", points );
+
+			// if points is already a PointPairList, use it
+			// otherwise, create a new PointPairList so it can be serialized
+			PointPairList list;
+			if ( points is PointPairList )
+				list = points as PointPairList;
+			else
+				list = new PointPairList( points );
+
+			info.AddValue( "points", list );
 			info.AddValue( "Tag", Tag );
 			info.AddValue( "fontSpec", fontSpec );
 			info.AddValue( "yAxisIndex", yAxisIndex );
@@ -602,9 +614,11 @@ namespace ZedGraph
 		{
 			if ( this.points == null )
 				this.Points = new PointPairList();
-			
+
 			if ( this.points is IPointListEdit )
-				(points as IPointListEdit).Add( point );
+				( points as IPointListEdit ).Add( point );
+			else
+				throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -620,6 +634,8 @@ namespace ZedGraph
 		{
 			if ( this.points is IPointListEdit )
 				(points as IPointListEdit).Clear();
+			else
+				throw new NotImplementedException();
 		}
 
 		/// <summary>
@@ -635,6 +651,8 @@ namespace ZedGraph
 		{
 			if ( this.points is IPointListEdit )
 				(points as IPointListEdit).Remove( index );
+			else
+				throw new NotImplementedException();
 		}
 
 

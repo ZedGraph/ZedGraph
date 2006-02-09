@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.26 $ $Date: 2006-02-03 05:48:36 $ </version>
+	/// <version> $Revision: 3.27 $ $Date: 2006-02-09 05:09:56 $ </version>
 	[Serializable]
 	public class PointPairList : CollectionPlus, IPointList, IPointListEdit
 	{
@@ -84,7 +84,19 @@ namespace ZedGraph
 		public PointPairList( double[] x, double[] y )
 		{
 			Add( x, y );
-			
+
+			sorted = false;
+		}
+
+		/// <summary>
+		/// Constructor to initialize the PointPairList from an IPointList
+		/// </summary>
+		public PointPairList( IPointList list )
+		{
+			int count = list.Count;
+			for ( int i = 0; i < count; i++ )
+				Add( list[i] );
+
 			sorted = false;
 		}
 

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.53 $ $Date: 2006-02-03 05:25:34 $ </version>
+	/// <version> $Revision: 3.54 $ $Date: 2006-02-09 05:09:56 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable
 	{
@@ -712,7 +712,8 @@ namespace ZedGraph
 		// Schema was changed to 6 with AxisGap
 		// Schema was changed to 7 with Exponent
 		// Schema was changed to 8 when "Scale" class was added
-		public const int schema = 8;
+		// Schema was changed to 9 when scale was actually output properly
+		public const int schema = 9;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -727,36 +728,8 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			if ( sch < 8 )
-			{
-				this.scale.Min = info.GetDouble( "min" );
-				this.scale.Max = info.GetDouble( "max" );
-				this.scale.Step = info.GetDouble( "step" );
-				this.scale.MinorStep = info.GetDouble( "minorStep" );
-			}
 			cross = info.GetDouble( "cross" );
-			//baseTic = info.GetDouble( "baseTic" );
-
-			if ( sch < 8 )
-			{
-				this.scale.MinAuto = info.GetBoolean( "minAuto" );
-				this.scale.MaxAuto = info.GetBoolean( "maxAuto" );
-				this.scale.StepAuto = info.GetBoolean( "stepAuto" );
-				this.scale.MinorStepAuto = info.GetBoolean( "minorStepAuto" );
-			}
 			crossAuto = info.GetBoolean( "crossAuto" );
-
-			// numDecAuto is now a dummy variable
-			bool numDecAuto = info.GetBoolean( "numDecAuto" );
-			//scaleMagAuto = info.GetBoolean( "scaleMagAuto" );
-			//scaleFormatAuto = info.GetBoolean( "scaleFormatAuto" );
-			
-			//minGrace = info.GetDouble( "minGrace" );
-			//maxGrace = info.GetDouble( "maxGrace" );
-
-			// numDec is now a dummy variable
-			int numDec = info.GetInt32( "numDec" );
-			//scaleMag = info.GetInt32( "scaleMag" );
 
 			isVisible = info.GetBoolean( "isVisible" );
 			isShowGrid = info.GetBoolean( "isShowGrid" );
@@ -770,17 +743,12 @@ namespace ZedGraph
 			isMinorInsideTic = info.GetBoolean( "isMinorInsideTic" );
 			isMinorOppositeTic = info.GetBoolean( "isMinorOppositeTic" );
 			isTicsBetweenLabels = info.GetBoolean( "isTicsBetweenLabels" );
-			//isReverse = info.GetBoolean( "isReverse" );
-			isOmitMag = info.GetBoolean( "isOmitMag" );
-			//isUseTenPower = info.GetBoolean( "isUseTenPower" );
-			//isPreventLabelOverlap = info.GetBoolean( "isPreventLabelOverlap" );
 
-			//type = (AxisType) info.GetValue( "type", typeof(AxisType) );
+			isOmitMag = info.GetBoolean( "isOmitMag" );
+
 			title = info.GetString( "title" );
-			//scaleFormat = info.GetString( "scaleFormat" );
 
 			scaleAlign = (AlignP) info.GetValue( "scaleAlign", typeof(AlignP) );
-			//textLabels = (string[]) info.GetValue( "textLabels", typeof(string[]) );
 
 			titleFontSpec = (FontSpec) info.GetValue( "titleFontSpec", typeof(FontSpec) );
 			scaleFontSpec = (FontSpec) info.GetValue( "scaleFontSpec", typeof(FontSpec) );
@@ -799,9 +767,6 @@ namespace ZedGraph
 			color = (Color) info.GetValue( "color", typeof(Color) );
 			gridColor = (Color) info.GetValue( "gridColor", typeof(Color) );
 			minorGridColor = (Color) info.GetValue( "minorGridColor", typeof(Color) );
-
-			//majorUnit = (DateUnit) info.GetValue( "majorUnit", typeof(DateUnit) );
-			//minorUnit = (DateUnit) info.GetValue( "minorUnit", typeof(DateUnit) );
 
 			if ( schema >= 2 )
 				isScaleVisible = info.GetBoolean( "isScaleVisible" );
@@ -827,8 +792,11 @@ namespace ZedGraph
 			if ( schema >= 6 )
 				axisGap = info.GetSingle( "axisGap" );
 
-			//if ( schema >= 7 )
-				//exponent = info.GetDouble( "exponent" );
+			if ( schema >= 9 )
+			{
+				scale = (Scale)info.GetValue( "scale", typeof( Scale ) );
+				scale.parentAxis = this;
+			}
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -839,32 +807,9 @@ namespace ZedGraph
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
-			//info.AddValue( "min", min );
-			//info.AddValue( "max", max );
-			//info.AddValue( "step", step );
-			//info.AddValue( "minorStep", minorStep );
+
 			info.AddValue( "cross", cross );
-			//info.AddValue( "baseTic", baseTic );
-
-			//info.AddValue( "minAuto", minAuto );
-			//info.AddValue( "maxAuto", maxAuto );
-			//info.AddValue( "stepAuto", stepAuto );
-			//info.AddValue( "minorStepAuto", minorStepAuto );
 			info.AddValue( "crossAuto", crossAuto );
-
-			// numDecAuto is now a dummy variable
-			bool numDecAuto = true;
-			info.AddValue( "numDecAuto", numDecAuto );
-			//info.AddValue( "scaleMagAuto", scaleMagAuto );
-			//info.AddValue( "scaleFormatAuto", scaleFormatAuto );
-
-			//info.AddValue( "minGrace", minGrace );
-			//info.AddValue( "maxGrace", maxGrace );
-
-			// numDec is now a dummy variable
-			int numDec = 0;
-			info.AddValue( "numDec", numDec );
-			//info.AddValue( "scaleMag", scaleMag );
 
 			info.AddValue( "isVisible", isVisible );
 			info.AddValue( "isShowGrid", isShowGrid );
@@ -878,16 +823,11 @@ namespace ZedGraph
 			info.AddValue( "isMinorInsideTic", isMinorInsideTic );
 			info.AddValue( "isMinorOppositeTic", isMinorOppositeTic );
 			info.AddValue( "isTicsBetweenLabels", isTicsBetweenLabels );
-			//info.AddValue( "isReverse", isReverse );
-			info.AddValue( "isOmitMag", isOmitMag );
-			//info.AddValue( "isUseTenPower", isUseTenPower );
-			//info.AddValue( "isPreventLabelOverlap", isPreventLabelOverlap );
 
-			//info.AddValue( "type", type );
+			info.AddValue( "isOmitMag", isOmitMag );
+
 			info.AddValue( "title", title );
-			//info.AddValue( "scaleFormat", scaleFormat );
 			info.AddValue( "scaleAlign", scaleAlign );
-			//info.AddValue( "textLabels", textLabels );
 			info.AddValue( "titleFontSpec", titleFontSpec );
 			info.AddValue( "scaleFontSpec", scaleFontSpec );
 
@@ -905,9 +845,6 @@ namespace ZedGraph
 			info.AddValue( "color", color );
 			info.AddValue( "gridColor", gridColor );
 			info.AddValue( "minorGridColor", minorGridColor );
-
-			//info.AddValue( "majorUnit", majorUnit );
-			//info.AddValue( "minorUnit", minorUnit );
 
 			// New for Schema = 2
 			info.AddValue( "isScaleVisible", isScaleVisible );
@@ -929,8 +866,8 @@ namespace ZedGraph
 			// new for schema = 6
 			info.AddValue( "axisGap", axisGap );
 
-			// new for schema = 7
-			//info.AddValue( "exponent", exponent );
+			// new for schema = 9
+			info.AddValue( "scale", this.scale );
 		}
 	#endregion
 

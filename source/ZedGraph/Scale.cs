@@ -39,8 +39,8 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.2 $ $Date: 2006-02-08 05:35:12 $ </version>
-	abstract public class Scale //: ISerializable
+	/// <version> $Revision: 1.3 $ $Date: 2006-02-09 05:09:56 $ </version>
+	abstract public class Scale : ISerializable
 	{
 	#region Fields
 
@@ -192,7 +192,7 @@ namespace ZedGraph
 		internal double	minScale,
 								maxScale;
 
-		internal readonly Axis		parentAxis;
+		internal Axis		parentAxis;
 
 	#endregion
 
@@ -623,18 +623,12 @@ namespace ZedGraph
 		}
 	#endregion
 
-#if false
-		#region Serialization
+	#region Serialization
+
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		// Schema was changed to 2 when IsScaleVisible was added
-		// Schema was changed to 3 when IsAxisSegmentVisible was added
-		// Schema was changed to 4 when IsScaleLabelsInside, isSkipFirstLabel, isSkipLastLabel were added
-		// Schema was changed to 5 with IsCrossTic, IsInsideCrossTic, IsMinorCrossTic, IsMinorInsideCrossTic
-		// Schema was changed to 6 with AxisGap
-		// Schema was changed to 7 with Exponent
-		public const int schema = 7;
+		public const int schema = 1;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -653,98 +647,33 @@ namespace ZedGraph
 			max = info.GetDouble( "max" );
 			step = info.GetDouble( "step" );
 			minorStep = info.GetDouble( "minorStep" );
-			cross = info.GetDouble( "cross" );
+			exponent = info.GetDouble( "exponent" );
 			baseTic = info.GetDouble( "baseTic" );
+
 
 			minAuto = info.GetBoolean( "minAuto" );
 			maxAuto = info.GetBoolean( "maxAuto" );
 			stepAuto = info.GetBoolean( "stepAuto" );
 			minorStepAuto = info.GetBoolean( "minorStepAuto" );
-			crossAuto = info.GetBoolean( "crossAuto" );
-
-			// numDecAuto is now a dummy variable
-			bool numDecAuto = info.GetBoolean( "numDecAuto" );
 			scaleMagAuto = info.GetBoolean( "scaleMagAuto" );
 			scaleFormatAuto = info.GetBoolean( "scaleFormatAuto" );
 			
 			minGrace = info.GetDouble( "minGrace" );
 			maxGrace = info.GetDouble( "maxGrace" );
 
-			// numDec is now a dummy variable
-			int numDec = info.GetInt32( "numDec" );
 			scaleMag = info.GetInt32( "scaleMag" );
 
-			isVisible = info.GetBoolean( "isVisible" );
-			isShowGrid = info.GetBoolean( "isShowGrid" );
-			isShowTitle = info.GetBoolean( "isShowTitle" );
-			isZeroLine = info.GetBoolean( "isZeroLine" );
-			isTic = info.GetBoolean( "isTic" );
-			isInsideTic = info.GetBoolean( "isInsideTic" );
-			isOppositeTic = info.GetBoolean( "isOppositeTic" );
-			isMinorTic = info.GetBoolean( "isMinorTic" );
-			isShowMinorGrid = info.GetBoolean( "isShowMinorGrid" );
-			isMinorInsideTic = info.GetBoolean( "isMinorInsideTic" );
-			isMinorOppositeTic = info.GetBoolean( "isMinorOppositeTic" );
-			isTicsBetweenLabels = info.GetBoolean( "isTicsBetweenLabels" );
 			isReverse = info.GetBoolean( "isReverse" );
-			isOmitMag = info.GetBoolean( "isOmitMag" );
-			isUseTenPower = info.GetBoolean( "isUseTenPower" );
 			isPreventLabelOverlap = info.GetBoolean( "isPreventLabelOverlap" );
+			isUseTenPower = info.GetBoolean( "isUseTenPower" );
 
-			type = (AxisType) info.GetValue( "type", typeof(AxisType) );
-			title = info.GetString( "title" );
-			scaleFormat = info.GetString( "scaleFormat" );
-
-			scaleAlign = (AlignP) info.GetValue( "scaleAlign", typeof(AlignP) );
 			textLabels = (string[]) info.GetValue( "textLabels", typeof(string[]) );
-
-			titleFontSpec = (FontSpec) info.GetValue( "titleFontSpec", typeof(FontSpec) );
-			scaleFontSpec = (FontSpec) info.GetValue( "scaleFontSpec", typeof(FontSpec) );
-
-			ticPenWidth = info.GetSingle( "ticPenWidth" );
-			ticSize = info.GetSingle( "ticSize" );
-			minorTicSize = info.GetSingle( "minorTicSize" );
-			gridDashOn = info.GetSingle( "gridDashOn" );
-			gridDashOff = info.GetSingle( "gridDashOff" );
-			gridPenWidth = info.GetSingle( "gridPenWidth" );
-			minorGridDashOn = info.GetSingle( "minorGridDashOn" );
-			minorGridDashOff = info.GetSingle( "minorGridDashOff" );
-			minorGridPenWidth = info.GetSingle( "minorGridPenWidth" );
-			minSpace = info.GetSingle( "minSpace" );
-
-			color = (Color) info.GetValue( "color", typeof(Color) );
-			gridColor = (Color) info.GetValue( "gridColor", typeof(Color) );
-			minorGridColor = (Color) info.GetValue( "minorGridColor", typeof(Color) );
+			scaleFormat = info.GetString( "scaleFormat" );
 
 			majorUnit = (DateUnit) info.GetValue( "majorUnit", typeof(DateUnit) );
 			minorUnit = (DateUnit) info.GetValue( "minorUnit", typeof(DateUnit) );
 
-			if ( schema >= 2 )
-				isScaleVisible = info.GetBoolean( "isScaleVisible" );
 
-			if ( schema >= 3 )
-				isAxisSegmentVisible = info.GetBoolean( "isAxisSegmentVisible" );
-
-			if ( schema >= 4 )
-			{
-				isScaleLabelsInside = info.GetBoolean( "isScaleLabelsInside" );
-				isSkipFirstLabel = info.GetBoolean( "isSkipFirstLabel" );
-				isSkipLastLabel = info.GetBoolean( "isSkipLastLabel" );
-			}
-
-			if ( schema >= 5 )
-			{
-				isCrossTic = info.GetBoolean( "isCrossTic" );
-				isInsideCrossTic = info.GetBoolean( "isInsideCrossTic" );
-				isMinorCrossTic = info.GetBoolean( "isMinorCrossTic" );
-				isMinorInsideCrossTic = info.GetBoolean( "isMinorInsideCrossTic" );
-			}
-
-			if ( schema >= 6 )
-				axisGap = info.GetSingle( "axisGap" );
-
-			if ( schema >= 7 )
-				exponent = info.GetDouble( "exponent" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -759,97 +688,33 @@ namespace ZedGraph
 			info.AddValue( "max", max );
 			info.AddValue( "step", step );
 			info.AddValue( "minorStep", minorStep );
-			info.AddValue( "cross", cross );
+			info.AddValue( "exponent", exponent );
 			info.AddValue( "baseTic", baseTic );
 
 			info.AddValue( "minAuto", minAuto );
 			info.AddValue( "maxAuto", maxAuto );
 			info.AddValue( "stepAuto", stepAuto );
 			info.AddValue( "minorStepAuto", minorStepAuto );
-			info.AddValue( "crossAuto", crossAuto );
-
-			// numDecAuto is now a dummy variable
-			bool numDecAuto = true;
-			info.AddValue( "numDecAuto", numDecAuto );
 			info.AddValue( "scaleMagAuto", scaleMagAuto );
 			info.AddValue( "scaleFormatAuto", scaleFormatAuto );
 
 			info.AddValue( "minGrace", minGrace );
 			info.AddValue( "maxGrace", maxGrace );
 
-			// numDec is now a dummy variable
-			int numDec = 0;
-			info.AddValue( "numDec", numDec );
 			info.AddValue( "scaleMag", scaleMag );
-
-			info.AddValue( "isVisible", isVisible );
-			info.AddValue( "isShowGrid", isShowGrid );
-			info.AddValue( "isShowTitle", isShowTitle );
-			info.AddValue( "isZeroLine", isZeroLine );
-			info.AddValue( "isTic", isTic );
-			info.AddValue( "isInsideTic", isInsideTic );
-			info.AddValue( "isOppositeTic", isOppositeTic );
-			info.AddValue( "isMinorTic", isMinorTic );
-			info.AddValue( "isShowMinorGrid", isShowMinorGrid );
-			info.AddValue( "isMinorInsideTic", isMinorInsideTic );
-			info.AddValue( "isMinorOppositeTic", isMinorOppositeTic );
-			info.AddValue( "isTicsBetweenLabels", isTicsBetweenLabels );
 			info.AddValue( "isReverse", isReverse );
-			info.AddValue( "isOmitMag", isOmitMag );
-			info.AddValue( "isUseTenPower", isUseTenPower );
 			info.AddValue( "isPreventLabelOverlap", isPreventLabelOverlap );
+			info.AddValue( "isUseTenPower", isUseTenPower );
 
-			info.AddValue( "type", type );
-			info.AddValue( "title", title );
-			info.AddValue( "scaleFormat", scaleFormat );
-			info.AddValue( "scaleAlign", scaleAlign );
 			info.AddValue( "textLabels", textLabels );
-			info.AddValue( "titleFontSpec", titleFontSpec );
-			info.AddValue( "scaleFontSpec", scaleFontSpec );
-
-			info.AddValue( "ticPenWidth", ticPenWidth );
-			info.AddValue( "ticSize", ticSize );
-			info.AddValue( "minorTicSize", minorTicSize );
-			info.AddValue( "gridDashOn", gridDashOn );
-			info.AddValue( "gridDashOff", gridDashOff );
-			info.AddValue( "gridPenWidth", gridPenWidth );
-			info.AddValue( "minorGridDashOn", minorGridDashOn );
-			info.AddValue( "minorGridDashOff", minorGridDashOff );
-			info.AddValue( "minorGridPenWidth", minorGridPenWidth );
-			info.AddValue( "minSpace", minSpace );
-
-			info.AddValue( "color", color );
-			info.AddValue( "gridColor", gridColor );
-			info.AddValue( "minorGridColor", minorGridColor );
+			info.AddValue( "scaleFormat", scaleFormat );
 
 			info.AddValue( "majorUnit", majorUnit );
 			info.AddValue( "minorUnit", minorUnit );
 
-			// New for Schema = 2
-			info.AddValue( "isScaleVisible", isScaleVisible );
-
-			// New for schema = 3
-			info.AddValue( "isAxisSegmentVisible", isAxisSegmentVisible );
-
-			// New for schema = 4
-			info.AddValue( "isScaleLabelsInside", isScaleLabelsInside );
-			info.AddValue( "isSkipFirstLabel", isSkipFirstLabel );
-			info.AddValue( "isSkipLastLabel", isSkipLastLabel );
-
-			// New for schema = 5
-			info.AddValue( "isCrossTic", isCrossTic );
-			info.AddValue( "isInsideCrossTic", isInsideCrossTic );
-			info.AddValue( "isMinorCrossTic", isMinorCrossTic );
-			info.AddValue( "isMinorInsideCrossTic", isMinorInsideCrossTic );
-
-			// new for schema = 6
-			info.AddValue( "axisGap", axisGap );
-
-			// new for schema = 7
-			info.AddValue( "exponent", exponent );
 		}
 	#endregion
-#endif
+
 
 	#region properties
 

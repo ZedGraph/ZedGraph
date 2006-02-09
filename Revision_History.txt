@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+8-Feb-2006
+[FIX] Fix serialization code to handle Scale & Axis properly
+[FIX] Make serialization always output a PointPairList, no matter what type IPointList it had
+
 7-Feb-2006
 [UPD] Add bounds checking for Min/Max on Date Scales
 [UPD] Add bounds checking for XDate.ToString()
