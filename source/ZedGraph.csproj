@@ -99,6 +99,11 @@
                     AssemblyName = "System.Design"
                     HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\system.design.dll"
                 />
+                <Reference
+                    Name = "System.Runtime.Serialization.Formatters.Soap"
+                    AssemblyName = "System.Runtime.Serialization.Formatters.Soap"
+                    HintPath = "..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
+                />
             </References>
         </Build>
         <Files>

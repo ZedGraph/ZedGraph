@@ -9,9 +9,9 @@ using System.Drawing.Imaging;
 using System.Drawing.Printing;
 using System.Drawing.Text;
 using System.Data;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Xml;
-using System.Xml.Serialization;
+using System.Runtime.Serialization.Formatters.Soap;
 using System.IO;
 using GDIDB;
 using ZedGraph;
@@ -32,6 +32,8 @@ namespace ZedGraph.LibTest
 		private CheckBox LabelsInsideBox;
 		private ComboBox AxisSelection;
 		private CheckBox CrossAutoBox;
+
+		private bool isBinarySerialize = false;
 
 		/// <summary>
 		/// 
@@ -1316,12 +1318,13 @@ namespace ZedGraph.LibTest
 #endif
 
 #if true		// DeSerialize
-				DeSerialize( out myPane );
-				myPane.AxisChange( this.CreateGraphics() );
+				DeSerialize( out myPane, @"c:\temp\myZedGraphFile" );
 
 				trackBar1.Minimum = 0;
 				trackBar1.Maximum = 100;
 				trackBar1.Value = 50;
+
+				myPane.AxisChange( this.CreateGraphics() );
 #endif
 
 #if false	// Basic bar test - Linear
@@ -1343,11 +1346,12 @@ namespace ZedGraph.LibTest
 			BarItem bar1 = myPane.AddBar( "First", list1, Color.Blue );
 			//myPane.YAxis.Type = AxisType.Log;
 			//myPane.BarType = BarType.ClusterHiLow;
-			myPane.AxisChange( this.CreateGraphics() );
 
 			trackBar1.Minimum = 0;
 			trackBar1.Maximum = 100;
 			trackBar1.Value = 50;
+
+			myPane.AxisChange( this.CreateGraphics() );
 
 #endif
 
@@ -2120,17 +2124,23 @@ namespace ZedGraph.LibTest
 			setupDlg.ShowDialog();
 		}
 
-		private void Serialize( GraphPane myPane )
+		private void Serialize( GraphPane myPane, string fileName )
 		{
-			//XmlSerializer mySerializer = new XmlSerializer( typeof( GraphPane ) );
-			//StreamWriter myWriter = new StreamWriter( @"myFileName.xml" );
+			IFormatter mySerializer;
+			Stream myWriter;
 
-			//SoapFormatter mySerializer = new SoapFormatter();
-			//FileStream myWriter = new FileStream( @"myFileName.soap", FileMode.Create );
-
-			BinaryFormatter mySerializer = new BinaryFormatter();
-			Stream myWriter = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Create,
-				FileAccess.Write, FileShare.None );
+			if ( isBinarySerialize )
+			{
+				mySerializer = new BinaryFormatter();
+				myWriter = new FileStream( fileName + ".bin", FileMode.Create,
+					FileAccess.Write, FileShare.None );
+			}
+			else
+			{
+				mySerializer = new SoapFormatter();
+				myWriter = new FileStream( fileName + ".soap", FileMode.Create,
+					FileAccess.Write, FileShare.None );
+			}
 
 			if ( myPane != null )
 			{
@@ -2142,11 +2152,23 @@ namespace ZedGraph.LibTest
 		}
 
 
-		private void DeSerialize( out GraphPane myPane )
+		private void DeSerialize( out GraphPane myPane, string fileName )
 		{
-			BinaryFormatter mySerializer = new BinaryFormatter();
-			Stream myReader = new FileStream( "c:\\temp\\myFileName.bin", FileMode.Open,
-				FileAccess.Read, FileShare.Read );
+			IFormatter mySerializer;
+			FileStream myReader;
+
+			if ( isBinarySerialize )
+			{
+				mySerializer = new BinaryFormatter();
+				myReader = new FileStream( fileName + ".bin", FileMode.Open,
+					FileAccess.Read, FileShare.Read );
+			}
+			else
+			{
+				mySerializer = new SoapFormatter();
+				myReader = new FileStream( fileName + ".soap", FileMode.Open,
+					FileAccess.Read, FileShare.Read );
+			}
 
 			myPane = (GraphPane) mySerializer.Deserialize( myReader );
 			Invalidate();
@@ -2156,9 +2178,6 @@ namespace ZedGraph.LibTest
 
 		private void Serialize( MasterPane master )
 		{
-			//XmlSerializer mySerializer = new XmlSerializer( typeof( GraphPane ) );
-			//StreamWriter myWriter = new StreamWriter( @"myFileName.xml" );
-
 			//SoapFormatter mySerializer = new SoapFormatter();
 			//FileStream myWriter = new FileStream( @"myFileName.soap", FileMode.Create );
 
@@ -2210,8 +2229,9 @@ namespace ZedGraph.LibTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			Serialize( myPane);
+			Serialize( myPane, @"c:\temp\myZedGraphFile" );
 			//DeSerialize( out master );
+			return;
 
 			object obj;
 			int index;
@@ -2425,17 +2445,14 @@ namespace ZedGraph.LibTest
 			if ( _crossAxis is XAxis )
 				controlAxis = pane.YAxis;
 
-			ReverseBox.Checked = _crossAxis.IsReverse;
-			LabelsInsideBox.Checked = _crossAxis.IsScaleLabelsInside;
-			CrossAutoBox.Checked = _crossAxis.CrossAuto;
+			if ( _crossAxis != null )
+			{
+				ReverseBox.Checked = _crossAxis.IsReverse;
+				LabelsInsideBox.Checked = _crossAxis.IsScaleLabelsInside;
+				CrossAutoBox.Checked = _crossAxis.CrossAuto;
 
-			/*
-			double ratio = (_crossAxis.Cross - controlAxis.Min) / (controlAxis.Max - controlAxis.Min);
-			if ( ratio >= 0 && ratio <= 1 )
-				trackBar1.Value = (int) (100 * ratio);
-			*/
-
-			trackBar1.Value = (int) ( Math.Abs( _crossAxis.ScaleFontSpec.Angle ) + 0.5 ) % 360;
+				trackBar1.Value = (int) ( Math.Abs( _crossAxis.ScaleFontSpec.Angle ) + 0.5 ) % 360;
+			}
 		}
 
 		private void CrossAutoBox_CheckedChanged( object sender, EventArgs e )

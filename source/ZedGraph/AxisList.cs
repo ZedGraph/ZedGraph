@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.1 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-02-09 06:58:12 $ </version>
 	[Serializable]
 	abstract public class AxisList : CollectionPlus
 	{
@@ -54,37 +54,6 @@ namespace ZedGraph
 
 	#endregion
 
-	#region Serialization
-		/// <summary>
-		/// Current schema value that defines the version of the serialized file
-		/// </summary>
-		public const int schema = 1;
-
-		/// <summary>
-		/// Constructor for deserializing objects
-		/// </summary>
-		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
-		/// </param>
-		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
-		/// </param>
-		protected AxisList( SerializationInfo info, StreamingContext context )
-		{
-			// The schema value is just a file version parameter.  You can use it to make future versions
-			// backwards compatible as new member variables are added to classes
-			int sch = info.GetInt32( "schema" );
-		}
-		/// <summary>
-		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
-		/// </summary>
-		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
-		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
-		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
-		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
-		{
-			info.AddValue( "schema", schema );
-		}
-	#endregion
-
 	#region List Methods
 
 		/// <summary>
@@ -96,7 +65,7 @@ namespace ZedGraph
 		/// <value>An <see cref="Axis"/> object reference.</value>
 		public Axis this[ int index ]  
 		{
-			get { return( (Axis) ( ( index < 0 || index >= this.Count ) ? List[0] : List[index] ) ); }
+			get { return( (Axis) ( ( index < 0 || index >= this.Count ) ? null : List[index] ) ); }
 		}
 
 		/// <summary>
