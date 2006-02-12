@@ -1317,7 +1317,7 @@ namespace ZedGraph.LibTest
 			myBar.Bar.Size = 20f;
 #endif
 
-#if true		// DeSerialize
+#if false		// DeSerialize
 				DeSerialize( out myPane, @"c:\temp\myZedGraphFile" );
 
 				trackBar1.Minimum = 0;
@@ -1327,7 +1327,7 @@ namespace ZedGraph.LibTest
 				myPane.AxisChange( this.CreateGraphics() );
 #endif
 
-#if false	// Basic bar test - Linear
+#if true	// Basic bar test - Linear
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 10, 10 ), "Title", "XAxis", "YAxis" );
 
@@ -1346,6 +1346,7 @@ namespace ZedGraph.LibTest
 			BarItem bar1 = myPane.AddBar( "First", list1, Color.Blue );
 			//myPane.YAxis.Type = AxisType.Log;
 			//myPane.BarType = BarType.ClusterHiLow;
+			myPane.XAxis.Scale.ScaleFormatEvent += new Scale.ScaleFormatHandler( CustomFormatter );
 
 			trackBar1.Minimum = 0;
 			trackBar1.Maximum = 100;
@@ -1748,6 +1749,12 @@ namespace ZedGraph.LibTest
 			if ( this.myPane != null )
 				this.myPane.AxisChange( this.CreateGraphics() );
       
+		}
+
+		public string CustomFormatter( GraphPane pane, Axis axis, double val, int index )
+		{
+			string label = val.ToString( "e1" ) + " gal";
+			return label;
 		}
 
 		/// <summary>

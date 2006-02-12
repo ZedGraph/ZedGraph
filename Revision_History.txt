@@ -1,5 +1,8 @@
 ZedGraph Class Library Revision History
 
+11-Feb-2006
+[NEW] Add ScaleLabelEvent for Scale label formatting
+
 8-Feb-2006
 [FIX] Fix serialization code to handle Scale & Axis properly
 [FIX] Make serialization always output a PointPairList, no matter what type IPointList it had
