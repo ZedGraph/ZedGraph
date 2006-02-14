@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.19 $ $Date: 2005-12-26 11:09:10 $ </version>
+	/// <version> $Revision: 3.20 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -310,17 +310,28 @@ namespace ZedGraph
 			stepType = rhs.StepType;
 			isSmooth = rhs.IsSmooth;
 			smoothTension = rhs.SmoothTension;
-			fill = (Fill) rhs.Fill.Clone();
+			fill = rhs.Fill.Clone();
 		}
 
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the Line</returns>
-		public object Clone()
-		{ 
-			return new Line( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public Line Clone()
+		{
+			return new Line( this );
+		}
+
 	#endregion
 
 	#region Serialization

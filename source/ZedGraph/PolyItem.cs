@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1 $ $Date: 2005-07-23 00:53:30 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class PolyItem : BoxItem, ICloneable, ISerializable
 	{
@@ -131,12 +131,22 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="PolyItem"/></returns>
-		override public object Clone()
-		{ 
-			return new PolyItem( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public new PolyItem Clone()
+		{
+			return new PolyItem( this );
 		}
 
 	#endregion

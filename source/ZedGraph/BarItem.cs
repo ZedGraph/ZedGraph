@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="GraphPane.BarType"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -127,17 +127,29 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="BarItem"/> object from which to copy</param>
 		public BarItem( BarItem rhs ) : base( rhs )
 		{
-			bar = new Bar( rhs.Bar );
+			//bar = new Bar( rhs.Bar );
+			bar = rhs.bar.Clone();
 		}
-		
+
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the BarItem</returns>
-		override public object Clone()
-		{ 
-			return new BarItem( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public BarItem Clone()
+		{
+			return new BarItem( this );
+		}
+
 	#endregion
 
 	#region Serialization

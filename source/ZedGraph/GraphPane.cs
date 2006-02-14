@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.56 $ $Date: 2006-01-26 05:46:03 $ </version>
+	/// <version> $Revision: 3.57 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -608,38 +608,53 @@ namespace ZedGraph
 		/// <param name="rhs">The GraphPane object from which to copy</param>
 		public GraphPane( GraphPane rhs ) : base( rhs )
 		{
-			xAxis = new XAxis( rhs.XAxis );
-
-			yAxisList = new YAxisList( rhs.yAxisList );
-			y2AxisList = new Y2AxisList( rhs.y2AxisList );
-
-			curveList = new CurveList( rhs.CurveList );
-			zoomStack = new ZoomStateStack( rhs.zoomStack );
-			
+			// copy values for all the value types
 			this.isIgnoreInitial = rhs.IsIgnoreInitial;
 			this.isBoundedRanges = rhs.isBoundedRanges;
-			
+
 			this.isAxisRectAuto = rhs.IsAxisRectAuto;
-			this.axisBorder = (Border) rhs.AxisBorder.Clone();
-			this.axisFill = (Fill) rhs.AxisFill.Clone();
+			this.axisBorder = rhs.AxisBorder.Clone();
+			this.axisFill = rhs.AxisFill.Clone();
 
 			this.minClusterGap = rhs.MinClusterGap;
 			this.minBarGap = rhs.MinBarGap;
 			this.clusterScaleWidth = rhs.ClusterScaleWidth;
 			this.barBase = rhs.BarBase;
 			this.barType = rhs.BarType;
-			
+
 			this.lineType = rhs.LineType;
-		} 
+
+
+			// copy all the reference types with deep copies
+			this.xAxis = new XAxis( rhs.XAxis );
+
+			this.yAxisList = new YAxisList( rhs.yAxisList );
+			this.y2AxisList = new Y2AxisList( rhs.y2AxisList );
+
+			this.curveList = new CurveList( rhs.CurveList );
+			this.zoomStack = new ZoomStateStack( rhs.zoomStack );
+	
+		}
 
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the GraphPane</returns>
-		public override object Clone()
-		{ 
-			return new GraphPane( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public GraphPane Clone()
+		{
+			return new GraphPane( this );
+		}
+
 	#endregion
 
 	#region Serialization

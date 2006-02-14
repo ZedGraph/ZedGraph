@@ -35,8 +35,8 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.16 $ $Date: 2006-02-08 06:22:58 $ </version>
-	public class PaneBase : ICloneable
+	/// <version> $Revision: 3.17 $ $Date: 2006-02-14 06:14:22 $ </version>
+	abstract public class PaneBase : ICloneable
 	{
 
 	#region Fields
@@ -595,9 +595,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="PaneBase"/> object from which to copy</param>
 		public PaneBase( PaneBase rhs )
 		{
-			this.paneFill = (Fill) rhs.paneFill.Clone();
-			this.paneBorder = (Border) rhs.paneBorder.Clone();
-			this.title = (string) rhs.title.Clone();
+			// copy over all the value types
 			this.IsShowTitle = rhs.isShowTitle;
 			this.isFontsScaled = rhs.isFontsScaled;
 			this.isPenWidthScaled = rhs.isPenWidthScaled;
@@ -607,25 +605,59 @@ namespace ZedGraph
 			this.marginRight = rhs.marginRight;
 			this.marginTop = rhs.marginTop;
 			this.marginBottom = rhs.marginBottom;
-
 			this.paneRect = rhs.paneRect;
-			legend = new Legend( rhs.Legend );
-			this.fontSpec = (FontSpec) rhs.fontSpec.Clone();
-			this.graphItemList = (GraphItemList) rhs.graphItemList.Clone();
+
+			// Copy the reference types by cloning
+			this.paneFill = rhs.paneFill.Clone();
+			this.paneBorder = rhs.paneBorder.Clone();
+			this.title = (string) rhs.title.Clone();
+
+			legend = rhs.Legend.Clone();
+			this.fontSpec = rhs.fontSpec.Clone();
+			this.graphItemList = rhs.graphItemList.Clone();
 			
 			if ( rhs.tag is ICloneable )
 				this.tag = ((ICloneable) rhs.tag).Clone();
 			else
 				this.tag = rhs.tag;
 		}
-		
+
+
+		//abstract public object ShallowClone();
+
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="PaneBase"/></returns>
-		public virtual object Clone()
-		{ 
-			return new PaneBase( this ); 
+		/// <remarks>
+		/// Note that this method must be called with an explicit cast to ICloneable, and
+		/// that it is inherently virtual.  For example:
+		/// <code>
+		/// ParentClass foo = new ChildClass();
+		/// ChildClass bar = (ChildClass) ((ICloneable)foo).Clone();
+		/// </code>
+		/// Assume that ChildClass is inherited from ParentClass.  Even though foo is declared with
+		/// ParentClass, it is actually an instance of ChildClass.  Calling the ICloneable implementation
+		/// of Clone() on foo actually calls ChildClass.Clone() as if it were a virtual function.
+		/// </remarks>
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			throw new NotImplementedException( "Can't clone an abstract base type -- child types must implement ICloneable" );
+			//return new PaneBase( this );
+		}
+
+		/// <summary>
+		/// Create a shallow, memberwise copy of this class.
+		/// </summary>
+		/// <remarks>
+		/// Note that this method uses <see cref="MemberWiseClone" />, which will copy all
+		/// members (shallow) including those of classes derived from this class.</remarks>
+		/// <returns>a new copy of the class</returns>
+		public PaneBase ShallowClone()
+		{
+			// return a shallow copy
+			return this.MemberwiseClone() as PaneBase;
 		}
 
 	#endregion
@@ -941,7 +973,9 @@ namespace ZedGraph
 			// Clone the GraphPane so we don't mess up the minPix and maxPix values or
 			// the paneRect/axisRect calculations of the original
 
-			PaneBase tempPane = (PaneBase) this.Clone();
+			//PaneBase tempPane = (PaneBase) ((ICloneable)this).Clone();
+			// This is actually a shallow clone, so we don't duplicate all the data, curveLists, etc.
+			PaneBase tempPane = this.ShallowClone();
 
 			tempPane.ReSize( bitmapGraphics, new RectangleF( 0, 0, width, height ) );
 

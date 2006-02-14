@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-09-05 18:34:50 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -195,11 +195,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// The Copy Constructor
+		/// The Copy Constructor - Make a deep-copy clone of this class instance.
 		/// </summary>
 		/// <param name="rhs">The <see cref="MasterPane"/> object from which to copy</param>
 		public MasterPane( MasterPane rhs ) : base( rhs )
 		{
+			// copy all the value types
 			this.paneLayout = rhs.paneLayout;
 			this.innerPaneGap = rhs.innerPaneGap;
 			this.rows = rhs.rows;
@@ -208,18 +209,30 @@ namespace ZedGraph
 			this.countList = rhs.countList;
 			this.hasUniformLegendEntries = rhs.hasUniformLegendEntries ;
 
-			this.paneList = (PaneList) rhs.paneList.Clone();
+			// Then, fill in all the reference types with deep copies
+			this.paneList = rhs.paneList.Clone();
+
 		}
-		
+
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" /> to make a deep copy.
 		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="MasterPane"/></returns>
-		public override object Clone()
-		{ 
-			return new MasterPane( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
-		
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public MasterPane Clone()
+		{
+			return new MasterPane( this );
+		}
+
 	#endregion
 
 	#region Serialization

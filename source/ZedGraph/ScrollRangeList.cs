@@ -34,8 +34,8 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.1 $ $Date: 2005-09-24 09:13:32 $ </version>
-	public class ScrollRangeList : CollectionPlus
+	/// <version> $Revision: 3.2 $ $Date: 2006-02-14 06:14:22 $ </version>
+	public class ScrollRangeList : CollectionPlus, ICloneable
 	{
 
 	#region Constructors
@@ -56,15 +56,26 @@ namespace ZedGraph
 			foreach ( ScrollRange item in rhs )
 				this.Add( new ScrollRange( item ) );
 		}
-				
+
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="ScrollRangeList"/>.</returns>
-		public object Clone()
-		{ 
-			return new ScrollRangeList( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public ScrollRangeList Clone()
+		{
+			return new ScrollRangeList( this );
+		}
+
 		
 	#endregion
 

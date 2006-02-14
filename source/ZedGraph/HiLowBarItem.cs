@@ -54,7 +54,7 @@ namespace ZedGraph
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -109,17 +109,28 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="HiLowBarItem"/> object from which to copy</param>
 		public HiLowBarItem( HiLowBarItem rhs ) : base( rhs )
 		{
-			this.bar = new HiLowBar( rhs.Bar );
+			this.bar = rhs.bar.Clone(); // new HiLowBar( rhs.Bar );
 		}
 
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="HiLowBarItem"/></returns>
-		override public object Clone()
-		{ 
-			return new HiLowBarItem( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public HiLowBarItem Clone()
+		{
+			return new HiLowBarItem( this );
+		}
+
 		#endregion
 
 		#region Serialization

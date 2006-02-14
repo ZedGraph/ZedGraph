@@ -32,9 +32,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2006-02-08 06:22:58 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
-	public class Border : ISerializable
+	public class Border : ISerializable, ICloneable
 	{
 	#region Fields
 		/// <summary>
@@ -141,15 +141,26 @@ namespace ZedGraph
 			isVisible = rhs.IsVisible;
 			inflateFactor = rhs.inflateFactor;
 		}
-		
+
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the Border class</returns>
-		public object Clone()
-		{ 
-			return new Border( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public Border Clone()
+		{
+			return new Border( this );
+		}
+
 	#endregion
 
 	#region Serialization

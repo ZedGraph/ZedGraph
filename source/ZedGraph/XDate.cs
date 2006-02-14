@@ -28,8 +28,8 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2006-02-08 05:35:12 $ </version>
-	public struct XDate : ICloneable
+	/// <version> $Revision: 3.15 $ $Date: 2006-02-14 06:14:22 $ </version>
+	public struct XDate //: ICloneable
 	{
 	#region Fields & Constants
 		// =========================================================================
@@ -245,15 +245,27 @@ namespace ZedGraph
 		{
 			xlDate = rhs.xlDate;
 		}
-		
+/*
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the XDate</returns>
-		public object Clone()
-		{ 
-			return new XDate( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public XDate Clone()
+		{
+			return new XDate( this );
+		}
+*/
+
 	#endregion
 	
 	#region Properties

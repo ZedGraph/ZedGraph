@@ -49,7 +49,7 @@ namespace ZedGraph
 	/// is assigned with <see cref="GraphPane.BarBase"/>, and is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class ErrorBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -149,15 +149,26 @@ namespace ZedGraph
 		{
 			errorBar = new ErrorBar( rhs.ErrorBar );
 		}
-		
+
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="ErrorBarItem"/></returns>
-		override public object Clone()
-		{ 
-			return new ErrorBarItem( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public ErrorBarItem Clone()
+		{
+			return new ErrorBarItem( this );
+		}
+
 	#endregion
 
 	#region Serialization

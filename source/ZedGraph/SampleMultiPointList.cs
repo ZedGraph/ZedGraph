@@ -188,13 +188,22 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Shallow copy clone routine.  This does not duplicate the data points, it just
-		/// creates another data "window".
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new <see cref="SampleMultiPointList" /></returns>
-		virtual public object Clone()
-		{ 
-			return new SampleMultiPointList( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public SampleMultiPointList Clone()
+		{
+			return new SampleMultiPointList( this );
 		}
 
 		/// <summary>

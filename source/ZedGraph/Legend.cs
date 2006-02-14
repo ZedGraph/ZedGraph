@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.28 $ $Date: 2005-10-07 21:08:26 $ </version>
+	/// <version> $Revision: 3.29 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -354,21 +354,32 @@ namespace ZedGraph
 			isHStack = rhs.IsHStack;
 			isVisible = rhs.IsVisible;
 			
-			this.location = (Location) rhs.Location;
-			this.border = (Border) rhs.Border.Clone();
-			this.fill = (Fill) rhs.Fill.Clone();
+			this.location = rhs.Location;
+			this.border = rhs.Border.Clone();
+			this.fill = rhs.Fill.Clone();
 			
-			fontSpec = (FontSpec) rhs.FontSpec.Clone();
+			fontSpec = rhs.FontSpec.Clone();
 		}
 
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the Legend</returns>
-		public object Clone()
-		{ 
-			return new Legend( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public Legend Clone()
+		{
+			return new Legend( this );
+		}
+
 		#endregion
 
 		#region Serialization

@@ -210,6 +210,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\FilteredPointList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\FontSpec.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2005-02-13 17:31:41 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class EllipseItem : BoxItem, ICloneable, ISerializable
 	{
@@ -107,13 +107,24 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="EllipseItem"/></returns>
-		override public object Clone()
-		{ 
-			return new EllipseItem( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public new EllipseItem Clone()
+		{
+			return new EllipseItem( this );
+		}
+
 	#endregion
 
 	#region Serialization

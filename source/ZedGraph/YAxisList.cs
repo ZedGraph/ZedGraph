@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.1 $ $Date: 2005-09-24 09:13:32 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class YAxisList : AxisList, ICloneable
 	{
@@ -59,16 +59,26 @@ namespace ZedGraph
 				this.Add( new YAxis( item ) );
 			}
 		}
-				
+
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="YAxisList"/>.</returns>
-		public object Clone()
-		{ 
-			return new YAxisList( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
-		
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public YAxisList Clone()
+		{
+			return new YAxisList( this );
+		}
+
 	#endregion
 
 	#region List Methods

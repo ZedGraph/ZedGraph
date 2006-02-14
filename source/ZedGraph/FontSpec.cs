@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2005-11-24 03:17:53 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -525,8 +525,8 @@ namespace ZedGraph
 			isBold = rhs.IsBold;
 			isItalic = rhs.IsItalic;
 			isUnderline = rhs.IsUnderline;
-			fill = (Fill) rhs.Fill.Clone();
-			border = (Border) rhs.Border.Clone();
+			fill = rhs.Fill.Clone();
+			border = rhs.Border.Clone();
 
 			stringAlignment = rhs.StringAlignment;
 			angle = rhs.Angle;
@@ -542,13 +542,24 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the FontSpec</returns>
-		public object Clone()
-		{ 
-			return new FontSpec( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public FontSpec Clone()
+		{
+			return new FontSpec( this );
+		}
+
 	#endregion
 
 	#region Serialization

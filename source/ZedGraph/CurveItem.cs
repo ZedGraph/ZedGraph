@@ -34,9 +34,9 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.29 $ $Date: 2006-02-09 05:09:56 $ </version>
+	/// <version> $Revision: 3.30 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
-	abstract public class CurveItem : ISerializable
+	abstract public class CurveItem : ISerializable, ICloneable
 	{
 	
 	#region Fields
@@ -208,7 +208,7 @@ namespace ZedGraph
 			yAxisIndex = rhs.yAxisIndex;
 
 			if ( rhs.fontSpec != null )
-				this.fontSpec = (FontSpec) rhs.fontSpec.Clone();
+				this.fontSpec = rhs.fontSpec.Clone();
 			else
 				this.fontSpec = null;
 
@@ -219,13 +219,29 @@ namespace ZedGraph
 			
 			this.points = (IPointList) rhs.Points.Clone();
 		}
-		
+
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the CurveItem</returns>
-		public abstract object Clone();
-		
+		/// <remarks>
+		/// Note that this method must be called with an explicit cast to ICloneable, and
+		/// that it is inherently virtual.  For example:
+		/// <code>
+		/// ParentClass foo = new ChildClass();
+		/// ChildClass bar = (ChildClass) ((ICloneable)foo).Clone();
+		/// </code>
+		/// Assume that ChildClass is inherited from ParentClass.  Even though foo is declared with
+		/// ParentClass, it is actually an instance of ChildClass.  Calling the ICloneable implementation
+		/// of Clone() on foo actually calls ChildClass.Clone() as if it were a virtual function.
+		/// </remarks>
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			throw new NotImplementedException( "Can't clone an abstract base type -- child types must implement ICloneable" );
+			//return new PaneBase( this );
+		}
+
 	#endregion
 
 	#region Serialization

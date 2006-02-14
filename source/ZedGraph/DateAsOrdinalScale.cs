@@ -39,9 +39,9 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.4 $ $Date: 2006-02-09 05:09:56 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
-	class DateAsOrdinalScale : Scale, ISerializable
+	class DateAsOrdinalScale : Scale, ISerializable, ICloneable
 	{
 
 	#region constructors
@@ -59,14 +59,24 @@ namespace ZedGraph
 			: base( rhs )
 		{
 		}
-		
+
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="DateAsOrdinalScale" /> object.</returns>
-		public object Clone()
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
 		{
-			return new DateAsOrdinalScale( this ); 
+			return this.Clone();
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public DateAsOrdinalScale Clone()
+		{
+			return new DateAsOrdinalScale( this );
 		}
 
 	#endregion

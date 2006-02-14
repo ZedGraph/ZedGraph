@@ -38,8 +38,8 @@ namespace ZedGraph
 	/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.MinorStepAuto"/>,
 	/// and <see cref="Axis.StepAuto"/>.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2006-02-08 05:35:12 $ </version>
-	public class ScaleState
+	/// <version> $Revision: 3.10 $ $Date: 2006-02-14 06:14:22 $ </version>
+	public class ScaleState : ICloneable
 	{
 		/// <summary>
 		/// The axis range data for <see cref="Axis.Min"/>, <see cref="Axis.Max"/>,
@@ -115,6 +115,25 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
+		/// </summary>
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public ScaleState Clone()
+		{
+			return new ScaleState( this );
+		}
+
+		/// <summary>
 		/// Copy the properties from this <see cref="ScaleState"/> out to the specified <see cref="Axis"/>.
 		/// </summary>
 		/// <param name="axis">The <see cref="Axis"/> reference to which the properties should be
@@ -170,7 +189,7 @@ namespace ZedGraph
 	/// objects, corresponding to the list of <see cref="Axis" /> objects
 	/// from <see cref="GraphPane.YAxisList" /> or <see cref="GraphPane.Y2AxisList" />.
 	/// </summary>
-	public class ScaleStateList : CollectionPlus
+	public class ScaleStateList : CollectionPlus, ICloneable
 	{
 		/// <summary>
 		/// Construct a new <see cref="ScaleStateList" /> automatically from an
@@ -193,17 +212,27 @@ namespace ZedGraph
 		{
 			foreach ( ScaleState item in rhs )
 			{
-				this.Add( new ScaleState( item ) );
+				this.Add( item.Clone() );
 			}
 		}
-				
+
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="ScaleStateList"/>.</returns>
-		public object Clone()
-		{ 
-			return new ScaleStateList( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public ScaleStateList Clone()
+		{
+			return new ScaleStateList( this );
 		}
 
 		/// <summary>
@@ -272,8 +301,8 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2006-02-08 05:35:12 $ </version>
-	public class ZoomState
+	/// <version> $Revision: 3.10 $ $Date: 2006-02-14 06:14:22 $ </version>
+	public class ZoomState : ICloneable
 	{
 		/// <summary>
 		/// An enumeration that describes whether a given state is the result of a Pan or Zoom
@@ -374,6 +403,26 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
+		/// </summary>
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public ZoomState Clone()
+		{
+			return new ZoomState( this );
+		}
+
+
+		/// <summary>
 		/// Copy the properties from this <see cref="ZoomState"/> out to the specified <see cref="GraphPane"/>.
 		/// </summary>
 		/// <param name="pane">The <see cref="GraphPane"/> to which the scale range properties should be
@@ -405,8 +454,8 @@ namespace ZedGraph
 	/// states (of scale range settings).
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2006-02-08 05:35:12 $ </version>
-	public class ZoomStateStack : CollectionBase
+	/// <version> $Revision: 3.10 $ $Date: 2006-02-14 06:14:22 $ </version>
+	public class ZoomStateStack : CollectionBase, ICloneable
 	{
 		/// <summary>
 		/// Default Constructor
@@ -426,6 +475,26 @@ namespace ZedGraph
 				this.List.Add( new ZoomState( state ) );
 			}
 		}
+
+		/// <summary>
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
+		/// </summary>
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public ZoomStateStack Clone()
+		{
+			return new ZoomStateStack( this );
+		}
+
 
 		/// <summary>
 		/// Public readonly property that indicates if the stack is empty

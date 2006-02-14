@@ -793,7 +793,9 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
-			DoPrint();
+			Bitmap img = this.zedGraphControl1.GraphPane.ScaledImage( 1000, 1000, 72 );
+			img.Save( @"c:\temp\junk.png", ImageFormat.Png );
+			//DoPrint();
 		}
 
 		private void propertyGrid1_PropertyValueChanged(object s, System.Windows.Forms.PropertyValueChangedEventArgs e)

@@ -1753,8 +1753,7 @@ namespace ZedGraph.LibTest
 
 		public string CustomFormatter( GraphPane pane, Axis axis, double val, int index )
 		{
-			string label = val.ToString( "e1" ) + " gal";
-			return label;
+			return val.ToString( "e1" ) + " gal";
 		}
 
 		/// <summary>

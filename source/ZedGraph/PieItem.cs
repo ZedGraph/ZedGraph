@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.20 $ $Date: 2005-09-26 03:51:31 $ </version>
+	/// <version> $Revision: 1.21 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem , ICloneable, ISerializable
 	{
@@ -432,23 +432,34 @@ namespace ZedGraph
 		public PieItem( PieItem rhs ) : base( rhs )
 		{
 			this.pieValue = rhs.pieValue;
-			this.fill = (Fill) rhs.fill.Clone();
-			this.Border = (Border) rhs.border.Clone();
+			this.fill = rhs.fill.Clone();
+			this.Border = rhs.border.Clone();
 			this.displacement = rhs.displacement;
-			this.labelDetail = (TextItem) rhs.labelDetail.Clone();
+			this.labelDetail = rhs.labelDetail.Clone();
 			this.labelType = rhs.labelType;
 			this.valueDecimalDigits = rhs.valueDecimalDigits ;
 			this.percentDecimalDigits = rhs.percentDecimalDigits ;
 		}
 
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="ErrorBarItem"/></returns>
-		override public object Clone()
-		{ 
-			return new PieItem( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public PieItem Clone()
+		{
+			return new PieItem( this );
+		}
+
 
 	#endregion
 

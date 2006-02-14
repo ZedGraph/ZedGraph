@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2006-02-03 05:25:34 $ </version>
+	/// <version> $Revision: 3.12 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -193,17 +193,28 @@ namespace ZedGraph
 			color = rhs.Color;
 			isVisible = rhs.IsVisible;
 			penWidth = rhs.PenWidth;
-			this.symbol = (Symbol) rhs.Symbol.Clone();
+			this.symbol = rhs.Symbol.Clone();
 		}
 
 		/// <summary>
-		/// Deep-copy clone routine
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
 		/// </summary>
-		/// <returns>A new, independent copy of the <see cref="ErrorBar"/></returns>
-		public object Clone()
-		{ 
-			return new ErrorBar( this ); 
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
 		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public ErrorBar Clone()
+		{
+			return new ErrorBar( this );
+		}
+
 	#endregion
 
 	#region Serialization

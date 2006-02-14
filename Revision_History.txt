@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+13-Feb-2006
+[FIX] Add Scale.Clone to Axis.Clone
+[UPD] Make Scale and Axis class abstract cloneable, add typesafe Clone() methods
+
 11-Feb-2006
 [NEW] Add ScaleLabelEvent for Scale label formatting
 

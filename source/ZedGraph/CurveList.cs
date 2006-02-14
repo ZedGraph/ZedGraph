@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.30 $ $Date: 2005-12-26 11:09:10 $ </version>
+	/// <version> $Revision: 3.31 $ $Date: 2006-02-14 06:14:22 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -135,15 +135,6 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Deep-copy clone routine
-		/// </summary>
-		/// <returns>A new, independent copy of the CurveList</returns>
-		public object Clone()
-		{ 
-			return new CurveList( this ); 
-		}
-		
-		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The XAxis object from which to copy</param>
@@ -153,9 +144,29 @@ namespace ZedGraph
 
 			foreach ( CurveItem item in rhs )
 			{
-				this.Add( (CurveItem) item.Clone() );
+				this.Add( (CurveItem) ((ICloneable)item).Clone() );
 			}
 		}
+
+		/// <summary>
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
+		/// </summary>
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public CurveList Clone()
+		{
+			return new CurveList( this );
+		}
+
 		
 	#endregion
 	
