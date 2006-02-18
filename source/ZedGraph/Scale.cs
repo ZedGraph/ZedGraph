@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.5 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2006-02-18 15:00:30 $ </version>
 	abstract public class Scale : ISerializable, ICloneable
 	{
 	#region Fields
@@ -579,6 +579,8 @@ namespace ZedGraph
 			minorUnit = rhs.minorUnit;
 
 			scaleFormat = rhs.scaleFormat;
+
+			textLabels = rhs.textLabels;
 		}
 
 		/// <summary>

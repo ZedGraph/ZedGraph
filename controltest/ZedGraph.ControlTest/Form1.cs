@@ -528,7 +528,28 @@ namespace ZedGraph.ControlTest
 
 #endif
 
-#if true		// test
+#if true	// Basic curve test - 32000 points
+
+			PointPairList list = new PointPairList();
+			Random rand = new Random();
+
+			for ( int i=0; i<32000; i++ )
+			{
+				double val = rand.NextDouble();
+				double x = (double) i;
+				double y = x + val * val * val * 10;
+
+				list.Add( x, y );
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.HDash );
+			myCurve.Line.IsVisible = false;
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+#endif
+
+#if false		// test
 			PointPairList hList = new PointPairList();
 			PointPairList cList = new PointPairList();
 			string[] labels = new string[11];

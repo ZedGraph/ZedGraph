@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.55 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.56 $ $Date: 2006-02-18 15:00:30 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -3142,11 +3142,14 @@ namespace ZedGraph
                     Pen		minorGridPen = new Pen( this.minorGridColor,
                                     pane.ScaledPenWidth(minorGridPenWidth, scaleFactor));
 
-                    minorGridPen.DashStyle = DashStyle.Custom;
-					float[] pattern = new float[2];
-					pattern[0] = this.minorGridDashOn;
-					pattern[1] = this.minorGridDashOff;
-					minorGridPen.DashPattern = pattern;
+					if ( this.minorGridDashOff > 1e-10 && this.minorGridDashOn > 1e-10 )
+					{
+						minorGridPen.DashStyle = DashStyle.Custom;
+						float[] pattern = new float[2];
+						pattern[0] = this.minorGridDashOn;
+						pattern[1] = this.minorGridDashOff;
+						minorGridPen.DashPattern = pattern;
+					}
 					
 					int iTic = this.scale.CalcMinorStart( baseVal );
 					int majorTic = 0;

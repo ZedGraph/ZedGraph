@@ -1276,6 +1276,43 @@ namespace ZedGraph.LibTest
 
 #endif
 
+
+#if false	// Basic curve test - Linear Axis with Many Points
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList list = new PointPairList();
+
+			for ( int i=0; i<100000; i++ )
+			{
+				double x = (double) i;
+				double y = Math.Sin( x / 8.0 );
+				double z = Math.Abs(Math.Cos( i / 8.0 )) * y;
+
+				list.Add( x, y, z );
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.HDash );
+			myCurve.Symbol.IsVisible = false;
+			//myPane.XAxis.Min = 1;
+			//myPane.XAxis.Max = 100;
+			//myPane.XAxis.IsReverse = true;
+			//myPane.XAxis.Type = AxisType.Log;
+
+			//RectangleF rect = new RectangleF( 3, 0.7, 8, 0.2 );
+			Graphics g = this.CreateGraphics();
+			myPane.AxisChange( g );
+			SetSize();
+
+			int startTick = Environment.TickCount;
+
+			myPane.Draw( g );
+
+			int endTick = Environment.TickCount;
+
+			MessageBox.Show( "ticks = " + ( endTick - startTick ).ToString() );
+#endif
+
 #if false	// Gantt Chart
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Gantt Chart", "Date", "Project" );
 
@@ -1327,7 +1364,7 @@ namespace ZedGraph.LibTest
 				myPane.AxisChange( this.CreateGraphics() );
 #endif
 
-#if true	// Basic bar test - Linear
+#if false	// Basic bar test - Linear
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 10, 10 ), "Title", "XAxis", "YAxis" );
 
@@ -1490,7 +1527,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if false	// vertical bars with labels
+#if true	// vertical bars with labels
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -1732,6 +1769,30 @@ namespace ZedGraph.LibTest
 			master.AxisChange( g );
 #endif
 
+#if false
+// Create a new GraphPane
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard" };
+			double[] x = { 100, 115, 75, 22, 98, 40 };
+			double[] x2 = { 120, 175, 95, 57, 113, 110 };
+			double[] x3 = { 204, 192, 119, 80, 134, 156 };
+			BarItem myCurve = myPane.AddBar( "Here", x, null, Color.Red );
+			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 90f );
+			myCurve = myPane.AddBar( "There", x2, null, Color.Blue );
+			myCurve.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 90f );
+			myCurve = myPane.AddBar( "Elsewhere", x3, null, Color.Green );
+			myCurve.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 90f );
+			myPane.YAxis.IsTicsBetweenLabels = true;
+			myPane.YAxis.TextLabels = labels;
+			myPane.YAxis.Type = AxisType.Text;
+			myPane.BarType = BarType.Stack;
+			myPane.BarBase = BarBase.Y;
+			myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 45.0F );
+
+
+#endif
+
 			if ( master != null )
 				_crossAxis = master[0].Y2Axis;
 			else
@@ -1753,7 +1814,8 @@ namespace ZedGraph.LibTest
 
 		public string CustomFormatter( GraphPane pane, Axis axis, double val, int index )
 		{
-			return val.ToString( "e1" ) + " gal";
+			string label = val.ToString( "e1" ) + " gal";
+			return label;
 		}
 
 		/// <summary>
