@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.52 $ $Date: 2006-02-08 06:22:58 $ </version>
+	/// <version> $Revision: 3.53 $ $Date: 2006-02-18 16:07:42 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -91,6 +91,17 @@ namespace ZedGraph
 		/// public property <see cref="IsShowContextMenu"/> to access this value.
 		/// </summary>
 		private bool isShowContextMenu;
+
+		/// <summary>
+		/// private field that determines whether or not a message box will be shown in response to
+		/// a context menu "Copy" command.  Use the
+		/// public property <see cref="IsShowCopyMessage"/> to access this value.
+		/// </summary>
+		/// <remarks>
+		/// Note that, if this value is set to false, the user will receive no indicative feedback
+		/// in response to a Copy action.
+		/// </remarks>
+		private bool isShowCopyMessage;
 
 		/// <summary>
 		/// private field that determines whether the settings of
@@ -549,6 +560,7 @@ namespace ZedGraph
 			this.isShowPointValues = false;
 			this.isShowCursorValues = false;
 			this.isShowContextMenu = true;
+			this.isShowCopyMessage = true;
 			this.isPrintFillPage = true;
 			this.isPrintKeepAspectRatio = true;
 			this.isPrintScaleAll = true;
@@ -874,6 +886,20 @@ namespace ZedGraph
 		{
 			get { return isShowContextMenu; }
 			set { isShowContextMenu = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines whether or not a message box will be shown
+		/// in response to a context menu "Copy" command.
+		/// </summary>
+		/// <remarks>
+		/// Note that, if this property is set to false, the user will receive no
+		/// indicative feedback in response to a Copy action.
+		/// </remarks>
+		public bool IsShowCopyMessage
+		{
+			get { return isShowCopyMessage; }
+			set { isShowCopyMessage = value; }
 		}
 
 		/// <summary>
@@ -2202,7 +2228,7 @@ namespace ZedGraph
 		/// <param name="e"></param>
 		protected void MenuClick_Copy( System.Object sender, System.EventArgs e )
 		{
-			Copy( true );
+			Copy( this.isShowCopyMessage );
 		}
 		
 		/// <summary>

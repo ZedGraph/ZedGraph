@@ -544,6 +544,7 @@ namespace ZedGraph.ControlTest
 
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.HDash );
 			myCurve.Line.IsVisible = false;
+			zedGraphControl1.IsShowCopyMessage = false;
 
 			myPane.AxisChange( this.CreateGraphics() );
 
