@@ -55,7 +55,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 3.36 $ $Date: 2006-02-08 05:35:12 $</version>
+	/// <version>$Revision: 3.37 $ $Date: 2006-02-26 17:23:22 $</version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -97,12 +97,12 @@ namespace ZedGraph
 			vsassist.Register('R',typeof(ZedGraphWebRect));
 			vsassist.Register('m',typeof(ZedGraphWebRect2));	
 
-			this.GraphBorder.Color = ZedGraph.GraphPane.Default.AxisBorderColor;
-			this.GraphBorder.PenWidth = ZedGraph.GraphPane.Default.AxisBorderPenWidth;
-			this.GraphBorder.IsVisible = true;
-			this.GraphFill.Brush = ZedGraph.GraphPane.Default.AxisBackBrush;
-			this.GraphFill.Color = ZedGraph.GraphPane.Default.AxisBackColor;
-			this.GraphFill.Type  = ZedGraph.GraphPane.Default.AxisBackType;
+			this.AxisBorder.Color = ZedGraph.GraphPane.Default.AxisBorderColor;
+			this.AxisBorder.PenWidth = ZedGraph.GraphPane.Default.AxisBorderPenWidth;
+			this.AxisBorder.IsVisible = true;
+			this.AxisFill.Brush = ZedGraph.GraphPane.Default.AxisBackBrush;
+			this.AxisFill.Color = ZedGraph.GraphPane.Default.AxisBackColor;
+			this.AxisFill.Type  = ZedGraph.GraphPane.Default.AxisBackType;
 		
 			this.PaneBorder.Color = ZedGraph.PaneBase.Default.BorderColor;
 			this.PaneBorder.PenWidth = ZedGraph.PaneBase.Default.BorderPenWidth;
@@ -551,14 +551,14 @@ namespace ZedGraph
 		[Bindable(true)]
 		[Category("Axis")]
 		[NotifyParentProperty(true)]
-		public bool IsGraphRectAuto
+		public bool IsAxisRectAuto
 		{
 			get 
 			{ 
-				object x = ViewState["IsGraphRectAuto"]; 
+				object x = ViewState["IsAxisRectAuto"]; 
 				return (null == x) ? true : (bool)x;
 			}
-			set { ViewState["IsGraphRectAuto"] = value; }			
+			set { ViewState["IsAxisRectAuto"] = value; }			
 		}
 
 		/// <summary>
@@ -779,7 +779,7 @@ namespace ZedGraph
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
-		public ZedGraphWebRect GraphRect
+		public ZedGraphWebRect AxisRect
 		{
 			get { return (ZedGraphWebRect)vsassist.GetValue('r',this.IsTrackingViewState); }
 		}
@@ -821,7 +821,7 @@ namespace ZedGraph
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
-		public ZedGraphWebBorder GraphBorder
+		public ZedGraphWebBorder AxisBorder
 		{
 			get { return (ZedGraphWebBorder)vsassist.GetValue('b',this.IsTrackingViewState); }
 		}
@@ -835,7 +835,7 @@ namespace ZedGraph
 		NotifyParentProperty(true),
 		PersistenceMode(PersistenceMode.InnerProperty)
 		]
-		public ZedGraphWebFill GraphFill
+		public ZedGraphWebFill AxisFill
 		{
 			get { return (ZedGraphWebFill)vsassist.GetValue('f',this.IsTrackingViewState); }
 		}
@@ -1003,11 +1003,11 @@ namespace ZedGraph
 				pane.IsIgnoreInitial = this.IsIgnoreInitial;
 				pane.IsIgnoreMissing = this.IsIgnoreMissing;
 				pane.LineType = this.LineType;
-				this.GraphRect.CopyTo(pane.AxisRect);
-				pane.IsAxisRectAuto = this.IsGraphRectAuto;
+				this.AxisRect.CopyTo(pane.AxisRect);
+				pane.IsAxisRectAuto = this.IsAxisRectAuto;
 				this.PieRect.CopyTo(pane.PieRect);
-				this.GraphBorder.CopyTo(pane.AxisBorder);
-				this.GraphFill.CopyTo(pane.AxisFill);
+				this.AxisBorder.CopyTo(pane.AxisBorder);
+				this.AxisFill.CopyTo(pane.AxisFill);
 				pane.MinClusterGap = this.MinClusterGap;
 				pane.MinBarGap = this.MinBarGap;
 				pane.BarBase = this.BarBase;				
