@@ -1277,6 +1277,57 @@ namespace ZedGraph.LibTest
 #endif
 
 
+#if true	// Box and Whisker diagram
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			// Throw some data points on the chart for good looks
+			PointPairList list = new PointPairList();
+			for ( int i=0; i<20; i++ )
+			{
+				double x = (double) i * 5;
+				double y = Math.Sin( x / 8.0 );
+				list.Add( x, y );
+			}
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			myCurve.Line.IsVisible = false;
+
+			// Horizontal box and whisker chart
+			// yval is the vertical position of the box & whisker
+			double yval = 0.3;
+			// pct5 = 5th percentile value
+			double pct5 = 5;
+			// pct25 = 25th percentile value
+			double pct25 = 40;
+			// median = median value
+			double median = 55;
+			// pct75 = 75th percentile value
+			double pct75 = 80;
+			// pct95 = 95th percentile value
+			double pct95 = 95;
+
+			// Draw the box
+			PointPairList list2 = new PointPairList();
+			list2.Add( pct25, yval, median );
+			list2.Add( median, yval, pct75 );
+			HiLowBarItem myBar = myPane.AddHiLowBar( "box", list2, Color.Black );
+			// set the size of the box (in points, scaled to graph size)
+			myBar.Bar.Size = 20;
+			myBar.Bar.Fill.IsVisible = false;
+			myPane.BarBase = BarBase.Y;
+
+			// Draw the whiskers
+			double[] xwhisk = { pct5, pct25, PointPair.Missing, pct75, pct95 };
+			double[] ywhisk = { yval, yval, yval, yval, yval };
+			PointPairList list3 = new PointPairList();
+			list3.Add( xwhisk, ywhisk );
+			LineItem mywhisk = myPane.AddCurve( "whisker", list3, Color.Black, SymbolType.None );
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+#endif
+
+
 #if false	// Basic curve test - Linear Axis with Many Points
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
@@ -1527,7 +1578,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// vertical bars with labels
+#if false	// vertical bars with labels
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -1594,7 +1645,8 @@ namespace ZedGraph.LibTest
 			LineItem myCurve = myPane.AddCurve( "curve", ppl1, Color.Blue, SymbolType.Diamond );
 			LineItem myCurve2 = myPane.AddCurve( "curve2", ppl2, Color.Red, SymbolType.Triangle );
 
-			myPane.XAxis.Type = AxisType.Exponent;
+			myPane.XAxis.IsUseTenPower = false;
+			myPane.XAxis.Type = AxisType.Log;
 			myPane.XAxis.Exponent = 0.3;
 
 			myPane.AxisChange( this.CreateGraphics() );
