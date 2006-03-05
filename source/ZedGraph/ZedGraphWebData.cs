@@ -2437,11 +2437,11 @@ namespace ZedGraph
 			item.MaxAuto = this.MaxAuto;
 			//item.NumDecAuto = this.NumDecAuto;
 			//item.NumDec = this.NumDec;
-			item.CrossAuto = this.CrossAuto;
 			item.ScaleMagAuto = this.ScaleMagAuto;
 			item.ScaleFormatAuto = this.ScaleFormatAuto;
 
 			item.Cross = this.Cross;
+			item.CrossAuto = this.CrossAuto;
 			item.IsZeroLine = this.IsZeroLine;
 			item.MinSpace = this.MinSpace;
 			item.IsTicsBetweenLabels = this.IsTicsBetweenLabels;

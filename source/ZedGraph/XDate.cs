@@ -26,9 +26,23 @@ namespace ZedGraph
 	/// This struct encapsulates a date and time value, and handles associated
 	/// calculations and conversions between various formats.
 	/// </summary>
-	/// 
+	/// <remarks>
+	/// This format stored as a double value representing days since a reference date
+	/// (XL date 0.0 is December 30, 1899 at 00:00 hrs).
+	/// Negative values are permissible, and the
+	/// range of valid dates is from noon on January 1st, 4713 B.C. forward.  Internally, the
+	/// date calculations are done using Astronomical Julian Day numbers.  The Astronomical Julian
+	/// Day number is defined as the number of days since noon on January 1st, 4713 B.C.
+	/// (also referred to as 12:00 on January 1, -4712).
+	/// NOTE: MS Excel actually has an error in the Serial Date calculations because it
+	/// errantly assumes 1900 is a leap year.  The XDate calculations do not have this same
+	/// error.  Therefore, XDate and Excel Date Serial values are 1 day different up until
+	/// the date value of 60 (in Excel, this is February 29th, 1900, and in XDate, this is
+	/// February 28th, 1900).  At a value of 61 (March 1st, 1900) or greater, they agree with
+	/// eachother.
+	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2006-03-05 07:28:16 $ </version>
 	public struct XDate //: ICloneable
 	{
 	#region Fields & Constants
@@ -40,21 +54,6 @@ namespace ZedGraph
 		/// The actual date value in MS Excel format.  This is the only data field in
 		/// the <see cref="XDate"/> struct.
 		/// </summary>
-		/// <remarks>
-		/// This format is in days since a reference date
-		/// (XL date 0.0 is December 30, 1899 at 00:00 hrs).
-		/// Negative values are permissible, and the
-		/// range of valid dates is from noon on January 1st, 4713 B.C. forward.  Internally, the
-		/// date calculations are done using Astronomical Julian Day numbers.  The Astronomical Julian
-		/// Day number is defined as the number of days since noon on January 1st, 4713 B.C.
-		/// (also referred to as 12:00 on January 1, -4712).
-		/// NOTE: MS Excel actually has an error in the Serial Date calculations because it
-		/// errantly assumes 1900 is a leap year.  The XDate calculations do not have this same
-		/// error.  Therefore, XDate and Excel Date Serial values are 1 day different up until
-		/// the date value of 60 (in Excel, this is February 29th, 1900, and in XDate, this is
-		/// February 28th, 1900).  At a value of 61 (March 1st, 1900) or greater, they agree with
-		/// eachother.
-		/// </remarks>
 		private double xlDate;
 		
 		/// <summary>

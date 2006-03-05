@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.31 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.32 $ $Date: 2006-03-05 07:28:16 $ </version>
 	[Serializable]
 	public class CurveList : CollectionPlus, ICloneable
 	{
@@ -338,10 +338,10 @@ namespace ZedGraph
 			Scale scale = pane.XAxis.Scale;
 			scale.rangeMin = double.MaxValue;
 			scale.rangeMax = double.MinValue;
-			scale.lBound = ( isBoundedRanges && pane.XAxis.MinAuto ) ?
-					double.MinValue : pane.XAxis.Min;
-			scale.uBound = ( isBoundedRanges && pane.XAxis.MaxAuto ) ?
-					double.MaxValue : pane.XAxis.Max;
+			scale.lBound = ( isBoundedRanges && !pane.XAxis.MinAuto ) ?
+				pane.XAxis.Min : double.MinValue;
+			scale.uBound = ( isBoundedRanges && !pane.XAxis.MaxAuto ) ?
+				pane.XAxis.Max : double.MaxValue;
 
 			
 			foreach ( YAxis axis in pane.YAxisList )
@@ -349,8 +349,8 @@ namespace ZedGraph
 				scale = axis.Scale;
 				scale.rangeMin = double.MaxValue;
 				scale.rangeMax = double.MinValue;
-				scale.lBound = ( isBoundedRanges && scale.MinAuto ) ? double.MinValue : scale.Min;
-				scale.uBound = ( isBoundedRanges && scale.MaxAuto ) ? double.MaxValue : scale.Max;
+				scale.lBound = ( isBoundedRanges && !scale.MinAuto ) ? scale.Min : double.MinValue;
+				scale.uBound = ( isBoundedRanges && !scale.MaxAuto ) ? scale.Max : double.MaxValue;
 			}
 
 			foreach ( Y2Axis axis in pane.Y2AxisList )
@@ -358,8 +358,8 @@ namespace ZedGraph
 				scale = axis.Scale;
 				scale.rangeMin = double.MaxValue;
 				scale.rangeMax = double.MinValue;
-				scale.lBound = ( isBoundedRanges && scale.MinAuto ) ? double.MinValue : scale.Min;
-				scale.uBound = ( isBoundedRanges && scale.MaxAuto ) ? double.MaxValue : scale.Max;
+				scale.lBound = ( isBoundedRanges && !scale.MinAuto ) ? scale.Min : double.MinValue;
+				scale.uBound = ( isBoundedRanges && !scale.MaxAuto ) ? scale.Max : double.MaxValue;
 			}
 
 			// initialize the values to outrageous ones to start

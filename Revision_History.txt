@@ -1,22 +1,26 @@
 ZedGraph Class Library Revision History
 
-18-Feb-2006
+3-Mar-2006 (Release Version 4.3) (by Champion)
+[FIX] Fix IsBoundedRange implementation
+[FIX] Place Axis.CrossAuto copy after Axis.Cross copy in ZedGraphWebData to avoid auto-set to false
+
+18-Feb-2006 (by Champion)
 [FIX] Protect minorgrid from dash=0 in Axis.cs
 [FIX] problem with copy constructor on textlabels
 [NEW] Add ZedGraphControl.IsShowCopyMessage
 
-13-Feb-2006
+13-Feb-2006 (by Champion)
 [FIX] Add Scale.Clone to Axis.Clone
 [UPD] Make Scale and Axis class abstract cloneable, add typesafe Clone() methods
 
-11-Feb-2006
+11-Feb-2006 (by Champion)
 [NEW] Add ScaleLabelEvent for Scale label formatting
 
-8-Feb-2006
+8-Feb-2006 (by Champion)
 [FIX] Fix serialization code to handle Scale & Axis properly
 [FIX] Make serialization always output a PointPairList, no matter what type IPointList it had
 
-7-Feb-2006
+7-Feb-2006 (by Champion)
 [UPD] Add bounds checking for Min/Max on Date Scales
 [UPD] Add bounds checking for XDate.ToString()
 [UPD] MouseWheel actions now trigger a ZoomEvent

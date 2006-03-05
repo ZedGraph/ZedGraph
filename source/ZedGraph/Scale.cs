@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.6 $ $Date: 2006-02-18 15:00:30 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2006-03-05 07:28:16 $ </version>
 	abstract public class Scale : ISerializable, ICloneable
 	{
 	#region Fields
@@ -189,6 +189,13 @@ namespace ZedGraph
 		/// Scale values for calculating transforms.  These are temporary values
 		/// used only during the Draw process.
 		/// </summary>
+		/// <remarks>
+		/// These values are just <see cref="Scale.Min" /> and <see cref="Scale.Max" />
+		/// for normal linear scales, but for log or exponent scales they will be a
+		/// linear representation.  For <see cref="LogScale" />, it is the <see cref="Math.Log" />
+		/// of the value, and for <see cref="ExponentScale" />, it is the <see cref="Math.Exp" />
+		/// of the value.
+		/// </remarks>
 		internal double	minScale,
 								maxScale;
 
@@ -585,7 +592,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
+		/// calling the typed version of Clone />
 		/// </summary>
 		/// <remarks>
 		/// Note that this method must be called with an explicit cast to ICloneable, and

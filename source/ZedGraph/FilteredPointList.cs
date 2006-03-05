@@ -1,7 +1,43 @@
+//============================================================================
+//FilteredPointList class
+//Copyright (C) 2006  John Champion
+//
+//This library is free software; you can redistribute it and/or
+//modify it under the terms of the GNU Lesser General Public
+//License as published by the Free Software Foundation; either
+//version 2.1 of the License, or (at your option) any later version.
+//
+//This library is distributed in the hope that it will be useful,
+//but WITHOUT ANY WARRANTY; without even the implied warranty of
+//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//Lesser General Public License for more details.
+//
+//You should have received a copy of the GNU Lesser General Public
+//License along with this library; if not, write to the Free Software
+//Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+//=============================================================================using System;
 using System;
 
 namespace ZedGraph
 {
+	/// <summary>
+	/// An example of an <see cref="IPointList" /> implementation that stores large datasets, and
+	/// selectively filters the output data depending on the displayed range.
+	/// </summary>
+	/// <remarks>
+	/// This class will refilter the data points each time <see cref="SetBounds" /> is called.  The
+	/// data are filtered down to <see cref="MaxPts" /> points, within the data bounds of
+	/// <see cref="XMinBound" /> and <see cref="XMaxBound" />.  The data are filtered by simply skipping
+	/// points to achieve the desired total number of points.  Input arrays are assumed to be
+	/// monotonically increasing in X, and evenly spaced in X.
+	/// </remarks>
+	/// <seealso cref="PointPairList" />
+	/// <seealso cref="BasicArrayPointList" />
+	/// <seealso cref="IPointList" />
+	/// <seealso cref="IPointListEdit" />
+	///
+	/// <author> John Champion</author>
+	/// <version> $Revision: 1.2 $ $Date: 2006-03-05 07:28:16 $ </version>
 	[Serializable]
 	public class FilteredPointList : IPointList
 	{
@@ -122,6 +158,33 @@ namespace ZedGraph
 
 				return arraySize;
 			}
+		}
+
+		/// <summary>
+		/// Gets the desired number of filtered points to output.  You can set this value by
+		/// calling <see cref="SetBounds" />.
+		/// </summary>
+		public int MaxPts
+		{
+			get { return maxPts; }
+		}
+
+		/// <summary>
+		/// Gets the minimum value for the range of X data that are included in the filtered result.
+		/// You can set this value by calling <see cref="SetBounds" />.
+		/// </summary>
+		public double XMinBound
+		{
+			get { return xMinBound; }
+		}
+
+		/// <summary>
+		/// Gets the maximum value for the range of X data that are included in the filtered result.
+		/// You can set this value by calling <see cref="SetBounds" />.
+		/// </summary>
+		public double XMaxBound
+		{
+			get { return xMaxBound; }
 		}
 
 	#endregion

@@ -31,15 +31,17 @@ namespace ZedGraph
 	/// data collection class using the <see cref="IPointList" /> interface.  This
 	/// <see cref="IPointListEdit" /> interface adds the ability to remove and add points
 	/// to the list, and so is used by the <see cref="CurveItem" /> class for the
-	/// <see cref="CurveItem.AddPoint" />, <see cref="CurveItem.RemovePoint" />, and
+	/// <see cref="CurveItem.AddPoint(double,double)" />, <see cref="CurveItem.RemovePoint" />, and
 	/// <see cref="CurveItem.Clear" /> methods.
 	/// </remarks>
 	/// <seealso cref="PointPairList" />
 	/// <seealso cref="BasicArrayPointList" />
+	/// <seealso cref="IPointList" />
+	/// <seealso cref="FilteredPointList" />
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-02-08 06:22:58 $ </version>
-	public interface IPointListEdit
+	/// <version> $Revision: 3.3 $ $Date: 2006-03-05 07:28:16 $ </version>
+	public interface IPointListEdit : IPointList
 	{
 		/// <summary>
 		/// Appends a point to the end of the list.  The data are passed in as a <see cref="PointPair" />
@@ -48,6 +50,15 @@ namespace ZedGraph
 		/// <param name="point">The <see cref="PointPair" /> object containing the data to be added.</param>
 		/// <returns>The ordinal position (zero-based), at which the new point was added.</returns>
 		int Add( PointPair point );
+
+		/// <summary>
+		/// Appends a point to the end of the list.  The data are passed in as two <see cref="Double" />
+		/// types.
+		/// </summary>
+		/// <param name="x">The <see cref="Double" /> value containing the X data to be added.</param>
+		/// <param name="y">The <see cref="Double" /> value containing the Y data to be added.</param>
+		/// <returns>The ordinal position (zero-based), at which the new point was added.</returns>
+		int Add( double x, double y );
 
 		/// <summary>
 		/// Removes a single data point from the list at the specified ordinal location

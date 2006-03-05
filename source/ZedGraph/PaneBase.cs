@@ -22,6 +22,8 @@
 using System;
 using System.Text;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
@@ -35,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.17 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2006-03-05 07:28:16 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -627,7 +629,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
+		/// calling the typed version of Clone
 		/// </summary>
 		/// <remarks>
 		/// Note that this method must be called with an explicit cast to ICloneable, and
@@ -651,7 +653,7 @@ namespace ZedGraph
 		/// Create a shallow, memberwise copy of this class.
 		/// </summary>
 		/// <remarks>
-		/// Note that this method uses <see cref="MemberWiseClone" />, which will copy all
+		/// Note that this method uses MemberWiseClone, which will copy all
 		/// members (shallow) including those of classes derived from this class.</remarks>
 		/// <returns>a new copy of the class</returns>
 		public PaneBase ShallowClone()
@@ -969,6 +971,8 @@ namespace ZedGraph
 			Bitmap bitmap = new Bitmap( width, height );
 			bitmap.SetResolution( dpi, dpi );
 			Graphics bitmapGraphics = Graphics.FromImage( bitmap );
+
+			//bitmapGraphics.SmoothingMode = SmoothingMode.AntiAlias;
 			
 			// Clone the GraphPane so we don't mess up the minPix and maxPix values or
 			// the paneRect/axisRect calculations of the original

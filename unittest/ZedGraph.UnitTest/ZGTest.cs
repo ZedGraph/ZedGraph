@@ -99,7 +99,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion	</author>
-	/// <version> $Revision: 3.14 $ $Date: 2005-08-22 03:08:51 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2006-03-05 07:28:16 $ </version>
 	[TestFixture]
 	public	class ControlTest
 	{
@@ -234,7 +234,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.14 $ $Date: 2005-08-22 03:08:51 $ </version>
+	/// <version>	$Revision: 3.15 $ $Date: 2006-03-05 07:28:16 $ </version>
 	[TestFixture]
 	public	class LibraryTest
 	{
@@ -1067,7 +1067,8 @@ namespace ZedGraph.UnitTest
 		{
 			//	Create a new	graph
 			testee	=	new	GraphPane( new	Rectangle(	40, 40, form2.Size.Width-80,	form2.Size.Height-80 ),
-				"My Test Dual Y Graph",	"Date", "My	Y	Axis" );
+				"My Test Dual Y Graph",	"Date", "My	Y Axis" );
+			testee.Y2Axis.Title = "My Y2 Axis";
 				
 			//	Make up some random data points
 			double[] x = new	double[36];
@@ -1387,7 +1388,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.14 $ $Date: 2005-08-22 03:08:51 $ </version>
+	/// <version>	$Revision: 3.15 $ $Date: 2006-03-05 07:28:16 $ </version>
 	[TestFixture]
 	public	class LongFeatureTest
 	{
@@ -2017,7 +2018,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.14 $ $Date: 2005-08-22 03:08:51 $ </version>
+	/// <version>	$Revision: 3.15 $ $Date: 2006-03-05 07:28:16 $ </version>
 	[TestFixture]
 	public	class FindNearestTest
 	{

@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.53 $ $Date: 2006-02-18 16:07:42 $ </version>
+	/// <version> $Revision: 3.54 $ $Date: 2006-03-05 07:28:16 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -277,7 +277,8 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="mousePt">The point at which the mouse was clicked</param>
 		/// <seealso cref="ContextMenuBuilder" />
-		public delegate void ContextMenuBuilderEventHandler( object sender, ContextMenu menu, Point mousePt );
+		public delegate void ContextMenuBuilderEventHandler( ZedGraphControl sender,
+					ContextMenu menu, Point mousePt );
 		/// <summary>
 		/// Subscribe to this event to be able to modify the ZedGraph context menu.
 		/// </summary>
@@ -296,7 +297,8 @@ namespace ZedGraph
 		/// <param name="newState">A <see cref="ZoomState"/> object that corresponds to the state of the
 		/// <see cref="GraphPane"/> after the zoom or pan event</param>
 		/// <seealso cref="ZoomEvent" />
-		public delegate void ZoomEventHandler( ZedGraphControl control, ZoomState oldState, ZoomState newState );
+		public delegate void ZoomEventHandler( ZedGraphControl control, ZoomState oldState,
+				ZoomState newState );
 
 		/// <summary>
 		/// Subscribe to this event to be notified when the <see cref="GraphPane"/> is zoomed or panned by the user,

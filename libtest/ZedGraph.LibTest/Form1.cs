@@ -539,170 +539,144 @@ namespace ZedGraph.LibTest
 			myPane.AxisChange( CreateGraphics() );
 #endif
 
-#if false	// Standard Sample Graph
+#if true	// Standard Sample Graph
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
 				"Widget Production\n(units/hour)" );
 			SetSize();
 
-			//myPane.IsFontsScaled = true;
-			//myPane.XAxis.ScaleFontSpec.Size = 8;
-
-			double[] x = { 100, 400, 500, 600, 900, 1000 };
-			double[] y = { 20, 25, 35, 75, 33, 50 };
+			// Set the titles and axis labels
+			myPane.Title = "Wacky Widget Company\nProduction Report";
+			myPane.XAxis.Title = "Time, Days\n(Since Plant Construction Startup)";
+			myPane.YAxis.Title = "Widget Production\n(units/hour)";
+    
 			LineItem curve;
+    
+			// Set up curve "Larry"
+			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
+			double[] y = { 20, 10, 50, 25, 35, 75, 90, 40, 33, 50 };
+			// Use green, with circle symbols
 			curve = myPane.AddCurve( "Larry", x, y, Color.Green, SymbolType.Circle );
-			curve.FontSpec = new FontSpec( "Arial", 16, Color.Green, true, false, false );
-			curve.FontSpec.Border.IsVisible = false;
 			curve.Line.Width = 1.5F;
+			// Fill the area under the curve with a white-green gradient
 			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 60, 190, 50), 90F );
+			// Make it a smooth line
 			curve.Line.IsSmooth = true;
 			curve.Line.SmoothTension = 0.6F;
+			// Fill the symbols with white
 			curve.Symbol.Fill = new Fill( Color.White );
 			curve.Symbol.Size = 10;
-			//curve.IsLegendLabelVisible = false;
-			
-			//MessageBox.Show( curve.Points.InterpolateX( 450 ).ToString() );
-
+    
+			// Second curve is "moe"
 			double[] x3 = { 150, 250, 400, 520, 780, 940 };
 			double[] y3 = { 5.2, 49.0, 33.8, 88.57, 99.9, 36.8 };
+			// Use a red color with triangle symbols
 			curve = myPane.AddCurve( "Moe", x3, y3, Color.FromArgb( 200, 55, 135), SymbolType.Triangle );
-			curve.FontSpec = new FontSpec( "Times", 12, Color.FromArgb( 200, 55, 135), true, false, false );
-			curve.FontSpec.Border.IsVisible = false;
 			curve.Line.Width = 1.5F;
-			//curve.Line.IsSmooth = true;
+			// Fill the area under the curve with semi-transparent pink using the alpha value
+			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 160, 230, 145, 205), 90F );
+			// Fill the symbols with white
 			curve.Symbol.Fill = new Fill( Color.White );
-			//curve.IsLegendLabelVisible = false;
-			
-			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
-			Image image = Image.FromHbitmap( bm.GetHbitmap() );
-			//TextureBrush tBrush = new TextureBrush( image, WrapMode.Tile );
-			//LinearGradientBrush tBrush = new LinearGradientBrush( new Rectangle(0, 0, 100, 100), Color.Blue, Color.Red, 45.0F );
-			//curve.Line.Fill = new Fill( tBrush );
-			curve.Line.Fill = new Fill(image, WrapMode.Tile );
-			//curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 160, 230, 145, 205), 90F );
 			curve.Symbol.Size = 10;
-			
+    
+			// Third Curve is a bar, called "Wheezy"
 			double[] x4 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y4 = { 30, 45, 53, 60, 75, 83, 84, 79, 71, 57 };
 			BarItem bar = myPane.AddBar( "Wheezy", x4, y4, Color.SteelBlue );
-			bar.FontSpec = new FontSpec( "Courier", 20, Color.SteelBlue, false, true, false );
-			bar.FontSpec.Border.IsVisible = false;
+			// Fill the bars with a RosyBrown-White-RosyBrown gradient
 			bar.Bar.Fill = new Fill( Color.RosyBrown, Color.White, Color.RosyBrown );
-			myPane.BarType = BarType.Stack;
-			bar.IsY2Axis = true;
-			//curve.Bar.Fill = new Fill( Color.Blue );
-			//curve.Symbol.Size = 12;
-
+    
+			// Fourth curve is a bar
 			double[] x2 = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
 			double[] y2 = { 10, 15, 17, 20, 25, 27, 29, 26, 24, 18 };
 			bar = myPane.AddBar( "Curly", x2, y2, Color.RoyalBlue );
+			// Fill the bars with a RoyalBlue-White-RoyalBlue gradient
 			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
-			bar.Bar.Border.IsVisible = false;
-			myPane.ClusterScaleWidth = 1;
-			bar.IsY2Axis = true;
-			//Brush brush = new HatchBrush( HatchStyle.Cross, Color.AliceBlue, Color.Red );
-			//GraphicsPath path = new GraphicsPath();
-			//path.AddLine( 10, 10, 20, 20 );
-			//path.AddLine( 20, 20, 30, 0 );
-			//path.AddLine( 30, 0, 10, 10 );
-			
-			//brush = new PathGradientBrush( path );
-			//bar.Bar.Fill = new Fill( brush );
-			
-			//PointPairList junk = new PointPairList();
-			//myPane.AddCurve( "Hi There", junk, Color.Blue, SymbolType.None );
-			
+    
+			// Fill the pane background with a gradient
 			myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
-			
+			// Fill the axis background with a gradient
 			myPane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
-						Color.FromArgb( 255, 255, 190), 90F );
-			
-			//myPane.PaneBorder.InflateFactor = -4.0f;
-
+				Color.FromArgb( 255, 255, 190), 90F );
+    
+    
+			// Make each cluster 100 user scale units wide.  This is needed because the X Axis
+			// type is Linear rather than Text or Ordinal
+			myPane.ClusterScaleWidth = 100;
+			// Bars are stacked
+			myPane.BarType = BarType.Stack;
+    
+			// Enable the X and Y axis grids
 			myPane.XAxis.IsShowGrid = true;
-			//myPane.XAxis.Max = 1200;
-			myPane.XAxis.Type = AxisType.LinearAsOrdinal;
-			//myPane.XAxis.Cross = 80;
-			//myPane.IsPenWidthScaled = false;
-			//myPane.XAxis.ScaleFontSpec.Angle = 90;
-			//myPane.XAxis.ScaleAlign = AlignP.Inside;
-			//myPane.XAxis.IsShowMinorGrid = true;
-			//myPane.XAxis.MinorGridColor = Color.Red;
-
 			myPane.YAxis.IsShowGrid = true;
-			//myPane.YAxis.ScaleFontSpec.Angle = 90;
+    
+			// Manually set the scale maximums according to user preference
+			myPane.XAxis.Max = 1200;
 			myPane.YAxis.Max = 120;
-			//myPane.YAxis.Cross = 1150;
-			//myPane.YAxis.ScaleAlign = AlignP.Inside;
-			//myPane.YAxis.ScaleFontSpec.Border.IsVisible = true;
-			//myPane.YAxis.Type = AxisType.Log;
-			//myPane.YAxis.IsUseTenPower = false;
-			//myPane.YAxis.IsShowMinorGrid = true;
-			//myPane.YAxis.MinorGridColor = Color.Red;
-
-			//myPane.Y2Axis.IsVisible = true;
-			//myPane.Y2Axis.Cross = 50;
-			//myPane.Y2Axis.Max = 120;
-			//myPane.Y2Axis.ScaleAlign = AlignP.Outside;
-			myPane.Y2Axis.IsVisible = true;
-			myPane.Y2Axis.Max = 80;
-			
+    
+			// Add a text item to decorate the graph
 			TextItem text = new TextItem("First Prod\n21-Oct-93", 175F, 80.0F );
+			// Align the text such that the Bottom-Center is at (175, 80) in user scale coordinates
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
 			text.FontSpec.StringAlignment = StringAlignment.Near;
 			myPane.GraphItemList.Add( text );
-
+    
+			// Add an arrow pointer for the above text item
 			ArrowItem arrow = new ArrowItem( Color.Black, 12F, 175F, 77F, 100F, 45F );
 			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
 			myPane.GraphItemList.Add( arrow );
-
+    
+			// Add a another text item to to point out a graph feature
 			text = new TextItem("Upgrade", 700F, 50.0F );
+			// rotate the text 90 degrees
 			text.FontSpec.Angle = 90;
-			text.FontSpec.FontColor = Color.Black;
+			// Align the text such that the Right-Center is at (700, 50) in user scale coordinates
 			text.Location.AlignH = AlignH.Right;
 			text.Location.AlignV = AlignV.Center;
+			// Disable the border and background fill options for the text
 			text.FontSpec.Fill.IsVisible = false;
-			//text.FontSpec.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, -45F );
 			text.FontSpec.Border.IsVisible = false;
 			myPane.GraphItemList.Add( text );
-
+    
+			// Add an arrow pointer for the above text item
 			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
 			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
 			arrow.PenWidth = 2.0F;
 			myPane.GraphItemList.Add( arrow );
-
+    
+			// Add a text "Confidential" stamp to the graph
 			text = new TextItem("Confidential", 0.85F, -0.03F );
+			// use AxisFraction coordinates so the text is placed relative to the AxisRect
 			text.Location.CoordinateFrame = CoordType.AxisFraction;
-
+			// rotate the text 15 degrees
 			text.FontSpec.Angle = 15.0F;
+			// Text will be red, bold, and 16 point
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.IsBold = true;
 			text.FontSpec.Size = 16;
+			// Disable the border and background fill options for the text
 			text.FontSpec.Border.IsVisible = false;
-			text.FontSpec.Border.Color = Color.Red;
 			text.FontSpec.Fill.IsVisible = false;
-
+			// Align the text such the the Left-Bottom corner is at the specified coordinates
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
 			myPane.GraphItemList.Add( text );
-
+    
+			// Add a BoxItem to show a colored band behind the graph data
 			BoxItem box = new BoxItem( new RectangleF( 0, 110, 1200, 10 ),
-					Color.Empty, Color.FromArgb( 225, 245, 225) );
+				Color.Empty, Color.FromArgb( 225, 245, 225) );
 			box.Location.CoordinateFrame = CoordType.AxisXYScale;
-			
-//			BoxItem box = new BoxItem( new RectangleF( 0F, .2F, 1F, .2F ),
-//					Color.Empty, Color.PeachPuff );
-//			box.Location.CoordinateFrame = CoordType.AxisFraction;
-			//box.Border.IsVisible = false;
+			// Align the left-top of the box to (0, 110)
 			box.Location.AlignH = AlignH.Left;
 			box.Location.AlignV = AlignV.Top;
+			// place the box behind the axis items, so the grid is drawn on top of it
 			box.ZOrder = ZOrder.E_BehindAxis;
 			myPane.GraphItemList.Add( box );
-			
+    
+			// Add some text inside the above box to indicate "Peak Range"
 			TextItem myText = new TextItem( "Peak Range", 1170, 105 );
 			myText.Location.CoordinateFrame = CoordType.AxisXYScale;
 			myText.Location.AlignH = AlignH.Right;
@@ -712,45 +686,11 @@ namespace ZedGraph.LibTest
 			myText.FontSpec.Fill.IsVisible = false;
 			myText.FontSpec.Border.IsVisible = false;
 			myPane.GraphItemList.Add( myText );
-			
-			
-			//myPane.LineType = LineType.Stack;
-			//myPane.PaneBorder.IsVisible= false;
-
-			RectangleF rect = new RectangleF( .5F, .05F, .2F, .2F );
-			EllipseItem ellipse = new EllipseItem( rect, Color.Black, Color.Blue );
-			ellipse.Location.CoordinateFrame = CoordType.PaneFraction;
-			ellipse.ZOrder = ZOrder.G_BehindAll;
-			myPane.GraphItemList.Add( ellipse );
-
-			RectangleF rectx = new RectangleF( 1000, 20, 400, 40 );
-			EllipseItem ellipsex = new EllipseItem( rectx, Color.Black, Color.Red );
-			ellipsex.ZOrder = ZOrder.E_BehindAxis;
-			ellipsex.IsClippedToAxisRect = true;
-			myPane.GraphItemList.Add( ellipsex );
-
-			//myPane.CurveList.Remove( myPane.CurveList.IndexOf( bar ) );
-
-//			Bitmap bm = new Bitmap( @"c:\temp\sunspot.jpg" );
-			/*
-			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
-			Image image = Image.FromHbitmap( bm.GetHbitmap() );
-			ImageItem imageItem = new ImageItem( image,
-				new RectangleF( 0.2F, 0.6F, 0.2F, 0.2F ),
-				CoordType.AxisFraction, AlignH.Left, AlignV.Top );
-			//imageItem.IsScaled = false;
-			imageItem.ZOrder = ZOrder.C_BehindAxisBorder;
-			myPane.GraphItemList.Add( imageItem );
-			*/
-
-			float limit = 95F;
-			float arrowWidth = (float) myPane.XAxis.Max;
-			ArrowItem newArrow = new ZedGraph.ArrowItem( Color.Blue, 5.0F, 0F, limit, arrowWidth, limit );
-			//newArrow.Location.Width = arrowWidth;
-			newArrow.ZOrder = ZedGraph.ZOrder.E_BehindAxis;
-			//newArrow.IsArrowHead = false;
-			newArrow.Size = 10;
-			myPane.GraphItemList.Add( newArrow );
+    
+			// Calculate the Axis Scale Ranges
+			Graphics g = this.CreateGraphics();
+			myPane.AxisChange( g );
+			g.Dispose();
 #endif
 	
 #if false	// MasterPane
@@ -1277,7 +1217,7 @@ namespace ZedGraph.LibTest
 #endif
 
 
-#if true	// Box and Whisker diagram
+#if false	// Box and Whisker diagram
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
@@ -1365,40 +1305,50 @@ namespace ZedGraph.LibTest
 #endif
 
 #if false	// Gantt Chart
-			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Gantt Chart", "Date", "Project" );
+			myPane = new GraphPane();
+
+			myPane.Title = "Gantt Chart";
+			myPane.XAxis.Title = "Date";
+			myPane.YAxis.Title = "Project";
 
 			myPane.XAxis.Type = AxisType.Date; 
 			myPane.YAxis.Type = AxisType.Text;
 			myPane.BarBase = BarBase.Y;
 			
-
 			string[] labels = { "Project 1", "Project 2" };
 			myPane.YAxis.TextLabels = labels;
 			myPane.YAxis.IsTicsBetweenLabels = true;
 
+			// First, define all the bars that you want to be red
 			PointPairList ppl = new PointPairList();
 			XDate start = new XDate( 2005, 10, 31 );
 			XDate end = new XDate( 2005, 11, 15 );
 			// x is start of bar, y is project number, z is end of bar
+			// Define this first one using start/end variables for illustration
 			ppl.Add( start, 1.0, end );
-			HiLowBarItem myBar = myPane.AddHiLowBar( "job 1", ppl, Color.Red ); 
+			// add another red bar, assigned to project 2
+			// Didn't use start/end variables here, but it's the same concept
+			ppl.Add( new XDate( 2005, 12, 16 ), 2.0, new XDate( 2005, 12, 31 ) );
+			HiLowBarItem myBar = myPane.AddHiLowBar( "job 1", ppl, Color.Red );
+			// This tells the bar that we want to manually define the Y position
+			// Y is AxisType.Text, which is ordinal, so a Y value of 1.0 goes with the first label,
+			// 2.0 with the second, etc.
 			myBar.IsOverrideOrdinal = true;
 			myBar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 90.0f );
+			// This size is the width of the bar
 			myBar.Bar.Size = 20f;
 
+			// Now, define all the bars that you want to be Green
 			ppl = new PointPairList();
-			start = new XDate( 2005, 11,16 );
-			end = new XDate( 2005, 11, 26 );
-			ppl.Add( start, 2.0, end );
+			ppl.Add( new XDate( 2005, 11,16 ), 2.0, new XDate( 2005, 11, 26 ) );
 			myBar = myPane.AddHiLowBar( "job 2", ppl, Color.Green ); 
 			myBar.IsOverrideOrdinal = true;
 			myBar.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 90.0f );
 			myBar.Bar.Size = 20f;
 
+			// Define all the bars that you want to be blue
 			ppl = new PointPairList();
-			start = new XDate( 2005, 11, 27 );
-			end = new XDate( 2005, 12, 15 );
-			ppl.Add( start, 1.0, end );
+			ppl.Add( new XDate( 2005, 11, 27 ), 1.0, new XDate( 2005, 12, 15 ) );
 			myBar = myPane.AddHiLowBar( "job 3", ppl, Color.Blue );
 			myBar.IsOverrideOrdinal = true;
 			myBar.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 90.0f );
@@ -1845,6 +1795,33 @@ namespace ZedGraph.LibTest
 
 #endif
 
+#if false	// ordinal demo
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 300, 200 ), "Ordinal Demo", "X Value (ordinal)", "Y Value" );
+
+			PointPairList list = new PointPairList();
+			list.Add( 10, 50 );
+			list.Add( 11, 24 );
+			list.Add( 20, 75 );
+			list.Add( 21, 62 );
+
+			LineItem myCurve = myPane.AddCurve( "Curve", list, Color.Blue, SymbolType.Diamond );
+			myCurve.Symbol.Fill = new Fill( Color.White );
+
+			myPane.FontSpec.Size = 24;
+			myPane.XAxis.TitleFontSpec.Size = 18;
+			myPane.XAxis.ScaleFontSpec.Size = 18;
+			myPane.YAxis.TitleFontSpec.Size = 18;
+			myPane.YAxis.ScaleFontSpec.Size = 18;
+			myPane.XAxis.Type = AxisType.Ordinal;
+			myPane.AxisChange( this.CreateGraphics() );
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+#endif
+
 			if ( master != null )
 				_crossAxis = master[0].Y2Axis;
 			else
@@ -2079,6 +2056,7 @@ namespace ZedGraph.LibTest
 			{
 				Matrix mat = e.Graphics.Transform;
 				e.Graphics.FillRectangle( brush, this.ClientRectangle );
+				//e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 
 				if ( master != null )
 					master.Draw( e.Graphics );
@@ -2349,6 +2327,11 @@ namespace ZedGraph.LibTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
+			myPane.ScaledImage( 640, 480, 72 ).Save( "zedgraph.png", ImageFormat.Png );
+			//image.Save( @"c:\zedgraph.png", ImageFormat.Png );
+			//master.Image.Save( @"c:\zedgraph.png", ImageFormat.Png );
+			return;
+
 			Serialize( myPane, @"c:\temp\myZedGraphFile" );
 			//DeSerialize( out master );
 			return;
@@ -2383,11 +2366,6 @@ namespace ZedGraph.LibTest
 			}
 			//DoAddPoints();
 			return;
-
-			//Image image = master.ScaledImage( 300, 200, 72 );
-			//image.Save( @"c:\zedgraph.png", ImageFormat.Png );
-			//master.Image.Save( @"c:\zedgraph.png", ImageFormat.Png );
-			//return;
 
 			//DoPrint();
 			//DoPageSetup();
