@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.4 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2006-03-08 04:01:03 $ </version>
 	[Serializable]
 	class LinearScale : Scale, ISerializable, ICloneable
 	{
@@ -138,7 +138,7 @@ namespace ZedGraph
 			base.PickScale( pane, g, scaleFactor );
 
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < 1.0e-20 )
+			if ( this.max - this.min < 1.0e-30 )
 			{
 				if ( this.maxAuto )
 					this.max = this.max + 0.2 * ( this.max == 0 ? 1.0 : Math.Abs( this.max ) );

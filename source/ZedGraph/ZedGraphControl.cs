@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.54 $ $Date: 2006-03-05 07:28:16 $ </version>
+	/// <version> $Revision: 3.55 $ $Date: 2006-03-08 04:01:03 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -2134,6 +2134,7 @@ namespace ZedGraph
 
 					menuItem = new MenuItem();
 					menuItem.Index = index++;
+					//menuItem.Tag = "copy";
 					string menuStr = resourceManager.GetString( "copy" );
 					menuItem.Text = menuStr;
 					this.contextMenu.MenuItems.Add( menuItem );
@@ -2141,6 +2142,7 @@ namespace ZedGraph
 
 					menuItem = new MenuItem();
 					menuItem.Index = index++;
+					//menuItem.Tag = "save_as";
 					menuStr = resourceManager.GetString( "save_as" );
 					menuItem.Text = menuStr;
 					this.contextMenu.MenuItems.Add( menuItem );
@@ -2148,6 +2150,7 @@ namespace ZedGraph
 
 					menuItem = new MenuItem();
 					menuItem.Index = index++;
+					//menuItem.Tag = "page_setup";
 					menuStr = resourceManager.GetString( "page_setup" );
 					menuItem.Text = menuStr;
 					this.contextMenu.MenuItems.Add( menuItem );
@@ -2155,6 +2158,7 @@ namespace ZedGraph
 
 					menuItem = new MenuItem();
 					menuItem.Index = index++;
+					//menuItem.Tag = "print";
 					menuStr = resourceManager.GetString( "print" );
 					menuItem.Text = menuStr;
 					this.contextMenu.MenuItems.Add( menuItem );
@@ -2162,6 +2166,7 @@ namespace ZedGraph
 
 					menuItem = new MenuItem();
 					menuItem.Index = index++;
+					//menuItem.Tag = "show_val";
 					menuStr = resourceManager.GetString( "show_val" );
 					menuItem.Text = menuStr;
 					menuItem.Checked = this.IsShowPointValues;
@@ -2170,6 +2175,7 @@ namespace ZedGraph
 
 					menuItem = new MenuItem();
 					menuItem.Index = index++;
+					//menuItem.Tag = "unzoom";
 
 					if ( pane == null || pane.ZoomStack.IsEmpty )
 						menuStr = resourceManager.GetString( "unzoom" );
@@ -2199,6 +2205,7 @@ namespace ZedGraph
 
 					menuItem = new MenuItem();
 					menuItem.Index = index++;
+					//menuItem.Tag = "undo_all";
 					menuStr = resourceManager.GetString( "undo_all" );
 					menuItem.Text = menuStr;
 					this.contextMenu.MenuItems.Add( menuItem );
@@ -2208,6 +2215,7 @@ namespace ZedGraph
 
 					menuItem = new MenuItem();
 					menuItem.Index = index++;
+					//menuItem.Tag = "set_default";
 					menuStr = resourceManager.GetString( "set_default" );
 					menuItem.Text = menuStr;
 					this.contextMenu.MenuItems.Add( menuItem );

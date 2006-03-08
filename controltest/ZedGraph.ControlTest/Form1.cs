@@ -68,43 +68,41 @@ namespace ZedGraph.ControlTest
 			// 
 			// propertyGrid1
 			// 
-			this.propertyGrid1.CommandsVisibleIfAvailable = true;
 			this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Right;
-			this.propertyGrid1.LargeButtons = false;
 			this.propertyGrid1.LineColor = System.Drawing.SystemColors.ScrollBar;
-			this.propertyGrid1.Location = new System.Drawing.Point(622, 0);
+			this.propertyGrid1.Location = new System.Drawing.Point( 622, 0 );
 			this.propertyGrid1.Name = "propertyGrid1";
-			this.propertyGrid1.Size = new System.Drawing.Size(240, 461);
+			this.propertyGrid1.Size = new System.Drawing.Size( 240, 461 );
 			this.propertyGrid1.TabIndex = 2;
-			this.propertyGrid1.Text = "PropertyGrid";
-			this.propertyGrid1.ViewBackColor = System.Drawing.SystemColors.Window;
-			this.propertyGrid1.ViewForeColor = System.Drawing.SystemColors.WindowText;
-			this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
+			this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler( this.propertyGrid1_PropertyValueChanged );
 			// 
 			// splitter1
 			// 
 			this.splitter1.Dock = System.Windows.Forms.DockStyle.Right;
-			this.splitter1.Location = new System.Drawing.Point(617, 0);
+			this.splitter1.Location = new System.Drawing.Point( 617, 0 );
 			this.splitter1.Name = "splitter1";
-			this.splitter1.Size = new System.Drawing.Size(5, 461);
+			this.splitter1.Size = new System.Drawing.Size( 5, 461 );
 			this.splitter1.TabIndex = 4;
 			this.splitter1.TabStop = false;
 			// 
-			// zedGraphControl2
+			// zedGraphControl1
 			// 
 			this.zedGraphControl1.IsAutoScrollRange = false;
 			this.zedGraphControl1.IsEnableHPan = true;
+			this.zedGraphControl1.IsEnableHZoom = true;
 			this.zedGraphControl1.IsEnableVPan = true;
 			this.zedGraphControl1.IsEnableVZoom = true;
-			this.zedGraphControl1.IsEnableHZoom = true;
+			this.zedGraphControl1.IsPrintFillPage = true;
+			this.zedGraphControl1.IsPrintKeepAspectRatio = true;
 			this.zedGraphControl1.IsScrollY2 = false;
 			this.zedGraphControl1.IsShowContextMenu = true;
+			this.zedGraphControl1.IsShowCopyMessage = true;
 			this.zedGraphControl1.IsShowCursorValues = false;
 			this.zedGraphControl1.IsShowHScrollBar = false;
 			this.zedGraphControl1.IsShowPointValues = false;
 			this.zedGraphControl1.IsShowVScrollBar = false;
 			this.zedGraphControl1.IsZoomOnMouseCenter = false;
-			this.zedGraphControl1.Location = new System.Drawing.Point(8, 8);
+			this.zedGraphControl1.Location = new System.Drawing.Point( 8, 8 );
 			this.zedGraphControl1.Name = "zedGraphControl1";
 			this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
@@ -117,28 +115,29 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ScrollMinX = 0;
 			this.zedGraphControl1.ScrollMinY = 0;
 			this.zedGraphControl1.ScrollMinY2 = 0;
-			this.zedGraphControl1.Size = new System.Drawing.Size(600, 448);
+			this.zedGraphControl1.Size = new System.Drawing.Size( 600, 448 );
 			this.zedGraphControl1.TabIndex = 5;
 			this.zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
 			this.zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomStepFraction = 0.1;
+			this.zedGraphControl1.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler( this.zedGraphControl1_ContextMenuBuilder );
 			// 
 			// Form1
 			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(862, 461);
-			this.Controls.Add(this.zedGraphControl1);
-			this.Controls.Add(this.splitter1);
-			this.Controls.Add(this.propertyGrid1);
+			this.AutoScaleBaseSize = new System.Drawing.Size( 5, 13 );
+			this.ClientSize = new System.Drawing.Size( 862, 461 );
+			this.Controls.Add( this.zedGraphControl1 );
+			this.Controls.Add( this.splitter1 );
+			this.Controls.Add( this.propertyGrid1 );
 			this.Name = "Form1";
 			this.Text = "Form1";
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
-			this.Resize += new System.EventHandler(this.Form1_Resize);
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
-			this.Load += new System.EventHandler(this.Form1_Load);
-			this.ResumeLayout(false);
+			this.Resize += new System.EventHandler( this.Form1_Resize );
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler( this.Form1_KeyDown );
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form1_MouseDown );
+			this.Load += new System.EventHandler( this.Form1_Load );
+			this.ResumeLayout( false );
 
 		}
 #endregion
@@ -615,7 +614,7 @@ namespace ZedGraph.ControlTest
 			//zedGraphControl1.ScrollMaxX = 100;
 #endif
 
-#if true	// Dual Y demo
+#if false	// Dual Y demo
 
 			// Get a reference to the GraphPane instance in the ZedGraphControl
 			myPane = zedGraphControl1.GraphPane;
@@ -629,7 +628,7 @@ namespace ZedGraph.ControlTest
 			// Make up some data points based on the Sine function
 			PointPairList list = new PointPairList();
 			PointPairList list2 = new PointPairList();
-			for ( int i=0; i<36; i++ )
+			for ( int i=0; i<100; i++ )
 			{
 				double x = (double) i * 5.0;
 				double y = Math.Sin( (double) i * Math.PI / 15.0 ) * 16.0;
@@ -700,9 +699,51 @@ namespace ZedGraph.ControlTest
 			//zedGraphControl1.PointValueEvent += new ZedGraphControl.PointValueHandler( MyPointValueHandler );
 
 			// Add a custom context menu item
-			//zedGraphControl1.ContextMenuBuilder += new ZedGraphControl.ContextMenuBuilderEventHandler(MyContextMenuBuilder);
+			zedGraphControl1.ContextMenuBuilder += new ZedGraphControl.ContextMenuBuilderEventHandler(MyContextMenuBuilder);
 
 			zedGraphControl1.ScrollEvent += new ZedGraph.ZedGraphControl.ScrollEventHandler(zedGraphControl1_ScrollEvent);
+#endif
+
+#if true	// vertical bars
+
+			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+			Random rand = new Random();
+
+			for ( int i=0; i<5; i++ )
+			{
+				double x = (double) i;
+				double y = rand.NextDouble() * 1000;
+				double y2 = rand.NextDouble() * 1000;
+				double y3 = rand.NextDouble() * 1000;
+				list.Add( x, y );
+				list2.Add( x, y2 );
+				list3.Add( x, y3 );
+			}
+
+			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
+			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
+			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
+
+			myPane.XAxis.IsTicsBetweenLabels = true;
+			string[] labels = { "one", "two", "three", "four", "five" };
+			myPane.XAxis.TextLabels = labels;
+			myPane.XAxis.Type = AxisType.Text;
+
+			// Tell ZedGraph to calculate the axis ranges
+			zedGraphControl1.AxisChange();
+			zedGraphControl1.Invalidate();
+#endif
+
+#if false
+			PointPairList ppl = new PointPairList();
+			ppl.Add( 0, -5e-7 ); ppl.Add( 1, -1e-4 ); ppl.Add( 2, .1);
+
+			zedGraphControl1.GraphPane.AddBar( "", ppl, Color.Red );
+
+			zedGraphControl1.AxisChange();
+			zedGraphControl1.Invalidate(); 
 #endif
 
 			zedGraphControl1.AxisChange();
@@ -762,39 +803,46 @@ namespace ZedGraph.ControlTest
 			Invalidate();
 		}
 
-		private void MyContextMenuHandler( object sender, ContextMenu menu )
+		/*
+		private void MyContextMenuBuilder( object sender, ContextMenu menu, Point mousePt )
 		{
 			//MenuItem menuItem = menu.MenuItems..Find( "Set Scale to Default", false );
 
-			
 			foreach( MenuItem item in menu.MenuItems )
 			{
 				if ( item.Text == "Set Scale to Default" )
 				{
 					menu.MenuItems.Remove( item );
+//					item.Enabled = false;
 					break;
 				}
 			}
-			
+		}
+		*/
+		private void MyContextMenuBuilder( object sender, ContextMenu menu, Point mousePt )
+		{
+			int count = menu.MenuItems.Count;
 
-			//menu.MenuItems.RemoveByKey( "Set Scale to Default" );
-
-			//menu.MenuItems.RemoveAt( 5 );
-
-			/*
-			MenuItem menuItem;
-			int index = menu.MenuItems.Count;
-
-			menuItem = new MenuItem();
-			menuItem.Index = index++;
-			menuItem.Text = "My New Item";
+			// create a new menu item
+			MenuItem menuItem = new MenuItem();
+			// assign an index to the item
+			menuItem.Index = count;
+			// This is the text that will show up in the menu
+			menuItem.Text = "Do Something Special";
+			// This is the user-defined Tag so you can find this menu item later if necessary
+			//menuItem.Tag = "my_special_tag";
+			// Add a handler that will respond when that menu item is selected
+			menuItem.Click += new System.EventHandler( DoSomethingSpecial );
+			// Add the menu item to the menu
 			menu.MenuItems.Add( menuItem );
-			//menuItem.Click += new System.EventHandler( this.MenuClick_Copy );
-
-			//menu.MenuItems.RemoveAt(2);
-			 */
 		}
 
+		protected void DoSomethingSpecial( object sender, System.EventArgs e )
+		{
+			// do something here.  For example, remove all curves from the graph
+			zedGraphControl1.GraphPane.CurveList.Clear();
+			zedGraphControl1.Refresh();
+		}
 
 		private void Form1_Resize(object sender, EventArgs e)
 		{
@@ -994,6 +1042,11 @@ namespace ZedGraph.ControlTest
 		}
 
 		private void zedGraphControl1_Load( object sender, EventArgs e )
+		{
+
+		}
+
+		private void zedGraphControl1_ContextMenuBuilder( ZedGraphControl sender, ContextMenu menu, Point mousePt )
 		{
 
 		}

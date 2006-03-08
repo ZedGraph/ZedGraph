@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.7 $ $Date: 2006-03-05 07:28:16 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2006-03-08 04:01:03 $ </version>
 	abstract public class Scale : ISerializable, ICloneable
 	{
 	#region Fields
@@ -1600,18 +1600,18 @@ namespace ZedGraph
 			if ( this.scaleMagAuto )
 			{
 				// Find the optimal scale display multiple
-				double mag = 0;
-				double mag2 = 0;
+				double mag = -100;
+				double mag2 = -100;
 
-				if ( Math.Abs( this.min ) > 1.0e-10 )
+				if ( Math.Abs( this.min ) > 1.0e-30 )
 					mag = Math.Floor( Math.Log10( Math.Abs( this.min ) ) );
-				if ( Math.Abs( this.max ) > 1.0e-10 )
+				if ( Math.Abs( this.max ) > 1.0e-30 )
 					mag2 = Math.Floor( Math.Log10( Math.Abs( this.max ) ) );
-				if ( Math.Abs( mag2 ) > Math.Abs( mag ) )
-					mag = mag2;
+
+				mag = Math.Max( mag2, mag );
 
 				// Do not use scale multiples for magnitudes below 4
-				if ( Math.Abs( mag ) <= 3 )
+				if ( mag == -100 || Math.Abs( mag ) <= 3 )
 					mag = 0;
 
 				// Use a power of 10 that is a multiple of 3 (engineering scale)

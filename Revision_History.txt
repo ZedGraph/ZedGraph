@@ -1,5 +1,10 @@
 ZedGraph Class Library Revision History
 
+6-Mar-2006 (by Champion)
+[UPD] Add menuitem stringID strings to tags for consistent ID -- NOTE: ONLY WORKS W/2005 -- Add in later
+[UPD] Experiment with interpolation for points way out of bounds
+[FIX] Fix problem with ScaleMagAuto using tiny min value in preference to max value
+
 3-Mar-2006 (Release Version 4.3) (by Champion)
 [FIX] Fix IsBoundedRange implementation
 [FIX] Place Axis.CrossAuto copy after Axis.Cross copy in ZedGraphWebData to avoid auto-set to false

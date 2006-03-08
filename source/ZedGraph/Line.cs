@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.20 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2006-03-08 04:01:03 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -598,16 +598,16 @@ namespace ZedGraph
                                 CurveItem curve, float scaleFactor)
         {
 			float	tmpX, tmpY,
-					lastX = 0,
-					lastY = 0;
+					lastX = float.MaxValue,
+					lastY = float.MaxValue;
 			double	curX, curY, lowVal;
-			bool	broke = true;
+			bool	lastBad = true;
 			IPointList points = curve.Points;
 			ValueHandler valueHandler = new ValueHandler( pane, false );
 			Axis yAxis = curve.GetYAxis( pane );
 
-            Pen pen = new Pen( this.color, pane.ScaledPenWidth( width, scaleFactor ) );
-            pen.DashStyle = this.Style;
+			Pen pen = new Pen( this.color, pane.ScaledPenWidth( width, scaleFactor ) );
+			pen.DashStyle = this.Style;
 
 			if ( points != null && !this.color.IsEmpty && this.IsVisible )
 			{
@@ -641,7 +641,9 @@ namespace ZedGraph
 							( pane.XAxis.IsLog && curX <= 0.0 ) ||
 							( yAxis.IsLog && curY <= 0.0 ) )
 					{
-						broke = true;
+						// If the point is invalid, then make a linebreak only if IsIgnoreMissing is false
+						// LastX and LastY are always the last valid point, so this works out
+						lastBad = lastBad || !pane.IsIgnoreMissing;
 					}
 					else
 					{
@@ -649,16 +651,19 @@ namespace ZedGraph
 						// screen coordinates
 						tmpX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curX );
 						tmpY = yAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curY );
-						
-						// off-scale values "break" the line
-						if ( tmpX < -1000000 || tmpX > 1000000 ||
-							tmpY < -1000000 || tmpY > 1000000 )
-							broke = true;
-						else
+
+						if ( !lastBad )
 						{
-							// If the last two points are valid, draw a line segment
-							if ( !broke || ( pane.IsIgnoreMissing && lastX != 0 ) )
+							try
 							{
+								// GDI+ plots the data wrong and/or throws an exception for
+								// outrageous coordinates, so we do a sanity check here
+								if ( lastX > 5000000 || lastX < -5000000 ||
+										lastY > 5000000 || lastY < -5000000 ||
+										tmpX > 5000000 || tmpX < -5000000 ||
+										tmpY > 5000000 || tmpY < -5000000 )
+									InterpolatePoint( g, pane, pen, lastX, lastY, tmpX, tmpY );
+
 								if ( this.StepType == StepType.ForwardStep )
 								{
 									g.DrawLine( pen, lastX, lastY, tmpX, lastY );
@@ -673,15 +678,95 @@ namespace ZedGraph
 									g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
 
 							}
-
-							// Save some values for the next point
-							broke = false;
-							lastX = tmpX;
-							lastY = tmpY;
+							catch
+							{
+								InterpolatePoint( g, pane, pen, lastX, lastY, tmpX, tmpY );
+							}
 						}
+
+						lastX = tmpX;
+						lastY = tmpY;
+						lastBad = false;
 					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// This method just handles the case where one or more of the coordinates are outrageous,
+		/// or GDI+ threw an exception.  This method attempts to correct the outrageous coordinates by
+		/// interpolating them to a point (along the original line) that lies at the edge of the AxisRect
+		/// so that GDI+ will handle it properly.  GDI+ will throw an exception, or just plot the data
+		/// incorrectly if the coordinates are too large (empirically, this appears to be when the
+		/// coordinate value is greater than 5,000,000 or less than -5,000,000).  Although you typically
+		/// would not see coordinates like this, if you repeatedly zoom in on a ZedGraphControl, eventually
+		/// all your points will be way outside the bounds of the plot.
+		/// </summary>
+		private void InterpolatePoint( Graphics g, GraphPane pane, Pen pen, float lastX, float lastY,
+						float tmpX, float tmpY )
+		{
+			try
+			{
+				// try to interpolate values
+				bool lastIn = pane.AxisRect.Contains( lastX, lastY );
+				bool curIn = pane.AxisRect.Contains( tmpX, tmpY );
+
+				// If both points are outside the AxisRect, make a new point that is on the LastX/Y
+				// side of the AxisRect, and fall through to the code that handles lastIn == true
+				if ( !lastIn )
+				{
+					float newX, newY;
+
+					if ( Math.Abs( lastX ) > Math.Abs( lastY ) )
+					{
+						newX = lastX < 0 ? pane.AxisRect.Left : pane.AxisRect.Right;
+						newY = lastY + (tmpY - lastY) * (newX - lastX) / (tmpX - lastX);
+					}
+					else
+					{
+						newY = lastY < 0 ? pane.AxisRect.Top : pane.AxisRect.Bottom;
+						newX = lastX + (tmpX - lastX) * (newY - lastY) / (tmpY - lastY);
+					}
+
+					lastX = newX;
+					lastY = newY;
+				}
+
+				if ( !curIn )
+				{
+					float newX, newY;
+
+					if ( Math.Abs( tmpX ) > Math.Abs( tmpY ) )
+					{
+						newX = tmpX < 0 ? pane.AxisRect.Left : pane.AxisRect.Right;
+						newY = tmpY + ( lastY - tmpY ) * ( newX - tmpX ) / ( lastX - tmpX );
+					}
+					else
+					{
+						newY = tmpY < 0 ? pane.AxisRect.Top : pane.AxisRect.Bottom;
+						newX = tmpX + ( lastX - tmpX ) * ( newY - tmpY ) / ( lastY - tmpY );
+					}
+
+					tmpX = newX;
+					tmpY = newY;
+				}
+
+				if ( this.StepType == StepType.ForwardStep )
+				{
+					g.DrawLine( pen, lastX, lastY, tmpX, lastY );
+					g.DrawLine( pen, tmpX, lastY, tmpX, tmpY );
+				}
+				else if ( this.StepType == StepType.RearwardStep )
+				{
+					g.DrawLine( pen, lastX, lastY, lastX, tmpY );
+					g.DrawLine( pen, lastX, tmpY, tmpX, tmpY );
+				}
+				else 		// non-step
+					g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
+
+			}
+
+			catch { }
 		}
 
 		/// <summary>
