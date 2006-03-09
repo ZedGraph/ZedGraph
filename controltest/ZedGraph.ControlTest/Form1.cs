@@ -319,7 +319,7 @@ namespace ZedGraph.ControlTest
 
 #endif
 
-#if false	// Basic curve test - Date Axis
+#if true	// Basic curve test - Date Axis
 
 			PointPairList list = new PointPairList();
 
@@ -331,7 +331,7 @@ namespace ZedGraph.ControlTest
 			}
 
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
-			myPane.XAxis.ScaleFormat = "dd/MM HH:mm";
+			//myPane.XAxis.ScaleFormat = "dd/MM HH:mm";
 			myPane.XAxis.Type = AxisType.Date;
 
 			zedGraphControl1.IsAutoScrollRange = true;
@@ -704,7 +704,7 @@ namespace ZedGraph.ControlTest
 			zedGraphControl1.ScrollEvent += new ZedGraph.ZedGraphControl.ScrollEventHandler(zedGraphControl1_ScrollEvent);
 #endif
 
-#if true	// vertical bars
+#if false	// vertical bars
 
 			PointPairList list = new PointPairList();
 			PointPairList list2 = new PointPairList();

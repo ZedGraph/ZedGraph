@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// eachother.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.16 $ $Date: 2006-03-05 07:28:16 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2006-03-09 06:13:13 $ </version>
 	public struct XDate //: ICloneable
 	{
 	#region Fields & Constants
@@ -103,9 +103,13 @@ namespace ZedGraph
 		/// </summary>
 		public const double SecondsPerDay = 86400.0;
 		/// <summary>
-		/// The number of seconds in a day
+		/// The number of milliseconds in a second
 		/// </summary>
 		public const double MillisecondsPerSecond = 1000.0;
+		/// <summary>
+		/// The number of milliseconds in a day
+		/// </summary>
+		public const double MillisecondsPerDay = 86400000.0;
 		/// <summary>
 		/// The default format string to be used in <see cref="ToString()"/> when
 		/// no format is provided
@@ -463,10 +467,12 @@ namespace ZedGraph
 			// Normalize the data to allow for negative and out of range values
 			// In this way, setting month to zero would be December of the previous year,
 			// setting hour to 24 would be the first hour of the next day, etc.
-			double dsec = second + (double) millisecond / MillisecondsPerSecond;
-			NormalizeCalendarDate( ref year, ref month, ref day, ref hour, ref minute, ref dsec );
+			//double dsec = second + (double) millisecond / MillisecondsPerSecond;
+			double ms = millisecond;
+			NormalizeCalendarDate( ref year, ref month, ref day, ref hour, ref minute, ref second,
+						ref ms );
 		
-			return _CalendarDateToXLDate( year, month, day, hour, minute, dsec );
+			return _CalendarDateToXLDate( year, month, day, hour, minute, second, ms );
 		}
 		
 		/// <summary>
@@ -508,10 +514,11 @@ namespace ZedGraph
 			// Normalize the data to allow for negative and out of range values
 			// In this way, setting month to zero would be December of the previous year,
 			// setting hour to 24 would be the first hour of the next day, etc.
-			double dsec = second;
-			NormalizeCalendarDate( ref year, ref month, ref day, ref hour, ref minute, ref dsec );
+			double ms = 0;
+			NormalizeCalendarDate( ref year, ref month, ref day, ref hour, ref minute,
+					ref second, ref ms );
 		
-			return _CalendarDateToXLDate( year, month, day, hour, minute, dsec );
+			return _CalendarDateToXLDate( year, month, day, hour, minute, second, ms );
 		}
 		
 		/// <summary>
@@ -554,9 +561,12 @@ namespace ZedGraph
 			// Normalize the data to allow for negative and out of range values
 			// In this way, setting month to zero would be December of the previous year,
 			// setting hour to 24 would be the first hour of the next day, etc.
-			NormalizeCalendarDate( ref year, ref month, ref day, ref hour, ref minute, ref second );
+			int sec = (int)second;
+			double ms = ( second - sec ) * MillisecondsPerSecond;
+			NormalizeCalendarDate( ref year, ref month, ref day, ref hour, ref minute, ref sec,
+					ref ms );
 		
-			return _CalendarDateToXLDate( year, month, day, hour, minute, second );
+			return _CalendarDateToXLDate( year, month, day, hour, minute, sec, ms );
 		}
 		
 		/// <summary>
@@ -589,10 +599,11 @@ namespace ZedGraph
 			// Normalize the data to allow for negative and out of range values
 			// In this way, setting month to zero would be December of the previous year,
 			// setting hour to 24 would be the first hour of the next day, etc.
-			double dsec = second;
-			NormalizeCalendarDate( ref year, ref month, ref day, ref hour, ref minute, ref dsec );
+			double ms = 0;
+			NormalizeCalendarDate( ref year, ref month, ref day, ref hour, ref minute,
+				ref second, ref ms );
 		
-			return _CalendarDateToJulianDay( year, month, day, hour, minute, dsec );
+			return _CalendarDateToJulianDay( year, month, day, hour, minute, second, ms );
 		}
 		
 		/// <summary>
@@ -628,11 +639,12 @@ namespace ZedGraph
 			// Normalize the data to allow for negative and out of range values
 			// In this way, setting month to zero would be December of the previous year,
 			// setting hour to 24 would be the first hour of the next day, etc.
-			double dsec = second + (double) millisecond / MillisecondsPerSecond;
+			double ms = millisecond;
 
-			NormalizeCalendarDate( ref year, ref month, ref day, ref hour, ref minute, ref dsec );
+			NormalizeCalendarDate( ref year, ref month, ref day, ref hour, ref minute,
+						ref second, ref ms );
 		
-			return _CalendarDateToJulianDay( year, month, day, hour, minute, dsec );
+			return _CalendarDateToJulianDay( year, month, day, hour, minute, second, ms );
 		}
 		
 		/// <summary>
@@ -655,18 +667,27 @@ namespace ZedGraph
 		/// The integer minute value (e.g., 35 for 35 minutes past the hour).
 		/// </param>
 		/// <param name="second">
-		/// The double second value (e.g., 42 for 42 seconds past the minute).
+		/// The integer second value (e.g., 42 for 42 seconds past the minute).
+		/// </param>
+		/// <param name="millisecond">
+		/// The double millisecond value (e.g., 325.3 for 325.3 milliseconds past the second).
 		/// </param>
 		private static void NormalizeCalendarDate( ref int year, ref int month, ref int day,
-											ref int hour, ref int minute, ref double second )
+											ref int hour, ref int minute, ref int second,
+											ref double millisecond )
 		{
 			// Normalize the data to allow for negative and out of range values
 			// In this way, setting month to zero would be December of the previous year,
 			// setting hour to 24 would be the first hour of the next day, etc.
-		
+
+			// Normalize the milliseconds and carry over to seconds
+			int carry = (int)Math.Floor( millisecond / MillisecondsPerSecond );
+			millisecond -= carry * (int)MillisecondsPerSecond;
+			second += carry;
+
 			// Normalize the seconds and carry over to minutes
-			int carry = (int) Math.Floor( second / SecondsPerMinute );
-			second -= carry * (int) SecondsPerMinute;
+			carry = (int)Math.Floor( second / SecondsPerMinute );
+			second -= carry * (int)SecondsPerMinute;
 			minute += carry;
 		
 			// Normalize the minutes and carry over to hours
@@ -706,13 +727,17 @@ namespace ZedGraph
 		/// The integer minute value (e.g., 35 for 35 minutes past the hour).
 		/// </param>
 		/// <param name="second">
-		/// The double second value (e.g., 42.3 for 42.3 seconds past the minute).
+		/// The integer second value (e.g., 42 for 42 seconds past the minute).
+		/// </param>
+		/// <param name="millisecond">
+		/// The double millisecond value (e.g., 325.3 for 325.3 milliseconds past the second).
 		/// </param>
 		/// <returns>The corresponding XL date, expressed in double floating point format</returns>
 		private static double _CalendarDateToXLDate( int year, int month, int day, int hour,
-					int minute, double second )
+					int minute, int second, double millisecond )
 		{
-			return JulianDayToXLDate( _CalendarDateToJulianDay( year, month, day, hour, minute, second ) );
+			return JulianDayToXLDate( _CalendarDateToJulianDay( year, month, day, hour, minute,
+						second, millisecond ) );
 		}
 		
 		/// <summary>
@@ -737,12 +762,15 @@ namespace ZedGraph
 		/// The integer minute value (e.g., 35 for 35 minutes past the hour).
 		/// </param>
 		/// <param name="second">
-		/// The double second value (e.g., 42.3 for 42.3 seconds past the minute).
+		/// The integer second value (e.g., 42 for 42 seconds past the minute).
+		/// </param>
+		/// <param name="millisecond">
+		/// The double millisecond value (e.g., 325.3 for 325.3 milliseconds past the second).
 		/// </param>
 		/// <returns>The corresponding Astronomical Julian Day number, expressed in double
 		/// floating point format</returns>
 		private static double _CalendarDateToJulianDay( int year, int month, int day, int hour,
-					int minute, double second )
+					int minute, int second, double millisecond )
 		{
 			// Taken from http://www.srrb.noaa.gov/highlights/sunrise/program.txt
 			// routine calcJD()
@@ -759,7 +787,8 @@ namespace ZedGraph
 			return	Math.Floor( 365.25 * ( (double) year + 4716.0 ) ) +
 					Math.Floor( 30.6001 * (double) ( month + 1 ) ) +
 					(double) day + B - 1524.5 +
-					hour  / HoursPerDay + minute / MinutesPerDay + second / SecondsPerDay;
+					hour  / HoursPerDay + minute / MinutesPerDay + second / SecondsPerDay +
+					millisecond / MillisecondsPerDay;
 		
 		}
 
@@ -830,11 +859,10 @@ namespace ZedGraph
 		{
 			double jDay = XLDateToJulianDay( xlDate );
 			
-			double dsec;
+			double ms;
 			JulianDayToCalendarDate( jDay, out year, out month, out day, out hour,
-				out minute, out dsec );
-			second = (int) dsec;
-			millisecond = (int) ( ( dsec - second ) * MillisecondsPerSecond + 0.5 );
+				out minute, out second, out ms );
+			millisecond = (int)ms;
 		}
 		
 		/// <summary>
@@ -899,12 +927,10 @@ namespace ZedGraph
 		public static void JulianDayToCalendarDate( double jDay, out int year, out int month,
 			out int day, out int hour, out int minute, out int second )
 		{
-			double fsec;
+			double ms = 0;
 
 			JulianDayToCalendarDate( jDay, out year, out month,
-					out day, out hour, out minute, out fsec );
-
-			second = (int) fsec;
+					out day, out hour, out minute, out second, out ms );
 		}
 
 		/// <summary>
@@ -930,10 +956,51 @@ namespace ZedGraph
 		/// The integer minute value (e.g., 35 for 35 minutes past the hour).
 		/// </param>
 		/// <param name="second">
-		/// The <see cref="System.Double" /> second value (e.g., 42.5 for 42.5 seconds past the minute).
+		/// The double second value (e.g., 42.3 for 42.3 seconds past the minute).
 		/// </param>
 		public static void JulianDayToCalendarDate( double jDay, out int year, out int month,
 			out int day, out int hour, out int minute, out double second )
+		{
+			int sec;
+			double ms;
+
+			JulianDayToCalendarDate( jDay, out year, out month,
+					out day, out hour, out minute, out sec, out ms );
+
+			second = sec + ms / MillisecondsPerSecond;
+		}
+
+		/// <summary>
+		/// Calculate a Calendar date (year, month, day, hour, minute, second) corresponding to
+		/// the Astronomical Julian Day number
+		/// </summary>
+		/// <param name="jDay">
+		/// The Astronomical Julian Day number to be converted
+		/// </param>
+		/// <param name="year">
+		/// The integer year value (e.g., 1994).
+		/// </param>
+		/// <param name="month">
+		/// The integer month value (e.g., 7 for July).
+		/// </param>
+		/// <param name="day">
+		/// The integer day value (e.g., 19 for the 19th day of the month).
+		/// </param>
+		/// <param name="hour">
+		/// The integer hour value (e.g., 14 for 2:00 pm).
+		/// </param>
+		/// <param name="minute">
+		/// The integer minute value (e.g., 35 for 35 minutes past the hour).
+		/// </param>
+		/// <param name="second">
+		/// The integer second value (e.g., 42 for 42 seconds past the minute).
+		/// </param>
+		/// <param name="millisecond">
+		/// The <see cref="System.Double" /> millisecond value (e.g., 342.5 for 342.5 milliseconds past
+		/// the second).
+		/// </param>
+		public static void JulianDayToCalendarDate( double jDay, out int year, out int month,
+			out int day, out int hour, out int minute, out int second, out double millisecond )
 		{
 			// add 5 ten-thousandths of a second to the day fraction to avoid roundoff errors
 			jDay += 0.0005 / SecondsPerDay;
@@ -959,8 +1026,9 @@ namespace ZedGraph
 			fday = ( fday - (long) fday ) * MinutesPerHour;
 			minute = (int) fday;
 			fday = ( fday - (long) fday ) * SecondsPerMinute;
-			second = fday;
-		
+			second = (int) fday;
+			fday = ( fday - (long) fday ) * MillisecondsPerSecond;
+			millisecond = fday;
 		}
 		
 		/// <summary>

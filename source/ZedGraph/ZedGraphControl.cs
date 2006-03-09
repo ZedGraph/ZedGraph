@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.55 $ $Date: 2006-03-08 04:01:03 $ </version>
+	/// <version> $Revision: 3.56 $ $Date: 2006-03-09 06:13:13 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -533,7 +533,8 @@ namespace ZedGraph
 			SetStyle( ControlStyles.SupportsTransparentBackColor, true );
 			//this.BackColor = Color.Transparent;
 
-			resourceManager = new ResourceManager( "ZedGraph.ZedGraph.ZedGraphLocale", Assembly.GetExecutingAssembly() );
+			resourceManager = new ResourceManager( "ZedGraph.ZedGraph.ZedGraphLocale",
+					Assembly.GetExecutingAssembly() );
 
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
 			masterPane = new MasterPane( "", rect );

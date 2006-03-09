@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.8 $ $Date: 2006-03-08 04:01:03 $ </version>
+	/// <version> $Revision: 1.9 $ $Date: 2006-03-09 06:13:13 $ </version>
 	abstract public class Scale : ISerializable, ICloneable
 	{
 	#region Fields
@@ -192,8 +192,9 @@ namespace ZedGraph
 		/// <remarks>
 		/// These values are just <see cref="Scale.Min" /> and <see cref="Scale.Max" />
 		/// for normal linear scales, but for log or exponent scales they will be a
-		/// linear representation.  For <see cref="LogScale" />, it is the <see cref="Math.Log" />
-		/// of the value, and for <see cref="ExponentScale" />, it is the <see cref="Math.Exp" />
+		/// linear representation.  For <see cref="LogScale" />, it is the
+		/// <see cref="Math.Log(double)" /> of the value, and for <see cref="ExponentScale" />,
+		/// it is the <see cref="Math.Exp(double)" />
 		/// of the value.
 		/// </remarks>
 		internal double	minScale,

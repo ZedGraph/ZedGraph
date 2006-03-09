@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.15 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2006-03-09 06:13:13 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -83,6 +83,15 @@ namespace ZedGraph
 		/// null if <see cref="AutoPaneLayout(Graphics,bool,int[])"/> was never called.
 		/// </summary>
 		private int[] countList;
+
+		/// <summary>
+		/// private field that stores the row/column size proportional values as specified
+		/// to the <see cref="AutoPaneLayout(Graphics,bool,int[],float[])"/> method.  This
+		/// value will be null if <see cref="AutoPaneLayout(Graphics,bool,int[],float[])"/>
+		/// was never called.  
+		/// </summary>
+		private float[] prop;
+
 		/// <summary>
 		///Private field that stores a boolean value which signifies whether all 
 		///<see cref="ZedGraph.GraphPane"/>s in the chart use the same entries in their 
@@ -187,6 +196,8 @@ namespace ZedGraph
 			this.columns = -1;
 			this.isColumnSpecified = false;
 			this.countList = null;
+			this.prop = null;
+
 			this.hasUniformLegendEntries = Default.hasUniformLegendEntries ;
 
 			this.paneList = new PaneList();
@@ -207,6 +218,7 @@ namespace ZedGraph
 			this.columns = rhs.columns;
 			this.isColumnSpecified = rhs.isColumnSpecified;
 			this.countList = rhs.countList;
+			this.prop = rhs.prop;
 			this.hasUniformLegendEntries = rhs.hasUniformLegendEntries ;
 
 			// Then, fill in all the reference types with deep copies
@@ -239,7 +251,8 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		// schema changed to 2 with addition of 'prop'
+		public const int schema2 = 2;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -264,6 +277,10 @@ namespace ZedGraph
 			this.countList = (int[]) info.GetValue( "countList", typeof(int[]) );
 			this.hasUniformLegendEntries = info.GetBoolean( "hasUniformLegendEntries" );
 
+			if ( sch >= 2 )
+				this.prop = (float[]) info.GetValue( "prop", typeof(float[]) );
+			else
+				this.prop = null;
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -286,6 +303,7 @@ namespace ZedGraph
 			info.AddValue( "countList", countList );
 			info.AddValue( "hasUniformLegendEntries", hasUniformLegendEntries );
 
+			info.AddValue( "prop", prop );
 		}
 
 		/// <summary>
@@ -370,7 +388,7 @@ namespace ZedGraph
 			this.paneRect = paneRect;
 
 			if ( this.countList != null )
-				AutoPaneLayout( g, this.isColumnSpecified, this.countList );
+				AutoPaneLayout( g, this.isColumnSpecified, this.countList, this.prop );
 			else if ( this.rows >= 1 && this.columns >= 1 )
 				AutoPaneLayout( g, this.rows, this.columns );
 			else
@@ -543,15 +561,61 @@ namespace ZedGraph
 		/// <see paramref="isColumnSpecified"/>.</param>
 		public void AutoPaneLayout( Graphics g, bool isColumnSpecified, int[] countList )
 		{
+			AutoPaneLayout( g, isColumnSpecified, countList, null );
+		}
+
+		/// <summary>
+		/// Automatically set all of the <see cref="GraphPane"/> <see cref="PaneBase.PaneRect"/>'s in
+		/// the list to the specified configuration.
+		/// </summary>
+		/// <remarks>This method specifies the number of panes in each row or column, allowing for
+		/// irregular layouts.</remarks>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="isColumnSpecified">Specifies whether the number of columns in each row, or
+		/// the number of rows in each column will be specified.  A value of true indicates the
+		/// number of columns in each row are specified in <see paramref="countList"/>.</param>
+		/// <param name="countList">An integer array specifying either the number of columns in
+		/// each row or the number of rows in each column, depending on the value of
+		/// <see paramref="isColumnSpecified"/>.</param>
+		/// <param name="proportion">An array of float values specifying proportional sizes for each
+		/// row or column.  Note that these proportions apply to the non-specified dimension -- that is,
+		/// if <see paramref="isColumnSpecified"/> is true, then these proportions apply to the row
+		/// heights, and if <see paramref="isColumnSpecified"/> is false, then these proportions apply
+		/// to the column widths.  The values in this array are arbitrary floats -- the dimension of
+		/// any given row or column is that particular proportional value divided by the sum of all
+		/// the values.  For example, let <see paramref="isColumnSpecified"/> be true, and
+		/// <see paramref="proportion"/> is an array with values of { 1.0, 2.0, 3.0 }.  The sum of
+		/// those values is 6.0.  Therefore, the first row is 1/6th of the available height, the
+		/// second row is 2/6th's of the available height, and the third row is 3/6th's of the
+		/// available height.
+		/// </param>
+		public void AutoPaneLayout( Graphics g, bool isColumnSpecified, int[] countList,
+						float[] proportion )
+		{
 			// save the layout settings for future reference
 			this.isColumnSpecified = isColumnSpecified;
 			this.countList = countList;
 			this.rows = -1;
 			this.columns = -1;
+			this.prop = null;
 
 			// punt if there are no entries in the countList
 			if ( countList.Length <= 0 )
 				return;
+
+			this.prop = new float[countList.Length];
+
+			// Sum up the total proportional factors
+			float sumProp = 0.0f;
+			for ( int i=0; i<countList.Length; i++ )
+			{
+				this.prop[i] = ( proportion == null || proportion.Length <= i || this.prop[i] < 1e-10 ) ?
+											1.0f : proportion[i];
+				sumProp += this.prop[i];
+			}
 
 			// calculate scaleFactor on "normal" pane size (BaseDimension)
 			float scaleFactor = this.CalcScaleFactor();
@@ -568,14 +632,19 @@ namespace ZedGraph
 			if ( isColumnSpecified )
 			{
 				int rows = countList.Length;
-				float height = ( innerRect.Height - (float)(rows - 1) * scaledInnerGap ) / (float) rows;
+
+				float y = 0.0f;
 
 				for ( int rowNum=0; rowNum<rows; rowNum++ )
 				{
+					float height = ( innerRect.Height - (float)( rows - 1 ) * scaledInnerGap ) *
+									this.prop[rowNum] / sumProp;
+
 					int columns = countList[rowNum];
 					if ( columns <= 0 )
 						columns = 1;
-					float width = ( innerRect.Width - (float)(columns - 1) * scaledInnerGap ) / (float) columns;
+					float width = ( innerRect.Width - (float)(columns - 1) * scaledInnerGap ) /
+									(float) columns;
 
 					if ( iPane >= this.paneList.Count )
 						return;
@@ -584,20 +653,26 @@ namespace ZedGraph
 					{
 						this[iPane].PaneRect = new RectangleF(
 											innerRect.X + colNum * ( width + scaledInnerGap ),
-											innerRect.Y + rowNum * ( height + scaledInnerGap ),
+											innerRect.Y + y,
 											width,
 											height );
 						iPane++;
 					}
+
+					y += height + scaledInnerGap;
 				}
 			}
 			else
 			{
 				int columns = countList.Length;
-				float width = ( innerRect.Width - (float)(columns - 1) * scaledInnerGap ) / (float) columns;
+
+				float x = 0.0f;
 
 				for ( int colNum=0; colNum<columns; colNum++ )
 				{
+					float width = ( innerRect.Width - (float)( columns - 1 ) * scaledInnerGap ) *
+									this.prop[colNum] / sumProp;
+
 					int rows = countList[colNum];
 					if ( rows <= 0 )
 						rows = 1;
@@ -609,12 +684,14 @@ namespace ZedGraph
 							return;
 
 						this[iPane].PaneRect = new RectangleF(
-											innerRect.X + colNum * ( width + scaledInnerGap ),
+											innerRect.X + x,
 											innerRect.Y + rowNum * ( height + scaledInnerGap ),
 											width,
 											height );
 						iPane++;
 					}
+
+					x += width + scaledInnerGap;
 				}
 			}
 		}

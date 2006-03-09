@@ -1,5 +1,9 @@
 ZedGraph Class Library Revision History
 
+8-Mar-2006 (Dev version 4.3.1) (by Champion)
+[UPD] Add proportion term to MasterPane.AutoPaneLayout to allow variable widths/heights
+[FIX] Fix millisecond treatment in XDate to avoid DateTime exception throwing
+
 6-Mar-2006 (by Champion)
 [UPD] Add menuitem stringID strings to tags for consistent ID -- NOTE: ONLY WORKS W/2005 -- Add in later
 [UPD] Experiment with interpolation for points way out of bounds
