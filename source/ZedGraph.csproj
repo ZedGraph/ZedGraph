@@ -49,14 +49,14 @@
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
                     DefineConstants = "TRACE"
-                    DocumentationFile = "bin\Release\ZedGraph.xml"
+                    DocumentationFile = "bin\ZedGraph.xml"
                     DebugSymbols = "false"
                     FileAlignment = "4096"
                     IncrementalBuild = "false"
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "true"
-                    OutputPath = "bin\Release\"
+                    OutputPath = "..\lib\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -452,6 +452,10 @@
                 />
                 <File
                     RelPath = "ZedGraph\ZedGraphLocale.resx"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "ZedGraph\ZedGraphLocale.sv.resx"
                     BuildAction = "EmbeddedResource"
                 />
                 <File

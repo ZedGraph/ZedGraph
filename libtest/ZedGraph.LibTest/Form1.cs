@@ -539,7 +539,7 @@ namespace ZedGraph.LibTest
 			myPane.AxisChange( CreateGraphics() );
 #endif
 
-#if true	// Standard Sample Graph
+#if false	// Standard Sample Graph
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Wacky Widget Company\nProduction Report",
 				"Time, Days\n(Since Plant Construction Startup)",
@@ -693,7 +693,7 @@ namespace ZedGraph.LibTest
 			g.Dispose();
 #endif
 	
-#if false	// MasterPane
+#if true	// MasterPane
 			master = new MasterPane( "ZedGraph MasterPane Example", new Rectangle( 10, 10, 10, 10 ) );
 
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
@@ -701,10 +701,10 @@ namespace ZedGraph.LibTest
 
 			//master.MarginAll = 10;
 			//master.InnerPaneGap = 10;
-			master.Legend.IsVisible = true;
-			master.Legend.Position = LegendPos.TopCenter;
+			//master.Legend.IsVisible = true;
+			//master.Legend.Position = LegendPos.TopCenter;
 			
-
+/*
 			TextItem text = new TextItem( "Priority", 0.88F, 0.12F );
 			text.Location.CoordinateFrame = CoordType.PaneFraction;
 
@@ -735,9 +735,10 @@ namespace ZedGraph.LibTest
 			text.ZOrder = ZOrder.A_InFront;
 			
 			master.GraphItemList.Add( text );
+*/
 			ColorSymbolRotator rotator = new ColorSymbolRotator();
 
-			for ( int j=0; j<5; j++ )
+			for ( int j=0; j<6; j++ )
 			{
 				// Create a new graph with topLeft at (40,40) and size 600x400
 				GraphPane myPaneT = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
@@ -769,7 +770,9 @@ namespace ZedGraph.LibTest
 
 			Graphics g = this.CreateGraphics();
 			
-			master.AutoPaneLayout( g, PaneLayout.ExplicitRow32 );
+			//master.AutoPaneLayout( g, PaneLayout.ExplicitRow32 );
+			//master.AutoPaneLayout( g, 2, 4 );
+			master.AutoPaneLayout( g, false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
 			master.AxisChange( g );
 
 			g.Dispose();
@@ -1827,8 +1830,6 @@ namespace ZedGraph.LibTest
 			else
 				_crossAxis = myPane.Y2AxisList[1];
 
-			_crossAxis = myPane.Y2AxisList[1];
-
 			trackBar1.Minimum = 0;
 			trackBar1.Maximum = 100;
 			trackBar1.Value = 50;
@@ -2327,7 +2328,11 @@ namespace ZedGraph.LibTest
 
 		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
 		{
-			myPane.ScaledImage( 640, 480, 72 ).Save( "zedgraph.png", ImageFormat.Png );
+			PaneBase tmpPane = myPane;
+			if ( master != null )
+				tmpPane = master;
+			tmpPane.ScaledImage( 240, 160, 72 ).Save( "zedgraph.png", ImageFormat.Png );
+
 			//image.Save( @"c:\zedgraph.png", ImageFormat.Png );
 			//master.Image.Save( @"c:\zedgraph.png", ImageFormat.Png );
 			return;

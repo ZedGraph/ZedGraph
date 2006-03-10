@@ -1,6 +1,3 @@
-
-#if true
-
 using System;
 using System.Drawing;
 using System.Drawing.Printing;
@@ -319,7 +316,62 @@ namespace ZedGraph.ControlTest
 
 #endif
 
-#if true	// Basic curve test - Date Axis
+#if true		// masterpane test
+
+			MasterPane master = zedGraphControl1.MasterPane;
+
+			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+			master.PaneList.Clear();
+
+			master.IsShowTitle = true;
+			master.Title = "My MasterPane Title";
+
+			master.MarginAll = 10;
+			//master.InnerPaneGap = 10;
+			//master.Legend.IsVisible = true;
+			//master.Legend.Position = LegendPos.TopCenter;
+
+			ColorSymbolRotator rotator = new ColorSymbolRotator();
+
+			for ( int j = 0; j < 6; j++ )
+			{
+				// Create a new graph with topLeft at (40,40) and size 600x400
+				GraphPane myPaneT = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+					"Case #" + ( j + 1 ).ToString(),
+					"Time, Days",
+					"Rate, m/s" );
+
+				myPaneT.PaneFill = new Fill( Color.White, Color.LightYellow, 45.0F );
+				myPaneT.BaseDimension = 6.0F;
+
+				// Make up some data arrays based on the Sine function
+				double x, y;
+				PointPairList list = new PointPairList();
+				for ( int i = 0; i < 36; i++ )
+				{
+					x = (double)i + 5;
+					y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
+					list.Add( x, y );
+				}
+
+				LineItem myCurve = myPaneT.AddCurve( "Type " + j.ToString(),
+					list, rotator.NextColor, rotator.NextSymbol );
+				myCurve.Symbol.Fill = new Fill( Color.White );
+
+				master.Add( myPaneT );
+			}
+
+			Graphics g = this.CreateGraphics();
+
+			//master.AutoPaneLayout( g, PaneLayout.ExplicitRow32 );
+			//master.AutoPaneLayout( g, 2, 4 );
+			master.AutoPaneLayout( g, false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
+			zedGraphControl1.AxisChange();
+
+			g.Dispose();
+#endif
+
+#if false	// Basic curve test - Date Axis
 
 			PointPairList list = new PointPairList();
 
@@ -1053,525 +1105,3 @@ namespace ZedGraph.ControlTest
 
 	}
 }
-
-#endif
-
-
-
-#if false
-using System; 
-using ZedGraph; 
-using System.Data; 
-using System.Drawing; 
-using System.Windows.Forms; 
-using System.IO; 
-using System.Globalization; 
-using System.Collections; 
-using System.Threading; 
-//using ICApis; 
- 
-namespace ZedGraph.ControlTest
-{ 
-	/// <summary> 
-	///  
-	/// </summary> 
-	public class Form1 : Form 
-	{ 
-		public const int Hour = 1;
-		public const int Day = 2;
-		public const int Week = 3;
-
-		private PointPairList _pointPairList = new PointPairList(); 
-		private Image _backImage; 
-		private System.Windows.Forms.Panel optionsPanel; 
-		private System.Windows.Forms.Panel diagramPanel; 
-		private GraphPane _myPane = new GraphPane();  
-		private RadioButton[] _accuracyButtons; 
-		private int _accuracy = Form1.Day; 
- 
-		Fill _fill = new Fill(Color.FromArgb( 150, 255, 0, 0 ), Color.FromArgb( 150, 130, 255, 130 ), 
-			Color.FromArgb( 150, 255, 0, 0 ) ); 
- 
-		Thread _showGraphThread; 
-		private ZedGraph.ZedGraphControl zedGraphControl1; 
- 
-		public delegate void FinishShowDiagramThread(); 
-		public FinishShowDiagramThread m_FinishShowDiagram; 
-		private System.Windows.Forms.Panel topPanel; 
-		private System.Windows.Forms.Panel buttomPanel; 
-		private System.Windows.Forms.Panel sliderPanel; 
-		private System.Windows.Forms.Label sliderLabel; 
-		private System.Windows.Forms.TrackBar barWidthScaleSlider; 
-		private System.Windows.Forms.Panel checkBoxPanel; 
-		private System.Windows.Forms.CheckBox autoscaleBox; 
-		private System.Windows.Forms.CheckBox showGrid; 
-		private System.Windows.Forms.GroupBox accuracyGroup; 
-		private System.Windows.Forms.RadioButton everyHour; 
-		private System.Windows.Forms.RadioButton everyDay; 
-		private System.Windows.Forms.RadioButton everyWeek; 
-		private System.Windows.Forms.ProgressBar progressBar1;
-		private ZedGraph.ZedGraphControl zedGraphControl1; 
- 
-		/// <summary> 
-		/// This is an estimated value of the amount of data entries which will be added to the graph. 
-		/// </summary> 
-		private int _estimatedCount = 0; 
- 
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		[STAThread]
-		static void Main() 
-		{
-			Application.Run( new Form1() );
-		}
- 
-		private void InitializeComponent() 
-		{ 
-			this.optionsPanel = new System.Windows.Forms.Panel();
-			this.buttomPanel = new System.Windows.Forms.Panel();
-			this.progressBar1 = new System.Windows.Forms.ProgressBar();
-			this.topPanel = new System.Windows.Forms.Panel();
-			this.sliderPanel = new System.Windows.Forms.Panel();
-			this.sliderLabel = new System.Windows.Forms.Label();
-			this.barWidthScaleSlider = new System.Windows.Forms.TrackBar();
-			this.checkBoxPanel = new System.Windows.Forms.Panel();
-			this.autoscaleBox = new System.Windows.Forms.CheckBox();
-			this.showGrid = new System.Windows.Forms.CheckBox();
-			this.accuracyGroup = new System.Windows.Forms.GroupBox();
-			this.everyHour = new System.Windows.Forms.RadioButton();
-			this.everyDay = new System.Windows.Forms.RadioButton();
-			this.everyWeek = new System.Windows.Forms.RadioButton();
-			this.diagramPanel = new System.Windows.Forms.Panel();
-			this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
-			this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
-			this.optionsPanel.SuspendLayout();
-			this.buttomPanel.SuspendLayout();
-			this.topPanel.SuspendLayout();
-			this.sliderPanel.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.barWidthScaleSlider)).BeginInit();
-			this.checkBoxPanel.SuspendLayout();
-			this.accuracyGroup.SuspendLayout();
-			this.diagramPanel.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// optionsPanel
-			// 
-			this.optionsPanel.Controls.Add(this.buttomPanel);
-			this.optionsPanel.Controls.Add(this.topPanel);
-			this.optionsPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.optionsPanel.Location = new System.Drawing.Point(0, 550);
-			this.optionsPanel.Name = "optionsPanel";
-			this.optionsPanel.Size = new System.Drawing.Size(1016, 64);
-			this.optionsPanel.TabIndex = 1;
-			// 
-			// buttomPanel
-			// 
-			this.buttomPanel.Controls.Add(this.progressBar1);
-			this.buttomPanel.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.buttomPanel.Location = new System.Drawing.Point(0, 52);
-			this.buttomPanel.Name = "buttomPanel";
-			this.buttomPanel.Size = new System.Drawing.Size(1016, 12);
-			this.buttomPanel.TabIndex = 10;
-			// 
-			// progressBar1
-			// 
-			this.progressBar1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.progressBar1.Location = new System.Drawing.Point(0, 0);
-			this.progressBar1.Name = "progressBar1";
-			this.progressBar1.Size = new System.Drawing.Size(1016, 12);
-			this.progressBar1.Step = 1;
-			this.progressBar1.TabIndex = 11;
-			// 
-			// topPanel
-			// 
-			this.topPanel.Controls.Add(this.sliderPanel);
-			this.topPanel.Controls.Add(this.checkBoxPanel);
-			this.topPanel.Controls.Add(this.accuracyGroup);
-			this.topPanel.Dock = System.Windows.Forms.DockStyle.Top;
-			this.topPanel.Location = new System.Drawing.Point(0, 0);
-			this.topPanel.Name = "topPanel";
-			this.topPanel.Size = new System.Drawing.Size(1016, 40);
-			this.topPanel.TabIndex = 9;
-			// 
-			// sliderPanel
-			// 
-			this.sliderPanel.Controls.Add(this.sliderLabel);
-			this.sliderPanel.Controls.Add(this.barWidthScaleSlider);
-			this.sliderPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.sliderPanel.Location = new System.Drawing.Point(72, 0);
-			this.sliderPanel.Name = "sliderPanel";
-			this.sliderPanel.Size = new System.Drawing.Size(656, 40);
-			this.sliderPanel.TabIndex = 14;
-			// 
-			// sliderLabel
-			// 
-			this.sliderLabel.Dock = System.Windows.Forms.DockStyle.Right;
-			this.sliderLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((System.Byte)(0)));
-			this.sliderLabel.Location = new System.Drawing.Point(616, 0);
-			this.sliderLabel.Name = "sliderLabel";
-			this.sliderLabel.Size = new System.Drawing.Size(40, 40);
-			this.sliderLabel.TabIndex = 9;
-			this.sliderLabel.Text = "1";
-			this.sliderLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// barWidthScaleSlider
-			// 
-			this.barWidthScaleSlider.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.barWidthScaleSlider.Enabled = false;
-			this.barWidthScaleSlider.Location = new System.Drawing.Point(0, 0);
-			this.barWidthScaleSlider.Maximum = 500;
-			this.barWidthScaleSlider.Minimum = 1;
-			this.barWidthScaleSlider.Name = "barWidthScaleSlider";
-			this.barWidthScaleSlider.Size = new System.Drawing.Size(656, 40);
-			this.barWidthScaleSlider.TabIndex = 10;
-			this.barWidthScaleSlider.Value = 1;
-			// 
-			// checkBoxPanel
-			// 
-			this.checkBoxPanel.Controls.Add(this.autoscaleBox);
-			this.checkBoxPanel.Controls.Add(this.showGrid);
-			this.checkBoxPanel.Dock = System.Windows.Forms.DockStyle.Left;
-			this.checkBoxPanel.Location = new System.Drawing.Point(0, 0);
-			this.checkBoxPanel.Name = "checkBoxPanel";
-			this.checkBoxPanel.Size = new System.Drawing.Size(72, 40);
-			this.checkBoxPanel.TabIndex = 13;
-			// 
-			// autoscaleBox
-			// 
-			this.autoscaleBox.Checked = true;
-			this.autoscaleBox.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.autoscaleBox.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.autoscaleBox.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.autoscaleBox.Location = new System.Drawing.Point(0, 24);
-			this.autoscaleBox.Name = "autoscaleBox";
-			this.autoscaleBox.Size = new System.Drawing.Size(72, 16);
-			this.autoscaleBox.TabIndex = 12;
-			this.autoscaleBox.Text = "Autoscale";
-			this.autoscaleBox.CheckedChanged += new System.EventHandler(this.autoscaleBox_CheckedChanged);
-			// 
-			// showGrid
-			// 
-			this.showGrid.Checked = true;
-			this.showGrid.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.showGrid.Dock = System.Windows.Forms.DockStyle.Top;
-			this.showGrid.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.showGrid.Location = new System.Drawing.Point(0, 0);
-			this.showGrid.Name = "showGrid";
-			this.showGrid.Size = new System.Drawing.Size(72, 16);
-			this.showGrid.TabIndex = 11;
-			this.showGrid.Text = "Show Grid";
-			// 
-			// accuracyGroup
-			// 
-			this.accuracyGroup.Controls.Add(this.everyHour);
-			this.accuracyGroup.Controls.Add(this.everyDay);
-			this.accuracyGroup.Controls.Add(this.everyWeek);
-			this.accuracyGroup.Dock = System.Windows.Forms.DockStyle.Right;
-			this.accuracyGroup.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.accuracyGroup.Location = new System.Drawing.Point(728, 0);
-			this.accuracyGroup.Name = "accuracyGroup";
-			this.accuracyGroup.Size = new System.Drawing.Size(288, 40);
-			this.accuracyGroup.TabIndex = 12;
-			this.accuracyGroup.TabStop = false;
-			this.accuracyGroup.Text = " Accuracy ";
-			// 
-			// everyHour
-			// 
-			this.everyHour.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.everyHour.Location = new System.Drawing.Point(8, 16);
-			this.everyHour.Name = "everyHour";
-			this.everyHour.Size = new System.Drawing.Size(80, 16);
-			this.everyHour.TabIndex = 0;
-			this.everyHour.Text = "Every Hour";
-			this.everyHour.Click += new System.EventHandler(this.everyHour_Click);
-			// 
-			// everyDay
-			// 
-			this.everyDay.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.everyDay.Location = new System.Drawing.Point(96, 16);
-			this.everyDay.Name = "everyDay";
-			this.everyDay.Size = new System.Drawing.Size(80, 16);
-			this.everyDay.TabIndex = 0;
-			this.everyDay.Text = "Every Day";
-			this.everyDay.Click += new System.EventHandler(this.everyDay_Click);
-			// 
-			// everyWeek
-			// 
-			this.everyWeek.FlatStyle = System.Windows.Forms.FlatStyle.System;
-			this.everyWeek.Location = new System.Drawing.Point(184, 16);
-			this.everyWeek.Name = "everyWeek";
-			this.everyWeek.Size = new System.Drawing.Size(80, 16);
-			this.everyWeek.TabIndex = 0;
-			this.everyWeek.Text = "Every Week";
-			this.everyWeek.Click += new System.EventHandler(this.everyWeek_Click);
-			// 
-			// diagramPanel
-			// 
-			this.diagramPanel.Controls.Add(this.zedGraphControl1);
-			this.diagramPanel.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.diagramPanel.Location = new System.Drawing.Point(0, 0);
-			this.diagramPanel.Name = "diagramPanel";
-			this.diagramPanel.Size = new System.Drawing.Size(1016, 550);
-			this.diagramPanel.TabIndex = 2;
-			// 
-			// zedGraphControl1
-			// 
-			this.zedGraphControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.zedGraphControl1.IsEnableHPan = true;
-			this.zedGraphControl1.IsEnableVPan = true;
-			this.zedGraphControl1.IsEnableZoom = true;
-			this.zedGraphControl1.IsScrollY2 = false;
-			this.zedGraphControl1.IsShowContextMenu = true;
-			this.zedGraphControl1.IsShowHScrollBar = false;
-			this.zedGraphControl1.IsShowPointValues = false;
-			this.zedGraphControl1.IsShowVScrollBar = false;
-			this.zedGraphControl1.IsZoomOnMouseCenter = false;
-			this.zedGraphControl1.Location = new System.Drawing.Point(0, 0);
-			this.zedGraphControl1.Name = "zedGraphControl1";
-			this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
-			this.zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
-			this.zedGraphControl1.PanModifierKeys2 = System.Windows.Forms.Keys.None;
-			this.zedGraphControl1.PointDateFormat = "g";
-			this.zedGraphControl1.PointValueFormat = "G";
-			this.zedGraphControl1.ScrollMaxX = 0;
-			this.zedGraphControl1.ScrollMaxY = 0;
-			this.zedGraphControl1.ScrollMaxY2 = 0;
-			this.zedGraphControl1.ScrollMinX = 0;
-			this.zedGraphControl1.ScrollMinY = 0;
-			this.zedGraphControl1.ScrollMinY2 = 0;
-			this.zedGraphControl1.Size = new System.Drawing.Size(1016, 550);
-			this.zedGraphControl1.TabIndex = 1;
-			this.zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
-			this.zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
-			this.zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
-			this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
-			this.zedGraphControl1.ZoomStepFraction = 0.1;
-			// 
-			// zedGraphControl1
-			// 
-			this.zedGraphControl1.IsEnableHPan = true;
-			this.zedGraphControl1.IsEnableVPan = true;
-			this.zedGraphControl1.IsEnableZoom = true;
-			this.zedGraphControl1.IsScrollY2 = false;
-			this.zedGraphControl1.IsShowContextMenu = true;
-			this.zedGraphControl1.IsShowHScrollBar = false;
-			this.zedGraphControl1.IsShowPointValues = false;
-			this.zedGraphControl1.IsShowVScrollBar = false;
-			this.zedGraphControl1.IsZoomOnMouseCenter = false;
-			this.zedGraphControl1.Location = new System.Drawing.Point(8, 8);
-			this.zedGraphControl1.Name = "zedGraphControl1";
-			this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
-			this.zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
-			this.zedGraphControl1.PanModifierKeys2 = System.Windows.Forms.Keys.None;
-			this.zedGraphControl1.PointDateFormat = "g";
-			this.zedGraphControl1.PointValueFormat = "G";
-			this.zedGraphControl1.ScrollMaxX = 0;
-			this.zedGraphControl1.ScrollMaxY = 0;
-			this.zedGraphControl1.ScrollMaxY2 = 0;
-			this.zedGraphControl1.ScrollMinX = 0;
-			this.zedGraphControl1.ScrollMinY = 0;
-			this.zedGraphControl1.ScrollMinY2 = 0;
-			this.zedGraphControl1.Size = new System.Drawing.Size(904, 432);
-			this.zedGraphControl1.TabIndex = 0;
-			this.zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
-			this.zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
-			this.zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
-			this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
-			this.zedGraphControl1.ZoomStepFraction = 0.1;
-			// 
-			// DiagramDialogRandom
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(1016, 614);
-			this.Controls.Add(this.diagramPanel);
-			this.Controls.Add(this.optionsPanel);
-			this.Name = "DiagramDialogRandom";
-			this.Closing += new System.ComponentModel.CancelEventHandler(this.DiagramDialog_Closing);
-			this.optionsPanel.ResumeLayout(false);
-			this.buttomPanel.ResumeLayout(false);
-			this.topPanel.ResumeLayout(false);
-			this.sliderPanel.ResumeLayout(false);
-			((System.ComponentModel.ISupportInitialize)(this.barWidthScaleSlider)).EndInit();
-			this.checkBoxPanel.ResumeLayout(false);
-			this.accuracyGroup.ResumeLayout(false);
-			this.diagramPanel.ResumeLayout(false);
-			this.ResumeLayout(false);
-
-		} 
- 
-		public Form1() //Device d_) 
-		{ 
-			_backImage = Bitmap.FromFile("background.gif"); 
- 
-			m_FinishShowDiagram = new FinishShowDiagramThread(this.finishShowDiagramThread); 
- 
-			InitializeComponent(); 
- 
- 
-			this.initGraph(-1);//-1 because we use the default ClusterScaleWidth here 
-			this.Show(); 
- 
-			_showGraphThread = new Thread(new ThreadStart(this.showDiagram)); 
-			_showGraphThread.Start(); 
-			this.WindowState = FormWindowState.Maximized; 
-		} 
- 
- 
-		private void initGraph(double clusterScaleWidth_) 
-		{ 
-			_myPane = new GraphPane(); 
-			if (clusterScaleWidth_ > 0) 
-			{ 
-				_myPane.ClusterScaleWidth = clusterScaleWidth_; 
-			} 
-			_myPane.PaneRect = new RectangleF(0,0,zedGraphControl1.Size.Width,zedGraphControl1.Size.Height); 
-			_myPane.YAxis.Title = "#Errors"; 
- 
-			// Fill the pane background with the image 
-			try 
-			{ 
-				TextureBrush texBrush = new TextureBrush(_backImage); 
-				_myPane.PaneFill = new Fill( texBrush ); 
-			} 
-			catch(Exception e_) 
-			{ 
-				Console.WriteLine("INFOCENTER: Useless exception was caught."); 
-				//sometimes we get here an Exception that the _backImage is already in use, 
-				//but it simply works, when catching it... 
-			} 
- 
-			_myPane.AxisFill.IsVisible = false;//turn off the axis background fill 
-			_myPane.XAxis.IsShowGrid = showGrid.Checked;//defined by the checkBox "showGrid" 
-			_myPane.YAxis.IsShowGrid = showGrid.Checked; 
-			_myPane.Legend.IsVisible = false;//hide the legend 
-			_myPane.XAxis.Type = AxisType.Date; 
-			zedGraphControl1.GraphPane = _myPane; 
-		} 
- 
-		private void showDiagram() 
-		{ 
-			this.clearGraphData(); 
-			this.updateGraph(); 
- 
-			int count = 0;//counts the while loop cycles for scaling the bar width 
-			long errors = 0; 
-			Random r = new Random(); 
-			while (true) 
-			{ 
-				lock (r) { errors = r.Next(0,99999); }  
-				_pointPairList.Add(new XDate( 
-					new DateTime(count*(long)Math.Round(Math.Pow(10.0,7))*3600)),errors); 
-				this.initGraph(_myPane.ClusterScaleWidth); 
-				zedGraphControl1.GraphPane = _myPane; 
-				BarItem myCurve = _myPane.AddBar( "ErrorOccurences", _pointPairList, Color.SteelBlue); 
-				myCurve.Bar.Fill = _fill; 
-				this.updateGraph(); 
-				if (count >= 10000) break; 
- 
-				count++; 
- 
-				_myPane.ClusterScaleWidth = 10.0*(2.1 -_accuracy) / count;//scale the bar width 
-			} 
-			updateGraph(); 
-			this.Invoke(this.m_FinishShowDiagram); 
-		}//showDiagram 
- 
-		private void finishShowDiagramThread() 
-		{ 
-			MessageBox.Show("Drawing was finished successfully!"); 
-		} 
- 
- 
-		private void showGrid_CheckedChanged(object sender, System.EventArgs e) 
-		{ 
-			_myPane.XAxis.IsShowGrid = showGrid.Checked; 
-			_myPane.YAxis.IsShowGrid = showGrid.Checked; 
-			updateGraph(); 
-		} 
- 
-		private void barWidthScaleSlider_Scroll(object sender, System.EventArgs e) 
-		{ 
-			double val = (double)barWidthScaleSlider.Value/100.0; 
-			sliderLabel.Text = "" + Math.Round(val,2); 
-			_myPane.ClusterScaleWidth = val; 
-			updateGraph(); 
-		} 
- 
- 
-		private void clearGraphData() 
-		{ 
-			_pointPairList = new PointPairList(); 
-			_myPane.GraphItemList.Clear(); 
-			_myPane.CurveList.Clear(); 
-		} 
- 
- 
-		private void updateGraph()  
-		{ 
-			if (!this.IsDisposed) 
-			{ 
-				_myPane.AxisChange(this.CreateGraphics()); 
-				zedGraphControl1.Refresh(); 
-			}//if 
-		} 
- 
- 
-		private void DiagramDialog_Closing(object sender, System.ComponentModel.CancelEventArgs e) 
-		{ 
-			if ((_showGraphThread != null) && (_showGraphThread.IsAlive)) 
-			{ 
-				_showGraphThread.Abort(); 
-			} 
-		} 
- 
- 
-		private void everyHour_Click(object sender, System.EventArgs e) 
-		{ 
-			try 
-			{ 
-				_accuracy = Form1.Hour; 
-				this.accuracyGroup.Enabled = false; 
-				_showGraphThread = new Thread(new ThreadStart(this.showDiagram)); 
-				_showGraphThread.Start(); 
-			} 
-			catch(Exception e_) 
-			{ 
-				MessageBox.Show(e_.Message+"\n"+e_.StackTrace); 
-			} 
-		} 
- 
-		private void everyDay_Click(object sender, System.EventArgs e) 
-		{ 
-			_accuracy = Form1.Day; 
-			this.accuracyGroup.Enabled = false; 
-			_showGraphThread = new Thread(new ThreadStart(this.showDiagram)); 
-			_showGraphThread.Start(); 
-		} 
- 
-		private void everyWeek_Click(object sender, System.EventArgs e) 
-		{ 
-			_accuracy = Form1.Week; 
-			this.accuracyGroup.Enabled = false; 
-			_showGraphThread = new Thread(new ThreadStart(this.showDiagram)); 
-			_showGraphThread.Start(); 
-		} 
- 
-		private void autoscaleBox_CheckedChanged(object sender, System.EventArgs e) 
-		{ 
-			if (_showGraphThread.IsAlive) 
-			{ 
-				barWidthScaleSlider.Enabled = !autoscaleBox.Checked; 
-			} 
-			else 
-			{ 
-				barWidthScaleSlider.Enabled = true; 
-				//because after drawing the user should be able to alter the scaling 
-			} 
-		} 
- 
- 
-	} 
-} 
-
-#endif

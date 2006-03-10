@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.16 $ $Date: 2006-03-09 06:13:13 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2006-03-10 07:26:50 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -454,7 +454,23 @@ namespace ZedGraph
 			// Reset the clipping
 			g.ResetClip();
 		}
-		
+
+		/// <summary>
+		/// Automatically set all of the <see cref="GraphPane"/> <see cref="PaneBase.PaneRect"/>'s in
+		/// the list to a default layout configuration.
+		/// </summary>
+		/// <remarks>This method uses a default <see cref="PaneLayout"/> enumeration of
+		/// <see cref="PaneLayout.SquareColPreferred" />.  Other pane layout options are available
+		/// including an explicit (row,column) overload and a more general overload.</remarks>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		public void AutoPaneLayout( Graphics g )
+		{
+			AutoPaneLayout( g, PaneLayout.SquareColPreferred );
+		}
+
 		/// <summary>
 		/// Automatically set all of the <see cref="GraphPane"/> <see cref="PaneBase.PaneRect"/>'s in
 		/// the list to a reasonable configuration.
@@ -612,7 +628,7 @@ namespace ZedGraph
 			float sumProp = 0.0f;
 			for ( int i=0; i<countList.Length; i++ )
 			{
-				this.prop[i] = ( proportion == null || proportion.Length <= i || this.prop[i] < 1e-10 ) ?
+				this.prop[i] = ( proportion == null || proportion.Length <= i || proportion[i] < 1e-10 ) ?
 											1.0f : proportion[i];
 				sumProp += this.prop[i];
 			}

@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.18 $ $Date: 2006-03-05 07:28:16 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2006-03-10 07:26:50 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -986,6 +986,9 @@ namespace ZedGraph
 			//tempPane.AxisChange( bitmapGraphics );
 			tempPane.Draw( bitmapGraphics );
 			//this.Draw( bitmapGraphics );
+
+			this.ReSize( bitmapGraphics, this.PaneRect );
+
 			bitmapGraphics.Dispose();
 
 			return bitmap;
