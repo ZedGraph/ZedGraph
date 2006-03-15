@@ -1,5 +1,8 @@
 == ZedGraph Class Library Revision History ==
 
+;14-Mar-2006 (by Champion)
+: [FIX] use IsAnyOrdinal in Axis.GetClusterWidth() for ClusterScaleWidth value
+
 ;13-Mar-2006 (Release Version 4.3.2) (by Champion)
 : [UPD] Upload release version
 

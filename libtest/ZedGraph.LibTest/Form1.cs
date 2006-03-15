@@ -693,7 +693,7 @@ namespace ZedGraph.LibTest
 			g.Dispose();
 #endif
 	
-#if true	// MasterPane
+#if false	// MasterPane
 			master = new MasterPane( "ZedGraph MasterPane Example", new Rectangle( 10, 10, 10, 10 ) );
 
 			master.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
@@ -1368,26 +1368,142 @@ namespace ZedGraph.LibTest
 				myPane.AxisChange( this.CreateGraphics() );
 #endif
 
-#if false	// Basic bar test - Linear
+#if false			// spline test
 
-			myPane = new GraphPane( new RectangleF( 0, 0, 10, 10 ), "Title", "XAxis", "YAxis" );
+			myPane = new GraphPane();
+			PointPairList ppl = new PointPairList();
 
-			PointPairList list1 = new PointPairList();
-			Random rand = new Random();
+			ppl.Add( 0, 713 );
+			ppl.Add( 7360, 333 );
+			ppl.Add( 10333.333, 45.333336 );
+			ppl.Add( 11666.667, 5 );
+			ppl.Add( 12483.333, 45.333336 );
+			ppl.Add( 13600, 110 );
+			ppl.Add( 15800, 184.66667 );
+			ppl.Add( 18644.998, 186.33368 );
+			ppl.Add( 18770.002, 186.66664 );
+			ppl.Add( 18896.666, 187.08336 );
+			ppl.Add( 18993.334, 187.50002 );
+			ppl.Add( 19098.332, 188.08334 );
+			ppl.Add( 19285.002, 189.41634 );
+			ppl.Add( 19443.332, 190.83334 );
+			ppl.Add( 19633.334, 193.16634 );
+			ppl.Add( 19823.336, 196.49983 );
+			ppl.Add( 19940.002, 199.16669 );
+			ppl.Add( 20143.303, 204.66566 );
+			ppl.Add( 20350, 210.91667 );
+			ppl.Add( 36000, 713 );
 
-			for ( int i = 0; i < 10; i++ )
+			LineItem curve = myPane.AddCurve( "test", ppl, Color.Green, SymbolType.Default );
+			curve.Line.IsSmooth = true;
+			curve.Line.SmoothTension = 0.4F;
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+#endif
+
+#if false	// hilowbar test
+
+			myPane = new GraphPane();
+
+			myPane.Title = "Bar Type Sample";
+			myPane.XAxis.Title = "Text Axis";
+			myPane.YAxis.Title = "Some Data Value";
+			myPane.XAxis.Type = AxisType.Text;
+			myPane.ClusterScaleWidth = 1.0;
+			//myPane.BarType = BarType.Overlay;
+
+			myPane.FontSpec.Size = 18;
+			myPane.YAxis.TitleFontSpec.Size = 16;
+			myPane.XAxis.TitleFontSpec.Size = 16;
+
+			string[] labels = { "North", "South", "East", "West", "Up", "Down" };
+			myPane.XAxis.TextLabels = labels;
+			//Random rand = new Random();
+
+			double[] xArray = { 3, 5, 9, 11, 16, 18 };
+			double[] xArray2 = { 10, 12, 13, 15, 17, 19 };
+			double[] yArray = { 10, 45, 78, 34, 15, 26 };
+			double[] yArray2 = { 54, 34, 64, 24, 44, 74 };
+			PointPairList list1 = new PointPairList( xArray, yArray );
+			PointPairList list2 = new PointPairList( xArray2, yArray2 );
+/*
+			for ( int i = 0; i < 6; i++ )
 			{
-				double x = (double)i;
+				double x = xArray[i];
 				double y1 = rand.NextDouble() * 1.0 + .00001;
-				double ylow = 1e-1;
+				double y2 = rand.NextDouble() * 1.0 + .00001;
 
-				list1.Add( x, y1, ylow );
+				list1.Add( x, y1 );
+				list2.Add( x, y2 );
 			}
-
-			BarItem bar1 = myPane.AddBar( "First", list1, Color.Blue );
+*/
+			HiLowBarItem bar1 = myPane.AddHiLowBar( "First", list1, Color.Blue );
+			HiLowBarItem bar2 = myPane.AddHiLowBar( "Second", list2, Color.Red );
 			//myPane.YAxis.Type = AxisType.Log;
 			//myPane.BarType = BarType.ClusterHiLow;
-			myPane.XAxis.Scale.ScaleFormatEvent += new Scale.ScaleFormatHandler( CustomFormatter );
+			//myPane.XAxis.Scale.ScaleFormatEvent += new Scale.ScaleFormatHandler( CustomFormatter );
+
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+			myPane.AxisChange( this.CreateGraphics() );
+
+#endif
+
+#if true	// Basic bar test - Linear
+
+			myPane = new GraphPane();
+
+			myPane.Title = "BarItem Sample (BarType.ClusterHiLow)";
+			myPane.XAxis.Title = "Text Axis";
+			myPane.YAxis.Title = "Some Data Value";
+			myPane.XAxis.Type = AxisType.Text;
+			myPane.ClusterScaleWidth = 2.0;
+			myPane.BarType = BarType.ClusterHiLow;
+
+			myPane.FontSpec.Size = 18;
+			myPane.YAxis.TitleFontSpec.Size = 16;
+			myPane.XAxis.TitleFontSpec.Size = 16;
+
+			string[] labels = { "North", "South", "East", "West", "Up", "Down" };
+			myPane.XAxis.TextLabels = labels;
+			//Random rand = new Random();
+
+			//double[] xArray = { 3, 5, 9, 11, 16, 18 };
+			double[] xArray = { 1, 1.8, 3.2, 4, 5, 6 };
+			double[] xArray2 = { 10, 12, 13, 15, 17, 19 };
+			double[] yArray = { 10, 75, 25, 16, 15, 26 };
+			double[] yArray2 = { 54, 62, 44, 24, 44, 74 };
+			double[] ylArray2 = { 34, 42, 15, 0, 5, 20 };
+			double[] yArray3 = { 54, 62, 44, 24, 34, 74 };
+			double[] ylArray3 = { 44, 42, 14, 14, 14, 34 };
+			PointPairList list1 = new PointPairList( xArray, yArray, ylArray2 );
+			PointPairList list2 = new PointPairList( xArray, yArray2, ylArray2 );
+			PointPairList list3 = new PointPairList( xArray, yArray3, ylArray3 );
+			/*
+			for ( int i = 0; i < 6; i++ )
+			{
+				double x = xArray[i];
+				double y1 = rand.NextDouble() * 1.0 + .00001;
+				double y2 = rand.NextDouble() * 1.0 + .00001;
+
+				list1.Add( x, y1 );
+				list2.Add( x, y2 );
+			}
+*/
+			//ErrorBarItem bar1 = myPane.AddErrorBar( "First", list3, Color.Blue );
+			//bar1.ErrorBar.Symbol.Size = 12;
+			//bar1.ErrorBar.PenWidth = 2;
+			//HiLowBarItem bar1 = myPane.AddHiLowBar( "First", list3, Color.Blue );
+			//bar1.Bar.Size = 20;
+			BarItem bar1 = myPane.AddBar( "First", list1, Color.Blue );
+			BarItem bar2 = myPane.AddBar( "Second", list2, Color.Red );
+			//myPane.YAxis.Type = AxisType.Log;
+			//myPane.BarType = BarType.ClusterHiLow;
+			//myPane.XAxis.Scale.ScaleFormatEvent += new Scale.ScaleFormatHandler( CustomFormatter );
 
 			trackBar1.Minimum = 0;
 			trackBar1.Maximum = 100;
@@ -2331,7 +2447,7 @@ namespace ZedGraph.LibTest
 			PaneBase tmpPane = myPane;
 			if ( master != null )
 				tmpPane = master;
-			tmpPane.ScaledImage( 240, 160, 72 ).Save( "zedgraph.png", ImageFormat.Png );
+			tmpPane.ScaledImage( 400, 300, 72 ).Save( myPane.Title + ".png", ImageFormat.Png );
 
 			//image.Save( @"c:\zedgraph.png", ImageFormat.Png );
 			//master.Image.Save( @"c:\zedgraph.png", ImageFormat.Png );

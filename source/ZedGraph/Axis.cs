@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.57 $ $Date: 2006-03-05 07:28:16 $ </version>
+	/// <version> $Revision: 3.58 $ $Date: 2006-03-15 08:06:50 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -3286,7 +3286,7 @@ namespace ZedGraph
 		{
 			double basisVal = this.Min;
 			return Math.Abs( this.scale.Transform( basisVal +
-					((this.IsOrdinal || this.IsText) ? 1.0 : pane.ClusterScaleWidth ) ) -
+					( this.IsAnyOrdinal ? 1.0 : pane.ClusterScaleWidth ) ) -
 					this.scale.Transform( basisVal ) );
 		}
 	#endregion
