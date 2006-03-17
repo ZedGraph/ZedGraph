@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.58 $ $Date: 2006-03-17 06:21:14 $ </version>
+	/// <version> $Revision: 3.59 $ $Date: 2006-03-17 08:14:40 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1571,6 +1571,47 @@ namespace ZedGraph
 			x = this.XAxis.Scale.ReverseTransform( ptF.X );
 			y = this.YAxis.Scale.ReverseTransform( ptF.Y );
 			y2 = this.Y2Axis.Scale.ReverseTransform( ptF.Y );
+		}
+
+		/// <summary>
+		/// Return the user scale values that correspond to the specified screen
+		/// coordinate position (pixels).
+		/// </summary>
+		/// <remarks>This method implicitly assumes that <see cref="AxisRect"/>
+		/// has already been calculated via <see cref="AxisChange"/> or
+		/// <see cref="Draw"/> methods, or the <see cref="AxisRect"/> is
+		/// set manually (see <see cref="IsAxisRectAuto"/>).</remarks>
+		/// <param name="ptF">The X,Y pair that defines the screen coordinate
+		/// point of interest</param>
+		/// <param name="isY2Axis">true to return data that corresponds to a
+		/// <see cref="Y2Axis" />, false for a <see cref="YAxis" />.</param>
+		/// <param name="yAxisIndex">The ordinal index of the Y or Y2 axis from which
+		/// to return data (see <seealso cref="YAxisList"/>, <seealso cref="Y2AxisList"/>)
+		/// </param>
+		/// <param name="x">The resultant value in user coordinates from the
+		/// <see cref="XAxis"/></param>
+		/// <param name="y">The resultant value in user coordinates from the
+		/// primary <see cref="YAxis"/></param>
+		public void ReverseTransform( PointF ptF, bool isY2Axis, int yAxisIndex,
+					out double x, out double y )
+		{
+			// Setup the scaling data based on the axis rect
+			this.xAxis.Scale.SetupScaleData( this, this.xAxis );
+			x = this.XAxis.Scale.ReverseTransform( ptF.X );
+
+			Axis yAxis = null;
+			if ( isY2Axis && Y2AxisList.Count > yAxisIndex )
+				yAxis = Y2AxisList[yAxisIndex];
+			else if ( !isY2Axis && YAxisList.Count > yAxisIndex )
+				yAxis = YAxisList[yAxisIndex];
+
+			if ( yAxis != null )
+			{
+				yAxis.Scale.SetupScaleData( this, yAxis );
+				y = yAxis.Scale.ReverseTransform( ptF.Y );
+			}
+			else
+				y = PointPair.Missing;
 		}
 
 		/// <summary>

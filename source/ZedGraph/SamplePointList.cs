@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ZedGraph
 {
+	/// <summary>
+	/// enumeration used to indicate which type of data will be plotted.
+	/// </summary>
 	public enum SampleType { Time, Position, VelocityInst, TimeDiff, VelocityAvg };
 
 	public class Sample

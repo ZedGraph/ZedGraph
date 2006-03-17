@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	/// 
 	/// <author>Jerry Vos and John Champion</author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-03-17 06:21:14 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-03-17 08:14:40 $ </version>
 	[Serializable]
 	public class RadarPointList : CollectionPlus, IPointList, IPointListEdit
 	{
@@ -81,6 +81,9 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// gets the number of points available in the list
+		/// </summary>
 		public new int Count
 		{
 			get { return List.Count + 1; }

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.59 $ $Date: 2006-03-17 06:21:14 $ </version>
+	/// <version> $Revision: 3.60 $ $Date: 2006-03-17 08:14:40 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -2227,7 +2227,7 @@ namespace ZedGraph
 		/// value or at the normal position (outside the <see cref="GraphPane.AxisRect" />).
 		/// </summary>
 		/// <remarks>
-		/// This value only applies if <see cref="IsCrossAuto" /> is false.
+		/// This value only applies if <see cref="CrossAuto" /> is false.
 		/// </remarks>
 		public bool IsTitleAtCross
 		{
@@ -2539,8 +2539,8 @@ namespace ZedGraph
 		/// the Y axes) required to contain the axis.  If <see cref="Cross" /> is zero, then
 		/// this space will be the space required between the <see cref="GraphPane.AxisRect" /> and
 		/// the <see cref="PaneBase.PaneRect" />.  This method sets the internal values of
-		/// <see cref="tmpMinSpace" /> and <see cref="tmpSpace" /> for use by the
-		/// <see cref="GraphPane.CalcAxisRect(Graphics)" /> method.
+		/// <see cref="tmpSpace" /> for use by the <see cref="GraphPane.CalcAxisRect(Graphics)" />
+		/// method.
 		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -2556,6 +2556,9 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
+		/// <param name="fixedSpace">The amount of space (pixels) at the edge of the AxisRect
+		/// that is always required for this axis, even if the axis is shifted by the
+		/// <see cref="Cross" /> value.</param>
 		/// <returns>Returns the space, in pixels, required for this axis (between the
 		/// paneRect and axisRect)</returns>
 		public float CalcSpace( Graphics g, GraphPane pane, float scaleFactor, out float fixedSpace )
@@ -3232,7 +3235,7 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <param name="shift">The number of pixels to shift this axis, based on the
+		/// <param name="shiftPos">The number of pixels to shift this axis, based on the
 		/// value of <see cref="Cross"/>.  A positive value is into the axisRect relative to
 		/// the default axis position.</param>
 		/// <param name="scaleFactor">
@@ -3265,9 +3268,10 @@ namespace ZedGraph
 				// calculated, and the cross value is determined using a transform of scale values (which
 				// rely on AxisRect).
 
-				float gap = this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
-				float y = scaledTic * ( hasTic ? 1.0f : 0.0f ) +
-							 ( isScaleVisible ? this.scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height + scaledTic * 0.5f : 0 );
+				float gap = scaledTic * ( hasTic ? 1.0f : 0.0f ) +
+							this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
+				float y = ( isScaleVisible ? this.scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height
+							+ scaledTic * 0.5f : 0 );
 
 				if ( this.isScaleLabelsInside )
 					y = shiftPos - y - gap;

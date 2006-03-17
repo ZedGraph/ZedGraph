@@ -390,12 +390,17 @@ namespace ZedGraph.ControlTest
 				myPane.GraphItemList.Add( arrow );
 			}
 
+			myPane.XAxis.IsAllTics = true;
+			myPane.XAxis.IsTitleAtCross = false;
 			myPane.XAxis.Cross = 0;
 			myPane.XAxis.IsSkipFirstLabel = true;
 			myPane.XAxis.IsSkipLastLabel = true;
 			myPane.XAxis.IsSkipCrossLabel = true;
+
+			myPane.YAxis.IsAllTics = true;
+			myPane.YAxis.IsTitleAtCross = false;
 			myPane.YAxis.Cross = 0;
-			myPane.YAxis.IsSkipCrossLabel = true;
+			myPane.YAxis.IsSkipFirstLabel = true;
 			myPane.YAxis.IsSkipLastLabel = true;
 			myPane.YAxis.IsSkipCrossLabel = true;
 #endif

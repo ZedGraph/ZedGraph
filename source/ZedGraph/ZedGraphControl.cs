@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.58 $ $Date: 2006-03-17 06:21:14 $ </version>
+	/// <version> $Revision: 3.59 $ $Date: 2006-03-17 08:14:40 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -390,15 +390,24 @@ namespace ZedGraph
 		public event ZedMouseEventHandler MouseDownEvent;
 
 		/// <summary>
-		/// Hide all the standard control mouse events so that the specific MouseDownEvent,
-		/// MouseUpEvent, and MouseMoveEvent are the only options.  This is so that the
-		/// user must return true/false in order to indicate whether or not we should
-		/// respond to the event.
+		/// Hide the standard control MouseDown event so that the ZedGraphControl.MouseDownEvent
+		/// can be used.  This is so that the user must return true/false in order to indicate
+		/// whether or not we should respond to the event.
 		/// </summary>
 		[Bindable( false ), Browsable( false )]
 		public new event MouseEventHandler MouseDown;
+		/// <summary>
+		/// Hide the standard control MouseUp event so that the ZedGraphControl.MouseUpEvent
+		/// can be used.  This is so that the user must return true/false in order to indicate
+		/// whether or not we should respond to the event.
+		/// </summary>
 		[Bindable( false ), Browsable( false )]
 		public new event MouseEventHandler MouseUp;
+		/// <summary>
+		/// Hide the standard control MouseMove event so that the ZedGraphControl.MouseMoveEvent
+		/// can be used.  This is so that the user must return true/false in order to indicate
+		/// whether or not we should respond to the event.
+		/// </summary>
 		[Bindable( false ), Browsable( false )]
 		private new event MouseEventHandler MouseMove;
 		/*
