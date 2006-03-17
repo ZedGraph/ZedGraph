@@ -172,7 +172,7 @@ namespace ZedGraph.LibTest
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
-#if false	// Multi Y Axis demo
+#if true	// Multi Y Axis demo
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Demonstration of Multi Y Graph",
 				"Time, s",
@@ -262,11 +262,15 @@ namespace ZedGraph.LibTest
 			myPane.Y2Axis.Min = 1.5;
 			myPane.Y2Axis.Max = 3;
 
-			myPane.YAxis.IsVisible = false;
-			myPane.YAxis.IsTic = false;
+			myPane.YAxis.IsVisible = true;
+			//myPane.YAxis.IsTic = false;
 			myPane.YAxis.IsMinorTic = false;
 			myPane.YAxis.IsCrossTic = false;
 			myPane.YAxis.IsMinorCrossTic = false;
+			myPane.YAxis.IsInsideTic = false;
+			myPane.YAxis.IsMinorInsideTic = false;
+			myPane.YAxis.IsOppositeTic = false;
+			myPane.YAxis.IsMinorOppositeTic = false;
 
 			// Create a second Y Axis, green
 			YAxis yAxis3b = new YAxis( "Test Axis" );
@@ -278,7 +282,29 @@ namespace ZedGraph.LibTest
 			yAxis3b.IsMinorTic = false;
 			yAxis3b.IsOppositeTic = false;
 			yAxis3b.IsMinorOppositeTic = false;
-			yAxis3b.IsScaleLabelsInside = true;
+			//yAxis3b.IsScaleLabelsInside = true;
+			yAxis3b.IsTitleAtCross = false;
+			yAxis3b.IsInsideTic = false;
+			yAxis3b.IsMinorInsideTic = false;
+			yAxis3b.IsOppositeTic = false;
+			yAxis3b.IsMinorOppositeTic = false;
+
+			// Create a second Y Axis, green
+			YAxis yAxis3c = new YAxis( "Test 2 Axis" );
+			myPane.YAxisList.Add( yAxis3c );
+			yAxis3c.ScaleFontSpec.FontColor = Color.Brown;
+			yAxis3c.TitleFontSpec.FontColor = Color.Brown;
+			yAxis3c.Color = Color.Brown;
+			yAxis3c.IsTic = false;
+			yAxis3c.IsMinorTic = false;
+			yAxis3c.IsOppositeTic = false;
+			yAxis3c.IsMinorOppositeTic = false;
+			//yAxis3c.IsScaleLabelsInside = true;
+			yAxis3c.IsTitleAtCross = false;
+			yAxis3c.IsInsideTic = false;
+			yAxis3c.IsMinorInsideTic = false;
+			yAxis3c.IsOppositeTic = false;
+			yAxis3c.IsMinorOppositeTic = false;
 
 			// Create a second Y Axis, green
 			YAxis yAxis3 = new YAxis( "Distance, m" );
@@ -293,7 +319,7 @@ namespace ZedGraph.LibTest
 			yAxis3.IsMinorOppositeTic = false;
 			// Align the Y2 axis labels so they are flush to the axis
 			yAxis3.ScaleAlign = AlignP.Inside;
-			yAxis3.AxisGap = 0;
+			//yAxis3.AxisGap = 0;
 
 			Y2Axis yAxis4 = new Y2Axis( "Energy" );
 			yAxis4.IsVisible = true;
@@ -1453,7 +1479,7 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if true	// Basic bar test - Linear
+#if false	// Basic bar test - Linear
 
 			myPane = new GraphPane();
 
@@ -1504,6 +1530,8 @@ namespace ZedGraph.LibTest
 			//myPane.YAxis.Type = AxisType.Log;
 			//myPane.BarType = BarType.ClusterHiLow;
 			//myPane.XAxis.Scale.ScaleFormatEvent += new Scale.ScaleFormatHandler( CustomFormatter );
+
+			myPane.YAxis.IsTitleAtCross = false;
 
 			trackBar1.Minimum = 0;
 			trackBar1.Maximum = 100;
@@ -1944,7 +1972,7 @@ namespace ZedGraph.LibTest
 			if ( master != null )
 				_crossAxis = master[0].Y2Axis;
 			else
-				_crossAxis = myPane.Y2AxisList[1];
+				_crossAxis = myPane.YAxisList[1];
 
 			trackBar1.Minimum = 0;
 			trackBar1.Maximum = 100;

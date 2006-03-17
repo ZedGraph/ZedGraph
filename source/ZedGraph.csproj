@@ -340,7 +340,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ZedGraph\RadarPointList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ZedGraph\SampleMultiPointList.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ZedGraph\SamplePointList.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

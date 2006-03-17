@@ -40,9 +40,23 @@ namespace ZedGraph
 	/// <seealso cref="FilteredPointList" />
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.3 $ $Date: 2006-03-05 07:28:16 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2006-03-17 06:21:14 $ </version>
 	public interface IPointListEdit : IPointList
 	{
+		/// <summary>
+		/// Indexer to access a data point by its ordinal position in the collection.
+		/// </summary>
+		/// <remarks>
+		/// This is the standard interface that ZedGraph uses to access the data.  Although
+		/// you must pass a <see cref="PointPair" /> here, your internal data storage format
+		/// can be anything.
+		/// </remarks>
+		/// <param name="index">The ordinal position (zero-based) of the
+		/// data point to be accessed.</param>
+		/// <value>A <see cref="PointPair"/> object instance.  Note that <see cref="PointPair" />
+		/// is a struct, so this a value object.</value>
+		new PointPair this[int index] { get; set; }
+
 		/// <summary>
 		/// Appends a point to the end of the list.  The data are passed in as a <see cref="PointPair" />
 		/// object.

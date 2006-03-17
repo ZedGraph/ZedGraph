@@ -119,7 +119,10 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomStepFraction = 0.1;
+			this.zedGraphControl1.MouseDownEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseDownEvent );
 			this.zedGraphControl1.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler( this.zedGraphControl1_ContextMenuBuilder );
+			this.zedGraphControl1.MouseUpEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseUpEvent );
+			this.zedGraphControl1.MouseMoveEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseMoveEvent );
 			// 
 			// Form1
 			// 
@@ -316,7 +319,89 @@ namespace ZedGraph.ControlTest
 
 #endif
 
-#if true			// spline test
+#if false
+			myPane = zedGraphControl1.GraphPane;
+			myPane.Title = "Demonstration of SamplePointList";
+			myPane.XAxis.Title = "Time since start, days";
+			myPane.YAxis.Title = "Postion (meters) or\nAverage Velocity (meters/day)";
+			myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 230, 230, 255 ), 45.0f );
+
+			SamplePointList spl = new SamplePointList();
+
+			// Calculate sample data points
+			// starting position & velocity
+			double d0 = 15.0;		// m
+			double v0 = 5.2;		// m/d
+			double acc = 11.5;	// m/d/d
+			for ( int i = 0; i < 10; i++ )
+			{
+				Sample sample = new Sample();
+
+				// Samples are one day apart
+				sample.Time = new DateTime( 2006, 3, i + 1 );
+				// velocity in meters per day
+				sample.Velocity = v0 + acc * i;
+				sample.Position = acc * i * i / 2.0 + v0 * i + d0;
+				spl.Add( sample );
+			}
+
+			// Create the first curve as Position vs delta time
+			spl.XType = SampleType.TimeDiff;
+			spl.YType = SampleType.Position;
+			LineItem curve = myPane.AddCurve( "Position", spl, Color.Green, SymbolType.Diamond );
+			curve.Symbol.Fill = new Fill( Color.White );
+			curve.Line.Width = 2.0f;
+
+			// create the second curve as Average Velocity vs delta time
+			SamplePointList spl2 = new SamplePointList( spl );
+			spl2.YType = SampleType.VelocityAvg;
+			LineItem curve2 = myPane.AddCurve( "Average Velocity", spl2, Color.Blue, SymbolType.Circle );
+			curve2.Symbol.Fill = new Fill( Color.White );
+			curve2.Line.Width = 2.0f;
+
+#endif
+
+
+#if true			// radar plot
+
+			myPane = zedGraphControl1.GraphPane;
+			RadarPointList rpl = new RadarPointList();
+
+			Random rand = new Random();
+
+			for ( int i = 0; i < 7; i++ )
+			{
+				double r = rand.NextDouble() * 10.0 + 1.0;
+				PointPair pt = new PointPair( PointPair.Missing, r, "r = " + r.ToString( "f1" ) );
+				rpl.Add( pt );
+			}
+			LineItem curve = myPane.AddCurve( "test", rpl, Color.Green, SymbolType.Default );
+			//curve.Line.IsSmooth = true;
+			curve.Line.SmoothTension = 0.5F;
+
+			myPane.XAxis.IsZeroLine = true;
+
+			for ( int i = 0; i < 7; i++ )
+			{
+				ArrowItem arrow = new ArrowItem( 0, 0, (float) rpl[i].X, (float) rpl[i].Y );
+				arrow.IsArrowHead = false;
+				arrow.Color = Color.LightGray;
+				arrow.ZOrder = ZOrder.D_BehindCurves;
+				myPane.GraphItemList.Add( arrow );
+			}
+
+			myPane.XAxis.Cross = 0;
+			myPane.XAxis.IsSkipFirstLabel = true;
+			myPane.XAxis.IsSkipLastLabel = true;
+			myPane.XAxis.IsSkipCrossLabel = true;
+			myPane.YAxis.Cross = 0;
+			myPane.YAxis.IsSkipCrossLabel = true;
+			myPane.YAxis.IsSkipLastLabel = true;
+			myPane.YAxis.IsSkipCrossLabel = true;
+#endif
+
+
+#if false			// spline test
 
 			myPane = zedGraphControl1.GraphPane;
 			PointPairList ppl = new PointPairList();
@@ -965,112 +1050,6 @@ namespace ZedGraph.ControlTest
 			}
 		}
 
-		private bool MyMouseDownEventHandler( ZedGraphControl sender, MouseEventArgs e )
-		{
-			if ( e.Button == MouseButtons.Left && Control.ModifierKeys == Keys.Control )
-			{
-				this.zedGraphControl1.ZoomPane( this.zedGraphControl1.GraphPane, 0.5,
-					new PointF( e.X, e.Y ), true );
-
-				return true;
-			}
-
-			return false;
-		}
-
-
-		PointF		startPt;
-		double		startX, startY, startY2;
-		bool		isDragPoint = false;
-		CurveItem	dragCurve;
-		int			dragIndex;
-		PointPair	startPair;
-
-		private void zedGraphControl1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			if ( e.Button == MouseButtons.Left && Control.ModifierKeys == Keys.Control )
-			{
-				this.zedGraphControl1.ZoomPane( this.zedGraphControl1.GraphPane, 0.5,
-					new PointF( e.X, e.Y ), true );
-			}
-			return;
-
-			Image image = zedGraphControl1.MasterPane.ScaledImage( 300, 200, 72 );
-			image.Save( @"c:\zedgraph.png", ImageFormat.Png );
-			return;
-
-			LineItem curve = zedGraphControl1.GraphPane.CurveList[0] as LineItem;
-			for ( int i=0; i<500; i++ )
-			{
-				double x = new XDate( 1997, i, i );
-				double y = (Math.Sin( i / 9.0 * Math.PI ) + 1.1 ) * 1000.0;
-				(curve.Points as PointPairList).Add( x, y );
-				zedGraphControl1.AxisChange();
-
-				this.Refresh();
-			}
-
-			if ( Control.ModifierKeys == Keys.Alt )
-			{
-				GraphPane myPane = zedGraphControl1.GraphPane;
-				PointF mousePt = new PointF( e.X, e.Y );
-
-				if ( myPane.FindNearestPoint( mousePt, out dragCurve, out dragIndex ) )
-				{
-					startPt = mousePt;
-					startPair = dragCurve.Points[dragIndex];
-					isDragPoint = true;
-					myPane.ReverseTransform( mousePt, out startX, out startY, out startY2 );
-				}
-			}
-
-			/*
-			if ( myPane.YAxis.Type == AxisType.Linear )
-				myPane.YAxis.Type = AxisType.Log;
-			else
-				myPane.YAxis.Type = AxisType.Linear;
-
-			zedGraphControl4.AxisChange();
-			Refresh();
-			*/
-
-			/*
-			double rangeX = myPane.XAxis.Max - myPane.XAxis.Min;
-			myPane.XAxis.Max -= rangeX/20.0;
-			myPane.XAxis.Min += rangeX/20.0;
-			double rangeY = myPane.YAxis.Max - myPane.YAxis.Min;
-			myPane.YAxis.Max -= rangeY/20.0;
-			myPane.YAxis.Min += rangeY/20.0;
-			zedGraphControl4.AxisChange();
-			zedGraphControl4.Refresh();
-			//Invalidate();
-			*/
-		}
-
-		private void zedGraphControl1_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			if ( isDragPoint )
-			{
-				// move the point
-				double curX, curY, curY2;
-				GraphPane myPane = zedGraphControl1.GraphPane;
-				PointF mousePt = new PointF( e.X, e.Y );
-				myPane.ReverseTransform( mousePt, out curX, out curY, out curY2 );
-				PointPair newPt = new PointPair( startPair.X + curX - startX, startPair.Y + curY - startY );
-				(dragCurve.Points as PointPairList)[dragIndex] = newPt;
-				zedGraphControl1.Refresh();
-			}
-		}
-
-		private void zedGraphControl1_MouseUp(object sender, System.Windows.Forms.MouseEventArgs e)
-		{
-			if ( isDragPoint )
-			{
-				// finalize the move
-				isDragPoint = false;
-			}
-		}
-
 		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
 		{
 			//clone the pane so the paneRect can be changed for printing
@@ -1122,6 +1101,9 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+			zedGraphControl1.GraphPane.ScaledImage( 400, 300, 72 ).Save( "zedgraph.png", ImageFormat.Png );
+			return;
+
 			myTimer.Stop();
 			Invalidate();
 			return;
@@ -1136,15 +1118,93 @@ namespace ZedGraph.ControlTest
 			Refresh();
 		}
 
-		private void zedGraphControl1_Load( object sender, EventArgs e )
-		{
-
-		}
-
 		private void zedGraphControl1_ContextMenuBuilder( ZedGraphControl sender, ContextMenu menu, Point mousePt )
 		{
 
 		}
 
+		PointF startPt;
+		double startX, startY;
+		bool isDragPoint = false;
+		CurveItem dragCurve;
+		int dragIndex;
+		PointPair startPair;
+
+		private bool zedGraphControl1_MouseDownEvent( ZedGraphControl control, MouseEventArgs e )
+		{
+			// point-dragging is activated by an 'Alt' key and mousedown combination
+			if ( Control.ModifierKeys == Keys.Alt )
+			{
+				GraphPane myPane = control.GraphPane;
+				PointF mousePt = new PointF( e.X, e.Y );
+
+				// find the point that was clicked, and make sure the point list is editable
+				// and that it's a primary Y axis (the first Y or Y2 axis)
+				if ( myPane.FindNearestPoint( mousePt, out dragCurve, out dragIndex ) &&
+							dragCurve.Points is IPointListEdit &&
+							dragCurve.YAxisIndex == 0 )
+				{
+					// save the starting point information
+					startPt = mousePt;
+					startPair = dragCurve.Points[dragIndex];
+					// indicate a drag operation is in progress
+					isDragPoint = true;
+					// get the scale values for the start of the drag
+					double startY2;
+					myPane.ReverseTransform( mousePt, out startX, out startY, out startY2 );
+					// if it's a Y2 axis, use that value instead of Y
+					if ( dragCurve.IsY2Axis )
+						startY = startY2;
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private bool zedGraphControl1_MouseMoveEvent( ZedGraphControl control, MouseEventArgs e )
+		{
+			// see if a dragging operation is underway
+			if ( isDragPoint )
+			{
+				// move the point
+				GraphPane myPane = control.GraphPane;
+				PointF mousePt = new PointF( e.X, e.Y );
+				// get the scale values that correspond to the current point
+				double curX, curY, curY2;
+				myPane.ReverseTransform( mousePt, out curX, out curY, out curY2 );
+				// if it's a Y2 axis, use that value instead of Y
+				if ( dragCurve.IsY2Axis )
+					curY = curY2;
+				// calculate the new scale values for the point
+				PointPair newPt = new PointPair( startPair.X + curX - startX, startPair.Y + curY - startY );
+				// save the data back to the point list
+				( dragCurve.Points as IPointListEdit )[dragIndex] = newPt;
+				// force a redraw
+				control.Refresh();
+				// tell the ZedGraphControl not to do anything else with this event
+				return true;
+			}
+
+			// since we didn't handle the event, tell the ZedGraphControl to handle it
+			return false;
+		}
+
+		private bool zedGraphControl1_MouseUpEvent( ZedGraphControl control, MouseEventArgs e )
+		{
+			if ( isDragPoint )
+			{
+				// dragging operation is no longer active
+				isDragPoint = false;
+			}
+
+			return false;
+		}
+
+		private void zedGraphControl1_MouseDown( object sender, MouseEventArgs e )
+		{
+			MessageBox.Show( "Hi" );
+		}
 	}
 }

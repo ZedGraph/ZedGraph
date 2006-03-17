@@ -1,5 +1,12 @@
 == ZedGraph Class Library Revision History ==
 
+;16-Mar-2006 (by Champion)
+: [NEW] SamplePointList and RadarPointList IPointList types
+: [UPD] Make IPointListEdit have a set method for the indexer
+: [UPD] Hide the ZedGraphControl MouseMove, MouseUp, MouseDown events to avoid confusion
+: [UPD] Use only one delegate for Mouse events
+: [NEW] Add Axis.IsSkipCrossLabel and Axis.IsTitleAtCross
+
 ;14-Mar-2006 (by Champion)
 : [FIX] use IsAnyOrdinal in Axis.GetClusterWidth() for ClusterScaleWidth value
 
