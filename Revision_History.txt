@@ -1,5 +1,8 @@
 == ZedGraph Class Library Revision History ==
 
+;17-Mar-2006 (by Champion)
+: Release Version 4.3.3
+
 ;16-Mar-2006 (by Champion)
 : [NEW] SamplePointList and RadarPointList IPointList types
 : [UPD] Make IPointListEdit have a set method for the indexer
