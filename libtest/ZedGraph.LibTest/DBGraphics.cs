@@ -11,18 +11,18 @@ namespace GDIDB
 	/// 
 	public class DBGraphics
 	{
-		private Graphics graphics;
-		private Bitmap memoryBitmap;
-		private int width;
-		private int height;
+		private	Graphics	graphics;
+		private Bitmap		memoryBitmap;
+		private	int			width;
+		private	int			height;
 
 		/// <summary>
 		/// Default constructor
 		/// </summary>
 		public DBGraphics()
 		{
-			width = 0;
-			height = 0;
+			width	= 0;
+			height	= 0;
 		}
 
 		/// <summary>
@@ -32,9 +32,9 @@ namespace GDIDB
 		/// <param name="width">width of paint area</param>
 		/// <param name="height">height of paint area</param>
 		/// <returns>true/false if double buffer is created</returns>
-		public bool CreateDoubleBuffer( Graphics g, int width, int height )
+		public bool CreateDoubleBuffer(Graphics g, int width, int height)
 		{
-			if ( width <= 0 || height <= 0 )
+			if (width <= 0 || height <= 0)
 				return false;
 
 			if ( width != this.width || height != this.height || memoryBitmap == null || graphics == null )
@@ -54,8 +54,8 @@ namespace GDIDB
 				this.width = width;
 				this.height = height;
 
-				memoryBitmap = new Bitmap( width, height );
-				graphics = Graphics.FromImage( memoryBitmap );
+				memoryBitmap	= new Bitmap(width, height);
+				graphics		= Graphics.FromImage(memoryBitmap);
 			}
 
 			return true;
@@ -66,10 +66,10 @@ namespace GDIDB
 		/// Renders the double buffer to the screen
 		/// </summary>
 		/// <param name="g">Window forms Graphics Object</param>
-		public void Render( Graphics g )
+		public void Render(Graphics g)
 		{
-			if ( memoryBitmap != null )
-				g.DrawImage( memoryBitmap, new Rectangle( 0, 0, width, height ), 0, 0, width, height, GraphicsUnit.Pixel );
+			if (memoryBitmap != null)
+				g.DrawImage(memoryBitmap, new Rectangle(0,0, width, height),0,0, width, height, GraphicsUnit.Pixel);
 		}
 
 		/// <summary>
@@ -84,12 +84,12 @@ namespace GDIDB
 		/// <summary>
 		/// Accessor for memory graphics object
 		/// </summary>
-		public Graphics g
+		public Graphics g 
 		{
-			get
-			{
-				return graphics;
+			get 
+			{ 
+				return graphics; 
 			}
-		}
+		}		
 	}
 }

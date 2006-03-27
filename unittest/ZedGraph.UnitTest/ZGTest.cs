@@ -99,7 +99,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion	</author>
-	/// <version> $Revision: 3.16 $ $Date: 2006-03-27 01:31:42 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2006-03-27 03:35:46 $ </version>
 	[TestFixture]
 	public	class ControlTest
 	{
@@ -151,7 +151,7 @@ namespace ZedGraph.UnitTest
 		[Test]
 		public	void StandardUserControl()
 		{
-			testee.Chart.Fill = new Fill(	Color.White, Color.LightGoldenrodYellow );
+			testee.AxisFill = new Fill(	Color.White, Color.LightGoldenrodYellow );
 
 			double[] x = {	72, 200, 300,	400, 500, 600, 700,	800, 900, 1000 };
 			double[] y = {	20, 10,	50, 40, 35, 60, 90,	25, 48,	75	};
@@ -173,24 +173,24 @@ namespace ZedGraph.UnitTest
 			curve.Symbol.Fill.Type =	FillType.Solid;
 			curve.Symbol.Size = 14;
 			
-			testee.XAxis.MajorGrid.IsVisible =	true;
-			testee.XAxis.Scale.FontSpec.Angle	=	60;
+			testee.XAxis.IsShowGrid =	true;
+			testee.XAxis.ScaleFontSpec.Angle	=	60;
 			
-			testee.YAxis.MajorGrid.IsVisible =	true;
+			testee.YAxis.IsShowGrid =	true;
 			
-			TextObj text	=	new TextObj("First	Prod\n21-Oct-99", 100F, 50.0F );
+			TextItem text	=	new TextItem("First	Prod\n21-Oct-99", 100F, 50.0F );
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV	= AlignV.Bottom;
 			text.FontSpec.Fill.Color = Color.LightBlue;
 			text.FontSpec.Fill.Type	=	FillType.Brush;
 			text.FontSpec.IsItalic	=	true;
-			testee.GraphObjList.Add( text );
+			testee.GraphItemList.Add( text );
 			
-			ArrowObj arrow	=	new ArrowObj( Color.Black, 12F, 100F, 47F, 72F,	25F );
+			ArrowItem arrow	=	new ArrowItem( Color.Black, 12F, 100F, 47F, 72F,	25F );
 			arrow.Location.CoordinateFrame	=	CoordType.AxisXYScale;
-			testee.GraphObjList.Add( arrow );
+			testee.GraphItemList.Add( arrow );
 			
-			text = new TextObj("Upgrade", 700F, 50.0F );
+			text = new TextItem("Upgrade", 700F, 50.0F );
 			text.FontSpec.Angle = 90;
 			text.FontSpec.FontColor =	Color.Black;
 			text.Location.AlignH = AlignH.Right;
@@ -198,13 +198,13 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
 			text.FontSpec.Fill.Type	=	FillType.Brush;
 			text.FontSpec.Border.IsVisible = false;
-			testee.GraphObjList.Add( text );
+			testee.GraphItemList.Add( text );
 			
-			arrow = new ArrowObj( Color.Black,	15, 700, 53,	700, 80 );
+			arrow = new ArrowItem( Color.Black,	15, 700, 53,	700, 80 );
 			arrow.Location.CoordinateFrame	=	CoordType.AxisXYScale;
 			arrow.PenWidth =	2.0F;
-			testee.GraphObjList.Add( arrow );
-			text = new TextObj("Confidential", 0.8F, -0.03F );
+			testee.GraphItemList.Add( arrow );
+			text = new TextItem("Confidential", 0.8F, -0.03F );
 			text.Location.CoordinateFrame =	CoordType.AxisFraction;
 			text.FontSpec.Angle = 15.0F;
 			text.FontSpec.FontColor =	Color.Red;
@@ -214,7 +214,7 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.Border.Color = Color.Red;
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV	= AlignV.Bottom;
-			testee.GraphObjList.Add( text );
+			testee.GraphItemList.Add( text );
 			
 			testee.AxisChange(	control.CreateGraphics()	);
 
@@ -234,7 +234,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.16 $ $Date: 2006-03-27 01:31:42 $ </version>
+	/// <version>	$Revision: 3.17 $ $Date: 2006-03-27 03:35:46 $ </version>
 	[TestFixture]
 	public	class LibraryTest
 	{
@@ -279,7 +279,7 @@ namespace ZedGraph.UnitTest
 		{
 			Rectangle paneRect = form2.ClientRectangle;
 			paneRect.Inflate( -10, -10	);
-			testee.Rect = paneRect;
+			testee.PaneRect = paneRect;
 		}
 
 		private void	Form2_MouseDown(	object	sender,	System.Windows.Forms.MouseEventArgs e )
@@ -329,15 +329,15 @@ namespace ZedGraph.UnitTest
 			*/
 
 			//	Draw the X tics	between the labels instead of	at the labels
-			testee.XAxis.MajorTic.IsBetweenLabels = true;
+			testee.XAxis.IsTicsBetweenLabels = true;
 
 			//	Set the XAxis	labels
-			testee.XAxis.Scale.TextLabels = labels;
+			testee.XAxis.TextLabels = labels;
 			//	Set the XAxis	to Text type
 			testee.XAxis.Type =	AxisType.Text;
 
-			testee.XAxis.Scale.IsReverse	=	false;
-			testee.BarSettings.ClusterScaleWidth = 1;
+			testee.XAxis.IsReverse	=	false;
+			testee.ClusterScaleWidth = 1;
 
 			//Add Labels to the curves
 
@@ -350,8 +350,8 @@ namespace ZedGraph.UnitTest
 				string lab =	y[i].ToString( "F1" );
 				//	create	the text item (assumes	the	x	axis is	ordinal or	text)
 				//	for negative bars, the	label appears just	above	the zero	value
-				TextObj text	=	new TextObj( lab, (float) (i+1), (float) (y[i]	< 0 ? 0.0	: y[i]) + shift );
-				//	tell	Zedgraph to use user	scale units	for locating	the	TextObj
+				TextItem text	=	new TextItem( lab, (float) (i+1), (float) (y[i]	< 0 ? 0.0	: y[i]) + shift );
+				//	tell	Zedgraph to use user	scale units	for locating	the	TextItem
 				text.Location.CoordinateFrame =	CoordType.AxisXYScale;
 				//	Align the left-center	of the text to the	specified	point
 				text.Location.AlignH = AlignH.Left;
@@ -359,15 +359,15 @@ namespace ZedGraph.UnitTest
 				text.FontSpec.Border.IsVisible = false;
 				//	rotate the	text 90 degrees
 				text.FontSpec.Angle = 90;
-				//	add the	TextObj to	the	list
-				testee.GraphObjList.Add( text );
+				//	add the	TextItem to	the	list
+				testee.GraphItemList.Add( text );
 			}
 
 			//	Tell ZedGraph to	refigure	the
 			//	axes	since the data have	changed
 			testee.AxisChange(	form2.CreateGraphics() );
 			//	Add one step to the	max	scale value	to leave	room for the labels
-			testee.YAxis.Scale.Max += testee.YAxis.Scale.MajorStep;
+			testee.YAxis.Max += testee.YAxis.Step;
 
 			testee.AxisChange(	form2.CreateGraphics() );
 			SetSize();
@@ -402,17 +402,17 @@ namespace ZedGraph.UnitTest
 			CurveItem myCurve1 =	testee.AddBar( "Curve	2", null, y2, Color.Blue	);
 			CurveItem myCurve2 =	testee.AddBar( "Curve	3", null, y3, Color.Green	);
 			//	Draw the X tics	between the labels instead of	at the labels
-			testee.XAxis.MajorTic.IsBetweenLabels = true;
+			testee.XAxis.IsTicsBetweenLabels = true;
 
 			//	Set the XAxis	labels
-			testee.XAxis.Scale.TextLabels = labels;
-			testee.XAxis.Scale.FontSpec.Size	=	9F	;
+			testee.XAxis.TextLabels = labels;
+			testee.XAxis.ScaleFontSpec.Size	=	9F	;
 			//	Set the XAxis	to Text type
 			testee.XAxis.Type =	AxisType.Text;
-			testee.BarSettings.Base = BarBase.X;
+			testee.BarBase = BarBase.X;
 
-			testee.XAxis.Scale.IsReverse	=	false;
-			testee.BarSettings.ClusterScaleWidth = 1;
+			testee.XAxis.IsReverse	=	false;
+			testee.ClusterScaleWidth = 1;
 
 			//Add Labels to the curves
 
@@ -425,8 +425,8 @@ namespace ZedGraph.UnitTest
 				string lab =	y2[i].ToString( "F1" );
 				//	create	the text item (assumes	the	x	axis is	ordinal or	text)
 				//	for negative bars, the	label appears just	above	the zero	value
-				TextObj text	=	new TextObj( lab, (float) (i + 1), (float) (y2[i] < 0	?	0.0 : y2[i]) + shift );
-				//	tell	Zedgraph to use user	scale units	for locating	the	TextObj
+				TextItem text	=	new TextItem( lab, (float) (i + 1), (float) (y2[i] < 0	?	0.0 : y2[i]) + shift );
+				//	tell	Zedgraph to use user	scale units	for locating	the	TextItem
 				text.Location.CoordinateFrame =	CoordType.AxisXYScale;
 				//	Align the left-center	of the text to the	specified	point
 				text.Location.AlignH = AlignH.Left;
@@ -434,15 +434,15 @@ namespace ZedGraph.UnitTest
 				text.FontSpec.Border.IsVisible = false;
 				//	rotate the	text 90 degrees
 				text.FontSpec.Angle = 90;
-				//	add the	TextObj to	the	list
-				testee.GraphObjList.Add( text );
+				//	add the	TextItem to	the	list
+				testee.GraphItemList.Add( text );
 			}
 
 			//	Tell ZedGraph to	refigure	the
 			//	axes	since the data have	changed
 			testee.AxisChange(	form2.CreateGraphics() );
 			//	Add one step to the	max	scale value	to leave	room for the labels
-			testee.YAxis.Scale.Max += testee.YAxis.Scale.MajorStep;
+			testee.YAxis.Max += testee.YAxis.Step;
 
 			testee.AxisChange(	form2.CreateGraphics() );
 			SetSize();
@@ -476,26 +476,26 @@ namespace ZedGraph.UnitTest
 			CurveItem myCurve1 =	testee.AddBar( "Curve	2",y2, null,	 Color.Blue	);
 			CurveItem myCurve2 =	testee.AddBar( "Curve	3",  y3,	null,Color.Green	);
 			//	Draw the Y tics	between the labels instead of	at the labels
-			testee.YAxis.MajorTic.IsBetweenLabels = true;
+			testee.YAxis.IsTicsBetweenLabels = true;
 
 			//	Set the YAxis	labels
-			testee.YAxis.Scale.TextLabels = labels;
-			testee.YAxis.Scale.FontSpec.Size	=	9F	;
+			testee.YAxis.TextLabels = labels;
+			testee.YAxis.ScaleFontSpec.Size	=	9F	;
 											//show	the zero	line
-			testee.XAxis.MajorGrid.IsZeroLine = true	;
+			testee.XAxis.IsZeroLine = true	;
 			//	Set the YAxis	to Text	type
 			testee.YAxis.Type =	AxisType.Text;
-			testee.BarSettings.Base = BarBase.Y;
+			testee.BarBase = BarBase.Y;
 
-			testee.YAxis.Scale.IsReverse =	false;
-			testee.BarSettings.ClusterScaleWidth = 1;
+			testee.YAxis.IsReverse =	false;
+			testee.ClusterScaleWidth = 1;
 
 
 			//	Tell ZedGraph to	refigure	the
 			//	axes	since the data have	changed
 			testee.AxisChange(	form2.CreateGraphics() );
 			//	Add one step to the	max	scale value	to leave	room for the labels
-			testee.XAxis.Scale.Max += testee.YAxis.Scale.MajorStep;
+			testee.XAxis.Max += testee.YAxis.Step;
 
 			testee.AxisChange(	form2.CreateGraphics() );
 			SetSize();
@@ -531,21 +531,21 @@ namespace ZedGraph.UnitTest
 			CurveItem myCurve1 =	testee.AddBar( "Curve	2", null, y2, Color.Blue	);
 			CurveItem myCurve2 =	testee.AddBar( "Curve	3", null, y3, Color.Green	);
 			//	Draw the X tics	between the labels instead of	at the labels
-			testee.XAxis.MajorTic.IsBetweenLabels = true;
+			testee.XAxis.IsTicsBetweenLabels = true;
 
 			//	Set the XAxis	labels
-			testee.XAxis.Scale.TextLabels = labels;
-			testee.XAxis.Scale.FontSpec.Size	=	9F	;
+			testee.XAxis.TextLabels = labels;
+			testee.XAxis.ScaleFontSpec.Size	=	9F	;
 			//	Set the XAxis	to Text type
 			testee.XAxis.Type =	AxisType.Text;
-			testee.BarSettings.Base = BarBase.X;
+			testee.BarBase = BarBase.X;
 			//display as	stack bar
-			testee.BarSettings.Type = BarType.Stack ;
+			testee.BarType = BarType.Stack ;
 			//display horizontal grid	lines
-			testee.YAxis.MajorGrid.IsVisible =	true ;
+			testee.YAxis.IsShowGrid =	true ;
 			
-			testee.XAxis.Scale.IsReverse	=	false;
-			testee.BarSettings.ClusterScaleWidth = 1;
+			testee.XAxis.IsReverse	=	false;
+			testee.ClusterScaleWidth = 1;
 						  //turn	off pen width	scaling
 			testee.IsPenWidthScaled = false	;
 			
@@ -597,21 +597,21 @@ namespace ZedGraph.UnitTest
 			BarItem myCurve1 =	testee.AddBar( "Curve	2", null, y2, Color.Blue	);
 			BarItem myCurve2 =	testee.AddBar( "Curve	3", null, y3, Color.Green	);
 			//	Draw the X tics	between the labels instead of	at the labels
-			testee.XAxis.MajorTic.IsBetweenLabels = true;
+			testee.XAxis.IsTicsBetweenLabels = true;
 
 			//	Set the XAxis	labels
-			testee.XAxis.Scale.TextLabels = labels;
-			testee.XAxis.Scale.FontSpec.Size	=	9F	;
+			testee.XAxis.TextLabels = labels;
+			testee.XAxis.ScaleFontSpec.Size	=	9F	;
 			//	Set the XAxis	to Text type
 			testee.XAxis.Type =	AxisType.Text;
-			testee.BarSettings.Base = BarBase.X;
+			testee.BarBase = BarBase.X;
 			//display as	stack bar
-			testee.BarSettings.Type = BarType.PercentStack	;
+			testee.BarType = BarType.PercentStack	;
 			//display horizontal grid	lines
-			testee.YAxis.MajorGrid.IsVisible =	true ;
+			testee.YAxis.IsShowGrid =	true ;
 			
-			testee.XAxis.Scale.IsReverse	=	false;
-			testee.BarSettings.ClusterScaleWidth = 1;
+			testee.XAxis.IsReverse	=	false;
+			testee.ClusterScaleWidth = 1;
 			//turn off	pen width scaling
 			testee.IsPenWidthScaled = false	;
 			
@@ -673,27 +673,27 @@ namespace ZedGraph.UnitTest
 			CurveItem myCurve1 =	testee.AddBar( "Curve	2", null, y2, Color.Blue	);
 			CurveItem myCurve2 =	testee.AddBar( "Curve	3", null, y, Color.Green	);
 			//	Draw the X tics	between the labels instead of	at the labels
-			testee.XAxis.MajorTic.IsBetweenLabels = true;
+			testee.XAxis.IsTicsBetweenLabels = true;
 
 			//	Set the XAxis	labels
-			testee.XAxis.Scale.TextLabels = labels;
-			testee.XAxis.Scale.FontSpec.Size	=	9F	;
+			testee.XAxis.TextLabels = labels;
+			testee.XAxis.ScaleFontSpec.Size	=	9F	;
 			//	Set the XAxis	to Text type
 			testee.XAxis.Type =	AxisType.Text;
-			testee.BarSettings.Base = BarBase.X;
+			testee.BarBase = BarBase.X;
 			//display as	overlay bars
-			testee.BarSettings.Type = BarType.Overlay;
+			testee.BarType = BarType.Overlay;
 			//display horizontal grid	lines
-			testee.YAxis.MajorGrid.IsVisible =	true ;
+			testee.YAxis.IsShowGrid =	true ;
 			
-			testee.XAxis.Scale.IsReverse	=	false;
-			testee.BarSettings.ClusterScaleWidth = 1;
+			testee.XAxis.IsReverse	=	false;
+			testee.ClusterScaleWidth = 1;
 
 			//	Tell ZedGraph to	refigure	the
 			//	axes	since the data have	changed
 			testee.AxisChange(	form2.CreateGraphics() );
 			//	Add one step to the	max	scale value	to leave	room for the labels
-			testee.YAxis.Scale.Max += testee.YAxis.Scale.MajorStep;
+			testee.YAxis.Max += testee.YAxis.Step;
 
 			testee.AxisChange(	form2.CreateGraphics() );
 			SetSize();
@@ -727,27 +727,27 @@ namespace ZedGraph.UnitTest
 			CurveItem myCurve1 =	testee.AddBar( "Curve	2", null, y2, Color.Blue	);
 			CurveItem myCurve2 =	testee.AddBar( "Curve	3", null, y, Color.Green	);
 			//	Draw the X tics	between the labels instead of	at the labels
-			testee.XAxis.MajorTic.IsBetweenLabels = true;
+			testee.XAxis.IsTicsBetweenLabels = true;
 
 			//	Set the XAxis	labels
-			testee.XAxis.Scale.TextLabels = labels;
-			testee.XAxis.Scale.FontSpec.Size	=	9F	;
+			testee.XAxis.TextLabels = labels;
+			testee.XAxis.ScaleFontSpec.Size	=	9F	;
 			//	Set the XAxis	to Text type
 			testee.XAxis.Type =	AxisType.Text;
-			testee.BarSettings.Base = BarBase.X;
+			testee.BarBase = BarBase.X;
 			//display as	overlay bars
-			testee.BarSettings.Type = BarType.SortedOverlay;
+			testee.BarType = BarType.SortedOverlay;
 			//display horizontal grid	lines
-			testee.YAxis.MajorGrid.IsVisible =	true ;
+			testee.YAxis.IsShowGrid =	true ;
 			
-			testee.XAxis.Scale.IsReverse	=	false;
-			testee.BarSettings.ClusterScaleWidth = 1;
+			testee.XAxis.IsReverse	=	false;
+			testee.ClusterScaleWidth = 1;
 
 			//	Shift	the text items up by	5 user	scale units	above	the	bars
 			const float shift = 5;
 
 			string lab = "" ;
-			TextObj text	= null ;
+			TextItem text	= null ;
 			for ( int x = 0; x < 3 ; x++ )
 			for ( int i=0;	i<y.Length;	i++ )
 			{
@@ -756,29 +756,29 @@ namespace ZedGraph.UnitTest
 				{
 					 case 0 :
 						 lab =	y[i].ToString();
-						 text	=	new TextObj( lab, (float) (i+1), (float) (y[i]	< 0 ? y[i] + 2*shift	: y[i]) - shift );
+						 text	=	new TextItem( lab, (float) (i+1), (float) (y[i]	< 0 ? y[i] + 2*shift	: y[i]) - shift );
 						 break;
 					 case 1 :
 						 lab =	y2[i].ToString();
-						 text	=	new TextObj( lab, (float) (i+1), (float) (y2[i]	< 0 ? y2[i] +2* shift	: y2[i]) - shift );
+						 text	=	new TextItem( lab, (float) (i+1), (float) (y2[i]	< 0 ? y2[i] +2* shift	: y2[i]) - shift );
 						 break;
 					 case 2:
 						 lab =	y3[i].ToString();
-						 text	=	new TextObj( lab, (float) (i+1), (float) (y3[i]	< 0 ? y3[i] + 2*shift	: y3[i]) - shift);
+						 text	=	new TextItem( lab, (float) (i+1), (float) (y3[i]	< 0 ? y3[i] + 2*shift	: y3[i]) - shift);
 						 break;
 					 default:
 						break ;
 				}
 				text.FontSpec.Size = 4 ;
 				text.FontSpec.IsBold = true ;
-				//	tell	Zedgraph to use user	scale units	for locating	the	TextObj
+				//	tell	Zedgraph to use user	scale units	for locating	the	TextItem
 				text.Location.CoordinateFrame =	CoordType.AxisXYScale;
 				//	Align the left-center	of the text to the	specified	point
 				text.Location.AlignH = AlignH.Center;
 				text.Location.AlignV	= AlignV.Center;
 				text.FontSpec.Border.IsVisible = false;
-				//	add the	TextObj to	the	list
-				testee.GraphObjList.Add( text );
+				//	add the	TextItem to	the	list
+				testee.GraphItemList.Add( text );
 			}
 
 			form2.WindowState	= FormWindowState.Maximized ;
@@ -787,7 +787,7 @@ namespace ZedGraph.UnitTest
 			//	axes	since the data have	changed
 			testee.AxisChange(	form2.CreateGraphics() );
 			//	Add one step to the	max	scale value	to leave	room for the labels
-			testee.YAxis.Scale.Max += testee.YAxis.Scale.MajorStep;
+			testee.YAxis.Max += testee.YAxis.Step;
 
 			testee.AxisChange(	form2.CreateGraphics() );
 			SetSize();
@@ -817,22 +817,22 @@ namespace ZedGraph.UnitTest
 			BarItem	myCurve1 = testee.AddBar(	"Curve 2",y2,	null,	Color.Blue );
 			BarItem	myCurve2 = testee.AddBar(	"Curve 3",	 y3, null,Color.Green );
 			//	Draw the Y tics	between the labels instead of	at the labels
-			testee.YAxis.MajorTic.IsBetweenLabels = true;
-			testee.BarSettings.Type = BarType.Stack ;
+			testee.YAxis.IsTicsBetweenLabels = true;
+			testee.BarType = BarType.Stack ;
 
 			//	Set the YAxis	labels
-			testee.YAxis.Scale.TextLabels = labels;
-			testee.YAxis.Scale.FontSpec.Size	=	9F	;
+			testee.YAxis.TextLabels = labels;
+			testee.YAxis.ScaleFontSpec.Size	=	9F	;
 			//show	the zero	line
-			testee.XAxis.MajorGrid.IsZeroLine = true	;
+			testee.XAxis.IsZeroLine = true	;
 			//show	XAxis the grid lines
-			testee.XAxis.MajorGrid.IsVisible =	true ;
+			testee.XAxis.IsShowGrid =	true ;
 			//	Set the YAxis	to Text	type
 			testee.YAxis.Type =	AxisType.Text;
-			testee.BarSettings.Base = BarBase.Y;
+			testee.BarBase = BarBase.Y;
 
-			testee.YAxis.Scale.IsReverse =	false;
-			testee.BarSettings.ClusterScaleWidth = 1;
+			testee.YAxis.IsReverse =	false;
+			testee.ClusterScaleWidth = 1;
 			
 			
 
@@ -934,8 +934,8 @@ namespace ZedGraph.UnitTest
 			curve = testee.AddCurve( "One	Value",	x, y, Color.Red, SymbolType.Diamond	);
 			curve.Symbol.Fill.Type =	FillType.Solid;
 
-			testee.XAxis.MajorGrid.IsVisible =	true;
-			testee.YAxis.MajorGrid.IsVisible =	true;
+			testee.XAxis.IsShowGrid =	true;
+			testee.YAxis.IsShowGrid =	true;
 
 			testee.AxisChange(	form2.CreateGraphics() );
 			SetSize();
@@ -977,26 +977,26 @@ namespace ZedGraph.UnitTest
 			curve.Symbol.Fill.Type =	FillType.Solid;
 			curve.Symbol.Size = 12;
 
-			testee.Fill = new	Fill( Color.White, Color.WhiteSmoke	);
-			testee.Chart.Fill = new Fill(	Color.White, Color.LightGoldenrodYellow );
-			testee.XAxis.MajorGrid.IsVisible =	true;
-			testee.XAxis.Scale.FontSpec.Angle	=	0;
+			testee.PaneFill = new	Fill( Color.White, Color.WhiteSmoke	);
+			testee.AxisFill = new Fill(	Color.White, Color.LightGoldenrodYellow );
+			testee.XAxis.IsShowGrid =	true;
+			testee.XAxis.ScaleFontSpec.Angle	=	0;
 
-			testee.YAxis.MajorGrid.IsVisible =	true;
-			testee.YAxis.Scale.FontSpec.Angle =	90;
+			testee.YAxis.IsShowGrid =	true;
+			testee.YAxis.ScaleFontSpec.Angle =	90;
 
-			TextObj text	=	new TextObj("First	Prod\n21-Oct-93", 100F, 50.0F );
+			TextItem text	=	new TextItem("First	Prod\n21-Oct-93", 100F, 50.0F );
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV	= AlignV.Bottom;
 			text.FontSpec.Fill.Color = Color.PowderBlue;
 			text.FontSpec.Fill.Type	=	FillType.Brush;
-			testee.GraphObjList.Add( text );
+			testee.GraphItemList.Add( text );
 
-			ArrowObj arrow	=	new ArrowObj( Color.Black, 12F, 100F, 47F, 72F,	25F );
+			ArrowItem arrow	=	new ArrowItem( Color.Black, 12F, 100F, 47F, 72F,	25F );
 			arrow.Location.CoordinateFrame	=	CoordType.AxisXYScale;
-			testee.GraphObjList.Add( arrow );
+			testee.GraphItemList.Add( arrow );
 
-			text = new TextObj("Upgrade", 700F, 50.0F );
+			text = new TextItem("Upgrade", 700F, 50.0F );
 			text.FontSpec.Angle = 90;
 			text.FontSpec.FontColor =	Color.Black;
 			text.Location.AlignH = AlignH.Right;
@@ -1004,14 +1004,14 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.Fill.Color = Color.LightGoldenrodYellow;
 			text.FontSpec.Fill.Type	=	FillType.Brush;
 			text.FontSpec.Border.IsVisible = false;
-			testee.GraphObjList.Add( text );
+			testee.GraphItemList.Add( text );
 
-			arrow = new ArrowObj( Color.Black,	15, 700, 53,	700, 80 );
+			arrow = new ArrowItem( Color.Black,	15, 700, 53,	700, 80 );
 			arrow.Location.CoordinateFrame	=	CoordType.AxisXYScale;
 			arrow.PenWidth =	2.0F;
-			testee.GraphObjList.Add( arrow );
+			testee.GraphItemList.Add( arrow );
 
-			text = new TextObj("Confidential", 0.8F, -0.03F );
+			text = new TextItem("Confidential", 0.8F, -0.03F );
 			text.Location.CoordinateFrame =	CoordType.AxisFraction;
 
 			text.FontSpec.Angle = 15.0F;
@@ -1024,7 +1024,7 @@ namespace ZedGraph.UnitTest
 
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV	= AlignV.Bottom;
-			testee.GraphObjList.Add( text );
+			testee.GraphItemList.Add( text );
 			
 			testee.AxisChange(	form2.CreateGraphics() );
 			SetSize();
@@ -1068,7 +1068,7 @@ namespace ZedGraph.UnitTest
 			//	Create a new	graph
 			testee	=	new	GraphPane( new	Rectangle(	40, 40, form2.Size.Width-80,	form2.Size.Height-80 ),
 				"My Test Dual Y Graph",	"Date", "My	Y Axis" );
-			testee.Y2Axis.Title.Text = "My Y2 Axis";
+			testee.Y2Axis.Title = "My Y2 Axis";
 				
 			//	Make up some random data points
 			double[] x = new	double[36];
@@ -1094,11 +1094,11 @@ namespace ZedGraph.UnitTest
 			myCurve.IsY2Axis =	true;
 			testee.YAxis.IsVisible	=	true;
 			testee.Y2Axis.IsVisible =	true;
-			testee.Y2Axis.MajorGrid.IsVisible = true;
-			testee.XAxis.MajorGrid.IsVisible =	true;
-			testee.YAxis.MajorTic.IsOpposite	= false;
-			testee.YAxis.MinorTic.IsOpposite = false;
-			testee.YAxis.MajorGrid.IsZeroLine	= false;
+			testee.Y2Axis.IsShowGrid = true;
+			testee.XAxis.IsShowGrid =	true;
+			testee.YAxis.IsOppositeTic	= false;
+			testee.YAxis.IsMinorOppositeTic = false;
+			testee.YAxis.IsZeroLine	= false;
 			
 			//	Tell ZedGraph to	refigure	the
 			//	axes	since the data have	changed
@@ -1165,7 +1165,7 @@ namespace ZedGraph.UnitTest
 				x, y, Color.Red, SymbolType.Diamond	);
 			//	Set the XAxis	to date type
 			testee.XAxis.Type =	AxisType.Date;
-			testee.XAxis.Scale.Format = "dd-MMM-yyyy";
+			testee.XAxis.ScaleFormat = "dd-MMM-yyyy";
 
 
 			//	Tell ZedGraph to	refigure	the
@@ -1208,11 +1208,11 @@ namespace ZedGraph.UnitTest
 			LineItem myCurve	=	testee.AddCurve(	"My	Curve",
 				points, Color.Red, SymbolType.Diamond );
 			//	Set the XAxis	labels
-			testee.XAxis.Scale.TextLabels = labels;
+			testee.XAxis.TextLabels = labels;
 			//	Set the XAxis	to Text type
 			testee.XAxis.Type =	AxisType.Text;
 			//	Set the labels at	an angle so they	don't overlap
-			testee.XAxis.Scale.FontSpec.Angle	=	0;
+			testee.XAxis.ScaleFontSpec.Angle	=	0;
 			//	Tell ZedGraph to	refigure	the
 			//	axes	since the data have	changed
 			testee.AxisChange(	form2.CreateGraphics() );
@@ -1266,18 +1266,18 @@ namespace ZedGraph.UnitTest
 	//		HiLowBarItem myCurve	=	testee.AddHiLowBar(	"My	Curve",null,hi,low, Color.Green );
 			HiLowBarItem myCurve	=	testee.AddHiLowBar(	"My	Curve",null,hi,low, Color.Green );
 
-			testee.XAxis.Scale.FontSpec.Size = 8 ;
-			testee.XAxis.Scale.FontSpec.Angle = 60 ;
-			testee.XAxis.Scale.FontSpec.IsBold = true ;
+			testee.XAxis.ScaleFontSpec.Size = 8 ;
+			testee.XAxis.ScaleFontSpec.Angle = 60 ;
+			testee.XAxis.ScaleFontSpec.IsBold = true ;
 
 			//	Set the XAxis	to Text type
 			testee.XAxis.Type =	AxisType.Text;
-			testee.XAxis.Scale.TextLabels = x ;
-			testee.XAxis.Scale.MajorStep = 1 ;
-			testee.XAxis.MajorTic.IsBetweenLabels = false  ;
+			testee.XAxis.TextLabels = x ;
+			testee.XAxis.Step = 1 ;
+			testee.XAxis.IsTicsBetweenLabels = false  ;
 
-			testee.YAxis.MajorGrid.IsVisible = true ;
-			testee.YAxis.MinorGrid.IsVisible = true ;
+			testee.YAxis.IsShowGrid = true ;
+			testee.YAxis.IsShowMinorGrid = true ;
 
 			form2.WindowState = FormWindowState.Maximized ;
 			testee.AxisChange(	form2.CreateGraphics() );
@@ -1312,16 +1312,16 @@ namespace ZedGraph.UnitTest
 
 			ErrorBarItem myCurve	=	testee.AddErrorBar(	"My	Curve",x,hi,low, Color.Blue );
 
-			testee.XAxis.Scale.FontSpec.Size = 12 ;
-			testee.XAxis.Scale.FontSpec.Angle = 90 ;
+			testee.XAxis.ScaleFontSpec.Size = 12 ;
+			testee.XAxis.ScaleFontSpec.Angle = 90 ;
 
 			//	Set the XAxis	to date type
 			testee.XAxis.Type =	AxisType.Date;
-			testee.XAxis.Scale.Min = x[0] - 1 ;
+			testee.XAxis.Min = x[0] - 1 ;
 			myCurve.ErrorBar.PenWidth = 2;
 			
-			testee.YAxis.MajorGrid.IsVisible = true ;
-			testee.YAxis.MinorGrid.IsVisible = true ;
+			testee.YAxis.IsShowGrid = true ;
+			testee.YAxis.IsShowMinorGrid = true ;
 
 			form2.WindowState = FormWindowState.Maximized ;
 			testee.AxisChange(	form2.CreateGraphics() );
@@ -1351,11 +1351,11 @@ namespace ZedGraph.UnitTest
 			CurveItem myCurve	=	testee.AddCurve(	"My Curve",
 				null, y,	Color.Red,	SymbolType.Diamond );
 			//	Set the XAxis	labels
-			testee.XAxis.Scale.TextLabels = labels;
+			testee.XAxis.TextLabels = labels;
 			//	Set the XAxis	to Text type
 			testee.XAxis.Type =	AxisType.Text;
 			//	Set the labels at	an angle so they	don't overlap
-			testee.XAxis.Scale.FontSpec.Angle	=	0;
+			testee.XAxis.ScaleFontSpec.Angle	=	0;
 			//	Tell ZedGraph to	refigure	the
 			//	axes	since the data have	changed
 			testee.AxisChange(	form2.CreateGraphics() );
@@ -1388,7 +1388,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.16 $ $Date: 2006-03-27 01:31:42 $ </version>
+	/// <version>	$Revision: 3.17 $ $Date: 2006-03-27 03:35:46 $ </version>
 	[TestFixture]
 	public	class LongFeatureTest
 	{
@@ -1431,7 +1431,7 @@ namespace ZedGraph.UnitTest
 		{
 			Rectangle paneRect = form2.ClientRectangle;
 			paneRect.Inflate( -10, -10	);
-			testee.Rect = paneRect;
+			testee.PaneRect = paneRect;
 		}
 
 		private void	Form2_MouseDown(	object	sender,	System.Windows.Forms.MouseEventArgs e )
@@ -1476,49 +1476,49 @@ namespace ZedGraph.UnitTest
 				x, y2, Color.Blue, SymbolType.Circle	);
 			myCurve.IsY2Axis =	true;
 
-			testee.XAxis.MajorGrid.IsVisible =	false;
+			testee.XAxis.IsShowGrid =	false;
 			testee.XAxis.IsVisible	= false;
-			testee.XAxis.MajorGrid.IsZeroLine = false;
-			testee.XAxis.MajorTic.IsOutside =	false;
-			testee.XAxis.MinorTic.IsOutside	= false;
-			testee.XAxis.MajorTic.IsInside = false;
-			testee.XAxis.MinorTic.IsInside	=	false;
-			testee.XAxis.MinorTic.IsOpposite = false;
-			testee.XAxis.MajorTic.IsOpposite = false;
-			testee.XAxis.Scale.IsReverse	=	false;
+			testee.XAxis.IsZeroLine = false;
+			testee.XAxis.IsTic =	false;
+			testee.XAxis.IsMinorTic	= false;
+			testee.XAxis.IsInsideTic = false;
+			testee.XAxis.IsMinorInsideTic	=	false;
+			testee.XAxis.IsMinorOppositeTic = false;
+			testee.XAxis.IsOppositeTic = false;
+			testee.XAxis.IsReverse	=	false;
 			//	testee.XAxis.IsLog = false;
-			testee.XAxis.Title.Text = "";
+			testee.XAxis.Title = "";
 
-			testee.YAxis.MajorGrid.IsVisible =	false;
+			testee.YAxis.IsShowGrid =	false;
 			testee.YAxis.IsVisible	=	false;
-			testee.YAxis.MajorGrid.IsZeroLine	= false;
-			testee.YAxis.MajorTic.IsOutside = false;
-			testee.YAxis.MinorTic.IsOutside	= false;
-			testee.YAxis.MajorTic.IsInside = false;
-			testee.YAxis.MinorTic.IsInside =	false;
-			testee.YAxis.MinorTic.IsOpposite = false;
-			testee.YAxis.MajorTic.IsOpposite	= false;
-			testee.YAxis.Scale.IsReverse =	false;
+			testee.YAxis.IsZeroLine	= false;
+			testee.YAxis.IsTic = false;
+			testee.YAxis.IsMinorTic	= false;
+			testee.YAxis.IsInsideTic = false;
+			testee.YAxis.IsMinorInsideTic =	false;
+			testee.YAxis.IsMinorOppositeTic = false;
+			testee.YAxis.IsOppositeTic	= false;
+			testee.YAxis.IsReverse =	false;
 			//testee.YAxis.IsLog =	false;
-			testee.YAxis.Title.Text = "";
+			testee.YAxis.Title = "";
 
-			testee.Y2Axis.MajorGrid.IsVisible = false;
+			testee.Y2Axis.IsShowGrid = false;
 			testee.Y2Axis.IsVisible =	false;
-			testee.Y2Axis.MajorGrid.IsZeroLine	=	false;
-			testee.Y2Axis.MajorTic.IsOutside = false;
-			testee.Y2Axis.MinorTic.IsOutside	=	false;
-			testee.Y2Axis.MajorTic.IsInside = false;
-			testee.Y2Axis.MinorTic.IsInside = false;
-			testee.Y2Axis.MinorTic.IsOpposite = false;
-			testee.Y2Axis.MajorTic.IsOpposite	=	false;
-			testee.Y2Axis.Scale.IsReverse = false;
+			testee.Y2Axis.IsZeroLine	=	false;
+			testee.Y2Axis.IsTic = false;
+			testee.Y2Axis.IsMinorTic	=	false;
+			testee.Y2Axis.IsInsideTic = false;
+			testee.Y2Axis.IsMinorInsideTic = false;
+			testee.Y2Axis.IsMinorOppositeTic = false;
+			testee.Y2Axis.IsOppositeTic	=	false;
+			testee.Y2Axis.IsReverse = false;
 			//testee.Y2Axis.IsLog = false;
-			testee.Y2Axis.Title.Text = "";
+			testee.Y2Axis.Title = "";
 
-			testee.Chart.Border.IsVisible = false;
-			testee.Border.IsVisible	= false;
+			testee.AxisBorder.IsVisible = false;
+			testee.PaneBorder.IsVisible	= false;
 
-			testee.Title.IsVisible = false;
+			testee.IsShowTitle = false;
 			testee.Legend.IsHStack =	false;
 			testee.Legend.IsVisible = false;
 			testee.Legend.Border.IsVisible	=	false;
@@ -1533,49 +1533,49 @@ namespace ZedGraph.UnitTest
 
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Do you see a dual Y graph with no axes?" )	);
 			
-			testee.Border = new Border( true, Color.Red, 3.0F );
+			testee.PaneBorder = new Border( true, Color.Red, 3.0F );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Pane Frame Added?" ) );
 			
-			testee.Border = new Border( Color.Black,	1.0F );
+			testee.PaneBorder = new Border( Color.Black,	1.0F );
 
-			testee.Chart.Border	=	new Border( true, Color.Red, 3.0F );
+			testee.AxisBorder	=	new Border( true, Color.Red, 3.0F );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Axis Frame Added?"	) );
 			
-			testee.Chart.Border	=	new Border( Color.Black, 1.0F );
+			testee.AxisBorder	=	new Border( Color.Black, 1.0F );
 
-			testee.Fill = new	Fill( Color.White, Color.LightGoldenrodYellow );
-			testee.Margin.Top	=	50.0F;
-			testee.Margin.Bottom	=	50.0F;
-			testee.Margin.Left	=	50.0F;
-			testee.Margin.Right	=	50.0F;
+			testee.PaneFill = new	Fill( Color.White, Color.LightGoldenrodYellow );
+			testee.MarginTop	=	50.0F;
+			testee.MarginBottom	=	50.0F;
+			testee.MarginLeft	=	50.0F;
+			testee.MarginRight	=	50.0F;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Pane Background Filled?" ) );
 			
-			testee.Margin.Top	=	20.0F;
-			testee.Margin.Bottom	=	20.0F;
-			testee.Margin.Left	=	20.0F;
-			testee.Margin.Right	=	20.0F;
-			testee.Fill.IsVisible =	false;
-			testee.Chart.Fill = new Fill(	Color.White, Color.LightGoldenrodYellow );
+			testee.MarginTop	=	20.0F;
+			testee.MarginBottom	=	20.0F;
+			testee.MarginLeft	=	20.0F;
+			testee.MarginRight	=	20.0F;
+			testee.PaneFill.IsVisible =	false;
+			testee.AxisFill = new Fill(	Color.White, Color.LightGoldenrodYellow );
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Axis Background Filled?" ) );
 			
-			testee.Chart.Fill.IsVisible	= false;
+			testee.AxisFill.IsVisible	= false;
 			
-			testee.Title.IsVisible = true;
-			testee.Title.FontSpec.FontColor = Color.Red;
-			testee.Title.Text	=	"The Title";
+			testee.IsShowTitle = true;
+			testee.FontSpec.FontColor = Color.Red;
+			testee.Title	=	"The Title";
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Title Added?"	) );
 			
-			testee.Title.FontSpec.FontColor = Color.Black;
+			testee.FontSpec.FontColor = Color.Black;
 
 			testee.Legend.IsVisible = true;
 			testee.Legend.FontSpec.FontColor = Color.Red;
@@ -1640,64 +1640,64 @@ namespace ZedGraph.UnitTest
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Visible?"	) );
 
-			testee.XAxis.Title.Text = "X Axis Title";
+			testee.XAxis.Title = "X Axis Title";
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Title Visible?" ) );
 
 			//testee.XAxis.TicPenWidth	= 3.0F;
-			testee.XAxis.MajorGrid.IsZeroLine = true;
+			testee.XAxis.IsZeroLine = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis ZeroLine Visible?" )	);
 
-			testee.XAxis.MajorGrid.IsZeroLine = false;
+			testee.XAxis.IsZeroLine = false;
 			//testee.XAxis.TicPenWidth	= 1.0F;
-			testee.XAxis.MajorTic.IsOutside =	true;
+			testee.XAxis.IsTic =	true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis major tics Visible?" ) );
 
-			testee.XAxis.MinorTic.IsOutside	= true;
+			testee.XAxis.IsMinorTic	= true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis minor tics Visible?"	) );
 
-			testee.XAxis.MajorTic.IsInside = true;
+			testee.XAxis.IsInsideTic = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Inside tics Visible?" )	);
 
-			testee.XAxis.MajorTic.IsOpposite = true;
+			testee.XAxis.IsOppositeTic = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Opposite tics Visible?"	)	);
 
-			testee.XAxis.MinorTic.IsInside	=	true;
+			testee.XAxis.IsMinorInsideTic	=	true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Minor Inside tics Visible?" )	);
 
-			testee.XAxis.MinorTic.IsOpposite = true;
+			testee.XAxis.IsMinorOppositeTic = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Minor Opposite tics Visible?"	) );
 
-			testee.XAxis.MajorTic.PenWidth = 1.0F;
+			testee.XAxis.TicPenWidth = 1.0F;
 			testee.XAxis.Color	= Color.Black;
-			testee.XAxis.MajorGrid.IsVisible =	true;
+			testee.XAxis.IsShowGrid =	true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Grid Visible?" ) );
 
-			testee.XAxis.MajorGrid.PenWidth = 1.0F;
-			testee.XAxis.MajorGrid.Color = Color.Black;
-			testee.XAxis.Scale.IsReverse	=	true;
+			testee.XAxis.GridPenWidth = 1.0F;
+			testee.XAxis.GridColor = Color.Black;
+			testee.XAxis.IsReverse	=	true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Reversed?" ) );
 
-			testee.XAxis.Scale.IsReverse	=	false;
+			testee.XAxis.IsReverse	=	false;
 			testee.XAxis.Type =	AxisType.Log;
 
 			form2.Refresh();
@@ -1715,64 +1715,64 @@ namespace ZedGraph.UnitTest
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Visible?" ) );
 
-			testee.YAxis.Title.Text = "Y Axis	Title";
+			testee.YAxis.Title = "Y Axis	Title";
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Title Visible?" ) );
 
 			//testee.YAxis.TicPenWidth	= 3.0F;
-			testee.YAxis.MajorGrid.IsZeroLine	= true;
+			testee.YAxis.IsZeroLine	= true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis ZeroLine Visible?" )	);
 
-			testee.YAxis.MajorGrid.IsZeroLine	= false;
+			testee.YAxis.IsZeroLine	= false;
 			//testee.YAxis.TicPenWidth	= 1.0F;
-			testee.YAxis.MajorTic.IsOutside = true;
+			testee.YAxis.IsTic = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis major tics Visible?"	) );
 
-			testee.YAxis.MinorTic.IsOutside	= true;
+			testee.YAxis.IsMinorTic	= true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis minor tics Visible?"	) );
 
-			testee.YAxis.MajorTic.IsInside = true;
+			testee.YAxis.IsInsideTic = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Inside tics Visible?" )	);
 
-			testee.YAxis.MajorTic.IsOpposite	= true;
+			testee.YAxis.IsOppositeTic	= true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Opposite tics Visible?"	) );
 
-			testee.YAxis.MinorTic.IsInside =	true;
+			testee.YAxis.IsMinorInsideTic =	true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Minor Inside tics Visible?"	) );
 
-			testee.YAxis.MinorTic.IsOpposite = true;
+			testee.YAxis.IsMinorOppositeTic = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Minor Opposite tics Visible?" ) );
 
-			testee.YAxis.MajorTic.PenWidth = 1.0F;
+			testee.YAxis.TicPenWidth = 1.0F;
 			testee.YAxis.Color	= Color.Black;
-			testee.YAxis.MajorGrid.IsVisible =	true;
+			testee.YAxis.IsShowGrid =	true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Grid Visible?" ) );
 
-			testee.YAxis.MajorGrid.PenWidth = 1.0F;
-			testee.YAxis.MajorGrid.Color = Color.Black;
-			testee.YAxis.Scale.IsReverse =	true;
+			testee.YAxis.GridPenWidth = 1.0F;
+			testee.YAxis.GridColor = Color.Black;
+			testee.YAxis.IsReverse =	true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Reversed?" ) );
 
-			testee.YAxis.Scale.IsReverse =	false;
+			testee.YAxis.IsReverse =	false;
 			testee.YAxis.Type =	AxisType.Log;
 
 			form2.Refresh();
@@ -1790,64 +1790,64 @@ namespace ZedGraph.UnitTest
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Visible?" ) );
 
-			testee.Y2Axis.Title.Text = "Y2	Axis Title";
+			testee.Y2Axis.Title = "Y2	Axis Title";
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Title Visible?" ) );
 
 			//testee.Y2Axis.TicPenWidth	=	3.0F;
-			testee.Y2Axis.MajorGrid.IsZeroLine	=	true;
+			testee.Y2Axis.IsZeroLine	=	true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis ZeroLine Visible?"	)	);
 
-			testee.Y2Axis.MajorGrid.IsZeroLine	=	false;
+			testee.Y2Axis.IsZeroLine	=	false;
 			//testee.Y2Axis.TicPenWidth	=	1.0F;
-			testee.Y2Axis.MajorTic.IsOutside = true;
+			testee.Y2Axis.IsTic = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis major tics Visible?" ) );
 
-			testee.Y2Axis.MinorTic.IsOutside	=	true;
+			testee.Y2Axis.IsMinorTic	=	true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis minor tics Visible?" ) );
 
-			testee.Y2Axis.MajorTic.IsInside = true;
+			testee.Y2Axis.IsInsideTic = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Inside tics Visible?"	)	);
 
-			testee.Y2Axis.MajorTic.IsOpposite	=	true;
+			testee.Y2Axis.IsOppositeTic	=	true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Opposite tics Visible?"	) );
 
-			testee.Y2Axis.MinorTic.IsInside = true;
+			testee.Y2Axis.IsMinorInsideTic = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Minor Inside tics Visible?"	) );
 
-			testee.Y2Axis.MinorTic.IsOpposite = true;
+			testee.Y2Axis.IsMinorOppositeTic = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Minor Opposite tics Visible?" ) );
 
-			testee.Y2Axis.MajorTic.PenWidth = 1.0F;
+			testee.Y2Axis.TicPenWidth = 1.0F;
 			testee.Y2Axis.Color	=	Color.Black;
-			testee.Y2Axis.MajorGrid.IsVisible = true;
+			testee.Y2Axis.IsShowGrid = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Grid Visible?" ) );
 
-			testee.Y2Axis.MajorGrid.PenWidth	= 1.0F;
-			testee.Y2Axis.MajorGrid.Color = Color.Black;
-			testee.Y2Axis.Scale.IsReverse = true;
+			testee.Y2Axis.GridPenWidth	= 1.0F;
+			testee.Y2Axis.GridColor = Color.Black;
+			testee.Y2Axis.IsReverse = true;
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Reversed?" )	);
 
-			testee.Y2Axis.Scale.IsReverse = false;
+			testee.Y2Axis.IsReverse = false;
 			testee.Y2Axis.Type = AxisType.Log;
 
 			form2.Refresh();
@@ -1859,9 +1859,9 @@ namespace ZedGraph.UnitTest
 
 			for ( float angle=0.0F; angle<=360.0F; angle+=	10.0F	)
 			{
-				testee.XAxis.Scale.FontSpec.Angle	=	angle;
-				testee.YAxis.Scale.FontSpec.Angle =	-angle	+ 90.0F;
-				testee.Y2Axis.Scale.FontSpec.Angle = -angle	- 90.0F;
+				testee.XAxis.ScaleFontSpec.Angle	=	angle;
+				testee.YAxis.ScaleFontSpec.Angle =	-angle	+ 90.0F;
+				testee.Y2Axis.ScaleFontSpec.Angle = -angle	- 90.0F;
 				//testee.XAxis.TitleFontSpec.Angle =	-angle;
 				//testee.YAxis.TitleFontSpec.Angle = angle + 180.0F;
 				//testee.Y2Axis.TitleFontSpec.Angle = angle;
@@ -1875,17 +1875,17 @@ namespace ZedGraph.UnitTest
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
 				"Did Fonts Rotate & Axes Accomodate them?" ) );
 					
-			testee.XAxis.Scale.FontSpec.Angle	=	0;
-			testee.YAxis.Scale.FontSpec.Angle =	90.0F;
-			testee.Y2Axis.Scale.FontSpec.Angle = -90.0F;
+			testee.XAxis.ScaleFontSpec.Angle	=	0;
+			testee.YAxis.ScaleFontSpec.Angle =	90.0F;
+			testee.Y2Axis.ScaleFontSpec.Angle = -90.0F;
 			
 			for ( float angle=0.0F; angle<=360.0F; angle+=	10.0F	)
 			{
-				testee.XAxis.Title.FontSpec.Angle	= -angle;
-				testee.YAxis.Title.FontSpec.Angle	=	angle +	180.0F;
-				testee.Y2Axis.Title.FontSpec.Angle =	angle;
+				testee.XAxis.TitleFontSpec.Angle	= -angle;
+				testee.YAxis.TitleFontSpec.Angle	=	angle +	180.0F;
+				testee.Y2Axis.TitleFontSpec.Angle =	angle;
 				//testee.Legend.FontSpec.Angle = angle;
-				testee.Title.FontSpec.Angle	=	angle;
+				testee.FontSpec.Angle	=	angle;
 				
 				form2.Refresh();
 				TestUtils.DelaySeconds( 50 );
@@ -1894,19 +1894,19 @@ namespace ZedGraph.UnitTest
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
 				"Did Axis Titles Rotate and the AxisRect adjust properly?"	)	);
 					
-			testee.XAxis.Scale.FontSpec.Angle	=	0;
-			testee.YAxis.Scale.FontSpec.Angle =	90.0F;
-			testee.Y2Axis.Scale.FontSpec.Angle = -90.0F;
-			testee.XAxis.Title.FontSpec.Angle	= 0;
-			testee.YAxis.Title.FontSpec.Angle	=	180.0F;
-			testee.Y2Axis.Title.FontSpec.Angle =	0;
+			testee.XAxis.ScaleFontSpec.Angle	=	0;
+			testee.YAxis.ScaleFontSpec.Angle =	90.0F;
+			testee.Y2Axis.ScaleFontSpec.Angle = -90.0F;
+			testee.XAxis.TitleFontSpec.Angle	= 0;
+			testee.YAxis.TitleFontSpec.Angle	=	180.0F;
+			testee.Y2Axis.TitleFontSpec.Angle =	0;
 			//testee.Legend.FontSpec.Angle = 0;
-			testee.Title.FontSpec.Angle	=	0;
+			testee.FontSpec.Angle	=	0;
 
 			///////////////////////////////////////////////////////////////////////////////
 
-			TextObj text	=	new TextObj( "ZedGraph TextObj", 0.5F, 0.5F );
-			testee.GraphObjList.Add( text );
+			TextItem text	=	new TextItem( "ZedGraph TextItem", 0.5F, 0.5F );
+			testee.GraphItemList.Add( text );
 			
 			text.Location.CoordinateFrame =	CoordType.AxisFraction;
 			text.FontSpec.IsItalic	=	false;
@@ -1918,14 +1918,14 @@ namespace ZedGraph.UnitTest
 			
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
-				"Is TextObj Centered on Graph?"	) );
+				"Is TextItem Centered on Graph?"	) );
 			
 			text.FontSpec.FontColor =	Color.Black;
 			text.FontSpec.Border	= new	Border( true,	Color.Red, 3.0F	);
 			
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
-				"Does TextObj have a Border?"	) );
+				"Does TextItem have a Border?"	) );
 			
 			text.FontSpec.Border	= new	Border( Color.Black, 1.0F );
 			
@@ -1934,7 +1934,7 @@ namespace ZedGraph.UnitTest
 
 			form2.Refresh();
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
-				"Is TextObj background filled?" )	);
+				"Is TextItem background filled?" )	);
 			
 			text.FontSpec.Size = 20.0F;
 			text.FontSpec.Family	=	"Garamond";
@@ -1986,15 +1986,15 @@ namespace ZedGraph.UnitTest
 			Assert.IsTrue( TestUtils.promptIfTestWorked(
 				"Text Rotate with Bottom-Left at (75, 0.5)?"	) );
 				
-			testee.Fill.Type = FillType.Brush;
-			testee.Chart.Fill.Type =	FillType.Brush;
+			testee.PaneFill.Type = FillType.Brush;
+			testee.AxisFill.Type =	FillType.Brush;
 			testee.Legend.Fill.Type = FillType.Brush;
 
 			for ( float angle=0.0F; angle<=360.0F; angle+=	10.0F	)
 			{
-				testee.Fill.Brush	= new	LinearGradientBrush(	testee.Rect,	Color.White,
+				testee.PaneFill.Brush	= new	LinearGradientBrush(	testee.PaneRect,	Color.White,
 					Color.Red, angle, true );
-				testee.Chart.Fill.Brush = new LinearGradientBrush( testee.Chart.Rect, Color.White,
+				testee.AxisFill.Brush = new LinearGradientBrush( testee.AxisRect, Color.White,
 					Color.Blue,	-angle, true );
 				testee.Legend.Fill.Brush	=	new	LinearGradientBrush(	testee.Legend.Rect, Color.White,
 					Color.Green, -angle, true	);
@@ -2018,7 +2018,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.16 $ $Date: 2006-03-27 01:31:42 $ </version>
+	/// <version>	$Revision: 3.17 $ $Date: 2006-03-27 03:35:46 $ </version>
 	[TestFixture]
 	public	class FindNearestTest
 	{
@@ -2064,7 +2064,7 @@ namespace ZedGraph.UnitTest
 		{
 			Rectangle paneRect = form2.ClientRectangle;
 			paneRect.Inflate( -10, -10	);
-			testee.Rect = paneRect;
+			testee.PaneRect = paneRect;
 		}
 
 		object nearestObject;
@@ -2086,10 +2086,10 @@ namespace ZedGraph.UnitTest
 			TestUtils.WaitForMouseClick( 10000 );
 			bool match = false;
 
-			if ( theType == typeof(GraphObj) )
+			if ( theType == typeof(GraphItem) )
 			{
-				if (	nearestObject is GraphObj &&
-						(string) ((GraphObj)nearestObject).Tag == tag )
+				if (	nearestObject is GraphItem &&
+						(string) ((GraphItem)nearestObject).Tag == tag )
 					match = true;
 			}
 			else if ( theType == typeof(CurveItem) )
@@ -2181,45 +2181,45 @@ namespace ZedGraph.UnitTest
 			//bar.Bar.Fill = new Fill( brush );
 			
 			
-			testee.BarSettings.ClusterScaleWidth = 100;
-			testee.BarSettings.Type = BarType.Stack;
+			testee.ClusterScaleWidth = 100;
+			testee.BarType = BarType.Stack;
 
-			testee.Fill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
-			testee.Chart.Fill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
+			testee.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			testee.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
 			
-			testee.XAxis.MajorGrid.IsVisible = true;
-			testee.YAxis.MajorGrid.IsVisible = true;
-			testee.YAxis.Scale.Max = 120;
+			testee.XAxis.IsShowGrid = true;
+			testee.YAxis.IsShowGrid = true;
+			testee.YAxis.Max = 120;
 			testee.Y2Axis.IsVisible = true;
-			testee.Y2Axis.Scale.Max = 120;
+			testee.Y2Axis.Max = 120;
 			
-			TextObj text = new TextObj("First Prod\n21-Oct-93", 175F, 80.0F );
+			TextItem text = new TextItem("First Prod\n21-Oct-93", 175F, 80.0F );
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
 			text.Tag = "First";
-			testee.GraphObjList.Add( text );
+			testee.GraphItemList.Add( text );
 
-			ArrowObj arrow = new ArrowObj( Color.Black, 12F, 175F, 77F, 100F, 45F );
+			ArrowItem arrow = new ArrowItem( Color.Black, 12F, 175F, 77F, 100F, 45F );
 			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
-			testee.GraphObjList.Add( arrow );
+			testee.GraphItemList.Add( arrow );
 
-			text = new TextObj("Upgrade", 700F, 50.0F );
+			text = new TextItem("Upgrade", 700F, 50.0F );
 			text.FontSpec.Angle = 90;
 			text.FontSpec.FontColor = Color.Black;
 			text.Location.AlignH = AlignH.Right;
 			text.Location.AlignV = AlignV.Center;
 			text.FontSpec.Fill.IsVisible = false;
 			text.FontSpec.Border.IsVisible = false;
-			testee.GraphObjList.Add( text );
+			testee.GraphItemList.Add( text );
 
-			arrow = new ArrowObj( Color.Black, 15, 700, 53, 700, 80 );
+			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
 			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
 			arrow.PenWidth = 2.0F;
 			arrow.Tag = "Arrow";
-			testee.GraphObjList.Add( arrow );
+			testee.GraphItemList.Add( arrow );
 
-			text = new TextObj("Confidential", 0.8F, -0.03F );
+			text = new TextItem("Confidential", 0.8F, -0.03F );
 			text.Location.CoordinateFrame = CoordType.AxisFraction;
 
 			text.FontSpec.Angle = 15.0F;
@@ -2232,25 +2232,25 @@ namespace ZedGraph.UnitTest
 
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
-			testee.GraphObjList.Add( text );
+			testee.GraphItemList.Add( text );
 			
 			testee.IsPenWidthScaled = false ;
 
 			RectangleF rect = new RectangleF( 500, 50, 200, 20 );
-			EllipseObj ellipse = new EllipseObj( rect, Color.Blue, 
+			EllipseItem ellipse = new EllipseItem( rect, Color.Blue, 
 				Color.Goldenrod );
 			ellipse.Location.CoordinateFrame = CoordType.AxisXYScale;
 			ellipse.Tag = "Ellipse";
-			testee.GraphObjList.Add( ellipse );
+			testee.GraphItemList.Add( ellipse );
 
 //			Bitmap bm = new Bitmap( @"c:\temp\sunspot.jpg" );
 			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
 			Image image = Image.FromHbitmap( bm.GetHbitmap() );
-			ImageObj imageItem = new ImageObj( image, new RectangleF( 0.8F, 0.8F, 0.2F, 0.2F ),
+			ImageItem imageItem = new ImageItem( image, new RectangleF( 0.8F, 0.8F, 0.2F, 0.2F ),
 				CoordType.AxisFraction, AlignH.Left, AlignV.Top );
 			imageItem.IsScaled = true;
 			imageItem.Tag = "Bitmap";
-			testee.GraphObjList.Add( imageItem );
+			testee.GraphItemList.Add( imageItem );
 
 			testee.AxisChange( form2.CreateGraphics() );
 			SetSize();
@@ -2258,9 +2258,9 @@ namespace ZedGraph.UnitTest
 
 			TestUtils.ShowMessage( "For each step, read the message in the Title Bar of the form" );
 
-			HandleFind( "Select the ellipse object", "Ellipse", 0, typeof(GraphObj) );
-			HandleFind( "Select the 'First Prod' text object", "First", 0, typeof(GraphObj) );
-			HandleFind( "Select the upgrade arrow object", "Arrow", 0, typeof(GraphObj) );
+			HandleFind( "Select the ellipse object", "Ellipse", 0, typeof(GraphItem) );
+			HandleFind( "Select the 'First Prod' text object", "First", 0, typeof(GraphItem) );
+			HandleFind( "Select the upgrade arrow object", "Arrow", 0, typeof(GraphItem) );
 			HandleFind( "Select the Graph Title", "", 0, typeof(GraphPane) );
 			HandleFind( "Select the X Axis", "ZedGraph.XAxis", 0, typeof(Axis) );
 			HandleFind( "Select the Y Axis", "ZedGraph.YAxis", 0, typeof(Axis) );
@@ -2270,7 +2270,7 @@ namespace ZedGraph.UnitTest
 			HandleFind( "Select the negative brown bar", "Wheezy", 2, typeof(CurveItem) );
 			HandleFind( "Select the negative blue bar", "Curly", 2, typeof(CurveItem) );
 			HandleFind( "Select the highest green circle symbol", "Larry", 6, typeof(CurveItem) );
-			HandleFind( "Select the windows bitmap object", "Bitmap", 0, typeof(GraphObj) );
+			HandleFind( "Select the windows bitmap object", "Bitmap", 0, typeof(GraphItem) );
 
 		}
 		#endregion

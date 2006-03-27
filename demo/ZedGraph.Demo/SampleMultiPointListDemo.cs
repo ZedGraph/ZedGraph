@@ -40,9 +40,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the titles and axis labels
-			myPane.Title.Text = "SampleMultiPointList (IPointList) Demo";
-			myPane.XAxis.Title.Text = "Time, seconds";
-			myPane.YAxis.Title.Text = "Distance (m), or Velocity (m/s)";
+			myPane.Title = "SampleMultiPointList (IPointList) Demo";
+			myPane.XAxis.Title = "Time, seconds";
+			myPane.YAxis.Title = "Distance (m), or Velocity (m/s)";
 			
 			// Create a new SampleMultiPointList (see SampleMultiPointList.cs for details)
 			SampleMultiPointList myList = new SampleMultiPointList();
@@ -72,7 +72,7 @@ namespace ZedGraph.Demo
 			myPane.AddCurve( "Velocity", myList2, Color.Red );
 			
 			// Fill the axis background with a color gradient
-			myPane.Chart.Fill = new Fill( Color.White,
+			myPane.AxisFill = new Fill( Color.White,
 				Color.LightGoldenrodYellow, 45.0F );
 
 			base.ZedGraphControl.AxisChange();

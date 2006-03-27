@@ -36,9 +36,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title.Text = "Cat Stats";
-			myPane.XAxis.Title.Text = "Big Cats";
-			myPane.YAxis.Title.Text = "Population";
+			myPane.Title = "Cat Stats";
+			myPane.XAxis.Title = "Big Cats";
+			myPane.YAxis.Title = "Population";
 			
 			// Make up some data points
 			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard" };
@@ -62,15 +62,15 @@ namespace ZedGraph.Demo
 			myCurve.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green );
 
 			// Draw the X tics between the labels instead of at the labels
-			myPane.XAxis.MajorTic.IsBetweenLabels = true;
+			myPane.XAxis.IsTicsBetweenLabels = true;
 
 			// Set the XAxis labels
-			myPane.XAxis.Scale.TextLabels = labels;
+			myPane.XAxis.TextLabels = labels;
 			// Set the XAxis to Text type
 			myPane.XAxis.Type = AxisType.Text;
 
 			// Set the bar type to stack, which stacks the bars by automatically accumulating the values
-			myPane.BarSettings.Type = BarType.Stack;
+			myPane.BarType = BarType.Stack;
 			
 			base.ZedGraphControl.AxisChange();
 		}

@@ -35,7 +35,7 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the pane title
-			myPane.Title.Text = "2004 ZedGraph Sales by Region\n ($M)";
+			myPane.Title = "2004 ZedGraph Sales by Region\n ($M)";
 
 			// Enter some data values
 			double [] values =   { 15, 15, 40, 20 } ;
@@ -45,8 +45,8 @@ namespace ZedGraph.Demo
 			string [] labels = { "Europe", "Pac Rim", "South America", "Africa" } ;
 
 			// Fill the pane and axis background with solid color
-			myPane.Fill = new Fill( Color.Cornsilk );
-			myPane.Chart.Fill = new Fill( Color.Cornsilk );
+			myPane.PaneFill = new Fill( Color.Cornsilk );
+			myPane.AxisFill = new Fill( Color.Cornsilk );
 			myPane.Legend.Position = LegendPos.Right ;
 			
 			// Create some pie slices
@@ -80,23 +80,23 @@ namespace ZedGraph.Demo
 				total += ((PieItem)curves[x]).Value ;
 
 			// Add a text item to highlight total sales
-			TextObj text = new TextObj("Total 2004 Sales - " + "$" + total.ToString () + "M", 0.85F, 0.80F,CoordType.PaneFraction );
+			TextItem text = new TextItem("Total 2004 Sales - " + "$" + total.ToString () + "M", 0.85F, 0.80F,CoordType.PaneFraction );
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Border.IsVisible = false ;
 			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
 			text.FontSpec.StringAlignment = StringAlignment.Center ;
-			myPane.GraphObjList.Add( text );
+			myPane.GraphItemList.Add( text );
 			
 			// Add a colored background behind the pie
-			BoxObj box = new BoxObj( new RectangleF( 0F, 0F, 1F, 1F ),
+			BoxItem box = new BoxItem( new RectangleF( 0F, 0F, 1F, 1F ),
 				Color.Empty, Color.PeachPuff );
 			box.Location.CoordinateFrame = CoordType.AxisFraction;
 			box.Border.IsVisible = false;
 			box.Location.AlignH = AlignH.Left;
 			box.Location.AlignV = AlignV.Top;
 			box.ZOrder = ZOrder.E_BehindAxis;
-			myPane.GraphObjList.Add( box );
+			myPane.GraphItemList.Add( box );
 
 			base.ZedGraphControl.AxisChange();
 		}

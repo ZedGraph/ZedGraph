@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// This class will refilter the data points each time <see cref="SetBounds" /> is called.  The
 	/// data are filtered down to <see cref="MaxPts" /> points, within the data bounds of
 	/// <see cref="XMinBound" /> and <see cref="XMaxBound" />.  The data are filtered by simply skipping
-	/// points to achieve the desired total number of _points.  Input arrays are assumed to be
+	/// points to achieve the desired total number of points.  Input arrays are assumed to be
 	/// monotonically increasing in X, and evenly spaced in X.
 	/// </remarks>
 	/// <seealso cref="PointPairList" />
@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	///
 	/// <author> John Champion</author>
-	/// <version> $Revision: 1.3 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.4 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	public class FilteredPointList : IPointList
 	{

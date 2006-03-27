@@ -36,9 +36,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title.Text = "Demo for Step Charts";
-			myPane.XAxis.Title.Text = "Time, Days";
-			myPane.YAxis.Title.Text = "Widget Production (units/hour)";
+			myPane.Title = "Demo for Step Charts";
+			myPane.XAxis.Title = "Time, Days";
+			myPane.YAxis.Title = "Widget Production (units/hour)";
 
 			// Generate some sine-based data values
 			PointPairList list = new PointPairList();

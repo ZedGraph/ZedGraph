@@ -46,10 +46,10 @@ namespace ZedGraph
 	/// controlled by the symbol size in <see cref="ZedGraph.ErrorBar.Symbol"/>,
 	/// specified in points (1/72nd inch).  The position of each "I-Beam" is set
 	/// according to the <see cref="PointPair"/> values.  The independent axis
-	/// is assigned with <see cref="BarSettings.Base"/>, and is a
+	/// is assigned with <see cref="GraphPane.BarBase"/>, and is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	public class ErrorBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -59,7 +59,7 @@ namespace ZedGraph
 		/// class defined for this <see cref="ErrorBarItem"/>.  Use the public
 		/// property <see cref="ErrorBar"/> to access this value.
 		/// </summary>
-		private ErrorBar _errorBar;
+		private ErrorBar errorBar;
 
 	#endregion
 
@@ -70,7 +70,7 @@ namespace ZedGraph
 		/// </summary>
 		public ErrorBar ErrorBar
 		{
-			get { return _errorBar; }
+			get { return errorBar; }
 		}
 
 		/// <summary>
@@ -92,25 +92,25 @@ namespace ZedGraph
 		/// <value>true if the X axis is independent, false otherwise</value>
 		override internal bool IsXIndependent( GraphPane pane )
 		{
-			return pane._barSettings.Base == BarBase.X;
+			return pane.BarBase == BarBase.X;
 		}
 
 	#endregion
 
 	#region Constructors
 		/// <summary>
-		/// Create a new <see cref="ErrorBarItem"/>, specifying only the legend _label.
+		/// Create a new <see cref="ErrorBarItem"/>, specifying only the legend label.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		public ErrorBarItem( string label ) : base( label )
 		{
-			this._errorBar = new ErrorBar();
+			this.errorBar = new ErrorBar();
 		}
 		
 		/// <summary>
 		/// Create a new <see cref="ErrorBarItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		/// <param name="x">An array of double precision values that define
 		/// the X axis values for this curve</param>
 		/// <param name="y">An array of double precision values that define
@@ -129,7 +129,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Create a new <see cref="ErrorBarItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		/// <param name="points">A <see cref="IPointList"/> of double precision values that define
 		/// the X, Y and lower dependent values for this curve</param>
 		/// <param name="color">A <see cref="Color"/> value that will be applied to
@@ -138,7 +138,7 @@ namespace ZedGraph
 		public ErrorBarItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
-			_errorBar = new ErrorBar( color );
+			errorBar = new ErrorBar( color );
 		}
 
 		/// <summary>
@@ -147,7 +147,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="ErrorBarItem"/> object from which to copy</param>
 		public ErrorBarItem( ErrorBarItem rhs ) : base( rhs )
 		{
-			_errorBar = new ErrorBar( rhs.ErrorBar );
+			errorBar = new ErrorBar( rhs.ErrorBar );
 		}
 
 		/// <summary>
@@ -190,7 +190,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			_errorBar = (ErrorBar) info.GetValue( "errorBar", typeof(ErrorBar) );
+			errorBar = (ErrorBar) info.GetValue( "errorBar", typeof(ErrorBar) );
 
 			// This is now just a dummy variable, since barBase was removed
 			BarBase barBase = (BarBase) info.GetValue( "barBase", typeof(BarBase) );
@@ -205,7 +205,7 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "errorBar", _errorBar );
+			info.AddValue( "errorBar", errorBar );
 
 			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
 			info.AddValue( "barBase", BarBase.X );
@@ -237,9 +237,9 @@ namespace ZedGraph
 		/// </param>
 		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
-			if ( this._isVisible )
+			if ( this.isVisible )
 			{
-				_errorBar.Draw( g, pane, this, this.BaseAxis( pane ),
+				errorBar.Draw( g, pane, this, this.BaseAxis( pane ),
 								this.ValueAxis( pane ), scaleFactor );
 			}
 		}		
@@ -268,7 +268,7 @@ namespace ZedGraph
 		{
 			float pixBase, pixValue, pixLowValue;
 
-			if ( pane._barSettings.Base == BarBase.X )
+			if ( pane.BarBase == BarBase.X )
 			{
 				pixBase = rect.Left + rect.Width / 2.0F;
 				pixValue = rect.Top;
@@ -281,8 +281,8 @@ namespace ZedGraph
 				pixLowValue = rect.Left;
 			}
 
-			Pen pen = new Pen( _errorBar.Color, _errorBar.PenWidth );
-			this.ErrorBar.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixValue,
+			Pen pen = new Pen( errorBar.Color, errorBar.PenWidth );
+			this.ErrorBar.Draw( g, pane, pane.BarBase == BarBase.X, pixBase, pixValue,
 								pixLowValue, scaleFactor, pen, null );
 		}
 

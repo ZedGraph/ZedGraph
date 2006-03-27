@@ -36,15 +36,15 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the GraphPane title
-			myPane.Title.Text = "2004 ZedGraph Sales by Region\n($M)";
-			myPane.Title.FontSpec.IsItalic = true;
-			myPane.Title.FontSpec.Size = 24f;
-			myPane.Title.FontSpec.Family = "Times New Roman";
+			myPane.Title = "2004 ZedGraph Sales by Region\n($M)";
+			myPane.FontSpec.IsItalic = true;
+			myPane.FontSpec.Size = 24f;
+			myPane.FontSpec.Family = "Times";
 
 			// Fill the pane background with a color gradient
-			myPane.Fill = new Fill( Color.White, Color.Goldenrod, 45.0f );
+			myPane.PaneFill = new Fill( Color.White, Color.Goldenrod, 45.0f );
 			// No fill for the axis background
-			myPane.Chart.Fill.Type = FillType.None;
+			myPane.AxisFill.Type = FillType.None;
 
 			// Set the legend to an arbitrary location
 			myPane.Legend.Position = LegendPos.Float ;
@@ -72,21 +72,21 @@ namespace ZedGraph.Demo
 				total += ((PieItem)curves[x]).Value ;
 
 			// Make a text label to highlight the total value
-			TextObj text = new TextObj( "Total 2004 Sales\n" + "$" + total.ToString () + "M",
+			TextItem text = new TextItem( "Total 2004 Sales\n" + "$" + total.ToString () + "M",
 								0.18F, 0.40F, CoordType.PaneFraction );
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Border.IsVisible = false ;
 			text.FontSpec.Fill = new Fill( Color.White, Color.FromArgb( 255, 100, 100 ), 45F );
 			text.FontSpec.StringAlignment = StringAlignment.Center ;
-			myPane.GraphObjList.Add( text );
+			myPane.GraphItemList.Add( text );
 
 			// Create a drop shadow for the total value text item
-			TextObj text2 = new TextObj( text );
+			TextItem text2 = new TextItem( text );
 			text2.FontSpec.Fill = new Fill( Color.Black );
 			text2.Location.X += 0.008f;
 			text2.Location.Y += 0.01f;
-			myPane.GraphObjList.Add( text2 );
+			myPane.GraphItemList.Add( text2 );
 			 
 			base.ZedGraphControl.AxisChange();
 		}

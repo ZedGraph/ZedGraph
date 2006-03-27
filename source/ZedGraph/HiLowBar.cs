@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -47,7 +47,7 @@ namespace ZedGraph
         /// <see cref="HiLowBar"/> in points (1/72 inch).  Use the public
         /// property <see cref="Size"/> to access this value.
 		/// </summary>
-		private float		_size;
+		private float		size;
 
 		/// <summary>
 		/// Private field that determines whether the bar width will be based on
@@ -55,7 +55,7 @@ namespace ZedGraph
 		/// space similar to <see cref="BarItem"/> objects.  Use the public property
 		/// <see cref="IsMaximumWidth"/> to access this value.
 		/// </summary>
-		private bool _isMaximumWidth;
+		private bool isMaximumWidth;
 	#endregion
 
 	#region Properties
@@ -117,7 +117,7 @@ namespace ZedGraph
 		/// (1/72nd inch)</param>
 		public HiLowBar( Color color, float size ) : base( color )
 		{
-			this._size = size;
+			this.size = size;
 		}
 
 		/// <summary>
@@ -126,7 +126,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="HiLowBar"/> object from which to copy</param>
 		public HiLowBar( HiLowBar rhs ) : base( rhs )
 		{
-			this._size = rhs._size;
+			this.size = rhs.size;
 		}
 
 		/// <summary>
@@ -169,8 +169,8 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			_size = info.GetSingle( "size" );
-			_isMaximumWidth = info.GetBoolean( "isMaximumWidth" );
+			size = info.GetSingle( "size" );
+			isMaximumWidth = info.GetBoolean( "isMaximumWidth" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -182,8 +182,8 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "size", _size );
-			info.AddValue( "isMaximumWidth", _isMaximumWidth );
+			info.AddValue( "size", size );
+			info.AddValue( "isMaximumWidth", isMaximumWidth );
 		}
 	#endregion
 
@@ -197,7 +197,7 @@ namespace ZedGraph
 		/// if <see cref="IsMaximumWidth"/> is true, the bar width will
 		/// be set according to the maximum available cluster width less
 		/// the cluster gap (see <see cref="GraphPane.GetClusterWidth"/>
-		/// and <see cref="BarSettings.MinClusterGap"/>).  That is, if
+		/// and <see cref="GraphPane.MinClusterGap"/>).  That is, if
 		/// <see cref="IsMaximumWidth"/> is true, then the value of
 		/// <see cref="Size"/> will be ignored.
 		/// </remarks>
@@ -205,8 +205,8 @@ namespace ZedGraph
         /// <seealso cref="Default.Size"/>
 		public float Size
 		{
-			get { return _size; }
-			set { _size = value; }
+			get { return size; }
+			set { size = value; }
 		}
 
 		/// <summary>
@@ -216,12 +216,12 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>If true, then the value
 		/// of <see cref="Size"/> is ignored.  If this value is true, then
-		/// <see cref="BarSettings.MinClusterGap"/> will be used to determine the total space between each bar.
+		/// <see cref="GraphPane.MinClusterGap"/> will be used to determine the total space between each bar.
 		/// </remarks>
 		public bool IsMaximumWidth
 		{
-			get { return _isMaximumWidth; }
-			set { _isMaximumWidth = value; }
+			get { return isMaximumWidth; }
+			set { isMaximumWidth = value; }
 		}
 	#endregion
 
@@ -331,10 +331,10 @@ namespace ZedGraph
 		/// <returns>The width of each bar, in pixel units</returns>
 		public float GetBarWidth( GraphPane pane, Axis baseAxis, float scaleFactor )
 		{
-			if ( _isMaximumWidth )
-				return baseAxis._scale.GetClusterWidth( pane ) / ( 1.0F + pane._barSettings.MinClusterGap );
+			if ( isMaximumWidth )
+				return baseAxis.GetClusterWidth( pane ) / ( 1.0F + pane.MinClusterGap );
 			else
-				return (float) ( this._size * scaleFactor );
+				return (float) ( this.size * scaleFactor );
 		}
 	#endregion
 

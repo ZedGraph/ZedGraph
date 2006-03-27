@@ -27,12 +27,12 @@ namespace ZedGraph
 	/// <summary>
 	/// <see cref="Y2Axis"/> inherits from <see cref="Axis"/>, and defines the
 	/// special characteristics of a vertical axis, specifically located on
-	/// the right side of the <see cref="Chart.Rect"/> of the <see cref="GraphPane"/>
+	/// the right side of the <see cref="GraphPane.AxisRect"/> of the <see cref="GraphPane"/>
 	/// object
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	public class Y2Axis : Axis, ICloneable, ISerializable
 	{
@@ -54,7 +54,7 @@ namespace ZedGraph
 			/// Determines if a line will be drawn at the zero value for the 
 			/// <see cref="Y2Axis"/>, that is, a line that
 			/// divides the negative values from positive values.
-			/// <seealso cref="MajorGrid.IsZeroLine"/>.
+			/// <seealso cref="Axis.IsZeroLine"/>.
 			/// </summary>
 			public static bool IsZeroLine = true;
 		}
@@ -78,9 +78,9 @@ namespace ZedGraph
 		/// <param name="title">The <see cref="Axis.Title"/> for this axis</param>
 		public Y2Axis( string title ) : base( title )
 		{
-			this._isVisible = Default.IsVisible;
-			this._majorGrid._isZeroLine = MajorGrid.Default.IsZeroLine;
-			this._scale._fontSpec.Angle = -90.0F;
+			this.isVisible = Default.IsVisible;
+			this.isZeroLine = Default.IsZeroLine;
+			this.scaleFontSpec.Angle = -90.0F;
 		}
 
 		/// <summary>
@@ -168,7 +168,7 @@ namespace ZedGraph
 		{
 			// Move the origin to the BottomRight of the axisRect, which is the left
 			// side of the Y2 axis (facing from the label side)
-			g.TranslateTransform( pane.Chart._rect.Right, pane.Chart._rect.Bottom );
+			g.TranslateTransform( pane.AxisRect.Right, pane.AxisRect.Bottom );
 			// rotate so this axis is in the left-right direction
 			g.RotateTransform( -90 );
 		}
@@ -208,7 +208,7 @@ namespace ZedGraph
 		{
 			double effCross = EffectiveCrossValue( pane );
 
-			if ( !this._crossAuto )
+			if ( !this.crossAuto )
 				return pane.XAxis.Scale.Transform( effCross ) - pane.XAxis.Scale.MaxPix;
 			else
 				return 0;

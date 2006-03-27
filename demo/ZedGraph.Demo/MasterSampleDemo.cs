@@ -39,21 +39,21 @@ namespace ZedGraph.Demo
 			myMaster.PaneList.Clear();
 
 			// Set the masterpane title
-			myMaster.Title.Text = "ZedGraph MasterPane Example";
-			myMaster.Title.IsVisible = true;
+			myMaster.Title = "ZedGraph MasterPane Example";
+			myMaster.IsShowTitle = true;
 
 			// Fill the masterpane background with a color gradient
-			myMaster.Fill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+			myMaster.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
 
 			// Set the margins to 10 points
-			myMaster.Margin.All = 10;
+			myMaster.MarginAll = 10;
 
 			// Enable the masterpane legend
 			myMaster.Legend.IsVisible = true;
 			myMaster.Legend.Position = LegendPos.TopCenter;
 
 			// Add a priority stamp
-			TextObj text = new TextObj( "Priority", 0.88F, 0.12F );
+			TextItem text = new TextItem( "Priority", 0.88F, 0.12F );
 			text.Location.CoordinateFrame = CoordType.PaneFraction;
 			text.FontSpec.Angle = 15.0F;
 			text.FontSpec.FontColor = Color.Red;
@@ -64,10 +64,10 @@ namespace ZedGraph.Demo
 			text.FontSpec.Fill.IsVisible = false;
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
-			myMaster.GraphObjList.Add( text );
+			myMaster.GraphItemList.Add( text );
 
 			// Add a draft watermark
-			text = new TextObj( "DRAFT", 0.5F, 0.5F );
+			text = new TextItem( "DRAFT", 0.5F, 0.5F );
 			text.Location.CoordinateFrame = CoordType.PaneFraction;
 			text.FontSpec.Angle = 30.0F;
 			text.FontSpec.FontColor = Color.FromArgb( 70, 255, 100, 100 );
@@ -78,7 +78,7 @@ namespace ZedGraph.Demo
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Center;
 			text.ZOrder = ZOrder.B_BehindLegend;
-			myMaster.GraphObjList.Add( text );
+			myMaster.GraphItemList.Add( text );
 
 			// Initialize a color and symbol type rotator
 			ColorSymbolRotator rotator = new ColorSymbolRotator();
@@ -94,7 +94,7 @@ namespace ZedGraph.Demo
 					"Rate, m/s" );
 
 				// Fill the GraphPane background with a color gradient
-				myPane.Fill = new Fill( Color.White, Color.LightYellow, 45.0F );
+				myPane.PaneFill = new Fill( Color.White, Color.LightYellow, 45.0F );
 				myPane.BaseDimension = 6.0F;
 
 				// Make up some data arrays based on the Sine function

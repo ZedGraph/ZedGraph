@@ -36,9 +36,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the titles and axis labels
-			myPane.Title.Text = "Axis Cross Demo";
-			myPane.XAxis.Title.Text = "My X Axis";
-			myPane.YAxis.Title.Text = "My Y Axis";
+			myPane.Title = "Axis Cross Demo";
+			myPane.XAxis.Title = "My X Axis";
+			myPane.YAxis.Title = "My Y Axis";
 			
 			// Make up some data arrays based on the Sine function
 			double x, y;
@@ -58,12 +58,12 @@ namespace ZedGraph.Demo
 			// Set the Y axis intersect the X axis at an X value of 0.0
 			myPane.YAxis.Cross = 0.0;
 			// Turn off the axis frame and all the opposite side tics
-			myPane.Chart.Border.IsVisible = false;
-			myPane.XAxis.MajorTic.IsOpposite = false;
-			myPane.XAxis.MinorTic.IsOpposite = false;
-			myPane.YAxis.MajorTic.IsOpposite = false;
-			myPane.YAxis.MinorTic.IsOpposite = false;
-			myPane.YAxis.Scale.IsSkipFirstLabel = true;
+			myPane.AxisBorder.IsVisible = false;
+			myPane.XAxis.IsOppositeTic = false;
+			myPane.XAxis.IsMinorOppositeTic = false;
+			myPane.YAxis.IsOppositeTic = false;
+			myPane.YAxis.IsMinorOppositeTic = false;
+			myPane.YAxis.IsSkipFirstLabel = true;
 			
 			// Tell ZedGraph to refigure the
 			// axes since the data have changed

@@ -28,12 +28,12 @@ namespace ZedGraph
 {
 	/// <summary>
 	/// A class that encapsulates color-fill properties for an object.  The <see cref="Fill"/> class
-	/// is used in <see cref="PaneBase.Rect"/>, <see cref="Chart.Rect"/>, <see cref="Legend"/>,
+	/// is used in <see cref="PaneBase.PaneRect"/>, <see cref="GraphPane.AxisRect"/>, <see cref="Legend"/>,
 	/// <see cref="Bar"/>, and <see cref="Line"/> objects.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	public class Fill : ISerializable, ICloneable
 	{
@@ -44,28 +44,28 @@ namespace ZedGraph
 		/// property <see cref="Color"/> to access this value.  This property is
 		/// only applicable if the <see cref="Type"/> is not <see cref="ZedGraph.FillType.None"/>.
 		/// </summary>
-		private Color		_color;
+		private Color		color;
 		/// <summary>
 		/// Private field that stores the custom fill brush.  Use the public
 		/// property <see cref="Brush"/> to access this value.  This property is
 		/// only applicable if the 
 		/// <see cref="Type"/> property is set to <see cref="ZedGraph.FillType.Brush"/>.
 		/// </summary>
-		protected Brush		_brush;
+		public Brush		brush;
 		/// <summary>
 		/// Private field that determines the type of color fill.  Use the public
 		/// property <see cref="Type"/> to access this value.  The fill color
 		/// is determined by the property <see cref="Color"/> or
 		/// <see cref="Brush"/>.
 		/// </summary>
-		private FillType	_type;
+		private FillType	type;
 		/// <summary>
 		/// Private field that determines if the brush will be scaled to the bounding box
 		/// of the filled object.  If this value is false, then the brush will only be aligned
 		/// with the filled object based on the <see cref="AlignH"/> and <see cref="AlignV"/>
 		/// properties.
 		/// </summary>
-		private bool		_isScaled;
+		private bool		isScaled;
 		/// <summary>
 		/// Private field that determines how the brush will be aligned with the filled object
 		/// in the horizontal direction.  This value is a <see cref="ZedGraph.AlignH"/> enumeration.
@@ -74,7 +74,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="AlignH"/>
 		/// <seealso cref="AlignV"/>
-		private AlignH		_alignH;
+		private AlignH		alignH;
 		/// <summary>
 		/// Private field that determines how the brush will be aligned with the filled object
 		/// in the vertical direction.  This value is a <see cref="ZedGraph.AlignV"/> enumeration.
@@ -83,39 +83,39 @@ namespace ZedGraph
 		/// </summary>
 		/// <seealso cref="AlignH"/>
 		/// <seealso cref="AlignV"/>
-		private AlignV		_alignV;
+		private AlignV		alignV;
 
-		private double	_rangeMin;
-		private double	_rangeMax;
-		private double _rangeDefault;
-		private Bitmap	_gradientBM;
+		private double	rangeMin;
+		private double	rangeMax;
+		private double rangeDefault;
+		private Bitmap	gradientBM;
 
 		/// <summary>
 		/// Private field that saves the image passed to the constructor.
 		/// This is used strictly for serialization.
 		/// </summary>
-		private Image	_image;
+		private Image	image;
 		/// <summary>
 		/// Private field that saves the image wrapmode passed to the constructor.
 		/// This is used strictly for serialization.
 		/// </summary>
-		private WrapMode _wrapMode;
+		private WrapMode wrapMode;
 		/// <summary>
 		/// Private field that saves the list of colors used to create the
 		/// <see cref="LinearGradientBrush"/> in the constructor.  This is used strictly
 		/// for serialization.
 		/// </summary>
-		private Color[] _colorList;
+		private Color[] colorList;
 		/// <summary>
 		/// Private field that saves the list of positions used to create the
 		/// <see cref="LinearGradientBrush"/> in the constructor.  This is used strictly
 		/// for serialization.
 		/// </summary>
-		private float[] _positionList;
+		private float[] positionList;
 		/// <summary>
 		/// Private field the saves the angle of the fill.  This is used strictly for serialization.
 		/// </summary>
-		private float _angle;
+		private float angle;
 
 
 	#endregion
@@ -152,22 +152,22 @@ namespace ZedGraph
 		/// </summary>
 		private void Init()
 		{
-			_color = Color.White;
-			_brush = null;
-			_type = FillType.None;
-			this._isScaled = Default.IsScaled;
-			this._alignH = Default.AlignH;
-			this._alignV = Default.AlignV;
-			this._rangeMin = 0.0;
-			this._rangeMax = 1.0;
-			this._rangeDefault = double.MaxValue;
-			_gradientBM = null;
+			color = Color.White;
+			brush = null;
+			type = FillType.None;
+			this.isScaled = Default.IsScaled;
+			this.alignH = Default.AlignH;
+			this.alignV = Default.AlignV;
+			this.rangeMin = 0.0;
+			this.rangeMax = 1.0;
+			this.rangeDefault = double.MaxValue;
+			gradientBM = null;
 
-			_colorList = null;
-			_positionList = null;
-			_angle = 0;
-			_image = null;
-			_wrapMode = WrapMode.Tile;
+			colorList = null;
+			positionList = null;
+			angle = 0;
+			image = null;
+			wrapMode = WrapMode.Tile;
 
 		}
 
@@ -189,9 +189,9 @@ namespace ZedGraph
 		public Fill( Color color, Brush brush, FillType type )
 		{
 			Init();
-			this._color = color;
-			this._brush = brush;
-			this._type = type;
+			this.color = color;
+			this.brush = brush;
+			this.type = type;
 		}
 		
 		/// <summary>
@@ -203,8 +203,8 @@ namespace ZedGraph
 		public Fill( Color color )
 		{
 			Init();
-			this._color = color;
-			this._type = FillType.Solid;
+			this.color = color;
+			this.type = FillType.Solid;
 		}
 		
 		/// <summary>
@@ -217,14 +217,14 @@ namespace ZedGraph
 		public Fill( Color color1, Color color2, float angle )
 		{
 			Init();
-			this._color = color2;
+			this.color = color2;
 
 			ColorBlend blend = new ColorBlend( 2 );
 			blend.Colors[0] = color1;
 			blend.Colors[1] = color2;
 			blend.Positions[0] = 0.0f;
 			blend.Positions[1] = 1.0f;
-			this._type = FillType.Brush;
+			this.type = FillType.Brush;
 
 			this.CreateBrushFromBlend( blend, angle );
 		}
@@ -264,7 +264,7 @@ namespace ZedGraph
 		public Fill( Color color1, Color color2, Color color3, float angle )
 		{
 			Init();
-			this._color = color3;
+			this.color = color3;
 
 			ColorBlend blend = new ColorBlend( 3 );
 			blend.Colors[0] = color1;
@@ -273,7 +273,7 @@ namespace ZedGraph
 			blend.Positions[0] = 0.0f;
 			blend.Positions[1] = 0.5f;
 			blend.Positions[2] = 1.0f;
-			this._type = FillType.Brush;
+			this.type = FillType.Brush;
 			
 			this.CreateBrushFromBlend( blend, angle );
 		}
@@ -303,7 +303,7 @@ namespace ZedGraph
 		public Fill( ColorBlend blend, float angle )
 		{
 			Init();
-			this._type = FillType.Brush;
+			this.type = FillType.Brush;
 			this.CreateBrushFromBlend( blend, angle );
 		}
 
@@ -336,7 +336,7 @@ namespace ZedGraph
 		public Fill( Color[] colors, float angle )
 		{
 			Init();
-			_color = colors[ colors.Length - 1 ];
+			color = colors[ colors.Length - 1 ];
 
 			ColorBlend blend = new ColorBlend();
 			blend.Colors = colors;
@@ -344,7 +344,7 @@ namespace ZedGraph
 			blend.Positions[0] = 0.0F;
 			for ( int i=1; i<colors.Length; i++ )
 				blend.Positions[i] = (float) i / (float)( colors.Length - 1 );
-			this._type = FillType.Brush;
+			this.type = FillType.Brush;
 
 			this.CreateBrushFromBlend( blend, angle );
 		}
@@ -382,12 +382,12 @@ namespace ZedGraph
 		public Fill( Color[] colors, float[] positions, float angle )
 		{
 			Init();
-			_color = colors[ colors.Length - 1 ];
+			color = colors[ colors.Length - 1 ];
 
 			ColorBlend blend = new ColorBlend();
 			blend.Colors = colors;
 			blend.Positions = positions;
-			this._type = FillType.Brush;
+			this.type = FillType.Brush;
 
 			this.CreateBrushFromBlend( blend, angle );
 		}
@@ -401,11 +401,11 @@ namespace ZedGraph
 		public Fill( Image image, WrapMode wrapMode )
 		{
 			Init();
-			this._color = Color.White;
-			this._brush = new TextureBrush( image, wrapMode );
-			this._type = FillType.Brush;
-			this._image = image;
-			this._wrapMode = wrapMode;
+			this.color = Color.White;
+			this.brush = new TextureBrush( image, wrapMode );
+			this.type = FillType.Brush;
+			this.image = image;
+			this.wrapMode = wrapMode;
 		}
 		
 		/// <summary>
@@ -431,10 +431,10 @@ namespace ZedGraph
 		public Fill( Brush brush, bool isScaled )
 		{
 			Init();
-			this._isScaled = isScaled;
-			this._color = Color.White;
-			this._brush = (Brush) brush.Clone();
-			this._type = FillType.Brush;
+			this.isScaled = isScaled;
+			this.color = Color.White;
+			this.brush = (Brush) brush.Clone();
+			this.type = FillType.Brush;
 		}
 		
 		/// <summary>
@@ -452,12 +452,12 @@ namespace ZedGraph
 		public Fill( Brush brush, AlignH alignH, AlignV alignV )
 		{
 			Init();
-			this._alignH = alignH;
-			this._alignV = alignV;
-			this._isScaled = false;
-			this._color = Color.White;
-			this._brush = (Brush) brush.Clone();
-			this._type = FillType.Brush;
+			this.alignH = alignH;
+			this.alignV = alignV;
+			this.isScaled = false;
+			this.color = Color.White;
+			this.brush = (Brush) brush.Clone();
+			this.type = FillType.Brush;
 		}
 
 		/// <summary>
@@ -466,39 +466,39 @@ namespace ZedGraph
 		/// <param name="rhs">The Fill object from which to copy</param>
 		public Fill( Fill rhs )
 		{
-			_color = rhs._color;
-			if ( rhs._brush != null )
-				_brush = (Brush) rhs._brush.Clone();
+			color = rhs.color;
+			if ( rhs.brush != null )
+				brush = (Brush) rhs.brush.Clone();
 			else
-				_brush = null;
-			_type = rhs._type;
-			_alignH = rhs.AlignH;
-			_alignV = rhs.AlignV;
-            _isScaled = rhs.IsScaled;
-			_rangeMin = rhs._rangeMin;
-			_rangeMax = rhs._rangeMax;
-			_rangeDefault = rhs._rangeDefault;
-			_gradientBM = null;
+				brush = null;
+			type = rhs.type;
+			alignH = rhs.AlignH;
+			alignV = rhs.AlignV;
+            isScaled = rhs.IsScaled;
+			rangeMin = rhs.rangeMin;
+			rangeMax = rhs.rangeMax;
+			rangeDefault = rhs.rangeDefault;
+			gradientBM = null;
 
-			if ( rhs._colorList != null )
-				_colorList = (Color[]) rhs._colorList.Clone();
+			if ( rhs.colorList != null )
+				colorList = (Color[]) rhs.colorList.Clone();
 			else
-				_colorList = null;
+				colorList = null;
 
-			if ( rhs._positionList != null )
+			if ( rhs.positionList != null )
 			{
-				_positionList = (float[]) rhs._positionList.Clone();
+				positionList = (float[]) rhs.positionList.Clone();
 			}
 			else
-				_positionList = null;
+				positionList = null;
 
-			if ( rhs._image != null )
-				_image = (Image) rhs._image.Clone();
+			if ( rhs.image != null )
+				image = (Image) rhs.image.Clone();
 			else
-				_image = null;
+				image = null;
 
-			_angle = rhs._angle;
-			_wrapMode = rhs._wrapMode;
+			angle = rhs.angle;
+			wrapMode = rhs.wrapMode;
 		}
 
 		/// <summary>
@@ -522,14 +522,14 @@ namespace ZedGraph
 
 		private void CreateBrushFromBlend( ColorBlend blend, float angle )
 		{
-			this._angle = angle;
+			this.angle = angle;
 
-			_colorList = (Color[]) blend.Colors.Clone();
-			_positionList = (float[]) blend.Positions.Clone();
+			colorList = (Color[]) blend.Colors.Clone();
+			positionList = (float[]) blend.Positions.Clone();
 
-			this._brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
+			this.brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
 				Color.Red, Color.White, angle );
-			((LinearGradientBrush)this._brush).InterpolationColors = blend;
+			((LinearGradientBrush)this.brush).InterpolationColors = blend;
 		}
 
 	#endregion
@@ -556,39 +556,39 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			_color = (Color) info.GetValue( "color", typeof(Color) );
+			color = (Color) info.GetValue( "color", typeof(Color) );
 			//brush = (Brush) info.GetValue( "brush", typeof(Brush) );
 			//brushHolder = (BrushHolder) info.GetValue( "brushHolder", typeof(BrushHolder) );
-			_type = (FillType) info.GetValue( "type", typeof(FillType) );
-			_isScaled = info.GetBoolean( "isScaled" );
-			_alignH = (AlignH) info.GetValue( "alignH", typeof(AlignH) );
-			_alignV = (AlignV) info.GetValue( "alignV", typeof(AlignV) );
-			_rangeMin = info.GetDouble( "rangeMin" );
-			_rangeMax = info.GetDouble( "rangeMax" );
+			type = (FillType) info.GetValue( "type", typeof(FillType) );
+			isScaled = info.GetBoolean( "isScaled" );
+			alignH = (AlignH) info.GetValue( "alignH", typeof(AlignH) );
+			alignV = (AlignV) info.GetValue( "alignV", typeof(AlignV) );
+			rangeMin = info.GetDouble( "rangeMin" );
+			rangeMax = info.GetDouble( "rangeMax" );
 
 			//BrushHolder brushHolder = (BrushHolder) info.GetValue( "brushHolder", typeof( BrushHolder ) );
 			//brush = brush;
 
-			_colorList = (Color[]) info.GetValue( "colorList", typeof(Color[]) );
-			_positionList = (float[]) info.GetValue( "positionList", typeof(float[]) );
-			_angle = info.GetSingle( "angle" );
-			_image = (Image) info.GetValue( "image", typeof(Image) );
-			_wrapMode = (WrapMode) info.GetValue( "wrapMode", typeof(WrapMode) );
+			colorList = (Color[]) info.GetValue( "colorList", typeof(Color[]) );
+			positionList = (float[]) info.GetValue( "positionList", typeof(float[]) );
+			angle = info.GetSingle( "angle" );
+			image = (Image) info.GetValue( "image", typeof(Image) );
+			wrapMode = (WrapMode) info.GetValue( "wrapMode", typeof(WrapMode) );
 
-			if ( _colorList != null && _positionList != null )
+			if ( colorList != null && positionList != null )
 			{
 				ColorBlend blend = new ColorBlend();
-				blend.Colors = _colorList;
-				blend.Positions = _positionList;
-				CreateBrushFromBlend( blend, _angle );
+				blend.Colors = colorList;
+				blend.Positions = positionList;
+				CreateBrushFromBlend( blend, angle );
 			}
-			else if ( _image != null )
+			else if ( image != null )
 			{
-				this._brush = new TextureBrush( _image, _wrapMode );
+				this.brush = new TextureBrush( image, wrapMode );
 			}
 
 			if ( sch >= 2 )
-				_rangeDefault = info.GetDouble( "rangeDefault" );
+				rangeDefault = info.GetDouble( "rangeDefault" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -600,34 +600,34 @@ namespace ZedGraph
 		{
 
 			info.AddValue( "schema", schema );
-			info.AddValue( "color", _color );
+			info.AddValue( "color", color );
 			//info.AddValue( "brush", brush );
 			//info.AddValue( "brushHolder", brushHolder );
-			info.AddValue( "type", _type );
-			info.AddValue( "isScaled", _isScaled );
-			info.AddValue( "alignH", _alignH );
-			info.AddValue( "alignV", _alignV );
-			info.AddValue( "rangeMin", _rangeMin );
-			info.AddValue( "rangeMax", _rangeMax );
+			info.AddValue( "type", type );
+			info.AddValue( "isScaled", isScaled );
+			info.AddValue( "alignH", alignH );
+			info.AddValue( "alignV", alignV );
+			info.AddValue( "rangeMin", rangeMin );
+			info.AddValue( "rangeMax", rangeMax );
 
 			//BrushHolder brushHolder = new BrushHolder();
 			//brush = brush;
 			//info.AddValue( "brushHolder", brushHolder );
 
-			info.AddValue( "colorList", _colorList );
-			info.AddValue( "positionList", _positionList );
-			info.AddValue( "angle", _angle );
-			info.AddValue( "image", _image );
-			info.AddValue( "wrapMode", _wrapMode );
+			info.AddValue( "colorList", colorList );
+			info.AddValue( "positionList", positionList );
+			info.AddValue( "angle", angle );
+			info.AddValue( "image", image );
+			info.AddValue( "wrapMode", wrapMode );
 
-			info.AddValue( "rangeDefault", _rangeDefault );
+			info.AddValue( "rangeDefault", rangeDefault );
 		}
 	#endregion
 
 	#region Properties
 
 		/// <summary>
-		/// The fill color.  This property is used as a single color to make a solid _fill
+		/// The fill color.  This property is used as a single color to make a solid fill
 		/// (<see cref="Type"/> is <see cref="FillType.Solid"/>), or it can be used in 
 		/// combination with <see cref="System.Drawing.Color.White"/> to make a
 		/// <see cref="LinearGradientBrush"/>
@@ -637,8 +637,8 @@ namespace ZedGraph
 		/// <seealso cref="Type"/>
 		public Color Color
 		{
-			get { return _color; }
-			set { _color = value; }
+			get { return color; }
+			set { color = value; }
 		}
 
 		/// <summary>
@@ -649,8 +649,8 @@ namespace ZedGraph
 		/// </summary>
 		public Brush Brush
 		{
-			get { return _brush; }
-			set { _brush = value; }
+			get { return brush; }
+			set { brush = value; }
 		}
 		/// <summary>
 		/// Determines the type of fill, which can be either solid
@@ -661,8 +661,8 @@ namespace ZedGraph
 		/// <seealso cref="ZedGraph.Fill.Color"/>
 		public FillType Type
 		{
-			get { return _type; }
-			set { _type = value; }
+			get { return type; }
+			set { type = value; }
 		}
 		/// <summary>
 		/// This property determines the type of color fill. 
@@ -681,8 +681,8 @@ namespace ZedGraph
 		/// <seealso cref="Type"/>
 		public bool IsVisible
 		{
-			get { return _type != FillType.None; }
-			set { _type = value ? ( _type == FillType.None ? FillType.Brush : _type ) : FillType.None; }
+			get { return type != FillType.None; }
+			set { type = value ? ( type == FillType.None ? FillType.Brush : type ) : FillType.None; }
 		}
 
 		/// <summary>
@@ -693,8 +693,8 @@ namespace ZedGraph
 		/// </summary>
 		public bool IsScaled
 		{
-			get { return _isScaled; }
-			set { _isScaled = value; }
+			get { return isScaled; }
+			set { isScaled = value; }
 		}
 		
 		/// <summary>
@@ -705,8 +705,8 @@ namespace ZedGraph
 		/// <seealso cref="AlignV"/>
 		public AlignH AlignH
 		{
-			get { return _alignH; }
-			set { _alignH = value; }
+			get { return alignH; }
+			set { alignH = value; }
 		}
 		
 		/// <summary>
@@ -717,8 +717,8 @@ namespace ZedGraph
 		/// <seealso cref="AlignH"/>
 		public AlignV AlignV
 		{
-			get { return _alignV; }
-			set { _alignV = value; }
+			get { return alignV; }
+			set { alignV = value; }
 		}
 
 		/// <summary>
@@ -727,7 +727,7 @@ namespace ZedGraph
 		/// or <see cref="FillType.GradientByZ"/>.
 		/// </summary>
 		/// <remarks>
-		/// The gradient by value fill method allows the _fill color for each point or bar to
+		/// The gradient by value fill method allows the fill color for each point or bar to
 		/// be based on a value for that point (either X, Y, or Z in the <see cref="IPointList"/>.
 		/// For example, assume a <see cref="Fill"/> class is defined with a linear gradient ranging from
 		/// <see cref="System.Drawing.Color.Blue"/> to <see cref="System.Drawing.Color.Red"/> and the <see cref="Fill.Type"/>
@@ -746,8 +746,8 @@ namespace ZedGraph
 		/// <seealso cref="FillType.GradientByZ"/>
 		public bool IsGradientValueType
 		{
-			get { return _type == FillType.GradientByX || _type == FillType.GradientByY ||
-					_type == FillType.GradientByZ; }
+			get { return type == FillType.GradientByX || type == FillType.GradientByY ||
+					type == FillType.GradientByZ; }
 		}
 
 		/// <summary>
@@ -763,8 +763,8 @@ namespace ZedGraph
 		/// <value>A double value, in user scale unit</value>
 		public double RangeMin
 		{
-			get { return _rangeMin; }
-			set { _rangeMin = value; }
+			get { return rangeMin; }
+			set { rangeMin = value; }
 		}
 		/// <summary>
 		/// The maximum user-scale value for the gradient-by-value determination.  This defines
@@ -779,8 +779,8 @@ namespace ZedGraph
 		/// <value>A double value, in user scale unit</value>
 		public double RangeMax
 		{
-			get { return _rangeMax; }
-			set { _rangeMax = value; }
+			get { return rangeMax; }
+			set { rangeMax = value; }
 		}
 
 		/// <summary>
@@ -803,8 +803,8 @@ namespace ZedGraph
 		/// <value>A double value, in user scale unit</value>
 		public double RangeDefault
 		{
-			get { return _rangeDefault; }
-			set { _rangeDefault = value; }
+			get { return rangeDefault; }
+			set { rangeDefault = value; }
 		}
 
 	#endregion
@@ -848,7 +848,7 @@ namespace ZedGraph
 		public Brush MakeBrush( RectangleF rect, PointPair dataValue )
 		{
 			// get a brush
-			if ( this.IsVisible && ( !this._color.IsEmpty || this._brush != null ) )
+			if ( this.IsVisible && ( !this.color.IsEmpty || this.brush != null ) )
 			{
 				if ( rect.Height < 1.0F )
 					rect.Height = 1.0F;
@@ -856,21 +856,21 @@ namespace ZedGraph
 					rect.Width = 1.0F;
 					
 				//Brush	brush;
-				if ( this._type == FillType.Brush )
+				if ( this.type == FillType.Brush )
 				{
-					return ScaleBrush( rect, this._brush, this._isScaled );
+					return ScaleBrush( rect, this.brush, this.isScaled );
 				}
 				else if ( IsGradientValueType )
 				{
 					if ( dataValue != null )
 						return new SolidBrush( GetGradientColor( dataValue ) );
-					else if ( _rangeDefault != double.MaxValue )
-						return new SolidBrush( GetGradientColor( _rangeDefault ) );
+					else if ( rangeDefault != double.MaxValue )
+						return new SolidBrush( GetGradientColor( rangeDefault ) );
 					else
-						return ScaleBrush( rect, this._brush, true );
+						return ScaleBrush( rect, this.brush, true );
 				}
 				else
-					return new SolidBrush( this._color );
+					return new SolidBrush( this.color );
 			}
 
 			// Always return a suitable default
@@ -881,9 +881,9 @@ namespace ZedGraph
 		{
 			double val;
 
-			if ( this._type == FillType.GradientByZ )
+			if ( this.type == FillType.GradientByZ )
 				val = dataValue.Z;
-			else if ( this._type == FillType.GradientByY )
+			else if ( this.type == FillType.GradientByY )
 				val = dataValue.Y;
 			else
 				val = dataValue.X;
@@ -896,29 +896,29 @@ namespace ZedGraph
 			double valueFraction;
 
 			if ( Double.IsInfinity( val ) || double.IsNaN( val ) || val == PointPair.Missing )
-				val = this._rangeDefault;
+				val = this.rangeDefault;
 
-			if ( this._rangeMax - this._rangeMin < 1e-20 || val == double.MaxValue )
+			if ( this.rangeMax - this.rangeMin < 1e-20 || val == double.MaxValue )
 				valueFraction = 0.5;
 			else			
-				valueFraction = ( val - this._rangeMin ) / ( _rangeMax - _rangeMin );
+				valueFraction = ( val - this.rangeMin ) / ( rangeMax - rangeMin );
 
 			if ( valueFraction < 0.0 )
 				valueFraction = 0.0;
 			else if ( valueFraction > 1.0 )
 				valueFraction = 1.0;
 
-			if ( _gradientBM == null )
+			if ( gradientBM == null )
 			{
 				RectangleF rect = new RectangleF( 0, 0, 100, 1 );
-				_gradientBM = new Bitmap( 100, 1 );
-				Graphics gBM = Graphics.FromImage( _gradientBM );
+				gradientBM = new Bitmap( 100, 1 );
+				Graphics gBM = Graphics.FromImage( gradientBM );
 
-				Brush tmpBrush = ScaleBrush( rect, this._brush, true );
+				Brush tmpBrush = ScaleBrush( rect, this.brush, true );
 				gBM.FillRectangle( tmpBrush, rect );
 			}
 
-			return _gradientBM.GetPixel( (int) (99.9 * valueFraction), 0 );
+			return gradientBM.GetPixel( (int) (99.9 * valueFraction), 0 );
 		}
 
 		private Brush ScaleBrush( RectangleF rect, Brush brush, bool isScaled )
@@ -944,7 +944,7 @@ namespace ZedGraph
 					{
 						float	dx = 0,
 								dy = 0;
-						switch ( this._alignH )
+						switch ( this.alignH )
 						{
 						case AlignH.Left:
 							dx = rect.Left - linBrush.Rectangle.Left;
@@ -957,7 +957,7 @@ namespace ZedGraph
 							break;
 						}
 						
-						switch ( this._alignV )
+						switch ( this.alignV )
 						{
 						case AlignV.Top:
 							dy = rect.Top - linBrush.Rectangle.Top;
@@ -990,7 +990,7 @@ namespace ZedGraph
 					{
 						float	dx = 0,
 								dy = 0;
-						switch ( this._alignH )
+						switch ( this.alignH )
 						{
 						case AlignH.Left:
 							dx = rect.Left;
@@ -1003,7 +1003,7 @@ namespace ZedGraph
 							break;
 						}
 						
-						switch ( this._alignV )
+						switch ( this.alignV )
 						{
 						case AlignV.Top:
 							dy = rect.Top;
@@ -1028,7 +1028,7 @@ namespace ZedGraph
 			}
 			else
 				// If they didn't provide a brush, make one using the fillcolor gradient to white
-				return new LinearGradientBrush( rect, Color.White, this._color, 0F );
+				return new LinearGradientBrush( rect, Color.White, this.color, 0F );
 		}
 
 		/// <summary>
@@ -1050,30 +1050,6 @@ namespace ZedGraph
 				brush.Dispose();
 			}
 		}
-
-		/// <summary>
-		/// Fill the background of the <see cref="RectangleF"/> area, using the
-		/// fill type from this <see cref="Fill"/>.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="rect">The <see cref="RectangleF"/> struct specifying the area
-		/// to be filled</param>
-		/// <param name="pt">The data value to be used in case it's a
-		/// <see cref="FillType.GradientByX" />, <see cref="FillType.GradientByY" />, or
-		/// <see cref="FillType.GradientByZ" /> <see cref="FillType" />.</param>
-		public void Draw( Graphics g, RectangleF rect, PointPair pt )
-		{
-			if ( this.IsVisible )
-			{
-				Brush brush = this.MakeBrush( rect, pt );
-				g.FillRectangle( brush, rect );
-				brush.Dispose();
-			}
-		}
-
 	#endregion
 	}
 }

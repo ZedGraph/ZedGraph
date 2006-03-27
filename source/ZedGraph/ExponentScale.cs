@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion with contributions by jackply </author>
-	/// <version> $Revision: 1.5 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	class ExponentScale : Scale, ISerializable, ICloneable
 	{
@@ -110,15 +110,15 @@ namespace ZedGraph
 		{
 			base.SetupScaleData( pane, axis );
 
-			if (  this._exponent > 0 )
+			if (  this.exponent > 0 )
 			{
-				this._minScale = Math.Pow( this._min, _exponent );
-				this._maxScale = Math.Pow( this._max, _exponent );
+				this.minScale = Math.Pow( this.min, exponent );
+				this.maxScale = Math.Pow( this.max, exponent );
 			}
-			else if ( this._exponent < 0 )
+			else if ( this.exponent < 0 )
 			{
-				this._minScale = Math.Pow( this._max, _exponent );
-				this._maxScale = Math.Pow( this._min, _exponent );
+				this.minScale = Math.Pow( this.max, exponent );
+				this.maxScale = Math.Pow( this.min, exponent );
 			}
 		}
 
@@ -140,16 +140,16 @@ namespace ZedGraph
 		/// </returns>
 		override internal double CalcMajorTicValue( double baseVal, double tic )
 		{
-			if ( this._exponent > 0.0 )
+			if ( this.exponent > 0.0 )
 			{
-				//return baseVal + Math.Pow ( (double) this.majorStep * tic, exp );
+				//return baseVal + Math.Pow ( (double) this.step * tic, exp );
 				//baseVal is got from CalBase..., and it is exp..
-				return Math.Pow( Math.Pow( baseVal, 1 / _exponent ) + this._majorStep * tic, _exponent );
+				return Math.Pow( Math.Pow( baseVal, 1 / exponent ) + this.step * tic, exponent );
 			}
-			else if ( this._exponent < 0.0 )
+			else if ( this.exponent < 0.0 )
 			{
 				//baseVal is got from CalBase..., and it is exp..
-				return Math.Pow( Math.Pow( baseVal, 1 / _exponent ) + this._majorStep * tic, _exponent );
+				return Math.Pow( Math.Pow( baseVal, 1 / exponent ) + this.step * tic, exponent );
 			}
 
 			return 1.0;
@@ -174,7 +174,7 @@ namespace ZedGraph
 		/// </returns>
 		override internal double CalcMinorTicValue( double baseVal, int iTic )
 		{
-			return baseVal + Math.Pow( (double) this._majorStep * (double) iTic, _exponent );
+			return baseVal + Math.Pow( (double) this.step * (double) iTic, exponent );
 		}
 
 		/// <summary>
@@ -190,7 +190,7 @@ namespace ZedGraph
 		/// </returns>
 		override internal int CalcMinorStart( double baseVal )
 		{
-			return (int) ( ( Math.Pow( this._min, _exponent ) - baseVal ) / Math.Pow( this._minorStep, _exponent ) );
+			return (int) ( ( Math.Pow( this.min, exponent ) - baseVal ) / Math.Pow( this.minorStep, exponent ) );
 		}
 
 		/// <summary>
@@ -201,18 +201,18 @@ namespace ZedGraph
 		/// is called by the general <see cref="Scale.PickScale"/> method.  The exponential scale
 		/// relies on the <see cref="Scale.Exponent" /> property to set the scaling exponent.  This
 		/// method honors the <see cref="Scale.MinAuto"/>, <see cref="Scale.MaxAuto"/>,
-		/// and <see cref="Scale.MajorStepAuto"/> autorange settings.
+		/// and <see cref="Scale.StepAuto"/> autorange settings.
 		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.MajorStep"/>
+		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.Step"/>
 		/// setting is explicitly honored, and the remaining autorange settings (if any) will
 		/// be calculated to accomodate the non-autoranged values.  For log axes, the MinorStep
 		/// value is not used.
 		/// <para>On Exit:</para>
 		/// <para><see cref="Scale.Min"/> is set to scale minimum (if <see cref="Scale.MinAuto"/> = true)</para>
 		/// <para><see cref="Scale.Max"/> is set to scale maximum (if <see cref="Scale.MaxAuto"/> = true)</para>
-		/// <para><see cref="Scale.MajorStep"/> is set to scale step size (if <see cref="Scale.MajorStepAuto"/> = true)</para>
-		/// <para><see cref="Scale.Mag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="Scale.Format"/> is set to the display format for the values (this controls the
+		/// <para><see cref="Scale.Step"/> is set to scale step size (if <see cref="Scale.StepAuto"/> = true)</para>
+		/// <para><see cref="Scale.ScaleMag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="Scale.ScaleFormat"/> is set to the display format for the values (this controls the
 		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <seealso cref="Scale.PickScale"/>
@@ -223,70 +223,70 @@ namespace ZedGraph
 			base.PickScale( pane, g, scaleFactor );
 
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this._max - this._min < 1.0e-20 )
+			if ( this.max - this.min < 1.0e-20 )
 			{
-				if ( this._maxAuto )
-					this._max = this._max + 0.2 * ( this._max == 0 ? 1.0 : Math.Abs( this._max ) );
-				if ( this._minAuto )
-					this._min = this._min - 0.2 * ( this._min == 0 ? 1.0 : Math.Abs( this._min ) );
+				if ( this.maxAuto )
+					this.max = this.max + 0.2 * ( this.max == 0 ? 1.0 : Math.Abs( this.max ) );
+				if ( this.minAuto )
+					this.min = this.min - 0.2 * ( this.min == 0 ? 1.0 : Math.Abs( this.min ) );
 			}
 
 			// This is the zero-lever test.  If minVal is within the zero lever fraction
 			// of the data range, then use zero.
 
-			if ( this._minAuto && this._min > 0 &&
-				this._min / ( this._max - this._min ) < Default.ZeroLever )
-				this._min = 0;
+			if ( this.minAuto && this.min > 0 &&
+				this.min / ( this.max - this.min ) < Default.ZeroLever )
+				this.min = 0;
 
 			// Repeat the zero-lever test for cases where the maxVal is less than zero
-			if ( this._maxAuto && this._max < 0 &&
-				Math.Abs( this._max / ( this._max - this._min ) ) <
+			if ( this.maxAuto && this.max < 0 &&
+				Math.Abs( this.max / ( this.max - this.min ) ) <
 				Default.ZeroLever )
-				this._max = 0;
+				this.max = 0;
 
 			// Calculate the new step size
-			if ( this._majorStepAuto )
+			if ( this.stepAuto )
 			{
-				double targetSteps = ( _parentAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
+				double targetSteps = ( parentAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
 
 				// Calculate the step size based on target steps
-				this._majorStep = CalcStepSize( this._max - this._min, targetSteps );
+				this.step = CalcStepSize( this.max - this.min, targetSteps );
 
-				if ( this._isPreventLabelOverlap )
+				if ( this.isPreventLabelOverlap )
 				{
 					// Calculate the maximum number of labels
 					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
-					if ( maxLabels < ( this._max - this._min ) / this._majorStep )
-						this._majorStep = CalcBoundedStepSize( this._max - this._min, maxLabels );
+					if ( maxLabels < ( this.max - this.min ) / this.step )
+						this.step = CalcBoundedStepSize( this.max - this.min, maxLabels );
 				}
 			}
 
 			// Calculate the new step size
-			if ( this._minorStepAuto )
-				this._minorStep = CalcStepSize( this._majorStep,
-					( _parentAxis is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
+			if ( this.minorStepAuto )
+				this.minorStep = CalcStepSize( this.step,
+					( parentAxis is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
 
 			// Calculate the scale minimum
-			if ( this._minAuto )
-				this._min = this._min - MyMod( this._min, this._majorStep );
+			if ( this.minAuto )
+				this.min = this.min - MyMod( this.min, this.step );
 
 			// Calculate the scale maximum
-			if ( this._maxAuto )
-				this._max = MyMod( this._max, this._majorStep ) == 0.0 ? this._max :
-					this._max + this._majorStep - MyMod( this._max, this._majorStep );
+			if ( this.maxAuto )
+				this.max = MyMod( this.max, this.step ) == 0.0 ? this.max :
+					this.max + this.step - MyMod( this.max, this.step );
 
 			// set the scale magnitude if required
-			if ( this._magAuto )
+			if ( this.scaleMagAuto )
 			{
 				// Find the optimal scale display multiple
 				double mag = 0;
 				double mag2 = 0;
 
-				if ( Math.Abs( this._min ) > 1.0e-10 )
-					mag = Math.Floor( Math.Log10( Math.Abs( this._min ) ) );
-				if ( Math.Abs( this._max ) > 1.0e-10 )
-					mag2 = Math.Floor( Math.Log10( Math.Abs( this._max ) ) );
+				if ( Math.Abs( this.min ) > 1.0e-10 )
+					mag = Math.Floor( Math.Log10( Math.Abs( this.min ) ) );
+				if ( Math.Abs( this.max ) > 1.0e-10 )
+					mag2 = Math.Floor( Math.Log10( Math.Abs( this.max ) ) );
 				if ( Math.Abs( mag2 ) > Math.Abs( mag ) )
 					mag = mag2;
 
@@ -295,16 +295,16 @@ namespace ZedGraph
 					mag = 0;
 
 				// Use a power of 10 that is a multiple of 3 (engineering scale)
-				this._mag = (int) ( Math.Floor( mag / 3.0 ) * 3.0 );
+				this.scaleMag = (int) ( Math.Floor( mag / 3.0 ) * 3.0 );
 			}
 
 			// Calculate the appropriate number of dec places to display if required
-			if ( this._formatAuto )
+			if ( this.scaleFormatAuto )
 			{
-				int numDec = 0 - (int) ( Math.Floor( Math.Log10( this._majorStep ) ) - this._mag );
+				int numDec = 0 - (int) ( Math.Floor( Math.Log10( this.step ) ) - this.scaleMag );
 				if ( numDec < 0 )
 					numDec = 0;
-				this._format = "f" + numDec.ToString();
+				this.scaleFormat = "f" + numDec.ToString();
 			}
 		}
 
@@ -320,18 +320,20 @@ namespace ZedGraph
 		/// cause the third value label on the axis to be generated.
 		/// </param>
 		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Scale.IsLog"/>)
-		/// and text (<see cref="Scale.IsText"/>) type axes.
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Axis.IsLog"/>)
+		/// and text (<see cref="Axis.IsText"/>) type axes.
 		/// </param>
-		/// <returns>The resulting value label as a <see cref="string" /></returns>
-		override internal string MakeLabel( GraphPane pane, int index, double dVal )
+		/// <param name="label">
+		/// Output only.  The resulting value label.
+		/// </param>
+		override internal void MakeLabel( GraphPane pane, int index, double dVal, out string label )
 		{
-			if ( this._format == null )
-				this._format = Scale.Default.Format;
+			if ( this.scaleFormat == null )
+				this.scaleFormat = Scale.Default.ScaleFormat;
 
-			double scaleMult = Math.Pow( (double) 10.0, this._mag );
-			double val = Math.Pow( dVal, 1 / _exponent ) / scaleMult;
-			return val.ToString( this._format );
+			double scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
+			double val = Math.Pow( dVal, 1 / exponent ) / scaleMult;
+			label = val.ToString( this.scaleFormat );
 		}
 
 

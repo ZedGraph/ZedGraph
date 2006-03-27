@@ -36,9 +36,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// set the title and axis labels
-			myPane.Title.Text = "Smooth Line Demo";
-			myPane.XAxis.Title.Text = "Value";
-			myPane.YAxis.Title.Text = "Time";
+			myPane.Title = "Smooth Line Demo";
+			myPane.XAxis.Title = "Value";
+			myPane.YAxis.Title = "Time";
 			
 			// Enter some arbitrary data
 			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
@@ -70,7 +70,7 @@ namespace ZedGraph.Demo
 			curve.Symbol.Size = 5;
 
 			// Fill the axis background with a color gradient
-			myPane.Chart.Fill = new Fill( Color.White, Color.LightGray, 45.0F );
+			myPane.AxisFill = new Fill( Color.White, Color.LightGray, 45.0F );
 
 			base.ZedGraphControl.AxisChange();
 		}

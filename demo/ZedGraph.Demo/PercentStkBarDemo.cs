@@ -44,35 +44,35 @@ namespace ZedGraph.Demo
 			double[] y5 = new double [4] ;
 
 			// Set the pane title
-			myPane.Title.Text = "% Product Sales by Quarter by Type";
+			myPane.Title = "% Product Sales by Quarter by Type";
 			// Position the legend and fill the background
 			myPane.Legend.Position = LegendPos.TopCenter ;
 			myPane.Legend.Fill.Color = Color.LightCyan ;
 			// Fill the pane background with a solid color
-			myPane.Fill.Color = Color.Cornsilk ;
+			myPane.PaneFill.Color = Color.Cornsilk ;
 			// Fill the axis background with a solid color
-			myPane.Chart.Fill.Type = FillType.Solid ;
-			myPane.Chart.Fill.Color = Color.LightCyan ;
+			myPane.AxisFill.Type = FillType.Solid ;
+			myPane.AxisFill.Color = Color.LightCyan ;
 			// Set the bar type to percent stack, which makes the bars sum up to 100%
-			myPane.BarSettings.Type = BarType.PercentStack ;
+			myPane.BarType = BarType.PercentStack ;
 
 			// Set the X axis title
-			myPane.XAxis.Title.Text = "Quarter";
+			myPane.XAxis.Title = "Quarter";
 			myPane.XAxis.Type = AxisType.Text ;
-			myPane.XAxis.Scale.TextLabels = quarters ;   
+			myPane.XAxis.TextLabels = quarters ;   
       
 			// Set the Y2 axis properties
-			myPane.Y2Axis.Title.Text = "2004 Total Sales ($M)"  ;
+			myPane.Y2Axis.Title = "2004 Total Sales ($M)"  ;
 			myPane.Y2Axis.IsVisible = true;
-			myPane.Y2Axis.MinorTic.IsOpposite = false;
-			myPane.Y2Axis.MajorTic.IsOpposite = false;
-			myPane.Y2Axis.Scale.FontSpec.FontColor = Color.Red ;
+			myPane.Y2Axis.IsMinorOppositeTic = false;
+			myPane.Y2Axis.IsOppositeTic = false;
+			myPane.Y2Axis.ScaleFontSpec.FontColor = Color.Red ;
 
 			// Set the Y axis properties
-			myPane.YAxis.Title.Text = "" ;
-			myPane.YAxis.Scale.Max = 120 ;
-			myPane.YAxis.MinorTic.IsOpposite = false;
-			myPane.YAxis.MajorTic.IsOpposite = false;
+			myPane.YAxis.Title = "" ;
+			myPane.YAxis.Max = 120 ;
+			myPane.YAxis.IsMinorOppositeTic = false;
+			myPane.YAxis.IsOppositeTic = false;
 
 			// get total values into array for Line
 			for ( int x = 0 ; x < 4 ; x++ )
@@ -87,7 +87,7 @@ namespace ZedGraph.Demo
 			// Make the symbols solid red
 			curve.Line.Color = Color.Red ;
 			curve.Symbol.Fill = new Fill( Color.Red );
-			myPane.Y2Axis.Title.FontSpec.FontColor = Color.Red ;
+			myPane.Y2Axis.TitleFontSpec.FontColor = Color.Red ;
 			curve.Symbol.Size = 8;
 
 			// Add a gradient blue bar

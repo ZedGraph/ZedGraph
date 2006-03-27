@@ -36,9 +36,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the titles and axis labels
-			myPane.Title.Text = "Wacky Widget Company\nProduction Report";
-			myPane.XAxis.Title.Text = "Time, Days\n(Since Plant Construction Startup)";
-			myPane.YAxis.Title.Text = "Widget Production\n(units/hour)";
+			myPane.Title = "Wacky Widget Company\nProduction Report";
+			myPane.XAxis.Title = "Time, Days\n(Since Plant Construction Startup)";
+			myPane.YAxis.Title = "Widget Production\n(units/hour)";
 			
 			LineItem curve;
 
@@ -84,42 +84,42 @@ namespace ZedGraph.Demo
 			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
 			
 			// Fill the pane background with a gradient
-			myPane.Fill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
 			// Fill the axis background with a gradient
-			myPane.Chart.Fill = new Fill( Color.FromArgb( 255, 255, 245),
+			myPane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
 						Color.FromArgb( 255, 255, 190), 90F );
 			
 
 			// Make each cluster 100 user scale units wide.  This is needed because the X Axis
 			// type is Linear rather than Text or Ordinal
-			myPane.BarSettings.ClusterScaleWidth = 100;
+			myPane.ClusterScaleWidth = 100;
 			// Bars are stacked
-			myPane.BarSettings.Type = BarType.Stack;
+			myPane.BarType = BarType.Stack;
 
 			// Enable the X and Y axis grids
-			myPane.XAxis.MajorGrid.IsVisible = true;
-			myPane.YAxis.MajorGrid.IsVisible = true;
+			myPane.XAxis.IsShowGrid = true;
+			myPane.YAxis.IsShowGrid = true;
 
 			// Manually set the scale maximums according to user preference
-			myPane.XAxis.Scale.Max = 1200;
-			myPane.YAxis.Scale.Max = 120;
+			myPane.XAxis.Max = 1200;
+			myPane.YAxis.Max = 120;
 			
 			// Add a text item to decorate the graph
-			TextObj text = new TextObj("First Prod\n21-Oct-93", 175F, 80.0F );
+			TextItem text = new TextItem("First Prod\n21-Oct-93", 175F, 80.0F );
 			// Align the text such that the Bottom-Center is at (175, 80) in user scale coordinates
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
 			text.FontSpec.StringAlignment = StringAlignment.Near;
-			myPane.GraphObjList.Add( text );
+			myPane.GraphItemList.Add( text );
 
 			// Add an arrow pointer for the above text item
-			ArrowObj arrow = new ArrowObj( Color.Black, 12F, 175F, 77F, 100F, 45F );
+			ArrowItem arrow = new ArrowItem( Color.Black, 12F, 175F, 77F, 100F, 45F );
 			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
-			myPane.GraphObjList.Add( arrow );
+			myPane.GraphItemList.Add( arrow );
 
 			// Add a another text item to to point out a graph feature
-			text = new TextObj("Upgrade", 700F, 50.0F );
+			text = new TextItem("Upgrade", 700F, 50.0F );
 			// rotate the text 90 degrees
 			text.FontSpec.Angle = 90;
 			// Align the text such that the Right-Center is at (700, 50) in user scale coordinates
@@ -128,16 +128,16 @@ namespace ZedGraph.Demo
 			// Disable the border and background fill options for the text
 			text.FontSpec.Fill.IsVisible = false;
 			text.FontSpec.Border.IsVisible = false;
-			myPane.GraphObjList.Add( text );
+			myPane.GraphItemList.Add( text );
 
 			// Add an arrow pointer for the above text item
-			arrow = new ArrowObj( Color.Black, 15, 700, 53, 700, 80 );
+			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
 			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
 			arrow.PenWidth = 2.0F;
-			myPane.GraphObjList.Add( arrow );
+			myPane.GraphItemList.Add( arrow );
 
 			// Add a text "Confidential" stamp to the graph
-			text = new TextObj("Confidential", 0.85F, -0.03F );
+			text = new TextItem("Confidential", 0.85F, -0.03F );
 			// use AxisFraction coordinates so the text is placed relative to the AxisRect
 			text.Location.CoordinateFrame = CoordType.AxisFraction;
 			// rotate the text 15 degrees
@@ -152,10 +152,10 @@ namespace ZedGraph.Demo
 			// Align the text such the the Left-Bottom corner is at the specified coordinates
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
-			myPane.GraphObjList.Add( text );
+			myPane.GraphItemList.Add( text );
 
-			// Add a BoxObj to show a colored band behind the graph data
-			BoxObj box = new BoxObj( new RectangleF( 0, 110, 1200, 10 ),
+			// Add a BoxItem to show a colored band behind the graph data
+			BoxItem box = new BoxItem( new RectangleF( 0, 110, 1200, 10 ),
 					Color.Empty, Color.FromArgb( 225, 245, 225) );
 			box.Location.CoordinateFrame = CoordType.AxisXYScale;
 			// Align the left-top of the box to (0, 110)
@@ -163,10 +163,10 @@ namespace ZedGraph.Demo
 			box.Location.AlignV = AlignV.Top;
 			// place the box behind the axis items, so the grid is drawn on top of it
 			box.ZOrder = ZOrder.E_BehindAxis;
-			myPane.GraphObjList.Add( box );
+			myPane.GraphItemList.Add( box );
 			
 			// Add some text inside the above box to indicate "Peak Range"
-			TextObj myText = new TextObj( "Peak Range", 1170, 105 );
+			TextItem myText = new TextItem( "Peak Range", 1170, 105 );
 			myText.Location.CoordinateFrame = CoordType.AxisXYScale;
 			myText.Location.AlignH = AlignH.Right;
 			myText.Location.AlignV = AlignV.Center;
@@ -174,7 +174,7 @@ namespace ZedGraph.Demo
 			myText.FontSpec.IsBold = false;
 			myText.FontSpec.Fill.IsVisible = false;
 			myText.FontSpec.Border.IsVisible = false;
-			myPane.GraphObjList.Add( myText );
+			myPane.GraphItemList.Add( myText );
 			
 			base.ZedGraphControl.AxisChange();
 		}

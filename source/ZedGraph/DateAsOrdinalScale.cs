@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.7 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	class DateAsOrdinalScale : Scale, ISerializable, ICloneable
 	{
@@ -102,8 +102,8 @@ namespace ZedGraph
 		/// </remarks>
 		public override double Min
 		{
-			get { return this._min; }
-			set { this._min = XDate.MakeValidDate( value ); }
+			get { return this.min; }
+			set { this.min = XDate.MakeValidDate( value ); }
 		}
 
 		/// <summary>
@@ -116,8 +116,8 @@ namespace ZedGraph
 		/// </remarks>
 		public override double Max
 		{
-			get { return this._max; }
-			set { this._max = XDate.MakeValidDate( value ); }
+			get { return this.max; }
+			set { this.max = XDate.MakeValidDate( value ); }
 		}
 
 	#endregion
@@ -135,10 +135,10 @@ namespace ZedGraph
 		/// <para>On Exit:</para>
 		/// <para><see cref="Scale.Min"/> is set to scale minimum (if <see cref="Scale.MinAuto"/> = true)</para>
 		/// <para><see cref="Scale.Max"/> is set to scale maximum (if <see cref="Scale.MaxAuto"/> = true)</para>
-		/// <para><see cref="Scale.MajorStep"/> is set to scale step size (if <see cref="Scale.MajorStepAuto"/> = true)</para>
+		/// <para><see cref="Scale.Step"/> is set to scale step size (if <see cref="Scale.StepAuto"/> = true)</para>
 		/// <para><see cref="Scale.MinorStep"/> is set to scale minor step size (if <see cref="Scale.MinorStepAuto"/> = true)</para>
-		/// <para><see cref="Scale.Mag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="Scale.Format"/> is set to the display format for the values (this controls the
+		/// <para><see cref="Scale.ScaleMag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="Scale.ScaleFormat"/> is set to the display format for the values (this controls the
 		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
@@ -169,12 +169,12 @@ namespace ZedGraph
 
 			foreach ( CurveItem curve in pane.CurveList )
 			{
-				if ( ( _parentAxis is Y2Axis && curve.IsY2Axis ) ||
-						( _parentAxis is YAxis && !curve.IsY2Axis ) ||
-						( _parentAxis is XAxis ) )
+				if ( ( parentAxis is Y2Axis && curve.IsY2Axis ) ||
+						( parentAxis is YAxis && !curve.IsY2Axis ) ||
+						( parentAxis is XAxis ) )
 				{
 					curve.GetRange( out xMin, out xMax, out yMin, out yMax, false, false, pane );
-					if ( _parentAxis is XAxis )
+					if ( parentAxis is XAxis )
 						range = xMax - xMin;
 					else
 						range = yMax - yMin;
@@ -201,14 +201,16 @@ namespace ZedGraph
 		/// cause the third value label on the axis to be generated.
 		/// </param>
 		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Scale.IsLog"/>)
-		/// and text (<see cref="Scale.IsText"/>) type axes.
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Axis.IsLog"/>)
+		/// and text (<see cref="Axis.IsText"/>) type axes.
 		/// </param>
-		/// <returns>The resulting value label as a <see cref="string" /></returns>
-		override internal string MakeLabel( GraphPane pane, int index, double dVal )
+		/// <param name="label">
+		/// Output only.  The resulting value label.
+		/// </param>
+		override internal void MakeLabel( GraphPane pane, int index, double dVal, out string label )
 		{
-			if ( this._format == null )
-				this._format = Scale.Default.Format;
+			if ( this.scaleFormat == null )
+				this.scaleFormat = Scale.Default.ScaleFormat;
 
 			double val;
 
@@ -218,10 +220,10 @@ namespace ZedGraph
 						pane.CurveList[0].Points.Count > tmpIndex )
 			{
 				val = pane.CurveList[0].Points[tmpIndex].X;
-				return XDate.ToString( val, this._format );
+				label = XDate.ToString( val, this.scaleFormat );
 			}
 			else
-				return string.Empty;
+				label = string.Empty;
 		}
 
 	#endregion

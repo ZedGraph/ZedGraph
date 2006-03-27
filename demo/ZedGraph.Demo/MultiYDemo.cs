@@ -36,10 +36,10 @@ namespace ZedGraph.Demo
 			GraphPane	myPane = base.GraphPane;
 
 			// Set the titles and axis labels
-			myPane.Title.Text = "Demonstration of Multi Y Graph";
-			myPane.XAxis.Title.Text = "Time, s";
-			myPane.YAxis.Title.Text = "Velocity, m/s";
-			myPane.Y2Axis.Title.Text = "Acceleration, m/s2";
+			myPane.Title = "Demonstration of Multi Y Graph";
+			myPane.XAxis.Title = "Time, s";
+			myPane.YAxis.Title = "Velocity, m/s";
+			myPane.Y2Axis.Title = "Acceleration, m/s2";
 
 			// Make up some data points based on the Sine function
 			PointPairList vList = new PointPairList();
@@ -94,64 +94,64 @@ namespace ZedGraph.Demo
 			myCurve.YAxisIndex = 1;
 
 			// Show the x axis grid
-			myPane.XAxis.MajorGrid.IsVisible = true;
+			myPane.XAxis.IsShowGrid = true;
 
 			// Make the Y axis scale red
-			myPane.YAxis.Scale.FontSpec.FontColor = Color.Red;
-			myPane.YAxis.Title.FontSpec.FontColor = Color.Red;
+			myPane.YAxis.ScaleFontSpec.FontColor = Color.Red;
+			myPane.YAxis.TitleFontSpec.FontColor = Color.Red;
 			// turn off the opposite tics so the Y tics don't show up on the Y2 axis
-			myPane.YAxis.MajorTic.IsOpposite = false;
-			myPane.YAxis.MinorTic.IsOpposite = false;
+			myPane.YAxis.IsOppositeTic = false;
+			myPane.YAxis.IsMinorOppositeTic = false;
 			// Don't display the Y zero line
-			myPane.YAxis.MajorGrid.IsZeroLine = false;
+			myPane.YAxis.IsZeroLine = false;
 			// Align the Y axis labels so they are flush to the axis
-			myPane.YAxis.Scale.Align = AlignP.Inside;
-			myPane.YAxis.Scale.Max = 100;
+			myPane.YAxis.ScaleAlign = AlignP.Inside;
+			myPane.YAxis.Max = 100;
 
 			// Enable the Y2 axis display
 			myPane.Y2Axis.IsVisible = true;
 			// Make the Y2 axis scale blue
-			myPane.Y2Axis.Scale.FontSpec.FontColor = Color.Blue;
-			myPane.Y2Axis.Title.FontSpec.FontColor = Color.Blue;
+			myPane.Y2Axis.ScaleFontSpec.FontColor = Color.Blue;
+			myPane.Y2Axis.TitleFontSpec.FontColor = Color.Blue;
 			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
-			myPane.Y2Axis.MajorTic.IsOpposite = false;
-			myPane.Y2Axis.MinorTic.IsOpposite = false;
+			myPane.Y2Axis.IsOppositeTic = false;
+			myPane.Y2Axis.IsMinorOppositeTic = false;
 			// Display the Y2 axis grid lines
-			myPane.Y2Axis.MajorGrid.IsVisible = true;
+			myPane.Y2Axis.IsShowGrid = true;
 			// Align the Y2 axis labels so they are flush to the axis
-			myPane.Y2Axis.Scale.Align = AlignP.Inside;
-			myPane.Y2Axis.Scale.Min = 1.5;
-			myPane.Y2Axis.Scale.Max = 3;
+			myPane.Y2Axis.ScaleAlign = AlignP.Inside;
+			myPane.Y2Axis.Min = 1.5;
+			myPane.Y2Axis.Max = 3;
 
 			// Create a second Y Axis, green
 			YAxis yAxis3 = new YAxis( "Distance, m" );
 			myPane.YAxisList.Add( yAxis3 );
-			yAxis3.Scale.FontSpec.FontColor = Color.Green;
-			yAxis3.Title.FontSpec.FontColor = Color.Green;
+			yAxis3.ScaleFontSpec.FontColor = Color.Green;
+			yAxis3.TitleFontSpec.FontColor = Color.Green;
 			yAxis3.Color = Color.Green;
 			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
-			yAxis3.MajorTic.IsInside = false;
-			yAxis3.MinorTic.IsInside = false;
-			yAxis3.MajorTic.IsOpposite = false;
-			yAxis3.MinorTic.IsOpposite = false;
+			yAxis3.IsInsideTic = false;
+			yAxis3.IsMinorInsideTic = false;
+			yAxis3.IsOppositeTic = false;
+			yAxis3.IsMinorOppositeTic = false;
 			// Align the Y2 axis labels so they are flush to the axis
-			yAxis3.Scale.Align = AlignP.Inside;
+			yAxis3.ScaleAlign = AlignP.Inside;
 
 			Y2Axis yAxis4 = new Y2Axis( "Energy" );
 			yAxis4.IsVisible = true;
 			myPane.Y2AxisList.Add( yAxis4 );
 			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
-			yAxis4.MajorTic.IsInside = false;
-			yAxis4.MinorTic.IsInside = false;
-			yAxis4.MajorTic.IsOpposite = false;
-			yAxis4.MinorTic.IsOpposite = false;
+			yAxis4.IsInsideTic = false;
+			yAxis4.IsMinorInsideTic = false;
+			yAxis4.IsOppositeTic = false;
+			yAxis4.IsMinorOppositeTic = false;
 			// Align the Y2 axis labels so they are flush to the axis
-			yAxis4.Scale.Align = AlignP.Inside;
+			yAxis4.ScaleAlign = AlignP.Inside;
 			yAxis4.Type = AxisType.Log;
-			yAxis4.Scale.Min = 100;
+			yAxis4.Min = 100;
 
 			// Fill the axis background with a gradient
-			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+			myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
 
 			base.ZedGraphControl.AxisChange();
 		}

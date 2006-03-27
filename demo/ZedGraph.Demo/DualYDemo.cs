@@ -36,10 +36,10 @@ namespace ZedGraph.Demo
 			GraphPane	myPane = base.GraphPane;
 
 			// Set the titles and axis labels
-			myPane.Title.Text = "Demonstration of Dual Y Graph";
-			myPane.XAxis.Title.Text = "Time, Days";
-			myPane.YAxis.Title.Text = "Parameter A";
-			myPane.Y2Axis.Title.Text = "Parameter B";
+			myPane.Title = "Demonstration of Dual Y Graph";
+			myPane.XAxis.Title = "Time, Days";
+			myPane.YAxis.Title = "Parameter A";
+			myPane.Y2Axis.Title = "Parameter B";
 			
 			// Make up some data points based on the Sine function
 			PointPairList list = new PointPairList();
@@ -68,37 +68,37 @@ namespace ZedGraph.Demo
 			myCurve.IsY2Axis = true;
 
 			// Show the x axis grid
-			myPane.XAxis.MajorGrid.IsVisible = true;
+			myPane.XAxis.IsShowGrid = true;
 
 			// Make the Y axis scale red
-			myPane.YAxis.Scale.FontSpec.FontColor = Color.Red;
-			myPane.YAxis.Title.FontSpec.FontColor = Color.Red;
+			myPane.YAxis.ScaleFontSpec.FontColor = Color.Red;
+			myPane.YAxis.TitleFontSpec.FontColor = Color.Red;
 			// turn off the opposite tics so the Y tics don't show up on the Y2 axis
-			myPane.YAxis.MajorTic.IsOpposite = false;
-			myPane.YAxis.MinorTic.IsOpposite = false;
+			myPane.YAxis.IsOppositeTic = false;
+			myPane.YAxis.IsMinorOppositeTic = false;
 			// Don't display the Y zero line
-			myPane.YAxis.MajorGrid.IsZeroLine = false;
+			myPane.YAxis.IsZeroLine = false;
 			// Align the Y axis labels so they are flush to the axis
-			myPane.YAxis.Scale.Align = AlignP.Inside;
+			myPane.YAxis.ScaleAlign = AlignP.Inside;
 			// Manually set the axis range
-			myPane.YAxis.Scale.Min = -30;
-			myPane.YAxis.Scale.Max = 30;
+			myPane.YAxis.Min = -30;
+			myPane.YAxis.Max = 30;
 
 			// Enable the Y2 axis display
 			myPane.Y2Axis.IsVisible = true;
 			// Make the Y2 axis scale blue
-			myPane.Y2Axis.Scale.FontSpec.FontColor = Color.Blue;
-			myPane.Y2Axis.Title.FontSpec.FontColor = Color.Blue;
+			myPane.Y2Axis.ScaleFontSpec.FontColor = Color.Blue;
+			myPane.Y2Axis.TitleFontSpec.FontColor = Color.Blue;
 			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
-			myPane.Y2Axis.MajorTic.IsOpposite = false;
-			myPane.Y2Axis.MinorTic.IsOpposite = false;
+			myPane.Y2Axis.IsOppositeTic = false;
+			myPane.Y2Axis.IsMinorOppositeTic = false;
 			// Display the Y2 axis grid lines
-			myPane.Y2Axis.MajorGrid.IsVisible = true;
+			myPane.Y2Axis.IsShowGrid = true;
 			// Align the Y2 axis labels so they are flush to the axis
-			myPane.Y2Axis.Scale.Align = AlignP.Inside;
+			myPane.Y2Axis.ScaleAlign = AlignP.Inside;
 
 			// Fill the axis background with a gradient
-			myPane.Chart.Fill = new Fill( Color.White, Color.LightGray, 45.0f );
+			myPane.AxisFill = new Fill( Color.White, Color.LightGray, 45.0f );
 
 			base.ZedGraphControl.AxisChange();
 		}

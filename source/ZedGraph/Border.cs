@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	public class Border : ISerializable, ICloneable
 	{
@@ -41,12 +41,12 @@ namespace ZedGraph
 		/// Private field that stores the Border color.  Use the public
 		/// property <see cref="Color"/> to access this value.
 		/// </summary>
-		private Color	_color;
+		private Color	color;
 		/// <summary>
 		/// Private field that stores the pen width for this Border.  Use the public
 		/// property <see cref="PenWidth"/> to access this value.
 		/// </summary>
-		private float	_penWidth;
+		private float	penWidth;
 
 		/// <summary>
 		/// Private field that stores the amount of inflation to be done on the rectangle
@@ -54,13 +54,13 @@ namespace ZedGraph
 		/// the actual rectangle area.  Use the public property <see cref="InflateFactor"/>
 		/// to access this value.
 		/// </summary>
-		private float	_inflateFactor;
+		private float	inflateFactor;
 		/// <summary>
 		/// Private field that determines if the Border will be drawn.  The Border will only
 		/// be drawn if this value is true.  Use the public property <see cref="IsVisible"/>
 		/// for access to this value.
 		/// </summary>
-		private bool	_isVisible;
+		private bool	isVisible;
 	#endregion
 
 	#region Defaults
@@ -100,10 +100,10 @@ namespace ZedGraph
 		/// </summary>
 		public Border()
 		{
-			_isVisible = Default.IsVisible;
-			_color = Default.Color;
-			_penWidth = Default.PenWidth;
-			_inflateFactor = Default.InflateFactor;
+			isVisible = Default.IsVisible;
+			color = Default.Color;
+			penWidth = Default.PenWidth;
+			inflateFactor = Default.InflateFactor;
 		}
 
 		/// <summary>
@@ -114,10 +114,10 @@ namespace ZedGraph
         /// <param name="penWidth">The width, in points (1/72 inch), for the Border.</param>
         public Border( bool isVisible, Color color, float penWidth )
 		{
-			this._color = color.IsEmpty ? Default.Color : color;
-			this._penWidth = penWidth;
-			this._isVisible = isVisible;
-			_inflateFactor = Default.InflateFactor;
+			this.color = color.IsEmpty ? Default.Color : color;
+			this.penWidth = penWidth;
+			this.isVisible = isVisible;
+			inflateFactor = Default.InflateFactor;
 		}
 
 		/// <summary>
@@ -136,10 +136,10 @@ namespace ZedGraph
 		/// <param name="rhs">The Border object from which to copy</param>
 		public Border( Border rhs )
 		{
-			_color = rhs.Color;
-			_penWidth = rhs.PenWidth;
-			_isVisible = rhs.IsVisible;
-			_inflateFactor = rhs._inflateFactor;
+			color = rhs.Color;
+			penWidth = rhs.PenWidth;
+			isVisible = rhs.IsVisible;
+			inflateFactor = rhs.inflateFactor;
 		}
 
 		/// <summary>
@@ -182,10 +182,10 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			_color = (Color) info.GetValue( "color", typeof(Color) );
-			_penWidth = info.GetSingle( "penWidth" );
-			_isVisible = info.GetBoolean( "isVisible" );
-			_inflateFactor = info.GetSingle( "inflateFactor" );
+			color = (Color) info.GetValue( "color", typeof(Color) );
+			penWidth = info.GetSingle( "penWidth" );
+			isVisible = info.GetBoolean( "isVisible" );
+			inflateFactor = info.GetSingle( "inflateFactor" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -196,10 +196,10 @@ namespace ZedGraph
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
-			info.AddValue( "color", _color );
-			info.AddValue( "penWidth", _penWidth );
-			info.AddValue( "isVisible", _isVisible );
-			info.AddValue( "inflateFactor", _inflateFactor );
+			info.AddValue( "color", color );
+			info.AddValue( "penWidth", penWidth );
+			info.AddValue( "isVisible", isVisible );
+			info.AddValue( "inflateFactor", inflateFactor );
 		}
 	#endregion
 		
@@ -210,16 +210,16 @@ namespace ZedGraph
 		/// </summary>
 		public Color Color
 		{
-			get { return _color; }
-			set { _color = value; }
+			get { return color; }
+			set { color = value; }
 		}
 		/// <summary>
         /// Gets or sets the width, in points (1/72 inch), of the <see cref="Pen"/> used to draw this Border.
         /// </summary>
 		public float PenWidth
 		{
-			get { return _penWidth; }
-			set { _penWidth = value; }
+			get { return penWidth; }
+			set { penWidth = value; }
 		}
 		/// <summary>
 		/// Gets or sets the amount of inflation to be done on the rectangle
@@ -231,8 +231,8 @@ namespace ZedGraph
 		/// </remarks>
 		public float InflateFactor
 		{
-			get { return _inflateFactor; }
-			set { _inflateFactor = value; }
+			get { return inflateFactor; }
+			set { inflateFactor = value; }
 		}
 		/// <summary>
 		/// Determines whether or not the Border will be drawn.  true to draw the Border,
@@ -240,8 +240,8 @@ namespace ZedGraph
 		/// </summary>
 		public bool IsVisible
 		{
-			get { return _isVisible; }
-			set { _isVisible = value; }
+			get { return isVisible; }
+			set { isVisible = value; }
 		}
 	#endregion
 
@@ -262,11 +262,11 @@ namespace ZedGraph
 		/// <returns>A <see cref="Pen"/> object with the proper color and pen width.</returns>
 		public Pen MakePen( bool isPenWidthScaled, float scaleFactor )
 		{
-			float scaledPenWidth = _penWidth;
+			float scaledPenWidth = penWidth;
 			if ( isPenWidthScaled )
-				scaledPenWidth = (float)(_penWidth * scaleFactor);
+				scaledPenWidth = (float)(penWidth * scaleFactor);
 			
-			return new Pen( _color, scaledPenWidth );
+			return new Pen( color, scaledPenWidth );
 		}
 				
 		/// <summary>
@@ -291,11 +291,11 @@ namespace ZedGraph
 		{
 			// Need to use the RectangleF props since rounding it can cause the axisFrame to
 			// not line up properly with the last tic mark
-			if ( this._isVisible )
+			if ( this.isVisible )
 			{
 				RectangleF tRect = rect;
 
-				float		scaledInflate = (float) ( this._inflateFactor * scaleFactor );
+				float		scaledInflate = (float) ( this.inflateFactor * scaleFactor );
 				tRect.Inflate( scaledInflate, scaledInflate );
 
 				g.DrawRectangle( MakePen(isPenWidthScaled, scaleFactor), tRect.X, tRect.Y, tRect.Width, tRect.Height );

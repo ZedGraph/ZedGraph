@@ -11,13 +11,12 @@ namespace ZedGraph.Demo
 	/// </summary>
 	public class BarGraphBandDemo : DemoBase
 	{
-		public BarGraphBandDemo() : base( "Bar Graph Demo with Band",
-							"Bar Graph Band Demo", DemoType.Bar )
+		public BarGraphBandDemo()
 		{
 			// Create a new graph with topLeft at (40,40) and size 600x400
-			base.GraphPane.Title.Text = "My Test Bar Graph";
-			base.GraphPane.XAxis.Title.Text = "Label";
-			base.GraphPane.YAxis.Title.Text = "My Y Axis";
+			base.GraphPane.Title = "My Test Bar Graph";
+			base.GraphPane.XAxis.Title = "Label";
+			base.GraphPane.YAxis.Title = "My Y Axis";
 
 			// Make up some random data points
 			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty" };
@@ -38,11 +37,11 @@ namespace ZedGraph.Demo
 			// Generate a green bar with "Curve 3" in the legend
 			myCurve = base.GraphPane.AddCurve( "Curve 3", x, y3, Color.Green );
 
-			base.GraphPane.BarSettings.ClusterScaleWidth = 100f;
-			base.GraphPane.XAxis.Scale.Min = 0;
-			base.GraphPane.XAxis.Scale.Max = 800;
-			base.GraphPane.YAxis.Scale.Min = 0;
-			base.GraphPane.YAxis.Scale.Max = 140;
+			base.GraphPane.ClusterScaleWidth = 100f;
+			base.GraphPane.XAxis.Min = 0;
+			base.GraphPane.XAxis.Max = 800;
+			base.GraphPane.YAxis.Min = 0;
+			base.GraphPane.YAxis.Max = 140;
 			double[] xg = { 0, 800 };
 			double[] yg = { 0, 0 };
 			LineItem myCurve2;

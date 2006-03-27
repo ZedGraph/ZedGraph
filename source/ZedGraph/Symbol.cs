@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.26 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 3.27 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -42,13 +42,13 @@ namespace ZedGraph
         /// <see cref="Symbol"/> in points (1/72 inch).  Use the public
         /// property <see cref="Size"/> to access this value.
 		/// </summary>
-		private float		_size;
+		private float		size;
 		/// <summary>
 		/// Private field that stores the <see cref="SymbolType"/> for this
 		/// <see cref="Symbol"/>.  Use the public
 		/// property <see cref="Type"/> to access this value.
 		/// </summary>
-		private SymbolType	_type;
+		private SymbolType	type;
 		/// <summary>
 		/// Private field that stores the visibility of this
 		/// <see cref="Symbol"/>.  Use the public
@@ -56,19 +56,19 @@ namespace ZedGraph
 		/// false, the symbols will not be shown (but the <see cref="Line"/> may
 		/// still be shown).
 		/// </summary>
-		private bool		_isVisible;
+		private bool		isVisible;
 		/// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="Symbol"/>.  Use the public property <see cref="Fill"/> to
 		/// access this value.
 		/// </summary>
-		private Fill		_fill;
+		private Fill		fill;
 		/// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Border"/> data for this
 		/// <see cref="Symbol"/>.  Use the public property <see cref="Border"/> to
 		/// access this value.
 		/// </summary>
-		private Border		_border;
+		private Border		border;
 	#endregion
 
 	#region Defaults
@@ -133,8 +133,8 @@ namespace ZedGraph
         /// <seealso cref="Default.Size"/>
 		public float Size
 		{
-			get { return _size; }
-			set { _size = value; }
+			get { return size; }
+			set { size = value; }
 		}
 		/// <summary>
 		/// Gets or sets the type (shape) of the <see cref="Symbol"/>
@@ -143,8 +143,8 @@ namespace ZedGraph
 		/// <seealso cref="Default.Type"/>
 		public SymbolType Type
 		{
-			get { return _type; }
-			set { _type = value; }
+			get { return type; }
+			set { type = value; }
 		}
 		/// <summary>
 		/// Gets or sets a property that shows or hides the <see cref="Symbol"/>.
@@ -153,8 +153,8 @@ namespace ZedGraph
 		/// <seealso cref="Default.IsVisible"/>
 		public bool IsVisible
 		{
-			get { return _isVisible; }
-			set { _isVisible = value; }
+			get { return isVisible; }
+			set { isVisible = value; }
 		}
 		
 		/// <summary>
@@ -163,8 +163,8 @@ namespace ZedGraph
 		/// </summary>
 		public Fill	Fill
 		{
-			get { return _fill; }
-			set { _fill = value; }
+			get { return fill; }
+			set { fill = value; }
 		}
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Border"/> data for this
@@ -172,8 +172,8 @@ namespace ZedGraph
 		/// </summary>
 		public Border Border
 		{
-			get { return _border; }
-			set { _border = value; }
+			get { return border; }
+			set { border = value; }
 		}
 
 		#endregion
@@ -200,11 +200,11 @@ namespace ZedGraph
 		/// </param>
 		public Symbol( SymbolType type, Color color )
 		{
-			this._size = Default.Size;
-			this._type = type;
-			this._isVisible = Default.IsVisible;
-			this._border = new Border( Default.IsBorderVisible, color, Default.PenWidth );
-			this._fill = new Fill( color, Default.FillBrush, Default.FillType );
+			this.size = Default.Size;
+			this.type = type;
+			this.isVisible = Default.IsVisible;
+			this.border = new Border( Default.IsBorderVisible, color, Default.PenWidth );
+			this.fill = new Fill( color, Default.FillBrush, Default.FillType );
 		}
 
 		/// <summary>
@@ -213,11 +213,11 @@ namespace ZedGraph
 		/// <param name="rhs">The Symbol object from which to copy</param>
 		public Symbol( Symbol rhs )
 		{
-			_size = rhs.Size;
-			_type = rhs.Type;
-			_isVisible = rhs.IsVisible;
-			_fill = rhs.Fill.Clone();
-			_border = rhs.Border.Clone();
+			size = rhs.Size;
+			type = rhs.Type;
+			isVisible = rhs.IsVisible;
+			fill = rhs.Fill.Clone();
+			border = rhs.Border.Clone();
 		}
 
 		/// <summary>
@@ -260,11 +260,11 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			_size = info.GetSingle( "size" );
-			_type = (SymbolType) info.GetValue( "type", typeof(SymbolType) );
-			_isVisible = info.GetBoolean( "isVisible" );
-			_fill = (Fill) info.GetValue( "fill", typeof(Fill) );
-			_border = (Border) info.GetValue( "border", typeof(Border) );
+			size = info.GetSingle( "size" );
+			type = (SymbolType) info.GetValue( "type", typeof(SymbolType) );
+			isVisible = info.GetBoolean( "isVisible" );
+			fill = (Fill) info.GetValue( "fill", typeof(Fill) );
+			border = (Border) info.GetValue( "border", typeof(Border) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -275,11 +275,11 @@ namespace ZedGraph
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
-			info.AddValue( "size", _size );
-			info.AddValue( "type", _type );
-			info.AddValue( "isVisible", _isVisible );
-			info.AddValue( "fill", _fill );
-			info.AddValue( "border", _border );
+			info.AddValue( "size", size );
+			info.AddValue( "type", type );
+			info.AddValue( "isVisible", isVisible );
+			info.AddValue( "fill", fill );
+			info.AddValue( "border", border );
 		}
 	#endregion
 
@@ -307,7 +307,7 @@ namespace ZedGraph
 							Pen pen, Brush brush )
 		{
 			// Only draw if the symbol is visible
-			if (	this._isVisible &&
+			if (	this.isVisible &&
 					this.Type != SymbolType.None &&
 					x < 100000 && x > -100000 &&
 					y < 100000 && y > -100000 )
@@ -316,11 +316,11 @@ namespace ZedGraph
 				g.TranslateTransform( x, y );
 			
 				// Fill or draw the symbol as required
-				if ( this._fill.IsVisible)
+				if ( this.fill.IsVisible)
 					g.FillPath( brush, path );
 					//FillPoint( g, x, y, scaleFactor, pen, brush );
 				
-				if ( this._border.IsVisible )
+				if ( this.border.IsVisible )
 					g.DrawPath( pen, path );
 					//DrawPoint( g, x, y, scaleFactor, pen );
 				
@@ -356,13 +356,13 @@ namespace ZedGraph
 							float scaleFactor, PointPair dataValue )
 		{
 			// Only draw if the symbol is visible
-			if (	this._isVisible &&
+			if (	this.isVisible &&
 					this.Type != SymbolType.None &&
 					x < 100000 && x > -100000 &&
 					y < 100000 && y > -100000 )
 			{
 				//SolidBrush	brush = new SolidBrush( this.fill.Color );
-                Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+                Pen pen = border.MakePen( pane.IsPenWidthScaled, scaleFactor );
 				GraphicsPath path = this.MakePath( g, scaleFactor );
 				Brush brush = this.Fill.MakeBrush( path.GetBounds(), dataValue );
 
@@ -385,13 +385,13 @@ namespace ZedGraph
 		/// <returns>Returns the <see cref="GraphicsPath"/> for the current symbol</returns>
 		public GraphicsPath MakePath( Graphics g, float scaleFactor )
 		{
-			float	scaledSize = (float) ( this._size * scaleFactor );
+			float	scaledSize = (float) ( this.size * scaleFactor );
 			float	hsize = scaledSize / 2,
 					hsize1 = hsize + 1;
 			
 			GraphicsPath path = new GraphicsPath();
 			
-			switch( this._type == SymbolType.Default ? Default.Type : this._type )
+			switch( this.type == SymbolType.Default ? Default.Type : this.type )
 			{
 			case SymbolType.Square:
 				path.AddLine( -hsize, -hsize, hsize, -hsize );
@@ -478,13 +478,13 @@ namespace ZedGraph
 			double	curX, curY, lowVal;
 			IPointList points = curve.Points;
 		
-			if ( points != null && ( this._border.IsVisible || this._fill.IsVisible ) )
+			if ( points != null && ( this.border.IsVisible || this.fill.IsVisible ) )
 			{
 				// For the sake of speed, go ahead and create a solid brush and a pen
 				// If it's a gradient fill, it will be created on the fly for each symbol
 				//SolidBrush	brush = new SolidBrush( this.fill.Color );
-                Pen pen = this._border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-                //Pen pen = new Pen( this.border.Color, pane.ScaledPenWidth(_border.PenWidth * scaleFactor) );
+                Pen pen = this.border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+                //Pen pen = new Pen( this.border.Color, pane.ScaledPenWidth(border.PenWidth * scaleFactor) );
 				
 				GraphicsPath path = MakePath( g, scaleFactor );
 				RectangleF rect = path.GetBounds();
@@ -525,7 +525,7 @@ namespace ZedGraph
 							!System.Double.IsNaN( curY ) &&
 							!System.Double.IsInfinity( curX ) &&
 							!System.Double.IsInfinity( curY ) &&
-							( curX > 0 || !pane.XAxis.Scale.IsLog ) &&
+							( curX > 0 || !pane.XAxis.IsLog ) &&
 							( !yScale.IsLog || curY > 0.0 ) )
 					{
 						// Transform the user scale values to pixel locations
@@ -534,8 +534,8 @@ namespace ZedGraph
 
 						// If the fill type for this symbol is a Gradient by value type,
 						// the make a brush corresponding to the appropriate current value
-						if ( this._fill.IsGradientValueType )
-							brush = _fill.MakeBrush( rect, points[i] );
+						if ( this.fill.IsGradientValueType )
+							brush = fill.MakeBrush( rect, points[i] );
 						// Otherwise, the brush is already defined
 						// Draw the symbol at the specified pixel location
 						this.DrawSymbol( g, tmpX, tmpY, path, pen, brush );		

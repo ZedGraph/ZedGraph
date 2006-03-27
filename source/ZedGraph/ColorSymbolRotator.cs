@@ -27,7 +27,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2006-03-27 03:35:43 $ </version>
 	public class ColorSymbolRotator
 	{
 	#region Static fields
@@ -67,7 +67,7 @@ namespace ZedGraph
 			SymbolType.VDash
 		};		
 
-		private static ColorSymbolRotator _staticInstance;
+		private static ColorSymbolRotator staticInstance;
 	#endregion
 	
 	#region Fields
@@ -155,10 +155,10 @@ namespace ZedGraph
 		{
 			get
 			{
-				if (_staticInstance == null)
-					_staticInstance = new ColorSymbolRotator();
+				if (staticInstance == null)
+					staticInstance = new ColorSymbolRotator();
 
-				return _staticInstance;
+				return staticInstance;
 			}
 		}
 		

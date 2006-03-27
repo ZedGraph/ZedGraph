@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -52,23 +52,23 @@ namespace ZedGraph
 		/// property <see cref="IsVisible"/> to access this value.  If this value is
 		/// false, the symbols will not be shown.
 		/// </summary>
-		private bool		_isVisible;
+		private bool		isVisible;
 		/// <summary>
 		/// Private field that stores the error bar color.  Use the public
 		/// property <see cref="Color"/> to access this value.
 		/// </summary>
-		private Color		_color;
+		private Color		color;
 		/// <summary>
 		/// Private field that stores the pen width for this error bar.  Use the public
 		/// property <see cref="PenWidth"/> to access this value.
 		/// </summary>
-		private float		_penWidth;
+		private float		penWidth;
 		/// <summary>
 		/// private field that contains the symbol element that will be drawn
 		/// at the top and bottom of the error bar.  Use the public property
 		/// <see cref="Symbol"/> to access this value.
 		/// </summary>
-		private Symbol		_symbol;
+		private Symbol		symbol;
 	#endregion
 
 	#region Defaults
@@ -115,8 +115,8 @@ namespace ZedGraph
 		/// <seealso cref="Default.IsVisible"/>
 		public bool IsVisible
 		{
-			get { return _isVisible; }
-			set { _isVisible = value; }
+			get { return isVisible; }
+			set { isVisible = value; }
 		}
 		
 		/// <summary>
@@ -129,8 +129,8 @@ namespace ZedGraph
 		/// </remarks>
 		public Color Color
 		{
-			get { return _color; }
-			set { _color = value; }
+			get { return color; }
+			set { color = value; }
 		}
 		/// <summary>
 		/// The pen width to be used for drawing error bars
@@ -142,8 +142,8 @@ namespace ZedGraph
 		/// </remarks>
 		public float PenWidth
 		{
-			get { return _penWidth; }
-			set { _penWidth = value; }
+			get { return penWidth; }
+			set { penWidth = value; }
 		}
 		/// <summary>
 		/// Contains the symbol element that will be drawn
@@ -151,8 +151,8 @@ namespace ZedGraph
 		/// </summary>
 		public Symbol Symbol
 		{
-			get { return _symbol; }
-			set { _symbol = value; }
+			get { return symbol; }
+			set { symbol = value; }
 		}
 
 	#endregion
@@ -177,11 +177,11 @@ namespace ZedGraph
 		/// </param>
 		public ErrorBar( Color color )
 		{
-			this._symbol = new Symbol( Default.Type, color );
-			this._symbol.Size = Default.Size;
-			this._color = color;
-			this._penWidth = Default.PenWidth;
-			this._isVisible = Default.IsVisible;
+			this.symbol = new Symbol( Default.Type, color );
+			this.symbol.Size = Default.Size;
+			this.color = color;
+			this.penWidth = Default.PenWidth;
+			this.isVisible = Default.IsVisible;
 		}
 
 		/// <summary>
@@ -190,10 +190,10 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="ErrorBar"/> object from which to copy</param>
 		public ErrorBar( ErrorBar rhs )
 		{
-			_color = rhs.Color;
-			_isVisible = rhs.IsVisible;
-			_penWidth = rhs.PenWidth;
-			this._symbol = rhs.Symbol.Clone();
+			color = rhs.Color;
+			isVisible = rhs.IsVisible;
+			penWidth = rhs.PenWidth;
+			this.symbol = rhs.Symbol.Clone();
 		}
 
 		/// <summary>
@@ -236,10 +236,10 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			_isVisible = info.GetBoolean( "isVisible" );
-			_color = (Color) info.GetValue( "color", typeof(Color) );
-			_penWidth = info.GetSingle( "penWidth" );
-			_symbol = (Symbol) info.GetValue( "symbol", typeof(Symbol) );
+			isVisible = info.GetBoolean( "isVisible" );
+			color = (Color) info.GetValue( "color", typeof(Color) );
+			penWidth = info.GetSingle( "penWidth" );
+			symbol = (Symbol) info.GetValue( "symbol", typeof(Symbol) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -250,10 +250,10 @@ namespace ZedGraph
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
-			info.AddValue( "isVisible", _isVisible );
-			info.AddValue( "color", _color );
-			info.AddValue( "penWidth", _penWidth );
-			info.AddValue( "symbol", _symbol );
+			info.AddValue( "isVisible", isVisible );
+			info.AddValue( "color", color );
+			info.AddValue( "penWidth", penWidth );
+			info.AddValue( "symbol", symbol );
 		}
 	#endregion
 
@@ -296,17 +296,17 @@ namespace ZedGraph
 			if ( isXBase )
 			{
 				g.DrawLine( pen, pixBase, pixValue, pixBase, pixLowValue );
-				this._symbol.DrawSymbol( g, pane, pixBase, pixValue,
+				this.symbol.DrawSymbol( g, pane, pixBase, pixValue,
 							scaleFactor, dataValue );
-				this._symbol.DrawSymbol( g, pane, pixBase, pixLowValue,
+				this.symbol.DrawSymbol( g, pane, pixBase, pixLowValue,
 							scaleFactor, dataValue );
 			}
 			else
 			{
 				g.DrawLine( pen, pixValue, pixBase, pixLowValue, pixBase );
-				this._symbol.DrawSymbol( g, pane, pixValue, pixBase,
+				this.symbol.DrawSymbol( g, pane, pixValue, pixBase,
 							scaleFactor, dataValue );
-				this._symbol.DrawSymbol( g, pane, pixLowValue, pixBase,
+				this.symbol.DrawSymbol( g, pane, pixLowValue, pixBase,
 							scaleFactor, dataValue );
 			}
 		}
@@ -346,7 +346,7 @@ namespace ZedGraph
 		
 			if ( curve.Points != null && this.IsVisible )
 			{
-				Pen pen = new Pen( _color, _penWidth );
+				Pen pen = new Pen( color, penWidth );
 				
 				// Loop over each defined point							
 				for ( int i=0; i<curve.Points.Count; i++ )
@@ -360,15 +360,15 @@ namespace ZedGraph
 					// Also, any value <= zero on a log scale is invalid
 				
 					if (	!curve.Points[i].IsInvalid3D &&
-							( scaleBase > 0 || !baseAxis._scale.IsLog ) &&
-							( ( scaleValue > 0 && scaleLowValue > 0 ) || !valueAxis._scale.IsLog ) )
+							( scaleBase > 0 || !baseAxis.IsLog ) &&
+							( ( scaleValue > 0 && scaleLowValue > 0 ) || !valueAxis.IsLog ) )
 					{
 						pixBase = baseAxis.Scale.Transform( curve.IsOverrideOrdinal, i, scaleBase );
 						pixValue = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, scaleValue );
 						pixLowValue = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, scaleLowValue );
 
 						//if ( this.fill.IsGradientValueType )
-						//	brush = fill.MakeBrush( _rect, _points[i] );
+						//	brush = fill.MakeBrush( rect, points[i] );
 
 						this.Draw( g, pane, baseAxis is XAxis, pixBase, pixValue,
 										pixLowValue, scaleFactor, pen,

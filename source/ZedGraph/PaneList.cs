@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.4 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	public class PaneList : CollectionPlus, ICloneable
 	{
@@ -131,7 +131,7 @@ namespace ZedGraph
 		/// Indexer to access the specified <see cref="GraphPane"/> object by
 		/// its <see cref="PaneBase.Title"/> string.
 		/// </summary>
-		/// <param name="title">The string _title of the
+		/// <param name="title">The string title of the
 		/// <see cref="GraphPane"/> object to be accessed.</param>
 		/// <value>A <see cref="GraphPane"/> object reference.</value>
 		public GraphPane this[ string title ]  
@@ -187,7 +187,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>The comparison of titles is not case sensitive, but it must include
 		/// all characters including punctuation, spaces, etc.</remarks>
-		/// <param name="title">The <see cref="String"/> _label that is in the
+		/// <param name="title">The <see cref="String"/> label that is in the
 		/// <see cref="PaneBase.Title"/> attribute of the item to be found.
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="GraphPane"/>,
@@ -199,7 +199,7 @@ namespace ZedGraph
 			int index = 0;
 			foreach ( GraphPane pane in this )
 			{
-				if ( String.Compare( pane.Title.Text, title, true ) == 0 )
+				if ( String.Compare( pane.Title, title, true ) == 0 )
 					return index;
 				index++;
 			}

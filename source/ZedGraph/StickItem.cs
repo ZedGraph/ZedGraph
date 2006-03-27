@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.4 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	public class StickItem : LineItem, ICloneable, ISerializable
 	{
@@ -58,7 +58,7 @@ namespace ZedGraph
 		/// <value>true if the Z data are included, false otherwise</value>
 		override internal bool IsZIncluded( GraphPane pane )
 		{
-			return this._symbol.IsVisible;
+			return this.symbol.IsVisible;
 		}
 
 		/// <summary>
@@ -77,16 +77,16 @@ namespace ZedGraph
 		/// <summary>
 		/// Create a new <see cref="StickItem"/>, specifying only the legend <see cref="CurveItem.Label" />.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		public StickItem( string label ) : base( label )
 		{
-			this._symbol.IsVisible = false;
+			this.symbol.IsVisible = false;
 		}
 		
 		/// <summary>
 		/// Create a new <see cref="StickItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		/// <param name="x">An array of double precision values that define
 		/// the independent (X axis) values for this curve</param>
 		/// <param name="y">An array of double precision values that define
@@ -105,7 +105,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Create a new <see cref="StickItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		/// <param name="x">An array of double precision values that define
 		/// the independent (X axis) values for this curve</param>
 		/// <param name="y">An array of double precision values that define
@@ -121,7 +121,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Create a new <see cref="StickItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">A <see cref="Color"/> value that will be applied to
@@ -135,7 +135,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Create a new <see cref="StickItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">A <see cref="Color"/> value that will be applied to
@@ -147,7 +147,7 @@ namespace ZedGraph
 		public StickItem( string label, IPointList points, Color color, float lineWidth )
 			: base( label, points, color, Symbol.Default.Type, lineWidth )
 		{
-			this._symbol.IsVisible = false;
+			this.symbol.IsVisible = false;
 		}
 
 		/// <summary>

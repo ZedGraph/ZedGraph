@@ -32,6 +32,22 @@ using ZedGraph;
 namespace ZedGraph
 {
 	/// <summary>
+	/// Enum for specifying the type of data to be returned by the ZedGraphWeb Render() method.
+	/// </summary>
+	public enum RenderModeType
+	{
+		/// <summary>
+		/// Renders as an IMG tag referencing a local generated image. ContentType stays text.
+		/// </summary>
+		ImageTag,
+		/// <summary>
+		/// Renders the binary image. ContentType is changed accordingly.
+		/// </summary>
+		RawImage
+	}
+
+
+	/// <summary>
 	/// The ZedGraphWeb class provides a web control interface to the
 	/// <see cref="ZedGraph"/> class library.  This allows ZedGraph to be used
 	/// from a web page with ASP.net.  All graph
@@ -39,7 +55,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 3.38 $ $Date: 2006-03-27 01:31:37 $</version>
+	/// <version>$Revision: 3.39 $ $Date: 2006-03-27 03:35:43 $</version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -81,12 +97,12 @@ namespace ZedGraph
 			vsassist.Register('R',typeof(ZedGraphWebRect));
 			vsassist.Register('m',typeof(ZedGraphWebRect2));	
 
-			this.AxisBorder.Color = ZedGraph.Chart.Default.BorderColor;
-			this.AxisBorder.PenWidth = ZedGraph.Chart.Default.BorderPenWidth;
+			this.AxisBorder.Color = ZedGraph.GraphPane.Default.AxisBorderColor;
+			this.AxisBorder.PenWidth = ZedGraph.GraphPane.Default.AxisBorderPenWidth;
 			this.AxisBorder.IsVisible = true;
-			this.AxisFill.Brush = ZedGraph.Chart.Default.FillBrush;
-			this.AxisFill.Color = ZedGraph.Chart.Default.FillColor;
-			this.AxisFill.Type  = ZedGraph.Chart.Default.FillType;
+			this.AxisFill.Brush = ZedGraph.GraphPane.Default.AxisBackBrush;
+			this.AxisFill.Color = ZedGraph.GraphPane.Default.AxisBackColor;
+			this.AxisFill.Type  = ZedGraph.GraphPane.Default.AxisBackType;
 		
 			this.PaneBorder.Color = ZedGraph.PaneBase.Default.BorderColor;
 			this.PaneBorder.PenWidth = ZedGraph.PaneBase.Default.BorderPenWidth;
@@ -99,7 +115,7 @@ namespace ZedGraph
 			this.FontSpec.IsItalic = ZedGraph.PaneBase.Default.FontItalic;
 			this.FontSpec.Size = ZedGraph.PaneBase.Default.FontSize;
 			this.FontSpec.IsUnderline = ZedGraph.PaneBase.Default.FontUnderline;
-			this.FontSpec.Fill.Type = FillType.None;	// no _fill
+			this.FontSpec.Fill.Type = FillType.None;	// no fill
 			
 			this.XAxis.IsVisible = ZedGraph.XAxis.Default.IsVisible;
 			this.XAxis.IsZeroLine = ZedGraph.XAxis.Default.IsZeroLine;
@@ -111,10 +127,10 @@ namespace ZedGraph
 			this.Y2Axis.IsZeroLine = ZedGraph.Y2Axis.Default.IsZeroLine;
 
 			ZedGraphWebRect2 margins = this.Margins;
-			margins.Left = ZedGraph.Margin.Default.Left;
-			margins.Right = ZedGraph.Margin.Default.Right;
-			margins.Top = ZedGraph.Margin.Default.Top;
-			margins.Bottom = ZedGraph.Margin.Default.Bottom;
+			margins.Left = ZedGraph.PaneBase.Default.MarginLeft;
+			margins.Right = ZedGraph.PaneBase.Default.MarginRight;
+			margins.Top = ZedGraph.PaneBase.Default.MarginTop;
+			margins.Bottom = ZedGraph.PaneBase.Default.MarginBottom;
 		}
 		#endregion
 
@@ -127,9 +143,9 @@ namespace ZedGraph
 		static public void RenderDemo( Graphics g, GraphPane pane )
 		{
 			// Set the titles and axis labels
-			pane.Title.Text = "Wacky Widget Company\nProduction Report";
-			pane.XAxis.Title.Text = "Time, Days\n(Since Plant Construction Startup)";
-			pane.YAxis.Title.Text = "Widget Production\n(units/hour)";
+			pane.Title = "Wacky Widget Company\nProduction Report";
+			pane.XAxis.Title = "Time, Days\n(Since Plant Construction Startup)";
+			pane.YAxis.Title = "Widget Production\n(units/hour)";
 			
 			LineItem curve;
 
@@ -175,60 +191,60 @@ namespace ZedGraph
 			bar.Bar.Fill = new Fill( Color.RoyalBlue, Color.White, Color.RoyalBlue );
 			
 			// Fill the pane background with a gradient
-			pane.Fill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			pane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
 			// Fill the axis background with a gradient
-			pane.Chart.Fill = new Fill( Color.FromArgb( 255, 255, 245),
+			pane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
 				Color.FromArgb( 255, 255, 190), 90F );
 			
 
 			// Make each cluster 100 user scale units wide.  This is needed because the X Axis
 			// type is Linear rather than Text or Ordinal
-			pane._barSettings.ClusterScaleWidth = 100;
+			pane.ClusterScaleWidth = 100;
 			// Bars are stacked
-			pane._barSettings.Type = BarType.Stack;
+			pane.BarType = BarType.Stack;
 
 			// Enable the X and Y axis grids
-			pane.XAxis._majorGrid._isVisible = true;
-			pane.YAxis._majorGrid._isVisible = true;
+			pane.XAxis.IsShowGrid = true;
+			pane.YAxis.IsShowGrid = true;
 
 			// Manually set the scale maximums according to user preference
-			pane.XAxis._scale._max = 1200;
-			pane.YAxis._scale._max = 120;
+			pane.XAxis.Max = 1200;
+			pane.YAxis.Max = 120;
 			
 			// Add a text item to decorate the graph
-			TextObj text = new TextObj("First Prod\n21-Oct-93", 175F, 80.0F );
+			TextItem text = new TextItem("First Prod\n21-Oct-93", 175F, 80.0F );
 			// Align the text such that the Bottom-Center is at (175, 80) in user scale coordinates
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Bottom;
 			text.FontSpec.Fill = new Fill( Color.White, Color.PowderBlue, 45F );
 			text.FontSpec.StringAlignment = StringAlignment.Near;
-			pane.GraphObjList.Add( text );
+			pane.GraphItemList.Add( text );
 
 			// Add an arrow pointer for the above text item
-			ArrowObj arrow = new ArrowObj( Color.Black, 12F, 175F, 77F, 100F, 45F );
+			ArrowItem arrow = new ArrowItem( Color.Black, 12F, 175F, 77F, 100F, 45F );
 			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
-			pane.GraphObjList.Add( arrow );
+			pane.GraphItemList.Add( arrow );
 
 			// Add a another text item to to point out a graph feature
-			text = new TextObj("Upgrade", 700F, 50.0F );
+			text = new TextItem("Upgrade", 700F, 50.0F );
 			// rotate the text 90 degrees
 			text.FontSpec.Angle = 90;
 			// Align the text such that the Right-Center is at (700, 50) in user scale coordinates
 			text.Location.AlignH = AlignH.Right;
 			text.Location.AlignV = AlignV.Center;
-			// Disable the border and background _fill options for the _text
+			// Disable the border and background fill options for the text
 			text.FontSpec.Fill.IsVisible = false;
 			text.FontSpec.Border.IsVisible = false;
-			pane.GraphObjList.Add( text );
+			pane.GraphItemList.Add( text );
 
 			// Add an arrow pointer for the above text item
-			arrow = new ArrowObj( Color.Black, 15, 700, 53, 700, 80 );
+			arrow = new ArrowItem( Color.Black, 15, 700, 53, 700, 80 );
 			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
 			arrow.PenWidth = 2.0F;
-			pane.GraphObjList.Add( arrow );
+			pane.GraphItemList.Add( arrow );
 
 			// Add a text "Confidential" stamp to the graph
-			text = new TextObj("Confidential", 0.85F, -0.03F );
+			text = new TextItem("Confidential", 0.85F, -0.03F );
 			// use AxisFraction coordinates so the text is placed relative to the AxisRect
 			text.Location.CoordinateFrame = CoordType.AxisFraction;
 			// rotate the text 15 degrees
@@ -237,16 +253,16 @@ namespace ZedGraph
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.IsBold = true;
 			text.FontSpec.Size = 16;
-			// Disable the border and background _fill options for the _text
+			// Disable the border and background fill options for the text
 			text.FontSpec.Border.IsVisible = false;
 			text.FontSpec.Fill.IsVisible = false;
 			// Align the text such the the Left-Bottom corner is at the specified coordinates
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
-			pane.GraphObjList.Add( text );
+			pane.GraphItemList.Add( text );
 
-			// Add a BoxObj to show a colored band behind the graph data
-			BoxObj box = new BoxObj( new RectangleF( 0, 110, 1200, 10 ),
+			// Add a BoxItem to show a colored band behind the graph data
+			BoxItem box = new BoxItem( new RectangleF( 0, 110, 1200, 10 ),
 				Color.Empty, Color.FromArgb( 225, 245, 225) );
 			box.Location.CoordinateFrame = CoordType.AxisXYScale;
 			// Align the left-top of the box to (0, 110)
@@ -254,10 +270,10 @@ namespace ZedGraph
 			box.Location.AlignV = AlignV.Top;
 			// place the box behind the axis items, so the grid is drawn on top of it
 			box.ZOrder = ZOrder.E_BehindAxis;
-			pane.GraphObjList.Add( box );
+			pane.GraphItemList.Add( box );
 			
 			// Add some text inside the above box to indicate "Peak Range"
-			TextObj myText = new TextObj( "Peak Range", 1170, 105 );
+			TextItem myText = new TextItem( "Peak Range", 1170, 105 );
 			myText.Location.CoordinateFrame = CoordType.AxisXYScale;
 			myText.Location.AlignH = AlignH.Right;
 			myText.Location.AlignV = AlignV.Center;
@@ -265,7 +281,7 @@ namespace ZedGraph
 			myText.FontSpec.IsBold = false;
 			myText.FontSpec.Fill.IsVisible = false;
 			myText.FontSpec.Border.IsVisible = false;
-			pane.GraphObjList.Add( myText );
+			pane.GraphItemList.Add( myText );
 
 			pane.AxisChange( g );
 		}
@@ -383,7 +399,7 @@ namespace ZedGraph
 
 		
 		/// <summary>
-		/// Proxy property that gets the value of the <see cref="PaneBase.Fill"/>.
+		/// Proxy property that gets the value of the <see cref="PaneBase.PaneFill"/>.
 		/// </summary>
 		[
 		Category("Layout of master pane"),
@@ -397,7 +413,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Proxy property that gets the value of the <see cref="Chart.Border"/>.
+		/// Proxy property that gets the value of the <see cref="GraphPane.AxisBorder"/>.
 		/// </summary>
 		[		
 		Category("Layout of master pane"),
@@ -412,7 +428,7 @@ namespace ZedGraph
 
 
 		/// <summary>
-		/// Proxy property that gets or sets the width of the <see cref="PaneBase.Rect"/>.
+		/// Proxy property that gets or sets the width of the <see cref="PaneBase.PaneRect"/>.
 		/// </summary>
 		/// <value>The width in output device pixels</value>
 		[Bindable(true),Category("Layout of master pane"),NotifyParentProperty(true),DefaultValue(400)]
@@ -427,7 +443,7 @@ namespace ZedGraph
 		}
 		
 		/// <summary>
-		/// Proxy property that gets or sets the height of the <see cref="PaneBase.Rect"/>.
+		/// Proxy property that gets or sets the height of the <see cref="PaneBase.PaneRect"/>.
 		/// </summary>
 		/// <value>The height in output device pixels</value>
 		[Bindable(true),Category("Layout of master pane"),NotifyParentProperty(true),DefaultValue(250)]
@@ -457,7 +473,7 @@ namespace ZedGraph
 		}		
 		
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="Label.IsVisible"/>, which
+		/// Proxy property that gets or sets the value of <see cref="PaneBase.IsShowTitle"/>, which
 		/// determines if the <see cref="ZedGraph.PaneBase.Title"/> is visible.
 		/// </summary>
 		/// <value>true to show the pane title, false otherwise</value>
@@ -516,21 +532,21 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="BarSettings.Base"/>.
+		/// Proxy property that gets or sets the value of <see cref="GraphPane.BarBase"/>.
 		/// </summary>
 		[Bindable(true),Category("Behavior"),NotifyParentProperty(true)]
 		public BarBase BarBase
 		{
 			get 
 			{ 
-				object x = ViewState["BarBase"];
-				return ( null == x ) ? BarSettings.Default.Base : (BarBase)x;
+				object x = ViewState["BarBase"]; 
+				return (null == x) ? GraphPane.Default.BarBase : (BarBase)x;
 			}
 			set { ViewState["BarBase"] = value; }			
 		}
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="Chart.IsRectAuto"/>.
+		/// Proxy property that gets or sets the value of <see cref="GraphPane.IsAxisRectAuto"/>.
 		/// </summary>
 		[Bindable(true)]
 		[Category("Axis")]
@@ -594,8 +610,7 @@ namespace ZedGraph
 		}	
 	
 		/// <summary>
-		/// Proxy property that gets or sets the value of the
-		/// <see cref="BarSettings.ClusterScaleWidth"/>.
+		/// Proxy property that gets or sets the value of the <see cref="GraphPane.ClusterScaleWidth"/>.
 		/// </summary>
 		[NotifyParentProperty(true),Category("Behavior")]
 		public double ClusterScaleWidth
@@ -654,7 +669,7 @@ namespace ZedGraph
 
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of the <see cref="BarSettings.Type"/>.
+		/// Proxy property that gets or sets the value of the <see cref="GraphPane.BarType"/>.
 		/// </summary>
 		[NotifyParentProperty(true),Category("Data Appearance")]
 		public BarType BarType
@@ -662,7 +677,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["BarType"]; 
-				return (null == x) ? BarSettings.Default.Type : (BarType)x;
+				return (null == x) ? GraphPane.Default.BarType : (BarType)x;
 			}
 			set { ViewState["BarType"] = value; }
 		} 
@@ -682,8 +697,7 @@ namespace ZedGraph
 		} 
 	
 		/// <summary>
-		/// Proxy property that gets or sets the value of the
-		/// <see cref="BarSettings.MinClusterGap"/>.
+		/// Proxy property that gets or sets the value of the <see cref="GraphPane.MinClusterGap"/>.
 		/// </summary>
 		[NotifyParentProperty(true),Category("Data Appearance")]
 		public float MinClusterGap
@@ -691,14 +705,13 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["MinClusterGap"]; 
-				return (null == x) ? BarSettings.Default.MinClusterGap : (float)x;
+				return (null == x) ? GraphPane.Default.MinClusterGap : (float)x;
 			}
 			set { ViewState["MinClusterGap"] = value; }
 		} 
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of the
-		/// <see cref="BarSettings.MinBarGap"/>.
+		/// Proxy property that gets or sets the value of the <see cref="GraphPane.MinBarGap"/>.
 		/// </summary>
 		[NotifyParentProperty(true),Category("Data Appearance")]
 		public float MinBarGap
@@ -706,7 +719,7 @@ namespace ZedGraph
 			get 
 			{ 
 				object x = ViewState["MinBarGap"]; 
-				return (null == x) ? BarSettings.Default.MinBarGap : (float)x;
+				return (null == x) ? GraphPane.Default.MinBarGap : (float)x;
 			}
 			set { ViewState["MinBarGap"] = value; }
 		} 
@@ -714,8 +727,8 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Proxy property that gets the value of the <see cref="GraphPane" /> Margin
-		/// properties (<see cref="Margin.Left" />, <see cref="Margin.Right" />,
-		/// <see cref="Margin.Top" /> and <see cref="Margin.Bottom" />).
+		/// properties (<see cref="PaneBase.MarginLeft" />, <see cref="PaneBase.MarginRight" />,
+		/// <see cref="PaneBase.MarginTop" /> and <see cref="PaneBase.MarginBottom" />).
 		/// </summary>
 		[
 		Category("Layout of panes"),
@@ -744,7 +757,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Proxy property that gets the value of the <see cref="GraphObjList"/>.
+		/// Proxy property that gets the value of the <see cref="PaneBase.GraphItemList"/>.
 		/// </summary>
 		[
 		Category("Data"),		
@@ -758,7 +771,7 @@ namespace ZedGraph
 		}
 							
 		/// <summary>
-		/// Proxy property that gets the value of the <see cref="Chart.Rect"/>.
+		/// Proxy property that gets the value of the <see cref="GraphPane.AxisRect"/>.
 		/// </summary>
 		[
 		Category("Axis"),
@@ -771,7 +784,7 @@ namespace ZedGraph
 			get { return (ZedGraphWebRect)vsassist.GetValue('r',this.IsTrackingViewState); }
 		}
 		
-/*		/// <summary>
+		/// <summary>
 		/// Proxy property that gets the value of the <see cref="GraphPane.PieRect"/>.
 		/// </summary>
 		[
@@ -784,10 +797,9 @@ namespace ZedGraph
 		{
 			get { return (ZedGraphWebRect)vsassist.GetValue('R',this.IsTrackingViewState); }
 		}		
-*/			
+				
 		/// <summary>
-		/// Proxy property that gets the value of the <see cref="PaneBase.Title" />
-		/// <see cref="FontSpec"/>.
+		/// Proxy property that gets the value of the <see cref="PaneBase.FontSpec"/>.
 		/// </summary>
 		[
 		Category("Layout of panes"),
@@ -801,7 +813,7 @@ namespace ZedGraph
 		}
 			
 		/// <summary>
-		/// Proxy property that gets the value of the <see cref="Chart.Border"/>.
+		/// Proxy property that gets the value of the <see cref="GraphPane.AxisBorder"/>.
 		/// </summary>
 		[		
 		Category("Axis"),
@@ -815,7 +827,7 @@ namespace ZedGraph
 		}
 				
 		/// <summary>
-		/// Proxy property that gets the value of the <see cref="Chart.Fill"/>.
+		/// Proxy property that gets the value of the <see cref="GraphPane.AxisFill"/>.
 		/// </summary>
 		[
 		Category("Axis"),
@@ -829,7 +841,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Proxy property that gets the value of the <see cref="PaneBase.Border"/>.
+		/// Proxy property that gets the value of the <see cref="PaneBase.PaneBorder"/>.
 		/// </summary>
 		[		
 		Category("Layout of panes"),
@@ -843,7 +855,7 @@ namespace ZedGraph
 		}
 				
 		/// <summary>
-		/// Proxy property that gets the value of the <see cref="PaneBase.Fill"/>.
+		/// Proxy property that gets the value of the <see cref="PaneBase.PaneFill"/>.
 		/// </summary>
 		[
 		Category("Layout of panes"),
@@ -936,8 +948,8 @@ namespace ZedGraph
 			ZedGraphWebControlEventHandler handler;
 			handler = (ZedGraphWebControlEventHandler) Events[_eventRender];
 
-			MasterPaneFill.CopyTo(mp.Fill);
-			MasterPaneBorder.CopyTo(mp.Border);
+			MasterPaneFill.CopyTo(mp.PaneFill);
+			MasterPaneBorder.CopyTo(mp.PaneBorder);
 
 			if ( (handler == null) && (CurveList.Count == 0) && (GraphItemList.Count == 0) )
 			{
@@ -982,32 +994,32 @@ namespace ZedGraph
 		{
 			try 
 			{
-				pane.Title.IsVisible = this.IsShowTitle;
-				pane._barSettings.Type = this.BarType;
-				pane._barSettings.ClusterScaleWidth = this.ClusterScaleWidth;								
+				pane.IsShowTitle = this.IsShowTitle;
+				pane.BarType = this.BarType;
+				pane.ClusterScaleWidth = this.ClusterScaleWidth;								
 				XAxis.CopyTo( pane.XAxis );
 				YAxis.CopyTo( pane.YAxis );
 				Y2Axis.CopyTo( pane.Y2Axis );				
 				pane.IsIgnoreInitial = this.IsIgnoreInitial;
 				pane.IsIgnoreMissing = this.IsIgnoreMissing;
 				pane.LineType = this.LineType;
-				this.AxisRect.CopyTo(pane.Chart._rect);
-				pane.Chart.IsRectAuto = this.IsAxisRectAuto;
-				//this.PieRect.CopyTo(pane.PieRect);
-				this.AxisBorder.CopyTo(pane.Chart.Border);
-				this.AxisFill.CopyTo(pane.Chart.Fill);
-				pane._barSettings.MinClusterGap = this.MinClusterGap;
-				pane._barSettings.MinBarGap = this.MinBarGap;
-				pane._barSettings.Base = this.BarBase;				
+				this.AxisRect.CopyTo(pane.AxisRect);
+				pane.IsAxisRectAuto = this.IsAxisRectAuto;
+				this.PieRect.CopyTo(pane.PieRect);
+				this.AxisBorder.CopyTo(pane.AxisBorder);
+				this.AxisFill.CopyTo(pane.AxisFill);
+				pane.MinClusterGap = this.MinClusterGap;
+				pane.MinBarGap = this.MinBarGap;
+				pane.BarBase = this.BarBase;				
 				this.Legend.CopyTo(pane.Legend);
-				this.FontSpec.CopyTo(pane.Title.FontSpec);
-				pane.Title.Text = this.Title;
-				this.PaneBorder.CopyTo(pane.Border);
-				this.PaneFill.CopyTo(pane.Fill);
-				pane.Margin.Left = this.Margins.Left;
-				pane.Margin.Right = this.Margins.Right;
-				pane.Margin.Top = this.Margins.Top;
-				pane.Margin.Bottom = this.Margins.Bottom;
+				this.FontSpec.CopyTo(pane.FontSpec);
+				pane.Title = this.Title;
+				this.PaneBorder.CopyTo(pane.PaneBorder);
+				this.PaneFill.CopyTo(pane.PaneFill);
+				pane.MarginLeft = this.Margins.Left;
+				pane.MarginRight = this.Margins.Right;
+				pane.MarginTop = this.Margins.Top;
+				pane.MarginBottom = this.Margins.Bottom;
 				pane.BaseDimension = this.BaseDimension;
 				pane.IsFontsScaled = this.IsFontsScaled;
 				pane.IsPenWidthScaled = this.IsPenWidthScaled;
@@ -1020,11 +1032,11 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Add the <see cref="ZedGraphWebGraphItem" /> objects defined in the webcontrol to
-		/// the <see cref="GraphPane" /> as <see cref="GraphObj" /> objects.
+		/// the <see cref="GraphPane" /> as <see cref="GraphItem" /> objects.
 		/// </summary>
 		/// <param name="g">The <see cref="Graphics" /> instance of interest.</param>
 		/// <param name="pane">The <see cref="GraphPane" /> object to receive the
-		/// <see cref="GraphObj" /> objects.</param>
+		/// <see cref="GraphItem" /> objects.</param>
 		protected void AddWebGraphItems( Graphics g, GraphPane pane )
 		{
 			try
@@ -1036,37 +1048,37 @@ namespace ZedGraph
 					if ( draw is ZedGraphWebTextItem )
 					{
 						ZedGraphWebTextItem item = (ZedGraphWebTextItem)draw;
-						TextObj x = new TextObj();
+						TextItem x = new TextItem();
 						item.CopyTo(x);
-						pane.GraphObjList.Add(x);
+						pane.GraphItemList.Add(x);
 					}
 					else if ( draw is ZedGraphWebArrowItem )
 					{
 						ZedGraphWebArrowItem item = (ZedGraphWebArrowItem)draw;					
-						ArrowObj x = new ArrowObj();
+						ArrowItem x = new ArrowItem();
 						item.CopyTo(x);
-						pane.GraphObjList.Add(x);
+						pane.GraphItemList.Add(x);
 					}
 					else if ( draw is ZedGraphWebImageItem )
 					{
 						ZedGraphWebImageItem item = (ZedGraphWebImageItem)draw;					
-						ImageObj x = new ImageObj();
+						ImageItem x = new ImageItem();
 						item.CopyTo(x);
-						pane.GraphObjList.Add(x);
+						pane.GraphItemList.Add(x);
 					}
 					else if ( draw is ZedGraphWebBoxItem )
 					{
 						ZedGraphWebBoxItem item = (ZedGraphWebBoxItem)draw;					
-						BoxObj x = new BoxObj();
+						BoxItem x = new BoxItem();
 						item.CopyTo(x);
-						pane.GraphObjList.Add(x);
+						pane.GraphItemList.Add(x);
 					}
 					else if ( draw is ZedGraphWebEllipseItem )
 					{
 						ZedGraphWebEllipseItem item = (ZedGraphWebEllipseItem)draw;					
-						EllipseObj x = new EllipseObj();
+						EllipseItem x = new EllipseItem();
 						item.CopyTo(x);
-						pane.GraphObjList.Add(x);
+						pane.GraphItemList.Add(x);
 					}
 				}
 			}
@@ -1304,7 +1316,7 @@ namespace ZedGraph
 				if ( this.AxisChanged ) mp.AxisChange(g);
 			
 				// Render the graph to a bitmap
-				if( bShowTransparency && mp.Fill.Color.A != 255 )
+				if( bShowTransparency && mp.PaneFill.Color.A != 255 )
 				{
 					//Show the transparency as white/gray filled squares
 					// We need to add the resource namespace to its name

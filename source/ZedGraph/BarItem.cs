@@ -30,11 +30,11 @@ namespace ZedGraph
 	/// </summary>
 	/// <remarks>
 	/// The orientation of the bars depends on the state of
-	/// <see cref="BarSettings.Base"/>, and the bars can be stacked or
-	/// clustered, depending on the state of <see cref="BarSettings.Type"/>
+	/// <see cref="GraphPane.BarBase"/>, and the bars can be stacked or
+	/// clustered, depending on the state of <see cref="GraphPane.BarType"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.16 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2006-03-27 03:35:43 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -44,7 +44,7 @@ namespace ZedGraph
 		/// class defined for this <see cref="BarItem"/>.  Use the public
 		/// property <see cref="Bar"/> to access this value.
 		/// </summary>
-		protected Bar			_bar;
+		protected Bar			bar;
 	#endregion
 	
 	#region Properties
@@ -54,7 +54,7 @@ namespace ZedGraph
 		/// </summary>
 		public Bar Bar
 		{
-			get { return _bar; }
+			get { return bar; }
 		}
 
 		/// <summary>
@@ -65,7 +65,7 @@ namespace ZedGraph
 		/// <value>true if the Z data are included, false otherwise</value>
 		override internal bool IsZIncluded( GraphPane pane )
 		{
-			return pane._barSettings.Type == BarType.ClusterHiLow;
+			return pane.BarType == BarType.ClusterHiLow;
 		}
 
 		/// <summary>
@@ -76,24 +76,24 @@ namespace ZedGraph
 		/// <value>true if the X axis is independent, false otherwise</value>
 		override internal bool IsXIndependent( GraphPane pane )
 		{
-			return pane._barSettings.Base == BarBase.X;
+			return pane.BarBase == BarBase.X;
 		}
 		
 	#endregion
 	
 	#region Constructors
 		/// <summary>
-		/// Create a new <see cref="BarItem"/>, specifying only the legend _label for the bar.
+		/// Create a new <see cref="BarItem"/>, specifying only the legend label for the bar.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		public BarItem( string label ) : base( label )
 		{
-			this._bar = new Bar();
+			this.bar = new Bar();
 		}
 		/// <summary>
 		/// Create a new <see cref="BarItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		/// <param name="x">An array of double precision values that define
 		/// the independent (X axis) values for this curve</param>
 		/// <param name="y">An array of double precision values that define
@@ -109,7 +109,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Create a new <see cref="BarItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">A <see cref="Color"/> value that will be applied to
@@ -118,7 +118,7 @@ namespace ZedGraph
 		public BarItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
-			_bar = new Bar( color );
+			bar = new Bar( color );
 		}
 		
 		/// <summary>
@@ -128,7 +128,7 @@ namespace ZedGraph
 		public BarItem( BarItem rhs ) : base( rhs )
 		{
 			//bar = new Bar( rhs.Bar );
-			_bar = rhs._bar.Clone();
+			bar = rhs.bar.Clone();
 		}
 
 		/// <summary>
@@ -171,7 +171,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			_bar = (Bar) info.GetValue( "bar", typeof(Bar) );
+			bar = (Bar) info.GetValue( "bar", typeof(Bar) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -183,7 +183,7 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "bar", _bar );
+			info.AddValue( "bar", bar );
 		}
 	#endregion
 
@@ -214,8 +214,8 @@ namespace ZedGraph
 									float scaleFactor  )
 		{
 			// Pass the drawing onto the bar class
-			if ( this._isVisible )
-				_bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
+			if ( this.isVisible )
+				bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
 								this.GetBarWidth( pane ), pos, scaleFactor );
 		}
 		
@@ -240,7 +240,7 @@ namespace ZedGraph
 		/// </param>
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor )
 		{
-			this._bar.Draw( g, pane, rect, scaleFactor, true, null );
+			this.bar.Draw( g, pane, rect, scaleFactor, true, null );
 		}
 
 	#endregion

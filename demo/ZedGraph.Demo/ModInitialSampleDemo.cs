@@ -36,9 +36,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set up the title and axis labels
-			myPane.Title.Text = "My Test Graph\n(For CodeProject Sample)";
-			myPane.XAxis.Title.Text = "My X Axis";
-			myPane.YAxis.Title.Text = "My Y Axis";
+			myPane.Title = "My Test Graph\n(For CodeProject Sample)";
+			myPane.XAxis.Title = "My X Axis";
+			myPane.YAxis.Title = "My Y Axis";
 			
 			// Make up some data arrays based on the Sine function
 			PointPairList list1 = new PointPairList();
@@ -63,13 +63,13 @@ namespace ZedGraph.Demo
 				list2, Color.Blue, SymbolType.Circle );
 
 			// Change the color of the title
-			myPane.Title.FontSpec.FontColor = Color.Green;
+			myPane.FontSpec.FontColor = Color.Green;
 
 			// Add gridlines to the plot, and make them gray
-			myPane.XAxis.MajorGrid.IsVisible = true;
-			myPane.YAxis.MajorGrid.IsVisible = true;
-			myPane.XAxis.MajorGrid.Color = Color.LightGray;
-			myPane.YAxis.MajorGrid.Color = Color.LightGray;
+			myPane.XAxis.IsShowGrid = true;
+			myPane.YAxis.IsShowGrid = true;
+			myPane.XAxis.GridColor = Color.LightGray;
+			myPane.YAxis.GridColor = Color.LightGray;
 
 			// Move the legend location
 			base.Pane.Legend.Position = ZedGraph.LegendPos.Bottom;
@@ -89,17 +89,17 @@ namespace ZedGraph.Demo
 			myCurve2.Symbol.Fill = new Fill( Color.White );
 
 			// Add a background gradient fill to the axis frame
-			myPane.Chart.Fill = new Fill( Color.White,
+			myPane.AxisFill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 210), -45F );
 
 			// Add a caption and an arrow
-			TextObj myText = new TextObj( "Interesting\nPoint", 230F, 70F );
+			TextItem myText = new TextItem( "Interesting\nPoint", 230F, 70F );
 			myText.FontSpec.FontColor = Color.Red;
 			myText.Location.AlignH = AlignH.Center;
 			myText.Location.AlignV = AlignV.Top;
-			myPane.GraphObjList.Add( myText );
-			ArrowObj myArrow = new ArrowObj( Color.Red, 12F, 230F, 70F, 280F, 55F );
-			myPane.GraphObjList.Add( myArrow );
+			myPane.GraphItemList.Add( myText );
+			ArrowItem myArrow = new ArrowItem( Color.Red, 12F, 230F, 70F, 280F, 55F );
+			myPane.GraphItemList.Add( myArrow );
 
 			base.ZedGraphControl.AxisChange();
 		}

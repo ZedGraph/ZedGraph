@@ -38,9 +38,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title.Text = "My Test Sorted Overlay Bar Graph";
-			myPane.XAxis.Title.Text = "Label";
-			myPane.YAxis.Title.Text = "My Y Axis";
+			myPane.Title = "My Test Sorted Overlay Bar Graph";
+			myPane.XAxis.Title = "Label";
+			myPane.YAxis.Title = "My Y Axis";
 			
 			// Enter some data values
 			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty" };
@@ -58,21 +58,21 @@ namespace ZedGraph.Demo
 			myCurve = myPane.AddBar( "Curve 3", null, y3, Color.Green );
 
 			// Draw the X tics between the labels instead of at the labels
-			myPane.XAxis.MajorTic.IsBetweenLabels = true;
+			myPane.XAxis.IsTicsBetweenLabels = true;
 
 			// Set the XAxis to Text type
 			myPane.XAxis.Type = AxisType.Text;
 			// Set the XAxis labels
-			myPane.XAxis.Scale.TextLabels = labels;
-			myPane.XAxis.Scale.FontSpec.Size = 10.0F ;
+			myPane.XAxis.TextLabels = labels;
+			myPane.XAxis.ScaleFontSpec.Size = 10.0F ;
 			
 			// Make the bars a sorted overlay type so that they are drawn on top of eachother
 			// (without summing), and each stack is sorted so the shorter bars are in front
 			// of the taller bars
-			myPane.BarSettings.Type = BarType.SortedOverlay;
+			myPane.BarType = BarType.SortedOverlay;
 			
 			// Fill the axis background with a color gradient
-			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0F );
+			myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0F );
 
 			base.ZedGraphControl.AxisChange();
 		}
