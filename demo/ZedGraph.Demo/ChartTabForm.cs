@@ -17,9 +17,11 @@
 //Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //=============================================================================
 using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Text;
 using System.Windows.Forms;
 
 namespace ZedGraph.Demo
@@ -29,38 +31,13 @@ namespace ZedGraph.Demo
 	/// a text box for describing the currently showing chart.
 	/// </summary>
 	/// 
-	/// <author> Jerry Vos </author>
-	/// <version> $Revision: 1.8 $ $Date: 2005-03-19 09:49:22 $ </version>
-	public abstract class ChartTabForm : System.Windows.Forms.Form
+	/// <author> Jerry Vos with mods by John Champion</author>
+	/// <version> $Revision: 1.9 $ $Date: 2006-03-27 01:31:36 $ </version>
+	public abstract partial class ChartTabForm : Form
 	{
 		private const string TitlePrefix = "ZedGraph Demos : ";
-
-		
-		private System.Windows.Forms.TreeView demoTree;
-
-		/// <summary>
-		/// Required designer variable.
-		/// </summary>
-		private System.ComponentModel.Container components = null;
-
-		private Hashtable typeToNodeTable;
-		private System.Windows.Forms.Splitter splitterHoriz;
-		private System.Windows.Forms.TabControl displayTC;
-		private System.Windows.Forms.TabPage tabDemo;
-		private System.Windows.Forms.Splitter splitterVert;
-		private System.Windows.Forms.GroupBox chartDescGB;
-		private System.Windows.Forms.RichTextBox descriptionBox;
-		private System.Windows.Forms.MainMenu mainMenu1;
-		private System.Windows.Forms.MenuItem mnuFile;
-		private System.Windows.Forms.MenuItem mnuFExit;
-		private System.Windows.Forms.MenuItem mnuHelp;
-		private System.Windows.Forms.MenuItem mnuHWeb;
-		private System.Windows.Forms.MenuItem mnuHAbout;
-		private System.Windows.Forms.MenuItem mnuHWSF;
-		private System.Windows.Forms.MenuItem mnuHWCP;
-		private System.Windows.Forms.MenuItem menuItem1;
-
 		private Hashtable demos;
+		private Hashtable typeToNodeTable;
 
 	#region Abstract methods
 		/// <summary>
@@ -73,6 +50,7 @@ namespace ZedGraph.Demo
 		/// </code>
 		/// </summary>
 		protected abstract void loadDemos();
+
 	#endregion
 
 	#region Constructor
@@ -83,8 +61,8 @@ namespace ZedGraph.Demo
 			//
 			InitializeComponent();
 
-			this.demos				= new Hashtable();
-			this.typeToNodeTable	= new Hashtable();
+			this.demos = new Hashtable();
+			this.typeToNodeTable = new Hashtable();
 
 			buildPrimaryTree();
 
@@ -99,9 +77,9 @@ namespace ZedGraph.Demo
 		/// </summary>
 		private void buildPrimaryTree()
 		{
-			foreach (string name in Enum.GetNames(typeof(DemoType)))
+			foreach ( string name in Enum.GetNames( typeof( DemoType ) ) )
 			{
-				buildPrimaryNode((DemoType) Enum.Parse(typeof(DemoType), name));
+				buildPrimaryNode( (DemoType)Enum.Parse( typeof( DemoType ), name ) );
 			}
 		}
 
@@ -109,12 +87,12 @@ namespace ZedGraph.Demo
 		/// Builds a top level node in the tree for a DemoType.
 		/// </summary>
 		/// <param name="type">The type of demo.</param>
-		private void buildPrimaryNode(DemoType type)
+		private void buildPrimaryNode( DemoType type )
 		{
-			TreeNode currNode = new TreeNode(TypeToName(type));
+			TreeNode currNode = new TreeNode( TypeToName( type ) );
 			typeToNodeTable[type] = currNode;
 
-			this.demoTree.Nodes.Add(currNode);
+			this.demoTree.Nodes.Add( currNode );
 		}
 	#endregion
 
@@ -123,23 +101,23 @@ namespace ZedGraph.Demo
 		/// Loads a demo into the correct place in the tree.
 		/// </summary>
 		/// <param name="demo">The demo to load.</param>
-		protected void loadDemo(ZedGraphDemo demo) 
+		protected void loadDemo( ZedGraphDemo demo )
 		{
-			foreach (DemoType type in demo.Types)
+			foreach ( DemoType type in demo.Types )
 			{
 				TreeNode demosNode;
 
-				TreeNode typeNode = (TreeNode) typeToNodeTable[type];
-				if (typeNode == null)
+				TreeNode typeNode = (TreeNode)typeToNodeTable[type];
+				if ( typeNode == null )
 				{
 					// error, this shouldn't be reached
 					// TODO: do something about this
-				} 
-				else 
+				}
+				else
 				{
-					demosNode = new TreeNode(demo.Title);
+					demosNode = new TreeNode( demo.Title );
 
-					typeNode.Nodes.Add(demosNode);
+					typeNode.Nodes.Add( demosNode );
 				}
 			}
 			// store the demo based on it's title
@@ -152,9 +130,9 @@ namespace ZedGraph.Demo
 		/// 
 		/// <param name="type">A DemoType</param>
 		/// <returns>A name for the DemoType</returns>
-		private string TypeToName(DemoType type)
+		private string TypeToName( DemoType type )
 		{
-			switch (type)
+			switch ( type )
 			{
 				case DemoType.Pie:
 					return "Pie";
@@ -176,25 +154,25 @@ namespace ZedGraph.Demo
 		/// Loads a demo into the frame
 		/// </summary>
 		/// <param name="key">The key the demo is stored in demos under</param>
-		private void Init(object key) 
+		private void Init( object key )
 		{
-			ZedGraphDemo demo = (ZedGraphDemo) this.demos[key];
-			
+			ZedGraphDemo demo = (ZedGraphDemo)this.demos[key];
+
 			if ( demo == null )
 				return;
 
 			this.tabDemo.Controls.Clear();
-			this.tabDemo.Controls.Add(demo.ZedGraphControl);
+			this.tabDemo.Controls.Add( demo.ZedGraphControl );
 
 			demo.ZedGraphControl.Width = tabDemo.Width;
-			demo.ZedGraphControl.Height	= tabDemo.Height;
+			demo.ZedGraphControl.Height = tabDemo.Height;
 
-			demo.ZedGraphControl.Anchor	= AnchorStyles.Left | AnchorStyles.Top  
+			demo.ZedGraphControl.Anchor = AnchorStyles.Left | AnchorStyles.Top
 												| AnchorStyles.Right | AnchorStyles.Bottom;
 
-			this.Text				= TitlePrefix + demo.Title;
+			this.Text = TitlePrefix + demo.Title;
 
-			descriptionBox.Text	= demo.Description;
+			descriptionBox.Text = demo.Description;
 
 			// tell the control to rescale itself
 			demo.ZedGraphControl.AxisChange();
@@ -210,189 +188,14 @@ namespace ZedGraph.Demo
 		/// </summary>
 		protected override void Dispose( bool disposing )
 		{
-			if( disposing )
+			if ( disposing )
 			{
-				if(components != null)
+				if ( components != null )
 				{
 					components.Dispose();
 				}
 			}
 			base.Dispose( disposing );
-		}
-	#endregion
-
-	#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-			this.demoTree = new System.Windows.Forms.TreeView();
-			this.splitterHoriz = new System.Windows.Forms.Splitter();
-			this.chartDescGB = new System.Windows.Forms.GroupBox();
-			this.descriptionBox = new System.Windows.Forms.RichTextBox();
-			this.splitterVert = new System.Windows.Forms.Splitter();
-			this.displayTC = new System.Windows.Forms.TabControl();
-			this.tabDemo = new System.Windows.Forms.TabPage();
-			this.mainMenu1 = new System.Windows.Forms.MainMenu();
-			this.mnuFile = new System.Windows.Forms.MenuItem();
-			this.mnuFExit = new System.Windows.Forms.MenuItem();
-			this.mnuHelp = new System.Windows.Forms.MenuItem();
-			this.mnuHWeb = new System.Windows.Forms.MenuItem();
-			this.mnuHWSF = new System.Windows.Forms.MenuItem();
-			this.mnuHWCP = new System.Windows.Forms.MenuItem();
-			this.mnuHAbout = new System.Windows.Forms.MenuItem();
-			this.menuItem1 = new System.Windows.Forms.MenuItem();
-			this.chartDescGB.SuspendLayout();
-			this.displayTC.SuspendLayout();
-			this.SuspendLayout();
-			// 
-			// demoTree
-			// 
-			this.demoTree.Dock = System.Windows.Forms.DockStyle.Left;
-			this.demoTree.ImageIndex = -1;
-			this.demoTree.Location = new System.Drawing.Point(0, 0);
-			this.demoTree.Name = "demoTree";
-			this.demoTree.SelectedImageIndex = -1;
-			this.demoTree.Size = new System.Drawing.Size(160, 470);
-			this.demoTree.TabIndex = 0;
-			this.demoTree.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.demoTree_AfterSelect);
-			// 
-			// splitterHoriz
-			// 
-			this.splitterHoriz.Location = new System.Drawing.Point(160, 0);
-			this.splitterHoriz.Name = "splitterHoriz";
-			this.splitterHoriz.Size = new System.Drawing.Size(3, 470);
-			this.splitterHoriz.TabIndex = 1;
-			this.splitterHoriz.TabStop = false;
-			// 
-			// chartDescGB
-			// 
-			this.chartDescGB.Controls.Add(this.descriptionBox);
-			this.chartDescGB.Controls.Add(this.splitterVert);
-			this.chartDescGB.Controls.Add(this.displayTC);
-			this.chartDescGB.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.chartDescGB.Location = new System.Drawing.Point(163, 0);
-			this.chartDescGB.Name = "chartDescGB";
-			this.chartDescGB.Size = new System.Drawing.Size(493, 470);
-			this.chartDescGB.TabIndex = 2;
-			this.chartDescGB.TabStop = false;
-			// 
-			// descriptionBox
-			// 
-			this.descriptionBox.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.descriptionBox.Location = new System.Drawing.Point(3, 363);
-			this.descriptionBox.Name = "descriptionBox";
-			this.descriptionBox.ReadOnly = true;
-			this.descriptionBox.Size = new System.Drawing.Size(487, 104);
-			this.descriptionBox.TabIndex = 13;
-			this.descriptionBox.Text = "In here goes the demo description";
-			// 
-			// splitterVert
-			// 
-			this.splitterVert.Dock = System.Windows.Forms.DockStyle.Top;
-			this.splitterVert.Location = new System.Drawing.Point(3, 360);
-			this.splitterVert.Name = "splitterVert";
-			this.splitterVert.Size = new System.Drawing.Size(487, 3);
-			this.splitterVert.TabIndex = 11;
-			this.splitterVert.TabStop = false;
-			// 
-			// displayTC
-			// 
-			this.displayTC.Controls.Add(this.tabDemo);
-			this.displayTC.Dock = System.Windows.Forms.DockStyle.Top;
-			this.displayTC.Location = new System.Drawing.Point(3, 16);
-			this.displayTC.Name = "displayTC";
-			this.displayTC.SelectedIndex = 0;
-			this.displayTC.Size = new System.Drawing.Size(487, 344);
-			this.displayTC.TabIndex = 10;
-			// 
-			// tabDemo
-			// 
-			this.tabDemo.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-			this.tabDemo.Location = new System.Drawing.Point(4, 22);
-			this.tabDemo.Name = "tabDemo";
-			this.tabDemo.Size = new System.Drawing.Size(479, 318);
-			this.tabDemo.TabIndex = 0;
-			this.tabDemo.Text = "Demo";
-			// 
-			// mainMenu1
-			// 
-			this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																					  this.mnuFile,
-																					  this.mnuHelp});
-			// 
-			// mnuFile
-			// 
-			this.mnuFile.Index = 0;
-			this.mnuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																					this.mnuFExit});
-			this.mnuFile.Text = "&File";
-			// 
-			// mnuFExit
-			// 
-			this.mnuFExit.Index = 0;
-			this.mnuFExit.Text = "E&xit";
-			this.mnuFExit.Click += new System.EventHandler(this.mnuFExit_Click);
-			// 
-			// mnuHelp
-			// 
-			this.mnuHelp.Index = 1;
-			this.mnuHelp.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																					this.mnuHWeb,
-																					this.mnuHAbout,
-																					this.menuItem1});
-			this.mnuHelp.Text = "&Help";
-			// 
-			// mnuHWeb
-			// 
-			this.mnuHWeb.Index = 0;
-			this.mnuHWeb.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-																					this.mnuHWSF,
-																					this.mnuHWCP});
-			this.mnuHWeb.Text = "ZedGraph &Webpage";
-			this.mnuHWeb.Click += new System.EventHandler(this.mnuHWeb_Click);
-			// 
-			// mnuHWSF
-			// 
-			this.mnuHWSF.Index = 0;
-			this.mnuHWSF.Text = "SourceForge";
-			this.mnuHWSF.Click += new System.EventHandler(this.mnuHWSF_Click);
-			// 
-			// mnuHWCP
-			// 
-			this.mnuHWCP.Index = 1;
-			this.mnuHWCP.Text = "CodeProject";
-			this.mnuHWCP.Click += new System.EventHandler(this.mnuHWCP_Click);
-			// 
-			// mnuHAbout
-			// 
-			this.mnuHAbout.Index = 1;
-			this.mnuHAbout.Text = "&About";
-			this.mnuHAbout.Click += new System.EventHandler(this.mnuHAbout_Click);
-			// 
-			// menuItem1
-			// 
-			this.menuItem1.Index = 2;
-			this.menuItem1.Text = "&License";
-			this.menuItem1.Click += new System.EventHandler(this.menuItem1_Click);
-			// 
-			// ChartTabForm
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
-			this.ClientSize = new System.Drawing.Size(656, 470);
-			this.Controls.Add(this.chartDescGB);
-			this.Controls.Add(this.splitterHoriz);
-			this.Controls.Add(this.demoTree);
-			this.Menu = this.mainMenu1;
-			this.Name = "ChartTabForm";
-			this.Text = "DemoForm";
-			this.Load += new System.EventHandler(this.ChartTabForm_Load);
-			this.chartDescGB.ResumeLayout(false);
-			this.displayTC.ResumeLayout(false);
-			this.ResumeLayout(false);
-
 		}
 	#endregion
 
@@ -406,10 +209,10 @@ namespace ZedGraph.Demo
 		/// <param name="e">
 		/// Where the name of the clicked demo is retrieved from
 		/// </param>
-		private void demoTree_AfterSelect(object sender, TreeViewEventArgs e)
+		private void demoTree_AfterSelect( object sender, TreeViewEventArgs e )
 		{
-			if (demos[e.Node.Text] != null)
-				Init(e.Node.Text);
+			if ( demos[e.Node.Text] != null )
+				Init( e.Node.Text );
 		}
 
 		/// <summary>
@@ -417,43 +220,72 @@ namespace ZedGraph.Demo
 		/// </summary>
 		/// <param name="sender">Ignored.</param>
 		/// <param name="e">Ignored.</param>
-		private void mnuFExit_Click(object sender, System.EventArgs e)
+		private void mnuFExit_Click( object sender, System.EventArgs e )
 		{
-			System.Environment.Exit(0);
+			System.Environment.Exit( 0 );
 		}
 
-		private void mnuHAbout_Click(object sender, System.EventArgs e)
+		private void mnuHAbout_Click( object sender, System.EventArgs e )
 		{
 			Form frmAbout = new AboutForm();
-			
-			frmAbout.ShowDialog(this);
+
+			frmAbout.ShowDialog( this );
 		}
 
-		private void menuItem1_Click(object sender, System.EventArgs e)
+		private void menuItem1_Click( object sender, System.EventArgs e )
 		{
 			Form frmLicense = new LicenseForm();
 
-			frmLicense.ShowDialog(this);
+			frmLicense.ShowDialog( this );
 		}
 
-		private void mnuHWeb_Click(object sender, System.EventArgs e)
+		private void mnuHWeb_Click( object sender, System.EventArgs e )
 		{
 			// open up the sourceforge site
-			mnuHWSF_Click(sender, e);
+			mnuHWSF_Click( sender, e );
 		}
 
-		private void mnuHWSF_Click(object sender, System.EventArgs e)
+		private void mnuHWSF_Click( object sender, System.EventArgs e )
 		{
-			Help.ShowHelp(this, "http://zedgraph.sourceforge.net");
+			Help.ShowHelp( this, "http://zedgraph.sourceforge.net" );
 		}
 
-		private void mnuHWCP_Click(object sender, System.EventArgs e)
+		private void mnuHWCP_Click( object sender, System.EventArgs e )
 		{
-			Help.ShowHelp(this, "http://codeproject.com/csharp/zedgraph.asp");
+			Help.ShowHelp( this, "http://codeproject.com/csharp/zedgraph.asp" );
 		}
 	#endregion
 
-		private void ChartTabForm_Load(object sender, System.EventArgs e)
+		private void ChartTabForm_Load( object sender, System.EventArgs e )
+		{
+			Init( "Combo Demo" );
+		}
+
+		private void menuFileExit_Click( object sender, EventArgs e )
+		{
+			System.Environment.Exit( 0 );
+		}
+
+		private void menuHelpAbout_Click( object sender, EventArgs e )
+		{
+			Form frmAbout = new AboutForm();
+
+			frmAbout.ShowDialog( this );
+		}
+
+		private void menuHelpLicense_Click( object sender, EventArgs e )
+		{
+			Form frmLicense = new LicenseForm();
+
+			frmLicense.ShowDialog( this );
+		}
+
+		private void menuHelpWebPage_Click( object sender, EventArgs e )
+		{
+			Help.ShowHelp( this, "http://zedgraph.sourceforge.net" );
+		}
+
+		private void ChartTabForm_Load_1( object sender, EventArgs e )
 		{
 			Init( "Combo Demo" );
 		}

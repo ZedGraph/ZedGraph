@@ -41,7 +41,7 @@ namespace ZedGraph
 		/// for points corresponding to that axis are ignored.  That is, if the X axis is an
 		/// ordinal type, then all X values associated with the curves are ignored.</summary>
 		/// <seealso cref="AxisType.Ordinal"/>
-		/// <seealso cref="Axis.IsText"/>
+		/// <seealso cref="Scale.IsText"/>
 		/// <seealso cref="ZedGraph.Scale.Default.MaxTextLabels"/>
 		Text,
 		/// <summary> An ordinal axis with regular numeric labels.  An ordinal axis means that
@@ -49,7 +49,7 @@ namespace ZedGraph
 		/// for points corresponding to that axis are ignored.  That is, if the X axis is an
 		/// ordinal type, then all X values associated with the curves are ignored. </summary>
 		/// <seealso cref="AxisType.Text"/>
-		/// <seealso cref="Axis.IsOrdinal"/>
+		/// <seealso cref="Scale.IsOrdinal"/>
 		Ordinal,
 		/// <summary> An ordinal axis that will have labels formatted with ordinal values corresponding
 		/// to the number of values in each <see cref="CurveItem" />.
@@ -58,7 +58,7 @@ namespace ZedGraph
 		/// The <see cref="CurveItem" /> data points will be evenly-spaced at ordinal locations, and the
 		/// actual data values are ignored. </remarks>
 		/// <seealso cref="AxisType.Text"/>
-		/// <seealso cref="Axis.IsOrdinal"/>
+		/// <seealso cref="Scale.IsOrdinal"/>
 		DateAsOrdinal,
 		/// <summary> An ordinal axis that will have labels formatted with values from the actual data
 		/// values of the first <see cref="CurveItem" /> in the <see cref="CurveList" />.
@@ -69,11 +69,11 @@ namespace ZedGraph
 		/// are 1, 5, and 100, then the tic labels will show 1, 5, and 100, but they will be equal
 		/// distance from each other. </remarks>
 		/// <seealso cref="AxisType.Text"/>
-		/// <seealso cref="Axis.IsOrdinal"/>
+		/// <seealso cref="Scale.IsOrdinal"/>
 		LinearAsOrdinal,
 		/// <summary> An exponential axis </summary>
 		Exponent
-	};
+	}
 
 	/// <summary>
 	/// Enumeration type for the various types of fills that can be used with <see cref="Bar"/>
@@ -95,7 +95,7 @@ namespace ZedGraph
 		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
 		/// range by initializing the <see cref="Fill"/> class with your own custom
 		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
-		/// data value makes no sense (<see cref="PaneBase.PaneFill"/>, <see cref="Legend.Fill"/>,
+		/// data value makes no sense (<see cref="PaneBase.Fill"/>, <see cref="Legend.Fill"/>,
 		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
 		/// </remarks>
 		/// <seealso cref="Fill.RangeMin"/>
@@ -109,7 +109,7 @@ namespace ZedGraph
 		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
 		/// range by initializing the <see cref="Fill"/> class with your own custom
 		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
-		/// data value makes no sense (<see cref="PaneBase.PaneFill"/>, <see cref="Legend.Fill"/>,
+		/// data value makes no sense (<see cref="PaneBase.Fill"/>, <see cref="Legend.Fill"/>,
 		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
 		/// </remarks>
 		/// <seealso cref="Fill.RangeMin"/>
@@ -123,33 +123,39 @@ namespace ZedGraph
 		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
 		/// range by initializing the <see cref="Fill"/> class with your own custom
 		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
-		/// data value makes no sense (<see cref="PaneBase.PaneFill"/>, <see cref="Legend.Fill"/>,
+		/// data value makes no sense (<see cref="PaneBase.Fill"/>, <see cref="Legend.Fill"/>,
 		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
 		/// </remarks>
 		/// <seealso cref="Fill.RangeMin"/>
 		/// <seealso cref="Fill.RangeMax"/>
 		/// <seealso cref="Fill.RangeDefault"/>
 		GradientByZ
-	};
+	}
 
 	/// <summary>
 	/// Enumeration type for the various axis date and time unit types that are available
 	/// </summary>
 	public enum DateUnit
 	{
-		/// <summary> Yearly units <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/> </summary>
+		/// <summary> Yearly units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
 		Year,
-		/// <summary> Monthly units <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/> </summary>
+		/// <summary> Monthly units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
 		Month,
-		/// <summary> Daily units <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/> </summary>
+		/// <summary> Daily units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
 		Day,
-		/// <summary> Hourly units <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/> </summary>
+		/// <summary> Hourly units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
 		Hour,
-		/// <summary> Minute units <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/> </summary>
+		/// <summary> Minute units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
 		Minute,
-		/// <summary> Second units <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/> </summary>
+		/// <summary> Second units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
 		Second
-	};
+	}
 
 	/// <summary>
 	/// Enumeration type for the various symbol shapes that are available
@@ -193,7 +199,7 @@ namespace ZedGraph
 		/// <summary> No symbol is shown (this is equivalent to using
 		/// <see cref="Symbol.IsVisible"/> = false.</summary>
 		None
-	};
+	}
 
 	/// <summary>
 	/// Enumeration type that defines the possible legend locations
@@ -202,38 +208,38 @@ namespace ZedGraph
 	public enum LegendPos
 	{
 		/// <summary>
-		/// Locate the <see cref="Legend"/> above the <see cref="GraphPane.AxisRect"/>
+		/// Locate the <see cref="Legend"/> above the <see cref="Chart.Rect"/>
 		/// </summary>
 		Top,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> on the left side of the <see cref="GraphPane.AxisRect"/>
+		/// Locate the <see cref="Legend"/> on the left side of the <see cref="Chart.Rect"/>
 		/// </summary>
 		Left,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> on the right side of the <see cref="GraphPane.AxisRect"/>
+		/// Locate the <see cref="Legend"/> on the right side of the <see cref="Chart.Rect"/>
 		/// </summary>
 		Right,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> below the <see cref="GraphPane.AxisRect"/>
+		/// Locate the <see cref="Legend"/> below the <see cref="Chart.Rect"/>
 		/// </summary>
 		Bottom,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> inside the <see cref="GraphPane.AxisRect"/> in the
+		/// Locate the <see cref="Legend"/> inside the <see cref="Chart.Rect"/> in the
 		/// top-left corner.  
 		/// </summary>
 		InsideTopLeft,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> inside the <see cref="GraphPane.AxisRect"/> in the
+		/// Locate the <see cref="Legend"/> inside the <see cref="Chart.Rect"/> in the
 		/// top-right corner. 
 		/// </summary>
 		InsideTopRight,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> inside the <see cref="GraphPane.AxisRect"/> in the
+		/// Locate the <see cref="Legend"/> inside the <see cref="Chart.Rect"/> in the
 		/// bottom-left corner.
 		/// </summary>
 		InsideBotLeft,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> inside the <see cref="GraphPane.AxisRect"/> in the
+		/// Locate the <see cref="Legend"/> inside the <see cref="Chart.Rect"/> in the
 		/// bottom-right corner. 
 		/// </summary>
 		InsideBotRight,
@@ -243,25 +249,25 @@ namespace ZedGraph
 		/// </summary>
 		Float,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> centered above the <see cref="GraphPane.AxisRect"/>
+		/// Locate the <see cref="Legend"/> centered above the <see cref="Chart.Rect"/>
 		/// </summary>
 		TopCenter,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> centered below the <see cref="GraphPane.AxisRect"/>
+		/// Locate the <see cref="Legend"/> centered below the <see cref="Chart.Rect"/>
 		/// </summary>
 		BottomCenter,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> above the <see cref="GraphPane.AxisRect"/>, but flush
-		/// against the left margin of the <see cref="PaneBase.PaneRect" />.
+		/// Locate the <see cref="Legend"/> above the <see cref="Chart.Rect"/>, but flush
+		/// against the left margin of the <see cref="PaneBase.Rect" />.
 		/// </summary>
 		TopFlushLeft,
 		/// <summary>
-		/// Locate the <see cref="Legend"/> below the <see cref="GraphPane.AxisRect"/>, but flush
-		/// against the left margin of the <see cref="PaneBase.PaneRect" />.
+		/// Locate the <see cref="Legend"/> below the <see cref="Chart.Rect"/>, but flush
+		/// against the left margin of the <see cref="PaneBase.Rect" />.
 		/// </summary>
 		BottomFlushLeft
 
-	};
+	}
 
 	/// <summary>
 	/// Enumeration type for the different horizontal text alignment options
@@ -287,37 +293,37 @@ namespace ZedGraph
 		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Right
-	};
+	}
 	
 	/// <summary>
 	/// Enumeration type for the different proximal alignment options
 	/// </summary>
 	/// <seealso cref="FontSpec"/>
-	/// <seealso cref="Axis.ScaleAlign"/>
+	/// <seealso cref="Scale.Align"/>
 	public enum AlignP
 	{
 		/// <summary>
 		/// Position the text so that its "inside" edge (the edge that is
 		/// nearest to the alignment reference point or object) is aligned.
-		/// Used by the <see cref="Axis.ScaleAlign"/> method to align text
+		/// Used by the <see cref="Scale.Align"/> method to align text
 		/// to the axis.
 		/// </summary>
 		Inside,
 		/// <summary>
 		/// Position the text so that its center is aligned with the
 		/// reference object or point.
-		/// Used by the <see cref="Axis.ScaleAlign"/> method to align text
+		/// Used by the <see cref="Scale.Align"/> method to align text
 		/// to the axis.
 		/// </summary>
 		Center,
 		/// <summary>
 		/// Position the text so that its right edge (the edge that is
 		/// farthest from the alignment reference point or object) is aligned.
-		/// Used by the <see cref="Axis.ScaleAlign"/> method to align text
+		/// Used by the <see cref="Scale.Align"/> method to align text
 		/// to the axis.
 		/// </summary>
 		Outside
-	};
+	}
 	
 	/// <summary>
 	/// Enumeration type for the different vertical text alignment options
@@ -344,19 +350,19 @@ namespace ZedGraph
 		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Bottom
-	};
+	}
 
 	/// <summary>
 	/// Enumeration type for the user-defined coordinate types available.
-	/// These coordinate types are used the <see cref="ArrowItem"/> objects
-	/// and <see cref="TextItem"/> objects only.
+	/// These coordinate types are used the <see cref="ArrowObj"/> objects
+	/// and <see cref="TextObj"/> objects only.
 	/// </summary>
 	/// <seealso cref="ZedGraph.Location.CoordinateFrame"/>
 	public enum CoordType
 	{
 		/// <summary>
 		/// Coordinates are specified as a fraction of the
-		/// <see cref="GraphPane.AxisRect"/>.  That is, for the X coordinate, 0.0
+		/// <see cref="Chart.Rect"/>.  That is, for the X coordinate, 0.0
 		/// is at the left edge of the AxisRect and 1.0
 		/// is at the right edge of the AxisRect. A value less
 		/// than zero is left of the AxisRect and a value
@@ -366,14 +372,14 @@ namespace ZedGraph
 		AxisFraction,
 		/// <summary>
 		/// Coordinates are specified as a fraction of the
-		/// <see cref="PaneBase.PaneRect"/>.  That is, for the X coordinate, 0.0
-		/// is at the left edge of the PaneRect and 1.0
-		/// is at the right edge of the PaneRect. A value less
-		/// than zero is left of the PaneRect and a value
-		/// greater than 1.0 is right of the PaneRect.  For the Y coordinate, 0.0
+		/// <see cref="PaneBase.Rect"/>.  That is, for the X coordinate, 0.0
+		/// is at the left edge of the Rect and 1.0
+		/// is at the right edge of the Rect. A value less
+		/// than zero is left of the Rect and a value
+		/// greater than 1.0 is right of the Rect.  For the Y coordinate, 0.0
 		/// is the top and 1.0 is the bottom.  Note that
 		/// any value less than zero or greater than 1.0 will be outside
-		/// the PaneRect, and therefore clipped.
+		/// the Rect, and therefore clipped.
 		/// </summary>
 		PaneFraction,
 		/// <summary>
@@ -387,8 +393,8 @@ namespace ZedGraph
 		/// </summary>
 		AxisXY2Scale,
 		/// <summary>
-		/// The X coordinate is specified as a fraction of the <see cref="GraphPane.AxisRect"/>,
-		/// and the Y coordinate is specified as a fraction of the <see cref="PaneBase.PaneRect" />.
+		/// The X coordinate is specified as a fraction of the <see cref="Chart.Rect"/>,
+		/// and the Y coordinate is specified as a fraction of the <see cref="PaneBase.Rect" />.
 		/// </summary>
 		/// <remarks>
 		/// For the X coordinate, 0.0
@@ -400,8 +406,8 @@ namespace ZedGraph
 		/// </remarks>
 		XAxisFractionYPaneFraction,
 		/// <summary>
-		/// The X coordinate is specified as a fraction of the <see cref="PaneBase.PaneRect"/>,
-		/// and the Y coordinate is specified as a fraction of the <see cref="GraphPane.AxisRect" />.
+		/// The X coordinate is specified as a fraction of the <see cref="PaneBase.Rect"/>,
+		/// and the Y coordinate is specified as a fraction of the <see cref="Chart.Rect" />.
 		/// </summary>
 		/// <remarks>
 		/// For the X coordinate, a value of zero is at
@@ -415,12 +421,12 @@ namespace ZedGraph
 		XPaneFractionYAxisFraction,
 		/// <summary>
 		/// The X coordinate is specified as an X Scale value, and the Y coordinate
-		/// is specified as a fraction of the <see cref="GraphPane.AxisRect"/>.
+		/// is specified as a fraction of the <see cref="Chart.Rect"/>.
 		/// </summary>
 		/// <remarks>
 		/// For the X coordinate, the value just corresponds to the values of the X scale.
 		/// Values outside the scale range will be
-		/// outside the <see cref="GraphPane.AxisRect" />.  For the Y coordinate, 0.0
+		/// outside the <see cref="Chart.Rect" />.  For the Y coordinate, 0.0
 		/// is at the top edge of the AxisRect and 1.0
 		/// is at the bottom edge of the AxisRect. A value less
 		/// than zero is above the AxisRect and a value
@@ -429,7 +435,7 @@ namespace ZedGraph
 		XScaleYAxisFraction,
 		/// <summary>
 		/// The X coordinate is specified as a fraction of the
-		/// <see cref="GraphPane.AxisRect"/> and the Y coordinate is specified as
+		/// <see cref="Chart.Rect"/> and the Y coordinate is specified as
 		/// a Y scale value.
 		/// </summary>
 		/// <remarks>
@@ -439,12 +445,12 @@ namespace ZedGraph
 		/// than zero is left of the AxisRect and a value
 		/// greater than 1.0 is right of the AxisRect.  For the Y coordinate, the value just
 		/// corresponds to the values of the Y scale.  Values outside the scale range will be
-		/// outside the <see cref="GraphPane.AxisRect" />.
+		/// outside the <see cref="Chart.Rect" />.
 		/// </remarks>
 		XAxisFractionYScale,
 		/// <summary>
 		/// The X coordinate is specified as a fraction of the
-		/// <see cref="GraphPane.AxisRect"/> and the Y coordinate is specified as
+		/// <see cref="Chart.Rect"/> and the Y coordinate is specified as
 		/// a Y2 scale value.
 		/// </summary>
 		/// <remarks>
@@ -454,11 +460,11 @@ namespace ZedGraph
 		/// than zero is left of the AxisRect and a value
 		/// greater than 1.0 is right of the AxisRect.  For the Y coordinate, the value just
 		/// corresponds to the values of the Y2 scale.  Values outside the scale range will be
-		/// outside the <see cref="GraphPane.AxisRect" />.
+		/// outside the <see cref="Chart.Rect" />.
 		/// </remarks>
 		XAxisFractionY2Scale
 
-	};
+	}
 	
 	/// <summary>
 	/// Enumeration type that defines how a curve is drawn.  Curves can be drawn
@@ -488,14 +494,14 @@ namespace ZedGraph
 		/// points are connected directly by line segments.
 		/// </summary>
 		NonStep
-	};
+	}
 	
 	/// <summary>
 	/// Enumeration type that defines the base axis from which <see cref="Bar"/> graphs
 	/// are displayed. The bars can be drawn on any of the three axes (<see cref="XAxis"/>,
 	/// <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
 	/// </summary>
-	/// <seealso cref="GraphPane.BarBase"/>
+	/// <seealso cref="BarSettings.Base"/>
 	public enum BarBase
 	{
 		/// <summary>
@@ -510,7 +516,7 @@ namespace ZedGraph
 		/// Draw the <see cref="Bar"/> chart based from the <see cref="Y2Axis"/>.
 		/// </summary>
 		Y2
-	};
+	}
 	
 	/// <summary>
 	/// Enumeration type that defines the available types of <see cref="LineItem"/> graphs.
@@ -531,7 +537,7 @@ namespace ZedGraph
 	/// <summary>
 	/// Enumeration type that defines the available types of <see cref="BarItem"/> graphs.
 	/// </summary>
-	/// <seealso cref="GraphPane.BarType"/>
+	/// <seealso cref="BarSettings.Type"/>
 	public enum BarType
 	{
 		/// <summary>
@@ -582,7 +588,7 @@ namespace ZedGraph
 		///are displayed below the zero line as percentages of the absolute total of all values. 
 		/// </summary>
 		PercentStack 
-	};
+	}
 	
 	/// <summary>
 	/// Enumeration type that defines which set of data points - X or Y - is used  
@@ -601,37 +607,37 @@ namespace ZedGraph
 	};
 
 	/// <summary>
-	/// Enumeration that specifies a Z-Order position for <see cref="GraphItem"/>
+	/// Enumeration that specifies a Z-Order position for <see cref="GraphObj"/>
 	/// objects.
 	/// </summary>
 	/// <remarks>This enumeration allows you to set the layering of various graph
-	/// features.  Except for the <see cref="GraphItem"/> objects, other feature types
+	/// features.  Except for the <see cref="GraphObj"/> objects, other feature types
 	/// all have a fixed depth as follows (front to back):
 	/// <list>
 	/// <see cref="Legend"/> objects
-	/// The border around <see cref="GraphPane.AxisRect"/>
+	/// The border around <see cref="Chart.Rect"/>
 	/// <see cref="CurveItem"/> objects
 	/// The <see cref="Axis"/> features
-	/// The background fill of the <see cref="GraphPane.AxisRect"/>
+	/// The background fill of the <see cref="Chart.Rect"/>
 	/// The pane <see cref="PaneBase.Title"/>
-	/// The background fill of the <see cref="PaneBase.PaneRect"/>
+	/// The background fill of the <see cref="PaneBase.Rect"/>
 	/// </list>
-	/// You cannot place anything behind the <see cref="PaneBase.PaneRect"/>
-	/// background fill, but <see cref="GraphItem.ZOrder"/> allows you to
-	/// explicitly control the depth of <see cref="GraphItem"/> objects
+	/// You cannot place anything behind the <see cref="PaneBase.Rect"/>
+	/// background fill, but <see cref="GraphObj.ZOrder"/> allows you to
+	/// explicitly control the depth of <see cref="GraphObj"/> objects
 	/// between all other object types.  For items of equal <see cref="ZOrder"/>,
-	/// such as multiple <see cref="CurveItem"/>'s or <see cref="GraphItem"/>'s
+	/// such as multiple <see cref="CurveItem"/>'s or <see cref="GraphObj"/>'s
 	/// having the same <see cref="ZOrder"/> value, the relative depth is
 	/// controlled by the ordinal position in the list (either
-	/// <see cref="CurveList"/> or <see cref="GraphItemList"/>).
-	/// <see cref="GraphItem"/> objects
-	/// can be placed in the <see cref="GraphItemList"/> of either a
+	/// <see cref="CurveList"/> or <see cref="GraphObjList"/>).
+	/// <see cref="GraphObj"/> objects
+	/// can be placed in the <see cref="GraphObjList"/> of either a
 	/// <see cref="GraphPane"/> or a <see cref="MasterPane"/>.  For a
-	/// <see cref="GraphPane"/>-based <see cref="GraphItem"/>, all <see cref="ZOrder"/>
+	/// <see cref="GraphPane"/>-based <see cref="GraphObj"/>, all <see cref="ZOrder"/>
 	/// values are applicable.  For a <see cref="MasterPane"/>-based
-	/// <see cref="GraphItem"/>, any <see cref="ZOrder"/> value can be used, but there
+	/// <see cref="GraphObj"/>, any <see cref="ZOrder"/> value can be used, but there
 	/// are really only three depths:
-	/// <list><see cref="ZOrder.G_BehindAll"/> will place the item behind the pane title,
+	/// <list><see cref="ZOrder.G_BehindAll"/> will place the item behind the pane _title,
 	/// <see cref="ZOrder.A_InFront"/> will place on top of all other graph features,
 	/// any other value places the object above the pane title, but behind the <see cref="GraphPane"/>'s.
 	/// </list>
@@ -639,61 +645,45 @@ namespace ZedGraph
 	public enum ZOrder
 	{
 	   /// <summary>
-	   /// Specifies that the <see cref="GraphItem"/> will be behind all other
+	   /// Specifies that the <see cref="GraphObj"/> will be behind all other
 	   /// objects (including the <see cref="PaneBase"/> <see cref="PaneBase.Title"/>).
 	   /// </summary>
 	   G_BehindAll,
 	   /// <summary>
-	   /// Specifies that the <see cref="GraphItem"/> will be behind the
-	   /// <see cref="GraphPane.AxisRect"/> background <see cref="Fill"/>
-	   /// (see <see cref="GraphPane.AxisFill"/>).
+	   /// Specifies that the <see cref="GraphObj"/> will be behind the
+	   /// <see cref="Chart.Rect"/> background <see cref="Fill"/>
+	   /// (see <see cref="Chart.Fill"/>).
 	   /// </summary>
-	   F_BehindAxisFill,
+	   F_BehindChartFill,
 	   /// <summary>
-	   /// Specifies that the <see cref="GraphItem"/> will be behind the
+	   /// Specifies that the <see cref="GraphObj"/> will be behind the
 	   /// <see cref="Axis"/> objects.
 	   /// </summary>
 	   E_BehindAxis,
 	   /// <summary>
-	   /// Specifies that the <see cref="GraphItem"/> will be behind the
+	   /// Specifies that the <see cref="GraphObj"/> will be behind the
 	   /// <see cref="CurveItem"/> objects.
 	   /// </summary>
 	   D_BehindCurves,
 	   /// <summary>
-	   /// Specifies that the <see cref="GraphItem"/> will be behind the
+	   /// Specifies that the <see cref="GraphObj"/> will be behind the
 	   /// <see cref="Axis"/> border.
 	   /// </summary>
-	   C_BehindAxisBorder,
+	   C_BehindChartBorder,
 	   /// <summary>
-	   /// Specifies that the <see cref="GraphItem"/> will be behind the
+	   /// Specifies that the <see cref="GraphObj"/> will be behind the
 	   /// <see cref="Legend"/> object.
 	   /// </summary>
 	   B_BehindLegend,
 	   /// <summary>
-	   /// Specifies that the <see cref="GraphItem"/> will be in front of
-	   /// all other objects, except for the other <see cref="GraphItem"/>
+	   /// Specifies that the <see cref="GraphObj"/> will be in front of
+	   /// all other objects, except for the other <see cref="GraphObj"/>
 	   /// objects that have the same <see cref="ZOrder"/> and are before
-	   /// this object in the <see cref="GraphItemList"/>.
+	   /// this object in the <see cref="GraphObjList"/>.
 	   /// </summary>
 	   A_InFront
-	};
-/*
-	/// <summary>
-	/// Enumeration for the type of pie to be displayed
-	/// </summary>
-	public enum PieType
-	{
-		/// <summary>
-		///	Specifies that the <see cref="PieItem"/> chart will be displayed in two dimensions
-		/// </summary>
-		Pie2D,
+	}
 
-		/// <summary>
-		///	Specifies that the <see cref="PieItem"/> chart will be displayed in three dimensions
-		/// </summary>
-		Pie3D
-	} ;
-*/
 	/// <summary>
 	/// Enumeration that determines the type of label that is displayed for each pie slice
 	/// (see <see cref="PieItem.LabelType"/>).
@@ -739,7 +729,7 @@ namespace ZedGraph
 		///No label displayed. 
 		/// </summary>
 		None
-	};
+	}
 	
 	/// <summary>
 	/// Define the auto layout options for the <see cref="MasterPane.AutoPaneLayout(Graphics,PaneLayout)"/> method.
@@ -790,12 +780,12 @@ namespace ZedGraph
 		ExplicitCol21,
 		/// <summary>
 		/// Layout the <see cref="GraphPane"/>'s with an explicit number of columns: The first row has
-		/// 2 columns and the second row has 3 columns for a total of 5 panes.
+		/// 2 columns and the second row has 3 _columns for a total of 5 panes.
 		/// </summary>
 		ExplicitCol23,
 		/// <summary>
 		/// Layout the <see cref="GraphPane"/>'s with an explicit number of columns: The first row has
-		/// 3 columns and the second row has 2 columns for a total of 5 panes.
+		/// 3 columns and the second row has 2 _columns for a total of 5 panes.
 		/// </summary>
 		ExplicitCol32,
 		/// <summary>
@@ -810,13 +800,30 @@ namespace ZedGraph
 		ExplicitRow21,
 		/// <summary>
 		/// Layout the <see cref="GraphPane"/>'s with an explicit number of rows: The first column has
-		/// 2 rows and the second column has 3 rows for a total of 5 panes.
+		/// 2 rows and the second column has 3 _rows for a total of 5 panes.
 		/// </summary>
 		ExplicitRow23,
 		/// <summary>
 		/// Layout the <see cref="GraphPane"/>'s with an explicit number of rows: The first column has
-		/// 3 rows and the second column has 2 rows for a total of 5 panes.
+		/// 3 rows and the second column has 2 _rows for a total of 5 panes.
 		/// </summary>
 		ExplicitRow32
-	};
+	}
+
+	/// <summary>
+	/// Enum for specifying the type of data to be returned by the ZedGraphWeb Render() method.
+	/// </summary>
+	public enum RenderModeType
+	{
+		/// <summary>
+		/// Renders as an IMG tag referencing a local generated image. ContentType stays _text.
+		/// </summary>
+		ImageTag,
+		/// <summary>
+		/// Renders the binary image. ContentType is changed accordingly.
+		/// </summary>
+		RawImage
+	}
+
+
 }

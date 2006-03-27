@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.4 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 1.5 $ $Date: 2006-03-27 01:31:37 $ </version>
 	[Serializable]
 	class TextScale : Scale, ISerializable, ICloneable
 	{
@@ -122,8 +122,8 @@ namespace ZedGraph
 		/// </returns>
 		override internal double CalcBaseTic()
 		{
-			if ( this.baseTic != PointPair.Missing )
-				return this.baseTic;
+			if ( this._baseTic != PointPair.Missing )
+				return this._baseTic;
 			else
 				return 1.0;
 
@@ -140,10 +140,10 @@ namespace ZedGraph
 			int nTics = 1;
 
 			// If no array of labels is available, just assume 10 labels so we don't blow up.
-			if ( this.textLabels == null )
+			if ( this._textLabels == null )
 				nTics = 10;
 			else
-				nTics = this.textLabels.Length;
+				nTics = this._textLabels.Length;
 
 			if ( nTics < 1 )
 				nTics = 1;
@@ -162,24 +162,24 @@ namespace ZedGraph
 		/// type, such that the labeled values start at 1.0 and increment by 1.0 for
 		/// each successive label.  The maximum number of labels on the graph is
 		/// determined by <see cref="Scale.Default.MaxTextLabels"/>.  If necessary, this method will
-		/// set the <see cref="Scale.Step"/> value to greater than 1.0 in order to keep the total
+		/// set the <see cref="Scale.MajorStep"/> value to greater than 1.0 in order to keep the total
 		/// labels displayed below <see cref="Scale.Default.MaxTextLabels"/>.  For example, a
-		/// <see cref="Scale.Step"/> size of 2.0 would only display every other label on the
-		/// axis.  The <see cref="Scale.Step"/> value calculated by this routine is always
+		/// <see cref="Scale.MajorStep"/> size of 2.0 would only display every other label on the
+		/// axis.  The <see cref="Scale.MajorStep"/> value calculated by this routine is always
 		/// an integral value.  This
 		/// method honors the <see cref="Scale.MinAuto"/>, <see cref="Scale.MaxAuto"/>,
-		/// and <see cref="Scale.StepAuto"/> autorange settings.
+		/// and <see cref="Scale.MajorStepAuto"/> autorange settings.
 		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.Step"/>
+		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.MajorStep"/>
 		/// setting is explicitly honored, and the remaining autorange settings (if any) will
 		/// be calculated to accomodate the non-autoranged values.
 		/// <para>On Exit:</para>
 		/// <para><see cref="Scale.Min"/> is set to scale minimum (if <see cref="Scale.MinAuto"/> = true)</para>
 		/// <para><see cref="Scale.Max"/> is set to scale maximum (if <see cref="Scale.MaxAuto"/> = true)</para>
-		/// <para><see cref="Scale.Step"/> is set to scale step size (if <see cref="Scale.StepAuto"/> = true)</para>
+		/// <para><see cref="Scale.MajorStep"/> is set to scale step size (if <see cref="Scale.MajorStepAuto"/> = true)</para>
 		/// <para><see cref="Scale.MinorStep"/> is set to scale minor step size (if <see cref="Scale.MinorStepAuto"/> = true)</para>
-		/// <para><see cref="Scale.ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="Scale.ScaleFormat"/> is set to the display format for the values (this controls the
+		/// <para><see cref="Scale.Mag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="Scale.Format"/> is set to the display format for the values (this controls the
 		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
@@ -202,62 +202,68 @@ namespace ZedGraph
 			base.PickScale( pane, g, scaleFactor );
 
 			// if text labels are provided, then autorange to the number of labels
-			if ( this.textLabels != null )
+			if ( this._textLabels != null )
 			{
-				if ( this.minAuto )
-					this.min = 0.5;
-				if ( this.maxAuto )
-					this.max = this.textLabels.Length + 0.5;
+				if ( this._minAuto )
+					this._min = 0.5;
+				if ( this._maxAuto )
+					this._max = this._textLabels.Length + 0.5;
 			}
 			else
 			{
-				if ( this.minAuto )
-					this.min -= 0.5;
-				if ( this.maxAuto )
-					this.max += 0.5;
+				if ( this._minAuto )
+					this._min -= 0.5;
+				if ( this._maxAuto )
+					this._max += 0.5;
 			}
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < .1 )
+			if ( this._max - this._min < .1 )
 			{
-				if ( this.maxAuto )
-					this.max = this.min + 10.0;
+				if ( this._maxAuto )
+					this._max = this._min + 10.0;
 				else
-					this.min = this.max - 10.0;
+					this._min = this._max - 10.0;
 			}
 
-			if ( this.stepAuto )
+			if ( this._majorStepAuto )
 			{
-				if ( !this.isPreventLabelOverlap )
+				if ( !this._isPreventLabelOverlap )
 				{
-					this.step = 1;
+					this._majorStep = 1;
 				}
-				else if ( this.textLabels != null )
+				else if ( this._textLabels != null )
 				{
 					// Calculate the maximum number of labels
 					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
 					// Calculate a step size based on the width of the labels
-					double tmpStep = Math.Ceiling( ( this.max - this.min ) / maxLabels );
+					double tmpStep = Math.Ceiling( ( this._max - this._min ) / maxLabels );
 
 					// Use the lesser of the two step sizes
-					//if ( tmpStep < this.step )
-					this.step = tmpStep;
+					//if ( tmpStep < this.majorStep )
+					this._majorStep = tmpStep;
 				}
 				else
-					this.step = (int) ( ( this.max - this.min - 1.0 ) / Default.MaxTextLabels ) + 1.0;
+					this._majorStep = (int) ( ( this._max - this._min - 1.0 ) / Default.MaxTextLabels ) + 1.0;
 
 			}
 			else
 			{
-				this.step = (int) this.step;
-				if ( this.step <= 0 )
-					this.step = 1.0;
+				this._majorStep = (int) this._majorStep;
+				if ( this._majorStep <= 0 )
+					this._majorStep = 1.0;
 			}
 
-			if ( this.minorStepAuto )
-				this.minorStep = 1;
-			//this.numDec = 0;
-			this.scaleMag = 0;
+			if ( this._minorStepAuto )
+			{
+				this._minorStep = this._majorStep / 10;
+
+				//this._minorStep = CalcStepSize( this._majorStep, 10 );
+				if ( this._minorStep < 1 )
+					this._minorStep = 1;
+			}
+
+			this._mag = 0;
 		}
 
 		/// <summary>
@@ -272,22 +278,20 @@ namespace ZedGraph
 		/// cause the third value label on the axis to be generated.
 		/// </param>
 		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Axis.IsLog"/>)
-		/// and text (<see cref="Axis.IsText"/>) type axes.
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Scale.IsLog"/>)
+		/// and text (<see cref="Scale.IsText"/>) type axes.
 		/// </param>
-		/// <param name="label">
-		/// Output only.  The resulting value label.
-		/// </param>
-		override internal void MakeLabel( GraphPane pane, int index, double dVal, out string label )
+		/// <returns>The resulting value label as a <see cref="string" /></returns>
+		override internal string MakeLabel( GraphPane pane, int index, double dVal )
 		{
-			if ( this.scaleFormat == null )
-				this.scaleFormat = Scale.Default.ScaleFormat;
+			if ( this._format == null )
+				this._format = Scale.Default.Format;
 
-			index *= (int) this.step;
-			if ( this.textLabels == null || index < 0 || index >= textLabels.Length )
-				label = "";
+			index *= (int) this._majorStep;
+			if ( this._textLabels == null || index < 0 || index >= _textLabels.Length )
+				return string.Empty;
 			else
-				label = textLabels[index];
+				return _textLabels[index];
 		}
 
 

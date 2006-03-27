@@ -66,7 +66,7 @@ namespace ZedGraph.Demo
 			control = new ZedGraphControl();
 		}
 
-		#region ZedGraphDemo Members
+	#region ZedGraphDemo Members
 
 		/// <summary>
 		/// The graph pane the chart is show in.
@@ -83,11 +83,11 @@ namespace ZedGraph.Demo
 		/// </summary>
 		public GraphPane GraphPane { get { return control.GraphPane; } }
 
-		public string Description { get { return description; } }
-		
-		public string Title { get { return title; } }
+		public virtual string Description { get { return description; } }
 
-		public ICollection Types { get { return types; } }
+		public virtual string Title { get { return title; } }
+
+		public virtual ICollection Types { get { return types; } }
 		
 		/// <summary>
 		/// The control the graph pane is in.
@@ -97,7 +97,7 @@ namespace ZedGraph.Demo
 			get { return control; }
 		}
 
-		#endregion
+	#endregion
 
 	}
 }

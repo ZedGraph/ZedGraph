@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.6 $ $Date: 2006-03-27 01:06:29 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2006-03-27 01:31:37 $ </version>
 	[Serializable]
 	class LinearAsOrdinalScale : Scale, ISerializable, ICloneable
 	{
@@ -108,10 +108,10 @@ namespace ZedGraph
 		/// <para>On Exit:</para>
 		/// <para><see cref="Scale.Min"/> is set to scale minimum (if <see cref="Scale.MinAuto"/> = true)</para>
 		/// <para><see cref="Scale.Max"/> is set to scale maximum (if <see cref="Scale.MaxAuto"/> = true)</para>
-		/// <para><see cref="Scale.Step"/> is set to scale step size (if <see cref="Scale.StepAuto"/> = true)</para>
+		/// <para><see cref="Scale.MajorStep"/> is set to scale step size (if <see cref="Scale.MajorStepAuto"/> = true)</para>
 		/// <para><see cref="Scale.MinorStep"/> is set to scale minor step size (if <see cref="Scale.MinorStepAuto"/> = true)</para>
-		/// <para><see cref="Scale.ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="Scale.ScaleFormat"/> is set to the display format for the values (this controls the
+		/// <para><see cref="Scale.Mag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="Scale.Format"/> is set to the display format for the values (this controls the
 		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
@@ -143,12 +143,12 @@ namespace ZedGraph
 
 			foreach ( CurveItem curve in pane.CurveList )
 			{
-				if ( ( parentAxis is Y2Axis && curve.IsY2Axis ) ||
-						( parentAxis is YAxis && !curve.IsY2Axis ) ||
-						( parentAxis is XAxis ) )
+				if ( ( _parentAxis is Y2Axis && curve.IsY2Axis ) ||
+						( _parentAxis is YAxis && !curve.IsY2Axis ) ||
+						( _parentAxis is XAxis ) )
 				{
 					curve.GetRange( out xMin, out xMax, out yMin, out yMax, false, false, pane );
-					if ( parentAxis is XAxis )
+					if ( _parentAxis is XAxis )
 					{
 						tMin = xMin;
 						tMax = xMax;
@@ -182,16 +182,14 @@ namespace ZedGraph
 		/// cause the third value label on the axis to be generated.
 		/// </param>
 		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Axis.IsLog"/>)
-		/// and text (<see cref="Axis.IsText"/>) type axes.
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Scale.IsLog"/>)
+		/// and text (<see cref="Scale.IsText"/>) type axes.
 		/// </param>
-		/// <param name="label">
-		/// Output only.  The resulting value label.
-		/// </param>
-		override internal void MakeLabel( GraphPane pane, int index, double dVal, out string label )
+		/// <returns>The resulting value label as a <see cref="string" /></returns>
+		override internal string MakeLabel( GraphPane pane, int index, double dVal )
 		{
-			if ( this.scaleFormat == null )
-				this.scaleFormat = Scale.Default.ScaleFormat;
+			if ( this._format == null )
+				this._format = Scale.Default.Format;
 
 			double val;
 
@@ -201,11 +199,11 @@ namespace ZedGraph
 						pane.CurveList[0].Points.Count > tmpIndex )
 			{
 				val = pane.CurveList[0].Points[tmpIndex].X;
-				double scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
-				label = ( val / scaleMult ).ToString( this.scaleFormat );
+				double scaleMult = Math.Pow( (double) 10.0, this._mag );
+				return ( val / scaleMult ).ToString( this._format );
 			}
 			else
-				label = string.Empty;
+				return string.Empty;
 		}
 
 	#endregion

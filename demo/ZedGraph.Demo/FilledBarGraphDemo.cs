@@ -35,9 +35,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the titles and axis labels
-			myPane.Title = "Image Fill Example";
-			myPane.XAxis.Title = "Region";
-			myPane.YAxis.Title = "Astronomy Sector Sales";
+			myPane.Title.Text = "Image Fill Example";
+			myPane.XAxis.Title.Text = "Region";
+			myPane.YAxis.Title.Text = "Astronomy Sector Sales";
 
 			// Make up some random data points
 			double[] y = { 80, 70, 65, 78, 40 };
@@ -47,8 +47,10 @@ namespace ZedGraph.Demo
 			// Add a bar to the graph
 			BarItem myCurve = myPane.AddBar( "Curve 1", null, y, Color.White );
 			// Access a image from the resources
-			Image image = Bitmap.FromStream(
-				GetType().Assembly.GetManifestResourceStream("ZedGraph.Demo.ngc4414.jpg") );
+			//Image image = Bitmap.FromStream(
+			//	GetType().Assembly.GetManifestResourceStream("ZedGraph.Demo.ngc4414.jpg") );
+			Image image = Resources.ngc4414;
+
 			// create a brush with the image
 			TextureBrush brush = new TextureBrush( image );
 			// use the image for the bar fill
@@ -59,8 +61,10 @@ namespace ZedGraph.Demo
 			// Add a second bar to the graph
 			myCurve = myPane.AddBar( "Curve 2", null, y2, Color.White );
 			// Access a image from the resources
-			Image image2 = Bitmap.FromStream(
-				GetType().Assembly.GetManifestResourceStream("ZedGraph.Demo.ngc4261.gif") );
+			//Image image2 = Bitmap.FromStream(
+			//	GetType().Assembly.GetManifestResourceStream("ZedGraph.Demo.ngc4261.gif") );
+			Image image2 = Resources.ngc4261;
+
 			// create a brush with the image
 			TextureBrush brush2 = new TextureBrush( image2 );			
 			// use the image for the bar fill
@@ -69,16 +73,16 @@ namespace ZedGraph.Demo
 			myCurve.Bar.Border.IsVisible = false;
 			
 			// Draw the X tics between the labels instead of at the labels
-			myPane.XAxis.IsTicsBetweenLabels = true;
+			myPane.XAxis.MajorTic.IsBetweenLabels = true;
 
 			// Set the XAxis labels
-			myPane.XAxis.TextLabels = str;
+			myPane.XAxis.Scale.TextLabels = str;
 
 			// Set the XAxis to Text type
 			myPane.XAxis.Type = AxisType.Text;
 
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.White, Color.SteelBlue, 45.0f );
+			myPane.Chart.Fill = new Fill( Color.White, Color.SteelBlue, 45.0f );
 
 			// disable the legend
 			myPane.Legend.IsVisible = false;

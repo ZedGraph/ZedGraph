@@ -28,10 +28,10 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.8 $ $Date: 2006-01-26 05:46:03 $ </version>
+	/// <version> $Revision: 3.9 $ $Date: 2006-03-27 01:31:37 $ </version>
 	public class ValueHandler
 	{
-		private GraphPane pane;
+		private GraphPane _pane;
 
 		/// <summary>
 		/// Basic constructor that saves a reference to the parent
@@ -46,7 +46,7 @@ namespace ZedGraph
 		/// an initialization, false otherwise.</param>
 		public ValueHandler( GraphPane pane, bool initialize )
 		{
-			this.pane = pane;
+			this._pane = pane;
 			if ( initialize )
 			{
 				// just create a dummy image, which results in a full draw operation
@@ -74,7 +74,7 @@ namespace ZedGraph
 		public bool GetValues( CurveItem curve, int iPt, out double baseVal,
 							out double lowVal, out double hiVal )
 		{
-			return GetValues( this.pane, curve, iPt, out baseVal,
+			return GetValues( this._pane, curve, iPt, out baseVal,
 									out lowVal, out hiVal );
 		}
 
@@ -116,8 +116,8 @@ namespace ZedGraph
 				baseVal = curve.Points[iPt].Y;
 
 			// is it a stacked bar type?
-			if ( curve is BarItem && ( pane.BarType == BarType.Stack ||
-						pane.BarType == BarType.PercentStack ) )
+			if ( curve is BarItem && ( pane._barSettings.Type == BarType.Stack ||
+						pane._barSettings.Type == BarType.PercentStack ) )
 			{
 				double positiveStack = 0;
 				double negativeStack = 0;
@@ -132,7 +132,7 @@ namespace ZedGraph
 					{
 						curVal = PointPair.Missing;
 						// For non-ordinal curves, find a matching base value (must match exactly)
-						if ( curve.IsOverrideOrdinal || !baseAxis.IsAnyOrdinal )
+						if ( curve.IsOverrideOrdinal || !baseAxis._scale.IsAnyOrdinal )
 						{
 							IPointList points = tmpCurve.Points;
 
@@ -192,7 +192,7 @@ namespace ZedGraph
 
 				// if the curve is a PercentStack type, then calculate the percent for this bar
 				// based on the total height of the stack
-				if ( pane.BarType == BarType.PercentStack )
+				if ( pane._barSettings.Type == BarType.PercentStack )
 				{
 					// Use the total magnitude of the positive plus negative bar stacks to determine
 					// the percentage value
@@ -233,7 +233,7 @@ namespace ZedGraph
 					{
 						curVal = PointPair.Missing;
 						// For non-ordinal curves, find a matching base value (must match exactly)
-						if ( curve.IsOverrideOrdinal || !baseAxis.IsAnyOrdinal )
+						if ( curve.IsOverrideOrdinal || !baseAxis._scale.IsAnyOrdinal )
 						{
 							IPointList points = tmpCurve.Points;
 
@@ -279,7 +279,7 @@ namespace ZedGraph
 			// otherwise, the curve is not a stacked type (not a stacked bar or stacked line)
 			else
 			{
-				if ( curve is BarItem && pane.BarType != BarType.ClusterHiLow )
+				if ( curve is BarItem && pane._barSettings.Type != BarType.ClusterHiLow )
 					lowVal = 0;
 				else
 					lowVal = curve.Points[iPt].LowValue;
@@ -292,8 +292,8 @@ namespace ZedGraph
 
 			// Special Exception: Bars on log scales should always plot from the Min value upwards,
 			// since they can never be zero
-			if ( curve is BarItem  && valueAxis.IsLog && lowVal == 0 )
-				lowVal = valueAxis.Min;
+			if ( curve is BarItem && valueAxis._scale.IsLog && lowVal == 0 )
+				lowVal = valueAxis._scale._min;
 
 			if ( baseVal == PointPair.Missing || hiVal == PointPair.Missing ||
 					( lowVal == PointPair.Missing && ( curve is ErrorBarItem ||
@@ -305,7 +305,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Calculate the user scale position of the center of the specified bar, using the
-		/// <see cref="Axis"/> as specified by <see cref="GraphPane.BarBase"/>.  This method is
+		/// <see cref="Axis"/> as specified by <see cref="BarSettings.Base"/>.  This method is
 		/// used primarily by the
 		/// <see cref="GraphPane.FindNearestPoint(PointF,out CurveItem,out int)"/> method in order to
 		/// determine the bar "location," which is defined as the center of the top of the individual bar.
@@ -325,21 +325,22 @@ namespace ZedGraph
 		public double BarCenterValue( CurveItem curve, float barWidth, int iCluster,
 										  double val, int iOrdinal )
 		{
-			Axis baseAxis = curve.BaseAxis( pane );
+			Axis baseAxis = curve.BaseAxis( _pane );
 			if ( curve is ErrorBarItem || curve is HiLowBarItem )
 			{
-				if ( baseAxis.IsAnyOrdinal && iCluster >= 0 && !curve.IsOverrideOrdinal )
+				if ( baseAxis._scale.IsAnyOrdinal && iCluster >= 0 && !curve.IsOverrideOrdinal )
 					return (double) iCluster + 1.0;
 				else
 					return val;
 			}
 			else
 			{
-				float clusterWidth = pane.GetClusterWidth();
-				float clusterGap = pane.MinClusterGap * barWidth;
-				float barGap = barWidth * pane.MinBarGap;
+				float clusterWidth = _pane.GetClusterWidth();
+				float clusterGap = _pane._barSettings.MinClusterGap * barWidth;
+				float barGap = barWidth * _pane._barSettings.MinBarGap;
 
-				if ( ( curve.IsBar && !( pane.BarType == BarType.Cluster || pane.BarType == BarType.ClusterHiLow ) ) )
+				if ( ( curve.IsBar && !( _pane._barSettings.Type == BarType.Cluster ||
+								_pane._barSettings.Type == BarType.ClusterHiLow ) ) )
 					iOrdinal = 0;
 
 				float centerPix = baseAxis.Scale.Transform( curve.IsOverrideOrdinal, iCluster, val )

@@ -37,20 +37,20 @@ namespace ZedGraph.Demo
 			myMaster.PaneList.Clear();
 
 			// Set the master pane title
-			myMaster.Title = "Multiple Pie Charts on a MasterPane";
-			myMaster.IsShowTitle = true ;
+			myMaster.Title.Text = "Multiple Pie Charts on a MasterPane";
+			myMaster.Title.IsVisible = true ;
 
 			// Fill the masterpane background with a color gradient
-			myMaster.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+			myMaster.Fill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
 
 			// Set the margins and the space between panes to 10 points
-			myMaster.MarginAll = 10;
+			myMaster.Margin.All = 10;
 			myMaster.InnerPaneGap = 10;
 
 			// Enable the masterpane legend
 			myMaster.Legend.IsVisible = true ;
 			myMaster.Legend.Position = LegendPos.TopCenter;
-			myMaster.HasUniformLegendEntries = true;
+			myMaster.IsUniformLegendEntries = true;
 
 			// Enter some data values
 			double [] values = { 15, 15, 40, 20 } ;
@@ -64,12 +64,12 @@ namespace ZedGraph.Demo
 			{
 				// Create the GraphPane
 				GraphPane myPane = new GraphPane();
-				myPane.Title = "2003 Regional Sales";
+				myPane.Title.Text = "2003 Regional Sales";
 
 				// Fill the pane background with a solid color
-				myPane.PaneFill = new Fill( Color.Cornsilk );
+				myPane.Fill = new Fill( Color.Cornsilk );
 				// Fill the axis background with a solid color
-				myPane.AxisFill = new Fill( Color.Cornsilk );
+				myPane.Chart.Fill = new Fill( Color.Cornsilk );
 
 				// Hide the GraphPane legend
 				myPane.Legend.IsVisible = false	 ;

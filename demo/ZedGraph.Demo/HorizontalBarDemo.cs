@@ -37,9 +37,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title = "Horizontal Bar Graph";
-			myPane.XAxis.Title = "Performance Factor";
-			myPane.YAxis.Title = "Grouping";
+			myPane.Title.Text = "Horizontal Bar Graph";
+			myPane.XAxis.Title.Text = "Performance Factor";
+			myPane.YAxis.Title.Text = "Grouping";
 			
 			// Enter some random data values
 			double[] y = { 100, 115, 75, -22, 98, 40, -10 };
@@ -62,18 +62,18 @@ namespace ZedGraph.Demo
 			myCurve.Bar.Fill = new Fill( Color.White, Color.Green, 90F );
 
 			// Draw the X tics between the labels instead of at the labels
-			myPane.YAxis.IsTicsBetweenLabels = true;
+			myPane.YAxis.MajorTic.IsBetweenLabels = true;
 
 			// Set the XAxis to an ordinal type
 			myPane.YAxis.Type = AxisType.Ordinal;
 			// draw the X axis zero line
-			myPane.XAxis.IsZeroLine = true;
+			myPane.XAxis.MajorGrid.IsZeroLine = true;
 
 			//This is the part that makes the bars horizontal
-			myPane.BarBase = BarBase.Y;
+			myPane.BarSettings.Base = BarBase.Y;
 			
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.White,
+			myPane.Chart.Fill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 45.0F );
 
 			base.ZedGraphControl.AxisChange();
@@ -106,10 +106,10 @@ namespace ZedGraph.Demo
 
 						// create the text item (assumes the x axis is ordinal or text)
 						// for negative bars, the label appears just above the zero value
-						TextItem text = new TextItem( lab, (float) xVal + ( xVal > 0 ? shift : -shift ),
+						TextObj text = new TextObj( lab, (float) xVal + ( xVal > 0 ? shift : -shift ),
 														(float) yVal );
 
-						// tell Zedgraph to use user scale units for locating the TextItem
+						// tell Zedgraph to use user scale units for locating the TextObj
 						text.Location.CoordinateFrame = CoordType.AxisXYScale;
 						text.FontSpec.Size = 10;
 						// AlignH the left-center of the text to the specified point
@@ -119,8 +119,8 @@ namespace ZedGraph.Demo
 						// rotate the text 90 degrees
 						text.FontSpec.Angle = 0;
 						text.FontSpec.Fill.IsVisible = false;
-						// add the TextItem to the list
-						myPane.GraphItemList.Add( text );
+						// add the TextObj to the list
+						myPane.GraphObjList.Add( text );
 					}
 				}
 

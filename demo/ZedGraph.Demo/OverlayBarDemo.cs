@@ -41,8 +41,8 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis label
-			myPane.Title = "Overlay Bar Graph Demo";
-			myPane.YAxis.Title = "Value";
+			myPane.Title.Text = "Overlay Bar Graph Demo";
+			myPane.YAxis.Title.Text = "Value";
 			
 			// Enter some data values
 			double[] y = { 100, 115, 75, -22, 98, 40, -10 };
@@ -66,7 +66,7 @@ namespace ZedGraph.Demo
 			myCurve = myPane.AddBar( "Curve 3", null, y3, Color.Green );
 
 			// Draw the X tics between the labels instead of at the labels
-			myPane.XAxis.IsTicsBetweenLabels = true;
+			myPane.XAxis.MajorTic.IsBetweenLabels = true;
 
 			// Set the XAxis to the ordinal type
 			myPane.XAxis.Type = AxisType.Ordinal;
@@ -82,8 +82,8 @@ namespace ZedGraph.Demo
 				string lab = y3[i].ToString( "F1" );
 				// create the text item (assumes the x axis is ordinal or text)
 				// for negative bars, the label appears just above the zero value
-				TextItem text = new TextItem( lab, (float) (i+1), (float) (y3[i] < 0 ? 0.0 : y3[i]) + shift );
-				// tell Zedgraph to use user scale units for locating the TextItem
+				TextObj text = new TextObj( lab, (float) (i+1), (float) (y3[i] < 0 ? 0.0 : y3[i]) + shift );
+				// tell Zedgraph to use user scale units for locating the TextObj
 				text.Location.CoordinateFrame = CoordType.AxisXYScale;
 				// AlignH the left-center of the text to the specified point
 				text.Location.AlignH = AlignH.Left;
@@ -92,20 +92,20 @@ namespace ZedGraph.Demo
 				text.FontSpec.Fill.IsVisible = false;
 				// rotate the text 90 degrees
 				text.FontSpec.Angle = 90;
-				// add the TextItem to the list
-				myPane.GraphItemList.Add( text );
+				// add the TextObj to the list
+				myPane.GraphObjList.Add( text );
 			}
 			
 			// Indicate that the bars are overlay type, which are drawn on top of eachother
-			myPane.BarType = BarType.Overlay;
+			myPane.BarSettings.Type = BarType.Overlay;
 			
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0F );
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0F );
 
 			base.ZedGraphControl.AxisChange();
 
 			// Add one step to the max scale value to leave room for the labels
-			myPane.YAxis.Max += myPane.YAxis.Step;
+			myPane.YAxis.Scale.Max += myPane.YAxis.Scale.MajorStep;
 		}
 	}
 }

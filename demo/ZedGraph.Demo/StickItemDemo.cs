@@ -37,9 +37,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the titles and axis labels
-			myPane.Title = "StickItem Demo Chart";
-			myPane.XAxis.Title = "X Label";
-			myPane.YAxis.Title = "My Y Axis";
+			myPane.Title.Text = "StickItem Demo Chart";
+			myPane.XAxis.Title.Text = "X Label";
+			myPane.YAxis.Title.Text = "My Y Axis";
 			
 			PointPairList list = new PointPairList();
 			for ( int i=0; i<100; i++ )
@@ -52,11 +52,11 @@ namespace ZedGraph.Demo
 
 			StickItem myCurve = myPane.AddStick( "Some Sticks", list, Color.Blue );
 			myCurve.Line.Width = 2.0f;
-			myPane.XAxis.IsShowGrid = true;
-			myPane.XAxis.Max = 100;
+			myPane.XAxis.MajorGrid.IsVisible = true;
+			myPane.XAxis.Scale.Max = 100;
 			
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.White,
+			myPane.Chart.Fill = new Fill( Color.White,
 				Color.LightGoldenrodYellow, 45.0F );
 
 			base.ZedGraphControl.AxisChange();

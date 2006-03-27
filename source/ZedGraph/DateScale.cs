@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.5 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2006-03-27 01:31:37 $ </version>
 	[Serializable]
 	class DateScale : Scale, ISerializable, ICloneable
 	{
@@ -101,8 +101,8 @@ namespace ZedGraph
 		/// </remarks>
 		public override double Min
 		{
-			get { return this.min; }
-			set { this.min = XDate.MakeValidDate( value ); }
+			get { return this._min; }
+			set { this._min = XDate.MakeValidDate( value ); }
 		}
 
 		/// <summary>
@@ -115,8 +115,8 @@ namespace ZedGraph
 		/// </remarks>
 		public override double Max
 		{
-			get { return this.max; }
-			set { this.max = XDate.MakeValidDate( value ); }
+			get { return this._max; }
+			set { this._max = XDate.MakeValidDate( value ); }
 		}
 	#endregion
 
@@ -142,26 +142,26 @@ namespace ZedGraph
 		{
 			XDate xDate = new XDate( baseVal );
 
-			switch ( this.majorUnit )
+			switch ( this._majorUnit )
 			{
 				case DateUnit.Year:
 				default:
-					xDate.AddYears( tic * this.step );
+					xDate.AddYears( tic * this._majorStep );
 					break;
 				case DateUnit.Month:
-					xDate.AddMonths( tic * this.step );
+					xDate.AddMonths( tic * this._majorStep );
 					break;
 				case DateUnit.Day:
-					xDate.AddDays( tic * this.step );
+					xDate.AddDays( tic * this._majorStep );
 					break;
 				case DateUnit.Hour:
-					xDate.AddHours( tic * this.step );
+					xDate.AddHours( tic * this._majorStep );
 					break;
 				case DateUnit.Minute:
-					xDate.AddMinutes( tic * this.step );
+					xDate.AddMinutes( tic * this._majorStep );
 					break;
 				case DateUnit.Second:
-					xDate.AddSeconds( tic * this.step );
+					xDate.AddSeconds( tic * this._majorStep );
 					break;
 			}
 
@@ -189,26 +189,26 @@ namespace ZedGraph
 		{
 			XDate xDate = new XDate( baseVal );
 
-			switch ( this.minorUnit )
+			switch ( this._minorUnit )
 			{
 				case DateUnit.Year:
 				default:
-					xDate.AddYears( (double) iTic * this.minorStep );
+					xDate.AddYears( (double) iTic * this._minorStep );
 					break;
 				case DateUnit.Month:
-					xDate.AddMonths( (double) iTic * this.minorStep );
+					xDate.AddMonths( (double) iTic * this._minorStep );
 					break;
 				case DateUnit.Day:
-					xDate.AddDays( (double) iTic * this.minorStep );
+					xDate.AddDays( (double) iTic * this._minorStep );
 					break;
 				case DateUnit.Hour:
-					xDate.AddHours( (double) iTic * this.minorStep );
+					xDate.AddHours( (double) iTic * this._minorStep );
 					break;
 				case DateUnit.Minute:
-					xDate.AddMinutes( (double) iTic * this.minorStep );
+					xDate.AddMinutes( (double) iTic * this._minorStep );
 					break;
 				case DateUnit.Second:
-					xDate.AddSeconds( (double) iTic * this.minorStep );
+					xDate.AddSeconds( (double) iTic * this._minorStep );
 					break;
 			}
 
@@ -228,21 +228,21 @@ namespace ZedGraph
 		/// </returns>
 		override internal int CalcMinorStart( double baseVal )
 		{
-			switch ( this.minorUnit )
+			switch ( this._minorUnit )
 			{
 				case DateUnit.Year:
 				default:
-					return (int) ( ( this.min - baseVal ) / ( 365.0 * this.minorStep ) );
+					return (int) ( ( this._min - baseVal ) / ( 365.0 * this._minorStep ) );
 				case DateUnit.Month:
-					return (int) ( ( this.min - baseVal ) / ( 28.0 * this.minorStep ) );
+					return (int) ( ( this._min - baseVal ) / ( 28.0 * this._minorStep ) );
 				case DateUnit.Day:
-					return (int) ( ( this.min - baseVal ) / this.minorStep );
+					return (int) ( ( this._min - baseVal ) / this._minorStep );
 				case DateUnit.Hour:
-					return (int) ( ( this.min - baseVal ) * XDate.HoursPerDay / this.minorStep );
+					return (int) ( ( this._min - baseVal ) * XDate.HoursPerDay / this._minorStep );
 				case DateUnit.Minute:
-					return (int) ( ( this.min - baseVal ) * XDate.MinutesPerDay / this.minorStep );
+					return (int) ( ( this._min - baseVal ) * XDate.MinutesPerDay / this._minorStep );
 				case DateUnit.Second:
-					return (int) ( ( this.min - baseVal ) * XDate.SecondsPerDay / this.minorStep );
+					return (int) ( ( this._min - baseVal ) * XDate.SecondsPerDay / this._minorStep );
 			}
 		}
 
@@ -260,14 +260,14 @@ namespace ZedGraph
 		/// </returns>
 		override internal double CalcBaseTic()
 		{
-			if ( this.baseTic != PointPair.Missing )
-				return this.baseTic;
+			if ( this._baseTic != PointPair.Missing )
+				return this._baseTic;
 			else
 			{
 				int year, month, day, hour, minute, second;
-				XDate.XLDateToCalendarDate( this.min, out year, out month, out day, out hour, out minute,
+				XDate.XLDateToCalendarDate( this._min, out year, out month, out day, out hour, out minute,
 											out second );
-				switch ( this.majorUnit )
+				switch ( this._majorUnit )
 				{
 					case DateUnit.Year:
 					default:
@@ -291,9 +291,9 @@ namespace ZedGraph
 				}
 
 				double xlDate = XDate.CalendarDateToXLDate( year, month, day, hour, minute, second );
-				if ( xlDate < this.min )
+				if ( xlDate < this._min )
 				{
-					switch ( this.majorUnit )
+					switch ( this._majorUnit )
 					{
 						case DateUnit.Year:
 						default:
@@ -337,31 +337,31 @@ namespace ZedGraph
 			int year1, year2, month1, month2, day1, day2, hour1, hour2, minute1, minute2;
 			double second1, second2;
 
-			XDate.XLDateToCalendarDate( this.min, out year1, out month1, out day1,
+			XDate.XLDateToCalendarDate( this._min, out year1, out month1, out day1,
 										out hour1, out minute1, out second1 );
-			XDate.XLDateToCalendarDate( this.max, out year2, out month2, out day2,
+			XDate.XLDateToCalendarDate( this._max, out year2, out month2, out day2,
 										out hour2, out minute2, out second2 );
 
-			switch ( this.majorUnit )
+			switch ( this._majorUnit )
 			{
 				case DateUnit.Year:
 				default:
-					nTics = (int) ( ( year2 - year1 ) / this.step + 1.001 );
+					nTics = (int) ( ( year2 - year1 ) / this._majorStep + 1.001 );
 					break;
 				case DateUnit.Month:
-					nTics = (int) ( ( month2 - month1 + 12.0 * ( year2 - year1 ) ) / this.step + 1.001 );
+					nTics = (int) ( ( month2 - month1 + 12.0 * ( year2 - year1 ) ) / this._majorStep + 1.001 );
 					break;
 				case DateUnit.Day:
-					nTics = (int) ( ( this.max - this.min ) / this.step + 1.001 );
+					nTics = (int) ( ( this._max - this._min ) / this._majorStep + 1.001 );
 					break;
 				case DateUnit.Hour:
-					nTics = (int) ( ( this.max - this.min ) / ( this.step / XDate.HoursPerDay ) + 1.001 );
+					nTics = (int) ( ( this._max - this._min ) / ( this._majorStep / XDate.HoursPerDay ) + 1.001 );
 					break;
 				case DateUnit.Minute:
-					nTics = (int) ( ( this.max - this.min ) / ( this.step / XDate.MinutesPerDay ) + 1.001 );
+					nTics = (int) ( ( this._max - this._min ) / ( this._majorStep / XDate.MinutesPerDay ) + 1.001 );
 					break;
 				case DateUnit.Second:
-					nTics = (int) ( ( this.max - this.min ) / ( this.step / XDate.SecondsPerDay ) + 1.001 );
+					nTics = (int) ( ( this._max - this._min ) / ( this._majorStep / XDate.SecondsPerDay ) + 1.001 );
 					break;
 			}
 
@@ -380,14 +380,14 @@ namespace ZedGraph
 		/// This method only applies to <see cref="AxisType.Date"/> type axes, and it
 		/// is called by the general <see cref="PickScale"/> method.  The scale range is chosen
 		/// based on increments of 1, 2, or 5 (because they are even divisors of 10).
-		/// Note that the <see cref="Scale.Step"/> property setting can have multiple unit
+		/// Note that the <see cref="Scale.MajorStep"/> property setting can have multiple unit
 		/// types (<see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit" />),
 		/// but the <see cref="Scale.Min"/> and
 		/// <see cref="Scale.Max"/> units are always days (<see cref="XDate"/>).  This
 		/// method honors the <see cref="Scale.MinAuto"/>, <see cref="Scale.MaxAuto"/>,
-		/// and <see cref="Scale.StepAuto"/> autorange settings.
+		/// and <see cref="Scale.MajorStepAuto"/> autorange settings.
 		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.Step"/>
+		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.MajorStep"/>
 		/// setting is explicitly honored, and the remaining autorange settings (if any) will
 		/// be calculated to accomodate the non-autoranged values.  The basic default for
 		/// scale selection is defined with
@@ -396,10 +396,10 @@ namespace ZedGraph
 		/// <para>On Exit:</para>
 		/// <para><see cref="Scale.Min"/> is set to scale minimum (if <see cref="Scale.MinAuto"/> = true)</para>
 		/// <para><see cref="Scale.Max"/> is set to scale maximum (if <see cref="Scale.MaxAuto"/> = true)</para>
-		/// <para><see cref="Scale.Step"/> is set to scale step size (if <see cref="Scale.StepAuto"/> = true)</para>
+		/// <para><see cref="Scale.MajorStep"/> is set to scale step size (if <see cref="Scale.MajorStepAuto"/> = true)</para>
 		/// <para><see cref="Scale.MinorStep"/> is set to scale minor step size (if <see cref="Scale.MinorStepAuto"/> = true)</para>
-		/// <para><see cref="Scale.ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="Scale.ScaleFormat"/> is set to the display format for the values (this controls the
+		/// <para><see cref="Scale.Mag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="Scale.Format"/> is set to the display format for the values (this controls the
 		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
@@ -424,41 +424,41 @@ namespace ZedGraph
 			base.PickScale( pane, g, scaleFactor );
 
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < 1.0e-20 )
+			if ( this._max - this._min < 1.0e-20 )
 			{
-				if ( this.maxAuto )
-					this.max = this.max + 0.2 * ( this.max == 0 ? 1.0 : Math.Abs( this.max ) );
-				if ( this.minAuto )
-					this.min = this.min - 0.2 * ( this.min == 0 ? 1.0 : Math.Abs( this.min ) );
+				if ( this._maxAuto )
+					this._max = this._max + 0.2 * ( this._max == 0 ? 1.0 : Math.Abs( this._max ) );
+				if ( this._minAuto )
+					this._min = this._min - 0.2 * ( this._min == 0 ? 1.0 : Math.Abs( this._min ) );
 			}
 
 			// Calculate the new step size
-			if ( this.stepAuto )
+			if ( this._majorStepAuto )
 			{
-				double targetSteps = ( parentAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
+				double targetSteps = ( _parentAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
 
 				// Calculate the step size based on target steps
-				this.step = CalcDateStepSize( this.max - this.min, targetSteps );
+				this._majorStep = CalcDateStepSize( this._max - this._min, targetSteps );
 
-				if ( this.isPreventLabelOverlap )
+				if ( this._isPreventLabelOverlap )
 				{
 					// Calculate the maximum number of labels
 					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
 					if ( maxLabels < this.CalcNumTics() )
-						this.step = CalcDateStepSize( this.max - this.min, maxLabels );
+						this._majorStep = CalcDateStepSize( this._max - this._min, maxLabels );
 				}
 			}
 
 			// Calculate the scale minimum
-			if ( this.minAuto )
-				this.min = CalcEvenStepDate( this.min, -1 );
+			if ( this._minAuto )
+				this._min = CalcEvenStepDate( this._min, -1 );
 
 			// Calculate the scale maximum
-			if ( this.maxAuto )
-				this.max = CalcEvenStepDate( this.max, 1 );
+			if ( this._maxAuto )
+				this._max = CalcEvenStepDate( this._max, 1 );
 
-			this.scaleMag = 0;		// Never use a magnitude shift for date scales
+			this._mag = 0;		// Never use a magnitude shift for date scales
 			//this.numDec = 0;		// The number of decimal places to display is not used
 
 		}
@@ -473,7 +473,7 @@ namespace ZedGraph
 		/// <returns>The calculated step size for the specified data range.  Also
 		/// calculates and sets the values for <see cref="Scale.MajorUnit"/>,
 		/// <see cref="Scale.MinorUnit"/>, <see cref="Scale.MinorStep"/>, and
-		/// <see cref="Scale.ScaleFormat"/></returns>
+		/// <see cref="Scale.Format"/></returns>
 		protected double CalcDateStepSize( double range, double targetSteps )
 		{
 			return CalcDateStepSize( range, targetSteps, this );
@@ -491,7 +491,7 @@ namespace ZedGraph
 		/// <returns>The calculated step size for the specified data range.  Also
 		/// calculates and sets the values for <see cref="Scale.MajorUnit"/>,
 		/// <see cref="Scale.MinorUnit"/>, <see cref="Scale.MinorStep"/>, and
-		/// <see cref="Scale.ScaleFormat"/></returns>
+		/// <see cref="Scale.Format"/></returns>
 		internal static double CalcDateStepSize( double range, double targetSteps, Scale scale )
 		{
 			// Calculate an initial guess at step size
@@ -500,8 +500,8 @@ namespace ZedGraph
 			if ( range > Default.RangeYearYear )
 			{
 				scale.MajorUnit = DateUnit.Year;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatYearYear;
+				if ( scale._formatAuto )
+					scale._format = Default.FormatYearYear;
 
 				tempStep = Math.Ceiling( tempStep / 365.0 );
 
@@ -517,8 +517,8 @@ namespace ZedGraph
 			else if ( range > Default.RangeYearMonth )
 			{
 				scale.MajorUnit = DateUnit.Year;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatYearMonth;
+				if ( scale._formatAuto )
+					scale._format = Default.FormatYearMonth;
 				tempStep = Math.Ceiling( tempStep / 365.0 );
 
 				if ( scale.MinorStepAuto )
@@ -537,8 +537,8 @@ namespace ZedGraph
 			else if ( range > Default.RangeMonthMonth )
 			{
 				scale.MajorUnit = DateUnit.Month;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatMonthMonth;
+				if ( scale._formatAuto )
+					scale._format = Default.FormatMonthMonth;
 				tempStep = Math.Ceiling( tempStep / 30.0 );
 
 				if ( scale.MinorStepAuto )
@@ -550,8 +550,8 @@ namespace ZedGraph
 			else if ( range > Default.RangeDayDay )
 			{
 				scale.MajorUnit = DateUnit.Day;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatDayDay;
+				if ( scale._formatAuto )
+					scale._format = Default.FormatDayDay;
 				tempStep = Math.Ceiling( tempStep );
 
 				if ( scale.MinorStepAuto )
@@ -564,8 +564,8 @@ namespace ZedGraph
 			else if ( range > Default.RangeDayHour )
 			{
 				scale.MajorUnit = DateUnit.Day;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatDayHour;
+				if ( scale._formatAuto )
+					scale._format = Default.FormatDayHour;
 				tempStep = Math.Ceiling( tempStep );
 
 				if ( scale.MinorStepAuto )
@@ -587,8 +587,8 @@ namespace ZedGraph
 			{
 				scale.MajorUnit = DateUnit.Hour;
 				tempStep = Math.Ceiling( tempStep * XDate.HoursPerDay );
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatHourHour;
+				if ( scale._formatAuto )
+					scale._format = Default.FormatHourHour;
 
 				if ( tempStep > 12.0 )
 					tempStep = 24.0;
@@ -619,8 +619,8 @@ namespace ZedGraph
 				scale.MajorUnit = DateUnit.Hour;
 				tempStep = Math.Ceiling( tempStep * XDate.HoursPerDay );
 
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatHourMinute;
+				if ( scale._formatAuto )
+					scale._format = Default.FormatHourMinute;
 
 				if ( scale.MinorStepAuto )
 				{
@@ -642,8 +642,8 @@ namespace ZedGraph
 			else if ( range > Default.RangeMinuteMinute )
 			{
 				scale.MajorUnit = DateUnit.Minute;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatMinuteMinute;
+				if ( scale._formatAuto )
+					scale._format = Default.FormatMinuteMinute;
 
 				tempStep = Math.Ceiling( tempStep * XDate.MinutesPerDay );
 				// make sure the minute step size is 1, 5, 15, or 30 minutes
@@ -672,8 +672,8 @@ namespace ZedGraph
 				scale.MajorUnit = DateUnit.Minute;
 				tempStep = Math.Ceiling( tempStep * XDate.MinutesPerDay );
 
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatMinuteSecond;
+				if ( scale._formatAuto )
+					scale._format = Default.FormatMinuteSecond;
 
 				if ( scale.MinorStepAuto )
 				{
@@ -695,8 +695,8 @@ namespace ZedGraph
 			else // SecondSecond
 			{
 				scale.MajorUnit = DateUnit.Second;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatSecondSecond;
+				if ( scale._formatAuto )
+					scale._format = Default.FormatSecondSecond;
 
 				tempStep = Math.Ceiling( tempStep * XDate.SecondsPerDay );
 				// make sure the second step size is 1, 5, 15, or 30 seconds
@@ -748,7 +748,7 @@ namespace ZedGraph
 			if ( direction < 0 )
 				direction = 0;
 
-			switch ( majorUnit )
+			switch ( _majorUnit )
 			{
 				case DateUnit.Year:
 				default:
@@ -807,18 +807,70 @@ namespace ZedGraph
 		/// cause the third value label on the axis to be generated.
 		/// </param>
 		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Axis.IsLog"/>)
-		/// and text (<see cref="Axis.IsText"/>) type axes.
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Scale.IsLog"/>)
+		/// and text (<see cref="Scale.IsText"/>) type axes.
 		/// </param>
-		/// <param name="label">
-		/// Output only.  The resulting value label.
-		/// </param>
-		override internal void MakeLabel( GraphPane pane, int index, double dVal, out string label )
+		/// <returns>The resulting value label as a <see cref="string" /></returns>
+		override internal string MakeLabel( GraphPane pane, int index, double dVal )
 		{
-			if ( this.scaleFormat == null )
-				this.scaleFormat = Scale.Default.ScaleFormat;
+			if ( this._format == null )
+				this._format = Scale.Default.Format;
 
-			label = XDate.ToString( dVal, this.scaleFormat );
+			return XDate.ToString( dVal, this._format );
+		}
+
+		/// <summary>
+		/// Gets the major unit multiplier for this scale type, if any.
+		/// </summary>
+		/// <remarks>The major unit multiplier will correct the units of
+		/// <see cref="Scale.MajorStep" /> to match the units of <see cref="Scale.Min" />
+		/// and <see cref="Scale.Max" />.  This reflects the setting of
+		/// <see cref="Scale.MajorUnit" />.
+		/// </remarks>
+		override internal double MajorUnitMultiplier
+		{
+			get { return GetUnitMultiple( _majorUnit ); }
+		}
+
+		/// <summary>
+		/// Gets the minor unit multiplier for this scale type, if any.
+		/// </summary>
+		/// <remarks>The minor unit multiplier will correct the units of
+		/// <see cref="Scale.MinorStep" /> to match the units of <see cref="Scale.Min" />
+		/// and <see cref="Scale.Max" />.  This reflects the setting of
+		/// <see cref="Scale.MinorUnit" />.
+		/// </remarks>
+		override internal double MinorUnitMultiplier
+		{
+			get { return GetUnitMultiple( _minorUnit ); }
+		}
+
+		/// <summary>
+		/// Internal routine to calculate a multiplier to the selected unit back to days.
+		/// </summary>
+		/// <param name="unit">The unit type for which the multiplier is to be
+		/// calculated</param>
+		/// <returns>
+		/// This is ratio of days/selected unit
+		/// </returns>
+		private double GetUnitMultiple( DateUnit unit )
+		{
+			switch ( _majorUnit )
+			{
+				case DateUnit.Year:
+				default:
+					return 365.0;
+				case DateUnit.Month:
+					return 30.0;
+				case DateUnit.Day:
+					return 1.0;
+				case DateUnit.Hour:
+					return 1.0 / XDate.HoursPerDay;
+				case DateUnit.Minute:
+					return 1.0 / XDate.MinutesPerDay;
+				case DateUnit.Second:
+					return 1.0 / XDate.SecondsPerDay;
+			}
 		}
 
 	#endregion

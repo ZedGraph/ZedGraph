@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.5 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2006-03-27 01:31:37 $ </version>
 	[Serializable]
 	class LogScale : Scale, ISerializable, ICloneable
 	{
@@ -99,8 +99,8 @@ namespace ZedGraph
 		/// </remarks>
 		public override double Min
 		{
-			get { return this.min; }
-			set { if ( value > 0 ) this.min = value; }
+			get { return this._min; }
+			set { if ( value > 0 ) this._min = value; }
 		}
 
 		/// <summary>
@@ -113,8 +113,8 @@ namespace ZedGraph
 		/// </remarks>
 		public override double Max
 		{
-			get { return this.max; }
-			set { if ( value > 0 ) this.max = value; }
+			get { return this._max; }
+			set { if ( value > 0 ) this._max = value; }
 		}
 
 	#endregion
@@ -142,8 +142,8 @@ namespace ZedGraph
 		{
 			base.SetupScaleData( pane, axis );
 
-			this.minScale = SafeLog( this.min );
-			this.maxScale = SafeLog( this.max );
+			this._minScale = SafeLog( this._min );
+			this._maxScale = SafeLog( this._max );
 		}
 
 		/// <summary>
@@ -223,12 +223,12 @@ namespace ZedGraph
 		/// </returns>
 		override internal double CalcBaseTic()
 		{
-			if ( this.baseTic != PointPair.Missing )
-				return this.baseTic;
+			if ( this._baseTic != PointPair.Missing )
+				return this._baseTic;
 			else
 			{
 				// go to the nearest even multiple of the step size
-				return Math.Ceiling( Scale.SafeLog( this.min ) - 0.00000001 );
+				return Math.Ceiling( Scale.SafeLog( this._min ) - 0.00000001 );
 			}
 
 		}
@@ -245,8 +245,8 @@ namespace ZedGraph
 
 			//iStart = (int) ( Math.Ceiling( SafeLog( this.min ) - 1.0e-12 ) );
 			//iEnd = (int) ( Math.Floor( SafeLog( this.max ) + 1.0e-12 ) );
-			nTics = (int) ( Math.Floor( Scale.SafeLog( this.max ) + 1.0e-12 ) ) -
-					(int) ( Math.Ceiling( Scale.SafeLog( this.min ) - 1.0e-12 ) ) + 1;
+			nTics = (int) ( Math.Floor( Scale.SafeLog( this._max ) + 1.0e-12 ) ) -
+					(int) ( Math.Ceiling( Scale.SafeLog( this._min ) - 1.0e-12 ) ) + 1;
 
 			if ( nTics < 1 )
 				nTics = 1;
@@ -264,18 +264,18 @@ namespace ZedGraph
 		/// is called by the general <see cref="PickScale"/> method.  The scale range is chosen
 		/// based always on powers of 10 (full log cycles).  This
 		/// method honors the <see cref="Scale.MinAuto"/>, <see cref="Scale.MaxAuto"/>,
-		/// and <see cref="Scale.StepAuto"/> autorange settings.
+		/// and <see cref="Scale.MajorStepAuto"/> autorange settings.
 		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.Step"/>
+		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.MajorStep"/>
 		/// setting is explicitly honored, and the remaining autorange settings (if any) will
 		/// be calculated to accomodate the non-autoranged values.  For log axes, the MinorStep
 		/// value is not used.
 		/// <para>On Exit:</para>
 		/// <para><see cref="Scale.Min"/> is set to scale minimum (if <see cref="Scale.MinAuto"/> = true)</para>
 		/// <para><see cref="Scale.Max"/> is set to scale maximum (if <see cref="Scale.MaxAuto"/> = true)</para>
-		/// <para><see cref="Scale.Step"/> is set to scale step size (if <see cref="Scale.StepAuto"/> = true)</para>
-		/// <para><see cref="Scale.ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="Scale.ScaleFormat"/> is set to the display format for the values (this controls the
+		/// <para><see cref="Scale.MajorStep"/> is set to scale step size (if <see cref="Scale.MajorStepAuto"/> = true)</para>
+		/// <para><see cref="Scale.Mag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="Scale.Format"/> is set to the display format for the values (this controls the
 		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
@@ -297,40 +297,40 @@ namespace ZedGraph
 			// call the base class first
 			base.PickScale( pane, g, scaleFactor );
 
-			this.scaleMag = 0;		// Never use a magnitude shift for log scales
+			this._mag = 0;		// Never use a magnitude shift for log scales
 			//this.numDec = 0;		// The number of decimal places to display is not used
 
 			// Check for bad data range
-			if ( this.min <= 0.0 && this.max <= 0.0 )
+			if ( this._min <= 0.0 && this._max <= 0.0 )
 			{
-				this.min = 1.0;
-				this.max = 10.0;
+				this._min = 1.0;
+				this._max = 10.0;
 			}
-			else if ( this.min <= 0.0 )
+			else if ( this._min <= 0.0 )
 			{
-				this.min = this.max / 10.0;
+				this._min = this._max / 10.0;
 			}
-			else if ( this.max <= 0.0 )
+			else if ( this._max <= 0.0 )
 			{
-				this.max = this.min * 10.0;
+				this._max = this._min * 10.0;
 			}
 
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < 1.0e-20 )
+			if ( this._max - this._min < 1.0e-20 )
 			{
-				if ( this.maxAuto )
-					this.max = this.max * 2.0;
-				if ( this.minAuto )
-					this.min = this.min / 2.0;
+				if ( this._maxAuto )
+					this._max = this._max * 2.0;
+				if ( this._minAuto )
+					this._min = this._min / 2.0;
 			}
 
 			// Get the nearest power of 10 (no partial log cycles allowed)
-			if ( this.minAuto )
-				this.min = Math.Pow( (double) 10.0,
-					Math.Floor( Math.Log10( this.min ) ) );
-			if ( this.maxAuto )
-				this.max = Math.Pow( (double) 10.0,
-					Math.Ceiling( Math.Log10( this.max ) ) );
+			if ( this._minAuto )
+				this._min = Math.Pow( (double) 10.0,
+					Math.Floor( Math.Log10( this._min ) ) );
+			if ( this._maxAuto )
+				this._max = Math.Pow( (double) 10.0,
+					Math.Ceiling( Math.Log10( this._max ) ) );
 
 		}
 
@@ -346,21 +346,19 @@ namespace ZedGraph
 		/// cause the third value label on the axis to be generated.
 		/// </param>
 		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Axis.IsLog"/>)
-		/// and text (<see cref="Axis.IsText"/>) type axes.
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Scale.IsLog"/>)
+		/// and text (<see cref="Scale.IsText"/>) type axes.
 		/// </param>
-		/// <param name="label">
-		/// Output only.  The resulting value label.
-		/// </param>
-		override internal void MakeLabel( GraphPane pane, int index, double dVal, out string label )
+		/// <returns>The resulting value label as a <see cref="string" /></returns>
+		override internal string MakeLabel( GraphPane pane, int index, double dVal )
 		{
-			if ( this.scaleFormat == null )
-				this.scaleFormat = Scale.Default.ScaleFormat;
+			if ( this._format == null )
+				this._format = Scale.Default.Format;
 
-			if ( this.isUseTenPower )
-				label = string.Format( "{0:F0}", dVal );
+			if ( this._isUseTenPower )
+				return string.Format( "{0:F0}", dVal );
 			else
-				label = Math.Pow( 10.0, dVal ).ToString( this.scaleFormat );
+				return Math.Pow( 10.0, dVal ).ToString( this._format );
 		}
 
 	#endregion

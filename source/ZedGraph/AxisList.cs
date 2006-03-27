@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-02-09 06:58:12 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2006-03-27 01:31:37 $ </version>
 	[Serializable]
 	abstract public class AxisList : CollectionPlus
 	{
@@ -72,7 +72,7 @@ namespace ZedGraph
 		/// Indexer to access the specified <see cref="Axis"/> object by
 		/// its <see cref="Axis.Title"/> string.
 		/// </summary>
-		/// <param name="title">The string title of the
+		/// <param name="title">The string _title of the
 		/// <see cref="Axis"/> object to be accessed.</param>
 		/// <value>A <see cref="Axis"/> object reference.</value>
 		public Axis this[ string title ]  
@@ -102,7 +102,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>The comparison of titles is not case sensitive, but it must include
 		/// all characters including punctuation, spaces, etc.</remarks>
-		/// <param name="title">The <see cref="String"/> label that is in the
+		/// <param name="title">The <see cref="String"/> _label that is in the
 		/// <see cref="Axis.Title"/> attribute of the item to be found.
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="Axis"/>,
@@ -114,7 +114,7 @@ namespace ZedGraph
 			int index = 0;
 			foreach ( Axis axis in this )
 			{
-				if ( String.Compare( axis.Title, title, true ) == 0 )
+				if ( String.Compare( axis.Title._text, title, true ) == 0 )
 					return index;
 				index++;
 			}
