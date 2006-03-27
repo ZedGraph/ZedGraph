@@ -155,6 +155,8 @@ namespace ZedGraph.ControlTest
 		{
 			GraphPane myPane = zedGraphControl1.GraphPane;
 
+			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
+
 			//this.zedGraphControl1.MouseDownEvent += new ZedGraphControl.MouseDownEventHandler( MyMouseDownEventHandler );
 
 #if false // masterpane with pies
@@ -186,8 +188,8 @@ namespace ZedGraph.ControlTest
 			PointPairList list1 = new PointPairList();
 			PointPairList list2 = new PointPairList();
 
-			zedGraphControl1.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler( MyContextMenuHandler );
-			zedGraphControl1.PointValueEvent += new ZedGraphControl.PointValueHandler( MyPointValueHandler );
+			//zedGraphControl1.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler( MyContextMenuHandler );
+			//zedGraphControl1.PointValueEvent += new ZedGraphControl.PointValueHandler( MyPointValueHandler );
 			zedGraphControl1.IsShowPointValues = true;
 
 			for( int i = 0; i < 18; i++ )
@@ -361,8 +363,80 @@ namespace ZedGraph.ControlTest
 
 #endif
 
+#if false	// Japanese Candlestick
 
-#if true			// radar plot
+			myPane.Title = "Japanese Candlestick Chart Demo";
+			myPane.XAxis.Title = "Trading Date";
+			myPane.YAxis.Title = "Share Price, $US";
+
+			PointPairList blackList = new PointPairList();
+			PointPairList whiteList = new PointPairList();
+			PointPairList hilowList = new PointPairList();
+			Random rand = new Random();
+
+			// First day is feb 1st
+			XDate xDate = new XDate( 2006, 2, 1 );
+			double open = 50.0;
+
+			// Loop to calculate some random data
+			for ( int i=0; i<20; i++ )
+			{
+				double x = xDate.XLDate;
+				double close = open + rand.NextDouble() * 10.0 - 5.0;
+				double top = Math.Max( open, close );
+				double bot = Math.Min( open, close );
+				double hi = top + rand.NextDouble() * 5.0;
+				double low = bot - rand.NextDouble() * 5.0;
+
+				if ( open < close )
+				{
+					whiteList.Add( x, top, bot );
+					blackList.Add( x, PointPair.Missing, PointPair.Missing );
+				}
+				else
+				{
+					blackList.Add( x, top, bot );
+					whiteList.Add( x, PointPair.Missing, PointPair.Missing );
+				}
+
+				hilowList.Add( x, hi, low );
+
+				open = close;
+				// Advance one day
+				xDate.AddDays( 1.0 );
+				// but skip the weekends
+				if ( XDate.XLDateToDayOfWeek( xDate.XLDate ) == 6 )
+					xDate.AddDays( 2.0 );
+			}
+
+			// Create the black Open-Close Bars
+			HiLowBarItem openclose = myPane.AddHiLowBar( "Open-Close", blackList, Color.Black );
+			openclose.Bar.Fill = new Fill( Color.Black );
+			// Create the white Open-Close bars
+			HiLowBarItem openclose2 = myPane.AddHiLowBar( "Open-Close", whiteList, Color.Black );
+			openclose2.Bar.Fill = new Fill( Color.White );
+			openclose2.IsLegendLabelVisible = false;
+
+			// Create the high-low sticks
+			ErrorBarItem hilow = myPane.AddErrorBar( "Hi-Low", hilowList, Color.Black );
+			hilow.ErrorBar.Symbol.IsVisible = false;
+
+			// Use DateAsOrdinal to skip weekend gaps
+			myPane.XAxis.Type = AxisType.DateAsOrdinal;
+			myPane.XAxis.Scale.Step = 1.0;
+
+			// pretty it up a little
+			myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+			myPane.PaneFill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
+
+			// Tell ZedGraph to calculate the axis ranges
+			zedGraphControl1.AxisChange();
+			zedGraphControl1.Invalidate();
+
+#endif
+
+
+#if false			// radar plot
 
 			myPane = zedGraphControl1.GraphPane;
 			RadarPointList rpl = new RadarPointList();
@@ -504,7 +578,7 @@ namespace ZedGraph.ControlTest
 			g.Dispose();
 #endif
 
-#if false	// Basic curve test - Date Axis
+#if true	// Basic curve test - Date Axis
 
 			PointPairList list = new PointPairList();
 
@@ -516,7 +590,7 @@ namespace ZedGraph.ControlTest
 			}
 
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
-			//myPane.XAxis.ScaleFormat = "dd/MM HH:mm";
+			myPane.XAxis.ScaleFormat = "MMM\nyyyy";
 			myPane.XAxis.Type = AxisType.Date;
 
 			zedGraphControl1.IsAutoScrollRange = true;
@@ -1211,5 +1285,89 @@ namespace ZedGraph.ControlTest
 		{
 			MessageBox.Show( "Hi" );
 		}
+
+		// masterpane with three vertical panes
+		private void CreateGraph_ThreeVerticalPanes( ZedGraphControl z1 )
+		{
+			MasterPane master = z1.MasterPane;
+
+			master.PaneFill = new Fill( Color.FromArgb( 230, 230, 255 ) );
+			master.PaneList.Clear();
+
+			master.IsShowTitle = true;
+			master.Title = "My MasterPane Title";
+
+			master.MarginAll = 10;
+			master.InnerPaneGap = 0;
+			//master.Legend.IsVisible = true;
+			//master.Legend.Position = LegendPos.TopCenter;
+
+			ColorSymbolRotator rotator = new ColorSymbolRotator();
+
+			for ( int j = 0; j < 3; j++ )
+			{
+				// Create a new graph with topLeft at (40,40) and size 600x400
+				GraphPane myPaneT = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+					"Case #" + ( j + 1 ).ToString(),
+					"Time, Days",
+					"Rate, m/s" );
+
+				myPaneT.PaneFill = new Fill( Color.FromArgb( 230, 230, 255 ) );
+				myPaneT.AxisFill = new Fill( Color.White, Color.LightYellow, 45.0F );
+				myPaneT.BaseDimension = 6.0F;
+				myPaneT.XAxis.IsShowTitle = false;
+				myPaneT.XAxis.IsScaleVisible = false;
+				myPaneT.Legend.IsVisible = false;
+				myPaneT.PaneBorder.IsVisible = false;
+				myPaneT.IsShowTitle = false;
+				myPaneT.XAxis.IsTic = false;
+				myPaneT.XAxis.IsMinorTic = false;
+				myPaneT.XAxis.IsShowGrid = true;
+				myPaneT.XAxis.IsShowMinorGrid = true;
+				myPaneT.MarginAll = 0;
+				if ( j == 0 )
+					myPaneT.MarginTop = 20;
+				if ( j == 2 )
+				{
+					myPaneT.XAxis.IsShowTitle = true;
+					myPaneT.XAxis.IsScaleVisible = true;
+					myPaneT.MarginBottom = 10;
+				}
+
+				// This sets the minimum amount of space for the left and right side, respectively
+				// The reason for this is so that the AxisRects all end up being the same size.
+				myPaneT.YAxis.MinSpace = 50;
+				myPaneT.Y2Axis.MinSpace = 20;
+
+				// Make up some data arrays based on the Sine function
+				double x, y;
+				PointPairList list = new PointPairList();
+				for ( int i = 0; i < 36; i++ )
+				{
+					x = (double)i + 5;
+					y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
+					list.Add( x, y );
+				}
+
+				LineItem myCurve = myPaneT.AddCurve( "Type " + j.ToString(),
+					list, rotator.NextColor, rotator.NextSymbol );
+				myCurve.Symbol.Fill = new Fill( Color.White );
+
+				master.Add( myPaneT );
+			}
+
+			Graphics g = this.CreateGraphics();
+
+			master.AutoPaneLayout( g, true, new int[] { 1, 1, 1 }, new float[] { 2, 1, 1 } );
+			//master.AutoPaneLayout( g, PaneLayout.SingleColumn );
+			//master.AutoPaneLayout( g, PaneLayout.ExplicitRow32 );
+			//master.AutoPaneLayout( g, 2, 4 );
+			//master.AutoPaneLayout( g, false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
+			z1.AxisChange();
+
+			g.Dispose();
+		}
+
+
 	}
 }

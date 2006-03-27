@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// eachother.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2006-03-09 06:13:13 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2006-03-27 01:06:29 $ </version>
 	public struct XDate //: ICloneable
 	{
 	#region Fields & Constants
@@ -143,7 +143,8 @@ namespace ZedGraph
 		public XDate( DateTime dateTime )
 		{
 			this.xlDate = CalendarDateToXLDate( dateTime.Year, dateTime.Month,
-							dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second );
+							dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second,
+							dateTime.Millisecond );
 		}
 		
 		/// <summary>

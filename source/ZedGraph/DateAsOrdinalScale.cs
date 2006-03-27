@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.5 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2006-03-27 01:06:29 $ </version>
 	[Serializable]
 	class DateAsOrdinalScale : Scale, ISerializable, ICloneable
 	{
@@ -216,7 +216,8 @@ namespace ZedGraph
 
 			int tmpIndex = (int) dVal - 1;
 
-			if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > tmpIndex )
+			if ( tmpIndex >= 0 && pane.CurveList.Count > 0 &&
+						pane.CurveList[0].Points.Count > tmpIndex )
 			{
 				val = pane.CurveList[0].Points[tmpIndex].X;
 				label = XDate.ToString( val, this.scaleFormat );

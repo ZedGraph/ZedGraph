@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.17 $ $Date: 2006-03-10 07:26:50 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2006-03-27 01:06:29 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -393,7 +393,34 @@ namespace ZedGraph
 				AutoPaneLayout( g, this.rows, this.columns );
 			else
 				AutoPaneLayout( g, this.paneLayout );
+
+			CommonScaleFactor();
 		}
+
+		bool _isCommonScaleFactor = true;
+
+		public void CommonScaleFactor()
+		{
+			if ( _isCommonScaleFactor )
+			{
+				// Find the maximum scaleFactor of all the GraphPanes
+				float maxFactor = 0;
+				foreach ( GraphPane pane in PaneList )
+				{
+					pane.BaseDimension = PaneBase.Default.BaseDimension;
+					float scaleFactor = pane.CalcScaleFactor();
+					maxFactor = scaleFactor > maxFactor ? scaleFactor : maxFactor;
+				}
+
+				// Now, calculate the base dimension
+				foreach ( GraphPane pane in PaneList )
+				{
+					float scaleFactor = pane.CalcScaleFactor();
+					pane.BaseDimension *= scaleFactor / maxFactor;
+				}
+			}
+		}
+
 
 		/// <summary>
 		/// Render all the <see cref="GraphPane"/> objects in the <see cref="PaneList"/> to the

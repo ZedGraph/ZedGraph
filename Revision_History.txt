@@ -1,4 +1,7 @@
 == ZedGraph Class Library Revision History ==
+;25-Mar-2006 (by Champion)
+: Fix Millisecond issue with DateTime
+: Check for sub-zero index on LinearAsOrdinal and DateAsOrdinal MakeLabel()
 
 ;17-Mar-2006 (by Champion)
 : Release Version 4.3.3
