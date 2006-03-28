@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.1 $ $Date: 2006-03-27 03:25:17 $ </version>
+	/// <version> $Revision: 3.59.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -70,7 +70,7 @@ namespace ZedGraph
 		private bool isShowPointValues;
 		/// <summary>
 		/// private field that determines whether or not tooltips will be displayed
-		/// showing the scale values while the mouse is located within the AxisRect.
+		/// showing the scale values while the mouse is located within the ChartRect.
 		/// Use the public property <see cref="IsShowCursorValues"/> to access this value.
 		/// </summary>
 		private bool isShowCursorValues;
@@ -1466,7 +1466,7 @@ namespace ZedGraph
 			if ( e.Clicks > 1 || this.masterPane == null )
 				return;
 
-			GraphPane pane = this.MasterPane.FindAxisRect( new PointF( e.X, e.Y ) );
+			GraphPane pane = this.MasterPane.FindChartRect( new PointF( e.X, e.Y ) );
 
 			if ( pane != null &&
 				( this.isEnableHPan || this.isEnableVPan ) &&
@@ -1550,7 +1550,7 @@ namespace ZedGraph
 		{
 			if ( ( this.isEnableVZoom || isEnableHZoom ) && this.masterPane != null )
 			{
-				GraphPane pane = this.MasterPane.FindAxisRect( new PointF( e.X, e.Y ) );
+				GraphPane pane = this.MasterPane.FindChartRect( new PointF( e.X, e.Y ) );
 				if ( pane != null && e.Delta != 0 )
 				{
 					ZoomState oldState = pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
@@ -1979,7 +1979,7 @@ namespace ZedGraph
 				this.BackColor, FrameStyle.Dashed );
 
 			RectangleF chartRect = dragPane.Chart._rect;
-			// Bound the zoom to the AxisRect
+			// Bound the zoom to the ChartRect
 			PointF endPt = BoundPointToRect( new PointF( e.X, e.Y ), Rectangle.Round( chartRect ) );
 			// Calculate the endpoint and dimensions for the new
 			// rectangle, again using the PointToScreen method.
@@ -2030,7 +2030,7 @@ namespace ZedGraph
 		{
 			if ( this.masterPane != null )
 			{
-				GraphPane pane = this.masterPane.FindAxisRect( mousePt );
+				GraphPane pane = this.masterPane.FindChartRect( mousePt );
 				if ( ( isEnableHPan || isEnableVPan ) && ( Control.ModifierKeys == Keys.Shift || isPanning ) &&
 					( pane != null || isPanning ) )
 					Cursor.Current = Cursors.Hand;

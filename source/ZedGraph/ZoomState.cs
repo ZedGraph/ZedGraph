@@ -20,7 +20,7 @@
 #region Using directives
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 
 #endregion
@@ -32,35 +32,36 @@ namespace ZedGraph
 	/// </summary>
 	/// <remarks>This structure is used by the <see cref="ZoomState"/> class to store
 	/// <see cref="Axis"/> scale range settings in a collection for later retrieval.
-	/// The class stores the <see cref="Axis.Min"/>, <see cref="Axis.Max"/>,
-	/// <see cref="Axis.MinorStep"/>, and <see cref="Axis.Step"/> properties, along with
-	/// the corresponding auto-scale settings: <see cref="Axis.MinAuto"/>,
-	/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.MinorStepAuto"/>,
-	/// and <see cref="Axis.StepAuto"/>.</remarks>
+	/// The class stores the <see cref="Scale.Min"/>, <see cref="Scale.Max"/>,
+	/// <see cref="Scale.MinorStep"/>, and <see cref="Scale.MajorStep"/> properties, along with
+	/// the corresponding auto-scale settings: <see cref="Scale.MinAuto"/>,
+	/// <see cref="Scale.MaxAuto"/>, <see cref="Scale.MinorStepAuto"/>,
+	/// and <see cref="Scale.MajorStepAuto"/>.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.10.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
 	public class ScaleState : ICloneable
 	{
 		/// <summary>
-		/// The axis range data for <see cref="Axis.Min"/>, <see cref="Axis.Max"/>,
-		/// <see cref="Axis.MinorStep"/>, and <see cref="Axis.Step"/>
+		/// The axis range data for <see cref="Scale.Min"/>, <see cref="Scale.Max"/>,
+		/// <see cref="Scale.MinorStep"/>, and <see cref="Scale.MajorStep"/>
 		/// </summary>
-		private double	min, minorStep, step, max;
+		private double	_min, _minorStep, _majorStep, _max;
 		/// <summary>
-		/// The status of <see cref="Axis.MinAuto"/>,
-		/// <see cref="Axis.MaxAuto"/>, <see cref="Axis.MinorStepAuto"/>,
-		/// and <see cref="Axis.StepAuto"/>
+		/// The status of <see cref="Scale.MinAuto"/>,
+		/// <see cref="Scale.MaxAuto"/>, <see cref="Scale.MinorStepAuto"/>,
+		/// and <see cref="Scale.MajorStepAuto"/>
 		/// </summary>
-		private bool	minAuto, minorStepAuto, stepAuto, maxAuto,
-						scaleFormatAuto, scaleMagAuto;
+		private bool	_minAuto, _minorStepAuto,
+							_majorStepAuto, _maxAuto,
+							_formatAuto, _magAuto;
 
 		/// <summary>
-		/// The status of <see cref="Axis.MajorUnit"/> and <see cref="Axis.MinorUnit"/>
+		/// The status of <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
 		/// </summary>
-		private DateUnit minorUnit, majorUnit;
+		private DateUnit _minorUnit, _majorUnit;
 
-		private string	scaleFormat;
-		private int		scaleMag;
+		private string	_format;
+		private int		_mag;
 
 		/// <summary>
 		/// Construct a <see cref="ScaleState"/> from the specified <see cref="Axis"/>
@@ -69,24 +70,24 @@ namespace ZedGraph
 		/// range settings.</param>
 		public ScaleState( Axis axis )
 		{
-			this.min = axis.Min;
-			this.minorStep = axis.MinorStep;
-			this.step = axis.Step;
-			this.max = axis.Max;
-			this.majorUnit = axis.MajorUnit;
-			this.minorUnit = axis.MinorUnit;
+			this._min = axis._scale._min;
+			this._minorStep = axis._scale._minorStep;
+			this._majorStep = axis._scale._majorStep;
+			this._max = axis._scale._max;
+			this._majorUnit = axis._scale._majorUnit;
+			this._minorUnit = axis._scale._minorUnit;
 
-			this.scaleFormat = axis.ScaleFormat;
-			this.scaleMag = axis.ScaleMag;
+			this._format = axis._scale._format;
+			this._mag = axis._scale._mag;
 			//this.numDec = axis.NumDec;
 
-			this.minAuto = axis.MinAuto;
-			this.stepAuto = axis.StepAuto;
-			this.minorStepAuto = axis.MinorStepAuto;
-			this.maxAuto = axis.MaxAuto;
+			this._minAuto = axis._scale._minAuto;
+			this._majorStepAuto = axis._scale._majorStepAuto;
+			this._minorStepAuto = axis._scale._minorStepAuto;
+			this._maxAuto = axis._scale._maxAuto;
 
-			this.scaleFormatAuto = axis.ScaleFormatAuto;
-			this.scaleMagAuto = axis.ScaleMagAuto;
+			this._formatAuto = axis._scale._formatAuto;
+			this._magAuto = axis._scale._magAuto;
 		}
 
 		/// <summary>
@@ -95,23 +96,23 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="ScaleState"/> object from which to copy</param>
 		public ScaleState( ScaleState rhs )
 		{
-			this.min = rhs.min;
-			this.step = rhs.step;
-			this.minorStep = rhs.minorStep;
-			this.max = rhs.max;
-			this.majorUnit = rhs.majorUnit;
-			this.minorUnit = rhs.minorUnit;
+			this._min = rhs._min;
+			this._majorStep = rhs._majorStep;
+			this._minorStep = rhs._minorStep;
+			this._max = rhs._max;
+			this._majorUnit = rhs._majorUnit;
+			this._minorUnit = rhs._minorUnit;
 
-			this.scaleFormat = rhs.scaleFormat;
-			this.scaleMag = rhs.scaleMag;
+			this._format = rhs._format;
+			this._mag = rhs._mag;
 
-			this.minAuto = rhs.minAuto;
-			this.stepAuto = rhs.stepAuto;
-			this.minorStepAuto = rhs.minorStepAuto;
-			this.maxAuto = rhs.maxAuto;
+			this._minAuto = rhs._minAuto;
+			this._majorStepAuto = rhs._majorStepAuto;
+			this._minorStepAuto = rhs._minorStepAuto;
+			this._maxAuto = rhs._maxAuto;
 
-			this.scaleFormatAuto = rhs.scaleFormatAuto;
-			this.scaleMagAuto = rhs.scaleMagAuto;
+			this._formatAuto = rhs._formatAuto;
+			this._magAuto = rhs._magAuto;
 		}
 
 		/// <summary>
@@ -140,25 +141,25 @@ namespace ZedGraph
 		/// copied</param>
 		public void ApplyScale( Axis axis )
 		{
-			axis.Min = this.min;
-			axis.Step = this.step;
-			axis.MinorStep = this.minorStep;
-			axis.Max = this.max;
-			axis.MajorUnit = this.majorUnit;
-			axis.MinorUnit = this.minorUnit;
+			axis._scale._min = this._min;
+			axis._scale._majorStep = this._majorStep;
+			axis._scale._minorStep = this._minorStep;
+			axis._scale._max = this._max;
+			axis._scale._majorUnit = this._majorUnit;
+			axis._scale._minorUnit = this._minorUnit;
 
-			axis.ScaleFormat = this.scaleFormat;
-			axis.ScaleMag = this.scaleMag;
+			axis._scale._format = this._format;
+			axis._scale._mag = this._mag;
 
 			// The auto settings must be made after the min/step/max settings, since setting those
 			// properties actually affects the auto settings.
-			axis.MinAuto = this.minAuto;
-			axis.MinorStepAuto = this.minorStepAuto;
-			axis.StepAuto = this.stepAuto;
-			axis.MaxAuto = this.maxAuto;
+			axis._scale._minAuto = this._minAuto;
+			axis._scale._minorStepAuto = this._minorStepAuto;
+			axis._scale._majorStepAuto = this._majorStepAuto;
+			axis._scale._maxAuto = this._maxAuto;
 
-			axis.ScaleFormatAuto = this.scaleFormatAuto;
-			axis.ScaleMagAuto = this.scaleMagAuto;
+			axis._scale._formatAuto = this._formatAuto;
+			axis._scale._magAuto = this._magAuto;
 
 		}
 
@@ -170,16 +171,16 @@ namespace ZedGraph
 		/// <returns>true if the states are different, false otherwise</returns>
 		public bool IsChanged( Axis axis )
 		{
-			return	axis.Min != this.min ||
-					axis.Step != this.step ||
-					axis.MinorStep != this.minorStep ||
-					axis.Max != this.max ||
-					axis.MinorUnit != this.minorUnit ||
-					axis.MajorUnit != this.majorUnit ||
-					axis.MinAuto != this.minAuto ||
-					axis.MinorStepAuto != this.minorStepAuto ||
-					axis.StepAuto != this.stepAuto ||
-					axis.MaxAuto != this.maxAuto;
+			return axis._scale._min != this._min ||
+					axis._scale._majorStep != this._majorStep ||
+					axis._scale._minorStep != this._minorStep ||
+					axis._scale._max != this._max ||
+					axis._scale._minorUnit != this._minorUnit ||
+					axis._scale._majorUnit != this._majorUnit ||
+					axis._scale._minAuto != this._minAuto ||
+					axis._scale._minorStepAuto != this._minorStepAuto ||
+					axis._scale._majorStepAuto != this._majorStepAuto ||
+					axis._scale._maxAuto != this._maxAuto;
 		}
 
 	}
@@ -189,18 +190,31 @@ namespace ZedGraph
 	/// objects, corresponding to the list of <see cref="Axis" /> objects
 	/// from <see cref="GraphPane.YAxisList" /> or <see cref="GraphPane.Y2AxisList" />.
 	/// </summary>
-	public class ScaleStateList : CollectionPlus, ICloneable
+	public class ScaleStateList : List<ScaleState>, ICloneable
 	{
 		/// <summary>
 		/// Construct a new <see cref="ScaleStateList" /> automatically from an
-		/// existing <see cref="AxisList" />.
+		/// existing <see cref="YAxisList" />.
 		/// </summary>
-		/// <param name="list">The <see cref="AxisList" /> (a list of Y axes),
+		/// <param name="list">The <see cref="YAxisList" /> (a list of Y axes),
 		/// from which to retrieve the state and create the <see cref="ScaleState" />
 		/// objects.</param>
-		public ScaleStateList( AxisList list )
+		public ScaleStateList( YAxisList list )
 		{
-			foreach( Axis axis in list )
+			foreach ( Axis axis in list )
+				this.Add( new ScaleState( axis ) );
+		}
+
+		/// <summary>
+		/// Construct a new <see cref="ScaleStateList" /> automatically from an
+		/// existing <see cref="Y2AxisList" />.
+		/// </summary>
+		/// <param name="list">The <see cref="Y2AxisList" /> (a list of Y axes),
+		/// from which to retrieve the state and create the <see cref="ScaleState" />
+		/// objects.</param>
+		public ScaleStateList( Y2AxisList list )
+		{
+			foreach ( Axis axis in list )
 				this.Add( new ScaleState( axis ) );
 		}
 
@@ -237,17 +251,17 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Iterate through the list of <see cref="ScaleState" /> objects, comparing them
-		/// to the state of the specified <see cref="AxisList" /> <see cref="Axis" />
+		/// to the state of the specified <see cref="YAxisList" /> <see cref="Axis" />
 		/// objects.
 		/// </summary>
-		/// <param name="list">An <see cref="AxisList" /> object specifying a list of
+		/// <param name="list">A <see cref="YAxisList" /> object specifying a list of
 		/// <see cref="Axis" /> objects to be compared with this <see cref="ScaleStateList" />.
 		/// </param>
 		/// <returns>true if a difference is found, false otherwise</returns>
-		public bool IsChanged( AxisList list )
+		public bool IsChanged( YAxisList list )
 		{
 			int count = Math.Min( list.Count, this.Count );
-			for ( int i=0; i<count; i++ )
+			for ( int i = 0; i < count; i++ )
 				if ( this[i].IsChanged( list[i] ) )
 					return true;
 
@@ -255,37 +269,67 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Indexer to access the specified <see cref="ScaleState"/> object by
-		/// its ordinal position in the list.
+		/// Iterate through the list of <see cref="ScaleState" /> objects, comparing them
+		/// to the state of the specified <see cref="Y2AxisList" /> <see cref="Axis" />
+		/// objects.
 		/// </summary>
-		/// <param name="index">The ordinal position (zero-based) of the
-		/// <see cref="ScaleState"/> object to be accessed.</param>
-		/// <value>A <see cref="ScaleState"/> object reference.</value>
-		public ScaleState this[ int index ]  
+		/// <param name="list">A <see cref="Y2AxisList" /> object specifying a list of
+		/// <see cref="Axis" /> objects to be compared with this <see cref="ScaleStateList" />.
+		/// </param>
+		/// <returns>true if a difference is found, false otherwise</returns>
+		public bool IsChanged( Y2AxisList list )
 		{
-			get { return (ScaleState) List[index]; }
-			set { List[index] = value; }
+			int count = Math.Min( list.Count, this.Count );
+			for ( int i = 0; i < count; i++ )
+				if ( this[i].IsChanged( list[i] ) )
+					return true;
+
+			return false;
 		}
+		/*
+				/// <summary>
+				/// Indexer to access the specified <see cref="ScaleState"/> object by
+				/// its ordinal position in the list.
+				/// </summary>
+				/// <param name="index">The ordinal position (zero-based) of the
+				/// <see cref="ScaleState"/> object to be accessed.</param>
+				/// <value>A <see cref="ScaleState"/> object reference.</value>
+				public ScaleState this[ int index ]  
+				{
+					get { return (ScaleState) List[index]; }
+					set { List[index] = value; }
+				}
+				/// <summary>
+				/// Add a <see cref="ScaleState"/> object to the collection at the end of the list.
+				/// </summary>
+				/// <param name="state">A reference to the <see cref="ScaleState"/> object to
+				/// be added</param>
+				/// <seealso cref="IList.Add"/>
+				public void Add( ScaleState state )
+				{
+					List.Add( state );
+				}
+		*/
 
 		/// <summary>
-		/// Add a <see cref="ScaleState"/> object to the collection at the end of the list.
+		/// 
 		/// </summary>
-		/// <param name="state">A reference to the <see cref="ScaleState"/> object to
-		/// be added</param>
-		/// <seealso cref="IList.Add"/>
-		public void Add( ScaleState state )
+		/// <param name="list"></param>
+		public void ApplyScale( YAxisList list )
 		{
-			List.Add( state );
+			int count = Math.Min( list.Count, this.Count );
+			for ( int i = 0; i < count; i++ )
+				this[i].ApplyScale( list[i] );
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="list"></param>
-		public void ApplyScale( AxisList list )
+		public void ApplyScale( Y2AxisList list )
 		{
 			int count = Math.Min( list.Count, this.Count );
-			for ( int i=0; i<count; i++ )
+			for ( int i = 0; i < count; i++ )
 				this[i].ApplyScale( list[i] );
 		}
 	}
@@ -301,7 +345,7 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.10.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
 	public class ZoomState : ICloneable
 	{
 		/// <summary>
@@ -331,13 +375,13 @@ namespace ZedGraph
 		/// <summary>
 		/// <see cref="ScaleState"/> objects to store the state data from the axes.
 		/// </summary>
-		private ScaleState	xAxis;
-		private ScaleStateList yAxis, y2Axis;
+		private ScaleState	_xAxis;
+		private ScaleStateList _yAxis, _y2Axis;
 		/// <summary>
 		/// An enum value indicating the type of adjustment being made to the
 		/// scale range state.
 		/// </summary>
-		private StateType	type;
+		private StateType	_type;
 
 		/// <summary>
 		/// Gets a <see cref="StateType" /> value indicating the type of action (zoom or pan)
@@ -345,7 +389,7 @@ namespace ZedGraph
 		/// </summary>
 		public StateType Type
 		{
-			get { return type; }
+			get { return _type; }
 		}
 
 		/// <summary>
@@ -358,7 +402,7 @@ namespace ZedGraph
 		{
 			get
 			{
-				switch ( type )
+				switch ( _type )
 				{
 					case StateType.Pan:
 						return "Pan";
@@ -385,10 +429,10 @@ namespace ZedGraph
 		public ZoomState( GraphPane pane, StateType type )
 		{
 
-			this.xAxis = new ScaleState( pane.XAxis );
-			this.yAxis = new ScaleStateList( pane.YAxisList );
-			this.y2Axis = new ScaleStateList( pane.Y2AxisList );
-			this.type = type;
+			this._xAxis = new ScaleState( pane.XAxis );
+			this._yAxis = new ScaleStateList( pane.YAxisList );
+			this._y2Axis = new ScaleStateList( pane.Y2AxisList );
+			this._type = type;
 		}
 
 		/// <summary>
@@ -397,9 +441,9 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="ZoomState"/> object from which to copy</param>
 		public ZoomState( ZoomState rhs )
 		{
-			this.xAxis = new ScaleState( rhs.xAxis );
-			this.yAxis = new ScaleStateList( rhs.yAxis );
-			this.y2Axis = new ScaleStateList( rhs.y2Axis );
+			this._xAxis = new ScaleState( rhs._xAxis );
+			this._yAxis = new ScaleStateList( rhs._yAxis );
+			this._y2Axis = new ScaleStateList( rhs._y2Axis );
 		}
 
 		/// <summary>
@@ -429,9 +473,9 @@ namespace ZedGraph
 		/// copied.</param>
 		public void ApplyState( GraphPane pane )
 		{
-			this.xAxis.ApplyScale( pane.XAxis );
-			this.yAxis.ApplyScale( pane.YAxisList );
-			this.y2Axis.ApplyScale( pane.Y2AxisList );
+			this._xAxis.ApplyScale( pane.XAxis );
+			this._yAxis.ApplyScale( pane.YAxisList );
+			this._y2Axis.ApplyScale( pane.Y2AxisList );
 		}
 
 		/// <summary>
@@ -442,9 +486,9 @@ namespace ZedGraph
 		/// <returns>true if the states are different, false otherwise</returns>
 		public bool IsChanged( GraphPane pane )
 		{
-			return	this.xAxis.IsChanged( pane.XAxis ) ||
-					this.yAxis.IsChanged( pane.YAxisList ) ||
-					this.y2Axis.IsChanged( pane.Y2AxisList );
+			return	this._xAxis.IsChanged( pane.XAxis ) ||
+					this._yAxis.IsChanged( pane.YAxisList ) ||
+					this._y2Axis.IsChanged( pane.Y2AxisList );
 		}
 
 	}
@@ -454,8 +498,8 @@ namespace ZedGraph
 	/// states (of scale range settings).
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10 $ $Date: 2006-02-14 06:14:22 $ </version>
-	public class ZoomStateStack : CollectionBase, ICloneable
+	/// <version> $Revision: 3.10.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	public class ZoomStateStack : List<ZoomState>, ICloneable
 	{
 		/// <summary>
 		/// Default Constructor
@@ -472,7 +516,7 @@ namespace ZedGraph
 		{
 			foreach ( ZoomState state in rhs )
 			{
-				this.List.Add( new ZoomState( state ) );
+				Add( new ZoomState( state ) );
 			}
 		}
 
@@ -502,7 +546,7 @@ namespace ZedGraph
 		/// <value>true for an empty stack, false otherwise</value>
 		public bool IsEmpty
 		{
-			get { return this.List.Count == 0; }
+			get { return this.Count == 0; }
 		}
 
 		/// <summary>
@@ -517,7 +561,7 @@ namespace ZedGraph
 		public ZoomState Push( GraphPane pane, ZoomState.StateType type )
 		{
 			ZoomState state = new ZoomState( pane, type );
-			this.List.Add( state );
+			this.Add( state );
 			return state;
 		}
 
@@ -530,7 +574,7 @@ namespace ZedGraph
 		/// parameter).</returns>
 		public ZoomState Push( ZoomState state )
 		{
-			this.List.Add( state );
+			this.Add( state );
 			return state;
 		}
 
@@ -547,8 +591,8 @@ namespace ZedGraph
 		{
 			if ( !this.IsEmpty )
 			{
-				ZoomState state = (ZoomState) this.List[ this.List.Count - 1 ];
-				this.List.RemoveAt( this.List.Count - 1 );
+				ZoomState state = (ZoomState) this[ this.Count - 1 ];
+				this.RemoveAt( this.Count - 1 );
 
 				state.ApplyState( pane );
 				return state;
@@ -570,8 +614,8 @@ namespace ZedGraph
 		{
 			if ( !this.IsEmpty )
 			{
-				ZoomState state = (ZoomState) this.List[ 0 ];
-				this.List.Clear();
+				ZoomState state = (ZoomState) this[ 0 ];
+				this.Clear();
 
 				state.ApplyState( pane );
 
@@ -591,7 +635,7 @@ namespace ZedGraph
 			get
 			{
 				if ( !this.IsEmpty )
-					return (ZoomState) this.List[ this.List.Count - 1 ];
+					return (ZoomState) this[ this.Count - 1 ];
 				else
 					return null;
 			}

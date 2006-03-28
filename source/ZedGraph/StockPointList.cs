@@ -19,7 +19,7 @@
 
 using System;
 using System.Drawing;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace ZedGraph
 {
@@ -29,9 +29,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion based on code by Jerry Vos</author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
-	public class StockPointList : CollectionPlus, IPointList, IPointListEdit
+	public class StockPointList : List<StockPt>, IPointList, IPointListEdit
 	{
 	#region Properties
 
@@ -42,10 +42,10 @@ namespace ZedGraph
 		/// <param name="index">The ordinal position (zero-based) of the
 		/// <see cref="StockPt"/> object to be accessed.</param>
 		/// <value>A <see cref="StockPt"/> object reference.</value>
-		public PointPair this[int index]
+		public new PointPair this[int index]
 		{
-			get { return (StockPt)List[index]; }
-			set { List[index] = value; }
+			get { return base[index]; }
+			set { base[index] = new StockPt( value ); }
 		}
 
 	#endregion
@@ -100,23 +100,9 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="point">The <see cref="StockPt"/> object to
 		/// be added</param>
-		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
-		/// <seealso cref="IList.Add"/>
-		public int Add( StockPt point )
+		public void Add( PointPair point )
 		{
-			return List.Add( new StockPt( point ) );
-		}
-
-		/// <summary>
-		/// Add a <see cref="StockPt"/> object to the collection at the end of the list.
-		/// </summary>
-		/// <param name="point">The <see cref="StockPt"/> object to
-		/// be added</param>
-		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
-		/// <seealso cref="IList.Add"/>
-		public int Add( PointPair point )
-		{
-			return List.Add( new PointPair( point ) );
+			Add( new StockPt( point ) );
 		}
 
 		/// <summary>
@@ -128,9 +114,9 @@ namespace ZedGraph
 		/// <param name="high">The high value for the day</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
 		/// <seealso cref="IList.Add"/>
-		public int Add( double date, double high )
+		public void Add( double date, double high )
 		{
-			return List.Add( new StockPt( date, high, PointPair.Missing, PointPair.Missing,
+			Add( new StockPt( date, high, PointPair.Missing, PointPair.Missing,
 				PointPair.Missing, PointPair.Missing ) );
 		}
 
@@ -145,11 +131,12 @@ namespace ZedGraph
 		/// <param name="vol">The trading volume for the day</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
 		/// <seealso cref="IList.Add"/>
-		public int Add( double date, double high, double low, double open, double close, double vol )
+		public void Add( double date, double high, double low, double open, double close, double vol )
 		{
 			StockPt point = new StockPt( date, high, low, open, close, vol );
-			return List.Add( point );
+			Add( point );
 		}
+
 
 	#endregion
 	}

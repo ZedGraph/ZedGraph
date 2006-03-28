@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// Class that holds the specific properties for the minor tics.
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	public class MinorTic : ICloneable, ISerializable
 	{
 		internal bool	_isOutside,
@@ -462,7 +462,7 @@ namespace ZedGraph
 		/// <see cref="Axis"/></param>
 		/// <param name="topPix">The pixel value of the top of the axis border</param>
 		/// <param name="shift">The number of pixels to shift this axis, based on the
-		/// value of <see cref="Axis.Cross"/>.  A positive value is into the axisRect relative to
+		/// value of <see cref="Axis.Cross"/>.  A positive value is into the ChartRect relative to
 		/// the default axis position.</param>
 		/// <param name="scaledTic">The scaled size of a minor tic, in pixel units</param>
 		internal void Draw( Graphics g, GraphPane pane, Pen pen, float pixVal, float topPix,

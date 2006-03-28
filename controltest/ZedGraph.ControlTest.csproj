@@ -54,33 +54,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="ZedGraph.ControlTest\DataSet1.xsc">
-      <DependentUpon>DataSet1.xsd</DependentUpon>
-    </None>
-    <None Include="ZedGraph.ControlTest\DataSet1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="ZedGraph.ControlTest\DataSet1.xss">
-      <DependentUpon>DataSet1.xsd</DependentUpon>
-    </None>
-    <None Include="ZedGraph.ControlTest\DataSet2.xsc">
-      <DependentUpon>DataSet2.xsd</DependentUpon>
-    </None>
-    <None Include="ZedGraph.ControlTest\DataSet2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="ZedGraph.ControlTest\DataSet2.xss">
-      <DependentUpon>DataSet2.xsd</DependentUpon>
-    </None>
-    <None Include="ZedGraph.ControlTest\myordersdb.xsc">
-      <DependentUpon>myordersdb.xsd</DependentUpon>
-    </None>
-    <None Include="ZedGraph.ControlTest\myordersdb.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="ZedGraph.ControlTest\myordersdb.xss">
-      <DependentUpon>myordersdb.xsd</DependentUpon>
-    </None>
     <None Include="ZedGraph.ControlTest\NorthwindDataSet.xsc">
       <DependentUpon>NorthwindDataSet.xsd</DependentUpon>
     </None>
@@ -95,25 +68,12 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="ZedGraph.ControlTest\DataSet1.cs">
-      <DependentUpon>DataSet1.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="ZedGraph.ControlTest\DataSet1.Designer.cs">
-      <DependentUpon>DataSet1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ZedGraph.ControlTest\DataSet2.cs">
-      <DependentUpon>DataSet2.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="ZedGraph.ControlTest\DataSet2.Designer.cs">
-      <DependentUpon>DataSet2.cs</DependentUpon>
-    </Compile>
     <Compile Include="ZedGraph.ControlTest\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ZedGraph.ControlTest\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="ZedGraph.ControlTest\myordersdb.Designer.cs" />
     <Compile Include="ZedGraph.ControlTest\NorthwindDataSet.Designer.cs" />
     <Compile Include="ZedGraph.ControlTest\Program.cs" />
   </ItemGroup>

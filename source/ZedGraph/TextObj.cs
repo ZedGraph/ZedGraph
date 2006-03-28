@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
 	public class TextObj : GraphObj, ICloneable, ISerializable
 	{
@@ -177,7 +177,7 @@ namespace ZedGraph
 		/// Constructor that sets all <see cref="TextObj"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		/// <param name="text">The _text to be displayed.</param>
+		/// <param name="text">The text to be displayed.</param>
 		/// <param name="x">The x position of the text.  The units
 		/// of this position are specified by the
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
@@ -214,7 +214,7 @@ namespace ZedGraph
 		/// Constructor that sets all <see cref="TextObj"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		/// <param name="text">The _text to be displayed.</param>
+		/// <param name="text">The text to be displayed.</param>
 		/// <param name="x">The x position of the text.  The units
 		/// of this position are specified by the
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
@@ -238,7 +238,7 @@ namespace ZedGraph
 		/// Constructor that sets all <see cref="TextObj"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		/// <param name="text">The _text to be displayed.</param>
+		/// <param name="text">The text to be displayed.</param>
 		/// <param name="x">The x position of the text.  The units
 		/// of this position are specified by the
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be

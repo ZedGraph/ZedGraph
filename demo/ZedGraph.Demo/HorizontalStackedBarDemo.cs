@@ -34,9 +34,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title = "Cat Stats";
-			myPane.YAxis.Title = "Big Cats";
-			myPane.XAxis.Title = "Population";
+			myPane.Title.Text = "Cat Stats";
+			myPane.YAxis.Title.Text = "Big Cats";
+			myPane.XAxis.Title.Text = "Population";
 			
 			// Make up some data points
 			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard" };
@@ -60,21 +60,21 @@ namespace ZedGraph.Demo
 			myCurve.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 90f );
 
 			// Draw the Y tics between the labels instead of at the labels
-			myPane.YAxis.IsTicsBetweenLabels = true;
+			myPane.YAxis.MajorTic.IsBetweenLabels = true;
 
 			// Set the YAxis labels
-			myPane.YAxis.TextLabels = labels;
+			myPane.YAxis.Scale.TextLabels = labels;
 			// Set the YAxis to Text type
 			myPane.YAxis.Type = AxisType.Text;
 
 			// Set the bar type to stack, which stacks the bars by automatically accumulating the values
-			myPane.BarType = BarType.Stack;
+			myPane.BarSettings.Type = BarType.Stack;
 
 			// Make the bars horizontal by setting the BarBase to "Y"
-			myPane.BarBase = BarBase.Y;
+			myPane.BarSettings.Base = BarBase.Y;
 			
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.White,
+			myPane.Chart.Fill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 45.0F );
 
 			base.ZedGraphControl.AxisChange();

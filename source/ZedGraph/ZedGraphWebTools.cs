@@ -736,7 +736,7 @@ namespace ZedGraph
 				{
 					((IStateManager)item).TrackViewState();
 					((GenericItem)item).SetDirty();						
-					//_saveAll = true;
+					//saveAll = true;
 				}
 				return List.Count - 1;
 			}	

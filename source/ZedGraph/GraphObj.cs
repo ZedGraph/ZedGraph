@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
 	abstract public class GraphObj : ISerializable, ICloneable
 	{
@@ -52,10 +52,10 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Protected field that determines whether or not the rendering of this <see cref="GraphObj"/>
-		/// will be clipped to the AxisRect.  Use the public property <see cref="IsClippedToAxisRect"/> to
+		/// will be clipped to the ChartRect.  Use the public property <see cref="IsClippedToAxisRect"/> to
 		/// access this value.
 		/// </summary>
-		protected bool _isClippedToAxisRect;
+		protected bool _isClippedToChartRect;
 		
 		/// <summary>
 		/// A tag object for use by the user.  This can be used to store additional
@@ -109,9 +109,9 @@ namespace ZedGraph
 			/// enum</value>
 			public static CoordType CoordFrame = CoordType.AxisXYScale;
 			/// <summary>
-			/// The default value for <see cref="GraphObj.IsClippedToAxisRect"/>.
+			/// The default value for <see cref="GraphObj.IsClippedToChartRect"/>.
 			/// </summary>
-			public static bool IsClippedToAxisRect = false;
+			public static bool IsClippedToChartRect = false;
 		}
 	#endregion
 
@@ -159,10 +159,10 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>true to clip the <see cref="GraphObj"/> to the <see cref="Chart.Rect"/> bounds,
 		/// false to leave it unclipped.</value>
-		public bool IsClippedToAxisRect
+		public bool IsClippedToChartRect
 		{
-			get { return _isClippedToAxisRect; }
-			set { _isClippedToAxisRect = value; }
+			get { return _isClippedToChartRect; }
+			set { _isClippedToChartRect = value; }
 		}
 
 		
@@ -274,7 +274,7 @@ namespace ZedGraph
 		public GraphObj( float x, float y, CoordType coordType, AlignH alignH, AlignV alignV )
 		{
 			this._isVisible = true;
-			this._isClippedToAxisRect = Default.IsClippedToAxisRect;
+			this._isClippedToChartRect = Default.IsClippedToChartRect;
 			this.Tag = null;
 			this._zOrder = ZOrder.A_InFront;
 			this._location = new Location( x, y, coordType, alignH, alignV );
@@ -308,7 +308,7 @@ namespace ZedGraph
 					AlignH alignH, AlignV alignV )
 		{
 			this._isVisible = true;
-			this._isClippedToAxisRect = Default.IsClippedToAxisRect;
+			this._isClippedToChartRect = Default.IsClippedToChartRect;
 			this.Tag = null;
 			this._zOrder = ZOrder.A_InFront;
 			this._location = new Location( x, y, x2, y2, coordType, alignH, alignV );
@@ -322,7 +322,7 @@ namespace ZedGraph
 		{
 			// Copy value types
 			this._isVisible = rhs.IsVisible;
-			this._isClippedToAxisRect = rhs._isClippedToAxisRect;
+			this._isClippedToChartRect = rhs._isClippedToChartRect;
 			this._zOrder = rhs.ZOrder;
 
 			// copy reference types by cloning
@@ -363,7 +363,7 @@ namespace ZedGraph
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
 		/// <remarks>
-		/// schema changed to 2 when isClippedToAxisRect was added.
+		/// schema changed to 2 when isClippedToChartRect was added.
 		/// </remarks>
 		public const int schema = 1;
 
@@ -386,9 +386,9 @@ namespace ZedGraph
 			_zOrder = (ZOrder) info.GetValue( "zOrder", typeof(ZOrder) );
 
 			if ( sch >= 2 )
-				_isClippedToAxisRect = info.GetBoolean( "isClippedToAxisRect" );
+				_isClippedToChartRect = info.GetBoolean( "isClippedToChartRect" );
 			else
-				_isClippedToAxisRect = Default.IsClippedToAxisRect;
+				_isClippedToChartRect = Default.IsClippedToChartRect;
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -404,7 +404,7 @@ namespace ZedGraph
 			info.AddValue( "Tag", Tag );
 			info.AddValue( "zOrder", _zOrder );
 
-			info.AddValue( "isClippedToAxisRect", _isClippedToAxisRect );
+			info.AddValue( "isClippedToChartRect", _isClippedToChartRect );
 		}
 	#endregion
 

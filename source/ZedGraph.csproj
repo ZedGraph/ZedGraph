@@ -44,7 +44,6 @@
     <Compile Include="ZedGraph\ArrowObj.cs" />
     <Compile Include="ZedGraph\Axis.cs" />
     <Compile Include="ZedGraph\AxisLabel.cs" />
-    <Compile Include="ZedGraph\AxisList.cs" />
     <Compile Include="ZedGraph\Bar.cs" />
     <Compile Include="ZedGraph\BarItem.cs" />
     <Compile Include="ZedGraph\BarSettings.cs" />
@@ -54,7 +53,6 @@
     <Compile Include="ZedGraph\CandleStick.cs" />
     <Compile Include="ZedGraph\CandleStickItem.cs" />
     <Compile Include="ZedGraph\Chart.cs" />
-    <Compile Include="ZedGraph\CollectionPlus.cs" />
     <Compile Include="ZedGraph\ColorSymbolRotator.cs" />
     <Compile Include="ZedGraph\CurveItem.cs" />
     <Compile Include="ZedGraph\CurveList.cs" />
@@ -96,6 +94,7 @@
     <Compile Include="ZedGraph\MinorTic.cs" />
     <Compile Include="ZedGraph\OrdinalScale.cs" />
     <Compile Include="ZedGraph\PaneBase.cs" />
+    <Compile Include="ZedGraph\PaneLayoutMgr.cs" />
     <Compile Include="ZedGraph\PaneList.cs" />
     <Compile Include="ZedGraph\PieItem.cs" />
     <Compile Include="ZedGraph\PointPair.cs" />

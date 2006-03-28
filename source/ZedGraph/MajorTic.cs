@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// <see cref="MinorTic" />.
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	public class MajorTic : MinorTic, ICloneable, ISerializable
 	{
 		internal bool	_isBetweenLabels;
@@ -96,7 +96,7 @@ namespace ZedGraph
 		/// Note that this setting is only
 		/// applicable if <see cref="Axis.Type"/> = <see cref="AxisType.Text"/>.
 		/// </remarks>
-		/// <value>true to place the text between the labels for _text axes, false otherwise</value>
+		/// <value>true to place the text between the labels for text axes, false otherwise</value>
 		/// <seealso cref="MinorTic.IsOutside"/>
 		/// <seealso cref="MinorTic.IsInside"/>
 		/// <seealso cref="MinorTic.IsOpposite"/>

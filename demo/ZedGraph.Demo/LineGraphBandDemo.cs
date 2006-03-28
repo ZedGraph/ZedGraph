@@ -35,9 +35,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title = "Line Graph with Band Demo";
-			myPane.XAxis.Title = "Sequence";
-			myPane.YAxis.Title = "Temperature, C";
+			myPane.Title.Text = "Line Graph with Band Demo";
+			myPane.XAxis.Title.Text = "Sequence";
+			myPane.YAxis.Title.Text = "Temperature, C";
 			
 			// Enter some random data values
 			double[] y = { 100, 115, 75, 22, 98, 40, 10 };
@@ -46,7 +46,7 @@ namespace ZedGraph.Demo
 			double[] x = { 100, 200, 300, 400, 500, 600, 700 };
 
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245), Color.FromArgb( 255, 255, 190), 90F );
+			myPane.Chart.Fill = new Fill( Color.FromArgb( 255, 255, 245), Color.FromArgb( 255, 255, 190), 90F );
 
 			// Generate a red curve with "Curve 1" in the legend
 			LineItem myCurve = myPane.AddCurve( "Curve 1", x, y, Color.Red );
@@ -64,28 +64,28 @@ namespace ZedGraph.Demo
 			myCurve.Symbol.Fill = new Fill( Color.White );
 
 			// Manually set the x axis range
-			myPane.XAxis.Min = 0;
-			myPane.XAxis.Max = 800;
+			myPane.XAxis.Scale.Min = 0;
+			myPane.XAxis.Scale.Max = 800;
 			// Display the Y axis grid lines
-			myPane.YAxis.IsShowGrid = true;
-			myPane.YAxis.IsShowMinorGrid = true;
+			myPane.YAxis.MajorGrid.IsVisible = true;
+			myPane.YAxis.MinorGrid.IsVisible = true;
 
 			// Draw a box item to highlight a value range
-			BoxItem box = new BoxItem( new RectangleF( 0, 100, 800, 30 ), Color.Empty, 
+			BoxObj box = new BoxObj( new RectangleF( 0, 100, 800, 30 ), Color.Empty, 
 					Color.FromArgb( 150, Color.LightGreen ) );
 			box.Fill = new Fill( Color.White, Color.FromArgb( 200, Color.LightGreen ), 45.0F );
 			// Use the BehindAxis zorder to draw the highlight beneath the grid lines
 			box.ZOrder = ZOrder.E_BehindAxis;
-			myPane.GraphItemList.Add( box );
+			myPane.GraphObjList.Add( box );
 
 			// Add a text item to label the highlighted range
-			TextItem text = new TextItem( "Optimal\nRange", 750, 85, CoordType.AxisXYScale,
+			TextObj text = new TextObj( "Optimal\nRange", 750, 85, CoordType.AxisXYScale,
 									AlignH.Right, AlignV.Center );
 			text.FontSpec.Fill.IsVisible = false;
 			text.FontSpec.Border.IsVisible = false;
 			text.FontSpec.IsBold = true;
 			text.FontSpec.IsItalic = true;
-			myPane.GraphItemList.Add( text );
+			myPane.GraphObjList.Add( text );
 		}
 	}
 }

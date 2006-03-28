@@ -7,9 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.ControlTest", "Con
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.LibTest", "libtest\ZedGraph.LibTest.csproj", "{8D4E0CB3-42C5-4D39-B63B-373950B04DE8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.Demo", "Demo\ZedGraph.Demo.csproj", "{C9FDF2E8-0776-4DA5-AEA9-ED847D85F9C7}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.UnitTest", "unittest\ZedGraph.UnitTest.csproj", "{15D66EEE-A852-4A52-89C2-83E74ECF3770}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.Demo", "demo\ZedGraph.Demo.csproj", "{C9FDF2E8-0776-4DA5-AEA9-ED847D85F9C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +31,6 @@ Global
 		{C9FDF2E8-0776-4DA5-AEA9-ED847D85F9C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9FDF2E8-0776-4DA5-AEA9-ED847D85F9C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9FDF2E8-0776-4DA5-AEA9-ED847D85F9C7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{15D66EEE-A852-4A52-89C2-83E74ECF3770}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{15D66EEE-A852-4A52-89C2-83E74ECF3770}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{15D66EEE-A852-4A52-89C2-83E74ECF3770}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{15D66EEE-A852-4A52-89C2-83E74ECF3770}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

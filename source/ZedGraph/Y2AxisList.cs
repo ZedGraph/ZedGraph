@@ -20,7 +20,7 @@
 #region Using directives
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -30,16 +30,16 @@ using System.Security.Permissions;
 namespace ZedGraph
 {
 	/// <summary>
-	/// A collection class containing a list of <see cref="Y2Axis"/> objects.
+	/// A collection class containing a list of <see cref="YAxis"/> objects.
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.2.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
-	public class Y2AxisList : AxisList, ICloneable
+	public class Y2AxisList : List<Y2Axis>, ICloneable
 	{
 
-	#region Constructors
+		#region Constructors
 
 		/// <summary>
 		/// Default constructor for the collection class.
@@ -51,12 +51,12 @@ namespace ZedGraph
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The <see cref="Y2AxisList"/> object from which to copy</param>
+		/// <param name="rhs">The <see cref="AxisList"/> object from which to copy</param>
 		public Y2AxisList( Y2AxisList rhs )
 		{
 			foreach ( Y2Axis item in rhs )
 			{
-				this.Add( new Y2Axis( item ) );
+				this.Add( item.Clone() );
 			}
 		}
 
@@ -79,35 +79,95 @@ namespace ZedGraph
 			return new Y2AxisList( this );
 		}
 
-	#endregion
+		#endregion
 
-	#region List Methods
+		#region List Methods
 
 		/// <summary>
-		/// Add a <see cref="Y2Axis"/> object to the collection at the end of the list.
+		/// Indexer to access the specified <see cref="Axis"/> object by
+		/// its ordinal position in the list.
 		/// </summary>
-		/// <param name="axis">A reference to the <see cref="Y2Axis"/> object to
-		/// be added</param>
-		/// <seealso cref="IList.Add"/>
-		public int Add( Y2Axis axis )
+		/// <param name="index">The ordinal position (zero-based) of the
+		/// <see cref="YAxis"/> object to be accessed.</param>
+		/// <value>An <see cref="Axis"/> object reference.</value>
+		public new Y2Axis this[int index]
 		{
-			return List.Add( axis );
+			get { return ( ( ( index < 0 || index >= this.Count ) ? null : base[index] ) ); }
 		}
 
 		/// <summary>
-		/// Insert a <see cref="Y2Axis"/> object into the collection at the specified
-		/// zero-based index location.
+		/// Indexer to access the specified <see cref="Axis"/> object by
+		/// its <see cref="Axis.Title"/> string.
 		/// </summary>
-		/// <param name="index">The zero-based index location for insertion.</param>
-		/// <param name="axis">A reference to the <see cref="Y2Axis"/> object that is to be
-		/// inserted.</param>
-		/// <seealso cref="IList.Insert"/>
-		public void Insert( int index, Y2Axis axis )
+		/// <param name="title">The string title of the
+		/// <see cref="YAxis"/> object to be accessed.</param>
+		/// <value>A <see cref="Axis"/> object reference.</value>
+		public Y2Axis this[string title]
 		{
-			List.Insert( index, axis );
+			get
+			{
+				int index = IndexOf( title );
+				if ( index >= 0 )
+					return this[index];
+				else
+					return null;
+			}
 		}
 
-	#endregion
+		/// <summary>
+		/// Return the zero-based position index of the
+		/// <see cref="Axis"/> with the specified <see cref="Axis.Title"/>.
+		/// </summary>
+		/// <remarks>The comparison of titles is not case sensitive, but it must include
+		/// all characters including punctuation, spaces, etc.</remarks>
+		/// <param name="title">The <see cref="String"/> label that is in the
+		/// <see cref="Axis.Title"/> attribute of the item to be found.
+		/// </param>
+		/// <returns>The zero-based index of the specified <see cref="Axis"/>,
+		/// or -1 if the <see cref="Axis.Title"/> was not found in the list</returns>
+		/// <seealso cref="IList.IndexOf"/>
+		/// <seealso cref="IndexOfTag"/>
+		public int IndexOf( string title )
+		{
+			int index = 0;
+			foreach ( Y2Axis axis in this )
+			{
+				if ( String.Compare( axis.Title._text, title, true ) == 0 )
+					return index;
+				index++;
+			}
+
+			return -1;
+		}
+
+		/// <summary>
+		/// Return the zero-based position index of the
+		/// <see cref="Axis"/> with the specified <see cref="Axis.Tag" />.
+		/// </summary>
+		/// <remarks>In order for this method to work, the <see cref="Axis.Tag" />
+		/// property must be of type <see cref="String"/>.</remarks>
+		/// <param name="tagStr">The <see cref="String"/> tag that is in the
+		/// <see cref="Axis.Tag" /> attribute of the item to be found.
+		/// </param>
+		/// <returns>The zero-based index of the specified <see cref="Axis" />,
+		/// or -1 if the <see cref="Axis.Tag" /> string is not in the list</returns>
+		/// <seealso cref="IList.IndexOf" />
+		/// <seealso cref="IndexOf" />
+		public int IndexOfTag( string tagStr )
+		{
+			int index = 0;
+			foreach ( Y2Axis axis in this )
+			{
+				if ( axis.Tag is string &&
+					String.Compare( (string)axis.Tag, tagStr, true ) == 0 )
+					return index;
+				index++;
+			}
+
+			return -1;
+		}
+
+		#endregion
 
 	}
 }

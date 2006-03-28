@@ -30,11 +30,11 @@ namespace ZedGraph
 	/// </summary>
 	/// <remarks>
 	/// The orientation of the bars depends on the state of
-	/// <see cref="GraphPane.BarBase"/>, and the bars can be stacked or
-	/// clustered, depending on the state of <see cref="GraphPane.BarType"/>
+	/// <see cref="BarSettings.Base"/>, and the bars can be stacked or
+	/// clustered, depending on the state of <see cref="BarSettings.Type"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.15.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -44,7 +44,7 @@ namespace ZedGraph
 		/// class defined for this <see cref="BarItem"/>.  Use the public
 		/// property <see cref="Bar"/> to access this value.
 		/// </summary>
-		protected Bar			bar;
+		protected Bar			_bar;
 	#endregion
 	
 	#region Properties
@@ -54,7 +54,7 @@ namespace ZedGraph
 		/// </summary>
 		public Bar Bar
 		{
-			get { return bar; }
+			get { return _bar; }
 		}
 
 		/// <summary>
@@ -65,7 +65,7 @@ namespace ZedGraph
 		/// <value>true if the Z data are included, false otherwise</value>
 		override internal bool IsZIncluded( GraphPane pane )
 		{
-			return pane.BarType == BarType.ClusterHiLow;
+			return pane._barSettings.Type == BarType.ClusterHiLow;
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace ZedGraph
 		/// <value>true if the X axis is independent, false otherwise</value>
 		override internal bool IsXIndependent( GraphPane pane )
 		{
-			return pane.BarBase == BarBase.X;
+			return pane._barSettings.Base == BarBase.X;
 		}
 		
 	#endregion
@@ -88,7 +88,7 @@ namespace ZedGraph
 		/// <param name="label">The label that will appear in the legend.</param>
 		public BarItem( string label ) : base( label )
 		{
-			this.bar = new Bar();
+			this._bar = new Bar();
 		}
 		/// <summary>
 		/// Create a new <see cref="BarItem"/> using the specified properties.
@@ -118,7 +118,7 @@ namespace ZedGraph
 		public BarItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
-			bar = new Bar( color );
+			_bar = new Bar( color );
 		}
 		
 		/// <summary>
@@ -128,7 +128,7 @@ namespace ZedGraph
 		public BarItem( BarItem rhs ) : base( rhs )
 		{
 			//bar = new Bar( rhs.Bar );
-			bar = rhs.bar.Clone();
+			_bar = rhs._bar.Clone();
 		}
 
 		/// <summary>
@@ -171,7 +171,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			bar = (Bar) info.GetValue( "bar", typeof(Bar) );
+			_bar = (Bar) info.GetValue( "bar", typeof(Bar) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -183,7 +183,7 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "bar", bar );
+			info.AddValue( "bar", _bar );
 		}
 	#endregion
 
@@ -214,8 +214,8 @@ namespace ZedGraph
 									float scaleFactor  )
 		{
 			// Pass the drawing onto the bar class
-			if ( this.isVisible )
-				bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
+			if ( this._isVisible )
+				_bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
 								this.GetBarWidth( pane ), pos, scaleFactor );
 		}
 		
@@ -240,7 +240,7 @@ namespace ZedGraph
 		/// </param>
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor )
 		{
-			this.bar.Draw( g, pane, rect, scaleFactor, true, null );
+			this._bar.Draw( g, pane, rect, scaleFactor, true, null );
 		}
 
 	#endregion

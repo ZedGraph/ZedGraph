@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
 	public class PointPair4 : PointPair, ISerializable
 	{
@@ -75,7 +75,7 @@ namespace ZedGraph
 		/// <param name="y">This pair's y coordinate.</param>
 		/// <param name="z">This pair's z coordinate.</param>
 		/// <param name="t">This pair's t coordinate.</param>
-		/// <param name="label">This pair's string _label (<see cref="PointPair.Tag"/>)</param>
+		/// <param name="label">This pair's string label (<see cref="PointPair.Tag"/>)</param>
 		public PointPair4( double x, double y, double z, double t, string label ) :
 					base( x, y, z, label )
 		{

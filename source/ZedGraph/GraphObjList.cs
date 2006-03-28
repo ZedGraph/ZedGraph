@@ -19,7 +19,7 @@
 
 using System;
 using System.Drawing;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace ZedGraph
 {
@@ -29,9 +29,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
-	public class GraphObjList : CollectionPlus, ICloneable
+	public class GraphObjList : List<GraphObj>, ICloneable
 	{
 	#region Constructors
 		/// <summary>
@@ -74,6 +74,7 @@ namespace ZedGraph
 	#endregion
 
 	#region Methods
+/*
 		/// <summary>
 		/// Indexer to access the specified <see cref="GraphObj"/> object by its ordinal
 		/// position in the list.
@@ -86,13 +87,13 @@ namespace ZedGraph
 			get { return( (GraphObj) List[index] ); }
 			set { List[index] = value; }
 		}
-
+*/
 		/// <summary>
 		/// Indexer to access the specified <see cref="GraphObj"/> object by its <see cref="GraphObj.Tag"/>.
 		/// Note that the <see cref="GraphObj.Tag"/> must be a <see cref="String"/> type for this method
 		/// to work.
 		/// </summary>
-		/// <param name="tag">The <see cref="String"/> type _tag to search for.</param>
+		/// <param name="tag">The <see cref="String"/> type tag to search for.</param>
 		/// <value>A <see cref="GraphObj"/> object reference.</value>
 		public GraphObj this[ string tag ]  
 		{
@@ -100,12 +101,12 @@ namespace ZedGraph
 			{
 				int index = IndexOfTag( tag );
 				if ( index >= 0 )
-					return( (GraphObj) List[index]  );
+					return( this[index]  );
 				else
 					return null;
 			}
 		}
-
+/*
 		/// <summary>
 		/// Add a <see cref="GraphObj"/> object to the <see cref="GraphObjList"/>
 		/// collection at the end of the list.
@@ -131,14 +132,14 @@ namespace ZedGraph
 		{
 			List.Insert( index, item );
 		}
-
+*/
 		/// <summary>
 		/// Return the zero-based position index of the
 		/// <see cref="GraphObj"/> with the specified <see cref="GraphObj.Tag"/>.
 		/// </summary>
 		/// <remarks>In order for this method to work, the <see cref="GraphObj.Tag"/>
 		/// property must be of type <see cref="String"/>.</remarks>
-		/// <param name="label">The <see cref="String"/> _label that is in the
+		/// <param name="label">The <see cref="String"/> label that is in the
 		/// <see cref="GraphObj.Tag"/> attribute of the item to be found.
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="GraphObj"/>,
@@ -197,7 +198,7 @@ namespace ZedGraph
 				if ( item.ZOrder == zOrder && item.IsVisible )
 				{
 					Region region = null;
-					if ( item.IsClippedToAxisRect && pane is GraphPane )
+					if ( item.IsClippedToChartRect && pane is GraphPane )
 					{
 						region = g.Clip.Clone();
 						g.SetClip( ((GraphPane)pane).Chart._rect );
@@ -205,7 +206,7 @@ namespace ZedGraph
 
 					item.Draw( g, pane, scaleFactor );
 
-					if ( item.IsClippedToAxisRect && pane is GraphPane )
+					if ( item.IsClippedToChartRect && pane is GraphPane )
 						g.Clip = region;
 				}
 			}

@@ -46,27 +46,27 @@ namespace ZedGraph
 	/// to be scaled just like a <see cref="BarItem"/> in which only one
 	/// bar series is present.  That is, the bars width will be the width of
 	/// a cluster less the clustergap (see <see cref="GraphPane.GetClusterWidth"/>
-	/// and <see cref="GraphPane.MinClusterGap"/>). The position of each bar is set
+	/// and <see cref="BarSettings.MinClusterGap"/>). The position of each bar is set
 	/// according to the <see cref="PointPair"/> values.  The independent axis
-	/// is assigned with <see cref="GraphPane.BarBase"/>, and is a
-	/// <see cref="BarBase"/> enum type.  If <see cref="GraphPane.BarBase"/>
+	/// is assigned with <see cref="BarSettings.Base"/>, and is a
+	/// <see cref="BarBase"/> enum type.  If <see cref="BarSettings.Base"/>
 	/// is set to <see cref="ZedGraph.BarBase.Y"/> or <see cref="ZedGraph.BarBase.Y2"/>, then
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.12.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
 
-		#region Fields
+	#region Fields
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="ZedGraph.HiLowBar"/>
 		/// class defined for this <see cref="HiLowBarItem"/>.  Use the public
 		/// property <see cref="Bar"/> to access this value.
 		/// </summary>
-		private HiLowBar bar;
-		#endregion
+		private HiLowBar _bar;
+	#endregion
 
 		#region Constructors
 		/// <summary>
@@ -100,7 +100,7 @@ namespace ZedGraph
 		public HiLowBarItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
-			bar = new HiLowBar( color );
+			_bar = new HiLowBar( color );
 		}
 
 		/// <summary>
@@ -109,7 +109,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="HiLowBarItem"/> object from which to copy</param>
 		public HiLowBarItem( HiLowBarItem rhs ) : base( rhs )
 		{
-			this.bar = rhs.bar.Clone(); // new HiLowBar( rhs.Bar );
+			this._bar = rhs._bar.Clone(); // new HiLowBar( rhs.Bar );
 		}
 
 		/// <summary>
@@ -152,7 +152,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			bar = (HiLowBar) info.GetValue( "bar", typeof(HiLowBar) );
+			_bar = (HiLowBar) info.GetValue( "bar", typeof(HiLowBar) );
 
 			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
 			BarBase barBase = (BarBase) info.GetValue( "barBase", typeof(BarBase) );
@@ -167,7 +167,7 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "bar", bar );
+			info.AddValue( "bar", _bar );
 
 			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
 			info.AddValue( "barBase", BarBase.X );
@@ -181,7 +181,7 @@ namespace ZedGraph
 		/// </summary>
 		public HiLowBar Bar
 		{
-			get { return bar; }
+			get { return _bar; }
 		}
 
 		/// <summary>
@@ -203,7 +203,7 @@ namespace ZedGraph
 		/// <value>true if the X axis is independent, false otherwise</value>
 		override internal bool IsXIndependent( GraphPane pane )
 		{
-			return pane.BarBase == BarBase.X;
+			return pane._barSettings.Base == BarBase.X;
 		}
 			
 	#endregion
@@ -233,8 +233,8 @@ namespace ZedGraph
 		/// </param>
 		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
-			if ( this.isVisible )
-				bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
+			if ( this._isVisible )
+				_bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
 								GetBarWidth( pane ), pos, scaleFactor );
 		}		
 
@@ -260,7 +260,7 @@ namespace ZedGraph
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect,
 									float scaleFactor )
 		{
-			this.bar.Draw( g, pane, rect, scaleFactor, true, null );
+			this._bar.Draw( g, pane, rect, scaleFactor, true, null );
 		}
 
 	#endregion

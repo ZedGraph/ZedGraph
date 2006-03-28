@@ -26,12 +26,12 @@ using System.Security.Permissions;
 namespace ZedGraph
 {
 	/// <summary>
-	/// Class that handles the data associated with text _title and its associated font
+	/// Class that handles the data associated with text title and its associated font
 	/// properties
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	public class Label : ICloneable, ISerializable
 	{
 		/// <summary>
@@ -53,7 +53,7 @@ namespace ZedGraph
 		/// Constructor to build an <see cref="AxisLabel" /> from the text and the
 		/// associated font properties.
 		/// </summary>
-		/// <param name="text">The <see cref="string" /> representing the _text to be
+		/// <param name="text">The <see cref="string" /> representing the text to be
 		/// displayed</param>
 		/// <param name="fontFamily">The <see cref="String" /> font family name</param>
 		/// <param name="fontSize">The size of the font in points and scaled according
@@ -94,7 +94,10 @@ namespace ZedGraph
 		{
 			_text = (string) rhs._text.Clone();
 			_isVisible = rhs._isVisible;
-			_fontSpec = rhs._fontSpec.Clone();
+			if ( rhs._fontSpec != null )
+				_fontSpec = rhs._fontSpec.Clone();
+			else
+				_fontSpec = null;
 		}
 
 		/// <summary>

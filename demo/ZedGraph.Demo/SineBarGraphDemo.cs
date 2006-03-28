@@ -35,9 +35,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title = "A Sine wave displayed by a bar graph.";
-			myPane.XAxis.Title = "Label";
-			myPane.YAxis.Title = "My Y Axis";
+			myPane.Title.Text = "A Sine wave displayed by a bar graph.";
+			myPane.XAxis.Title.Text = "Label";
+			myPane.YAxis.Title.Text = "My Y Axis";
 
 			// Generate some curve data from the Sine function
 			const int size = 41;
@@ -65,7 +65,7 @@ namespace ZedGraph.Demo
 			myPane.XAxis.Type = AxisType.Ordinal;
 
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.White,
+			myPane.Chart.Fill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 45.0F );
 
 			base.ZedGraphControl.AxisChange();

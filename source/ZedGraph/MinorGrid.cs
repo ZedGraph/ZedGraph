@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// Class that holds the specific properties for the minor grid.
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	public class MinorGrid : ICloneable, ISerializable
 	{
 		internal bool	_isVisible;

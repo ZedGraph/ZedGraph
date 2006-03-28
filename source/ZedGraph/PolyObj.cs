@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
 	public class PolyObj : BoxObj, ICloneable, ISerializable
 	{
@@ -60,13 +60,13 @@ namespace ZedGraph
 	#region Constructors
 		/// <overloads>Constructors for the <see cref="PolyObj"/> object</overloads>
 		/// <summary>
-		/// A constructor that allows the position, border color, and solid _fill color
+		/// A constructor that allows the position, border color, and solid fill color
 		/// of the <see cref="PolyObj"/> to be pre-specified.
 		/// </summary>
 		/// <param name="borderColor">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the box border</param>
 		/// <param name="fillColor">An arbitrary <see cref="System.Drawing.Color"/> specification
-		/// for the box fill (will be a solid color _fill)</param>
+		/// for the box fill (will be a solid color fill)</param>
 		/// <param name="points">The <see cref="PointF"/> array that defines
 		/// the polygon.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.

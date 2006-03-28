@@ -27,12 +27,12 @@ namespace ZedGraph
 	/// <summary>
 	/// <see cref="Y2Axis"/> inherits from <see cref="Axis"/>, and defines the
 	/// special characteristics of a vertical axis, specifically located on
-	/// the right side of the <see cref="GraphPane.AxisRect"/> of the <see cref="GraphPane"/>
+	/// the right side of the <see cref="Chart.Rect"/> of the <see cref="GraphPane"/>
 	/// object
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.11.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
 	public class Y2Axis : Axis, ICloneable, ISerializable
 	{
@@ -54,7 +54,7 @@ namespace ZedGraph
 			/// Determines if a line will be drawn at the zero value for the 
 			/// <see cref="Y2Axis"/>, that is, a line that
 			/// divides the negative values from positive values.
-			/// <seealso cref="Axis.IsZeroLine"/>.
+			/// <seealso cref="MajorGrid.IsZeroLine"/>.
 			/// </summary>
 			public static bool IsZeroLine = true;
 		}
@@ -78,9 +78,9 @@ namespace ZedGraph
 		/// <param name="title">The <see cref="Axis.Title"/> for this axis</param>
 		public Y2Axis( string title ) : base( title )
 		{
-			this.isVisible = Default.IsVisible;
-			this.isZeroLine = Default.IsZeroLine;
-			this.scaleFontSpec.Angle = -90.0F;
+			this._isVisible = Default.IsVisible;
+			this._majorGrid._isZeroLine = MajorGrid.Default.IsZeroLine;
+			this._scale._fontSpec.Angle = -90.0F;
 		}
 
 		/// <summary>
@@ -166,9 +166,9 @@ namespace ZedGraph
 		/// </param>
 		override public void SetTransformMatrix( Graphics g, GraphPane pane, float scaleFactor )
 		{
-			// Move the origin to the BottomRight of the axisRect, which is the left
+			// Move the origin to the BottomRight of the ChartRect, which is the left
 			// side of the Y2 axis (facing from the label side)
-			g.TranslateTransform( pane.AxisRect.Right, pane.AxisRect.Bottom );
+			g.TranslateTransform( pane.Chart._rect.Right, pane.Chart._rect.Bottom );
 			// rotate so this axis is in the left-right direction
 			g.RotateTransform( -90 );
 		}
@@ -208,7 +208,7 @@ namespace ZedGraph
 		{
 			double effCross = EffectiveCrossValue( pane );
 
-			if ( !this.crossAuto )
+			if ( !this._crossAuto )
 				return pane.XAxis.Scale.Transform( effCross ) - pane.XAxis.Scale.MaxPix;
 			else
 				return 0;

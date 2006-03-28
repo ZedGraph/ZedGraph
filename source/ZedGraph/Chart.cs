@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	public class Chart : ICloneable, ISerializable
 	{
 		/// <summary>
@@ -146,15 +146,15 @@ namespace ZedGraph
 		/// <see cref="Rect"/> will be calculated automatically (almost always true).
 		/// </summary>
 		/// <remarks>
-		/// If you have a need to set the axisRect manually, such as you have multiple graphs
+		/// If you have a need to set the ChartRect manually, such as you have multiple graphs
 		/// on a page and you want to line up the edges perfectly, you can set this value
 		/// to false.  If you set this value to false, you must also manually set
 		/// the <see cref="Rect"/> property.
-		/// You can easily determine the axisRect that ZedGraph would have
-		/// calculated by calling the <see cref="GraphPane.CalcAxisRect(Graphics)"/> method, which returns
+		/// You can easily determine the ChartRect that ZedGraph would have
+		/// calculated by calling the <see cref="GraphPane.CalcChartRect(Graphics)"/> method, which returns
 		/// an axis rect sized for the current data range, scale sizes, etc.
 		/// </remarks>
-		/// <value>true to have ZedGraph calculate the axisRect, false to do it yourself</value>
+		/// <value>true to have ZedGraph calculate the ChartRect, false to do it yourself</value>
 		public bool IsRectAuto
 		{
 			get { return _isRectAuto; }
@@ -243,7 +243,7 @@ namespace ZedGraph
 			/// <summary>
 			/// The default display mode for the <see cref="Chart"/> border
 			/// (<see cref="Chart.Border"/> property). true
-			/// to show the border _border, false to omit the _border
+			/// to show the border border, false to omit the border
 			/// </summary>
 			public static bool IsBorderVisible = true;
 

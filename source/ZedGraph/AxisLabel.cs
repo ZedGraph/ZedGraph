@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	public class AxisLabel : Label, ICloneable, ISerializable
 	{
 		internal bool	_isOmitMag,
@@ -45,7 +45,7 @@ namespace ZedGraph
 		/// Constructor to build an <see cref="AxisLabel" /> from the text and the
 		/// associated font properties.
 		/// </summary>
-		/// <param name="text">The <see cref="string" /> representing the _text to be
+		/// <param name="text">The <see cref="string" /> representing the text to be
 		/// displayed</param>
 		/// <param name="fontFamily">The <see cref="String" /> font family name</param>
 		/// <param name="fontSize">The size of the font in points and scaled according
@@ -107,7 +107,7 @@ namespace ZedGraph
 		/// to the end of the Axis <see cref="Axis.Title"/> (e.g., "(10^4)") to indicate
 		/// that a magnitude is in use.  This property controls whether or not the
 		/// magnitude is included in the title.  Note that it only affects the axis
-		/// title; a magnitude value may still be used even if it is not shown in the _title.
+		/// title; a magnitude value may still be used even if it is not shown in the title.
 		/// </remarks>
 		/// <value>true to show the magnitude value, false to hide it</value>
 		/// <seealso cref="Axis.Title"/>

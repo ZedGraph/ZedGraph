@@ -27,9 +27,9 @@ namespace ZedGraph
 	/// </summary>
 	public struct ScrollRange
 	{
-		private bool isScrollable;
-		private double min;
-		private double max;
+		private bool _isScrollable;
+		private double _min;
+		private double _max;
 
 		/// <summary>
 		/// Construct a <see cref="ScrollRange" /> object given the specified data values.
@@ -39,9 +39,9 @@ namespace ZedGraph
 		/// <param name="isScrollable">true to make this item scrollable, false otherwise</param>
 		public ScrollRange( double min, double max, bool isScrollable )
 		{
-			this.min = min;
-			this.max = max;
-			this.isScrollable = isScrollable;
+			this._min = min;
+			this._max = max;
+			this._isScrollable = isScrollable;
 		}
 
 		/// <summary>
@@ -51,9 +51,9 @@ namespace ZedGraph
 		/// <param name="isScrollable">true to make this item scrollable, false otherwise</param>
 		public ScrollRange( bool isScrollable )
 		{
-			this.min = 0.0;
-			this.max = 0.0;
-			this.isScrollable = isScrollable;
+			this._min = 0.0;
+			this._max = 0.0;
+			this._isScrollable = isScrollable;
 		}
 
 		/// <summary>
@@ -62,9 +62,9 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="ScrollRange"/> object from which to copy</param>
 		public ScrollRange( ScrollRange rhs )
 		{
-			this.min = rhs.min;
-			this.max = rhs.max;
-			this.isScrollable = rhs.isScrollable;
+			this._min = rhs._min;
+			this._max = rhs._max;
+			this._isScrollable = rhs._isScrollable;
 		}
 				
 		/// <summary>
@@ -73,8 +73,8 @@ namespace ZedGraph
 		/// </summary>
 		public bool IsScrollable
 		{
-			get { return isScrollable; }
-			set { isScrollable = value; }
+			get { return _isScrollable; }
+			set { _isScrollable = value; }
 		}
 
 		/// <summary>
@@ -82,16 +82,16 @@ namespace ZedGraph
 		/// </summary>
 		public double Min
 		{
-			get { return min; }
-			set { min = value; }
+			get { return _min; }
+			set { _min = value; }
 		}
 		/// <summary>
 		/// The maximum axis value limit for the scroll bar.
 		/// </summary>
 		public double Max
 		{
-			get { return max; }
-			set { max = value; }
+			get { return _max; }
+			set { _max = value; }
 		}
 	}
 }

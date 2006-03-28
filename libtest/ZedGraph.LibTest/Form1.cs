@@ -20,151 +20,23 @@ using System.Threading;
 
 namespace ZedGraph.LibTest
 {
-	/// <summary>
-	/// Summary description for Form1.
-	/// </summary>
-	public class Form1 : System.Windows.Forms.Form
+	public partial class Form1 : Form
 	{
-		private IContainer components;
 		private DBGraphics memGraphics;
-		private TrackBar trackBar1;
-		private CheckBox ReverseBox;
-		private CheckBox LabelsInsideBox;
-		private ComboBox AxisSelection;
-		private CheckBox CrossAutoBox;
-
+		protected GraphPane myPane, myPane2;
+		protected MasterPane master = null;
+		private Axis _crossAxis;
 		private bool isBinarySerialize = false;
+		private static bool isFirst = true;
+		private static PointF startPt;
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public Form1()
 		{
-			//
-			// Required for Windows Form Designer support
-			//
 			InitializeComponent();
-			memGraphics = new  DBGraphics();
+			memGraphics = new DBGraphics();
 		}
 
-		/// <summary>
-		/// Clean up any resources being used.
-		/// </summary>
-		protected override void Dispose( bool disposing )
-		{
-			if( disposing )
-			{
-				if (components != null) 
-				{
-					components.Dispose();
-				}
-			}
-			base.Dispose( disposing );
-		}
-
-		#region Windows Form Designer generated code
-		/// <summary>
-		/// Required method for Designer support - do not modify
-		/// the contents of this method with the code editor.
-		/// </summary>
-		private void InitializeComponent()
-		{
-			this.components = new System.ComponentModel.Container();
-			this.trackBar1 = new System.Windows.Forms.TrackBar();
-			this.ReverseBox = new System.Windows.Forms.CheckBox();
-			this.LabelsInsideBox = new System.Windows.Forms.CheckBox();
-			this.AxisSelection = new System.Windows.Forms.ComboBox();
-			this.CrossAutoBox = new System.Windows.Forms.CheckBox();
-			( (System.ComponentModel.ISupportInitialize)( this.trackBar1 ) ).BeginInit();
-			this.SuspendLayout();
-			// 
-			// trackBar1
-			// 
-			this.trackBar1.Location = new System.Drawing.Point( 2, 1 );
-			this.trackBar1.Name = "trackBar1";
-			this.trackBar1.Size = new System.Drawing.Size( 311, 45 );
-			this.trackBar1.TabIndex = 0;
-			this.trackBar1.Scroll += new System.EventHandler( this.trackBar1_Scroll );
-			// 
-			// ReverseBox
-			// 
-			this.ReverseBox.Location = new System.Drawing.Point( 320, 1 );
-			this.ReverseBox.Name = "ReverseBox";
-			this.ReverseBox.Size = new System.Drawing.Size( 70, 17 );
-			this.ReverseBox.TabIndex = 1;
-			this.ReverseBox.Text = "IsReverse";
-			this.ReverseBox.CheckedChanged += new System.EventHandler( this.ReverseBox_CheckedChanged );
-			// 
-			// LabelsInsideBox
-			// 
-			this.LabelsInsideBox.Location = new System.Drawing.Point( 320, 24 );
-			this.LabelsInsideBox.Name = "LabelsInsideBox";
-			this.LabelsInsideBox.Size = new System.Drawing.Size( 84, 17 );
-			this.LabelsInsideBox.TabIndex = 2;
-			this.LabelsInsideBox.Text = "Labels Inside";
-			this.LabelsInsideBox.CheckedChanged += new System.EventHandler( this.LabelsInsideBox_CheckedChanged );
-			// 
-			// AxisSelection
-			// 
-			this.AxisSelection.Items.AddRange( new object[] {
-            "X Axis",
-            "Y Axis",
-            "Y2 Axis"} );
-			this.AxisSelection.Location = new System.Drawing.Point( 421, 20 );
-			this.AxisSelection.Name = "AxisSelection";
-			this.AxisSelection.Size = new System.Drawing.Size( 121, 21 );
-			this.AxisSelection.TabIndex = 4;
-			this.AxisSelection.SelectedIndexChanged += new System.EventHandler( this.AxisSelection_SelectedIndexChanged );
-			// 
-			// CrossAutoBox
-			// 
-			this.CrossAutoBox.Location = new System.Drawing.Point( 420, 1 );
-			this.CrossAutoBox.Name = "CrossAutoBox";
-			this.CrossAutoBox.Size = new System.Drawing.Size( 69, 17 );
-			this.CrossAutoBox.TabIndex = 5;
-			this.CrossAutoBox.Text = "crossAuto";
-			this.CrossAutoBox.CheckedChanged += new System.EventHandler( this.CrossAutoBox_CheckedChanged );
-			// 
-			// Form1
-			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size( 5, 13 );
-			this.ClientSize = new System.Drawing.Size( 608, 435 );
-			this.Controls.Add( this.CrossAutoBox );
-			this.Controls.Add( this.AxisSelection );
-			this.Controls.Add( this.LabelsInsideBox );
-			this.Controls.Add( this.ReverseBox );
-			this.Controls.Add( this.trackBar1 );
-			this.Name = "Form1";
-			this.Text = "Form1";
-			this.Load += new System.EventHandler( this.Form1_Load );
-			this.Paint += new System.Windows.Forms.PaintEventHandler( this.Form1_Paint );
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form1_MouseDown );
-			this.Resize += new System.EventHandler( this.Form1_Resize );
-			( (System.ComponentModel.ISupportInitialize)( this.trackBar1 ) ).EndInit();
-			this.ResumeLayout( false );
-			this.PerformLayout();
-
-		}
-		#endregion
-
-		/// <summary>
-		/// The main entry point for the application.
-		/// </summary>
-		[STAThread]
-		static void Main() 
-		{
-			Application.Run(new Form1());
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		protected GraphPane		myPane, myPane2;
-		protected MasterPane	master = null;
-		private Axis _crossAxis;
-
-
-		private void Form1_Load(object sender, System.EventArgs e)
+		private void Form1_Load(object sender, EventArgs e)
 		{
 			Trace.Listeners.Add(new TextWriterTraceListener( @"myTrace.txt" ) );
 			Trace.AutoFlush = true;
@@ -179,9 +51,9 @@ namespace ZedGraph.LibTest
 				"Velocity, m/s" );
 			
 			// Set the titles and axis labels
-			myPane.Y2Axis.Title = "Acceleration, m/s2";
+			myPane.Y2Axis.Title.Text = "Acceleration, m/s2";
 
-			// Make up some data points based on the Sine function
+			// Make up some data _points based on the Sine function
 			PointPairList vList = new PointPairList();
 			PointPairList aList = new PointPairList();
 			PointPairList dList = new PointPairList();
@@ -200,13 +72,13 @@ namespace ZedGraph.LibTest
 				dList.Add( time, distance );
 			}
 
-			// Generate a red curve with diamond symbols, and "Velocity" in the legend
+			// Generate a red curve with diamond symbols, and "Velocity" in the _legend
 			LineItem myCurve = myPane.AddCurve( "Velocity",
 				vList, Color.Red, SymbolType.Diamond );
 			// Fill the symbols with white
 			myCurve.Symbol.Fill = new Fill( Color.White );
 
-			// Generate a blue curve with circle symbols, and "Acceleration" in the legend
+			// Generate a blue curve with circle symbols, and "Acceleration" in the _legend
 			myCurve = myPane.AddCurve( "Acceleration",
 				aList, Color.Blue, SymbolType.Circle );
 			// Fill the symbols with white
@@ -214,7 +86,7 @@ namespace ZedGraph.LibTest
 			// Associate this curve with the Y2 axis
 			myCurve.IsY2Axis = true;
 
-			// Generate a green curve with square symbols, and "Distance" in the legend
+			// Generate a green curve with square symbols, and "Distance" in the _legend
 			myCurve = myPane.AddCurve( "Distance",
 				dList, Color.Green, SymbolType.Square );
 			// Fill the symbols with white
@@ -222,7 +94,7 @@ namespace ZedGraph.LibTest
 			// Associate this curve with the second Y axis
 			myCurve.YAxisIndex = 1;
 
-			// Generate a Black curve with triangle symbols, and "Energy" in the legend
+			// Generate a Black curve with triangle symbols, and "Energy" in the _legend
 			myCurve = myPane.AddCurve( "Energy",
 				eList, Color.Black, SymbolType.Triangle );
 			// Fill the symbols with white
@@ -233,110 +105,110 @@ namespace ZedGraph.LibTest
 			myCurve.YAxisIndex = 1;
 
 			// Show the x axis grid
-			myPane.XAxis.IsShowGrid = true;
+			myPane.XAxis.MajorGrid.IsVisible = true;
 
 			// Make the Y axis scale red
-			myPane.YAxis.ScaleFontSpec.FontColor = Color.Red;
-			myPane.YAxis.TitleFontSpec.FontColor = Color.Red;
+			myPane.YAxis.Scale.FontSpec.FontColor = Color.Red;
+			myPane.YAxis.Title.FontSpec.FontColor = Color.Red;
 			// turn off the opposite tics so the Y tics don't show up on the Y2 axis
-			myPane.YAxis.IsOppositeTic = false;
-			myPane.YAxis.IsMinorOppositeTic = false;
+			myPane.YAxis.MajorTic.IsOpposite = false;
+			myPane.YAxis.MinorTic.IsOpposite = false;
 			// Don't display the Y zero line
-			myPane.YAxis.IsZeroLine = false;
+			myPane.YAxis.MajorGrid.IsZeroLine = false;
 			// Align the Y axis labels so they are flush to the axis
-			myPane.YAxis.ScaleAlign = AlignP.Inside;
-			myPane.YAxis.Max = 100;
+			myPane.YAxis.Scale.Align = AlignP.Inside;
+			myPane.YAxis.Scale.Max = 100;
 
 			// Enable the Y2 axis display
 			myPane.Y2Axis.IsVisible = true;
 			// Make the Y2 axis scale blue
-			myPane.Y2Axis.ScaleFontSpec.FontColor = Color.Blue;
-			myPane.Y2Axis.TitleFontSpec.FontColor = Color.Blue;
+			myPane.Y2Axis.Scale.FontSpec.FontColor = Color.Blue;
+			myPane.Y2Axis.Title.FontSpec.FontColor = Color.Blue;
 			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
-			myPane.Y2Axis.IsOppositeTic = false;
-			myPane.Y2Axis.IsMinorOppositeTic = false;
+			myPane.Y2Axis.MajorTic.IsOpposite = false;
+			myPane.Y2Axis.MinorTic.IsOpposite = false;
 			// Display the Y2 axis grid lines
-			myPane.Y2Axis.IsShowGrid = true;
+			myPane.Y2Axis.MajorGrid.IsVisible = true;
 			// Align the Y2 axis labels so they are flush to the axis
-			myPane.Y2Axis.ScaleAlign = AlignP.Inside;
-			myPane.Y2Axis.Min = 1.5;
-			myPane.Y2Axis.Max = 3;
+			myPane.Y2Axis.Scale.Align = AlignP.Inside;
+			myPane.Y2Axis.Scale.Min = 1.5;
+			myPane.Y2Axis.Scale.Max = 3;
 
 			myPane.YAxis.IsVisible = true;
 			//myPane.YAxis.IsTic = false;
-			myPane.YAxis.IsMinorTic = false;
-			myPane.YAxis.IsCrossTic = false;
-			myPane.YAxis.IsMinorCrossTic = false;
-			myPane.YAxis.IsInsideTic = false;
-			myPane.YAxis.IsMinorInsideTic = false;
-			myPane.YAxis.IsOppositeTic = false;
-			myPane.YAxis.IsMinorOppositeTic = false;
+			myPane.YAxis.MinorTic.IsOutside = false;
+			myPane.YAxis.MajorTic.IsCrossOutside = false;
+			myPane.YAxis.MinorTic.IsCrossOutside = false;
+			myPane.YAxis.MajorTic.IsInside = false;
+			myPane.YAxis.MinorTic.IsInside = false;
+			myPane.YAxis.MajorTic.IsOpposite = false;
+			myPane.YAxis.MinorTic.IsOpposite = false;
 
 			// Create a second Y Axis, green
 			YAxis yAxis3b = new YAxis( "Test Axis" );
 			myPane.YAxisList.Add( yAxis3b );
-			yAxis3b.ScaleFontSpec.FontColor = Color.Brown;
-			yAxis3b.TitleFontSpec.FontColor = Color.Brown;
+			yAxis3b.Scale.FontSpec.FontColor = Color.Brown;
+			yAxis3b.Title.FontSpec.FontColor = Color.Brown;
 			yAxis3b.Color = Color.Brown;
-			yAxis3b.IsTic = false;
-			yAxis3b.IsMinorTic = false;
-			yAxis3b.IsOppositeTic = false;
-			yAxis3b.IsMinorOppositeTic = false;
+			yAxis3b.MajorTic.IsOutside = false;
+			yAxis3b.MinorTic.IsOutside = false;
+			yAxis3b.MajorTic.IsOpposite = false;
+			yAxis3b.MinorTic.IsOpposite = false;
 			//yAxis3b.IsScaleLabelsInside = true;
-			yAxis3b.IsTitleAtCross = false;
-			yAxis3b.IsInsideTic = false;
-			yAxis3b.IsMinorInsideTic = false;
-			yAxis3b.IsOppositeTic = false;
-			yAxis3b.IsMinorOppositeTic = false;
+			yAxis3b.Title.IsTitleAtCross = false;
+			yAxis3b.MajorTic.IsInside = false;
+			yAxis3b.MinorTic.IsInside = false;
+			yAxis3b.MajorTic.IsOpposite = false;
+			yAxis3b.MinorTic.IsOpposite = false;
 
 			// Create a second Y Axis, green
 			YAxis yAxis3c = new YAxis( "Test 2 Axis" );
 			myPane.YAxisList.Add( yAxis3c );
-			yAxis3c.ScaleFontSpec.FontColor = Color.Brown;
-			yAxis3c.TitleFontSpec.FontColor = Color.Brown;
+			yAxis3c.Scale.FontSpec.FontColor = Color.Brown;
+			yAxis3c.Title.FontSpec.FontColor = Color.Brown;
 			yAxis3c.Color = Color.Brown;
-			yAxis3c.IsTic = false;
-			yAxis3c.IsMinorTic = false;
-			yAxis3c.IsOppositeTic = false;
-			yAxis3c.IsMinorOppositeTic = false;
+			yAxis3c.MajorTic.IsOutside = false;
+			yAxis3c.MinorTic.IsOutside = false;
+			yAxis3c.MajorTic.IsOpposite = false;
+			yAxis3c.MinorTic.IsOpposite = false;
 			//yAxis3c.IsScaleLabelsInside = true;
-			yAxis3c.IsTitleAtCross = false;
-			yAxis3c.IsInsideTic = false;
-			yAxis3c.IsMinorInsideTic = false;
-			yAxis3c.IsOppositeTic = false;
-			yAxis3c.IsMinorOppositeTic = false;
+			yAxis3c.Title.IsTitleAtCross = false;
+			yAxis3c.MajorTic.IsInside = false;
+			yAxis3c.MinorTic.IsInside = false;
+			yAxis3c.MajorTic.IsOpposite = false;
+			yAxis3c.MinorTic.IsOpposite = false;
 
 			// Create a second Y Axis, green
 			YAxis yAxis3 = new YAxis( "Distance, m" );
 			myPane.YAxisList.Add( yAxis3 );
-			yAxis3.ScaleFontSpec.FontColor = Color.Green;
-			yAxis3.TitleFontSpec.FontColor = Color.Green;
+			yAxis3.Scale.FontSpec.FontColor = Color.Green;
+			yAxis3.Title.FontSpec.FontColor = Color.Green;
 			yAxis3.Color = Color.Green;
 			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
-			yAxis3.IsInsideTic = false;
-			yAxis3.IsMinorInsideTic = false;
-			yAxis3.IsOppositeTic = false;
-			yAxis3.IsMinorOppositeTic = false;
+			yAxis3.MajorTic.IsInside = false;
+			yAxis3.MinorTic.IsInside = false;
+			yAxis3.MajorTic.IsOpposite = false;
+			yAxis3.MinorTic.IsOpposite = false;
 			// Align the Y2 axis labels so they are flush to the axis
-			yAxis3.ScaleAlign = AlignP.Inside;
+			yAxis3.Scale.Align = AlignP.Inside;
 			//yAxis3.AxisGap = 0;
 
 			Y2Axis yAxis4 = new Y2Axis( "Energy" );
 			yAxis4.IsVisible = true;
 			myPane.Y2AxisList.Add( yAxis4 );
 			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
-			yAxis4.IsInsideTic = false;
-			yAxis4.IsMinorInsideTic = false;
-			yAxis4.IsOppositeTic = false;
-			yAxis4.IsMinorOppositeTic = false;
+			yAxis4.MajorTic.IsInside = false;
+			yAxis4.MinorTic.IsInside = false;
+			yAxis4.MajorTic.IsOpposite = false;
+			yAxis4.MinorTic.IsOpposite = false;
 			// Align the Y2 axis labels so they are flush to the axis
-			yAxis4.ScaleAlign = AlignP.Inside;
+			yAxis4.Scale.Align = AlignP.Inside;
 			yAxis4.Type = AxisType.Log;
-			yAxis4.Min = 100;
+			yAxis4.Scale.Min = 100;
 			
 
 			// Fill the axis background with a gradient
-			myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
 #endif
 
 #if false	// SampleMultiPointList Demo
@@ -439,9 +311,9 @@ namespace ZedGraph.LibTest
 			Random rand = new Random();
 
 			myPane = new GraphPane();
-//			myPane.Title = "My Title";
-//			myPane.XAxis.Title = "X Axis";
-//			myPane.YAxis.Title = "Y Axis";
+//			myPane.Title.Text = "My Title";
+//			myPane.XAxis.Title.Text = "X Axis";
+//			myPane.YAxis.Title.Text = "Y Axis";
 
 			PointPairList list1 = new PointPairList();
 			PointPairList list2 = new PointPairList();
@@ -487,9 +359,9 @@ namespace ZedGraph.LibTest
 			Random rand = new Random();
 
 			myPane = new GraphPane();
-			myPane.Title = "My Title";
-			myPane.XAxis.Title = "X Axis";
-			myPane.YAxis.Title = "Y Axis";
+			myPane.Title.Text = "My Title";
+			myPane.XAxis.Title.Text = "X Axis";
+			myPane.YAxis.Title.Text = "Y Axis";
 			//myPane.XAxis.Type = AxisType.Ordinal;
 			//myPane.XAxis.Type = AxisType.Date;
 			//myPane.ClusterScaleWidth = 0.75 / 1440.0;
@@ -551,7 +423,7 @@ namespace ZedGraph.LibTest
 			// Set the XAxis to Text type
 			myPane.YAxis.Type = AxisType.Text;
 			// Fill the Axis and Pane backgrounds
-			myPane.AxisFill = new Fill( Color.White,
+			myPane.Chart.Fill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 90F );
 			myPane.PaneFill = new Fill( Color.FromArgb( 250, 250, 255) );
 
@@ -573,9 +445,9 @@ namespace ZedGraph.LibTest
 			SetSize();
 
 			// Set the titles and axis labels
-			myPane.Title = "Wacky Widget Company\nProduction Report";
-			myPane.XAxis.Title = "Time, Days\n(Since Plant Construction Startup)";
-			myPane.YAxis.Title = "Widget Production\n(units/hour)";
+			myPane.Title.Text = "Wacky Widget Company\nProduction Report";
+			myPane.XAxis.Title.Text = "Time, Days\n(Since Plant Construction Startup)";
+			myPane.YAxis.Title.Text = "Widget Production\n(units/hour)";
     
 			LineItem curve;
     
@@ -623,7 +495,7 @@ namespace ZedGraph.LibTest
 			// Fill the pane background with a gradient
 			myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
 			// Fill the axis background with a gradient
-			myPane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
+			myPane.Chart.Fill = new Fill( Color.FromArgb( 255, 255, 245),
 				Color.FromArgb( 255, 255, 190), 90F );
     
     
@@ -675,7 +547,7 @@ namespace ZedGraph.LibTest
     
 			// Add a text "Confidential" stamp to the graph
 			text = new TextItem("Confidential", 0.85F, -0.03F );
-			// use AxisFraction coordinates so the text is placed relative to the AxisRect
+			// use AxisFraction coordinates so the text is placed relative to the ChartRect
 			text.Location.CoordinateFrame = CoordType.AxisFraction;
 			// rotate the text 15 degrees
 			text.FontSpec.Angle = 15.0F;
@@ -718,7 +590,7 @@ namespace ZedGraph.LibTest
 			myPane.AxisChange( g );
 			g.Dispose();
 #endif
-	
+
 #if false	// MasterPane
 			master = new MasterPane( "ZedGraph MasterPane Example", new Rectangle( 10, 10, 10, 10 ) );
 
@@ -804,6 +676,50 @@ namespace ZedGraph.LibTest
 			g.Dispose();
 #endif
 
+
+#if false	// MasterPane - Single Pane
+			master = new MasterPane( "ZedGraph MasterPane Single Pane Example", new Rectangle( 10, 10, 10, 10 ) );
+
+			master.Fill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+			
+			// Create a new graph with topLeft at (40,40) and size 600x400
+			GraphPane myPaneT = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
+				"Case 1",
+				"Time, Days",
+				"Rate, m/s" );
+
+			myPaneT.Fill = new Fill( Color.White, Color.LightYellow, 45.0F );
+			myPaneT.BaseDimension = 6.0F;
+
+			// Make up some data arrays based on the Sine function
+			double x, y;
+			PointPairList list = new PointPairList();
+			for ( int i=0; i<36; i++ )
+			{
+				x = (double) i + 5;
+				y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 ) );
+				list.Add( x, y );
+			}
+
+			LineItem myCurve = myPaneT.AddCurve( "Type 1",
+				list, Color.Blue, SymbolType.Circle );
+			myCurve.Symbol.Fill = new Fill( Color.White );
+
+			master.Add( myPaneT );
+
+			Graphics g = this.CreateGraphics();
+
+			master.Title.IsVisible = false;
+			master.Margin.All = 0;
+			//master.AutoPaneLayout( g, PaneLayout.ExplicitRow32 );
+			//master.AutoPaneLayout( g, 2, 4 );
+			master.AutoPaneLayout( g );
+			//master.AutoPaneLayout( g, false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
+			master.AxisChange( g );
+
+			g.Dispose();
+#endif
+
 #if false	// Pie
             myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"2004 ZedGraph Sales by Region\n($M)",
@@ -814,7 +730,7 @@ namespace ZedGraph.LibTest
 			myPane.FontSpec.Size = 24f;
 			myPane.FontSpec.Family = "Times";
 			myPane.PaneFill = new Fill( Color.White, Color.Goldenrod, 45.0f );
-			myPane.AxisFill.Type = FillType.None;
+			myPane.Chart.Fill.Type = FillType.None;
 			myPane.Legend.Position = LegendPos.Float ;
 			myPane.Legend.Location = new Location( 0.95f, 0.15f, CoordType.PaneFraction,
 								AlignH.Right, AlignV.Top );
@@ -948,17 +864,17 @@ namespace ZedGraph.LibTest
 
 			myPane.XAxis.Type = AxisType.Text;
 			myPane.XAxis.TextLabels = labels;
-			myPane.XAxis.ScaleFontSpec.Angle = -90;
-			myPane.XAxis.ScaleFontSpec.Size = 8;
-			myPane.XAxis.ScaleFontSpec.IsBold = true;
+			myPane.XAxis.Scale.FontSpec.Angle = -90;
+			myPane.XAxis.Scale.FontSpec.Size = 8;
+			myPane.XAxis.Scale.FontSpec.IsBold = true;
 			myPane.XAxis.IsTicsBetweenLabels = true;
 			myPane.XAxis.IsInsideTic = false;
 			myPane.XAxis.IsOppositeTic = false;
 			myPane.XAxis.IsMinorInsideTic = false;
 			myPane.XAxis.IsMinorOppositeTic = false;
 
-			myPane.YAxis.ScaleFontSpec.Size = 8;
-			myPane.YAxis.ScaleFontSpec.IsBold = true;
+			myPane.YAxis.Scale.FontSpec.Size = 8;
+			myPane.YAxis.Scale.FontSpec.IsBold = true;
 			myPane.YAxis.IsShowGrid = true;
 			myPane.YAxis.GridDashOn = 1.0f;
 			myPane.YAxis.GridDashOff = 0.0f;
@@ -1030,7 +946,7 @@ namespace ZedGraph.LibTest
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
 
-			myPane.Y2Axis.Title = "My Y2 Axis";
+			myPane.Y2Axis.Title.Text = "My Y2 Axis";
 
 			PointPairList list = new PointPairList();
 			PointPairList list2 = new PointPairList();
@@ -1068,7 +984,7 @@ namespace ZedGraph.LibTest
 
 			myPane.AddYAxis( "Another Y Axis" );
 			myPane.AddY2Axis( "Another Y2 Axis" );
-			myPane.Y2Axis.Title = "My Y2 Axis";
+			myPane.Y2Axis.Title.Text = "My Y2 Axis";
 			myPane.Y2AxisList[0].IsVisible = true;
 			myPane.Y2AxisList[1].IsVisible = true;
 
@@ -1237,7 +1153,7 @@ namespace ZedGraph.LibTest
 				AlignH.Left,
 				AlignV.Top);
 			    
-			m_selectionBox.IsClippedToAxisRect = true;
+			m_selectionBox.IsClippedToChartRect = true;
 			m_selectionBox.ZOrder = ZOrder.E_BehindAxis;
 			m_selectionBox.IsVisible = true;
 
@@ -1336,9 +1252,9 @@ namespace ZedGraph.LibTest
 #if false	// Gantt Chart
 			myPane = new GraphPane();
 
-			myPane.Title = "Gantt Chart";
-			myPane.XAxis.Title = "Date";
-			myPane.YAxis.Title = "Project";
+			myPane.Title.Text = "Gantt Chart";
+			myPane.XAxis.Title.Text = "Date";
+			myPane.YAxis.Title.Text = "Project";
 
 			myPane.XAxis.Type = AxisType.Date; 
 			myPane.YAxis.Type = AxisType.Text;
@@ -1433,9 +1349,9 @@ namespace ZedGraph.LibTest
 
 			myPane = new GraphPane();
 
-			myPane.Title = "Bar Type Sample";
-			myPane.XAxis.Title = "Text Axis";
-			myPane.YAxis.Title = "Some Data Value";
+			myPane.Title.Text = "Bar Type Sample";
+			myPane.XAxis.Title.Text = "Text Axis";
+			myPane.YAxis.Title.Text = "Some Data Value";
 			myPane.XAxis.Type = AxisType.Text;
 			myPane.ClusterScaleWidth = 1.0;
 			//myPane.BarType = BarType.Overlay;
@@ -1483,9 +1399,9 @@ namespace ZedGraph.LibTest
 
 			myPane = new GraphPane();
 
-			myPane.Title = "BarItem Sample (BarType.ClusterHiLow)";
-			myPane.XAxis.Title = "Text Axis";
-			myPane.YAxis.Title = "Some Data Value";
+			myPane.Title.Text = "BarItem Sample (BarType.ClusterHiLow)";
+			myPane.XAxis.Title.Text = "Text Axis";
+			myPane.YAxis.Title.Text = "Some Data Value";
 			myPane.XAxis.Type = AxisType.Text;
 			myPane.ClusterScaleWidth = 2.0;
 			myPane.BarType = BarType.ClusterHiLow;
@@ -1791,7 +1707,7 @@ namespace ZedGraph.LibTest
 			//myPane.GraphItemList.Add( text2 );
 
 			//myPane.YAxis.IsVisible = false;
-			//myPane.Y2Axis.Title = "Y2 Axis";
+			//myPane.Y2Axis.Title.Text = "Y2 Axis";
 			//myPane.XAxis.BaseTic = 1;
 			//myPane.XAxis.Step = 5;
 			//myPane.Y2Axis.Cross = 60;
@@ -1937,7 +1853,7 @@ namespace ZedGraph.LibTest
 			myPane.YAxis.Type = AxisType.Text;
 			myPane.BarType = BarType.Stack;
 			myPane.BarBase = BarBase.Y;
-			myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 45.0F );
+			myPane.Chart.Fill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 45.0F );
 
 
 #endif
@@ -1957,9 +1873,9 @@ namespace ZedGraph.LibTest
 
 			myPane.FontSpec.Size = 24;
 			myPane.XAxis.TitleFontSpec.Size = 18;
-			myPane.XAxis.ScaleFontSpec.Size = 18;
+			myPane.XAxis.Scale.FontSpec.Size = 18;
 			myPane.YAxis.TitleFontSpec.Size = 18;
-			myPane.YAxis.ScaleFontSpec.Size = 18;
+			myPane.YAxis.Scale.FontSpec.Size = 18;
 			myPane.XAxis.Type = AxisType.Ordinal;
 			myPane.AxisChange( this.CreateGraphics() );
 
@@ -1984,6 +1900,49 @@ namespace ZedGraph.LibTest
 			if ( this.myPane != null )
 				this.myPane.AxisChange( this.CreateGraphics() );
       
+		}
+
+		private void Form1_Paint(object sender, PaintEventArgs e)
+		{
+			SetSize();
+		}
+
+		private void Form1_Resize(object sender, EventArgs e)
+		{
+			Rectangle paneRect = this.ClientRectangle;
+			paneRect.Inflate( -20, -20 );
+			paneRect.Y += 30;
+			paneRect.Height -= 30;
+
+			Graphics g = this.CreateGraphics();
+			memGraphics.CreateDoubleBuffer( g, this.ClientRectangle.Width, this.ClientRectangle.Height );
+
+			if ( this.master != null )
+				this.master.ReSize( g, paneRect );
+			else if ( this.myPane != null )
+				this.myPane.ReSize( g, paneRect );
+
+			Invalidate();
+			g.Dispose();
+		}
+
+		private void SetSize()
+		{
+			Rectangle paneRect = this.ClientRectangle;
+			paneRect.Inflate( -20, -20 );
+			paneRect.Y += 30;
+			paneRect.Height -= 30;
+
+			Graphics g = this.CreateGraphics();
+			memGraphics.CreateDoubleBuffer( g, this.ClientRectangle.Width, this.ClientRectangle.Height );
+
+			if ( this.master != null )
+				this.master.ReSize( g, paneRect );
+			else if ( this.myPane != null )
+				this.myPane.ReSize( g, paneRect );
+
+			Invalidate();
+			g.Dispose();
 		}
 
 		public string CustomFormatter( GraphPane pane, Axis axis, double val, int index )
@@ -2014,27 +1973,27 @@ namespace ZedGraph.LibTest
 			g.Dispose();
 
 			//Calculate the number of steps for the Y axis in both directions
-			int plusYSteps = (int) ( yAxis.Max > 0 ? yAxis.Max / yAxis.Step : 0 );
-			int minusYSteps = (int) ( yAxis.Min < 0 ? -yAxis.Min / yAxis.Step : 0 );
+			int plusYSteps = (int)( yAxis.Scale.Max > 0 ? yAxis.Scale.Max / yAxis.Scale.MajorStep : 0 );
+			int minusYSteps = (int)( yAxis.Scale.Min < 0 ? -yAxis.Scale.Min / yAxis.Scale.MajorStep : 0 );
 
 			//Calculate the number of steps for the Y2 axis in both directions
-			int plusY2Steps = (int) ( y2Axis.Max > 0 ? y2Axis.Max / y2Axis.Step : 0 );
-			int minusY2Steps = (int) ( y2Axis.Min < 0 ? -y2Axis.Min / y2Axis.Step : 0 );
+			int plusY2Steps = (int)( y2Axis.Scale.Max > 0 ? y2Axis.Scale.Max / y2Axis.Scale.MajorStep : 0 );
+			int minusY2Steps = (int)( y2Axis.Scale.Min < 0 ? -y2Axis.Scale.Min / y2Axis.Scale.MajorStep : 0 );
 
 			//Make the number of steps above the zero line match
 			if ( plusYSteps > plusY2Steps )
-				y2Axis.Max += y2Axis.Step * ( plusYSteps - plusY2Steps );
+				y2Axis.Scale.Max += y2Axis.Scale.MajorStep * ( plusYSteps - plusY2Steps );
 			else if ( plusY2Steps > plusYSteps )
-				yAxis.Max += yAxis.Step * ( plusY2Steps - plusYSteps );
+				yAxis.Scale.Max += yAxis.Scale.MajorStep * ( plusY2Steps - plusYSteps );
 
 			//Make the number of steps below the zero line match
 			if ( minusYSteps > minusY2Steps )
-				y2Axis.Min -= y2Axis.Step * ( minusYSteps - minusY2Steps );
+				y2Axis.Scale.Min -= y2Axis.Scale.MajorStep * ( minusYSteps - minusY2Steps );
 			else if ( minusY2Steps > minusYSteps )
-				yAxis.Min -= yAxis.Step * ( minusY2Steps - minusYSteps );
+				yAxis.Scale.Min -= yAxis.Scale.MajorStep * ( minusY2Steps - minusYSteps );
 
 			//Calculate the total number of steps
-			int nSteps = (int) ( ( yAxis.Max - yAxis.Min ) / yAxis.Step );
+			int nSteps = (int)( ( yAxis.Scale.Max - yAxis.Scale.Min ) / yAxis.Scale.MajorStep );
 
 			//If the total steps is outrageous (more than maxSteps), then correct it
 			//Note that this may cause the graph to include fractional steps such that
@@ -2042,24 +2001,24 @@ namespace ZedGraph.LibTest
 			double factor = Math.Ceiling( (double) nSteps / (double) maxSteps );
 			if ( factor > 1 )
 			{
-				yAxis.Step *= factor;
-				y2Axis.Step *= factor;
+				yAxis.Scale.MajorStep *= factor;
+				y2Axis.Scale.MajorStep *= factor;
 			}
 
 
 			// Make sure that subsequent calls to AxisChange() don't change things
-			yAxis.MinAuto = false;
-			yAxis.MaxAuto = false;
-			yAxis.StepAuto = false;
-			y2Axis.MinAuto = false;
-			y2Axis.MaxAuto = false;
-			y2Axis.StepAuto = false;
+			yAxis.Scale.MinAuto = false;
+			yAxis.Scale.MaxAuto = false;
+			yAxis.Scale.MajorStepAuto = false;
+			y2Axis.Scale.MinAuto = false;
+			y2Axis.Scale.MaxAuto = false;
+			y2Axis.Scale.MajorStepAuto = false;
 		}
 
 		// Call this method only after calling AxisChange()
 		private void CreateStackBarLabels( GraphPane graphPane )
 		{
-			float labelOffset = (float)( 0.02 * ( graphPane.XAxis.Max - graphPane.XAxis.Min ) );
+			float labelOffset = (float)( 0.02 * ( graphPane.XAxis.Scale.Max - graphPane.XAxis.Scale.Min ) );
 			ValueHandler valueHandler = new ValueHandler( graphPane, true );
 			int barIndex = -1;
 
@@ -2085,7 +2044,7 @@ namespace ZedGraph.LibTest
 
 						string barLabelText = ( points[i].X ).ToString( "N2" );
 
-						TextItem label = new TextItem( barLabelText, (float)labelXCoordinate, (float)labelYCoordinate );
+						TextObj label = new TextObj( barLabelText, (float)labelXCoordinate, (float)labelYCoordinate );
 
 						label.Location.CoordinateFrame = CoordType.AxisXYScale;
 						label.FontSpec.Size = 10;
@@ -2095,7 +2054,7 @@ namespace ZedGraph.LibTest
 						label.FontSpec.Border.IsVisible = false;
 						label.FontSpec.Fill.IsVisible = false;
 
-						graphPane.GraphItemList.Add( label );
+						graphPane.GraphObjList.Add( label );
 					}
 				}
 			}
@@ -2105,7 +2064,7 @@ namespace ZedGraph.LibTest
 		private void CreateBarLabels( GraphPane pane )
 		{
 			// Make the gap between the bars and the labels = 2% of the axis range
-			float labelOffset = (float) ( pane.YAxis.Max - pane.YAxis.Min ) * 0.02f;
+			float labelOffset = (float)( pane.YAxis.Scale.Max - pane.YAxis.Scale.Min ) * 0.02f;
 
 			foreach ( CurveItem curve in pane.CurveList )
 			{
@@ -2134,8 +2093,8 @@ namespace ZedGraph.LibTest
 						string barLabelText				= 
 							( points[ i ].Y / 1000 ).ToString( "N2" );
 
-						TextItem label					= 
-							new TextItem( barLabelText, ( float ) labelXCoordintate, 
+						TextObj label					= 
+							new TextObj( barLabelText, ( float ) labelXCoordintate, 
 							labelYCoordinate );
 
 						label.Location.CoordinateFrame	= CoordType.AxisXYScale;
@@ -2147,7 +2106,7 @@ namespace ZedGraph.LibTest
 						label.FontSpec.Border.IsVisible	= false;
 						label.FontSpec.Fill.IsVisible	= false;
 
-						pane.GraphItemList.Add( label );
+						pane.GraphObjList.Add( label );
 					}
 				}
 			}
@@ -2158,12 +2117,7 @@ namespace ZedGraph.LibTest
 		/// 
 		/// </summary>
 		/// <param name="pevent"></param>
-		protected override void OnPaintBackground(PaintEventArgs pevent)
-		{
-		}
-
-		bool showTicks = false;
-		private void Form1_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+		protected override void OnPaintBackground(PaintEventArgs e)
 		{
 			int ticks = Environment.TickCount;
 
@@ -2218,7 +2172,9 @@ namespace ZedGraph.LibTest
 				MessageBox.Show( "Ticks is " + ticks );
 			}
 		}
-		
+
+		bool showTicks = false;
+
 		private void CopyToPNG( PaneBase thePane )
 		{
 			if ( thePane != null )
@@ -2296,40 +2252,15 @@ namespace ZedGraph.LibTest
 				return bResult;
 			}
 		}
-
-		private void Form1_Resize(object sender, System.EventArgs e)
-		{
-			SetSize();
-		}
-
-		private void SetSize()
-		{
-			Rectangle paneRect = this.ClientRectangle;
-			paneRect.Inflate( -20, -20 );
-			paneRect.Y += 30;
-			paneRect.Height -= 30;
-
-			Graphics g = this.CreateGraphics();
-			memGraphics.CreateDoubleBuffer( g, this.ClientRectangle.Width, this.ClientRectangle.Height );
-
-			if ( this.master != null )
-				this.master.ReSize( g, paneRect );
-			else if ( this.myPane != null )
-				this.myPane.ReSize( g, paneRect );
-
-			Invalidate();
-			g.Dispose();
-		}
-
 		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
 		{
-			//clone the pane so the paneRect can be changed for printing
+			//clone the pane so the _rect can be changed for printing
 			//PaneBase printPane = (PaneBase) master.Clone();
 			//GraphPane printPane = (GraphPane) myPane.Clone();
-			//printPane.PaneRect = new RectangleF( 50, 50, 400, 300 );
+			//printPane.Rect = new RectangleF( 50, 50, 400, 300 );
 
 			//printPane.Legend.IsVisible = true;
-			//printPane.PaneRect = new RectangleF( 50, 50, 300, 300 );
+			//printPane.Rect = new RectangleF( 50, 50, 300, 300 );
 			//printPane.ReSize( e.Graphics, new RectangleF( 50, 50, 300, 300 ) );
 				
 			//e.Graphics.PageScale = 1.0F;
@@ -2467,15 +2398,12 @@ namespace ZedGraph.LibTest
 			}
 		}
 
-		private static bool isFirst = true;
-		private static PointF startPt;
-
-		private void Form1_MouseDown( object sender, System.Windows.Forms.MouseEventArgs e )
+		private void Form1_MouseDown(object sender, MouseEventArgs e)
 		{
 			PaneBase tmpPane = myPane;
 			if ( master != null )
 				tmpPane = master;
-			tmpPane.ScaledImage( 400, 300, 72 ).Save( myPane.Title + ".png", ImageFormat.Png );
+			tmpPane.ScaledImage( 400, 300, 72 ).Save( myPane.Title.Text + ".png", ImageFormat.Png );
 
 			//image.Save( @"c:\zedgraph.png", ImageFormat.Png );
 			//master.Image.Save( @"c:\zedgraph.png", ImageFormat.Png );
@@ -2507,8 +2435,8 @@ namespace ZedGraph.LibTest
 					y1 = Math.Max( y1, y2 );
 
 					RectangleF rect = new RectangleF( (float)x1, (float)y1, width, height );
-					BoxItem box = new BoxItem( rect, Color.Red, Color.Red );
-					myPane.GraphItemList.Add( box );
+					BoxObj box = new BoxObj( rect, Color.Red, Color.Red );
+					myPane.GraphObjList.Add( box );
 					isFirst = true;
 					Invalidate();
 				}
@@ -2545,7 +2473,7 @@ namespace ZedGraph.LibTest
 				MessageBox.Show( curve.Label + ": " + curve[iPt].ToString() );
 			}
 			/*
-				myText.Text = String.Format( "label = {0}  X = {1}",
+				myText.Text = String.Format( "_label = {0}  X = {1}",
 					curve.Label, curve.Points[iPt].ToString("e2") );
 			else
 				myText.Text = "none";
@@ -2604,30 +2532,30 @@ namespace ZedGraph.LibTest
 			CopyToPNG( myPane );
 
 			/*
-						RectangleF tmpRect = myPane.AxisRect;
+						RectangleF tmpRect = myPane.ChartRect;
 						tmpRect.Inflate( -50, -50 );
-						myPane.AxisRect = tmpRect;
+						myPane.ChartRect = tmpRect;
 						myPane.AxisChange();
 						Invalidate();
 			*/
 
-			
-			
+
+
 			/*
 									CurveItem curve;
 									int	iPt;
 
 									if ( myPane.FindNearestPoint( new PointF( e.X, e.Y ), out curve, out iPt ) )
-										MessageBox.Show( String.Format( "label = {0}  X = {1}",
+										MessageBox.Show( String.Format( "_label = {0}  X = {1}",
 											curve.Label, curve.Points[iPt].ToString("e2") ) );
 									else
 										MessageBox.Show( "No Point Found" );
 			*/
-			
+
 			/*
 						double x, y, y2;
 
-						if ( nPts < 100 && myPane.AxisRect.Contains( e.X, e.Y ) )
+						if ( nPts < 100 && myPane.ChartRect.Contains( e.X, e.Y ) )
 						{
 							this.myPane.ReverseTransform( new PointF( e.X, e.Y ), out x, out y, out y2 );
 							gx[nPts] = x;
@@ -2645,32 +2573,32 @@ namespace ZedGraph.LibTest
 			//CopyToEMF( myPane );
 		}
 
-		private void trackBar1_Scroll( object sender, EventArgs e )
+		private void trackBar1_Scroll(object sender, EventArgs e)
 		{
 			Axis controlAxis = myPane.XAxis;
 			if ( _crossAxis is XAxis )
 				controlAxis = myPane.YAxis;
 
-			_crossAxis.Cross = (double) trackBar1.Value / 100.0 * (controlAxis.Max - controlAxis.Min) +
-							controlAxis.Min;
-			//_crossAxis.ScaleFontSpec.Angle = trackBar1.Value;
+			_crossAxis.Cross = (double)trackBar1.Value / 100.0 * ( controlAxis.Scale.Max - controlAxis.Scale.Min ) +
+							controlAxis.Scale.Min;
+			//_crossAxis.Scale.FontSpec.Angle = trackBar1.Value;
 			myPane.AxisChange( this.CreateGraphics() );
 			Refresh();
 		}
 
-		private void ReverseBox_CheckedChanged( object sender, EventArgs e )
+		private void ReverseBox_CheckedChanged(object sender, EventArgs e)
 		{
-			_crossAxis.IsReverse = ReverseBox.Checked;
+			_crossAxis.Scale.IsReverse = ReverseBox.Checked;
 			Invalidate();
 		}
 
-		private void LabelsInsideBox_CheckedChanged( object sender, EventArgs e )
+		private void LabelsInsideBox_CheckedChanged(object sender, EventArgs e)
 		{
-			_crossAxis.IsScaleLabelsInside = LabelsInsideBox.Checked;
+			_crossAxis.Scale.IsLabelsInside = LabelsInsideBox.Checked;
 			Invalidate();
 		}
 
-		private void AxisSelection_SelectedIndexChanged( object sender, EventArgs e )
+		private void AxisSelection_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if ( AxisSelection.SelectedIndex == 0 )
 				_crossAxis = myPane.XAxis;
@@ -2680,6 +2608,12 @@ namespace ZedGraph.LibTest
 				_crossAxis = myPane.Y2Axis;
 
 			UpdateControls();
+		}
+
+		private void CrossAutoBox_CheckedChanged(object sender, EventArgs e)
+		{
+			_crossAxis.CrossAuto = CrossAutoBox.Checked;
+			Invalidate();
 		}
 
 		private void UpdateControls()
@@ -2694,19 +2628,17 @@ namespace ZedGraph.LibTest
 
 			if ( _crossAxis != null )
 			{
-				ReverseBox.Checked = _crossAxis.IsReverse;
-				LabelsInsideBox.Checked = _crossAxis.IsScaleLabelsInside;
+				ReverseBox.Checked = _crossAxis.Scale.IsReverse;
+				LabelsInsideBox.Checked = _crossAxis.Scale.IsLabelsInside;
 				CrossAutoBox.Checked = _crossAxis.CrossAuto;
 
-				trackBar1.Value = (int) ( Math.Abs( _crossAxis.ScaleFontSpec.Angle ) + 0.5 ) % 360;
+				trackBar1.Value = (int) ( Math.Abs( _crossAxis.Scale.FontSpec.Angle ) + 0.5 ) % 360;
 			}
 		}
 
-		private void CrossAutoBox_CheckedChanged( object sender, EventArgs e )
-		{
-			_crossAxis.CrossAuto = CrossAutoBox.Checked;
-			Invalidate();
-		}
+
 
 	}
+
+
 }

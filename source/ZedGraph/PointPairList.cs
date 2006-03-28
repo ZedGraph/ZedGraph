@@ -19,7 +19,7 @@
 
 using System;
 using System.Drawing;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace ZedGraph
 {
@@ -32,20 +32,20 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.28 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.28.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
-	public class PointPairList : CollectionPlus, IPointList, IPointListEdit
+	public class PointPairList : List<PointPair>, IPointList, IPointListEdit
 	{
 	#region Fields
 		/// <summary>Private field to maintain the sort status of this
 		/// <see cref="PointPairList"/>.  Use the public property
 		/// <see cref="Sorted"/> to access this value.
 		/// </summary>
-		protected bool sorted = true;
+		protected bool _sorted = true;
 	#endregion
 
 	#region Properties
-		/// <summary>
+/*		/// <summary>
 		/// Indexer to access the specified <see cref="PointPair"/> object by
 		/// its ordinal position in the list.
 		/// </summary>
@@ -57,14 +57,14 @@ namespace ZedGraph
 			get { return (PointPair) List[index]; }
 			set { List[index] = value; }
 		}
-
+*/
 		/// <summary>
 		/// true if the list is currently sorted.
 		/// </summary>
 		/// <seealso cref="Sort()"/>
 		public bool Sorted
 		{
-			get { return sorted; }
+			get { return _sorted; }
 		}
 	#endregion
 
@@ -74,7 +74,7 @@ namespace ZedGraph
 		/// </summary>
 		public PointPairList()
 		{
-			sorted = false;
+			_sorted = false;
 		}
 
 		/// <summary>
@@ -85,7 +85,7 @@ namespace ZedGraph
 		{
 			Add( x, y );
 
-			sorted = false;
+			_sorted = false;
 		}
 
 		/// <summary>
@@ -97,7 +97,7 @@ namespace ZedGraph
 			for ( int i = 0; i < count; i++ )
 				Add( list[i] );
 
-			sorted = false;
+			_sorted = false;
 		}
 
 		/// <summary>
@@ -108,7 +108,7 @@ namespace ZedGraph
 		{
 			Add( x, y, baseVal );
 			
-			sorted = false;
+			_sorted = false;
 		}
 
 		/// <summary>
@@ -119,7 +119,7 @@ namespace ZedGraph
 		{
 			Add( rhs );
 
-			sorted = false;
+			_sorted = false;
 		}
 
 		/// <summary>
@@ -151,10 +151,11 @@ namespace ZedGraph
 		/// be added</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
 		/// <seealso cref="IList.Add"/>
-		public int Add( PointPair point )
+		public new int Add( PointPair point )
 		{
-			sorted = false;
-			return List.Add( new PointPair( point ) );
+			_sorted = false;
+			base.Add( new PointPair( point ) );
+			return this.Count - 1;
 		}
 
 		/// <summary>
@@ -172,7 +173,7 @@ namespace ZedGraph
 			foreach ( PointPair point in pointList )
 				rv = this.Add( point );
 				
-			sorted = false;
+			_sorted = false;
 			return rv;
 		}
 
@@ -215,10 +216,11 @@ namespace ZedGraph
 				else
 					point.Y = PointPair.Missing;
 					
-				rv = List.Add( point );
+				base.Add( point );
+				rv = this.Count - 1;
 			}
 			
-			sorted = false;
+			_sorted = false;
 			return rv;
 		}
 
@@ -273,10 +275,11 @@ namespace ZedGraph
 				else
 					point.Z = PointPair.Missing;
 					
-				rv = List.Add( point );
+				base.Add( point );
+				rv = this.Count - 1;
 			}
 			
-			sorted = false;
+			_sorted = false;
 			return rv;
 		}
 
@@ -287,11 +290,11 @@ namespace ZedGraph
 		/// <param name="y">The Y value</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
 		/// <seealso cref="IList.Add"/>
-		public int Add( double x, double y )
+		public void Add( double x, double y )
 		{
-			sorted = false;
+			_sorted = false;
 			PointPair	point = new PointPair( x, y );
-			return List.Add( point );
+			base.Add( point );
 		}
 
 		/// <summary>
@@ -302,11 +305,11 @@ namespace ZedGraph
 		/// <param name="tag">The Tag value for the PointPair</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
 		/// <seealso cref="IList.Add"/>
-		public int Add( double x, double y, string tag )
+		public void Add( double x, double y, string tag )
 		{
-			sorted = false;
+			_sorted = false;
 			PointPair	point = new PointPair( x, y, tag );
-			return List.Add( point );
+			base.Add( point );
 		}
 
 		/// <summary>
@@ -318,11 +321,11 @@ namespace ZedGraph
 		/// <returns>The zero-based ordinal index where the point was added
 		/// in the list.</returns>
 		/// <seealso cref="IList.Add"/>
-		public int Add( double x, double y, double z )
+		public void Add( double x, double y, double z )
 		{
-			sorted = false;
+			_sorted = false;
 			PointPair point = new PointPair( x, y, z );
-			return List.Add( point );
+			base.Add( point );
 		}
 
 		/// <summary>
@@ -335,11 +338,11 @@ namespace ZedGraph
 		/// <returns>The zero-based ordinal index where the point was added
 		/// in the list.</returns>
 		/// <seealso cref="IList.Add"/>
-		public int Add( double x, double y, double z, string tag )
+		public void Add( double x, double y, double z, string tag )
 		{
-			sorted = false;
+			_sorted = false;
 			PointPair point = new PointPair( x, y, z, tag );
-			return List.Add( point );
+			base.Add( point );
 		}
 
 		/// <summary>
@@ -352,10 +355,10 @@ namespace ZedGraph
 		/// <param name="point">
 		/// The <see cref="PointPair"/> object to be added.
 		/// </param>
-		public void Insert( int index, PointPair point )
+		public new void Insert( int index, PointPair point )
 		{
-			sorted = false;
-			List.Insert( index, point );
+			_sorted = false;
+			base.Insert( index, point );
 		}
 
 		/// <summary>
@@ -369,8 +372,8 @@ namespace ZedGraph
 		/// <param name="y">The Y value</param>
 		public void Insert( int index, double x, double y )
 		{
-			sorted = false;
-			List.Insert( index, new PointPair( x, y ) );
+			_sorted = false;
+			base.Insert( index, new PointPair( x, y ) );
 		}
 
 		/// <summary>
@@ -385,37 +388,37 @@ namespace ZedGraph
 		/// <param name="z">The Z or lower dependent axis value</param>
 		public void Insert( int index, double x, double y, double z )
 		{
-			sorted = false;
-			List.Insert( index, new PointPair( x, y, z ) );
+			_sorted = false;
+			Insert( index, new PointPair( x, y, z ) );
 		}
+		/*
+				/// <summary>
+				/// Remove the specified <see cref="PointPair"/> object from the collection based
+				/// the point values (must match exactly).
+				/// </summary>
+				/// <param name="pt">
+				/// A <see cref="PointPair"/> that is to be removed by value.
+				/// </param>
+				/// <seealso cref="IList.Remove"/>
+				public void Remove( PointPair pt )
+				{
+					List.Remove( pt );
+				}
 
-		/// <summary>
-		/// Remove the specified <see cref="PointPair"/> object from the collection based
-		/// the point values (must match exactly).
-		/// </summary>
-		/// <param name="pt">
-		/// A <see cref="PointPair"/> that is to be removed by value.
-		/// </param>
-		/// <seealso cref="IList.Remove"/>
-		public void Remove( PointPair pt )
-		{
-			List.Remove( pt );
-		}
-
-		/// <summary>
-		/// Return the zero-based position index of the specified
-		/// <see cref="PointPair"/> in the collection.
-		/// </summary>
-		/// <param name="pt">The <see cref="PointPair"/> object that is to be found.
-		/// </param>
-		/// <returns>The zero-based index of the specified <see cref="PointPair"/>, or -1 if the <see cref="PointPair"/>
-		/// is not in the list</returns>
-		/// <seealso cref="IList.IndexOf"/>
-		public int IndexOf( PointPair pt )
-		{
-			return List.IndexOf( pt );
-		}
-
+				/// <summary>
+				/// Return the zero-based position index of the specified
+				/// <see cref="PointPair"/> in the collection.
+				/// </summary>
+				/// <param name="pt">The <see cref="PointPair"/> object that is to be found.
+				/// </param>
+				/// <returns>The zero-based index of the specified <see cref="PointPair"/>, or -1 if the <see cref="PointPair"/>
+				/// is not in the list</returns>
+				/// <seealso cref="IList.IndexOf"/>
+				public int IndexOf( PointPair pt )
+				{
+					return List.IndexOf( pt );
+				}
+		*/
 		/// <summary>
 		/// Return the zero-based position index of the
 		/// <see cref="PointPair"/> with the specified label <see cref="PointPair.Tag"/>.
@@ -452,12 +455,12 @@ namespace ZedGraph
 		public override bool Equals( object obj )
 		{
 			PointPairList rhs = obj as PointPairList;
-			if( List.Count != rhs.Count )
+			if( this.Count != rhs.Count )
 				return false;
 
-			for( int i=0; i<List.Count; i++ )
+			for( int i=0; i<this.Count; i++ )
 			{
-				if( !List[i].Equals(rhs[i]) )
+				if( !this[i].Equals(rhs[i]) )
 					return false;
 			}
 
@@ -478,13 +481,13 @@ namespace ZedGraph
 		/// list if the list is already sorted.
 		/// </summary>
 		/// <returns>If the list was sorted before sort was called</returns>
-		public bool Sort()
+		public new bool Sort()
 		{
 			// if it is already sorted we don't have to sort again
-			if ( sorted )
+			if ( _sorted )
 				return true;
 
-			InnerList.Sort( new PointPair.PointPairComparer( SortType.XValues ) );
+			this.Sort( new PointPair.PointPairComparer( SortType.XValues ) );
 			return false;
 		}
 		
@@ -499,10 +502,10 @@ namespace ZedGraph
 		public bool Sort( SortType type)
 		{
 			// if it is already sorted we don't have to sort again
-			if ( sorted )
+			if ( _sorted )
 				return true;
 				
-			InnerList.Sort( new PointPair.PointPairComparer( type ) );
+			this.Sort( new PointPair.PointPairComparer( type ) );
 			
 			return false;
 		}
@@ -530,7 +533,7 @@ namespace ZedGraph
 					this[i].X = x[i];
 			}
 				
-			sorted = false;
+			_sorted = false;
 		}
 
 		/// <summary>
@@ -556,7 +559,7 @@ namespace ZedGraph
 					this[i].Y = y[i];
 			}
 				
-			sorted = false;
+			_sorted = false;
 		}
 
 		/// <summary>
@@ -582,7 +585,7 @@ namespace ZedGraph
 					this[i].Z = z[i];
 			}
 				
-			sorted = false;
+			_sorted = false;
 		}
 
 		/// <summary>
@@ -620,7 +623,7 @@ namespace ZedGraph
 					this[i].X += sumList[i].X;
 			}
 				
-			sorted = false;
+			_sorted = false;
 		}
 
 		/// <summary>

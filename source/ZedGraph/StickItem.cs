@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.3 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 1.3.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
 	public class StickItem : LineItem, ICloneable, ISerializable
 	{
@@ -58,7 +58,7 @@ namespace ZedGraph
 		/// <value>true if the Z data are included, false otherwise</value>
 		override internal bool IsZIncluded( GraphPane pane )
 		{
-			return this.symbol.IsVisible;
+			return this._symbol.IsVisible;
 		}
 
 		/// <summary>
@@ -80,7 +80,7 @@ namespace ZedGraph
 		/// <param name="label">The label that will appear in the legend.</param>
 		public StickItem( string label ) : base( label )
 		{
-			this.symbol.IsVisible = false;
+			this._symbol.IsVisible = false;
 		}
 		
 		/// <summary>
@@ -147,7 +147,7 @@ namespace ZedGraph
 		public StickItem( string label, IPointList points, Color color, float lineWidth )
 			: base( label, points, color, Symbol.Default.Type, lineWidth )
 		{
-			this.symbol.IsVisible = false;
+			this._symbol.IsVisible = false;
 		}
 
 		/// <summary>

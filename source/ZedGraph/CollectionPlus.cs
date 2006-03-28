@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <summary>
 	/// A collection base class containing basic extra functionality to be inherited
 	/// by <see cref="CurveList"/>, <see cref="IPointList"/>,
-	/// <see cref="GraphItemList"/>.
+	/// <see cref="GraphObjList"/>.
 	/// </summary>
 	/// <remarks>The methods in this collection operate on basic
 	/// <see cref="object"/> types.  Therefore, in order to make sure that
@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// Only Remove(), Move(), IndexOf(), etc. methods are included.</remarks>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.5 $ $Date: 2005-08-11 02:56:37 $ </version>
+	/// <version> $Revision: 3.5.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
 	public class CollectionPlus : CollectionBase
 	{

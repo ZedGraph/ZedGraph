@@ -38,14 +38,14 @@ namespace ZedGraph.Demo
 			myMaster.PaneList.Clear();
 			
 			// Set the master pane title
-			myMaster.Title = "MasterPane Test";
-			myMaster.IsShowTitle = true;
+			myMaster.Title.Text = "MasterPane Test";
+			myMaster.Title.IsVisible = true;
 
 			// Fill the pane background with a color gradient
-			myMaster.PaneFill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+			myMaster.Fill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
 			
 			// Set the margins and the space between panes to 10 points
-			myMaster.MarginAll = 10;
+			myMaster.Margin.All = 10;
 			myMaster.InnerPaneGap = 10;
 
 			// Enable the master pane legend
@@ -53,7 +53,7 @@ namespace ZedGraph.Demo
 			myMaster.Legend.Position = LegendPos.TopCenter;
 
 			// Add a confidential stamp
-			TextItem text = new TextItem( "Confidential", 0.80F, 0.12F );
+			TextObj text = new TextObj( "Confidential", 0.80F, 0.12F );
 			text.Location.CoordinateFrame = CoordType.PaneFraction;
 			// angle the text at 15 degrees
 			text.FontSpec.Angle = 15.0F;
@@ -65,10 +65,10 @@ namespace ZedGraph.Demo
 			text.FontSpec.Fill.IsVisible = false;
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
-			myMaster.GraphItemList.Add( text );
+			myMaster.GraphObjList.Add( text );
 
 			// Add a draft watermark
-			text = new TextItem("DRAFT", 0.5F, 0.5F );
+			text = new TextObj("DRAFT", 0.5F, 0.5F );
 			text.Location.CoordinateFrame = CoordType.PaneFraction;
 			// tilt the text at 30 degrees
 			text.FontSpec.Angle = 30.0F;
@@ -81,18 +81,18 @@ namespace ZedGraph.Demo
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Center;
 			text.ZOrder = ZOrder.B_BehindLegend;
-			myMaster.GraphItemList.Add( text );
+			myMaster.GraphObjList.Add( text );
 
 			for ( int j=0; j<6; j++ )
 			{
 				// Create a new GraphPane
 				GraphPane myPane = new GraphPane();
-				myPane.Title = "My Test Graph #" + (j+1).ToString();
-				myPane.XAxis.Title = "X Axis";
-				myPane.YAxis.Title = "Y Axis";
+				myPane.Title.Text = "My Test Graph #" + (j+1).ToString();
+				myPane.XAxis.Title.Text = "X Axis";
+				myPane.YAxis.Title.Text = "Y Axis";
 
 				// Fill the pane background with a color gradient
-				myPane.PaneFill = new Fill( Color.White, Color.LightYellow, 45.0F );
+				myPane.Fill = new Fill( Color.White, Color.LightYellow, 45.0F );
 				// Reduce the base dimension to 6 inches, since these panes tend to be smaller
 				myPane.BaseDimension = 6.0F;
 
@@ -115,7 +115,7 @@ namespace ZedGraph.Demo
 
 			// Tell ZedGraph to auto layout all the panes
 			Graphics g = base.ZedGraphControl.CreateGraphics();
-			myMaster.AutoPaneLayout( g, PaneLayout.SquareColPreferred );
+			myMaster.PaneLayoutMgr.SetLayout( PaneLayout.SquareColPreferred );
 			myMaster.AxisChange( g );
 			g.Dispose();
 

@@ -55,7 +55,7 @@ namespace ZedGraph
 	/// value of <see cref="BarSettings.Base"/>, which is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-27 01:31:37 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
 	public class JapaneseCandleStickItem : CurveItem, ICloneable, ISerializable
 	{
@@ -111,9 +111,9 @@ namespace ZedGraph
 	#region Constructors
 
 		/// <summary>
-		/// Create a new <see cref="CandleStickItem"/>, specifying only the legend _label.
+		/// Create a new <see cref="CandleStickItem"/>, specifying only the legend label.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		public JapaneseCandleStickItem( string label )
 			: base( label )
 		{
@@ -123,7 +123,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Create a new <see cref="JapaneseCandleStickItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The _label that will appear in the _legend.</param>
+		/// <param name="label">The label that will appear in the legend.</param>
 		/// <param name="points">An <see cref="IPointList"/> of double precision values that define
 		/// the Date, Close, Open, High, and Low values for the curve.  Note that this
 		/// <see cref="IPointList" /> should contain <see cref="StockPt" /> items rather

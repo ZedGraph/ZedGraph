@@ -25,7 +25,7 @@ namespace ZedGraph.Demo
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos </author>
-	/// <version> $Revision: 1.8 $ $Date: 2005-11-24 05:01:27 $ </version>
+	/// <version> $Revision: 1.8.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
 	public class DemoTabForm : ChartTabForm
 	{
 	#region Constructor
@@ -83,12 +83,5 @@ namespace ZedGraph.Demo
 		}
 	#endregion
 
-	#region Main
-		[STAThread]
-		static void Main() 
-		{
-			System.Windows.Forms.Application.Run(new DemoTabForm());
-		}
-	#endregion
 	}
 }

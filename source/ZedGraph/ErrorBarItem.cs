@@ -46,10 +46,10 @@ namespace ZedGraph
 	/// controlled by the symbol size in <see cref="ZedGraph.ErrorBar.Symbol"/>,
 	/// specified in points (1/72nd inch).  The position of each "I-Beam" is set
 	/// according to the <see cref="PointPair"/> values.  The independent axis
-	/// is assigned with <see cref="GraphPane.BarBase"/>, and is a
+	/// is assigned with <see cref="BarSettings.Base"/>, and is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.13.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
 	[Serializable]
 	public class ErrorBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -59,7 +59,7 @@ namespace ZedGraph
 		/// class defined for this <see cref="ErrorBarItem"/>.  Use the public
 		/// property <see cref="ErrorBar"/> to access this value.
 		/// </summary>
-		private ErrorBar errorBar;
+		private ErrorBar _errorBar;
 
 	#endregion
 
@@ -70,7 +70,7 @@ namespace ZedGraph
 		/// </summary>
 		public ErrorBar ErrorBar
 		{
-			get { return errorBar; }
+			get { return _errorBar; }
 		}
 
 		/// <summary>
@@ -92,7 +92,7 @@ namespace ZedGraph
 		/// <value>true if the X axis is independent, false otherwise</value>
 		override internal bool IsXIndependent( GraphPane pane )
 		{
-			return pane.BarBase == BarBase.X;
+			return pane._barSettings.Base == BarBase.X;
 		}
 
 	#endregion
@@ -104,7 +104,7 @@ namespace ZedGraph
 		/// <param name="label">The label that will appear in the legend.</param>
 		public ErrorBarItem( string label ) : base( label )
 		{
-			this.errorBar = new ErrorBar();
+			this._errorBar = new ErrorBar();
 		}
 		
 		/// <summary>
@@ -138,7 +138,7 @@ namespace ZedGraph
 		public ErrorBarItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
-			errorBar = new ErrorBar( color );
+			_errorBar = new ErrorBar( color );
 		}
 
 		/// <summary>
@@ -147,7 +147,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="ErrorBarItem"/> object from which to copy</param>
 		public ErrorBarItem( ErrorBarItem rhs ) : base( rhs )
 		{
-			errorBar = new ErrorBar( rhs.ErrorBar );
+			_errorBar = new ErrorBar( rhs.ErrorBar );
 		}
 
 		/// <summary>
@@ -190,7 +190,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			errorBar = (ErrorBar) info.GetValue( "errorBar", typeof(ErrorBar) );
+			_errorBar = (ErrorBar) info.GetValue( "errorBar", typeof(ErrorBar) );
 
 			// This is now just a dummy variable, since barBase was removed
 			BarBase barBase = (BarBase) info.GetValue( "barBase", typeof(BarBase) );
@@ -205,7 +205,7 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "errorBar", errorBar );
+			info.AddValue( "errorBar", _errorBar );
 
 			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
 			info.AddValue( "barBase", BarBase.X );
@@ -237,9 +237,9 @@ namespace ZedGraph
 		/// </param>
 		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
-			if ( this.isVisible )
+			if ( this._isVisible )
 			{
-				errorBar.Draw( g, pane, this, this.BaseAxis( pane ),
+				_errorBar.Draw( g, pane, this, this.BaseAxis( pane ),
 								this.ValueAxis( pane ), scaleFactor );
 			}
 		}		
@@ -268,7 +268,7 @@ namespace ZedGraph
 		{
 			float pixBase, pixValue, pixLowValue;
 
-			if ( pane.BarBase == BarBase.X )
+			if ( pane._barSettings.Base == BarBase.X )
 			{
 				pixBase = rect.Left + rect.Width / 2.0F;
 				pixValue = rect.Top;
@@ -281,8 +281,8 @@ namespace ZedGraph
 				pixLowValue = rect.Left;
 			}
 
-			Pen pen = new Pen( errorBar.Color, errorBar.PenWidth );
-			this.ErrorBar.Draw( g, pane, pane.BarBase == BarBase.X, pixBase, pixValue,
+			Pen pen = new Pen( _errorBar.Color, _errorBar.PenWidth );
+			this.ErrorBar.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixValue,
 								pixLowValue, scaleFactor, pen, null );
 		}
 
