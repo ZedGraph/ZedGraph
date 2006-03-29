@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.21.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.21.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem , ICloneable, ISerializable
 	{
@@ -629,7 +629,7 @@ namespace ZedGraph
 		{
 			//want to draw the largest pie possible within ChartRect
 			//but want to leave  5% slack around the pie so labels will not overrun clip area
-			//largest pie is limited by the smaller of ChartRect.height or axisRect.width...
+			//largest pie is limited by the smaller of ChartRect.height or ChartRect.width...
 			//this rect (nonExplRect)has to be re-positioned so that it's in the center of ChartRect.
 			//Where ChartRect is almost a square - low Aspect Ratio -, need to contract pieRect so that there's some
 			//room for labels, if they're visible.

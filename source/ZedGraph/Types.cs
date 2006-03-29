@@ -732,7 +732,8 @@ namespace ZedGraph
 	}
 	
 	/// <summary>
-	/// Define the auto layout options for the <see cref="MasterPane.AutoPaneLayout(Graphics,PaneLayout)"/> method.
+	/// Define the auto layout options for the
+	/// <see cref="PaneLayoutMgr.SetLayout(PaneLayout)"/> method.
 	/// </summary>
 	public enum PaneLayout
 	{

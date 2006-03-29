@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.23.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.23.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -60,6 +60,13 @@ namespace ZedGraph
 		/// property <see cref="IsSmooth"/> to access this value.
 		/// </summary>
 		private bool _isSmooth;
+		/// <summary>
+		/// private field that determines if the lines are draw using
+		/// Anti-Aliasing capabilities from the <see cref="Graphics" /> class.
+		/// Use the public property <see cref="IsAntiAlias" /> to access
+		/// this value.
+		/// </summary>
+		private bool _isAntiAlias;
 		/// <summary>
 		/// Private field that stores the smoothing tension
 		/// for this <see cref="Line"/>.  Use the public property
@@ -133,6 +140,11 @@ namespace ZedGraph
             /// </summary>
 			public static float Width = 1;
 			/// <summary>
+			/// The default value for the <see cref="Line.IsAntiAlias"/>
+			/// property.
+			/// </summary>
+			public static bool IsAntiAlias = false;
+			/// <summary>
 			/// The default value for the <see cref="Line.IsSmooth"/>
 			/// property.
 			/// </summary>
@@ -202,6 +214,21 @@ namespace ZedGraph
 		{
 			get { return _isVisible; }
 			set { _isVisible = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines if the lines are drawn using
+		/// Anti-Aliasing capabilities from the <see cref="Graphics" /> class.
+		/// </summary>
+		/// <remarks>
+		/// If this value is set to true, then the <see cref="Graphics.SmoothingMode" />
+		/// property will be set to <see cref="SmoothingMode.HighQuality" /> only while
+		/// this <see cref="Line" /> is drawn.  A value of false will leave the value of
+		/// <see cref="Graphics.SmoothingMode" /> unchanged.
+		/// </remarks>
+		public bool IsAntiAlias
+		{
+			get { return _isAntiAlias; }
+			set { _isAntiAlias = value; }
 		}
 		/// <summary>
 		/// Gets or sets a property that determines if this <see cref="Line"/>
@@ -292,6 +319,7 @@ namespace ZedGraph
 			this._isVisible = Default.IsVisible;
 			this._color = color.IsEmpty ? Default.Color : color;
 			this._stepType = Default.StepType;
+			this._isAntiAlias = Default.IsAntiAlias;
 			this._isSmooth = Default.IsSmooth;
 			this._smoothTension = Default.SmoothTension;
 			this._fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
@@ -303,14 +331,15 @@ namespace ZedGraph
 		/// <param name="rhs">The Line object from which to copy</param>
 		public Line( Line rhs )
 		{
-			_width = rhs.Width;
-			_style = rhs.Style;
-			_isVisible = rhs.IsVisible;
-			_color = rhs.Color;
-			_stepType = rhs.StepType;
-			_isSmooth = rhs.IsSmooth;
-			_smoothTension = rhs.SmoothTension;
-			_fill = rhs.Fill.Clone();
+			_width = rhs._width;
+			_style = rhs._style;
+			_isVisible = rhs._isVisible;
+			_color = rhs._color;
+			_stepType = rhs._stepType;
+			_isAntiAlias = rhs._isAntiAlias;
+			_isSmooth = rhs._isSmooth;
+			_smoothTension = rhs._smoothTension;
+			_fill = rhs._fill.Clone();
 		}
 
 		/// <summary>
@@ -338,7 +367,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -356,6 +385,7 @@ namespace ZedGraph
 			_width = info.GetSingle( "width" );
 			_style = (DashStyle) info.GetValue( "style", typeof(DashStyle) );
 			_isVisible = info.GetBoolean( "isVisible" );
+			_isAntiAlias = info.GetBoolean( "isAntiAlias" );
 			_isSmooth = info.GetBoolean( "isSmooth" );
 			_smoothTension = info.GetSingle( "smoothTension" );
 			_color = (Color) info.GetValue( "color", typeof(Color) );
@@ -374,6 +404,7 @@ namespace ZedGraph
 			info.AddValue( "width", _width );
 			info.AddValue( "style", _style );
 			info.AddValue( "isVisible", _isVisible );
+			info.AddValue( "isAntiAlias", _isAntiAlias );
 			info.AddValue( "isSmooth", _isSmooth );
 			info.AddValue( "smoothTension", _smoothTension );
 			info.AddValue( "color", _color );
@@ -409,13 +440,19 @@ namespace ZedGraph
 			// If the line is being shown, draw it
 			if ( this.IsVisible )
 			{
+				SmoothingMode sModeSave = g.SmoothingMode;
+				if ( this._isAntiAlias )
+					g.SmoothingMode = SmoothingMode.HighQuality;
+
 				if ( curve is StickItem )
 					DrawSticks( g, pane, curve, scaleFactor );
 				else if ( this.IsSmooth || this.Fill.IsVisible )
-                    DrawSmoothFilledCurve( g, pane, curve, scaleFactor );
-                else
-                    DrawCurve( g, pane, curve, scaleFactor );
-            }
+					DrawSmoothFilledCurve( g, pane, curve, scaleFactor );
+				else
+					DrawCurve( g, pane, curve, scaleFactor );
+
+				g.SmoothingMode = sModeSave;
+         }
 		}		
 
 		/// <summary>

@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.19.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.19.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -631,14 +631,14 @@ namespace ZedGraph
 		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>
-		/// <returns>The calculated axis rect, in pixel coordinates.</returns>
+		/// <returns>The calculated chart rect, in pixel coordinates.</returns>
 		public RectangleF CalcClientRect( Graphics g, float scaleFactor )
 		{
 			// get scaled values for the paneGap and character height
 			//float scaledOuterGap = (float) ( Default.OuterPaneGap * scaleFactor );
 			float charHeight = this._title._fontSpec.GetHeight( scaleFactor );
-				
-			// Axis rect starts out at the full pane rect.  It gets reduced to make room for the legend,
+
+			// chart rect starts out at the full pane rect.  It gets reduced to make room for the legend,
 			// scales, titles, etc.
 			RectangleF innerRect = new RectangleF(
 							this._rect.Left + this._margin.Left * scaleFactor,

@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.3.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.3.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class PaneList : List<GraphPane>, ICloneable
 	{
@@ -192,7 +192,6 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="GraphPane"/>,
 		/// or -1 if the <see cref="PaneBase.Title"/> was not found in the list</returns>
-		/// <seealso cref="IList.IndexOf"/>
 		/// <seealso cref="IndexOfTag"/>
 		public int IndexOf( string title )
 		{
@@ -218,8 +217,6 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="GraphPane"/>,
 		/// or -1 if the <see cref="PaneBase.Tag"/> string is not in the list</returns>
-		/// <seealso cref="IList.IndexOf"/>
-		/// <seealso cref="IndexOf"/>
 		public int IndexOfTag( string tagStr )
 		{
 			int index = 0;

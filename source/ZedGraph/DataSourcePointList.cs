@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class DataSourcePointList : IPointList
 	{
@@ -93,10 +93,11 @@ namespace ZedGraph
 		/// The <see cref="BindingSource" /> object from which to get the bound data
 		/// </summary>
 		/// <remarks>
-		/// Typically, you set the <see cref="System.Data.BindingSource.DataSource" />
+		/// Typically, you set the <see cref="System.Windows.Forms.BindingSource.DataSource" />
 		/// property to a reference to your database, table or list object.  The
-		/// <see cref="System.Data.BindingSource.DataMember" /> property would be set
-		/// to the name of the datatable within the <see cref="System.Data.BindingSource.DataSource" />,
+		/// <see cref="System.Windows.Forms.BindingSource.DataMember" /> property would be set
+		/// to the name of the datatable within the
+		/// <see cref="System.Windows.Forms.BindingSource.DataSource" />,
 		/// if applicable.</remarks>
 		public object BindingSource
 		{
@@ -107,7 +108,8 @@ namespace ZedGraph
 		/// The table or list object from which to extract the data values.
 		/// </summary>
 		/// <remarks>
-		/// This property is just an alias for <see cref="System.Data.BindingSource.DataSource" />.
+		/// This property is just an alias for
+		/// <see cref="System.Windows.Forms.BindingSource.DataSource" />.
 		/// </remarks>
 		public object DataSource
 		{

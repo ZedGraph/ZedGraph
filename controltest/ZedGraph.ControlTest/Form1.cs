@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
 
@@ -26,8 +28,8 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_CandleStick( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
-			//CreateGraph_BasicLinear( zedGraphControl1 );
-			CreateGraph_StackLine( zedGraphControl1 );
+			CreateGraph_BasicLinear( zedGraphControl1 );
+			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
@@ -40,6 +42,8 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_TwoTextAxes( zedGraphControl1 );
 			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
 			//CreateGraph_32kPoints( zedGraphControl1 );
+			//CreateGraph_ImageSymbols( zedGraphControl1 );
+			//CreateGraph_OnePoint( zedGraphControl1 );
 
 			//CreateGraph_DataSource( zedGraphControl1 );
 
@@ -442,15 +446,60 @@ namespace ZedGraph.ControlTest
 			}
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 
-			z1.GraphPane.XAxis.Scale.Min = 0;
-			z1.GraphPane.XAxis.Scale.Max = 100;
-			z1.GraphPane.XAxis.Scale.MajorStep = 10;
 			z1.IsShowHScrollBar = true;
 			z1.IsShowVScrollBar = true;
 			z1.IsAutoScrollRange = true;
 			//z1.GraphPane.IsBoundedRanges = false;
 			//z1.ScrollMinX = 0;
 			//z1.ScrollMaxX = 100;
+
+		}
+
+		// Basic curve test with images for symbols
+		private void CreateGraph_ImageSymbols( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			myPane.Title.Text = "Demonstration Chart with an Image for Symbols";
+			myPane.XAxis.Title.Text = "Some Independent Value";
+			myPane.YAxis.Title.Text = "The Dependent Axis";
+
+			PointPairList list = new PointPairList();
+			for ( int i = 0; i < 20; i++ )
+			{
+				double x = (double)i + 5;
+				double y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.4 ) );
+				list.Add( x, y );
+			}
+			LineItem myCurve = myPane.AddCurve( "Smile! It's only data", list, Color.Black, SymbolType.Square );
+
+			Bitmap bm = new Bitmap( @"..\..\teeth.png" );
+			Image image = Image.FromHbitmap( bm.GetHbitmap() );
+
+			myCurve.Symbol.Type = SymbolType.Circle;
+			myCurve.Symbol.Size = 18;
+			myCurve.Symbol.Border.IsVisible = false;
+			myCurve.Symbol.Fill = new Fill( image, WrapMode.Clamp );
+
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+			myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 255, 255 ), 45.0f );
+
+		}
+
+		// Basic curve test with images for symbols
+		private void CreateGraph_OnePoint( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+
+			list.Add( 0.5, 0.5 );
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Black, SymbolType.Circle );
+
+			myCurve.Symbol.Size = 16;
+			myCurve.Symbol.Fill = new Fill( Color.White, Color.FromArgb( 120, 120, 255 ), 45.0f );
+			myCurve.Symbol.Fill.IsScaled = true;
+			myCurve.Line.IsVisible = false;
 
 		}
 
@@ -1116,6 +1165,7 @@ namespace ZedGraph.ControlTest
 
 			LineItem myCurve = z1.GraphPane.AddCurve( "curve", dspl, Color.Blue );
 			z1.AxisChange();
+
 		}
 	}
 }

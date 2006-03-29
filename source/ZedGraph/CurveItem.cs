@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.31.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.31.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -49,20 +49,6 @@ namespace ZedGraph
 		/// </summary>
 		internal Label _label;
 	
-		/// <summary>
-		/// protected field that stores a legend label string for this
-		/// <see cref="CurveItem"/>.  Use the public
-		/// property <see cref="Label"/> to access this value.
-		/// </summary>
-		//protected string	label;
-
-		/// <summary>
-		/// protected field that stores the special <see cref="FontSpec" /> to be used for
-		/// the <see cref="Legend" /> entry of this <see cref="CurveItem" />.  Use the public
-		/// property <see cref="FontSpec" /> to access this value;
-		/// </summary>
-		//protected FontSpec	fontSpec;
-
 		/// <summary>
 		/// protected field that stores the boolean value that determines whether this
 		/// <see cref="CurveItem"/> is on the left Y axis or the right Y axis (Y2).
@@ -92,15 +78,6 @@ namespace ZedGraph
 		/// access this value.
 		/// </summary>
 		protected bool		_isOverrideOrdinal;
-		/// <summary>
-		/// protected field that stores the boolean value that determines whether the label
-		/// for this <see cref="CurveItem"/> is visible in the legend.
-		/// Use the public property <see cref="IsLegendLabelVisible"/> to access this value.
-		/// Note that this value turns the legend entry display on or off, but it does not
-		/// affect the display of the curve on the graph.  To hide the curve, you
-		/// have to set <see cref="IsVisible"/> to false.
-		/// </summary>
-		//protected bool		isLegendLabelVisible;
 		
 		/// <summary>
 		/// The <see cref="IPointList"/> of value sets that

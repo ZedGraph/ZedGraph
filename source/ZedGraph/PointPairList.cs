@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.28.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.28.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class PointPairList : List<PointPair>, IPointList, IPointListEdit
 	{
@@ -150,12 +150,10 @@ namespace ZedGraph
 		/// <param name="point">The <see cref="PointPair"/> object to
 		/// be added</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
-		/// <seealso cref="IList.Add"/>
-		public new int Add( PointPair point )
+		public new void Add( PointPair point )
 		{
 			_sorted = false;
 			base.Add( new PointPair( point ) );
-			return this.Count - 1;
 		}
 
 		/// <summary>
@@ -165,16 +163,12 @@ namespace ZedGraph
 		/// be added</param>
 		/// <returns>The zero-based ordinal index where the last point was added in the list,
 		/// or -1 if no points were added.</returns>
-		/// <seealso cref="IList.Add"/>
-		public int Add( PointPairList pointList )
+		public void Add( PointPairList pointList )
 		{
-			int rv = -1;
-			
 			foreach ( PointPair point in pointList )
-				rv = this.Add( point );
+			Add( point );
 				
 			_sorted = false;
-			return rv;
 		}
 
 		/// <summary>
@@ -188,11 +182,9 @@ namespace ZedGraph
 		/// <param name="y">A double[] array of Y values</param>
 		/// <returns>The zero-based ordinal index where the last point was added in the list,
 		/// or -1 if no points were added.</returns>
-		/// <seealso cref="IList.Add"/>
-		public int Add( double[] x, double[] y )
+		public void Add( double[] x, double[] y )
 		{
-			int 		len = 0,
-						rv = -1;
+			int 		len = 0;
 			
 			if ( x != null )
 				len = x.Length;
@@ -217,11 +209,9 @@ namespace ZedGraph
 					point.Y = PointPair.Missing;
 					
 				base.Add( point );
-				rv = this.Count - 1;
 			}
 			
 			_sorted = false;
-			return rv;
 		}
 
 		/// <summary>
@@ -237,11 +227,9 @@ namespace ZedGraph
 		/// <param name="z">A double[] array of Z or lower-dependent axis values</param>
 		/// <returns>The zero-based ordinal index where the last point was added in the list,
 		/// or -1 if no points were added.</returns>
-		/// <seealso cref="IList.Add"/>
-		public int Add( double[] x, double[] y, double[] z )
+		public void Add( double[] x, double[] y, double[] z )
 		{
-			int 		len = 0,
-						rv = -1;
+			int 		len = 0;
 			
 			if ( x != null )
 				len = x.Length;
@@ -276,11 +264,9 @@ namespace ZedGraph
 					point.Z = PointPair.Missing;
 					
 				base.Add( point );
-				rv = this.Count - 1;
 			}
 			
 			_sorted = false;
-			return rv;
 		}
 
 		/// <summary>
@@ -289,7 +275,6 @@ namespace ZedGraph
 		/// <param name="x">The X value</param>
 		/// <param name="y">The Y value</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
-		/// <seealso cref="IList.Add"/>
 		public void Add( double x, double y )
 		{
 			_sorted = false;
@@ -304,7 +289,6 @@ namespace ZedGraph
 		/// <param name="y">The Y value</param>
 		/// <param name="tag">The Tag value for the PointPair</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
-		/// <seealso cref="IList.Add"/>
 		public void Add( double x, double y, string tag )
 		{
 			_sorted = false;
@@ -320,7 +304,6 @@ namespace ZedGraph
 		/// <param name="z">The Z or lower dependent axis value</param>
 		/// <returns>The zero-based ordinal index where the point was added
 		/// in the list.</returns>
-		/// <seealso cref="IList.Add"/>
 		public void Add( double x, double y, double z )
 		{
 			_sorted = false;
@@ -337,7 +320,6 @@ namespace ZedGraph
 		/// <param name="tag">The Tag value for the PointPair</param>
 		/// <returns>The zero-based ordinal index where the point was added
 		/// in the list.</returns>
-		/// <seealso cref="IList.Add"/>
 		public void Add( double x, double y, double z, string tag )
 		{
 			_sorted = false;
@@ -430,7 +412,6 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="PointPair"/>,
 		/// or -1 if the <see cref="PointPair"/> is not in the list</returns>
-		/// <seealso cref="IList.IndexOf"/>
 		public int IndexOfTag( string label )
 		{
 			int iPt = 0;

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.32.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.32.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -252,7 +252,6 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="CurveItem"/>,
 		/// or -1 if the <see cref="CurveItem"/> is not in the list</returns>
-		/// <seealso cref="IList.IndexOf"/>
 		/// <seealso cref="IndexOfTag"/>
 		public int IndexOf( string label )
 		{
@@ -278,8 +277,6 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="CurveItem"/>,
 		/// or -1 if the <see cref="CurveItem"/> is not in the list</returns>
-		/// <seealso cref="IList.IndexOf"/>
-		/// <seealso cref="IndexOf"/>
 		public int IndexOfTag( string label )
 		{
 			int index = 0;

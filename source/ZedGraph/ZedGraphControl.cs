@@ -42,17 +42,11 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.59.2.3 $ $Date: 2006-03-29 07:37:19 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
 	#region Fields
-
-		/// <summary>
-		/// private variable for displaying point-by-point tooltips on
-		/// mouseover events.
-		/// </summary>
-		//private ToolTip pointToolTip;
 
 		/// <summary>
 		/// This private field contains the instance for the MasterPane object of this control.
@@ -189,6 +183,7 @@ namespace ZedGraph
 		private Keys zoomModifierKeys = Keys.None;
 		private MouseButtons zoomButtons2 = MouseButtons.None;
 		private Keys zoomModifierKeys2 = Keys.None;
+
 		private MouseButtons panButtons = MouseButtons.Left;
 
 		// Setting this field to Keys.Shift here
@@ -1664,77 +1659,9 @@ namespace ZedGraph
 			{
 				// If the MouseUp event occurs, the user is done dragging.
 				if ( this.isZooming )
-				{
-					PointF mousePt = BoundPointToRect( new PointF( e.X, e.Y ), dragPane.Chart._rect );
-
-					// Only accept a drag if it covers at least 5 pixels in each direction
-					Point curPt = ( (Control)sender ).PointToScreen( Point.Round( mousePt ) );
-					if ( Math.Abs( curPt.X - this.dragRect.X ) > 4 && Math.Abs( curPt.Y - this.dragRect.Y ) > 4 )
-					{
-						// Draw the rectangle to be evaluated. Set a dashed frame style
-						// using the FrameStyle enumeration.
-						ControlPaint.DrawReversibleFrame( this.dragRect,
-							this.BackColor, FrameStyle.Dashed );
-
-						double x1, x2;
-						double[] y1, y2, yy1, yy2;
-						PointF startPoint = ( (Control)sender ).PointToClient( this.dragRect.Location );
-
-						this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
-						this.dragPane.ReverseTransform( mousePt, out x2, out y2, out yy2 );
-
-						ZoomState oldState = this.dragPane.ZoomStack.Push( this.dragPane, ZoomState.StateType.Zoom );
-
-						if ( isEnableHZoom )
-						{
-							this.dragPane.XAxis._scale._min = Math.Min( x1, x2 );
-							this.dragPane.XAxis._scale._max = Math.Max( x1, x2 );
-						}
-						if ( isEnableVZoom )
-						{
-							for ( int i = 0; i < y1.Length; i++ )
-							{
-								this.dragPane.YAxisList[i]._scale._min = Math.Min( y1[i], y2[i] );
-								this.dragPane.YAxisList[i]._scale._max = Math.Max( y1[i], y2[i] );
-							}
-							for ( int i = 0; i < yy1.Length; i++ )
-							{
-								this.dragPane.Y2AxisList[i]._scale._min = Math.Min( yy1[i], yy2[i] );
-								this.dragPane.Y2AxisList[i]._scale._max = Math.Max( yy1[i], yy2[i] );
-							}
-						}
-
-						this.SetScroll( this.hScrollBar1, dragPane.XAxis, xScrollRange.Min, xScrollRange.Max );
-						this.SetScroll( this.vScrollBar1, dragPane.YAxis, yScrollRangeList[0].Min,
-							yScrollRangeList[0].Max );
-
-						// Provide Callback to notify the user of zoom events
-						if ( this.ZoomEvent != null )
-							this.ZoomEvent( this, oldState, new ZoomState( this.dragPane, ZoomState.StateType.Zoom ) );
-
-						Graphics g = this.CreateGraphics();
-						this.dragPane.AxisChange( g );
-						g.Dispose();
-					}
-
-					Refresh();
-				}
+					HandleZoomFinish( sender, e );
 				else if ( this.isPanning )
-				{
-					// push the prior saved zoomstate, since the scale ranges have already been changed on
-					// the fly during the panning operation
-					if ( this.zoomState != null && this.zoomState.IsChanged( this.dragPane ) )
-					{
-						this.dragPane.ZoomStack.Push( this.zoomState );
-
-						// Provide Callback to notify the user of pan events
-						if ( this.ZoomEvent != null )
-							this.ZoomEvent( this, this.zoomState,
-								new ZoomState( this.dragPane, ZoomState.StateType.Pan ) );
-
-						this.zoomState = null;
-					}
-				}
+					HandlePanFinish();
 			}
 
 			// Reset the rectangle.
@@ -1744,6 +1671,80 @@ namespace ZedGraph
 			isPanning = false;
 			Cursor.Current = Cursors.Default;
 
+		}
+
+		private void HandlePanFinish()
+		{
+			// push the prior saved zoomstate, since the scale ranges have already been changed on
+			// the fly during the panning operation
+			if ( this.zoomState != null && this.zoomState.IsChanged( this.dragPane ) )
+			{
+				this.dragPane.ZoomStack.Push( this.zoomState );
+
+				// Provide Callback to notify the user of pan events
+				if ( this.ZoomEvent != null )
+					this.ZoomEvent( this, this.zoomState,
+						new ZoomState( this.dragPane, ZoomState.StateType.Pan ) );
+
+				this.zoomState = null;
+			}
+		}
+
+		private void HandleZoomFinish( object sender, MouseEventArgs e )
+		{
+			PointF mousePt = BoundPointToRect( new PointF( e.X, e.Y ), dragPane.Chart._rect );
+
+			// Only accept a drag if it covers at least 5 pixels in each direction
+			Point curPt = ( (Control)sender ).PointToScreen( Point.Round( mousePt ) );
+			if ( Math.Abs( curPt.X - this.dragRect.X ) > 4 && Math.Abs( curPt.Y - this.dragRect.Y ) > 4 )
+			{
+				// Draw the rectangle to be evaluated. Set a dashed frame style
+				// using the FrameStyle enumeration.
+				ControlPaint.DrawReversibleFrame( this.dragRect,
+					this.BackColor, FrameStyle.Dashed );
+
+				double x1, x2;
+				double[] y1, y2, yy1, yy2;
+				PointF startPoint = ( (Control)sender ).PointToClient( this.dragRect.Location );
+
+				this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
+				this.dragPane.ReverseTransform( mousePt, out x2, out y2, out yy2 );
+
+				ZoomState oldState = this.dragPane.ZoomStack.Push( this.dragPane, ZoomState.StateType.Zoom );
+
+				if ( isEnableHZoom )
+				{
+					this.dragPane.XAxis._scale._min = Math.Min( x1, x2 );
+					this.dragPane.XAxis._scale._max = Math.Max( x1, x2 );
+				}
+				if ( isEnableVZoom )
+				{
+					for ( int i = 0; i < y1.Length; i++ )
+					{
+						this.dragPane.YAxisList[i]._scale._min = Math.Min( y1[i], y2[i] );
+						this.dragPane.YAxisList[i]._scale._max = Math.Max( y1[i], y2[i] );
+					}
+					for ( int i = 0; i < yy1.Length; i++ )
+					{
+						this.dragPane.Y2AxisList[i]._scale._min = Math.Min( yy1[i], yy2[i] );
+						this.dragPane.Y2AxisList[i]._scale._max = Math.Max( yy1[i], yy2[i] );
+					}
+				}
+
+				this.SetScroll( this.hScrollBar1, dragPane.XAxis, xScrollRange.Min, xScrollRange.Max );
+				this.SetScroll( this.vScrollBar1, dragPane.YAxis, yScrollRangeList[0].Min,
+					yScrollRangeList[0].Max );
+
+				// Provide Callback to notify the user of zoom events
+				if ( this.ZoomEvent != null )
+					this.ZoomEvent( this, oldState, new ZoomState( this.dragPane, ZoomState.StateType.Zoom ) );
+
+				Graphics g = this.CreateGraphics();
+				this.dragPane.AxisChange( g );
+				g.Dispose();
+			}
+
+			Refresh();
 		}
 
 		/// <summary>

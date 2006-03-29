@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	abstract public class GraphObj : ISerializable, ICloneable
 	{
@@ -52,7 +52,7 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Protected field that determines whether or not the rendering of this <see cref="GraphObj"/>
-		/// will be clipped to the ChartRect.  Use the public property <see cref="IsClippedToAxisRect"/> to
+		/// will be clipped to the ChartRect.  Use the public property <see cref="IsClippedToChartRect"/> to
 		/// access this value.
 		/// </summary>
 		protected bool _isClippedToChartRect;

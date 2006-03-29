@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-03-29 07:37:19 $ </version>
 	public class Chart : ICloneable, ISerializable
 	{
 		/// <summary>
@@ -152,7 +152,7 @@ namespace ZedGraph
 		/// the <see cref="Rect"/> property.
 		/// You can easily determine the ChartRect that ZedGraph would have
 		/// calculated by calling the <see cref="GraphPane.CalcChartRect(Graphics)"/> method, which returns
-		/// an axis rect sized for the current data range, scale sizes, etc.
+		/// a chart rect sized for the current data range, scale sizes, etc.
 		/// </remarks>
 		/// <value>true to have ZedGraph calculate the ChartRect, false to do it yourself</value>
 		public bool IsRectAuto

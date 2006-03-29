@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.25.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.25.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -49,6 +49,13 @@ namespace ZedGraph
 		/// property <see cref="Type"/> to access this value.
 		/// </summary>
 		private SymbolType	_type;
+		/// <summary>
+		/// private field that determines if the symbols are drawn using
+		/// Anti-Aliasing capabilities from the <see cref="Graphics" /> class.
+		/// Use the public property <see cref="IsAntiAlias" /> to access
+		/// this value.
+		/// </summary>
+		private bool _isAntiAlias;
 		/// <summary>
 		/// Private field that stores the visibility of this
 		/// <see cref="Symbol"/>.  Use the public
@@ -109,6 +116,11 @@ namespace ZedGraph
 			/// </summary>
 			public static SymbolType Type = SymbolType.Square;
 			/// <summary>
+			/// The default value for the <see cref="Symbol.IsAntiAlias"/>
+			/// property.
+			/// </summary>
+			public static bool IsAntiAlias = false;
+			/// <summary>
 			/// The default display mode for symbols (<see cref="Symbol.IsVisible"/> property).
 			/// true to display symbols, false to hide them.
 			/// </summary>
@@ -145,6 +157,21 @@ namespace ZedGraph
 		{
 			get { return _type; }
 			set { _type = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines if the symbols are drawn using
+		/// Anti-Aliasing capabilities from the <see cref="Graphics" /> class.
+		/// </summary>
+		/// <remarks>
+		/// If this value is set to true, then the <see cref="Graphics.SmoothingMode" />
+		/// property will be set to <see cref="SmoothingMode.HighQuality" /> only while
+		/// this <see cref="Symbol" /> is drawn.  A value of false will leave the value of
+		/// <see cref="Graphics.SmoothingMode" /> unchanged.
+		/// </remarks>
+		public bool IsAntiAlias
+		{
+			get { return _isAntiAlias; }
+			set { _isAntiAlias = value; }
 		}
 		/// <summary>
 		/// Gets or sets a property that shows or hides the <see cref="Symbol"/>.
@@ -202,6 +229,7 @@ namespace ZedGraph
 		{
 			this._size = Default.Size;
 			this._type = type;
+			this._isAntiAlias = Default.IsAntiAlias;
 			this._isVisible = Default.IsVisible;
 			this._border = new Border( Default.IsBorderVisible, color, Default.PenWidth );
 			this._fill = new Fill( color, Default.FillBrush, Default.FillType );
@@ -215,6 +243,7 @@ namespace ZedGraph
 		{
 			_size = rhs.Size;
 			_type = rhs.Type;
+			_isAntiAlias = rhs._isAntiAlias;
 			_isVisible = rhs.IsVisible;
 			_fill = rhs.Fill.Clone();
 			_border = rhs.Border.Clone();
@@ -245,7 +274,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -262,6 +291,7 @@ namespace ZedGraph
 
 			_size = info.GetSingle( "size" );
 			_type = (SymbolType) info.GetValue( "type", typeof(SymbolType) );
+			_isAntiAlias = info.GetBoolean( "isAntiAlias" );
 			_isVisible = info.GetBoolean( "isVisible" );
 			_fill = (Fill) info.GetValue( "fill", typeof(Fill) );
 			_border = (Border) info.GetValue( "border", typeof(Border) );
@@ -277,6 +307,7 @@ namespace ZedGraph
 			info.AddValue( "schema", schema );
 			info.AddValue( "size", _size );
 			info.AddValue( "type", _type );
+			info.AddValue( "isAntiAlias", _isAntiAlias );
 			info.AddValue( "isVisible", _isVisible );
 			info.AddValue( "fill", _fill );
 			info.AddValue( "border", _border );
@@ -361,12 +392,17 @@ namespace ZedGraph
 					x < 100000 && x > -100000 &&
 					y < 100000 && y > -100000 )
 			{
-				//SolidBrush	brush = new SolidBrush( this.fill.Color );
-                Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+				SmoothingMode sModeSave = g.SmoothingMode;
+				if ( this._isAntiAlias )
+					g.SmoothingMode = SmoothingMode.HighQuality;
+
+				Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
 				GraphicsPath path = this.MakePath( g, scaleFactor );
 				Brush brush = this.Fill.MakeBrush( path.GetBounds(), dataValue );
 
 				DrawSymbol( g, x, y, path, pen, brush );
+
+				g.SmoothingMode = sModeSave;
 			}
 		}
 
@@ -449,7 +485,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Draw the this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
+		/// Draw this <see cref="CurveItem"/> to the specified <see cref="Graphics"/>
 		/// device as a symbol at each defined point.  The routine
 		/// only draws the symbols; the lines are draw by the
 		/// <see cref="Line.DrawCurve"/> method.  This method
@@ -480,11 +516,15 @@ namespace ZedGraph
 		
 			if ( points != null && ( this._border.IsVisible || this._fill.IsVisible ) )
 			{
+				SmoothingMode sModeSave = g.SmoothingMode;
+				if ( this._isAntiAlias )
+					g.SmoothingMode = SmoothingMode.HighQuality;
+
 				// For the sake of speed, go ahead and create a solid brush and a pen
 				// If it's a gradient fill, it will be created on the fly for each symbol
 				//SolidBrush	brush = new SolidBrush( this.fill.Color );
-                Pen pen = this._border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-                //Pen pen = new Pen( this.border.Color, pane.ScaledPenWidth(_border.PenWidth * scaleFactor) );
+				Pen pen = this._border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+            //Pen pen = new Pen( this.border.Color, pane.ScaledPenWidth(_border.PenWidth * scaleFactor) );
 				
 				GraphicsPath path = MakePath( g, scaleFactor );
 				RectangleF rect = path.GetBounds();
@@ -541,6 +581,8 @@ namespace ZedGraph
 						this.DrawSymbol( g, tmpX, tmpY, path, pen, brush );		
 					}
 				}
+
+				g.SmoothingMode = sModeSave;
 			}
 		}
 		#endregion

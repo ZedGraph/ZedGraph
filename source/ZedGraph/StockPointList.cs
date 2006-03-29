@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion based on code by Jerry Vos</author>
-	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class StockPointList : List<StockPt>, IPointList, IPointListEdit
 	{
@@ -113,7 +113,6 @@ namespace ZedGraph
 		/// <param name="date">An <see cref="XDate" /> value</param>
 		/// <param name="high">The high value for the day</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
-		/// <seealso cref="IList.Add"/>
 		public void Add( double date, double high )
 		{
 			Add( new StockPt( date, high, PointPair.Missing, PointPair.Missing,
@@ -130,7 +129,6 @@ namespace ZedGraph
 		/// <param name="close">The closing value for the day</param>
 		/// <param name="vol">The trading volume for the day</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
-		/// <seealso cref="IList.Add"/>
 		public void Add( double date, double high, double low, double open, double close, double vol )
 		{
 			StockPt point = new StockPt( date, high, low, open, close, vol );

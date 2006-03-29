@@ -37,8 +37,8 @@ namespace ZedGraph
 	public class Sample : System.Object
 	{
 		private DateTime	_time;
-		public double		_position;
-		public double		_velocity;
+		private double		_position;
+		private double		_velocity;
 
 		/// <summary>
 		/// The time of the sample

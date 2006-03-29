@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class GraphObjList : List<GraphObj>, ICloneable
 	{
@@ -144,7 +144,6 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="GraphObj"/>,
 		/// or -1 if the <see cref="GraphObj"/> is not in the list</returns>
-		/// <seealso cref="IList.IndexOf"/>
 		public int IndexOfTag( string label )
 		{
 			int index = 0;
@@ -233,7 +232,7 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="index">The index number of the <see cref="TextObj"/>
 		///  that is under the mouse point.  The <see cref="TextObj"/> object is
-		/// accessible via <see cref="GraphObjList.this[int]"></see>.
+		/// accessible via the <see cref="GraphObjList" /> indexer property.
 		/// </param>
 		/// <returns>true if the mouse point is within a <see cref="GraphObj"/> bounding
 		/// box, false otherwise.</returns>

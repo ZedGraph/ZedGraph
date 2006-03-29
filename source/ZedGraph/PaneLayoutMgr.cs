@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	public class PaneLayoutMgr : ICloneable, ISerializable
 	{
 		// =========== PANE LAYOUT STUFF ================
@@ -39,28 +39,28 @@ namespace ZedGraph
 
 		/// <summary>
 		/// private field that saves the paneLayout format specified when
-		/// <see cref="AutoPaneLayout(Graphics,PaneLayout)"/> was called. This value will
-		/// default to <see cref="Default.PaneLayout"/> if <see cref="AutoPaneLayout(Graphics,PaneLayout)"/>
-		/// was never called.
+		/// <see cref="SetLayout(PaneLayout)"/> was called. This value will
+		/// default to <see cref="MasterPane.Default.PaneLayout"/> if
+		/// <see cref="SetLayout(PaneLayout)"/> (or an overload) was never called.
 		/// </summary>
 		internal PaneLayout _paneLayout;
 
 		/// <summary>
-		/// Private field that stores the boolean value that determines whether <see cref="_countList"/>
-		/// is specifying rows or columns.
+		/// Private field that stores the boolean value that determines whether
+		/// <see cref="_countList"/> is specifying rows or columns.
 		/// </summary>
 		internal bool _isColumnSpecified;
 		/// <summary>
 		/// private field that stores the row/column item count that was specified to the
-		/// <see cref="AutoPaneLayout(Graphics,bool,int[])"/> method.  This values will be
-		/// null if <see cref="AutoPaneLayout(Graphics,bool,int[])"/> was never called.
+		/// <see cref="SetLayout(bool,int[],float[])"/> method.  This values will be
+		/// null if <see cref="SetLayout(bool,int[],float[])"/> was never called.
 		/// </summary>
 		internal int[] _countList;
 
 		/// <summary>
 		/// private field that stores the row/column size proportional values as specified
-		/// to the <see cref="AutoPaneLayout(Graphics,bool,int[],float[])"/> method.  This
-		/// value will be null if <see cref="AutoPaneLayout(Graphics,bool,int[],float[])"/>
+		/// to the <see cref="SetLayout(bool,int[],float[])"/> method.  This
+		/// value will be null if <see cref="SetLayout(bool,int[],float[])"/>
 		/// was never called.  
 		/// </summary>
 		internal float[] _prop;
@@ -158,18 +158,30 @@ namespace ZedGraph
 
 	#region Methods
 
+		/// <overloads>The SetLayout() methods setup the desired layout of the
+		/// <see cref="GraphPane" /> objects within a <see cref="MasterPane" />.  These functions
+		/// do not make any changes, they merely set the parameters so that future calls
+		/// to <see cref="PaneBase.ReSize" /> or <see cref="DoLayout(Graphics,MasterPane)" />
+		/// will use the desired layout.<br /><br />
+		/// The layout options include a set of "canned" layouts provided by the
+		/// <see cref="ZedGraph.PaneLayout" /> enumeration, options to just set a specific
+		/// number of rows and columns of panes (and all pane sizes are the same), and more
+		/// customized options of specifying the number or rows in each column or the number of
+		/// columns in each row, along with proportional values that determine the size of each
+		/// individual column or row.
+		/// </overloads>
 		/// <summary>
 		/// Automatically set all of the <see cref="GraphPane"/> <see cref="PaneBase.Rect"/>'s in
-		/// the list to a reasonable configuration.
+		/// the list to a pre-defined layout configuration from a <see cref="PaneLayout" />
+		/// enumeration.
 		/// </summary>
 		/// <remarks>This method uses a <see cref="PaneLayout"/> enumeration to describe the type of layout
-		/// to be used.  An explicit (row,column) overload is also available.</remarks>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
+		/// to be used.  Overloads are available that provide other layout options</remarks>
 		/// <param name="paneLayout">A <see cref="PaneLayout"/> enumeration that describes how
 		/// the panes should be laid out within the <see cref="PaneBase.Rect"/>.</param>
+		/// <seealso cref="SetLayout(int,int)" />
+		/// <seealso cref="SetLayout(bool,int[])" />
+		/// <seealso cref="SetLayout(bool,int[],float[])" />
 		public void SetLayout( PaneLayout paneLayout )
 		{
 			Init();
@@ -181,16 +193,16 @@ namespace ZedGraph
 		/// Automatically set all of the <see cref="GraphPane"/> <see cref="PaneBase.Rect"/>'s in
 		/// the list to a reasonable configuration.
 		/// </summary>
-		/// <remarks>This method explicitly specifies the number of rows and columns to use in the layout.
-		/// A more automatic overload, using a <see cref="PaneLayout"/> enumeration, is available.</remarks>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
+		/// <remarks>This method explicitly specifies the number of rows and columns to use
+		/// in the layout, and all <see cref="GraphPane" /> objects will have the same size.
+		/// Overloads are available that provide other layout options</remarks>
 		/// <param name="rows">The number of rows of <see cref="GraphPane"/> objects
 		/// to include in the layout</param>
 		/// <param name="columns">The number of columns of <see cref="GraphPane"/> objects
 		/// to include in the layout</param>
+		/// <seealso cref="SetLayout(PaneLayout)" />
+		/// <seealso cref="SetLayout(bool,int[])" />
+		/// <seealso cref="SetLayout(bool,int[],float[])" />
 		public void SetLayout( int rows, int columns )
 		{
 			Init();
@@ -212,18 +224,19 @@ namespace ZedGraph
 		/// Automatically set all of the <see cref="GraphPane"/> <see cref="PaneBase.Rect"/>'s in
 		/// the list to the specified configuration.
 		/// </summary>
-		/// <remarks>This method specifies the number of panes in each row or column, allowing for
-		/// irregular layouts.</remarks>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
+		/// <remarks>This method specifies the number of rows in each column, or the number of
+		/// columns in each row, allowing for irregular layouts.  Overloads are available that
+		/// provide other layout options.
+		/// </remarks>
 		/// <param name="isColumnSpecified">Specifies whether the number of columns in each row, or
 		/// the number of rows in each column will be specified.  A value of true indicates the
 		/// number of columns in each row are specified in <see paramref="countList"/>.</param>
 		/// <param name="countList">An integer array specifying either the number of columns in
 		/// each row or the number of rows in each column, depending on the value of
 		/// <see paramref="isColumnSpecified"/>.</param>
+		/// <seealso cref="SetLayout(PaneLayout)" />
+		/// <seealso cref="SetLayout(int,int)" />
+		/// <seealso cref="SetLayout(bool,int[],float[])" />
 		public void SetLayout( bool isColumnSpecified, int[] countList )
 		{
 			SetLayout( isColumnSpecified, countList, null );
@@ -235,10 +248,11 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>This method specifies the number of panes in each row or column, allowing for
 		/// irregular layouts.</remarks>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
+		/// <remarks>This method specifies the number of rows in each column, or the number of
+		/// columns in each row, allowing for irregular layouts.  Additionally, a
+		/// <see paramref="proportion" /> parameter is provided that allows varying column or
+		/// row sizes.  Overloads for SetLayout() are available that provide other layout options.
+		/// </remarks>
 		/// <param name="isColumnSpecified">Specifies whether the number of columns in each row, or
 		/// the number of rows in each column will be specified.  A value of true indicates the
 		/// number of columns in each row are specified in <see paramref="_countList"/>.</param>
@@ -257,6 +271,9 @@ namespace ZedGraph
 		/// second row is 2/6th's of the available height, and the third row is 3/6th's of the
 		/// available height.
 		/// </param>
+		/// <seealso cref="SetLayout(PaneLayout)" />
+		/// <seealso cref="SetLayout(int,int)" />
+		/// <seealso cref="SetLayout(bool,int[])" />
 		public void SetLayout( bool isColumnSpecified, int[] countList, float[] proportion )
 		{
 			Init();
@@ -284,6 +301,21 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Modify the <see cref="GraphPane" /> <see cref="PaneBase.Rect" /> sizes of each
+		/// <see cref="GraphPane" /> such that they fit within the <see cref="MasterPane" />
+		/// in a pre-configured layout.
+		/// </summary>
+		/// <remarks>The <see cref="SetLayout(PaneLayout)" /> method (and overloads) is
+		/// used for setting the layout configuration.</remarks>
+		/// <param name="g">A <see cref="Graphics" /> instance to be used for font sizing,
+		/// etc. in determining the layout configuration.</param>
+		/// <param name="master">The <see cref="MasterPane" /> instance which is to
+		/// be resized.</param>
+		/// <seealso cref="SetLayout(PaneLayout)" />
+		/// <seealso cref="SetLayout(int,int)" />
+		/// <seealso cref="SetLayout(bool,int[])" />
+		/// <seealso cref="SetLayout(bool,int[],float[])" />
 		public void DoLayout( Graphics g, MasterPane master )
 		{
 			if ( this._countList != null )
@@ -360,6 +392,11 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Internal method that applies a previously set layout with a specific
+		/// row and column count.  This method is only called by
+		/// <see cref="DoLayout(Graphics,MasterPane)" />.
+		/// </summary>
 		internal void DoLayout( Graphics g, MasterPane master, int rows, int columns )
 		{
 			if ( rows < 1 )
@@ -375,6 +412,11 @@ namespace ZedGraph
 			DoLayout( g, master, true, countList, null );
 		}
 
+		/// <summary>
+		/// Internal method that applies a previously set layout with a rows per column or
+		/// columns per row configuration.  This method is only called by
+		/// <see cref="DoLayout(Graphics,MasterPane)" />.
+		/// </summary>
 		internal void DoLayout( Graphics g, MasterPane master, bool isColumnSpecified, int[] countList,
 					float[] proportion )
 		{

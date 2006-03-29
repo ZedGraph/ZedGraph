@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.18.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.18.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -63,14 +63,12 @@ namespace ZedGraph
 		/// </summary>
 		private bool _isUniformLegendEntries;
 		/// <summary>
-		/// private field that determines if the <see cref="AutoPaneLayout" />
+		/// private field that determines if the
+		/// <see cref="ZedGraph.PaneLayoutMgr.DoLayout(Graphics,MasterPane)" />
 		/// function will automatically set
-		/// the <see cref="BaseDimension" /> of each <see cref="GraphPane" /> in the
+		/// the <see cref="PaneBase.BaseDimension" /> of each <see cref="GraphPane" /> in the
 		/// <see cref="PaneList" /> such that the scale factors have the same value.
 		/// </summary>
-		/// <remarks>
-		/// 
-		/// </remarks>
 		private bool _isCommonScaleFactor;
 
 		/// <summary>
@@ -89,8 +87,16 @@ namespace ZedGraph
 		public new struct Default
 		{
 			/// <summary>
-			/// The default pane layout for <see cref="MasterPane.AutoPaneLayout(Graphics,PaneLayout)"/> method calls.
+			/// The default pane layout for
+			/// <see cref="ZedGraph.PaneLayoutMgr.DoLayout(Graphics,MasterPane)"/>
+			/// method calls.
 			/// </summary>
+			/// <seealso cref="PaneLayoutMgr" />
+			/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)" />
+			/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(int,int)" />
+			/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[])" />
+			/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[],float[])" />
+			/// <seealso cref="ReSize" />
 			public static PaneLayout PaneLayout = PaneLayout.SquareColPreferred;
 
 			/// <summary>
@@ -135,7 +141,10 @@ namespace ZedGraph
 		/// Gets the <see cref="PaneLayoutMgr" /> instance, which manages the pane layout
 		/// settings, and handles the layout functions.
 		/// </summary>
-		/// <seealso cref="SetPaneLayout" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(int,int)" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[])" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[],float[])" />
 		/// <seealso cref="ReSize" />
 		public PaneLayoutMgr PaneLayoutMgr
 		{
@@ -166,17 +175,24 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Gets or sets a value that determines if the <see cref="AutoPaneLayout" />
-		/// function will automatically set the <see cref="BaseDimension" /> of each
-		/// <see cref="GraphPane" /> in the <see cref="PaneList" /> such that the
+		/// Gets or sets a value that determines if the
+		/// <see cref="PaneLayoutMgr" /> will automatically set the
+		/// <see cref="PaneBase.BaseDimension" />
+		/// of each <see cref="GraphPane" /> in the <see cref="PaneList" /> such that the
 		/// scale factors have the same value.
 		/// </summary>
 		/// <remarks>
-		/// The scale factors, calculated by <see cref="CalcScaleFactor" />, determine
+		/// The scale factors, calculated by <see cref="PaneBase.CalcScaleFactor" />, determine
 		/// scaled font sizes, tic lengths, etc.  This function will insure that for
 		/// multiple graphpanes, a certain specified font size will be the same for
 		/// all the panes.
 		/// </remarks>
+		/// <seealso cref="PaneLayoutMgr" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(int,int)" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[])" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[],float[])" />
+		/// <seealso cref="ReSize" />
 		public bool IsCommonScaleFactor
 		{
 			get { return _isCommonScaleFactor; }
@@ -363,19 +379,23 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Change the size of the <see cref="PaneBase.Rect"/>, and also handle resizing the contents
-		/// by calling <see cref="AutoPaneLayout(Graphics,PaneLayout)"/>.
+		/// Change the size of the <see cref="PaneBase.Rect"/>, and also handle resizing the
+		/// contents by calling <see cref="ZedGraph.PaneLayoutMgr.DoLayout(Graphics,MasterPane)"/>.
 		/// </summary>
-		/// <remarks>This method will use the same pane layout
-		/// that was specified by the most recent call to <see cref="AutoPaneLayout(Graphics,PaneLayout)"/>.  If
-		/// <see cref="AutoPaneLayout(Graphics,PaneLayout)"/> has not previously been called, it will default to
-		/// <see cref="Default.PaneLayout"/>.
+		/// <remarks>This method will use the pane layout that was specified by a call to
+		/// <see cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)"/>.  If
+		/// <see cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)"/> has not previously been called,
+		/// it will default to <see cref="Default.PaneLayout"/>.
 		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		/// <param name="rect"></param>
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(int,int)" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[])" />
+		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[],float[])" />
 		public override void ReSize( Graphics g, RectangleF rect )
 		{
 			this._rect = rect;
@@ -384,7 +404,8 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Method that forces the scale factor calculations (via <see cref="CalcScaleFactor" />),
+		/// Method that forces the scale factor calculations
+		/// (via <see cref="PaneBase.CalcScaleFactor" />),
 		/// to give a common scale factor for all <see cref="GraphPane" /> objects in the
 		/// <see cref="PaneList" />.
 		/// </summary>

@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.2.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.2.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class Y2AxisList : List<Y2Axis>, ICloneable
 	{
@@ -51,7 +51,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The <see cref="AxisList"/> object from which to copy</param>
+		/// <param name="rhs">The <see cref="Y2AxisList"/> object from which to copy</param>
 		public Y2AxisList( Y2AxisList rhs )
 		{
 			foreach ( Y2Axis item in rhs )
@@ -125,7 +125,6 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="Axis"/>,
 		/// or -1 if the <see cref="Axis.Title"/> was not found in the list</returns>
-		/// <seealso cref="IList.IndexOf"/>
 		/// <seealso cref="IndexOfTag"/>
 		public int IndexOf( string title )
 		{
@@ -151,7 +150,6 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="Axis" />,
 		/// or -1 if the <see cref="Axis.Tag" /> string is not in the list</returns>
-		/// <seealso cref="IList.IndexOf" />
 		/// <seealso cref="IndexOf" />
 		public int IndexOfTag( string tagStr )
 		{

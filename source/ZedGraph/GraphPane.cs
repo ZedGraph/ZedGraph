@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.59.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -60,10 +60,10 @@ namespace ZedGraph
 		/// <summary>Private field instance of the <see cref="ZedGraph.XAxis"/> class.  Use the
 		/// public property <see cref="GraphPane.XAxis"/> to access this class.</summary>
 		private XAxis _xAxis;
-		/// <summary>Private field instance of the <see cref="ZedGraph.AxisList"/> class.  Use the
+		/// <summary>Private field instance of the <see cref="ZedGraph.YAxisList"/> class.  Use the
 		/// public property <see cref="GraphPane.YAxisList"/> to access this class.</summary>
 		private YAxisList _yAxisList;
-		/// <summary>Private field instance of the <see cref="ZedGraph.AxisList"/> class.  Use the
+		/// <summary>Private field instance of the <see cref="ZedGraph.Y2AxisList"/> class.  Use the
 		/// public property <see cref="GraphPane.Y2AxisList"/> to access this class.</summary>
 		private Y2AxisList _y2AxisList;
 		/// <summary>Private field instance of the <see cref="ZedGraph.CurveList"/> class.  Use the
@@ -527,9 +527,9 @@ namespace ZedGraph
 				//this.Legend.Position = LegendPos.TopCenter;
 			}
 
-			// if the ChartRect is not yet determined, then pick a scale based on a default AxisRect
+			// if the ChartRect is not yet determined, then pick a scale based on a default ChartRect
 			// size (using 75% of Rect -- code is in Axis.CalcMaxLabels() )
-			// With the scale picked, call CalcChartRect() so calculate a real AxisRect
+			// With the scale picked, call CalcChartRect() so calculate a real ChartRect
 			// then let the scales re-calculate to make sure that the assumption was ok
 			if ( this._chart._isRectAuto )
 			{
@@ -540,7 +540,7 @@ namespace ZedGraph
 					axis.Scale.PickScale( this, g, scaleFactor );
 
 				this._chart._rect = CalcChartRect( g );
-				//this.pieRect = PieItem.CalcPieRect( g, this, scaleFactor, this.axisRect );
+				//this.pieRect = PieItem.CalcPieRect( g, this, scaleFactor, this.chartRect );
 			}
 
 			// Pick new scales based on the range
@@ -589,7 +589,7 @@ namespace ZedGraph
 			if ( this._chart._isRectAuto )
 			{
 				this._chart._rect = CalcChartRect( g, scaleFactor );
-				//this.pieRect = PieItem.CalcPieRect( g, this, scaleFactor, this.axisRect );
+				//this.pieRect = PieItem.CalcPieRect( g, this, scaleFactor, this.chartRect );
 			}
 			else
 				CalcChartRect( g, scaleFactor );
@@ -697,10 +697,10 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <returns>The calculated axis rect, in pixel coordinates.</returns>
+		/// <returns>The calculated chart rect, in pixel coordinates.</returns>
 		public RectangleF CalcChartRect( Graphics g )
 		{
-			// Calculate the axis rect, deducting the area for the scales, titles, legend, etc.
+			// Calculate the chart rect, deducting the area for the scales, titles, legend, etc.
 			//int		hStack;
 			//float	legendWidth, legendHeight;
 
@@ -723,11 +723,11 @@ namespace ZedGraph
 		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>
-		/// <returns>The calculated axis rect, in pixel coordinates.</returns>
+		/// <returns>The calculated chart rect, in pixel coordinates.</returns>
 
 		public RectangleF CalcChartRect( Graphics g, float scaleFactor )
 		{
-			// Axis rect starts out at the full pane rect less the margins
+			// chart rect starts out at the full pane rect less the margins
 			//   and less space for the Pane title
 			RectangleF clientRect = this.CalcClientRect( g, scaleFactor );
 
@@ -737,13 +737,13 @@ namespace ZedGraph
 			float totSpaceY = 0;
 			//float spaceY2 = 0;
 
-			// actual minimum axis space for the left side of the Axis rect
+			// actual minimum axis space for the left side of the chart rect
 			float minSpaceL = 0;
-			// actual minimum axis space for the right side of the Axis rect
+			// actual minimum axis space for the right side of the chart rect
 			float minSpaceR = 0;
-			// actual minimum axis space for the bottom side of the Axis rect
+			// actual minimum axis space for the bottom side of the chart rect
 			float minSpaceB = 0;
-			// actual minimum axis space for the top side of the Axis rect
+			// actual minimum axis space for the top side of the chart rect
 			float minSpaceT = 0;
 
 			this._xAxis.CalcSpace( g, this, scaleFactor, out minSpaceB );
@@ -870,7 +870,7 @@ namespace ZedGraph
 		/// the given data points (double arrays) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
@@ -897,7 +897,7 @@ namespace ZedGraph
 		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
@@ -922,7 +922,7 @@ namespace ZedGraph
 		/// the given data points (double arrays) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
@@ -952,7 +952,7 @@ namespace ZedGraph
 		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
@@ -980,7 +980,7 @@ namespace ZedGraph
 		/// the given data points (double arrays) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
@@ -1007,7 +1007,7 @@ namespace ZedGraph
 		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
@@ -1034,7 +1034,8 @@ namespace ZedGraph
 		/// <remarks>
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.  Note that the <see cref="IPointList" />
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
+		/// Note that the <see cref="IPointList" />
 		/// should contain <see cref="StockPt" /> objects instead of <see cref="PointPair" />
 		/// objects in order to contain all the data values required for this curve type.
 		/// </remarks>
@@ -1063,7 +1064,8 @@ namespace ZedGraph
 		/// <remarks>
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.  Note that the <see cref="IPointList" />
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
+		/// Note that the <see cref="IPointList" />
 		/// should contain <see cref="StockPt" /> objects instead of <see cref="PointPair" />
 		/// objects in order to contain all the data values required for this curve type.
 		/// </remarks>
@@ -1088,7 +1090,7 @@ namespace ZedGraph
 		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
@@ -1119,7 +1121,7 @@ namespace ZedGraph
 		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
@@ -1144,7 +1146,7 @@ namespace ZedGraph
 		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
@@ -1168,7 +1170,7 @@ namespace ZedGraph
 		/// the given data points (double arrays) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
@@ -1194,7 +1196,7 @@ namespace ZedGraph
 		/// the given data points (double arrays) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
@@ -1224,7 +1226,7 @@ namespace ZedGraph
 		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// This is simplified way to add curves without knowledge of the
 		/// <see cref="CurveList"/> class.  An alternative is to use
-		/// the <see cref="ZedGraph.CurveList.Add"/> method.
+		/// the <see cref="ZedGraph.CurveList" /> Add() method.
 		/// </summary>
 		/// <param name="label">The text label (string) for the curve that will be
 		/// used as a <see cref="Legend"/> entry.</param>
@@ -1320,7 +1322,7 @@ namespace ZedGraph
 		/// specified user point.</returns>
 		public PointF GeneralTransform( PointF ptF, CoordType coord )
 		{
-			// Setup the scaling data based on the axis rect
+			// Setup the scaling data based on the chart rect
 			this._xAxis.Scale.SetupScaleData( this, this._xAxis );
 			foreach ( Axis axis in _yAxisList )
 				axis.Scale.SetupScaleData( this, axis );
@@ -1350,7 +1352,7 @@ namespace ZedGraph
 		public void ReverseTransform( PointF ptF, out double x, out double y,
 			out double y2 )
 		{
-			// Setup the scaling data based on the axis rect
+			// Setup the scaling data based on the chart rect
 			this._xAxis.Scale.SetupScaleData( this, this._xAxis );
 			this.YAxis.Scale.SetupScaleData( this, this.YAxis );
 			this.Y2Axis.Scale.SetupScaleData( this, this.Y2Axis );
@@ -1382,7 +1384,7 @@ namespace ZedGraph
 		public void ReverseTransform( PointF ptF, bool isY2Axis, int yAxisIndex,
 					out double x, out double y )
 		{
-			// Setup the scaling data based on the axis rect
+			// Setup the scaling data based on the chart rect
 			this._xAxis.Scale.SetupScaleData( this, this._xAxis );
 			x = this.XAxis.Scale.ReverseTransform( ptF.X );
 
@@ -1424,7 +1426,7 @@ namespace ZedGraph
 		public void ReverseTransform( PointF ptF, out double x, out double[] y,
 			out double[] y2 )
 		{
-			// Setup the scaling data based on the axis rect
+			// Setup the scaling data based on the chart rect
 			this._xAxis.Scale.SetupScaleData( this, _xAxis );
 			x = this.XAxis.Scale.ReverseTransform( ptF.X );
 
@@ -1543,7 +1545,7 @@ namespace ZedGraph
 				int saveIndex = -1;
 				ZOrder saveZOrder = ZOrder.G_BehindAll;
 
-				// Calculate the axis rect, deducting the area for the scales, titles, legend, etc.
+				// Calculate the chart rect, deducting the area for the scales, titles, legend, etc.
 				RectangleF tmpChartRect = CalcChartRect( g, scaleFactor );
 
 				// See if the point is in a GraphObj
@@ -1758,8 +1760,8 @@ namespace ZedGraph
 			ValueHandler valueHandler = new ValueHandler( this, false );
 
 			double xPixPerUnit = _chart._rect.Width / ( _xAxis._scale._max - _xAxis._scale._min );
-			//double	yPixPerUnit = axisRect.Height / ( yAxis.Max - yAxis.Min );
-			//double	y2PixPerUnit; // = axisRect.Height / ( y2Axis.Max - y2Axis.Min );
+			//double	yPixPerUnit = chartRect.Height / ( yAxis.Max - yAxis.Min );
+			//double	y2PixPerUnit; // = chartRect.Height / ( y2Axis.Max - y2Axis.Min );
 
 			double yPixPerUnitAct, yAct, yMinAct, yMaxAct;
 			double minDist = 1e20;

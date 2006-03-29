@@ -36,8 +36,8 @@ namespace ZedGraph
 	/// <seealso cref="IPointList" />
 	/// <seealso cref="IPointListEdit" />
 	///
-	/// <author> John Champion</author>
-	/// <version> $Revision: 1.2 $ $Date: 2006-03-05 07:28:16 $ </version>
+	/// <author> John Champion with mods by Christophe Holmes</author>
+	/// <version> $Revision: 1.2.2.1 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class FilteredPointList : IPointList
 	{
@@ -47,35 +47,46 @@ namespace ZedGraph
 		/// <summary>
 		/// Instance of an array of x values
 		/// </summary>
-		private double[] x;
+		private double[] _x;
 		/// <summary>
 		/// Instance of an array of x values
 		/// </summary>
-		private double[] y;
+		private double[] _y;
 
 		/// <summary>
 		/// This is the minimum value of the range of interest (typically the minimum of
 		/// the range that you have zoomed into)
 		/// </summary>
-		private double xMinBound = double.MinValue;
+		private double _xMinBound = double.MinValue;
 		/// <summary>
 		/// This is the maximum value of the range of interest (typically the maximum of
 		/// the range that you have zoomed into)
 		/// </summary>
-		private double xMaxBound = double.MaxValue;
+		private double _xMaxBound = double.MaxValue;
 		/// <summary>
 		/// This is the maximum number of points that you want to see in the filtered dataset
 		/// </summary>
-		private int maxPts = -1;
+		private int _maxPts = -1;
 
 		/// <summary>
 		/// The index of the xMinBound above
 		/// </summary>
-		private int minBoundIndex = -1;
+		private int _minBoundIndex = -1;
 		/// <summary>
 		/// The index of the xMaxBound above
 		/// </summary>
-		private int maxBoundIndex = -1;
+		private int _maxBoundIndex = -1;
+
+		/// <summary>
+		/// Switch used to indicate if the next filtered point should be the high point or the
+		/// low point within the current range.
+		/// </summary>
+		private bool _upDown = false;
+
+		/// <summary>
+		/// Determines if the high/low logic will be used.
+		/// </summary>
+		private bool _isApplyHighLowLogic = true;
 
 	#endregion
 
@@ -97,32 +108,57 @@ namespace ZedGraph
 			get
 			{
 				// See if the array should be bounded
-				if ( this.minBoundIndex >= 0 && this.maxBoundIndex >= 0 && this.maxPts >= 0 )
+				if ( this._minBoundIndex >= 0 && this._maxBoundIndex >= 0 && this._maxPts >= 0 )
 				{
 					// get number of points in bounded range
-					int nPts = maxBoundIndex - minBoundIndex + 1;
+					int nPts = _maxBoundIndex - _minBoundIndex + 1;
 
 
-					if ( nPts > maxPts )
+					if ( nPts > _maxPts )
 					{
 						// if we're skipping points, then calculate the new index
-						index = minBoundIndex + (int) ( (double) index * (double) nPts / (double) maxPts );
+						index = _minBoundIndex + (int) ( (double) index * (double) nPts / (double) _maxPts );
+						if ( index > 0 && _isApplyHighLowLogic )
+						{
+							_upDown = !_upDown;
+							double mx = double.MinValue;
+							double mn = double.MaxValue;
+							int exIndex = index;
+
+							for ( int i = index - ( nPts / _maxPts ); i <= index; i++ )
+							{
+								if ( i >= 0 && i < _y.Length )
+								{
+									if ( _upDown && _y[i] > mx )
+									{
+										exIndex = i;
+										mx = _y[i];
+									}
+									if ( !_upDown && _y[i] < mn )
+									{
+										exIndex = i;
+										mn = _y[i];
+									}
+								}
+							}
+							index = exIndex;
+						}
 					}
 					else
 					{
 						// otherwise, index is just offset by the start of the bounded range
-						index += minBoundIndex;
+						index += _minBoundIndex;
 					}
 				}
 
 				double xVal, yVal;
-				if ( index >= 0 && index < x.Length )
-					xVal = x[index];
+				if ( index >= 0 && index < _x.Length )
+					xVal = _x[index];
 				else
 					xVal = PointPair.Missing;
 
-				if ( index >= 0 && index < y.Length )
-					yVal = y[index];
+				if ( index >= 0 && index < _y.Length )
+					yVal = _y[index];
 				else
 					yVal = PointPair.Missing;
 
@@ -139,21 +175,21 @@ namespace ZedGraph
 		{
 			get
 			{
-				int arraySize = x.Length;
+				int arraySize = _x.Length;
 
 				// Is the filter active?
-				if ( minBoundIndex >= 0 && maxBoundIndex >= 0 && maxPts > 0 )
+				if ( _minBoundIndex >= 0 && _maxBoundIndex >= 0 && _maxPts > 0 )
 				{
 					// get the number of points within the filter bounds
-					int boundSize = maxBoundIndex - minBoundIndex + 1;
+					int boundSize = _maxBoundIndex - _minBoundIndex + 1;
 
 					// limit the point count to the filter bounds
 					if ( boundSize < arraySize )
 						arraySize = boundSize;
 
 					// limit the point count to the declared max points
-					if ( arraySize > maxPts )
-						arraySize = maxPts;
+					if ( arraySize > _maxPts )
+						arraySize = _maxPts;
 				}
 
 				return arraySize;
@@ -166,7 +202,7 @@ namespace ZedGraph
 		/// </summary>
 		public int MaxPts
 		{
-			get { return maxPts; }
+			get { return _maxPts; }
 		}
 
 		/// <summary>
@@ -175,7 +211,7 @@ namespace ZedGraph
 		/// </summary>
 		public double XMinBound
 		{
-			get { return xMinBound; }
+			get { return _xMinBound; }
 		}
 
 		/// <summary>
@@ -184,7 +220,22 @@ namespace ZedGraph
 		/// </summary>
 		public double XMaxBound
 		{
-			get { return xMaxBound; }
+			get { return _xMaxBound; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines if the High-Low filtering logic will be
+		/// applied.
+		/// </summary>
+		/// <remarks>
+		/// The high-low filtering logic alternately takes the highest or lowest Y value
+		/// within the subrange of points to be skipped.  Set this value to true to apply
+		/// this logic, or false to just use whatever value lies in the middle of the skipped
+		/// range.</remarks>
+		public bool IsApplyHighLowLogic
+		{
+			get { return _isApplyHighLowLogic; }
+			set { _isApplyHighLowLogic = value; }
 		}
 
 	#endregion
@@ -197,8 +248,8 @@ namespace ZedGraph
 		/// </summary>
 		public FilteredPointList( double[] x, double[] y )
 		{
-			this.x = x;
-			this.y = y;
+			this._x = x;
+			this._y = y;
 		}
 
 		/// <summary>
@@ -207,13 +258,15 @@ namespace ZedGraph
 		/// <param name="rhs">The FilteredPointList from which to copy</param>
 		public FilteredPointList( FilteredPointList rhs )
 		{
-			x = (double[]) rhs.x.Clone();
-			y = (double[]) rhs.y.Clone();
-			xMinBound = rhs.xMinBound;
-			xMaxBound = rhs.xMaxBound;
-			minBoundIndex = rhs.minBoundIndex;
-			maxBoundIndex = rhs.maxBoundIndex;
-			maxPts = rhs.maxPts;
+			_x = (double[]) rhs._x.Clone();
+			_y = (double[]) rhs._y.Clone();
+			_xMinBound = rhs._xMinBound;
+			_xMaxBound = rhs._xMaxBound;
+			_minBoundIndex = rhs._minBoundIndex;
+			_maxBoundIndex = rhs._maxBoundIndex;
+			_maxPts = rhs._maxPts;
+
+			_isApplyHighLowLogic = rhs._isApplyHighLowLogic;
 		}
 
 		/// <summary>
@@ -241,22 +294,22 @@ namespace ZedGraph
 		/// output by the filter</param>
 		public void SetBounds( double min, double max, int maxPts )
 		{
-			this.maxPts = maxPts;
+			this._maxPts = maxPts;
 			
 			// assume data points are equally spaced, and calculate the X step size between
 			// each data point
-			double step = ( this.x[ this.x.Length - 1 ] - this.x[0] ) / (double) this.x.Length;
+			double step = ( this._x[ this._x.Length - 1 ] - this._x[0] ) / (double) this._x.Length;
 			// calculate the index of the start of the bounded range
-			int first = (int) ( ( min - this.x[0] ) / step );
+			int first = (int) ( ( min - this._x[0] ) / step );
 			// calculate the index of the last point of the bounded range
 			int last = (int) ( ( max - min ) / step + first );
 
 			// Make sure the bounded indices are legitimate
-			first = Math.Max( Math.Min( first, this.x.Length ), 0 );
-			last = Math.Max( Math.Min( last, this.x.Length ), 0 );
+			first = Math.Max( Math.Min( first, this._x.Length ), 0 );
+			last = Math.Max( Math.Min( last, this._x.Length ), 0 );
 
-			this.minBoundIndex = first;
-			this.maxBoundIndex = last;
+			this._minBoundIndex = first;
+			this._maxBoundIndex = last;
 		}
 
 	#endregion

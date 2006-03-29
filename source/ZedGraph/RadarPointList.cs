@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	/// 
 	/// <author>Jerry Vos and John Champion</author>
-	/// <version> $Revision: 3.2.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.2.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	public class RadarPointList : List<PointPair>, IPointList, IPointListEdit
 	{
@@ -170,7 +170,6 @@ namespace ZedGraph
 		/// <param name="z">The 'Z' coordinate value, which is not normally used for plotting,
 		/// but can be used for <see cref="FillType.GradientByZ" /> type fills</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
-		/// <seealso cref="IList.Add"/>
 		public void Add( double r, double z )
 		{
 			Add( new PointPair( PointPair.Missing, r, z ) );

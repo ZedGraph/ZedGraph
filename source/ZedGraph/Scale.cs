@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.9.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	abstract public class Scale : ISerializable, ICloneable
 	{
 	#region Fields
@@ -1502,7 +1502,7 @@ namespace ZedGraph
 		/// </param>
 		virtual public void SetupScaleData( GraphPane pane, Axis axis )
 		{
-			// save the axisRect data for transforming scale values to pixels
+			// save the ChartRect data for transforming scale values to pixels
 			if ( axis is XAxis )
 			{
 				this._minPix = pane.Chart._rect.Left;
@@ -1740,7 +1740,7 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="topPix">
 		/// The pixel location of the far side of the ChartRect from this axis.
-		/// This value is the ChartRect.Height for the XAxis, or the axisRect.Width
+		/// This value is the ChartRect.Height for the XAxis, or the ChartRect.Width
 		/// for the YAxis and Y2Axis.
 		/// </param>
 		/// <param name="shift">The number of pixels to shift this axis, based on the

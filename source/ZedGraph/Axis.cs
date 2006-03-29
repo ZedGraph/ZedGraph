@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.60.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.60.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -888,7 +888,7 @@ namespace ZedGraph
 			if ( !this.IsCrossShifted( pane ) )
 			{
 				// if it's the primary axis and the scale labels are on the inside, then we
-				// don't need to save any room for the axis labels (they will be inside the axis rect)
+				// don't need to save any room for the axis labels (they will be inside the chart rect)
 				if ( IsPrimary( pane ) && _scale._isLabelsInside )
 					return 1.0f;
 				// otherwise, it's a secondary (outboard) axis and we always save room for the axis and labels.
@@ -1007,7 +1007,7 @@ namespace ZedGraph
 			float gap = this._axisGap * scaleFactor;
 
 			// The minimum amount of space to reserve for the NORMAL position of the axis.  This would
-			// be the left side of the axis rect for the Y axis, the right side for the Y2 axis, etc.
+			// be the left side of the chart rect for the Y axis, the right side for the Y2 axis, etc.
 			// This amount of space is based on the need to reserve space for tics, etc., even if the
 			// Axis.Cross property causes the axis to be in a different location.
 			fixedSpace = 0;
