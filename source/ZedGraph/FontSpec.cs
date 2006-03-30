@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.18.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.18.2.2 $ $Date: 2006-03-30 01:52:10 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -93,7 +93,7 @@ namespace ZedGraph
 		/// <value>The angle of the font, measured in anti-clockwise degrees from
 		/// horizontal.  Negative values are permitted.</value>
 		private float _angle;
-		
+
 		/// <summary>
 		/// Private field that determines the alignment with which this
 		/// <see cref="FontSpec"/> object is drawn.  This alignment really only
@@ -102,7 +102,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>A <see cref="StringAlignment"/> enumeration.</value>
 		private StringAlignment _stringAlignment;
-		
+
 		/// <summary>
 		/// Private field that determines the size of the font for this
 		/// <see cref="FontSpec"/> object.  Use the public property
@@ -110,7 +110,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>The size of the font, measured in points (1/72 inch).</value>
 		private float _size;
-		
+
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="Font"/>
 		/// object for this <see cref="FontSpec"/>.  This font object will be at
@@ -121,6 +121,12 @@ namespace ZedGraph
 		/// <value>A reference to a <see cref="Font"/> object</value>
 		private Font _font;
 
+		/// <summary>
+		/// Private field that determines if the <see cref="FontSpec" /> will be
+		/// displayed using anti-aliasing logic.
+		/// Use the public property <see cref="IsAntiAlias" /> to access this value.
+		/// </summary>
+		private bool _isAntiAlias;
 		/// <summary>
 		/// Private field that determines if the <see cref="FontSpec" /> will be
 		/// displayed with a drop shadow.
@@ -214,6 +220,11 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsDropShadow = false;
 			/// <summary>
+			/// Default value for <see cref="FontSpec.IsAntiAlias"/>, which determines
+			/// if anti-aliasing logic is used for this <see cref="FontSpec" />.
+			/// </summary>
+			public static bool IsAntiAlias = false;
+			/// <summary>
 			/// Default value for <see cref="FontSpec.DropShadowColor"/>, which determines
 			/// the color of the drop shadow for this <see cref="FontSpec" />.
 			/// </summary>
@@ -228,10 +239,10 @@ namespace ZedGraph
 			/// the offset distance of the drop shadow for this <see cref="FontSpec" />.
 			/// </summary>
 			public static float DropShadowOffset = 0.05f;
-		
+
 		}
 	#endregion
-	
+
 	#region Properties
 		/// <summary>
 		/// The color of the font characters for this <see cref="FontSpec"/>.
@@ -253,7 +264,7 @@ namespace ZedGraph
 		{
 			get { return _family; }
 			set
-			{ 
+			{
 				if ( value != _family )
 				{
 					_family = value;
@@ -270,7 +281,7 @@ namespace ZedGraph
 		{
 			get { return _isBold; }
 			set
-			{ 
+			{
 				if ( value != _isBold )
 				{
 					_isBold = value;
@@ -287,7 +298,7 @@ namespace ZedGraph
 		{
 			get { return _isItalic; }
 			set
-			{ 
+			{
 				if ( value != _isItalic )
 				{
 					_isItalic = value;
@@ -304,7 +315,7 @@ namespace ZedGraph
 		{
 			get { return _isUnderline; }
 			set
-			{ 
+			{
 				if ( value != _isUnderline )
 				{
 					_isUnderline = value;
@@ -322,7 +333,7 @@ namespace ZedGraph
 			get { return _angle; }
 			set { _angle = value; }
 		}
-		
+
 		/// <summary>
 		/// Determines the alignment with which this
 		/// <see cref="FontSpec"/> object is drawn.  This alignment really only
@@ -334,7 +345,7 @@ namespace ZedGraph
 			get { return _stringAlignment; }
 			set { _stringAlignment = value; }
 		}
-		
+
 		/// <summary>
 		/// The size of the font for this <see cref="FontSpec"/> object.
 		/// </summary>
@@ -343,7 +354,7 @@ namespace ZedGraph
 		{
 			get { return _size; }
 			set
-			{ 
+			{
 				if ( value != _size )
 				{
 					Remake( _scaledSize / _size * value, _size, ref _scaledSize,
@@ -361,18 +372,34 @@ namespace ZedGraph
 			get { return _border; }
 			set { _border = value; }
 		}
-				
+
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="FontSpec"/>, which controls how the background
 		/// behind the text is filled.
 		/// </summary>
-		public Fill	Fill
+		public Fill Fill
 		{
 			get { return _fill; }
 			set { _fill = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a value that determines if the <see cref="FontSpec" /> will be
+		/// drawn using anti-aliasing logic within GDI+.
+		/// </summary>
+		/// <remarks>
+		/// If this property is set to true, it will override the current setting of
+		/// <see cref="Graphics.SmoothingMode" /> by setting the value temporarily to
+		/// <see cref="SmoothingMode.HighQuality" />.  If this property is set to false,
+		/// the the current setting of <see cref="Graphics.SmoothingMode" /> will be
+		/// left as-is.
+		/// </remarks>
+		public bool IsAntiAlias
+		{
+			get { return _isAntiAlias; }
+			set { _isAntiAlias = value; }
+		}
 		/// <summary>
 		/// Gets or sets a value that determines if the <see cref="FontSpec" /> will be
 		/// displayed with a drop shadow.
@@ -432,13 +459,14 @@ namespace ZedGraph
 		}
 
 	#endregion
-	
+
 	#region Constructors
 
 		/// <summary>
 		/// Construct a <see cref="FontSpec"/> object with default properties.
 		/// </summary>
-		public FontSpec() : this( "Arial", 12, Color.Black, false, false, false )
+		public FontSpec()
+			: this( "Arial", 12, Color.Black, false, false, false )
 		{
 		}
 
@@ -501,6 +529,7 @@ namespace ZedGraph
 			this._size = size;
 			this._angle = 0F;
 
+			this._isAntiAlias = Default.IsAntiAlias;
 			this._stringAlignment = Default.StringAlignment;
 			this._isDropShadow = Default.IsDropShadow;
 			this._dropShadowColor = Default.DropShadowColor;
@@ -509,7 +538,7 @@ namespace ZedGraph
 
 			this._fill = new Fill( fillColor, fillBrush, fillType );
 			this._border = new Border( true, Color.Black, 1.0F );
-			
+
 			this._scaledSize = -1;
 			Remake( 1.0F, this._size, ref this._scaledSize, ref this._font );
 		}
@@ -527,6 +556,7 @@ namespace ZedGraph
 			_isUnderline = rhs.IsUnderline;
 			_fill = rhs.Fill.Clone();
 			_border = rhs.Border.Clone();
+			_isAntiAlias = rhs._isAntiAlias;
 
 			_stringAlignment = rhs.StringAlignment;
 			_angle = rhs.Angle;
@@ -536,7 +566,7 @@ namespace ZedGraph
 			_dropShadowColor = rhs._dropShadowColor;
 			_dropShadowAngle = rhs._dropShadowAngle;
 			_dropShadowOffset = rhs._dropShadowOffset;
-		
+
 			_scaledSize = rhs._scaledSize;
 			Remake( 1.0F, this._size, ref this._scaledSize, ref this._font );
 		}
@@ -567,7 +597,8 @@ namespace ZedGraph
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
 		// Change to 2 with addition of isDropShadow, dropShadowColor, dropShadowAngle, dropShadowOffset
-		public const int schema = 2;
+		// changed to 10 with the version 5 refactor -- not backwards compatible
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -582,24 +613,23 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			_fontColor = (Color) info.GetValue( "fontColor", typeof(Color) );
+			_fontColor = (Color)info.GetValue( "fontColor", typeof( Color ) );
 			_family = info.GetString( "family" );
 			_isBold = info.GetBoolean( "isBold" );
 			_isItalic = info.GetBoolean( "isItalic" );
 			_isUnderline = info.GetBoolean( "isUnderline" );
-			_fill = (Fill) info.GetValue( "fill", typeof(Fill) );
-			_border = (Border) info.GetValue( "border", typeof(Border) );
+			_isAntiAlias = info.GetBoolean( "isAntiAlias" );
+
+			_fill = (Fill)info.GetValue( "fill", typeof( Fill ) );
+			_border = (Border)info.GetValue( "border", typeof( Border ) );
 			_angle = info.GetSingle( "angle" );
-			_stringAlignment = (StringAlignment) info.GetValue( "stringAlignment", typeof(StringAlignment) );
+			_stringAlignment = (StringAlignment)info.GetValue( "stringAlignment", typeof( StringAlignment ) );
 			_size = info.GetSingle( "size" );
 
-			if ( sch >= 2 )
-			{
-				_isDropShadow = info.GetBoolean( "isDropShadow" );
-				_dropShadowColor = (Color) info.GetValue( "dropShadowColor", typeof(Color) );
-				_dropShadowAngle = info.GetSingle( "dropShadowAngle" );
-				_dropShadowOffset = info.GetSingle( "dropShadowOffset" );
-			}
+			_isDropShadow = info.GetBoolean( "isDropShadow" );
+			_dropShadowColor = (Color)info.GetValue( "dropShadowColor", typeof( Color ) );
+			_dropShadowAngle = info.GetSingle( "dropShadowAngle" );
+			_dropShadowOffset = info.GetSingle( "dropShadowOffset" );
 
 			_scaledSize = -1;
 			Remake( 1.0F, this._size, ref this._scaledSize, ref this._font );
@@ -609,7 +639,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
-		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
@@ -618,6 +648,8 @@ namespace ZedGraph
 			info.AddValue( "isBold", _isBold );
 			info.AddValue( "isItalic", _isItalic );
 			info.AddValue( "isUnderline", _isUnderline );
+			info.AddValue( "isAntiAlias", _isAntiAlias );
+
 			info.AddValue( "fill", _fill );
 			info.AddValue( "border", _border );
 			info.AddValue( "angle", _angle );
@@ -651,9 +683,9 @@ namespace ZedGraph
 			float newSize = size * scaleFactor;
 
 			float oldSize = ( font == null ) ? 0.0f : font.Size;
-			
+
 			// Regenerate the font only if the size has changed significantly
-			if (	font == null ||
+			if ( font == null ||
 					Math.Abs( newSize - oldSize ) > 0.1 ||
 					font.Name != this.Family ||
 					font.Bold != this._isBold ||
@@ -664,12 +696,12 @@ namespace ZedGraph
 				style = ( this._isBold ? FontStyle.Bold : style ) |
 							( this._isItalic ? FontStyle.Italic : style ) |
 							 ( this._isUnderline ? FontStyle.Underline : style );
-				
-				scaledSize = size * (float) scaleFactor;
+
+				scaledSize = size * (float)scaleFactor;
 				font = new Font( this._family, scaledSize, style, GraphicsUnit.World );
 			}
 		}
-		
+
 		/// <summary>
 		/// Get the <see cref="Font"/> class for the current scaled font.
 		/// </summary>
@@ -686,9 +718,9 @@ namespace ZedGraph
 		{
 			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
 			return this._font;
-		}		
+		}
 	#endregion
-	
+
 	#region Rendering Methods
 		/// <summary>
 		/// Render the specified <paramref name="text"/> to the specifed
@@ -699,12 +731,12 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-        /// <param name="isPenWidthScaled">
-        /// Set to true to have the <see cref="Border"/> pen width scaled with the
-        /// scaleFactor.
-        /// </param>
-        /// <param name="text">A string value containing the text to be
-        /// displayed.  This can be multiple lines, separated by newline ('\n')
+		/// <param name="isPenWidthScaled">
+		/// Set to true to have the <see cref="Border"/> pen width scaled with the
+		/// scaleFactor.
+		/// </param>
+		/// <param name="text">A string value containing the text to be
+		/// displayed.  This can be multiple lines, separated by newline ('\n')
 		/// characters</param>
 		/// <param name="x">The X location to display the text, in screen
 		/// coordinates, relative to the horizontal (<see cref="AlignH"/>)
@@ -739,12 +771,12 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-        /// <param name="isPenWidthScaled">
-        /// Set to true to have the <see cref="Border"/> pen width scaled with the
-        /// scaleFactor.
-        /// </param>
-        /// <param name="text">A string value containing the text to be
-        /// displayed.  This can be multiple lines, separated by newline ('\n')
+		/// <param name="isPenWidthScaled">
+		/// Set to true to have the <see cref="Border"/> pen width scaled with the
+		/// scaleFactor.
+		/// </param>
+		/// <param name="text">A string value containing the text to be
+		/// displayed.  This can be multiple lines, separated by newline ('\n')
 		/// characters</param>
 		/// <param name="x">The X location to display the text, in screen
 		/// coordinates, relative to the horizontal (<see cref="AlignH"/>)
@@ -771,7 +803,11 @@ namespace ZedGraph
 		{
 			// make sure the font size is properly scaled
 			//Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
-			
+
+			SmoothingMode sModeSave = g.SmoothingMode;
+			if ( _isAntiAlias )
+				g.SmoothingMode = SmoothingMode.HighQuality;
+
 			SizeF sizeF;
 			if ( layoutArea.IsEmpty )
 				sizeF = MeasureString( g, text, scaleFactor );
@@ -780,12 +816,12 @@ namespace ZedGraph
 
 			// Save the old transform matrix for later restoration
 			Matrix matrix = g.Transform;
-		
+
 			// Move the coordinate system to local coordinates
 			// of this text object (that is, at the specified
 			// x,y location)
 			g.TranslateTransform( x, y, MatrixOrder.Prepend );
-			
+
 			// Rotate the coordinate system according to the 
 			// specified angle of the FontSpec
 			if ( _angle != 0.0F )
@@ -804,21 +840,21 @@ namespace ZedGraph
 				xa = -sizeF.Width / 2.0F;
 			else
 				xa = 0.0F;
-				
+
 			if ( alignV == AlignV.Center )
 				ya = -sizeF.Height / 2.0F;
 			else if ( alignV == AlignV.Bottom )
 				ya = -sizeF.Height;
 			else
 				ya = 0.0F;
-			
+
 			// Shift the coordinates to accomodate the alignment
 			// parameters
 			g.TranslateTransform( xa, ya, MatrixOrder.Prepend );
 
 			// make a solid brush for rendering the font itself
 			SolidBrush brush = new SolidBrush( this._fontColor );
-			
+
 			// Create a rectangle representing the border around the
 			// text.  Note that, while the text is drawn based on the
 			// TopCenter position, the rectangle is drawn based on
@@ -829,7 +865,7 @@ namespace ZedGraph
 
 			// If the background is to be filled, fill it
 			this._fill.Draw( g, rectF );
-			
+
 			// Draw the border around the text if required
 			this._border.Draw( g, isPenWidthScaled, scaleFactor, rectF );
 
@@ -837,11 +873,11 @@ namespace ZedGraph
 			// for drawing the text
 			StringFormat strFormat = new StringFormat();
 			strFormat.Alignment = this._stringAlignment;
-//			if ( this.stringAlignment == StringAlignment.Far )
-//				g.TranslateTransform( sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
-//			else if ( this.stringAlignment == StringAlignment.Near )
-//				g.TranslateTransform( -sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
-			
+			//			if ( this.stringAlignment == StringAlignment.Far )
+			//				g.TranslateTransform( sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
+			//			else if ( this.stringAlignment == StringAlignment.Near )
+			//				g.TranslateTransform( -sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
+
 
 			// Draw the drop shadow text.  Note that the coordinate system
 			// is set up such that 0,0 is at the location where the
@@ -850,13 +886,13 @@ namespace ZedGraph
 			{
 				// make a solid brush for rendering the font itself
 				SolidBrush brushD = new SolidBrush( this._dropShadowColor );
-				float xShift = (float) ( Math.Cos( this._dropShadowAngle ) *
+				float xShift = (float)( Math.Cos( this._dropShadowAngle ) *
 							this._dropShadowOffset * this._font.Height );
-				float yShift = (float) ( Math.Sin( this._dropShadowAngle ) *
+				float yShift = (float)( Math.Sin( this._dropShadowAngle ) *
 							this._dropShadowOffset * this._font.Height );
 				RectangleF rectD = rectF;
 				rectD.Offset( xShift, yShift );
-				g.DrawString( text, this._font, brushD, rectD, strFormat  );
+				g.DrawString( text, this._font, brushD, rectD, strFormat );
 				brushD.Dispose();
 			}
 
@@ -864,26 +900,28 @@ namespace ZedGraph
 			// is set up such that 0,0 is at the location where the
 			// CenterTop of the text needs to be.
 			//RectangleF layoutArea = new RectangleF( 0.0F, 0.0F, sizeF.Width, sizeF.Height );
-			g.DrawString( text, this._font, brush, rectF, strFormat  );
+			g.DrawString( text, this._font, brush, rectF, strFormat );
 
 			// Restore the transform matrix back to original
 			g.Transform = matrix;
 
+			g.SmoothingMode = sModeSave;
 		}
-/*
+
 		/// <summary>
 		/// Render the specified <paramref name="text"/> to the specifed
 		/// <see cref="Graphics"/> device.  The text, border, and fill options
-		/// will be rendered as required.  This version is used where the	<paramref name="text"/>
-		/// requires wrapping	within the <paramref name="rect"/>
+		/// will be rendered as required.  This special case method will show the
+		/// specified text as a power of 10, using the <see cref="Default.SuperSize"/>
+		/// and <see cref="Default.SuperShift"/>.
 		/// </summary>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="isPenWidthScaled">
-		/// Set to true to have the <see cref="Border"/> pen width scaled with the
-		/// scaleFactor.
+		/// <param name="pane">
+		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+		/// owner of this object.
 		/// </param>
 		/// <param name="text">A string value containing the text to be
 		/// displayed.  This can be multiple lines, separated by newline ('\n')
@@ -902,30 +940,41 @@ namespace ZedGraph
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph. </param>
-		/// <param name="rect">The rectangle (in screen coordinates) in which to display the text.
-		///</param>
-		public void Draw( Graphics g, bool _isPenWidthScaled, string _text, float x,
-					float y, AlignH alignH, AlignV alignV,
-							float scaleFactor, RectangleF _rect )
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		public void DrawTenPower( Graphics g, GraphPane pane, string text, float x,
+			float y, AlignH alignH, AlignV alignV,
+			float scaleFactor )
 		{
+			SmoothingMode sModeSave = g.SmoothingMode;
+			if ( _isAntiAlias )
+				g.SmoothingMode = SmoothingMode.HighQuality;
+
 			// make sure the font size is properly scaled
-			Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
-			
+			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
+			float scaledSuperSize = this._scaledSize * Default.SuperSize;
+			Remake( scaleFactor, this.Size * Default.SuperSize, ref scaledSuperSize,
+				ref this._superScriptFont );
+
 			// Get the width and height of the text
-			SizeF sizeF = new SizeF(_rect.Width, _rect.Height ) ;
+			SizeF size10 = g.MeasureString( "10", this._font );
+			SizeF sizeText = g.MeasureString( text, this._superScriptFont );
+			SizeF totSize = new SizeF( size10.Width + sizeText.Width,
+									size10.Height + sizeText.Height * Default.SuperShift );
+			float charWidth = g.MeasureString( "x", this._superScriptFont ).Width;
+
 			// Save the old transform matrix for later restoration
 			Matrix matrix = g.Transform;
-		
+
 			// Move the coordinate system to local coordinates
 			// of this text object (that is, at the specified
 			// x,y location)
 			g.TranslateTransform( x, y, MatrixOrder.Prepend );
-			
+
 			// Rotate the coordinate system according to the 
 			// specified angle of the FontSpec
-			if ( angle != 0.0F )
-				g.RotateTransform( -angle, MatrixOrder.Prepend );
+			if ( _angle != 0.0F )
+				g.RotateTransform( -_angle, MatrixOrder.Prepend );
 
 			// Since the text will be drawn by g.DrawString()
 			// assuming the location is the TopCenter
@@ -935,57 +984,330 @@ namespace ZedGraph
 			// actually aligned per the caller specified position
 			float xa, ya;
 			if ( alignH == AlignH.Left )
-				xa = sizeF.Width / 2.0F;
+				xa = totSize.Width / 2.0F;
 			else if ( alignH == AlignH.Right )
-				xa = -sizeF.Width / 2.0F;
+				xa = -totSize.Width / 2.0F;
 			else
 				xa = 0.0F;
-				
+
 			if ( alignV == AlignV.Center )
-				ya = -sizeF.Height / 2.0F;
+				ya = -totSize.Height / 2.0F;
 			else if ( alignV == AlignV.Bottom )
-				ya = -sizeF.Height;
+				ya = -totSize.Height;
 			else
 				ya = 0.0F;
-			
+
 			// Shift the coordinates to accomodate the alignment
 			// parameters
 			g.TranslateTransform( xa, ya, MatrixOrder.Prepend );
 
 			// make a solid brush for rendering the font itself
-			SolidBrush brush = new SolidBrush( this.fontColor );
-			
+			SolidBrush brush = new SolidBrush( this._fontColor );
+
+			// make a center justified StringFormat alignment
+			// for drawing the text
+			StringFormat strFormat = new StringFormat();
+			strFormat.Alignment = this._stringAlignment;
+
 			// Create a rectangle representing the border around the
 			// text.  Note that, while the text is drawn based on the
 			// TopCenter position, the rectangle is drawn based on
 			// the TopLeft position.  Therefore, move the rectangle
 			// width/2 to the left to align it properly
-			RectangleF rectF = new RectangleF( -sizeF.Width / 2.0F, 0.0F,
-				sizeF.Width, sizeF.Height );
+			RectangleF rectF = new RectangleF( -totSize.Width / 2.0F, 0.0F,
+				totSize.Width, totSize.Height );
 
 			// If the background is to be filled, fill it
 			this._fill.Draw( g, rectF );
-			
-			// Draw the border around the text if required
-			this._border.Draw( g, _isPenWidthScaled, scaleFactor, rectF );
 
-			// make a center justified StringFormat alignment
-			// for drawing the text
-			StringFormat strFormat = new StringFormat();
-			strFormat.Alignment = StringAlignment.Center ; // this.stringAlignment;
-			if ( this.stringAlignment == StringAlignment.Far )
-				g.TranslateTransform( sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
-			else if ( this.stringAlignment == StringAlignment.Near )
-				g.TranslateTransform( -sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
-			
-			// Draw the actual text within rectF, wrapping as needed.
-			g.DrawString( _text, this.font, brush, rectF, strFormat );
+			// Draw the border around the text if required
+			this._border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rectF );
+
+			// Draw the actual text.  Note that the coordinate system
+			// is set up such that 0,0 is at the location where the
+			// CenterTop of the text needs to be.
+			g.DrawString( "10", this._font, brush,
+							( -totSize.Width + size10.Width ) / 2.0F,
+							sizeText.Height * Default.SuperShift, strFormat );
+			g.DrawString( text, this._superScriptFont, brush,
+							( totSize.Width - sizeText.Width - charWidth ) / 2.0F,
+							0.0F,
+							strFormat );
 
 			// Restore the transform matrix back to original
 			g.Transform = matrix;
 
+			g.SmoothingMode = sModeSave;
 		}
-*/
+	#endregion
+
+	#region Sizing Methods
+		/// <summary>
+		/// Get the height of the scaled font
+		/// </summary>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <returns>The scaled font height, in pixels</returns>
+		public float GetHeight( float scaleFactor )
+		{
+			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
+			float height = this._font.Height;
+			if ( _isDropShadow )
+				height += (float)( Math.Sin( this._dropShadowAngle ) * this._dropShadowOffset * this._font.Height );
+			return height;
+		}
+		/// <summary>
+		/// Get the average character width of the scaled font.  The average width is
+		/// based on the character 'x'
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <returns>The scaled font width, in pixels</returns>
+		public float GetWidth( Graphics g, float scaleFactor )
+		{
+			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
+			return g.MeasureString( "x", this._font ).Width;
+		}
+
+		/// <summary>
+		/// Get the total width of the specified text string
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="text">The text string for which the width is to be calculated
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <returns>The scaled text width, in pixels</returns>
+		public float GetWidth( Graphics g, string text, float scaleFactor )
+		{
+			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
+			float width = g.MeasureString( text, this._font ).Width;
+			if ( _isDropShadow )
+				width += (float)( Math.Cos( this._dropShadowAngle ) * this._dropShadowOffset * this._font.Height );
+			return width;
+		}
+		/// <summary>
+		/// Get a <see cref="SizeF"/> struct representing the width and height
+		/// of the specified text string, based on the scaled font size
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="text">The text string for which the width is to be calculated
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <returns>The scaled text dimensions, in pixels, in the form of
+		/// a <see cref="SizeF"/> struct</returns>
+		public SizeF MeasureString( Graphics g, string text, float scaleFactor )
+		{
+			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
+			SizeF size = g.MeasureString( text, this._font );
+			if ( _isDropShadow )
+			{
+				size.Width += (float)( Math.Cos( this._dropShadowAngle ) *
+								this._dropShadowOffset * this._font.Height );
+				size.Height += (float)( Math.Sin( this._dropShadowAngle ) *
+								this._dropShadowOffset * this._font.Height );
+			}
+			return size;
+		}
+
+		/// <summary>
+		/// Get a <see cref="SizeF"/> struct representing the width and height
+		/// of the specified text string, based on the scaled font size, and using
+		/// the specified <see cref="SizeF"/> as an outer limit.
+		/// </summary>
+		/// <remarks>
+		/// This method will allow the text to wrap as necessary to fit the 
+		/// <see paramref="layoutArea"/>.
+		/// </remarks>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="text">The text string for which the width is to be calculated
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <param name="layoutArea">The limiting area (<see cref="SizeF"/>) into which the text
+		/// must fit.  The actual rectangle may be smaller than this, but the text will be wrapped
+		/// to accomodate the area.</param>
+		/// <returns>The scaled text dimensions, in pixels, in the form of
+		/// a <see cref="SizeF"/> struct</returns>
+		public SizeF MeasureString( Graphics g, string text, float scaleFactor, SizeF layoutArea )
+		{
+			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
+			SizeF size = g.MeasureString( text, this._font, layoutArea );
+			if ( _isDropShadow )
+			{
+				size.Width += (float)( Math.Cos( this._dropShadowAngle ) *
+								this._dropShadowOffset * this._font.Height );
+				size.Height += (float)( Math.Sin( this._dropShadowAngle ) *
+								this._dropShadowOffset * this._font.Height );
+			}
+			return size;
+		}
+
+		/// <summary>
+		/// Get a <see cref="SizeF"/> struct representing the width and height
+		/// of the bounding box for the specified text string, based on the scaled font size.
+		/// </summary>
+		/// <remarks>
+		/// This routine differs from <see cref="MeasureString(Graphics,string,float)"/> in that it takes into
+		/// account the rotation angle of the font, and gives the dimensions of the
+		/// bounding box that encloses the text at the specified angle.
+		/// </remarks>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="text">The text string for which the width is to be calculated
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <returns>The scaled text dimensions, in pixels, in the form of
+		/// a <see cref="SizeF"/> struct</returns>
+		public SizeF BoundingBox( Graphics g, string text, float scaleFactor )
+		{
+			return BoundingBox( g, text, scaleFactor, new SizeF() );
+		}
+
+		/// <summary>
+		/// Get a <see cref="SizeF"/> struct representing the width and height
+		/// of the bounding box for the specified text string, based on the scaled font size.
+		/// </summary>
+		/// <remarks>
+		/// This routine differs from <see cref="MeasureString(Graphics,string,float)"/> in that it takes into
+		/// account the rotation angle of the font, and gives the dimensions of the
+		/// bounding box that encloses the text at the specified angle.
+		/// </remarks>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="text">The text string for which the width is to be calculated
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <param name="layoutArea">The limiting area (<see cref="SizeF"/>) into which the text
+		/// must fit.  The actual rectangle may be smaller than this, but the text will be wrapped
+		/// to accomodate the area.</param>
+		/// <returns>The scaled text dimensions, in pixels, in the form of
+		/// a <see cref="SizeF"/> struct</returns>
+		public SizeF BoundingBox( Graphics g, string text, float scaleFactor, SizeF layoutArea )
+		{
+			//Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
+			SizeF s;
+			if ( layoutArea.IsEmpty )
+				s = MeasureString( g, text, scaleFactor );
+			else
+				s = MeasureString( g, text, scaleFactor, layoutArea );
+
+			float cs = (float)Math.Abs( Math.Cos( this._angle * Math.PI / 180.0 ) );
+			float sn = (float)Math.Abs( Math.Sin( this._angle * Math.PI / 180.0 ) );
+
+			SizeF s2 = new SizeF( s.Width * cs + s.Height * sn,
+				s.Width * sn + s.Height * cs );
+
+			return s2;
+		}
+
+		/// <summary>
+		/// Get a <see cref="SizeF"/> struct representing the width and height
+		/// of the bounding box for the specified text string, based on the scaled font size.
+		/// </summary>
+		/// <remarks>
+		/// This special case method will show the specified string as a power of 10,
+		/// superscripted and downsized according to the
+		/// <see cref="Default.SuperSize"/> and <see cref="Default.SuperShift"/>.
+		/// This routine differs from <see cref="MeasureString(Graphics,string,float)"/> in that it takes into
+		/// account the rotation angle of the font, and gives the dimensions of the
+		/// bounding box that encloses the text at the specified angle.
+		/// </remarks>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="text">The text string for which the width is to be calculated
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <returns>The scaled text dimensions, in pixels, in the form of
+		/// a <see cref="SizeF"/> struct</returns>
+		public SizeF BoundingBoxTenPower( Graphics g, string text, float scaleFactor )
+		{
+			//Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
+			float scaledSuperSize = this._scaledSize * Default.SuperSize;
+			Remake( scaleFactor, this.Size * Default.SuperSize, ref scaledSuperSize,
+				ref this._superScriptFont );
+
+			// Get the width and height of the text
+			SizeF size10 = MeasureString( g, "10", scaleFactor );
+			SizeF sizeText = g.MeasureString( text, this._superScriptFont );
+
+			if ( _isDropShadow )
+			{
+				sizeText.Width += (float)( Math.Cos( this._dropShadowAngle ) *
+							this._dropShadowOffset * this._superScriptFont.Height );
+				sizeText.Height += (float)( Math.Sin( this._dropShadowAngle ) *
+							this._dropShadowOffset * this._superScriptFont.Height );
+			}
+
+			SizeF totSize = new SizeF( size10.Width + sizeText.Width,
+				size10.Height + sizeText.Height * Default.SuperShift );
+
+
+			float cs = (float)Math.Abs( Math.Cos( this._angle * Math.PI / 180.0 ) );
+			float sn = (float)Math.Abs( Math.Sin( this._angle * Math.PI / 180.0 ) );
+
+			SizeF s2 = new SizeF( totSize.Width * cs + totSize.Height * sn,
+				totSize.Width * sn + totSize.Height * cs );
+
+			return s2;
+		}
+
+
 		/// <summary>
 		/// Determines if the specified screen point lies within the bounding box of
 		/// the text, taking into account alignment and rotation parameters.
@@ -1060,7 +1382,7 @@ namespace ZedGraph
 		{
 			// make sure the font size is properly scaled
 			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			
+
 			// Get the width and height of the text
 			SizeF sizeF;
 			if ( layoutArea.IsEmpty )
@@ -1070,24 +1392,24 @@ namespace ZedGraph
 
 			// Create a bounding box rectangle for the text
 			RectangleF rect = new RectangleF( new PointF( -sizeF.Width / 2.0F, 0.0F ), sizeF );
-			
+
 			// Build a transform matrix that inverts that drawing transform
 			// in this manner, the point is brought back to the box, rather
 			// than vice-versa.  This allows the container check to be a simple
 			// RectangleF.Contains, since the rectangle won't be rotated.
 			Matrix matrix = new Matrix();
-			
+
 			// In this case, the bounding box is anchored to the
 			// top-left of the text box.  Handle the alignment
 			// as needed.
-			float	xa, ya;
+			float xa, ya;
 			if ( alignH == AlignH.Left )
 				xa = sizeF.Width / 2.0F;
 			else if ( alignH == AlignH.Right )
 				xa = -sizeF.Width / 2.0F;
 			else
 				xa = 0.0F;
-				
+
 			if ( alignV == AlignV.Center )
 				ya = -sizeF.Height / 2.0F;
 			else if ( alignV == AlignV.Bottom )
@@ -1108,408 +1430,15 @@ namespace ZedGraph
 			// of this text object (that is, at the specified
 			// x,y location)
 			matrix.Translate( -x, -y, MatrixOrder.Prepend );
-			
+
 			PointF[] pts = new PointF[1];
 			pts[0] = pt;
 			matrix.TransformPoints( pts );
-			
+
 			return rect.Contains( pts[0] );
 		}
-		
-		/// <summary>
-		/// Render the specified <paramref name="text"/> to the specifed
-		/// <see cref="Graphics"/> device.  The text, border, and fill options
-		/// will be rendered as required.  This special case method will show the
-		/// specified text as a power of 10, using the <see cref="Default.SuperSize"/>
-		/// and <see cref="Default.SuperShift"/>.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-        /// <param name="pane">
-        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
-        /// owner of this object.
-        /// </param>
-        /// <param name="text">A string value containing the text to be
-        /// displayed.  This can be multiple lines, separated by newline ('\n')
-		/// characters</param>
-		/// <param name="x">The X location to display the text, in screen
-		/// coordinates, relative to the horizontal (<see cref="AlignH"/>)
-		/// alignment parameter <paramref name="alignH"/></param>
-		/// <param name="y">The Y location to display the text, in screen
-		/// coordinates, relative to the vertical (<see cref="AlignV"/>
-		/// alignment parameter <paramref name="alignV"/></param>
-		/// <param name="alignH">A horizontal alignment parameter specified
-		/// using the <see cref="AlignH"/> enum type</param>
-		/// <param name="alignV">A vertical alignment parameter specified
-		/// using the <see cref="AlignV"/> enum type</param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		public void DrawTenPower( Graphics g, GraphPane pane, string text, float x,
-			float y, AlignH alignH, AlignV alignV,
-			float scaleFactor )
-		{
-			// make sure the font size is properly scaled
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			float scaledSuperSize = this._scaledSize * Default.SuperSize;
-			Remake( scaleFactor, this.Size * Default.SuperSize, ref scaledSuperSize,
-				ref this._superScriptFont );
-			
-			// Get the width and height of the text
-			SizeF size10 = g.MeasureString( "10", this._font );
-			SizeF sizeText = g.MeasureString( text, this._superScriptFont );
-			SizeF totSize = new SizeF( size10.Width + sizeText.Width,
-									size10.Height + sizeText.Height * Default.SuperShift );
-			float charWidth = g.MeasureString( "x", this._superScriptFont ).Width;
 
-			// Save the old transform matrix for later restoration
-			Matrix matrix = g.Transform;
-			
-			// Move the coordinate system to local coordinates
-			// of this text object (that is, at the specified
-			// x,y location)
-			g.TranslateTransform( x, y, MatrixOrder.Prepend );
-			
-			// Rotate the coordinate system according to the 
-			// specified angle of the FontSpec
-			if ( _angle != 0.0F )
-				g.RotateTransform( -_angle, MatrixOrder.Prepend );
-
-			// Since the text will be drawn by g.DrawString()
-			// assuming the location is the TopCenter
-			// (the Font is aligned using StringFormat to the
-			// center so multi-line text is center justified),
-			// shift the coordinate system so that we are
-			// actually aligned per the caller specified position
-			float xa, ya;
-			if ( alignH == AlignH.Left )
-				xa = totSize.Width / 2.0F;
-			else if ( alignH == AlignH.Right )
-				xa = -totSize.Width / 2.0F;
-			else
-				xa = 0.0F;
-				
-			if ( alignV == AlignV.Center )
-				ya = -totSize.Height / 2.0F;
-			else if ( alignV == AlignV.Bottom )
-				ya = -totSize.Height;
-			else
-				ya = 0.0F;
-			
-			// Shift the coordinates to accomodate the alignment
-			// parameters
-			g.TranslateTransform( xa, ya, MatrixOrder.Prepend );
-
-			// make a solid brush for rendering the font itself
-			SolidBrush brush = new SolidBrush( this._fontColor );
-			
-			// make a center justified StringFormat alignment
-			// for drawing the text
-			StringFormat strFormat = new StringFormat();
-			strFormat.Alignment = this._stringAlignment;
-			
-			// Create a rectangle representing the border around the
-			// text.  Note that, while the text is drawn based on the
-			// TopCenter position, the rectangle is drawn based on
-			// the TopLeft position.  Therefore, move the rectangle
-			// width/2 to the left to align it properly
-			RectangleF rectF = new RectangleF( -totSize.Width / 2.0F, 0.0F,
-				totSize.Width, totSize.Height );
-
-			// If the background is to be filled, fill it
-			this._fill.Draw( g, rectF );
-			
-			// Draw the border around the text if required
-			this._border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rectF );
-
-			// Draw the actual text.  Note that the coordinate system
-			// is set up such that 0,0 is at the location where the
-			// CenterTop of the text needs to be.
-			g.DrawString( "10", this._font, brush,
-							( -totSize.Width + size10.Width ) / 2.0F,
-							sizeText.Height * Default.SuperShift, strFormat );
-			g.DrawString( text, this._superScriptFont, brush,
-							( totSize.Width - sizeText.Width - charWidth ) / 2.0F,
-							0.0F,
-							strFormat );
-
-			// Restore the transform matrix back to original
-			g.Transform = matrix;
-
-		}
 	#endregion
-	
-	#region Sizing Methods
-		/// <summary>
-		/// Get the height of the scaled font
-		/// </summary>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <returns>The scaled font height, in pixels</returns>
-		public float GetHeight( float scaleFactor )
-		{
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			float height = this._font.Height;
-			if ( _isDropShadow )
-				height += (float) ( Math.Sin( this._dropShadowAngle ) * this._dropShadowOffset * this._font.Height );
-			return height;
-		}
-		/// <summary>
-		/// Get the average character width of the scaled font.  The average width is
-		/// based on the character 'x'
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <returns>The scaled font width, in pixels</returns>
-		public float GetWidth( Graphics g, float scaleFactor )
-		{
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			return g.MeasureString( "x", this._font ).Width;
-		}
-		
-		/// <summary>
-		/// Get the total width of the specified text string
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="text">The text string for which the width is to be calculated
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <returns>The scaled text width, in pixels</returns>
-		public float GetWidth( Graphics g, string text, float scaleFactor )
-		{
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			float width = g.MeasureString( text, this._font ).Width;
-			if ( _isDropShadow )
-				width += (float) ( Math.Cos( this._dropShadowAngle ) * this._dropShadowOffset * this._font.Height );
-			return width;
-		}
-		/// <summary>
-		/// Get a <see cref="SizeF"/> struct representing the width and height
-		/// of the specified text string, based on the scaled font size
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="text">The text string for which the width is to be calculated
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <returns>The scaled text dimensions, in pixels, in the form of
-		/// a <see cref="SizeF"/> struct</returns>
-		public SizeF MeasureString( Graphics g, string text, float scaleFactor )
-		{
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			SizeF size = g.MeasureString( text, this._font );
-			if ( _isDropShadow )
-			{
-				size.Width += (float) ( Math.Cos( this._dropShadowAngle ) *
-								this._dropShadowOffset * this._font.Height );
-				size.Height += (float) ( Math.Sin( this._dropShadowAngle ) *
-								this._dropShadowOffset * this._font.Height );
-			}
-			return size;
-		}
-		
-		/// <summary>
-		/// Get a <see cref="SizeF"/> struct representing the width and height
-		/// of the specified text string, based on the scaled font size, and using
-		/// the specified <see cref="SizeF"/> as an outer limit.
-		/// </summary>
-		/// <remarks>
-		/// This method will allow the text to wrap as necessary to fit the 
-		/// <see paramref="layoutArea"/>.
-		/// </remarks>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="text">The text string for which the width is to be calculated
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <param name="layoutArea">The limiting area (<see cref="SizeF"/>) into which the text
-		/// must fit.  The actual rectangle may be smaller than this, but the text will be wrapped
-		/// to accomodate the area.</param>
-		/// <returns>The scaled text dimensions, in pixels, in the form of
-		/// a <see cref="SizeF"/> struct</returns>
-		public SizeF MeasureString( Graphics g, string text, float scaleFactor, SizeF layoutArea )
-		{
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			SizeF size = g.MeasureString( text, this._font, layoutArea );
-			if ( _isDropShadow )
-			{
-				size.Width += (float) ( Math.Cos( this._dropShadowAngle ) *
-								this._dropShadowOffset * this._font.Height );
-				size.Height += (float) ( Math.Sin( this._dropShadowAngle ) *
-								this._dropShadowOffset * this._font.Height );
-			}
-			return size;
-		}
-		
-		/// <summary>
-		/// Get a <see cref="SizeF"/> struct representing the width and height
-		/// of the bounding box for the specified text string, based on the scaled font size.
-		/// </summary>
-		/// <remarks>
-		/// This routine differs from <see cref="MeasureString(Graphics,string,float)"/> in that it takes into
-		/// account the rotation angle of the font, and gives the dimensions of the
-		/// bounding box that encloses the text at the specified angle.
-		/// </remarks>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="text">The text string for which the width is to be calculated
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <returns>The scaled text dimensions, in pixels, in the form of
-		/// a <see cref="SizeF"/> struct</returns>
-		public SizeF BoundingBox( Graphics g, string text, float scaleFactor )
-		{
-			return BoundingBox( g, text, scaleFactor, new SizeF() );
-		}
 
-		/// <summary>
-		/// Get a <see cref="SizeF"/> struct representing the width and height
-		/// of the bounding box for the specified text string, based on the scaled font size.
-		/// </summary>
-		/// <remarks>
-		/// This routine differs from <see cref="MeasureString(Graphics,string,float)"/> in that it takes into
-		/// account the rotation angle of the font, and gives the dimensions of the
-		/// bounding box that encloses the text at the specified angle.
-		/// </remarks>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="text">The text string for which the width is to be calculated
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <param name="layoutArea">The limiting area (<see cref="SizeF"/>) into which the text
-		/// must fit.  The actual rectangle may be smaller than this, but the text will be wrapped
-		/// to accomodate the area.</param>
-		/// <returns>The scaled text dimensions, in pixels, in the form of
-		/// a <see cref="SizeF"/> struct</returns>
-		public SizeF BoundingBox( Graphics g, string text, float scaleFactor, SizeF layoutArea )
-		{
-			//Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
-			SizeF s;
-			if ( layoutArea.IsEmpty )
-				s = MeasureString( g, text, scaleFactor );
-			else
-				s = MeasureString( g, text, scaleFactor, layoutArea );
-			
-			float cs = (float) Math.Abs( Math.Cos( this._angle * Math.PI / 180.0 ) );
-			float sn = (float) Math.Abs( Math.Sin( this._angle * Math.PI / 180.0 ) );
-			
-			SizeF s2 = new SizeF( s.Width * cs + s.Height * sn,
-				s.Width * sn + s.Height * cs );
-			
-			return s2;
-		}
-
-		/// <summary>
-		/// Get a <see cref="SizeF"/> struct representing the width and height
-		/// of the bounding box for the specified text string, based on the scaled font size.
-		/// </summary>
-		/// <remarks>
-		/// This special case method will show the specified string as a power of 10,
-		/// superscripted and downsized according to the
-		/// <see cref="Default.SuperSize"/> and <see cref="Default.SuperShift"/>.
-		/// This routine differs from <see cref="MeasureString(Graphics,string,float)"/> in that it takes into
-		/// account the rotation angle of the font, and gives the dimensions of the
-		/// bounding box that encloses the text at the specified angle.
-		/// </remarks>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="text">The text string for which the width is to be calculated
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <returns>The scaled text dimensions, in pixels, in the form of
-		/// a <see cref="SizeF"/> struct</returns>
-		public SizeF BoundingBoxTenPower( Graphics g, string text, float scaleFactor )
-		{
-			//Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
-			float scaledSuperSize = this._scaledSize * Default.SuperSize;
-			Remake( scaleFactor, this.Size * Default.SuperSize, ref scaledSuperSize,
-				ref this._superScriptFont );
-
-			// Get the width and height of the text
-			SizeF size10 = MeasureString( g, "10", scaleFactor );
-			SizeF sizeText = g.MeasureString( text, this._superScriptFont );
-
-			if ( _isDropShadow )
-			{
-				sizeText.Width += (float) ( Math.Cos( this._dropShadowAngle ) *
-							this._dropShadowOffset * this._superScriptFont.Height );
-				sizeText.Height += (float) ( Math.Sin( this._dropShadowAngle ) *
-							this._dropShadowOffset * this._superScriptFont.Height );
-			}
-			
-			SizeF totSize = new SizeF( size10.Width + sizeText.Width,
-				size10.Height + sizeText.Height * Default.SuperShift );
-
-			
-			float cs = (float) Math.Abs( Math.Cos( this._angle * Math.PI / 180.0 ) );
-			float sn = (float) Math.Abs( Math.Sin( this._angle * Math.PI / 180.0 ) );
-			
-			SizeF s2 = new SizeF( totSize.Width * cs + totSize.Height * sn,
-				totSize.Width * sn + totSize.Height * cs );
-			
-			return s2;
-		}
-	#endregion
-	
 	}
 }

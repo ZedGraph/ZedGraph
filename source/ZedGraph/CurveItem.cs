@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.31.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 3.31.2.3 $ $Date: 2006-03-30 01:52:10 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -316,7 +316,7 @@ namespace ZedGraph
 				else if ( this is LineItem )
 					return ((LineItem) this).Symbol.Border.Color;
 				else if ( this is ErrorBarItem )
-					return ((ErrorBarItem) this).ErrorBar.Color;
+					return ((ErrorBarItem) this).Bar.Color;
 				else if ( this is HiLowBarItem )
 					return ((HiLowBarItem) this).Bar.Fill.Color;
 				else
@@ -335,7 +335,7 @@ namespace ZedGraph
 					((LineItem) this).Symbol.Fill.Color		= value;
 				}
 				else if ( this is ErrorBarItem )
-					((ErrorBarItem) this).ErrorBar.Color = value;
+					((ErrorBarItem) this).Bar.Color = value;
 				else if ( this is HiLowBarItem )
 					((HiLowBarItem) this).Bar.Fill.Color = value;
 			}
@@ -881,7 +881,7 @@ namespace ZedGraph
 			float barWidth;
 
 			if ( this is ErrorBarItem )
-				barWidth = (float) ( ((ErrorBarItem)this).ErrorBar.Symbol.Size *
+				barWidth = (float) ( ((ErrorBarItem)this).Bar.Symbol.Size *
 						pane.CalcScaleFactor() );
 			else if ( this is HiLowBarItem )
 				barWidth = (float) ( ((HiLowBarItem)this).Bar.GetBarWidth( pane,

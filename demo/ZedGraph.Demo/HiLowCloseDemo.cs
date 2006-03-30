@@ -77,8 +77,8 @@ namespace ZedGraph.Demo
 			// Add a blue error bar to the graph
 			ErrorBarItem myCurve = myPane.AddErrorBar(	"Price Range", hList,
 				Color.Blue );
-			myCurve.ErrorBar.PenWidth = 3;
-			myCurve.ErrorBar.Symbol.IsVisible = false;
+			myCurve.Bar.PenWidth = 3;
+			myCurve.Bar.Symbol.IsVisible = false;
 			
 			// Set the XAxis to date type
 			myPane.XAxis.Type =	AxisType.Date;

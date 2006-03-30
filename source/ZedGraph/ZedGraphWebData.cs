@@ -908,9 +908,9 @@ namespace ZedGraph
 		public void CopyTo( ErrorBarItem item )
 		{
 			base.CopyTo(item);
-			this.Symbol.CopyTo(item.ErrorBar.Symbol);
+			this.Symbol.CopyTo(item.Bar.Symbol);
 			//item.BarBase = this.BarBase;
-			item.ErrorBar.PenWidth = this.PenWidth;
+			item.Bar.PenWidth = this.PenWidth;
 		}
 
 		/// <summary>

@@ -49,7 +49,7 @@ namespace ZedGraph
 	/// is assigned with <see cref="BarSettings.Base"/>, and is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.13.2.2 $ $Date: 2006-03-30 01:52:10 $ </version>
 	[Serializable]
 	public class ErrorBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -59,18 +59,18 @@ namespace ZedGraph
 		/// class defined for this <see cref="ErrorBarItem"/>.  Use the public
 		/// property <see cref="ErrorBar"/> to access this value.
 		/// </summary>
-		private ErrorBar _errorBar;
+		private ErrorBar _bar;
 
 	#endregion
 
 	#region Properties
 		/// <summary>
-		/// Gets a reference to the <see cref="ErrorBar"/> class defined
+		/// Gets a reference to the <see cref="ZedGraph.ErrorBar"/> class defined
 		/// for this <see cref="ErrorBarItem"/>.
 		/// </summary>
-		public ErrorBar ErrorBar
+		public ErrorBar Bar
 		{
-			get { return _errorBar; }
+			get { return _bar; }
 		}
 
 		/// <summary>
@@ -104,7 +104,7 @@ namespace ZedGraph
 		/// <param name="label">The label that will appear in the legend.</param>
 		public ErrorBarItem( string label ) : base( label )
 		{
-			this._errorBar = new ErrorBar();
+			this._bar = new ErrorBar();
 		}
 		
 		/// <summary>
@@ -138,7 +138,7 @@ namespace ZedGraph
 		public ErrorBarItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
-			_errorBar = new ErrorBar( color );
+			_bar = new ErrorBar( color );
 		}
 
 		/// <summary>
@@ -147,7 +147,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="ErrorBarItem"/> object from which to copy</param>
 		public ErrorBarItem( ErrorBarItem rhs ) : base( rhs )
 		{
-			_errorBar = new ErrorBar( rhs.ErrorBar );
+			_bar = new ErrorBar( rhs.Bar );
 		}
 
 		/// <summary>
@@ -190,7 +190,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			_errorBar = (ErrorBar) info.GetValue( "errorBar", typeof(ErrorBar) );
+			_bar = (ErrorBar) info.GetValue( "errorBar", typeof(ErrorBar) );
 
 			// This is now just a dummy variable, since barBase was removed
 			BarBase barBase = (BarBase) info.GetValue( "barBase", typeof(BarBase) );
@@ -205,7 +205,7 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "errorBar", _errorBar );
+			info.AddValue( "errorBar", _bar );
 
 			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
 			info.AddValue( "barBase", BarBase.X );
@@ -239,7 +239,7 @@ namespace ZedGraph
 		{
 			if ( this._isVisible )
 			{
-				_errorBar.Draw( g, pane, this, this.BaseAxis( pane ),
+				_bar.Draw( g, pane, this, this.BaseAxis( pane ),
 								this.ValueAxis( pane ), scaleFactor );
 			}
 		}		
@@ -281,8 +281,8 @@ namespace ZedGraph
 				pixLowValue = rect.Left;
 			}
 
-			Pen pen = new Pen( _errorBar.Color, _errorBar.PenWidth );
-			this.ErrorBar.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixValue,
+			Pen pen = new Pen( _bar.Color, _bar.PenWidth );
+			this.Bar.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixValue,
 								pixLowValue, scaleFactor, pen, null );
 		}
 

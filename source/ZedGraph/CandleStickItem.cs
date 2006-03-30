@@ -51,7 +51,7 @@ namespace ZedGraph
 	/// value of <see cref="BarSettings.Base"/>, which is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-03-30 01:52:10 $ </version>
 	[Serializable]
 	public class CandleStickItem : CurveItem, ICloneable, ISerializable
 	{
@@ -63,7 +63,7 @@ namespace ZedGraph
 		/// property <see cref="CandleStick"/> to access this value.
 		/// </summary>
 		/// 
-		protected CandleStick _candleStick;
+		protected CandleStick _stick;
 
 	#endregion
 
@@ -72,9 +72,9 @@ namespace ZedGraph
 		/// Gets a reference to the <see cref="CandleStick"/> class defined
 		/// for this <see cref="CandleStickItem"/>.
 		/// </summary>
-		public CandleStick CandleStick
+		public CandleStick Stick
 		{
-			get { return _candleStick; }
+			get { return _stick; }
 		}
 
 		/// <summary>
@@ -112,7 +112,7 @@ namespace ZedGraph
 		public CandleStickItem( string label )
 			: base( label )
 		{
-			this._candleStick = new CandleStick();
+			this._stick = new CandleStick();
 		}
 
 		/// <summary>
@@ -129,7 +129,7 @@ namespace ZedGraph
 		public CandleStickItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
-			this._candleStick = new CandleStick( color );
+			this._stick = new CandleStick( color );
 		}
 
 		/// <summary>
@@ -139,7 +139,7 @@ namespace ZedGraph
 		public CandleStickItem( CandleStickItem rhs )
 			: base( rhs )
 		{
-			this._candleStick = rhs._candleStick.Clone();
+			this._stick = rhs._stick.Clone();
 		}
 
 		/// <summary>
@@ -184,7 +184,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			_candleStick = (CandleStick)info.GetValue( "candleStick", typeof( CandleStick ) );
+			_stick = (CandleStick)info.GetValue( "candleStick", typeof( CandleStick ) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -197,7 +197,7 @@ namespace ZedGraph
 			base.GetObjectData( info, context );
 
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "candleStick", _candleStick );
+			info.AddValue( "candleStick", _stick );
 		}
 
 	#endregion
@@ -230,7 +230,7 @@ namespace ZedGraph
 		{
 			if ( this._isVisible )
 			{
-				_candleStick.Draw( g, pane, this, this.BaseAxis( pane ),
+				_stick.Draw( g, pane, this, this.BaseAxis( pane ),
 									this.ValueAxis( pane ), scaleFactor );
 			}
 		}
@@ -276,8 +276,8 @@ namespace ZedGraph
 				pixClose = pixLow + rect.Width / 3;
 			}
 
-			Pen pen = new Pen( _candleStick.Color, _candleStick.PenWidth );
-			this._candleStick.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixHigh,
+			Pen pen = new Pen( _stick.Color, _stick.PenWidth );
+			this._stick.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixHigh,
 								pixLow, pixOpen, pixClose, scaleFactor, pen );
 		}
 

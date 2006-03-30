@@ -54,12 +54,12 @@ namespace ZedGraph.Demo
 			ErrorBarItem myCurve = myPane.AddErrorBar( "Curve 1", list, Color.Red );
 			// Make the X axis the base for this curve (this is the default)
 			myPane.BarSettings.Base = BarBase.X;
-			myCurve.ErrorBar.PenWidth = 1f;
+			myCurve.Bar.PenWidth = 1f;
 			// Use the HDash symbol so that the error bars look like I-beams
-			myCurve.ErrorBar.Symbol.Type = SymbolType.HDash;
-			myCurve.ErrorBar.Symbol.Border.PenWidth = .1f;
-			myCurve.ErrorBar.Symbol.IsVisible = true;
-			myCurve.ErrorBar.Symbol.Size = 4;
+			myCurve.Bar.Symbol.Type = SymbolType.HDash;
+			myCurve.Bar.Symbol.Border.PenWidth = .1f;
+			myCurve.Bar.Symbol.IsVisible = true;
+			myCurve.Bar.Symbol.Size = 4;
 			
 			// Fill the axis background with a color gradient
 			myPane.Chart.Fill = new Fill( Color.White,

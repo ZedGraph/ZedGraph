@@ -54,7 +54,7 @@ namespace ZedGraph
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.12.2.2 $ $Date: 2006-03-30 01:52:10 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -68,7 +68,7 @@ namespace ZedGraph
 		private HiLowBar _bar;
 	#endregion
 
-		#region Constructors
+	#region Constructors
 		/// <summary>
 		/// Create a new <see cref="HiLowBarItem"/> using the specified properties.
 		/// </summary>
@@ -131,9 +131,9 @@ namespace ZedGraph
 			return new HiLowBarItem( this );
 		}
 
-		#endregion
+	#endregion
 
-		#region Serialization
+	#region Serialization
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
@@ -172,9 +172,9 @@ namespace ZedGraph
 			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
 			info.AddValue( "barBase", BarBase.X );
 		}
-		#endregion
+	#endregion
 
-		#region Properties
+	#region Properties
 		/// <summary>
 		/// Gets a reference to the <see cref="HiLowBar"/> class defined
 		/// for this <see cref="HiLowBarItem"/>.

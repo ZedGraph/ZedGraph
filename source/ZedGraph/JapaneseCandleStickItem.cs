@@ -55,7 +55,7 @@ namespace ZedGraph
 	/// value of <see cref="BarSettings.Base"/>, which is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-03-30 01:52:10 $ </version>
 	[Serializable]
 	public class JapaneseCandleStickItem : CurveItem, ICloneable, ISerializable
 	{
@@ -67,7 +67,7 @@ namespace ZedGraph
 		/// property <see cref="CandleStick"/> to access this value.
 		/// </summary>
 		/// 
-		private JapaneseCandleStick japaneseCandleStick;
+		private JapaneseCandleStick _stick;
 
 	#endregion
 
@@ -76,9 +76,9 @@ namespace ZedGraph
 		/// Gets a reference to the <see cref="JapaneseCandleStick"/> class defined
 		/// for this <see cref="JapaneseCandleStickItem"/>.
 		/// </summary>
-		public JapaneseCandleStick JapaneseCandleStick
+		public JapaneseCandleStick Stick
 		{
-			get { return japaneseCandleStick; }
+			get { return _stick; }
 		}
 
 		/// <summary>
@@ -117,7 +117,7 @@ namespace ZedGraph
 		public JapaneseCandleStickItem( string label )
 			: base( label )
 		{
-			this.japaneseCandleStick = new JapaneseCandleStick();
+			this._stick = new JapaneseCandleStick();
 		}
 
 		/// <summary>
@@ -132,7 +132,7 @@ namespace ZedGraph
 		public JapaneseCandleStickItem( string label, IPointList points )
 			: base( label, points )
 		{
-			this.japaneseCandleStick = new JapaneseCandleStick();
+			this._stick = new JapaneseCandleStick();
 		}
 
 		/// <summary>
@@ -142,7 +142,7 @@ namespace ZedGraph
 		public JapaneseCandleStickItem( JapaneseCandleStickItem rhs )
 			: base( rhs )
 		{
-			this.japaneseCandleStick = rhs.japaneseCandleStick.Clone();
+			this._stick = rhs._stick.Clone();
 		}
 
 		/// <summary>
@@ -187,7 +187,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			japaneseCandleStick = (JapaneseCandleStick) info.GetValue( "japaneseCandleStick",
+			_stick = (JapaneseCandleStick) info.GetValue( "japaneseCandleStick",
 						typeof( JapaneseCandleStick ) );
 		}
 		/// <summary>
@@ -201,7 +201,7 @@ namespace ZedGraph
 			base.GetObjectData( info, context );
 
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "japaneseCandleStick", japaneseCandleStick );
+			info.AddValue( "japaneseCandleStick", _stick );
 		}
 
 		#endregion
@@ -234,7 +234,7 @@ namespace ZedGraph
 		{
 			if ( this._isVisible )
 			{
-				japaneseCandleStick.Draw( g, pane, this, this.BaseAxis( pane ),
+				_stick.Draw( g, pane, this, this.BaseAxis( pane ),
 									this.ValueAxis( pane ), scaleFactor );
 			}
 		}
@@ -280,11 +280,11 @@ namespace ZedGraph
 				pixClose = pixLow + rect.Width / 3;
 			}
 
-			Pen pen = new Pen( japaneseCandleStick.Color, japaneseCandleStick.PenWidth );
-			this.japaneseCandleStick.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixHigh,
+			Pen pen = new Pen( _stick.Color, _stick.PenWidth );
+			this._stick.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixHigh,
 								pixLow, pixOpen, pixClose, scaleFactor, pen,
-								japaneseCandleStick.RisingFill,
-								japaneseCandleStick.RisingBorder, null );
+								_stick.RisingFill,
+								_stick.RisingBorder, null );
 		}
 
 		#endregion

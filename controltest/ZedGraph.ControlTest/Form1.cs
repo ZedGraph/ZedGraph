@@ -28,7 +28,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_CandleStick( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
-			CreateGraph_BasicLinear( zedGraphControl1 );
+			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
@@ -46,6 +46,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_OnePoint( zedGraphControl1 );
 
 			//CreateGraph_DataSource( zedGraphControl1 );
+			CreateGraph_PolyTest( zedGraphControl1 );
 
 			zedGraphControl1.AxisChange();
 			SetSize();
@@ -354,7 +355,7 @@ namespace ZedGraph.ControlTest
 
 			//CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Black );
 			CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Blue );
-			myCurve.CandleStick.Size = 5;
+			myCurve.Stick.Size = 5;
 			//myCurve.CandleStick.PenWidth = 2;
 			//myCurve.CandleStick.IsOpenCloseVisible = false;
 
@@ -407,9 +408,9 @@ namespace ZedGraph.ControlTest
 
 			//CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Black );
 			JapaneseCandleStickItem myCurve = myPane.AddJapaneseCandleStick( "trades", spl );
-			myCurve.JapaneseCandleStick.Size = 5;
+			myCurve.Stick.Size = 5;
 			//myCurve.CandleStick.PenWidth = 2;
-			myCurve.JapaneseCandleStick.Color = Color.Blue;
+			myCurve.Stick.Color = Color.Blue;
 			//myCurve.CandleStick.IsOpenCloseVisible = false;
 
 			// Use DateAsOrdinal to skip weekend gaps
@@ -441,7 +442,7 @@ namespace ZedGraph.ControlTest
 			for ( int i = 0; i < 36; i++ )
 			{
 				double x = (double)i + 5;
-				double y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) );
+				double y = 30000.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) );
 				list.Add( x, y );
 			}
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
@@ -452,7 +453,6 @@ namespace ZedGraph.ControlTest
 			//z1.GraphPane.IsBoundedRanges = false;
 			//z1.ScrollMinX = 0;
 			//z1.ScrollMaxX = 100;
-
 		}
 
 		// Basic curve test with images for symbols
@@ -711,6 +711,42 @@ namespace ZedGraph.ControlTest
 			z1.Invalidate();
 
 
+		}
+
+		private void CreateGraph_PolyTest( ZedGraphControl z1 )
+		{
+			// Get a reference to the GraphPane instance in the ZedGraphControl
+			GraphPane myPane = z1.GraphPane;
+
+			PointF[] corners = new PointF[4];
+			corners[0] = new PointF( 300.0f, 85.0f );
+			corners[1] = new PointF( 400.0f, 85.0f );
+			corners[2] = new PointF( 400.0f, 95.0f );
+			corners[3] = new PointF( 300.0f, 95.0f );
+			PolyObj poly1 = new PolyObj( corners, Color.Empty, Color.Red );
+
+			PointF[] corners3 = new PointF[3];
+			corners3[0] = new PointF( 300.0f, 88.0f );
+			corners3[1] = new PointF( 375.0f, 95.0f );
+			corners3[2] = new PointF( 300.0f, 95.0f );
+			PolyObj poly3 = new PolyObj( corners3, Color.Empty, Color.LightGreen );
+
+			PointF[] corners2 = new PointF[3];
+			corners2[0] = new PointF( 333.0f, 85.0f );
+			corners2[1] = new PointF( 400.0f, 91.0f );
+			corners2[2] = new PointF( 400.0f, 85.0f );
+			PolyObj poly2 = new PolyObj( corners2, Color.Empty, Color.Cyan );
+
+			myPane.GraphObjList.Add( poly3 );
+			myPane.GraphObjList.Add( poly2 );
+			myPane.GraphObjList.Add( poly1 );
+
+			myPane.XAxis.Scale.Min = 250;
+			myPane.XAxis.Scale.Max = 450;
+			myPane.YAxis.Scale.Min = 80;
+			myPane.YAxis.Scale.Max = 100;
+
+			z1.AxisChange();
 		}
 
 		private void CreateGraph_DualYDemo( ZedGraphControl z1 )
@@ -1166,6 +1202,11 @@ namespace ZedGraph.ControlTest
 			LineItem myCurve = z1.GraphPane.AddCurve( "curve", dspl, Color.Blue );
 			z1.AxisChange();
 
+		}
+
+		private void zedGraphControl1_Paint( object sender, PaintEventArgs e )
+		{
+			//e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 		}
 	}
 }

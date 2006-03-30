@@ -53,7 +53,7 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.Name = "zedGraphControl1";
 			this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
-			this.zedGraphControl1.PanModifierKeys = System.Windows.Forms.Keys.Shift;
+			this.zedGraphControl1.PanModifierKeys = ( (System.Windows.Forms.Keys)( ( System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.None ) ) );
 			this.zedGraphControl1.PanModifierKeys2 = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.PointDateFormat = "g";
 			this.zedGraphControl1.PointValueFormat = "G";
@@ -70,6 +70,7 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomStepFraction = 0.1;
+			this.zedGraphControl1.Paint += new System.Windows.Forms.PaintEventHandler( this.zedGraphControl1_Paint );
 			// 
 			// Form1
 			// 
