@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.60.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 3.60.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -295,7 +295,7 @@ namespace ZedGraph
 		/// <param name="rhs">The Axis object from which to copy</param>
 		public Axis( Axis rhs )
 		{
-			this._scale = (Scale)( rhs._scale as ICloneable ).Clone();
+			this._scale = rhs._scale.Clone( this );
 
 			_cross = rhs._cross;
 
@@ -349,17 +349,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		// Schema was changed to 2 when IsScaleVisible was added
-		// Schema was changed to 3 when IsAxisSegmentVisible was added
-		// Schema was changed to 4 when IsScaleLabelsInside, isSkipFirstLabel, isSkipLastLabel were added
-		// Schema was changed to 5 with tic.isMajorCross, tic.isMajorCrossInside, tic.isMinorCross, tic.isMinorCrossInside
-		// Schema was changed to 6 with AxisGap
-		// Schema was changed to 7 with Exponent
-		// Schema was changed to 8 when "Scale" class was added
-		// Schema was changed to 9 when scale was actually output properly
-		// Schema was changed to 10 when isSkipCrossLabel, isTitleAtCross were added
-		// Schema was changed to 11 when Label, Tic, Grid classes added
-		public const int schema = 11;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -390,18 +380,13 @@ namespace ZedGraph
 
 			_color = (Color)info.GetValue( "color", typeof( Color ) );
 
-			if ( schema >= 3 )
-				_isAxisSegmentVisible = info.GetBoolean( "isAxisSegmentVisible" );
+			_isAxisSegmentVisible = info.GetBoolean( "isAxisSegmentVisible" );
 
 
-			if ( schema >= 6 )
-				_axisGap = info.GetSingle( "axisGap" );
+			_axisGap = info.GetSingle( "axisGap" );
 
-			if ( schema >= 9 )
-			{
-				_scale = (Scale)info.GetValue( "scale", typeof( Scale ) );
-				_scale._parentAxis = this;
-			}
+			_scale = (Scale)info.GetValue( "scale", typeof( Scale ) );
+			_scale._ownerAxis = this;
 
 		}
 		/// <summary>
@@ -430,13 +415,10 @@ namespace ZedGraph
 
 			info.AddValue( "color", _color );
 
-			// New for schema = 3
 			info.AddValue( "isAxisSegmentVisible", _isAxisSegmentVisible );
 
-			// new for schema = 6
 			info.AddValue( "axisGap", _axisGap );
 
-			// new for schema = 9
 			info.AddValue( "scale", this._scale );
 
 		}

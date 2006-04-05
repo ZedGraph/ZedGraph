@@ -51,7 +51,7 @@ namespace ZedGraph
 	/// value of <see cref="BarSettings.Base"/>, which is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-03-30 01:52:10 $ </version>
+	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-05 05:06:49 $ </version>
 	[Serializable]
 	public class CandleStickItem : CurveItem, ICloneable, ISerializable
 	{
@@ -168,7 +168,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -184,7 +184,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			_stick = (CandleStick)info.GetValue( "candleStick", typeof( CandleStick ) );
+			_stick = (CandleStick)info.GetValue( "stick", typeof( CandleStick ) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -197,7 +197,7 @@ namespace ZedGraph
 			base.GetObjectData( info, context );
 
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "candleStick", _stick );
+			info.AddValue( "stick", _stick );
 		}
 
 	#endregion

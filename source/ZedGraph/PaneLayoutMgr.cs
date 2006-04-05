@@ -30,7 +30,8 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
+	[Serializable]
 	public class PaneLayoutMgr : ICloneable, ISerializable
 	{
 		// =========== PANE LAYOUT STUFF ================
@@ -111,13 +112,12 @@ namespace ZedGraph
 
 	#endregion
 
-
 	#region Serialization
 
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		internal const int schema = 1;
+		internal const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects

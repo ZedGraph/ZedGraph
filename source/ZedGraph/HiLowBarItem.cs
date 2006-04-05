@@ -45,7 +45,7 @@ namespace ZedGraph
 	/// <see cref="HiLowBar.IsMaximumWidth"/> to true, which will cause the bars
 	/// to be scaled just like a <see cref="BarItem"/> in which only one
 	/// bar series is present.  That is, the bars width will be the width of
-	/// a cluster less the clustergap (see <see cref="GraphPane.GetClusterWidth"/>
+	/// a cluster less the clustergap (see <see cref="BarSettings.GetClusterWidth"/>
 	/// and <see cref="BarSettings.MinClusterGap"/>). The position of each bar is set
 	/// according to the <see cref="PointPair"/> values.  The independent axis
 	/// is assigned with <see cref="BarSettings.Base"/>, and is a
@@ -54,7 +54,7 @@ namespace ZedGraph
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12.2.2 $ $Date: 2006-03-30 01:52:10 $ </version>
+	/// <version> $Revision: 3.12.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -137,7 +137,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -153,9 +153,6 @@ namespace ZedGraph
 			int sch = info.GetInt32( "schema2" );
 
 			_bar = (HiLowBar) info.GetValue( "bar", typeof(HiLowBar) );
-
-			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
-			BarBase barBase = (BarBase) info.GetValue( "barBase", typeof(BarBase) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -166,11 +163,10 @@ namespace ZedGraph
 		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			base.GetObjectData( info, context );
+
 			info.AddValue( "schema2", schema2 );
 			info.AddValue( "bar", _bar );
 
-			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
-			info.AddValue( "barBase", BarBase.X );
 		}
 	#endregion
 

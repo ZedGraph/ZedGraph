@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.16.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.16.2.2 $ $Date: 2006-04-05 05:02:17 $ </version>
 	[Serializable]
 	public class Fill : ISerializable, ICloneable
 	{
@@ -538,8 +538,9 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 2;
+		public const int schema = 10;
 		// schema changed to 2 with addition of rangeDefault
+		// schema changed to 10 with version 5 refactor -- not backwards compatible
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -587,8 +588,7 @@ namespace ZedGraph
 				this._brush = new TextureBrush( _image, _wrapMode );
 			}
 
-			if ( sch >= 2 )
-				_rangeDefault = info.GetDouble( "rangeDefault" );
+			_rangeDefault = info.GetDouble( "rangeDefault" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object

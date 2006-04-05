@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 3.37.2.1 $ $Date: 2006-03-28 06:13:35 $</version>
+	/// <version>$Revision: 3.37.2.2 $ $Date: 2006-04-05 05:02:18 $</version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -1295,7 +1295,7 @@ namespace ZedGraph
 			using (Graphics g = Graphics.FromImage( image ))
 			{
 				// Apply layout plan				
-				mp.PaneLayoutMgr.SetLayout( this.PaneLayout );
+				mp.SetLayout( this.PaneLayout );
 				mp.ReSize( g, rect );
 
 				// Use callback to gather more settings and data values

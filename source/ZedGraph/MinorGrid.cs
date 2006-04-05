@@ -30,7 +30,8 @@ namespace ZedGraph
 	/// Class that holds the specific properties for the minor grid.
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
+	[Serializable]
 	public class MinorGrid : ICloneable, ISerializable
 	{
 		internal bool	_isVisible;
@@ -176,7 +177,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects

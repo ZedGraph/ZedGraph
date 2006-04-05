@@ -39,8 +39,9 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
-	abstract public class Scale : ISerializable, ICloneable
+	/// <version> $Revision: 1.9.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
+	[Serializable]
+	abstract public class Scale : ISerializable
 	{
 	#region Fields
 
@@ -160,7 +161,10 @@ namespace ZedGraph
 		internal double	_minScale,
 								_maxScale;
 
-		internal Axis		_parentAxis;
+		/// <summary>
+		/// private field that stores the owner Axis that contains this Scale instance.
+		/// </summary>
+		internal Axis _ownerAxis;
 
 	#endregion
 
@@ -559,13 +563,13 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Basic constructor -- requires that the <see cref="Scale" /> object be intialized with
-		/// a pre-existing parent <see cref="Axis" />.
+		/// a pre-existing owner <see cref="Axis" />.
 		/// </summary>
-		/// <param name="parentAxis">The <see cref="Axis" /> object that is the parent of this
+		/// <param name="ownerAxis">The <see cref="Axis" /> object that is the owner of this
 		/// <see cref="Scale" /> instance.</param>
-		public Scale( Axis parentAxis )
+		public Scale( Axis ownerAxis )
 		{
-			this._parentAxis = parentAxis;
+			this._ownerAxis = ownerAxis;
 
 			this._min = 0.0;
 			this._max = 1.0;
@@ -616,9 +620,11 @@ namespace ZedGraph
 		/// existing one.
 		/// </summary>
 		/// <param name="rhs">The <see cref="Scale" /> object to be copied.</param>
-		public Scale( Scale rhs )
+		/// <param name="owner">The <see cref="Axis" /> object that will own the
+		/// new instance of <see cref="Scale" /></param>
+		public Scale( Scale rhs, Axis owner )
 		{
-			_parentAxis = rhs._parentAxis;
+			_ownerAxis = owner;
 
 			_min = rhs._min;
 			_max = rhs._max;
@@ -663,6 +669,14 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Create a new clone of the current item, with a new owner assignment
+		/// </summary>
+		/// <param name="owner">The new <see cref="Axis" /> instance that will be
+		/// the owner of the new Scale</param>
+		/// <returns>A new <see cref="Scale" /> clone.</returns>
+		abstract public Scale Clone( Axis owner );
+/*
+		/// <summary>
 		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
 		/// calling the typed version of Clone />
 		/// </summary>
@@ -683,7 +697,7 @@ namespace ZedGraph
 			throw new NotImplementedException( "Can't clone an abstract base type -- child types must implement ICloneable" );
 			//return new PaneBase( this );
 		}
-
+*/
 
 		/// <summary>
 		/// A construction method that creates a new <see cref="Scale"/> object using the
@@ -701,26 +715,26 @@ namespace ZedGraph
 		/// <param name="type">An <see cref="AxisType"/> representing the type of derived type
 		/// of new <see cref="Scale" /> object to create.</param>
 		/// <returns>The new <see cref="Scale"/> object.</returns>
-		public static Scale MakeNewScale( Scale oldScale, AxisType type )
+		public Scale MakeNewScale( Scale oldScale, AxisType type )
 		{
 			switch ( type )
 			{
 				case AxisType.Linear:
-					return new LinearScale( oldScale );
+					return new LinearScale( oldScale, this._ownerAxis );
 				case AxisType.Date:
-					return new DateScale( oldScale );
+					return new DateScale( oldScale, this._ownerAxis );
 				case AxisType.Log:
-					return new LogScale( oldScale );
+					return new LogScale( oldScale, this._ownerAxis );
 				case AxisType.Exponent:
-					return new ExponentScale( oldScale );
+					return new ExponentScale( oldScale, this._ownerAxis );
 				case AxisType.Ordinal:
-					return new OrdinalScale( oldScale );
+					return new OrdinalScale( oldScale, this._ownerAxis );
 				case AxisType.Text:
-					return new TextScale( oldScale );
+					return new TextScale( oldScale, this._ownerAxis );
 				case AxisType.DateAsOrdinal:
-					return new DateAsOrdinalScale( oldScale );
+					return new DateAsOrdinalScale( oldScale, this._ownerAxis );
 				case AxisType.LinearAsOrdinal:
-					return new LinearAsOrdinalScale( oldScale );
+					return new LinearAsOrdinalScale( oldScale, this._ownerAxis );
 				default:
 					throw new Exception( "Implementation Error: Invalid AxisType" );
 			}
@@ -733,7 +747,7 @@ namespace ZedGraph
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
 		// schema changed to 2 with isScaleVisible
-		public const int schema = 2;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -773,8 +787,7 @@ namespace ZedGraph
 			_isUseTenPower = info.GetBoolean( "isUseTenPower" );
 
 			_isVisible = true;
-			if ( schema >= 2 )
-				_isVisible = info.GetBoolean( "isVisible" );
+			_isVisible = info.GetBoolean( "isVisible" );
 
 			_isSkipFirstLabel = info.GetBoolean( "isSkipFirstLabel" );
 			_isSkipLastLabel = info.GetBoolean( "isSkipLastLabel" );
@@ -792,8 +805,12 @@ namespace ZedGraph
 
 		}
 		/// <summary>
-		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to
+		/// serialize the target object
 		/// </summary>
+		/// <remarks>
+		/// You MUST set the _ownerAxis property after deserializing a BarSettings object.
+		/// </remarks>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
 		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
@@ -1545,7 +1562,7 @@ namespace ZedGraph
 			{
 				string label;
 
-				label = this.ScaleFormatEvent( pane, this._parentAxis, dVal, index );
+				label = this.ScaleFormatEvent( pane, this._ownerAxis, dVal, index );
 				if ( label != null )
 					return label;
 			}
@@ -1755,8 +1772,8 @@ namespace ZedGraph
 		internal void DrawLabels( Graphics g, GraphPane pane, double baseVal, int nTics,
 						float topPix, float shift, float scaleFactor )
 		{
-			MajorTic tic = _parentAxis._majorTic;
-			MajorGrid grid = _parentAxis._majorGrid;
+			MajorTic tic = _ownerAxis._majorTic;
+			MajorGrid grid = _ownerAxis._majorGrid;
 
 			double dVal, dVal2;
 			float pixVal, pixVal2;
@@ -1828,9 +1845,9 @@ namespace ZedGraph
 				// draw the grid
 				grid.Draw( g, gridPen, pixVal2, topPix );
 
-				bool isMaxValueAtMaxPix = ( ( _parentAxis is XAxis || _parentAxis is Y2Axis ) &&
+				bool isMaxValueAtMaxPix = ( ( _ownerAxis is XAxis || _ownerAxis is Y2Axis ) &&
 														!IsReverse ) ||
-											( _parentAxis is Y2Axis && IsReverse );
+											( _ownerAxis is Y2Axis && IsReverse );
 
 				bool isSkipZone = ( ( ( _isSkipFirstLabel && isMaxValueAtMaxPix ) ||
 										( _isSkipLastLabel && !isMaxValueAtMaxPix ) ) &&
@@ -1839,8 +1856,8 @@ namespace ZedGraph
 										( _isSkipFirstLabel && !isMaxValueAtMaxPix ) ) &&
 											pixVal > MaxPix - MinPix - edgeTolerance );
 
-				bool isSkipCross = _isSkipCrossLabel && !_parentAxis._crossAuto &&
-								Math.Abs( _parentAxis._cross - dVal ) < rangeTol * 10.0;
+				bool isSkipCross = _isSkipCrossLabel && !_ownerAxis._crossAuto &&
+								Math.Abs( _ownerAxis._cross - dVal ) < rangeTol * 10.0;
 
 				isSkipZone = isSkipZone || isSkipCross;
 
@@ -1863,7 +1880,7 @@ namespace ZedGraph
 						float shift, float maxSpace, float scaledTic, float scaleFactor )
 		{
 			float textTop, textCenter;
-			if ( _parentAxis.MajorTic.IsOutside )
+			if ( _ownerAxis.MajorTic.IsOutside )
 				textTop = scaledTic * 1.5F;
 			else
 				textTop = scaledTic * 0.5F;
@@ -1926,14 +1943,14 @@ namespace ZedGraph
 		/// </param>
 		internal void Draw( Graphics g, GraphPane pane, float scaleFactor, float shiftPos )
 		{
-			MajorGrid majorGrid = _parentAxis._majorGrid;
-			MajorTic majorTic = _parentAxis._majorTic;
-			MinorTic minorTic = _parentAxis._minorTic;
+			MajorGrid majorGrid = _ownerAxis._majorGrid;
+			MajorTic majorTic = _ownerAxis._majorTic;
+			MinorTic minorTic = _ownerAxis._minorTic;
 
 			float rightPix,
 					topPix;
 
-			if ( _parentAxis is XAxis )
+			if ( _ownerAxis is XAxis )
 			{
 				rightPix = pane.Chart._rect.Width;
 				topPix = -pane.Chart._rect.Height;
@@ -1970,11 +1987,11 @@ namespace ZedGraph
 			// get the first major tic value
 			double baseVal = CalcBaseTic();
 
-			Pen pen = new Pen( _parentAxis.Color,
+			Pen pen = new Pen( _ownerAxis.Color,
 						pane.ScaledPenWidth( majorTic._penWidth, scaleFactor ) );
 
 			// redraw the axis border
-			if ( _parentAxis.IsAxisSegmentVisible )
+			if ( _ownerAxis.IsAxisSegmentVisible )
 				g.DrawLine( pen, 0.0F, shiftPos, rightPix, shiftPos );
 
 			// Draw a zero-value line if needed
@@ -1987,9 +2004,9 @@ namespace ZedGraph
 			// draw the major tics and labels
 			DrawLabels( g, pane, baseVal, nTics, topPix, shiftPos, scaleFactor );
 
-			_parentAxis.DrawMinorTics( g, pane, baseVal, shiftPos, scaleFactor, topPix );
+			_ownerAxis.DrawMinorTics( g, pane, baseVal, shiftPos, scaleFactor, topPix );
 
-			_parentAxis.DrawTitle( g, pane, shiftPos, scaleFactor );
+			_ownerAxis.DrawTitle( g, pane, shiftPos, scaleFactor );
 		}
 
 		/// <summary>
@@ -2154,7 +2171,7 @@ namespace ZedGraph
 			// Calculate the maximum number of labels
 			double width;
 			RectangleF chartRect = pane.Chart._rect;
-			if ( _parentAxis is XAxis )
+			if ( _ownerAxis is XAxis )
 				width = ( chartRect.Width == 0 ) ? pane.Rect.Width * 0.75 : chartRect.Width;
 			else
 				width = ( chartRect.Height == 0 ) ? pane.Rect.Height * 0.75 : chartRect.Height;
@@ -2410,9 +2427,9 @@ namespace ZedGraph
 			else
 				ratio = ( x - this._minScale ) / ( this._maxScale - this._minScale );
 
-			if ( this._isReverse && ( _parentAxis is XAxis ) )
+			if ( this._isReverse && ( _ownerAxis is XAxis ) )
 				return (float) ( this._maxPix - ( this._maxPix - this._minPix ) * ratio );
-			else if ( _parentAxis is XAxis )
+			else if ( _ownerAxis is XAxis )
 				return (float) ( this._minPix + ( this._maxPix - this._minPix ) * ratio );
 			else if ( this._isReverse )
 				return (float) ( this._minPix + ( this._maxPix - this._minPix ) * ratio );
@@ -2475,7 +2492,7 @@ namespace ZedGraph
 			double val;
 
 			// see if the sign of the equation needs to be reversed
-			if ( ( this._isReverse ) == ( _parentAxis is XAxis ) )
+			if ( ( this._isReverse ) == ( _ownerAxis is XAxis ) )
 				val = (double) ( pixVal - this._maxPix )
 						/ (double) ( this._minPix - this._maxPix )
 						* ( this._maxScale - this._minScale ) + this._minScale;
@@ -2524,8 +2541,8 @@ namespace ZedGraph
 			// to take the log here
 			ratio = ( x - this._minScale ) / ( this._maxScale - this._minScale );
 
-			if ( ( this._isReverse && !( _parentAxis is YAxis ) ) ||
-				( !this._isReverse && ( _parentAxis is YAxis ) ) )
+			if ( ( this._isReverse && !( _ownerAxis is YAxis ) ) ||
+				( !this._isReverse && ( _ownerAxis is YAxis ) ) )
 				rv = (float) ( ( this._maxPix - this._minPix ) * ( 1.0F - ratio ) );
 			else
 				rv = (float) ( ( this._maxPix - this._minPix ) * ratio );

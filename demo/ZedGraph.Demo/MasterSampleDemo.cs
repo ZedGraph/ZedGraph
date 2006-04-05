@@ -118,7 +118,7 @@ namespace ZedGraph.Demo
 
 			Graphics g = this.ZedGraphControl.CreateGraphics();
 			// Tell ZedGraph to auto layout the new GraphPanes
-			myMaster.PaneLayoutMgr.SetLayout( PaneLayout.ExplicitRow32 );
+			myMaster.SetLayout( PaneLayout.ExplicitRow32 );
 			myMaster.AxisChange( g );
 			g.Dispose();
 		}

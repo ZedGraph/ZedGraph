@@ -32,7 +32,8 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-05 05:02:17 $ </version>
+	[Serializable]
 	public class Chart : ICloneable, ISerializable
 	{
 		/// <summary>
@@ -168,7 +169,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects

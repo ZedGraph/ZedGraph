@@ -39,15 +39,20 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.6.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.6.2.2 $ $Date: 2006-04-05 05:02:17 $ </version>
 	[Serializable]
-	class DateAsOrdinalScale : Scale, ISerializable, ICloneable
+	class DateAsOrdinalScale : Scale, ISerializable //, ICloneable
 	{
 
 	#region constructors
 
-		public DateAsOrdinalScale( Axis parentAxis )
-			: base( parentAxis )
+		/// <summary>
+		/// Default constructor that defines the owner <see cref="Axis" />
+		/// (containing object) for this new object.
+		/// </summary>
+		/// <param name="owner">The owner, or containing object, of this instance</param>
+		public DateAsOrdinalScale( Axis owner )
+			: base( owner )
 		{
 		}
 
@@ -55,28 +60,22 @@ namespace ZedGraph
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The <see cref="DateAsOrdinalScale" /> object from which to copy</param>
-		public DateAsOrdinalScale( Scale rhs )
-			: base( rhs )
+		/// <param name="owner">The <see cref="Axis" /> object that will own the
+		/// new instance of <see cref="DateAsOrdinalScale" /></param>
+		public DateAsOrdinalScale( Scale rhs, Axis owner )
+			: base( rhs, owner )
 		{
 		}
 
 		/// <summary>
-		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
+		/// Create a new clone of the current item, with a new owner assignment
 		/// </summary>
-		/// <returns>A deep copy of this object</returns>
-		object ICloneable.Clone()
+		/// <param name="owner">The new <see cref="Axis" /> instance that will be
+		/// the owner of the new Scale</param>
+		/// <returns>A new <see cref="Scale" /> clone.</returns>
+		public override Scale Clone( Axis owner )
 		{
-			return this.Clone();
-		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public DateAsOrdinalScale Clone()
-		{
-			return new DateAsOrdinalScale( this );
+			return new DateAsOrdinalScale( this, owner );
 		}
 
 	#endregion
@@ -169,12 +168,12 @@ namespace ZedGraph
 
 			foreach ( CurveItem curve in pane.CurveList )
 			{
-				if ( ( _parentAxis is Y2Axis && curve.IsY2Axis ) ||
-						( _parentAxis is YAxis && !curve.IsY2Axis ) ||
-						( _parentAxis is XAxis ) )
+				if ( ( _ownerAxis is Y2Axis && curve.IsY2Axis ) ||
+						( _ownerAxis is YAxis && !curve.IsY2Axis ) ||
+						( _ownerAxis is XAxis ) )
 				{
 					curve.GetRange( out xMin, out xMax, out yMin, out yMax, false, false, pane );
-					if ( _parentAxis is XAxis )
+					if ( _ownerAxis is XAxis )
 						range = xMax - xMin;
 					else
 						range = yMax - yMin;
@@ -229,7 +228,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects

@@ -17,6 +17,7 @@ namespace ZedGraph
 	/// and 255 is the most colored.  For the brightness, 0 represents black and 255
 	/// represents white.
 	/// </remarks>
+	[Serializable]
 	public struct HSBColor
 	{
 		/// <summary>

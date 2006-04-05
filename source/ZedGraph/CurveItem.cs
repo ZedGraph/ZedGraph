@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.31.2.3 $ $Date: 2006-03-30 01:52:10 $ </version>
+	/// <version> $Revision: 3.31.2.4 $ $Date: 2006-04-05 05:02:17 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -226,10 +226,6 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		// Increased schema to 2 when IsOverrideOrdinal was added.
-		// Increased schema to 3 when FontSpec was added.
-		// Increased schema to 4 when YAxisIndex was added.
-		// Increased schema to 10 for refactoring to version 5
 		public const int schema = 10;
 
 		/// <summary>
@@ -897,7 +893,7 @@ namespace ZedGraph
 							pane._barSettings.MinBarGap + pane._barSettings.MinClusterGap;
 				if ( denom <= 0 )
 					denom = 1;
-				barWidth = pane.GetClusterWidth() / denom;
+				barWidth = pane.BarSettings.GetClusterWidth() / denom;
 			}
 
 			if ( barWidth <= 0 )

@@ -30,8 +30,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
-	public class BarSettings : ICloneable, ISerializable
+	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
+	[Serializable]
+	public class BarSettings : ISerializable
 	{
 	#region Fields
 
@@ -68,6 +69,18 @@ namespace ZedGraph
 		/// value. </summary>
 		private double _clusterScaleWidth;
 
+		/// <summary>
+		/// Private field that determines if the <see cref="ClusterScaleWidth" /> will be
+		/// calculated automatically.  Use the public property <see cref="ClusterScaleWidthAuto" />
+		/// to access this value.
+		/// </summary>
+		private bool _clusterScaleWidthAuto;
+
+		/// <summary>
+		/// private field that stores the owner GraphPane that contains this BarSettings instance.
+		/// </summary>
+		internal GraphPane _ownerPane;
+
 	#endregion
 
 	#region Constructors
@@ -75,46 +88,34 @@ namespace ZedGraph
 		/// <summary>
 		/// Constructor to build a <see cref="BarSettings" /> instance from the defaults.
 		/// </summary>
-		public BarSettings()
+		public BarSettings( GraphPane parentPane )
 		{
 			this._minClusterGap = Default.MinClusterGap;
 			this._minBarGap = Default.MinBarGap;
 			this._clusterScaleWidth = Default.ClusterScaleWidth;
+			this._clusterScaleWidthAuto = Default.ClusterScaleWidthAuto;
 			this._base = Default.Base;
 			this._type = Default.Type;
 
+			this._ownerPane = parentPane;
 		}
 
 		/// <summary>
 		/// Copy constructor
 		/// </summary>
 		/// <param name="rhs">the <see cref="BarSettings" /> instance to be copied.</param>
-		public BarSettings( BarSettings rhs )
+		/// <param name="parentPane">The <see cref="GraphPane" /> that will be the
+		/// parent of this new BarSettings object.</param>
+		public BarSettings( BarSettings rhs, GraphPane parentPane )
 		{
 			this._minClusterGap = rhs._minClusterGap;
 			this._minBarGap = rhs._minBarGap;
 			this._clusterScaleWidth = rhs._clusterScaleWidth;
+			this._clusterScaleWidthAuto = rhs._clusterScaleWidthAuto;
 			this._base = rhs._base;
 			this._type = rhs._type;
-		}
 
-		/// <summary>
-		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
-		/// </summary>
-		/// <returns>A deep copy of this object</returns>
-		object ICloneable.Clone()
-		{
-			return this.Clone();
-		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public BarSettings Clone()
-		{
-			return new BarSettings( this );
+			this._ownerPane = parentPane;
 		}
 
 	#endregion
@@ -174,14 +175,44 @@ namespace ZedGraph
 		/// types (<see cref="AxisType.Linear"/>, <see cref="AxisType.Log"/>, and
 		/// <see cref="AxisType.Date"/>.
 		/// </summary>
+		/// <remarks>
+		/// This value can be calculated automatically if <see cref="ClusterScaleWidthAuto" />
+		/// is set to true.  In this case, ClusterScaleWidth will be calculated if
+		/// <see cref="Base" /> refers to an <see cref="Axis" /> of a non-ordinal type
+		/// (<see cref="Scale.IsAnyOrdinal" /> is false).  The ClusterScaleWidth is calculated
+		/// from the minimum difference found between any two points on the <see cref="Base" />
+		/// <see cref="Axis" /> for any <see cref="BarItem" /> in the
+		/// <see cref="GraphPane.CurveList" />.  The ClusterScaleWidth is set automatically
+		/// each time <see cref="GraphPane.AxisChange" /> is called.  Calculations are
+		/// done by the <see cref="BarSettings.CalcClusterScaleWidth" /> method.
+		/// </remarks>
 		/// <seealso cref="Default.ClusterScaleWidth"/>
+		/// <seealso cref="ClusterScaleWidthAuto"/>
 		/// <seealso cref="MinBarGap"/>
 		/// <seealso cref="MinClusterGap"/>
 		public double ClusterScaleWidth
 		{
 			get { return _clusterScaleWidth; }
-			set { _clusterScaleWidth = value; }
+			set { _clusterScaleWidth = value; _clusterScaleWidthAuto = false; }
 		}
+
+		/// <summary>
+		/// Gets or sets a property that determines if the <see cref="ClusterScaleWidth" /> will be
+		/// calculated automatically.
+		/// </summary>
+		/// <remarks>true for the <see cref="ClusterScaleWidth" /> to be calculated
+		/// automatically based on the available data, false otherwise.  This value will
+		/// be set to false automatically if the <see cref="ClusterScaleWidth" /> value
+		/// is changed by the user.
+		/// </remarks>
+		/// <seealso cref="Default.ClusterScaleWidthAuto"/>
+		/// <seealso cref="ClusterScaleWidth"/>
+		public bool ClusterScaleWidthAuto
+		{
+			get { return _clusterScaleWidthAuto; }
+			set { _clusterScaleWidthAuto = value; }
+		}
+
 	#endregion
 
 	#region Serialization
@@ -189,16 +220,21 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
 		/// </summary>
-		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// <remarks>
+		/// You MUST set the _ownerPane property after deserializing a BarSettings object.
+		/// </remarks>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the
+		/// serialized data
 		/// </param>
-		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains
+		/// the serialized data
 		/// </param>
-		protected BarSettings( SerializationInfo info, StreamingContext context )
+		internal BarSettings( SerializationInfo info, StreamingContext context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
@@ -207,7 +243,8 @@ namespace ZedGraph
 			this._minClusterGap = info.GetSingle( "minClusterGap" );
 			this._minBarGap = info.GetSingle( "minBarGap" );
 			this._clusterScaleWidth = info.GetDouble( "clusterScaleWidth" );
-			this._base = (BarBase)info.GetValue( "base", typeof(BarBase) );
+			this._clusterScaleWidthAuto = info.GetBoolean( "clusterScaleWidthAuto" );
+			this._base = (BarBase)info.GetValue( "base", typeof( BarBase ) );
 			this._type = (BarType)info.GetValue( "type", typeof( BarType ) );
 		}
 		/// <summary>
@@ -223,12 +260,117 @@ namespace ZedGraph
 			info.AddValue( "minClusterGap", _minClusterGap );
 			info.AddValue( "minBarGap", _minBarGap );
 			info.AddValue( "clusterScaleWidth", _clusterScaleWidth );
+			info.AddValue( "clusterScaleWidthAuto", _clusterScaleWidthAuto );
 			info.AddValue( "base", _base );
 			info.AddValue( "type", _type );
 		}
 
 	#endregion
 
+	#region Methods
+
+		/// <summary>
+		/// Calculate the width of an individual bar cluster on a <see cref="BarItem"/> graph.
+		/// This value only applies to bar graphs plotted on non-ordinal X axis
+		/// types (<see cref="Scale.IsAnyOrdinal" /> is false).
+		/// </summary>
+		/// <remarks>
+		/// This value can be calculated automatically if <see cref="ClusterScaleWidthAuto" />
+		/// is set to true.  In this case, ClusterScaleWidth will be calculated if
+		/// <see cref="Base" /> refers to an <see cref="Axis" /> of a non-ordinal type
+		/// (<see cref="Scale.IsAnyOrdinal" /> is false).  The ClusterScaleWidth is calculated
+		/// from the minimum difference found between any two points on the <see cref="Base" />
+		/// <see cref="Axis" /> for any <see cref="BarItem" /> in the
+		/// <see cref="GraphPane.CurveList" />.  The ClusterScaleWidth is set automatically
+		/// each time <see cref="GraphPane.AxisChange" /> is called.
+		/// </remarks>
+		/// <seealso cref="Default.ClusterScaleWidth"/>
+		/// <seealso cref="ClusterScaleWidthAuto"/>
+		/// <seealso cref="MinBarGap"/>
+		/// <seealso cref="MinClusterGap"/>
+		public void CalcClusterScaleWidth()
+		{
+			Axis baseAxis = BarBaseAxis();
+
+			if ( _clusterScaleWidthAuto && !baseAxis.Scale.IsAnyOrdinal )
+			{
+				double minStep = Double.MaxValue;
+				foreach ( CurveItem curve in _ownerPane.CurveList )
+				{
+					IPointList list = curve.Points;
+
+					if ( curve is BarItem && list.Count > 0 )
+					{
+						PointPair lastPt = list[0];
+						for ( int i = 1; i < list.Count; i++ )
+						{
+							PointPair pt = list[i];
+							if ( !pt.IsInvalid || !lastPt.IsInvalid )
+							{
+								double step;
+								if ( baseAxis is XAxis )
+									step = pt.X - lastPt.X;
+								else
+									step = pt.Y - lastPt.Y;
+
+								if ( step > 0 && step < minStep )
+									minStep = step;
+							}
+
+							lastPt = pt;
+						}
+
+					}
+				}
+
+				double range = baseAxis.Scale._maxScale - baseAxis.Scale._minScale;
+				if ( minStep <= 0 || minStep < 0.001 * range || minStep > range )
+					minStep = 0.1 * range;
+
+			}
+		}
+
+		/// <summary>
+		/// Determine the width, in screen pixel units, of each bar cluster including
+		/// the cluster gaps and bar gaps.
+		/// </summary>
+		/// <remarks>This method calls the <see cref="Scale.GetClusterWidth"/>
+		/// method for the base <see cref="Axis"/> for <see cref="Bar"/> graphs
+		/// (the base <see cref="Axis"/> is assigned by the <see cref="ZedGraph.BarSettings.Base"/>
+		/// property).
+		/// </remarks>
+		/// <seealso cref="ZedGraph.BarBase"/>
+		/// <seealso cref="ZedGraph.BarSettings"/>
+		/// <seealso cref="Scale.GetClusterWidth"/>
+		/// <seealso cref="ZedGraph.BarSettings.Type"/>
+		/// <returns>The width of each bar cluster, in pixel units</returns>
+		public float GetClusterWidth()
+		{
+			return BarBaseAxis()._scale.GetClusterWidth( _ownerPane );
+		}
+
+		/// <summary>
+		/// Determine the <see cref="Axis"/> from which the <see cref="Bar"/> charts are based.
+		/// </summary>
+		/// <seealso cref="ZedGraph.BarBase"/>
+		/// <seealso cref="BarSettings"/>
+		/// <seealso cref="ZedGraph.BarSettings.Base"/>
+		/// <seealso cref="Scale.GetClusterWidth"/>
+		/// <returns>The <see cref="Axis"/> class for the axis from which the bars are based</returns>
+		public Axis BarBaseAxis()
+		{
+			Axis barAxis;
+			if ( this._base == BarBase.Y )
+				barAxis = _ownerPane.YAxis;
+			else if ( this._base == BarBase.Y2 )
+				barAxis = _ownerPane.Y2Axis;
+			else
+				barAxis = _ownerPane.XAxis;
+
+			return barAxis;
+		}
+
+	#endregion
 
 	#region Defaults
 
@@ -278,6 +420,11 @@ namespace ZedGraph
 			/// <seealso cref="Default.MinClusterGap"/>
 			/// <seealso cref="BarSettings.MinBarGap"/>
 			public static double ClusterScaleWidth = 1.0;
+
+			/// <summary>
+			/// The default value for <see cref="BarSettings.ClusterScaleWidthAuto" />.
+			/// </summary>
+			public static bool ClusterScaleWidthAuto = true;
 		}
 	#endregion
 

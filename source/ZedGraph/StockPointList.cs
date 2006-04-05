@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion based on code by Jerry Vos</author>
-	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-05 05:02:18 $ </version>
 	[Serializable]
 	public class StockPointList : List<StockPt>, IPointList, IPointListEdit
 	{
@@ -102,7 +102,7 @@ namespace ZedGraph
 		/// be added</param>
 		public void Add( PointPair point )
 		{
-			Add( new StockPt( point ) );
+			base.Add( new StockPt( point ) );
 		}
 
 		/// <summary>

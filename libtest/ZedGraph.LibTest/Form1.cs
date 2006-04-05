@@ -2178,13 +2178,13 @@ namespace ZedGraph.LibTest
 		private void CopyToPNG( PaneBase thePane )
 		{
 			if ( thePane != null )
-				thePane.Image.Save(@"c:\zedgraph.png", System.Drawing.Imaging.ImageFormat.Png);
+				thePane.GetImage().Save(@"c:\zedgraph.png", System.Drawing.Imaging.ImageFormat.Png);
 		}
 
 		private void CopyToGif( GraphPane thePane )
 		{
 			if ( thePane != null )
-				thePane.Image.Save( @"c:\zedgraph.gif", ImageFormat.Gif );
+				thePane.GetImage().Save( @"c:\zedgraph.gif", ImageFormat.Gif );
 		}
 
 		private void CopyToClip( GraphPane thePane )
@@ -2403,7 +2403,7 @@ namespace ZedGraph.LibTest
 			PaneBase tmpPane = myPane;
 			if ( master != null )
 				tmpPane = master;
-			tmpPane.ScaledImage( 400, 300, 72 ).Save( myPane.Title.Text + ".png", ImageFormat.Png );
+			tmpPane.GetImage( 400, 300, 72 ).Save( myPane.Title.Text + ".png", ImageFormat.Png );
 
 			//image.Save( @"c:\zedgraph.png", ImageFormat.Png );
 			//master.Image.Save( @"c:\zedgraph.png", ImageFormat.Png );

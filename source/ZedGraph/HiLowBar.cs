@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.11.2.2 $ $Date: 2006-04-05 05:02:17 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -154,7 +154,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -196,7 +196,7 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/>).  Alternatively,
 		/// if <see cref="IsMaximumWidth"/> is true, the bar width will
 		/// be set according to the maximum available cluster width less
-		/// the cluster gap (see <see cref="GraphPane.GetClusterWidth"/>
+		/// the cluster gap (see <see cref="BarSettings.GetClusterWidth"/>
 		/// and <see cref="BarSettings.MinClusterGap"/>).  That is, if
 		/// <see cref="IsMaximumWidth"/> is true, then the value of
 		/// <see cref="Size"/> will be ignored.

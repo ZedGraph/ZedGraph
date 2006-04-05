@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.18.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 3.18.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -64,7 +64,7 @@ namespace ZedGraph
 		private bool _isUniformLegendEntries;
 		/// <summary>
 		/// private field that determines if the
-		/// <see cref="ZedGraph.PaneLayoutMgr.DoLayout(Graphics,MasterPane)" />
+		/// <see cref="DoLayout(Graphics)" />
 		/// function will automatically set
 		/// the <see cref="PaneBase.BaseDimension" /> of each <see cref="GraphPane" /> in the
 		/// <see cref="PaneList" /> such that the scale factors have the same value.
@@ -72,11 +72,39 @@ namespace ZedGraph
 		private bool _isCommonScaleFactor;
 
 		/// <summary>
+		/// private field that saves the paneLayout format specified when
+		/// <see cref="SetLayout(PaneLayout)"/> was called. This value will
+		/// default to <see cref="MasterPane.Default.PaneLayout"/> if
+		/// <see cref="SetLayout(PaneLayout)"/> (or an overload) was never called.
+		/// </summary>
+		internal PaneLayout _paneLayout;
+
+		/// <summary>
+		/// Private field that stores the boolean value that determines whether
+		/// <see cref="_countList"/> is specifying rows or columns.
+		/// </summary>
+		internal bool _isColumnSpecified;
+		/// <summary>
+		/// private field that stores the row/column item count that was specified to the
+		/// <see cref="SetLayout(bool,int[],float[])"/> method.  This values will be
+		/// null if <see cref="SetLayout(bool,int[],float[])"/> was never called.
+		/// </summary>
+		internal int[] _countList;
+
+		/// <summary>
+		/// private field that stores the row/column size proportional values as specified
+		/// to the <see cref="SetLayout(bool,int[],float[])"/> method.  This
+		/// value will be null if <see cref="SetLayout(bool,int[],float[])"/>
+		/// was never called.  
+		/// </summary>
+		internal float[] _prop;
+
+/*		/// <summary>
 		/// private field to store the <see cref="PaneLayoutMgr" /> instance, which
 		/// manages the persistence and handling of pane layout information.
 		/// </summary>
 		private PaneLayoutMgr _paneLayoutMgr;
-
+*/
 	#endregion
 
 	#region Defaults
@@ -88,14 +116,13 @@ namespace ZedGraph
 		{
 			/// <summary>
 			/// The default pane layout for
-			/// <see cref="ZedGraph.PaneLayoutMgr.DoLayout(Graphics,MasterPane)"/>
+			/// <see cref="DoLayout(Graphics)"/>
 			/// method calls.
 			/// </summary>
-			/// <seealso cref="PaneLayoutMgr" />
-			/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)" />
-			/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(int,int)" />
-			/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[])" />
-			/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[],float[])" />
+			/// <seealso cref="SetLayout(PaneLayout)" />
+			/// <seealso cref="SetLayout(int,int)" />
+			/// <seealso cref="SetLayout(bool,int[])" />
+			/// <seealso cref="SetLayout(bool,int[],float[])" />
 			/// <seealso cref="ReSize" />
 			public static PaneLayout PaneLayout = PaneLayout.SquareColPreferred;
 
@@ -136,7 +163,7 @@ namespace ZedGraph
 			get { return _paneList; }
 			set { _paneList = value; }
 		}
-
+/*
 		/// <summary>
 		/// Gets the <see cref="PaneLayoutMgr" /> instance, which manages the pane layout
 		/// settings, and handles the layout functions.
@@ -150,7 +177,7 @@ namespace ZedGraph
 		{
 			get { return _paneLayoutMgr; }
 		}
-
+*/
 		/// <summary>
 		/// Gets or sets the size of the margin between adjacent <see cref="GraphPane"/>
 		/// objects.
@@ -176,7 +203,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Gets or sets a value that determines if the
-		/// <see cref="PaneLayoutMgr" /> will automatically set the
+		/// <see cref="DoLayout(Graphics)" /> method will automatically set the
 		/// <see cref="PaneBase.BaseDimension" />
 		/// of each <see cref="GraphPane" /> in the <see cref="PaneList" /> such that the
 		/// scale factors have the same value.
@@ -187,11 +214,10 @@ namespace ZedGraph
 		/// multiple graphpanes, a certain specified font size will be the same for
 		/// all the panes.
 		/// </remarks>
-		/// <seealso cref="PaneLayoutMgr" />
-		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)" />
-		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(int,int)" />
-		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[])" />
-		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[],float[])" />
+		/// <seealso cref="SetLayout(PaneLayout)" />
+		/// <seealso cref="SetLayout(int,int)" />
+		/// <seealso cref="SetLayout(bool,int[])" />
+		/// <seealso cref="SetLayout(bool,int[],float[])" />
 		/// <seealso cref="ReSize" />
 		public bool IsCommonScaleFactor
 		{
@@ -219,7 +245,7 @@ namespace ZedGraph
 		{
 			this._innerPaneGap = Default.InnerPaneGap;
 
-			_paneLayoutMgr = new PaneLayoutMgr();
+			//_paneLayoutMgr = new PaneLayoutMgr();
 
 			this._isUniformLegendEntries = Default.IsUniformLegendEntries ;
 			this._isCommonScaleFactor = Default.IsCommonScaleFactor;
@@ -227,6 +253,16 @@ namespace ZedGraph
 			this._paneList = new PaneList();
 
 			this._legend.IsVisible = Default.IsShowLegend;
+
+			InitLayout();
+		}
+
+		private void InitLayout()
+		{
+			_paneLayout = Default.PaneLayout;
+			_countList = null;
+			_isColumnSpecified = false;
+			_prop = null;
 		}
 
 		/// <summary>
@@ -236,7 +272,7 @@ namespace ZedGraph
 		public MasterPane( MasterPane rhs ) : base( rhs )
 		{
 			// copy all the value types
-			this._paneLayoutMgr = rhs._paneLayoutMgr.Clone();
+			//this._paneLayoutMgr = rhs._paneLayoutMgr.Clone();
 			this._innerPaneGap = rhs._innerPaneGap;
 			this._isUniformLegendEntries = rhs._isUniformLegendEntries;
 			this._isCommonScaleFactor = rhs._isCommonScaleFactor;
@@ -244,6 +280,10 @@ namespace ZedGraph
 			// Then, fill in all the reference types with deep copies
 			this._paneList = rhs._paneList.Clone();
 
+			_paneLayout = rhs._paneLayout;
+			_countList = rhs._countList;
+			_isColumnSpecified = rhs._isColumnSpecified;
+			_prop = rhs._prop;
 		}
 
 		/// <summary>
@@ -272,7 +312,7 @@ namespace ZedGraph
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
 		// schema changed to 2 with addition of 'prop'
-		public const int schema2 = 2;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -288,12 +328,17 @@ namespace ZedGraph
 			int sch = info.GetInt32( "schema2" );
 
 			this._paneList = (PaneList) info.GetValue( "paneList", typeof(PaneList) );
-			this._paneLayoutMgr = (PaneLayoutMgr) info.GetValue( "paneLayoutMgr", typeof(PaneLayoutMgr) );
+			//this._paneLayoutMgr = (PaneLayoutMgr) info.GetValue( "paneLayoutMgr", typeof(PaneLayoutMgr) );
 			this._innerPaneGap = info.GetSingle( "innerPaneGap" );
 
 			this._isUniformLegendEntries = info.GetBoolean( "isUniformLegendEntries" );
 			this._isCommonScaleFactor = info.GetBoolean( "isCommonScaleFactor" );
 
+			_paneLayout = (PaneLayout)info.GetValue( "paneLayout", typeof( PaneLayout ) );
+			_countList = (int[])info.GetValue( "countList", typeof( int[] ) );
+
+			_isColumnSpecified = info.GetBoolean( "isColumnSpecified" );
+			_prop = (float[])info.GetValue( "prop", typeof( float[] ) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -307,12 +352,16 @@ namespace ZedGraph
 			info.AddValue( "schema2", schema2 );
 
 			info.AddValue( "paneList", _paneList );
-			info.AddValue( "paneLayoutMgr", _paneLayoutMgr );
+			//info.AddValue( "paneLayoutMgr", _paneLayoutMgr );
 			info.AddValue( "innerPaneGap", _innerPaneGap );
 
 			info.AddValue( "isUniformLegendEntries", _isUniformLegendEntries );
 			info.AddValue( "isCommonScaleFactor", _isCommonScaleFactor );
 
+			info.AddValue( "paneLayout", _paneLayout );
+			info.AddValue( "countList", _countList );
+			info.AddValue( "isColumnSpecified", _isColumnSpecified );
+			info.AddValue( "prop", _prop );
 		}
 
 		/// <summary>
@@ -380,11 +429,11 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Change the size of the <see cref="PaneBase.Rect"/>, and also handle resizing the
-		/// contents by calling <see cref="ZedGraph.PaneLayoutMgr.DoLayout(Graphics,MasterPane)"/>.
+		/// contents by calling <see cref="DoLayout(Graphics)"/>.
 		/// </summary>
 		/// <remarks>This method will use the pane layout that was specified by a call to
-		/// <see cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)"/>.  If
-		/// <see cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)"/> has not previously been called,
+		/// <see cref="SetLayout(PaneLayout)"/>.  If
+		/// <see cref="SetLayout(PaneLayout)"/> has not previously been called,
 		/// it will default to <see cref="Default.PaneLayout"/>.
 		/// </remarks>
 		/// <param name="g">
@@ -392,14 +441,14 @@ namespace ZedGraph
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		/// <param name="rect"></param>
-		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(PaneLayout)" />
-		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(int,int)" />
-		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[])" />
-		/// <seealso cref="ZedGraph.PaneLayoutMgr.SetLayout(bool,int[],float[])" />
+		/// <seealso cref="SetLayout(PaneLayout)" />
+		/// <seealso cref="SetLayout(int,int)" />
+		/// <seealso cref="SetLayout(bool,int[])" />
+		/// <seealso cref="SetLayout(bool,int[],float[])" />
 		public override void ReSize( Graphics g, RectangleF rect )
 		{
 			this._rect = rect;
-			PaneLayoutMgr.DoLayout( g, this );
+			DoLayout( g );
 			CommonScaleFactor();
 		}
 
@@ -624,6 +673,405 @@ namespace ZedGraph
 			return null;
 		}
 
+	#endregion
+
+	#region Layout Methods
+
+		/// <overloads>The SetLayout() methods setup the desired layout of the
+		/// <see cref="GraphPane" /> objects within a <see cref="MasterPane" />.  These functions
+		/// do not make any changes, they merely set the parameters so that future calls
+		/// to <see cref="PaneBase.ReSize" /> or <see cref="DoLayout(Graphics)" />
+		/// will use the desired layout.<br /><br />
+		/// The layout options include a set of "canned" layouts provided by the
+		/// <see cref="ZedGraph.PaneLayout" /> enumeration, options to just set a specific
+		/// number of rows and columns of panes (and all pane sizes are the same), and more
+		/// customized options of specifying the number or rows in each column or the number of
+		/// columns in each row, along with proportional values that determine the size of each
+		/// individual column or row.
+		/// </overloads>
+		/// <summary>
+		/// Automatically set all of the <see cref="GraphPane"/> <see cref="PaneBase.Rect"/>'s in
+		/// the list to a pre-defined layout configuration from a <see cref="PaneLayout" />
+		/// enumeration.
+		/// </summary>
+		/// <remarks>This method uses a <see cref="PaneLayout"/> enumeration to describe the type of layout
+		/// to be used.  Overloads are available that provide other layout options</remarks>
+		/// <param name="paneLayout">A <see cref="PaneLayout"/> enumeration that describes how
+		/// the panes should be laid out within the <see cref="PaneBase.Rect"/>.</param>
+		/// <seealso cref="SetLayout(int,int)" />
+		/// <seealso cref="SetLayout(bool,int[])" />
+		/// <seealso cref="SetLayout(bool,int[],float[])" />
+		public void SetLayout( PaneLayout paneLayout )
+		{
+			InitLayout();
+
+			_paneLayout = paneLayout;
+		}
+
+		/// <summary>
+		/// Automatically set all of the <see cref="GraphPane"/> <see cref="PaneBase.Rect"/>'s in
+		/// the list to a reasonable configuration.
+		/// </summary>
+		/// <remarks>This method explicitly specifies the number of rows and columns to use
+		/// in the layout, and all <see cref="GraphPane" /> objects will have the same size.
+		/// Overloads are available that provide other layout options</remarks>
+		/// <param name="rows">The number of rows of <see cref="GraphPane"/> objects
+		/// to include in the layout</param>
+		/// <param name="columns">The number of columns of <see cref="GraphPane"/> objects
+		/// to include in the layout</param>
+		/// <seealso cref="SetLayout(PaneLayout)" />
+		/// <seealso cref="SetLayout(bool,int[])" />
+		/// <seealso cref="SetLayout(bool,int[],float[])" />
+		public void SetLayout( int rows, int columns )
+		{
+			InitLayout();
+
+			if ( rows < 1 )
+				rows = 1;
+			if ( columns < 1 )
+				columns = 1;
+
+			int[] countList = new int[rows];
+
+			for ( int i = 0; i < rows; i++ )
+				countList[i] = columns;
+
+			SetLayout( true, countList, null );
+		}
+
+		/// <summary>
+		/// Automatically set all of the <see cref="GraphPane"/> <see cref="PaneBase.Rect"/>'s in
+		/// the list to the specified configuration.
+		/// </summary>
+		/// <remarks>This method specifies the number of rows in each column, or the number of
+		/// columns in each row, allowing for irregular layouts.  Overloads are available that
+		/// provide other layout options.
+		/// </remarks>
+		/// <param name="isColumnSpecified">Specifies whether the number of columns in each row, or
+		/// the number of rows in each column will be specified.  A value of true indicates the
+		/// number of columns in each row are specified in <see paramref="countList"/>.</param>
+		/// <param name="countList">An integer array specifying either the number of columns in
+		/// each row or the number of rows in each column, depending on the value of
+		/// <see paramref="isColumnSpecified"/>.</param>
+		/// <seealso cref="SetLayout(PaneLayout)" />
+		/// <seealso cref="SetLayout(int,int)" />
+		/// <seealso cref="SetLayout(bool,int[],float[])" />
+		public void SetLayout( bool isColumnSpecified, int[] countList )
+		{
+			SetLayout( isColumnSpecified, countList, null );
+		}
+
+		/// <summary>
+		/// Automatically set all of the <see cref="GraphPane"/> <see cref="PaneBase.Rect"/>'s in
+		/// the list to the specified configuration.
+		/// </summary>
+		/// <remarks>This method specifies the number of panes in each row or column, allowing for
+		/// irregular layouts.</remarks>
+		/// <remarks>This method specifies the number of rows in each column, or the number of
+		/// columns in each row, allowing for irregular layouts.  Additionally, a
+		/// <see paramref="proportion" /> parameter is provided that allows varying column or
+		/// row sizes.  Overloads for SetLayout() are available that provide other layout options.
+		/// </remarks>
+		/// <param name="isColumnSpecified">Specifies whether the number of columns in each row, or
+		/// the number of rows in each column will be specified.  A value of true indicates the
+		/// number of columns in each row are specified in <see paramref="_countList"/>.</param>
+		/// <param name="countList">An integer array specifying either the number of columns in
+		/// each row or the number of rows in each column, depending on the value of
+		/// <see paramref="isColumnSpecified"/>.</param>
+		/// <param name="proportion">An array of float values specifying proportional sizes for each
+		/// row or column.  Note that these proportions apply to the non-specified dimension -- that is,
+		/// if <see paramref="isColumnSpecified"/> is true, then these proportions apply to the row
+		/// heights, and if <see paramref="isColumnSpecified"/> is false, then these proportions apply
+		/// to the column widths.  The values in this array are arbitrary floats -- the dimension of
+		/// any given row or column is that particular proportional value divided by the sum of all
+		/// the values.  For example, let <see paramref="isColumnSpecified"/> be true, and
+		/// <see paramref="proportion"/> is an array with values of { 1.0, 2.0, 3.0 }.  The sum of
+		/// those values is 6.0.  Therefore, the first row is 1/6th of the available height, the
+		/// second row is 2/6th's of the available height, and the third row is 3/6th's of the
+		/// available height.
+		/// </param>
+		/// <seealso cref="SetLayout(PaneLayout)" />
+		/// <seealso cref="SetLayout(int,int)" />
+		/// <seealso cref="SetLayout(bool,int[])" />
+		public void SetLayout( bool isColumnSpecified, int[] countList, float[] proportion )
+		{
+			InitLayout();
+
+			// use defaults if the parameters are invalid
+			if ( countList != null && countList.Length > 0 )
+			{
+				this._prop = new float[countList.Length];
+
+				// Sum up the total proportional factors
+				float sumProp = 0.0f;
+				for ( int i = 0; i < countList.Length; i++ )
+				{
+					this._prop[i] = ( proportion == null || proportion.Length <= i || proportion[i] < 1e-10 ) ?
+												1.0f : proportion[i];
+					sumProp += this._prop[i];
+				}
+
+				// Make prop sum to 1.0
+				for ( int i = 0; i < countList.Length; i++ )
+					this._prop[i] /= sumProp;
+
+				_isColumnSpecified = isColumnSpecified;
+				_countList = countList;
+			}
+		}
+
+		/// <summary>
+		/// Modify the <see cref="GraphPane" /> <see cref="PaneBase.Rect" /> sizes of each
+		/// <see cref="GraphPane" /> such that they fit within the <see cref="MasterPane" />
+		/// in a pre-configured layout.
+		/// </summary>
+		/// <remarks>The <see cref="SetLayout(PaneLayout)" /> method (and overloads) is
+		/// used for setting the layout configuration.</remarks>
+		/// <param name="g">A <see cref="Graphics" /> instance to be used for font sizing,
+		/// etc. in determining the layout configuration.</param>
+		/// <seealso cref="SetLayout(PaneLayout)" />
+		/// <seealso cref="SetLayout(int,int)" />
+		/// <seealso cref="SetLayout(bool,int[])" />
+		/// <seealso cref="SetLayout(bool,int[],float[])" />
+		public void DoLayout( Graphics g )
+		{
+			if ( this._countList != null )
+				DoLayout( g, this._isColumnSpecified, this._countList, this._prop );
+			else
+			{
+				int count = _paneList.Count;
+				if ( count == 0 )
+					return;
+
+				int rows,
+						cols,
+						root = (int)( Math.Sqrt( (double)count ) + 0.9999999 );
+
+				//float[] widthList = new float[5];
+
+				switch ( _paneLayout )
+				{
+					case PaneLayout.ForceSquare:
+						rows = root;
+						cols = root;
+						DoLayout( g, rows, cols );
+						break;
+					case PaneLayout.SingleColumn:
+						rows = count;
+						cols = 1;
+						DoLayout( g, rows, cols );
+						break;
+					case PaneLayout.SingleRow:
+						rows = 1;
+						cols = count;
+						DoLayout( g, rows, cols );
+						break;
+					default:
+					case PaneLayout.SquareColPreferred:
+						rows = root;
+						cols = root;
+						if ( count <= root * ( root - 1 ) )
+							rows--;
+						DoLayout( g, rows, cols );
+						break;
+					case PaneLayout.SquareRowPreferred:
+						rows = root;
+						cols = root;
+						if ( count <= root * ( root - 1 ) )
+							cols--;
+						DoLayout( g, rows, cols );
+						break;
+					case PaneLayout.ExplicitCol12:
+						DoLayout( g, true, new int[2] { 1, 2 }, null );
+						break;
+					case PaneLayout.ExplicitCol21:
+						DoLayout( g, true, new int[2] { 2, 1 }, null );
+						break;
+					case PaneLayout.ExplicitCol23:
+						DoLayout( g, true, new int[2] { 2, 3 }, null );
+						break;
+					case PaneLayout.ExplicitCol32:
+						DoLayout( g, true, new int[2] { 3, 2 }, null );
+						break;
+					case PaneLayout.ExplicitRow12:
+						DoLayout( g, false, new int[2] { 1, 2 }, null );
+						break;
+					case PaneLayout.ExplicitRow21:
+						DoLayout( g, false, new int[2] { 2, 1 }, null );
+						break;
+					case PaneLayout.ExplicitRow23:
+						DoLayout( g, false, new int[2] { 2, 3 }, null );
+						break;
+					case PaneLayout.ExplicitRow32:
+						DoLayout( g, false, new int[2] { 3, 2 }, null );
+						break;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Internal method that applies a previously set layout with a specific
+		/// row and column count.  This method is only called by
+		/// <see cref="DoLayout(Graphics)" />.
+		/// </summary>
+		internal void DoLayout( Graphics g, int rows, int columns )
+		{
+			if ( rows < 1 )
+				rows = 1;
+			if ( columns < 1 )
+				columns = 1;
+
+			int[] countList = new int[rows];
+
+			for ( int i = 0; i < rows; i++ )
+				countList[i] = columns;
+
+			DoLayout( g, true, countList, null );
+		}
+
+		/// <summary>
+		/// Internal method that applies a previously set layout with a rows per column or
+		/// columns per row configuration.  This method is only called by
+		/// <see cref="DoLayout(Graphics)" />.
+		/// </summary>
+		internal void DoLayout( Graphics g, bool isColumnSpecified, int[] countList,
+					float[] proportion )
+		{
+
+			// calculate scaleFactor on "normal" pane size (BaseDimension)
+			float scaleFactor = CalcScaleFactor();
+
+			// innerRect is the area for the GraphPane's
+			RectangleF innerRect = CalcClientRect( g, scaleFactor );
+			_legend.CalcRect( g, this, scaleFactor, ref innerRect );
+
+			// scaled InnerGap is the area between the GraphPane.Rect's
+			float scaledInnerGap = (float)( _innerPaneGap * scaleFactor );
+
+			int iPane = 0;
+
+			if ( isColumnSpecified )
+			{
+				int rows = countList.Length;
+
+				float y = 0.0f;
+
+				for ( int rowNum = 0; rowNum < rows; rowNum++ )
+				{
+					float propFactor = _prop == null ? 1.0f / rows : _prop[rowNum];
+
+					float height = ( innerRect.Height - (float)( rows - 1 ) * scaledInnerGap ) *
+									propFactor;
+
+					int columns = countList[rowNum];
+					if ( columns <= 0 )
+						columns = 1;
+					float width = ( innerRect.Width - (float)( columns - 1 ) * scaledInnerGap ) /
+									(float)columns;
+
+					if ( iPane >= _paneList.Count )
+						return;
+
+					for ( int colNum = 0; colNum < columns; colNum++ )
+					{
+						this[iPane].Rect = new RectangleF(
+											innerRect.X + colNum * ( width + scaledInnerGap ),
+											innerRect.Y + y,
+											width,
+											height );
+						iPane++;
+					}
+
+					y += height + scaledInnerGap;
+				}
+			}
+			else
+			{
+				int columns = countList.Length;
+
+				float x = 0.0f;
+
+				for ( int colNum = 0; colNum < columns; colNum++ )
+				{
+					float propFactor = _prop == null ? 1.0f / columns : _prop[colNum];
+
+					float width = ( innerRect.Width - (float)( columns - 1 ) * scaledInnerGap ) *
+									propFactor;
+
+					int rows = countList[colNum];
+					if ( rows <= 0 )
+						rows = 1;
+					float height = ( innerRect.Height - (float)( rows - 1 ) * scaledInnerGap ) / (float)rows;
+
+					for ( int rowNum = 0; rowNum < rows; rowNum++ )
+					{
+						if ( iPane >= _paneList.Count )
+							return;
+
+						this[iPane].Rect = new RectangleF(
+											innerRect.X + x,
+											innerRect.Y + rowNum * ( height + scaledInnerGap ),
+											width,
+											height );
+						iPane++;
+					}
+
+					x += width + scaledInnerGap;
+				}
+			}
+		}
+
+		/*
+		/// <summary>
+		/// Automatically set all of the <see cref="GraphPane"/> <see cref="PaneBase.Rect"/>'s in
+		/// the list to a reasonable configuration.
+		/// </summary>
+		/// <remarks>This method explicitly specifies the number of rows and columns to use in the layout.
+		/// A more automatic overload, using a <see cref="PaneLayout"/> enumeration, is available.</remarks>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="rows">The number of rows of <see cref="GraphPane"/> objects
+		/// to include in the layout</param>
+		/// <param name="columns">The number of columns of <see cref="GraphPane"/> objects
+		/// to include in the layout</param>
+		public void DoPaneLayout( Graphics g, int rows, int columns )
+		{
+			// save the layout settings for future reference
+			this._countList = null;
+			this._rows = rows;
+			this._columns = columns;
+
+			// calculate scaleFactor on "normal" pane size (BaseDimension)
+			float scaleFactor = this.CalcScaleFactor();
+
+			// innerRect is the area for the GraphPane's
+			RectangleF innerRect = CalcClientRect( g, scaleFactor );
+			this._legend.CalcRect( g, this, scaleFactor, ref innerRect );
+
+			// scaled InnerGap is the area between the GraphPane.Rect's
+			float scaledInnerGap = (float)( this._innerPaneGap * scaleFactor );
+
+			float width = ( innerRect.Width - (float)( columns - 1 ) * scaledInnerGap ) / (float)columns;
+			float height = ( innerRect.Height - (float)( rows - 1 ) * scaledInnerGap ) / (float)rows;
+
+			int i = 0;
+			foreach ( GraphPane pane in this._paneList )
+			{
+				float rowNum = (float)( i / columns );
+				float colNum = (float)( i % columns );
+
+				pane.Rect = new RectangleF(
+									innerRect.X + colNum * ( width + scaledInnerGap ),
+									innerRect.Y + rowNum * ( height + scaledInnerGap ),
+									width,
+									height );
+
+				i++;
+			}
+		}
+		*/
 	#endregion
 
 	}

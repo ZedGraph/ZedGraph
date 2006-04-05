@@ -115,7 +115,7 @@ namespace ZedGraph.Demo
 
 			// Tell ZedGraph to auto layout all the panes
 			Graphics g = base.ZedGraphControl.CreateGraphics();
-			myMaster.PaneLayoutMgr.SetLayout( PaneLayout.SquareColPreferred );
+			myMaster.SetLayout( PaneLayout.SquareColPreferred );
 			myMaster.AxisChange( g );
 			g.Dispose();
 

@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.8.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.8.2.2 $ $Date: 2006-04-05 05:02:18 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane _pane;
@@ -50,7 +50,7 @@ namespace ZedGraph
 			if ( initialize )
 			{
 				// just create a dummy image, which results in a full draw operation
-				Image image = pane.Image;
+				Image image = pane.GetImage();
 			}
 		}
 
@@ -335,7 +335,7 @@ namespace ZedGraph
 			}
 			else
 			{
-				float clusterWidth = _pane.GetClusterWidth();
+				float clusterWidth = _pane._barSettings.GetClusterWidth();
 				float clusterGap = _pane._barSettings.MinClusterGap * barWidth;
 				float barGap = barWidth * _pane._barSettings.MinBarGap;
 

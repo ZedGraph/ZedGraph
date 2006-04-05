@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 3.59.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -359,7 +359,7 @@ namespace ZedGraph
 
 			this._chart = new Chart();
 
-			this._barSettings = new BarSettings();
+			this._barSettings = new BarSettings( this );
 
 			this._lineType = Default.LineType;
 		}
@@ -377,7 +377,7 @@ namespace ZedGraph
 
 			this._chart = rhs._chart.Clone();
 
-			this._barSettings = rhs._barSettings.Clone();
+			this._barSettings = new BarSettings( rhs._barSettings, this );
 
 			this._lineType = rhs.LineType;
 
@@ -447,6 +447,7 @@ namespace ZedGraph
 			_chart = (Chart) info.GetValue( "chart", typeof( Chart ) );
 
 			_barSettings = (BarSettings)info.GetValue( "barSettings", typeof( BarSettings ) );
+			_barSettings._ownerPane = this;
 
 			_isIgnoreInitial = info.GetBoolean( "isIgnoreInitial" );
 			_isBoundedRanges = info.GetBoolean( "isBoundedRanges" );
@@ -549,6 +550,9 @@ namespace ZedGraph
 				axis.Scale.PickScale( this, g, scaleFactor );
 			foreach ( Axis axis in _y2AxisList )
 				axis.Scale.PickScale( this, g, scaleFactor );
+
+			// Set the ClusterScaleWidth, if needed
+			_barSettings.CalcClusterScaleWidth();
 		}
 
 		/// <summary>
@@ -1923,47 +1927,7 @@ namespace ZedGraph
 				return false;
 		}
 
-		/// <summary>
-		/// Determine the width, in screen pixel units, of each bar cluster including
-		/// the cluster gaps and bar gaps.
-		/// </summary>
-		/// <remarks>This method calls the <see cref="Scale.GetClusterWidth"/>
-		/// method for the base <see cref="Axis"/> for <see cref="Bar"/> graphs
-		/// (the base <see cref="Axis"/> is assigned by the <see cref="ZedGraph.BarSettings.Base"/>
-		/// property).
-		/// </remarks>
-		/// <seealso cref="ZedGraph.BarBase"/>
-		/// <seealso cref="ZedGraph.BarSettings"/>
-		/// <seealso cref="Scale.GetClusterWidth"/>
-		/// <seealso cref="ZedGraph.BarSettings.Type"/>
-		/// <returns>The width of each bar cluster, in pixel units</returns>
-		public float GetClusterWidth()
-		{
-			return BarBaseAxis()._scale.GetClusterWidth( this );
-		}
-
-		/// <summary>
-		/// Determine the <see cref="Axis"/> from which the <see cref="Bar"/> charts are based.
-		/// </summary>
-		/// <seealso cref="ZedGraph.BarBase"/>
-		/// <seealso cref="BarSettings"/>
-		/// <seealso cref="ZedGraph.BarSettings.Base"/>
-		/// <seealso cref="Scale.GetClusterWidth"/>
-		/// <returns>The <see cref="Axis"/> class for the axis from which the bars are based</returns>
-		public Axis BarBaseAxis()
-		{
-			Axis barAxis;
-			if ( this._barSettings.Base == BarBase.Y )
-				barAxis = this.YAxis;
-			else if ( this._barSettings.Base == BarBase.Y2 )
-				barAxis = this.Y2Axis;
-			else
-				barAxis = this.XAxis;
-
-			return barAxis;
-		}
-
-		#endregion
+	#endregion
 
 	}
 }

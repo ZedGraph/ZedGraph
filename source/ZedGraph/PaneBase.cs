@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.19.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 3.19.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -365,7 +365,7 @@ namespace ZedGraph
 		/// and in another it may round to 2 pixels wide.  The result is typically undesirable.
 		/// Therefore, this option defaults to false.  This option is primarily useful for high
 		/// resolution output, such as printer output or high resolution bitmaps (from
-		/// <see cref="ScaledImage"/>) where it is desirable to have the pen width
+		/// <see cref="GetImage(int,int,float)"/>) where it is desirable to have the pen width
 		/// be consistent with the screen image.
 		/// </remarks>
 		/// <value>true to scale the pen widths according to the size of the graph,
@@ -376,30 +376,6 @@ namespace ZedGraph
 		{
 			get { return _isPenWidthScaled; }
 			set { _isPenWidthScaled = value; }
-		}
-
-		/// <summary>
-		/// Build a <see cref="Bitmap"/> object containing the graphical rendering of
-		/// all the <see cref="GraphPane"/> objects in this list.
-		/// </summary>
-		/// <value>A <see cref="Bitmap"/> object rendered with the current graph.</value>
-		public Bitmap Image
-		{
-			get
-			{
-				Bitmap bitmap = new Bitmap( (int) this._rect.Width,
-						(int) this._rect.Height );
-				Graphics bitmapGraphics = Graphics.FromImage( bitmap );
-
-				bitmapGraphics.TranslateTransform( -this._rect.Left,
-						-this._rect.Top );
-
-				this.Draw( bitmapGraphics );
-
-				bitmapGraphics.Dispose();
-
-				return bitmap;
-			}
 		}
 
 	#endregion
@@ -517,7 +493,7 @@ namespace ZedGraph
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
 		// schema changed to 2 when Label Class added
-		public const int schema = 2;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -801,14 +777,34 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Build a <see cref="Bitmap"/> object containing the graphical rendering of
+		/// all the <see cref="GraphPane"/> objects in this list.
+		/// </summary>
+		/// <value>A <see cref="Bitmap"/> object rendered with the current graph.</value>
+		/// <seealso cref="GetImage(int,int,float)"/>
+		public Bitmap GetImage()
+		{
+			Bitmap bitmap = new Bitmap( (int)this._rect.Width, (int)this._rect.Height );
+			Graphics bitmapGraphics = Graphics.FromImage( bitmap );
+
+			bitmapGraphics.TranslateTransform( -this._rect.Left, -this._rect.Top );
+
+			this.Draw( bitmapGraphics );
+
+			bitmapGraphics.Dispose();
+
+			return bitmap;
+		}
+
+		/// <summary>
 		/// Gets an image for the current GraphPane, scaled to the specified size and resolution.
 		/// </summary>
 		/// <param name="width">The scaled width of the bitmap in pixels</param>
 		/// <param name="height">The scaled height of the bitmap in pixels</param>
 		/// <param name="dpi">The resolution of the bitmap, in dots per inch</param>
-		/// <seealso cref="Image"/>
+		/// <seealso cref="GetImage()"/>
 		/// <seealso cref="Bitmap"/>
-		public Bitmap ScaledImage( int width, int height, float dpi )
+		public Bitmap GetImage( int width, int height, float dpi )
 		{
 			Bitmap bitmap = new Bitmap( width, height );
 			bitmap.SetResolution( dpi, dpi );

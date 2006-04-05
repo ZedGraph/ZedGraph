@@ -30,7 +30,8 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
+	[Serializable]
 	public class Margin : ICloneable, ISerializable
 	{
 		/// <summary>
@@ -185,7 +186,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -213,6 +214,8 @@ namespace ZedGraph
 		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
+			info.AddValue( "schema", schema );
+
 			info.AddValue( "left", _left );
 			info.AddValue( "right", _right );
 			info.AddValue( "top", _top );

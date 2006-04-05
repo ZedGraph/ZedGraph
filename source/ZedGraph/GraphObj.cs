@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-05 05:02:17 $ </version>
 	[Serializable]
 	abstract public class GraphObj : ISerializable, ICloneable
 	{
@@ -365,7 +365,7 @@ namespace ZedGraph
 		/// <remarks>
 		/// schema changed to 2 when isClippedToChartRect was added.
 		/// </remarks>
-		public const int schema = 1;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -385,10 +385,7 @@ namespace ZedGraph
 			Tag = info.GetValue( "Tag", typeof(object) );
 			_zOrder = (ZOrder) info.GetValue( "zOrder", typeof(ZOrder) );
 
-			if ( sch >= 2 )
-				_isClippedToChartRect = info.GetBoolean( "isClippedToChartRect" );
-			else
-				_isClippedToChartRect = Default.IsClippedToChartRect;
+			_isClippedToChartRect = info.GetBoolean( "isClippedToChartRect" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object

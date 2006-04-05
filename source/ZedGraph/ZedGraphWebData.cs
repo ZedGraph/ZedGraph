@@ -1057,7 +1057,7 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/>).  Alternatively,
 		/// if <see cref="IsMaximumWidth"/> is true, the bar width will
 		/// be set according to the maximum available cluster width less
-		/// the cluster gap (see <see cref="GraphPane.GetClusterWidth"/>
+		/// the cluster gap (see <see cref="BarSettings.GetClusterWidth"/>
 		/// and <see cref="BarSettings.MinClusterGap"/>).  That is, if
 		/// <see cref="IsMaximumWidth"/> is true, then the value of
 		/// <see cref="Size"/> will be ignored.

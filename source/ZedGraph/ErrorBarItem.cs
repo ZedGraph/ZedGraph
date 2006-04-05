@@ -49,7 +49,7 @@ namespace ZedGraph
 	/// is assigned with <see cref="BarSettings.Base"/>, and is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13.2.2 $ $Date: 2006-03-30 01:52:10 $ </version>
+	/// <version> $Revision: 3.13.2.3 $ $Date: 2006-04-05 05:06:49 $ </version>
 	[Serializable]
 	public class ErrorBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -175,7 +175,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -190,7 +190,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			_bar = (ErrorBar) info.GetValue( "errorBar", typeof(ErrorBar) );
+			_bar = (ErrorBar) info.GetValue( "bar", typeof(ErrorBar) );
 
 			// This is now just a dummy variable, since barBase was removed
 			BarBase barBase = (BarBase) info.GetValue( "barBase", typeof(BarBase) );
@@ -205,7 +205,7 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "errorBar", _bar );
+			info.AddValue( "bar", _bar );
 
 			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
 			info.AddValue( "barBase", BarBase.X );

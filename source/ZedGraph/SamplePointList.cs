@@ -69,6 +69,7 @@ namespace ZedGraph
 	/// <summary>
 	/// A collection class to maintain a set of samples
 	/// </summary>
+	[Serializable]
 	public class SamplePointList : IPointList
 	{
 		/// <summary>

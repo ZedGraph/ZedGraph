@@ -42,11 +42,11 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.3 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 3.59.2.4 $ $Date: 2006-04-05 05:02:18 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
-	#region Fields
+	#region Private Fields
 
 		/// <summary>
 		/// This private field contains the instance for the MasterPane object of this control.
@@ -54,33 +54,33 @@ namespace ZedGraph
 		/// <see cref="ZedGraphControl.MasterPane"/>. This is nulled when this Control is
 		/// disposed.
 		/// </summary>
-		private MasterPane masterPane;
+		private MasterPane _masterPane;
 
 		/// <summary>
 		/// private field that determines whether or not tooltips will be displayed
 		/// when the mouse hovers over data values.  Use the public property
 		/// <see cref="IsShowPointValues"/> to access this value.
 		/// </summary>
-		private bool isShowPointValues;
+		private bool _isShowPointValues;
 		/// <summary>
 		/// private field that determines whether or not tooltips will be displayed
 		/// showing the scale values while the mouse is located within the ChartRect.
 		/// Use the public property <see cref="IsShowCursorValues"/> to access this value.
 		/// </summary>
-		private bool isShowCursorValues;
+		private bool _isShowCursorValues;
 		/// <summary>
 		/// private field that determines the format for displaying tooltip values.
 		/// This format is passed to <see cref="PointPair.ToString(string)"/>.
-		/// Use the public property <see cref="pointValueFormat"/> to access this
+		/// Use the public property <see cref="PointValueFormat"/> to access this
 		/// value.
 		/// </summary>
-		private string pointValueFormat;
+		private string _pointValueFormat;
 
 		/// <summary>
 		/// private field that determines whether or not the context menu will be available.  Use the
 		/// public property <see cref="IsShowContextMenu"/> to access this value.
 		/// </summary>
-		private bool isShowContextMenu;
+		private bool _isShowContextMenu;
 
 		/// <summary>
 		/// private field that determines whether or not a message box will be shown in response to
@@ -91,7 +91,7 @@ namespace ZedGraph
 		/// Note that, if this value is set to false, the user will receive no indicative feedback
 		/// in response to a Copy action.
 		/// </remarks>
-		private bool isShowCopyMessage;
+		private bool _isShowCopyMessage;
 
 		/// <summary>
 		/// private field that determines whether the settings of
@@ -110,13 +110,13 @@ namespace ZedGraph
 		/// <see cref="PaneBase.IsPenWidthScaled" /> to be temporarily set to true during
 		/// printing operations.
 		/// </value>
-		bool isPrintScaleAll;
+		private bool _isPrintScaleAll;
 		/// <summary>
 		/// private field that determines whether or not the visible aspect ratio of the
 		/// <see cref="MasterPane" /> <see cref="PaneBase.Rect" /> will be preserved
 		/// when printing this <see cref="ZedGraphControl" />.
 		/// </summary>
-		bool isPrintKeepAspectRatio;
+		private bool _isPrintKeepAspectRatio;
 		/// <summary>
 		/// private field that determines whether or not the <see cref="MasterPane" />
 		/// <see cref="PaneBase.Rect" /> dimensions will be expanded to fill the
@@ -127,116 +127,78 @@ namespace ZedGraph
 		/// <see cref="PaneBase.Rect" /> dimensions will be expanded to fit as large
 		/// a space as possible while still honoring the visible aspect ratio.
 		/// </remarks>
-		bool isPrintFillPage;
+		private bool _isPrintFillPage;
 
 		/// <summary>
 		/// private field that determines the format for displaying tooltip date values.
 		/// This format is passed to <see cref="XDate.ToString(string)"/>.
-		/// Use the public property <see cref="pointDateFormat"/> to access this
+		/// Use the public property <see cref="PointDateFormat"/> to access this
 		/// value.
 		/// </summary>
-		private string pointDateFormat;
-
-		/// <summary>
-		/// Internal variable that indicates the control is currently being zoomed. 
-		/// </summary>
-		private bool isZooming = false;
-		/// <summary>
-		/// Internal variable that indicates the control is currently being panned.
-		/// </summary>
-		private bool isPanning = false;
+		private string _pointDateFormat;
 
 		/// <summary>
 		/// private value that determines whether or not zooming is enabled for the control in the
 		/// vertical direction.  Use the public property <see cref="IsEnableVZoom"/> to access this
 		/// value.
 		/// </summary>
-		private bool isEnableVZoom = true;
+		private bool _isEnableVZoom = true;
 		/// <summary>
 		/// private value that determines whether or not zooming is enabled for the control in the
 		/// horizontal direction.  Use the public property <see cref="IsEnableHZoom"/> to access this
 		/// value.
 		/// </summary>
-		private bool isEnableHZoom = true;
+		private bool _isEnableHZoom = true;
+
+		/// <summary>
+		/// private value that determines whether or not point editing is enabled in the
+		/// vertical direction.  Use the public property <see cref="IsEnableVEdit"/> to access this
+		/// value.
+		/// </summary>
+		private bool _isEnableVEdit = false;
+		/// <summary>
+		/// private value that determines whether or not point editing is enabled in the
+		/// horizontal direction.  Use the public property <see cref="IsEnableHEdit"/> to access this
+		/// value.
+		/// </summary>
+		private bool _isEnableHEdit = false;
 
 		/// <summary>
 		/// private value that determines whether or not panning is allowed for the control in the
 		/// horizontal direction.  Use the
 		/// public property <see cref="IsEnableHPan"/> to access this value.
 		/// </summary>
-		private bool isEnableHPan = true;
+		private bool _isEnableHPan = true;
 		/// <summary>
 		/// private value that determines whether or not panning is allowed for the control in the
 		/// vertical direction.  Use the
 		/// public property <see cref="IsEnableVPan"/> to access this value.
 		/// </summary>
-		private bool isEnableVPan = true;
+		private bool _isEnableVPan = true;
 
-		/// <summary>
-		/// private values that determine which mouse button and key combinations trigger pan and zoom
-		/// events.  Use the public properties <see cref="ZoomButtons"/>, <see cref="ZoomButtons2"/>,
-		/// <see cref="PanButtons2"/>, <see cref="PanButtons2"/>, <see cref="ZoomModifierKeys"/>,
-		/// <see cref="ZoomModifierKeys2"/>, <see cref="panModifierKeys"/>, and
-		/// <see cref="ZoomModifierKeys2"/> to access these values.
-		/// </summary>
-		private MouseButtons zoomButtons = MouseButtons.Left;
-		private Keys zoomModifierKeys = Keys.None;
-		private MouseButtons zoomButtons2 = MouseButtons.None;
-		private Keys zoomModifierKeys2 = Keys.None;
+		private double _zoomStepFraction = 0.1;
 
-		private MouseButtons panButtons = MouseButtons.Left;
+		private ScrollRange _xScrollRange;
 
-		// Setting this field to Keys.Shift here
-		// causes an apparent bug to crop up in VS 2003, by which it will have the value:
-		// "System.Windows.Forms.Keys.Shift+None", which won't compile
-		private Keys panModifierKeys = Keys.Shift;
-		private MouseButtons panButtons2 = MouseButtons.Middle;
-		private Keys panModifierKeys2 = Keys.None;
+		private ScrollRangeList _yScrollRangeList;
+		private ScrollRangeList _y2ScrollRangeList;
 
-		/// <summary>
-		/// Internal variable that stores the <see cref="GraphPane"/> reference for the Pane that is
-		/// currently being zoomed or panned.
-		/// </summary>
-		private GraphPane dragPane = null;
-		/// <summary>
-		/// Internal variable that stores a rectangle which is either the zoom rectangle, or the incremental
-		/// pan amount since the last mousemove event.
-		/// </summary>
-		private Rectangle dragRect;
-		/// <summary>
-		/// private field that stores the state of the scale ranges prior to starting a panning action.
-		/// </summary>
-		private ZoomState zoomState;
-
-		private double zoomStepFraction = 0.1;
-
-		private ScrollRange xScrollRange;
-
-		private ScrollRangeList yScrollRangeList;
-		private ScrollRangeList y2ScrollRangeList;
-
-		private bool isShowHScrollBar = false;
-		private bool isShowVScrollBar = false;
+		private bool _isShowHScrollBar = false;
+		private bool _isShowVScrollBar = false;
 		//private bool		isScrollY2 = false;
-		private bool isAutoScrollRange = false;
+		private bool _isAutoScrollRange = false;
 
 		//private System.Windows.Forms.HScrollBar hScrollBar1;
 		//private System.Windows.Forms.VScrollBar vScrollBar1;
 
 		// The range of values to use the scroll control bars
-		private const int ScrollControlSpan = int.MaxValue;
+		private const int _ScrollControlSpan = int.MaxValue;
 		// The ratio of the largeChange to the smallChange for the scroll bars
-		private const int ScrollSmallRatio = 10;
+		private const int _ScrollSmallRatio = 10;
 
-		private bool isZoomOnMouseCenter = false;
+		private bool _isZoomOnMouseCenter = false;
 
-		//temporarily save the location of a context menu click so we can use it for reference
-		// Note that Control.MousePosition ends up returning the position after the mouse has
-		// moved to the menu item within the context menu.  Therefore, this point is saved so
-		// that we have the point at which the context menu was first right-clicked
-		internal Point menuClickPt;
-
-		private ResourceManager resourceManager;
+		private ResourceManager _resourceManager;
 
 		/// <summary>
 		/// private field that stores a <see cref="PrintDocument" /> instance, which maintains
@@ -245,9 +207,371 @@ namespace ZedGraph
 		/// <remarks>
 		/// This is needed so that a "Print" action utilizes the settings from a prior
 		/// "Page Setup" action.</remarks>
-		private PrintDocument pdSave = null;
+		private PrintDocument _pdSave = null;
 		//private PrinterSettings printSave = null;
 		//private PageSettings pageSave = null;
+
+	#endregion
+
+	#region Fields: Buttons & Keys Properties
+
+		/// <summary>
+		/// Gets or sets a value that determines which Mouse button will be used to edit point
+		/// data values
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableHEdit" /> and/or
+		/// <see cref="IsEnableVEdit" /> are true.
+		/// </remarks>
+		/// <seealso cref="EditModifierKeys" />
+		private MouseButtons _editButtons = MouseButtons.Left;
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used to edit point
+		/// data values
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableHEdit" /> and/or
+		/// <see cref="IsEnableVEdit" /> are true.
+		/// </remarks>
+		/// <seealso cref="EditButtons" />
+		private Keys _editModifierKeys = Keys.Alt;
+
+		/// <summary>
+		/// Gets or sets a value that determines which Mouse button will be used to perform
+		/// zoom operations
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableHZoom" /> and/or
+		/// <see cref="IsEnableVZoom" /> are true.
+		/// </remarks>
+		/// <seealso cref="ZoomModifierKeys" />
+		/// <seealso cref="ZoomButtons2" />
+		/// <seealso cref="ZoomModifierKeys2" />
+		private MouseButtons _zoomButtons = MouseButtons.Left;
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used to perform
+		/// zoom operations
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableHZoom" /> and/or
+		/// <see cref="IsEnableVZoom" /> are true.
+		/// </remarks>
+		/// <seealso cref="ZoomButtons" />
+		/// <seealso cref="ZoomButtons2" />
+		/// <seealso cref="ZoomModifierKeys2" />
+		private Keys _zoomModifierKeys = Keys.None;
+
+		/// <summary>
+		/// Gets or sets a value that determines which Mouse button will be used as a
+		/// secondary option to perform zoom operations
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableHZoom" /> and/or
+		/// <see cref="IsEnableVZoom" /> are true.
+		/// </remarks>
+		/// <seealso cref="ZoomModifierKeys2" />
+		/// <seealso cref="ZoomButtons" />
+		/// <seealso cref="ZoomModifierKeys" />
+		private MouseButtons _zoomButtons2 = MouseButtons.None;
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used as a
+		/// secondary option to perform zoom operations
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableHZoom" /> and/or
+		/// <see cref="IsEnableVZoom" /> are true.
+		/// </remarks>
+		/// <seealso cref="ZoomButtons" />
+		/// <seealso cref="ZoomButtons2" />
+		/// <seealso cref="ZoomModifierKeys2" />
+		private Keys _zoomModifierKeys2 = Keys.None;
+
+		/// <summary>
+		/// Gets or sets a value that determines which Mouse button will be used to perform
+		/// panning operations
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableHPan" /> and/or
+		/// <see cref="IsEnableVPan" /> are true.  A Pan operation (dragging the graph with
+		/// the mouse) should not be confused with a scroll operation (using a scroll bar to
+		/// move the graph).
+		/// </remarks>
+		/// <seealso cref="PanModifierKeys" />
+		/// <seealso cref="PanButtons2" />
+		/// <seealso cref="PanModifierKeys2" />
+		private MouseButtons _panButtons = MouseButtons.Left;
+
+		// Setting this field to Keys.Shift here
+		// causes an apparent bug to crop up in VS 2003, by which it will have the value:
+		// "System.Windows.Forms.Keys.Shift+None", which won't compile
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used to perform
+		/// panning operations
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableHPan" /> and/or
+		/// <see cref="IsEnableVPan" /> are true.  A Pan operation (dragging the graph with
+		/// the mouse) should not be confused with a scroll operation (using a scroll bar to
+		/// move the graph).
+		/// </remarks>
+		/// <seealso cref="PanButtons" />
+		/// <seealso cref="PanButtons2" />
+		/// <seealso cref="PanModifierKeys2" />
+		private Keys _panModifierKeys = Keys.Shift;
+
+		/// <summary>
+		/// Gets or sets a value that determines which Mouse button will be used as a
+		/// secondary option to perform panning operations
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableHPan" /> and/or
+		/// <see cref="IsEnableVPan" /> are true.  A Pan operation (dragging the graph with
+		/// the mouse) should not be confused with a scroll operation (using a scroll bar to
+		/// move the graph).
+		/// </remarks>
+		/// <seealso cref="PanModifierKeys2" />
+		/// <seealso cref="PanButtons" />
+		/// <seealso cref="PanModifierKeys" />
+		private MouseButtons _panButtons2 = MouseButtons.Middle;
+
+		// Setting this field to Keys.Shift here
+		// causes an apparent bug to crop up in VS 2003, by which it will have the value:
+		// "System.Windows.Forms.Keys.Shift+None", which won't compile
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used as a
+		/// secondary option to perform panning operations
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableHPan" /> and/or
+		/// <see cref="IsEnableVPan" /> are true.  A Pan operation (dragging the graph with
+		/// the mouse) should not be confused with a scroll operation (using a scroll bar to
+		/// move the graph).
+		/// </remarks>
+		/// <seealso cref="PanButtons2" />
+		/// <seealso cref="PanButtons" />
+		/// <seealso cref="PanModifierKeys" />
+		private Keys _panModifierKeys2 = Keys.None;
+
+		/// <summary>
+		/// Gets or sets a value that determines which mouse button will be used as a primary option
+		/// to trigger a zoom event.
+		/// </summary>
+		/// <remarks>
+		/// This value is combined with <see cref="ZoomModifierKeys"/> to determine the actual zoom combination.
+		/// A secondary zoom button/key combination option is available via <see cref="ZoomButtons2"/> and
+		/// <see cref="ZoomModifierKeys2"/>.  To not use this button/key combination, set the value
+		/// of <see cref="ZoomButtons"/> to <see cref="MouseButtons.None"/>.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "Determines which mouse button is used as the primary for zooming" )]
+		public MouseButtons ZoomButtons
+		{
+			get { return _zoomButtons; }
+			set { _zoomButtons = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines which mouse button will be used as the secondary option
+		/// to trigger a zoom event.
+		/// </summary>
+		/// <remarks>
+		/// This value is combined with <see cref="ZoomModifierKeys2"/> to determine the actual zoom combination.
+		/// The primary zoom button/key combination option is available via <see cref="ZoomButtons"/> and
+		/// <see cref="ZoomModifierKeys"/>.  To not use this button/key combination, set the value
+		/// of <see cref="ZoomButtons2"/> to <see cref="MouseButtons.None"/>.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "Determines which mouse button is used as the secondary for zooming" )]
+		public MouseButtons ZoomButtons2
+		{
+			get { return _zoomButtons2; }
+			set { _zoomButtons2 = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used as a primary option
+		/// to trigger a zoom event.
+		/// </summary>
+		/// <remarks>
+		/// This value is combined with <see cref="ZoomButtons"/> to determine the actual zoom combination.
+		/// A secondary zoom button/key combination option is available via <see cref="ZoomButtons2"/> and
+		/// <see cref="ZoomModifierKeys2"/>.  To not use this button/key combination, set the value
+		/// of <see cref="ZoomButtons"/> to <see cref="MouseButtons.None"/>.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "Determines which modifier key used as the primary for zooming" )]
+		public Keys ZoomModifierKeys
+		{
+			get { return _zoomModifierKeys; }
+			set { _zoomModifierKeys = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used as a secondary option
+		/// to trigger a zoom event.
+		/// </summary>
+		/// <remarks>
+		/// This value is combined with <see cref="ZoomButtons2"/> to determine the actual zoom combination.
+		/// A primary zoom button/key combination option is available via <see cref="ZoomButtons"/> and
+		/// <see cref="ZoomModifierKeys"/>.  To not use this button/key combination, set the value
+		/// of <see cref="ZoomButtons2"/> to <see cref="MouseButtons.None"/>.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "Determines which modifier key used as the secondary for zooming" )]
+		public Keys ZoomModifierKeys2
+		{
+			get { return _zoomModifierKeys2; }
+			set { _zoomModifierKeys2 = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines which mouse button will be used as a primary option
+		/// to trigger a pan event.
+		/// </summary>
+		/// <remarks>
+		/// This value is combined with <see cref="PanModifierKeys"/> to determine the actual pan combination.
+		/// A secondary pan button/key combination option is available via <see cref="PanButtons2"/> and
+		/// <see cref="PanModifierKeys2"/>.  To not use this button/key combination, set the value
+		/// of <see cref="PanButtons"/> to <see cref="MouseButtons.None"/>.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "Determines which mouse button is used as the primary for panning" )]
+		public MouseButtons PanButtons
+		{
+			get { return _panButtons; }
+			set { _panButtons = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines which mouse button will be used as the secondary option
+		/// to trigger a pan event.
+		/// </summary>
+		/// <remarks>
+		/// This value is combined with <see cref="PanModifierKeys2"/> to determine the actual pan combination.
+		/// The primary pan button/key combination option is available via <see cref="PanButtons"/> and
+		/// <see cref="PanModifierKeys"/>.  To not use this button/key combination, set the value
+		/// of <see cref="PanButtons2"/> to <see cref="MouseButtons.None"/>.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "Determines which mouse button is used as the secondary for panning" )]
+		public MouseButtons PanButtons2
+		{
+			get { return _panButtons2; }
+			set { _panButtons2 = value; }
+		}
+
+		// NOTE: The default value of PanModifierKeys is Keys.Shift. Because of an apparent bug in
+		// VS 2003, the initial value set in InitializeComponent by the code wizard is "Keys.Shift+None"
+		// which will not compile.  As a temporary workaround, I've hidden the value so that it won't
+		// have compile errors.  This problem does not exist in VS 2005.
+
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used as a primary option
+		/// to trigger a pan event.
+		/// </summary>
+		/// <remarks>
+		/// This value is combined with <see cref="PanButtons"/> to determine the actual pan combination.
+		/// A secondary pan button/key combination option is available via <see cref="PanButtons2"/> and
+		/// <see cref="PanModifierKeys2"/>.  To not use this button/key combination, set the value
+		/// of <see cref="PanButtons"/> to <see cref="MouseButtons.None"/>.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "Determines which modifier key is used as the primary for panning" )]
+		public Keys PanModifierKeys
+		{
+			get { return _panModifierKeys; }
+			set { _panModifierKeys = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used as a secondary option
+		/// to trigger a pan event.
+		/// </summary>
+		/// <remarks>
+		/// This value is combined with <see cref="PanButtons2"/> to determine the actual pan combination.
+		/// A primary pan button/key combination option is available via <see cref="PanButtons"/> and
+		/// <see cref="PanModifierKeys"/>.  To not use this button/key combination, set the value
+		/// of <see cref="PanButtons2"/> to <see cref="MouseButtons.None"/>.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "Determines which modifier key is used as the secondary for panning" )]
+		public Keys PanModifierKeys2
+		{
+			get { return _panModifierKeys2; }
+			set { _panModifierKeys2 = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines which Mouse button will be used to edit point
+		/// data values
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableHEdit" /> and/or
+		/// <see cref="IsEnableVEdit" /> are true.
+		/// </remarks>
+		/// <seealso cref="EditModifierKeys" />
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "Specify mouse button for point editing" )]
+		public MouseButtons EditButtons
+		{
+			get { return _editButtons; }
+			set { _editButtons = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used to edit point
+		/// data values
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableHEdit" /> and/or
+		/// <see cref="IsEnableVEdit" /> are true.
+		/// </remarks>
+		/// <seealso cref="EditButtons" />
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "Specify modifier key for point editing" )]
+		public Keys EditModifierKeys
+		{
+			get { return _editModifierKeys; }
+			set { _editModifierKeys = value; }
+		}
+
+	#endregion
+
+	#region Fields: Temporary state variables
+
+		/// <summary>
+		/// Internal variable that indicates the control is currently being zoomed. 
+		/// </summary>
+		private bool _isZooming = false;
+		/// <summary>
+		/// Internal variable that indicates the control is currently being panned.
+		/// </summary>
+		private bool _isPanning = false;
+		/// <summary>
+		/// Internal variable that indicates a point value is currently being edited.
+		/// </summary>
+		private bool _isEditing = false;
+
+		/// <summary>
+		/// Internal variable that stores the <see cref="GraphPane"/> reference for the Pane that is
+		/// currently being zoomed or panned.
+		/// </summary>
+		private GraphPane _dragPane = null;
+		/// <summary>
+		/// Internal variable that stores a rectangle which is either the zoom rectangle, or the incremental
+		/// pan amount since the last mousemove event.
+		/// </summary>
+		private Point _dragStartPt;
+		private Point _dragEndPt;
+
+		private int _dragIndex;
+		private CurveItem _dragCurve;
+		private PointPair _dragStartPair;
+		/// <summary>
+		/// private field that stores the state of the scale ranges prior to starting a panning action.
+		/// </summary>
+		private ZoomState _zoomState;
+
+		//temporarily save the location of a context menu click so we can use it for reference
+		// Note that Control.MousePosition ends up returning the position after the mouse has
+		// moved to the menu item within the context menu.  Therefore, this point is saved so
+		// that we have the point at which the context menu was first right-clicked
+		internal Point _menuClickPt;
 
 	#endregion
 
@@ -305,7 +629,7 @@ namespace ZedGraph
 		/// <param name="newState">A <see cref="ZoomState"/> object that corresponds to the state of the
 		/// <see cref="GraphPane"/> after the scroll event</param>
 		/// <seealso cref="ZoomEvent" />
-		public delegate void ScrollEventHandler( ZedGraphControl sender, ScrollBar scrollBar,
+		public delegate void ScrollDoneHandler( ZedGraphControl sender, ScrollBar scrollBar,
 			ZoomState oldState, ZoomState newState );
 
 		/// <summary>
@@ -313,8 +637,29 @@ namespace ZedGraph
 		/// using the scrollbars.
 		/// </summary>
 		[Bindable( true ), Category( "Events" )]
-		[Description( "Subscribe this event to be notified when the graph is scrolled using the scrollbars" )]
-		public event ScrollEventHandler ScrollEvent;
+		[Description( "Subscribe this event to be notified when a scroll operation using the scrollbars is completed" )]
+		public event ScrollDoneHandler ScrollDoneEvent;
+
+		/// <summary>
+		/// A delegate that allows notification of scroll events.
+		/// </summary>
+		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="scrollBar">The source <see cref="ScrollBar"/> object</param>
+		/// <param name="oldState">A <see cref="ZoomState"/> object that corresponds to the state of the
+		/// <see cref="GraphPane"/> before the scroll event.</param>
+		/// <param name="newState">A <see cref="ZoomState"/> object that corresponds to the state of the
+		/// <see cref="GraphPane"/> after the scroll event</param>
+		/// <seealso cref="ZoomEvent" />
+		public delegate void ScrollProgressHandler( ZedGraphControl sender, ScrollBar scrollBar,
+			ZoomState oldState, ZoomState newState );
+
+		/// <summary>
+		/// Subscribe to this event to be notified when the <see cref="GraphPane"/> is scrolled by the user
+		/// using the scrollbars.
+		/// </summary>
+		[Bindable( true ), Category( "Events" )]
+		[Description( "Subscribe this event to be notified continuously as a scroll operation is taking place" )]
+		public event ScrollProgressHandler ScrollProgressEvent;
 
 		/// <summary>
 		/// A delegate that allows custom formatting of the point value tooltips
@@ -464,24 +809,24 @@ namespace ZedGraph
 			SetStyle( ControlStyles.SupportsTransparentBackColor, true );
 			//this.BackColor = Color.Transparent;
 
-			resourceManager = new ResourceManager( "ZedGraph.ZedGraph.ZedGraphLocale",
+			_resourceManager = new ResourceManager( "ZedGraph.ZedGraph.ZedGraphLocale",
 				Assembly.GetExecutingAssembly() );
 
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
-			masterPane = new MasterPane( "", rect );
-			masterPane.Margin.All = 0;
-			masterPane.Title.IsVisible = false;
+			_masterPane = new MasterPane( "", rect );
+			_masterPane.Margin.All = 0;
+			_masterPane.Title.IsVisible = false;
 
-			string titleStr = resourceManager.GetString( "title_def" );
-			string xStr = resourceManager.GetString( "x_title_def" );
-			string yStr = resourceManager.GetString( "y_title_def" );
+			string titleStr = _resourceManager.GetString( "title_def" );
+			string xStr = _resourceManager.GetString( "x_title_def" );
+			string yStr = _resourceManager.GetString( "y_title_def" );
 
 			//GraphPane graphPane = new GraphPane( rect, "Title", "X Axis", "Y Axis" );
 			GraphPane graphPane = new GraphPane( rect, titleStr, xStr, yStr );
 			Graphics g = this.CreateGraphics();
 			graphPane.AxisChange( g );
 			g.Dispose();
-			masterPane.Add( graphPane );
+			_masterPane.Add( graphPane );
 
 			this.hScrollBar1.Minimum = 0;
 			this.hScrollBar1.Maximum = 100;
@@ -491,23 +836,23 @@ namespace ZedGraph
 			this.vScrollBar1.Maximum = 100;
 			this.vScrollBar1.Value = 0;
 
-			this.isShowPointValues = false;
-			this.isShowCursorValues = false;
-			this.isShowContextMenu = true;
-			this.isShowCopyMessage = true;
-			this.isPrintFillPage = true;
-			this.isPrintKeepAspectRatio = true;
-			this.isPrintScaleAll = true;
+			_isShowPointValues = false;
+			_isShowCursorValues = false;
+			_isShowContextMenu = true;
+			_isShowCopyMessage = true;
+			_isPrintFillPage = true;
+			_isPrintKeepAspectRatio = true;
+			_isPrintScaleAll = true;
 
-			this.pointValueFormat = PointPair.DefaultFormat;
-			this.pointDateFormat = XDate.DefaultFormatStr;
+			_pointValueFormat = PointPair.DefaultFormat;
+			_pointDateFormat = XDate.DefaultFormatStr;
 
-			this.xScrollRange = new ScrollRange( true );
-			this.yScrollRangeList = new ScrollRangeList();
-			this.y2ScrollRangeList = new ScrollRangeList();
+			_xScrollRange = new ScrollRange( true );
+			_yScrollRangeList = new ScrollRangeList();
+			_y2ScrollRangeList = new ScrollRangeList();
 
-			this.yScrollRangeList.Add( new ScrollRange( true ) );
-			this.y2ScrollRangeList.Add( new ScrollRange( false ) );
+			_yScrollRangeList.Add( new ScrollRange( true ) );
+			_y2ScrollRangeList.Add( new ScrollRange( false ) );
 		}
 
 		/// <summary>
@@ -526,7 +871,7 @@ namespace ZedGraph
 				}
 				base.Dispose( disposing );
 
-				masterPane = null;
+				_masterPane = null;
 			}
 		}
 	
@@ -541,8 +886,8 @@ namespace ZedGraph
 		[DesignerSerializationVisibility( DesignerSerializationVisibility.Hidden )]
 		public MasterPane MasterPane
 		{
-			get { lock ( this ) return masterPane; }
-			set { lock ( this ) masterPane = value; }
+			get { lock ( this ) return _masterPane; }
+			set { lock ( this ) _masterPane = value; }
 		}
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.GraphPane"/> property for the control
@@ -562,8 +907,8 @@ namespace ZedGraph
 				// Just return the first GraphPane in the list
 				lock ( this )
 				{
-					if ( masterPane != null && masterPane.PaneList.Count > 0 )
-						return masterPane[0];
+					if ( _masterPane != null && _masterPane.PaneList.Count > 0 )
+						return _masterPane[0];
 					else
 						return null;
 				}
@@ -574,10 +919,10 @@ namespace ZedGraph
 				lock ( this )
 				{
 					//Clear the list, and replace it with the specified Graphpane
-					if ( masterPane != null )
+					if ( _masterPane != null )
 					{
-						masterPane.PaneList.Clear();
-						masterPane.Add( value );
+						_masterPane.PaneList.Clear();
+						_masterPane.Add( value );
 					}
 				}
 			}
@@ -598,8 +943,8 @@ namespace ZedGraph
 		[Description( "true to display tooltips when the mouse hovers over data points" )]
 		public bool IsShowPointValues
 		{
-			get { return isShowPointValues; }
-			set { isShowPointValues = value; }
+			get { return _isShowPointValues; }
+			set { _isShowPointValues = value; }
 		}
 
 		/// <summary>
@@ -615,8 +960,47 @@ namespace ZedGraph
 		[Description( "true to display tooltips showing the current mouse position within the Chart area" )]
 		public bool IsShowCursorValues
 		{
-			get { return isShowCursorValues; }
-			set { isShowCursorValues = value; }
+			get { return _isShowCursorValues; }
+			set { _isShowCursorValues = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines whether or not editing of point data is allowed in
+		/// the horizontal direction.
+		/// </summary>
+		/// <remarks>
+		/// Editing is done by holding down the Alt key, and left-clicking on an individual point of
+		/// a given <see cref="CurveItem" /> to drag it to a new location.  The Mouse and Key
+		/// combination for this mode are modifiable using <see cref="EditButtons" /> and
+		/// <see cref="EditModifierKeys" />.
+		/// </remarks>
+		/// <seealso cref="EditButtons" />
+		/// <seealso cref="EditModifierKeys" />
+		/// <seealso cref="IsEnableVEdit" />
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "true to allow horizontal editing by alt-left-click-drag" )]
+		public bool IsEnableHEdit
+		{
+			get { return _isEnableHEdit; }
+			set { _isEnableHEdit = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines whether or not editing of point data is allowed in
+		/// the vertical direction.
+		/// </summary>
+		/// <remarks>
+		/// Editing is done by holding down the Alt key, and left-clicking on an individual point of
+		/// a given <see cref="CurveItem" /> to drag it to a new location.  The Mouse and Key
+		/// combination for this mode are modifiable using <see cref="EditButtons" /> and
+		/// <see cref="EditModifierKeys" />.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "true to allow vertical editing by alt-left-click-drag" )]
+		public bool IsEnableVEdit
+		{
+			get { return _isEnableVEdit; }
+			set { _isEnableVEdit = value; }
 		}
 
 		/// <summary>
@@ -630,7 +1014,7 @@ namespace ZedGraph
 		[Description( "true to allow horizontal and vertical zooming by left-click-drag" )]
 		public bool IsEnableZoom
 		{
-			set { isEnableHZoom = value; isEnableVZoom = value; }
+			set { _isEnableHZoom = value; _isEnableVZoom = value; }
 		}
 		/// <summary>
 		/// Gets or sets a value that determines whether or not zooming is allowed for the control in
@@ -644,8 +1028,8 @@ namespace ZedGraph
 		[Description( "true to allow horizontal zooming by left-click-drag" )]
 		public bool IsEnableHZoom
 		{
-			get { return isEnableHZoom; }
-			set { isEnableHZoom = value; }
+			get { return _isEnableHZoom; }
+			set { _isEnableHZoom = value; }
 		}
 		/// <summary>
 		/// Gets or sets a value that determines whether or not zooming is allowed for the control in
@@ -659,8 +1043,8 @@ namespace ZedGraph
 		[Description( "true to allow vertical zooming by left-click-drag" )]
 		public bool IsEnableVZoom
 		{
-			get { return isEnableVZoom; }
-			set { isEnableVZoom = value; }
+			get { return _isEnableVZoom; }
+			set { _isEnableVZoom = value; }
 		}
 		/// <summary>
 		/// Gets or sets a value that determines whether or not panning is allowed for the control in
@@ -676,153 +1060,8 @@ namespace ZedGraph
 		[Description( "true to allow horizontal panning by middle-mouse-drag or shift-left-drag" )]
 		public bool IsEnableHPan
 		{
-			get { return isEnableHPan; }
-			set { isEnableHPan = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a value that determines which mouse button will be used as a primary option
-		/// to trigger a zoom event.
-		/// </summary>
-		/// <remarks>
-		/// This value is combined with <see cref="ZoomModifierKeys"/> to determine the actual zoom combination.
-		/// A secondary zoom button/key combination option is available via <see cref="ZoomButtons2"/> and
-		/// <see cref="ZoomModifierKeys2"/>.  To not use this button/key combination, set the value
-		/// of <see cref="ZoomButtons"/> to <see cref="MouseButtons.None"/>.
-		/// </remarks>
-		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
-		[Description( "Determines which mouse button is used as the primary for zooming" )]
-		public MouseButtons ZoomButtons
-		{
-			get { return zoomButtons; }
-			set { zoomButtons = value; }
-		}
-		/// <summary>
-		/// Gets or sets a value that determines which mouse button will be used as the secondary option
-		/// to trigger a zoom event.
-		/// </summary>
-		/// <remarks>
-		/// This value is combined with <see cref="ZoomModifierKeys2"/> to determine the actual zoom combination.
-		/// The primary zoom button/key combination option is available via <see cref="ZoomButtons"/> and
-		/// <see cref="ZoomModifierKeys"/>.  To not use this button/key combination, set the value
-		/// of <see cref="ZoomButtons2"/> to <see cref="MouseButtons.None"/>.
-		/// </remarks>
-		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
-		[Description( "Determines which mouse button is used as the secondary for zooming" )]
-		public MouseButtons ZoomButtons2
-		{
-			get { return zoomButtons2; }
-			set { zoomButtons2 = value; }
-		}
-		/// <summary>
-		/// Gets or sets a value that determines which modifier keys will be used as a primary option
-		/// to trigger a zoom event.
-		/// </summary>
-		/// <remarks>
-		/// This value is combined with <see cref="ZoomButtons"/> to determine the actual zoom combination.
-		/// A secondary zoom button/key combination option is available via <see cref="ZoomButtons2"/> and
-		/// <see cref="ZoomModifierKeys2"/>.  To not use this button/key combination, set the value
-		/// of <see cref="ZoomButtons"/> to <see cref="MouseButtons.None"/>.
-		/// </remarks>
-		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
-		[Description( "Determines which modifier key used as the primary for zooming" )]
-		public Keys ZoomModifierKeys
-		{
-			get { return zoomModifierKeys; }
-			set { zoomModifierKeys = value; }
-		}
-		/// <summary>
-		/// Gets or sets a value that determines which modifier keys will be used as a secondary option
-		/// to trigger a zoom event.
-		/// </summary>
-		/// <remarks>
-		/// This value is combined with <see cref="ZoomButtons2"/> to determine the actual zoom combination.
-		/// A primary zoom button/key combination option is available via <see cref="ZoomButtons"/> and
-		/// <see cref="ZoomModifierKeys"/>.  To not use this button/key combination, set the value
-		/// of <see cref="ZoomButtons2"/> to <see cref="MouseButtons.None"/>.
-		/// </remarks>
-		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
-		[Description( "Determines which modifier key used as the secondary for zooming" )]
-		public Keys ZoomModifierKeys2
-		{
-			get { return zoomModifierKeys2; }
-			set { zoomModifierKeys2 = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a value that determines which mouse button will be used as a primary option
-		/// to trigger a pan event.
-		/// </summary>
-		/// <remarks>
-		/// This value is combined with <see cref="panModifierKeys"/> to determine the actual pan combination.
-		/// A secondary pan button/key combination option is available via <see cref="PanButtons2"/> and
-		/// <see cref="PanModifierKeys2"/>.  To not use this button/key combination, set the value
-		/// of <see cref="PanButtons"/> to <see cref="MouseButtons.None"/>.
-		/// </remarks>
-		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
-		[Description( "Determines which mouse button is used as the primary for panning" )]
-		public MouseButtons PanButtons
-		{
-			get { return panButtons; }
-			set { panButtons = value; }
-		}
-		/// <summary>
-		/// Gets or sets a value that determines which mouse button will be used as the secondary option
-		/// to trigger a pan event.
-		/// </summary>
-		/// <remarks>
-		/// This value is combined with <see cref="panModifierKeys2"/> to determine the actual pan combination.
-		/// The primary pan button/key combination option is available via <see cref="PanButtons"/> and
-		/// <see cref="panModifierKeys"/>.  To not use this button/key combination, set the value
-		/// of <see cref="PanButtons2"/> to <see cref="MouseButtons.None"/>.
-		/// </remarks>
-		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
-		[Description( "Determines which mouse button is used as the secondary for panning" )]
-		public MouseButtons PanButtons2
-		{
-			get { return panButtons2; }
-			set { panButtons2 = value; }
-		}
-
-		// NOTE: The default value of PanModifierKeys is Keys.Shift. Because of an apparent bug in
-		// VS 2003, the initial value set in InitializeComponent by the code wizard is "Keys.Shift+None"
-		// which will not compile.  As a temporary workaround, I've hidden the value so that it won't
-		// have compile errors.  This problem does not exist in VS 2005.
-
-		/// <summary>
-		/// Gets or sets a value that determines which modifier keys will be used as a primary option
-		/// to trigger a pan event.
-		/// </summary>
-		/// <remarks>
-		/// This value is combined with <see cref="PanButtons"/> to determine the actual pan combination.
-		/// A secondary pan button/key combination option is available via <see cref="PanButtons2"/> and
-		/// <see cref="PanModifierKeys2"/>.  To not use this button/key combination, set the value
-		/// of <see cref="PanButtons"/> to <see cref="MouseButtons.None"/>.
-		/// </remarks>
-		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
-		[Description( "Determines which modifier key is used as the primary for panning" )]
-		public Keys PanModifierKeys
-		{
-			get { return panModifierKeys; }
-			set { panModifierKeys = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a value that determines which modifier keys will be used as a secondary option
-		/// to trigger a pan event.
-		/// </summary>
-		/// <remarks>
-		/// This value is combined with <see cref="PanButtons2"/> to determine the actual pan combination.
-		/// A primary pan button/key combination option is available via <see cref="PanButtons"/> and
-		/// <see cref="panModifierKeys"/>.  To not use this button/key combination, set the value
-		/// of <see cref="PanButtons2"/> to <see cref="MouseButtons.None"/>.
-		/// </remarks>
-		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
-		[Description( "Determines which modifier key is used as the secondary for panning" )]
-		public Keys PanModifierKeys2
-		{
-			get { return panModifierKeys2; }
-			set { panModifierKeys2 = value; }
+			get { return _isEnableHPan; }
+			set { _isEnableHPan = value; }
 		}
 
 		/// <summary>
@@ -839,8 +1078,8 @@ namespace ZedGraph
 		[Description( "true to allow vertical panning by middle-mouse-drag or shift-left-drag" )]
 		public bool IsEnableVPan
 		{
-			get { return isEnableVPan; }
-			set { isEnableVPan = value; }
+			get { return _isEnableVPan; }
+			set { _isEnableVPan = value; }
 		}
 
 		/// <summary>
@@ -855,8 +1094,8 @@ namespace ZedGraph
 		[Description( "true to enable the right mouse button context menu" )]
 		public bool IsShowContextMenu
 		{
-			get { return isShowContextMenu; }
-			set { isShowContextMenu = value; }
+			get { return _isShowContextMenu; }
+			set { _isShowContextMenu = value; }
 		}
 
 		/// <summary>
@@ -871,8 +1110,8 @@ namespace ZedGraph
 		[Description( "true to show a message box after a 'Copy' context menu action completes" )]
 		public bool IsShowCopyMessage
 		{
-			get { return isShowCopyMessage; }
-			set { isShowCopyMessage = value; }
+			get { return _isShowCopyMessage; }
+			set { _isShowCopyMessage = value; }
 		}
 
 		/// <summary>
@@ -884,8 +1123,8 @@ namespace ZedGraph
 		[Description( "true to preserve the displayed aspect ratio when printing" )]
 		public bool IsPrintKeepAspectRatio
 		{
-			get { return isPrintKeepAspectRatio; }
-			set { isPrintKeepAspectRatio = value; }
+			get { return _isPrintKeepAspectRatio; }
+			set { _isPrintKeepAspectRatio = value; }
 		}
 
 		/// <summary>
@@ -902,8 +1141,8 @@ namespace ZedGraph
 		[Description( "true to resize to fill the page when printing" )]
 		public bool IsPrintFillPage
 		{
-			get { return isPrintFillPage; }
-			set { isPrintFillPage = value; }
+			get { return _isPrintFillPage; }
+			set { _isPrintFillPage = value; }
 		}
 		/// <summary>
 		/// Gets or sets a value that determines whether the settings of
@@ -926,8 +1165,8 @@ namespace ZedGraph
 		[Description( "true to force font and pen width scaling when printing" )]
 		bool IsPrintScaleAll
 		{
-			get { return isPrintScaleAll; }
-			set { isPrintScaleAll = value; }
+			get { return _isPrintScaleAll; }
+			set { _isPrintScaleAll = value; }
 		}
 
 		/// <summary>
@@ -949,8 +1188,8 @@ namespace ZedGraph
 		[Description( "true to automatically set the scroll bar range to the actual data range" )]
 		public bool IsAutoScrollRange
 		{
-			get { return isAutoScrollRange; }
-			set { isAutoScrollRange = value; }
+			get { return _isAutoScrollRange; }
+			set { _isAutoScrollRange = value; }
 		}
 
 		/// <summary>
@@ -968,8 +1207,8 @@ namespace ZedGraph
 		[Description( "true to display the horizontal scroll bar" )]
 		public bool IsShowHScrollBar
 		{
-			get { return isShowHScrollBar; }
-			set { isShowHScrollBar = value; ZedGraphControl_ReSize( this, new EventArgs() ); }
+			get { return _isShowHScrollBar; }
+			set { _isShowHScrollBar = value; ZedGraphControl_ReSize( this, new EventArgs() ); }
 		}
 		/// <summary>
 		/// Gets or sets a value that determines if the vertical scroll bar will be visible.
@@ -989,8 +1228,8 @@ namespace ZedGraph
 		[Description( "true to display the vertical scroll bar" )]
 		public bool IsShowVScrollBar
 		{
-			get { return isShowVScrollBar; }
-			set { isShowVScrollBar = value; ZedGraphControl_ReSize( this, new EventArgs() ); }
+			get { return _isShowVScrollBar; }
+			set { _isShowVScrollBar = value; ZedGraphControl_ReSize( this, new EventArgs() ); }
 		}
 
 		/// <summary>
@@ -1018,18 +1257,18 @@ namespace ZedGraph
 		{
 			get
 			{
-				if ( y2ScrollRangeList != null && y2ScrollRangeList.Count > 0 )
-					return y2ScrollRangeList[0].IsScrollable;
+				if ( _y2ScrollRangeList != null && _y2ScrollRangeList.Count > 0 )
+					return _y2ScrollRangeList[0].IsScrollable;
 				else
 					return false;
 			}
 			set
 			{
-				if ( y2ScrollRangeList != null && y2ScrollRangeList.Count > 0 )
+				if ( _y2ScrollRangeList != null && _y2ScrollRangeList.Count > 0 )
 				{
-					ScrollRange tmp = y2ScrollRangeList[0];
+					ScrollRange tmp = _y2ScrollRangeList[0];
 					tmp.IsScrollable = value;
-					y2ScrollRangeList[0] = tmp;
+					_y2ScrollRangeList[0] = tmp;
 				}
 			}
 		}
@@ -1049,7 +1288,7 @@ namespace ZedGraph
 		[Description( "Sets the manual scroll bar ranges for the collection of Y axes" )]
 		public ScrollRangeList YScrollRangeList
 		{
-			get { return yScrollRangeList; }
+			get { return _yScrollRangeList; }
 		}
 
 		/// <summary>
@@ -1067,7 +1306,7 @@ namespace ZedGraph
 		[Description( "Sets the manual scroll bar ranges for the collection of Y2 axes" )]
 		public ScrollRangeList Y2ScrollRangeList
 		{
-			get { return y2ScrollRangeList; }
+			get { return _y2ScrollRangeList; }
 		}
 
 		/// <summary>
@@ -1085,8 +1324,8 @@ namespace ZedGraph
 		[Description( "Sets the manual scroll minimum value for the X axis" )]
 		public double ScrollMinX
 		{
-			get { return xScrollRange.Min; }
-			set { xScrollRange.Min = value; }
+			get { return _xScrollRange.Min; }
+			set { _xScrollRange.Min = value; }
 		}
 		/// <summary>
 		/// The maximum value for the X axis scroll range.
@@ -1103,8 +1342,8 @@ namespace ZedGraph
 		[Description( "Sets the manual scroll maximum value for the X axis" )]
 		public double ScrollMaxX
 		{
-			get { return xScrollRange.Max; }
-			set { xScrollRange.Max = value; }
+			get { return _xScrollRange.Max; }
+			set { _xScrollRange.Max = value; }
 		}
 		/// <summary>
 		/// The minimum value for the Y axis scroll range.
@@ -1126,18 +1365,18 @@ namespace ZedGraph
 		{
 			get
 			{
-				if ( yScrollRangeList != null && yScrollRangeList.Count > 0 )
-					return yScrollRangeList[0].Min;
+				if ( _yScrollRangeList != null && _yScrollRangeList.Count > 0 )
+					return _yScrollRangeList[0].Min;
 				else
 					return double.NaN;
 			}
 			set
 			{
-				if ( yScrollRangeList != null && yScrollRangeList.Count > 0 )
+				if ( _yScrollRangeList != null && _yScrollRangeList.Count > 0 )
 				{
-					ScrollRange tmp = yScrollRangeList[0];
+					ScrollRange tmp = _yScrollRangeList[0];
 					tmp.Min = value;
-					yScrollRangeList[0] = tmp;
+					_yScrollRangeList[0] = tmp;
 				}
 			}
 		}
@@ -1161,18 +1400,18 @@ namespace ZedGraph
 		{
 			get
 			{
-				if ( yScrollRangeList != null && yScrollRangeList.Count > 0 )
-					return yScrollRangeList[0].Max;
+				if ( _yScrollRangeList != null && _yScrollRangeList.Count > 0 )
+					return _yScrollRangeList[0].Max;
 				else
 					return double.NaN;
 			}
 			set
 			{
-				if ( yScrollRangeList != null && yScrollRangeList.Count > 0 )
+				if ( _yScrollRangeList != null && _yScrollRangeList.Count > 0 )
 				{
-					ScrollRange tmp = yScrollRangeList[0];
+					ScrollRange tmp = _yScrollRangeList[0];
 					tmp.Max = value;
-					yScrollRangeList[0] = tmp;
+					_yScrollRangeList[0] = tmp;
 				}
 			}
 		}
@@ -1196,18 +1435,18 @@ namespace ZedGraph
 		{
 			get
 			{
-				if ( y2ScrollRangeList != null && y2ScrollRangeList.Count > 0 )
-					return y2ScrollRangeList[0].Min;
+				if ( _y2ScrollRangeList != null && _y2ScrollRangeList.Count > 0 )
+					return _y2ScrollRangeList[0].Min;
 				else
 					return double.NaN;
 			}
 			set
 			{
-				if ( y2ScrollRangeList != null && y2ScrollRangeList.Count > 0 )
+				if ( _y2ScrollRangeList != null && _y2ScrollRangeList.Count > 0 )
 				{
-					ScrollRange tmp = y2ScrollRangeList[0];
+					ScrollRange tmp = _y2ScrollRangeList[0];
 					tmp.Min = value;
-					y2ScrollRangeList[0] = tmp;
+					_y2ScrollRangeList[0] = tmp;
 				}
 			}
 		}
@@ -1231,18 +1470,18 @@ namespace ZedGraph
 		{
 			get
 			{
-				if ( y2ScrollRangeList != null && y2ScrollRangeList.Count > 0 )
-					return y2ScrollRangeList[0].Max;
+				if ( _y2ScrollRangeList != null && _y2ScrollRangeList.Count > 0 )
+					return _y2ScrollRangeList[0].Max;
 				else
 					return double.NaN;
 			}
 			set
 			{
-				if ( y2ScrollRangeList != null && y2ScrollRangeList.Count > 0 )
+				if ( _y2ScrollRangeList != null && _y2ScrollRangeList.Count > 0 )
 				{
-					ScrollRange tmp = y2ScrollRangeList[0];
+					ScrollRange tmp = _y2ScrollRangeList[0];
 					tmp.Max = value;
-					y2ScrollRangeList[0] = tmp;
+					_y2ScrollRangeList[0] = tmp;
 				}
 			}
 		}
@@ -1256,8 +1495,8 @@ namespace ZedGraph
 		[Description( "Sets the numeric display format string for the point value tooltips" )]
 		public string PointValueFormat
 		{
-			get { return pointValueFormat; }
-			set { pointValueFormat = value; }
+			get { return _pointValueFormat; }
+			set { _pointValueFormat = value; }
 		}
 
 		/// <summary>
@@ -1268,8 +1507,8 @@ namespace ZedGraph
 		[Description( "Sets the date display format for the point value tooltips" )]
 		public string PointDateFormat
 		{
-			get { return pointDateFormat; }
-			set { pointDateFormat = value; }
+			get { return _pointDateFormat; }
+			set { _pointDateFormat = value; }
 		}
 
 		/// <summary>
@@ -1280,8 +1519,8 @@ namespace ZedGraph
 		[Description( "Sets the step size fraction for zooming with the mouse wheel" )]
 		public double ZoomStepFraction
 		{
-			get { return zoomStepFraction; }
-			set { zoomStepFraction = value; }
+			get { return _zoomStepFraction; }
+			set { _zoomStepFraction = value; }
 		}
 
 		/// <summary>
@@ -1292,8 +1531,8 @@ namespace ZedGraph
 		[Description( "true to center the mouse wheel zoom at the current mouse location" )]
 		public bool IsZoomOnMouseCenter
 		{
-			get { return isZoomOnMouseCenter; }
-			set { isZoomOnMouseCenter = value; }
+			get { return _isZoomOnMouseCenter; }
+			set { _isZoomOnMouseCenter = value; }
 		}
 
 		/// <summary>
@@ -1305,17 +1544,14 @@ namespace ZedGraph
 		/// </exception>
 		[Bindable( false ), Browsable( false )]
 		[DesignerSerializationVisibility( DesignerSerializationVisibility.Hidden )]
-		public Image Image
+		public Image GetImage()
 		{
-			get
+			lock ( this )
 			{
-				lock ( this )
-				{
-					if ( BeenDisposed || this.masterPane == null || this.masterPane[0] == null )
-						throw new ZedGraphException( "The control has been disposed" );
+				if ( BeenDisposed || _masterPane == null || _masterPane[0] == null )
+					throw new ZedGraphException( "The control has been disposed" );
 
-					return this.masterPane.Image;
-				}
+				return _masterPane.GetImage();
 			}
 		}
 
@@ -1330,7 +1566,7 @@ namespace ZedGraph
 		{
 			get
 			{
-				lock ( this ) return masterPane == null;
+				lock ( this ) return _masterPane == null;
 			}
 		}
 
@@ -1349,20 +1585,20 @@ namespace ZedGraph
 		{
 			lock ( this )
 			{
-				if ( BeenDisposed || this.masterPane == null || this.GraphPane == null )
+				if ( BeenDisposed || _masterPane == null || this.GraphPane == null )
 					return;
 
 				if ( hScrollBar1 != null && this.GraphPane != null &&
-					vScrollBar1 != null && yScrollRangeList != null )
+					vScrollBar1 != null && _yScrollRangeList != null )
 				{
-					SetScroll( hScrollBar1, this.GraphPane.XAxis, xScrollRange.Min, xScrollRange.Max );
-					SetScroll( vScrollBar1, this.GraphPane.YAxis, yScrollRangeList[0].Min,
-						yScrollRangeList[0].Max );
+					SetScroll( hScrollBar1, this.GraphPane.XAxis, _xScrollRange.Min, _xScrollRange.Max );
+					SetScroll( vScrollBar1, this.GraphPane.YAxis, _yScrollRangeList[0].Min,
+						_yScrollRangeList[0].Max );
 				}
 
 				base.OnPaint( e );
 
-				this.masterPane.Draw( e.Graphics );
+				_masterPane.Draw( e.Graphics );
 			}
 		}
 
@@ -1373,19 +1609,18 @@ namespace ZedGraph
 		/// A reference to the control that has been resized.
 		/// </param>
 		/// <param name="e">
-		/// A PaintEventArgs object containing the Graphics specifications
-		/// for this Paint event.
+		/// An EventArgs object.
 		/// </param>
 		protected void ZedGraphControl_ReSize( object sender, System.EventArgs e )
 		{
 			lock ( this )
 			{
-				if ( BeenDisposed || this.masterPane == null )
+				if ( BeenDisposed || _masterPane == null )
 					return;
 
 				Size newSize = this.Size;
 
-				if ( isShowHScrollBar )
+				if ( _isShowHScrollBar )
 				{
 					hScrollBar1.Visible = true;
 					newSize.Height -= this.hScrollBar1.Size.Height;
@@ -1395,7 +1630,7 @@ namespace ZedGraph
 				else
 					hScrollBar1.Visible = false;
 
-				if ( isShowVScrollBar )
+				if ( _isShowVScrollBar )
 				{
 					vScrollBar1.Visible = true;
 					newSize.Width -= this.vScrollBar1.Size.Width;
@@ -1406,7 +1641,7 @@ namespace ZedGraph
 					vScrollBar1.Visible = false;
 
 				Graphics g = this.CreateGraphics();
-				this.masterPane.ReSize( g, new RectangleF( 0, 0, newSize.Width, newSize.Height ) );
+				_masterPane.ReSize( g, new RectangleF( 0, 0, newSize.Width, newSize.Height ) );
 				g.Dispose();
 				this.Invalidate();
 			}
@@ -1423,16 +1658,16 @@ namespace ZedGraph
 		{
 			lock ( this )
 			{
-				if ( BeenDisposed || this.masterPane == null )
+				if ( BeenDisposed || _masterPane == null )
 					return;
 
 				Graphics g = this.CreateGraphics();
 
-				masterPane.AxisChange( g );
+				_masterPane.AxisChange( g );
 
 				g.Dispose();
 
-				if ( isAutoScrollRange )
+				if ( _isAutoScrollRange )
 					SetScrollRangeFromData();
 			}
 		}
@@ -1447,48 +1682,437 @@ namespace ZedGraph
 		/// <param name="e">A <see cref="MouseEventArgs" /> instance</param>
 		protected void ZedGraphControl_MouseDown( object sender, MouseEventArgs e )
 		{
-			this.isPanning = false;
-			this.isZooming = false;
-			this.dragPane = null;
+			_isPanning = false;
+			_isZooming = false;
+			_isEditing = false;
+			_dragPane = null;
+
+			Point mousePt = new Point( e.X, e.Y );
 
 			// Provide Callback for MouseDown events
-			if ( this.masterPane != null && this.MouseDownEvent != null )
+			if ( _masterPane != null && this.MouseDownEvent != null )
 			{
 				if ( this.MouseDownEvent( this, e ) )
 					return;
 			}
 
-			if ( e.Clicks > 1 || this.masterPane == null )
+			if ( e.Clicks > 1 || _masterPane == null )
 				return;
 
-			GraphPane pane = this.MasterPane.FindChartRect( new PointF( e.X, e.Y ) );
+			GraphPane pane = this.MasterPane.FindChartRect( mousePt );
+			//Rectangle rect = new Rectangle( mousePt, new Size( 1, 1 ) );
 
 			if ( pane != null &&
-				( this.isEnableHPan || this.isEnableVPan ) &&
-				( ( e.Button == this.panButtons && Control.ModifierKeys == this.panModifierKeys ) ||
-				( e.Button == this.panButtons2 && Control.ModifierKeys == this.panModifierKeys2 ) ) )
+				( _isEnableHPan || _isEnableVPan ) &&
+				( ( e.Button == _panButtons && Control.ModifierKeys == _panModifierKeys ) ||
+				( e.Button == _panButtons2 && Control.ModifierKeys == _panModifierKeys2 ) ) )
 			{
-				isPanning = true;
-				// Calculate the startPoint by using the PointToScreen
-				// method.
-				this.dragRect = new Rectangle( ( (Control)sender ).PointToScreen( new Point( e.X, e.Y ) ),
-					new Size( 1, 1 ) );
-				this.dragPane = pane;
-				this.zoomState = new ZoomState( this.dragPane, ZoomState.StateType.Pan );
+				_isPanning = true;
+				_dragStartPt = mousePt;
+				_dragPane = pane;
+				_zoomState = new ZoomState( _dragPane, ZoomState.StateType.Pan );
 			}
-			else if ( pane != null && ( this.isEnableHZoom || this.isEnableVZoom ) &&
-				( ( e.Button == this.zoomButtons && Control.ModifierKeys == this.zoomModifierKeys ) ||
-				( e.Button == this.zoomButtons2 && Control.ModifierKeys == this.zoomModifierKeys2 ) ) )
+			else if ( pane != null && ( _isEnableHZoom || _isEnableVZoom ) &&
+				( ( e.Button == _zoomButtons && Control.ModifierKeys == _zoomModifierKeys ) ||
+				( e.Button == _zoomButtons2 && Control.ModifierKeys == _zoomModifierKeys2 ) ) )
 			{
-				isZooming = true;
-				// Calculate the startPoint by using the PointToScreen
-				// method.
-				this.dragRect = new Rectangle( ( (Control)sender ).PointToScreen( new Point( e.X, e.Y ) ),
-					new Size( 1, 1 ) );
+				_isZooming = true;
+				_dragStartPt = mousePt;
+				_dragEndPt = mousePt;
+				_dragEndPt.Offset( 1, 1 );
+				_dragPane = pane;
+			}
+			else if ( pane != null && ( _isEnableHEdit || _isEnableVEdit ) &&
+				 ( e.Button == EditButtons && Control.ModifierKeys == EditModifierKeys ) )
+			{
 
-				this.dragPane = pane;
+				// find the point that was clicked, and make sure the point list is editable
+				// and that it's a primary Y axis (the first Y or Y2 axis)
+				if ( pane.FindNearestPoint( mousePt, out _dragCurve, out _dragIndex ) &&
+							_dragCurve.Points is IPointListEdit )
+				{
+					_isEditing = true;
+					_dragPane = pane;
+					_dragStartPt = mousePt;
+					_dragStartPair = _dragCurve[_dragIndex];
+				}
 			}
 		}
+
+		/// <summary>
+		/// Set the cursor according to the current mouse location.
+		/// </summary>
+		protected void SetCursor()
+		{
+			SetCursor( this.PointToClient( Control.MousePosition ) );
+		}
+
+		/// <summary>
+		/// Set the cursor according to the current mouse location.
+		/// </summary>
+		protected void SetCursor( Point mousePt )
+		{
+			if ( _masterPane != null )
+			{
+				GraphPane pane = _masterPane.FindChartRect( mousePt );
+				if ( ( _isEnableHPan || _isEnableVPan ) && ( Control.ModifierKeys == Keys.Shift || _isPanning ) &&
+					( pane != null || _isPanning ) )
+					Cursor.Current = Cursors.Hand;
+				else if ( ( _isEnableVZoom || _isEnableHZoom ) && ( pane != null || _isZooming ) )
+					Cursor.Current = Cursors.Cross;
+
+				//			else if ( isZoomMode || isPanMode )
+				//				Cursor.Current = Cursors.No;
+			}
+		}
+
+		/// <summary>
+		/// Handle a KeyUp event
+		/// </summary>
+		/// <param name="sender">The <see cref="ZedGraphControl" /> in which the KeyUp occurred.</param>
+		/// <param name="e">A <see cref="KeyEventArgs" /> instance.</param>
+		protected void ZedGraphControl_KeyUp( object sender, KeyEventArgs e )
+		{
+			SetCursor();
+		}
+
+		/// <summary>
+		/// Handle the Key Events so ZedGraph can Escape out of a panning or zooming operation.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		protected void ZedGraphControl_KeyDown( object sender, System.Windows.Forms.KeyEventArgs e )
+		{
+			SetCursor();
+
+			if ( e.KeyCode == Keys.Escape )
+			{
+				if ( _isPanning )
+					HandlePanCancel();
+				if ( _isZooming )
+					HandleZoomCancel();
+				if ( _isEditing )
+					HandleEditCancel();
+
+				_isZooming = false;
+				_isPanning = false;
+				_isEditing = false;
+
+				Refresh();
+			}
+		}
+
+		/// <summary>
+		/// Handle a MouseUp event in the <see cref="ZedGraphControl" />
+		/// </summary>
+		/// <param name="sender">A reference to the <see cref="ZedGraphControl" /></param>
+		/// <param name="e">A <see cref="MouseEventArgs" /> instance</param>
+		protected void ZedGraphControl_MouseUp( object sender, MouseEventArgs e )
+		{
+			// Provide Callback for MouseUp events
+			if ( _masterPane != null && this.MouseUpEvent != null )
+			{
+				if ( this.MouseUpEvent( this, e ) )
+					return;
+			}
+
+			if ( _masterPane != null && _dragPane != null )
+			{
+				// If the MouseUp event occurs, the user is done dragging.
+				if ( _isZooming )
+					HandleZoomFinish( sender, e );
+				else if ( _isPanning )
+					HandlePanFinish();
+				else if ( _isEditing )
+					HandleEditFinish();
+			}
+
+			// Reset the rectangle.
+			//dragStartPt = new Rectangle( 0, 0, 0, 0 );
+			_dragPane = null;
+			_isZooming = false;
+			_isPanning = false;
+			_isEditing = false;
+			Cursor.Current = Cursors.Default;
+
+		}
+
+		/// <summary>
+		/// Make a string label that corresponds to a user scale value.
+		/// </summary>
+		/// <param name="axis">The axis from which to obtain the scale value.  This determines
+		/// if it's a date value, linear, log, etc.</param>
+		/// <param name="val">The value to be made into a label</param>
+		/// <param name="iPt">The ordinal position of the value</param>
+		/// <param name="isOverrideOrdinal">true to override the ordinal settings of the axis,
+		/// and prefer the actual value instead.</param>
+		/// <returns>The string label.</returns>
+		protected string MakeValueLabel( Axis axis, double val, int iPt, bool isOverrideOrdinal )
+		{
+			if ( axis != null )
+			{
+				if ( axis.Scale.IsDate )
+				{
+					return XDate.ToString( val, _pointDateFormat );
+				}
+				else if ( axis._scale.IsText && axis._scale._textLabels != null )
+				{
+					int i = iPt;
+					if ( isOverrideOrdinal )
+						i = (int)( val - 0.5 );
+
+					if ( i >= 0 && i < axis._scale._textLabels.Length )
+						return axis._scale._textLabels[i];
+					else
+						return ( i + 1 ).ToString();
+				}
+				else if ( axis.Scale.IsAnyOrdinal && !isOverrideOrdinal )
+				{
+					return iPt.ToString( _pointValueFormat );
+				}
+				else
+					return val.ToString( _pointValueFormat );
+			}
+			else
+				return "";
+		}
+
+		/// <summary>
+		/// protected method for handling MouseMove events to display tooltips over
+		/// individual datapoints.
+		/// </summary>
+		/// <param name="sender">
+		/// A reference to the control that has the MouseMove event.
+		/// </param>
+		/// <param name="e">
+		/// A MouseEventArgs object.
+		/// </param>
+		protected void ZedGraphControl_MouseMove( object sender, MouseEventArgs e )
+		{
+			if ( _masterPane != null )
+			{
+				// Provide Callback for MouseMove events
+				if ( this.MouseMoveEvent != null && this.MouseMoveEvent( this, e ) )
+					return;
+
+				Point mousePt = new Point( e.X, e.Y );
+
+				//Point tempPt = this.PointToClient( Control.MousePosition );
+
+				SetCursor( mousePt );
+
+				// If the mouse is being dragged,
+				// undraw and redraw the rectangle as the mouse moves.
+				if ( _isZooming )
+					HandleZoomDrag( mousePt );
+				else if ( _isPanning )
+					HandlePanDrag( mousePt );
+				else if ( _isEditing )
+					HandleEditDrag( mousePt );
+				else if ( _isShowCursorValues )
+					HandleCursorValues( mousePt );
+				else if ( _isShowPointValues )
+					HandlePointValues( mousePt );
+			}
+		}
+
+		private Point HandlePointValues( Point mousePt )
+		{
+			int iPt;
+			GraphPane pane;
+			object nearestObj;
+
+			Graphics g = this.CreateGraphics();
+
+			if ( _masterPane.FindNearestPaneObject( mousePt,
+				g, out pane, out nearestObj, out iPt ) )
+			{
+				if ( nearestObj is CurveItem && iPt >= 0 )
+				{
+					CurveItem curve = (CurveItem)nearestObj;
+					// Provide Callback for User to customize the tooltips
+					if ( this.PointValueEvent != null )
+					{
+						string label = this.PointValueEvent( this, pane, curve, iPt );
+						if ( label != null && label.Length > 0 )
+						{
+							this.pointToolTip.SetToolTip( this, label );
+							this.pointToolTip.Active = true;
+						}
+						else
+							this.pointToolTip.Active = false;
+					}
+					else
+					{
+
+						if ( curve is PieItem )
+						{
+							this.pointToolTip.SetToolTip( this,
+								( (PieItem)curve ).Value.ToString( _pointValueFormat ) );
+						}
+						else
+						{
+							PointPair pt = curve.Points[iPt];
+
+							if ( pt.Tag is string )
+								this.pointToolTip.SetToolTip( this, (string)pt.Tag );
+							else
+							{
+								string xStr = MakeValueLabel( pane.XAxis, pt.X, iPt,
+									curve.IsOverrideOrdinal );
+								string yStr = MakeValueLabel(
+									curve.GetYAxis( pane ),
+									pt.Y, iPt, curve.IsOverrideOrdinal );
+
+								this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
+
+								//this.pointToolTip.SetToolTip( this,
+								//	curve.Points[iPt].ToString( this.pointValueFormat ) );
+							}
+						}
+
+						this.pointToolTip.Active = true;
+					}
+				}
+				else
+					this.pointToolTip.Active = false;
+			}
+			else
+				this.pointToolTip.Active = false;
+
+			g.Dispose();
+			return mousePt;
+		}
+
+		private Point HandleCursorValues( Point mousePt )
+		{
+			GraphPane pane = _masterPane.FindPane( mousePt );
+			if ( pane != null && pane.Chart._rect.Contains( mousePt ) )
+			{
+				double x, y, y2;
+				pane.ReverseTransform( mousePt, out x, out y, out y2 );
+				string xStr = MakeValueLabel( pane.XAxis, x, -1, true );
+				string yStr = MakeValueLabel( pane.YAxis, y, -1, true );
+				string y2Str = MakeValueLabel( pane.Y2Axis, y2, -1, true );
+
+				this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + ", " + y2Str + " )" );
+				this.pointToolTip.Active = true;
+			}
+			else
+				this.pointToolTip.Active = false;
+			return mousePt;
+		}
+
+
+	#endregion
+
+	#region Mouse Wheel Zoom Events
+
+		/// <summary>
+		/// Handle a MouseWheel event in the <see cref="ZedGraphControl" />
+		/// </summary>
+		/// <param name="sender">A reference to the <see cref="ZedGraphControl" /></param>
+		/// <param name="e">A <see cref="MouseEventArgs" /> instance</param>
+		protected void ZedGraphControl_MouseWheel( object sender, MouseEventArgs e )
+		{
+			if ( ( _isEnableVZoom || _isEnableHZoom ) && _masterPane != null )
+			{
+				GraphPane pane = this.MasterPane.FindChartRect( new PointF( e.X, e.Y ) );
+				if ( pane != null && e.Delta != 0 )
+				{
+					ZoomState oldState = pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
+
+					PointF centerPoint = new PointF( e.X, e.Y );
+					double zoomFraction = ( 1 + ( e.Delta < 0 ? 1.0 : -1.0 ) * ZoomStepFraction );
+
+					ZoomPane( pane, zoomFraction, centerPoint, _isZoomOnMouseCenter, false );
+
+					// Provide Callback to notify the user of zoom events
+					if ( this.ZoomEvent != null )
+						this.ZoomEvent( this, oldState, new ZoomState( pane, ZoomState.StateType.WheelZoom ) );
+
+					this.Refresh();
+
+				}
+			}
+		}
+
+		/// <summary>
+		/// Zoom a specified pane in or out according to the specified zoom fraction.
+		/// </summary>
+		/// <remarks>
+		/// The zoom will occur on the <see cref="XAxis" />, <see cref="YAxis" />, and
+		/// <see cref="Y2Axis" /> only if the corresponding flag, <see cref="IsEnableHZoom" /> or
+		/// <see cref="IsEnableVZoom" />, is true.  Note that if there are multiple Y or Y2 axes, all of
+		/// them will be zoomed.
+		/// </remarks>
+		/// <param name="pane">The <see cref="GraphPane" /> instance to be zoomed.</param>
+		/// <param name="zoomFraction">The fraction by which to zoom, less than 1 to zoom in, greater than
+		/// 1 to zoom out.  For example, 0.9 will zoom in such that the scale is 90% of what it was
+		/// originally.</param>
+		/// <param name="centerPt">The screen position about which the zoom will be centered.  This
+		/// value is only used if <see paramref="isZoomOnCenter" /> is true.
+		/// </param>
+		/// <param name="isZoomOnCenter">true to cause the zoom to be centered on the point
+		/// <see paramref="centerPt" />, false to center on the <see cref="Chart.Rect" />.
+		/// </param>
+		/// <param name="isRefresh">true to force a refresh of the control, false to leave it unrefreshed</param>
+		protected void ZoomPane( GraphPane pane, double zoomFraction, PointF centerPt, bool isZoomOnCenter,
+			bool isRefresh )
+		{
+			double x;
+			double[] y;
+			double[] y2;
+
+			pane.ReverseTransform( centerPt, out x, out y, out y2 );
+
+			if ( _isEnableHZoom )
+				ZoomScale( pane.XAxis, zoomFraction, x, isZoomOnCenter );
+			if ( _isEnableVZoom )
+			{
+				for ( int i = 0; i < pane.YAxisList.Count; i++ )
+					ZoomScale( pane.YAxisList[i], zoomFraction, y[i], isZoomOnCenter );
+				for ( int i = 0; i < pane.Y2AxisList.Count; i++ )
+					ZoomScale( pane.Y2AxisList[i], zoomFraction, y2[i], isZoomOnCenter );
+			}
+
+			Graphics g = this.CreateGraphics();
+			pane.AxisChange( g );
+			g.Dispose();
+
+
+			this.SetScroll( this.hScrollBar1, pane.XAxis, _xScrollRange.Min, _xScrollRange.Max );
+			this.SetScroll( this.vScrollBar1, pane.YAxis, _yScrollRangeList[0].Min,
+				_yScrollRangeList[0].Max );
+
+			if ( isRefresh )
+				Refresh();
+		}
+
+		/// <summary>
+		/// Zoom a specified pane in or out according to the specified zoom fraction.
+		/// </summary>
+		/// <remarks>
+		/// The zoom will occur on the <see cref="XAxis" />, <see cref="YAxis" />, and
+		/// <see cref="Y2Axis" /> only if the corresponding flag, <see cref="IsEnableHZoom" /> or
+		/// <see cref="IsEnableVZoom" />, is true.  Note that if there are multiple Y or Y2 axes, all of
+		/// them will be zoomed.
+		/// </remarks>
+		/// <param name="pane">The <see cref="GraphPane" /> instance to be zoomed.</param>
+		/// <param name="zoomFraction">The fraction by which to zoom, less than 1 to zoom in, greater than
+		/// 1 to zoom out.  For example, 0.9 will zoom in such that the scale is 90% of what it was
+		/// originally.</param>
+		/// <param name="centerPt">The screen position about which the zoom will be centered.  This
+		/// value is only used if <see paramref="isZoomOnCenter" /> is true.
+		/// </param>
+		/// <param name="isZoomOnCenter">true to cause the zoom to be centered on the point
+		/// <see paramref="centerPt" />, false to center on the <see cref="Chart.Rect" />.
+		/// </param>
+		public void ZoomPane( GraphPane pane, double zoomFraction, PointF centerPt, bool isZoomOnCenter )
+		{
+			ZoomPane( pane, zoomFraction, centerPt, isZoomOnCenter, true );
+		}
+
 
 		/// <summary>
 		/// Zoom the specified axis by the specified amount, with the center of the zoom at the
@@ -1536,215 +2160,71 @@ namespace ZedGraph
 			}
 		}
 
-		/// <summary>
-		/// Handle a MouseWheel event in the <see cref="ZedGraphControl" />
-		/// </summary>
-		/// <param name="sender">A reference to the <see cref="ZedGraphControl" /></param>
-		/// <param name="e">A <see cref="MouseEventArgs" /> instance</param>
-		protected void ZedGraphControl_MouseWheel( object sender, MouseEventArgs e )
+	#endregion
+
+	#region Pan Events
+
+		private Point HandlePanDrag( Point mousePt )
 		{
-			if ( ( this.isEnableVZoom || isEnableHZoom ) && this.masterPane != null )
+			double x1, x2;
+			double[] y1, y2, yy1, yy2;
+			//PointF endPoint = mousePt;
+			//PointF startPoint = ( (Control)sender ).PointToClient( this.dragRect.Location );
+
+			_dragPane.ReverseTransform( _dragStartPt, out x1, out y1, out yy1 );
+			_dragPane.ReverseTransform( mousePt, out x2, out y2, out yy2 );
+
+			if ( _isEnableHPan )
 			{
-				GraphPane pane = this.MasterPane.FindChartRect( new PointF( e.X, e.Y ) );
-				if ( pane != null && e.Delta != 0 )
-				{
-					ZoomState oldState = pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
-
-					PointF centerPoint = new PointF( e.X, e.Y );
-					double zoomFraction = ( 1 + ( e.Delta < 0 ? 1.0 : -1.0 ) * ZoomStepFraction );
-
-					ZoomPane( pane, zoomFraction, centerPoint, this.isZoomOnMouseCenter, false );
-
-					// Provide Callback to notify the user of zoom events
-					if ( this.ZoomEvent != null )
-						this.ZoomEvent( this, oldState, new ZoomState( pane, ZoomState.StateType.WheelZoom ) );
-
-					this.Refresh();
-
-				}
+				PanScale( _dragPane.XAxis, x1, x2 );
+				this.SetScroll( this.hScrollBar1, _dragPane.XAxis, _xScrollRange.Min, _xScrollRange.Max );
 			}
-		}
-
-		/// <summary>
-		/// Zoom a specified pane in or out according to the specified zoom fraction.
-		/// </summary>
-		/// <remarks>
-		/// The zoom will occur on the <see cref="XAxis" />, <see cref="YAxis" />, and
-		/// <see cref="Y2Axis" /> only if the corresponding flag, <see cref="IsEnableHZoom" /> or
-		/// <see cref="IsEnableVZoom" />, is true.  Note that if there are multiple Y or Y2 axes, all of
-		/// them will be zoomed.
-		/// </remarks>
-		/// <param name="pane">The <see cref="GraphPane" /> instance to be zoomed.</param>
-		/// <param name="zoomFraction">The fraction by which to zoom, less than 1 to zoom in, greater than
-		/// 1 to zoom out.  For example, 0.9 will zoom in such that the scale is 90% of what it was
-		/// originally.</param>
-		/// <param name="centerPt">The screen position about which the zoom will be centered.  This
-		/// value is only used if <see paramref="isZoomOnCenter" /> is true.
-		/// </param>
-		/// <param name="isZoomOnCenter">true to cause the zoom to be centered on the point
-		/// <see paramref="centerPt" />, false to center on the <see cref="Chart.Rect" />.
-		/// </param>
-		/// <param name="isRefresh">true to force a refresh of the control, false to leave it unrefreshed</param>
-		protected void ZoomPane( GraphPane pane, double zoomFraction, PointF centerPt, bool isZoomOnCenter,
-			bool isRefresh )
-		{
-			double x;
-			double[] y;
-			double[] y2;
-
-			pane.ReverseTransform( centerPt, out x, out y, out y2 );
-
-			if ( isEnableHZoom )
-				ZoomScale( pane.XAxis, zoomFraction, x, isZoomOnCenter );
-			if ( isEnableVZoom )
+			if ( _isEnableVPan )
 			{
-				for ( int i = 0; i < pane.YAxisList.Count; i++ )
-					ZoomScale( pane.YAxisList[i], zoomFraction, y[i], isZoomOnCenter );
-				for ( int i = 0; i < pane.Y2AxisList.Count; i++ )
-					ZoomScale( pane.Y2AxisList[i], zoomFraction, y2[i], isZoomOnCenter );
+				for ( int i = 0; i < y1.Length; i++ )
+					PanScale( _dragPane.YAxisList[i], y1[i], y2[i] );
+				for ( int i = 0; i < yy1.Length; i++ )
+					PanScale( _dragPane.Y2AxisList[i], yy1[i], yy2[i] );
+				this.SetScroll( this.vScrollBar1, _dragPane.YAxis, _yScrollRangeList[0].Min,
+					_yScrollRangeList[0].Max );
 			}
 
-			Graphics g = this.CreateGraphics();
-			pane.AxisChange( g );
-			g.Dispose();
+			Refresh();
 
+			_dragStartPt = mousePt;
 
-			this.SetScroll( this.hScrollBar1, pane.XAxis, xScrollRange.Min, xScrollRange.Max );
-			this.SetScroll( this.vScrollBar1, pane.YAxis, yScrollRangeList[0].Min,
-				yScrollRangeList[0].Max );
-
-			if ( isRefresh )
-				Refresh();
-		}
-
-		/// <summary>
-		/// Zoom a specified pane in or out according to the specified zoom fraction.
-		/// </summary>
-		/// <remarks>
-		/// The zoom will occur on the <see cref="XAxis" />, <see cref="YAxis" />, and
-		/// <see cref="Y2Axis" /> only if the corresponding flag, <see cref="IsEnableHZoom" /> or
-		/// <see cref="IsEnableVZoom" />, is true.  Note that if there are multiple Y or Y2 axes, all of
-		/// them will be zoomed.
-		/// </remarks>
-		/// <param name="pane">The <see cref="GraphPane" /> instance to be zoomed.</param>
-		/// <param name="zoomFraction">The fraction by which to zoom, less than 1 to zoom in, greater than
-		/// 1 to zoom out.  For example, 0.9 will zoom in such that the scale is 90% of what it was
-		/// originally.</param>
-		/// <param name="centerPt">The screen position about which the zoom will be centered.  This
-		/// value is only used if <see paramref="isZoomOnCenter" /> is true.
-		/// </param>
-		/// <param name="isZoomOnCenter">true to cause the zoom to be centered on the point
-		/// <see paramref="centerPt" />, false to center on the <see cref="Chart.Rect" />.
-		/// </param>
-		public void ZoomPane( GraphPane pane, double zoomFraction, PointF centerPt, bool isZoomOnCenter )
-		{
-			ZoomPane( pane, zoomFraction, centerPt, isZoomOnCenter, true );
-		}
-
-		/// <summary>
-		/// Handle a MouseUp event in the <see cref="ZedGraphControl" />
-		/// </summary>
-		/// <param name="sender">A reference to the <see cref="ZedGraphControl" /></param>
-		/// <param name="e">A <see cref="MouseEventArgs" /> instance</param>
-		protected void ZedGraphControl_MouseUp( object sender, MouseEventArgs e )
-		{
-			// Provide Callback for MouseUp events
-			if ( this.masterPane != null && this.MouseUpEvent != null )
-			{
-				if ( this.MouseUpEvent( this, e ) )
-					return;
-			}
-
-			if ( this.masterPane != null && this.dragPane != null )
-			{
-				// If the MouseUp event occurs, the user is done dragging.
-				if ( this.isZooming )
-					HandleZoomFinish( sender, e );
-				else if ( this.isPanning )
-					HandlePanFinish();
-			}
-
-			// Reset the rectangle.
-			this.dragRect = new Rectangle( 0, 0, 0, 0 );
-			this.dragPane = null;
-			isZooming = false;
-			isPanning = false;
-			Cursor.Current = Cursors.Default;
-
+			return mousePt;
 		}
 
 		private void HandlePanFinish()
 		{
 			// push the prior saved zoomstate, since the scale ranges have already been changed on
 			// the fly during the panning operation
-			if ( this.zoomState != null && this.zoomState.IsChanged( this.dragPane ) )
+			if ( _zoomState != null && _zoomState.IsChanged( _dragPane ) )
 			{
-				this.dragPane.ZoomStack.Push( this.zoomState );
+				_dragPane.ZoomStack.Push( _zoomState );
 
 				// Provide Callback to notify the user of pan events
 				if ( this.ZoomEvent != null )
-					this.ZoomEvent( this, this.zoomState,
-						new ZoomState( this.dragPane, ZoomState.StateType.Pan ) );
+					this.ZoomEvent( this, _zoomState,
+						new ZoomState( _dragPane, ZoomState.StateType.Pan ) );
 
-				this.zoomState = null;
+				_zoomState = null;
 			}
 		}
 
-		private void HandleZoomFinish( object sender, MouseEventArgs e )
+		private void HandlePanCancel()
 		{
-			PointF mousePt = BoundPointToRect( new PointF( e.X, e.Y ), dragPane.Chart._rect );
-
-			// Only accept a drag if it covers at least 5 pixels in each direction
-			Point curPt = ( (Control)sender ).PointToScreen( Point.Round( mousePt ) );
-			if ( Math.Abs( curPt.X - this.dragRect.X ) > 4 && Math.Abs( curPt.Y - this.dragRect.Y ) > 4 )
+			if ( _isPanning )
 			{
-				// Draw the rectangle to be evaluated. Set a dashed frame style
-				// using the FrameStyle enumeration.
-				ControlPaint.DrawReversibleFrame( this.dragRect,
-					this.BackColor, FrameStyle.Dashed );
-
-				double x1, x2;
-				double[] y1, y2, yy1, yy2;
-				PointF startPoint = ( (Control)sender ).PointToClient( this.dragRect.Location );
-
-				this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
-				this.dragPane.ReverseTransform( mousePt, out x2, out y2, out yy2 );
-
-				ZoomState oldState = this.dragPane.ZoomStack.Push( this.dragPane, ZoomState.StateType.Zoom );
-
-				if ( isEnableHZoom )
+				if ( _zoomState != null && _zoomState.IsChanged( _dragPane ) )
 				{
-					this.dragPane.XAxis._scale._min = Math.Min( x1, x2 );
-					this.dragPane.XAxis._scale._max = Math.Max( x1, x2 );
+					_zoomState.ApplyState( _dragPane );
+					_zoomState = null;
 				}
-				if ( isEnableVZoom )
-				{
-					for ( int i = 0; i < y1.Length; i++ )
-					{
-						this.dragPane.YAxisList[i]._scale._min = Math.Min( y1[i], y2[i] );
-						this.dragPane.YAxisList[i]._scale._max = Math.Max( y1[i], y2[i] );
-					}
-					for ( int i = 0; i < yy1.Length; i++ )
-					{
-						this.dragPane.Y2AxisList[i]._scale._min = Math.Min( yy1[i], yy2[i] );
-						this.dragPane.Y2AxisList[i]._scale._max = Math.Max( yy1[i], yy2[i] );
-					}
-				}
-
-				this.SetScroll( this.hScrollBar1, dragPane.XAxis, xScrollRange.Min, xScrollRange.Max );
-				this.SetScroll( this.vScrollBar1, dragPane.YAxis, yScrollRangeList[0].Min,
-					yScrollRangeList[0].Max );
-
-				// Provide Callback to notify the user of zoom events
-				if ( this.ZoomEvent != null )
-					this.ZoomEvent( this, oldState, new ZoomState( this.dragPane, ZoomState.StateType.Zoom ) );
-
-				Graphics g = this.CreateGraphics();
-				this.dragPane.AxisChange( g );
-				g.Dispose();
+				_isPanning = false;
+				Refresh();
 			}
-
-			Refresh();
 		}
 
 		/// <summary>
@@ -1776,298 +2256,180 @@ namespace ZedGraph
 			}
 		}
 
-		/// <summary>
-		/// Make a string label that corresponds to a user scale value.
-		/// </summary>
-		/// <param name="axis">The axis from which to obtain the scale value.  This determines
-		/// if it's a date value, linear, log, etc.</param>
-		/// <param name="val">The value to be made into a label</param>
-		/// <param name="iPt">The ordinal position of the value</param>
-		/// <param name="isOverrideOrdinal">true to override the ordinal settings of the axis,
-		/// and prefer the actual value instead.</param>
-		/// <returns>The string label.</returns>
-		protected string MakeValueLabel( Axis axis, double val, int iPt, bool isOverrideOrdinal )
+	#endregion
+
+	#region Edit Point Events
+
+		private void HandleEditDrag( Point mousePt )
 		{
-			if ( axis != null )
-			{
-				if ( axis.Scale.IsDate )
-				{
-					return XDate.ToString( val, this.pointDateFormat );
-				}
-				else if ( axis._scale.IsText && axis._scale._textLabels != null )
-				{
-					int i = iPt;
-					if ( isOverrideOrdinal )
-						i = (int)( val - 0.5 );
+			// get the scale values that correspond to the current point
+			double curX, curY;
+			_dragPane.ReverseTransform( mousePt, _dragCurve.IsY2Axis, _dragCurve.YAxisIndex,
+					out curX, out curY );
+			double startX, startY;
+			_dragPane.ReverseTransform( _dragStartPt, _dragCurve.IsY2Axis, _dragCurve.YAxisIndex,
+					out startX, out startY );
 
-					if ( i >= 0 && i < axis._scale._textLabels.Length )
-						return axis._scale._textLabels[i];
-					else
-						return ( i + 1 ).ToString();
-				}
-				else if ( axis.Scale.IsAnyOrdinal && !isOverrideOrdinal )
-				{
-					return iPt.ToString( this.pointValueFormat );
-				}
-				else
-					return val.ToString( this.pointValueFormat );
-			}
-			else
-				return "";
-		}
+			// calculate the new scale values for the point
+			PointPair newPt = new PointPair( _dragStartPair );
+			if ( _isEnableHEdit )
+				newPt.X += curX - startX;
+			if ( _isEnableVEdit )
+				newPt.Y += curY - startY;
 
-		/// <summary>
-		/// protected method for handling MouseMove events to display tooltips over
-		/// individual datapoints.
-		/// </summary>
-		/// <param name="sender">
-		/// A reference to the control that has the MouseMove event.
-		/// </param>
-		/// <param name="e">
-		/// A MouseEventArgs object.
-		/// </param>
-		protected void ZedGraphControl_MouseMove( object sender, MouseEventArgs e )
-		{
-			if ( this.masterPane != null )
-			{
-				// Provide Callback for MouseMove events
-				if ( this.MouseMoveEvent != null && this.MouseMoveEvent( this, e ) )
-					return;
+			// save the data back to the point list
+			IPointListEdit list = _dragCurve.Points as IPointListEdit;
+			if ( list != null )
+				list[_dragIndex] = newPt;
 
-				Point mousePt = new Point( e.X, e.Y );
-
-				Point tempPt = this.PointToClient( Control.MousePosition );
-
-				SetCursor( mousePt );
-
-				// If the mouse is being dragged,
-				// undraw and redraw the rectangle as the mouse moves.
-				if ( this.isZooming )
-					mousePt = HandleDragZoom( sender, e, mousePt );
-				else if ( this.isPanning )
-					mousePt = HandleDragPan( sender, mousePt );
-				else if ( isShowCursorValues )
-					mousePt = HandleCursorValues( mousePt );
-				else if ( isShowPointValues )
-					mousePt = HandlePointValues( mousePt );
-			}
-		}
-
-		private Point HandlePointValues( Point mousePt )
-		{
-			int iPt;
-			GraphPane pane;
-			object nearestObj;
-
-			Graphics g = this.CreateGraphics();
-
-			if ( masterPane.FindNearestPaneObject( mousePt,
-				g, out pane, out nearestObj, out iPt ) )
-			{
-				if ( nearestObj is CurveItem && iPt >= 0 )
-				{
-					CurveItem curve = (CurveItem)nearestObj;
-					// Provide Callback for User to customize the tooltips
-					if ( this.PointValueEvent != null )
-					{
-						string label = this.PointValueEvent( this, pane, curve, iPt );
-						if ( label != null && label.Length > 0 )
-						{
-							this.pointToolTip.SetToolTip( this, label );
-							this.pointToolTip.Active = true;
-						}
-						else
-							this.pointToolTip.Active = false;
-					}
-					else
-					{
-
-						if ( curve is PieItem )
-						{
-							this.pointToolTip.SetToolTip( this,
-								( (PieItem)curve ).Value.ToString( this.pointValueFormat ) );
-						}
-						else
-						{
-							PointPair pt = curve.Points[iPt];
-
-							if ( pt.Tag is string )
-								this.pointToolTip.SetToolTip( this, (string)pt.Tag );
-							else
-							{
-								string xStr = MakeValueLabel( pane.XAxis, pt.X, iPt,
-									curve.IsOverrideOrdinal );
-								string yStr = MakeValueLabel(
-									curve.GetYAxis( pane ),
-									pt.Y, iPt, curve.IsOverrideOrdinal );
-
-								this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
-
-								//this.pointToolTip.SetToolTip( this,
-								//	curve.Points[iPt].ToString( this.pointValueFormat ) );
-							}
-						}
-
-						this.pointToolTip.Active = true;
-					}
-				}
-				else
-					this.pointToolTip.Active = false;
-			}
-			else
-				this.pointToolTip.Active = false;
-
-			g.Dispose();
-			return mousePt;
-		}
-
-		private Point HandleCursorValues( Point mousePt )
-		{
-			GraphPane pane = masterPane.FindPane( mousePt );
-			if ( pane != null && pane.Chart._rect.Contains( mousePt ) )
-			{
-				double x, y, y2;
-				pane.ReverseTransform( mousePt, out x, out y, out y2 );
-				string xStr = MakeValueLabel( pane.XAxis, x, -1, true );
-				string yStr = MakeValueLabel( pane.YAxis, y, -1, true );
-				string y2Str = MakeValueLabel( pane.Y2Axis, y2, -1, true );
-
-				this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + ", " + y2Str + " )" );
-				this.pointToolTip.Active = true;
-			}
-			else
-				this.pointToolTip.Active = false;
-			return mousePt;
-		}
-
-		private Point HandleDragPan( object sender, Point mousePt )
-		{
-			double x1, x2;
-			double[] y1, y2, yy1, yy2;
-			PointF endPoint = mousePt;
-			PointF startPoint = ( (Control)sender ).PointToClient( this.dragRect.Location );
-
-			this.dragPane.ReverseTransform( startPoint, out x1, out y1, out yy1 );
-			this.dragPane.ReverseTransform( endPoint, out x2, out y2, out yy2 );
-
-			if ( this.isEnableHPan )
-			{
-				PanScale( this.dragPane.XAxis, x1, x2 );
-				this.SetScroll( this.hScrollBar1, dragPane.XAxis, xScrollRange.Min, xScrollRange.Max );
-			}
-			if ( this.isEnableVPan )
-			{
-				for ( int i = 0; i < y1.Length; i++ )
-					PanScale( this.dragPane.YAxisList[i], y1[i], y2[i] );
-				for ( int i = 0; i < yy1.Length; i++ )
-					PanScale( this.dragPane.Y2AxisList[i], yy1[i], yy2[i] );
-				this.SetScroll( this.vScrollBar1, dragPane.YAxis, yScrollRangeList[0].Min,
-					yScrollRangeList[0].Max );
-			}
-
+			// force a redraw
 			Refresh();
-
-			this.dragRect.Location = ( (Control)sender ).PointToScreen( mousePt );
-
-			return mousePt;
 		}
 
-		private Point HandleDragZoom( object sender, MouseEventArgs e, Point mousePt )
+		private void HandleEditFinish()
+		{
+			//Nothing to do here -- May want to add an undo option
+		}
+
+		private void HandleEditCancel()
+		{
+			if ( _isEditing )
+			{
+				IPointListEdit list = _dragCurve.Points as IPointListEdit;
+				if ( list != null )
+					list[_dragIndex] = _dragStartPair;
+				_isEditing = false;
+				Refresh();
+			}
+		}
+
+	#endregion
+
+	#region Zoom Events
+
+		private void HandleZoomDrag( Point mousePt )
 		{
 			// Hide the previous rectangle by calling the
 			// DrawReversibleFrame method with the same parameters.
-			ControlPaint.DrawReversibleFrame( this.dragRect,
-				this.BackColor, FrameStyle.Dashed );
+			Rectangle rect = CalcScreenRect( _dragStartPt, _dragEndPt );
+			ControlPaint.DrawReversibleFrame( rect, this.BackColor, FrameStyle.Dashed );
 
-			RectangleF chartRect = dragPane.Chart._rect;
 			// Bound the zoom to the ChartRect
-			PointF endPt = BoundPointToRect( new PointF( e.X, e.Y ), Rectangle.Round( chartRect ) );
-			// Calculate the endpoint and dimensions for the new
-			// rectangle, again using the PointToScreen method.
-			Point curPt = ( (Control)sender ).PointToScreen( Point.Round( endPt ) );
-			this.dragRect.Width = curPt.X - this.dragRect.X;
-			this.dragRect.Height = curPt.Y - this.dragRect.Y;
+			_dragEndPt = Point.Round( BoundPointToRect( mousePt, _dragPane.Chart._rect ) );
+			rect = CalcScreenRect( _dragStartPt, _dragEndPt );
+			// Draw the new rectangle by calling DrawReversibleFrame again.
+			ControlPaint.DrawReversibleFrame( rect, this.BackColor, FrameStyle.Dashed );
+		}
 
-			if ( !isEnableVZoom )
+		private void HandleZoomFinish( object sender, MouseEventArgs e )
+		{
+			PointF mousePtF = BoundPointToRect( new Point( e.X, e.Y ), _dragPane.Chart._rect );
+
+			// Only accept a drag if it covers at least 5 pixels in each direction
+			//Point curPt = ( (Control)sender ).PointToScreen( Point.Round( mousePt ) );
+			if ( ( Math.Abs( mousePtF.X - _dragStartPt.X ) > 4 || !_isEnableHZoom ) &&
+					( Math.Abs( mousePtF.Y - _dragStartPt.Y ) > 4 || !_isEnableVZoom ) )
 			{
-				this.dragRect.Y = (int)( chartRect.Y + 0.5 ) + curPt.Y - mousePt.Y;
-				this.dragRect.Height = (int)( chartRect.Height + 0.5 );
+				// Draw the rectangle to be evaluated. Set a dashed frame style
+				// using the FrameStyle enumeration.
+				//ControlPaint.DrawReversibleFrame( this.dragRect,
+				//	this.BackColor, FrameStyle.Dashed );
+
+				double x1, x2;
+				double[] y1, y2, yy1, yy2;
+				//PointF startPoint = ( (Control)sender ).PointToClient( this.dragRect.Location );
+
+				_dragPane.ReverseTransform( _dragStartPt, out x1, out y1, out yy1 );
+				_dragPane.ReverseTransform( mousePtF, out x2, out y2, out yy2 );
+
+				ZoomState oldState = _dragPane.ZoomStack.Push( _dragPane,
+							ZoomState.StateType.Zoom );
+
+				if ( _isEnableHZoom )
+				{
+					_dragPane.XAxis._scale._min = Math.Min( x1, x2 );
+					_dragPane.XAxis._scale._minAuto = false;
+
+					_dragPane.XAxis._scale._max = Math.Max( x1, x2 );
+					_dragPane.XAxis._scale._maxAuto = false;
+				}
+				if ( _isEnableVZoom )
+				{
+					for ( int i = 0; i < y1.Length; i++ )
+					{
+						_dragPane.YAxisList[i]._scale._min = Math.Min( y1[i], y2[i] );
+						_dragPane.YAxisList[i]._scale._max = Math.Max( y1[i], y2[i] );
+						_dragPane.YAxisList[i]._scale._minAuto = false;
+						_dragPane.YAxisList[i]._scale._maxAuto = false;
+					}
+					for ( int i = 0; i < yy1.Length; i++ )
+					{
+						_dragPane.Y2AxisList[i]._scale._min = Math.Min( yy1[i], yy2[i] );
+						_dragPane.Y2AxisList[i]._scale._max = Math.Max( yy1[i], yy2[i] );
+						_dragPane.Y2AxisList[i]._scale._minAuto = false;
+						_dragPane.Y2AxisList[i]._scale._maxAuto = false;
+					}
+				}
+
+				this.SetScroll( this.hScrollBar1, _dragPane.XAxis, _xScrollRange.Min, _xScrollRange.Max );
+				this.SetScroll( this.vScrollBar1, _dragPane.YAxis, _yScrollRangeList[0].Min,
+					_yScrollRangeList[0].Max );
+
+				// Provide Callback to notify the user of zoom events
+				if ( this.ZoomEvent != null )
+					this.ZoomEvent( this, oldState,
+						new ZoomState( _dragPane, ZoomState.StateType.Zoom ) );
+
+				Graphics g = this.CreateGraphics();
+				_dragPane.AxisChange( g );
+				g.Dispose();
 			}
-			else if ( !isEnableHZoom )
+
+			Refresh();
+		}
+
+		private void HandleZoomCancel()
+		{
+			if ( _isZooming )
 			{
-				this.dragRect.X = (int)( chartRect.X + 0.5 ) + curPt.X - mousePt.X;
-				this.dragRect.Width = (int)( chartRect.Width + 0.5 );
-			}
-
-			// Draw the new rectangle by calling DrawReversibleFrame
-			// again.
-			ControlPaint.DrawReversibleFrame( this.dragRect,
-				this.BackColor, FrameStyle.Dashed );
-			return mousePt;
-		}
-
-		private PointF BoundPointToRect( PointF mousePt, RectangleF rect )
-		{
-			if ( mousePt.X < rect.X ) mousePt.X = rect.X;
-			if ( mousePt.X > rect.Right ) mousePt.X = rect.Right;
-			if ( mousePt.Y < rect.Y ) mousePt.Y = rect.Y;
-			if ( mousePt.Y > rect.Bottom ) mousePt.Y = rect.Bottom;
-
-			return mousePt;
-		}
-
-		/// <summary>
-		/// Set the cursor according to the current mouse location.
-		/// </summary>
-		protected void SetCursor()
-		{
-			SetCursor( this.PointToClient( Control.MousePosition ) );
-		}
-
-		/// <summary>
-		/// Set the cursor according to the current mouse location.
-		/// </summary>
-		protected void SetCursor( Point mousePt )
-		{
-			if ( this.masterPane != null )
-			{
-				GraphPane pane = this.masterPane.FindChartRect( mousePt );
-				if ( ( isEnableHPan || isEnableVPan ) && ( Control.ModifierKeys == Keys.Shift || isPanning ) &&
-					( pane != null || isPanning ) )
-					Cursor.Current = Cursors.Hand;
-				else if ( ( isEnableVZoom || isEnableHZoom ) && ( pane != null || isZooming ) )
-					Cursor.Current = Cursors.Cross;
-
-				//			else if ( isZoomMode || isPanMode )
-				//				Cursor.Current = Cursors.No;
-			}
-		}
-
-		/// <summary>
-		/// Handle a KeyUp event
-		/// </summary>
-		/// <param name="sender">The <see cref="ZedGraphControl" /> in which the KeyUp occurred.</param>
-		/// <param name="e">A <see cref="KeyEventArgs" /> instance.</param>
-		protected void ZedGraphControl_KeyUp( object sender, KeyEventArgs e )
-		{
-			SetCursor();
-		}
-
-		/// <summary>
-		/// Handle the Key Events so ZedGraph can Escape out of a panning or zooming operation.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		protected void ZedGraphControl_KeyDown( object sender, System.Windows.Forms.KeyEventArgs e )
-		{
-			SetCursor();
-
-			if ( e.KeyCode == Keys.Escape )
-			{
-				this.isZooming = false;
-				this.isPanning = false;
+				_isZooming = false;
 				Refresh();
 			}
+		}
+
+		private PointF BoundPointToRect( Point mousePt, RectangleF rect )
+		{
+			PointF newPt = new PointF( mousePt.X, mousePt.Y );
+
+			if ( mousePt.X < rect.X ) newPt.X = rect.X;
+			if ( mousePt.X > rect.Right ) newPt.X = rect.Right;
+			if ( mousePt.Y < rect.Y ) newPt.Y = rect.Y;
+			if ( mousePt.Y > rect.Bottom ) newPt.Y = rect.Bottom;
+
+			return newPt;
+		}
+
+		private Rectangle CalcScreenRect( Point mousePt1, Point mousePt2 )
+		{
+			Point screenPt = PointToScreen( mousePt1 );
+			Size size = new Size( mousePt2.X - mousePt1.X, mousePt2.Y - mousePt1.Y );
+			Rectangle rect = new Rectangle( screenPt, size );
+
+			Rectangle chartRect = Rectangle.Round( _dragPane.Chart._rect );
+
+			Point chartPt = PointToScreen( chartRect.Location );
+			if ( !_isEnableVZoom )
+			{
+				rect.Y = chartPt.Y;
+				rect.Height = chartRect.Height + 1;
+			}
+			else if ( !_isEnableHZoom )
+			{
+				rect.X = chartPt.X;
+				rect.Width = chartRect.Width + 1;
+			}
+
+			return rect;
 		}
 
 	#endregion
@@ -2080,7 +2442,7 @@ namespace ZedGraph
 			{
 				for ( int i = 0; i < this.GraphPane.YAxisList.Count; i++ )
 				{
-					ScrollRange scroll = this.yScrollRangeList[i];
+					ScrollRange scroll = _yScrollRangeList[i];
 					if ( scroll.IsScrollable )
 					{
 						Axis axis = this.GraphPane.YAxisList[i];
@@ -2091,13 +2453,21 @@ namespace ZedGraph
 
 				for ( int i = 0; i < this.GraphPane.Y2AxisList.Count; i++ )
 				{
-					ScrollRange scroll = this.y2ScrollRangeList[i];
+					ScrollRange scroll = _y2ScrollRangeList[i];
 					if ( scroll.IsScrollable )
 					{
 						Axis axis = this.GraphPane.Y2AxisList[i];
 						HandleScroll( axis, e.NewValue, scroll.Min, scroll.Max, vScrollBar1.LargeChange,
 										!axis.Scale.IsReverse );
 					}
+				}
+
+				if ( _zoomState != null )
+				{
+					// Provide Callback to notify the user of pan events
+					if ( this.ScrollProgressEvent != null )
+						this.ScrollProgressEvent( this, vScrollBar1, _zoomState,
+									new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
 				}
 			}
 		}
@@ -2106,8 +2476,16 @@ namespace ZedGraph
 		{
 			if ( this.GraphPane != null )
 			{
-				HandleScroll( this.GraphPane.XAxis, e.NewValue, xScrollRange.Min, xScrollRange.Max,
+				HandleScroll( this.GraphPane.XAxis, e.NewValue, _xScrollRange.Min, _xScrollRange.Max,
 							hScrollBar1.LargeChange, this.GraphPane.XAxis.Scale.IsReverse );
+
+				if ( _zoomState != null )
+				{
+					// Provide Callback to notify the user of pan events
+					if ( this.ScrollProgressEvent != null )
+						this.ScrollProgressEvent( this, hScrollBar1, _zoomState,
+									new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
+				}
 			}
 		}
 
@@ -2123,22 +2501,22 @@ namespace ZedGraph
 				if ( scrollBar.Capture )
 				{
 					// save the original zoomstate
-					this.zoomState = new ZoomState( this.GraphPane, ZoomState.StateType.Scroll );
+					_zoomState = new ZoomState( this.GraphPane, ZoomState.StateType.Scroll );
 				}
 				else
 				{
 					// push the prior saved zoomstate, since the scale ranges have already been changed on
 					// the fly during the scrolling operation
-					if ( this.zoomState != null && this.zoomState.IsChanged( this.GraphPane ) )
+					if ( _zoomState != null && _zoomState.IsChanged( this.GraphPane ) )
 					{
-						this.GraphPane.ZoomStack.Push( this.zoomState );
+						this.GraphPane.ZoomStack.Push( _zoomState );
 
 						// Provide Callback to notify the user of pan events
-						if ( this.ScrollEvent != null )
-							this.ScrollEvent( this, scrollBar, this.zoomState,
+						if ( this.ScrollDoneEvent != null )
+							this.ScrollDoneEvent( this, scrollBar, _zoomState,
 										new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
 
-						this.zoomState = null;
+						_zoomState = null;
 					}
 				}
 			}
@@ -2154,7 +2532,7 @@ namespace ZedGraph
 				if ( scrollMax < axis._scale._max )
 					scrollMax = axis._scale._max;
 
-				int span = ScrollControlSpan - largeChange;
+				int span = _ScrollControlSpan - largeChange;
 				if ( span <= 0 )
 					return;
 
@@ -2201,30 +2579,30 @@ namespace ZedGraph
 		{
 			if ( this.GraphPane != null )
 			{
-				xScrollRange.Min = this.GraphPane.XAxis.Scale._rangeMin;
-				xScrollRange.Max = this.GraphPane.XAxis.Scale._rangeMax;
-				xScrollRange.IsScrollable = true;
+				_xScrollRange.Min = this.GraphPane.XAxis.Scale._rangeMin;
+				_xScrollRange.Max = this.GraphPane.XAxis.Scale._rangeMax;
+				_xScrollRange.IsScrollable = true;
 
 				for ( int i = 0; i < this.GraphPane.YAxisList.Count; i++ )
 				{
 					Axis axis = this.GraphPane.YAxisList[i];
 					ScrollRange range = new ScrollRange( axis.Scale._rangeMin, axis.Scale._rangeMax,
-															yScrollRangeList[i].IsScrollable );
-					if ( i >= yScrollRangeList.Count )
-						yScrollRangeList.Add( range );
+															_yScrollRangeList[i].IsScrollable );
+					if ( i >= _yScrollRangeList.Count )
+						_yScrollRangeList.Add( range );
 					else
-						yScrollRangeList[i] = range;
+						_yScrollRangeList[i] = range;
 				}
 
 				for ( int i = 0; i < this.GraphPane.Y2AxisList.Count; i++ )
 				{
 					Axis axis = this.GraphPane.Y2AxisList[i];
 					ScrollRange range = new ScrollRange( axis.Scale._rangeMin, axis.Scale._rangeMax,
-															y2ScrollRangeList[i].IsScrollable );
-					if ( i >= y2ScrollRangeList.Count )
-						y2ScrollRangeList.Add( range );
+															_y2ScrollRangeList[i].IsScrollable );
+					if ( i >= _y2ScrollRangeList.Count )
+						_y2ScrollRangeList.Add( range );
 					else
-						y2ScrollRangeList[i] = range;
+						_y2ScrollRangeList[i] = range;
 				}
 
 				//this.GraphPane.CurveList.GetRange( out scrollMinX, out scrollMaxX,
@@ -2238,7 +2616,7 @@ namespace ZedGraph
 			if ( scrollBar != null && axis != null )
 			{
 				scrollBar.Minimum = 0;
-				scrollBar.Maximum = ScrollControlSpan - 1;
+				scrollBar.Maximum = _ScrollControlSpan - 1;
 
 				if ( scrollMin > axis._scale._min )
 					scrollMin = axis._scale._min;
@@ -2268,17 +2646,17 @@ namespace ZedGraph
 					else
 						ratio = ( axis._scale._max - axis._scale._min ) / ( scrollMax - scrollMin );
 
-					int largeChange = (int)( ratio * ScrollControlSpan + 0.5 );
+					int largeChange = (int)( ratio * _ScrollControlSpan + 0.5 );
 					if ( largeChange < 1 )
 						largeChange = 1;
 					scrollBar.LargeChange = largeChange;
 
-					int smallChange = largeChange / ScrollSmallRatio;
+					int smallChange = largeChange / _ScrollSmallRatio;
 					if ( smallChange < 1 )
 						smallChange = 1;
 					scrollBar.SmallChange = smallChange;
 
-					int span = ScrollControlSpan - largeChange;
+					int span = _ScrollControlSpan - largeChange;
 
 					if ( axis.Scale.IsLog )
 						val = (int)( ( Math.Log( axis._scale._min ) - Math.Log( scrollMin ) ) /
@@ -2323,48 +2701,48 @@ namespace ZedGraph
 			e.Cancel = true;
 			ContextMenuStrip menuStrip = sender as ContextMenuStrip;
 
-			if ( this.masterPane != null && menuStrip != null )
+			if ( _masterPane != null && menuStrip != null )
 			{
 				menuStrip.Items.Clear();
 
-				this.isZooming = false;
-				this.isPanning = false;
+				_isZooming = false;
+				_isPanning = false;
 				Cursor.Current = Cursors.Default;
 
-				this.menuClickPt = this.PointToClient( Control.MousePosition );
-				GraphPane pane = this.masterPane.FindPane( menuClickPt );
+				_menuClickPt = this.PointToClient( Control.MousePosition );
+				GraphPane pane = _masterPane.FindPane( _menuClickPt );
 
-				if ( this.isShowContextMenu )
+				if ( _isShowContextMenu )
 				{
 					string menuStr = string.Empty;
 
 					ToolStripMenuItem item = new ToolStripMenuItem();
 					item.Name = "copy";
-					item.Text = resourceManager.GetString( "copy" );
+					item.Text = _resourceManager.GetString( "copy" );
 					item.Click += new System.EventHandler( this.MenuClick_Copy );
 					menuStrip.Items.Add( item );
 
 					item = new ToolStripMenuItem();
 					item.Name = "save_as";
-					item.Text = resourceManager.GetString( "save_as" );
+					item.Text = _resourceManager.GetString( "save_as" );
 					item.Click += new System.EventHandler( this.MenuClick_SaveAs );
 					menuStrip.Items.Add( item );
 
 					item = new ToolStripMenuItem();
 					item.Name = "page_setup";
-					item.Text = resourceManager.GetString( "page_setup" );
+					item.Text = _resourceManager.GetString( "page_setup" );
 					item.Click += new System.EventHandler( this.MenuClick_PageSetup );
 					menuStrip.Items.Add( item );
 
 					item = new ToolStripMenuItem();
 					item.Name = "print";
-					item.Text = resourceManager.GetString( "print" );
+					item.Text = _resourceManager.GetString( "print" );
 					item.Click += new System.EventHandler( this.MenuClick_Print );
 					menuStrip.Items.Add( item );
 
 					item = new ToolStripMenuItem();
 					item.Name = "show_val";
-					item.Text = resourceManager.GetString( "show_val" );
+					item.Text = _resourceManager.GetString( "show_val" );
 					item.Click += new System.EventHandler( this.MenuClick_ShowValues );
 					item.Checked = this.IsShowPointValues;
 					menuStrip.Items.Add( item );
@@ -2373,19 +2751,19 @@ namespace ZedGraph
 					item.Name = "unzoom";
 
 					if ( pane == null || pane.ZoomStack.IsEmpty )
-						menuStr = resourceManager.GetString( "unzoom" );
+						menuStr = _resourceManager.GetString( "unzoom" );
 					else
 					{
 						switch ( pane.ZoomStack.Top.Type )
 						{
 							case ZoomState.StateType.Zoom:
-								menuStr = resourceManager.GetString( "unzoom" );
+								menuStr = _resourceManager.GetString( "unzoom" );
 								break;
 							case ZoomState.StateType.Pan:
-								menuStr = resourceManager.GetString( "unpan" );
+								menuStr = _resourceManager.GetString( "unpan" );
 								break;
 							case ZoomState.StateType.Scroll:
-								menuStr = resourceManager.GetString( "unscroll" );
+								menuStr = _resourceManager.GetString( "unscroll" );
 								break;
 						}
 					}
@@ -2400,7 +2778,7 @@ namespace ZedGraph
 
 					item = new ToolStripMenuItem();
 					item.Name = "undo_all";
-					menuStr = resourceManager.GetString( "undo_all" );
+					menuStr = _resourceManager.GetString( "undo_all" );
 					item.Text = menuStr;
 					item.Click += new EventHandler( this.MenuClick_ZoomOutAll );
 					if ( pane == null || pane.ZoomStack.IsEmpty )
@@ -2409,7 +2787,7 @@ namespace ZedGraph
 
 					item = new ToolStripMenuItem();
 					item.Name = "set_default";
-					menuStr = resourceManager.GetString( "set_default" );
+					menuStr = _resourceManager.GetString( "set_default" );
 					item.Text = menuStr;
 					item.Click += new EventHandler( this.MenuClick_RestoreScale );
 					if ( pane == null )
@@ -2422,7 +2800,7 @@ namespace ZedGraph
 
 					// Provide Callback for User to edit the context menu
 					if ( this.ContextMenuBuilder != null )
-						this.ContextMenuBuilder( this, menuStrip, this.menuClickPt );
+						this.ContextMenuBuilder( this, menuStrip, _menuClickPt );
 				}
 			}
 		}
@@ -2435,7 +2813,7 @@ namespace ZedGraph
 		/// <param name="e"></param>
 		protected void MenuClick_Copy( System.Object sender, System.EventArgs e )
 		{
-			Copy( this.isShowCopyMessage );
+			Copy( _isShowCopyMessage );
 		}
 
 		/// <summary>
@@ -2446,12 +2824,12 @@ namespace ZedGraph
 		/// displayed.  true to show a message of "Image Copied to ClipBoard".</param>
 		public void Copy( bool isShowMessage )
 		{
-			if ( this.masterPane != null )
+			if ( _masterPane != null )
 			{
-				Clipboard.SetDataObject( this.masterPane.Image, true );
+				Clipboard.SetDataObject( _masterPane.GetImage(), true );
 				if ( isShowMessage )
 				{
-					string str = resourceManager.GetString( "copied_to_clip" );
+					string str = _resourceManager.GetString( "copied_to_clip" );
 					//MessageBox.Show( "Image Copied to ClipBoard" );
 					MessageBox.Show( str );
 				}
@@ -2475,7 +2853,7 @@ namespace ZedGraph
 		/// </summary>
 		public void SaveAs()
 		{
-			if ( this.masterPane != null )
+			if ( _masterPane != null )
 			{
 				SaveFileDialog saveDlg = new SaveFileDialog();
 				saveDlg.Filter = "PNG Format (*.png)|*.png|" +
@@ -2499,163 +2877,10 @@ namespace ZedGraph
 					Stream myStream = saveDlg.OpenFile();
 					if ( myStream != null )
 					{
-						this.masterPane.Image.Save( myStream, format );
+						_masterPane.GetImage().Save( myStream, format );
 						myStream.Close();
 					}
 				}
-			}
-		}
-
-		/// <summary>
-		/// Handler for the "Page Setup..." context menu item.   Displays a
-		/// <see cref="PageSetupDialog" />.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		protected void MenuClick_PageSetup( object sender, EventArgs e )
-		{
-			DoPageSetup();
-		}
-
-		/// <summary>
-		/// Handler for the "Print..." context menu item.   Displays a
-		/// <see cref="PrintDialog" />.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		protected void MenuClick_Print( object sender, EventArgs e )
-		{
-			DoPrint();
-		}
-
-		/// <summary>
-		/// Rendering method used by the print context menu items
-		/// </summary>
-		/// <param name="sender">The applicable <see cref="PrintDocument" />.</param>
-		/// <param name="e">A <see cref="PrintPageEventArgs" /> instance providing
-		/// page bounds, margins, and a Graphics instance for this printed output.
-		/// </param>
-		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
-		{
-			PrintDocument pd = sender as PrintDocument;
-
-			MasterPane mPane = this.MasterPane;
-			bool[] isPenSave = new bool[mPane.PaneList.Count + 1];
-			bool[] isFontSave = new bool[mPane.PaneList.Count + 1];
-			isPenSave[0] = mPane.IsPenWidthScaled;
-			isFontSave[0] = mPane.IsFontsScaled;
-			for ( int i = 0; i < mPane.PaneList.Count; i++ )
-			{
-				isPenSave[i + 1] = mPane[i].IsPenWidthScaled;
-				isFontSave[i + 1] = mPane[i].IsFontsScaled;
-				if ( this.isPrintScaleAll )
-				{
-					mPane[i].IsPenWidthScaled = true;
-					mPane[i].IsFontsScaled = true;
-				}
-			}
-
-			RectangleF saveRect = mPane.Rect;
-			SizeF newSize = mPane.Rect.Size;
-			if ( isPrintFillPage && isPrintKeepAspectRatio )
-			{
-				float xRatio = (float)e.MarginBounds.Width / (float)newSize.Width;
-				float yRatio = (float)e.MarginBounds.Height / (float)newSize.Height;
-				float ratio = Math.Min( xRatio, yRatio );
-
-				newSize.Width *= ratio;
-				newSize.Height *= ratio;
-			}
-			else if ( isPrintFillPage )
-				newSize = e.MarginBounds.Size;
-
-			mPane.ReSize( e.Graphics, new RectangleF( e.MarginBounds.Left,
-				e.MarginBounds.Top, newSize.Width, newSize.Height ) );
-			mPane.Draw( e.Graphics );
-
-			Graphics g = this.CreateGraphics();
-			mPane.ReSize( g, saveRect );
-			g.Dispose();
-
-			mPane.IsPenWidthScaled = isPenSave[0];
-			mPane.IsFontsScaled = isFontSave[0];
-			for ( int i = 0; i < mPane.PaneList.Count; i++ )
-			{
-				mPane[i].IsPenWidthScaled = isPenSave[i + 1];
-				mPane[i].IsFontsScaled = isFontSave[i + 1];
-			}
-		}
-
-		private PrintDocument GetPrintDocument()
-		{
-			if ( pdSave == null )
-				pdSave = new PrintDocument();
-			return pdSave;
-		}
-
-		/// <summary>
-		/// Display a <see cref="PageSetupDialog" /> to the user, allowing them to modify
-		/// the print settings for this <see cref="ZedGraphControl" />.
-		/// </summary>
-		public void DoPageSetup()
-		{
-			PrintDocument pd = GetPrintDocument();
-
-			if ( pd != null )
-			{
-				//pd.PrintPage += new PrintPageEventHandler( GraphPrintPage );
-				PageSetupDialog setupDlg = new PageSetupDialog();
-				setupDlg.Document = pd;
-				if ( setupDlg.ShowDialog() == DialogResult.OK )
-				{
-					pd.PrinterSettings = setupDlg.PrinterSettings;
-					pd.DefaultPageSettings = setupDlg.PageSettings;
-
-					// BUG in PrintDocument!!!  Converts in/mm repeatedly
-					// http://support.microsoft.com/?id=814355
-					// from http://www.vbinfozine.com/tpagesetupdialog.shtml, by Palo Mraz
-					//if ( System.Globalization.RegionInfo.CurrentRegion.IsMetric )
-					//{
-					//	setupDlg.Document.DefaultPageSettings.Margins = PrinterUnitConvert.Convert(
-					//	setupDlg.Document.DefaultPageSettings.Margins,
-					//	PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter );
-					//}
-				}
-			}
-		}
-
-		/// <summary>
-		/// Display a <see cref="PrintDialog" /> to the user, allowing them to select a
-		/// printer and print the <see cref="MasterPane" /> contained in this
-		/// <see cref="ZedGraphControl" />.
-		/// </summary>
-		public void DoPrint()
-		{
-			PrintDocument pd = GetPrintDocument();
-
-			if ( pd != null )
-			{
-				pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
-				PrintDialog pDlg = new PrintDialog();
-				pDlg.Document = pd;
-				if ( pDlg.ShowDialog() == DialogResult.OK )
-					pd.Print();
-			}
-		}
-
-		/// <summary>
-		/// Display a <see cref="PrintPreviewDialog" />, allowing the user to preview and
-		/// subsequently print the <see cref="MasterPane" /> contained in this
-		/// <see cref="ZedGraphControl" />.
-		/// </summary>
-		public void DoPrintPreview( PrintDocument pd )
-		{
-			if ( pd != null )
-			{
-				PrintPreviewDialog ppd = new PrintPreviewDialog();
-				pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
-				ppd.Document = pd;
-				ppd.Show();
 			}
 		}
 
@@ -2685,9 +2910,9 @@ namespace ZedGraph
 		/// <param name="e"></param>
 		protected void MenuClick_RestoreScale( object sender, EventArgs e )
 		{
-			if ( this.masterPane != null )
+			if ( _masterPane != null )
 			{
-				GraphPane pane = this.masterPane.FindPane( this.menuClickPt );
+				GraphPane pane = _masterPane.FindPane( _menuClickPt );
 				RestoreScale( pane );
 			}
 		}
@@ -2736,9 +2961,9 @@ namespace ZedGraph
 		/// <param name="e"></param>
 		protected void MenuClick_ZoomOut( System.Object sender, System.EventArgs e )
 		{
-			if ( this.masterPane != null )
+			if ( _masterPane != null )
 			{
-				GraphPane pane = this.masterPane.FindPane( this.menuClickPt );
+				GraphPane pane = _masterPane.FindPane( _menuClickPt );
 				ZoomOut( pane );
 			}
 		}
@@ -2776,9 +3001,9 @@ namespace ZedGraph
 		/// <param name="e"></param>
 		protected void MenuClick_ZoomOutAll( System.Object sender, System.EventArgs e )
 		{
-			if ( this.masterPane != null )
+			if ( _masterPane != null )
 			{
-				GraphPane pane = this.masterPane.FindPane( this.menuClickPt );
+				GraphPane pane = _masterPane.FindPane( _menuClickPt );
 				ZoomOutAll( pane );
 			}
 		}
@@ -2805,6 +3030,173 @@ namespace ZedGraph
 					this.ZoomEvent( this, oldState, newState );
 
 				Refresh();
+			}
+		}
+
+	#endregion
+
+	#region Printing
+
+		/// <summary>
+		/// Handler for the "Page Setup..." context menu item.   Displays a
+		/// <see cref="PageSetupDialog" />.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		protected void MenuClick_PageSetup( object sender, EventArgs e )
+		{
+			DoPageSetup();
+		}
+
+		/// <summary>
+		/// Handler for the "Print..." context menu item.   Displays a
+		/// <see cref="PrintDialog" />.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		protected void MenuClick_Print( object sender, EventArgs e )
+		{
+			DoPrint();
+		}
+
+		/// <summary>
+		/// Rendering method used by the print context menu items
+		/// </summary>
+		/// <param name="sender">The applicable <see cref="PrintDocument" />.</param>
+		/// <param name="e">A <see cref="PrintPageEventArgs" /> instance providing
+		/// page bounds, margins, and a Graphics instance for this printed output.
+		/// </param>
+		private void Graph_PrintPage( object sender, PrintPageEventArgs e )
+		{
+			PrintDocument pd = sender as PrintDocument;
+
+			MasterPane mPane = this.MasterPane;
+			bool[] isPenSave = new bool[mPane.PaneList.Count + 1];
+			bool[] isFontSave = new bool[mPane.PaneList.Count + 1];
+			isPenSave[0] = mPane.IsPenWidthScaled;
+			isFontSave[0] = mPane.IsFontsScaled;
+			for ( int i = 0; i < mPane.PaneList.Count; i++ )
+			{
+				isPenSave[i + 1] = mPane[i].IsPenWidthScaled;
+				isFontSave[i + 1] = mPane[i].IsFontsScaled;
+				if ( _isPrintScaleAll )
+				{
+					mPane[i].IsPenWidthScaled = true;
+					mPane[i].IsFontsScaled = true;
+				}
+			}
+
+			RectangleF saveRect = mPane.Rect;
+			SizeF newSize = mPane.Rect.Size;
+			if ( _isPrintFillPage && _isPrintKeepAspectRatio )
+			{
+				float xRatio = (float)e.MarginBounds.Width / (float)newSize.Width;
+				float yRatio = (float)e.MarginBounds.Height / (float)newSize.Height;
+				float ratio = Math.Min( xRatio, yRatio );
+
+				newSize.Width *= ratio;
+				newSize.Height *= ratio;
+			}
+			else if ( _isPrintFillPage )
+				newSize = e.MarginBounds.Size;
+
+			mPane.ReSize( e.Graphics, new RectangleF( e.MarginBounds.Left,
+				e.MarginBounds.Top, newSize.Width, newSize.Height ) );
+			mPane.Draw( e.Graphics );
+
+			Graphics g = this.CreateGraphics();
+			mPane.ReSize( g, saveRect );
+			g.Dispose();
+
+			mPane.IsPenWidthScaled = isPenSave[0];
+			mPane.IsFontsScaled = isFontSave[0];
+			for ( int i = 0; i < mPane.PaneList.Count; i++ )
+			{
+				mPane[i].IsPenWidthScaled = isPenSave[i + 1];
+				mPane[i].IsFontsScaled = isFontSave[i + 1];
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="System.Drawing.Printing.PrintDocument" /> instance
+		/// that is used for all of the context menu printing functions.
+		/// </summary>
+		public PrintDocument PrintDocument
+		{
+			get
+			{
+				if ( _pdSave == null )
+					_pdSave = new PrintDocument();
+				return _pdSave;
+			}
+			set { _pdSave = value; }
+		}
+
+		/// <summary>
+		/// Display a <see cref="PageSetupDialog" /> to the user, allowing them to modify
+		/// the print settings for this <see cref="ZedGraphControl" />.
+		/// </summary>
+		public void DoPageSetup()
+		{
+			PrintDocument pd = PrintDocument;
+
+			if ( pd != null )
+			{
+				//pd.PrintPage += new PrintPageEventHandler( GraphPrintPage );
+				PageSetupDialog setupDlg = new PageSetupDialog();
+				setupDlg.Document = pd;
+				if ( setupDlg.ShowDialog() == DialogResult.OK )
+				{
+					pd.PrinterSettings = setupDlg.PrinterSettings;
+					pd.DefaultPageSettings = setupDlg.PageSettings;
+
+					// BUG in PrintDocument!!!  Converts in/mm repeatedly
+					// http://support.microsoft.com/?id=814355
+					// from http://www.vbinfozine.com/tpagesetupdialog.shtml, by Palo Mraz
+					//if ( System.Globalization.RegionInfo.CurrentRegion.IsMetric )
+					//{
+					//	setupDlg.Document.DefaultPageSettings.Margins = PrinterUnitConvert.Convert(
+					//	setupDlg.Document.DefaultPageSettings.Margins,
+					//	PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter );
+					//}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Display a <see cref="PrintDialog" /> to the user, allowing them to select a
+		/// printer and print the <see cref="MasterPane" /> contained in this
+		/// <see cref="ZedGraphControl" />.
+		/// </summary>
+		public void DoPrint()
+		{
+			PrintDocument pd = PrintDocument;
+
+			if ( pd != null )
+			{
+				pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+				PrintDialog pDlg = new PrintDialog();
+				pDlg.Document = pd;
+				if ( pDlg.ShowDialog() == DialogResult.OK )
+					pd.Print();
+			}
+		}
+
+		/// <summary>
+		/// Display a <see cref="PrintPreviewDialog" />, allowing the user to preview and
+		/// subsequently print the <see cref="MasterPane" /> contained in this
+		/// <see cref="ZedGraphControl" />.
+		/// </summary>
+		public void DoPrintPreview()
+		{
+			PrintDocument pd = PrintDocument;
+
+			if ( pd != null )
+			{
+				PrintPreviewDialog ppd = new PrintPreviewDialog();
+				pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+				ppd.Document = pd;
+				ppd.Show();
 			}
 		}
 

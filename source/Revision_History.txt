@@ -1,5 +1,46 @@
 == ZedGraph Class Library Revision History ==
 
+;31-Mar-2006 (by Champion) V5_BRANCH
+: [UPD] Major code refactoring to prepare for version 5
+: [UPD] Change all to .Net 2.0
+: [UPD] Rename All GraphItem-derived objects to GraphObj's (ArrowObj, ImageObj, etc.)
+: [NEW] Add Chart object to replace AxisRect
+: [NEW] Add MinorTic & MajorTic objects
+: [NEW] Add MinorGrid & MajorGrid objects
+: [UPD] Change MasterPane.AutoPaneLayout to SetLayout() -- re-layout done automatically at resize time
+: [NEW] Add GraphPane.BarSettings
+: [UPD] Change PaneBase.Image to PaneBase.GetImage, ScaleImage to GetImage also
+: [NEW] Add CandleStickItem and JapaneseCandleStickItem
+: [NEW] Add StockPt and StockPointList
+: [NEW] Change all collections to generics
+: [FIX] Fix owner reference for Scale and BarSettings class, ICloneable no longer supported
+: [NEW] Add MasterPane.IsCommonScaleFactor
+: [NEW] Add BarSettings.ClusterScaleWidthAuto
+: [FIX] Fix MouseEvents by hiding parent control MouseUp, MouseDown, MouseMove
+: [NEW] Change menu to contextMenuStrip
+: [NEW] Add IsAntiAlias switch to FontSpec, Symbol, and Line classes
+: [NEW] Add Label and AxisLabel classes -> GraphPane.Title, Axis.Title
+: [UPD] Update FilteredPointList to handle high-low logic
+: [NEW] Add Margin object
+: [NEW] Add ScrollFinishedEvent to ZedGraphControl
+: [NEW] Add LineObj (arrowless line segment)
+: [FIX] CloseFigure on PolyObj
+: [NEW] Add DataSourcePointList with data binding
+: [NEW] Add designer attributes for ZedGraphControl
+
+
+
+;31-Mar-2006 (by Champion)
+: Release Version 4.3.4
+
+;25-Mar-2006 (by Champion)
+: Fix Millisecond issue with DateTime
+: Check for sub-zero index on LinearAsOrdinal and DateAsOrdinal MakeLabel()
+: Add CommonScaleFactor to MasterPane
+
+;17-Mar-2006 (by Champion)
+: Release Version 4.3.3
+
 ;16-Mar-2006 (by Champion)
 : [NEW] SamplePointList and RadarPointList IPointList types
 : [UPD] Make IPointListEdit have a set method for the indexer
