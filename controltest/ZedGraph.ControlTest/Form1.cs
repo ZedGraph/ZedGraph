@@ -8,6 +8,9 @@ using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Text;
 using System.Windows.Forms;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 
 namespace ZedGraph.ControlTest
@@ -27,8 +30,8 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_CandleStick( zedGraphControl1 );
-			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
-			//CreateGraph_BasicLinear( zedGraphControl1 );
+			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			CreateGraph_BasicLinear( zedGraphControl2 );
 			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
@@ -46,7 +49,8 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_OnePoint( zedGraphControl1 );
 
 			//CreateGraph_DataSource( zedGraphControl1 );
-			CreateGraph_PolyTest( zedGraphControl1 );
+			//CreateGraph_PolyTest( zedGraphControl1 );
+			//CreateGraph_BarJunk( zedGraphControl2 );
 
 			zedGraphControl1.AxisChange();
 			SetSize();
@@ -59,9 +63,52 @@ namespace ZedGraph.ControlTest
 
 		private void SetSize()
 		{
-			Rectangle rect = this.ClientRectangle;
-			rect.Inflate( -10, -10 );
-			zedGraphControl1.Size = rect.Size;
+			Rectangle formRect = this.ClientRectangle;
+			formRect.Inflate( -10, -10 );
+			tabControl1.Size = formRect.Size;
+
+
+			Rectangle pageRect = tabControl1.SelectedTab.ClientRectangle;
+			pageRect.Inflate( -10, -10 );
+			if ( zedGraphControl1.Size != pageRect.Size )
+			{
+				zedGraphControl1.Size = pageRect.Size;
+				zedGraphControl2.Size = pageRect.Size;
+			}
+		}
+
+		private void Serialize( ZedGraphControl z1, string fileName )
+		{
+			if ( z1 != null && !String.IsNullOrEmpty( fileName ) )
+			{
+				BinaryFormatter mySerializer = new BinaryFormatter();
+				Stream myWriter = new FileStream( fileName, FileMode.Create,
+						FileAccess.Write, FileShare.None );
+
+				mySerializer.Serialize( myWriter, z1.MasterPane );
+				//MessageBox.Show( "Serialized output created" );
+				myWriter.Close();
+			}
+		}
+
+
+		private void DeSerialize( ZedGraphControl z1, string fileName )
+		{
+			if ( z1 != null && !String.IsNullOrEmpty( fileName ) )
+			{
+				BinaryFormatter mySerializer = new BinaryFormatter();
+				Stream myReader = new FileStream( fileName, FileMode.Open,
+					FileAccess.Read, FileShare.Read );
+
+				MasterPane master = (MasterPane) mySerializer.Deserialize( myReader );
+				Invalidate();
+
+				myReader.Close();
+
+				z1.MasterPane = master;
+				//trigger a resize event
+				z1.Size = z1.Size;
+			}
 		}
 
 		private void CreateGraph_NormalPane( ZedGraphControl z1 )
@@ -198,7 +245,7 @@ namespace ZedGraph.ControlTest
 			z1.MasterPane.Add( pane.Clone() as GraphPane );
 			z1.MasterPane.Add( pane.Clone() as GraphPane );
 
-			z1.MasterPane.PaneLayoutMgr.SetLayout( PaneLayout.ExplicitRow32 );
+			z1.MasterPane.SetLayout( PaneLayout.ExplicitRow32 );
 		}
 
 		// Basic curve test - Date Axis w/ Time Span
@@ -442,7 +489,7 @@ namespace ZedGraph.ControlTest
 			for ( int i = 0; i < 36; i++ )
 			{
 				double x = (double)i + 5;
-				double y = 30000.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) );
+				double y = 300.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) );
 				list.Add( x, y );
 			}
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
@@ -450,9 +497,18 @@ namespace ZedGraph.ControlTest
 			z1.IsShowHScrollBar = true;
 			z1.IsShowVScrollBar = true;
 			z1.IsAutoScrollRange = true;
+
+			z1.IsEnableVEdit = true;
+			//z1.IsEnableVEdit = false;
+
+			z1.IsEnableVZoom = false;
+			z1.GraphPane.IsBoundedRanges = false;
+
 			//z1.GraphPane.IsBoundedRanges = false;
 			//z1.ScrollMinX = 0;
 			//z1.ScrollMaxX = 100;
+
+			z1.AxisChange();
 		}
 
 		// Basic curve test with images for symbols
@@ -590,7 +646,7 @@ namespace ZedGraph.ControlTest
 
 			//master.PaneLayoutMgr.SetLayout( PaneLayout.ExplicitRow32 );
 			//master.PaneLayoutMgr.SetLayout( 2, 4 );
-			master.PaneLayoutMgr.SetLayout( false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
+			master.SetLayout( false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
 			z1.AxisChange();
 
 			g.Dispose();
@@ -668,10 +724,10 @@ namespace ZedGraph.ControlTest
 
 			Graphics g = this.CreateGraphics();
 
-			master.PaneLayoutMgr.SetLayout( PaneLayout.SingleColumn );
-			//master.PaneLayoutMgr.SetLayout( PaneLayout.ExplicitRow32 );
-			//master.PaneLayoutMgr.SetLayout( 2, 4 );
-			//master.PaneLayoutMgr.SetLayout( false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
+			master.SetLayout( PaneLayout.SingleColumn );
+			//master.SetLayout( PaneLayout.ExplicitRow32 );
+			//master.SetLayout( 2, 4 );
+			//master.SetLayout( false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
 			z1.AxisChange();
 
 			g.Dispose();
@@ -715,6 +771,9 @@ namespace ZedGraph.ControlTest
 
 		private void CreateGraph_PolyTest( ZedGraphControl z1 )
 		{
+			GraphPane junk = z1.GraphPane.Clone();
+
+
 			// Get a reference to the GraphPane instance in the ZedGraphControl
 			GraphPane myPane = z1.GraphPane;
 
@@ -747,6 +806,12 @@ namespace ZedGraph.ControlTest
 			myPane.YAxis.Scale.Max = 100;
 
 			z1.AxisChange();
+			z1.Refresh();
+
+			Serialize( z1, "junk.bin" );
+			z1.MasterPane.PaneList.Clear();
+
+			DeSerialize( z1, "junk.bin" );
 		}
 
 		private void CreateGraph_DualYDemo( ZedGraphControl z1 )
@@ -1204,9 +1269,66 @@ namespace ZedGraph.ControlTest
 
 		}
 
+		private void CreateGraph_BarJunk( ZedGraphControl z1 )
+		{
+			GraphPane grPane = z1.GraphPane;
+
+			// X axis
+			grPane.XAxis.Title.Text = "Bins";
+			grPane.XAxis.Type = AxisType.LinearAsOrdinal;
+
+			// Y axis
+			grPane.YAxis.Title.Text = "Counts";
+			grPane.YAxis.Type = AxisType.Linear;
+
+			// Graph
+			grPane.Title.Text = "Histogram";
+			grPane.Legend.IsVisible = false;
+
+			PointPairList pointPairList = new PointPairList();
+			pointPairList.Add( Convert.ToDouble( 0 ), Convert.ToDouble( 20 ) );
+			pointPairList.Add( Convert.ToDouble( 1 ), Convert.ToDouble( 75 ) );
+			pointPairList.Add( Convert.ToDouble( 2 ), Convert.ToDouble( 98 ) );
+			pointPairList.Add( Convert.ToDouble( 3 ), Convert.ToDouble( 450 ) );
+			pointPairList.Add( Convert.ToDouble( 4 ), Convert.ToDouble( 578 ) );
+			pointPairList.Add( Convert.ToDouble( 5 ), Convert.ToDouble( 64 ) );
+			pointPairList.Add( Convert.ToDouble( 6 ), Convert.ToDouble( 90 ) );
+			pointPairList.Add( Convert.ToDouble( 7 ), Convert.ToDouble( 17 ) );
+			pointPairList.Add( Convert.ToDouble( 8 ), Convert.ToDouble( 2 ) );
+			pointPairList.Add( Convert.ToDouble( 9 ), Convert.ToDouble( 1 ) );
+
+			CurveItem myCurve = grPane.AddBar( "My Curve", pointPairList, Color.Red );
+
+			grPane.Chart.Fill = new Fill( Color.White, Color.FromArgb( 255, 255, 166 ), 45.0F );
+
+			z1.AxisChange();
+		}
+
 		private void zedGraphControl1_Paint( object sender, PaintEventArgs e )
 		{
 			//e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+		}
+
+		private void tabPage1_Click( object sender, EventArgs e )
+		{
+
+		}
+
+		private void button1_Click( object sender, EventArgs e )
+		{
+			tabControl1.SelectedTab = tabPage2;
+		}
+
+		int i = 0;
+		private void zedGraphControl2_Scroll( object sender, ScrollEventArgs e )
+		{
+			i++;
+		}
+
+		int j = 0;
+		private void zedGraphControl2_ScrollEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState, ZoomState newState )
+		{
+			j++;
 		}
 	}
 }
