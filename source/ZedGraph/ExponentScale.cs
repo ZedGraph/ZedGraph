@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2005  John Champion
+//Copyright © 2005  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion with contributions by jackply </author>
-	/// <version> $Revision: 1.4.2.2 $ $Date: 2006-04-05 05:02:17 $ </version>
+	/// <version> $Revision: 1.4.2.3 $ $Date: 2006-04-07 06:14:02 $ </version>
 	[Serializable]
 	class ExponentScale : Scale, ISerializable //, ICloneable
 	{
@@ -111,14 +111,43 @@ namespace ZedGraph
 
 			if (  this._exponent > 0 )
 			{
-				this._minScale = Math.Pow( this._min, _exponent );
-				this._maxScale = Math.Pow( this._max, _exponent );
+				this._minLinTemp = Linearize( this._min );
+				this._maxLinTemp = Linearize( this._max );
 			}
 			else if ( this._exponent < 0 )
 			{
-				this._minScale = Math.Pow( this._max, _exponent );
-				this._maxScale = Math.Pow( this._min, _exponent );
+				this._minLinTemp = Linearize( this._max );
+				this._maxLinTemp = Linearize( this._min );
 			}
+		}
+
+		/// <summary>
+		/// Convert a value to its linear equivalent for this type of scale.
+		/// </summary>
+		/// <remarks>
+		/// The default behavior is to just return the value unchanged.  However,
+		/// for <see cref="AxisType.Log" /> and <see cref="AxisType.Exponent" />,
+		/// it returns the log or power equivalent.
+		/// </remarks>
+		/// <param name="val">The value to be converted</param>
+		override public double Linearize( double val )
+		{
+			return SafeExp( val, _exponent );
+		}
+
+		/// <summary>
+		/// Convert a value from its linear equivalent to its actual scale value
+		/// for this type of scale.
+		/// </summary>
+		/// <remarks>
+		/// The default behavior is to just return the value unchanged.  However,
+		/// for <see cref="AxisType.Log" /> and <see cref="AxisType.Exponent" />,
+		/// it returns the anti-log or inverse-power equivalent.
+		/// </remarks>
+		/// <param name="val">The value to be converted</param>
+		override public double DeLinearize( double val )
+		{
+			return Math.Pow( val, 1 / _exponent );
 		}
 
 		/// <summary>

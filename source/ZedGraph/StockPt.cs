@@ -1,6 +1,6 @@
 //============================================================================
 //PointPair4 Class
-//Copyright (C) 2006  Jerry Vos & John Champion
+//Copyright © 2006  Jerry Vos & John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-04-05 05:02:18 $ </version>
+	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:06 $ </version>
 	[Serializable]
 	public class StockPt : PointPair, ISerializable
 	{

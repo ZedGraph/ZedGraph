@@ -1,6 +1,6 @@
 //============================================================================
 //PointPairList Class
-//Copyright (C) 2006  John Champion
+//Copyright © 2006  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion based on code by Jerry Vos</author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-05 05:02:18 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-07 06:14:06 $ </version>
 	[Serializable]
 	public class StockPointList : List<StockPt>, IPointList, IPointListEdit
 	{

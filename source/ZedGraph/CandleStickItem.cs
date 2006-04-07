@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2006  John Champion
+//Copyright © 2006  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -51,7 +51,7 @@ namespace ZedGraph
 	/// value of <see cref="BarSettings.Base"/>, which is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-05 05:06:49 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-07 06:14:02 $ </version>
 	[Serializable]
 	public class CandleStickItem : CurveItem, ICloneable, ISerializable
 	{

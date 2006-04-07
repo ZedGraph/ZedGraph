@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// eachother.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.18.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.18.2.2 $ $Date: 2006-04-07 06:14:09 $ </version>
 	public struct XDate //: ICloneable
 	{
 	#region Fields & Constants

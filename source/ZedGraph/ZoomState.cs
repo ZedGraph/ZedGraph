@@ -1,6 +1,6 @@
 ﻿//============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// <see cref="Scale.MaxAuto"/>, <see cref="Scale.MinorStepAuto"/>,
 	/// and <see cref="Scale.MajorStepAuto"/>.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.10.2.2 $ $Date: 2006-04-07 06:14:10 $ </version>
 	public class ScaleState : ICloneable
 	{
 		/// <summary>
@@ -345,7 +345,7 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.10.2.2 $ $Date: 2006-04-07 06:14:10 $ </version>
 	public class ZoomState : ICloneable
 	{
 		/// <summary>
@@ -498,7 +498,7 @@ namespace ZedGraph
 	/// states (of scale range settings).
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.10.2.2 $ $Date: 2006-04-07 06:14:10 $ </version>
 	public class ZoomStateStack : List<ZoomState>, ICloneable
 	{
 		/// <summary>

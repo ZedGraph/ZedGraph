@@ -1,6 +1,6 @@
 //============================================================================
 //IPointList interface
-//Copyright (C) 2005  John Champion
+//Copyright © 2005  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="BasicArrayPointList" />
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 1.3 $ $Date: 2005-08-22 03:08:51 $ </version>
+	/// <version> $Revision: 1.3.2.1 $ $Date: 2006-04-07 06:14:02 $ </version>
 	public interface IPointList : ICloneable
 	{
 		/// <summary>

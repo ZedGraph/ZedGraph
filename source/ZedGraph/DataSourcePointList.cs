@@ -1,6 +1,6 @@
 //============================================================================
 //DataSourcePointList Class
-//Copyright (C) 2006  John Champion, Jerry Vos
+//Copyright © 2006  John Champion, Jerry Vos
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:02 $ </version>
 	[Serializable]
 	public class DataSourcePointList : IPointList
 	{

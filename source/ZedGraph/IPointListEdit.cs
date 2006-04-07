@@ -1,6 +1,6 @@
 //============================================================================
 //IPointListEdit interface
-//Copyright (C) 2006  John Champion
+//Copyright © 2006  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// <seealso cref="FilteredPointList" />
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.4.2.1 $ $Date: 2006-03-28 06:13:35 $ </version>
+	/// <version> $Revision: 3.4.2.2 $ $Date: 2006-04-07 06:14:02 $ </version>
 	public interface IPointListEdit : IPointList
 	{
 		/// <summary>

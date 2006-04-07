@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.4 $ $Date: 2006-04-05 05:02:18 $ </version>
+	/// <version> $Revision: 3.59.2.5 $ $Date: 2006-04-07 06:14:10 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -800,6 +800,8 @@ namespace ZedGraph
 			base.MouseDown += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseDown );
 			base.MouseUp += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseUp );
 			base.MouseMove += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseMove );
+
+			//this.MouseWheel += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseWheel );
 
 			// Use double-buffering for flicker-free updating:
 			SetStyle( ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint
@@ -2057,8 +2059,8 @@ namespace ZedGraph
 		/// <see paramref="centerPt" />, false to center on the <see cref="Chart.Rect" />.
 		/// </param>
 		/// <param name="isRefresh">true to force a refresh of the control, false to leave it unrefreshed</param>
-		protected void ZoomPane( GraphPane pane, double zoomFraction, PointF centerPt, bool isZoomOnCenter,
-			bool isRefresh )
+		protected void ZoomPane( GraphPane pane, double zoomFraction, PointF centerPt,
+					bool isZoomOnCenter, bool isRefresh )
 		{
 			double x;
 			double[] y;
@@ -2134,6 +2136,8 @@ namespace ZedGraph
 		{
 			if ( axis != null && zoomFraction > 0.0001 && zoomFraction < 1000.0 )
 			{
+				Scale scale = axis._scale;
+/*
 				if ( axis.Scale.IsLog )
 				{
 					double ratio = Math.Sqrt( axis._scale._max / axis._scale._min * zoomFraction );
@@ -2146,14 +2150,17 @@ namespace ZedGraph
 				}
 				else
 				{
-					double range = ( axis._scale._max - axis._scale._min ) * zoomFraction / 2.0;
+*/
+					double minLin = axis._scale._minLinearized;
+					double maxLin = axis._scale._maxLinearized;
+					double range = ( maxLin - minLin ) * zoomFraction / 2.0;
 
 					if ( !isZoomOnCenter )
-						centerVal = ( axis._scale._max + axis._scale._min ) / 2.0;
+						centerVal = ( maxLin + minLin ) / 2.0;
 
-					axis._scale._min = centerVal - range;
-					axis._scale._max = centerVal + range;
-				}
+					axis._scale._minLinearized = centerVal - range;
+					axis._scale._maxLinearized = centerVal + range;
+//				}
 
 				axis._scale._minAuto = false;
 				axis._scale._maxAuto = false;
@@ -2243,6 +2250,16 @@ namespace ZedGraph
 		{
 			if ( axis != null )
 			{
+				Scale scale = axis._scale;
+				double delta = scale.Linearize( startVal ) - scale.Linearize( endVal );
+
+				scale._minLinearized += delta;
+				scale._maxLinearized += delta;
+
+				scale._minAuto = false;
+				scale._maxAuto = false;
+
+/*
 				if ( axis.Type == AxisType.Log )
 				{
 					axis._scale._min *= startVal / endVal;
@@ -2253,6 +2270,7 @@ namespace ZedGraph
 					axis._scale._min += startVal - endVal;
 					axis._scale._max += startVal - endVal;
 				}
+*/
 			}
 		}
 
@@ -2272,10 +2290,16 @@ namespace ZedGraph
 
 			// calculate the new scale values for the point
 			PointPair newPt = new PointPair( _dragStartPair );
+
+			Scale xScale = _dragPane.XAxis._scale;
 			if ( _isEnableHEdit )
-				newPt.X += curX - startX;
+				newPt.X = xScale.DeLinearize( xScale.Linearize( newPt.X ) +
+							xScale.Linearize( curX )- xScale.Linearize( startX ) );
+
+			Scale yScale = _dragCurve.GetYAxis( _dragPane )._scale;
 			if ( _isEnableVEdit )
-				newPt.Y += curY - startY;
+				newPt.Y = yScale.DeLinearize( yScale.Linearize( newPt.Y ) +
+							yScale.Linearize( curY ) - yScale.Linearize( startY ) );
 
 			// save the data back to the point list
 			IPointListEdit list = _dragCurve.Points as IPointListEdit;
@@ -2539,6 +2563,17 @@ namespace ZedGraph
 				if ( reverse )
 					newValue = span - newValue;
 
+				Scale scale = axis._scale;
+
+				double delta = scale._maxLinearized - scale._minLinearized;
+				double scrollMin2 = scale.Linearize( scrollMax ) - delta;
+				scrollMin = scale.Linearize( scrollMin );
+				//scrollMax = scale.Linearize( scrollMax );
+				double val = scrollMin + (double)newValue / (double)span *
+						( scrollMin2 - scrollMin );
+				scale._minLinearized = val;
+				scale._maxLinearized = val + delta;
+/*
 				if ( axis.Scale.IsLog )
 				{
 					double ratio = axis._scale._max / axis._scale._min;
@@ -2559,7 +2594,7 @@ namespace ZedGraph
 					axis._scale._min = val;
 					axis._scale._max = val + delta;
 				}
-
+*/
 				this.Invalidate();
 			}
 		}
@@ -2624,13 +2659,20 @@ namespace ZedGraph
 					scrollMax = axis._scale._max;
 
 				int val = 0;
-				double scrollMin2;
 
+				Scale scale = axis._scale;
+				double minLinearized = scale._minLinearized;
+				double maxLinearized = scale._maxLinearized;
+				scrollMin = scale.Linearize( scrollMin );
+				scrollMax = scale.Linearize( scrollMax );
+
+				double scrollMin2 = scrollMax - ( maxLinearized - minLinearized );
+				/*
 				if ( axis.Scale.IsLog )
 					scrollMin2 = scrollMax / ( axis._scale._max / axis._scale._min );
 				else
 					scrollMin2 = scrollMax - ( axis._scale._max - axis._scale._min );
-
+				*/
 				if ( scrollMin >= scrollMin2 )
 				{
 					//scrollBar.Visible = false;
@@ -2639,12 +2681,15 @@ namespace ZedGraph
 				}
 				else
 				{
-					double ratio;
+					double ratio = ( maxLinearized - minLinearized ) / ( scrollMax - scrollMin );
+
+					/*
 					if ( axis.Scale.IsLog )
 						ratio = ( Math.Log( axis._scale._max ) - Math.Log( axis._scale._min ) ) /
 									( Math.Log( scrollMax ) - Math.Log( scrollMin ) );
 					else
 						ratio = ( axis._scale._max - axis._scale._min ) / ( scrollMax - scrollMin );
+					*/
 
 					int largeChange = (int)( ratio * _ScrollControlSpan + 0.5 );
 					if ( largeChange < 1 )
@@ -2658,13 +2703,16 @@ namespace ZedGraph
 
 					int span = _ScrollControlSpan - largeChange;
 
+					val = (int)( ( minLinearized - scrollMin ) / ( scrollMin2 - scrollMin ) *
+									span + 0.5 );
+					/*
 					if ( axis.Scale.IsLog )
 						val = (int)( ( Math.Log( axis._scale._min ) - Math.Log( scrollMin ) ) /
 								( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) * span + 0.5 );
 					else
 						val = (int)( ( axis._scale._min - scrollMin ) / ( scrollMin2 - scrollMin ) *
 								span + 0.5 );
-
+					*/
 					if ( val < 0 )
 						val = 0;
 					else if ( val > span )

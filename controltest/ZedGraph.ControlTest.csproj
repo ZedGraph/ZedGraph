@@ -54,15 +54,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="ZedGraph.ControlTest\NorthwindDataSet.xsc">
-      <DependentUpon>NorthwindDataSet.xsd</DependentUpon>
-    </None>
-    <None Include="ZedGraph.ControlTest\NorthwindDataSet.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="ZedGraph.ControlTest\NorthwindDataSet.xss">
-      <DependentUpon>NorthwindDataSet.xsd</DependentUpon>
-    </None>
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
@@ -74,7 +65,6 @@
     <Compile Include="ZedGraph.ControlTest\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="ZedGraph.ControlTest\NorthwindDataSet.Designer.cs" />
     <Compile Include="ZedGraph.ControlTest\Program.cs" />
   </ItemGroup>
   <ItemGroup>

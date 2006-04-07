@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
+	/// <version> $Revision: 3.59.2.4 $ $Date: 2006-04-07 06:14:02 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -608,7 +608,7 @@ namespace ZedGraph
 			// version still look like a graph before it is fully set up
 			bool showGraf = AxisRangesValid();
 
-			// Setup the axes from graphing - This setup must be done before
+			// Setup the axes for graphing - This setup must be done before
 			// the GraphObj's are drawn so that the Transform functions are
 			// ready.  Also, this should be done before CalcChartRect so that the
 			// Axis.Cross - shift parameter can be calculated.
@@ -675,6 +675,15 @@ namespace ZedGraph
 
 			// Reset the clipping
 			g.ResetClip();
+
+			// Reset scale data
+			// this sets the temp values to NaN to cause an exception if these values are
+			// being used improperly
+			this._xAxis.Scale.ResetScaleData();
+			foreach ( Axis axis in _yAxisList )
+				axis.Scale.ResetScaleData();
+			foreach ( Axis axis in _y2AxisList )
+				axis.Scale.ResetScaleData();
 		}
 
 		private bool AxisRangesValid()

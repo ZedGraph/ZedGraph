@@ -1,6 +1,6 @@
 //============================================================================
 //PieItem Class
-//Copyright (C) 2005  Bob Kaye
+//Copyright © 2005  Bob Kaye
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.21.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
+	/// <version> $Revision: 1.21.2.4 $ $Date: 2006-04-07 06:14:03 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem , ICloneable, ISerializable
 	{

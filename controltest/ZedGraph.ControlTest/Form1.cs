@@ -12,7 +12,6 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-
 namespace ZedGraph.ControlTest
 {
 	public partial class Form1 : Form
@@ -31,7 +30,8 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_CandleStick( zedGraphControl1 );
 			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
-			CreateGraph_BasicLinear( zedGraphControl2 );
+			//CreateGraph_BasicLinear( zedGraphControl2 );
+			CreateGraph_BasicLog( zedGraphControl2 );
 			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
@@ -44,7 +44,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_TwoTextAxes( zedGraphControl1 );
 			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
-			//CreateGraph_32kPoints( zedGraphControl1 );
+			//CreateGraph_32kPoints( zedGraphControl2 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
 
@@ -455,7 +455,7 @@ namespace ZedGraph.ControlTest
 
 			//CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Black );
 			JapaneseCandleStickItem myCurve = myPane.AddJapaneseCandleStick( "trades", spl );
-			myCurve.Stick.Size = 5;
+			//myCurve.Stick.Size = 5;
 			//myCurve.CandleStick.PenWidth = 2;
 			myCurve.Stick.Color = Color.Blue;
 			//myCurve.CandleStick.IsOpenCloseVisible = false;
@@ -473,17 +473,29 @@ namespace ZedGraph.ControlTest
 			z1.Invalidate();
 		}
 
+		Timer myTimer;
+
+		private void MyTimer_Tick( object sender, EventArgs e )
+		{
+			// Get the first CurveItem in the graph
+			LineItem curve = zedGraphControl2.GraphPane.CurveList[0] as LineItem;
+			// Get the PointPairList
+			PointPairList list = curve.Points as PointPairList;
+			//list.Add( xvalue, (double)cpuUsagePerformanceCounter.NextValue() );
+			list.Add( 1, 1 );
+		}
+
 		// Basic curve test - Linear Axis
 		private void CreateGraph_BasicLinear( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.GraphPane;
-			/*
+
 			myTimer = new Timer();
 			myTimer.Enabled = true;
-			myTimer.Tick += new EventHandler( myTimer_Tick );
-			myTimer.Interval = 100;
+			myTimer.Tick += new EventHandler( MyTimer_Tick );
+			myTimer.Interval = 500;
 			myTimer.Start();
-			*/
+
 
 			PointPairList list = new PointPairList();
 			for ( int i = 0; i < 36; i++ )
@@ -507,6 +519,36 @@ namespace ZedGraph.ControlTest
 			//z1.GraphPane.IsBoundedRanges = false;
 			//z1.ScrollMinX = 0;
 			//z1.ScrollMaxX = 100;
+
+			myPane.XAxis.Title.FontSpec.Family = "Tahoma";
+
+			z1.AxisChange();
+		}
+
+		// Basic curve test - Log Axis
+		private void CreateGraph_BasicLog( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+			for ( int i = 0; i < 36; i++ )
+			{
+				double x = (double)i + 5;
+				double y = 3000.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) ) + 1.0;
+				list.Add( x, y );
+			}
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			myPane.YAxis.Type = AxisType.Log;
+			z1.IsShowHScrollBar = true;
+			z1.IsShowVScrollBar = true;
+			z1.IsAutoScrollRange = true;
+
+			z1.IsEnableVEdit = true;
+			z1.IsEnableHEdit = true;
+
+			//z1.IsEnableZoom = true;
+			myPane.IsBoundedRanges = false;
 
 			z1.AxisChange();
 		}
@@ -1196,23 +1238,17 @@ namespace ZedGraph.ControlTest
 
 			PointPairList list = new PointPairList();
 			Random rand = new Random();
-			string[] labels = new string[271];
 
-			for ( int i = 0; i < 271; i++ )
+			for ( int i = 0; i < 70000; i++ )
 			{
 				double val = rand.NextDouble();
 				double x = (double)i;
 				double y = x + val * val * val * 10;
 
 				list.Add( x, y );
-
-				labels[i] = "Data Item " + i.ToString();
 			}
 
-			myPane.XAxis.Type = AxisType.Text;
-			myPane.XAxis.Scale.TextLabels = labels;
-
-			LineItem myCurve = z1.GraphPane.AddCurve( "curve", list, Color.Blue, SymbolType.HDash );
+			LineItem myCurve = z1.GraphPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 			myCurve.Line.IsVisible = false;
 			z1.IsShowCopyMessage = false;
 
@@ -1225,15 +1261,15 @@ namespace ZedGraph.ControlTest
 		{
 
 			DataSourcePointList dspl = new DataSourcePointList();
-			ZedGraph.ControlTest.NorthwindDataSetTableAdapters.OrdersTableAdapter adapter =
-						new ZedGraph.ControlTest.NorthwindDataSetTableAdapters.OrdersTableAdapter();
-			ZedGraph.ControlTest.NorthwindDataSet.OrdersDataTable table = adapter.MyQuery();
+			//ZedGraph.ControlTest.NorthwindDataSetTableAdapters.OrdersTableAdapter adapter =
+			//			new ZedGraph.ControlTest.NorthwindDataSetTableAdapters.OrdersTableAdapter();
+			//ZedGraph.ControlTest.NorthwindDataSet.OrdersDataTable table = adapter.MyQuery();
 
-			dspl.DataSource = table;
-			dspl.XDataMember = "OrderDate";
-			dspl.YDataMember = "Freight";
-			dspl.ZDataMember = null;
-			dspl.TagDataMember = "ShipName";
+			//dspl.DataSource = table;
+			//dspl.XDataMember = "OrderDate";
+			//dspl.YDataMember = "Freight";
+			//dspl.ZDataMember = null;
+			//dspl.TagDataMember = "ShipName";
 			
 			List<Sample> sampleList = new List<Sample>(); 
 			
@@ -1251,13 +1287,13 @@ namespace ZedGraph.ControlTest
 				sampleList.Add( sample );
 			}
 
-			//dspl.DataSource = sampleList;
-			//dspl.XDataMember = "Time";
-			//dspl.YDataMember = "Position";
-			//dspl.ZDataMember = "Velocity";
-			//dspl.TagDataMember = null;
+			dspl.DataSource = sampleList;
+			dspl.XDataMember = "Time";
+			dspl.YDataMember = "Position";
+			dspl.ZDataMember = "Velocity";
+			dspl.TagDataMember = null;
 			
-
+			
 
 			//int count = table.Count;
 

@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
+	/// <version> $Revision: 1.9.2.4 $ $Date: 2006-04-07 06:14:03 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -140,15 +140,15 @@ namespace ZedGraph
 								_uBound;
 
 		/// <summary>
-		/// Scale values for calculating transforms.  These are temporary values
-		/// used only during the Draw process.
+		/// Pixel positions at the minimum and maximum value for this scale.
+		/// These are temporary values used/valid only during the Draw process.
 		/// </summary>
-		protected float	_minPix,
-								_maxPix;
+		internal float	_minPix,
+							_maxPix;
 	
 		/// <summary>
 		/// Scale values for calculating transforms.  These are temporary values
-		/// used only during the Draw process.
+		/// used ONLY during the Draw process.
 		/// </summary>
 		/// <remarks>
 		/// These values are just <see cref="Scale.Min" /> and <see cref="Scale.Max" />
@@ -158,8 +158,34 @@ namespace ZedGraph
 		/// it is the <see cref="Math.Exp(double)" />
 		/// of the value.
 		/// </remarks>
-		internal double	_minScale,
-								_maxScale;
+		internal double	_minLinTemp,
+								_maxLinTemp;
+
+		/// <summary>
+		/// Gets or sets the linearized version of the <see cref="Min" /> scale range.
+		/// </summary>
+		/// <remarks>
+		/// This value is valid at any time, whereas <see cref="_minLinTemp" /> is an optimization
+		/// pre-set that is only valid during draw operations.
+		/// </remarks>
+		internal double _minLinearized
+		{
+			get { return Linearize( _min ); }
+			set { _min = DeLinearize( value ); }
+		}
+
+		/// <summary>
+		/// Gets or sets the linearized version of the <see cref="Max" /> scale range.
+		/// </summary>
+		/// <remarks>
+		/// This value is valid at any time, whereas <see cref="_maxLinTemp" /> is an optimization
+		/// pre-set that is only valid during draw operations.
+		/// </remarks>
+		internal double _maxLinearized
+		{
+			get { return Linearize( _max ); }
+			set { _max = DeLinearize( value ); }
+		}
 
 		/// <summary>
 		/// private field that stores the owner Axis that contains this Scale instance.
@@ -908,7 +934,7 @@ namespace ZedGraph
 							type == AxisType.DateAsOrdinal;
 			}
 		}
-
+/*
 		/// <summary>
 		/// The pixel position at the minimum value for this axis.  This read-only
 		/// value is used/valid only during the Draw process.
@@ -925,7 +951,7 @@ namespace ZedGraph
 		{
 			get { return _maxPix; }
 		}
-
+*/
 		/// <summary>
 		/// Gets or sets the minimum scale value for this <see cref="Scale" />.
 		/// </summary>
@@ -1531,9 +1557,46 @@ namespace ZedGraph
 				this._maxPix = pane.Chart._rect.Bottom;
 			}
 
-			this._minScale = this._min;
-			this._maxScale = this._max;
+			this._minLinTemp = Linearize( this._min );
+			this._maxLinTemp = Linearize( this._max );
 
+		}
+
+		internal void ResetScaleData()
+		{
+			_minPix = float.NaN;
+			_maxPix = float.NaN;
+			_minLinTemp = double.NaN;
+			_maxLinTemp = double.NaN;
+		}
+
+		/// <summary>
+		/// Convert a value to its linear equivalent for this type of scale.
+		/// </summary>
+		/// <remarks>
+		/// The default behavior is to just return the value unchanged.  However,
+		/// for <see cref="AxisType.Log" /> and <see cref="AxisType.Exponent" />,
+		/// it returns the log or power equivalent.
+		/// </remarks>
+		/// <param name="val">The value to be converted</param>
+		virtual public double Linearize( double val )
+		{
+			return val;
+		}
+
+		/// <summary>
+		/// Convert a value from its linear equivalent to its actual scale value
+		/// for this type of scale.
+		/// </summary>
+		/// <remarks>
+		/// The default behavior is to just return the value unchanged.  However,
+		/// for <see cref="AxisType.Log" /> and <see cref="AxisType.Exponent" />,
+		/// it returns the anti-log or inverse-power equivalent.
+		/// </remarks>
+		/// <param name="val">The value to be converted</param>
+		virtual public double DeLinearize( double val )
+		{
+			return val;
 		}
 
 		/// <summary>
@@ -1790,9 +1853,9 @@ namespace ZedGraph
 			float maxSpace = maxLabelSize.Height;
 
 			float edgeTolerance = Default.EdgeTolerance * scaleFactor;
-			double rangeTol = ( _maxScale - _minScale ) * 0.001;
+			double rangeTol = ( _maxLinTemp - _minLinTemp ) * 0.001;
 
-			int firstTic = (int)( ( _minScale - baseVal ) / _majorStep + 0.99 );
+			int firstTic = (int)( ( _minLinTemp - baseVal ) / _majorStep + 0.99 );
 			if ( firstTic < 0 )
 				firstTic = 0;
 
@@ -1805,10 +1868,10 @@ namespace ZedGraph
 				dVal = CalcMajorTicValue( baseVal, i );
 
 				// If we're before the start of the scale, just go to the next tic
-				if ( dVal < _minScale )
+				if ( dVal < _minLinTemp )
 					continue;
 				// if we've already past the end of the scale, then we're done
-				if ( dVal > _maxScale + rangeTol )
+				if ( dVal > _maxLinTemp + rangeTol )
 					break;
 
 				// convert the value to a pixel position
@@ -1823,7 +1886,7 @@ namespace ZedGraph
 					if ( i == 0 )
 					{
 						dVal2 = CalcMajorTicValue( baseVal, -0.5 );
-						if ( dVal2 >= _minScale )
+						if ( dVal2 >= _minLinTemp )
 						{
 							pixVal2 = LocalTransform( dVal2 );
 							tic.Draw( g, pane, ticPen, pixVal2, topPix, shift, scaledTic );
@@ -1833,7 +1896,7 @@ namespace ZedGraph
 					}
 
 					dVal2 = CalcMajorTicValue( baseVal, (double)i + 0.5 );
-					if ( dVal2 > _maxScale )
+					if ( dVal2 > _maxLinTemp )
 						break;
 					pixVal2 = LocalTransform( dVal2 );
 				}
@@ -1854,7 +1917,7 @@ namespace ZedGraph
 											pixVal < edgeTolerance ) ||
 									( ( ( _isSkipLastLabel && isMaxValueAtMaxPix ) ||
 										( _isSkipFirstLabel && !isMaxValueAtMaxPix ) ) &&
-											pixVal > MaxPix - MinPix - edgeTolerance );
+											pixVal > _maxPix - _minPix - edgeTolerance );
 
 				bool isSkipCross = _isSkipCrossLabel && !_ownerAxis._crossAuto &&
 								Math.Abs( _ownerAxis._cross - dVal ) < rangeTol * 10.0;
@@ -2419,22 +2482,13 @@ namespace ZedGraph
 		public float Transform( double x )
 		{
 			// Must take into account Log, and Reverse Axes
-			double ratio;
-			if ( this.IsLog )
-				ratio = ( SafeLog( x ) - this._minScale ) / ( this._maxScale - this._minScale );
-			else if ( this.IsExponent )
-				ratio = ( SafeExp( x, this._exponent ) - this._minScale ) / ( this._maxScale - this._minScale );
-			else
-				ratio = ( x - this._minScale ) / ( this._maxScale - this._minScale );
+			double ratio = ( Linearize( x ) - this._minLinTemp ) /
+							( this._maxLinTemp - this._minLinTemp );
 
-			if ( this._isReverse && ( _ownerAxis is XAxis ) )
+			if ( _isReverse == _ownerAxis is XAxis )
 				return (float) ( this._maxPix - ( this._maxPix - this._minPix ) * ratio );
-			else if ( _ownerAxis is XAxis )
-				return (float) ( this._minPix + ( this._maxPix - this._minPix ) * ratio );
-			else if ( this._isReverse )
-				return (float) ( this._minPix + ( this._maxPix - this._minPix ) * ratio );
 			else
-				return (float) ( this._maxPix - ( this._maxPix - this._minPix ) * ratio );
+				return (float) ( this._minPix + ( this._maxPix - this._minPix ) * ratio );
 		}
 
 		/// <summary>
@@ -2495,18 +2549,13 @@ namespace ZedGraph
 			if ( ( this._isReverse ) == ( _ownerAxis is XAxis ) )
 				val = (double) ( pixVal - this._maxPix )
 						/ (double) ( this._minPix - this._maxPix )
-						* ( this._maxScale - this._minScale ) + this._minScale;
+						* ( this._maxLinTemp - this._minLinTemp ) + this._minLinTemp;
 			else
 				val = (double) ( pixVal - this._minPix )
 						/ (double) ( this._maxPix - this._minPix )
-						* ( this._maxScale - this._minScale ) + this._minScale;
+						* ( this._maxLinTemp - this._minLinTemp ) + this._minLinTemp;
 
-			if ( this.IsLog )
-				val = Math.Pow( 10.0, val );
-			else if ( this.IsExponent )
-				val = Math.Pow( val, 1.0 / _exponent );
-
-			return val;
+			return DeLinearize( val );
 		}
 
 
@@ -2527,7 +2576,7 @@ namespace ZedGraph
 		/// <see cref="SetupScaleData"/> must be called for the
 		/// current configuration before using this method.
 		/// </remarks>
-		/// <param name="x">The coordinate value, in user scale units, to
+		/// <param name="x">The coordinate value, in linearized user scale units, to
 		/// be transformed</param>
 		/// <returns>the coordinate value transformed to screen coordinates
 		/// for use in calling the <see cref="Draw"/> method</returns>
@@ -2539,10 +2588,10 @@ namespace ZedGraph
 
 			// Coordinate values for log scales are already in exponent form, so no need
 			// to take the log here
-			ratio = ( x - this._minScale ) / ( this._maxScale - this._minScale );
+			ratio = ( x - this._minLinTemp ) /
+						( this._maxLinTemp - this._minLinTemp );
 
-			if ( ( this._isReverse && !( _ownerAxis is YAxis ) ) ||
-				( !this._isReverse && ( _ownerAxis is YAxis ) ) )
+			if ( _isReverse != ( _ownerAxis is YAxis ) )
 				rv = (float) ( ( this._maxPix - this._minPix ) * ( 1.0F - ratio ) );
 			else
 				rv = (float) ( ( this._maxPix - this._minPix ) * ratio );

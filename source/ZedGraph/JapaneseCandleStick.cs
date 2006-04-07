@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2006  John Champion
+//Copyright © 2006  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
+	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:03 $ </version>
 	[Serializable]
 	public class JapaneseCandleStick : CandleStick, ICloneable, ISerializable
 	{
@@ -294,7 +294,7 @@ namespace ZedGraph
 								float pixOpen, float pixClose,
 								float scaleFactor, Pen pen, Fill fill, Border border, PointPair pt )
 		{
-			float halfSize = this._size * scaleFactor;
+			float halfSize = this._size * scaleFactor / 2.0f;
 
 			if ( pixBase != PointPair.Missing && Math.Abs( pixLow ) < 1000000 &&
 						Math.Abs( pixHigh ) < 1000000)

@@ -1,6 +1,6 @@
 //============================================================================
 //RadarPointList Class
-//Copyright (C) 2006  John Champion, Jerry Vos
+//Copyright © 2006  John Champion, Jerry Vos
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	/// 
 	/// <author>Jerry Vos and John Champion</author>
-	/// <version> $Revision: 3.2.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 3.2.2.3 $ $Date: 2006-04-07 06:14:03 $ </version>
 	[Serializable]
 	public class RadarPointList : List<PointPair>, IPointList, IPointListEdit
 	{

@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2005  John Champion
+//Copyright © 2005  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.4.2.2 $ $Date: 2006-04-05 05:02:17 $ </version>
+	/// <version> $Revision: 1.4.2.3 $ $Date: 2006-04-07 06:14:03 $ </version>
 	[Serializable]
 	class OrdinalScale : Scale, ISerializable //, ICloneable
 	{

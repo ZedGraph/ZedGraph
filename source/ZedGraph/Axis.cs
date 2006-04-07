@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.60.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
+	/// <version> $Revision: 3.60.2.4 $ $Date: 2006-04-07 06:14:01 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -802,7 +802,7 @@ namespace ZedGraph
 		//abstract internal float CalcCrossFraction( GraphPane pane );
 
 		/// <summary>
-		/// Returns the actual cross position for this axis, reflecting the settings of
+		/// Returns the linearized actual cross position for this axis, reflecting the settings of
 		/// <see cref="Cross" />, <see cref="CrossAuto" />, and <see cref="ZedGraph.Scale.IsReverse" />.
 		/// </summary>
 		/// <remarks>
@@ -812,8 +812,8 @@ namespace ZedGraph
 		internal double EffectiveCrossValue( GraphPane pane )
 		{
 			Axis crossAxis = GetCrossAxis( pane );
-			double min = crossAxis._scale._min;
-			double max = crossAxis._scale._max;
+			double min = crossAxis._scale._minLinTemp;
+			double max = crossAxis._scale._maxLinTemp;
 
 			if ( _crossAuto )
 			{
@@ -827,7 +827,7 @@ namespace ZedGraph
 			else if ( _cross > max )
 				return max;
 			else
-				return _cross;
+				return _scale.Linearize( _cross );
 		}
 
 		/// <summary>
@@ -880,11 +880,9 @@ namespace ZedGraph
 
 			double effCross = EffectiveCrossValue( pane );
 			Axis crossAxis = GetCrossAxis( pane );
-			if ( crossAxis._scale.IsLog )
-				effCross = Scale.SafeLog( effCross );
 
-			double max = crossAxis._scale._maxScale;
-			double min = crossAxis._scale._minScale;
+			double max = crossAxis._scale._maxLinTemp;
+			double min = crossAxis._scale._minLinTemp;
 			float frac;
 
 			if ( ( ( this is XAxis || this is YAxis ) && _scale._isLabelsInside == crossAxis._scale.IsReverse ) ||
@@ -1143,8 +1141,8 @@ namespace ZedGraph
 					this.MinorTic._isCrossOutside || this.MinorTic._isCrossInside || this._minorGrid._isVisible )
 					&& this._isVisible )
 			{
-				double tMajor = this._scale._majorStep * _scale.MajorUnitMultiplier,
-					tMinor = this._scale._minorStep * _scale.MinorUnitMultiplier;
+				double	tMajor = this._scale._majorStep * _scale.MajorUnitMultiplier,
+							tMinor = this._scale._minorStep * _scale.MinorUnitMultiplier;
 
 				if ( this._scale.IsLog || tMinor < tMajor )
 				{
@@ -1154,14 +1152,8 @@ namespace ZedGraph
 					// the full scale.  This means that if the minor step size is not
 					// an even division of the major step size, the minor tics won't
 					// line up with all of the scale labels and major tics.
-					double first = this._scale.Min,
-							last = this._scale.Max;
-
-					if ( this._scale.IsLog )
-					{
-						first = Scale.SafeLog( this._scale.Min );
-						last = Scale.SafeLog( this._scale.Max );
-					}
+					double	first = this._scale._minLinTemp,
+								last = this._scale._maxLinTemp;
 
 					double dVal = first;
 					float pixVal;
@@ -1237,7 +1229,7 @@ namespace ZedGraph
 						( this.MajorTic.IsOutside || this.MajorTic._isCrossOutside || this.MinorTic.IsOutside || this.MinorTic._isCrossOutside ) );
 
 				// Calculate the title position in screen coordinates
-				float x = ( this._scale.MaxPix - this._scale.MinPix ) / 2;
+				float x = ( this._scale._maxPix - this._scale._minPix ) / 2;
 
 				float scaledTic = MajorTic.ScaledTic( scaleFactor );
 

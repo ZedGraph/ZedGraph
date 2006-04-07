@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.8.2.2 $ $Date: 2006-04-05 05:02:18 $ </version>
+	/// <version> $Revision: 3.8.2.3 $ $Date: 2006-04-07 06:14:09 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane _pane;

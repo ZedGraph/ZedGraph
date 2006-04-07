@@ -1,6 +1,6 @@
 //============================================================================
 //BasicArrayPointList Class
-//Copyright (C) 2005  John Champion
+//Copyright © 2005  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointList" />
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.2.2.1 $ $Date: 2006-04-07 06:14:01 $ </version>
 	[Serializable]
 	public class BasicArrayPointList : IPointList
 	{

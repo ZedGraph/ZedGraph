@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.25.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 3.25.2.3 $ $Date: 2006-04-07 06:14:06 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -533,6 +533,9 @@ namespace ZedGraph
 				Scale xScale = pane.XAxis.Scale;
 				Scale yScale = curve.GetYAxis( pane ).Scale;
 
+				bool xIsLog = xScale.IsLog;
+				bool yIsLog = yScale.IsLog;
+
 				// Loop over each defined point							
 				for ( int i=0; i<points.Count; i++ )
 				{
@@ -565,8 +568,8 @@ namespace ZedGraph
 							!System.Double.IsNaN( curY ) &&
 							!System.Double.IsInfinity( curX ) &&
 							!System.Double.IsInfinity( curY ) &&
-							( curX > 0 || !pane.XAxis.Scale.IsLog ) &&
-							( !yScale.IsLog || curY > 0.0 ) )
+							( curX > 0 || !xIsLog ) &&
+							( !yIsLog || curY > 0.0 ) )
 					{
 						// Transform the user scale values to pixel locations
 						tmpX = xScale.Transform( curve.IsOverrideOrdinal, i, curX );

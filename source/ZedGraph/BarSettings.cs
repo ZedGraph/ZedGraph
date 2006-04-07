@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2006  John Champion
+//Copyright © 2006  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.3 $ $Date: 2006-04-05 05:02:17 $ </version>
+	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:01 $ </version>
 	[Serializable]
 	public class BarSettings : ISerializable
 	{
@@ -323,10 +323,11 @@ namespace ZedGraph
 					}
 				}
 
-				double range = baseAxis.Scale._maxScale - baseAxis.Scale._minScale;
+				double range = baseAxis.Scale._maxLinTemp - baseAxis.Scale._minLinTemp;
 				if ( minStep <= 0 || minStep < 0.001 * range || minStep > range )
 					minStep = 0.1 * range;
 
+				_clusterScaleWidth = minStep;
 			}
 		}
 

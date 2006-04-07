@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.23.2.2 $ $Date: 2006-03-29 07:37:19 $ </version>
+	/// <version> $Revision: 3.23.2.3 $ $Date: 2006-04-07 06:14:03 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -643,6 +643,9 @@ namespace ZedGraph
 			ValueHandler valueHandler = new ValueHandler( pane, false );
 			Axis yAxis = curve.GetYAxis( pane );
 
+			bool xIsLog = pane.XAxis._scale.IsLog;
+			bool yIsLog = yAxis._scale.IsLog;
+
 			Pen pen = new Pen( this._color, pane.ScaledPenWidth( _width, scaleFactor ) );
 			pen.DashStyle = this.Style;
 
@@ -675,8 +678,8 @@ namespace ZedGraph
 							System.Double.IsNaN( curY ) ||
 							System.Double.IsInfinity( curX ) ||
 							System.Double.IsInfinity( curY ) ||
-							( pane.XAxis._scale.IsLog && curX <= 0.0 ) ||
-							( yAxis._scale.IsLog && curY <= 0.0 ) )
+							( xIsLog && curX <= 0.0 ) ||
+							( yIsLog && curY <= 0.0 ) )
 					{
 						// If the point is invalid, then make a linebreak only if IsIgnoreMissing is false
 						// LastX and LastY are always the last valid point, so this works out

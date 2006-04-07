@@ -1,6 +1,6 @@
 //============================================================================
 //PointPair Class
-//Copyright (C) 2004  Jerry Vos
+//Copyright © 2004  Jerry Vos
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.15.4.2 $ $Date: 2006-04-05 05:02:17 $ </version>
+	/// <version> $Revision: 3.15.4.3 $ $Date: 2006-04-07 06:14:03 $ </version>
 	[Serializable]
 	public class PointPair : ISerializable
 	{
