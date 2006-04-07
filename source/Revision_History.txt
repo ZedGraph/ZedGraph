@@ -1,5 +1,9 @@
 == ZedGraph Class Library Revision History ==
 
+;6-Apr-2006 (by Champion) V5_BRANCH
+: [NEW] Add RollingPointPairList (by Colin Green)
+: [UPD] Make pan/zoom/etc used linearized axis equivalents so non-linear scales work consistently
+
 ;31-Mar-2006 (by Champion) V5_BRANCH
 : [UPD] Major code refactoring to prepare for version 5
 : [UPD] Change all to .Net 2.0
