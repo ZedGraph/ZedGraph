@@ -31,7 +31,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_CandleStick( zedGraphControl1 );
 			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl2 );
-			CreateGraph_BasicLog( zedGraphControl2 );
+			//CreateGraph_BasicLog( zedGraphControl2 );
 			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
@@ -51,6 +51,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_PolyTest( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl2 );
+			CreateGraph_Contour( zedGraphControl2 );
 
 			zedGraphControl1.AxisChange();
 			SetSize();
@@ -1336,6 +1337,70 @@ namespace ZedGraph.ControlTest
 			CurveItem myCurve = grPane.AddBar( "My Curve", pointPairList, Color.Red );
 
 			grPane.Chart.Fill = new Fill( Color.White, Color.FromArgb( 255, 255, 166 ), 45.0F );
+
+			z1.AxisChange();
+		}
+
+
+		public void CreateGraph_Contour( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			myPane.Title.Text = "Sample Contour Plot";
+			myPane.XAxis.Title.Text = "X Coordinate (m)";
+			myPane.YAxis.Title.Text = "Y Coordinate (m)";
+
+			Random rand = new Random();
+
+			// Generate four contours
+			for ( int i = 0; i < 4; i++ )
+			{
+				PointPairList list = new PointPairList();
+				// each contour gets a point every 10 degrees
+				for ( int j = 0; j < 36; j++ )
+				{
+					// the angle, theta, in radians
+					double theta = 2.0 * Math.PI * j / 36.0;
+					// the radius, with some random variability
+					double r = i * 2 + 2 + 0.5 * rand.NextDouble();
+					// Convert (r,p) to (x,y)
+					double x = r * Math.Cos( theta ) * 10.0 + 250.0;
+					double y = r * Math.Sin( theta ) * 10.0 + 250.0;
+					list.Add( x, y );
+				}
+
+				// duplicate the first point at the end to complete the circle
+				list.Add( list[0] );
+
+				// Add a curve with a suitable level, no symbols
+				LineItem myCurve = myPane.AddCurve( "Level=" + ( i + 1 ).ToString(), list,
+							Color.Black, SymbolType.None );
+
+				// Smooth out the contours a little
+				myCurve.Line.IsSmooth = true;
+				myCurve.Line.SmoothTension = 0.7f;
+			}
+
+			// Fill the curves with a different color for each curve
+			( myPane.CurveList[0] as LineItem ).Line.Fill =
+						new Fill( Color.White, Color.FromArgb( 255, 150, 255 ), 45.0f );
+			( myPane.CurveList[1] as LineItem ).Line.Fill =
+						new Fill( Color.White, Color.FromArgb( 255, 255, 150), 45.0f );
+			( myPane.CurveList[2] as LineItem ).Line.Fill =
+						new Fill( Color.White, Color.FromArgb( 150, 255, 150 ), 45.0f );
+			( myPane.CurveList[3] as LineItem ).Line.Fill =
+						new Fill( Color.White, Color.FromArgb( 150, 255, 255 ), 45.0f );
+
+			myPane.Legend.IsVisible = false;
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGray, 45.0f );
+			//myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
+			myPane.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+
+			// Manually set the axis ranges
+			myPane.XAxis.Scale.Min = 150;
+			myPane.XAxis.Scale.Max = 350;
+			myPane.YAxis.Scale.Min = 150;
+			myPane.YAxis.Scale.Max = 350;
 
 			z1.AxisChange();
 		}
