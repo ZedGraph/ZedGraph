@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.16.2.3 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 3.16.2.4 $ $Date: 2006-04-11 17:13:41 $ </version>
 	[Serializable]
 	public class Fill : ISerializable, ICloneable
 	{
@@ -44,14 +44,21 @@ namespace ZedGraph
 		/// property <see cref="Color"/> to access this value.  This property is
 		/// only applicable if the <see cref="Type"/> is not <see cref="ZedGraph.FillType.None"/>.
 		/// </summary>
-		private Color		_color;
+		private Color _color;
+		/// <summary>
+		/// Private field that stores the secondary color for gradientByValue fills.  Use the public
+		/// property <see cref="SecondaryValueGradientColor"/> to access this value.  This property is
+		/// only applicable if the <see cref="Type"/> is <see cref="ZedGraph.FillType.GradientByX"/>,
+		/// <see cref="ZedGraph.FillType.GradientByY"/>, or <see cref="ZedGraph.FillType.GradientByZ"/>.
+		/// </summary>
+		private Color _secondaryValueGradientColor;
 		/// <summary>
 		/// Private field that stores the custom fill brush.  Use the public
 		/// property <see cref="Brush"/> to access this value.  This property is
 		/// only applicable if the 
 		/// <see cref="Type"/> property is set to <see cref="ZedGraph.FillType.Brush"/>.
 		/// </summary>
-		protected Brush		_brush;
+		protected Brush	_brush;
 		/// <summary>
 		/// Private field that determines the type of color fill.  Use the public
 		/// property <see cref="Type"/> to access this value.  The fill color
@@ -153,6 +160,7 @@ namespace ZedGraph
 		private void Init()
 		{
 			_color = Color.White;
+			_secondaryValueGradientColor = Color.White;
 			_brush = null;
 			_type = FillType.None;
 			this._isScaled = Default.IsScaled;
@@ -467,6 +475,8 @@ namespace ZedGraph
 		public Fill( Fill rhs )
 		{
 			_color = rhs._color;
+			_secondaryValueGradientColor = rhs._color;
+
 			if ( rhs._brush != null )
 				_brush = (Brush) rhs._brush.Clone();
 			else
@@ -558,6 +568,7 @@ namespace ZedGraph
 			int sch = info.GetInt32( "schema" );
 
 			_color = (Color) info.GetValue( "color", typeof(Color) );
+			_secondaryValueGradientColor = (Color) info.GetValue( "secondaryValueGradientColor", typeof( Color ) );
 			//brush = (Brush) info.GetValue( "brush", typeof(Brush) );
 			//brushHolder = (BrushHolder) info.GetValue( "brushHolder", typeof(BrushHolder) );
 			_type = (FillType) info.GetValue( "type", typeof(FillType) );
@@ -601,6 +612,7 @@ namespace ZedGraph
 
 			info.AddValue( "schema", schema );
 			info.AddValue( "color", _color );
+			info.AddValue( "secondaryValueGradientColor", _secondaryValueGradientColor );
 			//info.AddValue( "brush", brush );
 			//info.AddValue( "brushHolder", brushHolder );
 			info.AddValue( "type", _type );
@@ -639,6 +651,26 @@ namespace ZedGraph
 		{
 			get { return _color; }
 			set { _color = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the secondary color for gradientByValue fills.
+		/// </summary>
+		/// <remarks>
+		/// This property is only applicable if the <see cref="Type"/> is
+		/// <see cref="ZedGraph.FillType.GradientByX"/>,
+		/// <see cref="ZedGraph.FillType.GradientByY"/>, or
+		/// <see cref="ZedGraph.FillType.GradientByZ"/>.  Once the gradient-by-value logic picks
+		/// a color, a new gradient will be created using the SecondaryValueGradientColor, the
+		/// resulting gradient-by-value color, and the angle setting for this
+		/// <see cref="Fill" />. Use a value of <see cref="System.Drawing.Color.Empty">Color.Empty</see> to have
+		/// a solid-color <see cref="Fill" /> resulting from a gradient-by-value
+		/// <see cref="FillType" />.
+		/// </remarks>
+		public Color SecondaryValueGradientColor
+		{
+			get { return _secondaryValueGradientColor; }
+			set { _secondaryValueGradientColor = value; }
 		}
 
 		/// <summary>
@@ -863,9 +895,31 @@ namespace ZedGraph
 				else if ( IsGradientValueType )
 				{
 					if ( dataValue != null )
-						return new SolidBrush( GetGradientColor( dataValue ) );
+					{
+						if ( !_secondaryValueGradientColor.IsEmpty )
+						{
+							// Go ahead and create a new Fill so we can do all the scaling, etc.,
+							// that is associated with a gradient
+							Fill tmpFill = new Fill( _secondaryValueGradientColor,
+									GetGradientColor( dataValue ), _angle );
+							return tmpFill.MakeBrush( rect );
+						}
+						else
+							return new SolidBrush( GetGradientColor( dataValue ) );
+					}
 					else if ( _rangeDefault != double.MaxValue )
-						return new SolidBrush( GetGradientColor( _rangeDefault ) );
+					{
+						if ( !_secondaryValueGradientColor.IsEmpty )
+						{
+							// Go ahead and create a new Fill so we can do all the scaling, etc.,
+							// that is associated with a gradient
+							Fill tmpFill = new Fill( _secondaryValueGradientColor,
+									GetGradientColor( _rangeDefault ), _angle );
+							return tmpFill.MakeBrush( rect );
+						}
+						else
+							return new SolidBrush( GetGradientColor( _rangeDefault ) );
+					}
 					else
 						return ScaleBrush( rect, this._brush, true );
 				}

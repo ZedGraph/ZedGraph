@@ -29,12 +29,13 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_CandleStick( zedGraphControl1 );
-			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl2 );
 			//CreateGraph_BasicLog( zedGraphControl2 );
 			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
+			CreateGraph_GradientByZBars( zedGraphControl2 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
@@ -43,7 +44,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_TwoTextAxes( zedGraphControl1 );
-			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
+			CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
 			//CreateGraph_32kPoints( zedGraphControl2 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
@@ -51,7 +52,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_PolyTest( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl2 );
-			CreateGraph_Contour( zedGraphControl2 );
+			//CreateGraph_Contour( zedGraphControl2 );
 
 			zedGraphControl1.AxisChange();
 			SetSize();
@@ -773,6 +774,11 @@ namespace ZedGraph.ControlTest
 			//master.SetLayout( false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
 			z1.AxisChange();
 
+			z1.IsAutoScrollRange = true;
+			z1.IsShowHScrollBar = true;
+			z1.IsShowVScrollBar = true;
+			z1.IsSynchronizeXAxes = true;
+
 			g.Dispose();
 		}
 
@@ -799,6 +805,39 @@ namespace ZedGraph.ControlTest
 			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
 			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
 			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
+
+			myPane.XAxis.MajorTic.IsBetweenLabels = true;
+			string[] labels = { "one", "two", "three", "four", "five" };
+			myPane.XAxis.Scale.TextLabels = labels;
+			myPane.XAxis.Type = AxisType.Text;
+
+			// Tell ZedGraph to calculate the axis ranges
+			z1.AxisChange();
+			z1.Invalidate();
+
+
+		}
+
+		private void CreateGraph_GradientByZBars( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+			Random rand = new Random();
+
+			for ( int i = 0; i < 5; i++ )
+			{
+				double x = (double)i;
+				double y = rand.NextDouble() * 1000;
+				double z = (y<300) ? 0 : ( (y<600) ? 0.5 : 1.0 );
+				list.Add( x, y, z );
+			}
+
+			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
+			myCurve.Bar.Fill = new Fill( Color.Red, Color.Green, Color.Blue, 0.0f );
+			myCurve.Bar.Fill.Type = FillType.GradientByZ;
+			myCurve.Bar.Fill.RangeMin = 0;
+			myCurve.Bar.Fill.RangeMax = 1;
 
 			myPane.XAxis.MajorTic.IsBetweenLabels = true;
 			string[] labels = { "one", "two", "three", "four", "five" };
@@ -1391,7 +1430,7 @@ namespace ZedGraph.ControlTest
 			( myPane.CurveList[3] as LineItem ).Line.Fill =
 						new Fill( Color.White, Color.FromArgb( 150, 255, 255 ), 45.0f );
 
-			myPane.Legend.IsVisible = false;
+			//myPane.Legend.IsVisible = false;
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGray, 45.0f );
 			//myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
 			myPane.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
@@ -1401,6 +1440,9 @@ namespace ZedGraph.ControlTest
 			myPane.XAxis.Scale.Max = 350;
 			myPane.YAxis.Scale.Min = 150;
 			myPane.YAxis.Scale.Max = 350;
+
+		
+			BarItem myBar = myPane.AddBar( "bar", myPane.CurveList[0].Points, Color.Green );
 
 			z1.AxisChange();
 		}

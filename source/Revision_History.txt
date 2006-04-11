@@ -1,5 +1,10 @@
 == ZedGraph Class Library Revision History ==
 
+;10-Apr-2006 (by Champion) V5_BRANCH
+: [NEW] Add Fill.SecondaryValueGradientColor to allow gradient results from gradient-by-value fills
+: [UPD] Fill background of legend for LineItems with the LineItem.Line.Fill color
+: [NEW] Add ZedGraphControl.IsSynchronizeXAxes, IsSynchronizeYAxes for multi-pane scroll/pan/zoom
+
 ;6-Apr-2006 (by Champion) V5_BRANCH
 : [NEW] Add RollingPointPairList (by Colin Green)
 : [UPD] Make pan/zoom/etc used linearized axis equivalents so non-linear scales work consistently

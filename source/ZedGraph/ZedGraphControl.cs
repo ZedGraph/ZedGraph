@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.5 $ $Date: 2006-04-07 06:14:10 $ </version>
+	/// <version> $Revision: 3.59.2.6 $ $Date: 2006-04-11 17:13:41 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -187,6 +187,9 @@ namespace ZedGraph
 		private bool _isShowVScrollBar = false;
 		//private bool		isScrollY2 = false;
 		private bool _isAutoScrollRange = false;
+
+		private bool _isSynchronizeXAxes = false;
+		private bool _isSynchronizeYAxes = false;
 
 		//private System.Windows.Forms.HScrollBar hScrollBar1;
 		//private System.Windows.Forms.VScrollBar vScrollBar1;
@@ -1235,6 +1238,44 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Gets or sets a value that determines if the <see cref="XAxis" /> <see cref="Scale" />
+		/// ranges for all <see cref="GraphPane" /> objects in the <see cref="MasterPane" /> will
+		/// be forced to match.
+		/// </summary>
+		/// <remarks>
+		/// If set to true (default is false), then all of the <see cref="GraphPane" /> objects
+		/// in the <see cref="MasterPane" /> associated with this <see cref="ZedGraphControl" />
+		/// will be forced to have matching scale ranges for the x axis.  That is, zoom, pan,
+		/// and scroll operations will result in zoom/pan/scroll for all graphpanes simultaneously.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "true to force the X axis ranges for all GraphPanes to match" )]
+		public bool IsSynchronizeXAxes
+		{
+			get { return _isSynchronizeXAxes; }
+			set { _isSynchronizeXAxes = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines if the <see cref="YAxis" /> <see cref="Scale" />
+		/// ranges for all <see cref="GraphPane" /> objects in the <see cref="MasterPane" /> will
+		/// be forced to match.
+		/// </summary>
+		/// <remarks>
+		/// If set to true (default is false), then all of the <see cref="GraphPane" /> objects
+		/// in the <see cref="MasterPane" /> associated with this <see cref="ZedGraphControl" />
+		/// will be forced to have matching scale ranges for the y axis.  That is, zoom, pan,
+		/// and scroll operations will result in zoom/pan/scroll for all graphpanes simultaneously.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "true to force the Y axis ranges for all GraphPanes to match" )]
+		public bool IsSynchronizeYAxes
+		{
+			get { return _isSynchronizeYAxes; }
+			set { _isSynchronizeYAxes = value; }
+		}
+
+		/// <summary>
 		/// Gets or sets a value that determines if the vertical scroll bar will affect the Y2 axis.
 		/// </summary>
 		/// <remarks>
@@ -2029,6 +2070,8 @@ namespace ZedGraph
 
 					ZoomPane( pane, zoomFraction, centerPoint, _isZoomOnMouseCenter, false );
 
+					ApplyToAllPanes( pane );
+
 					// Provide Callback to notify the user of zoom events
 					if ( this.ZoomEvent != null )
 						this.ZoomEvent( this, oldState, new ZoomState( pane, ZoomState.StateType.WheelZoom ) );
@@ -2195,6 +2238,8 @@ namespace ZedGraph
 				this.SetScroll( this.vScrollBar1, _dragPane.YAxis, _yScrollRangeList[0].Min,
 					_yScrollRangeList[0].Max );
 			}
+
+			ApplyToAllPanes( _dragPane );
 
 			Refresh();
 
@@ -2399,6 +2444,8 @@ namespace ZedGraph
 				this.SetScroll( this.vScrollBar1, _dragPane.YAxis, _yScrollRangeList[0].Min,
 					_yScrollRangeList[0].Max );
 
+				ApplyToAllPanes( _dragPane );
+
 				// Provide Callback to notify the user of zoom events
 				if ( this.ZoomEvent != null )
 					this.ZoomEvent( this, oldState,
@@ -2485,15 +2532,43 @@ namespace ZedGraph
 										!axis.Scale.IsReverse );
 					}
 				}
+			}
 
-				if ( _zoomState != null )
+			ApplyToAllPanes( this.GraphPane );
+
+			if ( _zoomState != null && this.GraphPane != null )
+			{
+				// Provide Callback to notify the user of pan events
+				if ( this.ScrollProgressEvent != null )
+					this.ScrollProgressEvent( this, vScrollBar1, _zoomState,
+								new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
+			}
+		}
+
+		private void ApplyToAllPanes( GraphPane primaryPane )
+		{
+			foreach ( GraphPane pane in _masterPane._paneList )
+			{
+				if ( pane != primaryPane )
 				{
-					// Provide Callback to notify the user of pan events
-					if ( this.ScrollProgressEvent != null )
-						this.ScrollProgressEvent( this, vScrollBar1, _zoomState,
-									new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
+					if ( _isSynchronizeXAxes )
+						Synchronize( primaryPane.XAxis, pane.XAxis );
+					if ( _isSynchronizeYAxes )
+						Synchronize( primaryPane.YAxis, pane.YAxis );
 				}
 			}
+		}
+
+		private void Synchronize( Axis source, Axis dest )
+		{
+			dest._scale._min = source._scale._min;
+			dest._scale._max = source._scale._max;
+			dest._scale._majorStep = source._scale._majorStep;
+			dest._scale._minorStep = source._scale._minorStep;
+			dest._scale._minAuto = source._scale._minAuto;
+			dest._scale._maxAuto = source._scale._maxAuto;
+			dest._scale._majorStepAuto = source._scale._majorStepAuto;
+			dest._scale._minorStepAuto = source._scale._minorStepAuto;
 		}
 
 		private void hScrollBar1_Scroll( object sender, ScrollEventArgs e )
@@ -2502,14 +2577,16 @@ namespace ZedGraph
 			{
 				HandleScroll( this.GraphPane.XAxis, e.NewValue, _xScrollRange.Min, _xScrollRange.Max,
 							hScrollBar1.LargeChange, this.GraphPane.XAxis.Scale.IsReverse );
+			}
 
-				if ( _zoomState != null )
-				{
-					// Provide Callback to notify the user of pan events
-					if ( this.ScrollProgressEvent != null )
-						this.ScrollProgressEvent( this, hScrollBar1, _zoomState,
-									new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
-				}
+			ApplyToAllPanes( this.GraphPane );
+
+			if ( _zoomState != null && this.GraphPane != null )
+			{
+				// Provide Callback to notify the user of pan events
+				if ( this.ScrollProgressEvent != null )
+					this.ScrollProgressEvent( this, hScrollBar1, _zoomState,
+								new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
 			}
 		}
 

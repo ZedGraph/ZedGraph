@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15.2.3 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 3.15.2.4 $ $Date: 2006-04-11 17:13:41 $ </version>
 	[Serializable]
 	public class LineItem : CurveItem, ICloneable, ISerializable
 	{
@@ -317,10 +317,17 @@ namespace ZedGraph
 		{
 			// Draw a sample curve to the left of the label text
 			float yMid = rect.Top + rect.Height / 2.0F;
-            this.Line.DrawSegment( g, pane, rect.Left, yMid, rect.Right, yMid, scaleFactor );
+			//RectangleF rect2 = rect;
+			//rect2.Y = yMid;
+			//rect2.Height = rect.Height / 2.0f;
+
+			_line.Fill.Draw( g, rect );
+
+			_line.DrawSegment( g, pane, rect.Left, yMid, rect.Right, yMid, scaleFactor );
 
             // Draw a sample symbol to the left of the label text				
-			this.Symbol.DrawSymbol( g, pane, rect.Left + rect.Width / 2.0F, yMid, scaleFactor, null );
+			_symbol.DrawSymbol( g, pane, rect.Left + rect.Width / 2.0F, yMid, scaleFactor, null );
+
 		}
 	
 		/// <summary>
