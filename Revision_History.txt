@@ -1,8 +1,18 @@
 == ZedGraph Class Library Revision History ==
 
+;13-Apr-2006 (by Champion) V5_BRANCH
+: [UPD] Work in logic for undo states with Synchronized Axes
+: [UPD] Break out ZoomStates classes to separate files
+
+;11-Apr-2006 (by Softlion) V5_BRANCH
+: [UPD] Major update to Web control to integrate with V5 class library changes
+: [UPD] Split out web control to ZedGraph.Web namespace
+: ???
+ 
 ;10-Apr-2006 (by Champion) V5_BRANCH
 : [NEW] Add Fill.SecondaryValueGradientColor to allow gradient results from gradient-by-value fills
 : [UPD] Fill background of legend for LineItems with the LineItem.Line.Fill color
+: [NEW] Add ZedGraphControl.IsSynchronizeXAxes, IsSynchronizeYAxes for multi-pane scroll/pan/zoom
 
 ;6-Apr-2006 (by Champion) V5_BRANCH
 : [NEW] Add RollingPointPairList (by Colin Green)

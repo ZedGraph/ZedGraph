@@ -31,11 +31,11 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_CandleStick( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl2 );
-			//CreateGraph_BasicLog( zedGraphControl2 );
+			CreateGraph_BasicLog( zedGraphControl2 );
 			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
-			CreateGraph_GradientByZBars( zedGraphControl2 );
+			//CreateGraph_GradientByZBars( zedGraphControl2 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );

@@ -12,7 +12,7 @@ using ZedGraph;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("ZedGraph Library")]
-[assembly: AssemblyCopyright("Copyright © 2005-2006 Benjamin Mayrargue & Darren Martz")]
+[assembly: AssemblyCopyright("Copyright © 2004-2006 Benjamin Mayrargue, Darren Martz & John Champion")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,5 +33,5 @@ using ZedGraph;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("1.0.0.*")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("4.9.1.*")]
+//[assembly: AssemblyFileVersion("1.0.0.0")]

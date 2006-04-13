@@ -35,11 +35,11 @@ namespace ZedGraph.Web
 	/// The ZedGraphWeb class provides a web control interface to the
 	/// <see cref="ZedGraph"/> class library.  This allows ZedGraph to be used
 	/// from a web page with ASP.net.  All graph
-	/// attributes are accessible via the <see cref="ZedGraphControl.GraphPane"/>
+	/// attributes are accessible via the <see cref="ZedGraph.GraphPane"/>
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.1.2.1 $ $Date: 2006-04-12 07:57:24 $</version>
+	/// <version>$Revision: 1.1.2.2 $ $Date: 2006-04-13 18:56:31 $</version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),

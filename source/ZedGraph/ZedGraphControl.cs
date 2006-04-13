@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.6 $ $Date: 2006-04-11 17:13:41 $ </version>
+	/// <version> $Revision: 3.59.2.7 $ $Date: 2006-04-13 18:56:31 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -569,6 +569,7 @@ namespace ZedGraph
 		/// private field that stores the state of the scale ranges prior to starting a panning action.
 		/// </summary>
 		private ZoomState _zoomState;
+		private ZoomStateStack _zoomStateStack;
 
 		//temporarily save the location of a context menu click so we can use it for reference
 		// Note that Control.MousePosition ends up returning the position after the mouse has
@@ -858,6 +859,9 @@ namespace ZedGraph
 
 			_yScrollRangeList.Add( new ScrollRange( true ) );
 			_y2ScrollRangeList.Add( new ScrollRange( false ) );
+
+			_zoomState = null;
+			_zoomStateStack = new ZoomStateStack();
 		}
 
 		/// <summary>
@@ -1253,7 +1257,12 @@ namespace ZedGraph
 		public bool IsSynchronizeXAxes
 		{
 			get { return _isSynchronizeXAxes; }
-			set { _isSynchronizeXAxes = value; }
+			set
+			{
+				if ( _isSynchronizeXAxes != value )
+					ZoomStatePurge();
+				_isSynchronizeXAxes = value;
+			}
 		}
 
 		/// <summary>
@@ -1272,7 +1281,12 @@ namespace ZedGraph
 		public bool IsSynchronizeYAxes
 		{
 			get { return _isSynchronizeYAxes; }
-			set { _isSynchronizeYAxes = value; }
+			set
+			{
+				if ( _isSynchronizeYAxes != value )
+					ZoomStatePurge();
+				_isSynchronizeYAxes = value;
+			}
 		}
 
 		/// <summary>
@@ -1753,7 +1767,8 @@ namespace ZedGraph
 				_isPanning = true;
 				_dragStartPt = mousePt;
 				_dragPane = pane;
-				_zoomState = new ZoomState( _dragPane, ZoomState.StateType.Pan );
+				//_zoomState = new ZoomState( _dragPane, ZoomState.StateType.Pan );
+				ZoomStateSave( _dragPane, ZoomState.StateType.Pan );
 			}
 			else if ( pane != null && ( _isEnableHZoom || _isEnableVZoom ) &&
 				( ( e.Button == _zoomButtons && Control.ModifierKeys == _zoomModifierKeys ) ||
@@ -1764,6 +1779,7 @@ namespace ZedGraph
 				_dragEndPt = mousePt;
 				_dragEndPt.Offset( 1, 1 );
 				_dragPane = pane;
+				ZoomStateSave( _dragPane, ZoomState.StateType.Zoom );
 			}
 			else if ( pane != null && ( _isEnableHEdit || _isEnableVEdit ) &&
 				 ( e.Button == EditButtons && Control.ModifierKeys == EditModifierKeys ) )
@@ -2063,7 +2079,8 @@ namespace ZedGraph
 				GraphPane pane = this.MasterPane.FindChartRect( new PointF( e.X, e.Y ) );
 				if ( pane != null && e.Delta != 0 )
 				{
-					ZoomState oldState = pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
+					ZoomState oldState = ZoomStateSave( pane, ZoomState.StateType.WheelZoom );
+					//ZoomState oldState = pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
 
 					PointF centerPoint = new PointF( e.X, e.Y );
 					double zoomFraction = ( 1 + ( e.Delta < 0 ? 1.0 : -1.0 ) * ZoomStepFraction );
@@ -2071,6 +2088,8 @@ namespace ZedGraph
 					ZoomPane( pane, zoomFraction, centerPoint, _isZoomOnMouseCenter, false );
 
 					ApplyToAllPanes( pane );
+
+					ZoomStatePush( pane );
 
 					// Provide Callback to notify the user of zoom events
 					if ( this.ZoomEvent != null )
@@ -2254,7 +2273,8 @@ namespace ZedGraph
 			// the fly during the panning operation
 			if ( _zoomState != null && _zoomState.IsChanged( _dragPane ) )
 			{
-				_dragPane.ZoomStack.Push( _zoomState );
+				//_dragPane.ZoomStack.Push( _zoomState );
+				ZoomStatePush( _dragPane );
 
 				// Provide Callback to notify the user of pan events
 				if ( this.ZoomEvent != null )
@@ -2271,11 +2291,14 @@ namespace ZedGraph
 			{
 				if ( _zoomState != null && _zoomState.IsChanged( _dragPane ) )
 				{
-					_zoomState.ApplyState( _dragPane );
-					_zoomState = null;
+					ZoomStateRestore( _dragPane );
+					//_zoomState.ApplyState( _dragPane );
+					//_zoomState = null;
 				}
 				_isPanning = false;
 				Refresh();
+
+				ZoomStateClear();
 			}
 		}
 
@@ -2411,8 +2434,9 @@ namespace ZedGraph
 				_dragPane.ReverseTransform( _dragStartPt, out x1, out y1, out yy1 );
 				_dragPane.ReverseTransform( mousePtF, out x2, out y2, out yy2 );
 
-				ZoomState oldState = _dragPane.ZoomStack.Push( _dragPane,
-							ZoomState.StateType.Zoom );
+				ZoomStatePush( _dragPane );
+				//ZoomState oldState = _dragPane.ZoomStack.Push( _dragPane,
+				//			ZoomState.StateType.Zoom );
 
 				if ( _isEnableHZoom )
 				{
@@ -2448,7 +2472,7 @@ namespace ZedGraph
 
 				// Provide Callback to notify the user of zoom events
 				if ( this.ZoomEvent != null )
-					this.ZoomEvent( this, oldState,
+					this.ZoomEvent( this, _zoomState, //oldState,
 						new ZoomState( _dragPane, ZoomState.StateType.Zoom ) );
 
 				Graphics g = this.CreateGraphics();
@@ -2465,6 +2489,8 @@ namespace ZedGraph
 			{
 				_isZooming = false;
 				Refresh();
+
+				ZoomStateClear();
 			}
 		}
 
@@ -2602,7 +2628,8 @@ namespace ZedGraph
 				if ( scrollBar.Capture )
 				{
 					// save the original zoomstate
-					_zoomState = new ZoomState( this.GraphPane, ZoomState.StateType.Scroll );
+					//_zoomState = new ZoomState( this.GraphPane, ZoomState.StateType.Scroll );
+					ZoomStateSave( this.GraphPane, ZoomState.StateType.Scroll );
 				}
 				else
 				{
@@ -2610,7 +2637,8 @@ namespace ZedGraph
 					// the fly during the scrolling operation
 					if ( _zoomState != null && _zoomState.IsChanged( this.GraphPane ) )
 					{
-						this.GraphPane.ZoomStack.Push( _zoomState );
+						//this.GraphPane.ZoomStack.Push( _zoomState );
+						ZoomStatePush( this.GraphPane );
 
 						// Provide Callback to notify the user of pan events
 						if ( this.ScrollDoneEvent != null )
@@ -3095,15 +3123,35 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Handler for the "UnZoom/UnPan" context menu item.  Restores the scale ranges to the values
-		/// before the last zoom or pan operation.
+		/// before the last zoom, pan, or scroll operation.
 		/// </summary>
-		/// <param name="pane">The <see cref="GraphPane" /> object which is to be zoomed out</param>
-		public void ZoomOut( GraphPane pane )
+		/// <remarks>
+		/// Triggers a <see cref="ZoomEvent" /> for any type of undo (including pan, scroll, zoom, and
+		/// wheelzoom).  This method will affect all the
+		/// <see cref="GraphPane" /> objects in the <see cref="MasterPane" /> if
+		/// <see cref="IsSynchronizeXAxes" /> or <see cref="IsSynchronizeYAxes" /> is true.
+		/// </remarks>
+		/// <param name="primaryPane">The primary <see cref="GraphPane" /> object which is to be
+		/// zoomed out</param>
+		public void ZoomOut( GraphPane primaryPane )
 		{
-			if ( pane != null && !pane.ZoomStack.IsEmpty )
+			if ( primaryPane != null && !primaryPane.ZoomStack.IsEmpty )
 			{
-				ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
-				ZoomState newState = pane.ZoomStack.Pop( pane );
+				ZoomState.StateType type = primaryPane.ZoomStack.Top.Type;
+
+				ZoomState oldState = new ZoomState( primaryPane, type );
+				ZoomState newState = null;
+				if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
+				{
+					foreach ( GraphPane pane in _masterPane._paneList )
+					{
+						ZoomState state = pane.ZoomStack.Pop( pane );
+						if ( pane == primaryPane )
+							newState = state;
+					}
+				}
+				else
+					newState = primaryPane.ZoomStack.Pop( primaryPane );
 
 				// Provide Callback to notify the user of zoom events
 				if ( this.ZoomEvent != null )
@@ -3142,13 +3190,27 @@ namespace ZedGraph
 		/// to their initial setting prior to any user actions.  The <see cref="RestoreScale" /> method
 		/// sets the scales to full auto mode (regardless of what the initial setting may have been).
 		/// </remarks>
-		/// <param name="pane">The <see cref="GraphPane" /> object which is to be zoomed out</param>
-		public void ZoomOutAll( GraphPane pane )
+		/// <param name="primaryPane">The <see cref="GraphPane" /> object which is to be zoomed out</param>
+		public void ZoomOutAll( GraphPane primaryPane )
 		{
-			if ( pane != null && !pane.ZoomStack.IsEmpty )
+			if ( primaryPane != null && !primaryPane.ZoomStack.IsEmpty )
 			{
-				ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
-				ZoomState newState = pane.ZoomStack.PopAll( pane );
+				ZoomState.StateType type = primaryPane.ZoomStack.Top.Type;
+
+				ZoomState oldState = new ZoomState( primaryPane, type );
+				//ZoomState newState = pane.ZoomStack.PopAll( pane );
+				ZoomState newState = null;
+				if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
+				{
+					foreach ( GraphPane pane in _masterPane._paneList )
+					{
+						ZoomState state = pane.ZoomStack.PopAll( pane );
+						if ( pane == primaryPane )
+							newState = state;
+					}
+				}
+				else
+					newState = primaryPane.ZoomStack.PopAll( primaryPane );
 
 				// Provide Callback to notify the user of zoom events
 				if ( this.ZoomEvent != null )
@@ -3323,6 +3385,116 @@ namespace ZedGraph
 				ppd.Document = pd;
 				ppd.Show();
 			}
+		}
+
+	#endregion
+
+	#region Zoom States
+
+		/// <summary>
+		/// Save the current states of the GraphPanes to a separate collection.  Save a single
+		/// (<see paramref="primaryPane" />) GraphPane if the panes are not synchronized
+		/// (see <see cref="IsSynchronizeXAxes" /> and <see cref="IsSynchronizeYAxes" />),
+		/// or save a list of states for all GraphPanes if the panes are synchronized.
+		/// </summary>
+		/// <param name="primaryPane">The primary GraphPane on which zoom/pan/scroll operations
+		/// are taking place</param>
+		/// <param name="type">The <see cref="ZoomState.StateType" /> that describes the
+		/// current operation</param>
+		/// <returns>The <see cref="ZoomState" /> that corresponds to the
+		/// <see paramref="primaryPane" />.
+		/// </returns>
+		private ZoomState ZoomStateSave( GraphPane primaryPane, ZoomState.StateType type )
+		{
+			ZoomStateClear();
+
+			if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
+			{
+				foreach ( GraphPane pane in _masterPane._paneList )
+				{
+					ZoomState state = new ZoomState( pane, type );
+					if ( pane == primaryPane )
+						_zoomState = state;
+					_zoomStateStack.Add( state );
+				}
+			}
+			else
+				_zoomState = new ZoomState( primaryPane, type );
+
+			return _zoomState;
+		}
+
+		/// <summary>
+		/// Restore the states of the GraphPanes to a previously saved condition (via
+		/// <see cref="ZoomStateSave" />.  This is essentially an "undo" for live
+		/// pan and scroll actions.  Restores a single
+		/// (<see paramref="primaryPane" />) GraphPane if the panes are not synchronized
+		/// (see <see cref="IsSynchronizeXAxes" /> and <see cref="IsSynchronizeYAxes" />),
+		/// or save a list of states for all GraphPanes if the panes are synchronized.
+		/// </summary>
+		/// <param name="primaryPane">The primary GraphPane on which zoom/pan/scroll operations
+		/// are taking place</param>
+		private void ZoomStateRestore( GraphPane primaryPane )
+		{
+			if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
+			{
+				for ( int i = 0; i < _masterPane._paneList.Count; i++ )
+				{
+					if ( i < _zoomStateStack.Count )
+						_zoomStateStack[i].ApplyState( _masterPane._paneList[i] );
+				}
+			}
+			else if ( _zoomState != null )
+				_zoomState.ApplyState( primaryPane );
+
+			ZoomStateClear();
+		}
+
+		/// <summary>
+		/// Place the previously saved states of the GraphPanes on the individual GraphPane
+		/// <see cref="ZedGraph.GraphPane.ZoomStack" /> collections.  This provides for an
+		/// option to undo the state change at a later time.  Save a single
+		/// (<see paramref="primaryPane" />) GraphPane if the panes are not synchronized
+		/// (see <see cref="IsSynchronizeXAxes" /> and <see cref="IsSynchronizeYAxes" />),
+		/// or save a list of states for all GraphPanes if the panes are synchronized.
+		/// </summary>
+		/// <param name="primaryPane">The primary GraphPane on which zoom/pan/scroll operations
+		/// are taking place</param>
+		/// <returns>The <see cref="ZoomState" /> that corresponds to the
+		/// <see paramref="primaryPane" />.
+		/// </returns>
+		private void ZoomStatePush( GraphPane primaryPane )
+		{
+			if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
+			{
+				for ( int i = 0; i < _masterPane._paneList.Count; i++ )
+				{
+					if ( i < _zoomStateStack.Count )
+						_masterPane._paneList[i].ZoomStack.Add( _zoomStateStack[i] );
+				}
+			}
+			else if ( _zoomState != null )
+				primaryPane.ZoomStack.Add( _zoomState );
+
+			ZoomStateClear();
+		}
+
+		/// <summary>
+		/// Clear the collection of saved states.
+		/// </summary>
+		private void ZoomStateClear()
+		{
+			_zoomStateStack.Clear();
+			_zoomState = null;
+		}
+
+		/// <summary>
+		/// Clear all states from the undo stack for each GraphPane.
+		/// </summary>
+		private void ZoomStatePurge()
+		{
+			foreach ( GraphPane pane in _masterPane._paneList )
+				pane.ZoomStack.Clear();
 		}
 
 	#endregion

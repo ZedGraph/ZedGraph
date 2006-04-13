@@ -103,6 +103,8 @@
     <Compile Include="ZedGraph\SampleMultiPointList.cs" />
     <Compile Include="ZedGraph\SamplePointList.cs" />
     <Compile Include="ZedGraph\Scale.cs" />
+    <Compile Include="ZedGraph\ScaleState.cs" />
+    <Compile Include="ZedGraph\ScaleStateList.cs" />
     <Compile Include="ZedGraph\ScrollRange.cs" />
     <Compile Include="ZedGraph\ScrollRangeList.cs" />
     <Compile Include="ZedGraph\StickItem.cs" />
@@ -127,6 +129,7 @@
     </Compile>
     <Compile Include="ZedGraph\ZedGraphException.cs" />
     <Compile Include="ZedGraph\ZoomState.cs" />
+    <Compile Include="ZedGraph\ZoomStateStack.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ZedGraph\ZedGraphControl.resx">
