@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.29.2.3 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 3.29.2.4 $ $Date: 2006-04-16 07:15:51 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -105,11 +105,16 @@ namespace ZedGraph
 		private float		_legendItemHeight;
 
 		/// <summary>
+		/// Private field to store the gap between the legend and the chart rectangle.
+		/// </summary>
+		private float _gap;
+
+		/// <summary>
 		/// Private temporary field to maintain the characteristic "gap" for the legend.
 		/// This is normal the height of the largest font in the legend.
 		/// This value is only valid during a draw operation.
 		/// </summary>
-		private float		_gap;
+		private float		_tmpSize;
 
 	#endregion
 
@@ -230,6 +235,12 @@ namespace ZedGraph
 			/// (see <see cref="ZedGraph.Fill.Type"/> property).
 			/// </summary>
 			public static FillType FontFillType = FillType.None;
+
+			/// <summary>
+			/// The default gap size between the legend and the <see cref="Chart.Rect" />.
+			/// This is the default value of <see cref="Legend.Gap" />.
+			/// </summary>
+			public static float Gap = 0.5f;
 		}
 	#endregion
 
@@ -317,7 +328,22 @@ namespace ZedGraph
 			get { return _location; }
 			set { _location = value; }
 		}
-		
+
+		/// <summary>
+		/// Gets or sets the gap size between the legend and the <see cref="Chart.Rect" />.
+		/// </summary>
+		/// <remarks>
+		/// This is expressed as a fraction of the largest scaled character height for any
+		/// of the fonts used in the legend.  Each <see cref="CurveItem" /> in the legend can
+		/// optionally have its own <see cref="FontSpec" /> specification.
+		/// </remarks>
+		public float Gap
+		{
+			get { return _gap; }
+			set { _gap = value; }
+		}
+
+
 	#endregion
 	
 	#region Constructors
@@ -341,6 +367,8 @@ namespace ZedGraph
 			
 			this._border = new Border( Default.IsBorderVisible, Default.BorderColor, Default.BorderWidth );
 			this._fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
+
+			_gap = Default.Gap;
 		}
 
 		/// <summary>
@@ -359,6 +387,8 @@ namespace ZedGraph
 			this._fill = rhs.Fill.Clone();
 			
 			_fontSpec = rhs.FontSpec.Clone();
+
+			_gap = rhs._gap;
 		}
 
 		/// <summary>
@@ -408,6 +438,8 @@ namespace ZedGraph
 			_border = (Border) info.GetValue( "border", typeof(Border) );
 			_fontSpec = (FontSpec) info.GetValue( "fontSpec", typeof(FontSpec) );
 			_location = (Location) info.GetValue( "location", typeof(Location) );
+
+			_gap = info.GetSingle( "gap" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -425,6 +457,8 @@ namespace ZedGraph
 			info.AddValue( "border", _border );
 			info.AddValue( "fontSpec", _fontSpec );
 			info.AddValue( "location", _location );
+
+			info.AddValue( "gap", _gap );
 		}
 	#endregion
 
@@ -461,7 +495,7 @@ namespace ZedGraph
 		
 			PaneList paneList = GetPaneList( pane );
 
-			float halfGap = this._gap / 2.0F;
+			float halfGap = this._tmpSize / 2.0F;
 
 			// Check for bad data values
 			if ( this._hStack <= 0 )
@@ -469,7 +503,7 @@ namespace ZedGraph
 			if ( this._legendItemWidth <= 0 )
 				this._legendItemWidth = 100;
 			if ( this._legendItemHeight <= 0 )
-				this._legendItemHeight = _gap;
+				this._legendItemHeight = _tmpSize;
 
 			//float gap = pane.ScaledGap( scaleFactor );
 
@@ -502,11 +536,11 @@ namespace ZedGraph
 									curve._label._fontSpec : this.FontSpec;
 
 						tmpFont.Draw( g, pane.IsPenWidthScaled, curve._label._text,
-								x + 2.5F * this._gap, y + this._legendItemHeight / 2.0F,
+								x + 2.5F * this._tmpSize, y + this._legendItemHeight / 2.0F,
 								AlignH.Left, AlignV.Center, scaleFactor );
 
 						RectangleF rect = new RectangleF( x, y + this._legendItemHeight / 4.0F,
-							2 * this._gap, this._legendItemHeight / 2.0F );
+							2 * this._tmpSize, this._legendItemHeight / 2.0F );
 						curve.DrawLegendKey( g, tmpPane, rect, scaleFactor );
 
 						// maintain a curve count for positioning
@@ -574,7 +608,7 @@ namespace ZedGraph
 			if ( this._rect.Contains( mousePt ) )
 			{
 				int j = (int) ( ( mousePt.Y - this._rect.Top ) / this._legendItemHeight );
-				int i = (int) ( ( mousePt.X - this._rect.Left - this._gap / 2.0f ) / this._legendItemWidth );
+				int i = (int) ( ( mousePt.X - this._rect.Left - this._tmpSize / 2.0f ) / this._legendItemWidth );
 				if ( i < 0 )
 					i = 0;
 				if ( i >= _hStack )
@@ -667,11 +701,12 @@ namespace ZedGraph
 			int		nCurve = 0;
 
 			PaneList paneList = GetPaneList( pane );
-			this._gap = GetMaxHeight( paneList, g, scaleFactor );
+			this._tmpSize = GetMaxHeight( paneList, g, scaleFactor );
 
-			float	halfGap = this._gap / 2.0F,
+			float	halfGap = this._tmpSize / 2.0F,
 					maxWidth = 0,
-					tmpWidth;
+					tmpWidth,
+					gapPix = _gap * _tmpSize;
 
 			foreach ( GraphPane tmpPane in paneList )
 			{
@@ -747,7 +782,7 @@ namespace ZedGraph
 				}
 		
 				// width of one legend entry
-				this._legendItemWidth = 3 * _gap + maxWidth;
+				this._legendItemWidth = 3 * _tmpSize + maxWidth;
 
 				// Calculate the number of columns in the legend
 				// Normally, the legend is:
@@ -764,7 +799,7 @@ namespace ZedGraph
 					this._hStack = 1;
 			}
 			else
-				this._legendItemWidth = 3.5F * _gap + maxWidth;
+				this._legendItemWidth = 3.5F * _tmpSize + maxWidth;
 		
 			// legend is:
 			//   item:     space  line  space  text   space
@@ -781,8 +816,8 @@ namespace ZedGraph
 		
 			// The total legend height
 			this._legendItemHeight = this._legendItemHeight * (float) scaleFactor + halfGap;
-			if ( _gap > this._legendItemHeight )
-				this._legendItemHeight = _gap;
+			if ( _tmpSize > this._legendItemHeight )
+				this._legendItemHeight = _tmpSize;
 			float totLegHeight = (float) Math.Ceiling( (double) nCurve / (double) _hStack )
 				* this._legendItemHeight;
 			
@@ -802,53 +837,53 @@ namespace ZedGraph
 						newRect.X = clientRect.Right - totLegWidth;
 						newRect.Y = tChartRect.Top;
 
-						tChartRect.Width -= totLegWidth + halfGap;
+						tChartRect.Width -= totLegWidth + gapPix;
 						break;
 					case LegendPos.Top:
 						newRect.X = tChartRect.Left;
 						newRect.Y = clientRect.Top;
 
-						tChartRect.Y += totLegHeight + halfGap;
-						tChartRect.Height -= totLegHeight + halfGap;
+						tChartRect.Y += totLegHeight + gapPix;
+						tChartRect.Height -= totLegHeight + gapPix;
 						break;
 					case LegendPos.TopFlushLeft:
 						newRect.X = clientRect.Left;
 						newRect.Y = clientRect.Top;
 
-						tChartRect.Y += totLegHeight + halfGap * 1.5f;
-						tChartRect.Height -= totLegHeight + halfGap * 1.5f;
+						tChartRect.Y += totLegHeight + gapPix * 1.5f;
+						tChartRect.Height -= totLegHeight + gapPix * 1.5f;
 						break;
 					case LegendPos.TopCenter:
 						newRect.X = tChartRect.Left + ( tChartRect.Width - totLegWidth ) / 2;
 						newRect.Y = tChartRect.Top;
 
-						tChartRect.Y += totLegHeight + halfGap;
-						tChartRect.Height -= totLegHeight + halfGap;
+						tChartRect.Y += totLegHeight + gapPix;
+						tChartRect.Height -= totLegHeight + gapPix;
 						break;
 					case LegendPos.Bottom:
 						newRect.X = tChartRect.Left;
 						newRect.Y = clientRect.Bottom - totLegHeight;
 
-						tChartRect.Height -= totLegHeight + halfGap;
+						tChartRect.Height -= totLegHeight + gapPix;
 						break;
 					case LegendPos.BottomFlushLeft:
 						newRect.X = clientRect.Left;
 						newRect.Y = clientRect.Bottom - totLegHeight;
 
-						tChartRect.Height -= totLegHeight + halfGap;
+						tChartRect.Height -= totLegHeight + gapPix;
 						break;
 					case LegendPos.BottomCenter:
 						newRect.X = tChartRect.Left + ( tChartRect.Width - totLegWidth ) / 2;
 						newRect.Y = clientRect.Bottom - totLegHeight;
 
-						tChartRect.Height -= totLegHeight + halfGap;
+						tChartRect.Height -= totLegHeight + gapPix;
 						break;
 					case LegendPos.Left:
 						newRect.X = clientRect.Left;
 						newRect.Y = tChartRect.Top;
 
 						tChartRect.X += totLegWidth + halfGap;
-						tChartRect.Width -= totLegWidth + halfGap;
+						tChartRect.Width -= totLegWidth + gapPix;
 						break;
 					case LegendPos.InsideTopRight:
 						newRect.X = tChartRect.Right - totLegWidth;

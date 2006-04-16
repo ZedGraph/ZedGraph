@@ -1,4 +1,9 @@
-== ZedGraph Class Library Revision History ==
+== Version 5 ==
+
+;15-Apr-2006 (by Champion) V5_BRANCH
+: [NEW] Add GapLabel class that includes a Gap for the Axis.Title and PaneBase.Title
+: [NEW] Add Axis.LabelGap property
+: [NEW] Add Legend.Gap property
 
 ;13-Apr-2006 (by Champion) V5_BRANCH
 : [UPD] Work in logic for undo states with Synchronized Axes
@@ -46,7 +51,7 @@
 : [NEW] Add DataSourcePointList with data binding
 : [NEW] Add designer attributes for ZedGraphControl
 
-
+== Version 4.3 ==
 
 ;31-Mar-2006 (by Champion)
 : Release Version 4.3.4
@@ -236,6 +241,8 @@
 :  Fix FindNearestPoint bug for text type axes
 :  Add ZedGraphControl.IsShowCursorValues
  
+== Version 4.2 ==
+
 ;9-Sep-2005 (by Champion) v4.2.3
 :  Fix issue with CalcDateStepSize() for max label calcs where the step number is only a target, not a max
 
@@ -300,6 +307,8 @@
 ;15-Jul-2005 (by Champion)
 :  Add PointPairList.Insert overloads
 
+== Version 4.1 ==
+
 ;14-Jul-2005 (by Champion) v4.1.8beta
 :  Add Axis.IsScaleLabelsInside
 :  Add Axis.IsSkipFirstLabel
@@ -349,6 +358,8 @@
 :	Use ScaleFormat for numeric labels and dates.
 :	Remove NumDec and NumDecAuto 
 :	Subscription event for zoom/pan notification (see ZoomEvent)
+
+== Version 4.0 ==
 
 ;19-Apr-2005 (by Champion) v4.0.8
 :  Fix roundoff bug for bar width (when scale has large values like dates)
@@ -479,7 +490,9 @@
 ;17-Jan-2005 (by Kaye)
 :  Fix up PieItem; Remove PieSlice
 
-;15-Jan-2005 (by Champion)
+== Version 3.5 ==
+
+;15-Jan-2005 (by Champion) v3.5.3
 :  Fix GraphItem Copy Constructor
 :  Fix +1 pixel error on ZedGraphControl bitmap
 :  Fix StringAlignment bug for FontSpec
@@ -622,7 +635,9 @@
 ;22-Sep-2004 (by Champion)
 :    Eliminate legend entries for curves with blank labels
 
-;21-Sep-2004 (by Champion)
+== Version 3.0 ==
+
+;21-Sep-2004 (by Champion) v3.0
 :    Release 3.0
 :    Fix grid so it's behind the bar/line fills
 
@@ -656,7 +671,9 @@
 :    Fix space allocation for rotated Axis Labels
 :    Add gradient fills for bars
 
-;1-Sep-2004 (by Champion)
+== Version 2.0 ==
+
+;1-Sep-2004 (by Champion) v2.0
 :    Fix grace so that it won't extend across negative/positive boundary
 :    Finish up #region's
 
@@ -729,6 +746,8 @@
 
 ;14-Jul-2004
 :    Added LGPL
+
+== Version 1 ==
 
 ;13-Jul-2004 (Release 1.5)
 :    Added AxisType.Ordinal 

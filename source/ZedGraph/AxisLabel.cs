@@ -33,9 +33,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:01 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-16 07:15:51 $ </version>
 	[Serializable]
-	public class AxisLabel : Label, ICloneable, ISerializable
+	public class AxisLabel : GapLabel, ICloneable, ISerializable
 	{
 		internal bool	_isOmitMag,
 							_isTitleAtCross;
@@ -141,7 +141,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 10;
+		public const int schema3 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -154,7 +154,7 @@ namespace ZedGraph
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
-			int sch2 = info.GetInt32( "schema2" );
+			int sch2 = info.GetInt32( "schema3" );
 
 			_isOmitMag = info.GetBoolean( "isOmitMag" );
 			_isTitleAtCross = info.GetBoolean( "isTitleAtCross" );
@@ -169,7 +169,7 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 
-			info.AddValue( "schema2", schema2 );
+			info.AddValue( "schema3", schema2 );
 			info.AddValue( "isOmitMag", _isVisible );
 			info.AddValue( "isTitleAtCross", _isTitleAtCross );
 		}

@@ -31,10 +31,12 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_CandleStick( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl2 );
-			CreateGraph_BasicLog( zedGraphControl2 );
+			//CreateGraph_BasicLog( zedGraphControl2 );
 			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
+			CreateGraph_HorizontalBars( zedGraphControl1 );
+			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl2 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
@@ -44,7 +46,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_TwoTextAxes( zedGraphControl1 );
-			CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
+			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
 			//CreateGraph_32kPoints( zedGraphControl2 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
@@ -53,6 +55,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_PolyTest( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl2 );
 			//CreateGraph_Contour( zedGraphControl2 );
+			CreateGraph_Junk( zedGraphControl2 );
 
 			zedGraphControl1.AxisChange();
 			SetSize();
@@ -696,6 +699,39 @@ namespace ZedGraph.ControlTest
 			g.Dispose();
 		}
 
+
+		// masterpane test
+		private void CreateGraph_Junk( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			int j = 5;
+
+				myPane.Title.Text = "Case #6";
+				myPane.XAxis.Title.Text = "Time, Days";
+				myPane.YAxis.Title.Text = "Rate, m/s";
+
+				myPane.Fill = new Fill( Color.White, Color.LightYellow, 45.0F );
+				myPane.BaseDimension = 6.0F;
+
+				// Make up some data arrays based on the Sine function
+				double x, y;
+				PointPairList list = new PointPairList();
+				for ( int i = 0; i < 36; i++ )
+				{
+					x = (double)i + 5;
+					y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
+					list.Add( x, y );
+				}
+
+				LineItem myCurve = myPane.AddCurve( "Type 5",
+					list, Color.Pink, SymbolType.Triangle );
+				myCurve.Symbol.Fill = new Fill( Color.White );
+
+
+			z1.AxisChange();
+		}
+
 		// masterpane with three vertical panes
 		private void CreateGraph_ThreeVerticalPanes( ZedGraphControl z1 )
 		{
@@ -810,6 +846,51 @@ namespace ZedGraph.ControlTest
 			string[] labels = { "one", "two", "three", "four", "five" };
 			myPane.XAxis.Scale.TextLabels = labels;
 			myPane.XAxis.Type = AxisType.Text;
+
+			// Tell ZedGraph to calculate the axis ranges
+			z1.AxisChange();
+			z1.Invalidate();
+
+
+		}
+
+
+		private void CreateGraph_HorizontalBars( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+			Random rand = new Random();
+
+			for ( int i = 0; i < 5; i++ )
+			{
+				double y = (double)i;
+				double x = rand.NextDouble() * 1000;
+				double x2 = rand.NextDouble() * 1000;
+				double x3 = rand.NextDouble() * 1000;
+				list.Add( x, y );
+				list2.Add( x2, y );
+				list3.Add( x3, y );
+			}
+
+			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
+			myCurve.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 90.0f );
+			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
+			myCurve2.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 90.0f );
+			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
+			myCurve3.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 90.0f );
+
+			myPane.YAxis.MajorTic.IsBetweenLabels = true;
+			string[] labels = { "one", "two", "three", "four", "five" };
+			myPane.YAxis.Scale.Align = AlignP.Outside;
+			myPane.YAxis.Scale.TextLabels = labels;
+			//myPane.YAxis.Scale.LabelGap = 2.0f;
+			//myPane.YAxis.Title.Gap = 2.0f;
+			//myPane.Legend.Gap = 2.0f;
+			myPane.YAxis.Type = AxisType.Text;
+			myPane.BarSettings.Base = BarBase.Y;
 
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();

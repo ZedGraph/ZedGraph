@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.60.2.4 $ $Date: 2006-04-07 06:14:01 $ </version>
+	/// <version> $Revision: 3.60.2.5 $ $Date: 2006-04-16 07:15:50 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -143,6 +143,11 @@ namespace ZedGraph
 			/// (<see cref="Axis.AxisGap"/> property). Units are in points (1/72 inch).
 			/// </summary>
 			public static float AxisGap = 5;
+
+			/// <summary>
+			/// The default setting for the gap between the scale labels and the axis title.
+			/// </summary>
+			public static float TitleGap = 0.0f;
 
 			/// <summary>
 			/// The default font family for the <see cref="Axis"/> <see cref="Title" /> text
@@ -984,7 +989,9 @@ namespace ZedGraph
 			// Scaled size (pixels) of a tic
 			float ticSize = this._majorTic.ScaledTic( scaleFactor );
 			// Scaled size (pixels) of the axis gap
-			float gap = this._axisGap * scaleFactor;
+			float axisGap = this._axisGap * scaleFactor;
+			float scaledLabelGap = _scale._labelGap * charHeight;
+			float scaledTitleGap = _title.GetScaledGap( scaleFactor );
 
 			// The minimum amount of space to reserve for the NORMAL position of the axis.  This would
 			// be the left side of the chart rect for the Y axis, the right side for the Y2 axis, etc.
@@ -1009,7 +1016,7 @@ namespace ZedGraph
 				if ( !IsPrimary( pane ) )
 				{
 					// always leave an extra tic space for the space between the multi-axes (Axis Gap)
-					_tmpSpace += gap;
+					_tmpSpace += axisGap;
 
 					// if it has inside tics, leave another tic space (Inside Tic Space)
 					if ( this.MajorTic._isInside || this.MajorTic._isCrossInside ||
@@ -1022,9 +1029,9 @@ namespace ZedGraph
 				// scale label is GetScaleMaxSpace()
 				// space between scale label and axis label is 0.5 tic
 
-				// account for the tic labels + 1/2 tic gap between the tic and the label
+				// account for the tic labels + 'LabelGap' tic gap between the tic and the label
 				_tmpSpace += this._scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height +
-						ticSize * 0.5F;
+						scaledLabelGap;
 
 				string str = MakeTitle();
 
@@ -1033,12 +1040,15 @@ namespace ZedGraph
 				if ( str.Length > 0 && this._title._isVisible )
 				{
 					//tmpSpace += this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height;
-					fixedSpace = this.Title.FontSpec.BoundingBox( g, str, scaleFactor ).Height;
+					fixedSpace = this.Title.FontSpec.BoundingBox( g, str, scaleFactor ).Height +
+							scaledTitleGap;
 					_tmpSpace += fixedSpace;
+
+					fixedSpace += scaledTitleGap;
 				}
 
 				if ( hasTic )
-					fixedSpace += ticSize * 1.5F;
+					fixedSpace += ticSize;
 			}
 
 			// for the Y axes, make sure that enough space is left to fit the first
@@ -1232,6 +1242,8 @@ namespace ZedGraph
 				float x = ( this._scale._maxPix - this._scale._minPix ) / 2;
 
 				float scaledTic = MajorTic.ScaledTic( scaleFactor );
+				float scaledLabelGap = _scale._fontSpec.GetHeight( scaleFactor ) * _scale._labelGap;
+				float scaledTitleGap = _title.GetScaledGap( scaleFactor );
 
 				// The space for the scale labels is only reserved if the axis is not shifted due to the
 				// cross value.  Note that this could be a problem if the axis is only shifted slightly,
@@ -1243,7 +1255,7 @@ namespace ZedGraph
 				float gap = scaledTic * ( hasTic ? 1.0f : 0.0f ) +
 							this.Title.FontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
 				float y = ( _scale._isVisible ? this._scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height
-							+ scaledTic * 0.5f : 0 );
+							+ scaledLabelGap : 0 );
 
 				if ( this._scale._isLabelsInside )
 					y = shiftPos - y - gap;
@@ -1254,6 +1266,9 @@ namespace ZedGraph
 					y = Math.Max( y, gap );
 
 				AlignV alignV = AlignV.Center;
+
+				// Add in the TitleGap space
+				y += scaledTitleGap;
 
 				// Draw the title
 				this.Title.FontSpec.Draw( g, pane.IsPenWidthScaled, str, x, y,

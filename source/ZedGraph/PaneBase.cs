@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.19.2.4 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 3.19.2.5 $ $Date: 2006-04-16 07:15:51 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -52,7 +52,7 @@ namespace ZedGraph
 		/// <summary>Private field that holds the main title of the pane.  Use the
 		/// public property <see cref="Title"/> to access this value.
 		/// </summary>
-		protected Label		_title;
+		protected GapLabel		_title;
 		
 		/// <summary>Private field instance of the <see cref="ZedGraph.Legend"/> class.  Use the
 		/// public property <see cref="PaneBase.Legend"/> to access this class.</summary>
@@ -114,6 +114,12 @@ namespace ZedGraph
 		/// <seealso cref="_isFontsScaled"/>
 		/// <seealso cref="CalcScaleFactor"/>
 		protected float		_baseDimension;
+
+		/// <summary>
+		/// private field that stores the gap between the bottom of the pane title and the
+		/// client area of the pane.  This is expressed as a fraction of the title character height.
+		/// </summary>
+		protected float _titleGap;
 
 	#endregion
 
@@ -216,6 +222,12 @@ namespace ZedGraph
 			/// </summary>
 			/// <seealso cref="PaneBase.CalcScaleFactor"/>
 			public static bool IsFontsScaled = true;
+
+			/// <summary>
+			/// The default value for the <see cref="PaneBase.TitleGap" /> property, expressed as
+			/// a fraction of the scaled <see cref="Title" /> character height.
+			/// </summary>
+			public static float TitleGap = 0.5f;
 		}
 	#endregion
 
@@ -341,6 +353,17 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Gets or sets the gap between the bottom of the pane title and the
+		/// client area of the pane.  This is expressed as a fraction of the scaled
+		/// <see cref="Title" /> character height.
+		/// </summary>
+		public float TitleGap
+		{
+			get { return _titleGap; }
+			set { _titleGap = value; }
+		}
+
+		/// <summary>
 		/// Determines if the font sizes, tic sizes, gap sizes, etc. will be scaled according to
 		/// the size of the <see cref="Rect"/> and the <see cref="BaseDimension"/>.  If this
 		/// value is set to false, then the font sizes and tic sizes will always be exactly as
@@ -401,14 +424,15 @@ namespace ZedGraph
 				
 			this._baseDimension = Default.BaseDimension;
 			this._margin = new Margin();
-						
+			_titleGap = Default.TitleGap;
+
 			this._isFontsScaled = Default.IsFontsScaled;
 			this._isPenWidthScaled = Default.IsPenWidthScaled;
 			this._fill = new Fill( Default.FillColor );
 			this._border = new Border( Default.IsBorderVisible, Default.BorderColor,
 				Default.BorderPenWidth );
 
-			this._title = new Label( title, Default.FontFamily,
+			this._title = new GapLabel( title, Default.FontFamily,
 				Default.FontSize, Default.FontColor, Default.FontBold,
 				Default.FontItalic, Default.FontUnderline );
 			this._title._fontSpec.Fill.IsVisible = false;
@@ -429,6 +453,7 @@ namespace ZedGraph
 			this._isFontsScaled = rhs._isFontsScaled;
 			this._isPenWidthScaled = rhs._isPenWidthScaled;
 
+			_titleGap = rhs._titleGap;
 			this._baseDimension = rhs._baseDimension;
 			this._margin = rhs._margin.Clone();
 			this._rect = rhs._rect;
@@ -508,19 +533,19 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			this._rect = (RectangleF) info.GetValue( "paneRect", typeof(RectangleF) );
+			this._rect = (RectangleF) info.GetValue( "rect", typeof(RectangleF) );
 			this._legend = (Legend) info.GetValue( "legend", typeof(Legend) );
-			this._title = (Label) info.GetValue( "title", typeof(Label) );
+			this._title = (GapLabel) info.GetValue( "title", typeof(GapLabel) );
 			//this.isShowTitle = info.GetBoolean( "isShowTitle" );
 			this._isFontsScaled = info.GetBoolean( "isFontsScaled" );
 			this._isPenWidthScaled = info.GetBoolean( "isPenWidthScaled" );
 			//this.fontSpec = (FontSpec) info.GetValue( "fontSpec" , typeof(FontSpec) );
-
-			this._fill = (Fill) info.GetValue( "paneFill", typeof(Fill) );
-			this._border = (Border) info.GetValue( "paneBorder", typeof(Border) );
+			_titleGap = info.GetSingle( "titleGap" );
+			this._fill = (Fill) info.GetValue( "fill", typeof(Fill) );
+			this._border = (Border) info.GetValue( "border", typeof(Border) );
 			this._baseDimension = info.GetSingle( "baseDimension" );
 			this._margin = (Margin)info.GetValue( "margin", typeof( Margin ) );
-			this._graphObjList = (GraphObjList) info.GetValue( "graphItemList", typeof(GraphObjList) );
+			this._graphObjList = (GraphObjList) info.GetValue( "graphObjList", typeof(GraphObjList) );
 
 			this._tag = info.GetValue( "tag", typeof(object) );
 
@@ -535,18 +560,20 @@ namespace ZedGraph
 		{
 			info.AddValue( "schema", schema );
 
-			info.AddValue( "paneRect", _rect );
+			info.AddValue( "rect", _rect );
 			info.AddValue( "legend", _legend );
 			info.AddValue( "title", _title );
 			//info.AddValue( "isShowTitle", isShowTitle );
 			info.AddValue( "isFontsScaled", _isFontsScaled );
 			info.AddValue( "isPenWidthScaled", _isPenWidthScaled );
+			info.AddValue( "titleGap", _titleGap );
+
 			//info.AddValue( "fontSpec", fontSpec );
-			info.AddValue( "paneFill", _fill );
-			info.AddValue( "paneBorder", _border );
+			info.AddValue( "fill", _fill );
+			info.AddValue( "border", _border );
 			info.AddValue( "baseDimension", _baseDimension );
 			info.AddValue( "margin", _margin );
-			info.AddValue( "graphItemList", _graphObjList );
+			info.AddValue( "graphObjList", _graphObjList );
 
 			info.AddValue( "tag", _tag );
 		}
@@ -626,9 +653,9 @@ namespace ZedGraph
 			if ( this._title._isVisible )
 			{
 				SizeF titleSize = this._title._fontSpec.BoundingBox( g, this._title._text, scaleFactor );
-				// Leave room for the title height, plus a line spacing of charHeight/2
-				innerRect.Y += titleSize.Height + charHeight / 2.0F;
-				innerRect.Height -= titleSize.Height + charHeight / 2.0F;
+				// Leave room for the title height, plus a line spacing of charHeight * _titleGap
+				innerRect.Y += titleSize.Height + charHeight * _titleGap;
+				innerRect.Height -= titleSize.Height + charHeight * _titleGap;
 			}
 
 			// Calculate the legend rect, and back it out of the current ChartRect

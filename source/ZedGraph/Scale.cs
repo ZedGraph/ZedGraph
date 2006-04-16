@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9.2.4 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 1.9.2.5 $ $Date: 2006-04-16 07:15:51 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -130,6 +130,13 @@ namespace ZedGraph
 		/// Use the public properties <see cref="FontSpec"/> and
 		/// <see cref="Scale.FontSpec"/> for access to these values. </summary>
 		internal FontSpec _fontSpec;
+
+		/// <summary>
+		/// Internal field that stores the amount of space between the scale labels and the
+		/// major tics.  Use the public property <see cref="LabelGap" /> to access this
+		/// value.
+		/// </summary>
+		internal float _labelGap;
 
 		/// <summary>
 		/// Data range temporary values, used by GetRange().
@@ -581,6 +588,13 @@ namespace ZedGraph
 			/// parameter to zero to turn off the effect.
 			/// </remarks>
 			public static float EdgeTolerance = 6;
+
+			/// <summary>
+			/// The default setting for the gap between the outside tics (or the axis edge
+			/// if there are no outside tics) and the scale labels, expressed as a fraction of
+			/// the major tic size.
+			/// </summary>
+			public static float LabelGap = 0.3f;
 		}
 
 	#endregion
@@ -639,6 +653,7 @@ namespace ZedGraph
 				Default.FillType );
 
 			this._fontSpec.Border.IsVisible = false;
+			this._labelGap = Default.LabelGap;
 		}
 
 		/// <summary>
@@ -687,6 +702,8 @@ namespace ZedGraph
 			_isLabelsInside = rhs._isLabelsInside;
 			_align = rhs._align;
 			_fontSpec = (FontSpec) rhs._fontSpec.Clone();
+
+			_labelGap = rhs._labelGap;
 
 			if ( rhs._textLabels is string[] )
 				_textLabels = (string[])rhs._textLabels.Clone();
@@ -828,6 +845,7 @@ namespace ZedGraph
 			_isLabelsInside = info.GetBoolean( "isLabelsInside" );
 			_align = (AlignP)info.GetValue( "align", typeof( AlignP ) );
 			_fontSpec = (FontSpec)info.GetValue( "fontSpec", typeof( FontSpec ) );
+			_labelGap = info.GetSingle( "labelGap" );
 
 		}
 		/// <summary>
@@ -879,6 +897,7 @@ namespace ZedGraph
 			info.AddValue( "isLabelsInside", _isLabelsInside );
 			info.AddValue( "align", _align );
 			info.AddValue( "fontSpec", _fontSpec );
+			info.AddValue( "labelGap", _labelGap );
 		}
 	#endregion
 
@@ -1360,6 +1379,15 @@ namespace ZedGraph
 		public FontSpec FontSpec
 		{
 			get { return _fontSpec; }
+		}
+
+		/// <summary>
+		/// The gap between the scale labels and the tics.
+		/// </summary>
+		public float LabelGap
+		{
+			get { return _labelGap; }
+			set { _labelGap = value; }
 		}
 
 		/// <summary>
@@ -1850,6 +1878,7 @@ namespace ZedGraph
 			// get the Y position of the center of the axis labels
 			// (the axis itself is referenced at zero)
 			SizeF maxLabelSize = GetScaleMaxSpace( g, pane, scaleFactor, true );
+			float charHeight = _fontSpec.GetHeight( scaleFactor );
 			float maxSpace = maxLabelSize.Height;
 
 			float edgeTolerance = Default.EdgeTolerance * scaleFactor;
@@ -1932,7 +1961,7 @@ namespace ZedGraph
 							Math.Abs( pixVal - lastPixVal ) < maxLabelSize.Width )
 						continue;
 
-					DrawLabel( g, pane, i, dVal, pixVal, shift, maxSpace, scaledTic, scaleFactor );
+					DrawLabel( g, pane, i, dVal, pixVal, shift, maxSpace, scaledTic, charHeight, scaleFactor );
 
 					lastPixVal = pixVal;
 				}
@@ -1940,13 +1969,13 @@ namespace ZedGraph
 		}
 
 		internal void DrawLabel( Graphics g, GraphPane pane, int i, double dVal, float pixVal,
-						float shift, float maxSpace, float scaledTic, float scaleFactor )
+						float shift, float maxSpace, float scaledTic, float charHeight, float scaleFactor )
 		{
 			float textTop, textCenter;
 			if ( _ownerAxis.MajorTic.IsOutside )
-				textTop = scaledTic * 1.5F;
+				textTop = scaledTic + charHeight * _labelGap;
 			else
-				textTop = scaledTic * 0.5F;
+				textTop = charHeight * _labelGap;
 
 			// draw the label
 			string tmpStr = MakeLabel( pane, i, dVal );

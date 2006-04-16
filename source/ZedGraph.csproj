@@ -64,6 +64,7 @@
     <Compile Include="ZedGraph\Fill.cs" />
     <Compile Include="ZedGraph\FilteredPointList.cs" />
     <Compile Include="ZedGraph\FontSpec.cs" />
+    <Compile Include="ZedGraph\GapLabel.cs" />
     <Compile Include="ZedGraph\GraphObj.cs" />
     <Compile Include="ZedGraph\GraphObjList.cs" />
     <Compile Include="ZedGraph\GraphPane.cs" />
