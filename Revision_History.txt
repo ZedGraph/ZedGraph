@@ -1,5 +1,9 @@
 == Version 5 ==
 
+;18-Apr-2006 (by Champion) V5_BRANCH
+: [FIX] Fix point in polyObj test
+: [FIX] Fix interpolate logic for line items (when zoomed way in)
+
 ;15-Apr-2006 (by Champion) V5_BRANCH
 : [NEW] Add GapLabel class that includes a Gap for the Axis.Title and PaneBase.Title
 : [NEW] Add Axis.LabelGap property

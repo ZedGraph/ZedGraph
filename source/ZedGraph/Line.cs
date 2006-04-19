@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.23.2.3 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 3.23.2.4 $ $Date: 2006-04-19 06:08:14 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -703,19 +703,22 @@ namespace ZedGraph
 										tmpX > 5000000 || tmpX < -5000000 ||
 										tmpY > 5000000 || tmpY < -5000000 )
 									InterpolatePoint( g, pane, pen, lastX, lastY, tmpX, tmpY );
+								else
+								{
 
-								if ( this.StepType == StepType.ForwardStep )
-								{
-									g.DrawLine( pen, lastX, lastY, tmpX, lastY );
-									g.DrawLine( pen, tmpX, lastY, tmpX, tmpY );
+									if ( this.StepType == StepType.ForwardStep )
+									{
+										g.DrawLine( pen, lastX, lastY, tmpX, lastY );
+										g.DrawLine( pen, tmpX, lastY, tmpX, tmpY );
+									}
+									else if ( this.StepType == StepType.RearwardStep )
+									{
+										g.DrawLine( pen, lastX, lastY, lastX, tmpY );
+										g.DrawLine( pen, lastX, tmpY, tmpX, tmpY );
+									}
+									else 		// non-step
+										g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
 								}
-								else if ( this.StepType == StepType.RearwardStep )
-								{
-									g.DrawLine( pen, lastX, lastY, lastX, tmpY );
-									g.DrawLine( pen, lastX, tmpY, tmpX, tmpY );
-								}
-								else 		// non-step
-									g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
 
 							}
 							catch
