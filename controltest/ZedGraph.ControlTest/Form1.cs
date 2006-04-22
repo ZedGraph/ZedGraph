@@ -32,7 +32,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl2 );
 			//CreateGraph_BasicLog( zedGraphControl2 );
-			//CreateGraph_StackLine( zedGraphControl1 );
+			CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
@@ -42,7 +42,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_SplineTest( zedGraphControl1 );
-			CreateGraph_DateAxis( zedGraphControl1 );
+			//CreateGraph_DateAxis( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_TwoTextAxes( zedGraphControl1 );
@@ -50,12 +50,13 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_32kPoints( zedGraphControl2 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
+			CreateGraph_StackedBars( zedGraphControl2 );
 
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_PolyTest( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl2 );
 			//CreateGraph_Contour( zedGraphControl2 );
-			CreateGraph_Junk( zedGraphControl2 );
+			//CreateGraph_Junk( zedGraphControl2 );
 
 			zedGraphControl1.AxisChange();
 			SetSize();
@@ -818,7 +819,7 @@ namespace ZedGraph.ControlTest
 			g.Dispose();
 		}
 
-		private void CreateGraph_VerticalBars( ZedGraphControl z1 )
+		private void CreateGraph_StackedBars( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.GraphPane;
 
@@ -829,7 +830,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 5; i++ )
 			{
-				double x = (double)i;
+				double x = (double)i / 3 + 4;
 				double y = rand.NextDouble() * 1000;
 				double y2 = rand.NextDouble() * 1000;
 				double y3 = rand.NextDouble() * 1000;
@@ -841,9 +842,48 @@ namespace ZedGraph.ControlTest
 			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
 			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
 			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
+			myPane.BarSettings.Type = BarType.Stack;
+			myPane.BarSettings.Base = BarBase.Y;
 
 			myPane.XAxis.MajorTic.IsBetweenLabels = true;
-			string[] labels = { "one", "two", "three", "four", "five" };
+			string[] labels = { "one", "two", "three", "four", "five", "six" };
+			myPane.XAxis.Scale.TextLabels = labels;
+			myPane.XAxis.Type = AxisType.Text;
+
+			// Tell ZedGraph to calculate the axis ranges
+			z1.AxisChange();
+			z1.Invalidate();
+
+
+		}
+
+		private void CreateGraph_VerticalBars( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+			Random rand = new Random();
+
+			for ( int i = 0; i < 5; i++ )
+			{
+				double x = (double)i / 3 + 4;
+				double y = rand.NextDouble() * 1000;
+				double y2 = rand.NextDouble() * 1000;
+				double y3 = rand.NextDouble() * 1000;
+				list.Add( x, y );
+				list2.Add( x, y2 );
+				list3.Add( x, y3 );
+			}
+
+			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
+			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
+			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
+			//myCurve.IsOverrideOrdinal = true;
+
+			myPane.XAxis.MajorTic.IsBetweenLabels = true;
+			string[] labels = { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
 			myPane.XAxis.Scale.TextLabels = labels;
 			myPane.XAxis.Type = AxisType.Text;
 

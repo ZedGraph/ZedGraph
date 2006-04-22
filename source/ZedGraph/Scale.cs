@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9.2.5 $ $Date: 2006-04-16 07:15:51 $ </version>
+	/// <version> $Revision: 1.9.2.6 $ $Date: 2006-04-22 10:26:00 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -2190,7 +2190,7 @@ namespace ZedGraph
 					this._max = maxVal + this._maxGrace * range;
 			}
 
-			if ( this._max < this._min )
+			if ( this._max <= this._min )
 			{
 				if ( this._maxAuto )
 					this._max = this._min + 1.0;

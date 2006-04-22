@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.32.2.4 $ $Date: 2006-04-22 02:52:55 $ </version>
+	/// <version> $Revision: 3.32.2.5 $ $Date: 2006-04-22 10:26:00 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -337,32 +337,13 @@ namespace ZedGraph
 						tYMinVal,
 						tYMaxVal;
 
-			Scale scale = pane.XAxis.Scale;
-			scale._rangeMin = double.MaxValue;
-			scale._rangeMax = double.MinValue;
-			scale._lBound = ( isBoundedRanges && !scale._minAuto ) ?
-				scale._min : double.MinValue;
-			scale._uBound = ( isBoundedRanges && !scale._maxAuto ) ?
-				scale._max : double.MaxValue;
+			InitScale( pane.XAxis.Scale, isBoundedRanges );
 
-			
 			foreach ( YAxis axis in pane.YAxisList )
-			{
-				scale = axis.Scale;
-				scale._rangeMin = double.MaxValue;
-				scale._rangeMax = double.MinValue;
-				scale._lBound = ( isBoundedRanges && !scale._minAuto ) ? scale._min : double.MinValue;
-				scale._uBound = ( isBoundedRanges && !scale._maxAuto ) ? scale._max : double.MaxValue;
-			}
+				InitScale( axis.Scale, isBoundedRanges );
 
 			foreach ( Y2Axis axis in pane.Y2AxisList )
-			{
-				scale = axis.Scale;
-				scale._rangeMin = double.MaxValue;
-				scale._rangeMax = double.MinValue;
-				scale._lBound = ( isBoundedRanges && !scale._minAuto ) ? scale._min : double.MinValue;
-				scale._uBound = ( isBoundedRanges && !scale._maxAuto ) ? scale._max : double.MaxValue;
-			}
+				InitScale( axis.Scale, isBoundedRanges );
 
 			maxPts = 1;
 			
@@ -394,12 +375,12 @@ namespace ZedGraph
 				bool isXOrd = xScale.IsAnyOrdinal;
    							
 				// For ordinal Axes, the data range is just 1 to Npts
-				if ( isYOrd )
+				if ( isYOrd && !curve.IsOverrideOrdinal )
 				{
 					tYMinVal = 1.0;
 					tYMaxVal = curve.NPts;
 				}
-				if ( isXOrd )
+				if ( isXOrd && !curve.IsOverrideOrdinal )
 				{
 					tXMinVal = 1.0;
 					tXMaxVal = curve.NPts;
@@ -473,7 +454,16 @@ namespace ZedGraph
 				axis.Scale.SetRange( pane, axis );
 
 		}
-		
+
+		private void InitScale( Scale scale, bool isBoundedRanges )
+		{
+			scale._rangeMin = double.MaxValue;
+			scale._rangeMax = double.MinValue;
+			scale._lBound = ( isBoundedRanges && !scale._minAuto ) ?
+				scale._min : double.MinValue;
+			scale._uBound = ( isBoundedRanges && !scale._maxAuto ) ?
+				scale._max : double.MaxValue;
+		}
 
 		/// <summary>
 		/// Calculate the range for stacked bars and lines.

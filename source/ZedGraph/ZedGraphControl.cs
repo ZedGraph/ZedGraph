@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.8 $ $Date: 2006-04-22 03:27:55 $ </version>
+	/// <version> $Revision: 3.59.2.9 $ $Date: 2006-04-22 10:26:00 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -2019,11 +2019,18 @@ namespace ZedGraph
 								this.pointToolTip.SetToolTip( this, (string)pt.Tag );
 							else
 							{
-								string xStr = MakeValueLabel( pane.XAxis, pt.X, iPt,
+								double xVal, yVal, lowVal;
+								ValueHandler valueHandler = new ValueHandler( pane, false );
+								if ( ( curve is BarItem || curve is ErrorBarItem || curve is HiLowBarItem )
+										&& pane.BarSettings.Base != BarBase.X )
+									valueHandler.GetValues( curve, iPt, out yVal, out lowVal, out xVal );
+								else
+									valueHandler.GetValues( curve, iPt, out xVal, out lowVal, out yVal );
+
+								string xStr = MakeValueLabel( pane.XAxis, xVal, iPt,
 									curve.IsOverrideOrdinal );
-								string yStr = MakeValueLabel(
-									curve.GetYAxis( pane ),
-									pt.Y, iPt, curve.IsOverrideOrdinal );
+								string yStr = MakeValueLabel( curve.GetYAxis( pane ), yVal, iPt,
+									curve.IsOverrideOrdinal );
 
 								this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
 

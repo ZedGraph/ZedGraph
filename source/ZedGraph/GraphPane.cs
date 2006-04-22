@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.4 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 3.59.2.5 $ $Date: 2006-04-22 10:26:00 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1889,6 +1889,12 @@ namespace ZedGraph
 								else if ( xVal >= _xAxis._scale._min && xVal <= _xAxis._scale._max &&
 											yVal >= yMinAct && yVal <= yMaxAct )
 								{
+									if ( curve is LineItem && _lineType == LineType.Stack )
+									{
+										double zVal;
+										valueHandler.GetValues( curve, iPt, out xVal, out zVal, out yVal );
+									}
+
 									distX = ( xVal - x ) * xPixPerUnit;
 									distY = ( yVal - yAct ) * yPixPerUnitAct;
 									dist = distX * distX + distY * distY;
