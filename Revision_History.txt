@@ -2,6 +2,7 @@
 
 ;21-Apr-2006 (by Champion) V5_BRANCH (prelim release 4.9.3)
 : [FIX] internal usage of public properties (Scale.MinorStep, etc.) caused Auto mode to switch off
+: [UPD] Add try/catch pair around the ZedGraphControl.OnPaint() method call to Draw()
 
 ;18-Apr-2006 (by Champion) V5_BRANCH (prelim release 4.9.2)
 : [FIX] Fix point in polyObj test

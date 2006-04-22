@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.7 $ $Date: 2006-04-13 18:56:31 $ </version>
+	/// <version> $Revision: 3.59.2.8 $ $Date: 2006-04-22 03:27:55 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -1655,7 +1655,9 @@ namespace ZedGraph
 
 				base.OnPaint( e );
 
-				_masterPane.Draw( e.Graphics );
+				// Add a try/catch pair since the users of the control can't catch this one
+				try { _masterPane.Draw( e.Graphics ); }
+				catch { }
 			}
 		}
 
