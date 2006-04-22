@@ -35,14 +35,14 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
-			CreateGraph_HorizontalBars( zedGraphControl1 );
+			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl2 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_SplineTest( zedGraphControl1 );
-			//CreateGraph_DateAxis( zedGraphControl1 );
+			CreateGraph_DateAxis( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_TwoTextAxes( zedGraphControl1 );
@@ -1211,21 +1211,36 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			PointPairList list2 = new PointPairList();
 
-			for ( int i = 0; i < 20; i++ )
-			{
-				double x = new XDate( 2005, 12+i, 1 );
-				double y = Math.Sin( i / 8.0 ) * 1000 + 1001;
-				list.Add( x, y, 1500 );
-				list2.Add( x, y * 1.2, 1500 );
-			}
+			double x = new XDate( 1990, 1, 2 );
+			double y = Math.Sin( i / 8.0 ) * 1000 + 1001;
+			list.Add( x, y );
+			x = new XDate( 1990, 1, 3 );
+			list.Add( x, y );
+			x = new XDate( 1990, 1, 8 );
+			list.Add( x, y );
+			x = new XDate( 1990, 1, 28 );
+			list.Add( x, y );
 
+
+			/*			for ( int i = 0; i < 20; i++ )
+						{
+							double x = new XDate( 2005, 12, 30+i );
+							double y = Math.Sin( i / 8.0 ) * 1000 + 1001;
+							list.Add( x, y, 1500 );
+							list2.Add( x, y * 1.2, 1500 );
+						}
+			*/
+			LineItem line = myPane.AddCurve( "Line", list, Color.Blue, SymbolType.Diamond );
+			//myPane.XAxis.Scale.Format = "MMM\nyyyy";
+			myPane.XAxis.Type = AxisType.Date;
+
+			/*
 			BarItem myBar = myPane.AddBar( "Bar", list, Color.Blue );
 			BarItem myBar2 = myPane.AddBar( "Bar2", list2, Color.Green );
 			//LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
-			myPane.XAxis.Scale.Format = "MMM\nyyyy";
-			myPane.XAxis.Type = AxisType.Date;
 			myPane.BarSettings.Type = BarType.ClusterHiLow;
 			myPane.BarSettings.ClusterScaleWidth = 20.0;
+			*/
 
 			z1.IsAutoScrollRange = true;
 			z1.IsShowHScrollBar = true;

@@ -1,5 +1,8 @@
 == Version 5 ==
 
+;21-Apr-2006 (by Champion) V5_BRANCH (prelim release 4.9.3)
+: [FIX] internal usage of public properties (Scale.MinorStep, etc.) caused Auto mode to switch off
+
 ;18-Apr-2006 (by Champion) V5_BRANCH (prelim release 4.9.2)
 : [FIX] Fix point in polyObj test
 : [FIX] Fix interpolate logic for line items (when zoomed way in)

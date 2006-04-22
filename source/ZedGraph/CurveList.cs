@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.32.2.3 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 3.32.2.4 $ $Date: 2006-04-22 02:52:55 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -360,8 +360,8 @@ namespace ZedGraph
 				scale = axis.Scale;
 				scale._rangeMin = double.MaxValue;
 				scale._rangeMax = double.MinValue;
-				scale._lBound = ( isBoundedRanges && !scale.MinAuto ) ? scale.Min : double.MinValue;
-				scale._uBound = ( isBoundedRanges && !scale.MaxAuto ) ? scale.Max : double.MaxValue;
+				scale._lBound = ( isBoundedRanges && !scale._minAuto ) ? scale._min : double.MinValue;
+				scale._uBound = ( isBoundedRanges && !scale._maxAuto ) ? scale._max : double.MaxValue;
 			}
 
 			maxPts = 1;

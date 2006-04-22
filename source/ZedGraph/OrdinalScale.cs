@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.4.2.3 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 1.4.2.4 $ $Date: 2006-04-22 02:52:55 $ </version>
 	[Serializable]
 	class OrdinalScale : Scale, ISerializable //, ICloneable
 	{
@@ -144,12 +144,12 @@ namespace ZedGraph
 		internal static void PickScale( GraphPane pane, Graphics g, float scaleFactor, Scale scale )
 		{
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( scale.Max - scale.Min < 1.0 )
+			if ( scale._max - scale._min < 1.0 )
 			{
-				if ( scale.MaxAuto )
-					scale.Max = scale.Min + 0.5;
+				if ( scale._maxAuto )
+					scale._max = scale._min + 0.5;
 				else
-					scale.Min = scale.Max - 0.5;
+					scale._min = scale._max - 0.5;
 			}
 			else
 			{
@@ -157,7 +157,7 @@ namespace ZedGraph
 				if ( scale._majorStepAuto )
 				{
 					// Calculate the step size based on targetSteps
-					scale._majorStep = Scale.CalcStepSize( scale.Max - scale.Min,
+					scale._majorStep = Scale.CalcStepSize( scale._max - scale._min,
 						( scale._ownerAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps );
 
 					if ( scale.IsPreventLabelOverlap )
@@ -166,7 +166,7 @@ namespace ZedGraph
 						double maxLabels = (double) scale.CalcMaxLabels( g, pane, scaleFactor );
 
 						// Calculate a step size based on the width of the labels
-						double tmpStep = Math.Ceiling( ( scale.Max - scale.Min ) / maxLabels );
+						double tmpStep = Math.Ceiling( ( scale._max - scale._min ) / maxLabels );
 
 						// Use the greater of the two step sizes
 						if ( tmpStep > scale._majorStep )
