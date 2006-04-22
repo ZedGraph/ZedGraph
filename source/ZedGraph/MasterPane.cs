@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.18 $ $Date: 2006-03-27 01:06:29 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2006-04-22 08:43:17 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -399,6 +399,10 @@ namespace ZedGraph
 
 		bool _isCommonScaleFactor = true;
 
+		/// <summary>
+		/// Set the <see cref="PaneBase.BaseDimension" /> properties for each
+		/// <see cref="GraphPane" /> such that the scalefactors are all equal.
+		/// </summary>
 		public void CommonScaleFactor()
 		{
 			if ( _isCommonScaleFactor )

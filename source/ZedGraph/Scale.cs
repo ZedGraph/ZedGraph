@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.11 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 1.12 $ $Date: 2006-04-22 08:43:17 $ </version>
 	abstract public class Scale : ISerializable, ICloneable
 	{
 	#region Fields
@@ -49,7 +49,7 @@ namespace ZedGraph
 		/// <see cref="Step"/>, <see cref="MinorStep"/>, and <see cref="Exponent" />
 		/// for access to these values.
 		/// </summary>
-		protected double	min,
+		internal double	min,
 								max,
 								step,
 								minorStep,
@@ -62,7 +62,7 @@ namespace ZedGraph
 		/// <see cref="ScaleMagAuto"/> and <see cref="ScaleFormatAuto"/>
 		/// for access to these values.
 		/// </summary>
-		protected bool		minAuto,
+		internal bool		minAuto,
 								maxAuto,
 								stepAuto,
 								minorStepAuto,
@@ -100,7 +100,7 @@ namespace ZedGraph
 		/// <summary> Private field for the format of the <see cref="Axis"/> tic labels.
 		/// Use the public property <see cref="ScaleFormat"/> for access to this value. </summary>
 		/// <seealso cref="ScaleFormatAuto"/>
-		protected string	scaleFormat;
+		internal string	scaleFormat;
 
 		/// <summary>
 		/// Private fields for Unit types to be used for the major and minor tics.
@@ -110,7 +110,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>The value of these types is of enumeration type <see cref="DateUnit"/>
 		/// </value>
-		protected DateUnit	majorUnit,
+		internal DateUnit	majorUnit,
 									minorUnit;
 
 		/// <summary>

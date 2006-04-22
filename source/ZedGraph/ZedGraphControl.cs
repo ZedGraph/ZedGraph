@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.61 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.62 $ $Date: 2006-04-22 08:43:17 $ </version>
 	public class ZedGraphControl : UserControl
 	{
 		private System.ComponentModel.IContainer components;
@@ -1375,7 +1375,11 @@ namespace ZedGraph
 
 				base.OnPaint( e );
 
-				this.masterPane.Draw( e.Graphics );
+				try
+				{
+					this.masterPane.Draw( e.Graphics );
+				}
+				catch { }
 			}
 		}
 

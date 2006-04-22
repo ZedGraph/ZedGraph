@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.7 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2006-04-22 08:43:17 $ </version>
 	[Serializable]
 	class DateScale : Scale, ISerializable, ICloneable
 	{
@@ -499,96 +499,96 @@ namespace ZedGraph
 
 			if ( range > Default.RangeYearYear )
 			{
-				scale.MajorUnit = DateUnit.Year;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatYearYear;
+				scale.majorUnit = DateUnit.Year;
+				if ( scale.scaleFormatAuto )
+					scale.scaleFormat = Default.FormatYearYear;
 
 				tempStep = Math.Ceiling( tempStep / 365.0 );
 
-				if ( scale.MinorStepAuto )
+				if ( scale.minorStepAuto )
 				{
-					scale.MinorUnit = DateUnit.Year;
+					scale.minorUnit = DateUnit.Year;
 					if ( tempStep == 1.0 )
-						scale.MinorStep = 0.25;
+						scale.minorStep = 0.25;
 					else
-						scale.MinorStep = Scale.CalcStepSize( tempStep, targetSteps );
+						scale.minorStep = Scale.CalcStepSize( tempStep, targetSteps );
 				}
 			}
 			else if ( range > Default.RangeYearMonth )
 			{
-				scale.MajorUnit = DateUnit.Year;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatYearMonth;
+				scale.majorUnit = DateUnit.Year;
+				if ( scale.scaleFormatAuto )
+					scale.scaleFormat = Default.FormatYearMonth;
 				tempStep = Math.Ceiling( tempStep / 365.0 );
 
-				if ( scale.MinorStepAuto )
+				if ( scale.minorStepAuto )
 				{
-					scale.MinorUnit = DateUnit.Month;
+					scale.minorUnit = DateUnit.Month;
 					// Calculate the minor steps to give an estimated 4 steps
 					// per major step.
-					scale.MinorStep = Math.Ceiling( range / ( targetSteps * 3 ) / 30.0 );
+					scale.minorStep = Math.Ceiling( range / ( targetSteps * 3 ) / 30.0 );
 					// make sure the minorStep is 1, 2, 3, 6, or 12 months
-					if ( scale.MinorStep > 6 )
-						scale.MinorStep = 12;
-					else if ( scale.MinorStep > 3 )
-						scale.MinorStep = 6;
+					if ( scale.minorStep > 6 )
+						scale.minorStep = 12;
+					else if ( scale.minorStep > 3 )
+						scale.minorStep = 6;
 				}
 			}
 			else if ( range > Default.RangeMonthMonth )
 			{
-				scale.MajorUnit = DateUnit.Month;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatMonthMonth;
+				scale.majorUnit = DateUnit.Month;
+				if ( scale.scaleFormatAuto )
+					scale.scaleFormat = Default.FormatMonthMonth;
 				tempStep = Math.Ceiling( tempStep / 30.0 );
 
-				if ( scale.MinorStepAuto )
+				if ( scale.minorStepAuto )
 				{
-					scale.MinorUnit = DateUnit.Month;
-					scale.MinorStep = tempStep * 0.25;
+					scale.minorUnit = DateUnit.Month;
+					scale.minorStep = tempStep * 0.25;
 				}
 			}
 			else if ( range > Default.RangeDayDay )
 			{
-				scale.MajorUnit = DateUnit.Day;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatDayDay;
+				scale.majorUnit = DateUnit.Day;
+				if ( scale.scaleFormatAuto )
+					scale.scaleFormat = Default.FormatDayDay;
 				tempStep = Math.Ceiling( tempStep );
 
-				if ( scale.MinorStepAuto )
+				if ( scale.minorStepAuto )
 				{
-					scale.MinorUnit = DateUnit.Day;
-					scale.MinorStep = tempStep * 0.25;
+					scale.minorUnit = DateUnit.Day;
+					scale.minorStep = tempStep * 0.25;
 					// make sure the minorStep is 1, 2, 3, 6, or 12 hours
 				}
 			}
 			else if ( range > Default.RangeDayHour )
 			{
-				scale.MajorUnit = DateUnit.Day;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatDayHour;
+				scale.majorUnit = DateUnit.Day;
+				if ( scale.scaleFormatAuto )
+					scale.scaleFormat = Default.FormatDayHour;
 				tempStep = Math.Ceiling( tempStep );
 
-				if ( scale.MinorStepAuto )
+				if ( scale.minorStepAuto )
 				{
-					scale.MinorUnit = DateUnit.Hour;
+					scale.minorUnit = DateUnit.Hour;
 					// Calculate the minor steps to give an estimated 4 steps
 					// per major step.
-					scale.MinorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.HoursPerDay );
+					scale.minorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.HoursPerDay );
 					// make sure the minorStep is 1, 2, 3, 6, or 12 hours
-					if ( scale.MinorStep > 6 )
-						scale.MinorStep = 12;
-					else if ( scale.MinorStep > 3 )
-						scale.MinorStep = 6;
+					if ( scale.minorStep > 6 )
+						scale.minorStep = 12;
+					else if ( scale.minorStep > 3 )
+						scale.minorStep = 6;
 					else
-						scale.MinorStep = 1;
+						scale.minorStep = 1;
 				}
 			}
 			else if ( range > Default.RangeHourHour )
 			{
-				scale.MajorUnit = DateUnit.Hour;
+				scale.majorUnit = DateUnit.Hour;
 				tempStep = Math.Ceiling( tempStep * XDate.HoursPerDay );
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatHourHour;
+				if ( scale.scaleFormatAuto )
+					scale.scaleFormat = Default.FormatHourHour;
 
 				if ( tempStep > 12.0 )
 					tempStep = 24.0;
@@ -601,49 +601,49 @@ namespace ZedGraph
 				else
 					tempStep = 1.0;
 
-				if ( scale.MinorStepAuto )
+				if ( scale.minorStepAuto )
 				{
-					scale.MinorUnit = DateUnit.Hour;
+					scale.minorUnit = DateUnit.Hour;
 					if ( tempStep <= 1.0 )
-						scale.MinorStep = 0.25;
+						scale.minorStep = 0.25;
 					else if ( tempStep <= 6.0 )
-						scale.MinorStep = 1.0;
+						scale.minorStep = 1.0;
 					else if ( tempStep <= 12.0 )
-						scale.MinorStep = 2.0;
+						scale.minorStep = 2.0;
 					else
-						scale.MinorStep = 4.0;
+						scale.minorStep = 4.0;
 				}
 			}
 			else if ( range > Default.RangeHourMinute )
 			{
-				scale.MajorUnit = DateUnit.Hour;
+				scale.majorUnit = DateUnit.Hour;
 				tempStep = Math.Ceiling( tempStep * XDate.HoursPerDay );
 
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatHourMinute;
+				if ( scale.scaleFormatAuto )
+					scale.scaleFormat = Default.FormatHourMinute;
 
-				if ( scale.MinorStepAuto )
+				if ( scale.minorStepAuto )
 				{
-					scale.MinorUnit = DateUnit.Minute;
+					scale.minorUnit = DateUnit.Minute;
 					// Calculate the minor steps to give an estimated 4 steps
 					// per major step.
-					scale.MinorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.MinutesPerDay );
+					scale.minorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.MinutesPerDay );
 					// make sure the minorStep is 1, 5, 15, or 30 minutes
-					if ( scale.MinorStep > 15.0 )
-						scale.MinorStep = 30.0;
-					else if ( scale.MinorStep > 5.0 )
-						scale.MinorStep = 15.0;
-					else if ( scale.MinorStep > 1.0 )
-						scale.MinorStep = 5.0;
+					if ( scale.minorStep > 15.0 )
+						scale.minorStep = 30.0;
+					else if ( scale.minorStep > 5.0 )
+						scale.minorStep = 15.0;
+					else if ( scale.minorStep > 1.0 )
+						scale.minorStep = 5.0;
 					else
-						scale.MinorStep = 1.0;
+						scale.minorStep = 1.0;
 				}
 			}
 			else if ( range > Default.RangeMinuteMinute )
 			{
-				scale.MajorUnit = DateUnit.Minute;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatMinuteMinute;
+				scale.majorUnit = DateUnit.Minute;
+				if ( scale.scaleFormatAuto )
+					scale.scaleFormat = Default.FormatMinuteMinute;
 
 				tempStep = Math.Ceiling( tempStep * XDate.MinutesPerDay );
 				// make sure the minute step size is 1, 5, 15, or 30 minutes
@@ -656,47 +656,47 @@ namespace ZedGraph
 				else
 					tempStep = 1.0;
 
-				if ( scale.MinorStepAuto )
+				if ( scale.minorStepAuto )
 				{
-					scale.MinorUnit = DateUnit.Minute;
+					scale.minorUnit = DateUnit.Minute;
 					if ( tempStep <= 1.0 )
-						scale.MinorStep = 0.25;
+						scale.minorStep = 0.25;
 					else if ( tempStep <= 5.0 )
-						scale.MinorStep = 1.0;
+						scale.minorStep = 1.0;
 					else
-						scale.MinorStep = 5.0;
+						scale.minorStep = 5.0;
 				}
 			}
 			else if ( range > Default.RangeMinuteSecond )
 			{
-				scale.MajorUnit = DateUnit.Minute;
+				scale.majorUnit = DateUnit.Minute;
 				tempStep = Math.Ceiling( tempStep * XDate.MinutesPerDay );
 
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatMinuteSecond;
+				if ( scale.scaleFormatAuto )
+					scale.scaleFormat = Default.FormatMinuteSecond;
 
-				if ( scale.MinorStepAuto )
+				if ( scale.minorStepAuto )
 				{
-					scale.MinorUnit = DateUnit.Second;
+					scale.minorUnit = DateUnit.Second;
 					// Calculate the minor steps to give an estimated 4 steps
 					// per major step.
-					scale.MinorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.SecondsPerDay );
+					scale.minorStep = Math.Ceiling( range / ( targetSteps * 3 ) * XDate.SecondsPerDay );
 					// make sure the minorStep is 1, 5, 15, or 30 seconds
-					if ( scale.MinorStep > 15.0 )
-						scale.MinorStep = 30.0;
-					else if ( scale.MinorStep > 5.0 )
-						scale.MinorStep = 15.0;
-					else if ( scale.MinorStep > 1.0 )
-						scale.MinorStep = 5.0;
+					if ( scale.minorStep > 15.0 )
+						scale.minorStep = 30.0;
+					else if ( scale.minorStep > 5.0 )
+						scale.minorStep = 15.0;
+					else if ( scale.minorStep > 1.0 )
+						scale.minorStep = 5.0;
 					else
-						scale.MinorStep = 1.0;
+						scale.minorStep = 1.0;
 				}
 			}
 			else // SecondSecond
 			{
-				scale.MajorUnit = DateUnit.Second;
-				if ( scale.ScaleFormatAuto )
-					scale.ScaleFormat = Default.FormatSecondSecond;
+				scale.majorUnit = DateUnit.Second;
+				if ( scale.scaleFormatAuto )
+					scale.scaleFormat = Default.FormatSecondSecond;
 
 				tempStep = Math.Ceiling( tempStep * XDate.SecondsPerDay );
 				// make sure the second step size is 1, 5, 15, or 30 seconds
@@ -709,15 +709,15 @@ namespace ZedGraph
 				else
 					tempStep = 1.0;
 
-				if ( scale.MinorStepAuto )
+				if ( scale.minorStepAuto )
 				{
-					scale.MinorUnit = DateUnit.Second;
+					scale.minorUnit = DateUnit.Second;
 					if ( tempStep <= 1.0 )
-						scale.MinorStep = 0.25;
+						scale.minorStep = 0.25;
 					else if ( tempStep <= 5.0 )
-						scale.MinorStep = 1.0;
+						scale.minorStep = 1.0;
 					else
-						scale.MinorStep = 5.0;
+						scale.minorStep = 5.0;
 				}
 			}
 

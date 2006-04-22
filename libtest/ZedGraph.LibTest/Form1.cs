@@ -337,6 +337,13 @@ namespace ZedGraph.LibTest
 
 			// Fill the axis background with a gradient
 			myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+
+			BoxItem box = new BoxItem( new RectangleF( 0.4f, 0.4f, 0.2f, 0.2f ),
+				Color.Black, Color.White, Color.LightBlue );
+			box.Location.CoordinateFrame = CoordType.AxisFraction;
+
+			myPane.GraphItemList.Add( box );
+			
 #endif
 
 #if false	// SampleMultiPointList Demo
@@ -2188,10 +2195,14 @@ namespace ZedGraph.LibTest
 
 				Matrix mat = memGraphics.g.Transform;
 
-				if ( master != null )
-					master.Draw( memGraphics.g );
-				else
-					myPane.Draw( memGraphics.g );
+				try
+				{
+					if ( master != null )
+						master.Draw( memGraphics.g );
+					else
+						myPane.Draw( memGraphics.g );
+				}
+				catch{}
 		   
 				// Render to the form
 				memGraphics.Render( e.Graphics );

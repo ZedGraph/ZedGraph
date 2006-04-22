@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.25 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.26 $ $Date: 2006-04-22 08:43:17 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -659,23 +659,28 @@ namespace ZedGraph
 								// GDI+ plots the data wrong and/or throws an exception for
 								// outrageous coordinates, so we do a sanity check here
 								if ( lastX > 5000000 || lastX < -5000000 ||
-										lastY > 5000000 || lastY < -5000000 ||
-										tmpX > 5000000 || tmpX < -5000000 ||
-										tmpY > 5000000 || tmpY < -5000000 )
+									lastY > 5000000 || lastY < -5000000 ||
+									tmpX > 5000000 || tmpX < -5000000 ||
+									tmpY > 5000000 || tmpY < -5000000 )
+								{
 									InterpolatePoint( g, pane, pen, lastX, lastY, tmpX, tmpY );
+								}
+								else
+								{
 
-								if ( this.StepType == StepType.ForwardStep )
-								{
-									g.DrawLine( pen, lastX, lastY, tmpX, lastY );
-									g.DrawLine( pen, tmpX, lastY, tmpX, tmpY );
+									if ( this.StepType == StepType.ForwardStep )
+									{
+										g.DrawLine( pen, lastX, lastY, tmpX, lastY );
+										g.DrawLine( pen, tmpX, lastY, tmpX, tmpY );
+									}
+									else if ( this.StepType == StepType.RearwardStep )
+									{
+										g.DrawLine( pen, lastX, lastY, lastX, tmpY );
+										g.DrawLine( pen, lastX, tmpY, tmpX, tmpY );
+									}
+									else 		// non-step
+										g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
 								}
-								else if ( this.StepType == StepType.RearwardStep )
-								{
-									g.DrawLine( pen, lastX, lastY, lastX, tmpY );
-									g.DrawLine( pen, lastX, tmpY, tmpX, tmpY );
-								}
-								else 		// non-step
-									g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
 
 							}
 							catch

@@ -1,10 +1,19 @@
 == ZedGraph Class Library Revision History ==
+
+;21-Apr-2006 (by Champion) Release version 4.3.5
+: [FIX] references to public properties from internal calcs caused auto modes to switch off
+: [FIX] CloseFigure on PolyItem
+: [FIX] PointInBox calcs for PolyItem
+: [UPD] add try/catch pair around ZedGraphControl OnPaint() call to Draw()
+: [FIX] Fix interpolate logic for line items (when zoomed way in)
+
 ;25-Mar-2006 (by Champion)
-: Fix Millisecond issue with DateTime
-: Check for sub-zero index on LinearAsOrdinal and DateAsOrdinal MakeLabel()
+: [FIX] Millisecond issue with DateTime
+: [FIX] Check for sub-zero index on LinearAsOrdinal and DateAsOrdinal MakeLabel()
+: [NEW] Add CommonScaleFactor to MasterPane
 
 ;17-Mar-2006 (by Champion)
-: Release Version 4.3.3
+: [UPD] Release Version 4.3.3
 
 ;16-Mar-2006 (by Champion)
 : [NEW] SamplePointList and RadarPointList IPointList types
@@ -12,7 +21,7 @@
 : [UPD] Hide the ZedGraphControl MouseMove, MouseUp, MouseDown events to avoid confusion
 : [UPD] Use only one delegate for Mouse events
 : [NEW] Add Axis.IsSkipCrossLabel and Axis.IsTitleAtCross
-; [NEW] Add ReverseTransform overload that selects a single Y axis
+: [NEW] Add ReverseTransform overload that selects a single Y axis
 
 ;14-Mar-2006 (by Champion)
 : [FIX] use IsAnyOrdinal in Axis.GetClusterWidth() for ClusterScaleWidth value

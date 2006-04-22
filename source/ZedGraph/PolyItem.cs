@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-04-22 08:43:17 $ </version>
 	[Serializable]
 	public class PolyItem : BoxItem, ICloneable, ISerializable
 	{
@@ -260,7 +260,7 @@ namespace ZedGraph
 				}
 			}
 
-			//path.CloseFigure();
+			path.CloseFigure();
 
 			return path;
 		}
@@ -287,7 +287,7 @@ namespace ZedGraph
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
 		override public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor )
 		{
-			if ( this.points == null || this.points.Length <= 1 )
+			if ( this.points != null && this.points.Length > 1 )
 			{
 				GraphicsPath path = MakePath( pane );
 
