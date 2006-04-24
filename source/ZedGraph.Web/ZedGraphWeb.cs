@@ -39,7 +39,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.1.2.2 $ $Date: 2006-04-13 18:56:31 $</version>
+	/// <version>$Revision: 1.1.2.3 $ $Date: 2006-04-24 05:06:45 $</version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -965,6 +965,9 @@ namespace ZedGraph.Web
 				// Add custom callback tweeking next
 				if( handler != null )
 					handler( g, mp );
+
+				// Set the layout according to user preferences
+				mp.ReSize( g );
 			}
 		}		
 	#endregion

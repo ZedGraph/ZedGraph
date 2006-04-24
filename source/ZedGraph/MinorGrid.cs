@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// Class that holds the specific properties for the minor grid.
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-24 05:06:46 $ </version>
 	[Serializable]
 	public class MinorGrid : ICloneable, ISerializable
 	{
@@ -154,8 +154,8 @@ namespace ZedGraph
 		/// <seealso cref="Color"/>
 		public float PenWidth
 		{
-			get { return PenWidth; }
-			set { PenWidth = value; }
+			get { return _penWidth; }
+			set { _penWidth = value; }
 		}
 		/// <summary>
 		/// The color to use for drawing this <see cref="Axis"/> grid.

@@ -157,8 +157,7 @@
     <None Include="zedgraphkey.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Revision_History.txt">
-      <Link>Revision_History.txt</Link>
+    <Content Include="Revision_History.txt">
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

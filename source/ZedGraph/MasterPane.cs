@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.18.2.4 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 3.18.2.5 $ $Date: 2006-04-24 05:06:45 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -425,6 +425,29 @@ namespace ZedGraph
 		{
 			foreach ( GraphPane pane in _paneList )
 				pane.AxisChange( g );
+		}
+
+		/// <summary>
+		/// Redo the layout using the current size of the <see cref="PaneBase.Rect"/>,
+		/// and also handle resizing the
+		/// contents by calling <see cref="DoLayout(Graphics)"/>.
+		/// </summary>
+		/// <remarks>This method will use the pane layout that was specified by a call to
+		/// <see cref="SetLayout(PaneLayout)"/>.  If
+		/// <see cref="SetLayout(PaneLayout)"/> has not previously been called,
+		/// it will default to <see cref="Default.PaneLayout"/>.
+		/// </remarks>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <seealso cref="SetLayout(PaneLayout)" />
+		/// <seealso cref="SetLayout(int,int)" />
+		/// <seealso cref="SetLayout(bool,int[])" />
+		/// <seealso cref="SetLayout(bool,int[],float[])" />
+		public void ReSize( Graphics g )
+		{
+			ReSize( g, _rect );
 		}
 
 		/// <summary>
@@ -827,8 +850,6 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>The <see cref="SetLayout(PaneLayout)" /> method (and overloads) is
 		/// used for setting the layout configuration.</remarks>
-		/// <param name="g">A <see cref="Graphics" /> instance to be used for font sizing,
-		/// etc. in determining the layout configuration.</param>
 		/// <seealso cref="SetLayout(PaneLayout)" />
 		/// <seealso cref="SetLayout(int,int)" />
 		/// <seealso cref="SetLayout(bool,int[])" />
