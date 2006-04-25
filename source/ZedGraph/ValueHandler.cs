@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.8.2.3 $ $Date: 2006-04-07 06:14:09 $ </version>
+	/// <version> $Revision: 3.8.2.4 $ $Date: 2006-04-25 01:26:21 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane _pane;
@@ -162,7 +162,10 @@ namespace ZedGraph
 
 						// If it's a missing value, skip it
 						if ( curVal == PointPair.Missing )
-							continue;
+						{
+							positiveStack = PointPair.Missing;
+							negativeStack = PointPair.Missing;
+						}
 
 						// the current curve is the target curve, save the summed values for later
 						if ( tmpCurve == curve )
@@ -171,28 +174,33 @@ namespace ZedGraph
 							if ( curVal >= 0 )
 							{
 								lowVal = positiveStack;
-								hiVal = positiveStack + curVal;
+								hiVal = ( curVal == PointPair.Missing || positiveStack == PointPair.Missing ) ?
+										PointPair.Missing : positiveStack + curVal;
 							}
 							// otherwise, use the negative stack
 							else
 							{
 								hiVal = negativeStack;
-								lowVal = negativeStack + curVal;
+								lowVal = ( curVal == PointPair.Missing || negativeStack == PointPair.Missing ) ?
+										PointPair.Missing : negativeStack + curVal;
 							}
 						}
 
 						// Add all positive values to the positive stack, and negative values to the
 						// negative stack
 						if ( curVal >= 0 )
-							positiveStack += curVal;
+							positiveStack = ( curVal == PointPair.Missing || positiveStack == PointPair.Missing ) ?
+										PointPair.Missing : positiveStack + curVal;
 						else
-							negativeStack += curVal;
+							negativeStack = ( curVal == PointPair.Missing || negativeStack == PointPair.Missing ) ?
+										PointPair.Missing : negativeStack + curVal;
 					}
 				}
 
 				// if the curve is a PercentStack type, then calculate the percent for this bar
 				// based on the total height of the stack
-				if ( pane._barSettings.Type == BarType.PercentStack )
+				if ( pane._barSettings.Type == BarType.PercentStack &&
+							hiVal != PointPair.Missing && lowVal != PointPair.Missing )
 				{
 					// Use the total magnitude of the positive plus negative bar stacks to determine
 					// the percentage value
@@ -253,20 +261,22 @@ namespace ZedGraph
 							curVal = tmpCurve.Points[iPt].Y;
 						}
 
-						// if the current value is missing, skip it
+						// if the current value is missing, then the rest of the stack is missing
 						if ( curVal == PointPair.Missing )
-							continue;
+							stack = PointPair.Missing;
 
 						// if the current curve is the target curve, save the values
 						if ( tmpCurve == curve )
 						{
 							lowVal = stack;
-							hiVal = stack + curVal;
+							hiVal = ( curVal == PointPair.Missing || stack == PointPair.Missing ) ?
+								PointPair.Missing : stack + curVal;
 						}
 
 						// sum all the curves to a single total.  This includes both positive and
 						// negative values (unlike the bar stack type).
-						stack += curVal;
+						stack = ( curVal == PointPair.Missing || stack == PointPair.Missing ) ?
+								PointPair.Missing : stack + curVal;
 					}
 				}
 				

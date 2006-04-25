@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.32.2.5 $ $Date: 2006-04-22 10:26:00 $ </version>
+	/// <version> $Revision: 3.32.2.6 $ $Date: 2006-04-25 01:26:21 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -501,28 +501,31 @@ namespace ZedGraph
 				double x = isXBase ? baseVal : hiVal;
 				double y = isXBase ? hiVal : baseVal;
 
-				if ( x < tXMinVal )
-					tXMinVal = x;
-				if ( x > tXMaxVal )
-					tXMaxVal = x;
-				if ( y < tYMinVal )
-					tYMinVal = y;
-				if ( y > tYMaxVal )
-					tYMaxVal = y;
+				if ( x != PointPair.Missing && y != PointPair.Missing && lowVal != PointPair.Missing )
+				{
+					if ( x < tXMinVal )
+						tXMinVal = x;
+					if ( x > tXMaxVal )
+						tXMaxVal = x;
+					if ( y < tYMinVal )
+						tYMinVal = y;
+					if ( y > tYMaxVal )
+						tYMaxVal = y;
 
-				if ( !isXBase )
-				{
-					if ( lowVal < tXMinVal )
-						tXMinVal = lowVal;
-					if ( lowVal > tXMaxVal )
-						tXMaxVal = lowVal;
-				}
-				else
-				{
-					if ( lowVal < tYMinVal )
-						tYMinVal = lowVal;
-					if ( lowVal > tYMaxVal )
-						tYMaxVal = lowVal;
+					if ( !isXBase )
+					{
+						if ( lowVal < tXMinVal )
+							tXMinVal = lowVal;
+						if ( lowVal > tXMaxVal )
+							tXMaxVal = lowVal;
+					}
+					else
+					{
+						if ( lowVal < tYMinVal )
+							tYMinVal = lowVal;
+						if ( lowVal > tYMaxVal )
+							tYMaxVal = lowVal;
+					}
 				}
 			}
 		}

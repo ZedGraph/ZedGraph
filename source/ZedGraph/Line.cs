@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.23.2.4 $ $Date: 2006-04-19 06:08:14 $ </version>
+	/// <version> $Revision: 3.23.2.5 $ $Date: 2006-04-25 01:26:21 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -837,9 +837,9 @@ namespace ZedGraph
 			if ( this.IsVisible && !this.Color.IsEmpty && points != null )
 			{
 				int		index = 0;
-				float	curX, curY,
-						lastX = 0,
-						lastY = 0;
+				float		curX, curY,
+							lastX = 0,
+							lastY = 0;
 				double	x, y, lowVal;
 				ValueHandler valueHandler = new ValueHandler( pane, false );
 
@@ -868,6 +868,9 @@ namespace ZedGraph
 							x = points[i].X;
 							y = points[i].Y;
 						}
+
+						if ( x == PointPair.Missing || y == PointPair.Missing )
+							continue;
 						
 						// Transform the user scale values to pixel locations
 						curX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, x );
@@ -975,7 +978,10 @@ namespace ZedGraph
 					{
 						// Get the user scale values for the current point
 						valueHandler.GetValues( curve, i, out x, out y, out hiVal );
-						
+
+						if ( x == PointPair.Missing || y == PointPair.Missing )
+							continue;
+
 						// Transform the user scale values to pixel locations
 						curX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, x );
 						Axis yAxis = curve.GetYAxis( pane );

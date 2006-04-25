@@ -59,6 +59,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_Junk( zedGraphControl2 );
 
 			zedGraphControl1.AxisChange();
+			zedGraphControl2.AxisChange();
 			SetSize();
 		}
 
@@ -80,6 +81,25 @@ namespace ZedGraph.ControlTest
 			{
 				zedGraphControl1.Size = pageRect.Size;
 				zedGraphControl2.Size = pageRect.Size;
+			}
+
+			double junk = DateTime.Now.ToOADate();
+			// Fix the ellipseItem to a perfect circle by using a fixed height, but a variable
+			// width
+			EllipseObj ellipse = zedGraphControl1.GraphPane.GraphObjList[0] as EllipseObj;
+			if ( ellipse != null )
+			{
+				GraphPane myPane = zedGraphControl1.GraphPane;
+				float dx = (float) ( myPane.XAxis.Scale.Max - myPane.XAxis.Scale.Min );
+				float dy = (float) ( myPane.YAxis.Scale.Max - myPane.YAxis.Scale.Min );
+				float xPix = myPane.Chart.Rect.Width * ellipse.Location.Width / dx;
+				float yPix = myPane.Chart.Rect.Height * ellipse.Location.Height / dy;
+
+				ellipse.Location.Width *= yPix / xPix;
+
+				// alternatively, use this to vary the height but fix the width
+				// (comment out the width line above)
+				//ellipse.Location.Height *= xPix / yPix;
 			}
 		}
 
@@ -620,17 +640,29 @@ namespace ZedGraph.ControlTest
 			{
 				double x = (double)i + 5;
 				double y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) );
-				list.Add( x, y );
-				list2.Add( x, 1.0 );
-				list3.Add( x, 2 + Math.Sin( i * 0.2 + Math.PI ) );
-				list3.Add( x, 2.0 );
+				if ( i == 15 )
+				{
+					list.Add( x, y );
+					list2.Add( x, PointPair.Missing );
+					list3.Add( x, 2 + Math.Sin( i * 0.2 + Math.PI ) );
+					list4.Add( x, 2.0 );
+				}
+				else
+				{
+					list.Add( x, y );
+					list2.Add( x, 1.0 );
+					list3.Add( x, 2 + Math.Sin( i * 0.2 + Math.PI ) );
+					list4.Add( x, 2.0 );
+				}
+
 			}
 			LineItem myCurve = myPane.AddCurve( "line 1", list, Color.Black, SymbolType.Diamond );
 			LineItem myCurve2 = myPane.AddCurve( "line 2", list2, Color.Black, SymbolType.Square );
 			LineItem myCurve3 = myPane.AddCurve( "line 3", list3, Color.Black, SymbolType.Circle );
-			LineItem myCurve4 = myPane.AddCurve( "line 4", list3, Color.Black, SymbolType.Triangle );
+			LineItem myCurve4 = myPane.AddCurve( "line 4", list4, Color.Black, SymbolType.Triangle );
 
 			myPane.LineType = LineType.Stack;
+			
 			myCurve.Line.Fill = new Fill( Color.White, Color.Maroon, 45.0f );
 			myCurve2.Line.Fill = new Fill( Color.White, Color.Blue, 45.0f );
 			myCurve3.Line.Fill = new Fill( Color.White, Color.Green, 45.0f );
@@ -640,8 +672,14 @@ namespace ZedGraph.ControlTest
 			myCurve3.Symbol.Fill = new Fill( Color.White );
 			myCurve4.Symbol.Fill = new Fill( Color.White );
 
+			RectangleF rect = new RectangleF( 20, 8, 10, 3 );
+			EllipseObj ellipse = new EllipseObj( rect, Color.Black, Color.White, Color.Blue );
+			myPane.GraphObjList.Add( ellipse );
 
-			GraphPane newPane = myPane.Clone();
+			// Tell ZedGraph to calculate the axis ranges
+			z1.AxisChange();
+			z1.Invalidate();
+
 		}
 
 		// masterpane test
@@ -843,7 +881,7 @@ namespace ZedGraph.ControlTest
 			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
 			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
 			myPane.BarSettings.Type = BarType.Stack;
-			myPane.BarSettings.Base = BarBase.Y;
+			myPane.BarSettings.Base = BarBase.X;
 
 			myPane.XAxis.MajorTic.IsBetweenLabels = true;
 			string[] labels = { "one", "two", "three", "four", "five", "six" };

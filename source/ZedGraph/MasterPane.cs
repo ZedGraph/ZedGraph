@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.18.2.5 $ $Date: 2006-04-24 05:06:45 $ </version>
+	/// <version> $Revision: 3.18.2.6 $ $Date: 2006-04-25 01:26:21 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -123,7 +123,7 @@ namespace ZedGraph
 			/// <seealso cref="SetLayout(int,int)" />
 			/// <seealso cref="SetLayout(bool,int[])" />
 			/// <seealso cref="SetLayout(bool,int[],float[])" />
-			/// <seealso cref="ReSize" />
+			/// <seealso cref="ReSize(Graphics,RectangleF)" />
 			public static PaneLayout PaneLayout = PaneLayout.SquareColPreferred;
 
 			/// <summary>
@@ -218,7 +218,7 @@ namespace ZedGraph
 		/// <seealso cref="SetLayout(int,int)" />
 		/// <seealso cref="SetLayout(bool,int[])" />
 		/// <seealso cref="SetLayout(bool,int[],float[])" />
-		/// <seealso cref="ReSize" />
+		/// <seealso cref="ReSize(Graphics,RectangleF)" />
 		public bool IsCommonScaleFactor
 		{
 			get { return _isCommonScaleFactor; }
