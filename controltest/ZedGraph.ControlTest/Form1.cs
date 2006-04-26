@@ -158,7 +158,8 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
 			//CreateGraph_NormalPane( zedGraphControl1 );
 			//CreateGraph_Contour( zedGraphControl1 );
-			CreateGraph_Linear( zedGraphControl1 );
+			//CreateGraph_Linear( zedGraphControl1 );
+			CreateGraph_StackLine( zedGraphControl1 );
 
 			//this.zedGraphControl1.MouseDownEvent += new ZedGraphControl.MouseDownEventHandler( MyMouseDownEventHandler );
 
@@ -1323,6 +1324,62 @@ namespace ZedGraph.ControlTest
 			//zedGraphControl1.IsEnableVZoom = false;
 
 		}
+
+		// Multiple stacked lines test
+		private void CreateGraph_StackLine( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+			PointPairList list4 = new PointPairList();
+			for ( int i = 0; i < 36; i++ )
+			{
+				double x = (double)i + 5;
+				double y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) );
+				if ( i == 15 )
+				{
+					list.Add( x, y );
+					list2.Add( x, PointPair.Missing );
+					list3.Add( x, 2 + Math.Sin( i * 0.2 + Math.PI ) );
+					list4.Add( x, 2.0 );
+				}
+				else
+				{
+					list.Add( x, y );
+					list2.Add( x, 1.0 );
+					list3.Add( x, 2 + Math.Sin( i * 0.2 + Math.PI ) );
+					list4.Add( x, 2.0 );
+				}
+
+			}
+			LineItem myCurve = myPane.AddCurve( "line 1", list, Color.Black, SymbolType.Diamond );
+			LineItem myCurve2 = myPane.AddCurve( "line 2", list2, Color.Black, SymbolType.Square );
+			LineItem myCurve3 = myPane.AddCurve( "line 3", list3, Color.Black, SymbolType.Circle );
+			LineItem myCurve4 = myPane.AddCurve( "line 4", list4, Color.Black, SymbolType.Triangle );
+
+			myPane.LineType = LineType.Stack;
+			
+			myCurve.Line.Fill = new Fill( Color.White, Color.Maroon, 45.0f );
+			myCurve2.Line.Fill = new Fill( Color.White, Color.Blue, 45.0f );
+			myCurve3.Line.Fill = new Fill( Color.White, Color.Green, 45.0f );
+			myCurve4.Line.Fill = new Fill( Color.White, Color.Red, 45.0f );
+			myCurve.Symbol.Fill = new Fill( Color.White );
+			myCurve2.Symbol.Fill = new Fill( Color.White );
+			myCurve3.Symbol.Fill = new Fill( Color.White );
+			myCurve4.Symbol.Fill = new Fill( Color.White );
+
+			RectangleF rect = new RectangleF( 20, 8, 10, 3 );
+			EllipseItem ellipse = new EllipseItem( rect, Color.Black, Color.White, Color.Blue );
+			myPane.GraphItemList.Add( ellipse );
+
+			// Tell ZedGraph to calculate the axis ranges
+			z1.AxisChange();
+			z1.Invalidate();
+
+		}
+
 
 		public void CreateGraph_NormalPane( ZedGraphControl z1 )
 		{

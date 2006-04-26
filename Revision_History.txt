@@ -1,5 +1,10 @@
 == ZedGraph Class Library Revision History ==
 
+;25-Apr-2006 (by Champion) Release version 4.3.6
+: [FIX] Fix ValueHandler to return PointPair.Missing if any part of stack is missing
+: [FIX] Fix CurveList.GetStackRange() to ignore missing values
+: [FIX] Fix Line.BuildPointsArray and Line.BuildLowPointsArray to skip missing
+
 ;21-Apr-2006 (by Champion) Release version 4.3.5
 : [FIX] references to public properties from internal calcs caused auto modes to switch off
 : [FIX] CloseFigure on PolyItem
