@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class JapaneseCandleStick : CandleStick, ICloneable, ISerializable
 	{
@@ -294,7 +294,7 @@ namespace ZedGraph
 								float pixOpen, float pixClose,
 								float scaleFactor, Pen pen, Fill fill, Border border, PointPair pt )
 		{
-			float halfSize = this._size * scaleFactor / 2.0f;
+			float halfSize = _size * scaleFactor / 2.0f;
 
 			if ( pixBase != PointPair.Missing && Math.Abs( pixLow ) < 1000000 &&
 						Math.Abs( pixHigh ) < 1000000)
@@ -359,7 +359,7 @@ namespace ZedGraph
 			if ( curve.Points != null )
 			{
 				Pen pen = new Pen( _color, _penWidth );
-				float halfSize = this._size * scaleFactor;
+				float halfSize = _size * scaleFactor;
 
 				// Loop over each defined point							
 				for ( int i = 0; i < curve.Points.Count; i++ )

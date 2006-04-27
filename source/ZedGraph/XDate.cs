@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// eachother.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.18.2.2 $ $Date: 2006-04-07 06:14:09 $ </version>
+	/// <version> $Revision: 3.18.2.3 $ $Date: 2006-04-27 06:50:12 $ </version>
 	public struct XDate //: ICloneable
 	{
 	#region Fields & Constants
@@ -131,7 +131,7 @@ namespace ZedGraph
 		/// </param>
 		public XDate( double xlDate )
 		{
-			this._xlDate = xlDate;
+			_xlDate = xlDate;
 		}
 		
 		/// <summary>
@@ -142,7 +142,7 @@ namespace ZedGraph
 		/// </param>
 		public XDate( DateTime dateTime )
 		{
-			this._xlDate = CalendarDateToXLDate( dateTime.Year, dateTime.Month,
+			_xlDate = CalendarDateToXLDate( dateTime.Year, dateTime.Month,
 							dateTime.Day, dateTime.Hour, dateTime.Minute, dateTime.Second,
 							dateTime.Millisecond );
 		}
@@ -299,8 +299,8 @@ namespace ZedGraph
 		/// </summary>
 		public DateTime DateTime
 		{
-			get { return XLDateToDateTime( this._xlDate ); }
-			set { this._xlDate = DateTimeToXLDate( value ); }
+			get { return XLDateToDateTime( _xlDate ); }
+			set { _xlDate = DateTimeToXLDate( value ); }
 		}
 		
 		/// <summary>
@@ -1172,7 +1172,7 @@ namespace ZedGraph
 		/// </param>
 		public void AddSeconds( double dSeconds )
 		{
-			this._xlDate += dSeconds / 86400.0;
+			_xlDate += dSeconds / 86400.0;
 		}
 		
 		/// <summary>
@@ -1183,7 +1183,7 @@ namespace ZedGraph
 		/// </param>
 		public void AddMinutes( double dMinutes )
 		{
-			this._xlDate += dMinutes / 1440.0;
+			_xlDate += dMinutes / 1440.0;
 		}
 		
 		/// <summary>
@@ -1194,7 +1194,7 @@ namespace ZedGraph
 		/// </param>
 		public void AddHours( double dHours )
 		{
-			this._xlDate += dHours / HoursPerDay;
+			_xlDate += dHours / HoursPerDay;
 		}
 		
 		/// <summary>
@@ -1205,7 +1205,7 @@ namespace ZedGraph
 		/// </param>
 		public void AddDays( double dDays )
 		{
-			this._xlDate += dDays;
+			_xlDate += dDays;
 		}
 		
 		/// <summary>
@@ -1222,17 +1222,17 @@ namespace ZedGraph
 			
 			int year, month, day, hour, minute, second;
 			
-			XLDateToCalendarDate( this._xlDate, out year, out month, out day, out hour, out minute, out second );
+			XLDateToCalendarDate( _xlDate, out year, out month, out day, out hour, out minute, out second );
 			if ( iMon != 0 )
 			{
 				month += iMon;
-				this._xlDate = CalendarDateToXLDate( year, month, day, hour, minute, second );
+				_xlDate = CalendarDateToXLDate( year, month, day, hour, minute, second );
 			}
 			
 			if ( sMon != 0 )
 			{
 				double xlDate2 = CalendarDateToXLDate( year, month+sMon, day, hour, minute, second );
-				this._xlDate += (xlDate2 - this._xlDate) * monFrac;
+				_xlDate += (xlDate2 - _xlDate) * monFrac;
 			}
 		}
 		
@@ -1250,17 +1250,17 @@ namespace ZedGraph
 			
 			int year, month, day, hour, minute, second;
 			
-			XLDateToCalendarDate( this._xlDate, out year, out month, out day, out hour, out minute, out second );
+			XLDateToCalendarDate( _xlDate, out year, out month, out day, out hour, out minute, out second );
 			if ( iYear != 0 )
 			{
 				year += iYear;
-				this._xlDate = CalendarDateToXLDate( year, month, day, hour, minute, second );
+				_xlDate = CalendarDateToXLDate( year, month, day, hour, minute, second );
 			}
 			
 			if ( sYear != 0 )
 			{
 				double xlDate2 = CalendarDateToXLDate( year+sYear, month, day, hour, minute, second );
-				this._xlDate += (xlDate2 - this._xlDate) * yearFrac;
+				_xlDate += (xlDate2 - _xlDate) * yearFrac;
 			}
 		}
 	#endregion
@@ -1401,11 +1401,11 @@ namespace ZedGraph
 		{
 			if ( obj is XDate )
 			{
-				return ((XDate) obj)._xlDate == this._xlDate;
+				return ((XDate) obj)._xlDate == _xlDate;
 			}
 			else if ( obj is double )
 			{
-				return ((double) obj) == this._xlDate;
+				return ((double) obj) == _xlDate;
 			}
 			else
 				return false;
@@ -1418,7 +1418,7 @@ namespace ZedGraph
 		/// <returns>An integer representing the hash code for this XDate value</returns>
 		public override int GetHashCode()
 		{
-			return this._xlDate.GetHashCode();
+			return _xlDate.GetHashCode();
 		}
 	#endregion
 	
@@ -1469,7 +1469,7 @@ namespace ZedGraph
 		/// <returns>A string representation of the date</returns>
 		public override string ToString()
 		{
-			return ToString( this._xlDate, DefaultFormatStr );
+			return ToString( _xlDate, DefaultFormatStr );
 		}
 		
 		/// <summary>

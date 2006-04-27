@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15.2.4 $ $Date: 2006-04-11 17:13:41 $ </version>
+	/// <version> $Revision: 3.15.2.5 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	public class LineItem : CurveItem, ICloneable, ISerializable
 	{
@@ -104,8 +104,8 @@ namespace ZedGraph
 		/// <param name="label">The _label that will appear in the legend.</param>
 		public LineItem( string label ) : base( label )
 		{
-			this._symbol = new Symbol();
-			this._line = new Line();
+			_symbol = new Symbol();
+			_line = new Line();
 		}
 		
 		/// <summary>
@@ -173,7 +173,7 @@ namespace ZedGraph
 			else
 				_line.Width = lineWidth;
 
-			this._symbol = new Symbol( symbolType, color );
+			_symbol = new Symbol( symbolType, color );
 		}
 
 		/// <summary>
@@ -286,7 +286,7 @@ namespace ZedGraph
 		/// </param>
 		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
-			if ( this._isVisible )
+			if ( _isVisible )
 			{
 				Line.Draw( g, pane, this, scaleFactor );
 				
@@ -345,6 +345,48 @@ namespace ZedGraph
 			this.Color			= rotator.NextColor;
 			this.Symbol.Type	= rotator.NextSymbol;
 		}
+
+		/// <summary>
+		/// Determine the coords for the rectangle associated with a specified point for 
+		/// this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> to which this curve belongs</param>
+		/// <param name="i">The index of the point of interest</param>
+		/// <param name="coords">A list of coordinates that represents the "rect" for
+		/// this point (used in an html AREA tag)</param>
+		/// <returns>true if it's a valid point, false otherwise</returns>
+		override public bool GetCoords( GraphPane pane, int i, out string coords )
+		{
+			coords = string.Empty;
+
+			if ( i < 0 || i >= _points.Count )
+				return false;
+
+			PointPair pt = _points[i];
+			if ( pt.IsInvalid )
+				return false;
+
+			double x, y, z;
+			ValueHandler valueHandler = new ValueHandler( pane, false );
+			valueHandler.GetValues( this, i, out x, out z, out y );
+
+			Axis yAxis = GetYAxis( pane );
+
+			PointF pixPt = new PointF( pane.XAxis.Scale.Transform( _isOverrideOrdinal, i, x ),
+							yAxis.Scale.Transform( _isOverrideOrdinal, i, y ) );
+			
+			if ( !pane.Chart.Rect.Contains( pixPt ) )
+				return false;
+
+			float halfSize = _symbol.Size * pane.CalcScaleFactor();
+
+			coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+					pixPt.X - halfSize, pixPt.Y - halfSize,
+					pixPt.X + halfSize, pixPt.Y + halfSize );
+
+			return true;
+		}
+
 	#endregion
 	}
 }

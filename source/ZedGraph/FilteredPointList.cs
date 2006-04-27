@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	///
 	/// <author> John Champion with mods by Christophe Holmes</author>
-	/// <version> $Revision: 1.2.2.2 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 1.2.2.3 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class FilteredPointList : IPointList
 	{
@@ -108,7 +108,7 @@ namespace ZedGraph
 			get
 			{
 				// See if the array should be bounded
-				if ( this._minBoundIndex >= 0 && this._maxBoundIndex >= 0 && this._maxPts >= 0 )
+				if ( _minBoundIndex >= 0 && _maxBoundIndex >= 0 && _maxPts >= 0 )
 				{
 					// get number of points in bounded range
 					int nPts = _maxBoundIndex - _minBoundIndex + 1;
@@ -248,8 +248,8 @@ namespace ZedGraph
 		/// </summary>
 		public FilteredPointList( double[] x, double[] y )
 		{
-			this._x = x;
-			this._y = y;
+			_x = x;
+			_y = y;
 		}
 
 		/// <summary>
@@ -294,22 +294,22 @@ namespace ZedGraph
 		/// output by the filter</param>
 		public void SetBounds( double min, double max, int maxPts )
 		{
-			this._maxPts = maxPts;
+			_maxPts = maxPts;
 			
 			// assume data points are equally spaced, and calculate the X step size between
 			// each data point
-			double step = ( this._x[ this._x.Length - 1 ] - this._x[0] ) / (double) this._x.Length;
+			double step = ( _x[ _x.Length - 1 ] - _x[0] ) / (double) _x.Length;
 			// calculate the index of the start of the bounded range
-			int first = (int) ( ( min - this._x[0] ) / step );
+			int first = (int) ( ( min - _x[0] ) / step );
 			// calculate the index of the last point of the bounded range
 			int last = (int) ( ( max - min ) / step + first );
 
 			// Make sure the bounded indices are legitimate
-			first = Math.Max( Math.Min( first, this._x.Length ), 0 );
-			last = Math.Max( Math.Min( last, this._x.Length ), 0 );
+			first = Math.Max( Math.Min( first, _x.Length ), 0 );
+			last = Math.Max( Math.Min( last, _x.Length ), 0 );
 
-			this._minBoundIndex = first;
-			this._maxBoundIndex = last;
+			_minBoundIndex = first;
+			_maxBoundIndex = last;
 		}
 
 	#endregion

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:08 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	public class TextObj : GraphObj, ICloneable, ISerializable
 	{
@@ -142,8 +142,8 @@ namespace ZedGraph
 		/// </summary>
 		public SizeF LayoutArea
 		{
-			get { return this._layoutArea; }
-			set { this._layoutArea = value; } 
+			get { return _layoutArea; }
+			set { _layoutArea = value; } 
 		}
 
 
@@ -197,17 +197,17 @@ namespace ZedGraph
 		private void Init( string text )
 		{
 			if ( text != null )
-				this._text = text;
+				_text = text;
 			else
 				text = "Text";
 			
-			this._fontSpec = new FontSpec(
+			_fontSpec = new FontSpec(
 				Default.FontFamily, Default.FontSize,
 				Default.FontColor, Default.FontBold,
 				Default.FontItalic, Default.FontUnderline );
 			
 			//this.isWrapped = Default.IsWrapped ;
-			this._layoutArea = new SizeF( 0, 0 );
+			_layoutArea = new SizeF( 0, 0 );
 		}
 		
 		/// <summary>
@@ -365,7 +365,7 @@ namespace ZedGraph
 		{
 			// transform the x,y location from the user-defined
 			// coordinate frame to the screen pixel location
-			PointF pix = this._location.Transform( pane );
+			PointF pix = _location.Transform( pane );
 			
 			// Draw the text on the screen, including any frame and background
 			// fill elements
@@ -375,8 +375,8 @@ namespace ZedGraph
 				//	this.FontSpec.Draw( g, pane.IsPenWidthScaled, this.text, pix.X, pix.Y,
 				//		this.location.AlignH, this.location.AlignV, scaleFactor );
 				//else
-					this.FontSpec.Draw( g, pane.IsPenWidthScaled, this._text, pix.X, pix.Y,
-						this._location.AlignH, this._location.AlignV, scaleFactor, this._layoutArea );
+					this.FontSpec.Draw( g, pane.IsPenWidthScaled, _text, pix.X, pix.Y,
+						_location.AlignH, _location.AlignV, scaleFactor, _layoutArea );
 
 			}
 		}
@@ -404,13 +404,36 @@ namespace ZedGraph
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
 		override public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor )
 		{
+			if ( ! base.PointInBox(pt, pane, g, scaleFactor ) )
+				return false;
+
 			// transform the x,y location from the user-defined
 			// coordinate frame to the screen pixel location
-			PointF pix = this._location.Transform( pane );
+			PointF pix = _location.Transform( pane );
 			
-			return this._fontSpec.PointInBox( pt, g, this._text, pix.X, pix.Y,
-								this._location.AlignH, this._location.AlignV, scaleFactor, this.LayoutArea );
+			return _fontSpec.PointInBox( pt, g, _text, pix.X, pix.Y,
+								_location.AlignH, _location.AlignV, scaleFactor, this.LayoutArea );
 		}
+
+		/// <summary>
+		/// Determines the shape type and Coords values for this GraphObj
+		/// </summary>
+		override public void GetCoords( PaneBase pane, Graphics g, float scaleFactor,
+				out string shape, out string coords )
+		{
+			// transform the x,y location from the user-defined
+			// coordinate frame to the screen pixel location
+			PointF pix = _location.Transform( pane );
+
+			PointF[] pts = _fontSpec.GetBox( g, _text, pix.X, pix.Y, _location.AlignH,
+				_location.AlignV, scaleFactor, new SizeF() );
+
+			shape = "poly";
+			coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0},{0:f0},{1:f0},{2:f0},{3:f0},",
+						pts[0].X, pts[0].Y, pts[1].X, pts[1].Y,
+						pts[2].X, pts[2].Y, pts[3].X, pts[3].Y );
+		}
+
 		
 	#endregion
 	

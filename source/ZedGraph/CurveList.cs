@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.32.2.6 $ $Date: 2006-04-25 01:26:21 $ </version>
+	/// <version> $Revision: 3.32.2.7 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -599,6 +599,35 @@ namespace ZedGraph
 					curve.Draw( g, pane, pos, scaleFactor );
 			}
 		}
+
+		/// <summary>
+		/// Find the ordinal position of the specified <see cref="BarItem" /> within
+		/// the <see cref="CurveList" />.  This position only counts <see cef="BarItem" />
+		/// types, ignoring all other types.
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> of interest</param>
+		/// <param name="barItem">The <see cref="BarItem" /> for which to search.</param>
+		/// <returns>The ordinal position of the specified bar, or -1 if the bar
+		/// was not found.</returns>
+		public int GetBarItemPos( GraphPane pane, BarItem barItem )
+		{
+			if (	pane._barSettings.Type == BarType.Overlay ||
+					pane._barSettings.Type == BarType.Stack ||
+					pane._barSettings.Type == BarType.PercentStack)
+				return 0;
+
+			int i = 0;
+			foreach ( CurveItem curve in this )
+			{
+				if ( curve == barItem )
+					return i;
+				else if ( curve is BarItem )
+					i++;
+			}
+
+			return -1;
+		}
+
 	#endregion
 
 	}

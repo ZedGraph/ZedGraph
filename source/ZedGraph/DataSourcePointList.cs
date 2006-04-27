@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class DataSourcePointList : IPointList
 	{
@@ -176,7 +176,7 @@ namespace ZedGraph
 		/// </summary>
 		public DataSourcePointList()
 		{
-			this._bindingSource = new BindingSource();
+			_bindingSource = new BindingSource();
 			_xDataMember = string.Empty;
 			_yDataMember = string.Empty;
 			_zDataMember = string.Empty;
@@ -189,7 +189,7 @@ namespace ZedGraph
 		/// </summary>
 		public DataSourcePointList( DataSourcePointList rhs ) : this()
 		{
-			this._bindingSource.DataSource = rhs._bindingSource.DataSource;
+			_bindingSource.DataSource = rhs._bindingSource.DataSource;
 			if ( rhs._xDataMember != null )
 				_xDataMember = (string) rhs._xDataMember.Clone();
 			if ( rhs._yDataMember != null )

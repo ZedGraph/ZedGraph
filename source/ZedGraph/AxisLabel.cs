@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-16 07:15:51 $ </version>
+	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class AxisLabel : GapLabel, ICloneable, ISerializable
 	{
@@ -60,8 +60,8 @@ namespace ZedGraph
 								bool isItalic, bool isUnderline ) :
 			base( text, fontFamily, fontSize, color, isBold, isItalic, isUnderline )
 		{
-			this._isOmitMag = false;
-			this._isTitleAtCross = true;
+			_isOmitMag = false;
+			_isTitleAtCross = true;
 		}
 
 		/// <summary>

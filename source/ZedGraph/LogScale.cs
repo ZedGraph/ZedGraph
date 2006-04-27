@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.5.2.3 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 1.5.2.4 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	class LogScale : Scale, ISerializable //, ICloneable
 	{
@@ -98,8 +98,8 @@ namespace ZedGraph
 		/// </remarks>
 		public override double Min
 		{
-			get { return this._min; }
-			set { if ( value > 0 ) this._min = value; }
+			get { return _min; }
+			set { if ( value > 0 ) _min = value; }
 		}
 
 		/// <summary>
@@ -112,8 +112,8 @@ namespace ZedGraph
 		/// </remarks>
 		public override double Max
 		{
-			get { return this._max; }
-			set { if ( value > 0 ) this._max = value; }
+			get { return _max; }
+			set { if ( value > 0 ) _max = value; }
 		}
 
 	#endregion
@@ -141,8 +141,8 @@ namespace ZedGraph
 		{
 			base.SetupScaleData( pane, axis );
 
-			this._minLinTemp = Linearize( this._min );
-			this._maxLinTemp = Linearize( this._max );
+			_minLinTemp = Linearize( _min );
+			_maxLinTemp = Linearize( _max );
 		}
 
 		/// <summary>
@@ -251,12 +251,12 @@ namespace ZedGraph
 		/// </returns>
 		override internal double CalcBaseTic()
 		{
-			if ( this._baseTic != PointPair.Missing )
-				return this._baseTic;
+			if ( _baseTic != PointPair.Missing )
+				return _baseTic;
 			else
 			{
 				// go to the nearest even multiple of the step size
-				return Math.Ceiling( Scale.SafeLog( this._min ) - 0.00000001 );
+				return Math.Ceiling( Scale.SafeLog( _min ) - 0.00000001 );
 			}
 
 		}
@@ -273,8 +273,8 @@ namespace ZedGraph
 
 			//iStart = (int) ( Math.Ceiling( SafeLog( this.min ) - 1.0e-12 ) );
 			//iEnd = (int) ( Math.Floor( SafeLog( this.max ) + 1.0e-12 ) );
-			nTics = (int) ( Math.Floor( Scale.SafeLog( this._max ) + 1.0e-12 ) ) -
-					(int) ( Math.Ceiling( Scale.SafeLog( this._min ) - 1.0e-12 ) ) + 1;
+			nTics = (int) ( Math.Floor( Scale.SafeLog( _max ) + 1.0e-12 ) ) -
+					(int) ( Math.Ceiling( Scale.SafeLog( _min ) - 1.0e-12 ) ) + 1;
 
 			if ( nTics < 1 )
 				nTics = 1;
@@ -325,40 +325,40 @@ namespace ZedGraph
 			// call the base class first
 			base.PickScale( pane, g, scaleFactor );
 
-			this._mag = 0;		// Never use a magnitude shift for log scales
+			_mag = 0;		// Never use a magnitude shift for log scales
 			//this.numDec = 0;		// The number of decimal places to display is not used
 
 			// Check for bad data range
-			if ( this._min <= 0.0 && this._max <= 0.0 )
+			if ( _min <= 0.0 && _max <= 0.0 )
 			{
-				this._min = 1.0;
-				this._max = 10.0;
+				_min = 1.0;
+				_max = 10.0;
 			}
-			else if ( this._min <= 0.0 )
+			else if ( _min <= 0.0 )
 			{
-				this._min = this._max / 10.0;
+				_min = _max / 10.0;
 			}
-			else if ( this._max <= 0.0 )
+			else if ( _max <= 0.0 )
 			{
-				this._max = this._min * 10.0;
+				_max = _min * 10.0;
 			}
 
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this._max - this._min < 1.0e-20 )
+			if ( _max - _min < 1.0e-20 )
 			{
-				if ( this._maxAuto )
-					this._max = this._max * 2.0;
-				if ( this._minAuto )
-					this._min = this._min / 2.0;
+				if ( _maxAuto )
+					_max = _max * 2.0;
+				if ( _minAuto )
+					_min = _min / 2.0;
 			}
 
 			// Get the nearest power of 10 (no partial log cycles allowed)
-			if ( this._minAuto )
-				this._min = Math.Pow( (double) 10.0,
-					Math.Floor( Math.Log10( this._min ) ) );
-			if ( this._maxAuto )
-				this._max = Math.Pow( (double) 10.0,
-					Math.Ceiling( Math.Log10( this._max ) ) );
+			if ( _minAuto )
+				_min = Math.Pow( (double) 10.0,
+					Math.Floor( Math.Log10( _min ) ) );
+			if ( _maxAuto )
+				_max = Math.Pow( (double) 10.0,
+					Math.Ceiling( Math.Log10( _max ) ) );
 
 		}
 
@@ -380,13 +380,13 @@ namespace ZedGraph
 		/// <returns>The resulting value label as a <see cref="string" /></returns>
 		override internal string MakeLabel( GraphPane pane, int index, double dVal )
 		{
-			if ( this._format == null )
-				this._format = Scale.Default.Format;
+			if ( _format == null )
+				_format = Scale.Default.Format;
 
-			if ( this._isUseTenPower )
+			if ( _isUseTenPower )
 				return string.Format( "{0:F0}", dVal );
 			else
-				return Math.Pow( 10.0, dVal ).ToString( this._format );
+				return Math.Pow( 10.0, dVal ).ToString( _format );
 		}
 
 	#endregion

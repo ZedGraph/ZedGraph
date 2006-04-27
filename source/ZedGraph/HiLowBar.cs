@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11.2.3 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 3.11.2.4 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -117,7 +117,7 @@ namespace ZedGraph
 		/// (1/72nd inch)</param>
 		public HiLowBar( Color color, float size ) : base( color )
 		{
-			this._size = size;
+			_size = size;
 		}
 
 		/// <summary>
@@ -126,7 +126,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="HiLowBar"/> object from which to copy</param>
 		public HiLowBar( HiLowBar rhs ) : base( rhs )
 		{
-			this._size = rhs._size;
+			_size = rhs._size;
 		}
 
 		/// <summary>
@@ -334,7 +334,7 @@ namespace ZedGraph
 			if ( _isMaximumWidth )
 				return baseAxis._scale.GetClusterWidth( pane ) / ( 1.0F + pane._barSettings.MinClusterGap );
 			else
-				return (float) ( this._size * scaleFactor );
+				return (float) ( _size * scaleFactor );
 		}
 	#endregion
 

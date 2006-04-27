@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.23.2.5 $ $Date: 2006-04-25 01:26:21 $ </version>
+	/// <version> $Revision: 3.23.2.6 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -314,15 +314,15 @@ namespace ZedGraph
 		/// <param name="color">The color to assign to this new Line object</param>
 		public Line( Color color )
 		{
-			this._width = Default.Width;
-			this._style = Default.Style;
-			this._isVisible = Default.IsVisible;
-			this._color = color.IsEmpty ? Default.Color : color;
-			this._stepType = Default.StepType;
-			this._isAntiAlias = Default.IsAntiAlias;
-			this._isSmooth = Default.IsSmooth;
-			this._smoothTension = Default.SmoothTension;
-			this._fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
+			_width = Default.Width;
+			_style = Default.Style;
+			_isVisible = Default.IsVisible;
+			_color = color.IsEmpty ? Default.Color : color;
+			_stepType = Default.StepType;
+			_isAntiAlias = Default.IsAntiAlias;
+			_isSmooth = Default.IsSmooth;
+			_smoothTension = Default.SmoothTension;
+			_fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
 		}
 
 		/// <summary>
@@ -441,7 +441,7 @@ namespace ZedGraph
 			if ( this.IsVisible )
 			{
 				SmoothingMode sModeSave = g.SmoothingMode;
-				if ( this._isAntiAlias )
+				if ( _isAntiAlias )
 					g.SmoothingMode = SmoothingMode.HighQuality;
 
 				if ( curve is StickItem )
@@ -484,9 +484,9 @@ namespace ZedGraph
         public void DrawSegment( Graphics g, GraphPane pane, float x1, float y1,
                             float x2, float y2, float scaleFactor )
         {
-			if ( this._isVisible && !this.Color.IsEmpty )
+			if ( _isVisible && !this.Color.IsEmpty )
 			{
-				Pen pen = new Pen( this._color, pane.ScaledPenWidth(_width, scaleFactor) );
+				Pen pen = new Pen( _color, pane.ScaledPenWidth(_width, scaleFactor) );
 				pen.DashStyle = this.Style;
 				g.DrawLine( pen, x1, y1, x2, y2 );
 			}
@@ -516,7 +516,7 @@ namespace ZedGraph
 		{
 			Axis yAxis = curve.GetYAxis( pane );
 			float basePix = yAxis.Scale.Transform( 0.0 );
-			Pen pen = new Pen( this._color, pane.ScaledPenWidth(_width, scaleFactor) );
+			Pen pen = new Pen( _color, pane.ScaledPenWidth(_width, scaleFactor) );
 			pen.DashStyle = this.Style;
 
 			for ( int i=0; i<curve.Points.Count; i++ )
@@ -577,7 +577,7 @@ namespace ZedGraph
 			{
 				Pen pen = new Pen( this.Color, pane.ScaledPenWidth( _width, scaleFactor ) );
 				pen.DashStyle = this.Style;
-				float tension = this._isSmooth ? this._smoothTension : 0f;
+				float tension = _isSmooth ? _smoothTension : 0f;
 				
 				// Fill the curve if needed
 				if ( this.Fill.IsVisible )
@@ -591,7 +591,7 @@ namespace ZedGraph
 					CloseCurve( pane, curve, arrPoints, count, yMin, path );
 				
 					RectangleF rect = path.GetBounds();
-					Brush brush = this._fill.MakeBrush( rect );
+					Brush brush = _fill.MakeBrush( rect );
 					g.FillPath( brush, path );
 					brush.Dispose();
 
@@ -646,10 +646,10 @@ namespace ZedGraph
 			bool xIsLog = pane.XAxis._scale.IsLog;
 			bool yIsLog = yAxis._scale.IsLog;
 
-			Pen pen = new Pen( this._color, pane.ScaledPenWidth( _width, scaleFactor ) );
+			Pen pen = new Pen( _color, pane.ScaledPenWidth( _width, scaleFactor ) );
 			pen.DashStyle = this.Style;
 
-			if ( points != null && !this._color.IsEmpty && this.IsVisible )
+			if ( points != null && !_color.IsEmpty && this.IsVisible )
 			{
 				// Loop over each point in the curve
 				for ( int i=0; i<points.Count; i++ )
@@ -845,7 +845,7 @@ namespace ZedGraph
 
 				// Step type plots get twice as many points.  Always add three points so there is
 				// room to close out the curve for area fills.
-				arrPoints = new PointF[ ( this._stepType == ZedGraph.StepType.NonStep ? 1 : 2 ) *
+				arrPoints = new PointF[ ( _stepType == ZedGraph.StepType.NonStep ? 1 : 2 ) *
 											points.Count + 1 ];
 
 				// Loop over all points in the curve
@@ -883,7 +883,7 @@ namespace ZedGraph
 						// Add the pixel value pair into the points array
 						// Two points are added for step type curves
 						// ignore step-type setting for smooth curves
-						if ( this._isSmooth || index == 0 || this.StepType == StepType.NonStep )
+						if ( _isSmooth || index == 0 || this.StepType == StepType.NonStep )
 						{
 							arrPoints[index].X = curX;
 							arrPoints[index].Y = curY;
@@ -964,7 +964,7 @@ namespace ZedGraph
 
 				// Step type plots get twice as many points.  Always add three points so there is
 				// room to close out the curve for area fills.
-				arrPoints = new PointF[ ( this._stepType == ZedGraph.StepType.NonStep ? 1 : 2 ) *
+				arrPoints = new PointF[ ( _stepType == ZedGraph.StepType.NonStep ? 1 : 2 ) *
 					( pane.LineType == LineType.Stack ? 2 : 1 ) *
 					points.Count + 1 ];
 
@@ -990,7 +990,7 @@ namespace ZedGraph
 						// Add the pixel value pair into the points array
 						// Two points are added for step type curves
 						// ignore step-type setting for smooth curves
-						if ( this._isSmooth || index == 0 || this.StepType == StepType.NonStep )
+						if ( _isSmooth || index == 0 || this.StepType == StepType.NonStep )
 						{
 							arrPoints[index].X = curX;
 							arrPoints[index].Y = curY;
@@ -1075,7 +1075,7 @@ namespace ZedGraph
 				PointF[]	arrPoints2;
 				int			count2;
 				
-				float		tension = this._isSmooth ? this._smoothTension : 0f;
+				float		tension = _isSmooth ? _smoothTension : 0f;
 				
 				// Find the next lower curve in the curveList that is also a LineItem type, and use
 				// its smoothing properties for the lower side of the filled area.

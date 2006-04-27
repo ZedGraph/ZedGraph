@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	public class Margin : ICloneable, ISerializable
 	{
@@ -52,10 +52,10 @@ namespace ZedGraph
 		/// </summary>
 		public Margin()
 		{
-			this._left = Default.Left;
-			this._right = Default.Right;
-			this._top = Default.Top;
-			this._bottom = Default.Bottom;
+			_left = Default.Left;
+			_right = Default.Right;
+			_top = Default.Top;
+			_bottom = Default.Bottom;
 		}
 
 		/// <summary>
@@ -64,10 +64,10 @@ namespace ZedGraph
 		/// <param name="rhs">the <see cref="Margin" /> instance to be copied.</param>
 		public Margin( Margin rhs )
 		{
-			this._left = rhs._left;
-			this._right = rhs._right;
-			this._top = rhs._top;
-			this._bottom = rhs._bottom;
+			_left = rhs._left;
+			_right = rhs._right;
+			_top = rhs._top;
+			_bottom = rhs._bottom;
 		}
 
 		/// <summary>
@@ -201,10 +201,10 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			this._left = info.GetSingle( "left" );
-			this._right = info.GetSingle( "right" );
-			this._top = info.GetSingle( "top" );
-			this._bottom = info.GetSingle( "bottom" );
+			_left = info.GetSingle( "left" );
+			_right = info.GetSingle( "right" );
+			_top = info.GetSingle( "top" );
+			_bottom = info.GetSingle( "bottom" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object

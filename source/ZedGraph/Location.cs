@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11.2.3 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 3.11.2.4 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	public class Location : ICloneable, ISerializable
 	{
@@ -217,13 +217,13 @@ namespace ZedGraph
 		/// units.</value>
 		public RectangleF Rect
 		{
-			get { return new RectangleF( this._x, this._y, this._width, this._height ); }
+			get { return new RectangleF( _x, _y, _width, _height ); }
 			set
 			{
-				this._x = value.X;
-				this._y = value.Y;
-				this._width = value.Width;
-				this._height = value.Height;
+				_x = value.X;
+				_y = value.Y;
+				_width = value.Width;
+				_height = value.Height;
 			}
 		}
 
@@ -233,8 +233,8 @@ namespace ZedGraph
 		/// <value>A <see cref="PointF"/> in <see cref="CoordinateFrame"/> units.</value>
 		public PointF TopLeft
 		{
-			get { return new PointF( this._x, this._y ); }
-			set { this._x = value.X; this._y = value.Y; }
+			get { return new PointF( _x, _y ); }
+			set { _x = value.X; _y = value.Y; }
 		}
 
 		/// <summary>
@@ -294,13 +294,13 @@ namespace ZedGraph
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
 		public Location( float x, float y, CoordType coordType, AlignH alignH, AlignV alignV )
 		{
-			this._x = x;
-			this._y = y;
-			this._width = 0;
-			this._height = 0;
-			this._coordinateFrame = coordType;
-			this._alignH = alignH;
-			this._alignV = alignV;
+			_x = x;
+			_y = y;
+			_width = 0;
+			_height = 0;
+			_coordinateFrame = coordType;
+			_alignH = alignH;
+			_alignV = alignV;
 		}
 		
 		/// <summary>
@@ -330,8 +330,8 @@ namespace ZedGraph
 			CoordType coordType, AlignH alignH, AlignV alignV ) :
 				this( x, y, coordType, alignH, alignV )
 		{
-			this._width = width;
-			this._height = height;
+			_width = width;
+			_height = height;
 		}
 		
 		/// <summary>
@@ -340,13 +340,13 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="Location"/> object from which to copy</param>
 		public Location( Location rhs )
 		{
-			this._x = rhs._x;
-			this._y = rhs._y;
-			this._width = rhs._width;
-			this._height = rhs._height;
-			this._coordinateFrame = rhs.CoordinateFrame;
-			this._alignH = rhs.AlignH;
-			this._alignV = rhs.AlignV;
+			_x = rhs._x;
+			_y = rhs._y;
+			_width = rhs._width;
+			_height = rhs._height;
+			_coordinateFrame = rhs.CoordinateFrame;
+			_alignH = rhs.AlignH;
+			_alignV = rhs.AlignV;
 		}
 
 		/// <summary>
@@ -429,8 +429,8 @@ namespace ZedGraph
 		/// specified user point.</returns>
 		public PointF Transform( PaneBase pane )
 		{
-			return Transform( pane, new PointF( this._x, this._y ),
-						this._coordinateFrame );
+			return Transform( pane, new PointF( _x, _y ),
+						_coordinateFrame );
 		}
 		
 		/// <summary>
@@ -521,7 +521,7 @@ namespace ZedGraph
 		public PointF TransformBottomRight( PaneBase pane )
 		{
 			return Transform( pane, new PointF( this.X2, this.Y2 ),
-				this._coordinateFrame );
+				_coordinateFrame );
 		}
 
 		/// <summary>

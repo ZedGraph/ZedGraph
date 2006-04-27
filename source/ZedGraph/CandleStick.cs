@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class CandleStick : ICloneable, ISerializable
 	{
@@ -172,10 +172,10 @@ namespace ZedGraph
 		/// </param>
 		public CandleStick( Color color )
 		{
-			this._size = Default.Size;
-			this._color = color;
-			this._penWidth = Default.PenWidth;
-			this._isOpenCloseVisible = Default.IsOpenCloseVisible;
+			_size = Default.Size;
+			_color = color;
+			_penWidth = Default.PenWidth;
+			_isOpenCloseVisible = Default.IsOpenCloseVisible;
 		}
 
 		/// <summary>
@@ -187,7 +187,7 @@ namespace ZedGraph
 			_color = rhs._color;
 			_isOpenCloseVisible = rhs._isOpenCloseVisible;
 			_penWidth = rhs._penWidth;
-			this._size = rhs._size;
+			_size = rhs._size;
 		}
 
 		/// <summary>
@@ -291,7 +291,7 @@ namespace ZedGraph
 								float pixOpen, float pixClose,
 								float scaleFactor, Pen pen  )
 		{
-			float halfSize = this._size * scaleFactor;
+			float halfSize = _size * scaleFactor;
 
 			if ( pixBase != PointPair.Missing )
 			{
@@ -351,7 +351,7 @@ namespace ZedGraph
 			if ( curve.Points != null )
 			{
 				Pen pen = new Pen( _color, _penWidth );
-				float halfSize = this._size * scaleFactor;
+				float halfSize = _size * scaleFactor;
 
 				// Loop over each defined point							
 				for ( int i = 0; i < curve.Points.Count; i++ )

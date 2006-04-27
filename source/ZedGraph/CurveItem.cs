@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.31.2.5 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 3.31.2.6 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -103,6 +103,11 @@ namespace ZedGraph
 		/// </remarks>
 		public object Tag;
 
+		/// <summary>
+		/// Protected field that stores the hyperlink information for this object.
+		/// </summary>
+		internal Link _link;
+
 	#endregion
 	
 	#region Constructors
@@ -142,10 +147,10 @@ namespace ZedGraph
 			Init( label );
 
 			if ( points == null )
-				this._points = new PointPairList();
+				_points = new PointPairList();
 			else
 				//this.points = (IPointList) _points.Clone();
-				this._points = points;
+				_points = points;
 		}
 		
 		/// <summary>
@@ -154,12 +159,13 @@ namespace ZedGraph
 		/// <param name="label">A string label (legend entry) for this curve</param>
 		private void Init( string label )
 		{
-			this._label = new Label( label, null );
-			this._isY2Axis = false;
-			this._isVisible = true;
-			this._isOverrideOrdinal = false;
+			_label = new Label( label, null );
+			_isY2Axis = false;
+			_isVisible = true;
+			_isOverrideOrdinal = false;
 			this.Tag = null;
-			this._yAxisIndex = 0;
+			_yAxisIndex = 0;
+			_link = new Link();
 		}
 			
 		/// <summary>
@@ -195,7 +201,9 @@ namespace ZedGraph
 			else
 				this.Tag = rhs.Tag;
 			
-			this._points = (IPointList) rhs.Points.Clone();
+			_points = (IPointList) rhs.Points.Clone();
+
+			_link = rhs._link.Clone();
 		}
 
 		/// <summary>
@@ -255,6 +263,8 @@ namespace ZedGraph
 
 			_yAxisIndex = info.GetInt32( "yAxisIndex" );
 
+			_link = (Link) info.GetValue( "link", typeof(Link) );
+
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -281,6 +291,8 @@ namespace ZedGraph
 			info.AddValue( "points", list );
 			info.AddValue( "Tag", Tag );
 			info.AddValue( "yAxisIndex", _yAxisIndex );
+
+			info.AddValue( "link", _link );
 		}
 	#endregion
 	
@@ -459,10 +471,10 @@ namespace ZedGraph
 		{
 			get 
 			{
-				if ( this._points == null )
+				if ( _points == null )
 					return 0;
 				else
-					return this._points.Count;
+					return _points.Count;
 			}
 		}
 		
@@ -484,12 +496,23 @@ namespace ZedGraph
 		{
 			get
 			{
-				if ( this._points == null )
+				if ( _points == null )
 					return new PointPair( PointPair.Missing, PointPair.Missing );
 				else
-					return ( this._points )[index];
+					return ( _points )[index];
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the hyperlink information for this <see cref="CurveItem" />.
+		/// </summary>
+		// /// <seealso cref="ZedGraph.Web.IsImageMap" />
+		public Link Link
+		{
+			get { return _link; }
+			set { _link = value; }
+		}
+
 	#endregion
 	
 	#region Rendering Methods
@@ -566,10 +589,10 @@ namespace ZedGraph
 		/// be added</param>
 		public void AddPoint( PointPair point )
 		{
-			if ( this._points == null )
+			if ( _points == null )
 				this.Points = new PointPairList();
 
-			if ( this._points is IPointListEdit )
+			if ( _points is IPointListEdit )
 				( _points as IPointListEdit ).Add( point );
 			else
 				throw new NotImplementedException();
@@ -586,7 +609,7 @@ namespace ZedGraph
 		/// </remarks>
 		public void Clear()
 		{
-			if ( this._points is IPointListEdit )
+			if ( _points is IPointListEdit )
 				(_points as IPointListEdit).Clear();
 			else
 				throw new NotImplementedException();
@@ -603,7 +626,7 @@ namespace ZedGraph
 		/// <param name="index">The ordinal position of the point to be removed.</param>
 		public void RemovePoint( int index )
 		{
-			if ( this._points is IPointListEdit )
+			if ( _points is IPointListEdit )
 				(_points as IPointListEdit).RemoveAt( index );
 			else
 				throw new NotImplementedException();
@@ -626,7 +649,7 @@ namespace ZedGraph
 		/// </returns>
 		public Axis GetYAxis( GraphPane pane )
 		{
-			if ( this._isY2Axis )
+			if ( _isY2Axis )
 				return pane.Y2AxisList[ _yAxisIndex ];
 			else
 				return pane.YAxisList[ _yAxisIndex ];
@@ -649,7 +672,7 @@ namespace ZedGraph
 		public int GetYAxisIndex( GraphPane pane )
 		{
 			if ( _yAxisIndex >= 0 &&
-					_yAxisIndex < ( this._isY2Axis ? pane.Y2AxisList.Count : pane.YAxisList.Count ) )
+					_yAxisIndex < ( _isY2Axis ? pane.Y2AxisList.Count : pane.YAxisList.Count ) )
 				return _yAxisIndex;
 			else
 				return 0;
@@ -901,7 +924,17 @@ namespace ZedGraph
 
 			return barWidth;
 		}
-		
+
+		/// <summary>
+		/// Determine the coords for the rectangle associated with a specified point for 
+		/// this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> to which this curve belongs</param>
+		/// <param name="i">The index of the point of interest</param>
+		/// <param name="coords">A list of coordinates that represents the "rect" for
+		/// this point (used in an html AREA tag)</param>
+		/// <returns>true if it's a valid point, false otherwise</returns>
+		abstract public bool GetCoords( GraphPane pane, int i, out string coords );
 
 	#endregion
 	

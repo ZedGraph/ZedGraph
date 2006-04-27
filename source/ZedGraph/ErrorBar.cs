@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12.2.3 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 3.12.2.4 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -177,11 +177,11 @@ namespace ZedGraph
 		/// </param>
 		public ErrorBar( Color color )
 		{
-			this._symbol = new Symbol( Default.Type, color );
-			this._symbol.Size = Default.Size;
-			this._color = color;
-			this._penWidth = Default.PenWidth;
-			this._isVisible = Default.IsVisible;
+			_symbol = new Symbol( Default.Type, color );
+			_symbol.Size = Default.Size;
+			_color = color;
+			_penWidth = Default.PenWidth;
+			_isVisible = Default.IsVisible;
 		}
 
 		/// <summary>
@@ -193,7 +193,7 @@ namespace ZedGraph
 			_color = rhs.Color;
 			_isVisible = rhs.IsVisible;
 			_penWidth = rhs.PenWidth;
-			this._symbol = rhs.Symbol.Clone();
+			_symbol = rhs.Symbol.Clone();
 		}
 
 		/// <summary>
@@ -296,17 +296,17 @@ namespace ZedGraph
 			if ( isXBase )
 			{
 				g.DrawLine( pen, pixBase, pixValue, pixBase, pixLowValue );
-				this._symbol.DrawSymbol( g, pane, pixBase, pixValue,
+				_symbol.DrawSymbol( g, pane, pixBase, pixValue,
 							scaleFactor, dataValue );
-				this._symbol.DrawSymbol( g, pane, pixBase, pixLowValue,
+				_symbol.DrawSymbol( g, pane, pixBase, pixLowValue,
 							scaleFactor, dataValue );
 			}
 			else
 			{
 				g.DrawLine( pen, pixValue, pixBase, pixLowValue, pixBase );
-				this._symbol.DrawSymbol( g, pane, pixValue, pixBase,
+				_symbol.DrawSymbol( g, pane, pixValue, pixBase,
 							scaleFactor, dataValue );
-				this._symbol.DrawSymbol( g, pane, pixLowValue, pixBase,
+				_symbol.DrawSymbol( g, pane, pixLowValue, pixBase,
 							scaleFactor, dataValue );
 			}
 		}

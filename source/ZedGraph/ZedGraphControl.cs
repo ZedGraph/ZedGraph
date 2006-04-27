@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.9 $ $Date: 2006-04-22 10:26:00 $ </version>
+	/// <version> $Revision: 3.59.2.10 $ $Date: 2006-04-27 06:50:12 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -217,6 +217,19 @@ namespace ZedGraph
 	#endregion
 
 	#region Fields: Buttons & Keys Properties
+
+		/// <summary>
+		/// Gets or sets a value that determines which Mouse button will be used to click on
+		/// linkable objects
+		/// </summary>
+		/// <seealso cref="LinkModifierKeys" />
+		private MouseButtons _linkButtons = MouseButtons.Left;
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used to click
+		/// on linkable objects
+		/// </summary>
+		/// <seealso cref="LinkButtons" />
+		private Keys _linkModifierKeys = Keys.Alt;
 
 		/// <summary>
 		/// Gets or sets a value that determines which Mouse button will be used to edit point
@@ -533,6 +546,35 @@ namespace ZedGraph
 			set { _editModifierKeys = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a value that determines which Mouse button will be used to click
+		/// on linkable objects
+		/// </summary>
+		/// <seealso cref="LinkModifierKeys" />
+		/// <seealso cref="LinkEvent"/>
+		// /// <seealso cref="ZedGraph.Web.IsImageMap"/>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "Specify mouse button for clicking on linkable objects" )]
+		public MouseButtons LinkButtons
+		{
+			get { return _linkButtons; }
+			set { _linkButtons = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used to click
+		/// on linkable objects
+		/// </summary>
+		/// <seealso cref="LinkButtons" />
+		/// <seealso cref="LinkEvent"/>
+		// /// <seealso cref="ZedGraph.Web.IsImageMap"/>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description( "Specify modifier key for clicking on linkable objects" )]
+		public Keys LinkModifierKeys
+		{
+			get { return _linkModifierKeys; }
+			set { _linkModifierKeys = value; }
+		}
+
 	#endregion
 
 	#region Fields: Temporary state variables
@@ -788,6 +830,43 @@ namespace ZedGraph
 		[Bindable( true ), Category( "Events" )]
 		[Description( "Subscribe to be notified when the mouse is moved inside the control" )]
 		public event ZedMouseEventHandler MouseMoveEvent;
+
+		/// <summary>
+		/// A delegate that allows notification of clicks on ZedGraph objects that have
+		/// active links enabled
+		/// </summary>
+		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="pane">The source <see cref="GraphPane" /> in which the click
+		/// occurred.
+		/// </param>
+		/// <param name="source">The source object which was clicked.  This is typically
+		/// a type of <see cref="CurveItem" /> if a curve point was clicked, or
+		/// a type of <see cref="GraphObj" /> if a graph object was clicked.
+		/// </param>
+		/// <param name="link">The <see cref="Link" /> object, belonging to
+		/// <paramref name="source" />, that contains the link information
+		/// </param>
+		/// <param name="index">An index value, typically used if a <see cref="CurveItem" />
+		/// was clicked, indicating the ordinal value of the actual point that was clicked.
+		/// </param>
+		public delegate void LinkEventHandler( ZedGraphControl sender, GraphPane pane,
+			object source, Link link, int index );
+
+		/// <summary>
+		/// Subscribe to this event to be able to respond to mouse clicks within linked
+		/// objects.
+		/// </summary>
+		/// <remarks>
+		/// Linked objects are typically either <see cref="GraphObj" /> type objects or
+		/// <see cref="CurveItem" /> type objects.  These object types can include
+		/// hyperlink information allowing for "drill-down" type operation.  
+		/// </remarks>
+		/// <seealso cref="LinkEventHandler"/>
+		/// <seealso cref="Link" />
+		/// <seealso cref="CurveItem.Link">CurveItem.Link</seealso>
+		/// <seealso cref="GraphObj.Link">GraphObj.Link</seealso>
+		// /// <seealso cref="ZedGraph.Web.IsImageMap" />
+		public event LinkEventHandler LinkEvent;
 
 	#endregion
 
@@ -1758,7 +1837,27 @@ namespace ZedGraph
 			if ( e.Clicks > 1 || _masterPane == null )
 				return;
 
-			GraphPane pane = this.MasterPane.FindChartRect( mousePt );
+			// First, see if the click is within a Linkable object within any GraphPane
+			GraphPane pane = this.MasterPane.FindPane( mousePt );
+			if (	pane != null && this.LinkEvent != null &&
+					e.Button == _linkButtons && Control.ModifierKeys == _linkModifierKeys )
+			{
+				object source;
+				Link link;
+				int index;
+				Graphics g = this.CreateGraphics();
+				float scaleFactor = pane.CalcScaleFactor();
+				if ( pane.FindLinkableObject( mousePt, g, scaleFactor, out source, out link, out index ) )
+				{
+					LinkEvent( this, pane, source, link, index );
+					// linkable objects override any other actions with mouse
+					return;
+				}
+				g.Dispose();
+			}
+
+			// Second, Check to see if it's within a Chart Rect
+			pane = this.MasterPane.FindChartRect( mousePt );
 			//Rectangle rect = new Rectangle( mousePt, new Size( 1, 1 ) );
 
 			if ( pane != null &&

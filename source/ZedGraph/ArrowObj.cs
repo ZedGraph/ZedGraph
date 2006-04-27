@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:01 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class ArrowObj : LineObj, ICloneable, ISerializable
 	{
@@ -124,7 +124,7 @@ namespace ZedGraph
 					float x2, float y2 ) : base( color, x1, y1, x2, y2 )
 		{
 			_isArrowHead = Default.IsArrowHead;
-			this._size = size;
+			_size = size;
 		}
 
 		/// <summary>
@@ -259,7 +259,7 @@ namespace ZedGraph
 				pix2.X > -10000 && pix2.X < 100000 && pix2.Y > -100000 && pix2.Y < 100000 )
 			{
 				// get a scaled size for the arrowhead
-				float scaledSize = (float) ( this._size * scaleFactor );
+				float scaledSize = (float) ( _size * scaleFactor );
 
 				// calculate the length and the angle of the arrow "vector"
 				double dy = pix2.Y - pix1.Y;
@@ -277,16 +277,16 @@ namespace ZedGraph
 				g.RotateTransform( angle );
 
 				// get a pen according to this arrow properties
-				Pen pen = new Pen( this._color, pane.ScaledPenWidth( _penWidth,scaleFactor) );
-                pen.DashStyle = this._style;
+				Pen pen = new Pen( _color, pane.ScaledPenWidth( _penWidth,scaleFactor) );
+                pen.DashStyle = _style;
 				
 				// Only show the arrowhead if required
-				if ( this._isArrowHead )
+				if ( _isArrowHead )
 				{
 					// Draw the line segment for this arrow
 					g.DrawLine( pen, 0, 0, length-scaledSize+1, 0 );
 
-					SolidBrush brush = new SolidBrush( this._color );
+					SolidBrush brush = new SolidBrush( _color );
 					
 					// Create a polygon representing the arrowhead based on the scaled
 					// size

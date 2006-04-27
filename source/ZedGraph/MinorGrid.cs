@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// Class that holds the specific properties for the minor grid.
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-24 05:06:46 $ </version>
+	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	public class MinorGrid : ICloneable, ISerializable
 	{
@@ -267,7 +267,7 @@ namespace ZedGraph
 		internal void Draw( Graphics g, Pen pen, float pixVal, float topPix )
 		{
 			// draw the minor grid
-			if ( this._isVisible )
+			if ( _isVisible )
 				g.DrawLine( pen, pixVal, 0.0F, pixVal, topPix );
 		}
 

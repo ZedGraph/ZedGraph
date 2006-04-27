@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.18.2.3 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 3.18.2.4 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -268,7 +268,7 @@ namespace ZedGraph
 				if ( value != _family )
 				{
 					_family = value;
-					Remake( _scaledSize / _size, this.Size, ref this._scaledSize, ref this._font );
+					Remake( _scaledSize / _size, this.Size, ref _scaledSize, ref _font );
 				}
 			}
 		}
@@ -285,7 +285,7 @@ namespace ZedGraph
 				if ( value != _isBold )
 				{
 					_isBold = value;
-					Remake( _scaledSize / _size, this.Size, ref this._scaledSize, ref this._font );
+					Remake( _scaledSize / _size, this.Size, ref _scaledSize, ref _font );
 				}
 			}
 		}
@@ -302,7 +302,7 @@ namespace ZedGraph
 				if ( value != _isItalic )
 				{
 					_isItalic = value;
-					Remake( _scaledSize / _size, this.Size, ref this._scaledSize, ref this._font );
+					Remake( _scaledSize / _size, this.Size, ref _scaledSize, ref _font );
 				}
 			}
 		}
@@ -319,7 +319,7 @@ namespace ZedGraph
 				if ( value != _isUnderline )
 				{
 					_isUnderline = value;
-					Remake( _scaledSize / _size, this.Size, ref this._scaledSize, ref this._font );
+					Remake( _scaledSize / _size, this.Size, ref _scaledSize, ref _font );
 				}
 			}
 		}
@@ -358,7 +358,7 @@ namespace ZedGraph
 				if ( value != _size )
 				{
 					Remake( _scaledSize / _size * value, _size, ref _scaledSize,
-								ref this._font );
+								ref _font );
 					_size = value;
 				}
 			}
@@ -521,26 +521,26 @@ namespace ZedGraph
 			bool isItalic, bool isUnderline, Color fillColor, Brush fillBrush,
 			FillType fillType )
 		{
-			this._fontColor = color;
-			this._family = family;
-			this._isBold = isBold;
-			this._isItalic = isItalic;
-			this._isUnderline = isUnderline;
-			this._size = size;
-			this._angle = 0F;
+			_fontColor = color;
+			_family = family;
+			_isBold = isBold;
+			_isItalic = isItalic;
+			_isUnderline = isUnderline;
+			_size = size;
+			_angle = 0F;
 
-			this._isAntiAlias = Default.IsAntiAlias;
-			this._stringAlignment = Default.StringAlignment;
-			this._isDropShadow = Default.IsDropShadow;
-			this._dropShadowColor = Default.DropShadowColor;
-			this._dropShadowAngle = Default.DropShadowAngle;
-			this._dropShadowOffset = Default.DropShadowOffset;
+			_isAntiAlias = Default.IsAntiAlias;
+			_stringAlignment = Default.StringAlignment;
+			_isDropShadow = Default.IsDropShadow;
+			_dropShadowColor = Default.DropShadowColor;
+			_dropShadowAngle = Default.DropShadowAngle;
+			_dropShadowOffset = Default.DropShadowOffset;
 
-			this._fill = new Fill( fillColor, fillBrush, fillType );
-			this._border = new Border( true, Color.Black, 1.0F );
+			_fill = new Fill( fillColor, fillBrush, fillType );
+			_border = new Border( true, Color.Black, 1.0F );
 
-			this._scaledSize = -1;
-			Remake( 1.0F, this._size, ref this._scaledSize, ref this._font );
+			_scaledSize = -1;
+			Remake( 1.0F, _size, ref _scaledSize, ref _font );
 		}
 
 		/// <summary>
@@ -568,7 +568,7 @@ namespace ZedGraph
 			_dropShadowOffset = rhs._dropShadowOffset;
 
 			_scaledSize = rhs._scaledSize;
-			Remake( 1.0F, this._size, ref this._scaledSize, ref this._font );
+			Remake( 1.0F, _size, ref _scaledSize, ref _font );
 		}
 
 		/// <summary>
@@ -632,7 +632,7 @@ namespace ZedGraph
 			_dropShadowOffset = info.GetSingle( "dropShadowOffset" );
 
 			_scaledSize = -1;
-			Remake( 1.0F, this._size, ref this._scaledSize, ref this._font );
+			Remake( 1.0F, _size, ref _scaledSize, ref _font );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -688,17 +688,17 @@ namespace ZedGraph
 			if ( font == null ||
 					Math.Abs( newSize - oldSize ) > 0.1 ||
 					font.Name != this.Family ||
-					font.Bold != this._isBold ||
-					font.Italic != this._isItalic ||
-					font.Underline != this._isUnderline )
+					font.Bold != _isBold ||
+					font.Italic != _isItalic ||
+					font.Underline != _isUnderline )
 			{
 				FontStyle style = FontStyle.Regular;
-				style = ( this._isBold ? FontStyle.Bold : style ) |
-							( this._isItalic ? FontStyle.Italic : style ) |
-							 ( this._isUnderline ? FontStyle.Underline : style );
+				style = ( _isBold ? FontStyle.Bold : style ) |
+							( _isItalic ? FontStyle.Italic : style ) |
+							 ( _isUnderline ? FontStyle.Underline : style );
 
 				scaledSize = size * (float)scaleFactor;
-				font = new Font( this._family, scaledSize, style, GraphicsUnit.World );
+				font = new Font( _family, scaledSize, style, GraphicsUnit.World );
 			}
 		}
 
@@ -716,8 +716,8 @@ namespace ZedGraph
 		/// </returns>
 		public Font GetFont( float scaleFactor )
 		{
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			return this._font;
+			Remake( scaleFactor, this.Size, ref _scaledSize, ref _font );
+			return _font;
 		}
 	#endregion
 
@@ -853,7 +853,7 @@ namespace ZedGraph
 			g.TranslateTransform( xa, ya, MatrixOrder.Prepend );
 
 			// make a solid brush for rendering the font itself
-			SolidBrush brush = new SolidBrush( this._fontColor );
+			SolidBrush brush = new SolidBrush( _fontColor );
 
 			// Create a rectangle representing the border around the
 			// text.  Note that, while the text is drawn based on the
@@ -864,15 +864,15 @@ namespace ZedGraph
 								sizeF.Width, sizeF.Height );
 
 			// If the background is to be filled, fill it
-			this._fill.Draw( g, rectF );
+			_fill.Draw( g, rectF );
 
 			// Draw the border around the text if required
-			this._border.Draw( g, isPenWidthScaled, scaleFactor, rectF );
+			_border.Draw( g, isPenWidthScaled, scaleFactor, rectF );
 
 			// make a center justified StringFormat alignment
 			// for drawing the text
 			StringFormat strFormat = new StringFormat();
-			strFormat.Alignment = this._stringAlignment;
+			strFormat.Alignment = _stringAlignment;
 			//			if ( this.stringAlignment == StringAlignment.Far )
 			//				g.TranslateTransform( sizeF.Width / 2.0F, 0F, MatrixOrder.Prepend );
 			//			else if ( this.stringAlignment == StringAlignment.Near )
@@ -885,14 +885,14 @@ namespace ZedGraph
 			if ( _isDropShadow )
 			{
 				// make a solid brush for rendering the font itself
-				SolidBrush brushD = new SolidBrush( this._dropShadowColor );
-				float xShift = (float)( Math.Cos( this._dropShadowAngle ) *
-							this._dropShadowOffset * this._font.Height );
-				float yShift = (float)( Math.Sin( this._dropShadowAngle ) *
-							this._dropShadowOffset * this._font.Height );
+				SolidBrush brushD = new SolidBrush( _dropShadowColor );
+				float xShift = (float)( Math.Cos( _dropShadowAngle ) *
+							_dropShadowOffset * _font.Height );
+				float yShift = (float)( Math.Sin( _dropShadowAngle ) *
+							_dropShadowOffset * _font.Height );
 				RectangleF rectD = rectF;
 				rectD.Offset( xShift, yShift );
-				g.DrawString( text, this._font, brushD, rectD, strFormat );
+				g.DrawString( text, _font, brushD, rectD, strFormat );
 				brushD.Dispose();
 			}
 
@@ -900,7 +900,7 @@ namespace ZedGraph
 			// is set up such that 0,0 is at the location where the
 			// CenterTop of the text needs to be.
 			//RectangleF layoutArea = new RectangleF( 0.0F, 0.0F, sizeF.Width, sizeF.Height );
-			g.DrawString( text, this._font, brush, rectF, strFormat );
+			g.DrawString( text, _font, brush, rectF, strFormat );
 
 			// Restore the transform matrix back to original
 			g.Transform = matrix;
@@ -951,17 +951,17 @@ namespace ZedGraph
 				g.SmoothingMode = SmoothingMode.HighQuality;
 
 			// make sure the font size is properly scaled
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			float scaledSuperSize = this._scaledSize * Default.SuperSize;
+			Remake( scaleFactor, this.Size, ref _scaledSize, ref _font );
+			float scaledSuperSize = _scaledSize * Default.SuperSize;
 			Remake( scaleFactor, this.Size * Default.SuperSize, ref scaledSuperSize,
-				ref this._superScriptFont );
+				ref _superScriptFont );
 
 			// Get the width and height of the text
-			SizeF size10 = g.MeasureString( "10", this._font );
-			SizeF sizeText = g.MeasureString( text, this._superScriptFont );
+			SizeF size10 = g.MeasureString( "10", _font );
+			SizeF sizeText = g.MeasureString( text, _superScriptFont );
 			SizeF totSize = new SizeF( size10.Width + sizeText.Width,
 									size10.Height + sizeText.Height * Default.SuperShift );
-			float charWidth = g.MeasureString( "x", this._superScriptFont ).Width;
+			float charWidth = g.MeasureString( "x", _superScriptFont ).Width;
 
 			// Save the old transform matrix for later restoration
 			Matrix matrix = g.Transform;
@@ -1002,12 +1002,12 @@ namespace ZedGraph
 			g.TranslateTransform( xa, ya, MatrixOrder.Prepend );
 
 			// make a solid brush for rendering the font itself
-			SolidBrush brush = new SolidBrush( this._fontColor );
+			SolidBrush brush = new SolidBrush( _fontColor );
 
 			// make a center justified StringFormat alignment
 			// for drawing the text
 			StringFormat strFormat = new StringFormat();
-			strFormat.Alignment = this._stringAlignment;
+			strFormat.Alignment = _stringAlignment;
 
 			// Create a rectangle representing the border around the
 			// text.  Note that, while the text is drawn based on the
@@ -1018,18 +1018,18 @@ namespace ZedGraph
 				totSize.Width, totSize.Height );
 
 			// If the background is to be filled, fill it
-			this._fill.Draw( g, rectF );
+			_fill.Draw( g, rectF );
 
 			// Draw the border around the text if required
-			this._border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rectF );
+			_border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rectF );
 
 			// Draw the actual text.  Note that the coordinate system
 			// is set up such that 0,0 is at the location where the
 			// CenterTop of the text needs to be.
-			g.DrawString( "10", this._font, brush,
+			g.DrawString( "10", _font, brush,
 							( -totSize.Width + size10.Width ) / 2.0F,
 							sizeText.Height * Default.SuperShift, strFormat );
-			g.DrawString( text, this._superScriptFont, brush,
+			g.DrawString( text, _superScriptFont, brush,
 							( totSize.Width - sizeText.Width - charWidth ) / 2.0F,
 							0.0F,
 							strFormat );
@@ -1054,10 +1054,10 @@ namespace ZedGraph
 		/// <returns>The scaled font height, in pixels</returns>
 		public float GetHeight( float scaleFactor )
 		{
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			float height = this._font.Height;
+			Remake( scaleFactor, this.Size, ref _scaledSize, ref _font );
+			float height = _font.Height;
 			if ( _isDropShadow )
-				height += (float)( Math.Sin( this._dropShadowAngle ) * this._dropShadowOffset * this._font.Height );
+				height += (float)( Math.Sin( _dropShadowAngle ) * _dropShadowOffset * _font.Height );
 			return height;
 		}
 		/// <summary>
@@ -1077,8 +1077,8 @@ namespace ZedGraph
 		/// <returns>The scaled font width, in pixels</returns>
 		public float GetWidth( Graphics g, float scaleFactor )
 		{
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			return g.MeasureString( "x", this._font ).Width;
+			Remake( scaleFactor, this.Size, ref _scaledSize, ref _font );
+			return g.MeasureString( "x", _font ).Width;
 		}
 
 		/// <summary>
@@ -1099,10 +1099,10 @@ namespace ZedGraph
 		/// <returns>The scaled text width, in pixels</returns>
 		public float GetWidth( Graphics g, string text, float scaleFactor )
 		{
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			float width = g.MeasureString( text, this._font ).Width;
+			Remake( scaleFactor, this.Size, ref _scaledSize, ref _font );
+			float width = g.MeasureString( text, _font ).Width;
 			if ( _isDropShadow )
-				width += (float)( Math.Cos( this._dropShadowAngle ) * this._dropShadowOffset * this._font.Height );
+				width += (float)( Math.Cos( _dropShadowAngle ) * _dropShadowOffset * _font.Height );
 			return width;
 		}
 		/// <summary>
@@ -1125,14 +1125,14 @@ namespace ZedGraph
 		/// a <see cref="SizeF"/> struct</returns>
 		public SizeF MeasureString( Graphics g, string text, float scaleFactor )
 		{
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			SizeF size = g.MeasureString( text, this._font );
+			Remake( scaleFactor, this.Size, ref _scaledSize, ref _font );
+			SizeF size = g.MeasureString( text, _font );
 			if ( _isDropShadow )
 			{
-				size.Width += (float)( Math.Cos( this._dropShadowAngle ) *
-								this._dropShadowOffset * this._font.Height );
-				size.Height += (float)( Math.Sin( this._dropShadowAngle ) *
-								this._dropShadowOffset * this._font.Height );
+				size.Width += (float)( Math.Cos( _dropShadowAngle ) *
+								_dropShadowOffset * _font.Height );
+				size.Height += (float)( Math.Sin( _dropShadowAngle ) *
+								_dropShadowOffset * _font.Height );
 			}
 			return size;
 		}
@@ -1165,14 +1165,14 @@ namespace ZedGraph
 		/// a <see cref="SizeF"/> struct</returns>
 		public SizeF MeasureString( Graphics g, string text, float scaleFactor, SizeF layoutArea )
 		{
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
-			SizeF size = g.MeasureString( text, this._font, layoutArea );
+			Remake( scaleFactor, this.Size, ref _scaledSize, ref _font );
+			SizeF size = g.MeasureString( text, _font, layoutArea );
 			if ( _isDropShadow )
 			{
-				size.Width += (float)( Math.Cos( this._dropShadowAngle ) *
-								this._dropShadowOffset * this._font.Height );
-				size.Height += (float)( Math.Sin( this._dropShadowAngle ) *
-								this._dropShadowOffset * this._font.Height );
+				size.Width += (float)( Math.Cos( _dropShadowAngle ) *
+								_dropShadowOffset * _font.Height );
+				size.Height += (float)( Math.Sin( _dropShadowAngle ) *
+								_dropShadowOffset * _font.Height );
 			}
 			return size;
 		}
@@ -1240,8 +1240,8 @@ namespace ZedGraph
 			else
 				s = MeasureString( g, text, scaleFactor, layoutArea );
 
-			float cs = (float)Math.Abs( Math.Cos( this._angle * Math.PI / 180.0 ) );
-			float sn = (float)Math.Abs( Math.Sin( this._angle * Math.PI / 180.0 ) );
+			float cs = (float)Math.Abs( Math.Cos( _angle * Math.PI / 180.0 ) );
+			float sn = (float)Math.Abs( Math.Sin( _angle * Math.PI / 180.0 ) );
 
 			SizeF s2 = new SizeF( s.Width * cs + s.Height * sn,
 				s.Width * sn + s.Height * cs );
@@ -1278,28 +1278,28 @@ namespace ZedGraph
 		public SizeF BoundingBoxTenPower( Graphics g, string text, float scaleFactor )
 		{
 			//Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
-			float scaledSuperSize = this._scaledSize * Default.SuperSize;
+			float scaledSuperSize = _scaledSize * Default.SuperSize;
 			Remake( scaleFactor, this.Size * Default.SuperSize, ref scaledSuperSize,
-				ref this._superScriptFont );
+				ref _superScriptFont );
 
 			// Get the width and height of the text
 			SizeF size10 = MeasureString( g, "10", scaleFactor );
-			SizeF sizeText = g.MeasureString( text, this._superScriptFont );
+			SizeF sizeText = g.MeasureString( text, _superScriptFont );
 
 			if ( _isDropShadow )
 			{
-				sizeText.Width += (float)( Math.Cos( this._dropShadowAngle ) *
-							this._dropShadowOffset * this._superScriptFont.Height );
-				sizeText.Height += (float)( Math.Sin( this._dropShadowAngle ) *
-							this._dropShadowOffset * this._superScriptFont.Height );
+				sizeText.Width += (float)( Math.Cos( _dropShadowAngle ) *
+							_dropShadowOffset * _superScriptFont.Height );
+				sizeText.Height += (float)( Math.Sin( _dropShadowAngle ) *
+							_dropShadowOffset * _superScriptFont.Height );
 			}
 
 			SizeF totSize = new SizeF( size10.Width + sizeText.Width,
 				size10.Height + sizeText.Height * Default.SuperShift );
 
 
-			float cs = (float)Math.Abs( Math.Cos( this._angle * Math.PI / 180.0 ) );
-			float sn = (float)Math.Abs( Math.Sin( this._angle * Math.PI / 180.0 ) );
+			float cs = (float)Math.Abs( Math.Cos( _angle * Math.PI / 180.0 ) );
+			float sn = (float)Math.Abs( Math.Sin( _angle * Math.PI / 180.0 ) );
 
 			SizeF s2 = new SizeF( totSize.Width * cs + totSize.Height * sn,
 				totSize.Width * sn + totSize.Height * cs );
@@ -1381,14 +1381,14 @@ namespace ZedGraph
 			float scaleFactor, SizeF layoutArea )
 		{
 			// make sure the font size is properly scaled
-			Remake( scaleFactor, this.Size, ref this._scaledSize, ref this._font );
+			Remake( scaleFactor, this.Size, ref _scaledSize, ref _font );
 
 			// Get the width and height of the text
 			SizeF sizeF;
 			if ( layoutArea.IsEmpty )
-				sizeF = g.MeasureString( text, this._font );
+				sizeF = g.MeasureString( text, _font );
 			else
-				sizeF = g.MeasureString( text, this._font, layoutArea );
+				sizeF = g.MeasureString( text, _font, layoutArea );
 
 			// Create a bounding box rectangle for the text
 			RectangleF rect = new RectangleF( new PointF( -sizeF.Width / 2.0F, 0.0F ), sizeF );
@@ -1436,6 +1436,102 @@ namespace ZedGraph
 			matrix.TransformPoints( pts );
 
 			return rect.Contains( pts[0] );
+		}
+
+		/// <summary>
+		/// Returns a polygon that defines the bounding box of
+		/// the text, taking into account alignment and rotation parameters.
+		/// </summary>
+		/// <param name="g">
+		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
+		/// PaintEventArgs argument to the Paint() method.
+		/// </param>
+		/// <param name="text">A string value containing the text to be
+		/// displayed.  This can be multiple lines, separated by newline ('\n')
+		/// characters</param>
+		/// <param name="x">The X location to display the text, in screen
+		/// coordinates, relative to the horizontal (<see cref="AlignH"/>)
+		/// alignment parameter <paramref name="alignH"/></param>
+		/// <param name="y">The Y location to display the text, in screen
+		/// coordinates, relative to the vertical (<see cref="AlignV"/>
+		/// alignment parameter <paramref name="alignV"/></param>
+		/// <param name="alignH">A horizontal alignment parameter specified
+		/// using the <see cref="AlignH"/> enum type</param>
+		/// <param name="alignV">A vertical alignment parameter specified
+		/// using the <see cref="AlignV"/> enum type</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <param name="layoutArea">The limiting area (<see cref="SizeF"/>) into which the text
+		/// must fit.  The actual rectangle may be smaller than this, but the text will be wrapped
+		/// to accomodate the area.</param>
+		/// <returns>A polygon of 4 points defining the area of this text</returns>
+		public PointF[] GetBox( Graphics g, string text, float x,
+				float y, AlignH alignH, AlignV alignV,
+				float scaleFactor, SizeF layoutArea )
+		{
+			// make sure the font size is properly scaled
+			Remake( scaleFactor, this.Size, ref _scaledSize, ref _font );
+
+			// Get the width and height of the text
+			SizeF sizeF;
+			if ( layoutArea.IsEmpty )
+				sizeF = g.MeasureString( text, _font );
+			else
+				sizeF = g.MeasureString( text, _font, layoutArea );
+
+			// Create a bounding box rectangle for the text
+			RectangleF rect = new RectangleF( new PointF( -sizeF.Width / 2.0F, 0.0F ), sizeF );
+
+			// Build a transform matrix that inverts that drawing transform
+			// in this manner, the point is brought back to the box, rather
+			// than vice-versa.  This allows the container check to be a simple
+			// RectangleF.Contains, since the rectangle won't be rotated.
+			Matrix matrix = new Matrix();
+
+			// In this case, the bounding box is anchored to the
+			// top-left of the text box.  Handle the alignment
+			// as needed.
+			float xa, ya;
+			if ( alignH == AlignH.Left )
+				xa = sizeF.Width / 2.0F;
+			else if ( alignH == AlignH.Right )
+				xa = -sizeF.Width / 2.0F;
+			else
+				xa = 0.0F;
+
+			if ( alignV == AlignV.Center )
+				ya = -sizeF.Height / 2.0F;
+			else if ( alignV == AlignV.Bottom )
+				ya = -sizeF.Height;
+			else
+				ya = 0.0F;
+
+			// Shift the coordinates to accomodate the alignment
+			// parameters
+			matrix.Translate( -xa, -ya, MatrixOrder.Prepend );
+
+			// Rotate the coordinate system according to the 
+			// specified angle of the FontSpec
+			if ( _angle != 0.0F )
+				matrix.Rotate( _angle, MatrixOrder.Prepend );
+
+			// Move the coordinate system to local coordinates
+			// of this text object (that is, at the specified
+			// x,y location)
+			matrix.Translate( -x, -y, MatrixOrder.Prepend );
+
+			PointF[] pts = new PointF[4];
+			pts[0] = new PointF( rect.Left, rect.Top );
+			pts[1] = new PointF( rect.Right, rect.Top );
+			pts[2] = new PointF( rect.Right, rect.Bottom );
+			pts[3] = new PointF( rect.Left, rect.Bottom );
+			matrix.TransformPoints( pts );
+
+			return pts;
 		}
 
 	#endregion

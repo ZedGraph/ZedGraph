@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.25.2.3 $ $Date: 2006-04-07 06:14:06 $ </version>
+	/// <version> $Revision: 3.25.2.4 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -227,12 +227,12 @@ namespace ZedGraph
 		/// </param>
 		public Symbol( SymbolType type, Color color )
 		{
-			this._size = Default.Size;
-			this._type = type;
-			this._isAntiAlias = Default.IsAntiAlias;
-			this._isVisible = Default.IsVisible;
-			this._border = new Border( Default.IsBorderVisible, color, Default.PenWidth );
-			this._fill = new Fill( color, Default.FillBrush, Default.FillType );
+			_size = Default.Size;
+			_type = type;
+			_isAntiAlias = Default.IsAntiAlias;
+			_isVisible = Default.IsVisible;
+			_border = new Border( Default.IsBorderVisible, color, Default.PenWidth );
+			_fill = new Fill( color, Default.FillBrush, Default.FillType );
 		}
 
 		/// <summary>
@@ -338,7 +338,7 @@ namespace ZedGraph
 							Pen pen, Brush brush )
 		{
 			// Only draw if the symbol is visible
-			if (	this._isVisible &&
+			if (	_isVisible &&
 					this.Type != SymbolType.None &&
 					x < 100000 && x > -100000 &&
 					y < 100000 && y > -100000 )
@@ -347,11 +347,11 @@ namespace ZedGraph
 				g.TranslateTransform( x, y );
 			
 				// Fill or draw the symbol as required
-				if ( this._fill.IsVisible)
+				if ( _fill.IsVisible)
 					g.FillPath( brush, path );
 					//FillPoint( g, x, y, scaleFactor, pen, brush );
 				
-				if ( this._border.IsVisible )
+				if ( _border.IsVisible )
 					g.DrawPath( pen, path );
 					//DrawPoint( g, x, y, scaleFactor, pen );
 				
@@ -387,13 +387,13 @@ namespace ZedGraph
 							float scaleFactor, PointPair dataValue )
 		{
 			// Only draw if the symbol is visible
-			if (	this._isVisible &&
+			if (	_isVisible &&
 					this.Type != SymbolType.None &&
 					x < 100000 && x > -100000 &&
 					y < 100000 && y > -100000 )
 			{
 				SmoothingMode sModeSave = g.SmoothingMode;
-				if ( this._isAntiAlias )
+				if ( _isAntiAlias )
 					g.SmoothingMode = SmoothingMode.HighQuality;
 
 				Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
@@ -421,13 +421,13 @@ namespace ZedGraph
 		/// <returns>Returns the <see cref="GraphicsPath"/> for the current symbol</returns>
 		public GraphicsPath MakePath( Graphics g, float scaleFactor )
 		{
-			float	scaledSize = (float) ( this._size * scaleFactor );
+			float	scaledSize = (float) ( _size * scaleFactor );
 			float	hsize = scaledSize / 2,
 					hsize1 = hsize + 1;
 			
 			GraphicsPath path = new GraphicsPath();
 			
-			switch( this._type == SymbolType.Default ? Default.Type : this._type )
+			switch( _type == SymbolType.Default ? Default.Type : _type )
 			{
 			case SymbolType.Square:
 				path.AddLine( -hsize, -hsize, hsize, -hsize );
@@ -514,16 +514,16 @@ namespace ZedGraph
 			double	curX, curY, lowVal;
 			IPointList points = curve.Points;
 		
-			if ( points != null && ( this._border.IsVisible || this._fill.IsVisible ) )
+			if ( points != null && ( _border.IsVisible || _fill.IsVisible ) )
 			{
 				SmoothingMode sModeSave = g.SmoothingMode;
-				if ( this._isAntiAlias )
+				if ( _isAntiAlias )
 					g.SmoothingMode = SmoothingMode.HighQuality;
 
 				// For the sake of speed, go ahead and create a solid brush and a pen
 				// If it's a gradient fill, it will be created on the fly for each symbol
 				//SolidBrush	brush = new SolidBrush( this.fill.Color );
-				Pen pen = this._border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+				Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
             //Pen pen = new Pen( this.border.Color, pane.ScaledPenWidth(_border.PenWidth * scaleFactor) );
 				
 				GraphicsPath path = MakePath( g, scaleFactor );
@@ -577,7 +577,7 @@ namespace ZedGraph
 
 						// If the fill type for this symbol is a Gradient by value type,
 						// the make a brush corresponding to the appropriate current value
-						if ( this._fill.IsGradientValueType )
+						if ( _fill.IsGradientValueType )
 							brush = _fill.MakeBrush( rect, points[i] );
 						// Otherwise, the brush is already defined
 						// Draw the symbol at the specified pixel location

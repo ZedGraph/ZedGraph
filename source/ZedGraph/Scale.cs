@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9.2.6 $ $Date: 2006-04-22 10:26:00 $ </version>
+	/// <version> $Revision: 1.9.2.7 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -609,51 +609,51 @@ namespace ZedGraph
 		/// <see cref="Scale" /> instance.</param>
 		public Scale( Axis ownerAxis )
 		{
-			this._ownerAxis = ownerAxis;
+			_ownerAxis = ownerAxis;
 
-			this._min = 0.0;
-			this._max = 1.0;
-			this._majorStep = 0.1;
-			this._minorStep = 0.1;
-			this._exponent = 1.0;
-			this._mag = 0;
-			this._baseTic = PointPair.Missing;
+			_min = 0.0;
+			_max = 1.0;
+			_majorStep = 0.1;
+			_minorStep = 0.1;
+			_exponent = 1.0;
+			_mag = 0;
+			_baseTic = PointPair.Missing;
 
-			this._minGrace = Default.MinGrace;
-			this._maxGrace = Default.MaxGrace;
+			_minGrace = Default.MinGrace;
+			_maxGrace = Default.MaxGrace;
 
-			this._minAuto = true;
-			this._maxAuto = true;
-			this._majorStepAuto = true;
-			this._minorStepAuto = true;
-			this._magAuto = true;
-			this._formatAuto = true;
+			_minAuto = true;
+			_maxAuto = true;
+			_majorStepAuto = true;
+			_minorStepAuto = true;
+			_magAuto = true;
+			_formatAuto = true;
 
-			this._isReverse = Default.IsReverse;
-			this._isUseTenPower = true;
-			this._isPreventLabelOverlap = true;
-			this._isVisible = true;
-			this._isSkipFirstLabel = false;
-			this._isSkipLastLabel = false;
-			this._isSkipCrossLabel = false;
+			_isReverse = Default.IsReverse;
+			_isUseTenPower = true;
+			_isPreventLabelOverlap = true;
+			_isVisible = true;
+			_isSkipFirstLabel = false;
+			_isSkipLastLabel = false;
+			_isSkipCrossLabel = false;
 
-			this._majorUnit = DateUnit.Year;
-			this._minorUnit = DateUnit.Year;
+			_majorUnit = DateUnit.Year;
+			_minorUnit = DateUnit.Year;
 
-			this._format = null;
-			this._textLabels = null;
+			_format = null;
+			_textLabels = null;
 
-			this._isLabelsInside = Default.IsLabelsInside;
-			this._align = Default.Align;
-			this._fontSpec = new FontSpec(
+			_isLabelsInside = Default.IsLabelsInside;
+			_align = Default.Align;
+			_fontSpec = new FontSpec(
 				Default.FontFamily, Default.FontSize,
 				Default.FontColor, Default.FontBold,
 				Default.FontUnderline, Default.FontItalic,
 				Default.FillColor, Default.FillBrush,
 				Default.FillType );
 
-			this._fontSpec.Border.IsVisible = false;
-			this._labelGap = Default.LabelGap;
+			_fontSpec.Border.IsVisible = false;
+			_labelGap = Default.LabelGap;
 		}
 
 		/// <summary>
@@ -763,21 +763,21 @@ namespace ZedGraph
 			switch ( type )
 			{
 				case AxisType.Linear:
-					return new LinearScale( oldScale, this._ownerAxis );
+					return new LinearScale( oldScale, _ownerAxis );
 				case AxisType.Date:
-					return new DateScale( oldScale, this._ownerAxis );
+					return new DateScale( oldScale, _ownerAxis );
 				case AxisType.Log:
-					return new LogScale( oldScale, this._ownerAxis );
+					return new LogScale( oldScale, _ownerAxis );
 				case AxisType.Exponent:
-					return new ExponentScale( oldScale, this._ownerAxis );
+					return new ExponentScale( oldScale, _ownerAxis );
 				case AxisType.Ordinal:
-					return new OrdinalScale( oldScale, this._ownerAxis );
+					return new OrdinalScale( oldScale, _ownerAxis );
 				case AxisType.Text:
-					return new TextScale( oldScale, this._ownerAxis );
+					return new TextScale( oldScale, _ownerAxis );
 				case AxisType.DateAsOrdinal:
-					return new DateAsOrdinalScale( oldScale, this._ownerAxis );
+					return new DateAsOrdinalScale( oldScale, _ownerAxis );
 				case AxisType.LinearAsOrdinal:
-					return new LinearAsOrdinalScale( oldScale, this._ownerAxis );
+					return new LinearAsOrdinalScale( oldScale, _ownerAxis );
 				default:
 					throw new Exception( "Implementation Error: Invalid AxisType" );
 			}
@@ -1576,17 +1576,17 @@ namespace ZedGraph
 			// save the ChartRect data for transforming scale values to pixels
 			if ( axis is XAxis )
 			{
-				this._minPix = pane.Chart._rect.Left;
-				this._maxPix = pane.Chart._rect.Right;
+				_minPix = pane.Chart._rect.Left;
+				_maxPix = pane.Chart._rect.Right;
 			}
 			else
 			{
-				this._minPix = pane.Chart._rect.Top;
-				this._maxPix = pane.Chart._rect.Bottom;
+				_minPix = pane.Chart._rect.Top;
+				_maxPix = pane.Chart._rect.Bottom;
 			}
 
-			this._minLinTemp = Linearize( this._min );
-			this._maxLinTemp = Linearize( this._max );
+			_minLinTemp = Linearize( _min );
+			_maxLinTemp = Linearize( _max );
 
 		}
 
@@ -1653,20 +1653,20 @@ namespace ZedGraph
 			{
 				string label;
 
-				label = this.ScaleFormatEvent( pane, this._ownerAxis, dVal, index );
+				label = this.ScaleFormatEvent( pane, _ownerAxis, dVal, index );
 				if ( label != null )
 					return label;
 			}
 
-			if ( this._format == null )
-				this._format = Scale.Default.Format;
+			if ( _format == null )
+				_format = Scale.Default.Format;
 
 			// linear or ordinal is the default behavior
 			// this method is overridden for other Scale types
 
-			double scaleMult = Math.Pow( (double) 10.0, this._mag );
+			double scaleMult = Math.Pow( (double) 10.0, _mag );
 
-			return ( dVal / scaleMult ).ToString( this._format );
+			return ( dVal / scaleMult ).ToString( _format );
 		}
 
 		/// <summary>
@@ -1700,7 +1700,7 @@ namespace ZedGraph
 			if ( _isVisible )
 			{
 				double dVal,
-					scaleMult = Math.Pow( (double)10.0, this._mag );
+					scaleMult = Math.Pow( (double)10.0, _mag );
 				int i;
 
 				float saveAngle = _fontSpec.Angle;
@@ -1722,7 +1722,7 @@ namespace ZedGraph
 					string tmpStr = MakeLabel( pane, i, dVal );
 
 					SizeF sizeF;
-					if ( this.IsLog && this._isUseTenPower )
+					if ( this.IsLog && _isUseTenPower )
 						sizeF = _fontSpec.BoundingBoxTenPower( g, tmpStr,
 							scaleFactor );
 					else
@@ -1762,7 +1762,7 @@ namespace ZedGraph
 		virtual internal double CalcMajorTicValue( double baseVal, double tic )
 		{
 			// Default behavior is a normal linear scale (also works for ordinal types)
-			return baseVal + (double) this._majorStep * tic;
+			return baseVal + (double) _majorStep * tic;
 		}
 
 		/// <summary>
@@ -1785,7 +1785,7 @@ namespace ZedGraph
 		virtual internal double CalcMinorTicValue( double baseVal, int iTic )
 		{
 			// default behavior is a linear axis (works for ordinal types too
-			return baseVal + (double) this._minorStep * (double) iTic;
+			return baseVal + (double) _minorStep * (double) iTic;
 		}
 
 		/// <summary>
@@ -1802,7 +1802,7 @@ namespace ZedGraph
 		virtual internal int CalcMinorStart( double baseVal )
 		{
 			// Default behavior is for a linear scale (works for ordinal as well
-			return (int) ( ( this._min - baseVal ) / this._minorStep );
+			return (int) ( ( _min - baseVal ) / _minorStep );
 		}
 
 		/// <summary>
@@ -1819,13 +1819,13 @@ namespace ZedGraph
 		/// </returns>
 		virtual internal double CalcBaseTic()
 		{
-			if ( this._baseTic != PointPair.Missing )
-				return this._baseTic;
+			if ( _baseTic != PointPair.Missing )
+				return _baseTic;
 			else
 				// default behavior is linear or ordinal type
 				// go to the nearest even multiple of the step size
-				return Math.Ceiling( (double) this._min / (double) this._majorStep - 0.00000001 )
-														* (double) this._majorStep;
+				return Math.Ceiling( (double) _min / (double) _majorStep - 0.00000001 )
+														* (double) _majorStep;
 		}
 
 		/// <summary>
@@ -1981,31 +1981,31 @@ namespace ZedGraph
 			string tmpStr = MakeLabel( pane, i, dVal );
 
 			float height;
-			if ( this.IsLog && this._isUseTenPower )
+			if ( this.IsLog && _isUseTenPower )
 				height = _fontSpec.BoundingBoxTenPower( g, tmpStr, scaleFactor ).Height;
 			else
 				height = _fontSpec.BoundingBox( g, tmpStr, scaleFactor ).Height;
 
-			if ( this._align == AlignP.Center )
+			if ( _align == AlignP.Center )
 				textCenter = textTop + maxSpace / 2.0F;
-			else if ( this._align == AlignP.Outside )
+			else if ( _align == AlignP.Outside )
 				textCenter = textTop + maxSpace - height / 2.0F;
 			else	// inside
 				textCenter = textTop + height / 2.0F;
 
-			if ( this._isLabelsInside )
+			if ( _isLabelsInside )
 				textCenter = shift - textCenter;
 			else
 				textCenter = shift + textCenter;
 
 
-			if ( this.IsLog && this._isUseTenPower )
-				this._fontSpec.DrawTenPower( g, pane, tmpStr,
+			if ( this.IsLog && _isUseTenPower )
+				_fontSpec.DrawTenPower( g, pane, tmpStr,
 					pixVal, textCenter,
 					AlignH.Center, AlignV.Center,
 					scaleFactor );
 			else
-				this._fontSpec.Draw( g, pane.IsPenWidthScaled, tmpStr,
+				_fontSpec.Draw( g, pane.IsPenWidthScaled, tmpStr,
 					pixVal, textCenter,
 					AlignH.Center, AlignV.Center,
 					scaleFactor );
@@ -2158,8 +2158,8 @@ namespace ZedGraph
 		/// </param>
 		virtual public void PickScale( GraphPane pane, Graphics g, float scaleFactor )
 		{
-			double minVal = this._rangeMin;
-			double maxVal = this._rangeMax;
+			double minVal = _rangeMin;
+			double maxVal = _rangeMax;
 
 			// Make sure that minVal and maxVal are legitimate values
 			if ( Double.IsInfinity( minVal ) || Double.IsNaN( minVal ) || minVal == Double.MaxValue )
@@ -2175,27 +2175,27 @@ namespace ZedGraph
 
 			// For autoranged values, assign the value.  If appropriate, adjust the value by the
 			// "Grace" value.
-			if ( this._minAuto )
+			if ( _minAuto )
 			{
-				this._min = minVal;
+				_min = minVal;
 				// Do not let the grace value extend the axis below zero when all the values were positive
-				if ( numType && ( this._min < 0 || minVal - this._minGrace * range >= 0.0 ) )
-					this._min = minVal - this._minGrace * range;
+				if ( numType && ( _min < 0 || minVal - _minGrace * range >= 0.0 ) )
+					_min = minVal - _minGrace * range;
 			}
-			if ( this._maxAuto )
+			if ( _maxAuto )
 			{
-				this._max = maxVal;
+				_max = maxVal;
 				// Do not let the grace value extend the axis above zero when all the values were negative
-				if ( numType && ( this._max > 0 || maxVal + this._maxGrace * range <= 0.0 ) )
-					this._max = maxVal + this._maxGrace * range;
+				if ( numType && ( _max > 0 || maxVal + _maxGrace * range <= 0.0 ) )
+					_max = maxVal + _maxGrace * range;
 			}
 
-			if ( this._max <= this._min )
+			if ( _max <= _min )
 			{
-				if ( this._maxAuto )
-					this._max = this._min + 1.0;
-				else if ( this._minAuto )
-					this._min = this._max - 1.0;
+				if ( _maxAuto )
+					_max = _min + 1.0;
+				else if ( _minAuto )
+					_min = _max - 1.0;
 			}
 
 		}
@@ -2278,16 +2278,16 @@ namespace ZedGraph
 		internal void SetScaleMag( double min, double max, double step )
 		{
 			// set the scale magnitude if required
-			if ( this._magAuto )
+			if ( _magAuto )
 			{
 				// Find the optimal scale display multiple
 				double mag = -100;
 				double mag2 = -100;
 
-				if ( Math.Abs( this._min ) > 1.0e-30 )
-					mag = Math.Floor( Math.Log10( Math.Abs( this._min ) ) );
-				if ( Math.Abs( this._max ) > 1.0e-30 )
-					mag2 = Math.Floor( Math.Log10( Math.Abs( this._max ) ) );
+				if ( Math.Abs( _min ) > 1.0e-30 )
+					mag = Math.Floor( Math.Log10( Math.Abs( _min ) ) );
+				if ( Math.Abs( _max ) > 1.0e-30 )
+					mag2 = Math.Floor( Math.Log10( Math.Abs( _max ) ) );
 
 				mag = Math.Max( mag2, mag );
 
@@ -2296,16 +2296,16 @@ namespace ZedGraph
 					mag = 0;
 
 				// Use a power of 10 that is a multiple of 3 (engineering scale)
-				this._mag = (int) ( Math.Floor( mag / 3.0 ) * 3.0 );
+				_mag = (int) ( Math.Floor( mag / 3.0 ) * 3.0 );
 			}
 
 			// Calculate the appropriate number of dec places to display if required
-			if ( this._formatAuto )
+			if ( _formatAuto )
 			{
-				int numDec = 0 - (int) ( Math.Floor( Math.Log10( this._majorStep ) ) - this._mag );
+				int numDec = 0 - (int) ( Math.Floor( Math.Log10( _majorStep ) ) - _mag );
 				if ( numDec < 0 )
 					numDec = 0;
-				this._format = "f" + numDec.ToString();
+				_format = "f" + numDec.ToString();
 			}
 		}
 
@@ -2397,7 +2397,7 @@ namespace ZedGraph
 			int nTics = 1;
 
 			// default behavior is for a linear or ordinal scale
-			nTics = (int) ( ( this._max - this._min ) / this._majorStep + 0.01 ) + 1;
+			nTics = (int) ( ( _max - _min ) / _majorStep + 0.01 ) + 1;
 
 			if ( nTics < 1 )
 				nTics = 1;
@@ -2430,27 +2430,27 @@ namespace ZedGraph
 		{
 			// Define suitable default ranges in the event that
 			// no data were available
-			if ( this._rangeMin >= Double.MaxValue || this._rangeMax <= Double.MinValue )
+			if ( _rangeMin >= Double.MaxValue || _rangeMax <= Double.MinValue )
 			{
 				// If this is a Y axis, and the main Y axis is valid, use it for defaults
 				if ( axis != pane.XAxis &&
 					pane.YAxis.Scale._rangeMin < double.MaxValue && pane.YAxis.Scale._rangeMax > double.MinValue )
 				{
-					this._rangeMin = pane.YAxis.Scale._rangeMin;
-					this._rangeMax = pane.YAxis.Scale._rangeMax;
+					_rangeMin = pane.YAxis.Scale._rangeMin;
+					_rangeMax = pane.YAxis.Scale._rangeMax;
 				}
 				// Otherwise, if this is a Y axis, and the main Y2 axis is valid, use it for defaults
 				else if ( axis != pane.XAxis &&
 					pane.Y2Axis.Scale._rangeMin < double.MaxValue && pane.Y2Axis.Scale._rangeMax > double.MinValue )
 				{
-					this._rangeMin = pane.Y2Axis.Scale._rangeMin;
-					this._rangeMax = pane.Y2Axis.Scale._rangeMax;
+					_rangeMin = pane.Y2Axis.Scale._rangeMin;
+					_rangeMax = pane.Y2Axis.Scale._rangeMax;
 				}
 				// Otherwise, just use 0 and 1
 				else
 				{
-					this._rangeMin = 0;
-					this._rangeMax = 1;
+					_rangeMin = 0;
+					_rangeMax = 1;
 				}
 
 			}
@@ -2511,13 +2511,13 @@ namespace ZedGraph
 		public float Transform( double x )
 		{
 			// Must take into account Log, and Reverse Axes
-			double ratio = ( Linearize( x ) - this._minLinTemp ) /
-							( this._maxLinTemp - this._minLinTemp );
+			double ratio = ( Linearize( x ) - _minLinTemp ) /
+							( _maxLinTemp - _minLinTemp );
 
 			if ( _isReverse == _ownerAxis is XAxis )
-				return (float) ( this._maxPix - ( this._maxPix - this._minPix ) * ratio );
+				return (float) ( _maxPix - ( _maxPix - _minPix ) * ratio );
 			else
-				return (float) ( this._minPix + ( this._maxPix - this._minPix ) * ratio );
+				return (float) ( _minPix + ( _maxPix - _minPix ) * ratio );
 		}
 
 		/// <summary>
@@ -2575,14 +2575,14 @@ namespace ZedGraph
 			double val;
 
 			// see if the sign of the equation needs to be reversed
-			if ( ( this._isReverse ) == ( _ownerAxis is XAxis ) )
-				val = (double) ( pixVal - this._maxPix )
-						/ (double) ( this._minPix - this._maxPix )
-						* ( this._maxLinTemp - this._minLinTemp ) + this._minLinTemp;
+			if ( ( _isReverse ) == ( _ownerAxis is XAxis ) )
+				val = (double) ( pixVal - _maxPix )
+						/ (double) ( _minPix - _maxPix )
+						* ( _maxLinTemp - _minLinTemp ) + _minLinTemp;
 			else
-				val = (double) ( pixVal - this._minPix )
-						/ (double) ( this._maxPix - this._minPix )
-						* ( this._maxLinTemp - this._minLinTemp ) + this._minLinTemp;
+				val = (double) ( pixVal - _minPix )
+						/ (double) ( _maxPix - _minPix )
+						* ( _maxLinTemp - _minLinTemp ) + _minLinTemp;
 
 			return DeLinearize( val );
 		}
@@ -2617,13 +2617,13 @@ namespace ZedGraph
 
 			// Coordinate values for log scales are already in exponent form, so no need
 			// to take the log here
-			ratio = ( x - this._minLinTemp ) /
-						( this._maxLinTemp - this._minLinTemp );
+			ratio = ( x - _minLinTemp ) /
+						( _maxLinTemp - _minLinTemp );
 
 			if ( _isReverse != ( _ownerAxis is YAxis ) )
-				rv = (float) ( ( this._maxPix - this._minPix ) * ( 1.0F - ratio ) );
+				rv = (float) ( ( _maxPix - _minPix ) * ( 1.0F - ratio ) );
 			else
-				rv = (float) ( ( this._maxPix - this._minPix ) * ratio );
+				rv = (float) ( ( _maxPix - _minPix ) * ratio );
 
 			return rv;
 		}

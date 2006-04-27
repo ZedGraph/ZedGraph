@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// <see cref="MinorTic" />.
 	/// </summary>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	public class MajorTic : MinorTic, ICloneable, ISerializable
 	{
@@ -43,17 +43,17 @@ namespace ZedGraph
 		/// </summary>
 		public MajorTic()
 		{
-			this._size = Default.Size;
-			this._color = Default.Color;
-			this._penWidth = Default.PenWidth;
+			_size = Default.Size;
+			_color = Default.Color;
+			_penWidth = Default.PenWidth;
 
 			this.IsOutside = Default.IsOutside;
 			this.IsInside = Default.IsInside;
 			this.IsOpposite = Default.IsOpposite;
-			this._isCrossOutside = Default.IsCrossOutside;
-			this._isCrossInside = Default.IsCrossInside;
+			_isCrossOutside = Default.IsCrossOutside;
+			_isCrossInside = Default.IsCrossInside;
 
-			this._isBetweenLabels = false;
+			_isBetweenLabels = false;
 		}
 
 		/// <summary>
@@ -63,7 +63,7 @@ namespace ZedGraph
 		public MajorTic( MajorTic rhs )
 			: base( rhs )
 		{
-			this._isBetweenLabels = rhs._isBetweenLabels;
+			_isBetweenLabels = rhs._isBetweenLabels;
 		}
 
 		/// <summary>

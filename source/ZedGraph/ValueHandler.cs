@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.8.2.4 $ $Date: 2006-04-25 01:26:21 $ </version>
+	/// <version> $Revision: 3.8.2.5 $ $Date: 2006-04-27 06:50:12 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane _pane;
@@ -46,7 +46,7 @@ namespace ZedGraph
 		/// an initialization, false otherwise.</param>
 		public ValueHandler( GraphPane pane, bool initialize )
 		{
-			this._pane = pane;
+			_pane = pane;
 			if ( initialize )
 			{
 				// just create a dummy image, which results in a full draw operation
@@ -74,7 +74,7 @@ namespace ZedGraph
 		public bool GetValues( CurveItem curve, int iPt, out double baseVal,
 							out double lowVal, out double hiVal )
 		{
-			return GetValues( this._pane, curve, iPt, out baseVal,
+			return GetValues( _pane, curve, iPt, out baseVal,
 									out lowVal, out hiVal );
 		}
 

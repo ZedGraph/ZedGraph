@@ -51,7 +51,7 @@ namespace ZedGraph
 	/// value of <see cref="BarSettings.Base"/>, which is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class CandleStickItem : CurveItem, ICloneable, ISerializable
 	{
@@ -112,7 +112,7 @@ namespace ZedGraph
 		public CandleStickItem( string label )
 			: base( label )
 		{
-			this._stick = new CandleStick();
+			_stick = new CandleStick();
 		}
 
 		/// <summary>
@@ -129,7 +129,7 @@ namespace ZedGraph
 		public CandleStickItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
-			this._stick = new CandleStick( color );
+			_stick = new CandleStick( color );
 		}
 
 		/// <summary>
@@ -139,7 +139,7 @@ namespace ZedGraph
 		public CandleStickItem( CandleStickItem rhs )
 			: base( rhs )
 		{
-			this._stick = rhs._stick.Clone();
+			_stick = rhs._stick.Clone();
 		}
 
 		/// <summary>
@@ -228,7 +228,7 @@ namespace ZedGraph
 		/// </param>
 		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor )
 		{
-			if ( this._isVisible )
+			if ( _isVisible )
 			{
 				_stick.Draw( g, pane, this, this.BaseAxis( pane ),
 									this.ValueAxis( pane ), scaleFactor );
@@ -277,11 +277,65 @@ namespace ZedGraph
 			}
 
 			Pen pen = new Pen( _stick.Color, _stick.PenWidth );
-			this._stick.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixHigh,
+			_stick.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixHigh,
 								pixLow, pixOpen, pixClose, scaleFactor, pen );
 		}
 
-		#endregion
+		/// <summary>
+		/// Determine the coords for the rectangle associated with a specified point for 
+		/// this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> to which this curve belongs</param>
+		/// <param name="i">The index of the point of interest</param>
+		/// <param name="coords">A list of coordinates that represents the "rect" for
+		/// this point (used in an html AREA tag)</param>
+		/// <returns>true if it's a valid point, false otherwise</returns>
+		override public bool GetCoords( GraphPane pane, int i, out string coords )
+		{
+			coords = string.Empty;
+
+			if ( i < 0 || i >= _points.Count )
+				return false;
+
+			Axis valueAxis = ValueAxis( pane );
+			Axis baseAxis = BaseAxis( pane );
+
+			float halfSize = _stick.Size * pane.CalcScaleFactor();
+
+			PointPair pt = _points[i];
+			double date = pt.X;
+			double high = pt.Y;
+			double low = pt.Z;
+
+			if ( !pt.IsInvalid3D &&
+					( date > 0 || !baseAxis._scale.IsLog ) &&
+					( ( high > 0 && low > 0 ) || !valueAxis._scale.IsLog ) )
+			{
+				float pixBase, pixHigh, pixLow;
+				pixBase = baseAxis.Scale.Transform( _isOverrideOrdinal, i, date );
+				pixHigh = valueAxis.Scale.Transform( _isOverrideOrdinal, i, high );
+				pixLow = valueAxis.Scale.Transform( _isOverrideOrdinal, i, low );
+
+				// Calculate the pixel location for the side of the bar (on the base axis)
+				float pixSide = pixBase - halfSize;
+
+				// Draw the bar
+				if ( baseAxis is XAxis )
+					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+								pixSide, pixLow,
+								pixSide + halfSize * 2, pixHigh );
+				else
+					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+								pixLow, pixSide,
+								pixHigh, pixSide + halfSize * 2 );
+
+				return true;
+			}
+
+			return false;
+		}
+
+	#endregion
 
 	}
 }

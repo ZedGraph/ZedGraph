@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.4.2.3 $ $Date: 2006-04-07 06:14:08 $ </version>
+	/// <version> $Revision: 1.4.2.4 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	class TextScale : Scale, ISerializable //, ICloneable
 	{
@@ -116,8 +116,8 @@ namespace ZedGraph
 		/// </returns>
 		override internal double CalcBaseTic()
 		{
-			if ( this._baseTic != PointPair.Missing )
-				return this._baseTic;
+			if ( _baseTic != PointPair.Missing )
+				return _baseTic;
 			else
 				return 1.0;
 
@@ -134,10 +134,10 @@ namespace ZedGraph
 			int nTics = 1;
 
 			// If no array of labels is available, just assume 10 labels so we don't blow up.
-			if ( this._textLabels == null )
+			if ( _textLabels == null )
 				nTics = 10;
 			else
-				nTics = this._textLabels.Length;
+				nTics = _textLabels.Length;
 
 			if ( nTics < 1 )
 				nTics = 1;
@@ -196,68 +196,68 @@ namespace ZedGraph
 			base.PickScale( pane, g, scaleFactor );
 
 			// if text labels are provided, then autorange to the number of labels
-			if ( this._textLabels != null )
+			if ( _textLabels != null )
 			{
-				if ( this._minAuto )
-					this._min = 0.5;
-				if ( this._maxAuto )
-					this._max = this._textLabels.Length + 0.5;
+				if ( _minAuto )
+					_min = 0.5;
+				if ( _maxAuto )
+					_max = _textLabels.Length + 0.5;
 			}
 			else
 			{
-				if ( this._minAuto )
-					this._min -= 0.5;
-				if ( this._maxAuto )
-					this._max += 0.5;
+				if ( _minAuto )
+					_min -= 0.5;
+				if ( _maxAuto )
+					_max += 0.5;
 			}
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this._max - this._min < .1 )
+			if ( _max - _min < .1 )
 			{
-				if ( this._maxAuto )
-					this._max = this._min + 10.0;
+				if ( _maxAuto )
+					_max = _min + 10.0;
 				else
-					this._min = this._max - 10.0;
+					_min = _max - 10.0;
 			}
 
-			if ( this._majorStepAuto )
+			if ( _majorStepAuto )
 			{
-				if ( !this._isPreventLabelOverlap )
+				if ( !_isPreventLabelOverlap )
 				{
-					this._majorStep = 1;
+					_majorStep = 1;
 				}
-				else if ( this._textLabels != null )
+				else if ( _textLabels != null )
 				{
 					// Calculate the maximum number of labels
 					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
 					// Calculate a step size based on the width of the labels
-					double tmpStep = Math.Ceiling( ( this._max - this._min ) / maxLabels );
+					double tmpStep = Math.Ceiling( ( _max - _min ) / maxLabels );
 
 					// Use the lesser of the two step sizes
 					//if ( tmpStep < this.majorStep )
-					this._majorStep = tmpStep;
+					_majorStep = tmpStep;
 				}
 				else
-					this._majorStep = (int) ( ( this._max - this._min - 1.0 ) / Default.MaxTextLabels ) + 1.0;
+					_majorStep = (int) ( ( _max - _min - 1.0 ) / Default.MaxTextLabels ) + 1.0;
 
 			}
 			else
 			{
-				this._majorStep = (int) this._majorStep;
-				if ( this._majorStep <= 0 )
-					this._majorStep = 1.0;
+				_majorStep = (int) _majorStep;
+				if ( _majorStep <= 0 )
+					_majorStep = 1.0;
 			}
 
-			if ( this._minorStepAuto )
+			if ( _minorStepAuto )
 			{
-				this._minorStep = this._majorStep / 10;
+				_minorStep = _majorStep / 10;
 
-				//this._minorStep = CalcStepSize( this._majorStep, 10 );
-				if ( this._minorStep < 1 )
-					this._minorStep = 1;
+				//_minorStep = CalcStepSize( _majorStep, 10 );
+				if ( _minorStep < 1 )
+					_minorStep = 1;
 			}
 
-			this._mag = 0;
+			_mag = 0;
 		}
 
 		/// <summary>
@@ -278,11 +278,11 @@ namespace ZedGraph
 		/// <returns>The resulting value label as a <see cref="string" /></returns>
 		override internal string MakeLabel( GraphPane pane, int index, double dVal )
 		{
-			if ( this._format == null )
-				this._format = Scale.Default.Format;
+			if ( _format == null )
+				_format = Scale.Default.Format;
 
-			index *= (int) this._majorStep;
-			if ( this._textLabels == null || index < 0 || index >= _textLabels.Length )
+			index *= (int) _majorStep;
+			if ( _textLabels == null || index < 0 || index >= _textLabels.Length )
 				return string.Empty;
 			else
 				return _textLabels[index];

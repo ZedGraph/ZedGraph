@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.6.2.3 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 1.6.2.4 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	class LinearScale : Scale, ISerializable //, ICloneable
 	{
@@ -136,60 +136,60 @@ namespace ZedGraph
 			base.PickScale( pane, g, scaleFactor );
 
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this._max - this._min < 1.0e-30 )
+			if ( _max - _min < 1.0e-30 )
 			{
-				if ( this._maxAuto )
-					this._max = this._max + 0.2 * ( this._max == 0 ? 1.0 : Math.Abs( this._max ) );
-				if ( this._minAuto )
-					this._min = this._min - 0.2 * ( this._min == 0 ? 1.0 : Math.Abs( this._min ) );
+				if ( _maxAuto )
+					_max = _max + 0.2 * ( _max == 0 ? 1.0 : Math.Abs( _max ) );
+				if ( _minAuto )
+					_min = _min - 0.2 * ( _min == 0 ? 1.0 : Math.Abs( _min ) );
 			}
 
 			// This is the zero-lever test.  If minVal is within the zero lever fraction
 			// of the data range, then use zero.
 
-			if ( this._minAuto && this._min > 0 &&
-				this._min / ( this._max - this._min ) < Default.ZeroLever )
-				this._min = 0;
+			if ( _minAuto && _min > 0 &&
+				_min / ( _max - _min ) < Default.ZeroLever )
+				_min = 0;
 
 			// Repeat the zero-lever test for cases where the maxVal is less than zero
-			if ( this._maxAuto && this._max < 0 &&
-				Math.Abs( this._max / ( this._max - this._min ) ) <
+			if ( _maxAuto && _max < 0 &&
+				Math.Abs( _max / ( _max - _min ) ) <
 				Default.ZeroLever )
-				this._max = 0;
+				_max = 0;
 
 			// Calculate the new step size
-			if ( this._majorStepAuto )
+			if ( _majorStepAuto )
 			{
 				double targetSteps = ( _ownerAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
 
 				// Calculate the step size based on target steps
-				this._majorStep = CalcStepSize( this._max - this._min, targetSteps );
+				_majorStep = CalcStepSize( _max - _min, targetSteps );
 
-				if ( this._isPreventLabelOverlap )
+				if ( _isPreventLabelOverlap )
 				{
 					// Calculate the maximum number of labels
 					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
-					if ( maxLabels < ( this._max - this._min ) / this._majorStep )
-						this._majorStep = CalcBoundedStepSize( this._max - this._min, maxLabels );
+					if ( maxLabels < ( _max - _min ) / _majorStep )
+						_majorStep = CalcBoundedStepSize( _max - _min, maxLabels );
 				}
 			}
 
 			// Calculate the new step size
-			if ( this._minorStepAuto )
-				this._minorStep = CalcStepSize( this._majorStep,
+			if ( _minorStepAuto )
+				_minorStep = CalcStepSize( _majorStep,
 					( _ownerAxis is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
 
 			// Calculate the scale minimum
-			if ( this._minAuto )
-				this._min = this._min - MyMod( this._min, this._majorStep );
+			if ( _minAuto )
+				_min = _min - MyMod( _min, _majorStep );
 
 			// Calculate the scale maximum
-			if ( this._maxAuto )
-				this._max = MyMod( this._max, this._majorStep ) == 0.0 ? this._max :
-					this._max + this._majorStep - MyMod( this._max, this._majorStep );
+			if ( _maxAuto )
+				_max = MyMod( _max, _majorStep ) == 0.0 ? _max :
+					_max + _majorStep - MyMod( _max, _majorStep );
 
-			SetScaleMag( this._min, this._max, this._majorStep );
+			SetScaleMag( _min, _max, _majorStep );
 		}
 
 

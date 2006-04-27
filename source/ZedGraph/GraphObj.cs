@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	abstract public class GraphObj : ISerializable, ICloneable
 	{
@@ -70,11 +70,16 @@ namespace ZedGraph
 		public object Tag;
 
 		/// <summary>
-		/// Protected field that determines the z-order "depth" of this
+		/// Internal field that determines the z-order "depth" of this
 		/// item relative to other graphic objects.  Use the public property
 		/// <see cref="ZOrder"/> to access this value.
 		/// </summary>
-		protected ZOrder _zOrder;
+		internal ZOrder _zOrder;
+
+		/// <summary>
+		/// Internal field that stores the hyperlink information for this object.
+		/// </summary>
+		internal Link _link;
 
 	#endregion
 
@@ -165,7 +170,30 @@ namespace ZedGraph
 			set { _isClippedToChartRect = value; }
 		}
 
-		
+		/// <summary>
+		/// Gets or sets the hyperlink information for this <see cref="GraphObj" />.
+		/// </summary>
+		// /// <seealso cref="ZedGraph.Web.IsImageMap" />
+		public Link Link
+		{
+			get { return _link; }
+			set { _link = value; }
+		}
+
+		/// <summary>
+		/// true if the <see cref="ZOrder" /> of this object is set to put it in front
+		/// of the <see cref="CurveItem" /> data points.
+		/// </summary>
+		public bool IsInFrontOfData
+		{
+			get
+			{
+				return	_zOrder == ZOrder.A_InFront ||
+							_zOrder == ZOrder.B_BehindLegend ||
+							_zOrder == ZOrder.C_BehindChartBorder;
+			}
+		}
+
 	#endregion
 	
 	#region Constructors
@@ -273,11 +301,12 @@ namespace ZedGraph
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
 		public GraphObj( float x, float y, CoordType coordType, AlignH alignH, AlignV alignV )
 		{
-			this._isVisible = true;
-			this._isClippedToChartRect = Default.IsClippedToChartRect;
+			_isVisible = true;
+			_isClippedToChartRect = Default.IsClippedToChartRect;
 			this.Tag = null;
-			this._zOrder = ZOrder.A_InFront;
-			this._location = new Location( x, y, coordType, alignH, alignV );
+			_zOrder = ZOrder.A_InFront;
+			_location = new Location( x, y, coordType, alignH, alignV );
+			_link = new Link();
 		}
 
 		/// <summary>
@@ -307,11 +336,12 @@ namespace ZedGraph
 		public GraphObj( float x, float y, float x2, float y2, CoordType coordType,
 					AlignH alignH, AlignV alignV )
 		{
-			this._isVisible = true;
-			this._isClippedToChartRect = Default.IsClippedToChartRect;
+			_isVisible = true;
+			_isClippedToChartRect = Default.IsClippedToChartRect;
 			this.Tag = null;
-			this._zOrder = ZOrder.A_InFront;
-			this._location = new Location( x, y, x2, y2, coordType, alignH, alignV );
+			_zOrder = ZOrder.A_InFront;
+			_location = new Location( x, y, x2, y2, coordType, alignH, alignV );
+			_link = new Link();
 		}
 
 		/// <summary>
@@ -321,9 +351,9 @@ namespace ZedGraph
 		public GraphObj( GraphObj rhs )
 		{
 			// Copy value types
-			this._isVisible = rhs.IsVisible;
-			this._isClippedToChartRect = rhs._isClippedToChartRect;
-			this._zOrder = rhs.ZOrder;
+			_isVisible = rhs.IsVisible;
+			_isClippedToChartRect = rhs._isClippedToChartRect;
+			_zOrder = rhs.ZOrder;
 
 			// copy reference types by cloning
 			if ( rhs.Tag is ICloneable )
@@ -331,7 +361,8 @@ namespace ZedGraph
 			else
 				this.Tag = rhs.Tag;
 
-			this._location = rhs.Location.Clone();
+			_location = rhs.Location.Clone();
+			_link = rhs._link.Clone();
 		}
 
 		/// <summary>
@@ -386,6 +417,7 @@ namespace ZedGraph
 			_zOrder = (ZOrder) info.GetValue( "zOrder", typeof(ZOrder) );
 
 			_isClippedToChartRect = info.GetBoolean( "isClippedToChartRect" );
+			_link = (Link) info.GetValue( "link", typeof( Link ) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -402,6 +434,7 @@ namespace ZedGraph
 			info.AddValue( "zOrder", _zOrder );
 
 			info.AddValue( "isClippedToChartRect", _isClippedToChartRect );
+			info.AddValue( "link", _link );
 		}
 	#endregion
 
@@ -449,7 +482,22 @@ namespace ZedGraph
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
-		abstract public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor );		
+		virtual public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor )
+		{
+			GraphPane gPane = pane as GraphPane;
+
+			if ( gPane != null && _isClippedToChartRect && !gPane.Chart.Rect.Contains( pt ) )
+				return false;
+
+			return true;
+		}
+
+		/// <summary>
+		/// Determines the shape type and Coords values for this GraphObj
+		/// </summary>
+		abstract public void GetCoords( PaneBase pane, Graphics g, float scaleFactor,
+				out string shape, out string coords );
+
 	#endregion
 	
 	}

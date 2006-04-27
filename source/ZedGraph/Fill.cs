@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.16.2.4 $ $Date: 2006-04-11 17:13:41 $ </version>
+	/// <version> $Revision: 3.16.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class Fill : ISerializable, ICloneable
 	{
@@ -163,12 +163,12 @@ namespace ZedGraph
 			_secondaryValueGradientColor = Color.White;
 			_brush = null;
 			_type = FillType.None;
-			this._isScaled = Default.IsScaled;
-			this._alignH = Default.AlignH;
-			this._alignV = Default.AlignV;
-			this._rangeMin = 0.0;
-			this._rangeMax = 1.0;
-			this._rangeDefault = double.MaxValue;
+			_isScaled = Default.IsScaled;
+			_alignH = Default.AlignH;
+			_alignV = Default.AlignV;
+			_rangeMin = 0.0;
+			_rangeMax = 1.0;
+			_rangeDefault = double.MaxValue;
 			_gradientBM = null;
 
 			_colorList = null;
@@ -197,9 +197,9 @@ namespace ZedGraph
 		public Fill( Color color, Brush brush, FillType type )
 		{
 			Init();
-			this._color = color;
-			this._brush = brush;
-			this._type = type;
+			_color = color;
+			_brush = brush;
+			_type = type;
 		}
 		
 		/// <summary>
@@ -211,8 +211,9 @@ namespace ZedGraph
 		public Fill( Color color )
 		{
 			Init();
-			this._color = color;
-			this._type = FillType.Solid;
+			_color = color;
+			if ( color != Color.Empty )
+				_type = FillType.Solid;
 		}
 		
 		/// <summary>
@@ -225,14 +226,14 @@ namespace ZedGraph
 		public Fill( Color color1, Color color2, float angle )
 		{
 			Init();
-			this._color = color2;
+			_color = color2;
 
 			ColorBlend blend = new ColorBlend( 2 );
 			blend.Colors[0] = color1;
 			blend.Colors[1] = color2;
 			blend.Positions[0] = 0.0f;
 			blend.Positions[1] = 1.0f;
-			this._type = FillType.Brush;
+			_type = FillType.Brush;
 
 			this.CreateBrushFromBlend( blend, angle );
 		}
@@ -272,7 +273,7 @@ namespace ZedGraph
 		public Fill( Color color1, Color color2, Color color3, float angle )
 		{
 			Init();
-			this._color = color3;
+			_color = color3;
 
 			ColorBlend blend = new ColorBlend( 3 );
 			blend.Colors[0] = color1;
@@ -281,7 +282,7 @@ namespace ZedGraph
 			blend.Positions[0] = 0.0f;
 			blend.Positions[1] = 0.5f;
 			blend.Positions[2] = 1.0f;
-			this._type = FillType.Brush;
+			_type = FillType.Brush;
 			
 			this.CreateBrushFromBlend( blend, angle );
 		}
@@ -311,7 +312,7 @@ namespace ZedGraph
 		public Fill( ColorBlend blend, float angle )
 		{
 			Init();
-			this._type = FillType.Brush;
+			_type = FillType.Brush;
 			this.CreateBrushFromBlend( blend, angle );
 		}
 
@@ -352,7 +353,7 @@ namespace ZedGraph
 			blend.Positions[0] = 0.0F;
 			for ( int i=1; i<colors.Length; i++ )
 				blend.Positions[i] = (float) i / (float)( colors.Length - 1 );
-			this._type = FillType.Brush;
+			_type = FillType.Brush;
 
 			this.CreateBrushFromBlend( blend, angle );
 		}
@@ -395,7 +396,7 @@ namespace ZedGraph
 			ColorBlend blend = new ColorBlend();
 			blend.Colors = colors;
 			blend.Positions = positions;
-			this._type = FillType.Brush;
+			_type = FillType.Brush;
 
 			this.CreateBrushFromBlend( blend, angle );
 		}
@@ -409,11 +410,11 @@ namespace ZedGraph
 		public Fill( Image image, WrapMode wrapMode )
 		{
 			Init();
-			this._color = Color.White;
-			this._brush = new TextureBrush( image, wrapMode );
-			this._type = FillType.Brush;
-			this._image = image;
-			this._wrapMode = wrapMode;
+			_color = Color.White;
+			_brush = new TextureBrush( image, wrapMode );
+			_type = FillType.Brush;
+			_image = image;
+			_wrapMode = wrapMode;
 		}
 		
 		/// <summary>
@@ -439,10 +440,10 @@ namespace ZedGraph
 		public Fill( Brush brush, bool isScaled )
 		{
 			Init();
-			this._isScaled = isScaled;
-			this._color = Color.White;
-			this._brush = (Brush) brush.Clone();
-			this._type = FillType.Brush;
+			_isScaled = isScaled;
+			_color = Color.White;
+			_brush = (Brush) brush.Clone();
+			_type = FillType.Brush;
 		}
 		
 		/// <summary>
@@ -460,12 +461,12 @@ namespace ZedGraph
 		public Fill( Brush brush, AlignH alignH, AlignV alignV )
 		{
 			Init();
-			this._alignH = alignH;
-			this._alignV = alignV;
-			this._isScaled = false;
-			this._color = Color.White;
-			this._brush = (Brush) brush.Clone();
-			this._type = FillType.Brush;
+			_alignH = alignH;
+			_alignV = alignV;
+			_isScaled = false;
+			_color = Color.White;
+			_brush = (Brush) brush.Clone();
+			_type = FillType.Brush;
 		}
 
 		/// <summary>
@@ -532,14 +533,14 @@ namespace ZedGraph
 
 		private void CreateBrushFromBlend( ColorBlend blend, float angle )
 		{
-			this._angle = angle;
+			_angle = angle;
 
 			_colorList = (Color[]) blend.Colors.Clone();
 			_positionList = (float[]) blend.Positions.Clone();
 
-			this._brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
+			_brush = new LinearGradientBrush( new Rectangle( 0, 0, 100, 100 ),
 				Color.Red, Color.White, angle );
-			((LinearGradientBrush)this._brush).InterpolationColors = blend;
+			((LinearGradientBrush)_brush).InterpolationColors = blend;
 		}
 
 	#endregion
@@ -596,7 +597,7 @@ namespace ZedGraph
 			}
 			else if ( _image != null )
 			{
-				this._brush = new TextureBrush( _image, _wrapMode );
+				_brush = new TextureBrush( _image, _wrapMode );
 			}
 
 			_rangeDefault = info.GetDouble( "rangeDefault" );
@@ -880,7 +881,7 @@ namespace ZedGraph
 		public Brush MakeBrush( RectangleF rect, PointPair dataValue )
 		{
 			// get a brush
-			if ( this.IsVisible && ( !this._color.IsEmpty || this._brush != null ) )
+			if ( this.IsVisible && ( !_color.IsEmpty || _brush != null ) )
 			{
 				if ( rect.Height < 1.0F )
 					rect.Height = 1.0F;
@@ -888,9 +889,9 @@ namespace ZedGraph
 					rect.Width = 1.0F;
 					
 				//Brush	brush;
-				if ( this._type == FillType.Brush )
+				if ( _type == FillType.Brush )
 				{
-					return ScaleBrush( rect, this._brush, this._isScaled );
+					return ScaleBrush( rect, _brush, _isScaled );
 				}
 				else if ( IsGradientValueType )
 				{
@@ -921,10 +922,10 @@ namespace ZedGraph
 							return new SolidBrush( GetGradientColor( _rangeDefault ) );
 					}
 					else
-						return ScaleBrush( rect, this._brush, true );
+						return ScaleBrush( rect, _brush, true );
 				}
 				else
-					return new SolidBrush( this._color );
+					return new SolidBrush( _color );
 			}
 
 			// Always return a suitable default
@@ -935,9 +936,9 @@ namespace ZedGraph
 		{
 			double val;
 
-			if ( this._type == FillType.GradientByZ )
+			if ( _type == FillType.GradientByZ )
 				val = dataValue.Z;
-			else if ( this._type == FillType.GradientByY )
+			else if ( _type == FillType.GradientByY )
 				val = dataValue.Y;
 			else
 				val = dataValue.X;
@@ -950,12 +951,12 @@ namespace ZedGraph
 			double valueFraction;
 
 			if ( Double.IsInfinity( val ) || double.IsNaN( val ) || val == PointPair.Missing )
-				val = this._rangeDefault;
+				val = _rangeDefault;
 
-			if ( this._rangeMax - this._rangeMin < 1e-20 || val == double.MaxValue )
+			if ( _rangeMax - _rangeMin < 1e-20 || val == double.MaxValue )
 				valueFraction = 0.5;
 			else			
-				valueFraction = ( val - this._rangeMin ) / ( _rangeMax - _rangeMin );
+				valueFraction = ( val - _rangeMin ) / ( _rangeMax - _rangeMin );
 
 			if ( valueFraction < 0.0 )
 				valueFraction = 0.0;
@@ -968,7 +969,7 @@ namespace ZedGraph
 				_gradientBM = new Bitmap( 100, 1 );
 				Graphics gBM = Graphics.FromImage( _gradientBM );
 
-				Brush tmpBrush = ScaleBrush( rect, this._brush, true );
+				Brush tmpBrush = ScaleBrush( rect, _brush, true );
 				gBM.FillRectangle( tmpBrush, rect );
 			}
 
@@ -998,7 +999,7 @@ namespace ZedGraph
 					{
 						float	dx = 0,
 								dy = 0;
-						switch ( this._alignH )
+						switch ( _alignH )
 						{
 						case AlignH.Left:
 							dx = rect.Left - linBrush.Rectangle.Left;
@@ -1011,7 +1012,7 @@ namespace ZedGraph
 							break;
 						}
 						
-						switch ( this._alignV )
+						switch ( _alignV )
 						{
 						case AlignV.Top:
 							dy = rect.Top - linBrush.Rectangle.Top;
@@ -1044,7 +1045,7 @@ namespace ZedGraph
 					{
 						float	dx = 0,
 								dy = 0;
-						switch ( this._alignH )
+						switch ( _alignH )
 						{
 						case AlignH.Left:
 							dx = rect.Left;
@@ -1057,7 +1058,7 @@ namespace ZedGraph
 							break;
 						}
 						
-						switch ( this._alignV )
+						switch ( _alignV )
 						{
 						case AlignV.Top:
 							dy = rect.Top;
@@ -1082,7 +1083,7 @@ namespace ZedGraph
 			}
 			else
 				// If they didn't provide a brush, make one using the fillcolor gradient to white
-				return new LinearGradientBrush( rect, Color.White, this._color, 0F );
+				return new LinearGradientBrush( rect, Color.White, _color, 0F );
 		}
 
 		/// <summary>

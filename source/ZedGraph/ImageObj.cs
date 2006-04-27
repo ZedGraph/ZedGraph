@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class ImageObj : GraphObj, ICloneable, ISerializable
 	{
@@ -143,7 +143,7 @@ namespace ZedGraph
 				base( rect.X, rect.Y, rect.Width, rect.Height, coordType,
 					alignH, alignV )
 		{
-			this._image = image;
+			_image = image;
 			_isScaled = Default.IsScaled;
 		}
 
@@ -171,7 +171,7 @@ namespace ZedGraph
 					float width, float height ) :
 				base( left, top, width, height )
 		{
-			this._image = image;
+			_image = image;
 			_isScaled = Default.IsScaled;
 		}
 
@@ -264,14 +264,14 @@ namespace ZedGraph
 		/// </param>
 		override public void Draw( Graphics g, PaneBase pane, float scaleFactor )
 		{
-			if ( this._image != null )
+			if ( _image != null )
 			{
 				// Convert the rectangle coordinates from the user coordinate system
 				// to the screen coordinate system
-				RectangleF tmpRect = this._location.TransformRect( pane );
+				RectangleF tmpRect = _location.TransformRect( pane );
 
 				if ( _isScaled )
-					g.DrawImage( this._image, tmpRect );
+					g.DrawImage( _image, tmpRect );
 				else
 				{
 					Region clip = g.Clip;
@@ -307,18 +307,36 @@ namespace ZedGraph
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
 		override public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor )
 		{
-			if ( this._image != null )
+			if ( _image != null )
 			{
+				if ( ! base.PointInBox(pt, pane, g, scaleFactor ) )
+					return false;
+
 				// transform the x,y location from the user-defined
 				// coordinate frame to the screen pixel location
-				RectangleF tmpRect = this._location.TransformRect( pane );
+				RectangleF tmpRect = _location.TransformRect( pane );
 
 				return tmpRect.Contains( pt );
 			}
 			else
 				return false;
 		}
-		
+
+		/// <summary>
+		/// Determines the shape type and Coords values for this GraphObj
+		/// </summary>
+		override public void GetCoords( PaneBase pane, Graphics g, float scaleFactor,
+				out string shape, out string coords )
+		{
+			// transform the x,y location from the user-defined
+			// coordinate frame to the screen pixel location
+			RectangleF pixRect = _location.TransformRect( pane );
+
+			shape = "rect";
+			coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+						pixRect.Left, pixRect.Top, pixRect.Right, pixRect.Bottom );
+		}
+
 	#endregion
 	}
 }

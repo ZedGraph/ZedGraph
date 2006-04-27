@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.6.2.3 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 1.6.2.4 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	class LinearAsOrdinalScale : Scale, ISerializable //, ICloneable
 	{
@@ -187,8 +187,8 @@ namespace ZedGraph
 		/// <returns>The resulting value label as a <see cref="string" /></returns>
 		override internal string MakeLabel( GraphPane pane, int index, double dVal )
 		{
-			if ( this._format == null )
-				this._format = Scale.Default.Format;
+			if ( _format == null )
+				_format = Scale.Default.Format;
 
 			double val;
 
@@ -197,8 +197,8 @@ namespace ZedGraph
 			if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > tmpIndex )
 			{
 				val = pane.CurveList[0].Points[tmpIndex].X;
-				double scaleMult = Math.Pow( (double) 10.0, this._mag );
-				return ( val / scaleMult ).ToString( this._format );
+				double scaleMult = Math.Pow( (double) 10.0, _mag );
+				return ( val / scaleMult ).ToString( _format );
 			}
 			else
 				return string.Empty;

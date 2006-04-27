@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.5.2.4 $ $Date: 2006-04-22 02:52:55 $ </version>
+	/// <version> $Revision: 1.5.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	class DateScale : Scale, ISerializable //, ICloneable
 	{
@@ -99,8 +99,8 @@ namespace ZedGraph
 		/// </remarks>
 		public override double Min
 		{
-			get { return this._min; }
-			set { this._min = XDate.MakeValidDate( value ); }
+			get { return _min; }
+			set { _min = XDate.MakeValidDate( value ); }
 		}
 
 		/// <summary>
@@ -113,8 +113,8 @@ namespace ZedGraph
 		/// </remarks>
 		public override double Max
 		{
-			get { return this._max; }
-			set { this._max = XDate.MakeValidDate( value ); }
+			get { return _max; }
+			set { _max = XDate.MakeValidDate( value ); }
 		}
 	#endregion
 
@@ -140,26 +140,26 @@ namespace ZedGraph
 		{
 			XDate xDate = new XDate( baseVal );
 
-			switch ( this._majorUnit )
+			switch ( _majorUnit )
 			{
 				case DateUnit.Year:
 				default:
-					xDate.AddYears( tic * this._majorStep );
+					xDate.AddYears( tic * _majorStep );
 					break;
 				case DateUnit.Month:
-					xDate.AddMonths( tic * this._majorStep );
+					xDate.AddMonths( tic * _majorStep );
 					break;
 				case DateUnit.Day:
-					xDate.AddDays( tic * this._majorStep );
+					xDate.AddDays( tic * _majorStep );
 					break;
 				case DateUnit.Hour:
-					xDate.AddHours( tic * this._majorStep );
+					xDate.AddHours( tic * _majorStep );
 					break;
 				case DateUnit.Minute:
-					xDate.AddMinutes( tic * this._majorStep );
+					xDate.AddMinutes( tic * _majorStep );
 					break;
 				case DateUnit.Second:
-					xDate.AddSeconds( tic * this._majorStep );
+					xDate.AddSeconds( tic * _majorStep );
 					break;
 			}
 
@@ -187,26 +187,26 @@ namespace ZedGraph
 		{
 			XDate xDate = new XDate( baseVal );
 
-			switch ( this._minorUnit )
+			switch ( _minorUnit )
 			{
 				case DateUnit.Year:
 				default:
-					xDate.AddYears( (double) iTic * this._minorStep );
+					xDate.AddYears( (double) iTic * _minorStep );
 					break;
 				case DateUnit.Month:
-					xDate.AddMonths( (double) iTic * this._minorStep );
+					xDate.AddMonths( (double) iTic * _minorStep );
 					break;
 				case DateUnit.Day:
-					xDate.AddDays( (double) iTic * this._minorStep );
+					xDate.AddDays( (double) iTic * _minorStep );
 					break;
 				case DateUnit.Hour:
-					xDate.AddHours( (double) iTic * this._minorStep );
+					xDate.AddHours( (double) iTic * _minorStep );
 					break;
 				case DateUnit.Minute:
-					xDate.AddMinutes( (double) iTic * this._minorStep );
+					xDate.AddMinutes( (double) iTic * _minorStep );
 					break;
 				case DateUnit.Second:
-					xDate.AddSeconds( (double) iTic * this._minorStep );
+					xDate.AddSeconds( (double) iTic * _minorStep );
 					break;
 			}
 
@@ -226,21 +226,21 @@ namespace ZedGraph
 		/// </returns>
 		override internal int CalcMinorStart( double baseVal )
 		{
-			switch ( this._minorUnit )
+			switch ( _minorUnit )
 			{
 				case DateUnit.Year:
 				default:
-					return (int) ( ( this._min - baseVal ) / ( 365.0 * this._minorStep ) );
+					return (int) ( ( _min - baseVal ) / ( 365.0 * _minorStep ) );
 				case DateUnit.Month:
-					return (int) ( ( this._min - baseVal ) / ( 28.0 * this._minorStep ) );
+					return (int) ( ( _min - baseVal ) / ( 28.0 * _minorStep ) );
 				case DateUnit.Day:
-					return (int) ( ( this._min - baseVal ) / this._minorStep );
+					return (int) ( ( _min - baseVal ) / _minorStep );
 				case DateUnit.Hour:
-					return (int) ( ( this._min - baseVal ) * XDate.HoursPerDay / this._minorStep );
+					return (int) ( ( _min - baseVal ) * XDate.HoursPerDay / _minorStep );
 				case DateUnit.Minute:
-					return (int) ( ( this._min - baseVal ) * XDate.MinutesPerDay / this._minorStep );
+					return (int) ( ( _min - baseVal ) * XDate.MinutesPerDay / _minorStep );
 				case DateUnit.Second:
-					return (int) ( ( this._min - baseVal ) * XDate.SecondsPerDay / this._minorStep );
+					return (int) ( ( _min - baseVal ) * XDate.SecondsPerDay / _minorStep );
 			}
 		}
 
@@ -258,14 +258,14 @@ namespace ZedGraph
 		/// </returns>
 		override internal double CalcBaseTic()
 		{
-			if ( this._baseTic != PointPair.Missing )
-				return this._baseTic;
+			if ( _baseTic != PointPair.Missing )
+				return _baseTic;
 			else
 			{
 				int year, month, day, hour, minute, second;
-				XDate.XLDateToCalendarDate( this._min, out year, out month, out day, out hour, out minute,
+				XDate.XLDateToCalendarDate( _min, out year, out month, out day, out hour, out minute,
 											out second );
-				switch ( this._majorUnit )
+				switch ( _majorUnit )
 				{
 					case DateUnit.Year:
 					default:
@@ -289,9 +289,9 @@ namespace ZedGraph
 				}
 
 				double xlDate = XDate.CalendarDateToXLDate( year, month, day, hour, minute, second );
-				if ( xlDate < this._min )
+				if ( xlDate < _min )
 				{
-					switch ( this._majorUnit )
+					switch ( _majorUnit )
 					{
 						case DateUnit.Year:
 						default:
@@ -335,31 +335,31 @@ namespace ZedGraph
 			int year1, year2, month1, month2, day1, day2, hour1, hour2, minute1, minute2;
 			double second1, second2;
 
-			XDate.XLDateToCalendarDate( this._min, out year1, out month1, out day1,
+			XDate.XLDateToCalendarDate( _min, out year1, out month1, out day1,
 										out hour1, out minute1, out second1 );
-			XDate.XLDateToCalendarDate( this._max, out year2, out month2, out day2,
+			XDate.XLDateToCalendarDate( _max, out year2, out month2, out day2,
 										out hour2, out minute2, out second2 );
 
-			switch ( this._majorUnit )
+			switch ( _majorUnit )
 			{
 				case DateUnit.Year:
 				default:
-					nTics = (int) ( ( year2 - year1 ) / this._majorStep + 1.001 );
+					nTics = (int) ( ( year2 - year1 ) / _majorStep + 1.001 );
 					break;
 				case DateUnit.Month:
-					nTics = (int) ( ( month2 - month1 + 12.0 * ( year2 - year1 ) ) / this._majorStep + 1.001 );
+					nTics = (int) ( ( month2 - month1 + 12.0 * ( year2 - year1 ) ) / _majorStep + 1.001 );
 					break;
 				case DateUnit.Day:
-					nTics = (int) ( ( this._max - this._min ) / this._majorStep + 1.001 );
+					nTics = (int) ( ( _max - _min ) / _majorStep + 1.001 );
 					break;
 				case DateUnit.Hour:
-					nTics = (int) ( ( this._max - this._min ) / ( this._majorStep / XDate.HoursPerDay ) + 1.001 );
+					nTics = (int) ( ( _max - _min ) / ( _majorStep / XDate.HoursPerDay ) + 1.001 );
 					break;
 				case DateUnit.Minute:
-					nTics = (int) ( ( this._max - this._min ) / ( this._majorStep / XDate.MinutesPerDay ) + 1.001 );
+					nTics = (int) ( ( _max - _min ) / ( _majorStep / XDate.MinutesPerDay ) + 1.001 );
 					break;
 				case DateUnit.Second:
-					nTics = (int) ( ( this._max - this._min ) / ( this._majorStep / XDate.SecondsPerDay ) + 1.001 );
+					nTics = (int) ( ( _max - _min ) / ( _majorStep / XDate.SecondsPerDay ) + 1.001 );
 					break;
 			}
 
@@ -422,41 +422,41 @@ namespace ZedGraph
 			base.PickScale( pane, g, scaleFactor );
 
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this._max - this._min < 1.0e-20 )
+			if ( _max - _min < 1.0e-20 )
 			{
-				if ( this._maxAuto )
-					this._max = this._max + 0.2 * ( this._max == 0 ? 1.0 : Math.Abs( this._max ) );
-				if ( this._minAuto )
-					this._min = this._min - 0.2 * ( this._min == 0 ? 1.0 : Math.Abs( this._min ) );
+				if ( _maxAuto )
+					_max = _max + 0.2 * ( _max == 0 ? 1.0 : Math.Abs( _max ) );
+				if ( _minAuto )
+					_min = _min - 0.2 * ( _min == 0 ? 1.0 : Math.Abs( _min ) );
 			}
 
 			// Calculate the new step size
-			if ( this._majorStepAuto )
+			if ( _majorStepAuto )
 			{
 				double targetSteps = ( _ownerAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
 
 				// Calculate the step size based on target steps
-				this._majorStep = CalcDateStepSize( this._max - this._min, targetSteps );
+				_majorStep = CalcDateStepSize( _max - _min, targetSteps );
 
-				if ( this._isPreventLabelOverlap )
+				if ( _isPreventLabelOverlap )
 				{
 					// Calculate the maximum number of labels
 					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
 					if ( maxLabels < this.CalcNumTics() )
-						this._majorStep = CalcDateStepSize( this._max - this._min, maxLabels );
+						_majorStep = CalcDateStepSize( _max - _min, maxLabels );
 				}
 			}
 
 			// Calculate the scale minimum
-			if ( this._minAuto )
-				this._min = CalcEvenStepDate( this._min, -1 );
+			if ( _minAuto )
+				_min = CalcEvenStepDate( _min, -1 );
 
 			// Calculate the scale maximum
-			if ( this._maxAuto )
-				this._max = CalcEvenStepDate( this._max, 1 );
+			if ( _maxAuto )
+				_max = CalcEvenStepDate( _max, 1 );
 
-			this._mag = 0;		// Never use a magnitude shift for date scales
+			_mag = 0;		// Never use a magnitude shift for date scales
 			//this.numDec = 0;		// The number of decimal places to display is not used
 
 		}
@@ -811,10 +811,10 @@ namespace ZedGraph
 		/// <returns>The resulting value label as a <see cref="string" /></returns>
 		override internal string MakeLabel( GraphPane pane, int index, double dVal )
 		{
-			if ( this._format == null )
-				this._format = Scale.Default.Format;
+			if ( _format == null )
+				_format = Scale.Default.Format;
 
-			return XDate.ToString( dVal, this._format );
+			return XDate.ToString( dVal, _format );
 		}
 
 		/// <summary>

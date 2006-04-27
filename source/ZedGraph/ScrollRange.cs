@@ -39,9 +39,9 @@ namespace ZedGraph
 		/// <param name="isScrollable">true to make this item scrollable, false otherwise</param>
 		public ScrollRange( double min, double max, bool isScrollable )
 		{
-			this._min = min;
-			this._max = max;
-			this._isScrollable = isScrollable;
+			_min = min;
+			_max = max;
+			_isScrollable = isScrollable;
 		}
 
 		/// <summary>
@@ -51,9 +51,9 @@ namespace ZedGraph
 		/// <param name="isScrollable">true to make this item scrollable, false otherwise</param>
 		public ScrollRange( bool isScrollable )
 		{
-			this._min = 0.0;
-			this._max = 0.0;
-			this._isScrollable = isScrollable;
+			_min = 0.0;
+			_max = 0.0;
+			_isScrollable = isScrollable;
 		}
 
 		/// <summary>
@@ -62,9 +62,9 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="ScrollRange"/> object from which to copy</param>
 		public ScrollRange( ScrollRange rhs )
 		{
-			this._min = rhs._min;
-			this._max = rhs._max;
-			this._isScrollable = rhs._isScrollable;
+			_min = rhs._min;
+			_max = rhs._max;
+			_isScrollable = rhs._isScrollable;
 		}
 				
 		/// <summary>

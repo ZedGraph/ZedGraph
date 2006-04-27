@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// a single line segment, drawn as a "decoration" on the chart.</remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:03 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	public class LineObj : GraphObj, ICloneable, ISerializable
 	{
@@ -151,13 +151,13 @@ namespace ZedGraph
 		public LineObj( Color color, float x1, float y1, float x2, float y2 )
 			: base( x1, y1, x2 - x1, y2 - y1 )
 		{
-			this._penWidth = Default.PenWidth;
+			_penWidth = Default.PenWidth;
 
-			this._color = color;
+			_color = color;
 			this.Location.AlignH = AlignH.Left;
 			this.Location.AlignV = AlignV.Top;
 
-			this._style = Default.Style;
+			_style = Default.Style;
 		}
 
 		/// <summary>
@@ -313,8 +313,8 @@ namespace ZedGraph
 				g.RotateTransform( angle );
 
 				// get a pen according to this arrow properties
-				Pen pen = new Pen( this._color, pane.ScaledPenWidth( _penWidth, scaleFactor ) );
-				pen.DashStyle = this._style;
+				Pen pen = new Pen( _color, pane.ScaledPenWidth( _penWidth, scaleFactor ) );
+				pen.DashStyle = _style;
 
 				g.DrawLine( pen, 0, 0, length, 0 );
 
@@ -348,15 +348,53 @@ namespace ZedGraph
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
 		override public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor )
 		{
+			if ( ! base.PointInBox(pt, pane, g, scaleFactor ) )
+				return false;
+
 			// transform the x,y location from the user-defined
 			// coordinate frame to the screen pixel location
-			PointF pix = this._location.TransformTopLeft( pane );
-			PointF pix2 = this._location.TransformBottomRight( pane );
+			PointF pix = _location.TransformTopLeft( pane );
+			PointF pix2 = _location.TransformBottomRight( pane );
 
 			Pen pen = new Pen( Color.Black, (float)GraphPane.Default.NearestTol * 2.0F );
 			GraphicsPath path = new GraphicsPath();
 			path.AddLine( pix, pix2 );
 			return path.IsOutlineVisible( pt, pen );
+		}
+
+		/// <summary>
+		/// Determines the shape type and Coords values for this GraphObj
+		/// </summary>
+		override public void GetCoords( PaneBase pane, Graphics g, float scaleFactor,
+				out string shape, out string coords )
+		{
+			// transform the x,y location from the user-defined
+			// coordinate frame to the screen pixel location
+			RectangleF pixRect = _location.TransformRect( pane );
+
+			Matrix matrix = new Matrix();
+			if ( pixRect.Right == 0 )
+				pixRect.Width = 1;
+			float angle = (float) Math.Atan( ( pixRect.Top - pixRect.Bottom ) /
+					( pixRect.Left - pixRect.Right ) );
+			matrix.Rotate( angle, MatrixOrder.Prepend );
+
+			// Move the coordinate system to local coordinates
+			// of this text object (that is, at the specified
+			// x,y location)
+			matrix.Translate( -pixRect.Left, -pixRect.Top, MatrixOrder.Prepend );
+
+			PointF[] pts = new PointF[4];
+			pts[0] = new PointF( 0, 3 );
+			pts[1] = new PointF( pixRect.Width, 3 );
+			pts[2] = new PointF( pixRect.Width, -3 );
+			pts[3] = new PointF( 0, -3 );
+			matrix.TransformPoints( pts );
+
+			shape = "poly";
+			coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0},{0:f0},{1:f0},{2:f0},{3:f0},",
+						pts[0].X, pts[0].Y, pts[1].X, pts[1].Y,
+						pts[2].X, pts[2].Y, pts[3].X, pts[3].Y );
 		}
 
 	#endregion

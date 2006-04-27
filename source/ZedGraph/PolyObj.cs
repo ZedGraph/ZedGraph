@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-19 06:08:14 $ </version>
+	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	public class PolyObj : BoxObj, ICloneable, ISerializable
 	{
@@ -74,7 +74,7 @@ namespace ZedGraph
 		public PolyObj( PointF[] points, Color borderColor, Color fillColor ) :
 				base( new RectangleF(), borderColor, fillColor )
 		{
-			this._points = points;
+			_points = points;
 		}
 
 		/// <summary>
@@ -88,7 +88,7 @@ namespace ZedGraph
 		public PolyObj( PointF[] points ) :
 			base( new RectangleF() )
 		{
-			this._points = points;
+			_points = points;
 		}
 
 		/// <summary>
@@ -118,7 +118,7 @@ namespace ZedGraph
 							Color fillColor1, Color fillColor2 ) :
 				base( new RectangleF(), borderColor, fillColor1, fillColor2 )
 		{
-			this._points = points;
+			_points = points;
 		}
 
 		/// <summary>
@@ -127,7 +127,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="PolyObj"/> object from which to copy</param>
 		public PolyObj( PolyObj rhs ) : base( rhs )
 		{
-			rhs._points = (PointF[]) this._points.Clone();
+			rhs._points = (PointF[]) _points.Clone();
 		}
 
 		/// <summary>
@@ -170,7 +170,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema3" );
 
-			this._points = (PointF[]) info.GetValue( "points", typeof(PointF[]) );
+			_points = (PointF[]) info.GetValue( "points", typeof(PointF[]) );
 
 		}
 		/// <summary>
@@ -184,7 +184,7 @@ namespace ZedGraph
 			base.GetObjectData( info, context );
 			info.AddValue( "schema3", schema3 );
 
-			info.AddValue( "points", this._points );
+			info.AddValue( "points", _points );
 		}
 	#endregion
 	
@@ -212,18 +212,18 @@ namespace ZedGraph
 		/// </param>
 		override public void Draw( Graphics g, PaneBase pane, float scaleFactor )
 		{
-			if ( this._points != null && this._points.Length > 1 )
+			if ( _points != null && _points.Length > 1 )
 			{
 				GraphicsPath path = MakePath( pane );
 
 				// Fill or draw the symbol as required
-				if ( this._fill.IsVisible)
+				if ( _fill.IsVisible)
 				{
 					Brush brush = this.Fill.MakeBrush( path.GetBounds() );
 					g.FillPath( brush, path );
 				}
 				
-				if ( this._border.IsVisible )
+				if ( _border.IsVisible )
 				{
 					Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
 					g.DrawPath( pen, path );
@@ -239,14 +239,14 @@ namespace ZedGraph
 			bool first = true;
 			PointF lastPt = new PointF();
 
-			foreach( PointF pt in this._points )
+			foreach( PointF pt in _points )
 			{
 				// Convert the coordinates from the user coordinate system
 				// to the screen coordinate system
 				// Offset the points by the location value
 				PointF pixPt = Location.Transform( pane,
-						new PointF( pt.X + this._location.X, pt.Y + this._location.Y),
-						this._location.CoordinateFrame );
+						new PointF( pt.X + _location.X, pt.Y + _location.Y),
+						_location.CoordinateFrame );
 
 				if (	Math.Abs( pixPt.X ) < 100000 &&
 						Math.Abs( pixPt.Y ) < 100000 )
@@ -287,8 +287,11 @@ namespace ZedGraph
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
 		override public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor )
 		{
-			if ( this._points != null && this._points.Length > 1 )
+			if ( _points != null && _points.Length > 1 )
 			{
+				if ( ! base.PointInBox(pt, pane, g, scaleFactor ) )
+					return false;
+
 				GraphicsPath path = MakePath( pane );
 
 				return path.IsVisible( pt );

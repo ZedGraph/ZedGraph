@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.22.2.3 $ $Date: 2006-04-07 06:14:01 $ </version>
+   /// <version> $Revision: 3.22.2.4 $ $Date: 2006-04-27 06:50:11 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -116,8 +116,8 @@ namespace ZedGraph
 		/// </param>
 		public Bar( Color color )
 		{
-			this._border = new Border( Default.IsBorderVisible, Default.BorderColor, Default.BorderWidth );
-			this._fill = new Fill( color.IsEmpty ? Default.FillColor : color,
+			_border = new Border( Default.IsBorderVisible, Default.BorderColor, Default.BorderWidth );
+			_fill = new Fill( color.IsEmpty ? Default.FillColor : color,
 									Default.FillBrush, Default.FillType );
 		}
 
@@ -127,8 +127,8 @@ namespace ZedGraph
 		/// <param name="rhs">The Bar object from which to copy</param>
 		public Bar( Bar rhs )
 		{
-			this._border = (Border) rhs.Border.Clone();
-			this._fill = (Fill) rhs.Fill.Clone();
+			_border = (Border) rhs.Border.Clone();
+			_fill = (Fill) rhs.Fill.Clone();
 		}
 
 		/// <summary>
@@ -325,7 +325,7 @@ namespace ZedGraph
 
 			// Border the Bar
 			//if ( !this.border.Color.IsEmpty )
-			this._border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
+			_border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
 
 		}
 

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:01 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class BarSettings : ISerializable
 	{
@@ -90,14 +90,14 @@ namespace ZedGraph
 		/// </summary>
 		public BarSettings( GraphPane parentPane )
 		{
-			this._minClusterGap = Default.MinClusterGap;
-			this._minBarGap = Default.MinBarGap;
-			this._clusterScaleWidth = Default.ClusterScaleWidth;
-			this._clusterScaleWidthAuto = Default.ClusterScaleWidthAuto;
-			this._base = Default.Base;
-			this._type = Default.Type;
+			_minClusterGap = Default.MinClusterGap;
+			_minBarGap = Default.MinBarGap;
+			_clusterScaleWidth = Default.ClusterScaleWidth;
+			_clusterScaleWidthAuto = Default.ClusterScaleWidthAuto;
+			_base = Default.Base;
+			_type = Default.Type;
 
-			this._ownerPane = parentPane;
+			_ownerPane = parentPane;
 		}
 
 		/// <summary>
@@ -108,14 +108,14 @@ namespace ZedGraph
 		/// parent of this new BarSettings object.</param>
 		public BarSettings( BarSettings rhs, GraphPane parentPane )
 		{
-			this._minClusterGap = rhs._minClusterGap;
-			this._minBarGap = rhs._minBarGap;
-			this._clusterScaleWidth = rhs._clusterScaleWidth;
-			this._clusterScaleWidthAuto = rhs._clusterScaleWidthAuto;
-			this._base = rhs._base;
-			this._type = rhs._type;
+			_minClusterGap = rhs._minClusterGap;
+			_minBarGap = rhs._minBarGap;
+			_clusterScaleWidth = rhs._clusterScaleWidth;
+			_clusterScaleWidthAuto = rhs._clusterScaleWidthAuto;
+			_base = rhs._base;
+			_type = rhs._type;
 
-			this._ownerPane = parentPane;
+			_ownerPane = parentPane;
 		}
 
 	#endregion
@@ -240,12 +240,12 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			this._minClusterGap = info.GetSingle( "minClusterGap" );
-			this._minBarGap = info.GetSingle( "minBarGap" );
-			this._clusterScaleWidth = info.GetDouble( "clusterScaleWidth" );
-			this._clusterScaleWidthAuto = info.GetBoolean( "clusterScaleWidthAuto" );
-			this._base = (BarBase)info.GetValue( "base", typeof( BarBase ) );
-			this._type = (BarType)info.GetValue( "type", typeof( BarType ) );
+			_minClusterGap = info.GetSingle( "minClusterGap" );
+			_minBarGap = info.GetSingle( "minBarGap" );
+			_clusterScaleWidth = info.GetDouble( "clusterScaleWidth" );
+			_clusterScaleWidthAuto = info.GetBoolean( "clusterScaleWidthAuto" );
+			_base = (BarBase)info.GetValue( "base", typeof( BarBase ) );
+			_type = (BarType)info.GetValue( "type", typeof( BarType ) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -361,9 +361,9 @@ namespace ZedGraph
 		public Axis BarBaseAxis()
 		{
 			Axis barAxis;
-			if ( this._base == BarBase.Y )
+			if ( _base == BarBase.Y )
 				barAxis = _ownerPane.YAxis;
-			else if ( this._base == BarBase.Y2 )
+			else if ( _base == BarBase.Y2 )
 				barAxis = _ownerPane.Y2Axis;
 			else
 				barAxis = _ownerPane.XAxis;

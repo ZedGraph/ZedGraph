@@ -32,14 +32,14 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl2 );
 			//CreateGraph_BasicLog( zedGraphControl2 );
-			CreateGraph_StackLine( zedGraphControl1 );
+			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl2 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
-			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
+			CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_SplineTest( zedGraphControl1 );
 			//CreateGraph_DateAxis( zedGraphControl1 );
@@ -86,20 +86,23 @@ namespace ZedGraph.ControlTest
 			double junk = DateTime.Now.ToOADate();
 			// Fix the ellipseItem to a perfect circle by using a fixed height, but a variable
 			// width
-			EllipseObj ellipse = zedGraphControl1.GraphPane.GraphObjList[0] as EllipseObj;
-			if ( ellipse != null )
+			if ( zedGraphControl1.GraphPane.GraphObjList.Count > 0 )
 			{
-				GraphPane myPane = zedGraphControl1.GraphPane;
-				float dx = (float) ( myPane.XAxis.Scale.Max - myPane.XAxis.Scale.Min );
-				float dy = (float) ( myPane.YAxis.Scale.Max - myPane.YAxis.Scale.Min );
-				float xPix = myPane.Chart.Rect.Width * ellipse.Location.Width / dx;
-				float yPix = myPane.Chart.Rect.Height * ellipse.Location.Height / dy;
+				EllipseObj ellipse = zedGraphControl1.GraphPane.GraphObjList[0] as EllipseObj;
+				if ( ellipse != null )
+				{
+					GraphPane myPane = zedGraphControl1.GraphPane;
+					float dx = (float)( myPane.XAxis.Scale.Max - myPane.XAxis.Scale.Min );
+					float dy = (float)( myPane.YAxis.Scale.Max - myPane.YAxis.Scale.Min );
+					float xPix = myPane.Chart.Rect.Width * ellipse.Location.Width / dx;
+					float yPix = myPane.Chart.Rect.Height * ellipse.Location.Height / dy;
 
-				ellipse.Location.Width *= yPix / xPix;
+					ellipse.Location.Width *= yPix / xPix;
 
-				// alternatively, use this to vary the height but fix the width
-				// (comment out the width line above)
-				//ellipse.Location.Height *= xPix / yPix;
+					// alternatively, use this to vary the height but fix the width
+					// (comment out the width line above)
+					//ellipse.Location.Height *= xPix / yPix;
+				}
 			}
 		}
 

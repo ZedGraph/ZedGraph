@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class EllipseObj : BoxObj, ICloneable, ISerializable
 	{
@@ -192,12 +192,12 @@ namespace ZedGraph
 					Math.Abs( pixRect.Right ) < 100000 &&
 					Math.Abs( pixRect.Bottom ) < 100000 )
 			{
-				Pen pen = this._border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-				Brush brush = this._fill.MakeBrush( pixRect );
+				Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+				Brush brush = _fill.MakeBrush( pixRect );
 
-				if ( this._fill.IsVisible )
+				if ( _fill.IsVisible )
 					g.FillEllipse( brush, pixRect );
-				if ( this._border.IsVisible )
+				if ( _border.IsVisible )
 					g.DrawEllipse( pen, pixRect );
 			}
 		}
@@ -224,9 +224,12 @@ namespace ZedGraph
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
 		override public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor )
 		{
+			if ( ! base.PointInBox(pt, pane, g, scaleFactor ) )
+				return false;
+
 			// transform the x,y location from the user-defined
 			// coordinate frame to the screen pixel location
-			RectangleF pixRect = this._location.TransformRect( pane );
+			RectangleF pixRect = _location.TransformRect( pane );
 
 			GraphicsPath path = new GraphicsPath();
 			path.AddEllipse( pixRect );

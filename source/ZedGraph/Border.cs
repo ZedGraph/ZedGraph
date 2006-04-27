@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12.2.3 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 3.12.2.4 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class Border : ISerializable, ICloneable
 	{
@@ -114,9 +114,9 @@ namespace ZedGraph
         /// <param name="penWidth">The width, in points (1/72 inch), for the Border.</param>
         public Border( bool isVisible, Color color, float penWidth )
 		{
-			this._color = color.IsEmpty ? Default.Color : color;
-			this._penWidth = penWidth;
-			this._isVisible = isVisible;
+			_color = color.IsEmpty ? Default.Color : color;
+			_penWidth = penWidth;
+			_isVisible = isVisible;
 			_inflateFactor = Default.InflateFactor;
 		}
 
@@ -291,11 +291,11 @@ namespace ZedGraph
 		{
 			// Need to use the RectangleF props since rounding it can cause the axisFrame to
 			// not line up properly with the last tic mark
-			if ( this._isVisible )
+			if ( _isVisible )
 			{
 				RectangleF tRect = rect;
 
-				float		scaledInflate = (float) ( this._inflateFactor * scaleFactor );
+				float		scaledInflate = (float) ( _inflateFactor * scaleFactor );
 				tRect.Inflate( scaledInflate, scaledInflate );
 
 				g.DrawRectangle( MakePen(isPenWidthScaled, scaleFactor), tRect.X, tRect.Y, tRect.Width, tRect.Height );

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11.2.3 $ $Date: 2006-04-07 06:14:09 $ </version>
+	/// <version> $Revision: 3.11.2.4 $ $Date: 2006-04-27 06:50:12 $ </version>
 	[Serializable]
 	public class XAxis : Axis, ICloneable, ISerializable
 	{
@@ -78,9 +78,9 @@ namespace ZedGraph
 		/// <param name="title">The <see cref="Axis.Title"/> for this axis</param>
 		public XAxis( string title ) : base( title )
 		{
-			this._isVisible = Default.IsVisible;
-			this._majorGrid._isZeroLine = Default.IsZeroLine;
-			this._scale._fontSpec.Angle = 0F;
+			_isVisible = Default.IsVisible;
+			_majorGrid._isZeroLine = Default.IsZeroLine;
+			_scale._fontSpec.Angle = 0F;
 		}
 
 		/// <summary>
@@ -206,7 +206,7 @@ namespace ZedGraph
 		{
 			double effCross = EffectiveCrossValue( pane );
 
-			if ( !this._crossAuto )
+			if ( !_crossAuto )
 				return pane.YAxis.Scale.Transform( effCross ) - pane.YAxis.Scale._maxPix;
 			else
 				return 0;

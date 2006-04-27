@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.10.2.3 $ $Date: 2006-04-13 18:56:31 $ </version>
+	/// <version> $Revision: 3.10.2.4 $ $Date: 2006-04-27 06:50:12 $ </version>
 	public class ZoomState : ICloneable
 	{
 		/// <summary>
@@ -122,10 +122,10 @@ namespace ZedGraph
 		public ZoomState( GraphPane pane, StateType type )
 		{
 
-			this._xAxis = new ScaleState( pane.XAxis );
-			this._yAxis = new ScaleStateList( pane.YAxisList );
-			this._y2Axis = new ScaleStateList( pane.Y2AxisList );
-			this._type = type;
+			_xAxis = new ScaleState( pane.XAxis );
+			_yAxis = new ScaleStateList( pane.YAxisList );
+			_y2Axis = new ScaleStateList( pane.Y2AxisList );
+			_type = type;
 		}
 
 		/// <summary>
@@ -134,9 +134,9 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="ZoomState"/> object from which to copy</param>
 		public ZoomState( ZoomState rhs )
 		{
-			this._xAxis = new ScaleState( rhs._xAxis );
-			this._yAxis = new ScaleStateList( rhs._yAxis );
-			this._y2Axis = new ScaleStateList( rhs._y2Axis );
+			_xAxis = new ScaleState( rhs._xAxis );
+			_yAxis = new ScaleStateList( rhs._yAxis );
+			_y2Axis = new ScaleStateList( rhs._y2Axis );
 		}
 
 		/// <summary>
@@ -166,9 +166,9 @@ namespace ZedGraph
 		/// copied.</param>
 		public void ApplyState( GraphPane pane )
 		{
-			this._xAxis.ApplyScale( pane.XAxis );
-			this._yAxis.ApplyScale( pane.YAxisList );
-			this._y2Axis.ApplyScale( pane.Y2AxisList );
+			_xAxis.ApplyScale( pane.XAxis );
+			_yAxis.ApplyScale( pane.YAxisList );
+			_y2Axis.ApplyScale( pane.Y2AxisList );
 		}
 
 		/// <summary>
@@ -179,9 +179,9 @@ namespace ZedGraph
 		/// <returns>true if the states are different, false otherwise</returns>
 		public bool IsChanged( GraphPane pane )
 		{
-			return	this._xAxis.IsChanged( pane.XAxis ) ||
-					this._yAxis.IsChanged( pane.YAxisList ) ||
-					this._y2Axis.IsChanged( pane.Y2AxisList );
+			return	_xAxis.IsChanged( pane.XAxis ) ||
+					_yAxis.IsChanged( pane.YAxisList ) ||
+					_y2Axis.IsChanged( pane.Y2AxisList );
 		}
 
 	}

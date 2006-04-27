@@ -1,6 +1,12 @@
 == Version 5 ==
 
-;24-Apr-2006 (by Champion) V5_BRANCH
+;26-Apr-2006 (by Champion) V5_BRANCH
+: [NEW] Add ZedGraphWeb.IsImageMap property
+: [NEW] Add Link Class, and property in GraphObj and CurveItem
+: [NEW] Add Image mapping to ZedGraphWeb
+: [NEW] Add ZedGraphControl.LinkEvent
+
+;24-Apr-2006 (by Champion) V5_BRANCH (prelim 4.9.4)
 : [FIX] Fix ValueHandler to return PointPair.Missing if any part of stack is missing
 : [FIX] Fix CurveList.GetStackRange() to ignore missing values
 : [FIX] Fix Line.BuildPointsArray and Line.BuildLowPointsArray to skip missing

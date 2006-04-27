@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="BarSettings.Type"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15.2.4 $ $Date: 2006-04-24 05:06:45 $ </version>
+	/// <version> $Revision: 3.15.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -88,7 +88,7 @@ namespace ZedGraph
 		/// <param name="label">The label that will appear in the legend.</param>
 		public BarItem( string label ) : base( label )
 		{
-			this._bar = new Bar();
+			_bar = new Bar();
 		}
 		/// <summary>
 		/// Create a new <see cref="BarItem"/> using the specified properties.
@@ -214,7 +214,7 @@ namespace ZedGraph
 									float scaleFactor  )
 		{
 			// Pass the drawing onto the bar class
-			if ( this._isVisible )
+			if ( _isVisible )
 				_bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
 								this.GetBarWidth( pane ), pos, scaleFactor );
 		}
@@ -240,7 +240,7 @@ namespace ZedGraph
 		/// </param>
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor )
 		{
-			this._bar.Draw( g, pane, rect, scaleFactor, true, null );
+			_bar.Draw( g, pane, rect, scaleFactor, true, null );
 		}
 
 		/// <summary>
@@ -334,6 +334,75 @@ namespace ZedGraph
 				}
 				curveIndex++;
 			}
+		}
+
+		/// <summary>
+		/// Determine the coords for the rectangle associated with a specified point for 
+		/// this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> to which this curve belongs</param>
+		/// <param name="i">The index of the point of interest</param>
+		/// <param name="coords">A list of coordinates that represents the "rect" for
+		/// this point (used in an html AREA tag)</param>
+		/// <returns>true if it's a valid point, false otherwise</returns>
+		override public bool GetCoords( GraphPane pane, int i, out string coords )
+		{
+			coords = string.Empty;
+
+			if ( i < 0 || i >= _points.Count )
+				return false;
+
+			Axis valueAxis = ValueAxis( pane );
+			Axis baseAxis = BaseAxis( pane );
+
+			// pixBase = pixel value for the bar center on the base axis
+			// pixHiVal = pixel value for the bar top on the value axis
+			// pixLowVal = pixel value for the bar bottom on the value axis
+			float pixBase, pixHiVal, pixLowVal;
+
+			float clusterWidth = pane.BarSettings.GetClusterWidth();
+			float barWidth = GetBarWidth( pane );
+			float clusterGap = pane._barSettings.MinClusterGap * barWidth;
+			float barGap = barWidth * pane._barSettings.MinBarGap;
+
+			// curBase = the scale value on the base axis of the current bar
+			// curHiVal = the scale value on the value axis of the current bar
+			// curLowVal = the scale value of the bottom of the bar
+			double curBase, curLowVal, curHiVal;
+			ValueHandler valueHandler = new ValueHandler( pane, false );
+			valueHandler.GetValues( this, i, out curBase, out curLowVal, out curHiVal );
+
+			// Any value set to double max is invalid and should be skipped
+			// This is used for calculated values that are out of range, divide
+			//   by zero, etc.
+			// Also, any value <= zero on a log scale is invalid
+
+			if ( !_points[i].IsInvalid3D )
+			{
+				// calculate a pixel value for the top of the bar on value axis
+				pixLowVal = valueAxis.Scale.Transform( _isOverrideOrdinal, i, curLowVal );
+				pixHiVal = valueAxis.Scale.Transform( _isOverrideOrdinal, i, curHiVal );
+				// calculate a pixel value for the center of the bar on the base axis
+				pixBase = baseAxis.Scale.Transform( _isOverrideOrdinal, i, curBase );
+
+				// Calculate the pixel location for the side of the bar (on the base axis)
+				float pixSide = pixBase - clusterWidth / 2.0F + clusterGap / 2.0F +
+								pane.CurveList.GetBarItemPos( pane, this ) * ( barWidth + barGap );
+
+				// Draw the bar
+				if ( pane._barSettings.Base == BarBase.X )
+					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+								pixSide, pixLowVal,
+								pixSide + barWidth, pixHiVal );
+				else
+					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+								pixLowVal, pixSide,
+								pixHiVal, pixSide + barWidth );
+
+				return true;
+			}
+
+			return false;
 		}
 
 	#endregion

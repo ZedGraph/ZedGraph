@@ -39,7 +39,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.1.2.3 $ $Date: 2006-04-24 05:06:45 $</version>
+	/// <version>$Revision: 1.1.2.4 $ $Date: 2006-04-27 06:50:11 $</version>
 	[	
 	ParseChildren(true),
 	PersistChildren(false),
@@ -272,6 +272,20 @@ namespace ZedGraph.Web
 		#endregion
 
 	#region Attributes
+
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraphWeb.IsImageMap" />.
+		/// </summary>
+		[Bindable( true ), Category( "Appearance" ), NotifyParentProperty( true )]
+		public bool IsImageMap
+		{
+			get
+			{
+				object x = ViewState["IsImageMap"];
+				return (x == null) ? false : (bool)x;
+			}
+			set { ViewState["IsImageMap"] = value; }
+		}
 
 		/// <summary>
 		/// Number of graph panes to create for a compound graph
@@ -1268,9 +1282,9 @@ namespace ZedGraph.Web
 		/// <param name="OutputStream">A <see cref="Stream"/> in which to output the ZedGraph
 		/// <see cref="System.Drawing.Image"/>.</param>
 		/// <param name="Format">The <see cref="ImageFormat"/> type to be output.</param>
-		protected void CreateGraph( System.IO.Stream OutputStream, ImageFormat Format )
+		protected MasterPane CreateGraph( System.IO.Stream OutputStream, ImageFormat Format )
 		{
-			CreateGraph( OutputStream, Format, false );
+			return CreateGraph( OutputStream, Format, false );
 		}
 
 		/// <summary>
@@ -1278,11 +1292,13 @@ namespace ZedGraph.Web
 		/// </summary>
 		/// <param name="OutputStream"></param>
 		/// <param name="Format"></param>
-		/// <param name="bShowTransparency">if true, draw squares instead of leaving the background transparent</param>
+		/// <param name="bShowTransparency">if true, draw squares instead of leaving the
+		/// background transparent</param>
 		/// <remarks>
 		/// bShowTransparency is set to true in design mode, to false otherwise.
 		/// </remarks>
-		protected void CreateGraph( System.IO.Stream OutputStream, ImageFormat Format, bool bShowTransparency )
+		protected MasterPane CreateGraph( System.IO.Stream OutputStream, ImageFormat Format,
+				bool bShowTransparency )
 		{
 			RectangleF rect = new RectangleF( 0, 0, this.Width, this.Height );
 			MasterPane mp = new MasterPane( this.Title, rect );
@@ -1291,11 +1307,11 @@ namespace ZedGraph.Web
 			for (int i=0; i<this.PaneCount; i++)
 			{
 				mp.Add( new GraphPane( rect, Title, string.Empty, string.Empty ) );
-			}			
-						
+			}
+
 			// create output bitmap container						
-			Bitmap image = new Bitmap( this.Width, this.Height ); 			
-			using (Graphics g = Graphics.FromImage( image ))
+			Bitmap image = new Bitmap( this.Width, this.Height );
+			using ( Graphics g = Graphics.FromImage( image ) )
 			{
 				// Apply layout plan				
 				mp.SetLayout( this.PaneLayout );
@@ -1305,10 +1321,10 @@ namespace ZedGraph.Web
 				OnDrawPane( g, mp );
 
 				// Allow designer control of axischange
-				if ( this.AxisChanged ) mp.AxisChange(g);
-			
+				if ( this.AxisChanged ) mp.AxisChange( g );
+
 				// Render the graph to a bitmap
-				if( bShowTransparency && mp.Fill.Color.A != 255 )
+				if ( bShowTransparency && mp.Fill.Color.A != 255 )
 				{
 					//Show the transparency as white/gray filled squares
 					// We need to add the resource namespace to its name
@@ -1317,7 +1333,7 @@ namespace ZedGraph.Web
 					Stream stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream( resourceName );
 
 					if ( stream == null )
-						throw new Exception( "Does the Build Action of the resource "+resourceName+" is set to Embedded Resource ?" );
+						throw new Exception( "Does the Build Action of the resource " + resourceName + " is set to Embedded Resource ?" );
 
 					System.Drawing.Image brushImage = new Bitmap( stream );
 					TextureBrush brush = new TextureBrush( brushImage, System.Drawing.Drawing2D.WrapMode.Tile );
@@ -1335,6 +1351,8 @@ namespace ZedGraph.Web
 
 			//TODO: provide caching options
 			ms.WriteTo(OutputStream);
+
+			return mp;
 		}
 
 		private System.IO.FileStream DesignTimeFileStream = null;
@@ -1344,7 +1362,9 @@ namespace ZedGraph.Web
 		/// </summary>
 		/// <param name="output"></param>
 		protected override void Render( HtmlTextWriter output )
-		{	
+		{
+			MasterPane masterPane = null;
+
 			bool bDesignMode = ( this.Page.Site != null && this.Page.Site.DesignMode );
 
 			if( !bDesignMode && this.RenderMode == RenderModeType.RawImage )
@@ -1369,7 +1389,7 @@ namespace ZedGraph.Web
 				{
 					string tempFileName, tempFilePathName;
 
-					//In design mode, we always recreate the file. No caching is allowed.
+					//In design, we always recreate the file. No caching is allowed.
 					if( bDesignMode )
 					{
 						//Create temporary file if it does not exists
@@ -1395,10 +1415,10 @@ namespace ZedGraph.Web
 						tempFilePathName = Path.Combine( tempFilePathName, tempFileName );
 						
 						//Should we use the cached image ?
-						if ( this.CacheDuration == 0 || !File.Exists(tempFilePathName) ||
+						if ( this.CacheDuration == 0 ||
+							!File.Exists(tempFilePathName) || IsImageMap ||
 							 File.GetCreationTimeUtc(tempFilePathName).AddSeconds(this.CacheDuration)
-									< DateTime.Now.ToUniversalTime()
-							 ) 
+									< DateTime.Now.ToUniversalTime() ) 
 						{
 							//No: so recreate the image file
 							DesignTimeFileStream = new FileStream( tempFilePathName,FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite );
@@ -1416,7 +1436,10 @@ namespace ZedGraph.Web
 						ImageFormat imageFormat = this.ImageFormat;
 						if( bDesignMode )
 							imageFormat = ImageFormat.Png;
-						CreateGraph( DesignTimeFileStream, imageFormat, bDesignMode );
+
+						// Draw the graph
+						masterPane = CreateGraph( DesignTimeFileStream, imageFormat, bDesignMode );
+
 						DesignTimeFileStream.Flush();
 						if( !bDesignMode ) //Production mode: close files !
 						{
@@ -1452,9 +1475,19 @@ namespace ZedGraph.Web
 					output.AddAttribute(HtmlTextWriterAttribute.Width,this.Width.ToString());
 					output.AddAttribute(HtmlTextWriterAttribute.Height,this.Height.ToString());
 					output.AddAttribute(HtmlTextWriterAttribute.Src,src);
-					output.AddAttribute(HtmlTextWriterAttribute.Alt,String.Empty);
-					output.RenderBeginTag(HtmlTextWriterTag.Img);
+					output.AddAttribute( HtmlTextWriterAttribute.Alt, String.Empty );
+					if ( this.IsImageMap && masterPane != null )
+						output.AddAttribute( HtmlTextWriterAttribute.Usemap, tempFileName + ".map" );
+					output.RenderBeginTag( HtmlTextWriterTag.Img );
 					output.RenderEndTag();
+
+					if ( this.IsImageMap && masterPane != null )
+					{
+						output.AddAttribute( HtmlTextWriterAttribute.Name, tempFileName + ".map" );
+						output.RenderBeginTag( HtmlTextWriterTag.Map );
+						MakeImageMap( masterPane, output );
+						output.RenderEndTag();
+					}
 				}
 				catch(Exception e)
 				{				
@@ -1464,7 +1497,126 @@ namespace ZedGraph.Web
 					output.Write( e.ToString() );
 					output.RenderEndTag();
 				}
+
 			}
+		}
+
+		private void MakeImageMap( MasterPane masterPane, HtmlTextWriter output )
+		{
+			string shape;
+			string coords;
+			Bitmap image = new Bitmap( 1, 1 );
+			using ( Graphics g = Graphics.FromImage( image ) )
+			{
+				float masterScale = masterPane.CalcScaleFactor();
+				// Frontmost objects are MasterPane objects with A_InFront
+				foreach ( GraphObj obj in masterPane.GraphObjList )
+				{
+					if ( obj.Link.IsActive && obj.ZOrder == ZOrder.A_InFront )
+					{
+						obj.GetCoords( masterPane, g, masterScale, out shape, out coords );
+						MakeAreaTag( shape, coords, obj.Link.Url, obj.Link.Target,
+							obj.Link.Title, output );
+					}
+				}
+
+				// Now loop over each GraphPane
+				foreach ( GraphPane pane in masterPane.PaneList )
+				{
+					float scaleFactor = pane.CalcScaleFactor();
+
+					// Next comes GraphPane GraphObjs in front of data points
+					foreach ( GraphObj obj in pane.GraphObjList )
+					{
+						if ( obj.Link.IsActive && obj.IsInFrontOfData )
+						{
+							obj.GetCoords( pane, g, scaleFactor, out shape, out coords );
+							MakeAreaTag( shape, coords, obj.Link.Url, obj.Link.Target,
+								obj.Link.Title, output );
+						}
+					}
+
+					// Then come the data points (CurveItems)
+					foreach ( CurveItem curve in pane.CurveList )
+					{
+						if ( curve.Link.IsActive && curve.IsVisible )
+						{
+							for ( int i = 0; i < curve.Points.Count; i++ )
+							{
+								//if ( curve.GetCoords( pane, i, pane.Rect.Left, pane.Rect.Top, out coords ) )
+								if ( curve.GetCoords( pane, i, out coords ) )
+								{
+									if ( curve is PieItem )
+									{
+										MakeAreaTag( "poly", coords, curve.Link.Url,
+												curve.Link.Target, curve.Link.Title, output );
+										// only one point for PieItems
+										break;
+									}
+									else
+									{
+										// Add an "?index=4" type tag to the url to indicate which
+										// point was selected
+										string url = curve.Link.Url;
+										if ( url.Contains( "?" ) )
+											url += "&index=" + i.ToString();
+										else
+											url += "?index=" + i.ToString();
+
+										string title = curve.Link.Title;
+										if ( curve.Points[i].Tag is string )
+											title = curve.Points[i].Tag as string;
+										MakeAreaTag( "rect", coords, url,
+												curve.Link.Target, title, output );
+									}
+								}
+							}
+						}
+					}
+
+					// Then comes the GraphObjs behind the data points
+					foreach ( GraphObj obj in pane.GraphObjList )
+					{
+						if ( obj.Link.IsActive && !obj.IsInFrontOfData )
+						{
+							obj.GetCoords( pane, g, scaleFactor, out shape, out coords );
+							MakeAreaTag( shape, coords, obj.Link.Url, obj.Link.Target,
+								obj.Link.Title, output );
+						}
+					}
+
+				}
+
+				// Hindmost objects are MasterPane objects with !A_InFront
+				foreach ( GraphObj obj in masterPane.GraphObjList )
+				{
+					if ( obj.Link.IsActive && obj.ZOrder != ZOrder.A_InFront )
+					{
+						obj.GetCoords( masterPane, g, masterScale, out shape, out coords );
+						MakeAreaTag( shape, coords, obj.Link.Url, obj.Link.Target,
+							obj.Link.Title, output );
+					}
+				}
+
+			}
+		}
+
+		private void MakeAreaTag( string shape, string coords, string url, string target,
+			string title, HtmlTextWriter output )
+		{
+			output.AddAttribute( HtmlTextWriterAttribute.Shape, shape );
+			output.AddAttribute( HtmlTextWriterAttribute.Coords, coords );
+
+			if ( url != string.Empty )
+				output.AddAttribute( HtmlTextWriterAttribute.Href, url );
+			if ( target != string.Empty )
+				output.AddAttribute( HtmlTextWriterAttribute.Target, target );
+			if ( title != string.Empty )
+				output.AddAttribute( HtmlTextWriterAttribute.Title, title );
+
+			output.RenderBeginTag( HtmlTextWriterTag.Area );
+			//output.Write( "Here's some random text" );
+			output.RenderEndTag();
 		}
 
 		/// <summary>
