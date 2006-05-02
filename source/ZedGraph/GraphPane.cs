@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.61 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.62 $ $Date: 2006-05-02 06:35:27 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -716,6 +716,8 @@ namespace ZedGraph
 			clusterScaleWidth = info.GetDouble( "clusterScaleWidth" );
 			axisRect = (RectangleF)info.GetValue( "axisRect", typeof( RectangleF ) );
 			lineType = (LineType)info.GetValue( "lineType", typeof( LineType ) );
+
+			zoomStack = new ZoomStateStack();
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object

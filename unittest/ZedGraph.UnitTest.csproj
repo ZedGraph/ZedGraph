@@ -98,7 +98,6 @@
                     Name = "nunit.framework"
                     AssemblyName = "nunit.framework"
                     HintPath = "..\..\..\..\..\..\..\Program Files\NUnit 2.2.4\bin\nunit.framework.dll"
-                    AssemblyFolderKey = "hklm\dn\nunit.framework"
                 />
             </References>
         </Build>

@@ -8,6 +8,9 @@ using System.Data;
 using System.Globalization;
 using ZedGraph;
 using System.Drawing.Imaging;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ZedGraph.ControlTest
 {
@@ -18,10 +21,11 @@ namespace ZedGraph.ControlTest
 	{
 		private PropertyGrid propertyGrid1;
 		private System.Windows.Forms.Splitter splitter1;
-		private ZedGraphControl zedGraphControl1;
+		//private ZedGraphControl zedGraphControl1;
 		private bool _isShowPropertyGrid = false;
 
 		private Timer myTimer;
+		private ZedGraph.ZedGraphControl zedGraphControl1;
 
 		/// <summary>
 		/// Required designer variable.
@@ -65,20 +69,25 @@ namespace ZedGraph.ControlTest
 			// 
 			// propertyGrid1
 			// 
+			this.propertyGrid1.CommandsVisibleIfAvailable = true;
 			this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Right;
+			this.propertyGrid1.LargeButtons = false;
 			this.propertyGrid1.LineColor = System.Drawing.SystemColors.ScrollBar;
-			this.propertyGrid1.Location = new System.Drawing.Point( 622, 0 );
+			this.propertyGrid1.Location = new System.Drawing.Point(622, 0);
 			this.propertyGrid1.Name = "propertyGrid1";
-			this.propertyGrid1.Size = new System.Drawing.Size( 240, 461 );
+			this.propertyGrid1.Size = new System.Drawing.Size(240, 461);
 			this.propertyGrid1.TabIndex = 2;
-			this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler( this.propertyGrid1_PropertyValueChanged );
+			this.propertyGrid1.Text = "PropertyGrid";
+			this.propertyGrid1.ViewBackColor = System.Drawing.SystemColors.Window;
+			this.propertyGrid1.ViewForeColor = System.Drawing.SystemColors.WindowText;
+			this.propertyGrid1.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid1_PropertyValueChanged);
 			// 
 			// splitter1
 			// 
 			this.splitter1.Dock = System.Windows.Forms.DockStyle.Right;
-			this.splitter1.Location = new System.Drawing.Point( 617, 0 );
+			this.splitter1.Location = new System.Drawing.Point(617, 0);
 			this.splitter1.Name = "splitter1";
-			this.splitter1.Size = new System.Drawing.Size( 5, 461 );
+			this.splitter1.Size = new System.Drawing.Size(5, 461);
 			this.splitter1.TabIndex = 4;
 			this.splitter1.TabStop = false;
 			// 
@@ -99,7 +108,7 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.IsShowPointValues = false;
 			this.zedGraphControl1.IsShowVScrollBar = false;
 			this.zedGraphControl1.IsZoomOnMouseCenter = false;
-			this.zedGraphControl1.Location = new System.Drawing.Point( 8, 8 );
+			this.zedGraphControl1.Location = new System.Drawing.Point(8, 8);
 			this.zedGraphControl1.Name = "zedGraphControl1";
 			this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.PanButtons2 = System.Windows.Forms.MouseButtons.Middle;
@@ -112,32 +121,28 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ScrollMinX = 0;
 			this.zedGraphControl1.ScrollMinY = 0;
 			this.zedGraphControl1.ScrollMinY2 = 0;
-			this.zedGraphControl1.Size = new System.Drawing.Size( 600, 448 );
+			this.zedGraphControl1.Size = new System.Drawing.Size(600, 440);
 			this.zedGraphControl1.TabIndex = 5;
 			this.zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
 			this.zedGraphControl1.ZoomModifierKeys = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomStepFraction = 0.1;
-			this.zedGraphControl1.MouseDownEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseDownEvent );
-			this.zedGraphControl1.ContextMenuBuilder += new ZedGraph.ZedGraphControl.ContextMenuBuilderEventHandler( this.zedGraphControl1_ContextMenuBuilder );
-			this.zedGraphControl1.MouseUpEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseUpEvent );
-			this.zedGraphControl1.MouseMoveEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseMoveEvent );
 			// 
 			// Form1
 			// 
-			this.AutoScaleBaseSize = new System.Drawing.Size( 5, 13 );
-			this.ClientSize = new System.Drawing.Size( 862, 461 );
-			this.Controls.Add( this.zedGraphControl1 );
-			this.Controls.Add( this.splitter1 );
-			this.Controls.Add( this.propertyGrid1 );
+			this.AutoScaleBaseSize = new System.Drawing.Size(5, 13);
+			this.ClientSize = new System.Drawing.Size(862, 461);
+			this.Controls.Add(this.zedGraphControl1);
+			this.Controls.Add(this.splitter1);
+			this.Controls.Add(this.propertyGrid1);
 			this.Name = "Form1";
 			this.Text = "Form1";
-			this.Resize += new System.EventHandler( this.Form1_Resize );
-			this.KeyDown += new System.Windows.Forms.KeyEventHandler( this.Form1_KeyDown );
-			this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form1_MouseDown );
-			this.Load += new System.EventHandler( this.Form1_Load );
-			this.ResumeLayout( false );
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+			this.Resize += new System.EventHandler(this.Form1_Resize);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+			this.Load += new System.EventHandler(this.Form1_Load);
+			this.ResumeLayout(false);
 
 		}
 #endregion
@@ -159,7 +164,9 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_NormalPane( zedGraphControl1 );
 			//CreateGraph_Contour( zedGraphControl1 );
 			//CreateGraph_Linear( zedGraphControl1 );
-			CreateGraph_StackLine( zedGraphControl1 );
+			//CreateGraph_StackLine( zedGraphControl1 );
+			//CreateGraph_StickToCurve( zedGraphControl1 );
+			CreateGraph_TextBasic( zedGraphControl1 );
 
 			//this.zedGraphControl1.MouseDownEvent += new ZedGraphControl.MouseDownEventHandler( MyMouseDownEventHandler );
 
@@ -873,6 +880,42 @@ namespace ZedGraph.ControlTest
 			propertyGrid1.SelectedObject = myPane;
 		}
 
+		private void Serialize( ZedGraphControl z1, string fileName )
+		{
+			if ( z1 != null && fileName != String.Empty )
+			{
+				BinaryFormatter mySerializer = new BinaryFormatter();
+				Stream myWriter = new FileStream( fileName, FileMode.Create,
+					FileAccess.Write, FileShare.None );
+
+				mySerializer.Serialize( myWriter, z1.MasterPane );
+				//MessageBox.Show( "Serialized output created" );
+				myWriter.Close();
+			}
+		}
+
+
+		private void DeSerialize( ZedGraphControl z1, string fileName )
+		{
+			if ( z1 != null && fileName != String.Empty )
+			{
+				BinaryFormatter mySerializer = new BinaryFormatter();
+				Stream myReader = new FileStream( fileName, FileMode.Open,
+					FileAccess.Read, FileShare.Read );
+
+				MasterPane master = (MasterPane) mySerializer.Deserialize( myReader );
+				Invalidate();
+
+				myReader.Close();
+
+				z1.MasterPane = master;
+				//trigger a resize event
+				z1.Size = z1.Size;
+			}
+		}
+
+
+
 		private void myTimer_Tick( object obj, EventArgs args )
 		{
 			PointPairList list = zedGraphControl1.GraphPane.CurveList[0].Points as PointPairList;
@@ -1038,10 +1081,19 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_KeyDown( object sender, System.Windows.Forms.KeyEventArgs e )
 		{
+			if ( e.KeyValue == 's' )
+				Serialize( zedGraphControl1, "myserial.bin" );
+			if ( e.KeyValue == 'd' )
+				DeSerialize( zedGraphControl1, "myserial.bin" );
 		}
 
 		private void Form1_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
 		{
+			DeSerialize( zedGraphControl1, "myserial.bin" );
+
+			return;
+
+
 			zedGraphControl1.GraphPane.ScaledImage( 400, 300, 72 ).Save( "zedgraph.png", ImageFormat.Png );
 			return;
 
@@ -1378,6 +1430,71 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 			z1.Invalidate();
 
+		}
+
+		private void CreateGraph_StickToCurve( ZedGraphControl z1 )
+		{
+			PointPairList listCurve = new PointPairList();
+			PointPairList listPts = new PointPairList();
+
+			Random rand = new Random();
+			double val = 155.0;
+			XDate date = new XDate( 2005, 7, 1 );
+
+			for ( int iDay = 0; iDay < 60; iDay++ )
+			{
+				double dv = rand.NextDouble() * 3 - 1.5;
+				listCurve.Add( date, val );
+				listPts.Add( date, val + dv, val );
+
+				val += rand.NextDouble() * 0.4 - 0.3;
+				date.AddDays( 1 );
+			}
+
+			GraphPane myPane = z1.GraphPane;
+			myPane.XAxis.Type = AxisType.Date;
+
+			myPane.AddCurve( "val", listCurve, Color.Red, SymbolType.None );
+			LineItem scatter = myPane.AddCurve( "pts", listPts, Color.Blue, SymbolType.Diamond );
+			scatter.Line.IsVisible = false;
+			scatter.Symbol.Fill = new Fill( Color.White );
+			scatter.Symbol.Size = 5;
+
+			ErrorBarItem myBar = myPane.AddErrorBar( "bars", listPts, Color.Green );
+			myBar.ErrorBar.Symbol.IsVisible = false;
+
+			z1.AxisChange();
+		}
+
+		// Basic curve test - text
+		private void CreateGraph_TextBasic( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+			Random rand = new Random();
+			string[] labels = new string[10];
+
+			for ( int i = 0; i < 10; i++ )
+			{
+				double val = rand.NextDouble();
+				double x = (double)i;
+				double y = x + val * val * val * 10;
+
+				list.Add( x, y );
+
+				labels[i] = "Text " + ( i + 1 ).ToString();
+			}
+
+			LineItem myCurve = z1.GraphPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			myCurve.Line.IsVisible = false;
+			z1.IsShowCopyMessage = false;
+			myPane.XAxis.Type = AxisType.Text;
+			//myPane.XAxis.Scale.TextLabels = labels;
+			myPane.XAxis.IsShowGrid = true;
+			myPane.XAxis.IsTicsBetweenLabels = true;
+
+			z1.AxisChange();
 		}
 
 
