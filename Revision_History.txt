@@ -1,5 +1,11 @@
 == Version 5 ==
 
+;1-May-2006 (by Champion) V5_BRANCH
+: [FIX] Initialize GraphPane._zoomStack in Deserialization
+
+;29-Apr-2006 (by Champion) V5_BRANCH
+: [FIX] render line separate from fill for filled curves so that isIgnoreMissing is not implied.
+
 ;26-Apr-2006 (by Champion) V5_BRANCH
 : [NEW] Add ZedGraphWeb.IsImageMap property
 : [NEW] Add Link Class, and property in GraphObj and CurveItem

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.23.2.6 $ $Date: 2006-04-27 06:50:12 $ </version>
+	/// <version> $Revision: 3.23.2.7 $ $Date: 2006-05-02 06:35:57 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -575,8 +575,6 @@ namespace ZedGraph
 				BuildPointsArray( pane, curve, out arrPoints, out count ) &&
 				count > 2 )
 			{
-				Pen pen = new Pen( this.Color, pane.ScaledPenWidth( _width, scaleFactor ) );
-				pen.DashStyle = this.Style;
 				float tension = _isSmooth ? _smoothTension : 0f;
 				
 				// Fill the curve if needed
@@ -599,10 +597,19 @@ namespace ZedGraph
 					yAxis.FixZeroLine( g, pane, scaleFactor, rect.Left, rect.Right );
 				}
 
-				// Stroke the curve
-				g.DrawCurve( pen, arrPoints, 0, count-2, tension );
+				// If it's a smooth curve, go ahead and render the path.  Otherwise, use the
+				// standard drawcurve method just in case there are missing values.
+				if ( _isSmooth )
+				{
+					Pen pen = new Pen( this.Color, pane.ScaledPenWidth( _width, scaleFactor ) );
+					pen.DashStyle = this.Style;
+					// Stroke the curve
+					g.DrawCurve( pen, arrPoints, 0, count - 2, tension );
 
-				pen.Dispose();
+					pen.Dispose();
+				}
+				else
+					DrawCurve( g, pane, curve, scaleFactor );
 			}
 		}
 

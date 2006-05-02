@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.6 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 3.59.2.7 $ $Date: 2006-05-02 06:35:57 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -454,6 +454,8 @@ namespace ZedGraph
 			_isIgnoreMissing = info.GetBoolean( "isIgnoreMissing" );
 
 			_lineType = (LineType)info.GetValue( "lineType", typeof( LineType ) );
+
+			_zoomStack = new ZoomStateStack();
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object

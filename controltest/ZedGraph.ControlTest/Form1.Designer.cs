@@ -60,7 +60,11 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.IsShowHScrollBar = false;
 			this.zedGraphControl1.IsShowPointValues = false;
 			this.zedGraphControl1.IsShowVScrollBar = false;
+			this.zedGraphControl1.IsSynchronizeXAxes = false;
+			this.zedGraphControl1.IsSynchronizeYAxes = false;
 			this.zedGraphControl1.IsZoomOnMouseCenter = false;
+			this.zedGraphControl1.LinkButtons = System.Windows.Forms.MouseButtons.Left;
+			this.zedGraphControl1.LinkModifierKeys = ( (System.Windows.Forms.Keys)( ( System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.None ) ) );
 			this.zedGraphControl1.Location = new System.Drawing.Point( 6, 6 );
 			this.zedGraphControl1.Name = "zedGraphControl1";
 			this.zedGraphControl1.PanButtons = System.Windows.Forms.MouseButtons.Left;
@@ -137,7 +141,11 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl2.IsShowHScrollBar = false;
 			this.zedGraphControl2.IsShowPointValues = false;
 			this.zedGraphControl2.IsShowVScrollBar = false;
+			this.zedGraphControl2.IsSynchronizeXAxes = false;
+			this.zedGraphControl2.IsSynchronizeYAxes = false;
 			this.zedGraphControl2.IsZoomOnMouseCenter = false;
+			this.zedGraphControl2.LinkButtons = System.Windows.Forms.MouseButtons.Left;
+			this.zedGraphControl2.LinkModifierKeys = ( (System.Windows.Forms.Keys)( ( System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.None ) ) );
 			this.zedGraphControl2.Location = new System.Drawing.Point( 6, 6 );
 			this.zedGraphControl2.Name = "zedGraphControl2";
 			this.zedGraphControl2.PanButtons = System.Windows.Forms.MouseButtons.Left;
@@ -182,6 +190,7 @@ namespace ZedGraph.ControlTest
 			this.Name = "Form1";
 			this.Text = "Form1";
 			this.Resize += new System.EventHandler( this.Form1_Resize );
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler( this.Form1_MouseDown );
 			this.Load += new System.EventHandler( this.Form1_Load );
 			this.tabControl1.ResumeLayout( false );
 			this.tabPage1.ResumeLayout( false );

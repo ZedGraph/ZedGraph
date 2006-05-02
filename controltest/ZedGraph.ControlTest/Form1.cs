@@ -39,7 +39,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl2 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
-			CreateGraph_ClusteredStackBar( zedGraphControl1 );
+			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_SplineTest( zedGraphControl1 );
 			//CreateGraph_DateAxis( zedGraphControl1 );
@@ -50,7 +50,9 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_32kPoints( zedGraphControl2 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
-			CreateGraph_StackedBars( zedGraphControl2 );
+			//CreateGraph_StackedBars( zedGraphControl2 );
+			//CreateGraph_StickToCurve( zedGraphControl1 );
+			CreateGraph_TextBasic( zedGraphControl2 );
 
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_PolyTest( zedGraphControl1 );
@@ -130,7 +132,7 @@ namespace ZedGraph.ControlTest
 					FileAccess.Read, FileShare.Read );
 
 				MasterPane master = (MasterPane) mySerializer.Deserialize( myReader );
-				Invalidate();
+				z1.Refresh();
 
 				myReader.Close();
 
@@ -1472,6 +1474,36 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 		}
 
+		// Basic curve test - text
+		private void CreateGraph_TextBasic( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+			Random rand = new Random();
+			string[] labels = new string[10];
+
+			for ( int i = 0; i < 10; i++ )
+			{
+				double val = rand.NextDouble();
+				double x = (double)i;
+				double y = x + val * val * val * 10;
+
+				list.Add( x, y );
+
+				labels[i] = "Text " + ( i + 1 ).ToString();
+			}
+
+			LineItem myCurve = z1.GraphPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			myCurve.Line.IsVisible = false;
+			z1.IsShowCopyMessage = false;
+			myPane.XAxis.Type = AxisType.Text;
+			myPane.XAxis.Scale.TextLabels = labels;
+			myPane.XAxis.MajorGrid.IsVisible = true;
+
+			z1.AxisChange();
+		}
+
 		//using ZedGraph.ControlTest.DataSet2TableAdapters;
 
 		private void CreateGraph_DataSource( ZedGraphControl z1 )
@@ -1624,6 +1656,40 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 		}
 
+		private void CreateGraph_StickToCurve( ZedGraphControl z1 )
+		{
+			PointPairList listCurve = new PointPairList();
+			PointPairList listPts = new PointPairList();
+
+			Random rand = new Random();
+			double val = 155.0;
+			XDate date = new XDate( 2005, 7, 1 );
+
+			for ( int iDay = 0; iDay < 60; iDay++ )
+			{
+				double dv = rand.NextDouble() * 3 - 1.5;
+				listCurve.Add( date, val );
+				listPts.Add( date, val + dv, val );
+
+				val += rand.NextDouble() * 0.4 - 0.3;
+				date.AddDays( 1 );
+			}
+
+			GraphPane myPane = z1.GraphPane;
+			myPane.XAxis.Type = AxisType.Date;
+
+			myPane.AddCurve( "val", listCurve, Color.Red, SymbolType.None );
+			LineItem scatter = myPane.AddCurve( "pts", listPts, Color.Blue, SymbolType.Diamond );
+			scatter.Line.IsVisible = false;
+			scatter.Symbol.Fill = new Fill( Color.White );
+			scatter.Symbol.Size = 5;
+
+			ErrorBarItem myBar = myPane.AddErrorBar( "bars", listPts, Color.Green );
+			myBar.Bar.Symbol.IsVisible = false;
+
+			z1.AxisChange();
+		}
+
 		private void zedGraphControl1_Paint( object sender, PaintEventArgs e )
 		{
 			//e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
@@ -1649,6 +1715,11 @@ namespace ZedGraph.ControlTest
 		private void zedGraphControl2_ScrollEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState, ZoomState newState )
 		{
 			j++;
+		}
+
+		private void Form1_MouseDown( object sender, MouseEventArgs e )
+		{
+			DeSerialize( zedGraphControl1, "savefile.bin" );
 		}
 	}
 }
