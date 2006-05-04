@@ -1,6 +1,6 @@
 == Version 5 ==
 
-;1-May-2006 (by Champion) V5_BRANCH
+;1-May-2006 (by Champion) V5_BRANCH (dev release 4.9.5)
 : [FIX] Initialize GraphPane._zoomStack in Deserialization
 
 ;29-Apr-2006 (by Champion) V5_BRANCH
@@ -85,7 +85,15 @@
 
 == Version 4.3 ==
 
-;21-Apr-2006 (by Champion) Release 4.3.5
+;1-May-2006 (by Champion)
+: [FIX] Initialize GraphPane._zoomStack in Deserialization
+
+;25-Apr-2006 (by Champion) Release version 4.3.6
+: [FIX] Fix ValueHandler to return PointPair.Missing if any part of stack is missing
+: [FIX] Fix CurveList.GetStackRange() to ignore missing values
+: [FIX] Fix Line.BuildPointsArray and Line.BuildLowPointsArray to skip missing
+
+;21-Apr-2006 (by Champion) Release version 4.3.5
 : [FIX] references to public properties from internal calcs caused auto modes to switch off
 : [FIX] CloseFigure on PolyItem
 : [FIX] PointInBox calcs for PolyItem

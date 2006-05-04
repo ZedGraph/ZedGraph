@@ -10,6 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization.Formatters.Soap;
 using System.IO;
 
 namespace ZedGraph.ControlTest
@@ -32,7 +33,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl2 );
 			//CreateGraph_BasicLog( zedGraphControl2 );
-			//CreateGraph_StackLine( zedGraphControl1 );
+			CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
@@ -119,6 +120,40 @@ namespace ZedGraph.ControlTest
 				mySerializer.Serialize( myWriter, z1.MasterPane );
 				//MessageBox.Show( "Serialized output created" );
 				myWriter.Close();
+			}
+		}
+
+
+		private void SoapSerialize( ZedGraphControl z1, string fileName )
+		{
+			if ( z1 != null && !String.IsNullOrEmpty( fileName ) )
+			{
+				SoapFormatter mySerializer = new SoapFormatter();
+				Stream myWriter = new FileStream( fileName, FileMode.Create,
+						FileAccess.Write, FileShare.None );
+
+				mySerializer.Serialize( myWriter, z1.MasterPane );
+				//MessageBox.Show( "Serialized output created" );
+				myWriter.Close();
+			}
+		}
+
+		private void SoapDeSerialize( ZedGraphControl z1, string fileName )
+		{
+			if ( z1 != null && !String.IsNullOrEmpty( fileName ) )
+			{
+				SoapFormatter mySerializer = new SoapFormatter();
+				Stream myReader = new FileStream( fileName, FileMode.Open,
+					FileAccess.Read, FileShare.Read );
+
+				MasterPane master = (MasterPane)mySerializer.Deserialize( myReader );
+				z1.Refresh();
+
+				myReader.Close();
+
+				z1.MasterPane = master;
+				//trigger a resize event
+				z1.Size = z1.Size;
 			}
 		}
 
@@ -1719,7 +1754,37 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_MouseDown( object sender, MouseEventArgs e )
 		{
-			DeSerialize( zedGraphControl1, "savefile.bin" );
+			if ( Control.ModifierKeys == Keys.Shift )
+				SoapDeSerialize( zedGraphControl1, "savefile.soap" );
+			else
+				SoapSerialize( zedGraphControl1, "savefile.soap" );
+		}
+
+		private bool zedGraphControl1_MouseMoveEvent( ZedGraphControl sender, MouseEventArgs e )
+		{
+			// Save the mouse location
+			PointF mousePt = new PointF( e.X, e.Y );
+
+			// Find the Chart rect that contains the current mouse location
+			GraphPane pane = sender.MasterPane.FindChartRect( mousePt );
+
+			// If pane is non-null, we have a valid location.  Otherwise, the mouse is not
+			// within any chart rect.
+			if ( pane != null )
+			{
+				double x, y, y2;
+				// Convert the mouse location to X, Y, and Y2 scale values
+				pane.ReverseTransform( mousePt, out x, out y, out y2 );
+				// Format the status label text
+				toolStripStatusXY.Text = "(" + x.ToString("f2") + ", " + y.ToString("f2") + ")";
+			}
+			else
+				// If there is no valid data, then clear the status label text
+				toolStripStatusXY.Text = string.Empty;
+
+			// Return false to indicate we have not processed the MouseMoveEvent
+			// ZedGraphControl should still go ahead and handle it
+			return false;
 		}
 	}
 }
