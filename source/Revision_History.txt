@@ -1,5 +1,9 @@
 == Version 5 ==
 
+;3-May-2006 (by Champion) V5_BRANCH
+: [FIX] Web Control - make IsPreventLabelOverlap = true by default
+: [FIX] Web Control - don't call SetupForMinorGridDefaults since it messes up major grid/tics
+
 ;1-May-2006 (by Champion) V5_BRANCH (dev release 4.9.5)
 : [FIX] Initialize GraphPane._zoomStack in Deserialization
 
