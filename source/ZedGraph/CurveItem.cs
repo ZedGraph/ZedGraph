@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.31.2.6 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 3.31.2.7 $ $Date: 2006-05-07 05:31:53 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -650,9 +650,19 @@ namespace ZedGraph
 		public Axis GetYAxis( GraphPane pane )
 		{
 			if ( _isY2Axis )
-				return pane.Y2AxisList[ _yAxisIndex ];
+			{
+				if ( _yAxisIndex < pane.Y2AxisList.Count )
+					return pane.Y2AxisList[_yAxisIndex];
+				else
+					return pane.Y2AxisList[0];
+			}
 			else
-				return pane.YAxisList[ _yAxisIndex ];
+			{
+				if ( _yAxisIndex < pane.YAxisList.Count )
+					return pane.YAxisList[_yAxisIndex];
+				else
+					return pane.Y2AxisList[0];
+			}
 		}
 
 		/// <summary>
@@ -745,7 +755,13 @@ namespace ZedGraph
 			double yLBound = double.MinValue;
 			double yUBound = double.MaxValue;
 
+			// initialize the values to outrageous ones to start
+			xMin = yMin = Double.MaxValue;
+			xMax = yMax = Double.MinValue;
+
 			Axis yAxis = this.GetYAxis( pane );
+			if ( yAxis == null )
+				return;
 
 			if ( isBoundedRanges )
 			{
@@ -761,10 +777,6 @@ namespace ZedGraph
 			bool isXLog = pane.XAxis.Scale.IsLog;
 			bool isYLog = yAxis.Scale.IsLog;
 
-			// initialize the values to outrageous ones to start
-			xMin = yMin = Double.MaxValue;
-			xMax = yMax = Double.MinValue;
-		
 			// Loop over each point in the arrays
 			//foreach ( PointPair point in this.Points )
 			for ( int i=0; i<this.Points.Count; i++ )

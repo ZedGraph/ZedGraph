@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.32.2.7 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 3.32.2.8 $ $Date: 2006-05-07 05:31:53 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -369,6 +369,7 @@ namespace ZedGraph
    				
 				// isYOrd is true if the Y axis is an ordinal type
 				Scale yScale = curve.GetYAxis( pane ).Scale;
+
 				Scale xScale = pane.XAxis.Scale;
 				bool isYOrd = yScale.IsAnyOrdinal;
 				// isXOrd is true if the X axis is an ordinal type

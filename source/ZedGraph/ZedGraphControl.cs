@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.10 $ $Date: 2006-04-27 06:50:12 $ </version>
+	/// <version> $Revision: 3.59.2.11 $ $Date: 2006-05-07 05:31:54 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -849,7 +849,12 @@ namespace ZedGraph
 		/// <param name="index">An index value, typically used if a <see cref="CurveItem" />
 		/// was clicked, indicating the ordinal value of the actual point that was clicked.
 		/// </param>
-		public delegate void LinkEventHandler( ZedGraphControl sender, GraphPane pane,
+		/// <returns>
+		/// Return true if you have handled the LinkEvent entirely, and you do not
+		/// want the <see cref="ZedGraphControl"/> to do any further action.
+		/// Return false if ZedGraph should go ahead and process the LinkEvent.
+		/// </returns>
+		public delegate bool LinkEventHandler( ZedGraphControl sender, GraphPane pane,
 			object source, Link link, int index );
 
 		/// <summary>
@@ -1849,9 +1854,15 @@ namespace ZedGraph
 				float scaleFactor = pane.CalcScaleFactor();
 				if ( pane.FindLinkableObject( mousePt, g, scaleFactor, out source, out link, out index ) )
 				{
-					LinkEvent( this, pane, source, link, index );
-					// linkable objects override any other actions with mouse
-					return;
+					if ( LinkEvent( this, pane, source, link, index ) )
+						return;
+
+					if ( link._url != string.Empty )
+					{
+						System.Diagnostics.Process.Start( link._url );
+						// linkable objects override any other actions with mouse
+						return;
+					}
 				}
 				g.Dispose();
 			}

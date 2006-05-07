@@ -1,6 +1,12 @@
 == Version 5 ==
 
 ;3-May-2006 (by Champion) V5_BRANCH
+: [FIX] Protect from exception if yAxisIndex >= yAxisList.Count
+: [FIX] Fix up Coordinate Transforms for ImageMap
+: [UPD] Make LinkEvent a bool
+: [UPD] Make ZedGraphControl launch browser
+
+;3-May-2006 (by Champion) V5_BRANCH
 : [FIX] Web Control - make IsPreventLabelOverlap = true by default
 : [FIX] Web Control - don't call SetupForMinorGridDefaults since it messes up major grid/tics
 

@@ -19,6 +19,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Collections;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -32,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 1.1.2.7 $ $Date: 2006-05-07 05:31:54 $ </version>
 	[Serializable]
 	abstract public class GraphObj : ISerializable, ICloneable
 	{

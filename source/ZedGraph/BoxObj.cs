@@ -33,11 +33,12 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-05-07 05:31:53 $ </version>
 	[Serializable]
 	public class BoxObj : GraphObj, ICloneable, ISerializable
 	{
 	#region Fields
+
 		/// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="BoxObj"/>.  Use the public property <see cref="Fill"/> to
@@ -50,6 +51,7 @@ namespace ZedGraph
 		/// Use the public property <see cref="Border"/> to access this value.
 		/// </summary>
 		protected Border _border;
+
 	#endregion
 
 	#region Defaults

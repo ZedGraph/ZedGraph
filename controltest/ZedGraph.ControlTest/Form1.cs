@@ -30,7 +30,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_CandleStick( zedGraphControl1 );
-			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl2 );
 			//CreateGraph_BasicLog( zedGraphControl2 );
 			//CreateGraph_StackLine( zedGraphControl1 );
@@ -54,6 +54,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_StackedBars( zedGraphControl2 );
 			//CreateGraph_StickToCurve( zedGraphControl1 );
 			CreateGraph_TextBasic( zedGraphControl2 );
+			CreateChartDualY( zedGraphControl1 );
 
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_PolyTest( zedGraphControl1 );
@@ -1725,6 +1726,149 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 		}
 
+		public void CreateChartDualY( ZedGraphControl z1 )
+		{
+
+			bool isAssociateWithAxis = true;
+
+			GraphPane myPane = z1.GraphPane;
+			// Make up some data points based on the Sine function
+			PointPairList vList = new PointPairList();
+			PointPairList aList = new PointPairList();
+			PointPairList dList = new PointPairList();
+			PointPairList eList = new PointPairList();
+
+			for ( int i = 0; i < 30; i++ )
+			{
+				double xFactor = (double)i;
+				vList.Add( xFactor, 15 );
+				aList.Add( xFactor, 150 );
+				dList.Add( xFactor, 1500 );
+				eList.Add( xFactor, 15000 );
+			}
+
+			//Form oForm = new Form3();
+			//oForm.ShowDialog();
+
+			// Generate a blue curve with "Curve 2" in the legend
+			LineItem myCurve = myPane.AddCurve( "Curve 1", vList, Color.Blue );
+
+
+			Y2Axis yAxisCur = new Y2Axis( "Curve 2" );
+			yAxisCur.IsVisible = true;
+			myPane.Y2AxisList.Add( yAxisCur );
+			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
+			yAxisCur.MajorTic.IsInside = false;
+			yAxisCur.MinorTic.IsInside = false;
+			yAxisCur.MajorTic.IsOpposite = false;
+			yAxisCur.MinorTic.IsOpposite = false;
+			// Align the Y2 axis labels so they are flush to the axis
+			yAxisCur.Scale.Align = AlignP.Inside;
+			yAxisCur.Type = AxisType.Linear;
+			yAxisCur.Scale.FontSpec.FontColor = Color.Green;
+			yAxisCur.Title.FontSpec.FontColor = Color.Green;
+			yAxisCur.Scale.Min = 100;
+			yAxisCur.Scale.Max = 500;
+
+
+			yAxisCur = new Y2Axis( "Curve 3" );
+			yAxisCur.IsVisible = true;
+			myPane.Y2AxisList.Add( yAxisCur );
+			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
+			yAxisCur.MajorTic.IsInside = false;
+			yAxisCur.MinorTic.IsInside = false;
+			yAxisCur.MajorTic.IsOpposite = false;
+			yAxisCur.MinorTic.IsOpposite = false;
+			// Align the Y2 axis labels so they are flush to the axis
+			yAxisCur.Scale.Align = AlignP.Inside;
+			yAxisCur.Type = AxisType.Linear;
+			yAxisCur.Scale.FontSpec.FontColor = Color.Red;
+			yAxisCur.Title.FontSpec.FontColor = Color.Red;
+			yAxisCur.Scale.Min = 1000;
+			yAxisCur.Scale.Max = 1700;
+
+			yAxisCur = new Y2Axis( "Curve 4" );
+			yAxisCur.IsVisible = true;
+			myPane.Y2AxisList.Add( yAxisCur );
+			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
+			yAxisCur.MajorTic.IsInside = false;
+			yAxisCur.MinorTic.IsInside = false;
+			yAxisCur.MajorTic.IsOpposite = false;
+			yAxisCur.MinorTic.IsOpposite = false;
+			// Align the Y2 axis labels so they are flush to the axis
+			yAxisCur.Scale.Align = AlignP.Inside;
+			yAxisCur.Type = AxisType.Linear;
+			yAxisCur.Scale.FontSpec.FontColor = Color.Orange;
+			yAxisCur.Title.FontSpec.FontColor = Color.Orange;
+			yAxisCur.Scale.Min = 13000;
+			yAxisCur.Scale.Max = 18000;
+
+
+			myCurve = myPane.AddCurve( "Curve 2", aList, Color.Green );
+			myCurve.IsY2Axis = true;
+			if ( isAssociateWithAxis )
+				myCurve.YAxisIndex = 1;
+
+
+			myCurve = myPane.AddCurve( "Curve 3", dList, Color.Red );
+			myCurve.IsY2Axis = true;
+			if ( isAssociateWithAxis )
+				myCurve.YAxisIndex = 2;
+
+
+			myCurve = myPane.AddCurve( "Curve 4", eList, Color.Orange );
+			myCurve.IsY2Axis = true;
+			if ( isAssociateWithAxis )
+				myCurve.YAxisIndex = 3;
+
+
+			z1.AxisChange();
+			z1.Invalidate();
+
+			MessageBox.Show( "now removing curve 3" );
+
+			removeGraphByName( zedGraphControl1, "Curve 3" );
+
+
+			z1.AxisChange();
+			z1.Invalidate();
+
+		}
+
+		private Boolean removeGraphByName( ZedGraphControl z1, string sOpName )
+		{
+			try
+			{
+				int i;
+				GraphPane gpane = z1.GraphPane;
+
+
+				for ( int j = 0; j < gpane.CurveList.Count; j++ )
+				{
+					string sCurCurveName = gpane.CurveList[j].Label.Text;
+
+					if ( sCurCurveName == sOpName )
+					{
+						gpane.CurveList.RemoveAt( j );
+					}
+				}
+
+				for ( int k = 0; k < gpane.Y2AxisList.Count; k++ )
+				{
+					if ( gpane.Y2AxisList[k].Title.Text == sOpName )
+						gpane.Y2AxisList.RemoveAt( k );
+				}
+
+				z1.AxisChange();
+				z1.Invalidate();
+				return false;
+			}
+			catch ( Exception ex )
+			{
+				MessageBox.Show( ex.Message );
+				return false;
+			}
+		}
 		private void zedGraphControl1_Paint( object sender, PaintEventArgs e )
 		{
 			//e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;

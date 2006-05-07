@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.18.2.4 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 3.18.2.5 $ $Date: 2006-05-07 05:31:53 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -1397,6 +1397,22 @@ namespace ZedGraph
 			// in this manner, the point is brought back to the box, rather
 			// than vice-versa.  This allows the container check to be a simple
 			// RectangleF.Contains, since the rectangle won't be rotated.
+			Matrix matrix = GetMatrix( x, y, sizeF, alignH, alignV, _angle );
+
+			PointF[] pts = new PointF[1];
+			pts[0] = pt;
+			matrix.TransformPoints( pts );
+
+			return rect.Contains( pts[0] );
+		}
+
+		private Matrix GetMatrix( float x, float y, SizeF sizeF, AlignH alignH, AlignV alignV,
+							float angle )
+		{
+			// Build a transform matrix that inverts that drawing transform
+			// in this manner, the point is brought back to the box, rather
+			// than vice-versa.  This allows the container check to be a simple
+			// RectangleF.Contains, since the rectangle won't be rotated.
 			Matrix matrix = new Matrix();
 
 			// In this case, the bounding box is anchored to the
@@ -1423,19 +1439,15 @@ namespace ZedGraph
 
 			// Rotate the coordinate system according to the 
 			// specified angle of the FontSpec
-			if ( _angle != 0.0F )
-				matrix.Rotate( _angle, MatrixOrder.Prepend );
+			if ( angle != 0.0F )
+				matrix.Rotate( angle, MatrixOrder.Prepend );
 
 			// Move the coordinate system to local coordinates
 			// of this text object (that is, at the specified
 			// x,y location)
 			matrix.Translate( -x, -y, MatrixOrder.Prepend );
 
-			PointF[] pts = new PointF[1];
-			pts[0] = pt;
-			matrix.TransformPoints( pts );
-
-			return rect.Contains( pts[0] );
+			return matrix;
 		}
 
 		/// <summary>
@@ -1486,43 +1498,8 @@ namespace ZedGraph
 			// Create a bounding box rectangle for the text
 			RectangleF rect = new RectangleF( new PointF( -sizeF.Width / 2.0F, 0.0F ), sizeF );
 
-			// Build a transform matrix that inverts that drawing transform
-			// in this manner, the point is brought back to the box, rather
-			// than vice-versa.  This allows the container check to be a simple
-			// RectangleF.Contains, since the rectangle won't be rotated.
-			Matrix matrix = new Matrix();
-
-			// In this case, the bounding box is anchored to the
-			// top-left of the text box.  Handle the alignment
-			// as needed.
-			float xa, ya;
-			if ( alignH == AlignH.Left )
-				xa = sizeF.Width / 2.0F;
-			else if ( alignH == AlignH.Right )
-				xa = -sizeF.Width / 2.0F;
-			else
-				xa = 0.0F;
-
-			if ( alignV == AlignV.Center )
-				ya = -sizeF.Height / 2.0F;
-			else if ( alignV == AlignV.Bottom )
-				ya = -sizeF.Height;
-			else
-				ya = 0.0F;
-
-			// Shift the coordinates to accomodate the alignment
-			// parameters
-			matrix.Translate( -xa, -ya, MatrixOrder.Prepend );
-
-			// Rotate the coordinate system according to the 
-			// specified angle of the FontSpec
-			if ( _angle != 0.0F )
-				matrix.Rotate( _angle, MatrixOrder.Prepend );
-
-			// Move the coordinate system to local coordinates
-			// of this text object (that is, at the specified
-			// x,y location)
-			matrix.Translate( -x, -y, MatrixOrder.Prepend );
+			Matrix matrix = GetMatrix( x, y, sizeF, alignH, alignV, _angle );
+			matrix.Invert();
 
 			PointF[] pts = new PointF[4];
 			pts[0] = new PointF( rect.Left, rect.Top );

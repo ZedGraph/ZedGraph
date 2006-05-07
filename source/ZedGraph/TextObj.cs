@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:12 $ </version>
+	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-05-07 05:31:54 $ </version>
 	[Serializable]
 	public class TextObj : GraphObj, ICloneable, ISerializable
 	{
@@ -429,7 +429,7 @@ namespace ZedGraph
 				_location.AlignV, scaleFactor, new SizeF() );
 
 			shape = "poly";
-			coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0},{0:f0},{1:f0},{2:f0},{3:f0},",
+			coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0},{4:f0},{5:f0},{6:f0},{7:f0},",
 						pts[0].X, pts[0].Y, pts[1].X, pts[1].Y,
 						pts[2].X, pts[2].Y, pts[3].X, pts[3].Y );
 		}
