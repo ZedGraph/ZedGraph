@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.11 $ $Date: 2006-05-07 05:31:54 $ </version>
+	/// <version> $Revision: 3.59.2.12 $ $Date: 2006-05-14 03:31:19 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -982,6 +982,20 @@ namespace ZedGraph
 			get { lock ( this ) return _masterPane; }
 			set { lock ( this ) _masterPane = value; }
 		}
+
+		// Testing for Designer attribute
+		/*
+		Class1 _class1 = null;
+		[ Bindable( true ), Browsable( true ), Category( "Data" ), NotifyParentProperty( true ),
+			DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
+			Description( "My Class1 Test" )]
+		public Class1 Class1
+		{
+			get { if ( _class1 == null ) _class1 = new Class1(); return _class1; }
+			set { _class1 = value; }
+		}
+		*/
+	
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.GraphPane"/> property for the control
 		/// </summary>
@@ -991,8 +1005,15 @@ namespace ZedGraph
 		/// accesses the first <see cref="GraphPane"/> in the list.  If there is more
 		/// than one <see cref="GraphPane"/>, use the <see cref="MasterPane"/>
 		/// indexer property to access any of the <see cref="GraphPane"/> objects.</remarks>
-		[Bindable( false ), Browsable( false )]
-		[DesignerSerializationVisibility( DesignerSerializationVisibility.Hidden )]
+		[
+			Bindable( false ), Browsable( false ),
+			DesignerSerializationVisibility( DesignerSerializationVisibility.Hidden )
+		]
+		//[
+		//	Bindable( true ), Browsable( true ), Category( "Data" ), NotifyParentProperty( true ),
+		//	AttributeProvider( typeof( GraphPane ) ),
+		//	Description("Access to the primary GraphPane object associated with this control")
+		//]
 		public GraphPane GraphPane
 		{
 			get
@@ -1274,8 +1295,11 @@ namespace ZedGraph
 		/// <see cref="ScrollMinY" />, <see cref="ScrollMaxY" />, 
 		/// <see cref="ScrollMinY2" />, and <see cref="ScrollMaxY2" />.  Note also that you must
 		/// call <see cref="AxisChange" /> from the <see cref="ZedGraphControl" /> for this to
-		/// work properly (e.g., don't call it directly from the <see cref="GraphPane" />.  Alternatively,
-		/// you can call <see cref="SetScrollRangeFromData" /> at anytime to set the scroll bar range.
+		/// work properly (e.g., don't call it directly from the <see cref="GraphPane" />.
+		/// Alternatively, you can call <see cref="SetScrollRangeFromData" /> at anytime to set
+		/// the scroll bar range.<br />
+		/// <b>In most cases, you will probably want to disable
+		/// <see cref="ZedGraph.GraphPane.IsBoundedRanges" /> before activating this option.</b>
 		/// </remarks>
 		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
 		[Description( "true to automatically set the scroll bar range to the actual data range" )]
@@ -1293,7 +1317,9 @@ namespace ZedGraph
 		/// clicking directly on it and dragging (see <see cref="IsEnableHPan"/> and <see cref="IsEnableVPan"/>).
 		/// You can control the available range of scrolling with the <see cref="ScrollMinX"/> and
 		/// <see cref="ScrollMaxX"/> properties.  Note that the scroll range can be set automatically by
-		/// <see cref="IsAutoScrollRange" />.
+		/// <see cref="IsAutoScrollRange" />.<br />
+		/// <b>In most cases, you will probably want to disable
+		/// <see cref="ZedGraph.GraphPane.IsBoundedRanges" /> before activating this option.</b>
 		/// </remarks>
 		/// <value>A boolean value.  true to display a horizontal scrollbar, false otherwise.</value>
 		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]
@@ -1314,7 +1340,9 @@ namespace ZedGraph
 		/// Note that the vertical scroll bar only affects the <see cref="YAxis"/>; it has no impact on
 		/// the <see cref="Y2Axis"/>.  The panning options affect both the <see cref="YAxis"/> and
 		/// <see cref="Y2Axis"/>.  Note also that the scroll range can be set automatically by
-		/// <see cref="IsAutoScrollRange" />.
+		/// <see cref="IsAutoScrollRange" />.<br />
+		/// <b>In most cases, you will probably want to disable
+		/// <see cref="ZedGraph.GraphPane.IsBoundedRanges" /> before activating this option.</b>
 		/// </remarks>
 		/// <value>A boolean value.  true to display a vertical scrollbar, false otherwise.</value>
 		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true )]

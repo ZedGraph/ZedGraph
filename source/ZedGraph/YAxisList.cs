@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.2.2.3 $ $Date: 2006-04-07 06:14:10 $ </version>
+	/// <version> $Revision: 3.2.2.4 $ $Date: 2006-05-14 03:31:19 $ </version>
 	[Serializable]
 	public class YAxisList : List<YAxis>, ICloneable
 	{
@@ -162,6 +162,22 @@ namespace ZedGraph
 			}
 
 			return -1;
+		}
+
+		/// <summary>
+		/// Create a new <see cref="YAxis" /> and add it to this list.
+		/// </summary>
+		/// <param name="title">The title string for the new axis</param>
+		/// <returns>An integer representing the ordinal position of the new <see cref="YAxis" /> in
+		/// this <see cref="YAxisList" />.  This is the value that you would set the
+		/// <see cref="CurveItem.YAxisIndex" /> property of a given <see cref="CurveItem" /> to 
+		/// assign it to this new <see cref="YAxis" />.</returns>
+		public int Add( string title )
+		{
+			YAxis axis = new YAxis( title );
+			Add( axis );
+
+			return Count - 1;
 		}
 
 		#endregion

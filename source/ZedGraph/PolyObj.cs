@@ -33,23 +33,23 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-04-27 06:50:12 $ </version>
+	/// <version> $Revision: 1.1.2.7 $ $Date: 2006-05-14 03:31:19 $ </version>
 	[Serializable]
 	public class PolyObj : BoxObj, ICloneable, ISerializable
 	{
 
 	#region Fields
-		private PointF[] _points;
+		private PointD[] _points;
 	#endregion
 
 	#region Properties
 
 		/// <summary>
-		/// Gets or sets the <see cref="PointF"/> array that defines
+		/// Gets or sets the <see cref="PointD"/> array that defines
 		/// the polygon.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
 		/// </summary>
-		public PointF[] Points
+		public PointD[] Points
 		{
 			get { return _points; }
 			set { _points = value; }
@@ -67,12 +67,12 @@ namespace ZedGraph
 		/// for the box border</param>
 		/// <param name="fillColor">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the box fill (will be a solid color fill)</param>
-		/// <param name="points">The <see cref="PointF"/> array that defines
+		/// <param name="points">The <see cref="PointD"/> array that defines
 		/// the polygon.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
 		/// </param>
-		public PolyObj( PointF[] points, Color borderColor, Color fillColor ) :
-				base( new RectangleF(), borderColor, fillColor )
+		public PolyObj( PointD[] points, Color borderColor, Color fillColor ) :
+				base( 0, 0, 1, 1, borderColor, fillColor )
 		{
 			_points = points;
 		}
@@ -81,21 +81,20 @@ namespace ZedGraph
 		/// A constructor that allows the position
 		/// of the <see cref="PolyObj"/> to be pre-specified.  Other properties are defaulted.
 		/// </summary>
-		/// <param name="points">The <see cref="PointF"/> array that defines
+		/// <param name="points">The <see cref="PointD"/> array that defines
 		/// the polygon.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
 		/// </param>
-		public PolyObj( PointF[] points ) :
-			base( new RectangleF() )
+		public PolyObj( PointD[] points ) : base( 0, 0, 1, 1 )
 		{
 			_points = points;
 		}
 
 		/// <summary>
 		/// A default constructor that creates a <see cref="PolyObj"/> from an empty
-		/// <see cref="PointF"/> array.  Other properties are defaulted.
+		/// <see cref="PointD"/> array.  Other properties are defaulted.
 		/// </summary>
-		public PolyObj() : this( new PointF[0] )
+		public PolyObj() : this( new PointD[0] )
 		{
 		}
 
@@ -110,13 +109,13 @@ namespace ZedGraph
 		/// for the start of the box gradient fill</param>
 		/// <param name="fillColor2">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the end of the box gradient fill</param>
-		/// <param name="points">The <see cref="PointF"/> array that defines
+		/// <param name="points">The <see cref="PointD"/> array that defines
 		/// the polygon.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
 		/// </param>
-		public PolyObj( PointF[] points, Color borderColor,
+		public PolyObj( PointD[] points, Color borderColor,
 							Color fillColor1, Color fillColor2 ) :
-				base( new RectangleF(), borderColor, fillColor1, fillColor2 )
+				base( 0, 0, 1, 1, borderColor, fillColor1, fillColor2 )
 		{
 			_points = points;
 		}
@@ -127,7 +126,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="PolyObj"/> object from which to copy</param>
 		public PolyObj( PolyObj rhs ) : base( rhs )
 		{
-			rhs._points = (PointF[]) _points.Clone();
+			rhs._points = (PointD[]) _points.Clone();
 		}
 
 		/// <summary>
@@ -170,7 +169,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema3" );
 
-			_points = (PointF[]) info.GetValue( "points", typeof(PointF[]) );
+			_points = (PointD[]) info.GetValue( "points", typeof(PointD[]) );
 
 		}
 		/// <summary>
@@ -239,13 +238,12 @@ namespace ZedGraph
 			bool first = true;
 			PointF lastPt = new PointF();
 
-			foreach( PointF pt in _points )
+			foreach( PointD pt in _points )
 			{
 				// Convert the coordinates from the user coordinate system
 				// to the screen coordinate system
 				// Offset the points by the location value
-				PointF pixPt = Location.Transform( pane,
-						new PointF( pt.X + _location.X, pt.Y + _location.Y),
+				PointF pixPt = Location.Transform( pane, pt.X + _location.X, pt.Y + _location.Y,
 						_location.CoordinateFrame );
 
 				if (	Math.Abs( pixPt.X ) < 100000 &&

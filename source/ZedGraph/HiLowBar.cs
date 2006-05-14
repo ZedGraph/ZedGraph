@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11.2.4 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 3.11.2.5 $ $Date: 2006-05-14 03:31:19 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -251,6 +251,9 @@ namespace ZedGraph
 		/// axis for the <see cref="Bar"/></param>
 		/// <param name="valueAxis">The <see cref="Axis"/> class instance that defines the value (dependent)
 		/// axis for the <see cref="Bar"/></param>
+		/// <param name="barWidth">
+		/// The width of each bar, in pixels.
+		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
@@ -260,9 +263,9 @@ namespace ZedGraph
 		override protected void DrawSingleBar( Graphics g, GraphPane pane,
 							CurveItem curve,
 							int index, int pos, Axis baseAxis, Axis valueAxis,
-							float scaleFactor )
+							float barWidth, float scaleFactor )
 		{
-			float	scaledSize = GetBarWidth( pane, baseAxis, scaleFactor );
+			//float	scaledSize = GetBarWidth( pane, baseAxis, scaleFactor );
 
 			// pixBase = pixel value for the bar center on the base axis
 			// pixValue = pixel value for the bar top on the value axis
@@ -301,20 +304,20 @@ namespace ZedGraph
 				pixLowVal = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, index, curLowVal );
 
 				// Calculate the pixel location for the side of the bar (on the base axis)
-				float pixSide = pixBase - scaledSize / 2.0F;
+				float pixSide = pixBase - barWidth / 2.0F;
 
 				// Draw the bar
 				if ( baseAxis is XAxis )
-					this.Draw( g, pane, pixSide, pixSide + scaledSize, pixLowVal,
+					this.Draw( g, pane, pixSide, pixSide + barWidth, pixLowVal,
 								pixHiVal, scaleFactor, true,
 								curve.Points[index] );
 				else
-					this.Draw( g, pane, pixLowVal, pixHiVal, pixSide, pixSide + scaledSize,
+					this.Draw( g, pane, pixLowVal, pixHiVal, pixSide, pixSide + barWidth,
 								scaleFactor, true,
 								curve.Points[index] );
 		   }
 	   }
-
+		/*
 		/// <summary>
 		/// Returns the width of the bar, in pixels, based on the settings for
 		/// <see cref="Size"/> and <see cref="IsMaximumWidth"/>.
@@ -336,6 +339,8 @@ namespace ZedGraph
 			else
 				return (float) ( _size * scaleFactor );
 		}
+		*/
+
 	#endregion
 
 	}

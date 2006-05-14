@@ -1,5 +1,30 @@
 == Version 5 ==
 
+;12-May-2006 (by Champion) V5_BRANCH
+: [FIX] FindNearestObject() -- Rect calculations were wrong for Y2 Axis (thanks fugacityepro)
+: [NEW] Add GraphPane.IsAlignGrids to line up number of major steps across Y/Y2 axes
+: [UPD] Add Page Setup and Print translations for German locale (thanks to Sean Goldin)
+: [UPD] Turn off GraphPane.IsBoundedRanges by default
+: [FIX] Get rid of CopyTo() methods for value types in ZedGraphWeb control
+: [UPD] Remove some properties from webcontrol, add MinorTic, MajorTic, Scale to organize
+: [UPD] Add descriptions for many web props
+: [UPD] Fix masterpane margin issues for webcontrol
+: [UPD] AxisChanged = true by default for web control
+
+;10-May-2006 (by Champion) V5_BRANCH (dev release 4.9.6)
+: [UPD] Make Location class use doubles to accommodate required precision for date coords
+: [UPD] Modify Matrix transform code for FontSpec to be generic
+: [FIX] Make HiLowBar use size property for width
+; [NEW] Add YAxisList.Add(string) method to create and add a new YAxis (ditto for Y2Axis)
+; [NEW] Add Link constructor
+; [NEW] Add PointD struct for PolyObj point list as doubles
+
+;3-May-2006 (by Champion) V5_BRANCH
+: [FIX] Protect from exception if yAxisIndex >= yAxisList.Count
+: [FIX] Fix up Coordinate Transforms for ImageMap
+: [UPD] Make LinkEvent a bool
+: [UPD] Make ZedGraphControl launch browser
+
 ;3-May-2006 (by Champion) V5_BRANCH
 : [FIX] Web Control - make IsPreventLabelOverlap = true by default
 : [FIX] Web Control - don't call SetupForMinorGridDefaults since it messes up major grid/tics

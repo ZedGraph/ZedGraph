@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.31.2.7 $ $Date: 2006-05-07 05:31:53 $ </version>
+	/// <version> $Revision: 3.31.2.8 $ $Date: 2006-05-14 03:31:18 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -915,8 +915,10 @@ namespace ZedGraph
 				barWidth = (float) ( ((ErrorBarItem)this).Bar.Symbol.Size *
 						pane.CalcScaleFactor() );
 			else if ( this is HiLowBarItem )
-				barWidth = (float) ( ((HiLowBarItem)this).Bar.GetBarWidth( pane,
-						((HiLowBarItem)this).BaseAxis(pane), pane.CalcScaleFactor() ) );
+//				barWidth = (float) ( ((HiLowBarItem)this).Bar.GetBarWidth( pane,
+//						((HiLowBarItem)this).BaseAxis(pane), pane.CalcScaleFactor() ) );
+				barWidth = (float) ( ((HiLowBarItem)this).Bar.Size *
+						pane.CalcScaleFactor() );
 			else // BarItem or LineItem
 			{
 				// For stacked bar types, the bar width will be based on a single bar

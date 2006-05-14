@@ -146,6 +146,7 @@ namespace ZedGraph.Demo
 			// a value of 34 or more will be blue, and values in between will be a
 			// linearly apportioned color between red and blue.
 			myCurve.Symbol.Fill.Type = FillType.GradientByZ;
+			//myCurve.Symbol.Fill.SecondaryValueGradientColor = Color.Empty;
 			myCurve.Symbol.Fill.RangeMin = 19;
 			myCurve.Symbol.Fill.RangeMax = 34;
 			//myCurve.Symbol.Fill.RangeDefault = 19;

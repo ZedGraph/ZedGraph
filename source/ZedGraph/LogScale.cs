@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.5.2.4 $ $Date: 2006-04-27 06:50:12 $ </version>
+	/// <version> $Revision: 1.5.2.5 $ $Date: 2006-05-14 03:31:19 $ </version>
 	[Serializable]
 	class LogScale : Scale, ISerializable //, ICloneable
 	{
@@ -126,7 +126,7 @@ namespace ZedGraph
 		/// <remarks>
 		/// This method is typically called by the parent <see cref="GraphPane"/>
 		/// object as part of the <see cref="GraphPane.Draw"/> method.  It is also
-		/// called by <see cref="GraphPane.GeneralTransform"/> and
+		/// called by <see cref="GraphPane.GeneralTransform(double,double,CoordType)"/> and
 		/// <see cref="GraphPane.ReverseTransform( PointF, out double, out double, out double )"/>
 		/// methods to setup for coordinate transformations.
 		/// </remarks>
@@ -324,6 +324,10 @@ namespace ZedGraph
 		{
 			// call the base class first
 			base.PickScale( pane, g, scaleFactor );
+
+			// Majorstep is always 1 for log scales
+			if ( _majorStepAuto )
+				_majorStep = 1.0;
 
 			_mag = 0;		// Never use a magnitude shift for log scales
 			//this.numDec = 0;		// The number of decimal places to display is not used

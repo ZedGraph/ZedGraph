@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-05-07 05:31:53 $ </version>
+	/// <version> $Revision: 1.1.2.7 $ $Date: 2006-05-14 03:31:18 $ </version>
 	[Serializable]
 	public class BoxObj : GraphObj, ICloneable, ISerializable
 	{
@@ -111,11 +111,16 @@ namespace ZedGraph
 		/// for the box border</param>
 		/// <param name="fillColor">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the box fill (will be a solid color fill)</param>
-		/// <param name="rect">The <see cref="RectangleF" /> struct that defines
-		/// the box.  This will be in units determined by
+		/// <param name="x">The x location for this <see cref="BoxObj" />.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
-		public BoxObj( RectangleF rect, Color borderColor, Color fillColor ) :
-				base( rect.Left, rect.Top, rect.Width, rect.Height )
+		/// <param name="y">The y location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="width">The width of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="height">The height of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		public BoxObj( double x, double y, double width, double height, Color borderColor, Color fillColor )
+			: base( x, y, width, height )
 		{
 			this.Border = new Border( borderColor, Default.PenWidth );
 			this.Fill = new Fill( fillColor );
@@ -125,22 +130,27 @@ namespace ZedGraph
 		/// A constructor that allows the position
 		/// of the <see cref="BoxObj"/> to be pre-specified.  Other properties are defaulted.
 		/// </summary>
-		/// <param name="rect">The <see cref="RectangleF"/> struct that defines
-		/// the box.  This will be in units determined by
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
-		/// </param>
-		public BoxObj( RectangleF rect ) :
-			base( rect.Left, rect.Top, rect.Width, rect.Height )
+		/// <param name="x">The x location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="y">The y location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="width">The width of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="height">The height of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		public BoxObj( double x, double y, double width, double height )
+			:
+			base( x, y, width, height )
 		{
 			this.Border = new Border( Default.BorderColor, Default.PenWidth );
 			this.Fill = new Fill( Default.FillColor );
 		}
 
 		/// <summary>
-		/// A default constructor that creates a <see cref="BoxObj"/> from a
-		/// <see cref="RectangleF"/> of (0,0,1,1).  Other properties are defaulted.
+		/// A default constructor that creates a <see cref="BoxObj"/> using a location of (0,0),
+		/// and a width,height of (1,1).  Other properties are defaulted.
 		/// </summary>
-		public BoxObj() : this( new RectangleF( 0, 0, 1, 1 ) )
+		public BoxObj() : this( 0, 0, 1, 1 )
 		{
 		}
 
@@ -155,13 +165,17 @@ namespace ZedGraph
 		/// for the start of the box gradient fill</param>
 		/// <param name="fillColor2">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the end of the box gradient fill</param>
-		/// <param name="rect">The <see cref="RectangleF"/> struct that defines
-		/// the box.  This will be in units determined by
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
-		/// </param>
-		public BoxObj( RectangleF rect, Color borderColor,
+		/// <param name="x">The x location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="y">The y location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="width">The width of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="height">The height of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		public BoxObj( double x, double y, double width, double height, Color borderColor,
 							Color fillColor1, Color fillColor2 ) :
-				base( rect.Left, rect.Top, rect.Width, rect.Height )
+				base( x, y, width, height )
 		{
 			this.Border = new Border( borderColor, Default.PenWidth );
 			this.Fill = new Fill( fillColor1, fillColor2 );

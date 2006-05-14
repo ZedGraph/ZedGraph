@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.7 $ $Date: 2006-05-07 05:31:54 $ </version>
+	/// <version> $Revision: 1.1.2.8 $ $Date: 2006-05-14 03:31:18 $ </version>
 	[Serializable]
 	abstract public class GraphObj : ISerializable, ICloneable
 	{
@@ -224,7 +224,7 @@ namespace ZedGraph
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
 		/// aligned to this position based on the
 		/// <see cref="AlignV"/> property.</param>
-		public GraphObj( float x, float y ) :
+		public GraphObj( double x, double y ) :
 			this( x, y, Default.CoordFrame, Default.AlignH, Default.AlignV )
 		{
 		}
@@ -246,7 +246,7 @@ namespace ZedGraph
 		/// <param name="y">The y position of the item.</param>
 		/// <param name="x2">The x2 position of the item.</param>
 		/// <param name="y2">The x2 position of the item.</param>
-		public GraphObj( float x, float y, float x2, float y2 ) :
+		public GraphObj( double x, double y, double x2, double y2 ) :
 			this( x, y, x2, y2, Default.CoordFrame, Default.AlignH, Default.AlignV )
 		{
 		}
@@ -270,7 +270,7 @@ namespace ZedGraph
 		/// <param name="coordType">The <see cref="CoordType"/> enum value that
 		/// indicates what type of coordinate system the x and y parameters are
 		/// referenced to.</param>
-		public GraphObj( float x, float y, CoordType coordType ) :
+		public GraphObj( double x, double y, CoordType coordType ) :
 			this( x, y, coordType, Default.AlignH, Default.AlignV )
 		{
 		}
@@ -300,7 +300,7 @@ namespace ZedGraph
 		/// the horizontal alignment of the object with respect to the (x,y) location</param>
 		/// <param name="alignV">The <see cref="ZedGraph.AlignV"/> enum that specifies
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
-		public GraphObj( float x, float y, CoordType coordType, AlignH alignH, AlignV alignV )
+		public GraphObj( double x, double y, CoordType coordType, AlignH alignH, AlignV alignV )
 		{
 			_isVisible = true;
 			_isClippedToChartRect = Default.IsClippedToChartRect;
@@ -334,7 +334,7 @@ namespace ZedGraph
 		/// the horizontal alignment of the object with respect to the (x,y) location</param>
 		/// <param name="alignV">The <see cref="ZedGraph.AlignV"/> enum that specifies
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
-		public GraphObj( float x, float y, float x2, float y2, CoordType coordType,
+		public GraphObj( double x, double y, double x2, double y2, CoordType coordType,
 					AlignH alignH, AlignV alignV )
 		{
 			_isVisible = true;

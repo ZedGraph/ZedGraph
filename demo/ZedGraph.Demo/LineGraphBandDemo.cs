@@ -71,7 +71,7 @@ namespace ZedGraph.Demo
 			myPane.YAxis.MinorGrid.IsVisible = true;
 
 			// Draw a box item to highlight a value range
-			BoxObj box = new BoxObj( new RectangleF( 0, 100, 800, 30 ), Color.Empty, 
+			BoxObj box = new BoxObj( 0, 100, 800, 30, Color.Empty, 
 					Color.FromArgb( 150, Color.LightGreen ) );
 			box.Fill = new Fill( Color.White, Color.FromArgb( 200, Color.LightGreen ), 45.0F );
 			// Use the BehindAxis zorder to draw the highlight beneath the grid lines

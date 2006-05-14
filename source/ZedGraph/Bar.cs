@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.22.2.4 $ $Date: 2006-04-27 06:50:11 $ </version>
+   /// <version> $Revision: 3.22.2.5 $ $Date: 2006-05-14 03:31:18 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -374,7 +374,7 @@ namespace ZedGraph
 
 			// Loop over each defined point and draw the corresponding bar                
 			for ( int i=0; i<curve.Points.Count; i++ )
-				DrawSingleBar( g, pane, curve, i, pos, baseAxis, valueAxis, scaleFactor );
+				DrawSingleBar( g, pane, curve, i, pos, baseAxis, valueAxis, barWidth, scaleFactor );
 		}
 
 		/// <summary>
@@ -404,6 +404,9 @@ namespace ZedGraph
 		/// <param name="index">
 		/// The zero-based index number for the single bar to be drawn.
 		/// </param>
+		/// <param name="barWidth">
+		/// The width of each bar, in pixels.
+		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
@@ -412,7 +415,7 @@ namespace ZedGraph
 		/// </param>
 		public void DrawSingleBar( Graphics g, GraphPane pane, CurveItem curve,
 									Axis baseAxis, Axis valueAxis,
-									int pos, int index, float scaleFactor )
+									int pos, int index, float barWidth, float scaleFactor )
 		{
 			// Make sure that a bar value exists for the current curve and current ordinal position
 			if ( index >= curve.Points.Count )
@@ -425,7 +428,7 @@ namespace ZedGraph
 				pos = 0;
 
 			// Draw the specified bar
-			DrawSingleBar( g, pane, curve, index, pos, baseAxis, valueAxis, scaleFactor );
+			DrawSingleBar( g, pane, curve, index, pos, baseAxis, valueAxis, barWidth, scaleFactor );
 		}
 
 		/// <summary>
@@ -453,6 +456,9 @@ namespace ZedGraph
 		/// axis for the <see cref="Bar"/></param>
 		/// <param name="valueAxis">The <see cref="Axis"/> class instance that defines the value (dependent)
 		/// axis for the <see cref="Bar"/></param>
+		/// <param name="barWidth">
+		/// The width of each bar, in pixels.
+		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
@@ -462,7 +468,7 @@ namespace ZedGraph
 		virtual protected void DrawSingleBar( Graphics g, GraphPane pane,
 										CurveItem curve,
 										int index, int pos, Axis baseAxis, Axis valueAxis,
-										float scaleFactor )
+										float barWidth, float scaleFactor )
 		{
 			// pixBase = pixel value for the bar center on the base axis
 			// pixHiVal = pixel value for the bar top on the value axis
@@ -470,7 +476,7 @@ namespace ZedGraph
 			float pixBase, pixHiVal, pixLowVal;
 
 			float clusterWidth = pane.BarSettings.GetClusterWidth();
-			float barWidth = curve.GetBarWidth( pane );
+			//float barWidth = curve.GetBarWidth( pane );
 			float clusterGap = pane._barSettings.MinClusterGap * barWidth;
 			float barGap = barWidth * pane._barSettings.MinBarGap;
 

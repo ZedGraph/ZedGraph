@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-05-14 03:31:18 $ </version>
 	[Serializable]
 	public class BarSettings : ISerializable
 	{
@@ -67,14 +67,14 @@ namespace ZedGraph
 		/// or other scale types, you can use this value to scale the bars to an arbitrary
 		/// user scale. Use the public property <see cref="ClusterScaleWidth"/> to access this
 		/// value. </summary>
-		private double _clusterScaleWidth;
+		internal double _clusterScaleWidth;
 
 		/// <summary>
 		/// Private field that determines if the <see cref="ClusterScaleWidth" /> will be
 		/// calculated automatically.  Use the public property <see cref="ClusterScaleWidthAuto" />
 		/// to access this value.
 		/// </summary>
-		private bool _clusterScaleWidthAuto;
+		internal bool _clusterScaleWidthAuto;
 
 		/// <summary>
 		/// private field that stores the owner GraphPane that contains this BarSettings instance.
@@ -324,7 +324,9 @@ namespace ZedGraph
 				}
 
 				double range = baseAxis.Scale._maxLinTemp - baseAxis.Scale._minLinTemp;
-				if ( minStep <= 0 || minStep < 0.001 * range || minStep > range )
+				if ( range <= 0 )
+					minStep = 1.0;
+				else if ( minStep <= 0 || minStep < 0.001 * range || minStep > range )
 					minStep = 0.1 * range;
 
 				_clusterScaleWidth = minStep;

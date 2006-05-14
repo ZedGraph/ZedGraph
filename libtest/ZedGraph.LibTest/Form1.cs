@@ -2429,13 +2429,12 @@ namespace ZedGraph.LibTest
 					double x1, x2, y1, y2, y3, y4;
 					myPane.ReverseTransform( startPt, out x1, out y1, out y3 );
 					myPane.ReverseTransform( mousePt, out x2, out y2, out y4 );
-					float width = (float)Math.Abs( x1 - x2 );
-					float height = (float)Math.Abs( y1 - y2 );
+					double width = Math.Abs( x1 - x2 );
+					double height = Math.Abs( y1 - y2 );
 					x1 = Math.Min( x1, x2 );
 					y1 = Math.Max( y1, y2 );
 
-					RectangleF rect = new RectangleF( (float)x1, (float)y1, width, height );
-					BoxObj box = new BoxObj( rect, Color.Red, Color.Red );
+					BoxObj box = new BoxObj( x1, y1, width, height, Color.Red, Color.Red );
 					myPane.GraphObjList.Add( box );
 					isFirst = true;
 					Invalidate();

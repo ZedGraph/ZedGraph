@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.19.2.6 $ $Date: 2006-04-27 06:50:12 $ </version>
+	/// <version> $Revision: 3.19.2.7 $ $Date: 2006-05-14 03:31:19 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -650,7 +650,7 @@ namespace ZedGraph
 							_rect.Height - scaleFactor * ( _margin.Top + _margin.Bottom ) );
 
 			// Leave room for the title
-			if ( _title._isVisible )
+			if ( _title._isVisible && _title._text != string.Empty )
 			{
 				SizeF titleSize = _title._fontSpec.BoundingBox( g, _title._text, scaleFactor );
 				// Leave room for the title height, plus a line spacing of charHeight * _titleGap
@@ -859,13 +859,14 @@ namespace ZedGraph
 			return bitmap;
 		}
 
-		internal PointF TransformCoord( PointF ptF, CoordType coord )
+		internal PointF TransformCoord( double x, double y, CoordType coord )
 		{
 			// If the Transformation is an illegal type, just stick it in the middle
 			if ( !(this is GraphPane) && !( coord == CoordType.PaneFraction ) )
 			{
 				coord = CoordType.PaneFraction;
-				ptF = new PointF( 0.5F, 0.5F );
+				x = 0.5;
+				y = 0.5;
 			}
 
 			// Just to save some casts
@@ -881,48 +882,48 @@ namespace ZedGraph
 
 			if ( coord == CoordType.ChartFraction )
 			{
-				ptPix.X = chartRect.Left + ptF.X * chartRect.Width;
-				ptPix.Y = chartRect.Top + ptF.Y * chartRect.Height;
+				ptPix.X = (float)(chartRect.Left + x * chartRect.Width);
+				ptPix.Y = (float)(chartRect.Top + y * chartRect.Height);
 			}
 			else if ( coord == CoordType.AxisXYScale )
 			{
-				ptPix.X = gPane.XAxis.Scale.Transform( ptF.X );
-				ptPix.Y = gPane.YAxis.Scale.Transform( ptF.Y );
+				ptPix.X = gPane.XAxis.Scale.Transform( x );
+				ptPix.Y = gPane.YAxis.Scale.Transform( y );
 			}
 			else if ( coord == CoordType.AxisXY2Scale )
 			{
-				ptPix.X = gPane.XAxis.Scale.Transform( ptF.X );
-				ptPix.Y = gPane.Y2Axis.Scale.Transform( ptF.Y );
+				ptPix.X = gPane.XAxis.Scale.Transform( x );
+				ptPix.Y = gPane.Y2Axis.Scale.Transform( y );
 			}
 			else if ( coord == CoordType.XScaleYChartFraction )
 			{
-				ptPix.X = gPane.XAxis.Scale.Transform( ptF.X );
-				ptPix.Y = chartRect.Top + ptF.Y * chartRect.Height;
+				ptPix.X = gPane.XAxis.Scale.Transform( x );
+				ptPix.Y = (float)(chartRect.Top + y * chartRect.Height);
 			}
 			else if ( coord == CoordType.XChartFractionYScale )
 			{
-				ptPix.X = chartRect.Left + ptF.X * chartRect.Width;
-				ptPix.Y = gPane.YAxis.Scale.Transform( ptF.Y );
+				ptPix.X = (float)(chartRect.Left + x * chartRect.Width);
+				ptPix.Y = gPane.YAxis.Scale.Transform( y );
 			}
 			else if ( coord == CoordType.XChartFractionY2Scale )
 			{
-				ptPix.X = chartRect.Left + ptF.X * chartRect.Width;
-				ptPix.Y = gPane.Y2Axis.Scale.Transform( ptF.Y );
+				ptPix.X = (float)(chartRect.Left + x * chartRect.Width);
+				ptPix.Y = gPane.Y2Axis.Scale.Transform( y );
 			}
 			else if ( coord == CoordType.XChartFractionYPaneFraction )
 			{
-				ptPix.X = chartRect.Left + ptF.X * chartRect.Width;
-				ptPix.Y = this.Rect.Top + ptF.Y * _rect.Height;
+				ptPix.X = (float)(chartRect.Left + x * chartRect.Width);
+				ptPix.Y = (float)(this.Rect.Top + y * _rect.Height);
 			}
 			else if ( coord == CoordType.XPaneFractionYChartFraction )
 			{
-				ptPix.X = this.Rect.Left + ptF.X * _rect.Width;
-				ptPix.Y = chartRect.Top + ptF.Y * chartRect.Height;
+				ptPix.X = (float)(this.Rect.Left + x * _rect.Width);
+				ptPix.Y = (float)(chartRect.Top + y * chartRect.Height);
 			}
 			else	// PaneFraction
 			{
-				ptPix.X = _rect.Left + ptF.X * _rect.Width;
-				ptPix.Y = _rect.Top + ptF.Y * _rect.Height;
+				ptPix.X = (float)(_rect.Left + x * _rect.Width);
+				ptPix.Y = (float)(_rect.Top + y * _rect.Height);
 			}
 
 			return ptPix;

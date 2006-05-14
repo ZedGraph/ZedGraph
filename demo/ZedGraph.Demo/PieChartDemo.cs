@@ -89,8 +89,7 @@ namespace ZedGraph.Demo
 			myPane.GraphObjList.Add( text );
 			
 			// Add a colored background behind the pie
-			BoxObj box = new BoxObj( new RectangleF( 0F, 0F, 1F, 1F ),
-				Color.Empty, Color.PeachPuff );
+			BoxObj box = new BoxObj( 0, 0, 1, 1, Color.Empty, Color.PeachPuff );
 			box.Location.CoordinateFrame = CoordType.ChartFraction;
 			box.Border.IsVisible = false;
 			box.Location.AlignH = AlignH.Left;

@@ -1,3 +1,5 @@
+using ZedGraph;
+
 namespace ZedGraph.ControlTest
 {
 	partial class Form1
@@ -29,6 +31,7 @@ namespace ZedGraph.ControlTest
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager( typeof( Form1 ) );
 			this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
 			this.tabControl1 = new System.Windows.Forms.TabControl();
 			this.tabPage1 = new System.Windows.Forms.TabPage();

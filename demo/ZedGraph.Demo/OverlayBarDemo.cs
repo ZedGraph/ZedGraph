@@ -99,7 +99,7 @@ namespace ZedGraph.Demo
 			// Indicate that the bars are overlay type, which are drawn on top of eachother
 			myPane.BarSettings.Type = BarType.Overlay;
 			
-			// Fill the axis background with a color gradient
+			// Fill the axis background with a color gradientC:\Documents and Settings\champioj\Desktop\ZedGraph-4.9-CVS\demo\ZedGraph.Demo\StepChartDemo.cs
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0F );
 
 			base.ZedGraphControl.AxisChange();

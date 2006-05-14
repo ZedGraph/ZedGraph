@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-04-27 06:50:12 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-05-14 03:31:19 $ </version>
 	// /// <seealso cref="ZedGraph.Web.IsImageMap"/>
 	[Serializable]
 	public class Link : ISerializable, ICloneable
@@ -149,6 +149,21 @@ namespace ZedGraph
 			_target = string.Empty;
 			this.Tag = null;
 			_isEnabled = false;
+		}
+
+		/// <summary>
+		/// Construct a Link instance from a specified title, url, and target.
+		/// </summary>
+		/// <param name="title">The title for the link (which shows up in the tooltip).</param>
+		/// <param name="url">The URL destination for the link.</param>
+		/// <param name="target">The target for the link (typically "_blank" or "_self").</param>
+		public Link( string title, string url, string target )
+		{
+			_title = title;
+			_url = url;
+			_target = target;
+			Tag = null;
+			_isEnabled = true;
 		}
 
 		/// <summary>

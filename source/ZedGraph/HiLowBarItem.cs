@@ -54,7 +54,7 @@ namespace ZedGraph
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 3.12.2.6 $ $Date: 2006-05-14 03:31:19 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -278,7 +278,7 @@ namespace ZedGraph
 			Axis valueAxis = ValueAxis( pane );
 			Axis baseAxis = BaseAxis( pane );
 
-			float	scaledSize = this._bar.GetBarWidth( pane, baseAxis, pane.CalcScaleFactor() );
+			float	scaledSize = GetBarWidth( pane );
 
 			// pixBase = pixel value for the bar center on the base axis
 			// pixHiVal = pixel value for the bar top on the value axis

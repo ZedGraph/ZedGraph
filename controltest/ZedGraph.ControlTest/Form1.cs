@@ -53,11 +53,15 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_OnePoint( zedGraphControl1 );
 			//CreateGraph_StackedBars( zedGraphControl2 );
 			//CreateGraph_StickToCurve( zedGraphControl1 );
-			CreateGraph_TextBasic( zedGraphControl2 );
-			CreateChartDualY( zedGraphControl1 );
+			//CreateGraph_TextBasic( zedGraphControl2 );
+			//CreateChartDualY( zedGraphControl1 );
+			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
+			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
+			//CreateGraph_MultiYDemo( zedGraphControl1 );
 
+			CreateGraph_TestScroll( zedGraphControl1 );
 			//CreateGraph_DataSource( zedGraphControl1 );
-			//CreateGraph_PolyTest( zedGraphControl1 );
+			CreateGraph_PolyTest( zedGraphControl2 );
 			//CreateGraph_BarJunk( zedGraphControl2 );
 			//CreateGraph_Contour( zedGraphControl2 );
 			//CreateGraph_Junk( zedGraphControl2 );
@@ -98,8 +102,8 @@ namespace ZedGraph.ControlTest
 					GraphPane myPane = zedGraphControl1.GraphPane;
 					float dx = (float)( myPane.XAxis.Scale.Max - myPane.XAxis.Scale.Min );
 					float dy = (float)( myPane.YAxis.Scale.Max - myPane.YAxis.Scale.Min );
-					float xPix = myPane.Chart.Rect.Width * ellipse.Location.Width / dx;
-					float yPix = myPane.Chart.Rect.Height * ellipse.Location.Height / dy;
+					float xPix = myPane.Chart.Rect.Width * (float) ellipse.Location.Width / dx;
+					float yPix = myPane.Chart.Rect.Height * (float) ellipse.Location.Height / dy;
 
 					ellipse.Location.Width *= yPix / xPix;
 
@@ -713,8 +717,7 @@ namespace ZedGraph.ControlTest
 			myCurve3.Symbol.Fill = new Fill( Color.White );
 			myCurve4.Symbol.Fill = new Fill( Color.White );
 
-			RectangleF rect = new RectangleF( 20, 8, 10, 3 );
-			EllipseObj ellipse = new EllipseObj( rect, Color.Black, Color.White, Color.Blue );
+			EllipseObj ellipse = new EllipseObj( 20, 8, 10, 3, Color.Black, Color.White, Color.Blue );
 			myPane.GraphObjList.Add( ellipse );
 
 			// Tell ZedGraph to calculate the axis ranges
@@ -1059,23 +1062,23 @@ namespace ZedGraph.ControlTest
 			// Get a reference to the GraphPane instance in the ZedGraphControl
 			GraphPane myPane = z1.GraphPane;
 
-			PointF[] corners = new PointF[4];
-			corners[0] = new PointF( 300.0f, 85.0f );
-			corners[1] = new PointF( 400.0f, 85.0f );
-			corners[2] = new PointF( 400.0f, 95.0f );
-			corners[3] = new PointF( 300.0f, 95.0f );
+			PointD[] corners = new PointD[4];
+			corners[0] = new PointD( 300.0f, 85.0f );
+			corners[1] = new PointD( 400.0f, 85.0f );
+			corners[2] = new PointD( 400.0f, 95.0f );
+			corners[3] = new PointD( 300.0f, 95.0f );
 			PolyObj poly1 = new PolyObj( corners, Color.Empty, Color.Red );
 
-			PointF[] corners3 = new PointF[3];
-			corners3[0] = new PointF( 300.0f, 88.0f );
-			corners3[1] = new PointF( 375.0f, 95.0f );
-			corners3[2] = new PointF( 300.0f, 95.0f );
+			PointD[] corners3 = new PointD[3];
+			corners3[0] = new PointD( 300.0f, 88.0f );
+			corners3[1] = new PointD( 375.0f, 95.0f );
+			corners3[2] = new PointD( 300.0f, 95.0f );
 			PolyObj poly3 = new PolyObj( corners3, Color.Empty, Color.LightGreen );
 
-			PointF[] corners2 = new PointF[3];
-			corners2[0] = new PointF( 333.0f, 85.0f );
-			corners2[1] = new PointF( 400.0f, 91.0f );
-			corners2[2] = new PointF( 400.0f, 85.0f );
+			PointD[] corners2 = new PointD[3];
+			corners2[0] = new PointD( 333.0f, 85.0f );
+			corners2[1] = new PointD( 400.0f, 91.0f );
+			corners2[2] = new PointD( 400.0f, 85.0f );
 			PolyObj poly2 = new PolyObj( corners2, Color.Empty, Color.Cyan );
 
 			myPane.GraphObjList.Add( poly3 );
@@ -1382,7 +1385,7 @@ namespace ZedGraph.ControlTest
 
 			PointPairList list = new PointPairList();
 
-			for ( int i = 1; i < 100; i++ )
+			for ( int i = 1; i < 500; i++ )
 			{
 				double x = i;
 				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
@@ -1392,11 +1395,17 @@ namespace ZedGraph.ControlTest
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 
 			z1.IsShowHScrollBar = true;
-			z1.IsShowVScrollBar = true;
-			z1.IsAutoScrollRange = true;
+			z1.ScrollMinX = 0;
+			z1.ScrollMaxX = 550;
+			//z1.IsShowVScrollBar = true;
+			//z1.IsAutoScrollRange = true;
 
-			//z1.GraphPane.XAxis.Min = 1;
-			//z1.GraphPane.XAxis.Max = 100;
+			//z1.GraphPane.IsBoundedRanges = false;
+			z1.GraphPane.XAxis.Scale.Min = 450;
+			z1.GraphPane.XAxis.Scale.MajorStep = 10;
+			z1.GraphPane.XAxis.Scale.Max = 550;
+
+			z1.AxisChange();
 			//z1.GraphPane.XAxis.IsReverse = true;
 			//z1.GraphPane.XAxis.Type = AxisType.Log;
 			//z1.IsAutoScrollRange = true;
@@ -1506,6 +1515,110 @@ namespace ZedGraph.ControlTest
 			LineItem myCurve = z1.GraphPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 			myCurve.Line.IsVisible = false;
 			z1.IsShowCopyMessage = false;
+
+			z1.AxisChange();
+		}
+
+		private void CreateGraph_OverlayBarDemo( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			// Set the title and axis label
+			myPane.Title.Text = "Overlay Bar Graph Demo";
+			myPane.YAxis.Title.Text = "Value";
+			
+			// Enter some data values
+			double[] y = { 100, 115, 75, -22, 98, 40, -10 };
+			double[] y2 = { 90, 100, 95, -35, 80, 35, 35 };
+			double[] y3 = { 80, 110, 65, -15, 54, 67, 18 };
+
+			// Manually sum up the curves
+			for ( int i=0; i<y.GetLength(0); i++ )
+				y2[i] += y[i];
+			for ( int i=0; i<y2.GetLength(0); i++ )
+				y3[i] += y2[i];
+
+
+			// Generate a red bar with "Curve 1" in the legend
+			CurveItem myCurve = myPane.AddBar( "Curve 1", null, y, Color.Red );
+
+			// Generate a blue bar with "Curve 2" in the legend
+			myCurve = myPane.AddBar( "Curve 2", null, y2, Color.Blue );
+
+			// Generate a green bar with "Curve 3" in the legend
+			myCurve = myPane.AddBar( "Curve 3", null, y3, Color.Green );
+
+			// Draw the X tics between the labels instead of at the labels
+			myPane.XAxis.MajorTic.IsBetweenLabels = true;
+
+			// Set the XAxis to the ordinal type
+			myPane.XAxis.Type = AxisType.Ordinal;
+
+			//Add Labels to the curves
+
+			// Shift the text items up by 5 user scale units above the bars
+			const float shift = 5;
+			
+			for ( int i=0; i<y.Length; i++ )
+			{
+				// format the label string to have 1 decimal place
+				string lab = y3[i].ToString( "F1" );
+				// create the text item (assumes the x axis is ordinal or text)
+				// for negative bars, the label appears just above the zero value
+				TextObj text = new TextObj( lab, (float) (i+1), (float) (y3[i] < 0 ? 0.0 : y3[i]) + shift );
+				// tell Zedgraph to use user scale units for locating the TextObj
+				text.Location.CoordinateFrame = CoordType.AxisXYScale;
+				// AlignH the left-center of the text to the specified point
+				text.Location.AlignH = AlignH.Left;
+				text.Location.AlignV = AlignV.Center;
+				text.FontSpec.Border.IsVisible = false;
+				text.FontSpec.Fill.IsVisible = false;
+				// rotate the text 90 degrees
+				text.FontSpec.Angle = 90;
+				// add the TextObj to the list
+				myPane.GraphObjList.Add( text );
+			}
+			
+			// Indicate that the bars are overlay type, which are drawn on top of eachother
+			myPane.BarSettings.Type = BarType.Overlay;
+			
+			// Fill the axis background with a color gradientC:\Documents and Settings\champioj\Desktop\ZedGraph-4.9-CVS\demo\ZedGraph.Demo\StepChartDemo.cs
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0F );
+
+			z1.AxisChange();
+
+			// Add one step to the max scale value to leave room for the labels
+			myPane.YAxis.Scale.Max += myPane.YAxis.Scale.MajorStep;
+		}
+
+		private void CreateGraph_HiLowBarDemo( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			// Set the title and axis labels
+			myPane.Title.Text = "Hi-Low Bar Graph Demo";
+			myPane.XAxis.Title.Text = "Event";
+			myPane.YAxis.Title.Text = "Range of Values";
+
+			// Make up some data points based on the Sine function
+			PointPairList list = new PointPairList();
+			for ( int i = 1; i < 45; i++ )
+			{
+				double y = Math.Sin( (double)i * Math.PI / 15.0 );
+				double yBase = y - 0.4;
+				list.Add( (double)i*100, y, yBase );
+			}
+
+			// Generate a red bar with "Curve 1" in the legend
+			HiLowBarItem myCurve = myPane.AddHiLowBar( "Curve 1", list, Color.Red );
+			// Fill the bar with a red-white-red gradient for a 3d look
+			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
+			// Make the bar width based on the available space, rather than a size in points
+			myCurve.Bar.IsMaximumWidth = true;
+
+			// Fill the axis background with a color gradient
+			myPane.Chart.Fill = new Fill( Color.White,
+				Color.FromArgb( 255, 255, 166 ), 45.0F );
 
 			z1.AxisChange();
 		}
@@ -1835,11 +1948,176 @@ namespace ZedGraph.ControlTest
 
 		}
 
+		private void CreateGraph_MultiYDemo( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			// Set the titles and axis labels
+			myPane.Title.Text = "Demonstration of Multi Y Graph";
+			myPane.XAxis.Title.Text = "Time, s";
+			myPane.YAxis.Title.Text = "Velocity, m/s";
+			myPane.Y2Axis.Title.Text = "Acceleration, m/s2";
+
+			// Make up some data points based on the Sine function
+			PointPairList vList = new PointPairList();
+			PointPairList aList = new PointPairList();
+			PointPairList dList = new PointPairList();
+			PointPairList eList = new PointPairList();
+
+			// Fabricate some data values
+			for ( int i = 0; i < 30; i++ )
+			{
+				double time = (double)i;
+				double acceleration = 2.0;
+				double velocity = acceleration * time;
+				double distance = acceleration * time * time / 2.0;
+				double energy = 100.0 * velocity * velocity / 2.0;
+				aList.Add( time, acceleration );
+				vList.Add( time, velocity );
+				eList.Add( time, energy );
+				dList.Add( time, distance );
+			}
+
+			// Generate a red curve with diamond symbols, and "Velocity" in the legend
+			LineItem myCurve = myPane.AddCurve( "Velocity",
+				vList, Color.Red, SymbolType.Diamond );
+			// Fill the symbols with white
+			myCurve.Symbol.Fill = new Fill( Color.White );
+
+			// Generate a blue curve with circle symbols, and "Acceleration" in the legend
+			myCurve = myPane.AddCurve( "Acceleration",
+				aList, Color.Blue, SymbolType.Circle );
+			// Fill the symbols with white
+			myCurve.Symbol.Fill = new Fill( Color.White );
+			// Associate this curve with the Y2 axis
+			myCurve.IsY2Axis = true;
+
+			// Generate a green curve with square symbols, and "Distance" in the legend
+			myCurve = myPane.AddCurve( "Distance",
+				dList, Color.Green, SymbolType.Square );
+			// Fill the symbols with white
+			myCurve.Symbol.Fill = new Fill( Color.White );
+			// Associate this curve with the second Y axis
+			myCurve.YAxisIndex = 1;
+
+			// Generate a Black curve with triangle symbols, and "Energy" in the legend
+			myCurve = myPane.AddCurve( "Energy",
+				eList, Color.Black, SymbolType.Triangle );
+			// Fill the symbols with white
+			myCurve.Symbol.Fill = new Fill( Color.White );
+			// Associate this curve with the Y2 axis
+			myCurve.IsY2Axis = true;
+			// Associate this curve with the second Y2 axis
+			myCurve.YAxisIndex = 1;
+
+			// Show the x axis grid
+			myPane.XAxis.MajorGrid.IsVisible = true;
+
+			// Make the Y axis scale red
+			myPane.YAxis.Scale.FontSpec.FontColor = Color.Red;
+			myPane.YAxis.Title.FontSpec.FontColor = Color.Red;
+			// turn off the opposite tics so the Y tics don't show up on the Y2 axis
+			myPane.YAxis.MajorTic.IsOpposite = false;
+			myPane.YAxis.MinorTic.IsOpposite = false;
+			// Don't display the Y zero line
+			myPane.YAxis.MajorGrid.IsZeroLine = false;
+			// Align the Y axis labels so they are flush to the axis
+			myPane.YAxis.Scale.Align = AlignP.Inside;
+
+			// Enable the Y2 axis display
+			myPane.Y2Axis.IsVisible = true;
+			// Make the Y2 axis scale blue
+			myPane.Y2Axis.Scale.FontSpec.FontColor = Color.Blue;
+			myPane.Y2Axis.Title.FontSpec.FontColor = Color.Blue;
+			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
+			myPane.Y2Axis.MajorTic.IsOpposite = false;
+			myPane.Y2Axis.MinorTic.IsOpposite = false;
+			// Display the Y2 axis grid lines
+			myPane.Y2Axis.MajorGrid.IsVisible = true;
+			// Align the Y2 axis labels so they are flush to the axis
+			myPane.Y2Axis.Scale.Align = AlignP.Inside;
+			myPane.Y2Axis.Scale.Min = 1.5;
+
+			// Create a second Y Axis, green
+			YAxis yAxis3 = new YAxis( "Distance, m" );
+			myPane.YAxisList.Add( yAxis3 );
+			yAxis3.Scale.FontSpec.FontColor = Color.Green;
+			yAxis3.Title.FontSpec.FontColor = Color.Green;
+			yAxis3.Color = Color.Green;
+			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
+			yAxis3.MajorTic.IsInside = false;
+			yAxis3.MinorTic.IsInside = false;
+			yAxis3.MajorTic.IsOpposite = false;
+			yAxis3.MinorTic.IsOpposite = false;
+			// Align the Y2 axis labels so they are flush to the axis
+			yAxis3.Scale.Align = AlignP.Inside;
+
+			Y2Axis yAxis4 = new Y2Axis( "Energy" );
+			yAxis4.IsVisible = true;
+			myPane.Y2AxisList.Add( yAxis4 );
+			// turn off the opposite tics so the Y2 tics don't show up on the Y axis
+			yAxis4.MajorTic.IsInside = false;
+			yAxis4.MinorTic.IsInside = false;
+			yAxis4.MajorTic.IsOpposite = false;
+			yAxis4.MinorTic.IsOpposite = false;
+			// Align the Y2 axis labels so they are flush to the axis
+			yAxis4.Scale.Align = AlignP.Inside;
+			yAxis4.Type = AxisType.Log;
+			yAxis4.Scale.Min = 100;
+
+			// Fill the axis background with a gradient
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+
+			myPane.IsAlignGrids = true;
+
+			z1.AxisChange();
+
+		}
+
+		private void CreateGraph_TestScroll( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+			// Make up some data points based on the Sine function 
+			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			for ( int i = 0; i < 36; i++ )
+			{
+				double x = (double)i * 5.0;
+				double y = Math.Sin( (double)i * Math.PI / 15.0 ) * 16.0;
+				double y2 = y * 13.5;
+				list.Add( x, y );
+				list2.Add( x, y2 );
+			}
+			// Generate a red curve with diamond symbols, and "Alpha" in the legend 
+			LineItem myCurve = myPane.AddCurve( "Alpha", list, Color.Red, SymbolType.Diamond );
+			// Fill the symbols with white 
+			myCurve.Symbol.Fill = new Fill( Color.White );
+			// Generate a blue curve with circle symbols, and "Beta" in the legend 
+			myCurve = myPane.AddCurve( "Beta", list2, Color.Blue, SymbolType.Circle );
+			// Fill the symbols with white 
+			myCurve.Symbol.Fill = new Fill( Color.White );
+			// Associate this curve with the Y2 axis 
+			myCurve.IsY2Axis = true;
+			// Show the x axis grid 
+			myPane.XAxis.MajorGrid.IsVisible = true;
+			// Activate the horizontal scroll bar  
+			z1.IsShowHScrollBar = true;
+			// Set the scrollable range  
+			z1.ScrollMinX = 0;
+			z1.ScrollMaxX = 36;
+			// Set the current range for the axis scale  
+			z1.GraphPane.XAxis.Scale.Min = 26;
+			z1.GraphPane.XAxis.Scale.MajorStep = 10;
+			z1.GraphPane.XAxis.Scale.Max = 36;
+			z1.GraphPane.IsBoundedRanges = false;
+
+			z1.AxisChange();
+		}
+
 		private Boolean removeGraphByName( ZedGraphControl z1, string sOpName )
 		{
 			try
 			{
-				int i;
 				GraphPane gpane = z1.GraphPane;
 
 

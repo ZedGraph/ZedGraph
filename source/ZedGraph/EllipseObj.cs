@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-05-14 03:31:18 $ </version>
 	[Serializable]
 	public class EllipseObj : BoxObj, ICloneable, ISerializable
 	{
@@ -45,17 +45,22 @@ namespace ZedGraph
 		/// A constructor that allows the position and size
 		/// of the <see cref="EllipseObj"/> to be pre-specified.  Other properties are defaulted.
 		/// </summary>
-		/// <param name="rect"/>The <see cref="RectangleF"/> struct that defines
-		/// the ellipse.  This will be in units determined by
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
-		public EllipseObj( RectangleF rect ) :
-			base( rect )
+		/// <param name="x">The x location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="y">The y location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="width">The width of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="height">The height of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		public EllipseObj( double x, double y, double width, double height )
+			: base( x, y, width, height )
 		{
 		}
 		
 		/// <summary>
-		/// A default constructor that places the <see cref="EllipseObj"/> at the
-		/// default <see cref="RectangleF"/> of (0,0,1,1).  Other properties are defaulted.
+		/// A default constructor that places the <see cref="EllipseObj"/> at location (0,0),
+		/// with width/height of (1,1).  Other properties are defaulted.
 		/// </summary>
 		public EllipseObj() : base()
 		{
@@ -69,11 +74,16 @@ namespace ZedGraph
 		/// for the ellipse border</param>
 		/// <param name="fillColor">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the ellipse fill (will be a solid color fill)</param>
-		/// <param name="rect"/>The <see cref="RectangleF"/> struct that defines
-		/// the ellipse.  This will be in units determined by
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
-		public EllipseObj( RectangleF rect, Color borderColor, Color fillColor ) :
-			base( rect, borderColor, fillColor )
+		/// <param name="x">The x location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="y">The y location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="width">The width of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="height">The height of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		public EllipseObj( double x, double y, double width, double height, Color borderColor, Color fillColor )
+			: base( x, y, width, height, borderColor, fillColor )
 		{
 		}
 
@@ -88,12 +98,17 @@ namespace ZedGraph
 		/// for the start of the ellipse gradient fill</param>
 		/// <param name="fillColor2">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the end of the ellipse gradient fill</param>
-		/// <param name="rect"/>The <see cref="RectangleF"/> struct that defines
-		/// the ellipse.  This will be in units determined by
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
-		public EllipseObj( RectangleF rect, Color borderColor,
+		/// <param name="x">The x location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="y">The y location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="width">The width of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="height">The height of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		public EllipseObj( double x, double y, double width, double height, Color borderColor,
 							Color fillColor1, Color fillColor2 ) :
-				base( rect, borderColor, fillColor1, fillColor2 )
+				base( x, y, width, height, borderColor, fillColor1, fillColor2 )
 		{
 		}
 

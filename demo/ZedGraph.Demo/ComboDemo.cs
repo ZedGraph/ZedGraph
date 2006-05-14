@@ -155,7 +155,7 @@ namespace ZedGraph.Demo
 			myPane.GraphObjList.Add( text );
 
 			// Add a BoxObj to show a colored band behind the graph data
-			BoxObj box = new BoxObj( new RectangleF( 0, 110, 1200, 10 ),
+			BoxObj box = new BoxObj( 0, 110, 1200, 10,
 					Color.Empty, Color.FromArgb( 225, 245, 225) );
 			box.Location.CoordinateFrame = CoordType.AxisXYScale;
 			// Align the left-top of the box to (0, 110)

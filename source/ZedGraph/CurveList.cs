@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.32.2.8 $ $Date: 2006-05-07 05:31:53 $ </version>
+	/// <version> $Revision: 3.32.2.9 $ $Date: 2006-05-14 03:31:18 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -404,8 +404,8 @@ namespace ZedGraph
 						// account for the fact that the bar clusters have a width
 						if ( !isXOrd )
 						{
-							tXMinVal -= pane._barSettings.ClusterScaleWidth / 2.0;
-							tXMaxVal += pane._barSettings.ClusterScaleWidth / 2.0;
+							tXMinVal -= pane._barSettings._clusterScaleWidth / 2.0;
+							tXMaxVal += pane._barSettings._clusterScaleWidth / 2.0;
 						}
 					}
 					else
@@ -422,8 +422,8 @@ namespace ZedGraph
 						// account for the fact that the bar clusters have a width
 						if ( !isYOrd )
 						{
-							tYMinVal -= pane._barSettings.ClusterScaleWidth / 2.0;
-							tYMaxVal += pane._barSettings.ClusterScaleWidth / 2.0;
+							tYMinVal -= pane._barSettings._clusterScaleWidth / 2.0;
+							tYMaxVal += pane._barSettings._clusterScaleWidth / 2.0;
 						}
 					}
 				}
@@ -579,7 +579,7 @@ namespace ZedGraph
 						barItem.Bar.DrawSingleBar( g, pane, barItem,
 							((BarItem)barItem).BaseAxis( pane ),
 							((BarItem)barItem).ValueAxis( pane ),
-							0, i, scaleFactor );
+							0, i, ( (BarItem)barItem ).GetBarWidth( pane ), scaleFactor );
 				}
 			}
 

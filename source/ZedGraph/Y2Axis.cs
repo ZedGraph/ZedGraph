@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11.2.4 $ $Date: 2006-04-27 06:50:12 $ </version>
+	/// <version> $Revision: 3.11.2.5 $ $Date: 2006-05-14 03:31:19 $ </version>
 	[Serializable]
 	public class Y2Axis : Axis, ICloneable, ISerializable
 	{
@@ -79,7 +79,7 @@ namespace ZedGraph
 		public Y2Axis( string title ) : base( title )
 		{
 			_isVisible = Default.IsVisible;
-			_majorGrid._isZeroLine = MajorGrid.Default.IsZeroLine;
+			_majorGrid._isZeroLine = Default.IsZeroLine;
 			_scale._fontSpec.Angle = -90.0F;
 		}
 

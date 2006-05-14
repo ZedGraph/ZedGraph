@@ -106,6 +106,7 @@
     <Compile Include="ZedGraph\PaneBase.cs" />
     <Compile Include="ZedGraph\PaneList.cs" />
     <Compile Include="ZedGraph\PieItem.cs" />
+    <Compile Include="ZedGraph\PointD.cs" />
     <Compile Include="ZedGraph\PointPair.cs" />
     <Compile Include="ZedGraph\PointPair4.cs" />
     <Compile Include="ZedGraph\PointPairList.cs" />

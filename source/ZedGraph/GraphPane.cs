@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.7 $ $Date: 2006-05-02 06:35:57 $ </version>
+	/// <version> $Revision: 3.59.2.8 $ $Date: 2006-05-14 03:31:18 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -105,6 +105,13 @@ namespace ZedGraph
 		/// XAxis.Min and XAxis.Max.</remarks>
 		private bool _isBoundedRanges;
 
+		/// <summary>
+		/// private field that determines if ZedGraph should modify the scale ranges for the Y and Y2
+		/// axes such that the number of steps, and therefore the grid lines, line up.  Use the
+		/// public property <see cref="IsAlignGrids" /> to acccess this value.
+		/// </summary>
+		private bool _isAlignGrids;
+
 
 		/// <summary>Private field that determines how the <see cref="LineItem"/>
 		/// graphs will be displayed. See the <see cref="ZedGraph.LineType"/> enum
@@ -137,7 +144,7 @@ namespace ZedGraph
 			/// true to have the auto-scale-range code subset the data according to any
 			/// manually set scale values, false otherwise.
 			/// </summary>
-			public static bool IsBoundedRanges = true;
+			public static bool IsBoundedRanges = false;
 
 			/// <summary>The default value for the <see cref="GraphPane.LineType"/> property, which
 			/// determines if the lines are drawn in normal or "stacked" mode.  See the
@@ -253,6 +260,9 @@ namespace ZedGraph
 		/// All data after the first non-zero Y value are included.
 		/// </remarks>
 		/// <seealso cref="Default.IsIgnoreInitial"/>
+		[Bindable( true ), Browsable( true ), Category( "Display" ), NotifyParentProperty( true )]
+		[Description("Determines whether the auto-ranged scale will include all data points" +
+			" or just the visible data points")]
 		public bool IsIgnoreInitial
 		{
 			get { return _isIgnoreInitial; }
@@ -282,6 +292,22 @@ namespace ZedGraph
 		{
 			get { return _isIgnoreMissing; }
 			set { _isIgnoreMissing = value; }
+		}
+		
+		/// <summary>
+		/// Gets or sets a value that determines if ZedGraph should modify the scale ranges
+		/// for the Y and Y2 axes such that the number of major steps, and therefore the
+		/// major grid lines, line up.
+		/// </summary>
+		/// <remarks>
+		/// This property affects the way that <see cref="AxisChange" /> selects the scale
+		/// ranges for the Y and Y2 axes.  It applies to the scale ranges of all Y and Y2 axes,
+		/// but only if the <see cref="Scale.MaxAuto" /> is set to true.<br />
+		/// </remarks>
+		public bool IsAlignGrids
+		{
+			get { return _isAlignGrids; }
+			set { _isAlignGrids = value; }
 		}
 
 		/// <summary>Determines how the <see cref="LineItem"/>
@@ -356,6 +382,7 @@ namespace ZedGraph
 
 			_isIgnoreInitial = Default.IsIgnoreInitial;
 			_isBoundedRanges = Default.IsBoundedRanges;
+			_isAlignGrids = false;
 
 			_chart = new Chart();
 
@@ -374,6 +401,7 @@ namespace ZedGraph
 			// copy values for all the value types
 			_isIgnoreInitial = rhs.IsIgnoreInitial;
 			_isBoundedRanges = rhs._isBoundedRanges;
+			_isAlignGrids = rhs._isAlignGrids;
 
 			_chart = rhs._chart.Clone();
 
@@ -452,6 +480,7 @@ namespace ZedGraph
 			_isIgnoreInitial = info.GetBoolean( "isIgnoreInitial" );
 			_isBoundedRanges = info.GetBoolean( "isBoundedRanges" );
 			_isIgnoreMissing = info.GetBoolean( "isIgnoreMissing" );
+			_isAlignGrids = info.GetBoolean( "isAlignGrids" );
 
 			_lineType = (LineType)info.GetValue( "lineType", typeof( LineType ) );
 
@@ -481,6 +510,7 @@ namespace ZedGraph
 			info.AddValue( "isIgnoreInitial", _isIgnoreInitial );
 			info.AddValue( "isBoundedRanges", _isBoundedRanges );
 			info.AddValue( "isIgnoreMissing", _isIgnoreMissing );
+			info.AddValue( "isAlignGrids", _isAlignGrids );
 
 			info.AddValue( "lineType", _lineType );
 		}
@@ -536,25 +566,62 @@ namespace ZedGraph
 			// then let the scales re-calculate to make sure that the assumption was ok
 			if ( _chart._isRectAuto )
 			{
-				_xAxis.Scale.PickScale( this, g, scaleFactor );
-				foreach ( Axis axis in _yAxisList )
-					axis.Scale.PickScale( this, g, scaleFactor );
-				foreach ( Axis axis in _y2AxisList )
-					axis.Scale.PickScale( this, g, scaleFactor );
+				PickScale( g, scaleFactor );
 
 				_chart._rect = CalcChartRect( g );
 				//this.pieRect = PieItem.CalcPieRect( g, this, scaleFactor, this.chartRect );
 			}
 
 			// Pick new scales based on the range
-			_xAxis.Scale.PickScale( this, g, scaleFactor );
-			foreach ( Axis axis in _yAxisList )
-				axis.Scale.PickScale( this, g, scaleFactor );
-			foreach ( Axis axis in _y2AxisList )
-				axis.Scale.PickScale( this, g, scaleFactor );
+			PickScale( g, scaleFactor );
 
 			// Set the ClusterScaleWidth, if needed
 			_barSettings.CalcClusterScaleWidth();
+		}
+
+		private void PickScale( Graphics g, float scaleFactor )
+		{
+			int maxTics = 0;
+
+			_xAxis._scale.PickScale( this, g, scaleFactor );
+			foreach ( Axis axis in _yAxisList )
+			{
+				axis._scale.PickScale( this, g, scaleFactor );
+				if ( axis._scale.MaxAuto )
+				{
+					int nTics = axis._scale.CalcNumTics();
+					maxTics = nTics > maxTics ? nTics : maxTics;
+				}
+			}
+			foreach ( Axis axis in _y2AxisList )
+			{
+				axis._scale.PickScale( this, g, scaleFactor );
+				if ( axis._scale.MaxAuto )
+				{
+					int nTics = axis._scale.CalcNumTics();
+					maxTics = nTics > maxTics ? nTics : maxTics;
+				}
+			}
+
+			if ( _isAlignGrids )
+			{
+				foreach ( Axis axis in _yAxisList )
+					ForceNumTics( axis, maxTics );
+
+				foreach ( Axis axis in _y2AxisList )
+					ForceNumTics( axis, maxTics );
+			}
+
+		}
+
+		private void ForceNumTics( Axis axis, int numTics )
+		{
+			if ( axis._scale.MaxAuto )
+			{
+				int nTics = axis._scale.CalcNumTics();
+				if ( nTics < numTics )
+					axis._scale._maxLinearized += axis._scale._majorStep * ( numTics - nTics );
+			}
 		}
 
 		/// <summary>
@@ -1347,7 +1414,37 @@ namespace ZedGraph
 			foreach ( Axis axis in _y2AxisList )
 				axis.Scale.SetupScaleData( this, axis );
 
-			return this.TransformCoord( ptF, coord );
+			return this.TransformCoord( ptF.X, ptF.Y, coord );
+		}
+
+		/// <summary>
+		/// Transform a data point from the specified coordinate type
+		/// (<see cref="CoordType"/>) to screen coordinates (pixels).
+		/// </summary>
+		/// <remarks>This method implicitly assumes that <see cref="ZedGraph.Chart.Rect"/>
+		/// has already been calculated via <see cref="AxisChange"/> or
+		/// <see cref="Draw"/> methods, or the <see cref="ZedGraph.Chart.Rect"/> is
+		/// set manually (see <see cref="ZedGraph.Chart.IsRectAuto"/>).
+		/// Note that this method is more accurate than the <see cref="GeneralTransform(PointF,CoordType)" />
+		/// overload, since it uses double types.  This would typically only be significant for
+		/// <see cref="AxisType.Date" /> coordinates.
+		/// </remarks>
+		/// <param name="x">The x coordinate that defines the location in user space</param>
+		/// <param name="y">The y coordinate that defines the location in user space</param>
+		/// <param name="coord">A <see cref="CoordType"/> type that defines the
+		/// coordinate system in which the X,Y pair is defined.</param>
+		/// <returns>A point in screen coordinates that corresponds to the
+		/// specified user point.</returns>
+		public PointF GeneralTransform( double x, double y, CoordType coord )
+		{
+			// Setup the scaling data based on the chart rect
+			_xAxis.Scale.SetupScaleData( this, _xAxis );
+			foreach ( Axis axis in _yAxisList )
+				axis.Scale.SetupScaleData( this, axis );
+			foreach ( Axis axis in _y2AxisList )
+				axis.Scale.SetupScaleData( this, axis );
+
+			return this.TransformCoord( x, y, coord );
 		}
 
 
@@ -1629,7 +1726,7 @@ namespace ZedGraph
 					if ( width > 0 )
 					{
 						tmpRect = new RectangleF( left, tmpChartRect.Top,
-							left + width, tmpChartRect.Height );
+							width, tmpChartRect.Height );
 						if ( saveZOrder <= ZOrder.E_BehindAxis && tmpRect.Contains( mousePt ) )
 						{
 							nearestObj = y2Axis;
