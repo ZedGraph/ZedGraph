@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion based on code by Jerry Vos</author>
-	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-07 06:14:06 $ </version>
+	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-05-15 06:35:31 $ </version>
 	[Serializable]
 	public class StockPointList : List<StockPt>, IPointList, IPointListEdit
 	{
@@ -135,6 +135,22 @@ namespace ZedGraph
 			Add( point );
 		}
 
+		/// <summary>
+		/// Access the <see cref="StockPt" /> at the specified ordinal index.
+		/// </summary>
+		/// <remarks>
+		/// To be compatible with the <see cref="IPointList" /> interface, the
+		/// <see cref="StockPointList" /> must implement an index that returns a
+		/// <see cref="PointPair" /> rather than a <see cref="StockPt" />.  This method
+		/// will return the actual <see cref="StockPt" /> at the specified position.
+		/// </remarks>
+		/// <param name="index">The ordinal position (zero-based) in the list</param>
+		/// <returns>The specified <see cref="StockPt" />.
+		/// </returns>
+		public StockPt GetAt( int index )
+		{
+			return base[index];
+		}
 
 	#endregion
 	}

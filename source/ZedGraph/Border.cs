@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12.2.4 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 3.12.2.5 $ $Date: 2006-05-15 06:35:31 $ </version>
 	[Serializable]
 	public class Border : ISerializable, ICloneable
 	{
@@ -226,8 +226,7 @@ namespace ZedGraph
 		/// before rendering.
 		/// </summary>
 		/// <remarks>This allows the border to be inset or outset relative to
-		/// the actual rectangle area.  Use the public property <see cref="InflateFactor"/>
-		/// to access this value.
+		/// the actual rectangle area.
 		/// </remarks>
 		public float InflateFactor
 		{

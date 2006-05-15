@@ -78,7 +78,7 @@ namespace ZedGraph.Web
 		/// <see cref="CurveItem"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="CurveItem"/> object</param>
-		public void CopyTo( CurveItem item )
+		internal void CopyTo( CurveItem item )
 		{
 			item.Label.Text = this.Label;
 			item.Color = this.Color;
@@ -295,7 +295,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.Border"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.Border"/> object</param>
-		public void CopyTo( Border item )
+		internal void CopyTo( Border item )
 		{
 			item.Color = this.Color;
 			item.IsVisible = this.IsVisible;
@@ -309,7 +309,10 @@ namespace ZedGraph.Web
 		/// <remarks> Determines the <see cref="System.Drawing.Color"/> of the <see cref="Pen"/> used to
 		/// draw this Border.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The Border color" )
+		]
 		public Color Color
 		{
 			get
@@ -326,7 +329,10 @@ namespace ZedGraph.Web
 		/// <remarks> Determines whether or not the Border will be drawn.  true to draw the Border,
 		/// false otherwise.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "true to display a border, false to hide it" )
+		]
 		public bool IsVisible
 		{
 			get
@@ -343,7 +349,10 @@ namespace ZedGraph.Web
 		/// <remarks> Gets or sets the width, in points (1/72 inch), of the <see cref="Pen"/>
 		/// used to draw this Border.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The width of the pen used to draw the border, in points (1/72nd inch)" )
+		]
 		public float PenWidth
 		{
 			get
@@ -360,7 +369,10 @@ namespace ZedGraph.Web
 		/// <remarks> Gets or sets the amount of inflation to be done on the rectangle
 		/// before rendering.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Sets an inflation amount, in pixels, used to expand the border before rendering" )
+		]
 		public float InflateFactor
 		{
 			get
@@ -412,7 +424,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.Fill"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.Fill"/> object</param>
-		public void CopyTo( Fill item )
+		internal void CopyTo( Fill item )
 		{
 			item.Color = System.Drawing.Color.FromArgb( (int)Math.Floor( this.ColorOpacity * 2.55 + .5 ), this.Color );
 			item.IsVisible = this.IsVisible;
@@ -434,7 +446,10 @@ namespace ZedGraph.Web
 		/// when <see cref="Type"/> is <see cref="FillType.Brush"/> and <see cref="Brush"/>
 		/// is null.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The color of the fill" )
+		]
 		public Color Color
 		{
 			get
@@ -478,7 +493,10 @@ namespace ZedGraph.Web
 		/// solid-color fill, you have to manually set <see cref="Type"/>
 		/// to <see cref="FillType.Solid"/>.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "true to display a fill, false for no fill" )
+		]
 		public bool IsVisible
 		{
 			get
@@ -500,7 +518,11 @@ namespace ZedGraph.Web
 		/// <seealso cref="FillType.GradientByZ"/>
 		/// <seealso cref="ZedGraph.Fill.IsGradientValueType"/>
 		/// <value>A double value, in user scale unit</value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The max user-scale value for gradient-by-value colors.  Defines the user-scale" +
+			" value at the high end of the color gradient" )
+		]
 		public double RangeMax
 		{
 			get
@@ -522,7 +544,11 @@ namespace ZedGraph.Web
 		/// <seealso cref="FillType.GradientByZ"/>
 		/// <seealso cref="ZedGraph.Fill.IsGradientValueType"/>
 		/// <value>A double value, in user scale unit</value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The min user-scale value for gradient-by-value colors.  Defines the user-scale" +
+			" value at the low end of the color gradient" )
+		]
 		public double RangeMin
 		{
 			get
@@ -542,7 +568,10 @@ namespace ZedGraph.Web
 		/// more information.
 		/// </remarks>
 		/// <seealso cref="ZedGraph.Fill.Color"/>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The type of fill (solid or brush)" )
+		]
 		public FillType Type
 		{
 			get
@@ -561,7 +590,10 @@ namespace ZedGraph.Web
 		/// This field only applies if <see cref="IsScaled"/> is false.
 		/// </remarks>
 		/// <seealso cref="AlignV"/>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Determines how the brush will be horizontally aligned with the filled object" )
+		]
 		public AlignH AlignH
 		{
 			get
@@ -580,7 +612,10 @@ namespace ZedGraph.Web
 		/// This field only applies if <see cref="IsScaled"/> is false.
 		/// </remarks>
 		/// <seealso cref="AlignH"/>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Determines how the brush will be vertically aligned with the filled object" )
+		]
 		public AlignV AlignV
 		{
 			get
@@ -599,7 +634,10 @@ namespace ZedGraph.Web
 		/// with the filled object based on the <see cref="AlignH"/> and <see cref="AlignV"/>
 		/// properties.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Determines whether the brush will be scaled to the object size" )
+		]
 		public bool IsScaled
 		{
 			get
@@ -674,7 +712,7 @@ namespace ZedGraph.Web
 		/// <see cref="Symbol"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="Symbol"/> object</param>
-		public void CopyTo( Symbol item )
+		internal void CopyTo( Symbol item )
 		{
 			item.IsVisible = this.IsVisible;
 			item.Size = this.Size;
@@ -690,7 +728,10 @@ namespace ZedGraph.Web
 		/// </summary>
 		/// <remarks> Gets or sets a property that shows or hides the <see cref="Symbol"/>.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "true to display symbols, false to hide them" )
+		]
 		public bool IsVisible
 		{
 			get
@@ -706,7 +747,10 @@ namespace ZedGraph.Web
 		/// </summary>
 		/// <remarks> Gets or sets the size of the <see cref="Symbol"/> in points (1/72nd inch).
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Sets the symbol size in points, scaled to the graph size" )
+		]
 		public float Size
 		{
 			get
@@ -723,7 +767,10 @@ namespace ZedGraph.Web
 		/// <remarks> Gets or sets the type (shape) of the <see cref="Symbol"/> using
 		/// a <see cref="SymbolType"/> enumeration.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Sets the symbol type from the SymbolType enumeration" )
+		]
 		public SymbolType SymbolType
 		{
 			get
@@ -745,7 +792,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Border class used to draw the outline of this symbol" )
 		]
 		public ZedGraphWebBorder Border
 		{
@@ -764,7 +812,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Fill class used to fill the area of this symbol" )
 		]
 		public ZedGraphWebFill Fill
 		{
@@ -814,7 +863,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.BarItem"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.BarItem"/> object</param>
-		public void CopyTo( BarItem item )
+		internal void CopyTo( BarItem item )
 		{
 			base.CopyTo( item );
 			this.Border.CopyTo( item.Bar.Border );
@@ -846,7 +895,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Border class used to draw the outline of the bars" )
 		]
 		public ZedGraphWebBorder Border
 		{
@@ -866,7 +916,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Fill class used to fill the area of the bars" )
 		]
 		public ZedGraphWebFill Fill
 		{
@@ -912,7 +963,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.ErrorBarItem"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.ErrorBarItem"/> object</param>
-		public void CopyTo( ErrorBarItem item )
+		internal void CopyTo( ErrorBarItem item )
 		{
 			base.CopyTo( item );
 			this.Symbol.CopyTo( item.Bar.Symbol );
@@ -945,7 +996,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Symbol type used for rendering the symbol 'ends' on this error bar" )
 		]
 		public ZedGraphWebSymbol Symbol
 		{
@@ -964,7 +1016,10 @@ namespace ZedGraph.Web
 		/// vertical line.  The pen width for the symbol outline is
 		/// controlled separately by the <see cref="Symbol"/> property.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The pen width used for rendering this error bar" )
+		]
 		public float PenWidth
 		{
 			get
@@ -1012,7 +1067,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.HiLowBarItem"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.HiLowBarItem"/> object</param>
-		public void CopyTo( HiLowBarItem item )
+		internal void CopyTo( HiLowBarItem item )
 		{
 			base.CopyTo( item );
 		}
@@ -1046,7 +1101,10 @@ namespace ZedGraph.Web
 		/// <see cref="BarSettings.MinClusterGap"/> will be used to determine the total
 		/// space between each bar.
 		/// </value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Set to true to use the maximum available width for this Hi-Low bar" )
+		]
 		public bool IsMaximumWidth
 		{
 			get
@@ -1071,7 +1129,10 @@ namespace ZedGraph.Web
 		/// <see cref="Size"/> will be ignored.
 		/// </remarks>
 		/// <value>Size in points (1/72 inch)</value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The fixed-size setting for width of this Hi-Low bar" )
+		]
 		public float Size
 		{
 			get
@@ -1094,7 +1155,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Border class used to render the outline of this Hi-Low Bar" )
 		]
 		public ZedGraphWebBorder Border
 		{
@@ -1113,7 +1175,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Fill class used to fill the area of this Hi-Low bar" )
 		]
 		public ZedGraphWebFill Fill
 		{
@@ -1163,7 +1226,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.LineItem"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.LineItem"/> object</param>
-		public void CopyTo( LineItem item )
+		internal void CopyTo( LineItem item )
 		{
 			base.CopyTo( item );
 			this.Symbol.CopyTo( item.Symbol );
@@ -1199,7 +1262,10 @@ namespace ZedGraph.Web
 		/// the <see cref="SmoothTension"/> property.
 		/// </remarks>
 		/// <seealso cref="ZedGraph.Line.IsSmooth"/>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "true for a smoothed curve, false for straight-line segments" )
+		]
 		public bool IsSmooth
 		{
 			get
@@ -1216,7 +1282,10 @@ namespace ZedGraph.Web
 		/// <remarks> The pen width used to draw the <see cref="Line"/>, in points (1/72 inch)
 		/// </remarks>
 		/// <seealso cref="ZedGraph.Line.Width"/>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Sets the pen width for the curve, in points" )
+		]
 		public float Width
 		{
 			get
@@ -1241,7 +1310,11 @@ namespace ZedGraph.Web
 		/// 0.0F for no smoothing, 1.0F for lots of smoothing, >1.0 for odd
 		/// smoothing.</value>
 		/// <seealso cref="ZedGraph.Line.IsSmooth"/>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Sets the tension for a smoothed curve (0=non-smooth, 1=very smooth," +
+			" >1 gives problems" )
+		]
 		public float SmoothTension
 		{
 			get
@@ -1259,7 +1332,10 @@ namespace ZedGraph.Web
 		/// This allows the line to be solid, dashed, or dotted.
 		/// </remarks>
 		/// <seealso cref="ZedGraph.Line.Style"/>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Set the dash style for the line" )
+		]
 		public DashStyle LineStyle
 		{
 			get
@@ -1286,7 +1362,10 @@ namespace ZedGraph.Web
 		/// that have <see cref="IsSmooth"/> set to true.
 		/// </remarks>
 		/// <seealso cref="ZedGraph.Line.StepType"/>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Set the type of step (forward, rearward, or non-step)" )
+		]
 		public StepType StepType
 		{
 			get
@@ -1308,7 +1387,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Sets the Symbol class for drawing the symbols associated with this line" )
 		]
 		public ZedGraphWebSymbol Symbol
 		{
@@ -1326,7 +1406,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Sets the Fill class for filling the area under this curve" )
 		]
 		public ZedGraphWebFill Fill
 		{
@@ -1374,7 +1455,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.PieItem"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.PieItem"/> object</param>
-		public void CopyTo( PieItem item )
+		internal void CopyTo( PieItem item )
 		{
 			base.CopyTo( item );
 			this.Border.CopyTo( item.Border );
@@ -1409,7 +1490,10 @@ namespace ZedGraph.Web
 		/// <remarks> Gets or sets the value of this <see cref="PieItem"/>.  
 		/// Minimum value is 0. 
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Sets the value for this pie item (slice)" )
+		]
 		public double Value
 		{
 			get
@@ -1423,10 +1507,13 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.PieItem.Displacement"/>.
 		/// </summary>
-		/// <remarks> Gets or sets the a value which determines the amount, if any, of this <see cref="PieItem"/>  
-		/// displacement.
+		/// <remarks> Gets or sets the a value which determines the amount, if any, of
+		/// this <see cref="PieItem"/> displacement.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Sets the displacement amount for this pie slice" )
+		]
 		public double Displacement
 		{
 			get
@@ -1443,7 +1530,10 @@ namespace ZedGraph.Web
 		/// <remarks> Gets or sets the <see cref="PieLabelType"/> to be used in displaying 
 		/// <see cref="PieItem"/> labels.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Sets the type of label for this pie slice (PieLabelType enumeration" )
+		]
 		public PieLabelType LabelType
 		{
 			get
@@ -1460,7 +1550,10 @@ namespace ZedGraph.Web
 		/// <remarks> Gets or sets the number of decimal digits to be displayed in a <see cref="PieItem"/> 
 		/// value label.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Sets the number of decimal digits to display in the value labels" )
+		]
 		public int ValueDecimalDigits
 		{
 			get
@@ -1477,7 +1570,10 @@ namespace ZedGraph.Web
 		/// <remarks> Gets or sets the number of decimal digits to be displayed in a <see cref="PieItem"/> 
 		/// percent label.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Sets the number of decimal digits to use for percent value display" )
+		]
 		public int PercentDecimalDigits
 		{
 			get
@@ -1498,7 +1594,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Holds the TextObj class for this pie slice" )
 		]
 		public ZedGraphWebTextObj LabelDetail
 		{
@@ -1514,7 +1611,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Sets the Border class used to draw the outline of this pie slice" )
 		]
 		public ZedGraphWebBorder Border
 		{
@@ -1556,7 +1654,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.GraphObj"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.GraphObj"/> object</param>
-		public void CopyTo( GraphObj item )
+		internal void CopyTo( GraphObj item )
 		{
 			item.ZOrder = this.ZOrder;
 			item.IsVisible = this.IsVisible;
@@ -1568,7 +1666,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.GraphObj.IsVisible"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "true to make this GraphObj visible, false to not display it" )
+		]
 		public bool IsVisible
 		{
 			get
@@ -1586,7 +1687,9 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Holds the Location class that determines where this GraphObj is positioned" +
+			" on the chart" )
 		]
 		public ZedGraphWebLocation Location
 		{
@@ -1596,6 +1699,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.GraphObj.ZOrder"/>
 		/// </summary>
+		[
+		NotifyParentProperty( true ),
+		Description( "Sets the ZOrder, or depth position for this GraphObj" )
+		]
 		public ZOrder ZOrder
 		{
 			get
@@ -1663,7 +1770,10 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraphWebCurveItem"/> object to be accessed.</param>
 		/// <value>A <see cref="ZedGraphWebCurveItem"/> object reference.</value>
 		/// <seealso cref="ZedGraph.CurveItem"/>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Indexer for accessing the CurveItems in the collection" )
+		]
 		public ZedGraphWebCurveItem this[int index]
 		{
 			get { return (ZedGraphWebCurveItem)ListGet( index ); }
@@ -1727,17 +1837,14 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraphWebGraphObj"/> object to be accessed.</param>
 		/// <value>A <see cref="ZedGraphWebGraphObj"/> object reference.</value>
 		/// <seealso cref="ZedGraph.GraphObj"/>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Indexer for accessing the GraphObjs in this collection" )
+		]
 		public ZedGraphWebGraphObj this[int index]
 		{
-			get
-			{
-				return (ZedGraphWebGraphObj)ListGet( index );
-			}
-			set
-			{
-				ListInsert( index, value );
-			}
+			get { return (ZedGraphWebGraphObj)ListGet( index ); }
+			set { ListInsert( index, value ); }
 		}
 	}
 
@@ -1786,17 +1893,14 @@ namespace ZedGraph.Web
 		/// <see cref="System.String"/> object to be accessed.</param>
 		/// <value>A <see cref="string"/> object reference.</value>
 		/// <seealso cref="System.String"/>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Indexer for accessing the string objects in this collection" )
+		]
 		public ZedGraphWebString this[int index]
 		{
-			get
-			{
-				return (ZedGraphWebString)ListGet( index );
-			}
-			set
-			{
-				ListInsert( index, value );
-			}
+			get { return (ZedGraphWebString)ListGet( index ); }
+			set { ListInsert( index, value ); }
 		}
 	}
 
@@ -1848,17 +1952,14 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraphWebPointPair"/> object to be accessed.</param>
 		/// <value>A <see cref="ZedGraphWebPointPair"/> object reference.</value>
 		/// <seealso cref="ZedGraph.PointPair"/>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Indexer for accessing the PointPair objects in this collection" )
+		]
 		public ZedGraphWebPointPair this[int index]
 		{
-			get
-			{
-				return (ZedGraphWebPointPair)ListGet( index );
-			}
-			set
-			{
-				ListInsert( index, value );
-			}
+			get { return (ZedGraphWebPointPair)ListGet( index ); }
+			set { ListInsert( index, value ); }
 		}
 	}
 
@@ -1894,7 +1995,7 @@ namespace ZedGraph.Web
 		/// <see cref="PointPair"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="PointPair"/> object</param>
-		public void CopyTo( PointPair item )
+		internal void CopyTo( PointPair item )
 		{
 			item.X = this.X;
 			item.Y = this.Y;
@@ -1906,7 +2007,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="PointPair.X"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The X value for this PointPair" )
+		]
 		public double X
 		{
 			get
@@ -1920,7 +2024,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="PointPair.Y"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The Y value for this PointPair" )
+		]
 		public double Y
 		{
 			get
@@ -1934,7 +2041,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="PointPair.Z"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The Z value for this PointPair" )
+		]
 		public double Z
 		{
 			get
@@ -1979,7 +2089,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="SizeF.Height"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The text associated with this string object" )
+		]
 		public string Value
 		{
 			get
@@ -2147,8 +2260,11 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Axis.Color"/>.
 		/// </summary>
-		[Category("Appearance")]
-		[NotifyParentProperty(true)]
+		[
+		Category("Appearance"),
+		NotifyParentProperty(true),
+		Description( "The color used for the grid lines" )
+		]
 		public Color Color
 		{
 			get
@@ -2165,8 +2281,11 @@ namespace ZedGraph.Web
 		/// <remarks> This property determines if the major <see cref="Axis"/> gridlines
 		/// (at each labeled value) will be visible.
 		/// </remarks>
-		[Category("Appearance")]
-		[NotifyParentProperty(true)]
+		[
+		Category("Appearance"),
+		NotifyParentProperty(true),
+		Description( "True to show the grid lines, false to hide them" )
+		]
 		public bool IsVisible
 		{
 			get
@@ -2183,8 +2302,11 @@ namespace ZedGraph.Web
 		/// <remarks> This is the distance,
 		/// in points (1/72 inch), of the dash segments that make up the dashed grid lines.
 		/// </remarks>
-		[Category("Appearance")]
-		[NotifyParentProperty(true)]
+		[
+		Category("Appearance"),
+		NotifyParentProperty(true),
+		Description( "The length, in scaled points, of the dash segments for a dashed grid line" )
+		]
 		public float DashOn
 		{
 			get
@@ -2202,8 +2324,11 @@ namespace ZedGraph.Web
 		/// in points (1/72 inch), of the spaces between the dash segments that make up
 		/// the dashed grid lines.
 		/// </remarks>
-		[Category("Appearance")]
-		[NotifyParentProperty(true)]
+		[
+		Category("Appearance"),
+		NotifyParentProperty(true),
+		Description( "The length, in scaled points, of the spaces between dashes for a dashed grid line" )
+		]
 		public float DashOff
 		{
 			get
@@ -2219,8 +2344,11 @@ namespace ZedGraph.Web
 		/// </summary>
 		/// <remarks> The pen width used for drawing the grid lines, expressed in points (1/72nd inch).
 		/// </remarks>
-		[Category("Appearance")]
-		[NotifyParentProperty(true)]
+		[
+		Category("Appearance"),
+		NotifyParentProperty(true),
+		Description( "The pen width, in points, for the grid line" )
+		]
 		public float PenWidth
 		{
 			get
@@ -2298,8 +2426,11 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the color of the tics.
 		/// </summary>
-		[Category("Appearance")]
-		[NotifyParentProperty(true)]
+		[
+		Category("Appearance"),
+		NotifyParentProperty(true),
+		Description( "The color of the tic marks" )
+		]
 		public Color Color
 		{
 			get
@@ -2316,8 +2447,11 @@ namespace ZedGraph.Web
 		/// <remarks> The length of the <see cref="ZedGraph.Axis"/> tic marks, expressed in points
 		/// (1/72nd inch).
 		/// </remarks>
-		[Category("Appearance")]
-		[NotifyParentProperty(true)]
+		[
+		Category("Appearance"),
+		NotifyParentProperty(true),
+		Description( "The size of the tics, in scaled points" )
+		]
 		public float Size
 		{
 			get
@@ -2335,9 +2469,11 @@ namespace ZedGraph.Web
 		/// <remarks> Determines whether or not the <see cref="ZedGraph.Axis"/> major tics (where the
 		/// scale labels are located) will be displayed.
 		/// </remarks>
-		[Category("Appearance")]
-		[NotifyParentProperty(true)]
-		[Description("Show tics outside")]
+		[
+		Category("Appearance"),
+		NotifyParentProperty(true),
+		Description( "True to display the tics at the outside of the axis, false to hide them" )
+		]
 		public bool IsOutside
 		{
 			get
@@ -2355,9 +2491,11 @@ namespace ZedGraph.Web
 		/// are shown.  These are the tic marks on the inside of the <see cref="ZedGraph.Axis"/> border.
 		/// The major tic spacing is controlled by <see cref="ZedGraph.Scale.MajorStep"/>.
 		/// </remarks>
-		[Category("Appearance")]
-		[NotifyParentProperty(true)]
-		[Description("Show tics inside")]
+		[
+		Category("Appearance"),
+		NotifyParentProperty(true),
+		Description( "True to display the tics on the inside of the axis, false to hide them" )
+		]
 		public bool IsInside
 		{
 			get
@@ -2376,8 +2514,11 @@ namespace ZedGraph.Web
 		/// the opposite side from the axis.
 		/// The major tic spacing is controlled by <see cref="ZedGraph.Scale.MajorStep"/>.
 		/// </remarks>
-		[Category("Appearance")]
-		[NotifyParentProperty(true)]
+		[
+		Category("Appearance"),
+		NotifyParentProperty(true),
+		Description( "True to display the tics at the opposite side from the axis, false to hide them" )
+		]
 		public bool IsOpposite
 		{
 			get
@@ -2395,8 +2536,11 @@ namespace ZedGraph.Web
 		/// <remarks> This property determines the pen width to be used when drawing the tic marks for
 		/// this <see cref="ZedGraph.Axis"/>.  The pen width is expressed in points (1/72nd inch).
 		/// </remarks>
-		[Category("Appearance")]
-		[NotifyParentProperty(true)]
+		[
+		Category("Appearance"),
+		NotifyParentProperty(true),
+		Description( "The pen width for the tics, in points" )
+		]
 		public float PenWidth
 		{
 			get
@@ -2454,7 +2598,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.Scale"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.Scale"/> object</param>
-		public void CopyTo( Scale item )
+		internal void CopyTo( Scale item )
 		{
 			this.FontSpec.CopyTo( item.FontSpec );
 
@@ -2484,7 +2628,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="Scale.Min"/>.
 		/// </summary>
-		[NotifyParentProperty(true)]
+		[
+		NotifyParentProperty(true),
+		Description( "The minimum user-scale value for the axis range" )
+		]
 		public double Min
 		{
 			get
@@ -2502,7 +2649,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="Scale.Max"/>.
 		/// </summary>
-		[NotifyParentProperty(true)]
+		[
+		NotifyParentProperty(true),
+		Description( "The maximum user-scale value for the axis range" )
+		]
 		public double Max
 		{
 			get
@@ -2524,8 +2674,12 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.Scale.MajorStep"/>
 		/// is set automatically.
 		/// </remarks>
-		[Category( "Behaviour" )]
-		[NotifyParentProperty( true )]
+		[
+		Category( "Behavior" ),
+		NotifyParentProperty(true),
+		Description( "Determines if the user-scale major step size value for the axis range" +
+			" will be set automatically" )
+		]
 		public bool MajorStepAuto
 		{
 			get
@@ -2543,8 +2697,11 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.Scale.MajorStep"/>
 		/// is set automatically.
 		/// </remarks>
-		[Category( "Behaviour" )]
-		[NotifyParentProperty( true )]
+		[
+		Category( "Behavior" ),
+		NotifyParentProperty(true),
+		Description( "The user-scale major step size value for the axis range" )
+		]
 		public double MajorStep
 		{
 			get
@@ -2579,8 +2736,12 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.Scale.MinorStep"/>
 		/// is set automatically.
 		/// </remarks>
-		[Category( "Behaviour" )]
-		[NotifyParentProperty( true )]
+		[
+		Category( "Behavior" ),
+		NotifyParentProperty(true),
+		Description( "Determines if the user-scale minor step size value for the axis range" +
+			" will be set automatically" )
+		]
 		public bool MinorStepAuto
 		{
 			get
@@ -2597,8 +2758,11 @@ namespace ZedGraph.Web
 		/// <remarks> Determines the minor step size value for the scale
 		/// is set automatically.
 		/// </remarks>
-		[Category( "Behaviour" )]
-		[NotifyParentProperty( true )]
+		[
+		Category( "Behavior" ),
+		NotifyParentProperty(true),
+		Description( "The user-scale minor step size value for the axis range" )
+		]
 		public double MinorStep
 		{
 			get
@@ -2632,7 +2796,12 @@ namespace ZedGraph.Web
 		/// <remarks> Determines whether or not the minimum scale value <see cref="Scale.Min"/>
 		/// is set automatically.
 		/// </remarks>
-		[NotifyParentProperty(true)]
+		[
+		Category( "Behavior" ),
+		NotifyParentProperty(true),
+		Description( "Determines if the user-scale minimum value for the axis range" +
+			" will be set automatically" )
+		]
 		public bool MinAuto
 		{
 			get
@@ -2649,7 +2818,12 @@ namespace ZedGraph.Web
 		/// <remarks> Determines whether or not the maximum scale value <see cref="Scale.Max"/>
 		/// is set automatically.
 		/// </remarks>
-		[NotifyParentProperty(true)]
+		[
+		Category( "Behavior" ),
+		NotifyParentProperty(true),
+		Description( "Determines if the user-scale maximum value for the axis range" +
+			" will be set automatically" )
+		]
 		public bool MaxAuto
 		{
 			get
@@ -2708,7 +2882,11 @@ namespace ZedGraph.Web
 		/// </summary>
 		/// <remarks> Determines if the scale values are reversed for this <see cref="ZedGraph.Axis"/>.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		Category( "Behavior" ),
+		NotifyParentProperty(true),
+		Description( "True to reverse the scale range (high to low instead of low to high)" )
+		]
 		public bool IsReverse
 		{
 			get
@@ -2725,7 +2903,11 @@ namespace ZedGraph.Web
 		/// <remarks> Determines whether or not the scale label format <see cref="Scale.Format"/>
 		/// is determined automatically based on the range of data values.
 		/// </remarks>
-		[NotifyParentProperty(true)]
+		[
+		Category( "Behavior" ),
+		NotifyParentProperty(true),
+		Description( "True to automatically set the scale label format" )
+		]
 		public bool FormatAuto
 		{
 			get
@@ -2762,7 +2944,7 @@ namespace ZedGraph.Web
 		/// <remarks> Controls the alignment of the <see cref="ZedGraph.Axis"/> tic labels.
 		/// </remarks>
 		[NotifyParentProperty(true)]
-		[Description("Controls the aligment of the tic labels")]
+		[Description("Controls the aligment of the tic labels with respect to the axis")]
 		public AlignP Align
 		{
 			get
@@ -2785,7 +2967,11 @@ namespace ZedGraph.Web
 		/// If this value is set manually by the user,
 		/// then <see cref="Scale.MagAuto"/> will also be set to false.
 		/// </remarks>
-		[NotifyParentProperty(true)]
+		[
+		Category( "Behavior" ),
+		NotifyParentProperty(true),
+		Description( "Sets the magnitude multiplier for the axis range" )
+		]
 		public int Mag
 		{
 			get
@@ -2804,7 +2990,12 @@ namespace ZedGraph.Web
 		/// If the user manually sets the <see cref="Scale.Mag"/> value, then this
 		/// flag will be set to false.
 		/// </remarks>
-		[NotifyParentProperty(true)]
+		[
+		Category( "Behavior" ),
+		NotifyParentProperty(true),
+		Description( "Determines if the magnitude multiplier for the axis range will be" +
+			" automatically set" )
+		]
 		public bool MagAuto
 		{
 			get
@@ -2825,7 +3016,8 @@ namespace ZedGraph.Web
 		Category("Appearance"),
 		DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
 		NotifyParentProperty(true),
-		PersistenceMode(PersistenceMode.InnerProperty)
+		PersistenceMode(PersistenceMode.InnerProperty),
+		Description( "Determines the FontSpec class used to render the scale labels" )
 		]
 		public ZedGraphWebFontSpec FontSpec
 		{
@@ -2888,7 +3080,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.Axis"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.Axis"/> object</param>
-		public void CopyTo( Axis item )
+		internal void CopyTo( Axis item )
 		{
 			this.FontSpec.CopyTo( item.Title.FontSpec );
 			this.Scale.CopyTo( item.Scale );
@@ -2924,7 +3116,11 @@ namespace ZedGraph.Web
 		/// Y2Axis, the "other" axis is the XAxis.
 		/// </remarks>
 		/// <value> The value is defined in user scale units </value>
-		[NotifyParentProperty( true )]
+		[
+		Category( "Behavior" ),
+		NotifyParentProperty(true),
+		Description( "Determines the opposing scale value at which this axis will cross" )
+		]
 		public double Cross
 		{
 			get
@@ -2941,7 +3137,12 @@ namespace ZedGraph.Web
 		/// <remarks> Determines whether or not the axis intersection point <see cref="ZedGraph.Axis.Cross"/>
 		/// is set automatically.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		Category( "Behavior" ),
+		NotifyParentProperty(true),
+		Description( "Determines if the opposing scale value at which this axis will cross" +
+			" will be set automatically" )
+		]
 		public bool CrossAuto
 		{
 			get
@@ -2958,8 +3159,11 @@ namespace ZedGraph.Web
 		/// <remarks> This affects only the grid lines, since the <see cref="Axis.Title"/> and
 		/// <see cref="Axis.Scale"/> both have their own color specification.
 		/// </remarks>
-		[Category( "Appearance" )]
-		[NotifyParentProperty( true )]
+		[
+		Category( "Appearance" ),
+		NotifyParentProperty(true),
+		Description( "Sets the color for the actual axis line segment" )
+		]
 		public Color AxisColor
 		{
 			get
@@ -2980,7 +3184,11 @@ namespace ZedGraph.Web
 		/// <see cref="Label.IsVisible"/> property is set to true.  If the Title text is empty,
 		/// then no title is shown, and no space is "reserved" for the title on the graph.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		Category( "Appearance" ),
+		NotifyParentProperty(true),
+		Description( "Sets the axis title string" )
+		]
 		public string Title
 		{
 			get
@@ -3002,7 +3210,8 @@ namespace ZedGraph.Web
 		/// applies whether <see cref="ZedGraph.Axis.IsVisible"/> is true or false.
 		/// </remarks>
 		[NotifyParentProperty( true )]
-		[Description( "Minimum amount of space in points between this axis and the pane border. Applies even if IsVisible is false." )]
+		[Description( "Minimum amount of space in points between this axis and the pane border." +
+			" Applies even if IsVisible is false." )]
 		public float MinSpace
 		{
 			get
@@ -3013,8 +3222,6 @@ namespace ZedGraph.Web
 			set { ViewState["MinSpace"] = value; }
 		}
 
-
-
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.MajorTic.IsBetweenLabels"/>.
 		/// </summary>
@@ -3023,7 +3230,8 @@ namespace ZedGraph.Web
 		/// applicable if <see cref="ZedGraph.Axis.Type"/> = <see cref="AxisType.Text"/>.
 		/// </remarks>
 		[NotifyParentProperty( true )]
-		[Description( "If true, draws major tics inbetween labels rather than right at the labels. Only for AxisType.Text." )]
+		[Description( "If true, draws major tics inbetween labels rather than right at the labels." +
+			" Only for AxisType.Text." )]
 		public bool IsTicsBetweenLabels
 		{
 			get
@@ -3041,7 +3249,11 @@ namespace ZedGraph.Web
 		/// <remarks> This boolean value determines if a line will be drawn at the
 		/// zero value for the axis.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		Category( "Appearance" ),
+		NotifyParentProperty(true),
+		Description( "Determines if the extra grid line at the zero value will be drawn." )
+		]
 		public bool IsZeroLine
 		{
 			get
@@ -3057,7 +3269,11 @@ namespace ZedGraph.Web
 		/// </summary>
 		/// <remarks> Determines whether or not the <see cref="ZedGraph.Axis"/> is shown.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		Category( "Appearance" ),
+		NotifyParentProperty(true),
+		Description( "Determines if the labels, title, and tics for this axis will be displayed" )
+		]
 		public bool IsVisible
 		{
 			get
@@ -3076,7 +3292,11 @@ namespace ZedGraph.Web
 		/// <see cref="AxisType.Log"/>, <see cref="AxisType.Date"/>,
 		/// or <see cref="AxisType.Text"/>.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		Category( "Appearance" ),
+		NotifyParentProperty(true),
+		Description( "Determines the type of scale for this axis (linear, log, date, etc)" )
+		]
 		public AxisType Type
 		{
 			get
@@ -3099,7 +3319,11 @@ namespace ZedGraph.Web
 		/// magnitude is included in the title.  Note that it only affects the axis
 		/// title; a magnitude value may still be used even if it is not shown in the title.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		Category( "Appearance" ),
+		NotifyParentProperty(true),
+		Description( "True to NOT add text to the title to indicate a magnitude multiplier" )
+		]
 		public bool IsOmitMag
 		{
 			get
@@ -3117,7 +3341,11 @@ namespace ZedGraph.Web
 		/// <remarks> Determines whether or not the <see cref="ZedGraph.Axis"/>
 		/// <see cref="ZedGraph.Axis.Title"/> will be displayed.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		Category( "Appearance" ),
+		NotifyParentProperty(true),
+		Description( "True to display the axis title, false otherwise" )
+		]
 		public bool IsShowTitle
 		{
 			get
@@ -3133,7 +3361,11 @@ namespace ZedGraph.Web
 		/// </summary>
 		/// <remarks> Determines if powers-of-ten notation will be used for the numeric value labels.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		Category( "Appearance" ),
+		NotifyParentProperty(true),
+		Description( "True to use the 10^x notation for scale labels on log scales" )
+		]
 		public bool IsUseTenPower
 		{
 			get
@@ -3151,7 +3383,11 @@ namespace ZedGraph.Web
 		/// see if the <see cref="ZedGraph.Axis"/> scale labels are close enough to overlap.  If so,
 		/// ZedGraph will adjust the step size to prevent overlap.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		Category( "Appearance" ),
+		NotifyParentProperty(true),
+		Description( "True to employ extra logic to avoid overlap in the scale labels" )
+		]
 		public bool IsPreventLabelOverlap
 		{
 			get
@@ -3172,7 +3408,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Holds the FontSpec class used to render the Axis title" )
 		]
 		public ZedGraphWebFontSpec FontSpec
 		{
@@ -3186,7 +3423,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Holds the MinorGrid properties" )
 		]
 		public ZedGraphWebGrid MinorGrid
 		{
@@ -3200,7 +3438,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Holds the MajorGrid properties" )
 		]
 		public ZedGraphWebGrid MajorGrid
 		{
@@ -3214,7 +3453,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Holds the MinorTic properties" )
 		]
 		public ZedGraphWebTic MinorTic
 		{
@@ -3228,7 +3468,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Holds the MajorTic properties" )
 		]
 		public ZedGraphWebTic MajorTic
 		{
@@ -3242,7 +3483,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Holds the properties for the scale range" )
 		]
 		public ZedGraphWebScale Scale
 		{
@@ -3301,7 +3543,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.Legend"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.Legend"/> object</param>
-		public void CopyTo( Legend item )
+		internal void CopyTo( Legend item )
 		{
 			item.IsVisible = this.IsVisible;
 			item.Position = this.Position;
@@ -3322,7 +3564,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Holds the location data for the legend (only for position=float)" )
 		]
 		public ZedGraphWebLocation Location
 		{
@@ -3336,7 +3579,9 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Holds the default font specifications for legend entries (can be" +
+			" overridden for each curve" )
 		]
 		public ZedGraphWebFontSpec FontSpec
 		{
@@ -3350,7 +3595,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Holds the background fill properties for the legend" )
 		]
 		public ZedGraphWebFill Fill
 		{
@@ -3364,7 +3610,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "Holds the Border class used to draw the border around the legend" )
 		]
 		public ZedGraphWebBorder Border
 		{
@@ -3391,7 +3638,10 @@ namespace ZedGraph.Web
 		/// <remarks> This property shows or hides the <see cref="Legend"/> entirely.
 		/// </remarks>
 		/// <value> true to show the <see cref="Legend"/>, false to hide it </value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "True to display the legend, false to hide it" )
+		]
 		public bool IsVisible
 		{
 			get
@@ -3405,7 +3655,11 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Legend.IsHStack"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "True to allow legend items to 'stack' in the horizontal direction," +
+			" false for a single vertical column of entries" )
+		]
 		public bool IsHStack
 		{
 			get
@@ -3422,7 +3676,10 @@ namespace ZedGraph.Web
 		/// <remarks> Sets or gets the location of the <see cref="Legend"/> on the
 		/// <see cref="GraphPane"/> using the <see cref="LegendPos"/> enum type
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "Determines the position (top, left, right, etc) for the legend" )
+		]
 		public LegendPos Position
 		{
 			get
@@ -3484,7 +3741,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.FontSpec"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.FontSpec"/> object</param>
-		public void CopyTo( FontSpec item )
+		internal void CopyTo( FontSpec item )
 		{
 			this.Border.CopyTo( item.Border );
 			this.Fill.CopyTo( item.Fill );
@@ -3507,7 +3764,10 @@ namespace ZedGraph.Web
 		/// </remarks>
 		/// <value>The angle of the font, measured in anti-clockwise degrees from
 		/// horizontal.  Negative values are permitted.</value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The angle at which the text is drawn.  CCW degrees from horizontal." )
+		]
 		public float Angle
 		{
 			get
@@ -3524,7 +3784,10 @@ namespace ZedGraph.Web
 		/// <remarks> The size of the font for this <see cref="FontSpec"/> object.
 		/// </remarks>
 		/// <value>The size of the font, measured in points (1/72 inch).</value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The text size, in scaled points (1/72nd inch)" )
+		]
 		public float Size
 		{
 			get
@@ -3541,7 +3804,10 @@ namespace ZedGraph.Web
 		/// <remarks> The font family name for this <see cref="FontSpec"/>.
 		/// </remarks>
 		/// <value>A text string with the font family name, e.g., "Arial"</value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The font family, e.g., 'Arial'" )
+		]
 		public string Family
 		{
 			get
@@ -3561,7 +3827,10 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.Fill.Color"/> properties, respectively.
 		/// </remarks>
 		/// <value>A system <see cref="System.Drawing.Color"/> reference.</value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The color of the font" )
+		]
 		public Color FontColor
 		{
 			get
@@ -3580,7 +3849,10 @@ namespace ZedGraph.Web
 		/// affects multi-line strings.
 		/// </remarks>
 		/// <value>A <see cref="StringAlignment"/> enumeration.</value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The alignment of the font (only matters for multi-line TextObj objects)" )
+		]
 		public StringAlignment StringAlignment
 		{
 			get
@@ -3598,7 +3870,10 @@ namespace ZedGraph.Web
 		/// drawn with bold typeface.
 		/// </remarks>
 		/// <value>A boolean value, true for bold, false for normal</value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "True for a bold font, false for the normal weight" )
+		]
 		public bool IsBold
 		{
 			get
@@ -3616,7 +3891,10 @@ namespace ZedGraph.Web
 		/// drawn with an italic typeface.
 		/// </remarks>
 		/// <value>A boolean value, true for italic, false for normal</value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "True for an italicized font, false for normal" )
+		]
 		public bool IsItalic
 		{
 			get
@@ -3634,7 +3912,10 @@ namespace ZedGraph.Web
 		/// drawn with an underline typeface.
 		/// </remarks>
 		/// <value>A boolean value, true for underline, false for normal</value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "True for an underlined font, false for normal" )
+		]
 		public bool IsUnderline
 		{
 			get
@@ -3658,7 +3939,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Border class used to draw a frame around this TextObj object" )
 		]
 		public ZedGraphWebBorder Border
 		{
@@ -3678,7 +3960,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Fill class used to fill the background of this TextObj object" )
 		]
 		public ZedGraphWebFill Fill
 		{
@@ -3717,7 +4000,10 @@ namespace ZedGraph.Web
 
 		/// <summary>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The left or X position of the top-left corner of the rectangle" )
+		]
 		public float Left
 		{
 			get
@@ -3730,7 +4016,10 @@ namespace ZedGraph.Web
 
 		/// <summary>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The top or Y position of the top-left corner of the rectangle" )
+		]
 		public float Top
 		{
 			get
@@ -3743,7 +4032,10 @@ namespace ZedGraph.Web
 
 		/// <summary>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The X position of the right side of the rectangle" )
+		]
 		public float Right
 		{
 			get
@@ -3756,7 +4048,10 @@ namespace ZedGraph.Web
 
 		/// <summary>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The Y position of the bottom side of the rectangle" )
+		]
 		public float Bottom
 		{
 			get
@@ -3801,7 +4096,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="SizeF.Height"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The height for this Size object" )
+		]
 		public float Height
 		{
 			get
@@ -3815,7 +4113,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="SizeF.Width"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The width for this Size object" )
+		]
 		public float Width
 		{
 			get
@@ -3861,7 +4162,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="PointD.X"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The X coordinate for this PointD instance" )
+		]
 		public double X
 		{
 			get
@@ -3875,7 +4179,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="PointD.Y"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The Y coordinate for this PointD instance" )
+		]
 		public double Y
 		{
 			get
@@ -3940,7 +4247,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.TextObj"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.TextObj"/> object</param>
-		public void CopyTo( TextObj item )
+		internal void CopyTo( TextObj item )
 		{
 			base.CopyTo( item );
 			item.LayoutArea = new SizeF( this.LayoutArea.Width, this.LayoutArea.Height );
@@ -3952,7 +4259,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.TextObj.Text"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The text string associated with this TextObj" )
+		]
 		public string Text
 		{
 			get
@@ -3970,7 +4280,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The desired LayoutArea (target size) for this TextObj object" )
 		]
 		public ZedGraphWebSize LayoutArea
 		{
@@ -3984,7 +4295,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The FontSpec used for rendering this TextObj object" )
 		]
 		public ZedGraphWebFontSpec FontSpec
 		{
@@ -4023,7 +4335,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.ArrowObj"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.ArrowObj"/> object</param>
-		public void CopyTo( ArrowObj item )
+		internal void CopyTo( ArrowObj item )
 		{
 			base.CopyTo( item );
 			item.Size = this.Size;
@@ -4039,7 +4351,10 @@ namespace ZedGraph.Web
 		/// </summary>
 		/// <remarks> The size of the arrowhead, expressed in points (1/72nd inch).
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The size, in scaled points, of the arrow head for this ArrowObj object" )
+		]
 		public float Size
 		{
 			get
@@ -4056,7 +4371,10 @@ namespace ZedGraph.Web
 		/// <remarks> The width of the pen, expressed in points (1/72nd inch), used to draw the
 		/// arrow line segment.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The pen width, in points, for this ArrowObj object" )
+		]
 		public float PenWidth
 		{
 			get
@@ -4072,7 +4390,10 @@ namespace ZedGraph.Web
 		/// </summary>
 		/// <remarks> The <see cref="System.Drawing.Color"/> value used to draw the <see cref="ZedGraph.ArrowObj"/>.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The rendered color of this ArrowObj object" )
+		]
 		public Color Color
 		{
 			get
@@ -4089,7 +4410,10 @@ namespace ZedGraph.Web
 		/// <remarks> Determines whether or not an arrowhead will be draw.  If false, only a line segment
 		/// will be drawn.
 		/// </remarks>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "True to display an arrowhead, false to display only a line-segment" )
+		]
 		public bool IsArrowHead
 		{
 			get
@@ -4134,7 +4458,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.ImageObj"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.ImageObj"/> object</param>
-		public void CopyTo( ImageObj item )
+		internal void CopyTo( ImageObj item )
 		{
 			base.CopyTo( item );
 			item.IsScaled = this.IsScaled;
@@ -4161,7 +4485,10 @@ namespace ZedGraph.Web
 		/// The <see cref="String"/> url reference from which to get the <see cref="Image"/>
 		/// data for this <see cref="ZedGraph.ImageObj"/>.
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The URL from which to access this image" )
+		]
 		public string ImageUrl
 		{
 			get
@@ -4180,7 +4507,10 @@ namespace ZedGraph.Web
 		/// </remarks>
 		/// <value>true to scale the image, false to draw the image unscaled, but clipped
 		/// to the destination rectangle</value>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "True to scale the image to the available area" )
+		]
 		public bool IsScaled
 		{
 			get
@@ -4230,7 +4560,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.BoxObj"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.BoxObj"/> object</param>
-		public void CopyTo( BoxObj item )
+		internal void CopyTo( BoxObj item )
 		{
 			base.CopyTo( item );
 			this.Border.CopyTo( item.Border );
@@ -4248,7 +4578,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Border class used to draw the frame around this BoxObj object" )
 		]
 		public ZedGraphWebBorder Border
 		{
@@ -4268,7 +4599,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Fill class used to fill the background area behind this BoxObj object" )
 		]
 		public ZedGraphWebFill Fill
 		{
@@ -4311,7 +4643,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.EllipseObj"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.EllipseObj"/> object</param>
-		public void CopyTo( EllipseObj item )
+		internal void CopyTo( EllipseObj item )
 		{
 			base.CopyTo( item );
 			this.Border.CopyTo( item.Border );
@@ -4329,7 +4661,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Border class used to draw the frame around this EllipseObj object" )
 		]
 		public ZedGraphWebBorder Border
 		{
@@ -4349,7 +4682,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The Fill class used to fill the background area behind this EllipseObj object" )
 		]
 		public ZedGraphWebFill Fill
 		{
@@ -4392,7 +4726,7 @@ namespace ZedGraph.Web
 		/// <see cref="ZedGraph.Location"/> object.
 		/// </summary>
 		/// <param name="item">The destination <see cref="ZedGraph.Location"/> object</param>
-		public void CopyTo( Location item )
+		internal void CopyTo( Location item )
 		{
 			item.X = this.X;
 			item.Y = this.Y;
@@ -4426,7 +4760,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The location of the top-left corner of the bounding box for this object" )
 		]
 		public ZedGraphWebPointD TopLeft
 		{
@@ -4440,7 +4775,8 @@ namespace ZedGraph.Web
 		Category( "Appearance" ),
 		DesignerSerializationVisibility( DesignerSerializationVisibility.Content ),
 		NotifyParentProperty( true ),
-		PersistenceMode( PersistenceMode.InnerProperty )
+		PersistenceMode( PersistenceMode.InnerProperty ),
+		Description( "The location of the bottom-right corner of the bounding box for this object" )
 		]
 		public ZedGraphWebPointD BottomRight
 		{
@@ -4450,7 +4786,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.Height"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The height of the bounding box of this object" )
+		]
 		public float Height
 		{
 			get
@@ -4464,7 +4803,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.Width"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The width of the bounding box of this object" )
+		]
 		public float Width
 		{
 			get
@@ -4478,7 +4820,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.Y"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The Y position of the top-left corner of this object" )
+		]
 		public float Y
 		{
 			get
@@ -4492,7 +4837,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.X"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The X position of the top-left corner of this object" )
+		]
 		public float X
 		{
 			get
@@ -4506,7 +4854,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.AlignH"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The horizontal alignment of this object with respect to the X,Y position" )
+		]
 		public AlignH AlignH
 		{
 			get
@@ -4520,7 +4871,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.AlignV"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The vertical alignment of this object with respect to the X,Y position" )
+		]
 		public AlignV AlignV
 		{
 			get
@@ -4534,7 +4888,10 @@ namespace ZedGraph.Web
 		/// <summary>
 		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Location.CoordinateFrame"/>
 		/// </summary>
-		[NotifyParentProperty( true )]
+		[
+		NotifyParentProperty( true ),
+		Description( "The type of coordinates used to specify this X,Y location" )
+		]
 		public CoordType CoordinateFrame
 		{
 			get

@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11.2.5 $ $Date: 2006-05-14 03:31:19 $ </version>
+	/// <version> $Revision: 3.11.2.6 $ $Date: 2006-05-15 06:35:31 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -214,9 +214,11 @@ namespace ZedGraph
 		/// the <see cref="Size"/> value, or it will be based on available
 		/// space similar to <see cref="BarItem"/> objects.
 		/// </summary>
-		/// <remarks>If true, then the value
-		/// of <see cref="Size"/> is ignored.  If this value is true, then
-		/// <see cref="BarSettings.MinClusterGap"/> will be used to determine the total space between each bar.
+		/// <remarks>If true, then the value of <see cref="Size"/> is ignored. 
+		/// If this value is true, then <see cref="BarSettings.MinClusterGap"/> will be used to
+		/// determine the total space between each bar.  If the base axis is non-ordinal, then
+		/// <see cref="BarSettings.ClusterScaleWidth" /> will be active.  In this case, you may
+		/// want to make sure that <see cref="BarSettings.ClusterScaleWidthAuto" /> is true.
 		/// </remarks>
 		public bool IsMaximumWidth
 		{
@@ -280,6 +282,7 @@ namespace ZedGraph
 			valueHandler.GetValues( curve, index, out curBase,
 					out curLowVal, out curHiVal );
 
+			barWidth = GetBarWidth( pane, baseAxis, scaleFactor );
 
 			// curLow = the scale value on the value axis for the bottom of the current bar
 			// Get a "low" value for the bottom of the bar and verify validity
@@ -317,7 +320,7 @@ namespace ZedGraph
 								curve.Points[index] );
 		   }
 	   }
-		/*
+		
 		/// <summary>
 		/// Returns the width of the bar, in pixels, based on the settings for
 		/// <see cref="Size"/> and <see cref="IsMaximumWidth"/>.
@@ -339,7 +342,7 @@ namespace ZedGraph
 			else
 				return (float) ( _size * scaleFactor );
 		}
-		*/
+		
 
 	#endregion
 

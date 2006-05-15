@@ -56,10 +56,10 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_TextBasic( zedGraphControl2 );
 			//CreateChartDualY( zedGraphControl1 );
 			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
-			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
+			CreateGraph_HiLowBarDemo( zedGraphControl1 );
 			//CreateGraph_MultiYDemo( zedGraphControl1 );
 
-			CreateGraph_TestScroll( zedGraphControl1 );
+			//CreateGraph_TestScroll( zedGraphControl1 );
 			//CreateGraph_DataSource( zedGraphControl1 );
 			CreateGraph_PolyTest( zedGraphControl2 );
 			//CreateGraph_BarJunk( zedGraphControl2 );
@@ -506,7 +506,7 @@ namespace ZedGraph.ControlTest
 			XDate xDate = new XDate( 2006, 2, 1 );
 			double open = 50.0;
 
-			for ( int i = 0; i < 20; i++ )
+			for ( int i = 0; i < 100; i++ )
 			{
 				double x = xDate.XLDate;
 				double close = open + rand.NextDouble() * 10.0 - 5.0;
@@ -524,9 +524,12 @@ namespace ZedGraph.ControlTest
 					xDate.AddDays( 2.0 );
 			}
 
+			StockPt spt = spl.GetAt( 5 );
+			spt.Close = spt.Open;
+
 			//CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Black );
 			JapaneseCandleStickItem myCurve = myPane.AddJapaneseCandleStick( "trades", spl );
-			//myCurve.Stick.Size = 5;
+			myCurve.Stick.Size = 3;
 			//myCurve.CandleStick.PenWidth = 2;
 			myCurve.Stick.Color = Color.Blue;
 			//myCurve.CandleStick.IsOpenCloseVisible = false;
@@ -777,6 +780,7 @@ namespace ZedGraph.ControlTest
 			//master.PaneLayoutMgr.SetLayout( PaneLayout.ExplicitRow32 );
 			//master.PaneLayoutMgr.SetLayout( 2, 4 );
 			master.SetLayout( false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
+			master.IsCommonScaleFactor = true;
 			z1.AxisChange();
 
 			g.Dispose();
@@ -1615,6 +1619,7 @@ namespace ZedGraph.ControlTest
 			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
 			// Make the bar width based on the available space, rather than a size in points
 			myCurve.Bar.IsMaximumWidth = true;
+			myPane.BarSettings.ClusterScaleWidthAuto = true;
 
 			// Fill the axis background with a color gradient
 			myPane.Chart.Fill = new Fill( Color.White,

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-05-14 03:31:18 $ </version>
+	/// <version> $Revision: 1.1.2.7 $ $Date: 2006-05-15 06:35:31 $ </version>
 	[Serializable]
 	public class BarSettings : ISerializable
 	{
@@ -299,7 +299,9 @@ namespace ZedGraph
 				{
 					IPointList list = curve.Points;
 
-					if ( curve is BarItem && list.Count > 0 )
+					if ( ( curve is BarItem ||
+								( curve is HiLowBarItem && (curve as HiLowBarItem).Bar.IsMaximumWidth ) )
+							&& list.Count > 0 )
 					{
 						PointPair lastPt = list[0];
 						for ( int i = 1; i < list.Count; i++ )
@@ -323,7 +325,7 @@ namespace ZedGraph
 					}
 				}
 
-				double range = baseAxis.Scale._maxLinTemp - baseAxis.Scale._minLinTemp;
+				double range = baseAxis.Scale._maxLinearized - baseAxis.Scale._minLinearized;
 				if ( range <= 0 )
 					minStep = 1.0;
 				else if ( minStep <= 0 || minStep < 0.001 * range || minStep > range )

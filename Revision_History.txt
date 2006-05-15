@@ -1,5 +1,13 @@
 == Version 5 ==
 
+;14-May-2006 (by Champion) V5_BRANCH
+: [FIX] Make JapaneseCandleSticks always show at lease a line for the bar if open=close
+: [UPD] Add StockPointList.GetAt() method to retrieve the actual StockPt, rather than the PointPair
+: [UPD] make JapaneseCandleStick width a rounded integral value after scaling to avoid artifacts
+: [FIX] Fix the IsMaximumWidth logic for HiLow bars again.
+: [UPD] Add more descriptions to web control
+: [FIX] CalcClusterScaleWidth() needs to use _minLinearized and _maxLinearized
+
 ;12-May-2006 (by Champion) V5_BRANCH
 : [FIX] FindNearestObject() -- Rect calculations were wrong for Y2 Axis (thanks fugacityepro)
 : [NEW] Add GraphPane.IsAlignGrids to line up number of major steps across Y/Y2 axes
