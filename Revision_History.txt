@@ -1,5 +1,8 @@
 == ZedGraph Class Library Revision History ==
 
+;15-May-2006 (by Champion)
+: [FIX] fix overflow for stick plots out of range
+
 ;1-May-2006 (by Champion)
 : [FIX] Initialize GraphPane._zoomStack in Deserialization
 
