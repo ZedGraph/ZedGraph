@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.7 $ $Date: 2006-05-15 06:35:31 $ </version>
+	/// <version> $Revision: 1.1.2.8 $ $Date: 2006-05-16 05:53:58 $ </version>
 	[Serializable]
 	public class BarSettings : ISerializable
 	{
@@ -292,47 +292,87 @@ namespace ZedGraph
 		{
 			Axis baseAxis = BarBaseAxis();
 
+			// First, calculate the clusterScaleWidth for BarItem objects
 			if ( _clusterScaleWidthAuto && !baseAxis.Scale.IsAnyOrdinal )
 			{
 				double minStep = Double.MaxValue;
+
 				foreach ( CurveItem curve in _ownerPane.CurveList )
 				{
 					IPointList list = curve.Points;
 
-					if ( ( curve is BarItem ||
-								( curve is HiLowBarItem && (curve as HiLowBarItem).Bar.IsMaximumWidth ) )
-							&& list.Count > 0 )
+					if ( curve is BarItem )
 					{
-						PointPair lastPt = list[0];
-						for ( int i = 1; i < list.Count; i++ )
-						{
-							PointPair pt = list[i];
-							if ( !pt.IsInvalid || !lastPt.IsInvalid )
-							{
-								double step;
-								if ( baseAxis is XAxis )
-									step = pt.X - lastPt.X;
-								else
-									step = pt.Y - lastPt.Y;
-
-								if ( step > 0 && step < minStep )
-									minStep = step;
-							}
-
-							lastPt = pt;
-						}
-
+						double step = GetMinStepSize( curve.Points, baseAxis );
+						minStep = step < minStep ? step : minStep;
 					}
 				}
 
-				double range = baseAxis.Scale._maxLinearized - baseAxis.Scale._minLinearized;
-				if ( range <= 0 )
-					minStep = 1.0;
-				else if ( minStep <= 0 || minStep < 0.001 * range || minStep > range )
-					minStep = 0.1 * range;
-
 				_clusterScaleWidth = minStep;
 			}
+
+			// Second, calculate the sizes of any HiLowBarItem and JapaneseCandleStickItem objects
+			foreach ( CurveItem curve in _ownerPane.CurveList )
+			{
+				IPointList list = curve.Points;
+
+				if ( curve is HiLowBarItem &&
+						(curve as HiLowBarItem).Bar.IsAutoSize )
+				{
+					( curve as HiLowBarItem ).Bar._userScaleSize =
+								GetMinStepSize( list, baseAxis );
+				}
+				else if ( curve is JapaneseCandleStickItem &&
+						(curve as JapaneseCandleStickItem).Stick.IsAutoSize )
+				{
+					( curve as JapaneseCandleStickItem ).Stick._userScaleSize =
+								GetMinStepSize( list, baseAxis );
+				}
+			}
+
+		}
+
+		/// <summary>
+		/// Determine the minimum increment between individual points to be used for
+		/// calculating a bar size that fits without overlapping
+		/// </summary>
+		/// <param name="list">The <see cref="IPointList" /> list of points for the bar
+		/// of interest</param>
+		/// <param name="baseAxis">The base axis for the bar</param>
+		/// <returns>The minimum increment between bars along the base axis</returns>
+		internal static double GetMinStepSize( IPointList list, Axis baseAxis )
+		{
+			double minStep = Double.MaxValue;
+
+			if ( list.Count <= 0 || baseAxis._scale.IsAnyOrdinal )
+				return 1.0;
+
+			PointPair lastPt = list[0];
+			for ( int i = 1; i < list.Count; i++ )
+			{
+				PointPair pt = list[i];
+				if ( !pt.IsInvalid || !lastPt.IsInvalid )
+				{
+					double step;
+					if ( baseAxis is XAxis )
+						step = pt.X - lastPt.X;
+					else
+						step = pt.Y - lastPt.Y;
+
+					if ( step > 0 && step < minStep )
+						minStep = step;
+				}
+
+				lastPt = pt;
+			}
+
+			double range = baseAxis.Scale._maxLinearized - baseAxis.Scale._minLinearized;
+			if ( range <= 0 )
+				minStep = 1.0;
+			else if ( minStep <= 0 || minStep < 0.001 * range || minStep > range )
+				minStep = 0.1 * range;
+
+			return minStep;
 		}
 
 		/// <summary>

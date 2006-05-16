@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.23.2.7 $ $Date: 2006-05-02 06:35:57 $ </version>
+	/// <version> $Revision: 3.23.2.8 $ $Date: 2006-05-16 05:53:58 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -534,7 +534,16 @@ namespace ZedGraph
 				{
 					float pixY = yAxis.Scale.Transform( curve.IsOverrideOrdinal, i, pt.Y );
 					float pixX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, pt.X );
-					g.DrawLine( pen, pixX, pixY, pixX, basePix );
+
+					if ( pixX >= pane.Chart._rect.Left && pixX <= pane.Chart._rect.Right )
+					{
+						if ( pixY > pane.Chart._rect.Bottom )
+							pixY = pane.Chart._rect.Bottom;
+						if ( pixY < pane.Chart._rect.Top )
+							pixY = pane.Chart._rect.Top;
+
+						g.DrawLine( pen, pixX, pixY, pixX, basePix );
+					}
 				}
 			}
 		}

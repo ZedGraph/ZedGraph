@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// that is scaled using the regular scalefactor method (see
 	/// <see cref="PaneBase.CalcScaleFactor"/>).  In this manner, the bar widths
 	/// are set similar to symbol sizes.  The other method is to set
-	/// <see cref="HiLowBar.IsMaximumWidth"/> to true, which will cause the bars
+	/// <see cref="HiLowBar.IsAutoSize"/> to true, which will cause the bars
 	/// to be scaled just like a <see cref="BarItem"/> in which only one
 	/// bar series is present.  That is, the bars width will be the width of
 	/// a cluster less the clustergap (see <see cref="BarSettings.GetClusterWidth"/>
@@ -54,7 +54,7 @@ namespace ZedGraph
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.12.2.6 $ $Date: 2006-05-14 03:31:19 $ </version>
+	/// <version> $Revision: 3.12.2.7 $ $Date: 2006-05-16 05:53:58 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{

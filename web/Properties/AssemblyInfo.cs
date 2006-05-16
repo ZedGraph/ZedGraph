@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "ZedGraph" )]
+[assembly: AssemblyTitle( "ZedGraph.Web" )]
 [assembly: AssemblyDescription( "ZedGraph Library" )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "" )]
-[assembly: AssemblyProduct( "ZedGraph Library" )]
-[assembly: AssemblyCopyright( "Copyright © 2003-2006 John Champion" )]
+[assembly: AssemblyProduct( "ZedGraph Web Control" )]
+[assembly: AssemblyCopyright( "Copyright © 2004-2006, Darren Martz, John Champion, Benjamin Mayrargue" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible( false )]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "a552bf32-72a3-4d27-968c-72e7a90243f2" )]
+[assembly: Guid( "9da18f13-4581-4f63-8e0e-abe56ab05431" )]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,4 +32,4 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 [assembly: AssemblyVersion( "4.9.7.*" )]
-//[assembly: AssemblyFileVersion( "4.9.7.0" )]
+//[assembly: AssemblyFileVersion( "4.9.7.*" )]

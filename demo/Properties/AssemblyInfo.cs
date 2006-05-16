@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle( "Demo" )]
-[assembly: AssemblyDescription( "" )]
+[assembly: AssemblyTitle( "ZedGraph.Demo" )]
+[assembly: AssemblyDescription( "ZedGraph Library Demo" )]
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "" )]
-[assembly: AssemblyProduct( "Demo" )]
-[assembly: AssemblyCopyright( "Copyright ©  2006" )]
+[assembly: AssemblyProduct( "ZedGraph Library Demo" )]
+[assembly: AssemblyCopyright( "Copyright ©  2005-2006 Jerry Vos, John Champion" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion( "1.0.0.0" )]
-[assembly: AssemblyFileVersion( "1.0.0.0" )]
+[assembly: AssemblyVersion( "4.9.7.*" )]
+//[assembly: AssemblyFileVersion( "1.0.0.0" )]

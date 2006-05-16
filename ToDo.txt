@@ -1,5 +1,12 @@
 TODO for ZedGraph:
 
+ZedGraph To Do:
+
+XML code for ZedGraph
+Dragging Objects mods
+ZedGraphControl.IsScrolling prop
+Crash on AddSticks()/zoom 8 times
+
 Stick item for stick charts, sticks go to X axis (or base axis)
 Expose Line Style for ArrowItem, StickItem
 

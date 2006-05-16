@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-05-16 05:53:58 $ </version>
 	[Serializable]
 	public class CandleStick : ICloneable, ISerializable
 	{
@@ -64,6 +64,19 @@ namespace ZedGraph
 		/// </summary>
 		protected float _size;
 
+		/// <summary>
+		/// Private field that determines if the <see cref="Size" /> property will be
+		/// calculated automatically based on the minimum axis scale step size between
+		/// bars.  Use the public property <see cref="IsAutoSize" /> to access this value.
+		/// </summary>
+		protected Boolean _isAutoSize;
+
+		/// <summary>
+		/// The result of the autosize calculation, which is the size of the bars in
+		/// user scale units.  This is converted to pixels at draw time.
+		/// </summary>
+		internal double _userScaleSize = 1.0;
+
 	#endregion
 
 	#region Defaults
@@ -79,7 +92,7 @@ namespace ZedGraph
 			/// The default width for the candlesticks (see <see cref="CandleStick.Size" />),
 			/// in units of points.
 			/// </summary>
-			public static float Size = 6;
+			public static float Size = 12;
 			/// <summary>
 			/// The default pen width to be used for drawing candlesticks
 			/// (<see cref="CandleStick.PenWidth"/> property).  Units are points.
@@ -94,6 +107,11 @@ namespace ZedGraph
 			/// The default color for drawing CandleSticks (<see cref="CandleStick.Color"/> property).
 			/// </summary>
 			public static Color Color = Color.Black;
+
+			/// <summary>
+			/// The default value for the <see cref="ZedGraph.CandleStick.IsAutoSize" /> property.
+			/// </summary>
+			public static Boolean IsAutoSize = true;
 		}
 
 	#endregion
@@ -138,14 +156,37 @@ namespace ZedGraph
 			set { _penWidth = value; }
 		}
 		/// <summary>
-		/// The total width to be used for drawing the opening/closing line segments ("wings")
-		/// of the <see cref="CandleStick" /> items.
-		/// Units are points.
+		/// Gets or sets the total width to be used for drawing the opening/closing line
+		/// segments ("wings") of the <see cref="CandleStick" /> items. Units are points.
 		/// </summary>
+		/// <remarks>The size of the candlesticks can be set by this value, which
+		/// is then scaled according to the scaleFactor (see
+		/// <see cref="PaneBase.CalcScaleFactor"/>).  Alternatively,
+		/// if <see cref="IsAutoSize"/> is true, the bar width will
+		/// be set according to the maximum available cluster width less
+		/// the cluster gap (see <see cref="BarSettings.GetClusterWidth"/>
+		/// and <see cref="BarSettings.MinClusterGap"/>).  That is, if
+		/// <see cref="IsAutoSize"/> is true, then the value of
+		/// <see cref="Size"/> will be ignored.  If you modify the value of Size,
+		/// then <see cref="IsAutoSize" /> will be automatically set to false.
+		/// </remarks>
+		/// <value>Size in points (1/72 inch)</value>
+		/// <seealso cref="Default.Size"/>
 		public float Size
 		{
 			get { return _size; }
-			set { _size = value; }
+			set { _size = value; _isAutoSize = false; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines if the <see cref="Size" /> property will be
+		/// calculated automatically based on the minimum axis scale step size between
+		/// bars.
+		/// </summary>
+		public Boolean IsAutoSize
+		{
+			get { return _isAutoSize; }
+			set { _isAutoSize = value; }
 		}
 
 	#endregion
@@ -173,6 +214,7 @@ namespace ZedGraph
 		public CandleStick( Color color )
 		{
 			_size = Default.Size;
+			_isAutoSize = Default.IsAutoSize;
 			_color = color;
 			_penWidth = Default.PenWidth;
 			_isOpenCloseVisible = Default.IsOpenCloseVisible;
@@ -188,6 +230,7 @@ namespace ZedGraph
 			_isOpenCloseVisible = rhs._isOpenCloseVisible;
 			_penWidth = rhs._penWidth;
 			_size = rhs._size;
+			_isAutoSize = rhs._isAutoSize;
 		}
 
 		/// <summary>
@@ -235,6 +278,7 @@ namespace ZedGraph
 			_color = (Color)info.GetValue( "color", typeof( Color ) );
 			_penWidth = info.GetSingle( "penWidth" );
 			_size = info.GetSingle( "size" );
+			_isAutoSize = info.GetBoolean( "isAutoSize" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -249,11 +293,13 @@ namespace ZedGraph
 			info.AddValue( "color", _color );
 			info.AddValue( "penWidth", _penWidth );
 			info.AddValue( "size", _size );
+			info.AddValue( "isAutoSize", _isAutoSize );
 		}
 
 	#endregion
 
 	#region Rendering Methods
+
 
 		/// <summary>
 		/// Draw the <see cref="CandleStick"/> to the specified <see cref="Graphics"/>
@@ -280,19 +326,15 @@ namespace ZedGraph
 		/// pixel units</param>
 		/// <param name="pixClose">The dependent axis position of the closing value of the candlestick in
 		/// pixel units</param>
-		/// <param name="scaleFactor">
-		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
-		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor
-		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.</param>
+		/// <param name="halfSize">
+		/// The scaled width of the candlesticks, pixels</param>
 		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
 		/// <see cref="PenWidth"/> for this <see cref="CandleStick"/></param>
 		public void Draw( Graphics g, GraphPane pane, bool isXBase,
 								float pixBase, float pixHigh, float pixLow,
 								float pixOpen, float pixClose,
-								float scaleFactor, Pen pen  )
+								float halfSize, Pen pen  )
 		{
-			float halfSize = _size * scaleFactor;
-
 			if ( pixBase != PointPair.Missing )
 			{
 				if ( isXBase )
@@ -351,7 +393,8 @@ namespace ZedGraph
 			if ( curve.Points != null )
 			{
 				Pen pen = new Pen( _color, _penWidth );
-				float halfSize = _size * scaleFactor;
+				//float halfSize = _size * scaleFactor;
+				float halfSize = GetBarWidth( pane, baseAxis, scaleFactor );
 
 				// Loop over each defined point							
 				for ( int i = 0; i < curve.Points.Count; i++ )
@@ -391,12 +434,35 @@ namespace ZedGraph
 							pixClose = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, close );
 
 						Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
-								pixClose, scaleFactor, pen );
+								pixClose, halfSize, pen );
 					}
 				}
 			}
 		}
 
+		/// <summary>
+		/// Returns the width of the candleStick, in pixels, based on the settings for
+		/// <see cref="Size"/> and <see cref="IsAutoSize"/>.
+		/// </summary>
+		/// <param name="pane">The parent <see cref="GraphPane"/> object.</param>
+		/// <param name="baseAxis">The <see cref="Axis"/> object that
+		/// represents the bar base (independent axis).</param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <returns>The width of each bar, in pixel units</returns>
+		public float GetBarWidth( GraphPane pane, Axis baseAxis, float scaleFactor )
+		{
+			if ( _isAutoSize )
+				return baseAxis._scale.GetClusterWidth( _userScaleSize ) /
+								( 1.0F + pane._barSettings.MinClusterGap ) / 2.0f;
+			else
+				return (float)( _size * scaleFactor ) / 2.0f;
+		}
+		
 	#endregion
 
 	}

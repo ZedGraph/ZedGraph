@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.6 $ $Date: 2006-05-15 06:35:31 $ </version>
+	/// <version> $Revision: 1.1.2.7 $ $Date: 2006-05-16 05:53:58 $ </version>
 	[Serializable]
 	public class JapaneseCandleStick : CandleStick, ICloneable, ISerializable
 	{
@@ -291,10 +291,10 @@ namespace ZedGraph
 		/// <see cref="FillType.GradientByZ" /> <see cref="FillType" /></param>
 		public void Draw( Graphics g, GraphPane pane, bool isXBase,
 								float pixBase, float pixHigh, float pixLow,
-								float pixOpen, float pixClose,
+								float pixOpen, float pixClose, float halfSize,
 								float scaleFactor, Pen pen, Fill fill, Border border, PointPair pt )
 		{
-			float halfSize = (int) ( _size * scaleFactor / 2.0f + 0.5f );
+			//float halfSize = (int) ( _size * scaleFactor / 2.0f + 0.5f );
 
 			if ( pixBase != PointPair.Missing && Math.Abs( pixLow ) < 1000000 &&
 						Math.Abs( pixHigh ) < 1000000)
@@ -364,7 +364,8 @@ namespace ZedGraph
 			if ( curve.Points != null )
 			{
 				Pen pen = new Pen( _color, _penWidth );
-				float halfSize = _size * scaleFactor;
+				//float halfSize = _size * scaleFactor;
+				float halfSize = GetBarWidth( pane, baseAxis, scaleFactor );
 
 				// Loop over each defined point							
 				for ( int i = 0; i < curve.Points.Count; i++ )
@@ -404,7 +405,8 @@ namespace ZedGraph
 							pixClose = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, close );
 
 						Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
-								pixClose, scaleFactor, pen, (close > open ? _risingFill : _fallingFill ),
+								pixClose, halfSize, scaleFactor, pen,
+								(close > open ? _risingFill : _fallingFill ),
 								(close > open ? _risingBorder : _fallingBorder ),	pt );
 					}
 				}

@@ -24,50 +24,49 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_Load( object sender, EventArgs e )
 		{
-			//CreateGraph_MasterWithPies( zedGraphControl1 );
-			//CreateGraph_NormalPane( zedGraphControl1 );
-			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
-			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
-			//CreateGraph_RadarPlot( zedGraphControl1 );
-			//CreateGraph_CandleStick( zedGraphControl1 );
-			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
-			//CreateGraph_BasicLinear( zedGraphControl2 );
-			//CreateGraph_BasicLog( zedGraphControl2 );
-			//CreateGraph_StackLine( zedGraphControl1 );
-			//CreateGraph_MasterPane( zedGraphControl1 );
-			//CreateGraph_VerticalBars( zedGraphControl1 );
-			//CreateGraph_HorizontalBars( zedGraphControl1 );
-			//CreateGraph_MasterPane( zedGraphControl1 );
-			//CreateGraph_GradientByZBars( zedGraphControl2 );
-			//CreateGraph_DualYDemo( zedGraphControl1 );
-			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
-			//CreateGraph_GrowingData( zedGraphControl1 );
-			//CreateGraph_SplineTest( zedGraphControl1 );
-			//CreateGraph_DateAxis( zedGraphControl1 );
-			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
-			//CreateGraph_ScrollTest( zedGraphControl1 );
-			//CreateGraph_TwoTextAxes( zedGraphControl1 );
-			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
 			//CreateGraph_32kPoints( zedGraphControl2 );
-			//CreateGraph_ImageSymbols( zedGraphControl1 );
-			//CreateGraph_OnePoint( zedGraphControl1 );
-			//CreateGraph_StackedBars( zedGraphControl2 );
-			//CreateGraph_StickToCurve( zedGraphControl1 );
-			//CreateGraph_TextBasic( zedGraphControl2 );
-			//CreateChartDualY( zedGraphControl1 );
-			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
-			CreateGraph_HiLowBarDemo( zedGraphControl1 );
-			//CreateGraph_MultiYDemo( zedGraphControl1 );
-
-			//CreateGraph_TestScroll( zedGraphControl1 );
-			//CreateGraph_DataSource( zedGraphControl1 );
-			CreateGraph_PolyTest( zedGraphControl2 );
 			//CreateGraph_BarJunk( zedGraphControl2 );
+			//CreateGraph_BasicLinear( zedGraphControl2 );
+			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
+			//CreateGraph_BasicLog( zedGraphControl2 );
+			//CreateGraph_BasicStick( zedGraphControl2 );
+			//CreateGraph_CandleStick( zedGraphControl1 );
+			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_Contour( zedGraphControl2 );
+			//CreateGraph_DateAxis( zedGraphControl1 );
+			//CreateGraph_DataSource( zedGraphControl1 );
+			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
+			//CreateGraph_DualYDemo( zedGraphControl1 );
+			//CreateGraph_GradientByZBars( zedGraphControl2 );
+			//CreateGraph_GrowingData( zedGraphControl1 );
+			CreateGraph_HiLowBarDemo( zedGraphControl1 );
+			//CreateGraph_HorizontalBars( zedGraphControl1 );
+			//CreateGraph_ImageSymbols( zedGraphControl1 );
+			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_Junk( zedGraphControl2 );
+			//CreateGraph_MasterPane( zedGraphControl1 );
+			//CreateGraph_MasterWithPies( zedGraphControl1 );
+			//CreateGraph_MultiYDemo( zedGraphControl1 );
+			//CreateGraph_NormalPane( zedGraphControl1 );
+			//CreateGraph_OnePoint( zedGraphControl1 );
+			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
+			//CreateGraph_PolyTest( zedGraphControl2 );
+			//CreateGraph_RadarPlot( zedGraphControl1 );
+			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
+			//CreateGraph_ScrollTest( zedGraphControl1 );
+			//CreateGraph_SplineTest( zedGraphControl1 );
+			//CreateGraph_StackedBars( zedGraphControl2 );
+			//CreateGraph_StackLine( zedGraphControl1 );
+			//CreateGraph_StickToCurve( zedGraphControl1 );
+			//CreateGraph_TestScroll( zedGraphControl1 );
+			//CreateGraph_TextBasic( zedGraphControl2 );
+			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
+			//CreateGraph_TwoTextAxes( zedGraphControl1 );
+			//CreateGraph_VerticalBars( zedGraphControl1 );
+			//CreateGraph_DualY( zedGraphControl1 );
+
 
 			zedGraphControl1.AxisChange();
-			zedGraphControl2.AxisChange();
 			SetSize();
 		}
 
@@ -78,18 +77,17 @@ namespace ZedGraph.ControlTest
 
 		private void SetSize()
 		{
-			Rectangle formRect = this.ClientRectangle;
-			formRect.Inflate( -10, -10 );
-			tabControl1.Size = formRect.Size;
-
-
-			Rectangle pageRect = tabControl1.SelectedTab.ClientRectangle;
+			Rectangle pageRect = this.ClientRectangle;
 			pageRect.Inflate( -10, -10 );
+			pageRect.Height -= 20;
+			//tabControl1.Size = formRect.Size;
+
+
+			//Rectangle pageRect = tabControl1.SelectedTab.ClientRectangle;
+			//pageRect.Inflate( -10, -10 );
+
 			if ( zedGraphControl1.Size != pageRect.Size )
-			{
 				zedGraphControl1.Size = pageRect.Size;
-				zedGraphControl2.Size = pageRect.Size;
-			}
 
 			double junk = DateTime.Now.ToOADate();
 			// Fix the ellipseItem to a perfect circle by using a fixed height, but a variable
@@ -102,8 +100,8 @@ namespace ZedGraph.ControlTest
 					GraphPane myPane = zedGraphControl1.GraphPane;
 					float dx = (float)( myPane.XAxis.Scale.Max - myPane.XAxis.Scale.Min );
 					float dy = (float)( myPane.YAxis.Scale.Max - myPane.YAxis.Scale.Min );
-					float xPix = myPane.Chart.Rect.Width * (float) ellipse.Location.Width / dx;
-					float yPix = myPane.Chart.Rect.Height * (float) ellipse.Location.Height / dy;
+					float xPix = myPane.Chart.Rect.Width * (float)ellipse.Location.Width / dx;
+					float yPix = myPane.Chart.Rect.Height * (float)ellipse.Location.Height / dy;
 
 					ellipse.Location.Width *= yPix / xPix;
 
@@ -171,7 +169,7 @@ namespace ZedGraph.ControlTest
 				Stream myReader = new FileStream( fileName, FileMode.Open,
 					FileAccess.Read, FileShare.Read );
 
-				MasterPane master = (MasterPane) mySerializer.Deserialize( myReader );
+				MasterPane master = (MasterPane)mySerializer.Deserialize( myReader );
 				z1.Refresh();
 
 				myReader.Close();
@@ -473,7 +471,8 @@ namespace ZedGraph.ControlTest
 
 			//CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Black );
 			CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Blue );
-			myCurve.Stick.Size = 5;
+			//myCurve.Stick.Size = 10;
+			myCurve.Stick.IsAutoSize = true;
 			//myCurve.CandleStick.PenWidth = 2;
 			//myCurve.CandleStick.IsOpenCloseVisible = false;
 
@@ -529,14 +528,15 @@ namespace ZedGraph.ControlTest
 
 			//CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Black );
 			JapaneseCandleStickItem myCurve = myPane.AddJapaneseCandleStick( "trades", spl );
-			myCurve.Stick.Size = 3;
+			//myCurve.Stick.Size = 3;
+			myCurve.Stick.IsAutoSize = true;
 			//myCurve.CandleStick.PenWidth = 2;
 			myCurve.Stick.Color = Color.Blue;
 			//myCurve.CandleStick.IsOpenCloseVisible = false;
 
 			// Use DateAsOrdinal to skip weekend gaps
 			myPane.XAxis.Type = AxisType.DateAsOrdinal;
-			myPane.XAxis.Scale.MajorStep = 1.0;
+			//myPane.XAxis.Scale.MajorStep = 1.0;
 
 			// pretty it up a little
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
@@ -552,7 +552,7 @@ namespace ZedGraph.ControlTest
 		private void MyTimer_Tick( object sender, EventArgs e )
 		{
 			// Get the first CurveItem in the graph
-			LineItem curve = zedGraphControl2.GraphPane.CurveList[0] as LineItem;
+			LineItem curve = zedGraphControl1.GraphPane.CurveList[0] as LineItem;
 			// Get the PointPairList
 			PointPairList list = curve.Points as PointPairList;
 			//list.Add( xvalue, (double)cpuUsagePerformanceCounter.NextValue() );
@@ -710,7 +710,7 @@ namespace ZedGraph.ControlTest
 			LineItem myCurve4 = myPane.AddCurve( "line 4", list4, Color.Black, SymbolType.Triangle );
 
 			myPane.LineType = LineType.Stack;
-			
+
 			myCurve.Line.Fill = new Fill( Color.White, Color.Maroon, 45.0f );
 			myCurve2.Line.Fill = new Fill( Color.White, Color.Blue, 45.0f );
 			myCurve3.Line.Fill = new Fill( Color.White, Color.Green, 45.0f );
@@ -794,26 +794,26 @@ namespace ZedGraph.ControlTest
 
 			int j = 5;
 
-				myPane.Title.Text = "Case #6";
-				myPane.XAxis.Title.Text = "Time, Days";
-				myPane.YAxis.Title.Text = "Rate, m/s";
+			myPane.Title.Text = "Case #6";
+			myPane.XAxis.Title.Text = "Time, Days";
+			myPane.YAxis.Title.Text = "Rate, m/s";
 
-				myPane.Fill = new Fill( Color.White, Color.LightYellow, 45.0F );
-				myPane.BaseDimension = 6.0F;
+			myPane.Fill = new Fill( Color.White, Color.LightYellow, 45.0F );
+			myPane.BaseDimension = 6.0F;
 
-				// Make up some data arrays based on the Sine function
-				double x, y;
-				PointPairList list = new PointPairList();
-				for ( int i = 0; i < 36; i++ )
-				{
-					x = (double)i + 5;
-					y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
-					list.Add( x, y );
-				}
+			// Make up some data arrays based on the Sine function
+			double x, y;
+			PointPairList list = new PointPairList();
+			for ( int i = 0; i < 36; i++ )
+			{
+				x = (double)i + 5;
+				y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
+				list.Add( x, y );
+			}
 
-				LineItem myCurve = myPane.AddCurve( "Type 5",
-					list, Color.Pink, SymbolType.Triangle );
-				myCurve.Symbol.Fill = new Fill( Color.White );
+			LineItem myCurve = myPane.AddCurve( "Type 5",
+				list, Color.Pink, SymbolType.Triangle );
+			myCurve.Symbol.Fill = new Fill( Color.White );
 
 
 			z1.AxisChange();
@@ -1036,7 +1036,7 @@ namespace ZedGraph.ControlTest
 			{
 				double x = (double)i;
 				double y = rand.NextDouble() * 1000;
-				double z = (y<300) ? 0 : ( (y<600) ? 0.5 : 1.0 );
+				double z = ( y < 300 ) ? 0 : ( ( y < 600 ) ? 0.5 : 1.0 );
 				list.Add( x, y, z );
 			}
 
@@ -1338,7 +1338,7 @@ namespace ZedGraph.ControlTest
 			PointPairList list2 = new PointPairList();
 
 			double x = new XDate( 1990, 1, 2 );
-			double y = Math.Sin( i / 8.0 ) * 1000 + 1001;
+			double y = Math.Sin( 5 / 8.0 ) * 1000 + 1001;
 			list.Add( x, y );
 			x = new XDate( 1990, 1, 3 );
 			list.Add( x, y );
@@ -1397,6 +1397,43 @@ namespace ZedGraph.ControlTest
 			}
 
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			z1.IsShowHScrollBar = true;
+			z1.ScrollMinX = 0;
+			z1.ScrollMaxX = 550;
+			//z1.IsShowVScrollBar = true;
+			//z1.IsAutoScrollRange = true;
+
+			//z1.GraphPane.IsBoundedRanges = false;
+			z1.GraphPane.XAxis.Scale.Min = 450;
+			z1.GraphPane.XAxis.Scale.MajorStep = 10;
+			z1.GraphPane.XAxis.Scale.Max = 550;
+
+			z1.AxisChange();
+			//z1.GraphPane.XAxis.IsReverse = true;
+			//z1.GraphPane.XAxis.Type = AxisType.Log;
+			//z1.IsAutoScrollRange = true;
+			//z1.ScrollMinX = 1;
+			//z1.ScrollMaxX = 100;
+			//z1.IsShowHScrollBar = true;
+			//z1.IsEnableVZoom = false;
+		}
+
+		// Basic stick test - Linear Axis
+		private void CreateGraph_BasicStick( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+
+			for ( int i = 1; i < 500; i++ )
+			{
+				double x = i;
+				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				list.Add( x, y );
+			}
+
+			StickItem myCurve = myPane.AddStick( "curve", list, Color.Blue );
 
 			z1.IsShowHScrollBar = true;
 			z1.ScrollMinX = 0;
@@ -1530,16 +1567,16 @@ namespace ZedGraph.ControlTest
 			// Set the title and axis label
 			myPane.Title.Text = "Overlay Bar Graph Demo";
 			myPane.YAxis.Title.Text = "Value";
-			
+
 			// Enter some data values
 			double[] y = { 100, 115, 75, -22, 98, 40, -10 };
 			double[] y2 = { 90, 100, 95, -35, 80, 35, 35 };
 			double[] y3 = { 80, 110, 65, -15, 54, 67, 18 };
 
 			// Manually sum up the curves
-			for ( int i=0; i<y.GetLength(0); i++ )
+			for ( int i = 0; i < y.GetLength( 0 ); i++ )
 				y2[i] += y[i];
-			for ( int i=0; i<y2.GetLength(0); i++ )
+			for ( int i = 0; i < y2.GetLength( 0 ); i++ )
 				y3[i] += y2[i];
 
 
@@ -1562,14 +1599,14 @@ namespace ZedGraph.ControlTest
 
 			// Shift the text items up by 5 user scale units above the bars
 			const float shift = 5;
-			
-			for ( int i=0; i<y.Length; i++ )
+
+			for ( int i = 0; i < y.Length; i++ )
 			{
 				// format the label string to have 1 decimal place
 				string lab = y3[i].ToString( "F1" );
 				// create the text item (assumes the x axis is ordinal or text)
 				// for negative bars, the label appears just above the zero value
-				TextObj text = new TextObj( lab, (float) (i+1), (float) (y3[i] < 0 ? 0.0 : y3[i]) + shift );
+				TextObj text = new TextObj( lab, (float)( i + 1 ), (float)( y3[i] < 0 ? 0.0 : y3[i] ) + shift );
 				// tell Zedgraph to use user scale units for locating the TextObj
 				text.Location.CoordinateFrame = CoordType.AxisXYScale;
 				// AlignH the left-center of the text to the specified point
@@ -1582,10 +1619,10 @@ namespace ZedGraph.ControlTest
 				// add the TextObj to the list
 				myPane.GraphObjList.Add( text );
 			}
-			
+
 			// Indicate that the bars are overlay type, which are drawn on top of eachother
 			myPane.BarSettings.Type = BarType.Overlay;
-			
+
 			// Fill the axis background with a color gradientC:\Documents and Settings\champioj\Desktop\ZedGraph-4.9-CVS\demo\ZedGraph.Demo\StepChartDemo.cs
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0F );
 
@@ -1610,7 +1647,7 @@ namespace ZedGraph.ControlTest
 			{
 				double y = Math.Sin( (double)i * Math.PI / 15.0 );
 				double yBase = y - 0.4;
-				list.Add( (double)i*100, y, yBase );
+				list.Add( (double)i * 100, y, yBase );
 			}
 
 			// Generate a red bar with "Curve 1" in the legend
@@ -1618,8 +1655,9 @@ namespace ZedGraph.ControlTest
 			// Fill the bar with a red-white-red gradient for a 3d look
 			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
 			// Make the bar width based on the available space, rather than a size in points
-			myCurve.Bar.IsMaximumWidth = true;
+			myCurve.Bar.IsAutoSize = true;
 			myPane.BarSettings.ClusterScaleWidthAuto = true;
+			//myPane.XAxis.Type = AxisType.Ordinal;
 
 			// Fill the axis background with a color gradient
 			myPane.Chart.Fill = new Fill( Color.White,
@@ -1673,9 +1711,9 @@ namespace ZedGraph.ControlTest
 			//dspl.YDataMember = "Freight";
 			//dspl.ZDataMember = null;
 			//dspl.TagDataMember = "ShipName";
-			
-			List<Sample> sampleList = new List<Sample>(); 
-			
+
+			List<Sample> sampleList = new List<Sample>();
+
 			//ArrayList arrayList = new ArrayList();
 			DateTime dt = new DateTime( 2006, 3, 1 );
 			for ( int i = 0; i < 50; i++ )
@@ -1695,8 +1733,8 @@ namespace ZedGraph.ControlTest
 			dspl.YDataMember = "Position";
 			dspl.ZDataMember = "Velocity";
 			dspl.TagDataMember = null;
-			
-			
+
+
 
 			//int count = table.Count;
 
@@ -1787,7 +1825,7 @@ namespace ZedGraph.ControlTest
 			( myPane.CurveList[0] as LineItem ).Line.Fill =
 						new Fill( Color.White, Color.FromArgb( 255, 150, 255 ), 45.0f );
 			( myPane.CurveList[1] as LineItem ).Line.Fill =
-						new Fill( Color.White, Color.FromArgb( 255, 255, 150), 45.0f );
+						new Fill( Color.White, Color.FromArgb( 255, 255, 150 ), 45.0f );
 			( myPane.CurveList[2] as LineItem ).Line.Fill =
 						new Fill( Color.White, Color.FromArgb( 150, 255, 150 ), 45.0f );
 			( myPane.CurveList[3] as LineItem ).Line.Fill =
@@ -1804,7 +1842,7 @@ namespace ZedGraph.ControlTest
 			myPane.YAxis.Scale.Min = 150;
 			myPane.YAxis.Scale.Max = 350;
 
-		
+
 			BarItem myBar = myPane.AddBar( "bar", myPane.CurveList[0].Points, Color.Green );
 
 			z1.AxisChange();
@@ -1844,7 +1882,7 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 		}
 
-		public void CreateChartDualY( ZedGraphControl z1 )
+		public void CreateGraph_DualY( ZedGraphControl z1 )
 		{
 
 			bool isAssociateWithAxis = true;
@@ -2157,28 +2195,6 @@ namespace ZedGraph.ControlTest
 			//e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
 		}
 
-		private void tabPage1_Click( object sender, EventArgs e )
-		{
-
-		}
-
-		private void button1_Click( object sender, EventArgs e )
-		{
-			tabControl1.SelectedTab = tabPage2;
-		}
-
-		int i = 0;
-		private void zedGraphControl2_Scroll( object sender, ScrollEventArgs e )
-		{
-			i++;
-		}
-
-		int j = 0;
-		private void zedGraphControl2_ScrollEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState, ZoomState newState )
-		{
-			j++;
-		}
-
 		private void Form1_MouseDown( object sender, MouseEventArgs e )
 		{
 			if ( Control.ModifierKeys == Keys.Shift )
@@ -2203,7 +2219,7 @@ namespace ZedGraph.ControlTest
 				// Convert the mouse location to X, Y, and Y2 scale values
 				pane.ReverseTransform( mousePt, out x, out y, out y2 );
 				// Format the status label text
-				toolStripStatusXY.Text = "(" + x.ToString("f2") + ", " + y.ToString("f2") + ")";
+				toolStripStatusXY.Text = "(" + x.ToString( "f2" ) + ", " + y.ToString( "f2" ) + ")";
 			}
 			else
 				// If there is no valid data, then clear the status label text

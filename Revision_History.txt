@@ -1,5 +1,10 @@
 == Version 5 ==
 
+;15-May-2006 (by Champion) V5_BRANCH
+: [FIX] Protect Stick plot from GDI+ overflow
+: [ADD] Add ZedGraphControl.IsScrolling
+: [UPD] Remake projects to fix conflict/in-use problem
+
 ;14-May-2006 (by Champion) V5_BRANCH
 : [FIX] Make JapaneseCandleSticks always show at lease a line for the bar if open=close
 : [UPD] Add StockPointList.GetAt() method to retrieve the actual StockPt, rather than the PointPair

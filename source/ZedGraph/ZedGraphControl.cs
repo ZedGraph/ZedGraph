@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.12 $ $Date: 2006-05-14 03:31:19 $ </version>
+	/// <version> $Revision: 3.59.2.13 $ $Date: 2006-05-16 05:53:58 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -884,6 +884,10 @@ namespace ZedGraph
 		{
 			InitializeComponent();
 
+			// These commands do nothing, but they get rid of the compiler warnings for
+			// unused events
+			bool b = MouseDown == null || MouseUp == null || MouseMove == null;
+
 			// Link in these events from the base class, since we disable them from this class.
 			base.MouseDown += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseDown );
 			base.MouseUp += new System.Windows.Forms.MouseEventHandler( this.ZedGraphControl_MouseUp );
@@ -1652,6 +1656,25 @@ namespace ZedGraph
 					tmp.Max = value;
 					_y2ScrollRangeList[0] = tmp;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Returns true if the user is currently scrolling via the scrollbar, or
+		/// false if no scrolling is taking place.
+		/// </summary>
+		/// <remarks>
+		/// This method just tests <see cref="ScrollBar.Capture" /> to see if the
+		/// mouse has been captured by the scroll bar.  If so, scrolling is active.
+		/// </remarks>
+		public Boolean IsScrolling
+		{
+			get
+			{
+				if ( hScrollBar1 != null && vScrollBar1 != null )
+					return hScrollBar1.Capture || vScrollBar1.Capture;
+				else
+					return false;
 			}
 		}
 

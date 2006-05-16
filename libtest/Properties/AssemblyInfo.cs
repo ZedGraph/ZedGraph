@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "" )]
 [assembly: AssemblyProduct( "ZedGraph.LibTest" )]
-[assembly: AssemblyCopyright( "Copyright ©  2006" )]
+[assembly: AssemblyCopyright( "Copyright © John Champion 2006" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 

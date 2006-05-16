@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9.2.8 $ $Date: 2006-05-14 03:31:19 $ </version>
+	/// <version> $Revision: 1.9.2.9 $ $Date: 2006-05-16 05:53:58 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -2105,6 +2105,10 @@ namespace ZedGraph
 		/// Determine the width, in pixel units, of each bar cluster including
 		/// the cluster gaps and bar gaps.
 		/// </summary>
+		/// <remarks>
+		/// This method uses the <see cref="BarSettings.ClusterScaleWidth" /> for
+		/// non-ordinal axes, or a cluster width of 1.0 for ordinal axes.
+		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
 		/// associated with this <see cref="Axis"/></param>
 		/// <returns>The width of each bar cluster, in pixel units</returns>
@@ -2113,6 +2117,20 @@ namespace ZedGraph
 			double basisVal = _min;
 			return Math.Abs( Transform( basisVal +
 					( IsAnyOrdinal ? 1.0 : pane._barSettings._clusterScaleWidth ) ) -
+					Transform( basisVal ) );
+		}
+
+		/// <summary>
+		/// Calculates the cluster width, in pixels, by transforming the specified
+		/// clusterScaleWidth.
+		/// </summary>
+		/// <param name="clusterScaleWidth">The width in user scale units of each
+		/// bar cluster</param>
+		/// <returns>The equivalent pixel size of the bar cluster</returns>
+		public float GetClusterWidth( double clusterScaleWidth )
+		{
+			double basisVal = _min;
+			return Math.Abs( Transform( basisVal + clusterScaleWidth ) -
 					Transform( basisVal ) );
 		}
 

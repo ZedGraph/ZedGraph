@@ -4,7 +4,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B99650EE-AF46-47B4-A4A9-212ADE7809B7}</ProjectGuid>
+    <ProjectGuid>{2541686B-1673-43BF-AF89-3163945DB009}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZedGraph</RootNamespace>
@@ -24,28 +24,18 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\lib\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\lib\ZedGraph.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System">
-      <HintPath>..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data">
-      <HintPath>..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing">
-      <HintPath>..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Drawing.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms">
-      <HintPath>..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.Windows.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml">
-      <HintPath>..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v2.0.50727\System.XML.dll</HintPath>
-    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -61,6 +51,8 @@
     <Compile Include="ZedGraph\CandleStick.cs" />
     <Compile Include="ZedGraph\CandleStickItem.cs" />
     <Compile Include="ZedGraph\Chart.cs" />
+    <Compile Include="ZedGraph\Class1.cs" />
+    <Compile Include="ZedGraph\CollectionPlus.cs" />
     <Compile Include="ZedGraph\ColorSymbolRotator.cs" />
     <Compile Include="ZedGraph\CurveItem.cs" />
     <Compile Include="ZedGraph\CurveList.cs" />
@@ -104,6 +96,7 @@
     <Compile Include="ZedGraph\MinorTic.cs" />
     <Compile Include="ZedGraph\OrdinalScale.cs" />
     <Compile Include="ZedGraph\PaneBase.cs" />
+    <Compile Include="ZedGraph\PaneLayoutMgr.cs" />
     <Compile Include="ZedGraph\PaneList.cs" />
     <Compile Include="ZedGraph\PieItem.cs" />
     <Compile Include="ZedGraph\PointD.cs" />
@@ -137,9 +130,7 @@
     <Compile Include="ZedGraph\ZedGraphControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ZedGraph\ZedGraphControl.Designer.cs">
-      <DependentUpon>ZedGraphControl.cs</DependentUpon>
-    </Compile>
+    <Compile Include="ZedGraph\ZedGraphControl.Designer.cs" />
     <Compile Include="ZedGraph\ZedGraphException.cs" />
     <Compile Include="ZedGraph\ZoomState.cs" />
     <Compile Include="ZedGraph\ZoomStateStack.cs" />
@@ -147,7 +138,6 @@
   <ItemGroup>
     <EmbeddedResource Include="ZedGraph\ZedGraphControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>ZedGraphControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ZedGraph\ZedGraphLocale.de.resx">
       <SubType>Designer</SubType>
@@ -169,8 +159,7 @@
     <None Include="zedgraphkey.snk" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Revision_History.txt">
-    </Content>
+    <Content Include="Revision_History.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

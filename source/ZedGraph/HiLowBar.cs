@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11.2.6 $ $Date: 2006-05-15 06:35:31 $ </version>
+	/// <version> $Revision: 3.11.2.7 $ $Date: 2006-05-16 05:53:58 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -53,12 +53,19 @@ namespace ZedGraph
 		/// Private field that determines whether the bar width will be based on
 		/// the <see cref="Size"/> value, or it will be based on available
 		/// space similar to <see cref="BarItem"/> objects.  Use the public property
-		/// <see cref="IsMaximumWidth"/> to access this value.
+		/// <see cref="IsAutoSize"/> to access this value.
 		/// </summary>
-		private bool _isMaximumWidth;
+		private bool _isAutoSize;
+
+		/// <summary>
+		/// The result of the autosize calculation, which is the size of the bars in
+		/// user scale units.  This is converted to pixels at draw time.
+		/// </summary>
+		internal double _userScaleSize = 1.0;
+
 	#endregion
 
-	#region Properties
+	#region Default
 		/// <summary>
 		/// A simple struct that defines the
 		/// default property values for the <see cref="ZedGraph.HiLowBar"/> class.
@@ -71,6 +78,11 @@ namespace ZedGraph
 			/// in units of points.
 			/// </summary>
 			public static float Size = 7;
+
+			/// <summary>
+			/// Default value for the <see cref="HiLowBar.IsAutoSize" /> property.
+			/// </summary>
+			public static bool IsAutoSize = true;
 		}
 	#endregion
 
@@ -118,6 +130,7 @@ namespace ZedGraph
 		public HiLowBar( Color color, float size ) : base( color )
 		{
 			_size = size;
+			_isAutoSize = Default.IsAutoSize;
 		}
 
 		/// <summary>
@@ -127,6 +140,7 @@ namespace ZedGraph
 		public HiLowBar( HiLowBar rhs ) : base( rhs )
 		{
 			_size = rhs._size;
+			_isAutoSize = rhs._isAutoSize;
 		}
 
 		/// <summary>
@@ -170,7 +184,7 @@ namespace ZedGraph
 			int sch = info.GetInt32( "schema2" );
 
 			_size = info.GetSingle( "size" );
-			_isMaximumWidth = info.GetBoolean( "isMaximumWidth" );
+			_isAutoSize = info.GetBoolean( "isAutoSize" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -183,7 +197,7 @@ namespace ZedGraph
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
 			info.AddValue( "size", _size );
-			info.AddValue( "isMaximumWidth", _isMaximumWidth );
+			info.AddValue( "isAutoSize", _isAutoSize );
 		}
 	#endregion
 
@@ -194,19 +208,20 @@ namespace ZedGraph
 		/// <remarks>The size of the bars can be set by this value, which
 		/// is then scaled according to the scaleFactor (see
 		/// <see cref="PaneBase.CalcScaleFactor"/>).  Alternatively,
-		/// if <see cref="IsMaximumWidth"/> is true, the bar width will
+		/// if <see cref="IsAutoSize"/> is true, the bar width will
 		/// be set according to the maximum available cluster width less
 		/// the cluster gap (see <see cref="BarSettings.GetClusterWidth"/>
 		/// and <see cref="BarSettings.MinClusterGap"/>).  That is, if
-		/// <see cref="IsMaximumWidth"/> is true, then the value of
-		/// <see cref="Size"/> will be ignored.
+		/// <see cref="IsAutoSize"/> is true, then the value of
+		/// <see cref="Size"/> will be ignored.  If you modify the value of Size,
+		/// then <see cref="IsAutoSize" /> will be automatically set to false.
 		/// </remarks>
-        /// <value>Size in points (1/72 inch)</value>
-        /// <seealso cref="Default.Size"/>
+      /// <value>Size in points (1/72 inch)</value>
+      /// <seealso cref="Default.Size"/>
 		public float Size
 		{
 			get { return _size; }
-			set { _size = value; }
+			set { _size = value; _isAutoSize = false; }
 		}
 
 		/// <summary>
@@ -220,10 +235,10 @@ namespace ZedGraph
 		/// <see cref="BarSettings.ClusterScaleWidth" /> will be active.  In this case, you may
 		/// want to make sure that <see cref="BarSettings.ClusterScaleWidthAuto" /> is true.
 		/// </remarks>
-		public bool IsMaximumWidth
+		public bool IsAutoSize
 		{
-			get { return _isMaximumWidth; }
-			set { _isMaximumWidth = value; }
+			get { return _isAutoSize; }
+			set { _isAutoSize = value; }
 		}
 	#endregion
 
@@ -323,7 +338,7 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Returns the width of the bar, in pixels, based on the settings for
-		/// <see cref="Size"/> and <see cref="IsMaximumWidth"/>.
+		/// <see cref="Size"/> and <see cref="IsAutoSize"/>.
 		/// </summary>
 		/// <param name="pane">The parent <see cref="GraphPane"/> object.</param>
 		/// <param name="baseAxis">The <see cref="Axis"/> object that
@@ -337,8 +352,9 @@ namespace ZedGraph
 		/// <returns>The width of each bar, in pixel units</returns>
 		public float GetBarWidth( GraphPane pane, Axis baseAxis, float scaleFactor )
 		{
-			if ( _isMaximumWidth )
-				return baseAxis._scale.GetClusterWidth( pane ) / ( 1.0F + pane._barSettings.MinClusterGap );
+			if ( _isAutoSize )
+				return baseAxis._scale.GetClusterWidth( _userScaleSize ) /
+								( 1.0F + pane._barSettings.MinClusterGap );
 			else
 				return (float) ( _size * scaleFactor );
 		}

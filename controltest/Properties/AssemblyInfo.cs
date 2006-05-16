@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle( "ZedGraph.ControlTest" )]
 [assembly: AssemblyDescription( "" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "Oxy" )]
+[assembly: AssemblyCompany( "" )]
 [assembly: AssemblyProduct( "ZedGraph.ControlTest" )]
-[assembly: AssemblyCopyright( "Copyright © Oxy 2006" )]
+[assembly: AssemblyCopyright( "Copyright © John Champion 2006" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible( false )]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid( "7dda4d0c-d0df-4faf-bebd-21242cbf8543" )]
+[assembly: Guid( "8d04f036-fbb9-409e-bd30-501ed1324a73" )]
 
 // Version information for an assembly consists of the following four values:
 //
