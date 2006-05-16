@@ -39,7 +39,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.1.2.1 $ $Date: 2006-05-16 05:53:58 $</version>
+	/// <version>$Revision: 1.1.2.2 $ $Date: 2006-05-16 06:22:39 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -1541,7 +1541,7 @@ namespace ZedGraph.Web
 					output.AddAttribute( HtmlTextWriterAttribute.Src, src );
 					output.AddAttribute( HtmlTextWriterAttribute.Alt, String.Empty );
 					if ( this.IsImageMap && masterPane != null )
-						output.AddAttribute( HtmlTextWriterAttribute.Usemap, tempFileName + ".map" );
+						output.AddAttribute( HtmlTextWriterAttribute.Usemap, "#" + tempFileName + ".map" );
 					output.RenderBeginTag( HtmlTextWriterTag.Img );
 					output.RenderEndTag();
 

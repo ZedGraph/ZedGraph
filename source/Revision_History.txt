@@ -4,6 +4,7 @@
 : [FIX] Protect Stick plot from GDI+ overflow
 : [ADD] Add ZedGraphControl.IsScrolling
 : [UPD] Remake projects to fix conflict/in-use problem
+: [FIX] Add '#' to map name for image maps
 
 ;14-May-2006 (by Champion) V5_BRANCH
 : [FIX] Make JapaneseCandleSticks always show at lease a line for the bar if open=close
