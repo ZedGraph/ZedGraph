@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11.2.7 $ $Date: 2006-05-16 05:53:58 $ </version>
+	/// <version> $Revision: 3.11.2.8 $ $Date: 2006-05-18 01:21:11 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -352,11 +352,16 @@ namespace ZedGraph
 		/// <returns>The width of each bar, in pixel units</returns>
 		public float GetBarWidth( GraphPane pane, Axis baseAxis, float scaleFactor )
 		{
+			float width;
+
 			if ( _isAutoSize )
-				return baseAxis._scale.GetClusterWidth( _userScaleSize ) /
+				width = baseAxis._scale.GetClusterWidth( _userScaleSize ) /
 								( 1.0F + pane._barSettings.MinClusterGap );
 			else
-				return (float) ( _size * scaleFactor );
+				width = (float) ( _size * scaleFactor );
+
+			// use integral size
+			return (int)( width + 0.5f );
 		}
 		
 

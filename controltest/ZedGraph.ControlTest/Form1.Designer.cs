@@ -83,6 +83,7 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomStepFraction = 0.1;
 			this.zedGraphControl1.Paint += new System.Windows.Forms.PaintEventHandler( this.zedGraphControl1_Paint );
+			this.zedGraphControl1.MouseDownEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseDownEvent );
 			this.zedGraphControl1.MouseMoveEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseMoveEvent );
 			// 
 			// statusStrip1

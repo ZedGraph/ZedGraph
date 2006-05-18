@@ -1,6 +1,6 @@
 == Version 5 ==
 
-;15-May-2006 (by Champion) V5_BRANCH
+;15-May-2006 (by Champion) V5_BRANCH (dev release v4.9.7)
 : [FIX] Protect Stick plot from GDI+ overflow
 : [ADD] Add ZedGraphControl.IsScrolling
 : [UPD] Remake projects to fix conflict/in-use problem

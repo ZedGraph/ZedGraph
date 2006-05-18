@@ -94,6 +94,7 @@
     <Compile Include="ZedGraph\MasterPane.cs" />
     <Compile Include="ZedGraph\MinorGrid.cs" />
     <Compile Include="ZedGraph\MinorTic.cs" />
+    <Compile Include="ZedGraph\NoDupePointList.cs" />
     <Compile Include="ZedGraph\OrdinalScale.cs" />
     <Compile Include="ZedGraph\PaneBase.cs" />
     <Compile Include="ZedGraph\PaneLayoutMgr.cs" />

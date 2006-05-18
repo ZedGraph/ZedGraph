@@ -26,7 +26,7 @@ namespace ZedGraph.ControlTest
 		{
 			//CreateGraph_32kPoints( zedGraphControl2 );
 			//CreateGraph_BarJunk( zedGraphControl2 );
-			//CreateGraph_BasicLinear( zedGraphControl2 );
+			CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl2 );
 			//CreateGraph_BasicStick( zedGraphControl2 );
@@ -37,9 +37,9 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
-			//CreateGraph_GradientByZBars( zedGraphControl2 );
+			//CreateGraph_GradientByZBars( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
-			CreateGraph_HiLowBarDemo( zedGraphControl1 );
+			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
@@ -47,6 +47,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterWithPies( zedGraphControl1 );
 			//CreateGraph_MultiYDemo( zedGraphControl1 );
+			//CreateGraph_NoDupePointList( zedGraphControl1 );
 			//CreateGraph_NormalPane( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
 			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
@@ -564,11 +565,11 @@ namespace ZedGraph.ControlTest
 		{
 			GraphPane myPane = z1.GraphPane;
 
-			myTimer = new Timer();
-			myTimer.Enabled = true;
-			myTimer.Tick += new EventHandler( MyTimer_Tick );
-			myTimer.Interval = 500;
-			myTimer.Start();
+			//myTimer = new Timer();
+			//myTimer.Enabled = true;
+			//myTimer.Tick += new EventHandler( MyTimer_Tick );
+			//myTimer.Interval = 500;
+			//myTimer.Start();
 
 
 			PointPairList list = new PointPairList();
@@ -576,9 +577,16 @@ namespace ZedGraph.ControlTest
 			{
 				double x = (double)i + 5;
 				double y = 300.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) );
-				list.Add( x, y );
+				list.Add( x, y, 0 );
 			}
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			myCurve.Symbol.Fill = new Fill( Color.White, Color.Red );
+			myCurve.Symbol.Fill.Type = FillType.GradientByZ;
+			myCurve.Symbol.Fill.RangeMin = 0;
+			myCurve.Symbol.Fill.RangeMax = 1;
+			myCurve.Symbol.Fill.RangeDefault = 0;
+			myCurve.Symbol.Fill.SecondaryValueGradientColor = Color.Empty;
 
 			z1.IsShowHScrollBar = true;
 			z1.IsShowVScrollBar = true;
@@ -1032,24 +1040,30 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			Random rand = new Random();
 
-			for ( int i = 0; i < 5; i++ )
+			for ( int i = 0; i < 16; i++ )
 			{
 				double x = (double)i;
 				double y = rand.NextDouble() * 1000;
-				double z = ( y < 300 ) ? 0 : ( ( y < 600 ) ? 0.5 : 1.0 );
+				double z = i / 4.0;
 				list.Add( x, y, z );
 			}
 
 			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
-			myCurve.Bar.Fill = new Fill( Color.Red, Color.Green, Color.Blue, 0.0f );
+			Color[] colors = { Color.Red, Color.Yellow, Color.Green, Color.Blue, Color.Purple };
+			myCurve.Bar.Fill = new Fill( colors );
 			myCurve.Bar.Fill.Type = FillType.GradientByZ;
-			myCurve.Bar.Fill.RangeMin = 0;
-			myCurve.Bar.Fill.RangeMax = 1;
 
-			myPane.XAxis.MajorTic.IsBetweenLabels = true;
-			string[] labels = { "one", "two", "three", "four", "five" };
-			myPane.XAxis.Scale.TextLabels = labels;
-			myPane.XAxis.Type = AxisType.Text;
+			myCurve.Bar.Fill.RangeMin = 0;
+			myCurve.Bar.Fill.RangeMax = 4;
+
+			//myPane.XAxis.MajorTic.IsBetweenLabels = true;
+			//string[] labels = { "one", "two", "three", "four", "five" };
+			//myPane.XAxis.Scale.TextLabels = labels;
+			//myPane.XAxis.Type = AxisType.Text;
+
+			ArrowObj line = new ArrowObj( Color.Red, 13, -1, 100, -1, 500 );
+			line.IsArrowHead = true;
+			myPane.GraphObjList.Add( line );
 
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();
@@ -1534,6 +1548,33 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 
 			z1.IsShowPointValues = true;
+		}
+
+		// Basic curve test - large dataset with NoDupePointList
+		private void CreateGraph_NoDupePointList( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			NoDupePointList list = new NoDupePointList();
+			Random rand = new Random();
+
+			for ( int i = 0; i < 100000; i++ )
+			{
+				double x = rand.NextDouble() * 1000;
+				double y = rand.NextDouble() * 1000;
+
+				list.Add( x, y );
+			}
+
+			LineItem myCurve = z1.GraphPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			myCurve.Line.IsVisible = false;
+
+			z1.AxisChange();
+			list.FilterMode = 3;
+			list.FilterData( myPane, myPane.YAxis );
+
+			MessageBox.Show( list.Count.ToString() );
+			int count = list.Count;
 		}
 
 		// Basic curve test - 32000 points
@@ -2227,6 +2268,30 @@ namespace ZedGraph.ControlTest
 
 			// Return false to indicate we have not processed the MouseMoveEvent
 			// ZedGraphControl should still go ahead and handle it
+			return false;
+		}
+
+		private bool zedGraphControl1_MouseDownEvent( ZedGraphControl sender, MouseEventArgs e )
+		{
+			Point mousePt = new Point( e.X, e.Y );
+			CurveItem curve;
+			int iPt;
+			if ( sender.GraphPane.FindNearestPoint( mousePt, out curve, out iPt ) &&
+					Control.ModifierKeys == Keys.Alt )
+			{
+				IPointListEdit list = curve.Points as IPointListEdit;
+				if ( list == null )
+					return false;
+
+				for ( int i = 0; i < list.Count; i++ )
+					list[i].Z = 0;
+
+				list[iPt].Z = 1;
+				sender.Refresh();
+
+				return false;
+			}
+
 			return false;
 		}
 	}
