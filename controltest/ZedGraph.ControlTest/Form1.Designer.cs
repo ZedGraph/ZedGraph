@@ -29,7 +29,7 @@ namespace ZedGraph.ControlTest
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
+			this.zedGraphControl1 = new ZedGraphControl();
 			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusXY = new System.Windows.Forms.ToolStripStatusLabel();
@@ -83,8 +83,8 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ZoomModifierKeys2 = System.Windows.Forms.Keys.None;
 			this.zedGraphControl1.ZoomStepFraction = 0.1;
 			this.zedGraphControl1.Paint += new System.Windows.Forms.PaintEventHandler( this.zedGraphControl1_Paint );
-			this.zedGraphControl1.MouseDownEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseDownEvent );
-			this.zedGraphControl1.MouseMoveEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseMoveEvent );
+			this.zedGraphControl1.MouseDownEvent += new ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseDownEvent );
+			this.zedGraphControl1.MouseMoveEvent += new ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseMoveEvent );
 			// 
 			// statusStrip1
 			// 

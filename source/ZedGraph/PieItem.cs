@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.21.2.5 $ $Date: 2006-04-27 06:50:12 $ </version>
+	/// <version> $Revision: 1.21.2.6 $ $Date: 2006-06-17 21:23:31 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem , ICloneable, ISerializable
 	{
@@ -575,28 +575,30 @@ namespace ZedGraph
 				if ( tRect.Width >= 1 && tRect.Height >= 1 )
 				{
 					SmoothingMode sMode = g.SmoothingMode ;
-					g.SmoothingMode = SmoothingMode.AntiAlias ;	
-				
-					Brush brush = _fill.MakeBrush( _boundingRectangle );
+					g.SmoothingMode = SmoothingMode.AntiAlias ;
 
-					g.FillPie( brush, tRect.X, tRect.Y, tRect.Width, tRect.Height, this.StartAngle, this.SweepAngle );
-
-					//add GraphicsPath for hit testing
-					_slicePath.AddPie( tRect.X, tRect.Y, tRect.Width, tRect.Height, 
-						this.StartAngle, this.SweepAngle);
-
-					if ( this.Border.IsVisible)
+					using ( Brush brush = _fill.MakeBrush( _boundingRectangle ) )
 					{
-						Pen borderPen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-						g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height, 
+						g.FillPie( brush, tRect.X, tRect.Y, tRect.Width, tRect.Height, this.StartAngle, this.SweepAngle );
+
+						//add GraphicsPath for hit testing
+						_slicePath.AddPie( tRect.X, tRect.Y, tRect.Width, tRect.Height,
 							this.StartAngle, this.SweepAngle );
-						borderPen.Dispose();
+
+						if ( this.Border.IsVisible )
+						{
+							Pen borderPen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+							g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height,
+								this.StartAngle, this.SweepAngle );
+							borderPen.Dispose();
+						}
+
+						if ( _labelType != PieLabelType.None )
+							DrawLabel( g, pane, tRect, scaleFactor );
+
+						//brush.Dispose();
 					}
 
-					if ( _labelType != PieLabelType.None )
-						DrawLabel( g, pane, tRect, scaleFactor  );
-
-					brush.Dispose();
 					g.SmoothingMode = sMode;	
 				}
 			}
@@ -995,9 +997,11 @@ namespace ZedGraph
 			if ( _fill.IsVisible )
 			{
 				// just avoid height/width being less than 0.1 so GDI+ doesn't cry
-				Brush brush = _fill.MakeBrush( rect );
-				g.FillRectangle( brush, rect );
-				brush.Dispose();
+				using ( Brush brush = _fill.MakeBrush( rect ) )
+				{
+					g.FillRectangle( brush, rect );
+					//brush.Dispose();
+				}
 			}
 
 			// Border the bar

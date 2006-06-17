@@ -1,5 +1,14 @@
 == Version 5 ==
 
+;17-Jun-2006 (by Champion) V5_BRANCH
+: [UPD] Add Japanese Language Locale - thanks to Yuichi Yasuda
+: [FIX] Move ScaleFormatEvent to Axis class, stub down to Scale
+: [FIX] Move PaneList.Count check in DoLayout for columns to protect for odd configurations - thanks to Brian Chappell
+: [FIX] CurveItem.cs: public Axis GetYAxis() had Y2 instead of Y
+: [UPD] Move ScaleFormatEventHandler from Scale to Axis, add MakeLabelEventWorks() method
+: [UPD] use "using" statements for short-term IDisposable objects (thanks to Adam Hughes)
+: [FIX] use threaded version of image copy to avoid MTA crash - per Dave Moor
+
 ;17-May-2006 (by Champion) V5_BRANCH
 : [ADD] NoDupePointList
 

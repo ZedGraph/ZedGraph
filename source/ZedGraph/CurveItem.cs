@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.31.2.8 $ $Date: 2006-05-14 03:31:18 $ </version>
+	/// <version> $Revision: 3.31.2.9 $ $Date: 2006-06-17 21:23:31 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -661,7 +661,7 @@ namespace ZedGraph
 				if ( _yAxisIndex < pane.YAxisList.Count )
 					return pane.YAxisList[_yAxisIndex];
 				else
-					return pane.Y2AxisList[0];
+					return pane.YAxisList[0];
 			}
 		}
 

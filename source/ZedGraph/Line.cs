@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.23.2.8 $ $Date: 2006-05-16 05:53:58 $ </version>
+	/// <version> $Revision: 3.23.2.9 $ $Date: 2006-06-17 21:23:31 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -598,9 +598,11 @@ namespace ZedGraph
 					CloseCurve( pane, curve, arrPoints, count, yMin, path );
 				
 					RectangleF rect = path.GetBounds();
-					Brush brush = _fill.MakeBrush( rect );
-					g.FillPath( brush, path );
-					brush.Dispose();
+					using ( Brush brush = _fill.MakeBrush( rect ) )
+					{
+						g.FillPath( brush, path );
+						//brush.Dispose();
+					}
 
 					// restore the zero line if needed (since the fill tends to cover it up)
 					yAxis.FixZeroLine( g, pane, scaleFactor, rect.Left, rect.Right );
@@ -610,12 +612,14 @@ namespace ZedGraph
 				// standard drawcurve method just in case there are missing values.
 				if ( _isSmooth )
 				{
-					Pen pen = new Pen( this.Color, pane.ScaledPenWidth( _width, scaleFactor ) );
-					pen.DashStyle = this.Style;
-					// Stroke the curve
-					g.DrawCurve( pen, arrPoints, 0, count - 2, tension );
+					using ( Pen pen = new Pen( this.Color, pane.ScaledPenWidth( _width, scaleFactor ) ) )
+					{
+						pen.DashStyle = this.Style;
+						// Stroke the curve
+						g.DrawCurve( pen, arrPoints, 0, count - 2, tension );
 
-					pen.Dispose();
+						//pen.Dispose();
+					}
 				}
 				else
 					DrawCurve( g, pane, curve, scaleFactor );

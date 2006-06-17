@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.18.2.7 $ $Date: 2006-04-27 06:50:12 $ </version>
+	/// <version> $Revision: 3.18.2.8 $ $Date: 2006-06-17 21:23:31 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -990,11 +990,11 @@ namespace ZedGraph
 					float width = ( innerRect.Width - (float)( columns - 1 ) * scaledInnerGap ) /
 									(float)columns;
 
-					if ( iPane >= _paneList.Count )
-						return;
-
 					for ( int colNum = 0; colNum < columns; colNum++ )
 					{
+						if ( iPane >= _paneList.Count )
+							return;
+
 						this[iPane].Rect = new RectangleF(
 											innerRect.X + colNum * ( width + scaledInnerGap ),
 											innerRect.Y + y,

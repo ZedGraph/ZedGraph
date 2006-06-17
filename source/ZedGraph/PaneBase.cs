@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.19.2.7 $ $Date: 2006-05-14 03:31:19 $ </version>
+	/// <version> $Revision: 3.19.2.8 $ $Date: 2006-06-17 21:23:31 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -812,13 +812,12 @@ namespace ZedGraph
 		public Bitmap GetImage()
 		{
 			Bitmap bitmap = new Bitmap( (int)_rect.Width, (int)_rect.Height );
-			Graphics bitmapGraphics = Graphics.FromImage( bitmap );
-
-			bitmapGraphics.TranslateTransform( -_rect.Left, -_rect.Top );
-
-			this.Draw( bitmapGraphics );
-
-			bitmapGraphics.Dispose();
+			using ( Graphics bitmapGraphics = Graphics.FromImage( bitmap ) )
+			{
+				bitmapGraphics.TranslateTransform( -_rect.Left, -_rect.Top );
+				this.Draw( bitmapGraphics );
+				//bitmapGraphics.Dispose();
+			}
 
 			return bitmap;
 		}
@@ -835,26 +834,27 @@ namespace ZedGraph
 		{
 			Bitmap bitmap = new Bitmap( width, height );
 			bitmap.SetResolution( dpi, dpi );
-			Graphics bitmapGraphics = Graphics.FromImage( bitmap );
+			using ( Graphics bitmapGraphics = Graphics.FromImage( bitmap ) )
+			{
+				//bitmapGraphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-			//bitmapGraphics.SmoothingMode = SmoothingMode.AntiAlias;
-			
-			// Clone the GraphPane so we don't mess up the minPix and maxPix values or
-			// the rect/ChartRect calculations of the original
+				// Clone the GraphPane so we don't mess up the minPix and maxPix values or
+				// the rect/ChartRect calculations of the original
 
-			//PaneBase tempPane = (PaneBase) ((ICloneable)this).Clone();
-			// This is actually a shallow clone, so we don't duplicate all the data, curveLists, etc.
-			PaneBase tempPane = this.ShallowClone();
+				//PaneBase tempPane = (PaneBase) ((ICloneable)this).Clone();
+				// This is actually a shallow clone, so we don't duplicate all the data, curveLists, etc.
+				PaneBase tempPane = this.ShallowClone();
 
-			tempPane.ReSize( bitmapGraphics, new RectangleF( 0, 0, width, height ) );
+				tempPane.ReSize( bitmapGraphics, new RectangleF( 0, 0, width, height ) );
 
-			//tempPane.AxisChange( bitmapGraphics );
-			tempPane.Draw( bitmapGraphics );
-			//this.Draw( bitmapGraphics );
+				//tempPane.AxisChange( bitmapGraphics );
+				tempPane.Draw( bitmapGraphics );
+				//this.Draw( bitmapGraphics );
 
-			this.ReSize( bitmapGraphics, this.Rect );
+				this.ReSize( bitmapGraphics, this.Rect );
 
-			bitmapGraphics.Dispose();
+				//bitmapGraphics.Dispose();
+			}
 
 			return bitmap;
 		}

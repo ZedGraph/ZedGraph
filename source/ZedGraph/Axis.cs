@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.60.2.6 $ $Date: 2006-04-27 06:50:11 $ </version>
+	/// <version> $Revision: 3.60.2.7 $ $Date: 2006-06-17 21:23:31 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -127,6 +127,29 @@ namespace ZedGraph
 		/// Temporary values for axis space calculations (see <see cref="CalcSpace" />).
 		/// </summary>
 		internal float _tmpSpace;
+
+	#endregion
+
+	#region Events
+
+		/// <summary>
+		/// A delegate that allows full custom formatting of the Axis labels
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> for which the label is to be
+		/// formatted</param>
+		/// <param name="axis">The <see cref="Scale" /> of interest.</param>
+		/// <param name="val">The value to be formatted</param>
+		/// <param name="index">The zero-based index of the label to be formatted</param>
+		/// <returns>
+		/// A string value representing the label, or null if the ZedGraph should go ahead
+		/// and generate the label according to the current settings</returns>
+		/// <seealso cref="ScaleFormatEvent" />
+		public delegate string ScaleFormatHandler( GraphPane pane, Axis axis, double val, int index );
+
+		/// <summary>
+		/// Subscribe to this event to handle custom formatting of the scale labels.
+		/// </summary>
+		public event ScaleFormatHandler ScaleFormatEvent;
 
 	#endregion
 
@@ -1108,10 +1131,12 @@ namespace ZedGraph
 			{
 				float zeroPix = _scale.Transform( 0.0 );
 
-				Pen zeroPen = new Pen( _color,
-						pane.ScaledPenWidth( _majorGrid._penWidth, scaleFactor ) );
-				g.DrawLine( zeroPen, left, zeroPix, right, zeroPix );
-				zeroPen.Dispose();
+				using ( Pen zeroPen = new Pen( _color,
+						pane.ScaledPenWidth( _majorGrid._penWidth, scaleFactor ) ) )
+				{
+					g.DrawLine( zeroPen, left, zeroPix, right, zeroPix );
+					//zeroPen.Dispose();
+				}
 			}
 		}
 
@@ -1283,6 +1308,48 @@ namespace ZedGraph
 			else
 				return _title._text;
 
+		}
+
+		/// <summary>
+		/// Make a value label for the axis at the specified ordinal position.
+		/// </summary>
+		/// <remarks>
+		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
+		/// and other axis format settings.  It also implements the ScaleFormatEvent such that
+		/// custom labels can be created.
+		/// </remarks>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="index">
+		/// The zero-based, ordinal index of the label to be generated.  For example, a value of 2 would
+		/// cause the third value label on the axis to be generated.
+		/// </param>
+		/// <param name="dVal">
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="IsLog"/>)
+		/// and text (<see cref="IsText"/>) type axes.
+		/// </param>
+		/// <returns>The resulting value label as a <see cref="string" /></returns>
+		internal string MakeLabelEventWorks( GraphPane pane, int index, double dVal )
+		{
+			// if there is a valid ScaleFormatEvent, then try to use it to create the label
+			// the label will be non-null if it's to be used
+			if ( this.ScaleFormatEvent != null )
+			{
+				string label;
+
+				label = this.ScaleFormatEvent( pane, this, dVal, index );
+				if ( label != null )
+					return label;
+			}
+
+			// second try.  If there's no custom ScaleFormatEvent, then just call
+			// _scale.MakeLabel according to the type of scale
+			if ( this.Scale != null )
+				return _scale.MakeLabel( pane, index, dVal );
+			else
+				return "?";
 		}
 
 	#endregion

@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.2.2.4 $ $Date: 2006-05-14 03:31:19 $ </version>
+	/// <version> $Revision: 3.2.2.5 $ $Date: 2006-06-17 21:23:31 $ </version>
 	[Serializable]
 	public class YAxisList : List<YAxis>, ICloneable
 	{
@@ -144,7 +144,8 @@ namespace ZedGraph
 		/// <see cref="Axis"/> with the specified <see cref="Axis.Tag" />.
 		/// </summary>
 		/// <remarks>In order for this method to work, the <see cref="Axis.Tag" />
-		/// property must be of type <see cref="String"/>.</remarks>
+		/// property must be of type <see cref="String"/>.
+		/// </remarks>
 		/// <param name="tagStr">The <see cref="String"/> tag that is in the
 		/// <see cref="Axis.Tag" /> attribute of the item to be found.
 		/// </param>

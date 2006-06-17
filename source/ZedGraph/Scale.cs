@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9.2.9 $ $Date: 2006-05-16 05:53:58 $ </version>
+	/// <version> $Revision: 1.9.2.10 $ $Date: 2006-06-17 21:23:31 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -1527,7 +1527,7 @@ namespace ZedGraph
 		}
 
 	#endregion
-
+/*
 	#region events
 
 		/// <summary>
@@ -1550,7 +1550,7 @@ namespace ZedGraph
 		public event ScaleFormatHandler ScaleFormatEvent;
 
 	#endregion
-
+*/
 	#region Methods
 
 		/// <summary>
@@ -1626,7 +1626,7 @@ namespace ZedGraph
 		{
 			return val;
 		}
-
+/*
 		/// <summary>
 		/// Make a value label for the axis at the specified ordinal position.
 		/// </summary>
@@ -1665,6 +1665,40 @@ namespace ZedGraph
 			// this method is overridden for other Scale types
 
 			double scaleMult = Math.Pow( (double) 10.0, _mag );
+
+			return ( dVal / scaleMult ).ToString( _format );
+		}
+*/
+
+		/// <summary>
+		/// Make a value label for the axis at the specified ordinal position.
+		/// </summary>
+		/// <remarks>
+		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
+		/// and other axis format settings.
+		/// </remarks>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="index">
+		/// The zero-based, ordinal index of the label to be generated.  For example, a value of 2 would
+		/// cause the third value label on the axis to be generated.
+		/// </param>
+		/// <param name="dVal">
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="IsLog"/>)
+		/// and text (<see cref="IsText"/>) type axes.
+		/// </param>
+		/// <returns>The resulting value label as a <see cref="string" /></returns>
+		virtual internal string MakeLabel( GraphPane pane, int index, double dVal )
+		{
+			if ( _format == null )
+				_format = Scale.Default.Format;
+
+			// linear or ordinal is the default behavior
+			// this method is overridden for other Scale types
+
+			double scaleMult = Math.Pow( (double)10.0, _mag );
 
 			return ( dVal / scaleMult ).ToString( _format );
 		}
@@ -1719,7 +1753,8 @@ namespace ZedGraph
 					dVal = CalcMajorTicValue( startVal, i );
 
 					// draw the label
-					string tmpStr = MakeLabel( pane, i, dVal );
+					//string tmpStr = MakeLabel( pane, i, dVal );
+					string tmpStr = _ownerAxis.MakeLabelEventWorks( pane, i, dVal );
 
 					SizeF sizeF;
 					if ( this.IsLog && _isUseTenPower )
@@ -1978,7 +2013,8 @@ namespace ZedGraph
 				textTop = charHeight * _labelGap;
 
 			// draw the label
-			string tmpStr = MakeLabel( pane, i, dVal );
+			//string tmpStr = MakeLabel( pane, i, dVal );
+			string tmpStr = _ownerAxis.MakeLabelEventWorks( pane, i, dVal );
 
 			float height;
 			if ( this.IsLog && _isUseTenPower )
@@ -2444,10 +2480,14 @@ namespace ZedGraph
 			return y * ( temp - Math.Floor( temp ) );
 		}
 
+		/// <summary>
+		/// Define suitable default ranges for an axis in the event that
+		/// no data were available
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane"/> of interest</param>
+		/// <param name="axis">The <see cref="Axis"/> for which to set the range</param>
 		internal void SetRange( GraphPane pane, Axis axis )
 		{
-			// Define suitable default ranges in the event that
-			// no data were available
 			if ( _rangeMin >= Double.MaxValue || _rangeMax <= Double.MinValue )
 			{
 				// If this is a Y axis, and the main Y axis is valid, use it for defaults

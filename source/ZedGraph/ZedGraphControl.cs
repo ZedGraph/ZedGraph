@@ -30,6 +30,7 @@ using System.Resources;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using System.Threading;
 
 namespace ZedGraph
 {
@@ -42,7 +43,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.13 $ $Date: 2006-05-16 05:53:58 $ </version>
+	/// <version> $Revision: 3.59.2.14 $ $Date: 2006-06-17 21:23:31 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -917,9 +918,11 @@ namespace ZedGraph
 
 			//GraphPane graphPane = new GraphPane( rect, "Title", "X Axis", "Y Axis" );
 			GraphPane graphPane = new GraphPane( rect, titleStr, xStr, yStr );
-			Graphics g = this.CreateGraphics();
-			graphPane.AxisChange( g );
-			g.Dispose();
+			using ( Graphics g = this.CreateGraphics() )
+			{
+				graphPane.AxisChange( g );
+				//g.Dispose();
+			}
 			_masterPane.Add( graphPane );
 
 			this.hScrollBar1.Minimum = 0;
@@ -1834,9 +1837,11 @@ namespace ZedGraph
 				else
 					vScrollBar1.Visible = false;
 
-				Graphics g = this.CreateGraphics();
-				_masterPane.ReSize( g, new RectangleF( 0, 0, newSize.Width, newSize.Height ) );
-				g.Dispose();
+				using ( Graphics g = this.CreateGraphics() )
+				{
+					_masterPane.ReSize( g, new RectangleF( 0, 0, newSize.Width, newSize.Height ) );
+					//g.Dispose();
+				}
 				this.Invalidate();
 			}
 		}
@@ -1855,11 +1860,11 @@ namespace ZedGraph
 				if ( BeenDisposed || _masterPane == null )
 					return;
 
-				Graphics g = this.CreateGraphics();
-
-				_masterPane.AxisChange( g );
-
-				g.Dispose();
+				using ( Graphics g = this.CreateGraphics() )
+				{
+					_masterPane.AxisChange( g );
+					//g.Dispose();
+				}
 
 				if ( _isAutoScrollRange )
 					SetScrollRangeFromData();
@@ -1901,21 +1906,23 @@ namespace ZedGraph
 				object source;
 				Link link;
 				int index;
-				Graphics g = this.CreateGraphics();
-				float scaleFactor = pane.CalcScaleFactor();
-				if ( pane.FindLinkableObject( mousePt, g, scaleFactor, out source, out link, out index ) )
+				using ( Graphics g = this.CreateGraphics() )
 				{
-					if ( LinkEvent( this, pane, source, link, index ) )
-						return;
-
-					if ( link._url != string.Empty )
+					float scaleFactor = pane.CalcScaleFactor();
+					if ( pane.FindLinkableObject( mousePt, g, scaleFactor, out source, out link, out index ) )
 					{
-						System.Diagnostics.Process.Start( link._url );
-						// linkable objects override any other actions with mouse
-						return;
+						if ( LinkEvent( this, pane, source, link, index ) )
+							return;
+
+						if ( link._url != string.Empty )
+						{
+							System.Diagnostics.Process.Start( link._url );
+							// linkable objects override any other actions with mouse
+							return;
+						}
 					}
+					//g.Dispose();
 				}
-				g.Dispose();
 			}
 
 			// Second, Check to see if it's within a Chart Rect
@@ -1979,12 +1986,12 @@ namespace ZedGraph
 				GraphPane pane = _masterPane.FindChartRect( mousePt );
 				if ( ( _isEnableHPan || _isEnableVPan ) && ( Control.ModifierKeys == Keys.Shift || _isPanning ) &&
 					( pane != null || _isPanning ) )
-					Cursor.Current = Cursors.Hand;
+					this.Cursor = Cursors.Hand;
 				else if ( ( _isEnableVZoom || _isEnableHZoom ) && ( pane != null || _isZooming ) )
-					Cursor.Current = Cursors.Cross;
+					this.Cursor = Cursors.Cross;
 
 				//			else if ( isZoomMode || isPanMode )
-				//				Cursor.Current = Cursors.No;
+				//				this.Cursor = Cursors.No;
 			}
 		}
 
@@ -2144,72 +2151,74 @@ namespace ZedGraph
 			GraphPane pane;
 			object nearestObj;
 
-			Graphics g = this.CreateGraphics();
-
-			if ( _masterPane.FindNearestPaneObject( mousePt,
-				g, out pane, out nearestObj, out iPt ) )
+			using ( Graphics g = this.CreateGraphics() )
 			{
-				if ( nearestObj is CurveItem && iPt >= 0 )
+
+				if ( _masterPane.FindNearestPaneObject( mousePt,
+					g, out pane, out nearestObj, out iPt ) )
 				{
-					CurveItem curve = (CurveItem)nearestObj;
-					// Provide Callback for User to customize the tooltips
-					if ( this.PointValueEvent != null )
+					if ( nearestObj is CurveItem && iPt >= 0 )
 					{
-						string label = this.PointValueEvent( this, pane, curve, iPt );
-						if ( label != null && label.Length > 0 )
+						CurveItem curve = (CurveItem)nearestObj;
+						// Provide Callback for User to customize the tooltips
+						if ( this.PointValueEvent != null )
 						{
-							this.pointToolTip.SetToolTip( this, label );
-							this.pointToolTip.Active = true;
-						}
-						else
-							this.pointToolTip.Active = false;
-					}
-					else
-					{
-
-						if ( curve is PieItem )
-						{
-							this.pointToolTip.SetToolTip( this,
-								( (PieItem)curve ).Value.ToString( _pointValueFormat ) );
+							string label = this.PointValueEvent( this, pane, curve, iPt );
+							if ( label != null && label.Length > 0 )
+							{
+								this.pointToolTip.SetToolTip( this, label );
+								this.pointToolTip.Active = true;
+							}
+							else
+								this.pointToolTip.Active = false;
 						}
 						else
 						{
-							PointPair pt = curve.Points[iPt];
 
-							if ( pt.Tag is string )
-								this.pointToolTip.SetToolTip( this, (string)pt.Tag );
+							if ( curve is PieItem )
+							{
+								this.pointToolTip.SetToolTip( this,
+									( (PieItem)curve ).Value.ToString( _pointValueFormat ) );
+							}
 							else
 							{
-								double xVal, yVal, lowVal;
-								ValueHandler valueHandler = new ValueHandler( pane, false );
-								if ( ( curve is BarItem || curve is ErrorBarItem || curve is HiLowBarItem )
-										&& pane.BarSettings.Base != BarBase.X )
-									valueHandler.GetValues( curve, iPt, out yVal, out lowVal, out xVal );
+								PointPair pt = curve.Points[iPt];
+
+								if ( pt.Tag is string )
+									this.pointToolTip.SetToolTip( this, (string)pt.Tag );
 								else
-									valueHandler.GetValues( curve, iPt, out xVal, out lowVal, out yVal );
+								{
+									double xVal, yVal, lowVal;
+									ValueHandler valueHandler = new ValueHandler( pane, false );
+									if ( ( curve is BarItem || curve is ErrorBarItem || curve is HiLowBarItem )
+											&& pane.BarSettings.Base != BarBase.X )
+										valueHandler.GetValues( curve, iPt, out yVal, out lowVal, out xVal );
+									else
+										valueHandler.GetValues( curve, iPt, out xVal, out lowVal, out yVal );
 
-								string xStr = MakeValueLabel( pane.XAxis, xVal, iPt,
-									curve.IsOverrideOrdinal );
-								string yStr = MakeValueLabel( curve.GetYAxis( pane ), yVal, iPt,
-									curve.IsOverrideOrdinal );
+									string xStr = MakeValueLabel( pane.XAxis, xVal, iPt,
+										curve.IsOverrideOrdinal );
+									string yStr = MakeValueLabel( curve.GetYAxis( pane ), yVal, iPt,
+										curve.IsOverrideOrdinal );
 
-								this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
+									this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
 
-								//this.pointToolTip.SetToolTip( this,
-								//	curve.Points[iPt].ToString( this.pointValueFormat ) );
+									//this.pointToolTip.SetToolTip( this,
+									//	curve.Points[iPt].ToString( this.pointValueFormat ) );
+								}
 							}
-						}
 
-						this.pointToolTip.Active = true;
+							this.pointToolTip.Active = true;
+						}
 					}
+					else
+						this.pointToolTip.Active = false;
 				}
 				else
 					this.pointToolTip.Active = false;
-			}
-			else
-				this.pointToolTip.Active = false;
 
-			g.Dispose();
+				//g.Dispose();
+			}
 			return mousePt;
 		}
 
@@ -2310,10 +2319,11 @@ namespace ZedGraph
 					ZoomScale( pane.Y2AxisList[i], zoomFraction, y2[i], isZoomOnCenter );
 			}
 
-			Graphics g = this.CreateGraphics();
-			pane.AxisChange( g );
-			g.Dispose();
-
+			using ( Graphics g = this.CreateGraphics() )
+			{
+				pane.AxisChange( g );
+				//g.Dispose();
+			}
 
 			this.SetScroll( this.hScrollBar1, pane.XAxis, _xScrollRange.Min, _xScrollRange.Max );
 			this.SetScroll( this.vScrollBar1, pane.YAxis, _yScrollRangeList[0].Min,
@@ -2645,9 +2655,11 @@ namespace ZedGraph
 					this.ZoomEvent( this, _zoomState, //oldState,
 						new ZoomState( _dragPane, ZoomState.StateType.Zoom ) );
 
-				Graphics g = this.CreateGraphics();
-				_dragPane.AxisChange( g );
-				g.Dispose();
+				using ( Graphics g = this.CreateGraphics() )
+				{
+					_dragPane.AxisChange( g );
+					//g.Dispose();
+				}
 			}
 
 			Refresh();
@@ -3149,7 +3161,15 @@ namespace ZedGraph
 		{
 			if ( _masterPane != null )
 			{
-				Clipboard.SetDataObject( _masterPane.GetImage(), true );
+				//Clipboard.SetDataObject( _masterPane.GetImage(), true );
+
+				// Threaded copy mode to avoid crash with MTA
+				// Contributed by Dave Moor
+				Thread ct = new Thread( new ThreadStart( this.ClipboardCopyThread ) );
+				ct.ApartmentState = ApartmentState.STA;
+				ct.Start();
+				ct.Join();
+
 				if ( isShowMessage )
 				{
 					string str = _resourceManager.GetString( "copied_to_clip" );
@@ -3157,6 +3177,14 @@ namespace ZedGraph
 					MessageBox.Show( str );
 				}
 			}
+		}
+
+		/// <summary>
+		/// A threaded version of the copy method to avoid crash with MTA
+		/// </summary>
+		private void ClipboardCopyThread()
+		{
+			Clipboard.SetDataObject( _masterPane.GetImage(), true );
 		}
 
 		/// <summary>
@@ -3258,23 +3286,96 @@ namespace ZedGraph
 				ZoomState oldState = pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
 				//ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
 
+				using ( Graphics g = this.CreateGraphics() )
+				{
+					pane.XAxis.ResetAutoScale( pane, g );
+					foreach ( YAxis axis in pane.YAxisList )
+						axis.ResetAutoScale( pane, g );
+					foreach ( Y2Axis axis in pane.Y2AxisList )
+						axis.ResetAutoScale( pane, g );
+
+					// Provide Callback to notify the user of zoom events
+					if ( this.ZoomEvent != null )
+						this.ZoomEvent( this, oldState, new ZoomState( pane, ZoomState.StateType.Zoom ) );
+
+					//g.Dispose();
+				}
+				Refresh();
+			}
+		}
+
+/*
+		public void RestoreScale( GraphPane primaryPane )
+		{
+			if ( primaryPane != null )
+			{
 				Graphics g = this.CreateGraphics();
-				pane.XAxis.ResetAutoScale( pane, g );
-				foreach ( YAxis axis in pane.YAxisList )
-					axis.ResetAutoScale( pane, g );
-				foreach ( Y2Axis axis in pane.Y2AxisList )
-					axis.ResetAutoScale( pane, g );
+				ZoomState oldState = new ZoomState( primaryPane, ZoomState.StateType.Zoom );
+				//ZoomState newState = null;
+
+				if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
+				{
+					foreach ( GraphPane pane in _masterPane._paneList )
+					{
+						if ( pane == primaryPane )
+						{
+							pane.XAxis.ResetAutoScale( pane, g );
+							foreach ( YAxis axis in pane.YAxisList )
+								axis.ResetAutoScale( pane, g );
+							foreach ( Y2Axis axis in pane.Y2AxisList )
+								axis.ResetAutoScale( pane, g );
+						}
+					}
+				}
+				else
+				{
+					primaryPane.XAxis.ResetAutoScale( primaryPane, g );
+					foreach ( YAxis axis in primaryPane.YAxisList )
+						axis.ResetAutoScale( primaryPane, g );
+					foreach ( Y2Axis axis in primaryPane.Y2AxisList )
+						axis.ResetAutoScale( primaryPane, g );
+				}
 
 				// Provide Callback to notify the user of zoom events
 				if ( this.ZoomEvent != null )
-					this.ZoomEvent( this, oldState, new ZoomState( pane, ZoomState.StateType.Zoom ) );
+					this.ZoomEvent( this, oldState, new ZoomState( primaryPane, ZoomState.StateType.Zoom ) );
 
 				g.Dispose();
 				Refresh();
-
-				//pane.zoomStack.Clear();
 			}
 		}
+*/
+/*
+		public void ZoomOutAll( GraphPane primaryPane )
+		{
+			if ( primaryPane != null && !primaryPane.ZoomStack.IsEmpty )
+			{
+				ZoomState.StateType type = primaryPane.ZoomStack.Top.Type;
+
+				ZoomState oldState = new ZoomState( primaryPane, type );
+				//ZoomState newState = pane.ZoomStack.PopAll( pane );
+				ZoomState newState = null;
+				if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
+				{
+					foreach ( GraphPane pane in _masterPane._paneList )
+					{
+						ZoomState state = pane.ZoomStack.PopAll( pane );
+						if ( pane == primaryPane )
+							newState = state;
+					}
+				}
+				else
+					newState = primaryPane.ZoomStack.PopAll( primaryPane );
+
+				// Provide Callback to notify the user of zoom events
+				if ( this.ZoomEvent != null )
+					this.ZoomEvent( this, oldState, newState );
+
+				Refresh();
+			}
+		}
+
+*/
 
 		/// <summary>
 		/// Handler for the "UnZoom/UnPan" context menu item.  Restores the scale ranges to the values
@@ -3461,9 +3562,11 @@ namespace ZedGraph
 				e.MarginBounds.Top, newSize.Width, newSize.Height ) );
 			mPane.Draw( e.Graphics );
 
-			Graphics g = this.CreateGraphics();
-			mPane.ReSize( g, saveRect );
-			g.Dispose();
+			using ( Graphics g = this.CreateGraphics() )
+			{
+				mPane.ReSize( g, saveRect );
+				//g.Dispose();
+			}
 
 			mPane.IsPenWidthScaled = isPenSave[0];
 			mPane.IsFontsScaled = isFontSave[0];

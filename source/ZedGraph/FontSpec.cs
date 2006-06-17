@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.18.2.6 $ $Date: 2006-05-14 03:31:18 $ </version>
+	/// <version> $Revision: 3.18.2.7 $ $Date: 2006-06-17 21:23:31 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -851,15 +851,17 @@ namespace ZedGraph
 			if ( _isDropShadow )
 			{
 				// make a solid brush for rendering the font itself
-				SolidBrush brushD = new SolidBrush( _dropShadowColor );
-				float xShift = (float)( Math.Cos( _dropShadowAngle ) *
-							_dropShadowOffset * _font.Height );
-				float yShift = (float)( Math.Sin( _dropShadowAngle ) *
-							_dropShadowOffset * _font.Height );
-				RectangleF rectD = rectF;
-				rectD.Offset( xShift, yShift );
-				g.DrawString( text, _font, brushD, rectD, strFormat );
-				brushD.Dispose();
+				using ( SolidBrush brushD = new SolidBrush( _dropShadowColor ) )
+				{
+					float xShift = (float)( Math.Cos( _dropShadowAngle ) *
+								_dropShadowOffset * _font.Height );
+					float yShift = (float)( Math.Sin( _dropShadowAngle ) *
+								_dropShadowOffset * _font.Height );
+					RectangleF rectD = rectF;
+					rectD.Offset( xShift, yShift );
+					g.DrawString( text, _font, brushD, rectD, strFormat );
+					//brushD.Dispose();
+				}
 			}
 
 			// Draw the actual text.  Note that the coordinate system
