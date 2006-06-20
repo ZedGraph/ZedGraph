@@ -1,5 +1,9 @@
 == Version 5 ==
 
+;19-Jun-2006 (by Champion) V5_BRANCH (dev release 4.9.8)
+: [FIX] Compromise solution on RestoreScale with syncro active
+: [FIX] Add tags back in for ContextMenuStrip with generic names
+
 ;17-Jun-2006 (by Champion) V5_BRANCH
 : [UPD] Add Japanese Language Locale - thanks to Yuichi Yasuda
 : [FIX] Move ScaleFormatEvent to Axis class, stub down to Scale

@@ -579,7 +579,7 @@ namespace ZedGraph.ControlTest
 			for ( int i = 0; i < 36; i++ )
 			{
 				double x = (double)i + 5;
-				double y = 300.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) );
+				double y = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.2 ) );
 				list.Add( x, y, 0 );
 			}
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
@@ -616,10 +616,10 @@ namespace ZedGraph.ControlTest
 
 			z1.AxisChange();
 
-			z1.GraphPane.XAxis.Type = AxisType.Log;
+			//z1.GraphPane.XAxis.Type = AxisType.Log;
 
-			z1.MasterPane[0].XAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler( XScaleFormatEvent );
-			z1.MasterPane[0].YAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler( YScaleFormatEvent );
+			//z1.MasterPane[0].XAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler( XScaleFormatEvent );
+			//z1.MasterPane[0].YAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler( YScaleFormatEvent );
 
 		}
 

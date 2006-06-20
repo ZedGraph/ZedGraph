@@ -43,7 +43,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.14 $ $Date: 2006-06-17 21:23:31 $ </version>
+	/// <version> $Revision: 3.59.2.15 $ $Date: 2006-06-20 05:41:50 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -3053,30 +3053,35 @@ namespace ZedGraph
 
 					ToolStripMenuItem item = new ToolStripMenuItem();
 					item.Name = "copy";
+					item.Tag = "copy";
 					item.Text = _resourceManager.GetString( "copy" );
 					item.Click += new System.EventHandler( this.MenuClick_Copy );
 					menuStrip.Items.Add( item );
 
 					item = new ToolStripMenuItem();
 					item.Name = "save_as";
+					item.Tag = "save_as";
 					item.Text = _resourceManager.GetString( "save_as" );
 					item.Click += new System.EventHandler( this.MenuClick_SaveAs );
 					menuStrip.Items.Add( item );
 
 					item = new ToolStripMenuItem();
 					item.Name = "page_setup";
+					item.Tag = "page_setup";
 					item.Text = _resourceManager.GetString( "page_setup" );
 					item.Click += new System.EventHandler( this.MenuClick_PageSetup );
 					menuStrip.Items.Add( item );
 
 					item = new ToolStripMenuItem();
 					item.Name = "print";
+					item.Tag = "print";
 					item.Text = _resourceManager.GetString( "print" );
 					item.Click += new System.EventHandler( this.MenuClick_Print );
 					menuStrip.Items.Add( item );
 
 					item = new ToolStripMenuItem();
 					item.Name = "show_val";
+					item.Tag = "show_val";
 					item.Text = _resourceManager.GetString( "show_val" );
 					item.Click += new System.EventHandler( this.MenuClick_ShowValues );
 					item.Checked = this.IsShowPointValues;
@@ -3084,6 +3089,7 @@ namespace ZedGraph
 
 					item = new ToolStripMenuItem();
 					item.Name = "unzoom";
+					item.Tag = "unzoom";
 
 					if ( pane == null || pane.ZoomStack.IsEmpty )
 						menuStr = _resourceManager.GetString( "unzoom" );
@@ -3113,6 +3119,7 @@ namespace ZedGraph
 
 					item = new ToolStripMenuItem();
 					item.Name = "undo_all";
+					item.Tag = "undo_all";
 					menuStr = _resourceManager.GetString( "undo_all" );
 					item.Text = menuStr;
 					item.Click += new EventHandler( this.MenuClick_ZoomOutAll );
@@ -3122,6 +3129,7 @@ namespace ZedGraph
 
 					item = new ToolStripMenuItem();
 					item.Name = "set_default";
+					item.Tag = "set_default";
 					menuStr = _resourceManager.GetString( "set_default" );
 					item.Text = menuStr;
 					item.Click += new EventHandler( this.MenuClick_RestoreScale );
@@ -3278,30 +3286,47 @@ namespace ZedGraph
 		/// setting prior to any user actions (which may or may not be full auto mode).
 		/// </remarks>
 		/// <param name="pane">The <see cref="GraphPane" /> object which is to have the scale restored</param>
-		public void RestoreScale( GraphPane pane )
+		public void RestoreScale( GraphPane primaryPane )
 		{
-			if ( pane != null )
+			if ( primaryPane != null )
 			{
 				//Go ahead and save the old zoomstates, which provides an "undo"-like capability
-				ZoomState oldState = pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
-				//ZoomState oldState = new ZoomState( pane, ZoomState.StateType.Zoom );
+				//ZoomState oldState = primaryPane.ZoomStack.Push( primaryPane, ZoomState.StateType.Zoom );
+				ZoomState oldState = new ZoomState( primaryPane, ZoomState.StateType.Zoom );
 
 				using ( Graphics g = this.CreateGraphics() )
 				{
-					pane.XAxis.ResetAutoScale( pane, g );
-					foreach ( YAxis axis in pane.YAxisList )
-						axis.ResetAutoScale( pane, g );
-					foreach ( Y2Axis axis in pane.Y2AxisList )
-						axis.ResetAutoScale( pane, g );
+					if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
+					{
+						foreach ( GraphPane pane in _masterPane._paneList )
+						{
+							pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
+							ResetAutoScale( pane, g );
+						}
+					}
+					else
+					{
+						primaryPane.ZoomStack.Push( primaryPane, ZoomState.StateType.Zoom );
+						ResetAutoScale( primaryPane, g );
+					}
 
 					// Provide Callback to notify the user of zoom events
 					if ( this.ZoomEvent != null )
-						this.ZoomEvent( this, oldState, new ZoomState( pane, ZoomState.StateType.Zoom ) );
+						this.ZoomEvent( this, oldState, new ZoomState( primaryPane, ZoomState.StateType.Zoom ) );
 
 					//g.Dispose();
 				}
 				Refresh();
 			}
+		}
+
+		private void ResetAutoScale( GraphPane pane, Graphics g )
+		{
+			pane.XAxis.ResetAutoScale( pane, g );
+			foreach ( YAxis axis in pane.YAxisList )
+				axis.ResetAutoScale( pane, g );
+			foreach ( Y2Axis axis in pane.Y2AxisList )
+				axis.ResetAutoScale( pane, g );
 		}
 
 /*
