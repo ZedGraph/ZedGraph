@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9.2.10 $ $Date: 2006-06-17 21:23:31 $ </version>
+	/// <version> $Revision: 1.9.2.11 $ $Date: 2006-06-23 03:50:55 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -1856,11 +1856,18 @@ namespace ZedGraph
 		{
 			if ( _baseTic != PointPair.Missing )
 				return _baseTic;
+			else if ( IsAnyOrdinal )
+			{
+				// basetic is always 1 for ordinal types
+				return 1;
+			}
 			else
+			{
 				// default behavior is linear or ordinal type
 				// go to the nearest even multiple of the step size
-				return Math.Ceiling( (double) _min / (double) _majorStep - 0.00000001 )
-														* (double) _majorStep;
+				return Math.Ceiling( (double)_min / (double)_majorStep - 0.00000001 )
+														* (double)_majorStep;
+			}
 		}
 
 		/// <summary>

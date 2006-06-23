@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.8 $ $Date: 2006-05-14 03:31:18 $ </version>
+	/// <version> $Revision: 3.59.2.9 $ $Date: 2006-06-23 03:50:55 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -560,6 +560,9 @@ namespace ZedGraph
 				//this.Legend.Position = LegendPos.TopCenter;
 			}
 
+			// Set the ClusterScaleWidth, if needed
+			_barSettings.CalcClusterScaleWidth();
+
 			// if the ChartRect is not yet determined, then pick a scale based on a default ChartRect
 			// size (using 75% of Rect -- code is in Axis.CalcMaxLabels() )
 			// With the scale picked, call CalcChartRect() so calculate a real ChartRect
@@ -576,7 +579,7 @@ namespace ZedGraph
 			PickScale( g, scaleFactor );
 
 			// Set the ClusterScaleWidth, if needed
-			_barSettings.CalcClusterScaleWidth();
+			//_barSettings.CalcClusterScaleWidth();
 		}
 
 		private void PickScale( Graphics g, float scaleFactor )

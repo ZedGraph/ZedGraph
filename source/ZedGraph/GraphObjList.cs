@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.4 $ $Date: 2006-04-07 06:14:02 $ </version>
+	/// <version> $Revision: 1.1.2.5 $ $Date: 2006-06-23 03:50:55 $ </version>
 	[Serializable]
 	public class GraphObjList : List<GraphObj>, ICloneable
 	{
@@ -95,7 +95,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="tag">The <see cref="String"/> type tag to search for.</param>
 		/// <value>A <see cref="GraphObj"/> object reference.</value>
-		public GraphObj this[ string tag ]  
+		/// <seealso cref="IndexOfTag"/>
+		public GraphObj this[string tag]  
 		{
 			get
 			{
@@ -133,30 +134,70 @@ namespace ZedGraph
 			List.Insert( index, item );
 		}
 */
+
 		/// <summary>
 		/// Return the zero-based position index of the
 		/// <see cref="GraphObj"/> with the specified <see cref="GraphObj.Tag"/>.
 		/// </summary>
 		/// <remarks>In order for this method to work, the <see cref="GraphObj.Tag"/>
 		/// property must be of type <see cref="String"/>.</remarks>
-		/// <param name="label">The <see cref="String"/> label that is in the
+		/// <param name="tag">The <see cref="String"/> tag that is in the
 		/// <see cref="GraphObj.Tag"/> attribute of the item to be found.
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="GraphObj"/>,
 		/// or -1 if the <see cref="GraphObj"/> is not in the list</returns>
-		public int IndexOfTag( string label )
+		public int IndexOfTag( string tag )
 		{
 			int index = 0;
 			foreach ( GraphObj p in this )
 			{
 				if ( p.Tag is string &&
-							String.Compare( (string) p.Tag, label, true ) == 0 )
+							String.Compare( (string) p.Tag, tag, true ) == 0 )
 					return index;
 				index++;
 			}
 
 			return -1;
 		}
+
+		/// <summary>
+		/// Move the position of the object at the specified index
+		/// to the new relative position in the list.</summary>
+		/// <remarks>For Graphic type objects, this method controls the
+		/// Z-Order of the items.  Objects at the beginning of the list
+		/// appear in front of objects at the end of the list.</remarks>
+		/// <param name="index">The zero-based index of the object
+		/// to be moved.</param>
+		/// <param name="relativePos">The relative number of positions to move
+		/// the object.  A value of -1 will move the
+		/// object one position earlier in the list, a value
+		/// of 1 will move it one position later.  To move an item to the
+		/// beginning of the list, use a large negative value (such as -999).
+		/// To move it to the end of the list, use a large positive value.
+		/// </param>
+		/// <returns>The new position for the object, or -1 if the object
+		/// was not found.</returns>
+		public int Move( int index, int relativePos )
+		{
+			if ( index < 0 || index >= Count )
+				return -1;
+
+			GraphObj graphObj = this[index];
+			this.RemoveAt( index );
+
+			index += relativePos;
+			if ( index < 0 )
+				index = 0;
+			if ( index > Count )
+				index = Count;
+
+			Insert( index, graphObj );
+			return index;
+		}
+
+	#endregion
+
+	#region Render Methods
 
 		/// <summary>
 		/// Render text to the specified <see cref="Graphics"/> device

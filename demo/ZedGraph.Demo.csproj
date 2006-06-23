@@ -41,6 +41,7 @@
     <Compile Include="ZedGraph.Demo\BarChartSampleDemo.cs" />
     <Compile Include="ZedGraph.Demo\BarGraphBandDemo.cs" />
     <Compile Include="ZedGraph.Demo\BaseTicDemo.cs" />
+    <Compile Include="ZedGraph.Demo\CandleStickDemo.cs" />
     <Compile Include="ZedGraph.Demo\ChartTabForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -72,7 +73,9 @@
     <Compile Include="ZedGraph.Demo\HorizontalBarSampleDemo.cs" />
     <Compile Include="ZedGraph.Demo\HorizontalBarsWithLabels.cs" />
     <Compile Include="ZedGraph.Demo\HorizontalStackedBarDemo.cs" />
+    <Compile Include="ZedGraph.Demo\ImageForSymbolDemo.cs" />
     <Compile Include="ZedGraph.Demo\InitialSampleDemo.cs" />
+    <Compile Include="ZedGraph.Demo\JapaneseCandleStickDemo.cs" />
     <Compile Include="ZedGraph.Demo\LicenseForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,6 +85,7 @@
     <Compile Include="ZedGraph.Demo\LineGraphBandDemo.cs" />
     <Compile Include="ZedGraph.Demo\LineStackingDemo.cs" />
     <Compile Include="ZedGraph.Demo\MasterPaneDemo.cs" />
+    <Compile Include="ZedGraph.Demo\MasterPaneLayout.cs" />
     <Compile Include="ZedGraph.Demo\MasterSampleDemo.cs" />
     <Compile Include="ZedGraph.Demo\ModInitialSampleDemo.cs" />
     <Compile Include="ZedGraph.Demo\MultiPieChartDemo.cs" />
@@ -130,14 +134,16 @@
     <Compile Include="ZedGraph.Demo\StackedBarsWithLabels.cs" />
     <Compile Include="ZedGraph.Demo\StepChartDemo.cs" />
     <Compile Include="ZedGraph.Demo\StickItemDemo.cs" />
+    <Compile Include="ZedGraph.Demo\SynchronizedPanes.cs" />
     <Compile Include="ZedGraph.Demo\TextAxisSampleDemo.cs" />
     <Compile Include="ZedGraph.Demo\TransparentDemo1.cs" />
     <Compile Include="ZedGraph.Demo\VerticalBarsWithLabelsDemo.cs" />
     <Compile Include="ZedGraph.Demo\ZedGraphDemo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ngc4414.jpg" />
-    <None Include="Resources\ngc4261.gif" />
+    <EmbeddedResource Include="Resources\ngc4414.jpg" />
+    <EmbeddedResource Include="Resources\ngc4261.gif" />
+    <EmbeddedResource Include="Resources\teeth.png" />
     <Content Include="ZedGraph.Demo\ngc4261.gif" />
     <Content Include="ZedGraph.Demo\ngc4414.jpg" />
   </ItemGroup>

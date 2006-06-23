@@ -37,7 +37,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DateAxis( zedGraphControl1 );
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
-			//CreateGraph_DualYDemo( zedGraphControl1 );
+			CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
@@ -64,7 +64,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_StickToCurve( zedGraphControl1 );
 			//CreateGraph_TestScroll( zedGraphControl1 );
 			//CreateGraph_TextBasic( zedGraphControl2 );
-			CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
+			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
 			//CreateGraph_TwoTextAxes( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
 			//CreateGraph_DualY( zedGraphControl1 );
@@ -509,7 +509,7 @@ namespace ZedGraph.ControlTest
 			XDate xDate = new XDate( 2006, 2, 1 );
 			double open = 50.0;
 
-			for ( int i = 0; i < 100; i++ )
+			for ( int i = 0; i < 50; i++ )
 			{
 				double x = xDate.XLDate;
 				double close = open + rand.NextDouble() * 10.0 - 5.0;
@@ -534,12 +534,13 @@ namespace ZedGraph.ControlTest
 			JapaneseCandleStickItem myCurve = myPane.AddJapaneseCandleStick( "trades", spl );
 			//myCurve.Stick.Size = 3;
 			myCurve.Stick.IsAutoSize = true;
-			//myCurve.CandleStick.PenWidth = 2;
+			myCurve.Stick.PenWidth = 1.0f;
 			myCurve.Stick.Color = Color.Blue;
 			//myCurve.CandleStick.IsOpenCloseVisible = false;
 
 			// Use DateAsOrdinal to skip weekend gaps
 			myPane.XAxis.Type = AxisType.DateAsOrdinal;
+			//myPane.XAxis.Type = AxisType.Ordinal ;
 			//myPane.XAxis.Scale.MajorStep = 1.0;
 
 			// pretty it up a little
@@ -816,6 +817,7 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 
 			g.Dispose();
+
 		}
 
 		public GraphPane AddGraph( int j, ColorSymbolRotator rotator )
@@ -1035,11 +1037,11 @@ namespace ZedGraph.ControlTest
 		{
 			MasterPane master = z1.MasterPane;
 
-			master.Fill = new Fill( Color.FromArgb( 230, 230, 255 ) );
+			master.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
 			master.PaneList.Clear();
 
 			master.Title.IsVisible = true;
-			master.Title.Text = "My MasterPane Title";
+			master.Title.Text = "Synchronized Graph Demo";
 
 			master.Margin.All = 10;
 			master.InnerPaneGap = 0;
@@ -1056,9 +1058,11 @@ namespace ZedGraph.ControlTest
 					"Time, Days",
 					"Rate, m/s" );
 
-				myPaneT.Fill = new Fill( Color.FromArgb( 230, 230, 255 ) );
+				//myPaneT.Fill = new Fill( Color.FromArgb( 230, 230, 255 ) );
+				myPaneT.Fill.IsVisible = false;
+
 				myPaneT.Chart.Fill = new Fill( Color.White, Color.LightYellow, 45.0F );
-				myPaneT.BaseDimension = 6.0F;
+				myPaneT.BaseDimension = 3.0F;
 				myPaneT.XAxis.Title.IsVisible = false;
 				myPaneT.XAxis.Scale.IsVisible = false;
 				myPaneT.Legend.IsVisible = false;
@@ -1077,6 +1081,9 @@ namespace ZedGraph.ControlTest
 					myPaneT.XAxis.Scale.IsVisible = true;
 					myPaneT.Margin.Bottom = 10;
 				}
+
+				if ( j > 0 )
+					myPaneT.YAxis.Scale.IsSkipLastLabel = true;
 
 				// This sets the minimum amount of space for the left and right side, respectively
 				// The reason for this is so that the ChartRect's all end up being the same size.
@@ -1100,20 +1107,23 @@ namespace ZedGraph.ControlTest
 				master.Add( myPaneT );
 			}
 
-			Graphics g = this.CreateGraphics();
+			using ( Graphics g = this.CreateGraphics() )
+			{
 
-			master.SetLayout( PaneLayout.SingleColumn );
-			//master.SetLayout( PaneLayout.ExplicitRow32 );
-			//master.SetLayout( 2, 4 );
-			//master.SetLayout( false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
-			z1.AxisChange();
+				master.SetLayout( PaneLayout.SingleColumn );
+				//master.SetLayout( PaneLayout.ExplicitRow32 );
+				//master.SetLayout( 2, 4 );
+				//master.SetLayout( false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
+				z1.AxisChange();
 
-			z1.IsAutoScrollRange = true;
-			z1.IsShowHScrollBar = true;
-			z1.IsShowVScrollBar = true;
-			z1.IsSynchronizeXAxes = true;
+				z1.IsAutoScrollRange = true;
+				z1.IsShowHScrollBar = true;
+				z1.IsShowVScrollBar = true;
+				z1.IsSynchronizeXAxes = true;
 
-			g.Dispose();
+				g.Dispose();
+			}
+
 		}
 
 		private void CreateGraph_StackedBars( ZedGraphControl z1 )
@@ -1335,28 +1345,38 @@ namespace ZedGraph.ControlTest
 			// Make up some data _points based on the Sine function
 			PointPairList list = new PointPairList();
 			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+			PointPairList list4 = new PointPairList();
 			for ( int i = 0; i < 100; i++ )
 			{
 				double x = (double)i * 5.0;
 				double y = Math.Sin( (double)i * Math.PI / 15.0 ) * 16.0;
-				double y2 = y * 13.5;
+				double y2 = Math.Sin( (double)i * Math.PI / 15.0 + Math.PI * 0.5 ) * 160.0;
+				double y3 = Math.Sin( (double)i * Math.PI / 15.0 + Math.PI ) * 16.0;
+				double y4 = Math.Sin( (double)i * Math.PI / 15.0 + Math.PI * 1.5 ) * 16.0;
 				list.Add( x, y );
 				list2.Add( x, y2 );
+				list3.Add( x, y3 );
+				list4.Add( x, y4 );
 			}
 
 			// Generate a red curve with diamond symbols, and "Alpha" in the _legend
-			LineItem myCurve = myPane.AddCurve( "Alpha",
-				list, Color.Red, SymbolType.Diamond );
+			LineItem myCurve = myPane.AddCurve( "Alpha", list, Color.Red, SymbolType.Diamond );
 			// Fill the symbols with white
 			myCurve.Symbol.Fill = new Fill( Color.White );
 
 			// Generate a blue curve with circle symbols, and "Beta" in the _legend
-			myCurve = myPane.AddCurve( "Beta",
-				list2, Color.Blue, SymbolType.Circle );
+			myCurve = myPane.AddCurve( "Beta", list2, Color.Blue, SymbolType.Circle );
 			// Fill the symbols with white
 			myCurve.Symbol.Fill = new Fill( Color.White );
 			// Associate this curve with the Y2 axis
 			myCurve.IsY2Axis = true;
+
+			// Generate a blue curve with circle symbols, and "Beta" in the _legend
+			myCurve = myPane.AddCurve( "Gamma", list3, Color.Green, SymbolType.Square );
+			myCurve = myPane.AddCurve( "Delta", list4, Color.Violet, SymbolType.Triangle );
+
+
 
 			// Show the x axis grid
 			myPane.XAxis.MajorGrid.IsVisible = true;
@@ -1390,6 +1410,8 @@ namespace ZedGraph.ControlTest
 
 			// Fill the axis background with a gradient
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGray, 45.0f );
+
+			//myPane.CurveList.Move( 0, 3 );
 
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();

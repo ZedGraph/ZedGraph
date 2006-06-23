@@ -19,6 +19,8 @@
 using System;
 using System.Drawing;
 using System.Collections;
+using System.Reflection;
+using System.IO;
 
 using ZedGraph;
 
@@ -49,7 +51,10 @@ namespace ZedGraph.Demo
 			// Access a image from the resources
 			//Image image = Bitmap.FromStream(
 			//	GetType().Assembly.GetManifestResourceStream("ZedGraph.Demo.ngc4414.jpg") );
-			Image image = Resources.ngc4414;
+			//Image image = Resources.ngc4414;
+			Assembly a = Assembly.GetExecutingAssembly();
+			Stream imgStream = a.GetManifestResourceStream( "ZedGraph.Demo.Resources.ngc4414.jpg" );
+			Image image = Bitmap.FromStream( imgStream ) as Bitmap;
 
 			// create a brush with the image
 			TextureBrush brush = new TextureBrush( image );
@@ -63,7 +68,9 @@ namespace ZedGraph.Demo
 			// Access a image from the resources
 			//Image image2 = Bitmap.FromStream(
 			//	GetType().Assembly.GetManifestResourceStream("ZedGraph.Demo.ngc4261.gif") );
-			Image image2 = Resources.ngc4261;
+			//Image image2 = Resources.ngc4261;
+			Stream imgStream2 = a.GetManifestResourceStream( "ZedGraph.Demo.Resources.ngc4261.gif" );
+			Image image2 = Bitmap.FromStream( imgStream2 ) as Bitmap;
 
 			// create a brush with the image
 			TextureBrush brush2 = new TextureBrush( image2 );			

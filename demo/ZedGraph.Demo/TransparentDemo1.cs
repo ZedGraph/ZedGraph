@@ -21,6 +21,7 @@ using System.Collections;
 using System.Drawing;
 using System.Resources;
 using System.Reflection;
+using System.IO;
 
 using ZedGraph;
 
@@ -60,7 +61,14 @@ namespace ZedGraph.Demo
 			//ResourceManager resourceManager = new ResourceManager( "ZedGraph.Demo",
 			//				Assembly.GetExecutingAssembly() );
 
-			Image image = Resources.ngc4414;
+			Assembly a = Assembly.GetExecutingAssembly();
+			string[] resNames = a.GetManifestResourceNames();
+
+			Stream imgStream = a.GetManifestResourceStream( "ZedGraph.Demo.Resources.ngc4414.jpg" );
+
+			Image image = Bitmap.FromStream( imgStream ) as Bitmap;
+
+			//Image image = Resources.ngc4414;
 
 			//Image image = Bitmap.FromStream(
 			//	GetType().Assembly.GetManifestResourceStream( "ZedGraph.Demo.ngc4414.jpg" ) );

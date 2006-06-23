@@ -43,7 +43,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.59.2.15 $ $Date: 2006-06-20 05:41:50 $ </version>
+	/// <version> $Revision: 3.59.2.16 $ $Date: 2006-06-23 03:50:55 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -2657,8 +2657,14 @@ namespace ZedGraph
 
 				using ( Graphics g = this.CreateGraphics() )
 				{
+					// always AxisChange() the dragPane
 					_dragPane.AxisChange( g );
-					//g.Dispose();
+
+					foreach ( GraphPane pane in _masterPane._paneList )
+					{
+						if ( pane != _dragPane && ( _isSynchronizeXAxes || _isSynchronizeYAxes ) )
+								pane.AxisChange( g );
+					}
 				}
 			}
 
@@ -3174,7 +3180,8 @@ namespace ZedGraph
 				// Threaded copy mode to avoid crash with MTA
 				// Contributed by Dave Moor
 				Thread ct = new Thread( new ThreadStart( this.ClipboardCopyThread ) );
-				ct.ApartmentState = ApartmentState.STA;
+				//ct.ApartmentState = ApartmentState.STA;
+				ct.SetApartmentState( ApartmentState.STA );
 				ct.Start();
 				ct.Join();
 

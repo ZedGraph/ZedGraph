@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.32.2.9 $ $Date: 2006-05-14 03:31:18 $ </version>
+	/// <version> $Revision: 3.32.2.10 $ $Date: 2006-06-23 03:50:55 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -272,18 +272,18 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>In order for this method to work, the <see cref="CurveItem.Tag"/>
 		/// property must be of type <see cref="String"/>.</remarks>
-		/// <param name="label">The <see cref="String"/> label that is in the
+		/// <param name="tag">The <see cref="String"/> tag that is in the
 		/// <see cref="CurveItem.Tag"/> attribute of the item to be found.
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="CurveItem"/>,
 		/// or -1 if the <see cref="CurveItem"/> is not in the list</returns>
-		public int IndexOfTag( string label )
+		public int IndexOfTag( string tag )
 		{
 			int index = 0;
 			foreach ( CurveItem p in this )
 			{
 				if ( p.Tag is string &&
-							String.Compare( (string) p.Tag, label, true ) == 0 )
+							String.Compare( (string) p.Tag, tag, true ) == 0 )
 					return index;
 				index++;
 			}
@@ -299,7 +299,48 @@ namespace ZedGraph
 		{
 			this.Sort( new CurveItem.Comparer( type, index ) );
 		}
-		
+
+		/// <summary>
+		/// Move the position of the object at the specified index
+		/// to the new relative position in the list.</summary>
+		/// <remarks>For Graphic type objects, this method controls the
+		/// Z-Order of the items.  Objects at the beginning of the list
+		/// appear in front of objects at the end of the list.</remarks>
+		/// <param name="index">The zero-based index of the object
+		/// to be moved.</param>
+		/// <param name="relativePos">The relative number of positions to move
+		/// the object.  A value of -1 will move the
+		/// object one position earlier in the list, a value
+		/// of 1 will move it one position later.  To move an item to the
+		/// beginning of the list, use a large negative value (such as -999).
+		/// To move it to the end of the list, use a large positive value.
+		/// </param>
+		/// <returns>The new position for the object, or -1 if the object
+		/// was not found.</returns>
+		public int Move( int index, int relativePos )
+		{
+			if ( index < 0 || index >= Count )
+				return -1;
+
+			CurveItem curve = this[index];
+			this.RemoveAt( index );
+
+			index += relativePos;
+			if ( index < 0 )
+				index = 0;
+			if ( index > Count )
+				index = Count;
+
+			Insert( index, curve );
+			return index;
+		}
+
+
+
+	#endregion
+
+	#region Rendering Methods
+
 		/// <summary>
 		/// Go through each <see cref="CurveItem"/> object in the collection,
 		/// calling the <see cref="CurveItem.GetRange"/> member to 

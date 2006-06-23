@@ -21,7 +21,7 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.Drawing.Drawing2D;
-using System.Globalization ;
+using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
@@ -32,13 +32,13 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.21.2.6 $ $Date: 2006-06-17 21:23:31 $ </version>
+	/// <version> $Revision: 1.21.2.7 $ $Date: 2006-06-23 03:50:55 $ </version>
 	[Serializable]
-	public class PieItem : CurveItem , ICloneable, ISerializable
+	public class PieItem : CurveItem, ICloneable, ISerializable
 	{
-		
-	#region Fields
-/*
+
+		#region Fields
+		/*
 		/// <summary>
 		/// Private field instance of the <see cref="PieItem"/> class indicating whether
 		/// the instance is displayed in 2D or 3D.(see <see cref="PieItem.PieType"/>)
@@ -52,28 +52,28 @@ namespace ZedGraph
 		/// bisecting the chord of this <see cref="PieItem"/>.  Maximum allowable value
 		/// is 0.5.
 		/// </summary>
-		private double	_displacement;
+		private double _displacement;
 
 		/// <summary>
 		/// A <see cref="ZedGraph.TextObj"/> which will customize the label display of this
 		/// <see cref="PieItem"/>
 		/// </summary>
 		private TextObj _labelDetail;
-	
+
 		/// <summary>
 		/// Private	field	that stores the	<see cref="ZedGraph.Fill"/> data for this
 		/// <see	cref="PieItem"/>.	 Use	the public property <see	cref="Fill"/> to
 		/// access this value.
 		/// </summary>
-		private Fill  _fill;
-		
+		private Fill _fill;
+
 		/// <summary>
 		/// Private	field	that stores the	<see cref="Border"/> class that defines	the
 		/// properties of the	border around	this <see cref="PieItem"/>. Use the public
 		/// property	<see cref="Border"/> to access this value.
 		/// </summary>
 		private Border _border;
-		
+
 		/// <summary>
 		/// Private field that stores the absolute value of this <see cref="PieItem"/> instance.
 		/// Value will be set to zero if submitted value is less than zero. 
@@ -85,33 +85,33 @@ namespace ZedGraph
 		/// will be displayed.  Use the public property <see cref="LabelType"/> to access this data.  
 		/// Use enum <see cref="ZedGraph.PieLabelType"/>.
 		/// </summary>
-		private PieLabelType _labelType ;
+		private PieLabelType _labelType;
 		/// <summary>
 		/// The point on the arc of this <see cref="PieItem"/> representing the intersection of
 		/// the arc and the explosion radius.
 		/// </summary>
-		private PointF _intersectionPoint ;
+		private PointF _intersectionPoint;
 
 		/// <summary>
 		/// The bounding rectangle for this <see cref="PieItem"/>.
 		/// </summary>
-		private RectangleF _boundingRectangle ;
+		private RectangleF _boundingRectangle;
 
 		/// <summary>
 		/// The formatted string for this <see cref="PieItem"/>'s label.  Formatting is
 		/// done based on  the <see cref="PieLabelType"/>.
 		/// </summary>
-		private string _labelStr ;
+		private string _labelStr;
 		/// <summary>
 		/// The point at which the line between this <see cref="PieItem"/> and its
 		/// label bends to the horizontal.
 		/// </summary>
-		private PointF _pivotPoint ;
+		private PointF _pivotPoint;
 		/// <summary>
 		/// The point at the end of the line between	this <see cref="PieItem"/> and 
 		/// it's label (i.e. the beginning of the label display)
 		/// </summary>
-		private PointF _endPoint ;
+		private PointF _endPoint;
 
 		/// <summary>
 		/// Private field to hold the GraphicsPath of this <see cref="PieItem"/> to be
@@ -149,15 +149,15 @@ namespace ZedGraph
 		/// </summary>
 		private int _percentDecimalDigits;
 
-		private static ColorSymbolRotator _rotator = new ColorSymbolRotator () ;
+		private static ColorSymbolRotator _rotator = new ColorSymbolRotator();
 
-	#endregion
+		#endregion
 
-	#region Defaults
+		#region Defaults
 		/// <summary>
 		/// Specify the default property values for the <see cref="PieItem"/> class.
 		/// </summary>
-		public	struct Default
+		public struct Default
 		{
 			/// <summary>
 			///Default <see cref="PieItem "/> displacement.
@@ -172,7 +172,7 @@ namespace ZedGraph
 			/// <summary>
 			/// The default fill mode for this PieItem (<see	cref="ZedGraph.Fill.Type"/> property).
 			/// </summary>
-			public static FillType FillType = FillType.Brush ;
+			public static FillType FillType = FillType.Brush;
 			/// <summary>
 			/// The default border	mode	for	PieItem	(<see cref="ZedGraph.Border.IsVisible"/> property).
 			/// true to	display frame	around PieItem,	false otherwise
@@ -192,12 +192,12 @@ namespace ZedGraph
 			/// The default custom brush for filling in the PieItem.
 			/// (<see cref="ZedGraph.Fill.Brush"/> property).
 			/// </summary>
-			public static Brush FillBrush = null;	
-		
+			public static Brush FillBrush = null;
+
 			/// <summary>
 			///Default value for controlling <see cref="PieItem"/> display.
 			/// </summary>
-			public static bool isVisible = true ;
+			public static bool isVisible = true;
 
 			/// <summary>
 			/// Default value for <see cref="PieItem.LabelType"/>.
@@ -215,25 +215,25 @@ namespace ZedGraph
 			/// Default value for the number of decimal digits  
 			/// to be displayed when <see cref="LabelType"/>  contains a value.
 			/// </summary>
-			public static int ValueDecimalDigits = 0 ;
+			public static int ValueDecimalDigits = 0;
 
 			/// <summary>
 			/// Default value for the number of decimal digits  
 			/// to be displayed where <see cref="LabelType"/> contains a percent.
 			/// </summary>
-			public static int PercentDecimalDigits = 2 ;
+			public static int PercentDecimalDigits = 2;
 		}
-	#endregion Defaults
+		#endregion Defaults
 
-	#region PieItem Properties
+		#region PieItem Properties
 		/// <summary>
 		/// Gets or sets the a value which determines the amount, if any, of this <see cref="PieItem"/>  
 		/// displacement.
 		/// </summary>
-		public	double Displacement
+		public double Displacement
 		{
-			get { return (_displacement); }
-			set { _displacement = value > .5 ? .5 : value ; }
+			get { return ( _displacement ); }
+			set { _displacement = value > .5 ? .5 : value; }
 		}
 
 		/// <summary>
@@ -241,8 +241,8 @@ namespace ZedGraph
 		/// </summary>
 		public GraphicsPath SlicePath
 		{
-			get { return (_slicePath); }
-//			set { this.slicePath = value; } 
+			get { return ( _slicePath ); }
+			//			set { this.slicePath = value; } 
 		}
 
 		/// <summary>
@@ -251,26 +251,26 @@ namespace ZedGraph
 		/// </summary>
 		public TextObj LabelDetail
 		{
-			get { return (_labelDetail); }
-			set { _labelDetail = value; } 
+			get { return ( _labelDetail ); }
+			set { _labelDetail = value; }
 		}
 
 		/// <summary>
 		/// Gets or sets the <see cref="Border"/> object so as to be able to modify
 		/// its properties.
 		/// </summary>
-		public	Border Border
+		public Border Border
 		{
-			get { return (_border); }
-			set { _border =	value; }
+			get { return ( _border ); }
+			set { _border = value; }
 		}
-				
+
 		/// <summary>
 		/// Gets or sets the arc length (in degrees) of this <see cref="PieItem"/>.
 		/// </summary>
 		private float SweepAngle
 		{
-			get { return (_sweepAngle); }
+			get { return ( _sweepAngle ); }
 			set { _sweepAngle = value; }
 		}
 
@@ -279,7 +279,7 @@ namespace ZedGraph
 		/// </summary>
 		private float StartAngle
 		{
-			get { return (_startAngle); }
+			get { return ( _startAngle ); }
 			set { _startAngle = value; }
 		}
 
@@ -289,7 +289,7 @@ namespace ZedGraph
 		/// </summary>
 		private float MidAngle
 		{
-			get { return (_midAngle); }
+			get { return ( _midAngle ); }
 			set { _midAngle = value; }
 		}
 
@@ -297,35 +297,37 @@ namespace ZedGraph
 		///  Gets or sets the value of this <see cref="PieItem"/>.  
 		///  Minimum value is 0. 
 		/// </summary>
-		public	double Value
+		public double Value
 		{
-			get { return (_pieValue); }
-			set { _pieValue	= value > 0 ? value : 0 ; }
+			get { return ( _pieValue ); }
+			set { _pieValue = value > 0 ? value : 0; }
 		}
-				
+
 		/// <summary>
 		/// Gets or sets the <see cref="PieLabelType"/> to be used in displaying 
 		/// <see cref="PieItem"/> labels.
 		/// </summary>
-		public	PieLabelType LabelType
+		public PieLabelType LabelType
 		{
-			get { return (_labelType); }
-			set { _labelType = value; 
-						if ( value == PieLabelType.None )
-							this.LabelDetail.IsVisible	= false ;
-						else
-							this.LabelDetail.IsVisible = true ;
-					}  
+			get { return ( _labelType ); }
+			set
+			{
+				_labelType = value;
+				if ( value == PieLabelType.None )
+					this.LabelDetail.IsVisible = false;
+				else
+					this.LabelDetail.IsVisible = true;
+			}
 		}
-		
+
 		/// <summary>
 		/// Gets or sets the number of decimal digits to be displayed in a <see cref="PieItem"/> 
 		/// value label.
 		/// </summary>
 		public int ValueDecimalDigits
 		{
-			get { return (_valueDecimalDigits); }
-			set { _valueDecimalDigits = value; } 
+			get { return ( _valueDecimalDigits ); }
+			set { _valueDecimalDigits = value; }
 		}
 
 		/// <summary>
@@ -334,8 +336,8 @@ namespace ZedGraph
 		/// </summary>
 		public int PercentDecimalDigits
 		{
-			get { return (_percentDecimalDigits); }
-			set { _percentDecimalDigits = value; } 
+			get { return ( _percentDecimalDigits ); }
+			set { _percentDecimalDigits = value; }
 		}
 
 		/*
@@ -358,7 +360,7 @@ namespace ZedGraph
 		{
 			return false;
 		}
- 
+
 		/// <summary>
 		/// Gets a flag indicating if the X axis is the independent axis for this <see cref="CurveItem" />
 		/// </summary>
@@ -369,10 +371,10 @@ namespace ZedGraph
 		{
 			return true;
 		}
-		
-	#endregion
 
-	#region Constructors
+		#endregion
+
+		#region Constructors
 		/// <summary>
 		/// Create a new <see cref="PieItem"/>, providing a gradient fill for the pie color.
 		/// </summary>
@@ -385,12 +387,13 @@ namespace ZedGraph
 		/// <param name="displacement">The amount this <see cref="PieItem"/>  instance will be 
 		/// displaced from the center point.</param>
 		/// <param name="label">Text label for this <see cref="PieItem"/> instance.</param>
-		public PieItem ( double pieValue, Color color1, Color color2, float fillAngle,
-						double displacement, string label ) :
+		public PieItem( double pieValue, Color color1, Color color2, float fillAngle,
+						double displacement, string label )
+			:
 						this( pieValue, color1, displacement, label )
 		{
 			if ( !color1.IsEmpty && !color2.IsEmpty )
-				_fill = new Fill( color1, color2, fillAngle ) ;
+				_fill = new Fill( color1, color2, fillAngle );
 		}
 
 		/// <summary>
@@ -401,17 +404,18 @@ namespace ZedGraph
 		/// <param name="displacement">The amount this <see cref="PieItem"/>  instance will be 
 		/// displaced from the center point.</param>
 		/// <param name="label">Text label for this <see cref="PieItem"/> instance.</param>
-		public PieItem ( double pieValue, Color color,  double displacement, string label ) : base( label )
+		public PieItem( double pieValue, Color color, double displacement, string label )
+			: base( label )
 		{
-			_pieValue = pieValue ;
-			_fill = new Fill( color.IsEmpty ? _rotator.NextColor : color ) ;
-			_displacement = displacement ;
-			_border = new Border(Default.BorderColor, Default.BorderWidth ) ;
-			_labelDetail = new TextObj() ;
-			_labelDetail.FontSpec.Size = Default.FontSize ;
+			_pieValue = pieValue;
+			_fill = new Fill( color.IsEmpty ? _rotator.NextColor : color );
+			_displacement = displacement;
+			_border = new Border( Default.BorderColor, Default.BorderWidth );
+			_labelDetail = new TextObj();
+			_labelDetail.FontSpec.Size = Default.FontSize;
 			_labelType = Default.LabelType;
-			_valueDecimalDigits = Default.ValueDecimalDigits ;
-			_percentDecimalDigits = Default.PercentDecimalDigits ;
+			_valueDecimalDigits = Default.ValueDecimalDigits;
+			_percentDecimalDigits = Default.PercentDecimalDigits;
 			_slicePath = null;
 		}
 
@@ -420,7 +424,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="pieValue">The value associated with this <see cref="PieItem"/> instance.</param>
 		/// <param name="label">Text label for this <see cref="PieItem"/> instance</param>
-		public PieItem ( double pieValue, string label ) :
+		public PieItem( double pieValue, string label )
+			:
 			this( pieValue, _rotator.NextColor, Default.Displacement, label )
 		{
 		}
@@ -429,7 +434,8 @@ namespace ZedGraph
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The <see cref="PieItem"/> object from which to copy</param>
-		public PieItem( PieItem rhs ) : base( rhs )
+		public PieItem( PieItem rhs )
+			: base( rhs )
 		{
 			_pieValue = rhs._pieValue;
 			_fill = rhs._fill.Clone();
@@ -437,8 +443,8 @@ namespace ZedGraph
 			_displacement = rhs._displacement;
 			_labelDetail = rhs._labelDetail.Clone();
 			_labelType = rhs._labelType;
-			_valueDecimalDigits = rhs._valueDecimalDigits ;
-			_percentDecimalDigits = rhs._percentDecimalDigits ;
+			_valueDecimalDigits = rhs._valueDecimalDigits;
+			_percentDecimalDigits = rhs._percentDecimalDigits;
 		}
 
 		/// <summary>
@@ -461,9 +467,9 @@ namespace ZedGraph
 		}
 
 
-	#endregion
+		#endregion
 
-	#region Serialization
+		#region Serialization
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
@@ -476,36 +482,37 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
-		protected PieItem( SerializationInfo info, StreamingContext context ) : base( info, context )
+		protected PieItem( SerializationInfo info, StreamingContext context )
+			: base( info, context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
 			_displacement = info.GetDouble( "displacement" );
-			_labelDetail = (TextObj) info.GetValue( "labelDetail", typeof(TextObj) );
-			_fill = (Fill) info.GetValue( "fill", typeof(Fill) );
-			_border = (Border) info.GetValue( "border", typeof(Border) );
+			_labelDetail = (TextObj)info.GetValue( "labelDetail", typeof( TextObj ) );
+			_fill = (Fill)info.GetValue( "fill", typeof( Fill ) );
+			_border = (Border)info.GetValue( "border", typeof( Border ) );
 			_pieValue = info.GetDouble( "pieValue" );
-			_labelType = (PieLabelType) info.GetValue( "labelType", typeof(PieLabelType) );
-			_intersectionPoint = (PointF) info.GetValue( "intersectionPoint", typeof(PointF) );
-			_boundingRectangle = (RectangleF)info.GetValue ( "boundingRectangle", typeof(RectangleF) );
-			_pivotPoint =(PointF) info.GetValue( "pivotPoint", typeof(PointF) );
-		  _endPoint =(PointF) info.GetValue( "endPoint", typeof(PointF) );
-			_slicePath = (GraphicsPath)info.GetValue ( "slicePath", typeof(GraphicsPath) );
+			_labelType = (PieLabelType)info.GetValue( "labelType", typeof( PieLabelType ) );
+			_intersectionPoint = (PointF)info.GetValue( "intersectionPoint", typeof( PointF ) );
+			_boundingRectangle = (RectangleF)info.GetValue( "boundingRectangle", typeof( RectangleF ) );
+			_pivotPoint = (PointF)info.GetValue( "pivotPoint", typeof( PointF ) );
+			_endPoint = (PointF)info.GetValue( "endPoint", typeof( PointF ) );
+			_slicePath = (GraphicsPath)info.GetValue( "slicePath", typeof( GraphicsPath ) );
 			_startAngle = (float)info.GetDouble( "startAngle" );
 			_sweepAngle = (float)info.GetDouble( "sweepAngle" );
 			_midAngle = (float)info.GetDouble( "midAngle" );
-			_labelStr = info.GetString ("labelStr") ;
-			_valueDecimalDigits = info.GetInt32 ("valueDecimalDigits") ;
-			_percentDecimalDigits = info.GetInt32 ("percentDecimalDigits") ;
+			_labelStr = info.GetString( "labelStr" );
+			_valueDecimalDigits = info.GetInt32( "valueDecimalDigits" );
+			_percentDecimalDigits = info.GetInt32( "percentDecimalDigits" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
-		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
 		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			base.GetObjectData( info, context );
@@ -514,9 +521,9 @@ namespace ZedGraph
 			info.AddValue( "labelDetail", _labelDetail );
 			info.AddValue( "fill", _fill );
 			info.AddValue( "border", _border );
-			info.AddValue( "pieValue", _pieValue);
+			info.AddValue( "pieValue", _pieValue );
 			info.AddValue( "labelType", _labelType );
-			info.AddValue( "intersectionPoint", _intersectionPoint);
+			info.AddValue( "intersectionPoint", _intersectionPoint );
 			info.AddValue( "boundingRectangle", _boundingRectangle );
 			info.AddValue( "pivotPoint", _pivotPoint );
 			info.AddValue( "endPoint", _endPoint );
@@ -525,13 +532,13 @@ namespace ZedGraph
 			info.AddValue( "sweepAngle", _sweepAngle );
 			info.AddValue( "midAngle", _midAngle );
 			info.AddValue( "labelStr", _labelStr );
-			info.AddValue ("valueDecimalDigits", _valueDecimalDigits ) ;
-			info.AddValue ("percentDecimalDigits", _percentDecimalDigits ) ;
+			info.AddValue( "valueDecimalDigits", _valueDecimalDigits );
+			info.AddValue( "percentDecimalDigits", _percentDecimalDigits );
 		}
-	
-	#endregion
-		
-	#region Methods
+
+		#endregion
+
+		#region Methods
 		/// <summary>
 		/// Do all rendering associated with this <see cref="PieItem"/> item to the specified
 		/// <see cref="Graphics"/> device.  This method is normally only
@@ -553,7 +560,7 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>				
-		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
+		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor )
 		{
 			if ( pane.Chart._rect.Width <= 0 && pane.Chart._rect.Height <= 0 )
 			{
@@ -565,17 +572,17 @@ namespace ZedGraph
 				//pane.PieRect = CalcPieRect( g, pane, scaleFactor, pane.ChartRect );
 				CalcPieRect( g, pane, scaleFactor, pane.Chart._rect );
 
-				_slicePath = new GraphicsPath() ;
+				_slicePath = new GraphicsPath();
 
 				if ( !_isVisible )
-					return ;
-				
-				RectangleF tRect = _boundingRectangle; 
+					return;
+
+				RectangleF tRect = _boundingRectangle;
 
 				if ( tRect.Width >= 1 && tRect.Height >= 1 )
 				{
-					SmoothingMode sMode = g.SmoothingMode ;
-					g.SmoothingMode = SmoothingMode.AntiAlias ;
+					SmoothingMode sMode = g.SmoothingMode;
+					g.SmoothingMode = SmoothingMode.AntiAlias;
 
 					using ( Brush brush = _fill.MakeBrush( _boundingRectangle ) )
 					{
@@ -599,7 +606,7 @@ namespace ZedGraph
 						//brush.Dispose();
 					}
 
-					g.SmoothingMode = sMode;	
+					g.SmoothingMode = sMode;
 				}
 			}
 		}
@@ -645,7 +652,7 @@ namespace ZedGraph
 				if ( nonExplRect.Width < nonExplRect.Height )
 				{
 					//create slack rect
-					nonExplRect.Inflate( -(float) 0.05F * nonExplRect.Height, -(float) 0.05F * nonExplRect.Width );
+					nonExplRect.Inflate( -(float)0.05F * nonExplRect.Height, -(float)0.05F * nonExplRect.Width );
 					//get the difference between dimensions
 					float delta = ( nonExplRect.Height - nonExplRect.Width ) / 2;
 					//make a square	so we end up with circular pie
@@ -655,7 +662,7 @@ namespace ZedGraph
 				}
 				else
 				{
-					nonExplRect.Inflate( -(float) 0.05F * nonExplRect.Height, -(float) 0.05F * nonExplRect.Width );
+					nonExplRect.Inflate( -(float)0.05F * nonExplRect.Height, -(float)0.05F * nonExplRect.Width );
 					float delta = ( nonExplRect.Width - nonExplRect.Height ) / 2;
 					nonExplRect.Width = nonExplRect.Height;
 					nonExplRect.X += delta;
@@ -664,8 +671,8 @@ namespace ZedGraph
 				double aspectRatio = chartRect.Width / chartRect.Height;
 				//make an adjustment in rect size,as aspect ratio varies
 				if ( aspectRatio < 1.5 )
-					nonExplRect.Inflate( -(float) ( .1 * ( 1.5 / aspectRatio ) * nonExplRect.Width ),
-											-(float) ( .1 * ( 1.5 / aspectRatio ) * nonExplRect.Width ) );
+					nonExplRect.Inflate( -(float)( .1 * ( 1.5 / aspectRatio ) * nonExplRect.Width ),
+											-(float)( .1 * ( 1.5 / aspectRatio ) * nonExplRect.Width ) );
 
 				//modify the rect to determine if any of the labels need to be wrapped....
 				//first see if there's any exploded slices and if so, what's the max displacement...
@@ -696,12 +703,12 @@ namespace ZedGraph
 		/// Recalculate the bounding rectangle when a piee slice is displaced.
 		/// </summary>
 		/// <param name="explRect">rectangle to be used for drawing exploded pie</param>
-		private void CalcExplodedRect ( ref RectangleF explRect)
+		private void CalcExplodedRect( ref RectangleF explRect )
 		{
 			//pie exploded out along the slice bisector - modify upper left of bounding rect to account for displacement
 			//keep height and width same
-			explRect.X += (float)(this.Displacement * explRect.Width / 2 * Math.Cos ( _midAngle * Math.PI /180 )) ;
-			explRect.Y += (float) (this.Displacement * explRect.Height / 2 * Math.Sin (_midAngle * Math.PI /180 )) ; 
+			explRect.X += (float)( this.Displacement * explRect.Width / 2 * Math.Cos( _midAngle * Math.PI / 180 ) );
+			explRect.Y += (float)( this.Displacement * explRect.Height / 2 * Math.Sin( _midAngle * Math.PI / 180 ) );
 		}
 
 		/// <summary>
@@ -731,8 +738,8 @@ namespace ZedGraph
 			foreach ( PieItem curve in pane.CurveList )
 			{
 				lblStr = curve._labelStr;
-				curve.StartAngle = (float) nextStartAngle;
-				curve.SweepAngle = (float) ( 360 * curve.Value / pieTotalValue );
+				curve.StartAngle = (float)nextStartAngle;
+				curve.SweepAngle = (float)( 360 * curve.Value / pieTotalValue );
 				curve.MidAngle = curve.StartAngle + curve.SweepAngle / 2;
 				nextStartAngle = curve._startAngle + curve._sweepAngle;
 				PieItem.BuildLabelString( curve );
@@ -740,7 +747,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		///Render the label for this <see cref="PieItem"/>.
+		/// Render the label for this <see cref="PieItem"/>.
 		/// </summary>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -767,11 +774,11 @@ namespace ZedGraph
 			//draw line from intersection point to pivot point -
 			g.DrawLine( labelPen, _intersectionPoint, _pivotPoint );
 
-			//draw  horizontal	 line to move label away from pie...
+			//draw horizontal line to move label away from pie...
 			g.DrawLine( labelPen, _pivotPoint, _endPoint );
 
 			//draw the label (TextObj)
-				_labelDetail.Draw( g, pane, scaleFactor );
+			_labelDetail.Draw( g, pane, scaleFactor );
 		}
 
 		/// <summary>
@@ -886,28 +893,28 @@ namespace ZedGraph
 			//get the point where the explosion radius intersects the this arc
 			PointF rectCenter = new PointF( ( rect.X + rect.Width / 2 ), ( rect.Y + rect.Height / 2 ) );
 
-			_intersectionPoint = new PointF( (float) ( rectCenter.X + ( rect.Width / 2 * Math.Cos( ( midAngle ) * Math.PI / 180 ) ) ),
-				(float) ( rectCenter.Y + ( rect.Height / 2 * Math.Sin( ( midAngle ) * Math.PI / 180 ) ) ) );
+			_intersectionPoint = new PointF( (float)( rectCenter.X + ( rect.Width / 2 * Math.Cos( ( midAngle ) * Math.PI / 180 ) ) ),
+				(float)( rectCenter.Y + ( rect.Height / 2 * Math.Sin( ( midAngle ) * Math.PI / 180 ) ) ) );
 
 			//draw line from intersection point to pivot point - length to be .05 * pieRect.Width pixels long
-			_pivotPoint = new PointF( (float) ( _intersectionPoint.X + .05 * rect.Width * Math.Cos( ( midAngle ) * Math.PI / 180 ) ),
-				(float) ( _intersectionPoint.Y + .05 * rect.Width * Math.Sin( ( midAngle ) * Math.PI / 180 ) ) );
+			_pivotPoint = new PointF( (float)( _intersectionPoint.X + .05 * rect.Width * Math.Cos( ( midAngle ) * Math.PI / 180 ) ),
+				(float)( _intersectionPoint.Y + .05 * rect.Width * Math.Sin( ( midAngle ) * Math.PI / 180 ) ) );
 
 			//add horizontal line to move label away from pie...length to be 5% of rect.Width
 			//does line go to left or right....label alignment is to the opposite
 			if ( _pivotPoint.X >= rectCenter.X )		//goes to right
 			{
-				_endPoint = new PointF( (float) ( _pivotPoint.X + .05 * rect.Width ), _pivotPoint.Y );
+				_endPoint = new PointF( (float)( _pivotPoint.X + .05 * rect.Width ), _pivotPoint.Y );
 				_labelDetail.Location.AlignH = AlignH.Left;
 			}
 			else
 			{
-				_endPoint = new PointF( (float) ( _pivotPoint.X - .05 * rect.Width ), _pivotPoint.Y );
+				_endPoint = new PointF( (float)( _pivotPoint.X - .05 * rect.Width ), _pivotPoint.Y );
 				_labelDetail.Location.AlignH = AlignH.Right;
 			}
-			_midAngle = (float) midAngle;
+			_midAngle = (float)midAngle;
 		}
-		
+
 		/// <summary>
 		/// Build the string that will be displayed as the slice label as determined by 
 		/// <see cref="LabelType"/>.
@@ -915,12 +922,12 @@ namespace ZedGraph
 		/// <param name="curve">reference to the <see cref="PieItem"/></param>
 		private static void BuildLabelString( PieItem curve )
 		{
-												//set up label string formatting
+			//set up label string formatting
 			NumberFormatInfo labelFormat = (NumberFormatInfo)NumberFormatInfo.CurrentInfo.Clone();
-			
-			labelFormat.NumberDecimalDigits = curve._valueDecimalDigits ;
-			labelFormat.PercentPositivePattern = 1 ;					//no space between number and % sign
-			labelFormat.PercentDecimalDigits = curve._percentDecimalDigits ;
+
+			labelFormat.NumberDecimalDigits = curve._valueDecimalDigits;
+			labelFormat.PercentPositivePattern = 1;					//no space between number and % sign
+			labelFormat.PercentDecimalDigits = curve._percentDecimalDigits;
 
 			switch ( curve._labelType )
 			{
@@ -928,17 +935,17 @@ namespace ZedGraph
 					curve._labelStr = curve._pieValue.ToString( "F", labelFormat );
 					break;
 				case PieLabelType.Percent:
-					curve._labelStr = (curve._sweepAngle / 360).ToString( "P", labelFormat );
+					curve._labelStr = ( curve._sweepAngle / 360 ).ToString( "P", labelFormat );
 					break;
 				case PieLabelType.Name_Value:
 					curve._labelStr = curve._label + ": " + curve._pieValue.ToString( "F", labelFormat );
 					break;
 				case PieLabelType.Name_Percent:
-					curve._labelStr = curve._label + ": " +  (curve._sweepAngle / 360).ToString( "P", labelFormat );
+					curve._labelStr = curve._label + ": " + ( curve._sweepAngle / 360 ).ToString( "P", labelFormat );
 					break;
 				case PieLabelType.Name_Value_Percent:
-					curve._labelStr = curve._label + ": " + curve._pieValue.ToString( "F", labelFormat ) + 
-						" (" + (curve._sweepAngle / 360).ToString ("P", labelFormat) + ")" ;
+					curve._labelStr = curve._label + ": " + curve._pieValue.ToString( "F", labelFormat ) +
+						" (" + ( curve._sweepAngle / 360 ).ToString( "P", labelFormat ) + ")";
 					break;
 				case PieLabelType.Name:
 					curve._labelStr = curve._label._text;
@@ -963,10 +970,10 @@ namespace ZedGraph
 			//go beyond nonExplRect, but want to maintain the same center point...therefore, got to 
 			//reduce the diameter of the nonexploded pie by the alue of the displacement
 
-			float xDispl = (float) ( ( maxDisplacement * baseRect.Width ) );
-			float yDispl = (float) ( ( maxDisplacement * baseRect.Height ) );
+			float xDispl = (float)( ( maxDisplacement * baseRect.Width ) );
+			float yDispl = (float)( ( maxDisplacement * baseRect.Height ) );
 
-			baseRect.Inflate( -(float) ( ( xDispl / 10 ) ), -(float) ( ( xDispl / 10 ) ) );
+			baseRect.Inflate( -(float)( ( xDispl / 10 ) ), -(float)( ( xDispl / 10 ) ) );
 		}
 
 		/// <summary>
@@ -1043,7 +1050,7 @@ namespace ZedGraph
 			PointF[] pts = new PointF[3];
 			pts[0] = new PointF( 0, 0 );
 			pts[1] = new PointF( _boundingRectangle.Width, 0 );
-			pts[2] = new PointF( _boundingRectangle.Width * (float) Math.Cos( SweepAngle * Math.PI / 180.0 ),
+			pts[2] = new PointF( _boundingRectangle.Width * (float)Math.Cos( SweepAngle * Math.PI / 180.0 ),
 										_boundingRectangle.Width * (float)Math.Sin( SweepAngle * Math.PI / 180.0 ) );
 			matrix.TransformPoints( pts );
 
@@ -1053,7 +1060,7 @@ namespace ZedGraph
 			return true;
 		}
 
-	#endregion  
-	
+		#endregion
+
 	}
 }

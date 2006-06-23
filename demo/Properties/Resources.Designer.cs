@@ -8,8 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ZedGraph.Demo
-{
+namespace ZedGraph.Demo.Properties {
     using System;
     
     
@@ -71,6 +70,13 @@ namespace ZedGraph.Demo
         internal static System.Drawing.Bitmap ngc4414 {
             get {
                 object obj = ResourceManager.GetObject("ngc4414", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        internal static System.Drawing.Bitmap teeth {
+            get {
+                object obj = ResourceManager.GetObject("teeth", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.8 $ $Date: 2006-05-16 05:53:58 $ </version>
+	/// <version> $Revision: 1.1.2.9 $ $Date: 2006-06-23 03:50:55 $ </version>
 	[Serializable]
 	public class BarSettings : ISerializable
 	{
@@ -307,6 +307,9 @@ namespace ZedGraph
 						minStep = step < minStep ? step : minStep;
 					}
 				}
+
+				if ( minStep == Double.MaxValue )
+					minStep = 1.0;
 
 				_clusterScaleWidth = minStep;
 			}

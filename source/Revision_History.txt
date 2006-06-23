@@ -1,5 +1,11 @@
 == Version 5 ==
 
+;20-Jun-2006 (by Champion) V5_BRANCH (dev release 4.9.9)
+: [FIX] Make sure axischange is called for all axes that are sync'd
+: [FIX] Provide default value for ClusterScaleWidth()
+: [FIX] Default basetic for ordinals is always 1
+: [UPD] Add back in the GraphObjList.Move and CurveList.Move methods (lost with generics)
+
 ;19-Jun-2006 (by Champion) V5_BRANCH (dev release 4.9.8)
 : [FIX] Compromise solution on RestoreScale with syncro active
 : [FIX] Add tags back in for ContextMenuStrip with generic names
@@ -16,7 +22,7 @@
 ;17-May-2006 (by Champion) V5_BRANCH
 : [ADD] NoDupePointList
 
-;15-May-2006 (by Champion) V5_BRANCH (dev release 4.9.7)
+;15-May-2006 (by Champion) V5_BRANCH (dev release v4.9.7)
 : [FIX] Protect Stick plot from GDI+ overflow
 : [ADD] Add ZedGraphControl.IsScrolling
 : [UPD] Remake projects to fix conflict/in-use problem
@@ -46,9 +52,9 @@
 : [UPD] Make Location class use doubles to accommodate required precision for date coords
 : [UPD] Modify Matrix transform code for FontSpec to be generic
 : [FIX] Make HiLowBar use size property for width
-; [NEW] Add YAxisList.Add(string) method to create and add a new YAxis (ditto for Y2Axis)
-; [NEW] Add Link constructor
-; [NEW] Add PointD struct for PolyObj point list as doubles
+: [NEW] Add YAxisList.Add(string) method to create and add a new YAxis (ditto for Y2Axis)
+: [NEW] Add Link constructor
+: [NEW] Add PointD struct for PolyObj point list as doubles
 
 ;3-May-2006 (by Champion) V5_BRANCH
 : [FIX] Protect from exception if yAxisIndex >= yAxisList.Count

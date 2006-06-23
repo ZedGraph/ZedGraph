@@ -51,7 +51,6 @@
     <Compile Include="ZedGraph\CandleStick.cs" />
     <Compile Include="ZedGraph\CandleStickItem.cs" />
     <Compile Include="ZedGraph\Chart.cs" />
-    <Compile Include="ZedGraph\Class1.cs" />
     <Compile Include="ZedGraph\CollectionPlus.cs" />
     <Compile Include="ZedGraph\ColorSymbolRotator.cs" />
     <Compile Include="ZedGraph\CurveItem.cs" />
