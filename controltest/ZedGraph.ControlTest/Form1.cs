@@ -1,4 +1,4 @@
-#if false
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -545,7 +545,7 @@ namespace ZedGraph.ControlTest
 			z1.Invalidate();
 		}
 
-		Timer myTimer;
+		//Timer myTimer;
 
 		private void MyTimer_Tick( object sender, EventArgs e )
 		{
@@ -2530,10 +2530,10 @@ namespace ZedGraph.ControlTest
 
 			//zedGraphControl1.GraphPane.XAxis.Type = AxisType.Date;
 
-			ZedGraph.ControlTest.Form2 form2 = new ZedGraph.ControlTest.Form2();
-			form2.Show();
+			//ZedGraph.ControlTest.Form2 form2 = new ZedGraph.ControlTest.Form2();
+			//form2.Show();
 
-			form2.zg1 = zedGraphControl1;
+			//form2.zg1 = zedGraphControl1;
 
 			//zedGraphControl1.MasterPane.Add( AddGraph( 6, new ColorSymbolRotator() ) );
 			//zedGraphControl1.MasterPane.SetLayout( false, new int[] { 1, 3, 3 }, new float[] { 2, 1, 3 } );
@@ -2597,15 +2597,11 @@ namespace ZedGraph.ControlTest
 	}
 }
 
-#endif
 
-using System;
-using System.Drawing;
-using System.Windows.Forms;
-using ZedGraph;
 
-namespace ZedGraph.ControlTest
-{
+
+#if false
+
 	public partial class Form1 : Form
 	{
 		const int NUMPOINTS = 10000;
@@ -2827,4 +2823,4 @@ namespace ZedGraph.ControlTest
 			}
 		}
 	}
-}
+#endif

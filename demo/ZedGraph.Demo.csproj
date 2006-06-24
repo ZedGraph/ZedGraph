@@ -144,8 +144,6 @@
     <EmbeddedResource Include="Resources\ngc4414.jpg" />
     <EmbeddedResource Include="Resources\ngc4261.gif" />
     <EmbeddedResource Include="Resources\teeth.png" />
-    <Content Include="ZedGraph.Demo\ngc4261.gif" />
-    <Content Include="ZedGraph.Demo\ngc4414.jpg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\source\ZedGraph.csproj">
