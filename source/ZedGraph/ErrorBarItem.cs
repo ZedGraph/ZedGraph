@@ -1,6 +1,6 @@
 ﻿//============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -46,10 +46,10 @@ namespace ZedGraph
 	/// controlled by the symbol size in <see cref="ZedGraph.ErrorBar.Symbol"/>,
 	/// specified in points (1/72nd inch).  The position of each "I-Beam" is set
 	/// according to the <see cref="PointPair"/> values.  The independent axis
-	/// is assigned with <see cref="GraphPane.BarBase"/>, and is a
+	/// is assigned with <see cref="BarSettings.Base"/>, and is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
 	public class ErrorBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -59,18 +59,18 @@ namespace ZedGraph
 		/// class defined for this <see cref="ErrorBarItem"/>.  Use the public
 		/// property <see cref="ErrorBar"/> to access this value.
 		/// </summary>
-		private ErrorBar errorBar;
+		private ErrorBar _bar;
 
 	#endregion
 
 	#region Properties
 		/// <summary>
-		/// Gets a reference to the <see cref="ErrorBar"/> class defined
+		/// Gets a reference to the <see cref="ZedGraph.ErrorBar"/> class defined
 		/// for this <see cref="ErrorBarItem"/>.
 		/// </summary>
-		public ErrorBar ErrorBar
+		public ErrorBar Bar
 		{
-			get { return errorBar; }
+			get { return _bar; }
 		}
 
 		/// <summary>
@@ -92,7 +92,7 @@ namespace ZedGraph
 		/// <value>true if the X axis is independent, false otherwise</value>
 		override internal bool IsXIndependent( GraphPane pane )
 		{
-			return pane.BarBase == BarBase.X;
+			return pane._barSettings.Base == BarBase.X;
 		}
 
 	#endregion
@@ -104,7 +104,7 @@ namespace ZedGraph
 		/// <param name="label">The label that will appear in the legend.</param>
 		public ErrorBarItem( string label ) : base( label )
 		{
-			this.errorBar = new ErrorBar();
+			_bar = new ErrorBar();
 		}
 		
 		/// <summary>
@@ -138,7 +138,7 @@ namespace ZedGraph
 		public ErrorBarItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
-			errorBar = new ErrorBar( color );
+			_bar = new ErrorBar( color );
 		}
 
 		/// <summary>
@@ -147,7 +147,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="ErrorBarItem"/> object from which to copy</param>
 		public ErrorBarItem( ErrorBarItem rhs ) : base( rhs )
 		{
-			errorBar = new ErrorBar( rhs.ErrorBar );
+			_bar = new ErrorBar( rhs.Bar );
 		}
 
 		/// <summary>
@@ -175,7 +175,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -190,7 +190,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			errorBar = (ErrorBar) info.GetValue( "errorBar", typeof(ErrorBar) );
+			_bar = (ErrorBar) info.GetValue( "bar", typeof(ErrorBar) );
 
 			// This is now just a dummy variable, since barBase was removed
 			BarBase barBase = (BarBase) info.GetValue( "barBase", typeof(BarBase) );
@@ -205,7 +205,7 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "errorBar", errorBar );
+			info.AddValue( "bar", _bar );
 
 			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
 			info.AddValue( "barBase", BarBase.X );
@@ -237,9 +237,9 @@ namespace ZedGraph
 		/// </param>
 		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
-			if ( this.isVisible )
+			if ( _isVisible )
 			{
-				errorBar.Draw( g, pane, this, this.BaseAxis( pane ),
+				_bar.Draw( g, pane, this, this.BaseAxis( pane ),
 								this.ValueAxis( pane ), scaleFactor );
 			}
 		}		
@@ -268,7 +268,7 @@ namespace ZedGraph
 		{
 			float pixBase, pixValue, pixLowValue;
 
-			if ( pane.BarBase == BarBase.X )
+			if ( pane._barSettings.Base == BarBase.X )
 			{
 				pixBase = rect.Left + rect.Width / 2.0F;
 				pixValue = rect.Top;
@@ -281,9 +281,79 @@ namespace ZedGraph
 				pixLowValue = rect.Left;
 			}
 
-			Pen pen = new Pen( errorBar.Color, errorBar.PenWidth );
-			this.ErrorBar.Draw( g, pane, pane.BarBase == BarBase.X, pixBase, pixValue,
+			Pen pen = new Pen( _bar.Color, _bar.PenWidth );
+			this.Bar.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixValue,
 								pixLowValue, scaleFactor, pen, null );
+		}
+
+		/// <summary>
+		/// Determine the coords for the rectangle associated with a specified point for 
+		/// this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> to which this curve belongs</param>
+		/// <param name="i">The index of the point of interest</param>
+		/// <param name="coords">A list of coordinates that represents the "rect" for
+		/// this point (used in an html AREA tag)</param>
+		/// <returns>true if it's a valid point, false otherwise</returns>
+		override public bool GetCoords( GraphPane pane, int i, out string coords )
+		{
+			coords = string.Empty;
+
+			if ( i < 0 || i >= _points.Count )
+				return false;
+
+			Axis valueAxis = ValueAxis( pane );
+			Axis baseAxis = BaseAxis( pane );
+
+			float scaledSize = _bar.Symbol.Size * pane.CalcScaleFactor();
+
+			// pixBase = pixel value for the bar center on the base axis
+			// pixHiVal = pixel value for the bar top on the value axis
+			// pixLowVal = pixel value for the bar bottom on the value axis
+			float pixBase, pixHiVal, pixLowVal;
+
+			float clusterWidth = pane.BarSettings.GetClusterWidth();
+			float barWidth = GetBarWidth( pane );
+			float clusterGap = pane._barSettings.MinClusterGap * barWidth;
+			float barGap = barWidth * pane._barSettings.MinBarGap;
+
+			// curBase = the scale value on the base axis of the current bar
+			// curHiVal = the scale value on the value axis of the current bar
+			// curLowVal = the scale value of the bottom of the bar
+			double curBase, curLowVal, curHiVal;
+			ValueHandler valueHandler = new ValueHandler( pane, false );
+			valueHandler.GetValues( this, i, out curBase, out curLowVal, out curHiVal );
+
+			// Any value set to double max is invalid and should be skipped
+			// This is used for calculated values that are out of range, divide
+			//   by zero, etc.
+			// Also, any value <= zero on a log scale is invalid
+
+			if ( !_points[i].IsInvalid3D )
+			{
+				// calculate a pixel value for the top of the bar on value axis
+				pixLowVal = valueAxis.Scale.Transform( _isOverrideOrdinal, i, curLowVal );
+				pixHiVal = valueAxis.Scale.Transform( _isOverrideOrdinal, i, curHiVal );
+				// calculate a pixel value for the center of the bar on the base axis
+				pixBase = baseAxis.Scale.Transform( _isOverrideOrdinal, i, curBase );
+
+				// Calculate the pixel location for the side of the bar (on the base axis)
+				float pixSide = pixBase - scaledSize / 2.0F;
+
+				// Draw the bar
+				if ( baseAxis is XAxis )
+					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+								pixSide, pixLowVal,
+								pixSide + scaledSize, pixHiVal );
+				else
+					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+								pixLowVal, pixSide,
+								pixHiVal, pixSide + scaledSize );
+
+				return true;
+			}
+
+			return false;
 		}
 
 	#endregion

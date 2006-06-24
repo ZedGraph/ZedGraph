@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2006-06-24 20:26:43 $ </version>
 	public class ColorSymbolRotator
 	{
 	#region Static fields
@@ -67,7 +67,7 @@ namespace ZedGraph
 			SymbolType.VDash
 		};		
 
-		private static ColorSymbolRotator staticInstance;
+		private static ColorSymbolRotator _staticInstance;
 	#endregion
 	
 	#region Fields
@@ -155,10 +155,10 @@ namespace ZedGraph
 		{
 			get
 			{
-				if (staticInstance == null)
-					staticInstance = new ColorSymbolRotator();
+				if (_staticInstance == null)
+					_staticInstance = new ColorSymbolRotator();
 
-				return staticInstance;
+				return _staticInstance;
 			}
 		}
 		

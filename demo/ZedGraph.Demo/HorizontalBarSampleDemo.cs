@@ -36,9 +36,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title = "A Horizontal Percent Stack Graph";
-			myPane.XAxis.Title = "Stuff";
-			myPane.YAxis.Title = "";
+			myPane.Title.Text = "A Horizontal Percent Stack Graph";
+			myPane.XAxis.Title.Text = "Stuff";
+			myPane.YAxis.Title.Text = "";
 			
 			// Enter some random data values
 			double[] y = { 100, 115, 15, 22, 98 };
@@ -58,27 +58,27 @@ namespace ZedGraph.Demo
 			myCurve.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 90F );
 
 			// Draw the Y tics between the labels instead of at the labels
-			myPane.YAxis.IsTicsBetweenLabels = true;
+			myPane.YAxis.MajorTic.IsBetweenLabels = true;
 
 			// Set the YAxis to text type
 			myPane.YAxis.Type = AxisType.Text;
 			string[] labels = { "Australia", "Africa", "America", "Asia", "Antartica" };
-			myPane.YAxis.TextLabels = labels;
-			myPane.XAxis.Max = 110;
+			myPane.YAxis.Scale.TextLabels = labels;
+			myPane.XAxis.Scale.Max = 110;
 
 			// Make the bars horizontal by setting bar base axis to Y
-			myPane.BarBase = BarBase.Y;
+			myPane.BarSettings.Base = BarBase.Y;
 			// Make the bars percent stack type
-			myPane.BarType = BarType.PercentStack;
+			myPane.BarSettings.Type = BarType.PercentStack;
 			
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.White,
+			myPane.Chart.Fill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 90F );
 			// Fill the legend background with a color gradient
 			myPane.Legend.Fill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 250), 90F );
 			// Fill the pane background with a solid color
-			myPane.PaneFill = new Fill( Color.FromArgb( 250, 250, 255) );
+			myPane.Fill = new Fill( Color.FromArgb( 250, 250, 255) );
 
 			base.ZedGraphControl.AxisChange();
 		}

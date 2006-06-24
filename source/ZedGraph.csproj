@@ -1,495 +1,175 @@
-<VisualStudioProject>
-    <CSHARP
-        ProjectType = "Local"
-        ProductVersion = "7.10.3077"
-        SchemaVersion = "2.0"
-        ProjectGuid = "{998CE547-E905-4931-91B6-5E0439177E7E}"
-    >
-        <Build>
-            <Settings
-                ApplicationIcon = ""
-                AssemblyKeyContainerName = ""
-                AssemblyName = "ZedGraph"
-                AssemblyOriginatorKeyFile = ""
-                DefaultClientScript = "JScript"
-                DefaultHTMLPageLayout = "Grid"
-                DefaultTargetSchema = "IE50"
-                DelaySign = "false"
-                OutputType = "Library"
-                PreBuildEvent = ""
-                PostBuildEvent = ""
-                RootNamespace = "ZedGraph"
-                RunPostBuildEvent = "OnBuildSuccess"
-                StartupObject = ""
-            >
-                <Config
-                    Name = "Debug"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\Debug\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE"
-                    DocumentationFile = "bin\ZedGraph.xml"
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "..\lib\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-            </Settings>
-            <References>
-                <Reference
-                    Name = "System"
-                    AssemblyName = "System"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
-                />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.Web"
-                    AssemblyName = "System.Web"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Web.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
-                />
-                <Reference
-                    Name = "System.Drawing"
-                    AssemblyName = "System.Drawing"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
-                />
-                <Reference
-                    Name = "System.Windows.Forms"
-                    AssemblyName = "System.Windows.Forms"
-                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
-                />
-                <Reference
-                    Name = "system.design"
-                    AssemblyName = "System.Design"
-                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\system.design.dll"
-                />
-                <Reference
-                    Name = "System.Runtime.Serialization.Formatters.Soap"
-                    AssemblyName = "System.Runtime.Serialization.Formatters.Soap"
-                    HintPath = "..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
-                />
-            </References>
-        </Build>
-        <Files>
-            <Include>
-                <Folder RelPath = "ModelSupport\ZedGraph\" />
-                <File
-                    RelPath = "ZedGraph\ArrowItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\Axis.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\AxisList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\Bar.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\BarItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\BasicArrayPointList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\Border.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\BoxItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\CollectionPlus.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ColorSymbolRotator.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\CurveItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\CurveList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\DateAsOrdinalScale.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\DateScale.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\EllipseItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ErrorBar.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ErrorBarItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ExponentScale.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\Fill.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\FilteredPointList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\FontSpec.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\GraphItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\GraphItemList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\GraphPane.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\HiLowBar.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\HiLowBarItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\HSBColor.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ImageItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\IPointList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\IPointListEdit.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\Legend.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\Line.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\LinearAsOrdinalScale.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\LinearScale.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\LineItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\Location.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\LogScale.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\MasterPane.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\OrdinalScale.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\PaneBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\PaneList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\PieItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\PointPair.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\PointPairList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\PolyItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\RadarPointList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\SampleMultiPointList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\SamplePointList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\Scale.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ScrollRange.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ScrollRangeList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\StickItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\Symbol.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\TextItem.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\TextScale.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\transparency.png"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ZedGraph\Types.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ValueHandler.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\XAxis.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\XDate.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\Y2Axis.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\Y2AxisList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\YAxis.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\YAxisList.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ZedGraphControl.cs"
-                    SubType = "UserControl"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ZedGraphControl.resx"
-                    DependentUpon = "ZedGraphControl.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ZedGraph\ZedGraphException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ZedGraphLocale.de.resx"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ZedGraph\ZedGraphLocale.es.resx"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ZedGraph\ZedGraphLocale.fr.resx"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ZedGraph\ZedGraphLocale.resx"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ZedGraph\ZedGraphLocale.sv.resx"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ZedGraph\ZedGraphWeb.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ZedGraphWebData.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ZedGraphWebTools.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph\ZoomState.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-            </Include>
-        </Files>
-    </CSHARP>
-</VisualStudioProject>
-
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2541686B-1673-43BF-AF89-3163945DB009}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ZedGraph</RootNamespace>
+    <AssemblyName>ZedGraph</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>zedgraphkey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ZedGraph\ArrowObj.cs" />
+    <Compile Include="ZedGraph\Axis.cs" />
+    <Compile Include="ZedGraph\AxisLabel.cs" />
+    <Compile Include="ZedGraph\Bar.cs" />
+    <Compile Include="ZedGraph\BarItem.cs" />
+    <Compile Include="ZedGraph\BarSettings.cs" />
+    <Compile Include="ZedGraph\BasicArrayPointList.cs" />
+    <Compile Include="ZedGraph\Border.cs" />
+    <Compile Include="ZedGraph\BoxObj.cs" />
+    <Compile Include="ZedGraph\CandleStick.cs" />
+    <Compile Include="ZedGraph\CandleStickItem.cs" />
+    <Compile Include="ZedGraph\Chart.cs" />
+    <Compile Include="ZedGraph\CollectionPlus.cs" />
+    <Compile Include="ZedGraph\ColorSymbolRotator.cs" />
+    <Compile Include="ZedGraph\CurveItem.cs" />
+    <Compile Include="ZedGraph\CurveList.cs" />
+    <Compile Include="ZedGraph\DataSourcePointList.cs" />
+    <Compile Include="ZedGraph\DateAsOrdinalScale.cs" />
+    <Compile Include="ZedGraph\DateScale.cs" />
+    <Compile Include="ZedGraph\EllipseObj.cs" />
+    <Compile Include="ZedGraph\ErrorBar.cs" />
+    <Compile Include="ZedGraph\ErrorBarItem.cs" />
+    <Compile Include="ZedGraph\ExponentScale.cs" />
+    <Compile Include="ZedGraph\Fill.cs" />
+    <Compile Include="ZedGraph\FilteredPointList.cs" />
+    <Compile Include="ZedGraph\FontSpec.cs" />
+    <Compile Include="ZedGraph\GapLabel.cs" />
+    <Compile Include="ZedGraph\GraphObj.cs" />
+    <Compile Include="ZedGraph\GraphObjList.cs" />
+    <Compile Include="ZedGraph\GraphPane.cs" />
+    <Compile Include="ZedGraph\HiLowBar.cs" />
+    <Compile Include="ZedGraph\HiLowBarItem.cs" />
+    <Compile Include="ZedGraph\HSBColor.cs" />
+    <Compile Include="ZedGraph\ImageObj.cs" />
+    <Compile Include="ZedGraph\IPointList.cs" />
+    <Compile Include="ZedGraph\IPointListEdit.cs" />
+    <Compile Include="ZedGraph\JapaneseCandleStick.cs" />
+    <Compile Include="ZedGraph\JapaneseCandleStickItem.cs" />
+    <Compile Include="ZedGraph\Label.cs" />
+    <Compile Include="ZedGraph\Legend.cs" />
+    <Compile Include="ZedGraph\Line.cs" />
+    <Compile Include="ZedGraph\LinearAsOrdinalScale.cs" />
+    <Compile Include="ZedGraph\LinearScale.cs" />
+    <Compile Include="ZedGraph\LineItem.cs" />
+    <Compile Include="ZedGraph\LineObj.cs" />
+    <Compile Include="ZedGraph\Link.cs" />
+    <Compile Include="ZedGraph\Location.cs" />
+    <Compile Include="ZedGraph\LogScale.cs" />
+    <Compile Include="ZedGraph\MajorGrid.cs" />
+    <Compile Include="ZedGraph\MajorTic.cs" />
+    <Compile Include="ZedGraph\Margin.cs" />
+    <Compile Include="ZedGraph\MasterPane.cs" />
+    <Compile Include="ZedGraph\MinorGrid.cs" />
+    <Compile Include="ZedGraph\MinorTic.cs" />
+    <Compile Include="ZedGraph\NoDupePointList.cs" />
+    <Compile Include="ZedGraph\OrdinalScale.cs" />
+    <Compile Include="ZedGraph\PaneBase.cs" />
+    <Compile Include="ZedGraph\PaneLayoutMgr.cs" />
+    <Compile Include="ZedGraph\PaneList.cs" />
+    <Compile Include="ZedGraph\PieItem.cs" />
+    <Compile Include="ZedGraph\PointD.cs" />
+    <Compile Include="ZedGraph\PointPair.cs" />
+    <Compile Include="ZedGraph\PointPair4.cs" />
+    <Compile Include="ZedGraph\PointPairList.cs" />
+    <Compile Include="ZedGraph\PolyObj.cs" />
+    <Compile Include="ZedGraph\RadarPointList.cs" />
+    <Compile Include="ZedGraph\RollingPointPairList.cs" />
+    <Compile Include="ZedGraph\SampleMultiPointList.cs" />
+    <Compile Include="ZedGraph\SamplePointList.cs" />
+    <Compile Include="ZedGraph\Scale.cs" />
+    <Compile Include="ZedGraph\ScaleState.cs" />
+    <Compile Include="ZedGraph\ScaleStateList.cs" />
+    <Compile Include="ZedGraph\ScrollRange.cs" />
+    <Compile Include="ZedGraph\ScrollRangeList.cs" />
+    <Compile Include="ZedGraph\StickItem.cs" />
+    <Compile Include="ZedGraph\StockPointList.cs" />
+    <Compile Include="ZedGraph\StockPt.cs" />
+    <Compile Include="ZedGraph\Symbol.cs" />
+    <Compile Include="ZedGraph\TextObj.cs" />
+    <Compile Include="ZedGraph\TextScale.cs" />
+    <Compile Include="ZedGraph\Types.cs" />
+    <Compile Include="ZedGraph\ValueHandler.cs" />
+    <Compile Include="ZedGraph\XAxis.cs" />
+    <Compile Include="ZedGraph\XDate.cs" />
+    <Compile Include="ZedGraph\Y2Axis.cs" />
+    <Compile Include="ZedGraph\Y2AxisList.cs" />
+    <Compile Include="ZedGraph\YAxis.cs" />
+    <Compile Include="ZedGraph\YAxisList.cs" />
+    <Compile Include="ZedGraph\ZedGraphControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ZedGraph\ZedGraphControl.Designer.cs" />
+    <Compile Include="ZedGraph\ZedGraphException.cs" />
+    <Compile Include="ZedGraph\ZoomState.cs" />
+    <Compile Include="ZedGraph\ZoomStateStack.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ZedGraph\ZedGraphControl.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.de.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.es.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.fr.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.ja.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.sv.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="zedgraphkey.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Revision_History.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

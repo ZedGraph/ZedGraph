@@ -36,14 +36,14 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title = "ZedgroSoft, International\nHi-Low-Close Daily Stock Chart";
-			myPane.XAxis.Title = "";
-			myPane.YAxis.Title = "Trading Price, $US";
+			myPane.Title.Text = "ZedgroSoft, International\nHi-Low-Close Daily Stock Chart";
+			myPane.XAxis.Title.Text = "";
+			myPane.YAxis.Title.Text = "Trading Price, $US";
 			
 			// Set the title font characteristics
-			myPane.FontSpec.Family = "Arial";
-			myPane.FontSpec.IsItalic = true;
-			myPane.FontSpec.Size = 18;
+			myPane.Title.FontSpec.Family = "Arial";
+			myPane.Title.FontSpec.IsItalic = true;
+			myPane.Title.FontSpec.Size = 18;
 
 
 			// Generate some random stock price data
@@ -77,28 +77,28 @@ namespace ZedGraph.Demo
 			// Add a blue error bar to the graph
 			ErrorBarItem myCurve = myPane.AddErrorBar(	"Price Range", hList,
 				Color.Blue );
-			myCurve.ErrorBar.PenWidth = 3;
-			myCurve.ErrorBar.Symbol.IsVisible = false;
+			myCurve.Bar.PenWidth = 3;
+			myCurve.Bar.Symbol.IsVisible = false;
 			
 			// Set the XAxis to date type
 			myPane.XAxis.Type =	AxisType.Date;
 			// X axis step size is 1 day
-			myPane.XAxis.Step = 1;
-			myPane.XAxis.MajorUnit = DateUnit.Day ;
+			myPane.XAxis.Scale.MajorStep = 1;
+			myPane.XAxis.Scale.MajorUnit = DateUnit.Day ;
 			// tilt the x axis labels to an angle of 65 degrees
-			myPane.XAxis.ScaleFontSpec.Angle = 65 ;
-			myPane.XAxis.ScaleFontSpec.IsBold = true ;
-			myPane.XAxis.ScaleFontSpec.Size = 12 ;
-			myPane.XAxis.ScaleFormat = "d MMM" ;
+			myPane.XAxis.Scale.FontSpec.Angle = 65 ;
+			myPane.XAxis.Scale.FontSpec.IsBold = true ;
+			myPane.XAxis.Scale.FontSpec.Size = 12 ;
+			myPane.XAxis.Scale.Format = "d MMM" ;
 			// make the x axis scale minimum 1 step less than the minimum data value
-			myPane.XAxis.Min = hList[0].X - 1 ;
+			myPane.XAxis.Scale.Min = hList[0].X - 1 ;
 
 			// Display the Y axis grid
-			myPane.YAxis.IsShowGrid = true ;
-			myPane.YAxis.MinorStep = 0.5;
+			myPane.YAxis.MajorGrid.IsVisible = true ;
+			myPane.YAxis.Scale.MinorStep = 0.5;
 
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.White,
+			myPane.Chart.Fill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 90F );
 
 			base.ZedGraphControl.AxisChange();

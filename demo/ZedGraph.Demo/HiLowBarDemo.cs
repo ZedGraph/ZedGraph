@@ -35,9 +35,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title = "Hi-Low Bar Graph Demo";
-			myPane.XAxis.Title = "Event";
-			myPane.YAxis.Title = "Range of Values";
+			myPane.Title.Text = "Hi-Low Bar Graph Demo";
+			myPane.XAxis.Title.Text = "Event";
+			myPane.YAxis.Title.Text = "Range of Values";
 
 			// Make up some data points based on the Sine function
 			PointPairList list = new PointPairList();
@@ -53,10 +53,10 @@ namespace ZedGraph.Demo
 			// Fill the bar with a red-white-red gradient for a 3d look
 			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
 			// Make the bar width based on the available space, rather than a size in points
-			myCurve.Bar.IsMaximumWidth = true;
+			myCurve.Bar.IsAutoSize = true;
 
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.White,
+			myPane.Chart.Fill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 45.0F );
 			
 			base.ZedGraphControl.AxisChange();

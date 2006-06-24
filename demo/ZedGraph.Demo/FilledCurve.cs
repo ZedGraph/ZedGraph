@@ -36,9 +36,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the titles and axis labels
-			myPane.Title = "My Test Date Graph";
-			myPane.XAxis.Title = "Date";
-			myPane.YAxis.Title = "My Y Axis";
+			myPane.Title.Text = "My Test Date Graph";
+			myPane.XAxis.Title.Text = "Date";
+			myPane.YAxis.Title.Text = "My Y Axis";
 			
 			// Make up some data points from the Sine function
 			PointPairList list = new PointPairList();
@@ -73,7 +73,7 @@ namespace ZedGraph.Demo
 			myPane.XAxis.Type = AxisType.Date;
 
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.White, Color.LightGoldenrodYellow, 45F );
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45F );
 
 			base.ZedGraphControl.AxisChange();
 		}

@@ -37,9 +37,9 @@ namespace ZedGraph.Demo
 			GraphPane	myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title = "Wacky Widget Company\nProduction Report";
-			myPane.XAxis.Title = "Time, Days\n(Since Plant Construction Startup)";
-			myPane.YAxis.Title = "Widget Production\n(units/hour)";
+			myPane.Title.Text = "Wacky Widget Company\nProduction Report";
+			myPane.XAxis.Title.Text = "Time, Days\n(Since Plant Construction Startup)";
+			myPane.YAxis.Title.Text = "Widget Production\n(units/hour)";
 
 			// enter some arbitrary data points
 			double[] x = { 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000 };
@@ -67,15 +67,15 @@ namespace ZedGraph.Demo
 			curve.Symbol.Size = 10;
 			
 			// Fill the pane background with a color gradient
-			myPane.PaneFill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			myPane.Fill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
 			
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.FromArgb( 255, 255, 245),
+			myPane.Chart.Fill = new Fill( Color.FromArgb( 255, 255, 245),
 				Color.FromArgb( 255, 255, 190), 90F );
 			
 			// Show the x and y axis gridlines
-			myPane.XAxis.IsShowGrid = true;
-			myPane.YAxis.IsShowGrid = true;
+			myPane.XAxis.MajorGrid.IsVisible = true;
+			myPane.YAxis.MajorGrid.IsVisible = true;
 			
 			// Use the stacked curve type so the curve values sum up
 			// this also causes only the area between the curves to be filled, rather than

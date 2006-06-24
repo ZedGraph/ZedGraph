@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraphException Class
-//Copyright (C) 2004  Jerry Vos
+//Copyright © 2004  Jerry Vos
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,7 @@ namespace ZedGraph
 	/// </summary>
 	///
 	/// <author> Jerry Vos modified by John Champion</author>
-	/// <version> $Revision: 3.1 $ $Date: 2005-02-02 04:52:05 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-06-24 20:26:44 $ </version>
 	public class ZedGraphException : System.ApplicationException
 	{
 		/// <summary>

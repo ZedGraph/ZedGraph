@@ -1,6 +1,6 @@
 ﻿//============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -32,40 +32,40 @@ namespace ZedGraph
 {
 	/// <summary>
 	/// A class that represents an image object on the graph.  A list of
-	/// <see cref="GraphItem"/> objects is maintained by the <see cref="GraphItemList"/>
+	/// <see cref="GraphObj"/> objects is maintained by the <see cref="GraphObjList"/>
 	/// collection class.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.11 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
 	[Serializable]
-	public class ImageItem : GraphItem, ICloneable, ISerializable
+	public class ImageObj : GraphObj, ICloneable, ISerializable
 	{
 	#region Fields
 		/// <summary>
 		/// Private field that stores the image.  Use the public property <see cref="Image"/>
 		/// to access this value.
 		/// </summary>
-		private Image		image;
+		private Image		_image;
 		/// <summary>
 		/// Private field that determines if the image will be scaled to the output rectangle.
 		/// </summary>
 		/// <value>true to scale the image, false to draw the image unscaled, but clipped
 		/// to the destination rectangle</value>
-		private bool		isScaled;
+		private bool		_isScaled;
 	#endregion
 
 	#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
-		/// default property values for the <see cref="ImageItem"/> class.
+		/// default property values for the <see cref="ImageObj"/> class.
 		/// </summary>
 		new public struct Default
 		{
 			// Default text item properties
 			/// <summary>
-			/// Default value for the <see cref="ImageItem"/>
-			/// <see cref="ImageItem.IsScaled"/> property.
+			/// Default value for the <see cref="ImageObj"/>
+			/// <see cref="ImageObj.IsScaled"/> property.
 			/// </summary>
 			public static bool IsScaled = true;
 		}
@@ -78,8 +78,8 @@ namespace ZedGraph
         /// <value> A <see cref="System.Drawing.Image"/> class reference. </value>
 		public Image Image
 		{
-			get { return image; }
-			set { image = value; }
+			get { return _image; }
+			set { _image = value; }
 		}
 		/// <summary>
 		/// Gets or sets a property that determines if the image will be scaled to the
@@ -89,18 +89,18 @@ namespace ZedGraph
 		/// to the destination rectangle</value>
 		public bool IsScaled
 		{
-			get { return isScaled; }
-			set { isScaled = value; }
+			get { return _isScaled; }
+			set { _isScaled = value; }
 		}
 	#endregion
 	
 	#region Constructors
-		/// <overloads>Constructors for the <see cref="ImageItem"/> object</overloads>
+		/// <overloads>Constructors for the <see cref="ImageObj"/> object</overloads>
 		/// <summary>
 		/// A default constructor that places a null <see cref="System.Drawing.Image"/> at a
 		/// default <see cref="RectangleF"/> of (0,0,1,1)
 		/// </summary>
-		public ImageItem() :
+		public ImageObj() :
 			this( null, 0, 0, 1, 1 )
 		{
 		}
@@ -108,23 +108,23 @@ namespace ZedGraph
 		/// <summary>
 		/// A constructor that allows the <see cref="System.Drawing.Image"/> and
 		/// <see cref="RectangleF"/> location for the
-		/// <see cref="ImageItem"/> to be pre-specified.
+		/// <see cref="ImageObj"/> to be pre-specified.
 		/// </summary>
 		/// <param name="image">A <see cref="System.Drawing.Image"/> class that defines
 		/// the image</param>
 		/// <param name="rect">A <see cref="RectangleF"/> struct that defines the
 		/// image location, specifed in units based on the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		public ImageItem( Image image, RectangleF rect ) :
+		public ImageObj( Image image, RectangleF rect ) :
 			this( image, rect.X, rect.Y, rect.Width, rect.Height )
 		{
 		}
 
-		/// <overloads>Constructors for the <see cref="ImageItem"/> object</overloads>
+		/// <overloads>Constructors for the <see cref="ImageObj"/> object</overloads>
 		/// <summary>
 		/// A constructor that allows the <see cref="System.Drawing.Image"/> and
 		/// <see cref="RectangleF"/> location for the
-		/// <see cref="ImageItem"/> to be pre-specified.
+		/// <see cref="ImageObj"/> to be pre-specified.
 		/// </summary>
 		/// <param name="image">A <see cref="System.Drawing.Image"/> class that defines
 		/// the image</param>
@@ -138,51 +138,51 @@ namespace ZedGraph
 		/// the horizontal alignment of the object with respect to the (x,y) location</param>
 		/// <param name="alignV">The <see cref="ZedGraph.AlignV"/> enum that specifies
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
-		public ImageItem( Image image, RectangleF rect, CoordType coordType,
+		public ImageObj( Image image, RectangleF rect, CoordType coordType,
 					AlignH alignH, AlignV alignV ) :
 				base( rect.X, rect.Y, rect.Width, rect.Height, coordType,
 					alignH, alignV )
 		{
-			this.image = image;
-			isScaled = Default.IsScaled;
+			_image = image;
+			_isScaled = Default.IsScaled;
 		}
 
-		/// <overloads>Constructors for the <see cref="ImageItem"/> object</overloads>
+		/// <overloads>Constructors for the <see cref="ImageObj"/> object</overloads>
 		/// <summary>
 		/// A constructor that allows the <see cref="System.Drawing.Image"/> and
 		/// individual <see cref="System.Single"/> coordinate locations for the
-		/// <see cref="ImageItem"/> to be pre-specified.
+		/// <see cref="ImageObj"/> to be pre-specified.
 		/// </summary>
 		/// <param name="image">A <see cref="System.Drawing.Image"/> class that defines
 		/// the image</param>
 		/// <param name="left">The position of the left side of the rectangle that defines the
-		/// <see cref="ImageItem"/> location.  The units of this position are specified by the
+		/// <see cref="ImageObj"/> location.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		/// <param name="top">The position of the top side of the rectangle that defines the
-		/// <see cref="ImageItem"/> location.  The units of this position are specified by the
+		/// <see cref="ImageObj"/> location.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		/// <param name="width">The width of the rectangle that defines the
-		/// <see cref="ImageItem"/> location.  The units of this position are specified by the
+		/// <see cref="ImageObj"/> location.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		/// <param name="height">The height of the rectangle that defines the
-		/// <see cref="ImageItem"/> location.  The units of this position are specified by the
+		/// <see cref="ImageObj"/> location.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		public ImageItem( Image image, float left, float top,
+		public ImageObj( Image image, float left, float top,
 					float width, float height ) :
 				base( left, top, width, height )
 		{
-			this.image = image;
-			isScaled = Default.IsScaled;
+			_image = image;
+			_isScaled = Default.IsScaled;
 		}
 
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The <see cref="ImageItem"/> object from which to copy</param>
-		public ImageItem( ImageItem rhs ) : base( rhs )
+		/// <param name="rhs">The <see cref="ImageObj"/> object from which to copy</param>
+		public ImageObj( ImageObj rhs ) : base( rhs )
 		{
-			image = rhs.image;
-			isScaled = rhs.IsScaled;
+			_image = rhs._image;
+			_isScaled = rhs.IsScaled;
 		}
 
 		/// <summary>
@@ -199,9 +199,9 @@ namespace ZedGraph
 		/// Typesafe, deep-copy clone method.
 		/// </summary>
 		/// <returns>A new, independent copy of this class</returns>
-		public ImageItem Clone()
+		public ImageObj Clone()
 		{
-			return new ImageItem( this );
+			return new ImageObj( this );
 		}
 	#endregion
 
@@ -209,7 +209,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -218,14 +218,14 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
-		protected ImageItem( SerializationInfo info, StreamingContext context ) : base( info, context )
+		protected ImageObj( SerializationInfo info, StreamingContext context ) : base( info, context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			image = (Image) info.GetValue( "image", typeof(Image) );
-			isScaled = info.GetBoolean( "isScaled" );
+			_image = (Image) info.GetValue( "image", typeof(Image) );
+			_isScaled = info.GetBoolean( "isScaled" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -237,8 +237,8 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "image", image );
-			info.AddValue( "isScaled", isScaled );
+			info.AddValue( "image", _image );
+			info.AddValue( "isScaled", _isScaled );
 		}
 	#endregion
 	
@@ -246,7 +246,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Render this object to the specified <see cref="Graphics"/> device
 		/// This method is normally only called by the Draw method
-		/// of the parent <see cref="GraphItemList"/> collection object.
+		/// of the parent <see cref="GraphObjList"/> collection object.
 		/// </summary>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -264,19 +264,19 @@ namespace ZedGraph
 		/// </param>
 		override public void Draw( Graphics g, PaneBase pane, float scaleFactor )
 		{
-			if ( this.image != null )
+			if ( _image != null )
 			{
 				// Convert the rectangle coordinates from the user coordinate system
 				// to the screen coordinate system
-				RectangleF tmpRect = this.location.TransformRect( pane );
+				RectangleF tmpRect = _location.TransformRect( pane );
 
-				if ( isScaled )
-					g.DrawImage( this.image, tmpRect );
+				if ( _isScaled )
+					g.DrawImage( _image, tmpRect );
 				else
 				{
 					Region clip = g.Clip;
 					g.SetClip( tmpRect );
-					g.DrawImageUnscaled( image, Rectangle.Round( tmpRect ) );
+					g.DrawImageUnscaled( _image, Rectangle.Round( tmpRect ) );
 					g.SetClip( clip, CombineMode.Replace );
 					//g.DrawImageUnscaledAndClipped( image, Rectangle.Round( tmpRect ) );
 				}
@@ -286,7 +286,7 @@ namespace ZedGraph
 		
 		/// <summary>
 		/// Determine if the specified screen point lies inside the bounding box of this
-		/// <see cref="ArrowItem"/>.  The bounding box is calculated assuming a distance
+		/// <see cref="ArrowObj"/>.  The bounding box is calculated assuming a distance
 		/// of <see cref="GraphPane.Default.NearestTol"/> pixels around the arrow segment.
 		/// </summary>
 		/// <param name="pt">The screen point, in pixels</param>
@@ -307,18 +307,36 @@ namespace ZedGraph
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
 		override public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor )
 		{
-			if ( this.image != null )
+			if ( _image != null )
 			{
+				if ( ! base.PointInBox(pt, pane, g, scaleFactor ) )
+					return false;
+
 				// transform the x,y location from the user-defined
 				// coordinate frame to the screen pixel location
-				RectangleF tmpRect = this.location.TransformRect( pane );
+				RectangleF tmpRect = _location.TransformRect( pane );
 
 				return tmpRect.Contains( pt );
 			}
 			else
 				return false;
 		}
-		
+
+		/// <summary>
+		/// Determines the shape type and Coords values for this GraphObj
+		/// </summary>
+		override public void GetCoords( PaneBase pane, Graphics g, float scaleFactor,
+				out string shape, out string coords )
+		{
+			// transform the x,y location from the user-defined
+			// coordinate frame to the screen pixel location
+			RectangleF pixRect = _location.TransformRect( pane );
+
+			shape = "rect";
+			coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+						pixRect.Left, pixRect.Top, pixRect.Right, pixRect.Bottom );
+		}
+
 	#endregion
 	}
 }

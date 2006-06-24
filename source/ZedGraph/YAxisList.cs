@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2005  John Champion
+//Copyright © 2005  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
 #region Using directives
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -34,12 +34,12 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-02-14 06:14:22 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
-	public class YAxisList : AxisList, ICloneable
+	public class YAxisList : List<YAxis>, ICloneable
 	{
 
-	#region Constructors
+		#region Constructors
 
 		/// <summary>
 		/// Default constructor for the collection class.
@@ -56,7 +56,7 @@ namespace ZedGraph
 		{
 			foreach ( YAxis item in rhs )
 			{
-				this.Add( new YAxis( item ) );
+				this.Add( item.Clone() );
 			}
 		}
 
@@ -79,35 +79,109 @@ namespace ZedGraph
 			return new YAxisList( this );
 		}
 
-	#endregion
+		#endregion
 
-	#region List Methods
+		#region List Methods
 
 		/// <summary>
-		/// Add a <see cref="YAxis"/> object to the collection at the end of the list.
+		/// Indexer to access the specified <see cref="Axis"/> object by
+		/// its ordinal position in the list.
 		/// </summary>
-		/// <param name="axis">A reference to the <see cref="YAxis"/> object to
-		/// be added</param>
-		/// <seealso cref="IList.Add"/>
-		public int Add( YAxis axis )
+		/// <param name="index">The ordinal position (zero-based) of the
+		/// <see cref="YAxis"/> object to be accessed.</param>
+		/// <value>An <see cref="Axis"/> object reference.</value>
+		public new YAxis this[int index]
 		{
-			return List.Add( axis );
+			get { return ( ( ( index < 0 || index >= this.Count ) ? null : base[index] ) ); }
 		}
 
 		/// <summary>
-		/// Insert a <see cref="YAxis"/> object into the collection at the specified
-		/// zero-based index location.
+		/// Indexer to access the specified <see cref="Axis"/> object by
+		/// its <see cref="Axis.Title"/> string.
 		/// </summary>
-		/// <param name="index">The zero-based index location for insertion.</param>
-		/// <param name="axis">A reference to the <see cref="YAxis"/> object that is to be
-		/// inserted.</param>
-		/// <seealso cref="IList.Insert"/>
-		public void Insert( int index, YAxis axis )
+		/// <param name="title">The string title of the
+		/// <see cref="YAxis"/> object to be accessed.</param>
+		/// <value>A <see cref="Axis"/> object reference.</value>
+		public YAxis this[string title]
 		{
-			List.Insert( index, axis );
+			get
+			{
+				int index = IndexOf( title );
+				if ( index >= 0 )
+					return this[index];
+				else
+					return null;
+			}
 		}
 
-	#endregion
+		/// <summary>
+		/// Return the zero-based position index of the
+		/// <see cref="Axis"/> with the specified <see cref="Axis.Title"/>.
+		/// </summary>
+		/// <remarks>The comparison of titles is not case sensitive, but it must include
+		/// all characters including punctuation, spaces, etc.</remarks>
+		/// <param name="title">The <see cref="String"/> label that is in the
+		/// <see cref="Axis.Title"/> attribute of the item to be found.
+		/// </param>
+		/// <returns>The zero-based index of the specified <see cref="Axis"/>,
+		/// or -1 if the <see cref="Axis.Title"/> was not found in the list</returns>
+		/// <seealso cref="IndexOfTag"/>
+		public int IndexOf( string title )
+		{
+			int index = 0;
+			foreach ( YAxis axis in this )
+			{
+				if ( String.Compare( axis.Title._text, title, true ) == 0 )
+					return index;
+				index++;
+			}
+
+			return -1;
+		}
+
+		/// <summary>
+		/// Return the zero-based position index of the
+		/// <see cref="Axis"/> with the specified <see cref="Axis.Tag" />.
+		/// </summary>
+		/// <remarks>In order for this method to work, the <see cref="Axis.Tag" />
+		/// property must be of type <see cref="String"/>.
+		/// </remarks>
+		/// <param name="tagStr">The <see cref="String"/> tag that is in the
+		/// <see cref="Axis.Tag" /> attribute of the item to be found.
+		/// </param>
+		/// <returns>The zero-based index of the specified <see cref="Axis" />,
+		/// or -1 if the <see cref="Axis.Tag" /> string is not in the list</returns>
+		public int IndexOfTag( string tagStr )
+		{
+			int index = 0;
+			foreach ( YAxis axis in this )
+			{
+				if ( axis.Tag is string &&
+					String.Compare( (string)axis.Tag, tagStr, true ) == 0 )
+					return index;
+				index++;
+			}
+
+			return -1;
+		}
+
+		/// <summary>
+		/// Create a new <see cref="YAxis" /> and add it to this list.
+		/// </summary>
+		/// <param name="title">The title string for the new axis</param>
+		/// <returns>An integer representing the ordinal position of the new <see cref="YAxis" /> in
+		/// this <see cref="YAxisList" />.  This is the value that you would set the
+		/// <see cref="CurveItem.YAxisIndex" /> property of a given <see cref="CurveItem" /> to 
+		/// assign it to this new <see cref="YAxis" />.</returns>
+		public int Add( string title )
+		{
+			YAxis axis = new YAxis( title );
+			Add( axis );
+
+			return Count - 1;
+		}
+
+		#endregion
 
 	}
 }

@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2005  John Champion
+//Copyright © 2005  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -28,81 +28,80 @@ namespace ZedGraph
 {
 	/// <summary>
 	/// A class that represents a bordered and/or filled polygon object on
-	/// the graph.  A list of <see cref="PolyItem"/> objects is maintained by
-	/// the <see cref="GraphItemList"/> collection class.
+	/// the graph.  A list of <see cref="PolyObj"/> objects is maintained by
+	/// the <see cref="GraphObjList"/> collection class.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-04-22 08:43:17 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
 	[Serializable]
-	public class PolyItem : BoxItem, ICloneable, ISerializable
+	public class PolyObj : BoxObj, ICloneable, ISerializable
 	{
 
 	#region Fields
-		private PointF[] points;
+		private PointD[] _points;
 	#endregion
 
 	#region Properties
 
 		/// <summary>
-		/// Gets or sets the <see cref="PointF"/> array that defines
+		/// Gets or sets the <see cref="PointD"/> array that defines
 		/// the polygon.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
 		/// </summary>
-		public PointF[] Points
+		public PointD[] Points
 		{
-			get { return points; }
-			set { points = value; }
+			get { return _points; }
+			set { _points = value; }
 		}
 
 	#endregion
 	
 	#region Constructors
-		/// <overloads>Constructors for the <see cref="PolyItem"/> object</overloads>
+		/// <overloads>Constructors for the <see cref="PolyObj"/> object</overloads>
 		/// <summary>
 		/// A constructor that allows the position, border color, and solid fill color
-		/// of the <see cref="PolyItem"/> to be pre-specified.
+		/// of the <see cref="PolyObj"/> to be pre-specified.
 		/// </summary>
 		/// <param name="borderColor">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the box border</param>
 		/// <param name="fillColor">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the box fill (will be a solid color fill)</param>
-		/// <param name="points">The <see cref="PointF"/> array that defines
+		/// <param name="points">The <see cref="PointD"/> array that defines
 		/// the polygon.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
 		/// </param>
-		public PolyItem( PointF[] points, Color borderColor, Color fillColor ) :
-				base( new RectangleF(), borderColor, fillColor )
+		public PolyObj( PointD[] points, Color borderColor, Color fillColor ) :
+				base( 0, 0, 1, 1, borderColor, fillColor )
 		{
-			this.points = points;
+			_points = points;
 		}
 
 		/// <summary>
 		/// A constructor that allows the position
-		/// of the <see cref="PolyItem"/> to be pre-specified.  Other properties are defaulted.
+		/// of the <see cref="PolyObj"/> to be pre-specified.  Other properties are defaulted.
 		/// </summary>
-		/// <param name="points">The <see cref="PointF"/> array that defines
+		/// <param name="points">The <see cref="PointD"/> array that defines
 		/// the polygon.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
 		/// </param>
-		public PolyItem( PointF[] points ) :
-			base( new RectangleF() )
+		public PolyObj( PointD[] points ) : base( 0, 0, 1, 1 )
 		{
-			this.points = points;
+			_points = points;
 		}
 
 		/// <summary>
-		/// A default constructor that creates a <see cref="PolyItem"/> from an empty
-		/// <see cref="PointF"/> array.  Other properties are defaulted.
+		/// A default constructor that creates a <see cref="PolyObj"/> from an empty
+		/// <see cref="PointD"/> array.  Other properties are defaulted.
 		/// </summary>
-		public PolyItem() : this( new PointF[0] )
+		public PolyObj() : this( new PointD[0] )
 		{
 		}
 
 		/// <summary>
 		/// A constructor that allows the position, border color, and two-color
 		/// gradient fill colors
-		/// of the <see cref="PolyItem"/> to be pre-specified.
+		/// of the <see cref="PolyObj"/> to be pre-specified.
 		/// </summary>
 		/// <param name="borderColor">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the box border</param>
@@ -110,24 +109,24 @@ namespace ZedGraph
 		/// for the start of the box gradient fill</param>
 		/// <param name="fillColor2">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the end of the box gradient fill</param>
-		/// <param name="points">The <see cref="PointF"/> array that defines
+		/// <param name="points">The <see cref="PointD"/> array that defines
 		/// the polygon.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
 		/// </param>
-		public PolyItem( PointF[] points, Color borderColor,
+		public PolyObj( PointD[] points, Color borderColor,
 							Color fillColor1, Color fillColor2 ) :
-				base( new RectangleF(), borderColor, fillColor1, fillColor2 )
+				base( 0, 0, 1, 1, borderColor, fillColor1, fillColor2 )
 		{
-			this.points = points;
+			_points = points;
 		}
 
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The <see cref="PolyItem"/> object from which to copy</param>
-		public PolyItem( PolyItem rhs ) : base( rhs )
+		/// <param name="rhs">The <see cref="PolyObj"/> object from which to copy</param>
+		public PolyObj( PolyObj rhs ) : base( rhs )
 		{
-			rhs.points = (PointF[]) this.points.Clone();
+			rhs._points = (PointD[]) _points.Clone();
 		}
 
 		/// <summary>
@@ -144,9 +143,9 @@ namespace ZedGraph
 		/// Typesafe, deep-copy clone method.
 		/// </summary>
 		/// <returns>A new, independent copy of this class</returns>
-		public new PolyItem Clone()
+		public new PolyObj Clone()
 		{
-			return new PolyItem( this );
+			return new PolyObj( this );
 		}
 
 	#endregion
@@ -155,7 +154,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema3 = 1;
+		public const int schema3 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -164,13 +163,13 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
-		protected PolyItem( SerializationInfo info, StreamingContext context ) : base( info, context )
+		protected PolyObj( SerializationInfo info, StreamingContext context ) : base( info, context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema3" );
 
-			this.points = (PointF[]) info.GetValue( "points", typeof(PointF[]) );
+			_points = (PointD[]) info.GetValue( "points", typeof(PointD[]) );
 
 		}
 		/// <summary>
@@ -184,7 +183,7 @@ namespace ZedGraph
 			base.GetObjectData( info, context );
 			info.AddValue( "schema3", schema3 );
 
-			info.AddValue( "points", this.points );
+			info.AddValue( "points", _points );
 		}
 	#endregion
 	
@@ -194,7 +193,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// This method is normally only called by the Draw method
-		/// of the parent <see cref="GraphItemList"/> collection object.
+		/// of the parent <see cref="GraphObjList"/> collection object.
 		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -212,24 +211,25 @@ namespace ZedGraph
 		/// </param>
 		override public void Draw( Graphics g, PaneBase pane, float scaleFactor )
 		{
-			if ( this.points != null && this.points.Length > 1 )
+			if ( _points != null && _points.Length > 1 )
 			{
-				GraphicsPath path = MakePath( pane );
-
-				// Fill or draw the symbol as required
-				if ( this.fill.IsVisible)
+				using ( GraphicsPath path = MakePath( pane ) )
 				{
-					Brush brush = this.Fill.MakeBrush( path.GetBounds() );
-					g.FillPath( brush, path );
-				}
-				
-				if ( this.border.IsVisible )
-				{
-					Pen pen = border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-					g.DrawPath( pen, path );
-				}
+					// Fill or draw the symbol as required
+					if ( _fill.IsVisible )
+					{
+						Brush brush = this.Fill.MakeBrush( path.GetBounds() );
+						g.FillPath( brush, path );
+					}
 
-				path.Dispose();
+					if ( _border.IsVisible )
+					{
+						Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+						g.DrawPath( pen, path );
+					}
+
+					//path.Dispose();
+				}
 			}
 		}
 		
@@ -239,14 +239,13 @@ namespace ZedGraph
 			bool first = true;
 			PointF lastPt = new PointF();
 
-			foreach( PointF pt in this.points )
+			foreach( PointD pt in _points )
 			{
 				// Convert the coordinates from the user coordinate system
 				// to the screen coordinate system
 				// Offset the points by the location value
-				PointF pixPt = Location.Transform( pane,
-						new PointF( pt.X + this.location.X, pt.Y + this.location.Y),
-						this.location.CoordinateFrame );
+				PointF pixPt = Location.Transform( pane, pt.X + _location.X, pt.Y + _location.Y,
+						_location.CoordinateFrame );
 
 				if (	Math.Abs( pixPt.X ) < 100000 &&
 						Math.Abs( pixPt.Y ) < 100000 )
@@ -267,7 +266,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Determine if the specified screen point lies inside the bounding box of this
-		/// <see cref="PolyItem"/>.
+		/// <see cref="PolyObj"/>.
 		/// </summary>
 		/// <param name="pt">The screen point, in pixels</param>
 		/// <param name="pane">
@@ -287,8 +286,11 @@ namespace ZedGraph
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
 		override public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor )
 		{
-			if ( this.points != null && this.points.Length > 1 )
+			if ( _points != null && _points.Length > 1 )
 			{
+				if ( ! base.PointInBox(pt, pane, g, scaleFactor ) )
+					return false;
+
 				GraphicsPath path = MakePath( pane );
 
 				return path.IsVisible( pt );

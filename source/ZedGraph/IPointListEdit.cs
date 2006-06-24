@@ -1,6 +1,6 @@
 //============================================================================
 //IPointListEdit interface
-//Copyright (C) 2006  John Champion
+//Copyright © 2006  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// <seealso cref="FilteredPointList" />
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.4 $ $Date: 2006-03-17 06:21:14 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2006-06-24 20:26:43 $ </version>
 	public interface IPointListEdit : IPointList
 	{
 		/// <summary>
@@ -62,8 +62,7 @@ namespace ZedGraph
 		/// object.
 		/// </summary>
 		/// <param name="point">The <see cref="PointPair" /> object containing the data to be added.</param>
-		/// <returns>The ordinal position (zero-based), at which the new point was added.</returns>
-		int Add( PointPair point );
+		void Add( PointPair point );
 
 		/// <summary>
 		/// Appends a point to the end of the list.  The data are passed in as two <see cref="Double" />
@@ -72,13 +71,13 @@ namespace ZedGraph
 		/// <param name="x">The <see cref="Double" /> value containing the X data to be added.</param>
 		/// <param name="y">The <see cref="Double" /> value containing the Y data to be added.</param>
 		/// <returns>The ordinal position (zero-based), at which the new point was added.</returns>
-		int Add( double x, double y );
+		void Add( double x, double y );
 
 		/// <summary>
 		/// Removes a single data point from the list at the specified ordinal location
 		/// (zero based).
 		/// </summary>
-		void Remove( int index );
+		void RemoveAt( int index );
 
 		/// <summary>
 		/// Clears all data points from the list.  After calling this method,

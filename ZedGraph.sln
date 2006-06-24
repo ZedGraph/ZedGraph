@@ -1,49 +1,44 @@
-Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph", "source\ZedGraph.csproj", "{998CE547-E905-4931-91B6-5E0439177E7E}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual C# Express 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph", "source\ZedGraph.csproj", "{2541686B-1673-43BF-AF89-3163945DB009}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.Demo", "demo\ZedGraph.Demo.csproj", "{ABA28191-9B11-40D2-A51B-21293FE84365}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.Web", "web\ZedGraph.Web.csproj", "{B17D1463-CDA6-4E19-B1C9-41B82C84B7DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.LibTest", "libtest\ZedGraph.LibTest.csproj", "{3986792A-CD38-40EB-BC80-96B05C3ECEB5}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.ControlTest", "controltest\ZedGraph.ControlTest.csproj", "{4589AC20-2958-420D-AF75-70D874C2803C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.ControlTest", "controltest\ZedGraph.ControlTest.csproj", "{47287BC7-EBDB-4911-8F16-0D01D117E459}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.LibTest", "libtest\ZedGraph.LibTest.csproj", "{8D4E0CB3-42C5-4D39-B63B-373950B04DE8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.Demo", "demo\ZedGraph.Demo.csproj", "{C9FDF2E8-0776-4DA5-AEA9-ED847D85F9C7}"
 EndProject
 Global
-	GlobalSection(SolutionConfiguration) = preSolution
-		Debug = Debug
-		Release = Release
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ProjectConfiguration) = postSolution
-		{998CE547-E905-4931-91B6-5E0439177E7E}.Debug.ActiveCfg = Debug|.NET
-		{998CE547-E905-4931-91B6-5E0439177E7E}.Debug.Build.0 = Debug|.NET
-		{998CE547-E905-4931-91B6-5E0439177E7E}.Release.ActiveCfg = Release|.NET
-		{998CE547-E905-4931-91B6-5E0439177E7E}.Release.Build.0 = Release|.NET
-		{ABA28191-9B11-40D2-A51B-21293FE84365}.Debug.ActiveCfg = Debug|.NET
-		{ABA28191-9B11-40D2-A51B-21293FE84365}.Debug.Build.0 = Debug|.NET
-		{ABA28191-9B11-40D2-A51B-21293FE84365}.Release.ActiveCfg = Release|.NET
-		{ABA28191-9B11-40D2-A51B-21293FE84365}.Release.Build.0 = Release|.NET
-		{3986792A-CD38-40EB-BC80-96B05C3ECEB5}.Debug.ActiveCfg = Debug|.NET
-		{3986792A-CD38-40EB-BC80-96B05C3ECEB5}.Debug.Build.0 = Debug|.NET
-		{3986792A-CD38-40EB-BC80-96B05C3ECEB5}.Release.ActiveCfg = Release|.NET
-		{3986792A-CD38-40EB-BC80-96B05C3ECEB5}.Release.Build.0 = Release|.NET
-		{47287BC7-EBDB-4911-8F16-0D01D117E459}.Debug.ActiveCfg = Debug|.NET
-		{47287BC7-EBDB-4911-8F16-0D01D117E459}.Debug.Build.0 = Debug|.NET
-		{47287BC7-EBDB-4911-8F16-0D01D117E459}.Release.ActiveCfg = Release|.NET
-		{47287BC7-EBDB-4911-8F16-0D01D117E459}.Release.Build.0 = Release|.NET
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2541686B-1673-43BF-AF89-3163945DB009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2541686B-1673-43BF-AF89-3163945DB009}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2541686B-1673-43BF-AF89-3163945DB009}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2541686B-1673-43BF-AF89-3163945DB009}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B17D1463-CDA6-4E19-B1C9-41B82C84B7DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B17D1463-CDA6-4E19-B1C9-41B82C84B7DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B17D1463-CDA6-4E19-B1C9-41B82C84B7DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B17D1463-CDA6-4E19-B1C9-41B82C84B7DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4589AC20-2958-420D-AF75-70D874C2803C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4589AC20-2958-420D-AF75-70D874C2803C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4589AC20-2958-420D-AF75-70D874C2803C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4589AC20-2958-420D-AF75-70D874C2803C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D4E0CB3-42C5-4D39-B63B-373950B04DE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D4E0CB3-42C5-4D39-B63B-373950B04DE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D4E0CB3-42C5-4D39-B63B-373950B04DE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D4E0CB3-42C5-4D39-B63B-373950B04DE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9FDF2E8-0776-4DA5-AEA9-ED847D85F9C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9FDF2E8-0776-4DA5-AEA9-ED847D85F9C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9FDF2E8-0776-4DA5-AEA9-ED847D85F9C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9FDF2E8-0776-4DA5-AEA9-ED847D85F9C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(SolutionItems) = postSolution
-		Revision_History.txt = Revision_History.txt
-		ToDo.txt = ToDo.txt
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-	EndGlobalSection
-	GlobalSection(ExtensibilityAddIns) = postSolution
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal

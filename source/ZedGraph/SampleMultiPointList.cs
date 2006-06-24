@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Charting Library for .Net
-//Copyright (C) 2005 John Champion and Jerry Vos
+//Copyright © 2005 John Champion and Jerry Vos
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -145,6 +145,7 @@ namespace ZedGraph
 	/// thereby plotting a distance vs time curve and a velocity vs time curve.  There
 	/// will still be only one copy of the data in memory.
 	/// </remarks>
+	[Serializable]
 	public class SampleMultiPointList : IPointList
 	{
 		/// <summary>

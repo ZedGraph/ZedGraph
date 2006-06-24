@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// interface.
 	/// 
 	/// <author>Colin Green with mods by John Champion</author>
-	/// <version> $Date: 2006-05-16 07:36:54 $ </version>
+	/// <version> $Date: 2006-06-24 20:26:43 $ </version>
 	/// </summary>
 	[Serializable]
 	public class RollingPointPairList : IPointList, ISerializable, IPointListEdit
@@ -209,7 +209,7 @@ namespace ZedGraph
 		/// overwriting old values if the buffer is full.
 		/// </summary>
 		/// <param name="item">The <see cref="PointPair" /> to be added.</param>
-		public int Add( PointPair item )
+		public void Add( PointPair item )
 		{
 			if ( _headIdx == -1 )
 			{	// buffer is currently empty.
@@ -233,8 +233,6 @@ namespace ZedGraph
 			}
 
 			_mBuffer[_headIdx] = item;
-
-			return this.Count - 1;
 		}
 
 		/// <summary>
@@ -278,7 +276,7 @@ namespace ZedGraph
 		/// Throws an <see cref="ArgumentOutOfRangeException" /> if index is less than
 		/// zero or greater than or equal to <see cref="Count" />
 		/// </param>
-		public void Remove( int index )
+		public void RemoveAt( int index )
 		{
 			int count = this.Count;
 
@@ -362,10 +360,9 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="x">The X value</param>
 		/// <param name="y">The Y value</param>
-		public int Add( double x, double y )
+		public void Add( double x, double y )
 		{
 			Add( new PointPair( x, y ) );
-			return this.Count - 1;
 		}
 
 		/// <summary>

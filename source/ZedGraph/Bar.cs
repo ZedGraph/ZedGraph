@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.24 $ $Date: 2006-03-27 03:35:43 $ </version>
+   /// <version> $Revision: 3.25 $ $Date: 2006-06-24 20:26:43 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -42,13 +42,13 @@ namespace ZedGraph
 		/// <see cref="Bar"/>.  Use the public property <see cref="Fill"/> to
 		/// access this value.
 		/// </summary>
-		private Fill  fill;
+		private Fill  _fill;
 		/// <summary>
 		/// Private field that stores the <see cref="Border"/> class that defines the
 		/// properties of the border around this <see cref="BarItem"/>. Use the public
 		/// property <see cref="Border"/> to access this value.
 		/// </summary>
-		private Border border;
+		private Border _border;
 	#endregion
 
 	#region Defaults
@@ -116,8 +116,8 @@ namespace ZedGraph
 		/// </param>
 		public Bar( Color color )
 		{
-			this.border = new Border( Default.IsBorderVisible, Default.BorderColor, Default.BorderWidth );
-			this.fill = new Fill( color.IsEmpty ? Default.FillColor : color,
+			_border = new Border( Default.IsBorderVisible, Default.BorderColor, Default.BorderWidth );
+			_fill = new Fill( color.IsEmpty ? Default.FillColor : color,
 									Default.FillBrush, Default.FillType );
 		}
 
@@ -127,8 +127,8 @@ namespace ZedGraph
 		/// <param name="rhs">The Bar object from which to copy</param>
 		public Bar( Bar rhs )
 		{
-			this.border = (Border) rhs.Border.Clone();
-			this.fill = (Fill) rhs.Fill.Clone();
+			_border = (Border) rhs.Border.Clone();
+			_fill = (Fill) rhs.Fill.Clone();
 		}
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -171,8 +171,8 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			fill = (Fill) info.GetValue( "fill", typeof(Fill) );
-			border = (Border) info.GetValue( "border", typeof(Border) );
+			_fill = (Fill) info.GetValue( "fill", typeof(Fill) );
+			_border = (Border) info.GetValue( "border", typeof(Border) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -183,8 +183,8 @@ namespace ZedGraph
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
-			info.AddValue( "fill", fill );
-			info.AddValue( "border", border );
+			info.AddValue( "fill", _fill );
+			info.AddValue( "border", _border );
 		}
 	#endregion
 
@@ -197,8 +197,8 @@ namespace ZedGraph
 		/// <seealso cref="Default.BorderColor"/>
 		public Border Border
 		{
-			get { return border; }
-			set { border = value; }
+			get { return _border; }
+			set { _border = value; }
 		}
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
@@ -206,8 +206,8 @@ namespace ZedGraph
 		/// </summary>
 		public Fill Fill
 		{
-			get { return fill; }
-			set { fill = value; }
+			get { return _fill; }
+			set { _fill = value; }
 		}
 	#endregion
 
@@ -312,18 +312,20 @@ namespace ZedGraph
 		public void Draw( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor,
 							bool fullFrame, PointPair dataValue )
 		{
+			_fill.Draw( g, rect, dataValue );
+
 			// Fill the Bar
-			if ( this.fill.IsVisible )
-			{
-				// just avoid height/width being less than 0.1 so GDI+ doesn't cry
-				Brush brush = this.fill.MakeBrush( rect, dataValue );
-				g.FillRectangle( brush, rect );
-				brush.Dispose();
-			}
+			//if ( this.fill.IsVisible )
+			//{
+			//	// just avoid height/width being less than 0.1 so GDI+ doesn't cry
+			//	Brush brush = this.fill.MakeBrush( _rect, dataValue );
+			//	g.FillRectangle( brush, rect );
+			//	brush.Dispose();
+			//}
 
 			// Border the Bar
-			if ( !this.border.Color.IsEmpty )
-				this.border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
+			//if ( !this.border.Color.IsEmpty )
+			_border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
 
 		}
 
@@ -366,13 +368,13 @@ namespace ZedGraph
 		{
 			// For Overlay and Stack bars, the position is always zero since the bars are on top
 			// of eachother
-			if	( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack ||
-					pane.BarType == BarType.PercentStack )
+			if ( pane._barSettings.Type == BarType.Overlay || pane._barSettings.Type == BarType.Stack ||
+					pane._barSettings.Type == BarType.PercentStack )
 				pos = 0;
 
 			// Loop over each defined point and draw the corresponding bar                
 			for ( int i=0; i<curve.Points.Count; i++ )
-				DrawSingleBar( g, pane, curve, i, pos, baseAxis, valueAxis, scaleFactor );
+				DrawSingleBar( g, pane, curve, i, pos, baseAxis, valueAxis, barWidth, scaleFactor );
 		}
 
 		/// <summary>
@@ -402,6 +404,9 @@ namespace ZedGraph
 		/// <param name="index">
 		/// The zero-based index number for the single bar to be drawn.
 		/// </param>
+		/// <param name="barWidth">
+		/// The width of each bar, in pixels.
+		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
@@ -410,7 +415,7 @@ namespace ZedGraph
 		/// </param>
 		public void DrawSingleBar( Graphics g, GraphPane pane, CurveItem curve,
 									Axis baseAxis, Axis valueAxis,
-									int pos, int index, float scaleFactor )
+									int pos, int index, float barWidth, float scaleFactor )
 		{
 			// Make sure that a bar value exists for the current curve and current ordinal position
 			if ( index >= curve.Points.Count )
@@ -418,12 +423,12 @@ namespace ZedGraph
 
 			// For Overlay and Stack bars, the position is always zero since the bars are on top
 			// of eachother
-			if	( pane.BarType == BarType.Overlay || pane.BarType == BarType.Stack ||
-					pane.BarType == BarType.PercentStack )
+			if ( pane._barSettings.Type == BarType.Overlay || pane._barSettings.Type == BarType.Stack ||
+					pane._barSettings.Type == BarType.PercentStack )
 				pos = 0;
 
 			// Draw the specified bar
-			DrawSingleBar( g, pane, curve, index, pos, baseAxis, valueAxis, scaleFactor );
+			DrawSingleBar( g, pane, curve, index, pos, baseAxis, valueAxis, barWidth, scaleFactor );
 		}
 
 		/// <summary>
@@ -451,6 +456,9 @@ namespace ZedGraph
 		/// axis for the <see cref="Bar"/></param>
 		/// <param name="valueAxis">The <see cref="Axis"/> class instance that defines the value (dependent)
 		/// axis for the <see cref="Bar"/></param>
+		/// <param name="barWidth">
+		/// The width of each bar, in pixels.
+		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
@@ -460,17 +468,17 @@ namespace ZedGraph
 		virtual protected void DrawSingleBar( Graphics g, GraphPane pane,
 										CurveItem curve,
 										int index, int pos, Axis baseAxis, Axis valueAxis,
-										float scaleFactor )
+										float barWidth, float scaleFactor )
 		{
 			// pixBase = pixel value for the bar center on the base axis
 			// pixHiVal = pixel value for the bar top on the value axis
 			// pixLowVal = pixel value for the bar bottom on the value axis
 			float pixBase, pixHiVal, pixLowVal;
 
-			float clusterWidth = pane.GetClusterWidth();
-			float barWidth = curve.GetBarWidth( pane );
-			float clusterGap = pane.MinClusterGap * barWidth;
-			float barGap = barWidth * pane.MinBarGap;
+			float clusterWidth = pane.BarSettings.GetClusterWidth();
+			//float barWidth = curve.GetBarWidth( pane );
+			float clusterGap = pane._barSettings.MinClusterGap * barWidth;
+			float barGap = barWidth * pane._barSettings.MinBarGap;
 
 			// curBase = the scale value on the base axis of the current bar
 			// curHiVal = the scale value on the value axis of the current bar
@@ -497,7 +505,7 @@ namespace ZedGraph
 								pos * ( barWidth + barGap );
 
 				// Draw the bar
-				if ( pane.BarBase == BarBase.X )
+				if ( pane._barSettings.Base == BarBase.X )
 					this.Draw( g, pane, pixSide, pixSide + barWidth, pixLowVal,
 							pixHiVal, scaleFactor, true,
 							curve.Points[index] );

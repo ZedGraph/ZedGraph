@@ -1,372 +1,164 @@
-<VisualStudioProject>
-    <CSHARP
-        ProjectType = "Local"
-        ProductVersion = "7.10.3077"
-        SchemaVersion = "2.0"
-        ProjectGuid = "{ABA28191-9B11-40D2-A51B-21293FE84365}"
-    >
-        <Build>
-            <Settings
-                ApplicationIcon = ""
-                AssemblyKeyContainerName = ""
-                AssemblyName = "ZedGraph.Demo"
-                AssemblyOriginatorKeyFile = ""
-                DefaultClientScript = "JScript"
-                DefaultHTMLPageLayout = "Grid"
-                DefaultTargetSchema = "IE50"
-                DelaySign = "false"
-                OutputType = "WinExe"
-                PreBuildEvent = ""
-                PostBuildEvent = ""
-                RootNamespace = ""
-                RunPostBuildEvent = "OnBuildSuccess"
-                StartupObject = "ZedGraph.Demo.DemoTabForm"
-            >
-                <Config
-                    Name = "Debug"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "DEBUG;TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "true"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "false"
-                    OutputPath = "bin\Debug\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-                <Config
-                    Name = "Release"
-                    AllowUnsafeBlocks = "false"
-                    BaseAddress = "285212672"
-                    CheckForOverflowUnderflow = "false"
-                    ConfigurationOverrideFile = ""
-                    DefineConstants = "TRACE"
-                    DocumentationFile = ""
-                    DebugSymbols = "false"
-                    FileAlignment = "4096"
-                    IncrementalBuild = "false"
-                    NoStdLib = "false"
-                    NoWarn = ""
-                    Optimize = "true"
-                    OutputPath = "bin\Release\"
-                    RegisterForComInterop = "false"
-                    RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "false"
-                    WarningLevel = "4"
-                />
-            </Settings>
-            <References>
-                <Reference
-                    Name = "System"
-                    AssemblyName = "System"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"
-                />
-                <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.Drawing"
-                    AssemblyName = "System.Drawing"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Drawing.dll"
-                />
-                <Reference
-                    Name = "System.Windows.Forms"
-                    AssemblyName = "System.Windows.Forms"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Windows.Forms.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
-                />
-                <Reference
-                    Name = "System.Runtime.Serialization.Formatters.Soap"
-                    AssemblyName = "System.Runtime.Serialization.Formatters.Soap"
-                    HintPath = "..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Runtime.Serialization.Formatters.Soap.dll"
-                />
-                <Reference
-                    Name = "ZedGraph"
-                    Project = "{998CE547-E905-4931-91B6-5E0439177E7E}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                />
-            </References>
-        </Build>
-        <Files>
-            <Include>
-                <File
-                    RelPath = "ZedGraph.Demo\AboutForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\AboutForm.resx"
-                    DependentUpon = "AboutForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\BarChartSampleDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\BaseTicDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\ChartTabForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\ChartTabForm.resx"
-                    DependentUpon = "ChartTabForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\ComboDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\CrossLineDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\DateAxisSampleDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\DemoBase.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\DemoTabForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\DemoTemplate.txt"
-                    BuildAction = "Content"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\DemoType.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\DualYDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\ErrorBarDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\FilledBarGraphDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\FilledCurve.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\GradientByValueDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\HiLowBarDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\HiLowCloseDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\HorizontalBarDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\HorizontalBarSampleDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\HorizontalBarsWithLabels.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\HorizontalStackedBarDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\InitialSampleDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\LicenseForm.cs"
-                    SubType = "Form"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\LicenseForm.resx"
-                    DependentUpon = "LicenseForm.cs"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\LineGraphBandDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\LineStackingDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\MasterPaneDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\MasterSampleDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\ModInitialSampleDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\MultiPieChartDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\MultiYDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\ngc4261.gif"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\ngc4414.jpg"
-                    BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\OverlayBarDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\PercentStkBarDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\PieChartDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\PieSampleDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\SampleMultiPointListDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\SineBarGraphDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\SmoothChartDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\SortedOverlayBarDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\StackedBarSampleDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\StackedBarsWithLabels.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\StepChartDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\StickItemDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\TextAxisSampleDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\TransparentDemo1.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\VerticalBarsWithLabelsDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ZedGraph.Demo\ZedGraphDemo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-            </Include>
-        </Files>
-    </CSHARP>
-</VisualStudioProject>
-
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C9FDF2E8-0776-4DA5-AEA9-ED847D85F9C7}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ZedGraph.Demo</RootNamespace>
+    <AssemblyName>ZedGraph.Demo</AssemblyName>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ZedGraph.Demo\BarChartSampleDemo.cs" />
+    <Compile Include="ZedGraph.Demo\BarGraphBandDemo.cs" />
+    <Compile Include="ZedGraph.Demo\BaseTicDemo.cs" />
+    <Compile Include="ZedGraph.Demo\CandleStickDemo.cs" />
+    <Compile Include="ZedGraph.Demo\ChartTabForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZedGraph.Demo\ChartTabForm.Designer.cs">
+      <DependentUpon>ChartTabForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ZedGraph.Demo\AboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZedGraph.Demo\AboutForm.Designer.cs">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ZedGraph.Demo\ComboDemo.cs" />
+    <Compile Include="ZedGraph.Demo\CrossLineDemo.cs" />
+    <Compile Include="ZedGraph.Demo\DateAxisSampleDemo.cs" />
+    <Compile Include="ZedGraph.Demo\DemoBase.cs" />
+    <Compile Include="ZedGraph.Demo\DemoTabForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZedGraph.Demo\DemoType.cs" />
+    <Compile Include="ZedGraph.Demo\DualYDemo.cs" />
+    <Compile Include="ZedGraph.Demo\ErrorBarDemo.cs" />
+    <Compile Include="ZedGraph.Demo\FilledBarGraphDemo.cs" />
+    <Compile Include="ZedGraph.Demo\FilledCurve.cs" />
+    <Compile Include="ZedGraph.Demo\GradientByValueDemo.cs" />
+    <Compile Include="ZedGraph.Demo\HiLowBarDemo.cs" />
+    <Compile Include="ZedGraph.Demo\HiLowCloseDemo.cs" />
+    <Compile Include="ZedGraph.Demo\HorizontalBarDemo.cs" />
+    <Compile Include="ZedGraph.Demo\HorizontalBarSampleDemo.cs" />
+    <Compile Include="ZedGraph.Demo\HorizontalBarsWithLabels.cs" />
+    <Compile Include="ZedGraph.Demo\HorizontalStackedBarDemo.cs" />
+    <Compile Include="ZedGraph.Demo\ImageForSymbolDemo.cs" />
+    <Compile Include="ZedGraph.Demo\InitialSampleDemo.cs" />
+    <Compile Include="ZedGraph.Demo\JapaneseCandleStickDemo.cs" />
+    <Compile Include="ZedGraph.Demo\LicenseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ZedGraph.Demo\LicenseForm.Designer.cs">
+      <DependentUpon>LicenseForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ZedGraph.Demo\LineGraphBandDemo.cs" />
+    <Compile Include="ZedGraph.Demo\LineStackingDemo.cs" />
+    <Compile Include="ZedGraph.Demo\MasterPaneDemo.cs" />
+    <Compile Include="ZedGraph.Demo\MasterPaneLayout.cs" />
+    <Compile Include="ZedGraph.Demo\MasterSampleDemo.cs" />
+    <Compile Include="ZedGraph.Demo\ModInitialSampleDemo.cs" />
+    <Compile Include="ZedGraph.Demo\MultiPieChartDemo.cs" />
+    <Compile Include="ZedGraph.Demo\MultiYDemo.cs" />
+    <Compile Include="ZedGraph.Demo\OverlayBarDemo.cs" />
+    <Compile Include="ZedGraph.Demo\PercentStkBarDemo.cs" />
+    <Compile Include="ZedGraph.Demo\PieChartDemo.cs" />
+    <Compile Include="ZedGraph.Demo\PieSampleDemo.cs" />
+    <Compile Include="ZedGraph.Demo\Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph.Demo\ChartTabForm.resx">
+      <DependentUpon>ChartTabForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph.Demo\AboutForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph.Demo\LicenseForm.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="ZedGraph.Demo\SampleMultiPointListDemo.cs" />
+    <Compile Include="ZedGraph.Demo\SineBarGraphDemo.cs" />
+    <Compile Include="ZedGraph.Demo\SmoothChartDemo.cs" />
+    <Compile Include="ZedGraph.Demo\SortedOverlayBarDemo.cs" />
+    <Compile Include="ZedGraph.Demo\StackedBarSampleDemo.cs" />
+    <Compile Include="ZedGraph.Demo\StackedBarsWithLabels.cs" />
+    <Compile Include="ZedGraph.Demo\StepChartDemo.cs" />
+    <Compile Include="ZedGraph.Demo\StickItemDemo.cs" />
+    <Compile Include="ZedGraph.Demo\SynchronizedPanes.cs" />
+    <Compile Include="ZedGraph.Demo\TextAxisSampleDemo.cs" />
+    <Compile Include="ZedGraph.Demo\TransparentDemo1.cs" />
+    <Compile Include="ZedGraph.Demo\VerticalBarsWithLabelsDemo.cs" />
+    <Compile Include="ZedGraph.Demo\ZedGraphDemo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\ngc4414.jpg" />
+    <EmbeddedResource Include="Resources\ngc4261.gif" />
+    <EmbeddedResource Include="Resources\teeth.png" />
+    <Content Include="ZedGraph.Demo\ngc4261.gif" />
+    <Content Include="ZedGraph.Demo\ngc4414.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\source\ZedGraph.csproj">
+      <Project>{B99650EE-AF46-47B4-A4A9-212ADE7809B7}</Project>
+      <Name>ZedGraph</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

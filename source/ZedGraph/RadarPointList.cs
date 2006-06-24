@@ -1,6 +1,6 @@
 //============================================================================
 //RadarPointList Class
-//Copyright (C) 2006  John Champion, Jerry Vos
+//Copyright © 2006  John Champion, Jerry Vos
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 
 using System;
 using System.Drawing;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace ZedGraph
 {
@@ -33,9 +33,9 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	/// 
 	/// <author>Jerry Vos and John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-03-17 08:14:40 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
-	public class RadarPointList : CollectionPlus, IPointList, IPointListEdit
+	public class RadarPointList : List<PointPair>, IPointList, IPointListEdit
 	{
 
 	#region Properties
@@ -48,11 +48,11 @@ namespace ZedGraph
 		/// <param name="index">The ordinal position (zero-based) of the
 		/// <see cref="PointPair"/> object to be accessed.</param>
 		/// <value>A <see cref="PointPair"/> object reference.</value>
-		public PointPair this[int index]
+		public new PointPair this[int index]
 		{
 			get
 			{
-				int count = List.Count;
+				int count = this.Count;
 				// The last point is a repeat of the first point
 				if ( index == count )
 					index = 0;
@@ -60,7 +60,7 @@ namespace ZedGraph
 				if ( index < 0 || index >= count )
 					return null;
 
-				PointPair pt = (PointPair)List[index];
+				PointPair pt = (PointPair)base[index];
 				double theta = (double) index / (double) count * 2.0 * Math.PI;
 				double x = pt.Y * Math.Cos( theta );
 				double y = pt.Y * Math.Sin( theta );
@@ -68,7 +68,7 @@ namespace ZedGraph
 			}
 			set
 			{
-				int count = List.Count;
+				int count = this.Count;
 				// The last point is a repeat of the first point
 				if ( index == count )
 					index = 0;
@@ -76,9 +76,19 @@ namespace ZedGraph
 				if ( index < 0 || index >= count )
 					return;
 
-				PointPair pt = (PointPair)List[index];
+				PointPair pt = (PointPair)base[index];
 				pt.Y = Math.Sqrt( value.X * value.X + value.Y * value.Y );
 			}
+		}
+
+		/// <summary>
+		/// Get the raw data
+		/// </summary>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		private PointPair GetAt( int index )
+		{
+			return base[index];
 		}
 
 		/// <summary>
@@ -86,7 +96,7 @@ namespace ZedGraph
 		/// </summary>
 		public new int Count
 		{
-			get { return List.Count + 1; }
+			get { return base.Count + 1; }
 		}
 
 	#endregion
@@ -100,12 +110,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Constructor to initialize the RadarPointList from an array of doubles.
+		/// Copy Constructor
 		/// </summary>
 		public RadarPointList( RadarPointList rhs )
 		{
-			for ( int i = 0; i < rhs.List.Count; i++ )
-				this.Add( (PointPair) rhs.List[i] );
+			for ( int i = 0; i < rhs.Count; i++ )
+				this.Add( rhs.GetAt(i) );
 		}
 
 		/// <summary>
@@ -131,7 +141,8 @@ namespace ZedGraph
 	#endregion
 
 	#region Methods
-		/// <summary>
+/*
+ * /// <summary>
 		/// Add the specified PointPair to the collection.
 		/// </summary>
 		/// <param name="pt">The PointPair to be added</param>
@@ -151,7 +162,7 @@ namespace ZedGraph
 		{
 			return List.Add( new PointPair( PointPair.Missing, r ) );
 		}
-
+*/
 		/// <summary>
 		/// Add a single point to the <see cref="RadarPointList"/> from two values of type double.
 		/// </summary>
@@ -159,10 +170,9 @@ namespace ZedGraph
 		/// <param name="z">The 'Z' coordinate value, which is not normally used for plotting,
 		/// but can be used for <see cref="FillType.GradientByZ" /> type fills</param>
 		/// <returns>The zero-based ordinal index where the point was added in the list.</returns>
-		/// <seealso cref="IList.Add"/>
-		public int Add( double r, double z )
+		public void Add( double r, double z )
 		{
-			return List.Add( new PointPair( PointPair.Missing, r, z ) );
+			Add( new PointPair( PointPair.Missing, r, z ) );
 		}
 
 	#endregion

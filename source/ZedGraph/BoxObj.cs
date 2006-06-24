@@ -1,6 +1,6 @@
 ﻿//============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -29,48 +29,50 @@ namespace ZedGraph
 	/// <summary>
 	/// A class that represents a bordered and/or filled box (rectangle) object on
 	/// the graph.  A list of
-	/// BoxItem objects is maintained by the <see cref="GraphItemList"/> collection class.
+	/// BoxObj objects is maintained by the <see cref="GraphObjList"/> collection class.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2006-04-22 08:43:17 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
 	[Serializable]
-	public class BoxItem : GraphItem, ICloneable, ISerializable
+	public class BoxObj : GraphObj, ICloneable, ISerializable
 	{
 	#region Fields
+
 		/// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
-		/// <see cref="BoxItem"/>.  Use the public property <see cref="Fill"/> to
+		/// <see cref="BoxObj"/>.  Use the public property <see cref="Fill"/> to
 		/// access this value.
 		/// </summary>
-		protected Fill fill;
+		protected Fill _fill;
 		/// <summary>
 		/// Private field that determines the properties of the border around this
-		/// <see cref="BoxItem"/>
+		/// <see cref="BoxObj"/>
 		/// Use the public property <see cref="Border"/> to access this value.
 		/// </summary>
-		protected Border border;
+		protected Border _border;
+
 	#endregion
 
 	#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
-		/// default property values for the <see cref="ArrowItem"/> class.
+		/// default property values for the <see cref="ArrowObj"/> class.
 		/// </summary>
 		new public struct Default
 		{
 			/// <summary>
-			/// The default pen width used for the <see cref="BoxItem"/> border
+			/// The default pen width used for the <see cref="BoxObj"/> border
             /// (<see cref="ZedGraph.Border.PenWidth"/> property).  Units are points (1/72 inch).
             /// </summary>
 			public static float PenWidth = 1.0F;
 			/// <summary>
-			/// The default color used for the <see cref="BoxItem"/> border
+			/// The default color used for the <see cref="BoxObj"/> border
 			/// (<see cref="ZedGraph.Border.Color"/> property).
 			/// </summary>
 			public static Color BorderColor = Color.Black;
 			/// <summary>
-			/// The default color used for the <see cref="BoxItem"/> fill
+			/// The default color used for the <see cref="BoxObj"/> fill
 			/// (<see cref="ZedGraph.Fill.Color"/> property).
 			/// </summary>
 			public static Color FillColor = Color.White;
@@ -80,40 +82,45 @@ namespace ZedGraph
 	#region Properties
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
-		/// <see cref="BoxItem"/>.
+		/// <see cref="BoxObj"/>.
 		/// </summary>
 		public Fill	Fill
 		{
-			get { return fill; }
-			set { fill = value; }
+			get { return _fill; }
+			set { _fill = value; }
 		}
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Border"/> object, which
 		/// determines the properties of the border around this
-		/// <see cref="BoxItem"/>
+		/// <see cref="BoxObj"/>
 		/// </summary>
 		public Border Border
 		{
-			get { return border; }
-			set { border = value; }
+			get { return _border; }
+			set { _border = value; }
 		}
 	#endregion
 	
 	#region Constructors
-		/// <overloads>Constructors for the <see cref="BoxItem"/> object</overloads>
+		/// <overloads>Constructors for the <see cref="BoxObj"/> object</overloads>
 		/// <summary>
 		/// A constructor that allows the position, border color, and solid fill color
-		/// of the <see cref="BoxItem"/> to be pre-specified.
+		/// of the <see cref="BoxObj"/> to be pre-specified.
 		/// </summary>
 		/// <param name="borderColor">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the box border</param>
 		/// <param name="fillColor">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the box fill (will be a solid color fill)</param>
-		/// <param name="rect">The <see cref="RectangleF" /> struct that defines
-		/// the box.  This will be in units determined by
+		/// <param name="x">The x location for this <see cref="BoxObj" />.  This will be in units determined by
 		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
-		public BoxItem( RectangleF rect, Color borderColor, Color fillColor ) :
-				base( rect.Left, rect.Top, rect.Width, rect.Height )
+		/// <param name="y">The y location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="width">The width of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="height">The height of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		public BoxObj( double x, double y, double width, double height, Color borderColor, Color fillColor )
+			: base( x, y, width, height )
 		{
 			this.Border = new Border( borderColor, Default.PenWidth );
 			this.Fill = new Fill( fillColor );
@@ -121,31 +128,36 @@ namespace ZedGraph
 
 		/// <summary>
 		/// A constructor that allows the position
-		/// of the <see cref="BoxItem"/> to be pre-specified.  Other properties are defaulted.
+		/// of the <see cref="BoxObj"/> to be pre-specified.  Other properties are defaulted.
 		/// </summary>
-		/// <param name="rect">The <see cref="RectangleF"/> struct that defines
-		/// the box.  This will be in units determined by
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
-		/// </param>
-		public BoxItem( RectangleF rect ) :
-			base( rect.Left, rect.Top, rect.Width, rect.Height )
+		/// <param name="x">The x location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="y">The y location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="width">The width of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="height">The height of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		public BoxObj( double x, double y, double width, double height )
+			:
+			base( x, y, width, height )
 		{
 			this.Border = new Border( Default.BorderColor, Default.PenWidth );
 			this.Fill = new Fill( Default.FillColor );
 		}
 
 		/// <summary>
-		/// A default constructor that creates a <see cref="BoxItem"/> from a
-		/// <see cref="RectangleF"/> of (0,0,1,1).  Other properties are defaulted.
+		/// A default constructor that creates a <see cref="BoxObj"/> using a location of (0,0),
+		/// and a width,height of (1,1).  Other properties are defaulted.
 		/// </summary>
-		public BoxItem() : this( new RectangleF( 0, 0, 1, 1 ) )
+		public BoxObj() : this( 0, 0, 1, 1 )
 		{
 		}
 
 		/// <summary>
 		/// A constructor that allows the position, border color, and two-color
 		/// gradient fill colors
-		/// of the <see cref="BoxItem"/> to be pre-specified.
+		/// of the <see cref="BoxObj"/> to be pre-specified.
 		/// </summary>
 		/// <param name="borderColor">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the box border</param>
@@ -153,13 +165,17 @@ namespace ZedGraph
 		/// for the start of the box gradient fill</param>
 		/// <param name="fillColor2">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the end of the box gradient fill</param>
-		/// <param name="rect">The <see cref="RectangleF"/> struct that defines
-		/// the box.  This will be in units determined by
-		/// <see cref="ZedGraph.Location.CoordinateFrame"/>.
-		/// </param>
-		public BoxItem( RectangleF rect, Color borderColor,
+		/// <param name="x">The x location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="y">The y location for this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="width">The width of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		/// <param name="height">The height of this <see cref="BoxObj" />.  This will be in units determined by
+		/// <see cref="ZedGraph.Location.CoordinateFrame" />.</param>
+		public BoxObj( double x, double y, double width, double height, Color borderColor,
 							Color fillColor1, Color fillColor2 ) :
-				base( rect.Left, rect.Top, rect.Width, rect.Height )
+				base( x, y, width, height )
 		{
 			this.Border = new Border( borderColor, Default.PenWidth );
 			this.Fill = new Fill( fillColor1, fillColor2 );
@@ -168,8 +184,8 @@ namespace ZedGraph
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The <see cref="BoxItem"/> object from which to copy</param>
-		public BoxItem( BoxItem rhs ) : base( rhs )
+		/// <param name="rhs">The <see cref="BoxObj"/> object from which to copy</param>
+		public BoxObj( BoxObj rhs ) : base( rhs )
 		{
 			this.Border = rhs.Border.Clone();
 			this.Fill = rhs.Fill.Clone();
@@ -189,9 +205,9 @@ namespace ZedGraph
 		/// Typesafe, deep-copy clone method.
 		/// </summary>
 		/// <returns>A new, independent copy of this class</returns>
-		public BoxItem Clone()
+		public BoxObj Clone()
 		{
-			return new BoxItem( this );
+			return new BoxObj( this );
 		}
 
 	#endregion
@@ -200,7 +216,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -209,14 +225,14 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
-		protected BoxItem( SerializationInfo info, StreamingContext context ) : base( info, context )
+		protected BoxObj( SerializationInfo info, StreamingContext context ) : base( info, context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			fill = (Fill) info.GetValue( "fill", typeof(Fill) );
-			border = (Border) info.GetValue( "border", typeof(Border) );
+			_fill = (Fill) info.GetValue( "fill", typeof(Fill) );
+			_border = (Border) info.GetValue( "border", typeof(Border) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -228,8 +244,8 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "fill", fill );
-			info.AddValue( "border", border );
+			info.AddValue( "fill", _fill );
+			info.AddValue( "border", _border );
 		}
 	#endregion
 	
@@ -239,7 +255,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// This method is normally only called by the Draw method
-		/// of the parent <see cref="GraphItemList"/> collection object.
+		/// of the parent <see cref="GraphObjList"/> collection object.
 		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -267,16 +283,16 @@ namespace ZedGraph
 					Math.Abs( pixRect.Bottom ) < 100000 )
 			{
 				// If the box is to be filled, fill it
-				this.fill.Draw( g, pixRect );
-
+				_fill.Draw( g, pixRect );
+				
 				// Draw the border around the box if required
-				this.border.Draw( g, pane.IsPenWidthScaled, scaleFactor, pixRect );
+				_border.Draw( g, pane.IsPenWidthScaled, scaleFactor, pixRect );
 			}
 		}
 		
 		/// <summary>
 		/// Determine if the specified screen point lies inside the bounding box of this
-		/// <see cref="BoxItem"/>.
+		/// <see cref="BoxObj"/>.
 		/// </summary>
 		/// <param name="pt">The screen point, in pixels</param>
 		/// <param name="pane">
@@ -296,13 +312,31 @@ namespace ZedGraph
 		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
 		override public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor )
 		{
+			if ( ! base.PointInBox(pt, pane, g, scaleFactor ) )
+				return false;
+
 			// transform the x,y location from the user-defined
 			// coordinate frame to the screen pixel location
-			RectangleF pixRect = this.location.TransformRect( pane );
+			RectangleF pixRect = _location.TransformRect( pane );
 
 			return pixRect.Contains( pt );
 		}
-		
+
+		/// <summary>
+		/// Determines the shape type and Coords values for this GraphObj
+		/// </summary>
+		override public void GetCoords( PaneBase pane, Graphics g, float scaleFactor,
+				out string shape, out string coords )
+		{
+			// transform the x,y location from the user-defined
+			// coordinate frame to the screen pixel location
+			RectangleF pixRect = _location.TransformRect( pane );
+
+			shape = "rect";
+			coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+						pixRect.Left, pixRect.Top, pixRect.Right, pixRect.Bottom );
+		}
+
 	#endregion
 	
 	}

@@ -37,9 +37,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the titles and axis labels
-			myPane.Title = "Demo of BaseTic property";
-			myPane.XAxis.Title = "Time, Days";
-			myPane.YAxis.Title = "Widget Production (units/hour)";
+			myPane.Title.Text = "Demo of BaseTic property";
+			myPane.XAxis.Title.Text = "Time, Days";
+			myPane.YAxis.Title.Text = "Widget Production (units/hour)";
 
 			// Build a PointPairList with points based on Sine wave
 			PointPairList list = new PointPairList();
@@ -60,10 +60,10 @@ namespace ZedGraph.Demo
 			curve.Symbol.Size = 5;
 
 			// Make the XAxis start with the first label at 50
-			myPane.XAxis.BaseTic = 50;
+			myPane.XAxis.Scale.BaseTic = 50;
 			
 			// Fill the axis background with a gradient
-			myPane.AxisFill = new Fill( Color.White, Color.SteelBlue, 45.0F );
+			myPane.Chart.Fill = new Fill( Color.White, Color.SteelBlue, 45.0F );
 
 			base.ZedGraphControl.AxisChange();
 		}

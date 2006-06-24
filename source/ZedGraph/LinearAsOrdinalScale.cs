@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2005  John Champion
+//Copyright © 2005  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -40,15 +40,20 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.8 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 1.9 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
-	class LinearAsOrdinalScale : Scale, ISerializable, ICloneable
+	class LinearAsOrdinalScale : Scale, ISerializable //, ICloneable
 	{
 
 	#region constructors
 
-		public LinearAsOrdinalScale( Axis parentAxis )
-			: base( parentAxis )
+		/// <summary>
+		/// Default constructor that defines the owner <see cref="Axis" />
+		/// (containing object) for this new object.
+		/// </summary>
+		/// <param name="owner">The owner, or containing object, of this instance</param>
+		public LinearAsOrdinalScale( Axis owner )
+			: base( owner )
 		{
 		}
 
@@ -56,30 +61,24 @@ namespace ZedGraph
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The <see cref="LinearAsOrdinalScale" /> object from which to copy</param>
-		public LinearAsOrdinalScale( Scale rhs )
-			: base( rhs )
+		/// <param name="owner">The <see cref="Axis" /> object that will own the
+		/// new instance of <see cref="LinearAsOrdinalScale" /></param>
+		public LinearAsOrdinalScale( Scale rhs, Axis owner )
+			: base( rhs, owner )
 		{
 		}
+
 
 		/// <summary>
-		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
+		/// Create a new clone of the current item, with a new owner assignment
 		/// </summary>
-		/// <returns>A deep copy of this object</returns>
-		object ICloneable.Clone()
+		/// <param name="owner">The new <see cref="Axis" /> instance that will be
+		/// the owner of the new Scale</param>
+		/// <returns>A new <see cref="Scale" /> clone.</returns>
+		public override Scale Clone( Axis owner )
 		{
-			return this.Clone();
+			return new LinearAsOrdinalScale( this, owner );
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public LinearAsOrdinalScale Clone()
-		{
-			return new LinearAsOrdinalScale( this );
-		}
-
 	#endregion
 
 	#region properties
@@ -108,10 +107,10 @@ namespace ZedGraph
 		/// <para>On Exit:</para>
 		/// <para><see cref="Scale.Min"/> is set to scale minimum (if <see cref="Scale.MinAuto"/> = true)</para>
 		/// <para><see cref="Scale.Max"/> is set to scale maximum (if <see cref="Scale.MaxAuto"/> = true)</para>
-		/// <para><see cref="Scale.Step"/> is set to scale step size (if <see cref="Scale.StepAuto"/> = true)</para>
+		/// <para><see cref="Scale.MajorStep"/> is set to scale step size (if <see cref="Scale.MajorStepAuto"/> = true)</para>
 		/// <para><see cref="Scale.MinorStep"/> is set to scale minor step size (if <see cref="Scale.MinorStepAuto"/> = true)</para>
-		/// <para><see cref="Scale.ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="Scale.ScaleFormat"/> is set to the display format for the values (this controls the
+		/// <para><see cref="Scale.Mag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="Scale.Format"/> is set to the display format for the values (this controls the
 		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
@@ -143,12 +142,12 @@ namespace ZedGraph
 
 			foreach ( CurveItem curve in pane.CurveList )
 			{
-				if ( ( parentAxis is Y2Axis && curve.IsY2Axis ) ||
-						( parentAxis is YAxis && !curve.IsY2Axis ) ||
-						( parentAxis is XAxis ) )
+				if ( ( _ownerAxis is Y2Axis && curve.IsY2Axis ) ||
+						( _ownerAxis is YAxis && !curve.IsY2Axis ) ||
+						( _ownerAxis is XAxis ) )
 				{
 					curve.GetRange( out xMin, out xMax, out yMin, out yMax, false, false, pane );
-					if ( parentAxis is XAxis )
+					if ( _ownerAxis is XAxis )
 					{
 						tMin = xMin;
 						tMax = xMax;
@@ -182,30 +181,27 @@ namespace ZedGraph
 		/// cause the third value label on the axis to be generated.
 		/// </param>
 		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Axis.IsLog"/>)
-		/// and text (<see cref="Axis.IsText"/>) type axes.
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Scale.IsLog"/>)
+		/// and text (<see cref="Scale.IsText"/>) type axes.
 		/// </param>
-		/// <param name="label">
-		/// Output only.  The resulting value label.
-		/// </param>
-		override internal void MakeLabel( GraphPane pane, int index, double dVal, out string label )
+		/// <returns>The resulting value label as a <see cref="string" /></returns>
+		override internal string MakeLabel( GraphPane pane, int index, double dVal )
 		{
-			if ( this.scaleFormat == null )
-				this.scaleFormat = Scale.Default.ScaleFormat;
+			if ( _format == null )
+				_format = Scale.Default.Format;
 
 			double val;
 
 			int tmpIndex = (int) dVal - 1;
 
-			if ( tmpIndex >= 0 && pane.CurveList.Count > 0 &&
-						pane.CurveList[0].Points.Count > tmpIndex )
+			if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > tmpIndex )
 			{
 				val = pane.CurveList[0].Points[tmpIndex].X;
-				double scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
-				label = ( val / scaleMult ).ToString( this.scaleFormat );
+				double scaleMult = Math.Pow( (double) 10.0, _mag );
+				return ( val / scaleMult ).ToString( _format );
 			}
 			else
-				label = string.Empty;
+				return string.Empty;
 		}
 
 	#endregion
@@ -214,7 +210,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects

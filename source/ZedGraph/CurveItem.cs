@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 
 using System;
 using System.Drawing;
-using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
@@ -34,39 +34,34 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.33 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.34 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
 	
 	#region Fields
+
 		/// <summary>
-		/// protected field that stores a legend label string for this
-		/// <see cref="CurveItem"/>.  Use the public
+		/// protected field that stores a <see cref="Label" /> instance for this
+		/// <see cref="CurveItem"/>, which is used for the <see cref="Legend" />
+		/// label.  Use the public
 		/// property <see cref="Label"/> to access this value.
 		/// </summary>
-		protected string	label;
-
-		/// <summary>
-		/// protected field that stores the special <see cref="FontSpec" /> to be used for
-		/// the <see cref="Legend" /> entry of this <see cref="CurveItem" />.  Use the public
-		/// property <see cref="FontSpec" /> to access this value;
-		/// </summary>
-		protected FontSpec	fontSpec;
-
+		internal Label _label;
+	
 		/// <summary>
 		/// protected field that stores the boolean value that determines whether this
 		/// <see cref="CurveItem"/> is on the left Y axis or the right Y axis (Y2).
 		/// Use the public property <see cref="IsY2Axis"/> to access this value.
 		/// </summary>
-		protected bool		isY2Axis;
+		protected bool		_isY2Axis;
 
 		/// <summary>
 		/// protected field that stores the index number of the Y Axis to which this
 		/// <see cref="CurveItem" /> belongs.  Use the public property <see cref="YAxisIndex" />
 		/// to access this value.
 		/// </summary>
-		protected int		yAxisIndex;
+		protected int		_yAxisIndex;
 
 		/// <summary>
 		/// protected field that stores the boolean value that determines whether this
@@ -74,24 +69,15 @@ namespace ZedGraph
 		/// Use the public property <see cref="IsVisible"/> to access this value.
 		/// Note that this value turns the curve display on or off, but it does not
 		/// affect the display of the legend entry.  To hide the legend entry, you
-		/// have to set <see cref="IsLegendLabelVisible"/> to false.
+		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
 		/// </summary>
-		protected bool		isVisible;
+		protected bool		_isVisible;
 		/// <summary>
 		/// protected field that stores a boolean value which allows you to override the normal
 		/// ordinal axis behavior.  Use the public property <see cref="IsOverrideOrdinal"/> to
 		/// access this value.
 		/// </summary>
-		protected bool		isOverrideOrdinal;
-		/// <summary>
-		/// protected field that stores the boolean value that determines whether the label
-		/// for this <see cref="CurveItem"/> is visible in the legend.
-		/// Use the public property <see cref="IsLegendLabelVisible"/> to access this value.
-		/// Note that this value turns the legend entry display on or off, but it does not
-		/// affect the display of the curve on the graph.  To hide the curve, you
-		/// have to set <see cref="IsVisible"/> to false.
-		/// </summary>
-		protected bool		isLegendLabelVisible;
+		protected bool		_isOverrideOrdinal;
 		
 		/// <summary>
 		/// The <see cref="IPointList"/> of value sets that
@@ -103,7 +89,7 @@ namespace ZedGraph
 		/// and are not plotted.  The curve will have a break at these points
 		/// to indicate the values are missing.
 		/// </summary>
-		protected IPointList points;
+		protected IPointList _points;
 
 		/// <summary>
 		/// A tag object for use by the user.  This can be used to store additional
@@ -116,6 +102,11 @@ namespace ZedGraph
 		/// it will cause an exception).
 		/// </remarks>
 		public object Tag;
+
+		/// <summary>
+		/// Protected field that stores the hyperlink information for this object.
+		/// </summary>
+		internal Link _link;
 
 	#endregion
 	
@@ -137,7 +128,7 @@ namespace ZedGraph
 		{
 		}
 /*	
-		public CurveItem( string label, int  y ) : this(  label, new IPointList( ) )
+		public CurveItem( string _label, int  y ) : this(  _label, new IPointList( ) )
 		{
 		}
 */
@@ -156,10 +147,10 @@ namespace ZedGraph
 			Init( label );
 
 			if ( points == null )
-				this.points = new PointPairList();
+				_points = new PointPairList();
 			else
-				//this.points = (IPointList) points.Clone();
-				this.points = points;
+				//this.points = (IPointList) _points.Clone();
+				_points = points;
 		}
 		
 		/// <summary>
@@ -168,14 +159,13 @@ namespace ZedGraph
 		/// <param name="label">A string label (legend entry) for this curve</param>
 		private void Init( string label )
 		{
-			this.label = label == null ? "" : label;
-			this.fontSpec = null;
-			this.isY2Axis = false;
-			this.isVisible = true;
-			this.isLegendLabelVisible = true;
-			this.isOverrideOrdinal = false;
+			_label = new Label( label, null );
+			_isY2Axis = false;
+			_isVisible = true;
+			_isOverrideOrdinal = false;
 			this.Tag = null;
-			this.yAxisIndex = 0;
+			_yAxisIndex = 0;
+			_link = new Link();
 		}
 			
 		/// <summary>
@@ -200,24 +190,20 @@ namespace ZedGraph
 		/// <param name="rhs">The CurveItem object from which to copy</param>
 		public CurveItem( CurveItem rhs )
 		{
-			label = rhs.Label;
-			isY2Axis = rhs.IsY2Axis;
-			isVisible = rhs.IsVisible;
-			isLegendLabelVisible = rhs.IsLegendLabelVisible;
-			isOverrideOrdinal = rhs.isOverrideOrdinal;
-			yAxisIndex = rhs.yAxisIndex;
-
-			if ( rhs.fontSpec != null )
-				this.fontSpec = rhs.fontSpec.Clone();
-			else
-				this.fontSpec = null;
+			_label = rhs._label.Clone();
+			_isY2Axis = rhs.IsY2Axis;
+			_isVisible = rhs.IsVisible;
+			_isOverrideOrdinal = rhs._isOverrideOrdinal;
+			_yAxisIndex = rhs._yAxisIndex;
 
 			if ( rhs.Tag is ICloneable )
 				this.Tag = ((ICloneable) rhs.Tag).Clone();
 			else
 				this.Tag = rhs.Tag;
 			
-			this.points = (IPointList) rhs.Points.Clone();
+			_points = (IPointList) rhs.Points.Clone();
+
+			_link = rhs._link.Clone();
 		}
 
 		/// <summary>
@@ -248,10 +234,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		// Increased schema to 2 when IsOverrideOrdinal was added.
-		// Increased schema to 3 when FontSpec was added.
-		// Increased schema to 4 when YAxisIndex was added.
-		public const int schema = 4;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -266,25 +249,21 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			label = info.GetString( "label" );
-			isY2Axis = info.GetBoolean( "isY2Axis" );
-			isVisible = info.GetBoolean( "isVisible" );
-			isLegendLabelVisible = info.GetBoolean( "isLegendLabelVisible" );
+			_label = (Label) info.GetValue( "label", typeof(Label) );
+			_isY2Axis = info.GetBoolean( "isY2Axis" );
+			_isVisible = info.GetBoolean( "isVisible" );
 
-			if ( sch >= 2 )
-				isOverrideOrdinal = info.GetBoolean( "isOverrideOrdinal" );
+			_isOverrideOrdinal = info.GetBoolean( "isOverrideOrdinal" );
 
 			// Data Points are always stored as a PointPairList, regardless of the
 			// actual original type (which could be anything that supports IPointList).
-			points = (PointPairList) info.GetValue( "points", typeof(PointPairList) );
+			_points = (PointPairList) info.GetValue( "points", typeof(PointPairList) );
 
 			Tag = info.GetValue( "Tag", typeof(object) );
 
-			if ( sch >= 3 )
-				fontSpec = (FontSpec) info.GetValue( "fontSpec", typeof(FontSpec) );
+			_yAxisIndex = info.GetInt32( "yAxisIndex" );
 
-			if ( sch >= 4 )
-				yAxisIndex = info.GetInt32( "yAxisIndex" );
+			_link = (Link) info.GetValue( "link", typeof(Link) );
 
 		}
 		/// <summary>
@@ -296,54 +275,36 @@ namespace ZedGraph
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
-			info.AddValue( "label", label );
-			info.AddValue( "isY2Axis", isY2Axis );
-			info.AddValue( "isVisible", isVisible );
-			info.AddValue( "isLegendLabelVisible", isLegendLabelVisible );
-			info.AddValue( "isOverrideOrdinal", isOverrideOrdinal );
+			info.AddValue( "label", _label );
+			info.AddValue( "isY2Axis", _isY2Axis );
+			info.AddValue( "isVisible", _isVisible );
+			info.AddValue( "isOverrideOrdinal", _isOverrideOrdinal );
 
 			// if points is already a PointPairList, use it
 			// otherwise, create a new PointPairList so it can be serialized
 			PointPairList list;
-			if ( points is PointPairList )
-				list = points as PointPairList;
+			if ( _points is PointPairList )
+				list = _points as PointPairList;
 			else
-				list = new PointPairList( points );
+				list = new PointPairList( _points );
 
 			info.AddValue( "points", list );
 			info.AddValue( "Tag", Tag );
-			info.AddValue( "fontSpec", fontSpec );
-			info.AddValue( "yAxisIndex", yAxisIndex );
+			info.AddValue( "yAxisIndex", _yAxisIndex );
+
+			info.AddValue( "link", _link );
 		}
 	#endregion
 	
 	#region Properties
 		/// <summary>
-		/// A text string that represents the <see cref="ZedGraph.Legend"/>
-		/// entry for the this
-		/// <see cref="CurveItem"/> object
+		/// A <see cref="Label" /> instance that represents the <see cref="ZedGraph.Legend"/>
+		/// entry for the this <see cref="CurveItem"/> object
 		/// </summary>
-		/// <seealso cref="CurveItem.FontSpec" />
-		public string Label
+		public Label Label
 		{
-			get { return label; }
-			set { label = value;}
-		}
-
-		/// <summary>
-		/// Gets or sets the special <see cref="FontSpec" /> to be used for
-		/// the <see cref="Legend" /> entry of this <see cref="CurveItem" />.
-		/// </summary>
-		/// <remarks>
-		/// This property defaults to null, indicating that the legend entry will use the
-		/// default <see cref="FontSpec" /> as defined for the <see cref="Legend" /> object.
-		/// If this property is non-null, then the special font will be used to draw the
-		/// legend label for this <see cref="CurveItem" />.
-		/// </remarks>
-		public FontSpec	FontSpec
-		{
-			get { return fontSpec; }
-			set { fontSpec = value; }
+			get { return _label; }
+			set { _label = value;}
 		}
 
 		/// <summary>
@@ -363,7 +324,7 @@ namespace ZedGraph
 				else if ( this is LineItem )
 					return ((LineItem) this).Symbol.Border.Color;
 				else if ( this is ErrorBarItem )
-					return ((ErrorBarItem) this).ErrorBar.Color;
+					return ((ErrorBarItem) this).Bar.Color;
 				else if ( this is HiLowBarItem )
 					return ((HiLowBarItem) this).Bar.Fill.Color;
 				else
@@ -382,7 +343,7 @@ namespace ZedGraph
 					((LineItem) this).Symbol.Fill.Color		= value;
 				}
 				else if ( this is ErrorBarItem )
-					((ErrorBarItem) this).ErrorBar.Color = value;
+					((ErrorBarItem) this).Bar.Color = value;
 				else if ( this is HiLowBarItem )
 					((HiLowBarItem) this).Bar.Fill.Color = value;
 			}
@@ -392,23 +353,12 @@ namespace ZedGraph
 		/// Determines whether this <see cref="CurveItem"/> is visible on the graph.
 		/// Note that this value turns the curve display on or off, but it does not
 		/// affect the display of the legend entry.  To hide the legend entry, you
-		/// have to set <see cref="IsLegendLabelVisible"/> to false.
+		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
 		/// </summary>
 		public bool IsVisible
 		{
-			get { return isVisible; }
-			set { isVisible = value; }
-		}
-		/// <summary>
-		/// Determines whether the label for this <see cref="CurveItem"/> is visible in the legend.
-		/// Note that this value turns the legend entry display on or off, but it does not
-		/// affect the display of the curve on the graph.  To hide the curve, you
-		/// have to set <see cref="IsVisible"/> to false.
-		/// </summary>
-		public bool IsLegendLabelVisible
-		{
-			get { return isLegendLabelVisible; }
-			set { isLegendLabelVisible = value; }
+			get { return _isVisible; }
+			set { _isVisible = value; }
 		}
 
 		/// <summary>
@@ -426,8 +376,8 @@ namespace ZedGraph
 		/// <seealso cref="AxisType.Text"/>
 		public bool IsOverrideOrdinal
 		{
-			get { return isOverrideOrdinal; }
-			set { isOverrideOrdinal = value; }
+			get { return _isOverrideOrdinal; }
+			set { _isOverrideOrdinal = value; }
 		}
 
 		/// <summary>
@@ -446,8 +396,8 @@ namespace ZedGraph
 		/// false to assign the curve to the <see cref="ZedGraph.YAxis"/></value>
 		public bool IsY2Axis
 		{
-			get { return isY2Axis; }
-			set { isY2Axis = value; }
+			get { return _isY2Axis; }
+			set { _isY2Axis = value; }
 		}
 		
 		/// <summary>
@@ -461,8 +411,8 @@ namespace ZedGraph
 		/// </remarks>
 		public int YAxisIndex
 		{
-			get { return yAxisIndex; }
-			set { yAxisIndex = value; }
+			get { return _yAxisIndex; }
+			set { _yAxisIndex = value; }
 		}
 
 		/// <summary>
@@ -521,10 +471,10 @@ namespace ZedGraph
 		{
 			get 
 			{
-				if ( this.points == null )
+				if ( _points == null )
 					return 0;
 				else
-					return this.points.Count;
+					return _points.Count;
 			}
 		}
 		
@@ -534,8 +484,8 @@ namespace ZedGraph
 		/// </summary>
 		public IPointList Points
 		{
-			get { return points; }
-			set { points = value; }
+			get { return _points; }
+			set { _points = value; }
 		}
 
 		/// <summary>
@@ -546,12 +496,23 @@ namespace ZedGraph
 		{
 			get
 			{
-				if ( this.points == null )
+				if ( _points == null )
 					return new PointPair( PointPair.Missing, PointPair.Missing );
 				else
-					return ( this.points )[index];
+					return ( _points )[index];
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets the hyperlink information for this <see cref="CurveItem" />.
+		/// </summary>
+		// /// <seealso cref="ZedGraph.Web.IsImageMap" />
+		public Link Link
+		{
+			get { return _link; }
+			set { _link = value; }
+		}
+
 	#endregion
 	
 	#region Rendering Methods
@@ -628,11 +589,11 @@ namespace ZedGraph
 		/// be added</param>
 		public void AddPoint( PointPair point )
 		{
-			if ( this.points == null )
+			if ( _points == null )
 				this.Points = new PointPairList();
 
-			if ( this.points is IPointListEdit )
-				( points as IPointListEdit ).Add( point );
+			if ( _points is IPointListEdit )
+				( _points as IPointListEdit ).Add( point );
 			else
 				throw new NotImplementedException();
 		}
@@ -648,8 +609,8 @@ namespace ZedGraph
 		/// </remarks>
 		public void Clear()
 		{
-			if ( this.points is IPointListEdit )
-				(points as IPointListEdit).Clear();
+			if ( _points is IPointListEdit )
+				(_points as IPointListEdit).Clear();
 			else
 				throw new NotImplementedException();
 		}
@@ -665,8 +626,8 @@ namespace ZedGraph
 		/// <param name="index">The ordinal position of the point to be removed.</param>
 		public void RemovePoint( int index )
 		{
-			if ( this.points is IPointListEdit )
-				(points as IPointListEdit).Remove( index );
+			if ( _points is IPointListEdit )
+				(_points as IPointListEdit).RemoveAt( index );
 			else
 				throw new NotImplementedException();
 		}
@@ -688,10 +649,20 @@ namespace ZedGraph
 		/// </returns>
 		public Axis GetYAxis( GraphPane pane )
 		{
-			if ( this.isY2Axis )
-				return pane.Y2AxisList[ yAxisIndex ];
+			if ( _isY2Axis )
+			{
+				if ( _yAxisIndex < pane.Y2AxisList.Count )
+					return pane.Y2AxisList[_yAxisIndex];
+				else
+					return pane.Y2AxisList[0];
+			}
 			else
-				return pane.YAxisList[ yAxisIndex ];
+			{
+				if ( _yAxisIndex < pane.YAxisList.Count )
+					return pane.YAxisList[_yAxisIndex];
+				else
+					return pane.YAxisList[0];
+			}
 		}
 
 		/// <summary>
@@ -710,9 +681,9 @@ namespace ZedGraph
 		/// </returns>
 		public int GetYAxisIndex( GraphPane pane )
 		{
-			if ( yAxisIndex >= 0 &&
-					yAxisIndex < ( this.isY2Axis ? pane.Y2AxisList.Count : pane.YAxisList.Count ) )
-				return yAxisIndex;
+			if ( _yAxisIndex >= 0 &&
+					_yAxisIndex < ( _isY2Axis ? pane.Y2AxisList.Count : pane.YAxisList.Count ) )
+				return _yAxisIndex;
 			else
 				return 0;
 		}
@@ -756,8 +727,8 @@ namespace ZedGraph
 		/// affects the data range that is considered for the automatic scale
 		/// ranging (see <see cref="GraphPane.IsIgnoreInitial"/>).  If true, then initial
 		/// data points where the Y value is zero are not included when
-		/// automatically determining the scale <see cref="Axis.Min"/>,
-		/// <see cref="Axis.Max"/>, and <see cref="Axis.Step"/> size.  All data after
+		/// automatically determining the scale <see cref="Scale.Min"/>,
+		/// <see cref="Scale.Max"/>, and <see cref="Scale.MajorStep"/> size.  All data after
 		/// the first non-zero Y value are included.
 		/// </param>
 		/// <param name="isBoundedRanges">
@@ -784,26 +755,28 @@ namespace ZedGraph
 			double yLBound = double.MinValue;
 			double yUBound = double.MaxValue;
 
+			// initialize the values to outrageous ones to start
+			xMin = yMin = Double.MaxValue;
+			xMax = yMax = Double.MinValue;
+
 			Axis yAxis = this.GetYAxis( pane );
+			if ( yAxis == null )
+				return;
 
 			if ( isBoundedRanges )
 			{
-				xLBound = pane.XAxis.scale.lBound;
-				xUBound = pane.XAxis.scale.uBound;
-				yLBound = yAxis.scale.lBound;
-				yUBound = yAxis.scale.uBound;
+				xLBound = pane.XAxis._scale._lBound;
+				xUBound = pane.XAxis._scale._uBound;
+				yLBound = yAxis._scale._lBound;
+				yUBound = yAxis._scale._uBound;
 			}
 
 
 			bool isZIncluded = this.IsZIncluded( pane );
 			bool isXIndependent = this.IsXIndependent( pane );
-			bool isXLog = pane.XAxis.IsLog;
-			bool isYLog = yAxis.IsLog;
+			bool isXLog = pane.XAxis.Scale.IsLog;
+			bool isYLog = yAxis.Scale.IsLog;
 
-			// initialize the values to outrageous ones to start
-			xMin = yMin = Double.MaxValue;
-			xMax = yMax = Double.MinValue;
-		
 			// Loop over each point in the arrays
 			//foreach ( PointPair point in this.Points )
 			for ( int i=0; i<this.Points.Count; i++ )
@@ -861,10 +834,10 @@ namespace ZedGraph
 		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "base"
 		/// (independent axis) from which the values are drawn. </summary>
 		/// <remarks>
-		/// This property is determined by the value of <see cref="GraphPane.BarBase"/> for
+		/// This property is determined by the value of <see cref="BarSettings.Base"/> for
 		/// <see cref="BarItem"/>, <see cref="ErrorBarItem"/>, and <see cref="HiLowBarItem"/>
 		/// types.  It is always the X axis for regular <see cref="LineItem"/> types.
-		/// Note that the <see cref="GraphPane.BarBase" /> setting can override the
+		/// Note that the <see cref="BarSettings.Base" /> setting can override the
 		/// <see cref="IsY2Axis" /> and <see cref="YAxisIndex" /> settings for bar types
 		/// (this is because all the bars that are clustered together must share the
 		/// same base axis).
@@ -876,7 +849,7 @@ namespace ZedGraph
 			BarBase barBase;
 
 			if ( this is BarItem || this is ErrorBarItem || this is HiLowBarItem )
-				barBase = pane.BarBase;
+				barBase = pane._barSettings.Base;
 			else
 				barBase = BarBase.X;
 
@@ -891,7 +864,7 @@ namespace ZedGraph
 		/// <summary>Returns a reference to the <see cref="Axis"/> object that is the "value"
 		/// (dependent axis) from which the points are drawn. </summary>
 		/// <remarks>
-		/// This property is determined by the value of <see cref="GraphPane.BarBase"/> for
+		/// This property is determined by the value of <see cref="BarSettings.Base"/> for
 		/// <see cref="BarItem"/>, <see cref="ErrorBarItem"/>, and <see cref="HiLowBarItem"/>
 		/// types.  It is always the Y axis for regular <see cref="LineItem"/> types.
 		/// </remarks>
@@ -902,7 +875,7 @@ namespace ZedGraph
 			BarBase barBase;
 
 			if ( this is BarItem || this is ErrorBarItem || this is HiLowBarItem )
-				barBase = pane.BarBase;
+				barBase = pane._barSettings.Base;
 			else
 				barBase = BarBase.X;
 
@@ -939,22 +912,25 @@ namespace ZedGraph
 			float barWidth;
 
 			if ( this is ErrorBarItem )
-				barWidth = (float) ( ((ErrorBarItem)this).ErrorBar.Symbol.Size *
+				barWidth = (float) ( ((ErrorBarItem)this).Bar.Symbol.Size *
 						pane.CalcScaleFactor() );
 			else if ( this is HiLowBarItem )
-				barWidth = (float) ( ((HiLowBarItem)this).Bar.GetBarWidth( pane,
-						((HiLowBarItem)this).BaseAxis(pane), pane.CalcScaleFactor() ) );
+//				barWidth = (float) ( ((HiLowBarItem)this).Bar.GetBarWidth( pane,
+//						((HiLowBarItem)this).BaseAxis(pane), pane.CalcScaleFactor() ) );
+				barWidth = (float) ( ((HiLowBarItem)this).Bar.Size *
+						pane.CalcScaleFactor() );
 			else // BarItem or LineItem
 			{
 				// For stacked bar types, the bar width will be based on a single bar
 				float numBars = 1.0F;
-				if ( pane.BarType == BarType.Cluster || pane.BarType == BarType.ClusterHiLow )
+				if ( pane._barSettings.Type == BarType.Cluster || pane._barSettings.Type == BarType.ClusterHiLow )
 					numBars = pane.CurveList.NumBars;
-					
-				float denom = numBars * ( 1.0F + pane.MinBarGap ) - pane.MinBarGap + pane.MinClusterGap;
+
+				float denom = numBars * ( 1.0F + pane._barSettings.MinBarGap ) -
+							pane._barSettings.MinBarGap + pane._barSettings.MinClusterGap;
 				if ( denom <= 0 )
 					denom = 1;
-				barWidth = pane.GetClusterWidth() / denom;
+				barWidth = pane.BarSettings.GetClusterWidth() / denom;
 			}
 
 			if ( barWidth <= 0 )
@@ -962,17 +938,27 @@ namespace ZedGraph
 
 			return barWidth;
 		}
-		
+
+		/// <summary>
+		/// Determine the coords for the rectangle associated with a specified point for 
+		/// this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> to which this curve belongs</param>
+		/// <param name="i">The index of the point of interest</param>
+		/// <param name="coords">A list of coordinates that represents the "rect" for
+		/// this point (used in an html AREA tag)</param>
+		/// <returns>true if it's a valid point, false otherwise</returns>
+		abstract public bool GetCoords( GraphPane pane, int i, out string coords );
 
 	#endregion
 	
-	#region Inner classes	
+	#region Inner classes
 		/// <summary>
 		/// Compares <see cref="CurveItem"/>'s based on the point value at the specified
 		/// index and for the specified axis.
 		/// <seealso cref="System.Collections.ArrayList.Sort()"/>
 		/// </summary>
-		public class Comparer : IComparer 
+		public class Comparer : IComparer<CurveItem>
 		{
 			private int index;
 			private SortType sortType;
@@ -995,7 +981,7 @@ namespace ZedGraph
 			/// <param name="l">Curve to the left.</param>
 			/// <param name="r">Curve to the right.</param>
 			/// <returns>-1, 0, or 1 depending on l.X's relation to r.X</returns>
-			int IComparer.Compare( object l, object r ) 
+			public int Compare( CurveItem l, CurveItem r ) 
 			{
 				if (l == null && r == null )
 					return 0;
@@ -1004,24 +990,22 @@ namespace ZedGraph
 				else if (l != null && r == null) 
 					return 1;
 
-				CurveItem lc = (CurveItem) l;
-				CurveItem rc = (CurveItem) r;
-				if ( rc != null && rc.NPts <= index )
+				if ( r != null && r.NPts <= index )
 					r = null;
-				if ( lc != null && lc.NPts <= index )
+				if ( l != null && l.NPts <= index )
 					l = null;
 						
 				double lVal, rVal;
 
 				if ( sortType == SortType.XValues )
 				{
-					lVal = System.Math.Abs( lc[index].X );
-					rVal = System.Math.Abs( rc[index].X );
+					lVal = System.Math.Abs( l[index].X );
+					rVal = System.Math.Abs( r[index].X );
 				}
 				else
 				{
-					lVal = System.Math.Abs( lc[index].Y );
-					rVal = System.Math.Abs( rc[index].Y );
+					lVal = System.Math.Abs( l[index].Y );
+					rVal = System.Math.Abs( r[index].Y );
 				}
 				
 				if ( lVal == PointPair.Missing || Double.IsInfinity( lVal ) || Double.IsNaN( lVal ) )

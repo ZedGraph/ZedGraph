@@ -1,6 +1,6 @@
 ﻿//============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
 #region Using directives
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -34,9 +34,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.5 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
-	public class PaneList : CollectionPlus, ICloneable
+	public class PaneList : List<GraphPane>, ICloneable
 	{
 
 	#region Constructors
@@ -86,7 +86,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -114,7 +114,7 @@ namespace ZedGraph
 	#endregion
 
 	#region List Methods
-		/// <summary>
+/*		/// <summary>
 		/// Indexer to access the specified <see cref="GraphPane"/> object by
 		/// its ordinal position in the list.
 		/// </summary>
@@ -126,7 +126,7 @@ namespace ZedGraph
 			get { return( (GraphPane) List[index] ); }
 			set { List[index] = value; }
 		}
-
+*/
 		/// <summary>
 		/// Indexer to access the specified <see cref="GraphPane"/> object by
 		/// its <see cref="PaneBase.Title"/> string.
@@ -140,12 +140,12 @@ namespace ZedGraph
 			{
 				int index = IndexOf( title );
 				if ( index >= 0 )
-					return( (GraphPane) List[index]  );
+					return( (GraphPane) this[index]  );
 				else
 					return null;
 			}
 		}
-
+/*
 		/// <summary>
 		/// Add a <see cref="GraphPane"/> object to the collection at the end of the list.
 		/// </summary>
@@ -180,7 +180,7 @@ namespace ZedGraph
 		{
 			List.Insert( index, pane );
 		}
-
+*/
 		/// <summary>
 		/// Return the zero-based position index of the
 		/// <see cref="GraphPane"/> with the specified <see cref="PaneBase.Title"/>.
@@ -192,14 +192,13 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="GraphPane"/>,
 		/// or -1 if the <see cref="PaneBase.Title"/> was not found in the list</returns>
-		/// <seealso cref="IList.IndexOf"/>
 		/// <seealso cref="IndexOfTag"/>
 		public int IndexOf( string title )
 		{
 			int index = 0;
 			foreach ( GraphPane pane in this )
 			{
-				if ( String.Compare( pane.Title, title, true ) == 0 )
+				if ( String.Compare( pane.Title.Text, title, true ) == 0 )
 					return index;
 				index++;
 			}
@@ -218,8 +217,6 @@ namespace ZedGraph
 		/// </param>
 		/// <returns>The zero-based index of the specified <see cref="GraphPane"/>,
 		/// or -1 if the <see cref="PaneBase.Tag"/> string is not in the list</returns>
-		/// <seealso cref="IList.IndexOf"/>
-		/// <seealso cref="IndexOf"/>
 		public int IndexOfTag( string tagStr )
 		{
 			int index = 0;

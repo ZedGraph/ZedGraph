@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -35,67 +35,64 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.62 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.63 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
-		#region Class Fields
+
+	#region Class Fields
 
 		/// <summary>
 		/// private field that stores the <see cref="ZedGraph.Scale" /> class, which implements all the
 		/// calculations and methods associated with the numeric scale for this
 		/// <see cref="Axis" />.  See the public property <see cref="Scale" /> to access this class.
 		/// </summary>
-		internal Scale scale;
+		internal Scale _scale;
+
+		/// <summary>
+		/// Private field that stores the <see cref="ZedGraph.MinorTic" /> class, which handles all
+		/// the minor tic information.  See the public property <see cref="MinorTic" /> to access this class.
+		/// </summary>
+		internal MinorTic _minorTic;
+		/// <summary>
+		/// Private field that stores the <see cref="ZedGraph.MajorTic" /> class, which handles all
+		/// the major tic information.  See the public property <see cref="MajorTic" /> to access this class.
+		/// </summary>
+		internal MajorTic _majorTic;
+
+		/// <summary>
+		/// Private field that stores the <see cref="ZedGraph.MajorGrid" /> class, which handles all
+		/// the major grid information.  See the public property <see cref="MajorGrid" /> to access this class.
+		/// </summary>
+		internal MajorGrid	_majorGrid;
+		/// <summary>
+		/// Private field that stores the <see cref="ZedGraph.MinorGrid" /> class, which handles all
+		/// the minor grid information.  See the public property <see cref="MinorGrid" /> to access this class.
+		/// </summary>
+		internal MinorGrid _minorGrid;
 
 		/// <summary> Private fields for the <see cref="Axis"/> scale rendering properties.
-		/// Use the public properties <see cref="Cross"/> and <see cref="BaseTic"/>
+		/// Use the public properties <see cref="Cross"/> and <see cref="ZedGraph.Scale.BaseTic"/>
 		/// for access to these values.
 		/// </summary>
-		protected double cross;
+		internal double _cross;
 
 		/// <summary> Private field for the <see cref="Axis"/> automatic cross position mode.
 		/// Use the public property <see cref="CrossAuto"/> for access to this value.
 		/// </summary>
-		protected bool crossAuto;
+		internal bool _crossAuto;
 
 		/// <summary> Private fields for the <see cref="Axis"/> attributes.
-		/// Use the public properties <see cref="IsVisible"/>, <see cref="IsShowGrid"/>,
-		/// <see cref="IsShowMinorGrid"/>, <see cref="IsZeroLine"/>,  <see cref="IsShowTitle"/>,
-		/// <see cref="IsTic"/>, <see cref="IsInsideTic"/>, <see cref="IsOppositeTic"/>,
-		/// <see cref="IsMinorTic"/>, <see cref="IsMinorInsideTic"/>,
-		/// <see cref="IsMinorOppositeTic"/>, <see cref="IsTicsBetweenLabels"/> and
-		/// <see cref="IsOmitMag"/> for access to these values.
+		/// Use the public properties <see cref="IsVisible"/>, <see cref="IsAxisSegmentVisible"/>
+		/// for access to these values.
 		/// </summary>
-		protected bool isVisible,
-							isShowGrid,
-							isShowTitle,
-							isZeroLine,
-							isTic,
-							isInsideTic,
-							isOppositeTic,
-							isMinorTic,
-							isShowMinorGrid,
-							isMinorInsideTic,
-							isMinorOppositeTic,
-							isCrossTic,
-							isInsideCrossTic,
-							isMinorCrossTic,
-							isMinorInsideCrossTic,
-							isTicsBetweenLabels,
-							isOmitMag,
-							isScaleVisible,
-							isAxisSegmentVisible,
-							isScaleLabelsInside,
-							isSkipFirstLabel,
-							isSkipLastLabel,
-							isSkipCrossLabel,
-							isTitleAtCross;
+		protected bool _isVisible,
+							_isAxisSegmentVisible;
 
 		/// <summary> Private field for the <see cref="Axis"/> title string.
-		/// Use the public property <see cref="Title"/>
-		/// for access to this value. </summary>
-		protected string title;
+		/// Use the public property <see cref="Title"/> for access to this value.
+		/// </summary>
+		protected AxisLabel _title;
 
 		/// <summary>
 		/// A tag object for use by the user.  This can be used to store additional
@@ -109,422 +106,139 @@ namespace ZedGraph
 		/// </remarks>
 		public object Tag;
 
-		/// <summary> Private field for the alignment of the <see cref="Axis"/> tic labels.
-		/// This fields controls whether the inside, center, or outside edges of the text labels are aligned.
-		/// Use the public property <see cref="ScaleAlign"/>
-		/// for access to this value. </summary>
-		/// <seealso cref="ScaleFormatAuto"/>
-		private AlignP scaleAlign;
-
-		/// <summary> Private fields for the <see cref="Axis"/> font specificatios.
-		/// Use the public properties <see cref="TitleFontSpec"/> and
-		/// <see cref="ScaleFontSpec"/> for access to these values. </summary>
-		protected FontSpec titleFontSpec,
-									scaleFontSpec;
-
-		/// <summary> Private fields for the <see cref="Axis"/> drawing dimensions.
-		/// Use the public properties <see cref="TicPenWidth"/>, <see cref="TicSize"/>,
-		/// <see cref="MinorTicSize"/>,
-		/// <see cref="GridDashOn"/>, <see cref="GridDashOff"/>,
-		/// <see cref="GridPenWidth"/>,
-		/// <see cref="MinorGridDashOn"/>, <see cref="MinorGridDashOff"/>,
-		/// and <see cref="MinorGridPenWidth"/> for access to these values. </summary>
-		private float ticPenWidth,
-							ticSize,
-							minorTicSize,
-							gridDashOn,
-							gridDashOff,
-							gridPenWidth,
-							minorGridDashOn,
-							minorGridDashOff,
-							minorGridPenWidth,
-							axisGap;
+		/// <summary> Private field for the <see cref="Axis"/> drawing dimensions.
+		/// Use the public property <see cref="AxisGap"/>
+		/// for access to these values. </summary>
+		private float	_axisGap;
 
 		/// <summary>
 		/// Private field for the <see cref="Axis"/> minimum allowable space allocation.
 		/// Use the public property <see cref="MinSpace"/> to access this value.
 		/// </summary>
 		/// <seealso cref="Default.MinSpace"/>
-		private float minSpace;
+		private float _minSpace;
 
 		/// <summary> Private fields for the <see cref="Axis"/> colors.
-		/// Use the public properties <see cref="Color"/> and
-		/// <see cref="GridColor"/> for access to these values. </summary>
-		private Color color,
-							gridColor,
-							minorGridColor;
+		/// Use the public property <see cref="Color"/> for access to this values.
+		/// </summary>
+		private Color _color;
 
 		/// <summary>
 		/// Temporary values for axis space calculations (see <see cref="CalcSpace" />).
 		/// </summary>
-		internal float tmpSpace;
-		//tmpMinSpace,
+		internal float _tmpSpace;
 
+	#endregion
 
-		#endregion
+	#region Events
 
-		#region Defaults
+		/// <summary>
+		/// A delegate that allows full custom formatting of the Axis labels
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> for which the label is to be
+		/// formatted</param>
+		/// <param name="axis">The <see cref="Scale" /> of interest.</param>
+		/// <param name="val">The value to be formatted</param>
+		/// <param name="index">The zero-based index of the label to be formatted</param>
+		/// <returns>
+		/// A string value representing the label, or null if the ZedGraph should go ahead
+		/// and generate the label according to the current settings</returns>
+		/// <seealso cref="ScaleFormatEvent" />
+		public delegate string ScaleFormatHandler( GraphPane pane, Axis axis, double val, int index );
+
+		/// <summary>
+		/// Subscribe to this event to handle custom formatting of the scale labels.
+		/// </summary>
+		public event ScaleFormatHandler ScaleFormatEvent;
+
+	#endregion
+
+	#region Defaults
+
 		/// <summary>
 		/// A simple struct that defines the
 		/// default property values for the <see cref="Axis"/> class.
 		/// </summary>
 		public struct Default
 		{
-			// Default Axis Properties
-			/// <summary>
-			/// The default size for the <see cref="Axis"/> tic marks.
-			/// (<see cref="Axis.TicSize"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float TicSize = 5;
-			/// <summary>
-			/// The default size for the <see cref="Axis"/> minor tic marks.
-			/// (<see cref="Axis.MinorTicSize"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float MinorTicSize = 2.5F;
-			/// <summary>
-			/// The default pen width for drawing the <see cref="Axis"/> tic marks.
-			/// (<see cref="Axis.TicPenWidth"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float TicPenWidth = 1.0F;
 			/// <summary>
 			/// The default size for the gap between multiple axes
 			/// (<see cref="Axis.AxisGap"/> property). Units are in points (1/72 inch).
 			/// </summary>
 			public static float AxisGap = 5;
-			/// <summary>
-			/// Determines the size of the band at the beginning and end of the axis that will have labels
-			/// omitted if the axis is shifted due to a non-default location using the <see cref="Axis.Cross"/>
-			/// property.
-			/// </summary>
-			/// <remarks>
-			/// This parameter applies only when <see cref="CrossAuto"/> is false.  It is scaled according
-			/// to the size of the graph based on <see cref="PaneBase.BaseDimension"/>.  When a non-default
-			/// axis location is selected, the first and last labels on that axis will overlap the opposing
-			/// axis frame.  This parameter allows those labels to be omitted to avoid the overlap.  Set this
-			/// parameter to zero to turn off the effect.
-			/// </remarks>
-			public static float EdgeTolerance = 6;
-			/// <summary> The default alignment of the <see cref="Axis"/> tic labels.
-			/// This value controls whether the inside, center, or outside edges of the text labels are aligned.
-			/// </summary>
-			/// <seealso cref="Axis.ScaleAlign"/>
-			public static AlignP ScaleAlign = AlignP.Center;
-			/// <summary>
-			/// The default font family for the <see cref="Axis"/> scale values
-			/// font specification <see cref="Axis.ScaleFontSpec"/>
-			/// (<see cref="FontSpec.Family"/> property).
-			/// </summary>
-			public static string ScaleFontFamily = "Arial";
-			/// <summary>
-			/// The default font size for the <see cref="Axis"/> scale values
-			/// font specification <see cref="Axis.ScaleFontSpec"/>
-			/// (<see cref="FontSpec.Size"/> property).  Units are
-			/// in points (1/72 inch).
-			/// </summary>
-			public static float ScaleFontSize = 14;
-			/// <summary>
-			/// The default font color for the <see cref="Axis"/> scale values
-			/// font specification <see cref="Axis.ScaleFontSpec"/>
-			/// (<see cref="FontSpec.FontColor"/> property).
-			/// </summary>
-			public static Color ScaleFontColor = Color.Black;
-			/// <summary>
-			/// The default font bold mode for the <see cref="Axis"/> scale values
-			/// font specification <see cref="Axis.ScaleFontSpec"/>
-			/// (<see cref="FontSpec.IsBold"/> property). true
-			/// for a bold typeface, false otherwise.
-			/// </summary>
-			public static bool ScaleFontBold = false;
-			/// <summary>
-			/// The default font italic mode for the <see cref="Axis"/> scale values
-			/// font specification <see cref="Axis.ScaleFontSpec"/>
-			/// (<see cref="FontSpec.IsItalic"/> property). true
-			/// for an italic typeface, false otherwise.
-			/// </summary>
-			public static bool ScaleFontItalic = false;
-			/// <summary>
-			/// The default font underline mode for the <see cref="Axis"/> scale values
-			/// font specification <see cref="Axis.ScaleFontSpec"/>
-			/// (<see cref="FontSpec.IsUnderline"/> property). true
-			/// for an underlined typeface, false otherwise.
-			/// </summary>
-			public static bool ScaleFontUnderline = false;
-			/// <summary>
-			/// The default color for filling in the scale text background
-			/// (see <see cref="ZedGraph.Fill.Color"/> property).
-			/// </summary>
-			public static Color ScaleFillColor = Color.White;
-			/// <summary>
-			/// The default custom brush for filling in the scale text background
-			/// (see <see cref="ZedGraph.Fill.Brush"/> property).
-			/// </summary>
-			public static Brush ScaleFillBrush = null;
-			/// <summary>
-			/// The default fill mode for filling in the scale text background
-			/// (see <see cref="ZedGraph.Fill.Type"/> property).
-			/// </summary>
-			public static FillType ScaleFillType = FillType.None;
 
 			/// <summary>
-			/// The default display mode for the <see cref="Axis"/>
-			/// <see cref="Title"/> property
-			/// (<see cref="Axis.IsShowGrid"/> property). true
-			/// to show the title, false to hide it.
+			/// The default setting for the gap between the scale labels and the axis title.
 			/// </summary>
-			public static bool IsShowTitle = true;
+			public static float TitleGap = 0.0f;
+
 			/// <summary>
-			/// The default font family for the <see cref="Axis"/> title text
-			/// font specification <see cref="Axis.TitleFontSpec"/>
+			/// The default font family for the <see cref="Axis"/> <see cref="Title" /> text
+			/// font specification <see cref="FontSpec"/>
 			/// (<see cref="FontSpec.Family"/> property).
 			/// </summary>
 			public static string TitleFontFamily = "Arial";
 			/// <summary>
-			/// The default font size for the <see cref="Axis"/> title text
-			/// font specification <see cref="Axis.TitleFontSpec"/>
+			/// The default font size for the <see cref="Axis"/> <see cref="Title" /> text
+			/// font specification <see cref="FontSpec"/>
 			/// (<see cref="FontSpec.Size"/> property).  Units are
 			/// in points (1/72 inch).
 			/// </summary>
 			public static float TitleFontSize = 14;
 			/// <summary>
-			/// The default font color for the <see cref="Axis"/> title text
-			/// font specification <see cref="Axis.TitleFontSpec"/>
+			/// The default font color for the <see cref="Axis"/> <see cref="Title" /> text
+			/// font specification <see cref="FontSpec"/>
 			/// (<see cref="FontSpec.FontColor"/> property).
 			/// </summary>
 			public static Color TitleFontColor = Color.Black;
 			/// <summary>
-			/// The default font bold mode for the <see cref="Axis"/> title text
-			/// font specification <see cref="Axis.TitleFontSpec"/>
+			/// The default font bold mode for the <see cref="Axis"/> <see cref="Title" /> text
+			/// font specification <see cref="FontSpec"/>
 			/// (<see cref="FontSpec.IsBold"/> property). true
 			/// for a bold typeface, false otherwise.
 			/// </summary>
 			public static bool TitleFontBold = true;
 			/// <summary>
-			/// The default font italic mode for the <see cref="Axis"/> title text
-			/// font specification <see cref="Axis.TitleFontSpec"/>
+			/// The default font italic mode for the <see cref="Axis"/> <see cref="Title" /> text
+			/// font specification <see cref="FontSpec"/>
 			/// (<see cref="FontSpec.IsItalic"/> property). true
 			/// for an italic typeface, false otherwise.
 			/// </summary>
 			public static bool TitleFontItalic = false;
 			/// <summary>
-			/// The default font underline mode for the <see cref="Axis"/> title text
-			/// font specification <see cref="Axis.TitleFontSpec"/>
+			/// The default font underline mode for the <see cref="Axis"/> <see cref="Title" /> text
+			/// font specification <see cref="FontSpec"/>
 			/// (<see cref="FontSpec.IsUnderline"/> property). true
 			/// for an underlined typeface, false otherwise.
 			/// </summary>
 			public static bool TitleFontUnderline = false;
 			/// <summary>
-			/// The default color for filling in the title text background
+			/// The default color for filling in the <see cref="Title" /> text background
 			/// (see <see cref="ZedGraph.Fill.Color"/> property).
 			/// </summary>
 			public static Color TitleFillColor = Color.White;
 			/// <summary>
-			/// The default custom brush for filling in the title text background
+			/// The default custom brush for filling in the <see cref="Title" /> text background
 			/// (see <see cref="ZedGraph.Fill.Brush"/> property).
 			/// </summary>
 			public static Brush TitleFillBrush = null;
 			/// <summary>
-			/// The default fill mode for filling in the title text background
+			/// The default fill mode for filling in the <see cref="Title" /> text background
 			/// (see <see cref="ZedGraph.Fill.Type"/> property).
 			/// </summary>
 			public static FillType TitleFillType = FillType.None;
 
 			/// <summary>
-			/// The default "dash on" size for drawing the <see cref="Axis"/> grid
-			/// (<see cref="Axis.GridDashOn"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float GridDashOn = 1.0F;
-			/// <summary>
-			/// The default "dash off" size for drawing the <see cref="Axis"/> grid
-			/// (<see cref="Axis.GridDashOff"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float GridDashOff = 5.0F;
-			/// <summary>
-			/// The default pen width for drawing the <see cref="Axis"/> grid
-			/// (<see cref="Axis.GridPenWidth"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float GridPenWidth = 1.0F;
-			/// <summary>
-			/// The default color for the <see cref="Axis"/> grid lines
-			/// (<see cref="Axis.GridColor"/> property).  This color only affects the
-			/// grid lines.
-			/// </summary>
-			public static Color GridColor = Color.Black;
-			/// <summary>
-			/// The default "dash on" size for drawing the <see cref="Axis"/> minor grid
-			/// (<see cref="Axis.MinorGridDashOn"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float MinorGridDashOn = 1.0F;
-			/// <summary>
-			/// The default "dash off" size for drawing the <see cref="Axis"/> minor grid
-			/// (<see cref="Axis.MinorGridDashOff"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float MinorGridDashOff = 10.0F;
-			/// <summary>
-			/// The default pen width for drawing the <see cref="Axis"/> minor grid
-			/// (<see cref="Axis.MinorGridPenWidth"/> property). Units are in points (1/72 inch).
-			/// </summary>
-			public static float MinorGridPenWidth = 1.0F;
-			/// <summary>
-			/// The default color for the <see cref="Axis"/> minor grid lines
-			/// (<see cref="Axis.MinorGridColor"/> property).  This color only affects the
-			/// minor grid lines.
-			/// </summary>
-			public static Color MinorGridColor = Color.Gray;
-			/// <summary>
 			/// The default color for the <see cref="Axis"/> itself
 			/// (<see cref="Axis.Color"/> property).  This color only affects the
-			/// tic marks and the axis border.
+			/// the axis border.
 			/// </summary>
-			public static Color Color = Color.Black;
-			/// <summary>
-			/// The default value for <see cref="Axis.IsScaleVisible"/>, which determines
-			/// whether or not the scale values are displayed.
-			/// </summary>
-			public static bool IsScaleVisible = true;
+			public static Color BorderColor = Color.Black;
 			/// <summary>
 			/// The default value for <see cref="Axis.IsAxisSegmentVisible"/>, which determines
 			/// whether or not the scale segment itself is visible
 			/// </summary>
 			public static bool IsAxisSegmentVisible = true;
-
-			/// <summary>
-			/// The default value for <see cref="Axis.IsScaleLabelsInside"/>, which determines
-			/// whether or not the scale labels and title for the <see cref="Axis"/> will appear
-			/// on the opposite side of the <see cref="Axis"/> that it normally appears.
-			/// </summary>
-			public static bool IsScaleLabelsInside = false;
-
-			/// <summary>
-			/// The default display mode for the <see cref="Axis"/> grid lines
-			/// (<see cref="Axis.IsShowGrid"/> property). true
-			/// to show the grid lines, false to hide them.
-			/// </summary>
-			public static bool IsShowGrid = false;
-			/// <summary>
-			/// The default display mode for the <see cref="Axis"/> minor grid lines
-			/// (<see cref="Axis.IsShowMinorGrid"/> property). true
-			/// to show the minor grid lines, false to hide them.
-			/// </summary>
-			public static bool IsShowMinorGrid = false;
-			/// <summary>
-			/// The display mode for the <see cref="Axis"/> major outside tic marks
-			/// (<see cref="Axis.IsTic"/> property).
-			/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
-			/// </summary>
-			/// <value>true to show the major tic marks (outside the axis),
-			/// false otherwise</value>
-			public static bool IsTic = true;
-			/// <summary>
-			/// The display mode for the <see cref="Axis"/> minor outside tic marks
-			/// (<see cref="Axis.IsMinorTic"/> property).
-			/// The minor tic spacing is controlled by <see cref="Axis.MinorStep"/>.
-			/// </summary>
-			/// <value>true to show the minor tic marks (outside the axis),
-			/// false otherwise</value>
-			public static bool IsMinorTic = true;
-			/// <summary>
-			/// The display mode for the <see cref="Axis"/> major inside tic marks
-			/// (<see cref="Axis.IsInsideTic"/> property).
-			/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
-			/// </summary>
-			/// <value>true to show the major tic marks (inside the axis),
-			/// false otherwise</value>
-			public static bool IsInsideTic = true;
-			/// <summary>
-			/// The display mode for the <see cref="Axis"/> major opposite tic marks
-			/// (<see cref="Axis.IsOppositeTic"/> property).
-			/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
-			/// </summary>
-			/// <value>true to show the major tic marks
-			/// (inside the axis on the opposite side),
-			/// false otherwise</value>
-			public static bool IsOppositeTic = true;
-			/// <summary>
-			/// The display mode for the <see cref="Axis"/> minor inside tic marks
-			/// (<see cref="Axis.IsMinorTic"/> property).
-			/// The minor tic spacing is controlled by <see cref="Axis.MinorStep"/>.
-			/// </summary>
-			/// <value>true to show the minor tic marks (inside the axis),
-			/// false otherwise</value>
-			public static bool IsMinorInsideTic = true;
-			/// <summary>
-			/// The display mode for the <see cref="Axis"/> minor opposite tic marks
-			/// (<see cref="Axis.IsMinorOppositeTic"/> property).
-			/// The minor tic spacing is controlled by <see cref="Axis.MinorStep"/>.
-			/// </summary>
-			/// <value>true to show the minor tic marks
-			/// (inside the axis on the opposite side),
-			/// false otherwise</value>
-			public static bool IsMinorOppositeTic = true;
-
-			/// <summary>
-			/// The default display mode for the <see cref="Axis"/> major outside 
-			/// "cross" tic marks (<see cref="Axis.IsCrossTic"/> property).
-			/// </summary>
-			/// <remarks>
-			/// The "cross" tics are a special, additional set of tic marks that
-			/// always appear on the actual axis, even if it has been shifted due
-			/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
-			/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
-			/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
-			/// they will exactly overlay the "normal" and "inside" tics.  If
-			/// <see cref="CrossAuto"/> is false, then you will most likely want to
-			/// enable the cross tics.
-			/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
-			/// </remarks>
-			/// <value>true to show the major cross tic marks, false otherwise</value>
-			public static bool IsCrossTic = false;
-			/// <summary>
-			/// The default display mode for the <see cref="Axis"/> major inside 
-			/// "cross" tic marks (<see cref="Axis.IsInsideCrossTic"/> property).
-			/// </summary>
-			/// <remarks>
-			/// The "cross" tics are a special, additional set of tic marks that
-			/// always appear on the actual axis, even if it has been shifted due
-			/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
-			/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
-			/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
-			/// they will exactly overlay the "normal" and "inside" tics.  If
-			/// <see cref="CrossAuto"/> is false, then you will most likely want to
-			/// enable the cross tics.
-			/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
-			/// </remarks>
-			/// <value>true to show the major cross tic marks, false otherwise</value>
-			public static bool IsInsideCrossTic = false;
-			/// <summary>
-			/// The default display mode for the <see cref="Axis"/> minor outside 
-			/// "cross" tic marks (<see cref="Axis.IsMinorCrossTic"/> property).
-			/// </summary>
-			/// <remarks>
-			/// The "cross" tics are a special, additional set of tic marks that
-			/// always appear on the actual axis, even if it has been shifted due
-			/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
-			/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
-			/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
-			/// they will exactly overlay the "normal" and "inside" tics.  If
-			/// <see cref="CrossAuto"/> is false, then you will most likely want to
-			/// enable the cross tics.
-			/// The minor tic spacing is controlled by <see cref="Axis.MinorStep"/>.
-			/// </remarks>
-			/// <value>true to show the major cross tic marks, false otherwise</value>
-			public static bool IsMinorCrossTic = false;
-			/// <summary>
-			/// The default display mode for the <see cref="Axis"/> minor inside 
-			/// "cross" tic marks (<see cref="Axis.IsMinorInsideCrossTic"/> property).
-			/// </summary>
-			/// <remarks>
-			/// The "cross" tics are a special, additional set of tic marks that
-			/// always appear on the actual axis, even if it has been shifted due
-			/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
-			/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
-			/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
-			/// they will exactly overlay the "normal" and "inside" tics.  If
-			/// <see cref="CrossAuto"/> is false, then you will most likely want to
-			/// enable the cross tics.
-			/// The major tic spacing is controlled by <see cref="Axis.MinorStep"/>.
-			/// </remarks>
-			/// <value>true to show the major cross tic marks, false otherwise</value>
-			public static bool IsMinorInsideCrossTic = false;
 
 			/// <summary>
 			/// The default setting for the <see cref="Axis"/> scale axis type
@@ -534,93 +248,61 @@ namespace ZedGraph
 			public static AxisType Type = AxisType.Linear;
 
 			/// <summary>
+			/// The default color for the axis segment.
+			/// </summary>
+			public static Color Color = Color.Black;
+
+			/// <summary>
 			/// The default setting for the axis space allocation.  This term, expressed in
 			/// points (1/72 inch) and scaled according to <see cref="PaneBase.CalcScaleFactor"/> for the
 			/// <see cref="GraphPane"/>, determines the minimum amount of space an axis must
-			/// have between the <see cref="GraphPane.AxisRect"/> and the
-			/// <see cref="PaneBase.PaneRect"/>.  This minimum space
+			/// have between the <see cref="Chart.Rect"/> and the
+			/// <see cref="PaneBase.Rect"/>.  This minimum space
 			/// applies whether <see cref="Axis.IsVisible"/> is true or false.
 			/// </summary>
 			public static float MinSpace = 0f;
 		}
-		#endregion
 
-		#region Constructors
+	#endregion
+
+	#region Constructors
+
 		/// <summary>
 		/// Default constructor for <see cref="Axis"/> that sets all axis properties
 		/// to default values as defined in the <see cref="Default"/> class.
 		/// </summary>
 		public Axis()
 		{
-			this.scale = new LinearScale( this );
+			_scale = new LinearScale( this );
 
-			this.cross = 0.0;
+			_cross = 0.0;
 
-			this.crossAuto = true;
+			_crossAuto = true;
 
-			this.ticSize = Default.TicSize;
-			this.minorTicSize = Default.MinorTicSize;
-			this.gridDashOn = Default.GridDashOn;
-			this.gridDashOff = Default.GridDashOff;
-			this.gridPenWidth = Default.GridPenWidth;
-			this.minorGridDashOn = Default.MinorGridDashOn;
-			this.minorGridDashOff = Default.MinorGridDashOff;
-			this.minorGridPenWidth = Default.MinorGridPenWidth;
+			_majorTic = new MajorTic();
+			_minorTic = new MinorTic();
 
-			this.axisGap = Default.AxisGap;
+			_majorGrid = new MajorGrid();
+			_minorGrid = new MinorGrid();
 
-			this.minSpace = Default.MinSpace;
-			this.isVisible = true;
-			this.isScaleVisible = Default.IsScaleVisible;
-			this.isShowTitle = Default.IsShowTitle;
-			this.isShowGrid = Default.IsShowGrid;
-			this.isShowMinorGrid = Default.IsShowMinorGrid;
-			this.isOmitMag = false;
+			_axisGap = Default.AxisGap;
 
-			this.isTic = Default.IsTic;
-			this.isInsideTic = Default.IsInsideTic;
-			this.isOppositeTic = Default.IsOppositeTic;
-			this.isCrossTic = Default.IsCrossTic;
-			this.isInsideCrossTic = Default.IsInsideCrossTic;
-			this.isMinorTic = Default.IsMinorTic;
-			this.isMinorInsideTic = Default.IsMinorInsideTic;
-			this.isMinorOppositeTic = Default.IsMinorOppositeTic;
-			this.isMinorCrossTic = Default.IsMinorCrossTic;
-			this.isMinorInsideCrossTic = Default.IsMinorInsideCrossTic;
+			_minSpace = Default.MinSpace;
+			_isVisible = true;
 
-			this.isTicsBetweenLabels = false;
-			this.isAxisSegmentVisible = Default.IsAxisSegmentVisible;
-			this.isScaleLabelsInside = Default.IsScaleLabelsInside;
-			this.isSkipFirstLabel = false;
-			this.isSkipLastLabel = false;
-			this.isSkipCrossLabel = false;
-			this.isTitleAtCross = true;
+			_isAxisSegmentVisible = Default.IsAxisSegmentVisible;
 
-			this.title = "";
-			this.TextLabels = null;
-			this.scaleAlign = Default.ScaleAlign;
-
-			this.ticPenWidth = Default.TicPenWidth;
-			this.color = Default.Color;
-			this.gridColor = Default.GridColor;
-			this.minorGridColor = Default.MinorGridColor;
-
-			this.titleFontSpec = new FontSpec(
-					Default.TitleFontFamily, Default.TitleFontSize,
+			_title = new AxisLabel( "", Default.TitleFontFamily, Default.TitleFontSize,
 					Default.TitleFontColor, Default.TitleFontBold,
-					Default.TitleFontUnderline, Default.TitleFontItalic,
-					Default.TitleFillColor, Default.TitleFillBrush,
+					Default.TitleFontUnderline, Default.TitleFontItalic );
+			_title.FontSpec.Fill = new Fill( Default.TitleFillColor, Default.TitleFillBrush,
 					Default.TitleFillType );
 
-			this.titleFontSpec.Border.IsVisible = false;
+			_title.FontSpec.Border.IsVisible = false;
 
-			this.scaleFontSpec = new FontSpec(
-				Default.ScaleFontFamily, Default.ScaleFontSize,
-				Default.ScaleFontColor, Default.ScaleFontBold,
-				Default.ScaleFontUnderline, Default.ScaleFontItalic,
-				Default.ScaleFillColor, Default.ScaleFillBrush,
-				Default.ScaleFillType );
-			this.scaleFontSpec.Border.IsVisible = false;
+
+			_color = Default.Color;
+
 		}
 
 		/// <summary>
@@ -632,7 +314,7 @@ namespace ZedGraph
 		public Axis( string title )
 			: this()
 		{
-			this.title = title;
+			_title._text = title;
 		}
 
 		/// <summary>
@@ -641,70 +323,29 @@ namespace ZedGraph
 		/// <param name="rhs">The Axis object from which to copy</param>
 		public Axis( Axis rhs )
 		{
-			this.scale = (Scale)( rhs.scale as ICloneable ).Clone();
-			cross = rhs.cross;
+			_scale = rhs._scale.Clone( this );
 
-			crossAuto = rhs.crossAuto;
-			//numDecAuto = rhs.NumDecAuto;
+			_cross = rhs._cross;
 
-			//numDec = rhs.numDec;
-			isVisible = rhs.IsVisible;
-			isScaleVisible = rhs.isScaleVisible;
-			isShowTitle = rhs.IsShowTitle;
-			isShowGrid = rhs.IsShowGrid;
-			isShowMinorGrid = rhs.IsShowMinorGrid;
-			isZeroLine = rhs.IsZeroLine;
+			_crossAuto = rhs._crossAuto;
 
-			isTic = rhs.IsTic;
-			isInsideTic = rhs.IsInsideTic;
-			isOppositeTic = rhs.IsOppositeTic;
-			isCrossTic = rhs.IsCrossTic;
-			isInsideCrossTic = rhs.IsInsideCrossTic;
+			_majorTic = rhs.MajorTic.Clone();
+			_minorTic = rhs.MinorTic.Clone();
 
-			isMinorTic = rhs.IsMinorTic;
-			isMinorInsideTic = rhs.IsMinorInsideTic;
-			isMinorOppositeTic = rhs.IsMinorOppositeTic;
-			isMinorCrossTic = rhs.IsMinorCrossTic;
-			isMinorInsideCrossTic = rhs.IsMinorInsideCrossTic;
+			_majorGrid = rhs._majorGrid.Clone();
+			_minorGrid = rhs._minorGrid.Clone();
 
-			isTicsBetweenLabels = rhs.IsTicsBetweenLabels;
-			isAxisSegmentVisible = rhs.isAxisSegmentVisible;
-			isScaleLabelsInside = rhs.isScaleLabelsInside;
-			isSkipFirstLabel = rhs.isSkipFirstLabel;
-			isSkipLastLabel = rhs.isSkipLastLabel;
-			isSkipCrossLabel = rhs.isSkipCrossLabel;
-			isTitleAtCross = rhs.isTitleAtCross;
+			_isVisible = rhs.IsVisible;
 
-			isOmitMag = rhs.IsOmitMag;
-			title = rhs.Title;
+			_isAxisSegmentVisible = rhs._isAxisSegmentVisible;
 
-			if ( rhs.TextLabels != null )
-				TextLabels = (string[])rhs.TextLabels.Clone();
-			else
-				TextLabels = null;
+			_title = (AxisLabel) rhs.Title.Clone();
 
-			scaleAlign = rhs.scaleAlign;
+			_axisGap = rhs._axisGap;
 
-			titleFontSpec = (FontSpec)rhs.TitleFontSpec.Clone();
-			scaleFontSpec = (FontSpec)rhs.ScaleFontSpec.Clone();
+			_minSpace = rhs.MinSpace;
 
-			ticPenWidth = rhs.TicPenWidth;
-			ticSize = rhs.TicSize;
-			minorTicSize = rhs.MinorTicSize;
-			gridDashOn = rhs.GridDashOn;
-			gridDashOff = rhs.GridDashOff;
-			gridPenWidth = rhs.GridPenWidth;
-			minorGridDashOn = rhs.MinorGridDashOn;
-			minorGridDashOff = rhs.MinorGridDashOff;
-			minorGridPenWidth = rhs.MinorGridPenWidth;
-
-			axisGap = rhs.axisGap;
-
-			minSpace = rhs.MinSpace;
-
-			color = rhs.Color;
-			gridColor = rhs.GridColor;
-			minorGridColor = rhs.MinorGridColor;
+			_color = rhs.Color;
 		}
 
 		/// <summary>
@@ -729,22 +370,13 @@ namespace ZedGraph
 			//return new PaneBase( this );
 		}
 
+	#endregion
 
-		#endregion
+	#region Serialization
 
-		#region Serialization
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		// Schema was changed to 2 when IsScaleVisible was added
-		// Schema was changed to 3 when IsAxisSegmentVisible was added
-		// Schema was changed to 4 when IsScaleLabelsInside, isSkipFirstLabel, isSkipLastLabel were added
-		// Schema was changed to 5 with IsCrossTic, IsInsideCrossTic, IsMinorCrossTic, IsMinorInsideCrossTic
-		// Schema was changed to 6 with AxisGap
-		// Schema was changed to 7 with Exponent
-		// Schema was changed to 8 when "Scale" class was added
-		// Schema was changed to 9 when scale was actually output properly
-		// Schema was changed to 10 when isSkipCrossLabel, isTitleAtCross were added
 		public const int schema = 10;
 
 		/// <summary>
@@ -760,81 +392,30 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			cross = info.GetDouble( "cross" );
-			crossAuto = info.GetBoolean( "crossAuto" );
+			_cross = info.GetDouble( "cross" );
+			_crossAuto = info.GetBoolean( "crossAuto" );
 
-			isVisible = info.GetBoolean( "isVisible" );
-			isShowGrid = info.GetBoolean( "isShowGrid" );
-			isShowTitle = info.GetBoolean( "isShowTitle" );
-			isZeroLine = info.GetBoolean( "isZeroLine" );
-			isTic = info.GetBoolean( "isTic" );
-			isInsideTic = info.GetBoolean( "isInsideTic" );
-			isOppositeTic = info.GetBoolean( "isOppositeTic" );
-			isMinorTic = info.GetBoolean( "isMinorTic" );
-			isShowMinorGrid = info.GetBoolean( "isShowMinorGrid" );
-			isMinorInsideTic = info.GetBoolean( "isMinorInsideTic" );
-			isMinorOppositeTic = info.GetBoolean( "isMinorOppositeTic" );
-			isTicsBetweenLabels = info.GetBoolean( "isTicsBetweenLabels" );
+			_majorTic = (MajorTic)info.GetValue( "MajorTic", typeof( MajorTic ) );
+			_minorTic = (MinorTic)info.GetValue( "MinorTic", typeof( MinorTic ) );
+			_majorGrid = (MajorGrid)info.GetValue( "majorGrid", typeof( MajorGrid ) );
+			_minorGrid = (MinorGrid)info.GetValue( "minorGrid", typeof( MinorGrid ) );
 
-			isOmitMag = info.GetBoolean( "isOmitMag" );
+			_isVisible = info.GetBoolean( "isVisible" );
 
-			title = info.GetString( "title" );
+			_title = (AxisLabel) info.GetValue( "title", typeof( AxisLabel ) );
 
-			scaleAlign = (AlignP)info.GetValue( "scaleAlign", typeof( AlignP ) );
+			_minSpace = info.GetSingle( "minSpace" );
 
-			titleFontSpec = (FontSpec)info.GetValue( "titleFontSpec", typeof( FontSpec ) );
-			scaleFontSpec = (FontSpec)info.GetValue( "scaleFontSpec", typeof( FontSpec ) );
+			_color = (Color)info.GetValue( "color", typeof( Color ) );
 
-			ticPenWidth = info.GetSingle( "ticPenWidth" );
-			ticSize = info.GetSingle( "ticSize" );
-			minorTicSize = info.GetSingle( "minorTicSize" );
-			gridDashOn = info.GetSingle( "gridDashOn" );
-			gridDashOff = info.GetSingle( "gridDashOff" );
-			gridPenWidth = info.GetSingle( "gridPenWidth" );
-			minorGridDashOn = info.GetSingle( "minorGridDashOn" );
-			minorGridDashOff = info.GetSingle( "minorGridDashOff" );
-			minorGridPenWidth = info.GetSingle( "minorGridPenWidth" );
-			minSpace = info.GetSingle( "minSpace" );
+			_isAxisSegmentVisible = info.GetBoolean( "isAxisSegmentVisible" );
 
-			color = (Color)info.GetValue( "color", typeof( Color ) );
-			gridColor = (Color)info.GetValue( "gridColor", typeof( Color ) );
-			minorGridColor = (Color)info.GetValue( "minorGridColor", typeof( Color ) );
 
-			if ( schema >= 2 )
-				isScaleVisible = info.GetBoolean( "isScaleVisible" );
+			_axisGap = info.GetSingle( "axisGap" );
 
-			if ( schema >= 3 )
-				isAxisSegmentVisible = info.GetBoolean( "isAxisSegmentVisible" );
+			_scale = (Scale)info.GetValue( "scale", typeof( Scale ) );
+			_scale._ownerAxis = this;
 
-			if ( schema >= 4 )
-			{
-				isScaleLabelsInside = info.GetBoolean( "isScaleLabelsInside" );
-				isSkipFirstLabel = info.GetBoolean( "isSkipFirstLabel" );
-				isSkipLastLabel = info.GetBoolean( "isSkipLastLabel" );
-			}
-
-			if ( schema >= 5 )
-			{
-				isCrossTic = info.GetBoolean( "isCrossTic" );
-				isInsideCrossTic = info.GetBoolean( "isInsideCrossTic" );
-				isMinorCrossTic = info.GetBoolean( "isMinorCrossTic" );
-				isMinorInsideCrossTic = info.GetBoolean( "isMinorInsideCrossTic" );
-			}
-
-			if ( schema >= 6 )
-				axisGap = info.GetSingle( "axisGap" );
-
-			if ( schema >= 9 )
-			{
-				scale = (Scale)info.GetValue( "scale", typeof( Scale ) );
-				scale.parentAxis = this;
-			}
-
-			if ( schema >= 10 )
-			{
-				isSkipCrossLabel = info.GetBoolean( "isSkipCrossLabel" );
-				isTitleAtCross = info.GetBoolean( "isTitleAtCross" );
-			}
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -846,237 +427,47 @@ namespace ZedGraph
 		{
 			info.AddValue( "schema", schema );
 
-			info.AddValue( "cross", cross );
-			info.AddValue( "crossAuto", crossAuto );
+			info.AddValue( "cross", _cross );
+			info.AddValue( "crossAuto", _crossAuto );
 
-			info.AddValue( "isVisible", isVisible );
-			info.AddValue( "isShowGrid", isShowGrid );
-			info.AddValue( "isShowTitle", isShowTitle );
-			info.AddValue( "isZeroLine", isZeroLine );
-			info.AddValue( "isTic", isTic );
-			info.AddValue( "isInsideTic", isInsideTic );
-			info.AddValue( "isOppositeTic", isOppositeTic );
-			info.AddValue( "isMinorTic", isMinorTic );
-			info.AddValue( "isShowMinorGrid", isShowMinorGrid );
-			info.AddValue( "isMinorInsideTic", isMinorInsideTic );
-			info.AddValue( "isMinorOppositeTic", isMinorOppositeTic );
-			info.AddValue( "isTicsBetweenLabels", isTicsBetweenLabels );
+			info.AddValue( "MajorTic", MajorTic );
+			info.AddValue( "MinorTic", MinorTic );
+			info.AddValue( "majorGrid", _majorGrid );
+			info.AddValue( "minorGrid", _minorGrid );
 
-			info.AddValue( "isOmitMag", isOmitMag );
+			info.AddValue( "isVisible", _isVisible );
 
-			info.AddValue( "title", title );
-			info.AddValue( "scaleAlign", scaleAlign );
-			info.AddValue( "titleFontSpec", titleFontSpec );
-			info.AddValue( "scaleFontSpec", scaleFontSpec );
+			info.AddValue( "title", _title );
 
-			info.AddValue( "ticPenWidth", ticPenWidth );
-			info.AddValue( "ticSize", ticSize );
-			info.AddValue( "minorTicSize", minorTicSize );
-			info.AddValue( "gridDashOn", gridDashOn );
-			info.AddValue( "gridDashOff", gridDashOff );
-			info.AddValue( "gridPenWidth", gridPenWidth );
-			info.AddValue( "minorGridDashOn", minorGridDashOn );
-			info.AddValue( "minorGridDashOff", minorGridDashOff );
-			info.AddValue( "minorGridPenWidth", minorGridPenWidth );
-			info.AddValue( "minSpace", minSpace );
+			info.AddValue( "minSpace", _minSpace );
 
-			info.AddValue( "color", color );
-			info.AddValue( "gridColor", gridColor );
-			info.AddValue( "minorGridColor", minorGridColor );
+			info.AddValue( "color", _color );
 
-			// New for Schema = 2
-			info.AddValue( "isScaleVisible", isScaleVisible );
+			info.AddValue( "isAxisSegmentVisible", _isAxisSegmentVisible );
 
-			// New for schema = 3
-			info.AddValue( "isAxisSegmentVisible", isAxisSegmentVisible );
+			info.AddValue( "axisGap", _axisGap );
 
-			// New for schema = 4
-			info.AddValue( "isScaleLabelsInside", isScaleLabelsInside );
-			info.AddValue( "isSkipFirstLabel", isSkipFirstLabel );
-			info.AddValue( "isSkipLastLabel", isSkipLastLabel );
+			info.AddValue( "scale", _scale );
 
-			// New for schema = 5
-			info.AddValue( "isCrossTic", isCrossTic );
-			info.AddValue( "isInsideCrossTic", isInsideCrossTic );
-			info.AddValue( "isMinorCrossTic", isMinorCrossTic );
-			info.AddValue( "isMinorInsideCrossTic", isMinorInsideCrossTic );
-
-			// new for schema = 6
-			info.AddValue( "axisGap", axisGap );
-
-			// new for schema = 9
-			info.AddValue( "scale", this.scale );
-
-			// new for schema = 10
-			info.AddValue( "isSkipCrossLabel", isSkipCrossLabel );
-			info.AddValue( "isTitleAtCross", isTitleAtCross );
 		}
-		#endregion
 
-		#region Scale Properties
+	#endregion
+
+	#region Scale Properties
 
 		/// <summary>
 		/// Gets the <see cref="Scale" /> instance associated with this <see cref="Axis" />.
 		/// </summary>
 		public Scale Scale
 		{
-			get { return this.scale; }
-		}
-
-		/// <summary>
-		/// Gets or sets the minimum scale value for this axis.
-		/// </summary>
-		/// <remarks>This value can be set
-		/// automatically based on the state of <see cref="MinAuto"/>.  If
-		/// this value is set manually, then <see cref="MinAuto"/> will
-		/// also be set to false.
-		/// </remarks>
-		/// <value> The value is defined in user scale units for <see cref="AxisType.Log"/>
-		/// and <see cref="AxisType.Linear"/> axes. For <see cref="AxisType.Text"/>
-		/// and <see cref="AxisType.Ordinal"/> axes,
-		/// this value is an ordinal starting with 1.0.  For <see cref="AxisType.Date"/>
-		/// axes, this value is in XL Date format (see <see cref="XDate"/>, which is the
-		/// number of days since the reference date of January 1, 1900.</value>
-		/// <seealso cref="Max"/>
-		/// <seealso cref="Step"/>
-		/// <seealso cref="MinorStep"/>
-		/// <seealso cref="MinAuto"/>
-		public double Min
-		{
-			get { return scale.Min; }
-			set { scale.Min = value; scale.MinAuto = false; }
-		}
-		/// <summary>
-		/// Gets or sets the maximum scale value for this axis.
-		/// </summary>
-		/// <remarks>
-		/// This value can be set
-		/// automatically based on the state of <see cref="MaxAuto"/>.  If
-		/// this value is set manually, then <see cref="MaxAuto"/> will
-		/// also be set to false.
-		/// </remarks>
-		/// <value> The value is defined in user scale units for <see cref="AxisType.Log"/>
-		/// and <see cref="AxisType.Linear"/> axes. For <see cref="AxisType.Text"/>
-		/// and <see cref="AxisType.Ordinal"/> axes,
-		/// this value is an ordinal starting with 1.0.  For <see cref="AxisType.Date"/>
-		/// axes, this value is in XL Date format (see <see cref="XDate"/>, which is the
-		/// number of days since the reference date of January 1, 1900.</value>
-		/// <seealso cref="Min"/>
-		/// <seealso cref="Step"/>
-		/// <seealso cref="MinorStep"/>
-		/// <seealso cref="MaxAuto"/>
-		public double Max
-		{
-			get { return scale.Max; }
-			set { scale.Max = value; scale.MaxAuto = false; }
-		}
-		/// <summary>
-		/// Gets or sets the scale step size for this axis (the increment between
-		/// labeled axis values).
-		/// </summary>
-		/// <remarks>
-		/// This value can be set
-		/// automatically based on the state of <see cref="StepAuto"/>.  If
-		/// this value is set manually, then <see cref="StepAuto"/> will
-		/// also be set to false.  This value is ignored for <see cref="AxisType.Log"/>
-		/// axes.  For <see cref="AxisType.Date"/> axes, this
-		/// value is defined in units of <see cref="MajorUnit"/>.
-		/// </remarks>
-		/// <value> The value is defined in user scale units </value>
-		/// <seealso cref="Min"/>
-		/// <seealso cref="Max"/>
-		/// <seealso cref="MinorStep"/>
-		/// <seealso cref="StepAuto"/>
-		/// <seealso cref="ZedGraph.Scale.Default.TargetXSteps"/>
-		/// <seealso cref="ZedGraph.Scale.Default.TargetYSteps"/>
-		/// <seealso cref="ZedGraph.Scale.Default.ZeroLever"/>
-		/// <seealso cref="ZedGraph.Scale.Default.MaxTextLabels"/>
-		public double Step
-		{
-			get { return scale.Step; }
-			set { scale.Step = value; scale.StepAuto = false; }
-		}
-		/// <summary>
-		/// Gets or sets the scale exponent value.  This only applies to <see cref="AxisType.Exponent" />. 
-		/// </summary>
-		/// <seealso cref="Min"/>
-		/// <seealso cref="Max"/>
-		/// <seealso cref="MinorStep"/>
-		/// <seealso cref="StepAuto"/>
-		/// <seealso cref="ZedGraph.Scale.Default.TargetXSteps"/>
-		/// <seealso cref="ZedGraph.Scale.Default.TargetYSteps"/>
-		/// <seealso cref="ZedGraph.Scale.Default.ZeroLever"/>
-		/// <seealso cref="ZedGraph.Scale.Default.MaxTextLabels"/>
-		public double Exponent
-		{
-			get { return scale.Exponent; }
-			set { scale.Exponent = value; }
-		}
-		/// <summary>
-		/// Gets or sets the type of units used for the major step size (<see cref="Step"/>).
-		/// </summary>
-		/// <remarks>
-		/// This unit type only applies to Date-Time axes (<see cref="AxisType.Date"/> = true).
-		/// The axis is set to date type with the <see cref="Type"/> property.
-		/// The unit types are defined as <see cref="DateUnit"/>.
-		/// </remarks>
-		/// <value> The value is a <see cref="DateUnit"/> enum type </value>
-		/// <seealso cref="Min"/>
-		/// <seealso cref="Max"/>
-		/// <seealso cref="Step"/>
-		/// <seealso cref="MinorStep"/>
-		/// <seealso cref="StepAuto"/>
-		public DateUnit MajorUnit
-		{
-			get { return scale.MajorUnit; }
-			set { scale.MajorUnit = value; }
-		}
-		/// <summary>
-		/// Gets or sets the type of units used for the minor step size (<see cref="MinorStep"/>).
-		/// </summary>
-		/// <remarks>
-		/// This unit type only applies to Date-Time axes (<see cref="AxisType.Date"/> = true).
-		/// The axis is set to date type with the <see cref="Type"/> property.
-		/// The unit types are defined as <see cref="DateUnit"/>.
-		/// </remarks>
-		/// <value> The value is a <see cref="DateUnit"/> enum type </value>
-		/// <seealso cref="Min"/>
-		/// <seealso cref="Max"/>
-		/// <seealso cref="Step"/>
-		/// <seealso cref="MinorStep"/>
-		/// <seealso cref="MinorStepAuto"/>
-		public DateUnit MinorUnit
-		{
-			get { return scale.MinorUnit; }
-			set { scale.MinorUnit = value; }
-		}
-		/// <summary>
-		/// Gets or sets the scale minor step size for this axis (the spacing between
-		/// minor tics).
-		/// </summary>
-		/// <remarks>This value can be set
-		/// automatically based on the state of <see cref="MinorStepAuto"/>.  If
-		/// this value is set manually, then <see cref="MinorStepAuto"/> will
-		/// also be set to false.  This value is ignored for <see cref="AxisType.Log"/> and
-		/// <see cref="AxisType.Text"/> axes.  For <see cref="AxisType.Date"/> axes, this
-		/// value is defined in units of <see cref="MinorUnit"/>.
-		/// </remarks>
-		/// <value> The value is defined in user scale units </value>
-		/// <seealso cref="Min"/>
-		/// <seealso cref="Max"/>
-		/// <seealso cref="Step"/>
-		/// <seealso cref="MinorStepAuto"/>
-		public double MinorStep
-		{
-			get { return scale.MinorStep; }
-			set { scale.MinorStep = value; scale.MinorStepAuto = false; }
+			get { return _scale; }
 		}
 		/// <summary>
 		/// Gets or sets the scale value at which this axis should cross the "other" axis.
 		/// </summary>
 		/// <remarks>This property allows the axis to be shifted away from its default location.
 		/// For example, for a graph with an X range from -100 to +100, the Y Axis can be located
-		/// at the X=0 value rather than the left edge of the axisRect.  This value can be set
+		/// at the X=0 value rather than the left edge of the ChartRect.  This value can be set
 		/// automatically based on the state of <see cref="CrossAuto"/>.  If
 		/// this value is set manually, then <see cref="CrossAuto"/> will
 		/// also be set to false.  The "other" axis is the axis the handles the second dimension
@@ -1084,106 +475,14 @@ namespace ZedGraph
 		/// Y2Axis, the "other" axis is the XAxis.
 		/// </remarks>
 		/// <value> The value is defined in user scale units </value>
-		/// <seealso cref="Min"/>
-		/// <seealso cref="Max"/>
-		/// <seealso cref="Step"/>
+		/// <seealso cref="ZedGraph.Scale.Min"/>
+		/// <seealso cref="ZedGraph.Scale.Max"/>
+		/// <seealso cref="ZedGraph.Scale.MajorStep"/>
 		/// <seealso cref="CrossAuto"/>
 		public double Cross
 		{
-			get { return cross; }
-			set { cross = value; this.crossAuto = false; }
-		}
-
-		/// <summary>
-		/// Gets or sets the scale value at which the first major tic label will appear.
-		/// </summary>
-		/// <remarks>This property allows the scale labels to start at an irregular value.
-		/// For example, on a scale range with <see cref="Min"/> = 0, <see cref="Max"/> = 1000,
-		/// and <see cref="Step"/> = 200, a <see cref="BaseTic"/> value of 50 would cause
-		/// the scale labels to appear at values 50, 250, 450, 650, and 850.  Note that the
-		/// default value for this property is <see cref="PointPair.Missing"/>, which means the
-		/// value is not used.  Setting this property to any value other than
-		/// <see cref="PointPair.Missing"/> will activate the effect.  The value specified must
-		/// coincide with the first major tic.  That is, if <see cref="BaseTic"/> were set to
-		/// 650 in the example above, then the major tics would only occur at 650 and 850.  This
-		/// setting may affect the minor tics, since the minor tics are always referenced to the
-		/// <see cref="BaseTic"/>.  That is, in the example above, if the <see cref="MinorStep"/>
-		/// were set to 30 (making it a non-multiple of the major step), then the minor tics would
-		/// occur at 20, 50 (so it lines up with the BaseTic), 80, 110, 140, etc.
-		/// </remarks>
-		/// <value> The value is defined in user scale units </value>
-		/// <seealso cref="Min"/>
-		/// <seealso cref="Max"/>
-		/// <seealso cref="Step"/>
-		/// <seealso cref="MinorStep"/>
-		/// <seealso cref="Cross"/>
-		public double BaseTic
-		{
-			get { return this.scale.BaseTic; }
-			set { this.scale.BaseTic = value; }
-		}
-
-		//abstract internal bool IsCrossed( GraphPane pane );
-
-		/// <summary>
-		/// Gets or sets a value that determines whether or not the minimum scale value <see cref="Min"/>
-		/// is set automatically.
-		/// </summary>
-		/// <remarks>
-		/// This value will be set to false if
-		/// <see cref="Min"/> is manually changed.
-		/// </remarks>
-		/// <value>true for automatic mode, false for manual mode</value>
-		/// <seealso cref="Min"/>
-		public bool MinAuto
-		{
-			get { return scale.MinAuto; }
-			set { scale.MinAuto = value; }
-		}
-		/// <summary>
-		/// Gets or sets a value that determines whether or not the maximum scale value <see cref="Max"/>
-		/// is set automatically.
-		/// </summary>
-		/// <remarks>
-		/// This value will be set to false if
-		/// <see cref="Max"/> is manually changed.
-		/// </remarks>
-		/// <value>true for automatic mode, false for manual mode</value>
-		/// <seealso cref="Max"/>
-		public bool MaxAuto
-		{
-			get { return scale.MaxAuto; }
-			set { scale.MaxAuto = value; }
-		}
-		/// <summary>
-		/// Gets or sets a value that determines whether or not the scale step size <see cref="Step"/>
-		/// is set automatically.
-		/// </summary>
-		/// <remarks>
-		/// This value will be set to false if
-		/// <see cref="Step"/> is manually changed.
-		/// </remarks>
-		/// <value>true for automatic mode, false for manual mode</value>
-		/// <seealso cref="Step"/>
-		public bool StepAuto
-		{
-			get { return scale.StepAuto; }
-			set { scale.StepAuto = value; }
-		}
-		/// <summary>
-		/// Gets or sets a value that determines whether or not the minor scale step size <see cref="MinorStep"/>
-		/// is set automatically.
-		/// </summary>
-		/// <remarks>
-		/// This value will be set to false if
-		/// <see cref="MinorStep"/> is manually changed.
-		/// </remarks>
-		/// <value>true for automatic mode, false for manual mode</value>
-		/// <seealso cref="MinorStep"/>
-		public bool MinorStepAuto
-		{
-			get { return scale.MinorStepAuto; }
-			set { scale.MinorStepAuto = value; }
+			get { return _cross; }
+			set { _cross = value; _crossAuto = false; }
 		}
 		/// <summary>
 		/// Gets or sets a value that determines whether or not the <see cref="Cross"/> value
@@ -1191,50 +490,14 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>Set to true to have ZedGraph put the axis in the default location, or false
 		/// to specify the axis location manually with a <see cref="Cross"/> value.</value>
-		/// <seealso cref="Min"/>
-		/// <seealso cref="Max"/>
-		/// <seealso cref="Step"/>
+		/// <seealso cref="ZedGraph.Scale.Min"/>
+		/// <seealso cref="ZedGraph.Scale.Max"/>
+		/// <seealso cref="ZedGraph.Scale.MajorStep"/>
 		/// <seealso cref="Cross"/>
 		public bool CrossAuto
 		{
-			get { return crossAuto; }
-			set { crossAuto = value; }
-		}
-
-		/// <summary> Gets or sets the "grace" value applied to the minimum data range.
-		/// </summary>
-		/// <remarks>
-		/// This value is
-		/// expressed as a fraction of the total data range.  For example, assume the data
-		/// range is from 4.0 to 16.0, leaving a range of 12.0.  If MinGrace is set to
-		/// 0.1, then 10% of the range, or 1.2 will be subtracted from the minimum data value.
-		/// The scale will then be ranged to cover at least 2.8 to 16.0.
-		/// </remarks>
-		/// <seealso cref="Min"/>
-		/// <seealso cref="ZedGraph.Scale.Default.MinGrace"/>
-		/// <seealso cref="MaxGrace"/>
-		public double MinGrace
-		{
-			get { return scale.MinGrace; }
-			set { scale.MinGrace = value; }
-		}
-		/// <summary> Gets or sets the "grace" value applied to the maximum data range.
-		/// </summary>
-		/// <remarks>
-		/// This values determines how much extra space is left after the last data value.
-		/// This value is
-		/// expressed as a fraction of the total data range.  For example, assume the data
-		/// range is from 4.0 to 16.0, leaving a range of 12.0.  If MaxGrace is set to
-		/// 0.1, then 10% of the range, or 1.2 will be added to the maximum data value.
-		/// The scale will then be ranged to cover at least 4.0 to 17.2.
-		/// </remarks>
-		/// <seealso cref="Max"/>
-		/// <seealso cref="ZedGraph.Scale.Default.MaxGrace"/>
-		/// <seealso cref="MinGrace"/>
-		public double MaxGrace
-		{
-			get { return scale.MaxGrace; }
-			set { scale.MaxGrace = value; }
+			get { return _crossAuto; }
+			set { _crossAuto = value; }
 		}
 
 		/// <summary>
@@ -1244,578 +507,84 @@ namespace ZedGraph
 		/// This term, expressed in
 		/// points (1/72 inch) and scaled according to <see cref="PaneBase.CalcScaleFactor"/>
 		/// for the <see cref="GraphPane"/>, determines the minimum amount of space
-		/// an axis must have between the <see cref="GraphPane.AxisRect"/> and the
-		/// <see cref="PaneBase.PaneRect"/>.  This minimum space
+		/// an axis must have between the <see cref="Chart.Rect"/> and the
+		/// <see cref="PaneBase.Rect"/>.  This minimum space
 		/// applies whether <see cref="IsVisible"/> is true or false.
 		/// </remarks>
 		public float MinSpace
 		{
-			get { return minSpace; }
-			set { minSpace = value; }
+			get { return _minSpace; }
+			set { _minSpace = value; }
 		}
 
-		#endregion
+	#endregion
 
-		#region Tic Properties
+	#region Tic Properties
+
 		/// <summary>
 		/// The color to use for drawing this <see cref="Axis"/>.
 		/// </summary>
 		/// <remarks>
-		/// This affects only the tic
-		/// marks, since the <see cref="TitleFontSpec"/> and
-		/// <see cref="ScaleFontSpec"/> both have their own color specification.
+		/// This affects only the axis segment (see <see cref="IsAxisSegmentVisible" />),
+		/// since the <see cref="Title"/>,
+		/// <see cref="Scale"/>, <see cref="MajorTic" />, <see cref="MinorTic" />,
+		/// <see cref="MajorGrid" />, and <see cref="MinorGrid" />
+		/// all have their own color specification.
 		/// </remarks>
 		/// <value> The color is defined using the
 		/// <see cref="System.Drawing.Color"/> class</value>
 		/// <seealso cref="Default.Color"/>.
-		/// <seealso cref="IsTic"/>
 		/// <seealso cref="IsVisible"/>
 		public Color Color
 		{
-			get { return color; }
-			set { color = value; }
-		}
-		/// <summary>
-		/// The length of the <see cref="Axis"/> tic marks.
-		/// </summary>
-		/// <remarks>
-		/// This length will be scaled
-		/// according to the <see cref="PaneBase.CalcScaleFactor"/> for the
-		/// <see cref="GraphPane"/>
-		/// </remarks>
-		/// <value>The tic size is measured in points (1/72 inch)</value>
-		/// <seealso cref="Default.TicSize"/>.
-		/// <seealso cref="IsTic"/>
-		/// <seealso cref="IsVisible"/>
-		/// <seealso cref="Color"/>
-		public float TicSize
-		{
-			get { return ticSize; }
-			set { ticSize = value; }
-		}
-		/// <summary>
-		/// The length of the <see cref="Axis"/> minor tic marks.
-		/// </summary>
-		/// <remarks>
-		/// This length will be scaled
-		/// according to the <see cref="PaneBase.CalcScaleFactor"/> for the
-		/// <see cref="GraphPane"/>
-		/// </remarks>
-		/// <value>The tic size is measured in points (1/72 inch)</value>
-		/// <seealso cref="Default.MinorTicSize"/>.
-		/// <seealso cref="IsMinorTic"/>
-		public float MinorTicSize
-		{
-			get { return minorTicSize; }
-			set { minorTicSize = value; }
-		}
-		/// <summary>
-		/// Calculate the scaled tic size for this <see cref="Axis"/>
-		/// </summary>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <returns>The scaled tic size, in points (1/72 inch)</returns>
-		/// <seealso cref="TicSize"/>
-		/// <seealso cref="MinorTicSize"/>
-		/// <seealso cref="TitleFontSpec"/>
-		/// <seealso cref="ScaleFontSpec"/>
-		/// <seealso cref="PaneBase.CalcScaleFactor"/>
-		public float ScaledTic( float scaleFactor )
-		{
-			return (float)( this.ticSize * scaleFactor );
-		}
-		/// <summary>
-		/// Calculate the scaled minor tic size for this <see cref="Axis"/>
-		/// </summary>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <returns>The scaled tic size, in points (1/72 inch)</returns>
-		/// <seealso cref="MinorTicSize"/>
-		/// <seealso cref="PaneBase.CalcScaleFactor"/>
-		public float ScaledMinorTic( float scaleFactor )
-		{
-			return (float)( this.minorTicSize * scaleFactor );
+			get { return _color; }
+			set { _color = value; }
 		}
 
 		/// <summary>
-		/// This is convenience property sets the status of all the different
-		/// tic properties to the same value.  true to activate all tics, false to
-		/// clear all tics.
+		/// Gets a reference to the <see cref="ZedGraph.MajorTic" /> class instance
+		/// for this <see cref="Axis" />.  This class stores all the major tic settings.
 		/// </summary>
-		/// <remarks>
-		/// This setting does not persist.  That is, you can clear all the tics with
-		/// <see cref="IsAllTics" /> = false, then activate them individually (example:
-		/// <see cref="IsMinorTic" /> = true).
-		/// </remarks>
-		/// <seealso cref="IsTic"/>
-		/// <seealso cref="IsMinorTic"/>
-		/// <seealso cref="IsInsideTic"/>
-		/// <seealso cref="IsOppositeTic"/>
-		/// <seealso cref="IsMinorInsideTic"/>
-		/// <seealso cref="IsMinorOppositeTic"/>
-		/// <seealso cref="IsCrossTic"/>
-		/// <seealso cref="IsInsideCrossTic"/>
-		/// <seealso cref="IsMinorInsideCrossTic"/>
-		/// <seealso cref="IsMinorCrossTic"/>
-		public bool IsAllTics
+		public MajorTic MajorTic
 		{
-			set
-			{
-				this.isTic = value;
-				this.isMinorTic = value;
-				this.isInsideTic = value;
-				this.isOppositeTic = value;
-				this.isMinorInsideTic = value;
-				this.isMinorOppositeTic = value;
-
-				this.isCrossTic = value;
-				this.isInsideCrossTic = value;
-				this.isMinorInsideCrossTic = value;
-				this.isMinorCrossTic = value;
-
-			}
+			get { return _majorTic; }
+		}
+		/// <summary>
+		/// Gets a reference to the <see cref="ZedGraph.MinorTic" /> class instance
+		/// for this <see cref="Axis" />.  This class stores all the minor tic settings.
+		/// </summary>
+		public MinorTic MinorTic
+		{
+			get { return _minorTic; }
 		}
 
-		/// <summary>
-		/// Gets or sets a property that determines whether or not the major outside tic marks
-		/// are shown.
-		/// </summary>
-		/// <remarks>
-		/// These are the tic marks on the outside of the <see cref="Axis"/> border.
-		/// The major tic spacing is controlled by <see cref="Step"/>.
-		/// </remarks>
-		/// <value>true to show the major outside tic marks, false otherwise</value>
-		/// <seealso cref="Default.IsTic"/>.
-		/// <seealso cref="IsMinorTic"/>
-		/// <seealso cref="IsInsideTic"/>
-		/// <seealso cref="IsOppositeTic"/>
-		/// <seealso cref="IsMinorInsideTic"/>
-		/// <seealso cref="IsMinorOppositeTic"/>
-		/// <seealso cref="IsCrossTic"/>
-		/// <seealso cref="IsInsideCrossTic"/>
-		/// <seealso cref="IsMinorInsideCrossTic"/>
-		/// <seealso cref="IsMinorCrossTic"/>
-		public bool IsTic
-		{
-			get { return isTic; }
-			set { isTic = value; }
-		}
-		/// <summary>
-		/// Gets or sets a property that determines whether or not the minor outside tic marks
-		/// are shown.
-		/// </summary>
-		/// <remarks>
-		/// These are the tic marks on the outside of the <see cref="Axis"/> border.
-		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.  This setting is
-		/// ignored (no minor tics are drawn) for text axes (see <see cref="IsText"/>).
-		/// </remarks>
-		/// <value>true to show the minor outside tic marks, false otherwise</value>
-		/// <seealso cref="Default.IsMinorTic"/>.
-		/// <seealso cref="IsTic"/>
-		/// <seealso cref="IsInsideTic"/>
-		/// <seealso cref="IsOppositeTic"/>
-		/// <seealso cref="IsMinorInsideTic"/>
-		/// <seealso cref="IsMinorOppositeTic"/>
-		public bool IsMinorTic
-		{
-			get { return isMinorTic; }
-			set { isMinorTic = value; }
-		}
-		/// <summary>
-		/// Gets or sets a property that determines whether or not the major inside tic marks
-		/// are shown.
-		/// </summary>
-		/// <remarks>
-		/// These are the tic marks on the inside of the <see cref="Axis"/> border.
-		/// The major tic spacing is controlled by <see cref="Step"/>.
-		/// </remarks>
-		/// <value>true to show the major inside tic marks, false otherwise</value>
-		/// <seealso cref="Default.IsInsideTic"/>.
-		/// <seealso cref="IsTic"/>
-		/// <seealso cref="IsMinorTic"/>
-		/// <seealso cref="IsOppositeTic"/>
-		/// <seealso cref="IsMinorInsideTic"/>
-		/// <seealso cref="IsMinorOppositeTic"/>
-		public bool IsInsideTic
-		{
-			get { return isInsideTic; }
-			set { isInsideTic = value; }
-		}
-		/// <summary>
-		/// Gets or sets a property that determines whether or not the major opposite tic marks
-		/// are shown.
-		/// </summary>
-		/// <remarks>
-		/// These are the tic marks on the inside of the <see cref="Axis"/> border on
-		/// the opposite side from the axis.
-		/// The major tic spacing is controlled by <see cref="Step"/>.
-		/// </remarks>
-		/// <value>true to show the major opposite tic marks, false otherwise</value>
-		/// <seealso cref="Default.IsOppositeTic"/>.
-		/// <seealso cref="IsTic"/>
-		/// <seealso cref="IsMinorTic"/>
-		/// <seealso cref="IsInsideTic"/>
-		/// <seealso cref="IsMinorInsideTic"/>
-		/// <seealso cref="IsMinorOppositeTic"/>
-		public bool IsOppositeTic
-		{
-			get { return isOppositeTic; }
-			set { isOppositeTic = value; }
-		}
-		/// <summary>
-		/// Gets or sets a property that determines whether or not the minor inside tic marks
-		/// are shown.
-		/// </summary>
-		/// <remarks>
-		/// These are the tic marks on the inside of the <see cref="Axis"/> border.
-		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
-		/// </remarks>
-		/// <value>true to show the minor inside tic marks, false otherwise</value>
-		/// <seealso cref="Default.IsMinorInsideTic"/>.
-		/// <seealso cref="IsTic"/>
-		/// <seealso cref="IsMinorTic"/>
-		/// <seealso cref="IsInsideTic"/>
-		/// <seealso cref="IsOppositeTic"/>
-		/// <seealso cref="IsMinorOppositeTic"/>
-		public bool IsMinorInsideTic
-		{
-			get { return isMinorInsideTic; }
-			set { isMinorInsideTic = value; }
-		}
-		/// <summary>
-		/// Gets or sets a property that determines whether or not the minor opposite tic marks
-		/// are shown.
-		/// </summary>
-		/// <remarks>
-		/// These are the tic marks on the inside of the <see cref="Axis"/> border on
-		/// the opposite side from the axis.
-		/// The minor tic spacing is controlled by <see cref="MinorStep"/>.
-		/// </remarks>
-		/// <value>true to show the minor opposite tic marks, false otherwise</value>
-		/// <seealso cref="Default.IsMinorOppositeTic"/>.
-		/// <seealso cref="IsTic"/>
-		/// <seealso cref="IsMinorTic"/>
-		/// <seealso cref="IsInsideTic"/>
-		/// <seealso cref="IsOppositeTic"/>
-		/// <seealso cref="IsMinorInsideTic"/>
-		public bool IsMinorOppositeTic
-		{
-			get { return isMinorOppositeTic; }
-			set { isMinorOppositeTic = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets the display mode for the <see cref="Axis"/> major outside 
-		/// "cross" tic marks.
-		/// </summary>
-		/// <remarks>
-		/// The "cross" tics are a special, additional set of tic marks that
-		/// always appear on the actual axis, even if it has been shifted due
-		/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
-		/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
-		/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
-		/// they will exactly overlay the "normal" and "inside" tics.  If
-		/// <see cref="CrossAuto"/> is false, then you will most likely want to
-		/// enable the cross tics.
-		/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
-		/// </remarks>
-		/// <value>true to show the major cross tic marks, false otherwise</value>
-		public bool IsCrossTic
-		{
-			get { return isCrossTic; }
-			set { isCrossTic = value; }
-		}
-		/// <summary>
-		/// Gets or sets the display mode for the <see cref="Axis"/> major inside 
-		/// "cross" tic marks.
-		/// </summary>
-		/// <remarks>
-		/// The "cross" tics are a special, additional set of tic marks that
-		/// always appear on the actual axis, even if it has been shifted due
-		/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
-		/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
-		/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
-		/// they will exactly overlay the "normal" and "inside" tics.  If
-		/// <see cref="CrossAuto"/> is false, then you will most likely want to
-		/// enable the cross tics.
-		/// The major tic spacing is controlled by <see cref="Axis.Step"/>.
-		/// </remarks>
-		/// <value>true to show the major cross tic marks, false otherwise</value>
-		public bool IsInsideCrossTic
-		{
-			get { return isInsideCrossTic; }
-			set { isInsideCrossTic = value; }
-		}
-		/// <summary>
-		/// Gets or sets the display mode for the <see cref="Axis"/> minor outside 
-		/// "cross" tic marks.
-		/// </summary>
-		/// <remarks>
-		/// The "cross" tics are a special, additional set of tic marks that
-		/// always appear on the actual axis, even if it has been shifted due
-		/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
-		/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
-		/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
-		/// they will exactly overlay the "normal" and "inside" tics.  If
-		/// <see cref="CrossAuto"/> is false, then you will most likely want to
-		/// enable the cross tics.
-		/// The minor tic spacing is controlled by <see cref="Axis.MinorStep"/>.
-		/// </remarks>
-		/// <value>true to show the major cross tic marks, false otherwise</value>
-		public bool IsMinorCrossTic
-		{
-			get { return isMinorCrossTic; }
-			set { isMinorCrossTic = value; }
-		}
-		/// <summary>
-		/// Gets or sets the display mode for the <see cref="Axis"/> minor inside 
-		/// "cross" tic marks.
-		/// </summary>
-		/// <remarks>
-		/// The "cross" tics are a special, additional set of tic marks that
-		/// always appear on the actual axis, even if it has been shifted due
-		/// to the <see cref="Axis.Cross" /> setting.  The other tic marks are always
-		/// fixed to the edges of the <see cref="GraphPane.AxisRect"/>.  The cross tics
-		/// are normally not displayed, since, if <see cref="Axis.CrossAuto" /> is true,
-		/// they will exactly overlay the "normal" and "inside" tics.  If
-		/// <see cref="CrossAuto"/> is false, then you will most likely want to
-		/// enable the cross tics.
-		/// The major tic spacing is controlled by <see cref="Axis.MinorStep"/>.
-		/// </remarks>
-		/// <value>true to show the major cross tic marks, false otherwise</value>
-		public bool IsMinorInsideCrossTic
-		{
-			get { return isMinorInsideCrossTic; }
-			set { isMinorInsideCrossTic = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a property that determines whether or not the major tics will be drawn
-		/// inbetween the labels, rather than right at the labels.
-		/// </summary>
-		/// <remarks>
-		/// Note that this setting is only
-		/// applicable if <see cref="Axis.Type"/> = <see cref="AxisType.Text"/>.
-		/// </remarks>
-		/// <value>true to place the text between the labels for text axes, false otherwise</value>
-		/// <seealso cref="IsTic"/>
-		/// <seealso cref="IsMinorTic"/>
-		/// <seealso cref="IsInsideTic"/>
-		/// <seealso cref="IsOppositeTic"/>
-		/// <seealso cref="IsMinorInsideTic"/>
-		/// <seealso cref="IsMinorOppositeTic"/>
-		public bool IsTicsBetweenLabels
-		{
-			get { return isTicsBetweenLabels; }
-			set { isTicsBetweenLabels = value; }
-		}
-		/// <summary>
-		/// Gets or sets the pen width to be used when drawing the tic marks for
-		/// this <see cref="Axis"/>
-		/// </summary>
-		/// <value>The pen width is defined in points (1/72 inch)</value>
-		/// <seealso cref="Default.TicPenWidth"/>.
-		/// <seealso cref="IsTic"/>
-		/// <seealso cref="Color"/>
-		public float TicPenWidth
-		{
-			get { return ticPenWidth; }
-			set { ticPenWidth = value; }
-		}
 		#endregion
 
-		#region Grid Properties
+	#region Grid Properties
 
 		/// <summary>
-		/// Gets or sets a value that determines if the major <see cref="Axis"/> gridlines
-		/// (at each labeled value) will be visible
+		/// Gets a reference to the <see cref="MajorGrid" /> class that contains the properties
+		/// of the major grid.
 		/// </summary>
-		/// <value>true to show the gridlines, false otherwise</value>
-		/// <seealso cref="Default.IsShowGrid">Default.IsShowGrid</seealso>.
-		/// <seealso cref="GridColor"/>
-		/// <seealso cref="GridPenWidth"/>
-		/// <seealso cref="GridDashOn"/>
-		/// <seealso cref="GridDashOff"/>
-		/// <seealso cref="IsVisible"/>
-		public bool IsShowGrid
+		public MajorGrid MajorGrid
 		{
-			get { return isShowGrid; }
-			set { isShowGrid = value; }
+			get { return _majorGrid; }
 		}
 
 		/// <summary>
-		/// Gets or sets a boolean value that determines if a line will be drawn at the
-		/// zero value for the axis.
+		/// Gets a reference to the <see cref="MinorGrid" /> class that contains the properties
+		/// of the minor grid.
 		/// </summary>
-		/// <remarks>
-		/// The zero line is a line that divides the negative values from the positive values.
-		/// The default is set according to
-		/// <see cref="XAxis.Default.IsZeroLine"/>, <see cref="YAxis.Default.IsZeroLine"/>,
-		/// <see cref="Y2Axis.Default.IsZeroLine"/>,
-		/// </remarks>
-		/// <value>true to show the zero line, false otherwise</value>
-		public bool IsZeroLine
+		public MinorGrid MinorGrid
 		{
-			get { return isZeroLine; }
-			set { isZeroLine = value; }
+			get { return _minorGrid; }
 		}
 
-		/// <summary>
-		/// The "Dash On" mode for drawing the grid.
-		/// </summary>
-		/// <remarks>
-		/// This is the distance,
-		/// in points (1/72 inch), of the dash segments that make up the dashed grid lines.
-		/// </remarks>
-		/// <value>The dash on length is defined in points (1/72 inch)</value>
-		/// <seealso cref="GridDashOff"/>
-		/// <seealso cref="IsShowGrid"/>
-		/// <seealso cref="Default.GridDashOn"/>.
-		public float GridDashOn
-		{
-			get { return gridDashOn; }
-			set { gridDashOn = value; }
-		}
-		/// <summary>
-		/// The "Dash Off" mode for drawing the grid.
-		/// </summary>
-		/// <remarks>
-		/// This is the distance,
-		/// in points (1/72 inch), of the spaces between the dash segments that make up
-		/// the dashed grid lines.
-		/// </remarks>
-		/// <value>The dash off length is defined in points (1/72 inch)</value>
-		/// <seealso cref="GridDashOn"/>
-		/// <seealso cref="IsShowGrid"/>
-		/// <seealso cref="Default.GridDashOff"/>.
-		public float GridDashOff
-		{
-			get { return gridDashOff; }
-			set { gridDashOff = value; }
-		}
-		/// <summary>
-		/// The pen width used for drawing the grid lines.
-		/// </summary>
-		/// <value>The grid pen width is defined in points (1/72 inch)</value>
-		/// <seealso cref="IsShowGrid"/>
-		/// <seealso cref="Default.GridPenWidth"/>.
-		/// <seealso cref="GridColor"/>
-		public float GridPenWidth
-		{
-			get { return gridPenWidth; }
-			set { gridPenWidth = value; }
-		}
-		/// <summary>
-		/// The color to use for drawing this <see cref="Axis"/> grid.
-		/// </summary>
-		/// <remarks>
-		/// This affects only the grid
-		/// lines, since the <see cref="TitleFontSpec"/> and
-		/// <see cref="ScaleFontSpec"/> both have their own color specification.
-		/// </remarks>
-		/// <value> The color is defined using the
-		/// <see cref="System.Drawing.Color"/> class</value>
-		/// <seealso cref="Default.GridColor"/>.
-		/// <seealso cref="GridPenWidth"/>
-		public Color GridColor
-		{
-			get { return gridColor; }
-			set { gridColor = value; }
-		}
-		#endregion
 
-		#region Minor Grid Properties
+	#endregion
 
-		/// <summary>
-		/// Gets or sets a value that determines if the minor <see cref="Axis"/> gridlines
-		/// (in between each labeled value) will be visible
-		/// </summary>
-		/// <value>true to show the minor gridlines, false otherwise</value>
-		/// <seealso cref="Default.IsShowMinorGrid">Default.IsShowMinorGrid</seealso>.
-		/// <seealso cref="MinorGridColor"/>
-		/// <seealso cref="MinorGridPenWidth"/>
-		/// <seealso cref="MinorGridDashOn"/>
-		/// <seealso cref="MinorGridDashOff"/>
-		/// <seealso cref="IsVisible"/>
-		public bool IsShowMinorGrid
-		{
-			get { return isShowMinorGrid; }
-			set { isShowMinorGrid = value; }
-		}
+	#region Type Properties
 
-		/// <summary>
-		/// Gets or sets the "Dash On" mode for drawing the minor grid.
-		/// </summary>
-		/// <remarks>
-		/// This is the distance,
-		/// in points (1/72 inch), of the dash segments that make up the dashed grid lines.
-		/// </remarks>
-		/// <value>The dash on length is defined in points (1/72 inch)</value>
-		/// <seealso cref="MinorGridDashOff"/>
-		/// <seealso cref="IsShowMinorGrid"/>
-		/// <seealso cref="Default.MinorGridDashOn"/>.
-		public float MinorGridDashOn
-		{
-			get { return minorGridDashOn; }
-			set { minorGridDashOn = value; }
-		}
-		/// <summary>
-		/// Gets or sets the "Dash Off" mode for drawing the minor grid.
-		/// </summary>
-		/// <remarks>
-		/// This is the distance,
-		/// in points (1/72 inch), of the spaces between the dash segments that make up
-		/// the dashed grid lines.
-		/// </remarks>
-		/// <value>The dash off length is defined in points (1/72 inch)</value>
-		/// <seealso cref="MinorGridDashOn"/>
-		/// <seealso cref="IsShowMinorGrid"/>
-		/// <seealso cref="Default.MinorGridDashOff"/>.
-		public float MinorGridDashOff
-		{
-			get { return minorGridDashOff; }
-			set { minorGridDashOff = value; }
-		}
-		/// <summary>
-		/// Gets or sets the default pen width used for drawing the minor grid lines.
-		/// </summary>
-		/// <value>The grid pen width is defined in points (1/72 inch)</value>
-		/// <seealso cref="IsShowMinorGrid"/>
-		/// <seealso cref="Default.MinorGridPenWidth"/>.
-		/// <seealso cref="MinorGridColor"/>
-		public float MinorGridPenWidth
-		{
-			get { return minorGridPenWidth; }
-			set { minorGridPenWidth = value; }
-		}
-		/// <summary>
-		/// Gets or sets the color to use for drawing this <see cref="Axis"/> minor grid.
-		/// </summary>
-		/// <remarks>
-		/// This affects only the minor grid
-		/// lines, since the <see cref="TitleFontSpec"/> and
-		/// <see cref="ScaleFontSpec"/> both have their own color specification.
-		/// </remarks>
-		/// <value> The color is defined using the
-		/// <see cref="System.Drawing.Color"/> class</value>
-		/// <seealso cref="Default.MinorGridColor"/>.
-		/// <seealso cref="MinorGridPenWidth"/>
-		public Color MinorGridColor
-		{
-			get { return minorGridColor; }
-			set { minorGridColor = value; }
-		}
-		#endregion
-
-		#region Type Properties
 		/// <summary>
 		/// This property determines whether or not the <see cref="Axis"/> is shown.
 		/// </summary>
@@ -1825,25 +594,14 @@ namespace ZedGraph
 		/// graph, it will just be invisible to the user
 		/// </remarks>
 		/// <value>true to show the axis, false to disable all drawing of this axis</value>
-		/// <seealso cref="Axis.IsScaleVisible"/>.
+		/// <seealso cref="ZedGraph.Scale.IsVisible"/>.
 		/// <seealso cref="XAxis.Default.IsVisible"/>.
 		/// <seealso cref="YAxis.Default.IsVisible"/>.
 		/// <seealso cref="Y2Axis.Default.IsVisible"/>.
 		public bool IsVisible
 		{
-			get { return isVisible; }
-			set { isVisible = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a property that determines whether or not the scale values will be shown.
-		/// </summary>
-		/// <value>true to show the scale values, false otherwise</value>
-		/// <seealso cref="Axis.IsVisible"/>.
-		public bool IsScaleVisible
-		{
-			get { return isScaleVisible; }
-			set { isScaleVisible = value; }
+			get { return _isVisible; }
+			set { _isVisible = value; }
 		}
 
 		/// <summary>
@@ -1852,109 +610,16 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// Under normal circumstances, this value won't affect the appearance of the display because
-		/// the Axis segment is overlain by the Axis border (see <see cref="GraphPane.AxisBorder"/>).
+		/// the Axis segment is overlain by the Axis border (see <see cref="Chart.Border"/>).
 		/// However, when the border is not visible, or when <see cref="Axis.CrossAuto"/> is set to
 		/// false, this value will make a difference.
 		/// </remarks>
 		public bool IsAxisSegmentVisible
 		{
-			get { return isAxisSegmentVisible; }
-			set { isAxisSegmentVisible = value; }
+			get { return _isAxisSegmentVisible; }
+			set { _isAxisSegmentVisible = value; }
 		}
 
-		/// <summary>
-		/// Determines if the scale values are reversed for this <see cref="Axis"/>
-		/// </summary>
-		/// <value>true for the X values to decrease to the right or the Y values to
-		/// decrease upwards, false otherwise</value>
-		/// <seealso cref="ZedGraph.Scale.Default.IsReverse"/>.
-		public bool IsReverse
-		{
-			get { return scale.IsReverse; }
-			set { scale.IsReverse = value; }
-		}
-		/// <summary>
-		/// Gets a property that indicates if this <see cref="Axis"/> is logarithmic (base 10).
-		/// </summary>
-		/// <remarks>
-		/// To make this property true, set <see cref="Type"/> to <see cref="AxisType.Log"/>.
-		/// </remarks>
-		/// <value>true for a logarithmic axis, false for a linear, date, or text axis</value>
-		/// <seealso cref="Type"/>
-		/// <seealso cref="AxisType"/>
-		public bool IsLog
-		{
-			get { return scale.IsLog; }
-		}
-		/// <summary>
-		/// Gets a property that indicates if this <see cref="Axis"/> is exponential.
-		/// </summary>
-		/// <remarks>
-		/// To make this property true, set <see cref="Type"/> to <see cref="AxisType.Exponent"/>.
-		/// </remarks>
-		/// <value>true for an exponential axis, false for a linear, date, log, or text axis</value>
-		/// <seealso cref="Type"/>
-		/// <seealso cref="AxisType"/>
-		public bool IsExponent
-		{
-			get { return scale.IsExponent; }
-		}
-		/// <summary>
-		/// Determines if this <see cref="Axis"/> is of the date-time type.
-		/// </summary>
-		/// <remarks>
-		/// To make this property
-		/// true, set <see cref="Type"/> to <see cref="AxisType.Date"/>.
-		/// </remarks>
-		/// <value>true for a date axis, false for a linear, log, or text axis</value>
-		/// <seealso cref="Type"/>
-		/// <seealso cref="AxisType"/>
-		public bool IsDate
-		{
-			get { return scale.IsDate; }
-		}
-		/// <summary>
-		/// Tests if this <see cref="Axis"/> is labeled with user provided text
-		/// labels rather than calculated numeric values.
-		/// </summary>
-		/// <remarks>
-		/// The text labels are provided via the
-		/// <see cref="TextLabels"/> property.  Internally, the axis is still handled with ordinal values
-		/// such that the axis <see cref="Min"/> is set to 1.0, and the axis <see cref="Max"/> is set
-		/// to the number of labels.  To make this property true, set <see cref="Type"/> to
-		/// <see cref="AxisType.Text"/>.
-		/// </remarks>
-		/// <value>true for a text-based axis, false for a linear, log, or date axes.
-		/// If this property is true, then you should also provide
-		/// an array of labels via <see cref="TextLabels"/>.
-		/// </value>
-		/// <seealso cref="Type"/>
-		/// <seealso cref="AxisType"/>
-		public bool IsText
-		{
-			get { return scale.IsText; }
-		}
-		/// <summary>
-		/// Tests if this <see cref="Axis"/> is an <see cref="AxisType.Ordinal"/> type axis
-		/// with numeric labels.
-		/// </summary>
-		/// <remarks>
-		/// This is similar to a <see cref="AxisType.Text"/> axis, but the labels are numeric
-		/// rather than user-defined text.  An ordinal axis will cause the associated values for the
-		/// curves to be ignored, and replaced by sequential integer values.
-		/// For example, if the X Axis is ordinal, then the X values for each curve will be ignored, and the
-		/// first point will be plotted at an ordinal value of 1.0, the second value at 2.0, etc.
-		/// To make this property true, set <see cref="Type"/> to
-		/// <see cref="AxisType.Ordinal"/>.
-		/// </remarks>
-		/// <value>true for an ordinal axis, false for a linear, log, text, or date axes.
-		/// </value>
-		/// <seealso cref="Type"/>
-		/// <seealso cref="AxisType"/>
-		public bool IsOrdinal
-		{
-			get { return scale.IsOrdinal; }
-		}
 		/// <summary>
 		/// Gets or sets the <see cref="AxisType"/> for this <see cref="Axis"/>.
 		/// </summary>
@@ -1963,325 +628,36 @@ namespace ZedGraph
 		/// <see cref="AxisType.Log"/>, <see cref="AxisType.Date"/>,
 		/// or <see cref="AxisType.Text"/>.
 		/// </remarks>
-		/// <seealso cref="IsLog"/>
-		/// <seealso cref="IsText"/>
-		/// <seealso cref="IsOrdinal"/>
-		/// <seealso cref="IsDate"/>
-		/// <seealso cref="IsReverse"/>
+		/// <seealso cref="ZedGraph.Scale.IsLog"/>
+		/// <seealso cref="ZedGraph.Scale.IsText"/>
+		/// <seealso cref="ZedGraph.Scale.IsOrdinal"/>
+		/// <seealso cref="ZedGraph.Scale.IsDate"/>
+		/// <seealso cref="ZedGraph.Scale.IsReverse"/>
 		public AxisType Type
 		{
-			get { return scale.Type; }
-			set { this.scale = Scale.MakeNewScale( this.scale, value ); }
+			get { return _scale.Type; }
+			set { _scale = Scale.MakeNewScale( _scale, value ); }
 		}
 
-		/// <summary>
-		/// Gets a value that indicates if this <see cref="Axis" /> is of any of the
-		/// ordinal types in the <see cref="AxisType" /> enumeration.
-		/// </summary>
-		/// <seealso cref="Type" />
-		public bool IsAnyOrdinal { get { return this.scale.IsAnyOrdinal; } }
+	#endregion
 
-		#endregion
+	#region Label Properties
 
-		#region Label Properties
 		/// <summary>
-		/// Gets or sets the property that controls whether or not the magnitude factor (power of 10) for
-		/// this scale will be included in the label.
-		/// </summary>
-		/// <remarks>
-		/// For large scale values, a "magnitude" value (power of 10) is automatically
-		/// used for scaling the graph.  This magnitude value is automatically appended
-		/// to the end of the Axis <see cref="Title"/> (e.g., "(10^4)") to indicate
-		/// that a magnitude is in use.  This property controls whether or not the
-		/// magnitude is included in the title.  Note that it only affects the axis
-		/// title; a magnitude value may still be used even if it is not shown in the title.
-		/// </remarks>
-		/// <value>true to show the magnitude value, false to hide it</value>
-		/// <seealso cref="Title"/>
-		/// <seealso cref="ScaleMag"/>
-		/// <seealso cref="ScaleFormat"/>
-		// /// <seealso cref="NumDec"/>
-		public bool IsOmitMag
-		{
-			get { return isOmitMag; }
-			set { isOmitMag = value; }
-		}
-		/// <summary>
-		/// Gets or sets the text title of this <see cref="Axis"/>.
+		/// Gets or sets the <see cref="Label" /> class that contains the title of this
+		/// <see cref="Axis"/>.
 		/// </summary>
 		/// <remarks>The title normally shows the basis and dimensions of
 		/// the scale range, such as "Time (Years)".  The title is only shown if the
-		/// <see cref="IsShowTitle"/> property is set to true.  If the Title text is empty,
+		/// <see cref="Label.IsVisible"/> property is set to true.  If the Title text is empty,
 		/// then no title is shown, and no space is "reserved" for the title on the graph.
 		/// </remarks>
 		/// <value>the title is a string value</value>
-		/// <seealso cref="IsOmitMag"/>
-		/// <seealso cref="IsShowTitle"/>
-		public string Title
+		/// <seealso cref="AxisLabel.IsOmitMag"/>
+		public AxisLabel Title
 		{
-			get { return title; }
-			set { title = value; }
-		}
-
-		/// <summary>
-		/// The display mode for the <see cref="Axis"/>
-		/// <see cref="Title"/> property.  The default
-		/// value comes from <see cref="Default.IsShowTitle"/>.
-		/// </summary>
-		/// <value> boolean value; true to show the title, false to hide it.</value>
-		/// <seealso cref="Title"/>
-		public bool IsShowTitle
-		{
-			get { return isShowTitle; }
-			set { isShowTitle = value; }
-		}
-
-		/// <summary>
-		/// Determines if powers-of-ten notation will be used for the numeric value labels.
-		/// </summary>
-		/// <remarks>
-		/// The powers-of-ten notation is just the text "10" followed by a superscripted value
-		/// indicating the magnitude.  This mode is only valid for log scales (see
-		/// <see cref="IsLog"/> and <see cref="Type"/>).
-		/// </remarks>
-		/// <value> boolean value; true to show the title as a power of ten, false to
-		/// show a regular numeric value (e.g., "0.01", "10", "1000")</value>
-		public bool IsUseTenPower
-		{
-			get { return this.scale.IsUseTenPower; }
-			set { this.scale.IsUseTenPower = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a <see cref="bool"/> value that determines if ZedGraph will check to
-		/// see if the <see cref="Axis"/> scale labels are close enough to overlap.  If so,
-		/// ZedGraph will adjust the step size to prevent overlap.
-		/// </summary>
-		/// <remarks>
-		/// The process of checking for overlap is done during the <see cref="GraphPane.AxisChange"/>
-		/// method call, and affects the selection of the major step size (<see cref="Step"/>).
-		/// </remarks>
-		/// <value> boolean value; true to check for overlap, false otherwise</value>
-		public bool IsPreventLabelOverlap
-		{
-			get { return this.scale.IsPreventLabelOverlap; }
-			set { this.scale.IsPreventLabelOverlap = value; }
-		}
-
-		/// <summary>
-		/// The text labels for this <see cref="Axis"/>.
-		/// </summary>
-		/// <remarks>
-		/// This property is only
-		/// applicable if <see cref="Type"/> is set to <see cref="AxisType.Text"/>.
-		/// </remarks>
-		public string[] TextLabels
-		{
-			get { return scale.TextLabels; }
-			set { scale.TextLabels = value; }
-		}
-
-		/// <summary>
-		/// Determines whether or not the scale label format <see cref="ScaleFormat"/>
-		/// is determined automatically based on the range of data values.
-		/// </summary>
-		/// <remarks>
-		/// This value will be set to false if
-		/// <see cref="ScaleFormat"/> is manually changed.
-		/// </remarks>
-		/// <value>true if <see cref="ScaleFormat"/> will be set automatically, false
-		/// if it is to be set manually by the user</value>
-		/// <seealso cref="ScaleMag"/>
-		/// <seealso cref="ScaleFormat"/>
-		/// <seealso cref="ScaleFontSpec"/>
-		// /// <seealso cref="NumDec"/>
-		public bool ScaleFormatAuto
-		{
-			get { return this.scale.ScaleFormatAuto; }
-			set { this.scale.ScaleFormatAuto = value; }
-		}
-		/// <summary>
-		/// The format of the <see cref="Axis"/> tic labels.
-		/// </summary>
-		/// <remarks>
-		/// This property is only used if the <see cref="Type"/> is set to <see cref="AxisType.Date"/>.
-		/// This property may be set automatically by ZedGraph, depending on the state of
-		/// <see cref="ScaleFormatAuto"/>.
-		/// </remarks>
-		/// <value>This format string is as defined for the <see cref="XDate.ToString()"/> function,
-		/// which uses the <see cref="System.Globalization.DateTimeFormatInfo" /> class for format strings.</value>
-		/// <seealso cref="ScaleMag"/>
-		/// <seealso cref="ScaleFormatAuto"/>
-		/// <seealso cref="ScaleFontSpec"/>
-		// /// <seealso cref="NumDec"/>
-		public string ScaleFormat
-		{
-			get { return this.scale.ScaleFormat; }
-			set { this.scale.ScaleFormat = value; this.scale.ScaleFormatAuto = false; }
-		}
-		/// <summary> Controls the alignment of the <see cref="Axis"/> tic labels.
-		/// </summary>
-		/// <remarks>
-		/// This property controls whether the inside, center, or outside edges of the
-		/// text labels are aligned.
-		/// </remarks>
-		public AlignP ScaleAlign
-		{
-			get { return scaleAlign; }
-			set { scaleAlign = value; }
-		}
-
-		/// <summary>
-		/// The magnitude multiplier for scale values.
-		/// </summary>
-		/// <remarks>
-		/// This is used to limit
-		/// the size of the displayed value labels.  For example, if the value
-		/// is really 2000000, then the graph will display 2000 with a 10^3
-		/// magnitude multiplier.  This value can be determined automatically
-		/// depending on the state of <see cref="ScaleMagAuto"/>.
-		/// If this value is set manually by the user,
-		/// then <see cref="ScaleMagAuto"/> will also be set to false.
-		/// </remarks>
-		/// <value>The magnitude multiplier (power of 10) for the scale
-		/// value labels</value>
-		/// <seealso cref="IsOmitMag"/>
-		/// <seealso cref="Title"/>
-		/// <seealso cref="ScaleFormat"/>
-		/// <seealso cref="ScaleFontSpec"/>
-		// /// <seealso cref="NumDec"/>
-		public int ScaleMag
-		{
-			get { return this.scale.ScaleMag; }
-			set { this.scale.ScaleMag = value; this.scale.ScaleMagAuto = false; }
-		}
-		/// <summary>
-		/// Determines whether the <see cref="ScaleMag"/> value will be set
-		/// automatically based on the data, or manually by the user.
-		/// </summary>
-		/// <remarks>
-		/// If the user manually sets the <see cref="ScaleMag"/> value, then this
-		/// flag will be set to false.
-		/// </remarks>
-		/// <value>true to have <see cref="ScaleMag"/> set automatically,
-		/// false otherwise</value>
-		/// <seealso cref="IsOmitMag"/>
-		/// <seealso cref="Title"/>
-		/// <seealso cref="ScaleMag"/>
-		public bool ScaleMagAuto
-		{
-			get { return this.scale.ScaleMagAuto; }
-			set { this.scale.ScaleMagAuto = value; }
-		}
-		/// <summary>
-		/// Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
-		/// the scale values
-		/// </summary>
-		/// <seealso cref="Default.ScaleFontFamily"/>
-		/// <seealso cref="Default.ScaleFontSize"/>
-		/// <seealso cref="Default.ScaleFontColor"/>
-		/// <seealso cref="Default.ScaleFontBold"/>
-		/// <seealso cref="Default.ScaleFontUnderline"/>
-		/// <seealso cref="Default.ScaleFontItalic"/>
-		public FontSpec ScaleFontSpec
-		{
-			get { return scaleFontSpec; }
-		}
-		/// <summary>
-		/// Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
-		/// the <see cref="Axis"/> <see cref="Title"/>,
-		/// </summary>
-		/// <seealso cref="Default.TitleFontFamily"/>
-		/// <seealso cref="Default.TitleFontSize"/>
-		/// <seealso cref="Default.TitleFontColor"/>
-		/// <seealso cref="Default.TitleFontBold"/>
-		/// <seealso cref="Default.TitleFontUnderline"/>
-		/// <seealso cref="Default.TitleFontItalic"/>
-		public FontSpec TitleFontSpec
-		{
-			get { return titleFontSpec; }
-		}
-
-		/// <summary>
-		/// Gets or sets a value that causes the axis scale labels and title to appear on the
-		/// opposite side of the axis.
-		/// </summary>
-		/// <remarks>
-		/// For example, setting this flag to true for the <see cref="YAxis"/> will shift the
-		/// axis labels and title to the right side of the <see cref="YAxis"/> instead of the
-		/// normal left-side location.  Set this property to true for the <see cref="XAxis"/>,
-		/// and set the <see cref="Cross"/> property for the <see cref="XAxis"/> to an arbitrarily
-		/// large value (assuming <see cref="IsReverse"/> is false for the <see cref="YAxis"/>) in
-		/// order to have the <see cref="XAxis"/> appear at the top of the <see cref="GraphPane.AxisRect"/>.
-		/// </remarks>
-		/// <seealso cref="IsReverse"/>
-		/// <seealso cref="Cross"/>
-		public bool IsScaleLabelsInside
-		{
-			get { return isScaleLabelsInside; }
-			set { isScaleLabelsInside = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a value that determines whether the Axis title is located at the <see cref="Cross" />
-		/// value or at the normal position (outside the <see cref="GraphPane.AxisRect" />).
-		/// </summary>
-		/// <remarks>
-		/// This value only applies if <see cref="CrossAuto" /> is false.
-		/// </remarks>
-		public bool IsTitleAtCross
-		{
-			get { return isTitleAtCross; }
-			set { isTitleAtCross = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a value that causes the first scale label for this <see cref="Axis"/> to be
-		/// hidden.
-		/// </summary>
-		/// <remarks>
-		/// Often, for axis that have an active <see cref="Cross"/> setting (e.g., <see cref="CrossAuto"/>
-		/// is false), the first and/or last scale label are overlapped by opposing axes.  Use this
-		/// property to hide the first scale label to avoid the overlap.  Note that setting this value
-		/// to true will hide any scale label that appears within <see cref="Default.EdgeTolerance"/> of the
-		/// beginning of the <see cref="Axis"/>.
-		/// </remarks>
-		public bool IsSkipFirstLabel
-		{
-			get { return isSkipFirstLabel; }
-			set { isSkipFirstLabel = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a value that causes the last scale label for this <see cref="Axis"/> to be
-		/// hidden.
-		/// </summary>
-		/// <remarks>
-		/// Often, for axis that have an active <see cref="Cross"/> setting (e.g., <see cref="CrossAuto"/>
-		/// is false), the first and/or last scale label are overlapped by opposing axes.  Use this
-		/// property to hide the last scale label to avoid the overlap.  Note that setting this value
-		/// to true will hide any scale label that appears within <see cref="Default.EdgeTolerance"/> of the
-		/// end of the <see cref="Axis"/>.
-		/// </remarks>
-		public bool IsSkipLastLabel
-		{
-			get { return isSkipLastLabel; }
-			set { isSkipLastLabel = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a value that causes the scale label that is located at the <see cref="Cross" />
-		/// value for this <see cref="Axis"/> to be hidden.
-		/// </summary>
-		/// <remarks>
-		/// For axes that have an active <see cref="Cross"/> setting (e.g., <see cref="CrossAuto"/>
-		/// is false), the scale label at the <see cref="Cross" /> value is overlapped by opposing axes.
-		/// Use this property to hide the scale label to avoid the overlap.
-		/// </remarks>
-		public bool IsSkipCrossLabel
-		{
-			get { return isSkipCrossLabel; }
-			set { isSkipCrossLabel = value; }
+			get { return _title; }
+			set { _title = value; }
 		}
 
 		/// <summary>
@@ -2297,12 +673,14 @@ namespace ZedGraph
 		/// <seealso cref="Default.AxisGap"/>.
 		public float AxisGap
 		{
-			get { return axisGap; }
-			set { axisGap = value; }
+			get { return _axisGap; }
+			set { _axisGap = value; }
 		}
-		#endregion
 
-		#region Rendering Methods
+	#endregion
+
+	#region Rendering Methods
+
 		/// <summary>
 		/// Restore the scale ranging to automatic mode, and recalculate the
 		/// <see cref="Axis"/> scale ranges
@@ -2315,22 +693,21 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <seealso cref="MinAuto"/>
-		/// <seealso cref="MaxAuto"/>
-		/// <seealso cref="StepAuto"/>
-		/// <seealso cref="ScaleMagAuto"/>
-		/// <seealso cref="ScaleFormatAuto"/>
-		// /// <seealso cref="NumDecAuto"/>
+		/// <seealso cref="ZedGraph.Scale.MinAuto"/>
+		/// <seealso cref="ZedGraph.Scale.MaxAuto"/>
+		/// <seealso cref="ZedGraph.Scale.MajorStepAuto"/>
+		/// <seealso cref="ZedGraph.Scale.MagAuto"/>
+		/// <seealso cref="ZedGraph.Scale.FormatAuto"/>
 		public void ResetAutoScale( GraphPane pane, Graphics g )
 		{
-			this.scale.MinAuto = true;
-			this.scale.MaxAuto = true;
-			this.scale.StepAuto = true;
-			this.scale.MinorStepAuto = true;
-			this.crossAuto = true;
-			this.scale.ScaleMagAuto = true;
+			_scale._minAuto = true;
+			_scale._maxAuto = true;
+			_scale._majorStepAuto = true;
+			_scale._minorStepAuto = true;
+			_crossAuto = true;
+			_scale._magAuto = true;
 			//this.numDecAuto = true;
-			this.scale.ScaleFormatAuto = true;
+			_scale._formatAuto = true;
 			pane.AxisChange( g );
 		}
 
@@ -2364,15 +741,20 @@ namespace ZedGraph
 		{
 			Matrix saveMatrix = g.Transform;
 
-			this.scale.SetupScaleData( pane, this );
+			_scale.SetupScaleData( pane, this );
 
-			SetTransformMatrix( g, pane, scaleFactor );
+			if ( _isVisible )
+			{
+				SetTransformMatrix( g, pane, scaleFactor );
 
-			DrawScale( g, pane, scaleFactor, shiftPos );
+				shiftPos = CalcTotalShift( pane, scaleFactor, shiftPos );
 
-			//DrawTitle( g, pane, scaleFactor );
+				_scale.Draw( g, pane, scaleFactor, shiftPos );
 
-			g.Transform = saveMatrix;
+				//DrawTitle( g, pane, scaleFactor );
+
+				g.Transform = saveMatrix;
+			}
 		}
 
 		/// <summary>
@@ -2447,43 +829,56 @@ namespace ZedGraph
 
 		//abstract internal float CalcCrossFraction( GraphPane pane );
 
+		/// <summary>
+		/// Returns the linearized actual cross position for this axis, reflecting the settings of
+		/// <see cref="Cross" />, <see cref="CrossAuto" />, and <see cref="ZedGraph.Scale.IsReverse" />.
+		/// </summary>
+		/// <remarks>
+		/// If the value of <see cref="Cross" /> lies outside the axis range, it is
+		/// limited to the axis range.
+		/// </remarks>
 		internal double EffectiveCrossValue( GraphPane pane )
 		{
 			Axis crossAxis = GetCrossAxis( pane );
-			double min = crossAxis.Min;
-			double max = crossAxis.Max;
+			double min = crossAxis._scale._minLinTemp;
+			double max = crossAxis._scale._maxLinTemp;
 
-			if ( crossAuto )
+			if ( _crossAuto )
 			{
-				if ( crossAxis.IsReverse == ( this is Y2Axis ) )
+				if ( crossAxis._scale.IsReverse == ( this is Y2Axis ) )
 					return max;
 				else
 					return min;
 			}
-			else if ( cross < min )
+			else if ( _cross < min )
 				return min;
-			else if ( cross > max )
+			else if ( _cross > max )
 				return max;
 			else
-				return cross;
+				return _scale.Linearize( _cross );
 		}
 
+		/// <summary>
+		/// Returns true if the axis is shifted at all due to the setting of
+		/// <see cref="Cross" />.  This function will always return false if
+		/// <see cref="CrossAuto" /> is true.
+		/// </summary>
 		internal bool IsCrossShifted( GraphPane pane )
 		{
-			if ( this.crossAuto )
+			if ( _crossAuto )
 				return false;
 			else
 			{
 				Axis crossAxis = GetCrossAxis( pane );
-				if ( ( ( this is XAxis || this is YAxis ) && !crossAxis.scale.IsReverse ) ||
-					( this is Y2Axis && crossAxis.scale.IsReverse ) )
+				if ( ( ( this is XAxis || this is YAxis ) && !crossAxis._scale.IsReverse ) ||
+					( this is Y2Axis && crossAxis._scale.IsReverse ) )
 				{
-					if ( this.cross <= crossAxis.Min )
+					if ( _cross <= crossAxis._scale._min )
 						return false;
 				}
 				else
 				{
-					if ( this.cross >= crossAxis.Max )
+					if ( _cross >= crossAxis._scale._max )
 						return false;
 				}
 			}
@@ -2491,17 +886,20 @@ namespace ZedGraph
 			return true;
 		}
 
+		/// <summary>
+		/// Calculates the proportional fraction of the total cross axis width at which
+		/// this axis is located.
+		/// </summary>
+		/// <param name="pane"></param>
+		/// <returns></returns>
 		internal float CalcCrossFraction( GraphPane pane )
 		{
-			//if ( this.crossAuto )
-			//	return ( isScaleLabelsInside && IsPrimary( pane ) ) ? 1.0f : 0.0f;
-
 			// if this axis is not shifted due to the Cross value
 			if ( !this.IsCrossShifted( pane ) )
 			{
 				// if it's the primary axis and the scale labels are on the inside, then we
-				// don't need to save any room for the axis labels (they will be inside the axis rect)
-				if ( IsPrimary( pane ) && isScaleLabelsInside )
+				// don't need to save any room for the axis labels (they will be inside the chart rect)
+				if ( IsPrimary( pane ) && _scale._isLabelsInside )
 					return 1.0f;
 				// otherwise, it's a secondary (outboard) axis and we always save room for the axis and labels.
 				else
@@ -2510,15 +908,13 @@ namespace ZedGraph
 
 			double effCross = EffectiveCrossValue( pane );
 			Axis crossAxis = GetCrossAxis( pane );
-			if ( crossAxis.IsLog )
-				effCross = Scale.SafeLog( effCross );
 
-			double max = crossAxis.scale.maxScale;
-			double min = crossAxis.scale.minScale;
+			double max = crossAxis._scale._maxLinTemp;
+			double min = crossAxis._scale._minLinTemp;
 			float frac;
 
-			if ( ( ( this is XAxis || this is YAxis ) && isScaleLabelsInside == crossAxis.scale.IsReverse ) ||
-				 ( this is Y2Axis && isScaleLabelsInside != crossAxis.scale.IsReverse ) )
+			if ( ( ( this is XAxis || this is YAxis ) && _scale._isLabelsInside == crossAxis._scale.IsReverse ) ||
+				 ( this is Y2Axis && _scale._isLabelsInside != crossAxis._scale.IsReverse ) )
 				frac = (float)( ( effCross - min ) / ( max - min ) );
 			else
 				frac = (float)( ( max - effCross ) / ( max - min ) );
@@ -2531,15 +927,61 @@ namespace ZedGraph
 			return frac;
 		}
 
+		private float CalcTotalShift( GraphPane pane, float scaleFactor, float shiftPos )
+		{
+			if ( !IsPrimary( pane ) )
+			{
+				// if ( CalcCrossFraction( pane ) != 0.0 )
+				if ( IsCrossShifted( pane ) )
+				{
+					shiftPos = 0;
+				}
+				else
+				{
+					// Scaled size (pixels) of a tic
+					float ticSize = _majorTic.ScaledTic( scaleFactor );
+
+					// if the scalelabels are on the inside, shift everything so the axis is drawn,
+					// for example, to the left side of the available space for a YAxis type
+					if ( _scale._isLabelsInside )
+					{
+						shiftPos += _tmpSpace;
+
+						// shift the axis to leave room for the outside tics
+						if ( _majorTic.IsOutside || _majorTic._isCrossOutside ||
+										_minorTic.IsOutside || _minorTic._isCrossOutside )
+							shiftPos -= ticSize;
+					}
+					else
+					{
+						// if it's not the primary axis, add a tic space for the spacing between axes
+						shiftPos += _axisGap * scaleFactor;
+
+						// if it has inside tics, leave another tic space
+						if ( _majorTic.IsInside || _majorTic._isCrossInside ||
+								_minorTic.IsInside || _minorTic._isCrossInside )
+							shiftPos += ticSize;
+					}
+				}
+			}
+
+			// shift is the position of the actual axis line itself
+			// everything else is based on that position.
+			float crossShift = CalcCrossShift( pane );
+			shiftPos += crossShift;
+
+			return shiftPos;
+		}
+
 		/// <summary>
 		/// Calculate the space required (pixels) for this <see cref="Axis"/> object.
 		/// </summary>
 		/// <remarks>
 		/// This is the total space (vertical space for the X axis, horizontal space for
 		/// the Y axes) required to contain the axis.  If <see cref="Cross" /> is zero, then
-		/// this space will be the space required between the <see cref="GraphPane.AxisRect" /> and
-		/// the <see cref="PaneBase.PaneRect" />.  This method sets the internal values of
-		/// <see cref="tmpSpace" /> for use by the <see cref="GraphPane.CalcAxisRect(Graphics)" />
+		/// this space will be the space required between the <see cref="Chart.Rect" /> and
+		/// the <see cref="PaneBase.Rect" />.  This method sets the internal values of
+		/// <see cref="_tmpSpace" /> for use by the <see cref="GraphPane.CalcChartRect(Graphics)" />
 		/// method.
 		/// </remarks>
 		/// <param name="g">
@@ -2556,96 +998,95 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		/// <param name="fixedSpace">The amount of space (pixels) at the edge of the AxisRect
+		/// <param name="fixedSpace">The amount of space (pixels) at the edge of the ChartRect
 		/// that is always required for this axis, even if the axis is shifted by the
 		/// <see cref="Cross" /> value.</param>
 		/// <returns>Returns the space, in pixels, required for this axis (between the
-		/// paneRect and axisRect)</returns>
+		/// rect and ChartRect)</returns>
 		public float CalcSpace( Graphics g, GraphPane pane, float scaleFactor, out float fixedSpace )
 		{
 			//fixedSpace = 0;
 
 			//Typical character height for the scale font
-			float charHeight = this.ScaleFontSpec.GetHeight( scaleFactor );
+			float charHeight = _scale._fontSpec.GetHeight( scaleFactor );
 			// Scaled size (pixels) of a tic
-			float ticSize = this.ScaledTic( scaleFactor );
+			float ticSize = _majorTic.ScaledTic( scaleFactor );
 			// Scaled size (pixels) of the axis gap
-			float gap = this.axisGap * scaleFactor;
+			float axisGap = _axisGap * scaleFactor;
+			float scaledLabelGap = _scale._labelGap * charHeight;
+			float scaledTitleGap = _title.GetScaledGap( scaleFactor );
 
 			// The minimum amount of space to reserve for the NORMAL position of the axis.  This would
-			// be the left side of the axis rect for the Y axis, the right side for the Y2 axis, etc.
+			// be the left side of the chart rect for the Y axis, the right side for the Y2 axis, etc.
 			// This amount of space is based on the need to reserve space for tics, etc., even if the
 			// Axis.Cross property causes the axis to be in a different location.
 			fixedSpace = 0;
 
 			// The actual space needed for this axis (ignoring the setting of Axis.Cross)
-			tmpSpace = 0;
+			_tmpSpace = 0;
 
 			// Account for the Axis
-			if ( this.isVisible )
+			if ( _isVisible )
 			{
-				//bool hasTic = ( this.isScaleLabelsInside ?
-				//		(this.isInsideTic || this.isInsideCrossTic ||
-				//				this.isMinorInsideTic || this.isMinorInsideCrossTic) :
-				//		(this.isTic || this.isCrossTic || this.isMinorTic || this.isMinorCrossTic) );
-
-				bool hasTic = this.isTic || this.isCrossTic || this.isMinorTic || this.isMinorCrossTic;
+				bool hasTic = this.MajorTic.IsOutside || this.MajorTic._isCrossOutside ||
+									this.MinorTic.IsOutside || this.MinorTic._isCrossOutside;
 
 				// account for the tic space.  Leave the tic space for any type of outside tic (Outside Tic Space)
 				if ( hasTic )
-					tmpSpace += ticSize;
+					_tmpSpace += ticSize;
 
 				// if this is not the primary axis
 				if ( !IsPrimary( pane ) )
 				{
 					// always leave an extra tic space for the space between the multi-axes (Axis Gap)
-					tmpSpace += gap;
+					_tmpSpace += axisGap;
 
 					// if it has inside tics, leave another tic space (Inside Tic Space)
-					if ( this.isInsideTic || this.isInsideCrossTic ||
-							this.isMinorInsideTic || this.isMinorInsideCrossTic )
-						tmpSpace += ticSize;
+					if ( this.MajorTic._isInside || this.MajorTic._isCrossInside ||
+							this.MinorTic._isInside || this.MinorTic._isCrossInside )
+						_tmpSpace += ticSize;
 				}
 
 				// tic takes up 1x tic
 				// space between tic and scale label is 0.5 tic
 				// scale label is GetScaleMaxSpace()
 				// space between scale label and axis label is 0.5 tic
-				if ( this.isScaleVisible )
-				{
-					// account for the tic labels + 1/2 tic gap between the tic and the label
-					tmpSpace += this.scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height +
-							ticSize * 0.5F;
-				}
+
+				// account for the tic labels + 'LabelGap' tic gap between the tic and the label
+				_tmpSpace += _scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height +
+						scaledLabelGap;
 
 				string str = MakeTitle();
 
 				// Only add space for the title if there is one
 				// Axis Title gets actual height
-				if ( str.Length > 0 && this.isShowTitle )
+				if ( str.Length > 0 && _title._isVisible )
 				{
 					//tmpSpace += this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height;
-					fixedSpace = this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height;
-					tmpSpace += fixedSpace;
+					fixedSpace = this.Title.FontSpec.BoundingBox( g, str, scaleFactor ).Height +
+							scaledTitleGap;
+					_tmpSpace += fixedSpace;
+
+					fixedSpace += scaledTitleGap;
 				}
 
 				if ( hasTic )
-					fixedSpace += ticSize * 1.5F;
+					fixedSpace += ticSize;
 			}
 
 			// for the Y axes, make sure that enough space is left to fit the first
 			// and last X axis scale label
 			if ( this.IsPrimary( pane ) && ( (
 					( this is YAxis && (
-						( !pane.XAxis.isSkipFirstLabel && !pane.XAxis.IsReverse ) ||
-						( !pane.XAxis.isSkipLastLabel && pane.XAxis.IsReverse ) ) ) ||
+						( !pane.XAxis._scale._isSkipFirstLabel && !pane.XAxis._scale._isReverse ) ||
+						( !pane.XAxis._scale._isSkipLastLabel && pane.XAxis._scale._isReverse ) ) ) ||
 					( this is Y2Axis && (
-						( !pane.XAxis.isSkipFirstLabel && pane.XAxis.IsReverse ) ||
-						( !pane.XAxis.isSkipLastLabel && !pane.XAxis.IsReverse ) ) ) ) &&
-					pane.XAxis.IsVisible && pane.XAxis.IsScaleVisible ) )
+						( !pane.XAxis._scale._isSkipFirstLabel && pane.XAxis._scale._isReverse ) ||
+						( !pane.XAxis._scale._isSkipLastLabel && !pane.XAxis._scale._isReverse ) ) ) ) &&
+					pane.XAxis.IsVisible && pane.XAxis._scale._isVisible ) )
 			{
 				// half the width of the widest item, plus a gap of 1/2 the charheight
-				float tmp = pane.XAxis.scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Width / 2.0F;
+				float tmp = pane.XAxis._scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Width / 2.0F;
 				//+ charHeight / 2.0F;
 				//if ( tmp > tmpSpace )
 				//	tmpSpace = tmp;
@@ -2654,11 +1095,11 @@ namespace ZedGraph
 			}
 
 			// Verify that the minSpace property was satisfied
-			tmpSpace = Math.Max( tmpSpace, this.minSpace * (float)scaleFactor );
+			_tmpSpace = Math.Max( _tmpSpace, _minSpace * (float)scaleFactor );
 
-			fixedSpace = Math.Max( fixedSpace, this.minSpace * (float)scaleFactor );
+			fixedSpace = Math.Max( fixedSpace, _minSpace * (float)scaleFactor );
 
-			return tmpSpace;
+			return _tmpSpace;
 		}
 
 		/// <summary>
@@ -2681,420 +1122,21 @@ namespace ZedGraph
 		/// this is always true), false otherwise</returns>
 		abstract internal bool IsPrimary( GraphPane pane );
 
-		/// <summary>
-		/// Draw the scale, including the tic marks, value labels, and grid lines as
-		/// required for this <see cref="Axis"/>.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <param name="shiftPos">
-		/// The number of pixels to shift to account for non-primary axis position (e.g.,
-		/// the second, third, fourth, etc. <see cref="YAxis" /> or <see cref="Y2Axis" />.
-		/// </param>
-		public void DrawScale( Graphics g, GraphPane pane, float scaleFactor, float shiftPos )
-		{
-			float rightPix,
-					topPix;
-
-			if ( this is XAxis )
-			{
-				rightPix = pane.AxisRect.Width;
-				topPix = -pane.AxisRect.Height;
-			}
-			else
-			{
-				rightPix = pane.AxisRect.Height;
-				topPix = -pane.AxisRect.Width;
-			}
-
-			// sanity check
-			if ( this.scale.Min >= this.scale.Max )
-				return;
-
-			// if the step size is outrageous, then quit
-			// (step size not used for log scales)
-			if ( !this.IsLog )
-			{
-				if ( this.scale.Step <= 0 || this.scale.MinorStep <= 0 )
-					return;
-
-				double tMajor = ( this.scale.Max - this.scale.Min ) / this.scale.Step,
-						tMinor = ( this.scale.Max - this.scale.Min ) / this.scale.MinorStep;
-				if ( IsDate )
-				{
-					tMajor /= GetUnitMultiple( scale.MajorUnit );
-					tMinor /= GetUnitMultiple( scale.MinorUnit );
-				}
-				if ( tMajor > 1000 ||
-					( ( this.isMinorTic || this.isMinorInsideTic || this.isMinorOppositeTic )
-					&& tMinor > 5000 ) )
-					return;
-			}
-
-			// calculate the total number of major tics required
-			int nTics = this.scale.CalcNumTics();
-
-			// get the first major tic value
-			double baseVal = this.scale.CalcBaseTic();
-
-			if ( this.IsVisible )
-			{
-				if ( !IsPrimary( pane ) )
-				{
-					// if ( CalcCrossFraction( pane ) != 0.0 )
-					if ( IsCrossShifted( pane ) )
-					{
-						shiftPos = 0;
-					}
-					else
-					{
-						// Scaled size (pixels) of a tic
-						float ticSize = this.ScaledTic( scaleFactor );
-
-						// if the scalelabels are on the inside, shift everything so the axis is drawn,
-						// for example, to the left side of the available space for a YAxis type
-						if ( isScaleLabelsInside )
-						{
-							shiftPos += this.tmpSpace;
-
-							// shift the axis to leave room for the outside tics
-							if ( this.isTic || this.isCrossTic || this.isMinorTic || this.isMinorCrossTic )
-								shiftPos -= ticSize;
-						}
-						else
-						{
-							// if it's not the primary axis, add a tic space for the spacing between axes
-							shiftPos += this.axisGap * scaleFactor;
-
-							// if it has inside tics, leave another tic space
-							if ( this.isInsideTic || this.isInsideCrossTic ||
-									this.isMinorInsideTic || this.isMinorInsideCrossTic )
-								shiftPos += ticSize;
-						}
-
-					}
-				}
-
-				// shift is the position of the actual axis line itself
-				// everything else is based on that position.
-				float crossShift = this.CalcCrossShift( pane );
-				shiftPos += crossShift;
-
-				Pen pen = new Pen( this.color, pane.ScaledPenWidth( ticPenWidth, scaleFactor ) );
-
-				// redraw the axis border
-				if ( this.isAxisSegmentVisible )
-					g.DrawLine( pen, 0.0F, shiftPos, rightPix, shiftPos );
-
-				// Draw a zero-value line if needed
-				if ( this.isZeroLine && this.scale.Min < 0.0 && this.scale.Max > 0.0 )
-				{
-					float zeroPix = this.scale.LocalTransform( 0.0 );
-					g.DrawLine( pen, zeroPix, 0.0F, zeroPix, topPix );
-				}
-
-				// draw the major tics and labels
-				DrawLabels( g, pane, baseVal, nTics, topPix, shiftPos, scaleFactor );
-
-				DrawMinorTics( g, pane, baseVal, shiftPos, scaleFactor, topPix );
-
-				DrawTitle( g, pane, shiftPos, scaleFactor );
-			}
-		}
-
 		internal void FixZeroLine( Graphics g, GraphPane pane, float scaleFactor,
 				float left, float right )
 		{
 			// restore the zero line if needed (since the fill tends to cover it up)
-			if ( this.isVisible && this.isZeroLine &&
-					this.Min < 0.0 && this.Max > 0.0 )
+			if ( _isVisible && _majorGrid._isZeroLine &&
+					_scale._min < 0.0 && _scale._max > 0.0 )
 			{
-				float zeroPix = this.scale.Transform( 0.0 );
+				float zeroPix = _scale.Transform( 0.0 );
 
-				Pen zeroPen = new Pen( this.Color,
-						pane.ScaledPenWidth( this.TicPenWidth, scaleFactor ) );
-				g.DrawLine( zeroPen, left, zeroPix, right, zeroPix );
-				zeroPen.Dispose();
-			}
-		}
-
-		/// <summary>
-		/// Internal routine to calculate a multiplier to the selected unit back to days.
-		/// </summary>
-		/// <param name="unit">The unit type for which the multiplier is to be
-		/// calculated</param>
-		/// <returns>
-		/// This is ratio of days/selected unit
-		/// </returns>
-		private double GetUnitMultiple( DateUnit unit )
-		{
-			switch ( unit )
-			{
-				case DateUnit.Year:
-				default:
-					return 365.0;
-				case DateUnit.Month:
-					return 30.0;
-				case DateUnit.Day:
-					return 1.0;
-				case DateUnit.Hour:
-					return 1.0 / XDate.HoursPerDay;
-				case DateUnit.Minute:
-					return 1.0 / XDate.MinutesPerDay;
-				case DateUnit.Second:
-					return 1.0 / XDate.SecondsPerDay;
-			}
-		}
-
-		/// <summary>
-		/// Draw the value labels, tic marks, and grid lines as
-		/// required for this <see cref="Axis"/>.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="baseVal">
-		/// The first major tic value for the axis
-		/// </param>
-		/// <param name="nTics">
-		/// The total number of major tics for the axis
-		/// </param>
-		/// <param name="topPix">
-		/// The pixel location of the far side of the axisRect from this axis.
-		/// This value is the axisRect.Height for the XAxis, or the axisRect.Width
-		/// for the YAxis and Y2Axis.
-		/// </param>
-		/// <param name="shift">The number of pixels to shift this axis, based on the
-		/// value of <see cref="Cross"/>.  A positive value is into the axisRect relative to
-		/// the default axis position.</param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		public void DrawLabels( Graphics g, GraphPane pane, double baseVal, int nTics,
-						float topPix, float shift, float scaleFactor )
-		{
-			double dVal, dVal2;
-			float pixVal, pixVal2;
-			string tmpStr;
-			float scaledTic = this.ScaledTic( scaleFactor );
-			double scaleMult = Math.Pow( (double)10.0, this.scale.ScaleMag );
-			Pen pen = new Pen( this.color, pane.ScaledPenWidth( ticPenWidth, scaleFactor ) );
-			Pen dottedPen = new Pen( this.gridColor, pane.ScaledPenWidth( gridPenWidth, scaleFactor ) );
-
-			float edgeTolerance = Default.EdgeTolerance * scaleFactor;
-
-			if ( this.gridDashOff > 1e-10 && this.gridDashOn > 1e-10 )
-			{
-				dottedPen.DashStyle = DashStyle.Custom;
-				float[] pattern = new float[2];
-				pattern[0] = this.gridDashOn;
-				pattern[1] = this.gridDashOff;
-				dottedPen.DashPattern = pattern;
-			}
-
-			// get the Y position of the center of the axis labels
-			// (the axis itself is referenced at zero)
-			SizeF maxLabelSize = this.scale.GetScaleMaxSpace( g, pane, scaleFactor, true );
-			float maxSpace = maxLabelSize.Height;
-
-			float textTop, textCenter;
-			if ( this.isTic )
-				textTop = scaledTic * 1.5F;
-			else
-				textTop = scaledTic * 0.5F;
-
-			double rangeTol = ( this.scale.maxScale - this.scale.minScale ) * 0.001;
-
-			int firstTic = (int)( ( this.scale.minScale - baseVal ) / this.scale.Step + 0.99 );
-			if ( firstTic < 0 )
-				firstTic = 0;
-
-			// save the position of the previous tic
-			float lastPixVal = -10000;
-
-			// loop for each major tic
-			for ( int i = firstTic; i < nTics + firstTic; i++ )
-			{
-				dVal = this.scale.CalcMajorTicValue( baseVal, i );
-
-				// If we're before the start of the scale, just go to the next tic
-				if ( dVal < this.scale.minScale )
-					continue;
-				// if we've already past the end of the scale, then we're done
-				if ( dVal > this.scale.maxScale + rangeTol )
-					break;
-
-				// convert the value to a pixel position
-				pixVal = this.scale.LocalTransform( dVal );
-
-				// see if the tic marks will be draw between the labels instead of at the labels
-				// (this applies only to AxisType.Text
-				if ( this.isTicsBetweenLabels && this.IsText )
+				using ( Pen zeroPen = new Pen( _color,
+						pane.ScaledPenWidth( _majorGrid._penWidth, scaleFactor ) ) )
 				{
-					// We need one extra tic in order to draw the tics between labels
-					// so provide an exception here
-					if ( i == 0 )
-					{
-						dVal2 = this.scale.CalcMajorTicValue( baseVal, -0.5 );
-						if ( dVal2 >= this.scale.minScale )
-						{
-							pixVal2 = this.scale.LocalTransform( dVal2 );
-							DrawATic( g, pane, pen, pixVal2, topPix, shift, scaledTic );
-							// draw the grid
-							if ( this.isVisible && this.isShowGrid )
-								g.DrawLine( dottedPen, pixVal2, 0.0F, pixVal2, topPix );
-						}
-					}
-
-					dVal2 = this.scale.CalcMajorTicValue( baseVal, (double)i + 0.5 );
-					if ( dVal2 > this.scale.maxScale )
-						break;
-					pixVal2 = this.scale.LocalTransform( dVal2 );
+					g.DrawLine( zeroPen, left, zeroPix, right, zeroPix );
+					//zeroPen.Dispose();
 				}
-				else
-					pixVal2 = pixVal;
-
-				DrawATic( g, pane, pen, pixVal2, topPix, shift, scaledTic );
-
-				// draw the grid
-				if ( this.isVisible && this.isShowGrid )
-					g.DrawLine( dottedPen, pixVal2, 0.0F, pixVal2, topPix );
-
-				/*
-				// See if the axis is shifted (due to CrossAuto = false) and the current label is within
-				// the shiftTolerance of the beginning or end of the axis.  This is the zone in which a
-				// label will tend to overlap the opposing axis
-				bool isOverlapZone = false;
-				if ( Math.Abs(shift) > 0 && ( ( pixVal < edgeTolerance && pane.AxisBorder.IsVisible ) ||
-							pixVal > this.maxPix - this.minPix - edgeTolerance  ) )
-					isOverlapZone = true;
-				*/
-
-				bool isMaxValueAtMaxPix = ( ( this is XAxis || this is Y2Axis ) && !this.scale.IsReverse ) ||
-											( this is Y2Axis && this.scale.IsReverse );
-
-				bool isSkipZone = ( ( ( this.isSkipFirstLabel && isMaxValueAtMaxPix ) ||
-										( isSkipLastLabel && !isMaxValueAtMaxPix ) ) &&
-											pixVal < edgeTolerance ) ||
-									( ( ( this.isSkipLastLabel && isMaxValueAtMaxPix ) ||
-										( isSkipFirstLabel && !isMaxValueAtMaxPix ) ) &&
-											pixVal > this.scale.MaxPix - this.scale.MinPix - edgeTolerance );
-
-				bool isSkipCross = this.isSkipCrossLabel &&
-							!this.crossAuto && Math.Abs( this.cross - dVal ) < rangeTol * 10.0;
-
-				isSkipZone = isSkipZone || isSkipCross;
-
-				if ( this.isVisible && this.isScaleVisible && !isSkipZone )
-				{
-					// For exponential scales, just skip any label that would overlap with the previous one
-					// This is because exponential scales have varying label spacing
-					if ( this.scale.IsPreventLabelOverlap &&
-							Math.Abs( pixVal - lastPixVal ) < maxLabelSize.Width )
-						continue;
-
-					// draw the label
-					this.scale.MakeLabel( pane, i, dVal, out tmpStr );
-
-					float height;
-					if ( this.IsLog && this.scale.IsUseTenPower )
-						height = ScaleFontSpec.BoundingBoxTenPower( g, tmpStr, scaleFactor ).Height;
-					else
-						height = ScaleFontSpec.BoundingBox( g, tmpStr, scaleFactor ).Height;
-
-					if ( this.ScaleAlign == AlignP.Center )
-						textCenter = textTop + maxSpace / 2.0F;
-					else if ( this.ScaleAlign == AlignP.Outside )
-						textCenter = textTop + maxSpace - height / 2.0F;
-					else	// inside
-						textCenter = textTop + height / 2.0F;
-
-					if ( this.isScaleLabelsInside )
-						textCenter = shift - textCenter;
-					else
-						textCenter = shift + textCenter;
-
-
-					if ( this.IsLog && this.scale.IsUseTenPower )
-						this.ScaleFontSpec.DrawTenPower( g, pane, tmpStr,
-							pixVal, textCenter,
-							AlignH.Center, AlignV.Center,
-							scaleFactor );
-					else
-						this.ScaleFontSpec.Draw( g, pane.IsPenWidthScaled, tmpStr,
-							pixVal, textCenter,
-							AlignH.Center, AlignV.Center,
-							scaleFactor );
-
-					lastPixVal = pixVal;
-				}
-			}
-		}
-
-		/// <summary>
-		/// Draw a tic mark at the specified single position.  This includes the inner, outer
-		/// and opposite tic marks as required.
-		/// </summary>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="pane">
-		/// A reference to the <see cref="GraphPane"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="pen">Graphic <see cref="Pen"/> with which to draw the tic mark.</param>
-		/// <param name="pixVal">The pixel location of the tic mark on this
-		/// <see cref="Axis"/></param>
-		/// <param name="topPix">The pixel value of the top of the axis border</param>
-		/// <param name="shift">The number of pixels to shift this axis, based on the
-		/// value of <see cref="Cross"/>.  A positive value is into the axisRect relative to
-		/// the default axis position.</param>
-		/// <param name="scaledTic">The length of the tic mark, in points (1/72 inch)</param>
-		void DrawATic( Graphics g, GraphPane pane, Pen pen, float pixVal, float topPix,
-					float shift, float scaledTic )
-		{
-			if ( this.isVisible )
-			{
-				// draw the outside tic
-				if ( this.isTic )
-					g.DrawLine( pen, pixVal, shift, pixVal, shift + scaledTic );
-
-				// draw the cross tic
-				if ( this.isCrossTic )
-					g.DrawLine( pen, pixVal, 0.0f, pixVal, scaledTic );
-
-				// draw the inside tic
-				if ( this.isInsideTic )
-					g.DrawLine( pen, pixVal, shift, pixVal, shift - scaledTic );
-
-				// draw the inside cross tic
-				if ( this.isInsideCrossTic )
-					g.DrawLine( pen, pixVal, 0.0f, pixVal, -scaledTic );
-
-				// draw the opposite tic
-				if ( this.isOppositeTic )
-					g.DrawLine( pen, pixVal, topPix, pixVal, topPix + scaledTic );
 			}
 		}
 
@@ -3114,7 +1156,7 @@ namespace ZedGraph
 		/// for all other tic marks.
 		/// </param>
 		/// <param name="shift">The number of pixels to shift this axis, based on the
-		/// value of <see cref="Cross"/>.  A positive value is into the axisRect relative to
+		/// value of <see cref="Cross"/>.  A positive value is into the ChartRect relative to
 		/// the default axis position.</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
@@ -3123,95 +1165,60 @@ namespace ZedGraph
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
 		/// <param name="topPix">
-		/// The pixel location of the far side of the axisRect from this axis.
-		/// This value is the axisRect.Height for the XAxis, or the axisRect.Width
+		/// The pixel location of the far side of the ChartRect from this axis.
+		/// This value is the ChartRect.Height for the XAxis, or the ChartRect.Width
 		/// for the YAxis and Y2Axis.
 		/// </param>
 		public void DrawMinorTics( Graphics g, GraphPane pane, double baseVal, float shift,
 								float scaleFactor, float topPix )
 		{
-			if ( ( this.isMinorTic || this.IsMinorOppositeTic || this.isMinorInsideTic ||
-					this.isMinorCrossTic || this.isMinorInsideCrossTic || this.isShowMinorGrid )
-					&& this.isVisible )
+			if ( ( this.MinorTic.IsOutside || this.MinorTic.IsOpposite || this.MinorTic.IsInside ||
+					this.MinorTic._isCrossOutside || this.MinorTic._isCrossInside || _minorGrid._isVisible )
+					&& _isVisible )
 			{
-				double tMajor = this.scale.Step * ( IsDate ? GetUnitMultiple( scale.MajorUnit ) : 1.0 ),
-					tMinor = this.scale.MinorStep * ( IsDate ? GetUnitMultiple( scale.MinorUnit ) : 1.0 );
+				double	tMajor = _scale._majorStep * _scale.MajorUnitMultiplier,
+							tMinor = _scale._minorStep * _scale.MinorUnitMultiplier;
 
-				if ( this.IsLog || tMinor < tMajor )
+				if ( _scale.IsLog || tMinor < tMajor )
 				{
-					float minorScaledTic = this.ScaledMinorTic( scaleFactor );
+					float minorScaledTic = this.MinorTic.ScaledTic( scaleFactor );
 
 					// Minor tics start at the minimum value and step all the way thru
 					// the full scale.  This means that if the minor step size is not
 					// an even division of the major step size, the minor tics won't
 					// line up with all of the scale labels and major tics.
-					double first = this.scale.Min,
-							last = this.scale.Max;
-
-					if ( this.IsLog )
-					{
-						first = Scale.SafeLog( this.scale.Min );
-						last = Scale.SafeLog( this.scale.Max );
-					}
+					double	first = _scale._minLinTemp,
+								last = _scale._maxLinTemp;
 
 					double dVal = first;
 					float pixVal;
-					Pen pen = new Pen( this.color, pane.ScaledPenWidth( ticPenWidth, scaleFactor ) );
-					Pen minorGridPen = new Pen( this.minorGridColor,
-										 pane.ScaledPenWidth( minorGridPenWidth, scaleFactor ) );
+					Pen pen = new Pen( _color, pane.ScaledPenWidth( MinorTic._penWidth, scaleFactor ) );
 
-					if ( this.minorGridDashOff > 1e-10 && this.minorGridDashOn > 1e-10 )
-					{
-						minorGridPen.DashStyle = DashStyle.Custom;
-						float[] pattern = new float[2];
-						pattern[0] = this.minorGridDashOn;
-						pattern[1] = this.minorGridDashOff;
-						minorGridPen.DashPattern = pattern;
-					}
+					Pen minorGridPen = _minorGrid.GetPen( pane, scaleFactor );
 
-					int iTic = this.scale.CalcMinorStart( baseVal );
-					int majorTic = 0;
-					double majorVal = this.scale.CalcMajorTicValue( baseVal, majorTic );
+					int iTic = _scale.CalcMinorStart( baseVal );
+					int MajorTic = 0;
+					double majorVal = _scale.CalcMajorTicValue( baseVal, MajorTic );
 
 					// Draw the minor tic marks
 					while ( dVal < last && iTic < 5000 )
 					{
 						// Calculate the scale value for the current tic
-						dVal = this.scale.CalcMinorTicValue( baseVal, iTic );
+						dVal = _scale.CalcMinorTicValue( baseVal, iTic );
 						// Maintain a value for the current major tic
 						if ( dVal > majorVal )
-							majorVal = this.scale.CalcMajorTicValue( baseVal, ++majorTic );
+							majorVal = _scale.CalcMajorTicValue( baseVal, ++MajorTic );
 
 						// Make sure that the current value does not match up with a major tic
 						if ( ( ( Math.Abs( dVal ) < 1e-20 && Math.Abs( dVal - majorVal ) > 1e-20 ) ||
 							( Math.Abs( dVal ) > 1e-20 && Math.Abs( ( dVal - majorVal ) / dVal ) > 1e-10 ) ) &&
 							( dVal >= first && dVal <= last ) )
 						{
-							pixVal = this.scale.LocalTransform( dVal );
+							pixVal = _scale.LocalTransform( dVal );
 
-							// draw the minor grid
-							if ( this.isShowMinorGrid )
-								g.DrawLine( minorGridPen, pixVal, 0.0F, pixVal, topPix );
+							_minorGrid.Draw( g, minorGridPen, pixVal, topPix );
 
-							// draw the outside tic
-							if ( this.isMinorTic )
-								g.DrawLine( pen, pixVal, shift, pixVal, shift + minorScaledTic );
-
-							// draw the minor outside cross tic
-							if ( this.isMinorCrossTic )
-								g.DrawLine( pen, pixVal, 0.0f, pixVal, minorScaledTic );
-
-							// draw the inside tic
-							if ( this.isMinorInsideTic )
-								g.DrawLine( pen, pixVal, shift, pixVal, shift - minorScaledTic );
-
-							// draw the minor inside cross tic
-							if ( this.isMinorInsideCrossTic )
-								g.DrawLine( pen, pixVal, 0.0f, pixVal, -minorScaledTic );
-
-							// draw the opposite tic
-							if ( this.isMinorOppositeTic )
-								g.DrawLine( pen, pixVal, topPix, pixVal, topPix + minorScaledTic );
+							_minorTic.Draw( g, pane, pen, pixVal, topPix, shift, minorScaledTic );
 						}
 
 						iTic++;
@@ -3236,7 +1243,7 @@ namespace ZedGraph
 		/// owner of this object.
 		/// </param>
 		/// <param name="shiftPos">The number of pixels to shift this axis, based on the
-		/// value of <see cref="Cross"/>.  A positive value is into the axisRect relative to
+		/// value of <see cref="Cross"/>.  A positive value is into the ChartRect relative to
 		/// the default axis position.</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
@@ -3249,70 +1256,103 @@ namespace ZedGraph
 			string str = MakeTitle();
 
 			// If the Axis is visible, draw the title
-			if ( this.isVisible && this.isShowTitle && str.Length > 0 )
+			if ( _isVisible && _title._isVisible && str.Length > 0 )
 			{
-				bool hasTic = ( this.isScaleLabelsInside ?
-						( this.isInsideTic || this.isInsideCrossTic ||
-								this.isMinorInsideTic || this.isMinorInsideCrossTic ) :
-						( this.isTic || this.isCrossTic || this.isMinorTic || this.isMinorCrossTic ) );
+				bool hasTic = ( _scale._isLabelsInside ?
+						( this.MajorTic.IsInside || this.MajorTic._isCrossInside ||
+								this.MinorTic.IsInside || this.MinorTic._isCrossInside ) :
+						( this.MajorTic.IsOutside || this.MajorTic._isCrossOutside || this.MinorTic.IsOutside || this.MinorTic._isCrossOutside ) );
 
 				// Calculate the title position in screen coordinates
-				float x = ( this.scale.MaxPix - this.scale.MinPix ) / 2;
+				float x = ( _scale._maxPix - _scale._minPix ) / 2;
 
-				float scaledTic = ScaledTic( scaleFactor );
+				float scaledTic = MajorTic.ScaledTic( scaleFactor );
+				float scaledLabelGap = _scale._fontSpec.GetHeight( scaleFactor ) * _scale._labelGap;
+				float scaledTitleGap = _title.GetScaledGap( scaleFactor );
 
 				// The space for the scale labels is only reserved if the axis is not shifted due to the
 				// cross value.  Note that this could be a problem if the axis is only shifted slightly,
 				// since the scale value labels may overlap the axis title.  However, it's not possible to
-				// calculate that actual shift amount at this point, because the AxisRect rect has not yet been
+				// calculate that actual shift amount at this point, because the ChartRect rect has not yet been
 				// calculated, and the cross value is determined using a transform of scale values (which
-				// rely on AxisRect).
+				// rely on ChartRect).
 
 				float gap = scaledTic * ( hasTic ? 1.0f : 0.0f ) +
-							this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
-				float y = ( isScaleVisible ? this.scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height
-							+ scaledTic * 0.5f : 0 );
+							this.Title.FontSpec.BoundingBox( g, str, scaleFactor ).Height / 2.0F;
+				float y = ( _scale._isVisible ? _scale.GetScaleMaxSpace( g, pane, scaleFactor, true ).Height
+							+ scaledLabelGap : 0 );
 
-				if ( this.isScaleLabelsInside )
+				if ( _scale._isLabelsInside )
 					y = shiftPos - y - gap;
 				else
 					y = shiftPos + y + gap;
 
-				if ( !crossAuto && !isTitleAtCross )
+				if ( !_crossAuto && !_title._isTitleAtCross )
 					y = Math.Max( y, gap );
 
 				AlignV alignV = AlignV.Center;
 
+				// Add in the TitleGap space
+				y += scaledTitleGap;
+
 				// Draw the title
-				this.TitleFontSpec.Draw( g, pane.IsPenWidthScaled, str, x, y,
+				this.Title.FontSpec.Draw( g, pane.IsPenWidthScaled, str, x, y,
 							AlignH.Center, alignV, scaleFactor );
 			}
 		}
 
 		private string MakeTitle()
 		{
-			if ( this.scale.ScaleMag != 0 && !this.isOmitMag && !this.IsLog )
-				return this.title + String.Format( " (10^{0})", this.scale.ScaleMag );
+			if ( _scale._mag != 0 && !_title._isOmitMag && !_scale.IsLog )
+				return _title._text + String.Format( " (10^{0})", _scale._mag );
 			else
-				return this.title;
+				return _title._text;
 
 		}
 
 		/// <summary>
-		/// Determine the width, in pixel units, of each bar cluster including
-		/// the cluster gaps and bar gaps.
+		/// Make a value label for the axis at the specified ordinal position.
 		/// </summary>
-		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
-		/// associated with this <see cref="Axis"/></param>
-		/// <returns>The width of each bar cluster, in pixel units</returns>
-		public float GetClusterWidth( GraphPane pane )
+		/// <remarks>
+		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
+		/// and other axis format settings.  It also implements the ScaleFormatEvent such that
+		/// custom labels can be created.
+		/// </remarks>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="index">
+		/// The zero-based, ordinal index of the label to be generated.  For example, a value of 2 would
+		/// cause the third value label on the axis to be generated.
+		/// </param>
+		/// <param name="dVal">
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="IsLog"/>)
+		/// and text (<see cref="IsText"/>) type axes.
+		/// </param>
+		/// <returns>The resulting value label as a <see cref="string" /></returns>
+		internal string MakeLabelEventWorks( GraphPane pane, int index, double dVal )
 		{
-			double basisVal = this.Min;
-			return Math.Abs( this.scale.Transform( basisVal +
-					( this.IsAnyOrdinal ? 1.0 : pane.ClusterScaleWidth ) ) -
-					this.scale.Transform( basisVal ) );
+			// if there is a valid ScaleFormatEvent, then try to use it to create the label
+			// the label will be non-null if it's to be used
+			if ( this.ScaleFormatEvent != null )
+			{
+				string label;
+
+				label = this.ScaleFormatEvent( pane, this, dVal, index );
+				if ( label != null )
+					return label;
+			}
+
+			// second try.  If there's no custom ScaleFormatEvent, then just call
+			// _scale.MakeLabel according to the type of scale
+			if ( this.Scale != null )
+				return _scale.MakeLabel( pane, index, dVal );
+			else
+				return "?";
 		}
-		#endregion
+
+	#endregion
 
 	}
 }

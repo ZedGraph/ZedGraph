@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -28,82 +28,47 @@ namespace ZedGraph
 {
 	/// <summary>
 	/// A class that represents a graphic arrow or line object on the graph.  A list of
-	/// ArrowItem objects is maintained by the <see cref="GraphItemList"/> collection class.
+	/// ArrowObj objects is maintained by the <see cref="GraphObjList"/> collection class.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
 	[Serializable]
-	public class ArrowItem : GraphItem, ICloneable, ISerializable
+	public class ArrowObj : LineObj, ICloneable, ISerializable
 	{
 	#region Fields
 		/// <summary>
 		/// Private field that stores the arrowhead size, measured in points.
 		/// Use the public property <see cref="Size"/> to access this value.
 		/// </summary>
-		private float		size;
-		/// <summary>
-		/// Private field that stores the color of the arrow.
-		/// Use the public property <see cref="Color"/> to access this value.
-		/// </summary>
-		/// <value>The color value is declared with a <see cref="System.Drawing.Color"/>
-		/// specification</value>
-		private Color		color;
-		/// <summary>
-		/// Private field that stores the width of the pen for drawing the line
-		/// segment of the arrow.
-		/// Use the public property <see cref="PenWidth"/> to access this value.
-		/// </summary>
-		/// <value> The width is defined in point units (1/72 inch) </value>
-		private float		penWidth;
+		private float		_size;
 		/// <summary>
 		/// Private boolean field that stores the arrowhead state.
 		/// Use the public property <see cref="IsArrowHead"/> to access this value.
 		/// </summary>
 		/// <value> true if an arrowhead is to be drawn, false otherwise </value>
-		private bool		isArrowHead;
+		private bool		_isArrowHead;
 
-		/// <summary>
-		/// Private field that stores the <see cref="DashStyle"/> for this
-		/// <see cref="ArrowItem"/>.  Use the public
-		/// property <see cref="Style"/> to access this value.
-		/// </summary>
-		private DashStyle style;
 	#endregion
 
 	#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
-		/// default property values for the <see cref="ArrowItem"/> class.
+		/// default property values for the <see cref="ArrowObj"/> class.
 		/// </summary>
 		new public struct Default
 		{
 			/// <summary>
-			/// The default size for the <see cref="ArrowItem"/> item arrowhead
-            /// (<see cref="ArrowItem.Size"/> property).  Units are in points (1/72 inch).
+			/// The default size for the <see cref="ArrowObj"/> item arrowhead
+            /// (<see cref="ArrowObj.Size"/> property).  Units are in points (1/72 inch).
             /// </summary>
 			public static float Size = 12.0F;
 			/// <summary>
-			/// The default display mode for the <see cref="ArrowItem"/> item arrowhead
-			/// (<see cref="ArrowItem.IsArrowHead"/> property).  true to show the
+			/// The default display mode for the <see cref="ArrowObj"/> item arrowhead
+			/// (<see cref="ArrowObj.IsArrowHead"/> property).  true to show the
 			/// arrowhead, false to hide it.
 			/// </summary>
 			public static bool IsArrowHead = true;
-			/// <summary>
-			/// The default pen width used for the <see cref="ArrowItem"/> line segment
-            /// (<see cref="ArrowItem.PenWidth"/> property).  Units are points (1/72 inch).
-            /// </summary>
-			public static float PenWidth = 1.0F;
-			/// <summary>
-			/// The default color used for the <see cref="ArrowItem"/> line segment
-			/// and arrowhead (<see cref="ArrowItem.Color"/> property).
-			/// </summary>
-			public static Color Color = Color.Red;
-			/// <summary>
-			/// The default drawing style for the line (<see cref="ArrowItem.Style"/> property).
-			/// This is defined with the <see cref="DashStyle"/> enumeration.
-			/// </summary>
-			public static DashStyle Style = DashStyle.Solid;
 		}
 	#endregion
 
@@ -118,29 +83,8 @@ namespace ZedGraph
         /// <seealso cref="Default.Size"/>
 		public float Size
 		{
-			get { return size; }
-			set { size = value; }
-		}
-		/// <summary>
-		/// The width of the line segment for the <see cref="ArrowItem"/>
-		/// </summary>
-        /// <value> The width is defined in points (1/72 inch) </value>
-        /// <seealso cref="Default.PenWidth"/>
-		public float PenWidth
-		{
-			get { return penWidth; }
-			set { penWidth = value; }
-		}
-		/// <summary>
-		/// The <see cref="System.Drawing.Color"/> of the arrowhead and line segment
-		/// </summary>
-		/// <value> The color is defined using the
-		/// <see cref="System.Drawing.Color"/> class </value>
-		/// <seealso cref="Default.Color"/>
-		public Color Color
-		{
-			get { return color; }
-			set { color = value; }
+			get { return _size; }
+			set { _size = value; }
 		}
 		/// <summary>
 		/// Determines whether or not to draw an arrowhead
@@ -150,26 +94,16 @@ namespace ZedGraph
 		/// <seealso cref="Default.IsArrowHead"/>
 		public bool IsArrowHead
 		{
-			get { return isArrowHead; }
-			set { isArrowHead = value; }
-		}
-		/// <summary>
-		/// The style of the <see cref="ArrowItem"/> line, defined as a <see cref="DashStyle"/> enum.
-		/// This allows the line to be solid, dashed, or dotted.
-		/// </summary>
-		/// <seealso cref="Default.Style"/>
-		public DashStyle Style
-		{
-			get { return style; }
-			set { style = value;}
+			get { return _isArrowHead; }
+			set { _isArrowHead = value; }
 		}
 	#endregion
 	
 	#region Constructors
-		/// <overloads>Constructors for the <see cref="ArrowItem"/> object</overloads>
+		/// <overloads>Constructors for the <see cref="ArrowObj"/> object</overloads>
 		/// <summary>
 		/// A constructor that allows the position, color, and size of the
-		/// <see cref="ArrowItem"/> to be pre-specified.
+		/// <see cref="ArrowObj"/> to be pre-specified.
 		/// </summary>
 		/// <param name="color">An arbitrary <see cref="System.Drawing.Color"/> specification
 		/// for the arrow</param>
@@ -186,19 +120,11 @@ namespace ZedGraph
 		/// <param name="y2">The y position of the ending point that defines the
 		/// arrow.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		public ArrowItem( Color color, float size, float x1, float y1,
-					float x2, float y2 ) :
-				base( x1, y1, x2-x1, y2-y1 )
+		public ArrowObj( Color color, float size, float x1, float y1,
+					float x2, float y2 ) : base( color, x1, y1, x2, y2 )
 		{
-			this.penWidth = Default.PenWidth;
-			isArrowHead = Default.IsArrowHead;
-
-			this.color = color;
-			this.size = size;
-			this.Location.AlignH = AlignH.Left;
-			this.Location.AlignV = AlignV.Top;
-
-			this.style = Default.Style;
+			_isArrowHead = Default.IsArrowHead;
+			_size = size;
 		}
 
 		/// <summary>
@@ -207,42 +133,39 @@ namespace ZedGraph
 		/// default values
 		/// </summary>
 		/// <param name="x1">The x position of the starting point that defines the
-		/// <see cref="ArrowItem"/>.  The units of this position are specified by the
+		/// <see cref="ArrowObj"/>.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		/// <param name="y1">The y position of the starting point that defines the
-		/// <see cref="ArrowItem"/>.  The units of this position are specified by the
+		/// <see cref="ArrowObj"/>.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		/// <param name="x2">The x position of the ending point that defines the
-		/// <see cref="ArrowItem"/>.  The units of this position are specified by the
+		/// <see cref="ArrowObj"/>.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		/// <param name="y2">The y position of the ending point that defines the
-		/// <see cref="ArrowItem"/>.  The units of this position are specified by the
+		/// <see cref="ArrowObj"/>.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		public ArrowItem( float x1, float y1, float x2, float y2 ) :
-			this( Default.Color, Default.Size, x1, y1, x2, y2 )
+		public ArrowObj( float x1, float y1, float x2, float y2 ) :
+			this( LineObj.Default.Color, Default.Size, x1, y1, x2, y2 )
 		{
 		}
 
 		/// <summary>
-		/// Default constructor -- places the <see cref="ArrowItem"/> at location
+		/// Default constructor -- places the <see cref="ArrowObj"/> at location
 		/// (0,0) to (1,1).  All other values are defaulted.
 		/// </summary>
-		public ArrowItem() :
-			this( Default.Color, Default.Size, 0, 0, 1, 1 )
+		public ArrowObj() :
+			this( LineObj.Default.Color, Default.Size, 0, 0, 1, 1 )
 		{
 		}
 
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The <see cref="ArrowItem"/> object from which to copy</param>
-		public ArrowItem( ArrowItem rhs ) : base( rhs )
+		/// <param name="rhs">The <see cref="ArrowObj"/> object from which to copy</param>
+		public ArrowObj( ArrowObj rhs ) : base( rhs )
 		{
-			size = rhs.Size;
-			color = rhs.Color;
-			penWidth = rhs.PenWidth;
-			isArrowHead = rhs.IsArrowHead;
-			style = rhs.style;
+			_size = rhs.Size;
+			_isArrowHead = rhs.IsArrowHead;
 		}
 
 		/// <summary>
@@ -259,9 +182,9 @@ namespace ZedGraph
 		/// Typesafe, deep-copy clone method.
 		/// </summary>
 		/// <returns>A new, independent copy of this class</returns>
-		public ArrowItem Clone()
+		public new ArrowObj Clone()
 		{
-			return new ArrowItem( this );
+			return new ArrowObj( this );
 		}
 
 	#endregion
@@ -270,8 +193,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		// changed to 2 with addition of Style property
-		public const int schema2 = 2;
+		public const int schema3 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -280,18 +202,14 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
-		protected ArrowItem( SerializationInfo info, StreamingContext context ) : base( info, context )
+		protected ArrowObj( SerializationInfo info, StreamingContext context ) : base( info, context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
-			int sch = info.GetInt32( "schema2" );
+			int sch = info.GetInt32( "schema3" );
 
-			size = info.GetSingle( "size" );
-			color = (Color) info.GetValue( "color", typeof(Color) );
-			penWidth = info.GetSingle( "penWidth" );
-			isArrowHead = info.GetBoolean( "isArrowHead" );
-			if ( sch >= 2 )
-				style = (DashStyle) info.GetValue( "style", typeof(DashStyle) );
+			_size = info.GetSingle( "size" );
+			_isArrowHead = info.GetBoolean( "isArrowHead" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -302,12 +220,9 @@ namespace ZedGraph
 		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			base.GetObjectData( info, context );
-			info.AddValue( "schema2", schema2 );
-			info.AddValue( "size", size );
-			info.AddValue( "color", color );
-			info.AddValue( "penWidth", penWidth );
-			info.AddValue( "isArrowHead", isArrowHead );
-			info.AddValue( "style", style );
+			info.AddValue( "schema3", schema2 );
+			info.AddValue( "size", _size );
+			info.AddValue( "isArrowHead", _isArrowHead );
 		}
 	#endregion
 	
@@ -317,7 +232,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// This method is normally only called by the Draw method
-		/// of the parent <see cref="GraphItemList"/> collection object.
+		/// of the parent <see cref="GraphObjList"/> collection object.
 		/// </remarks>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -344,7 +259,7 @@ namespace ZedGraph
 				pix2.X > -10000 && pix2.X < 100000 && pix2.Y > -100000 && pix2.Y < 100000 )
 			{
 				// get a scaled size for the arrowhead
-				float scaledSize = (float) ( this.size * scaleFactor );
+				float scaledSize = (float) ( _size * scaleFactor );
 
 				// calculate the length and the angle of the arrow "vector"
 				double dy = pix2.Y - pix1.Y;
@@ -362,16 +277,16 @@ namespace ZedGraph
 				g.RotateTransform( angle );
 
 				// get a pen according to this arrow properties
-				Pen pen = new Pen( this.color, pane.ScaledPenWidth( penWidth,scaleFactor) );
-                pen.DashStyle = this.style;
+				Pen pen = new Pen( _color, pane.ScaledPenWidth( _penWidth,scaleFactor) );
+                pen.DashStyle = _style;
 				
 				// Only show the arrowhead if required
-				if ( this.isArrowHead )
+				if ( _isArrowHead )
 				{
 					// Draw the line segment for this arrow
 					g.DrawLine( pen, 0, 0, length-scaledSize+1, 0 );
 
-					SolidBrush brush = new SolidBrush( this.color );
+					SolidBrush brush = new SolidBrush( _color );
 					
 					// Create a polygon representing the arrowhead based on the scaled
 					// size
@@ -395,43 +310,7 @@ namespace ZedGraph
 				g.Transform = transform;
 			}
 		}
-		
-		/// <summary>
-		/// Determine if the specified screen point lies inside the bounding box of this
-		/// <see cref="ArrowItem"/>.
-		/// </summary>
-		/// <remarks>The bounding box is calculated assuming a distance
-		/// of <see cref="GraphPane.Default.NearestTol"/> pixels around the arrow segment.
-		/// </remarks>
-		/// <param name="pt">The screen point, in pixels</param>
-		/// <param name="pane">
-		/// A reference to the <see cref="PaneBase"/> object that is the parent or
-		/// owner of this object.
-		/// </param>
-		/// <param name="g">
-		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
-		/// PaintEventArgs argument to the Paint() method.
-		/// </param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects.  This is calculated and
-		/// passed down by the parent <see cref="GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>
-		/// <returns>true if the point lies in the bounding box, false otherwise</returns>
-		override public bool PointInBox( PointF pt, PaneBase pane, Graphics g, float scaleFactor )
-		{
-			// transform the x,y location from the user-defined
-			// coordinate frame to the screen pixel location
-			PointF pix = this.location.TransformTopLeft( pane );
-			PointF pix2 = this.location.TransformBottomRight( pane );
-			
-			Pen pen = new Pen( Color.Black, (float) GraphPane.Default.NearestTol * 2.0F );
-			GraphicsPath path = new GraphicsPath();
-			path.AddLine( pix, pix2 );
-			return path.IsOutlineVisible( pt, pen );
-		}
-		
+				
 	#endregion
 	
 	}

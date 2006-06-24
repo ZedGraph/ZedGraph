@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.5 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
 	public class StickItem : LineItem, ICloneable, ISerializable
 	{
@@ -58,7 +58,7 @@ namespace ZedGraph
 		/// <value>true if the Z data are included, false otherwise</value>
 		override internal bool IsZIncluded( GraphPane pane )
 		{
-			return this.symbol.IsVisible;
+			return _symbol.IsVisible;
 		}
 
 		/// <summary>
@@ -80,7 +80,7 @@ namespace ZedGraph
 		/// <param name="label">The label that will appear in the legend.</param>
 		public StickItem( string label ) : base( label )
 		{
-			this.symbol.IsVisible = false;
+			_symbol.IsVisible = false;
 		}
 		
 		/// <summary>
@@ -147,7 +147,7 @@ namespace ZedGraph
 		public StickItem( string label, IPointList points, Color color, float lineWidth )
 			: base( label, points, color, Symbol.Default.Type, lineWidth )
 		{
-			this.symbol.IsVisible = false;
+			_symbol.IsVisible = false;
 		}
 
 		/// <summary>
@@ -183,7 +183,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema3 = 1;
+		public const int schema3 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects

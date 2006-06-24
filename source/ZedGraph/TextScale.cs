@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2005  John Champion
+//Copyright © 2005  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -38,15 +38,15 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.6 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
-	class TextScale : Scale, ISerializable, ICloneable
+	class TextScale : Scale, ISerializable //, ICloneable
 	{
 
 	#region constructors
 
-		public TextScale( Axis parentAxis )
-			: base( parentAxis )
+		public TextScale( Axis owner )
+			: base( owner )
 		{
 		}
 
@@ -54,28 +54,22 @@ namespace ZedGraph
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The <see cref="TextScale" /> object from which to copy</param>
-		public TextScale( Scale rhs )
-			: base( rhs )
+		/// <param name="owner">The <see cref="Axis" /> object that will own the
+		/// new instance of <see cref="TextScale" /></param>
+		public TextScale( Scale rhs, Axis owner )
+			: base( rhs, owner )
 		{
 		}
 
 		/// <summary>
-		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
+		/// Create a new clone of the current item, with a new owner assignment
 		/// </summary>
-		/// <returns>A deep copy of this object</returns>
-		object ICloneable.Clone()
+		/// <param name="owner">The new <see cref="Axis" /> instance that will be
+		/// the owner of the new Scale</param>
+		/// <returns>A new <see cref="Scale" /> clone.</returns>
+		public override Scale Clone( Axis owner )
 		{
-			return this.Clone();
-		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public TextScale Clone()
-		{
-			return new TextScale( this );
+			return new TextScale( this, owner );
 		}
 
 	#endregion
@@ -122,8 +116,8 @@ namespace ZedGraph
 		/// </returns>
 		override internal double CalcBaseTic()
 		{
-			if ( this.baseTic != PointPair.Missing )
-				return this.baseTic;
+			if ( _baseTic != PointPair.Missing )
+				return _baseTic;
 			else
 				return 1.0;
 
@@ -140,10 +134,10 @@ namespace ZedGraph
 			int nTics = 1;
 
 			// If no array of labels is available, just assume 10 labels so we don't blow up.
-			if ( this.textLabels == null )
+			if ( _textLabels == null )
 				nTics = 10;
 			else
-				nTics = this.textLabels.Length;
+				nTics = _textLabels.Length;
 
 			if ( nTics < 1 )
 				nTics = 1;
@@ -162,24 +156,24 @@ namespace ZedGraph
 		/// type, such that the labeled values start at 1.0 and increment by 1.0 for
 		/// each successive label.  The maximum number of labels on the graph is
 		/// determined by <see cref="Scale.Default.MaxTextLabels"/>.  If necessary, this method will
-		/// set the <see cref="Scale.Step"/> value to greater than 1.0 in order to keep the total
+		/// set the <see cref="Scale.MajorStep"/> value to greater than 1.0 in order to keep the total
 		/// labels displayed below <see cref="Scale.Default.MaxTextLabels"/>.  For example, a
-		/// <see cref="Scale.Step"/> size of 2.0 would only display every other label on the
-		/// axis.  The <see cref="Scale.Step"/> value calculated by this routine is always
+		/// <see cref="Scale.MajorStep"/> size of 2.0 would only display every other label on the
+		/// axis.  The <see cref="Scale.MajorStep"/> value calculated by this routine is always
 		/// an integral value.  This
 		/// method honors the <see cref="Scale.MinAuto"/>, <see cref="Scale.MaxAuto"/>,
-		/// and <see cref="Scale.StepAuto"/> autorange settings.
+		/// and <see cref="Scale.MajorStepAuto"/> autorange settings.
 		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.Step"/>
+		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.MajorStep"/>
 		/// setting is explicitly honored, and the remaining autorange settings (if any) will
 		/// be calculated to accomodate the non-autoranged values.
 		/// <para>On Exit:</para>
 		/// <para><see cref="Scale.Min"/> is set to scale minimum (if <see cref="Scale.MinAuto"/> = true)</para>
 		/// <para><see cref="Scale.Max"/> is set to scale maximum (if <see cref="Scale.MaxAuto"/> = true)</para>
-		/// <para><see cref="Scale.Step"/> is set to scale step size (if <see cref="Scale.StepAuto"/> = true)</para>
+		/// <para><see cref="Scale.MajorStep"/> is set to scale step size (if <see cref="Scale.MajorStepAuto"/> = true)</para>
 		/// <para><see cref="Scale.MinorStep"/> is set to scale minor step size (if <see cref="Scale.MinorStepAuto"/> = true)</para>
-		/// <para><see cref="Scale.ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="Scale.ScaleFormat"/> is set to the display format for the values (this controls the
+		/// <para><see cref="Scale.Mag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="Scale.Format"/> is set to the display format for the values (this controls the
 		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
@@ -202,62 +196,68 @@ namespace ZedGraph
 			base.PickScale( pane, g, scaleFactor );
 
 			// if text labels are provided, then autorange to the number of labels
-			if ( this.textLabels != null )
+			if ( _textLabels != null )
 			{
-				if ( this.minAuto )
-					this.min = 0.5;
-				if ( this.maxAuto )
-					this.max = this.textLabels.Length + 0.5;
+				if ( _minAuto )
+					_min = 0.5;
+				if ( _maxAuto )
+					_max = _textLabels.Length + 0.5;
 			}
 			else
 			{
-				if ( this.minAuto )
-					this.min -= 0.5;
-				if ( this.maxAuto )
-					this.max += 0.5;
+				if ( _minAuto )
+					_min -= 0.5;
+				if ( _maxAuto )
+					_max += 0.5;
 			}
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < .1 )
+			if ( _max - _min < .1 )
 			{
-				if ( this.maxAuto )
-					this.max = this.min + 10.0;
+				if ( _maxAuto )
+					_max = _min + 10.0;
 				else
-					this.min = this.max - 10.0;
+					_min = _max - 10.0;
 			}
 
-			if ( this.stepAuto )
+			if ( _majorStepAuto )
 			{
-				if ( !this.isPreventLabelOverlap )
+				if ( !_isPreventLabelOverlap )
 				{
-					this.step = 1;
+					_majorStep = 1;
 				}
-				else if ( this.textLabels != null )
+				else if ( _textLabels != null )
 				{
 					// Calculate the maximum number of labels
 					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
 					// Calculate a step size based on the width of the labels
-					double tmpStep = Math.Ceiling( ( this.max - this.min ) / maxLabels );
+					double tmpStep = Math.Ceiling( ( _max - _min ) / maxLabels );
 
 					// Use the lesser of the two step sizes
-					//if ( tmpStep < this.step )
-					this.step = tmpStep;
+					//if ( tmpStep < this.majorStep )
+					_majorStep = tmpStep;
 				}
 				else
-					this.step = (int) ( ( this.max - this.min - 1.0 ) / Default.MaxTextLabels ) + 1.0;
+					_majorStep = (int) ( ( _max - _min - 1.0 ) / Default.MaxTextLabels ) + 1.0;
 
 			}
 			else
 			{
-				this.step = (int) this.step;
-				if ( this.step <= 0 )
-					this.step = 1.0;
+				_majorStep = (int) _majorStep;
+				if ( _majorStep <= 0 )
+					_majorStep = 1.0;
 			}
 
-			if ( this.minorStepAuto )
-				this.minorStep = 1;
-			//this.numDec = 0;
-			this.scaleMag = 0;
+			if ( _minorStepAuto )
+			{
+				_minorStep = _majorStep / 10;
+
+				//_minorStep = CalcStepSize( _majorStep, 10 );
+				if ( _minorStep < 1 )
+					_minorStep = 1;
+			}
+
+			_mag = 0;
 		}
 
 		/// <summary>
@@ -272,22 +272,20 @@ namespace ZedGraph
 		/// cause the third value label on the axis to be generated.
 		/// </param>
 		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Axis.IsLog"/>)
-		/// and text (<see cref="Axis.IsText"/>) type axes.
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Scale.IsLog"/>)
+		/// and text (<see cref="Scale.IsText"/>) type axes.
 		/// </param>
-		/// <param name="label">
-		/// Output only.  The resulting value label.
-		/// </param>
-		override internal void MakeLabel( GraphPane pane, int index, double dVal, out string label )
+		/// <returns>The resulting value label as a <see cref="string" /></returns>
+		override internal string MakeLabel( GraphPane pane, int index, double dVal )
 		{
-			if ( this.scaleFormat == null )
-				this.scaleFormat = Scale.Default.ScaleFormat;
+			if ( _format == null )
+				_format = Scale.Default.Format;
 
-			index *= (int) this.step;
-			if ( this.textLabels == null || index < 0 || index >= textLabels.Length )
-				label = "";
+			index *= (int) _majorStep;
+			if ( _textLabels == null || index < 0 || index >= _textLabels.Length )
+				return string.Empty;
 			else
-				label = textLabels[index];
+				return _textLabels[index];
 		}
 
 
@@ -297,7 +295,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects

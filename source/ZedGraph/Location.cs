@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
 	public class Location : ICloneable, ISerializable
 	{
@@ -38,22 +38,22 @@ namespace ZedGraph
 		/// this object.  Use the public property <see cref="Location.AlignV"/>
 		/// to access this value.  The value of this field is a <see cref="AlignV"/> enum.
 		/// </summary>
-		private AlignV	alignV;
+		private AlignV	_alignV;
 		/// <summary> Private field to store the horizontal alignment property for
 		/// this object.  Use the public property <see cref="Location.AlignH"/>
 		/// to access this value.  The value of this field is a <see cref="AlignH"/> enum.
 		/// </summary>
-		private AlignH	alignH;
+		private AlignH	_alignH;
 
 		/// <summary> Private fields to store the X and Y coordinate positions for
 		/// this object.  Use the public properties <see cref="X"/> and
 		/// <see cref="Y"/> to access these values.  The coordinate type stored here is
 		/// dependent upon the setting of <see cref="CoordinateFrame"/>.
 		/// </summary>
-		private float		x,
-							y,
-							width,
-							height;
+		private double	_x,
+							_y,
+							_width,
+							_height;
 							
 		/// <summary>
 		/// Private field to store the coordinate system to be used for defining the
@@ -61,7 +61,7 @@ namespace ZedGraph
 		/// <see cref="CoordinateFrame"/> to access this value. The coordinate system
 		/// is defined with the <see cref="CoordType"/> enum.
 		/// </summary>
-		private CoordType	coordinateFrame;
+		private CoordType	_coordinateFrame;
 	#endregion
 
 	#region Properties
@@ -71,8 +71,8 @@ namespace ZedGraph
 		/// </summary>
 		public AlignH AlignH
 		{
-			get { return alignH; }
-			set { alignH = value; }
+			get { return _alignH; }
+			set { _alignH = value; }
 		}
 		/// <summary>
 		/// A vertical alignment parameter for this object specified
@@ -80,8 +80,8 @@ namespace ZedGraph
 		/// </summary>
 		public AlignV AlignV
 		{
-			get { return alignV; }
-			set { alignV = value; }
+			get { return _alignV; }
+			set { _alignV = value; }
 		}
 		/// <summary>
 		/// The coordinate system to be used for defining the object position
@@ -90,8 +90,8 @@ namespace ZedGraph
 		/// enum</value>
 		public CoordType CoordinateFrame
 		{
-			get { return coordinateFrame; }
-			set { coordinateFrame = value; }
+			get { return _coordinateFrame; }
+			set { _coordinateFrame = value; }
 		}
 		/// <summary>
 		/// The x position of the object.
@@ -102,10 +102,10 @@ namespace ZedGraph
 		/// The object will be aligned to this position based on the
 		/// <see cref="AlignH"/> property.
 		/// </remarks>
-		public float X
+		public double X
 		{
-			get { return x; }
-			set { x = value; }
+			get { return _x; }
+			set { _x = value; }
 		}
 		/// <summary>
 		/// The y position of the object.
@@ -116,10 +116,10 @@ namespace ZedGraph
 		/// The object will be aligned to this position based on the
 		/// <see cref="AlignV"/> property.
 		/// </remarks>
-		public float Y
+		public double Y
 		{
-			get { return y; }
-			set { y = value; }
+			get { return _y; }
+			set { _y = value; }
 		}
 		/// <summary>
 		/// The x1 position of the object (an alias for the x position).
@@ -130,10 +130,10 @@ namespace ZedGraph
 		/// The object will be aligned to this position based on the
 		/// <see cref="AlignH"/> property.
 		/// </remarks>
-		public float X1
+		public double X1
 		{
-			get { return x; }
-			set { x = value; }
+			get { return _x; }
+			set { _x = value; }
 		}
 		/// <summary>
 		/// The y1 position of the object (an alias for the y position).
@@ -144,10 +144,10 @@ namespace ZedGraph
 		/// The object will be aligned to this position based on the
 		/// <see cref="AlignV"/> property.
 		/// </remarks>
-		public float Y1
+		public double Y1
 		{
-			get { return y; }
-			set { y = value; }
+			get { return _y; }
+			set { _y = value; }
 		}
 		/// <summary>
 		/// The width of the object.
@@ -156,10 +156,10 @@ namespace ZedGraph
 		/// The units of this position are specified by the
 		/// <see cref="CoordinateFrame"/> property.
 		/// </remarks>
-		public float Width
+		public double Width
 		{
-			get { return width; }
-			set { width = value; }
+			get { return _width; }
+			set { _width = value; }
 		}
 		/// <summary>
 		/// The height of the object.
@@ -168,10 +168,10 @@ namespace ZedGraph
 		/// The units of this position are specified by the
 		/// <see cref="CoordinateFrame"/> property.
 		/// </remarks>
-		public float Height
+		public double Height
 		{
-			get { return height; }
-			set { height = value; }
+			get { return _height; }
+			set { _height = value; }
 		}
 		/// <summary>
 		/// The x2 position of the object.
@@ -181,13 +181,13 @@ namespace ZedGraph
 		/// <see cref="CoordinateFrame"/> property.
 		/// The object will be aligned to this position based on the
 		/// <see cref="AlignH"/> property.  This position is only used for
-		/// objects such as <see cref="ArrowItem"/>, where it makes sense
+		/// objects such as <see cref="ArrowObj"/>, where it makes sense
 		/// to have a second coordinate.  Note that the X2 position is stored
 		/// internally as a <see cref="Width"/> offset from <see cref="X"/>.
 		/// </remarks>
-		public float X2
+		public double X2
 		{
-			get { return x+width; }
+			get { return _x+_width; }
 			//set { width = value-x; }
 		}
 		/// <summary>
@@ -198,13 +198,13 @@ namespace ZedGraph
 		/// are specified by the <see cref="CoordinateFrame"/> property.
 		/// The object will be aligned to this position based on the
 		/// <see cref="AlignV"/> property.  This position is only used for
-		/// objects such as <see cref="ArrowItem"/>, where it makes sense
+		/// objects such as <see cref="ArrowObj"/>, where it makes sense
 		/// to have a second coordinate.  Note that the Y2 position is stored
 		/// internally as a <see cref="Height"/> offset from <see cref="Y"/>.
 		/// </remarks>
-		public float Y2
+		public double Y2
 		{
-			get { return y+height; }
+			get { return _y+_height; }
 			//set { height = value-y; }
 		}
 
@@ -213,37 +213,52 @@ namespace ZedGraph
 		/// <see cref="X"/>, <see cref="Y"/>, <see cref="Width"/>, and
 		/// <see cref="Height"/> properties.
 		/// </summary>
+		/// <remarks>
+		/// Note that this method reduces the precision of the location coordinates from double
+		/// precision to single precision.  In some cases, such as <see cref="AxisType.Date" />, it
+		/// may affect the resolution of the point location.
+		/// </remarks>
 		/// <value>A <see cref="RectangleF"/> in <see cref="CoordinateFrame"/>
 		/// units.</value>
 		public RectangleF Rect
 		{
-			get { return new RectangleF( this.x, this.y, this.width, this.height ); }
+			get { return new RectangleF( (float)_x, (float)_y, (float)_width, (float)_height ); }
 			set
 			{
-				this.x = value.X;
-				this.y = value.Y;
-				this.width = value.Width;
-				this.height = value.Height;
+				_x = value.X;
+				_y = value.Y;
+				_width = value.Width;
+				_height = value.Height;
 			}
 		}
 
 		/// <summary>
 		/// The top-left <see cref="PointF"/> for this <see cref="Location"/>.
 		/// </summary>
+		/// <remarks>
+		/// Note that this method reduces the precision of the location coordinates from double
+		/// precision to single precision.  In some cases, such as <see cref="AxisType.Date" />, it
+		/// may affect the resolution of the point location.
+		/// </remarks>
 		/// <value>A <see cref="PointF"/> in <see cref="CoordinateFrame"/> units.</value>
 		public PointF TopLeft
 		{
-			get { return new PointF( this.x, this.y ); }
-			set { this.x = value.X; this.y = value.Y; }
+			get { return new PointF( (float)_x, (float)_y ); }
+			set { _x = value.X; _y = value.Y; }
 		}
 
 		/// <summary>
 		/// The bottom-right <see cref="PointF"/> for this <see cref="Location"/>.
 		/// </summary>
+		/// <remarks>
+		/// Note that this method reduces the precision of the location coordinates from double
+		/// precision to single precision.  In some cases, such as <see cref="AxisType.Date" />, it
+		/// may affect the resolution of the point location.
+		/// </remarks>
 		/// <value>A <see cref="PointF"/> in <see cref="CoordinateFrame"/> units.</value>
 		public PointF BottomRight
 		{
-			get { return new PointF( this.X2, this.Y2 ); }
+			get { return new PointF( (float)this.X2, (float)this.Y2 ); }
 			//set { this.X2 = value.X; this.Y2 = value.Y; }
 		}
 	#endregion
@@ -253,7 +268,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Default constructor for the <see cref="Location"/> class.
 		/// </summary>
-		public Location() : this( 0, 0, CoordType.AxisFraction )
+		public Location() : this( 0, 0, CoordType.ChartFraction )
 		{
 		}
 
@@ -270,7 +285,7 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="coordType">The <see cref="CoordType"/> enum that specifies the
 		/// units for <see paramref="x"/> and <see paramref="y"/></param>
-		public Location( float x, float y, CoordType coordType ) :
+		public Location( double x, double y, CoordType coordType ) :
 				this( x, y, coordType, AlignH.Left, AlignV.Top )
 		{
 		}
@@ -292,15 +307,15 @@ namespace ZedGraph
 		/// the horizontal alignment of the object with respect to the (x,y) location</param>
 		/// <param name="alignV">The <see cref="ZedGraph.AlignV"/> enum that specifies
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
-		public Location( float x, float y, CoordType coordType, AlignH alignH, AlignV alignV )
+		public Location( double x, double y, CoordType coordType, AlignH alignH, AlignV alignV )
 		{
-			this.x = x;
-			this.y = y;
-			this.width = 0;
-			this.height = 0;
-			this.coordinateFrame = coordType;
-			this.alignH = alignH;
-			this.alignV = alignV;
+			_x = x;
+			_y = y;
+			_width = 0;
+			_height = 0;
+			_coordinateFrame = coordType;
+			_alignH = alignH;
+			_alignV = alignV;
 		}
 		
 		/// <summary>
@@ -310,7 +325,7 @@ namespace ZedGraph
 		/// <remarks>
 		/// The (x,y) position
 		/// corresponds to the starting position, the (x2, y2) coorresponds to the ending position
-		/// (typically used for <see cref="ArrowItem"/>'s).
+		/// (typically used for <see cref="ArrowObj"/>'s).
 		/// </remarks>
 		/// <param name="x">The x position, specified in units of <see paramref="coordType"/>.
 		/// </param>
@@ -326,12 +341,12 @@ namespace ZedGraph
 		/// the horizontal alignment of the object with respect to the (x,y) location</param>
 		/// <param name="alignV">The <see cref="ZedGraph.AlignV"/> enum that specifies
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
-		public Location( float x, float y, float width, float height,
+		public Location( double x, double y, double width, double height,
 			CoordType coordType, AlignH alignH, AlignV alignV ) :
 				this( x, y, coordType, alignH, alignV )
 		{
-			this.width = width;
-			this.height = height;
+			_width = width;
+			_height = height;
 		}
 		
 		/// <summary>
@@ -340,13 +355,13 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="Location"/> object from which to copy</param>
 		public Location( Location rhs )
 		{
-			this.x = rhs.x;
-			this.y = rhs.y;
-			this.width = rhs.width;
-			this.height = rhs.height;
-			this.coordinateFrame = rhs.CoordinateFrame;
-			this.alignH = rhs.AlignH;
-			this.alignV = rhs.AlignV;
+			_x = rhs._x;
+			_y = rhs._y;
+			_width = rhs._width;
+			_height = rhs._height;
+			_coordinateFrame = rhs.CoordinateFrame;
+			_alignH = rhs.AlignH;
+			_alignV = rhs.AlignV;
 		}
 
 		/// <summary>
@@ -374,7 +389,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -389,13 +404,13 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			alignV = (AlignV) info.GetValue( "alignV", typeof(AlignV) );
-			alignH = (AlignH) info.GetValue( "alignH", typeof(AlignH) );
-			x = info.GetSingle( "x" );
-			y = info.GetSingle( "y" );
-			width = info.GetSingle( "width" );
-			height = info.GetSingle( "height" );
-			coordinateFrame = (CoordType) info.GetValue( "coordinateFrame", typeof(CoordType) );
+			_alignV = (AlignV) info.GetValue( "alignV", typeof(AlignV) );
+			_alignH = (AlignH) info.GetValue( "alignH", typeof(AlignH) );
+			_x = info.GetDouble( "x" );
+			_y = info.GetDouble( "y" );
+			_width = info.GetDouble( "width" );
+			_height = info.GetDouble( "height" );
+			_coordinateFrame = (CoordType) info.GetValue( "coordinateFrame", typeof(CoordType) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -406,13 +421,13 @@ namespace ZedGraph
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
-			info.AddValue( "alignV", alignV );
-			info.AddValue( "alignH", alignH );
-			info.AddValue( "x", x );
-			info.AddValue( "y", y );
-			info.AddValue( "width", width );
-			info.AddValue( "height", height );
-			info.AddValue( "coordinateFrame", coordinateFrame );
+			info.AddValue( "alignV", _alignV );
+			info.AddValue( "alignH", _alignH );
+			info.AddValue( "x", _x );
+			info.AddValue( "y", _y );
+			info.AddValue( "width", _width );
+			info.AddValue( "height", _height );
+			info.AddValue( "coordinateFrame", _coordinateFrame );
 		}
 	#endregion
 
@@ -429,8 +444,8 @@ namespace ZedGraph
 		/// specified user point.</returns>
 		public PointF Transform( PaneBase pane )
 		{
-			return Transform( pane, new PointF( this.x, this.y ),
-						this.coordinateFrame );
+			return Transform( pane, _x, _y,
+						_coordinateFrame );
 		}
 		
 		/// <summary>
@@ -445,15 +460,17 @@ namespace ZedGraph
 		/// A reference to the <see cref="PaneBase"/> object that contains
 		/// the <see cref="Axis"/> classes which will be used for the transform.
 		/// </param>
-		/// <param name="ptF">The X,Y pair that defines the point in user
-		/// coordinates.</param>
+		/// <param name="x">The x coordinate that defines the point in user
+		/// space.</param>
+		/// <param name="y">The y coordinate that defines the point in user
+		/// space.</param>
 		/// <param name="coord">A <see cref="CoordType"/> type that defines the
 		/// coordinate system in which the X,Y pair is defined.</param>
 		/// <returns>A point in display device coordinates that corresponds to the
 		/// specified user point.</returns>
-		public static PointF Transform( PaneBase pane, PointF ptF, CoordType coord )
+		public static PointF Transform( PaneBase pane, double x, double y, CoordType coord )
 		{
-			return pane.TransformCoord( ptF, coord );
+			return pane.TransformCoord( x, y, coord );
 		}
 		
 		/// <summary>
@@ -479,14 +496,14 @@ namespace ZedGraph
 		{
 			PointF pt = Transform( pane );
 			
-			if ( alignH == AlignH.Right )
+			if ( _alignH == AlignH.Right )
 				pt.X -= width;
-			else if ( alignH == AlignH.Center )
+			else if ( _alignH == AlignH.Center )
 				pt.X -= width / 2.0F;
 				
-			if ( alignV == AlignV.Bottom )
+			if ( _alignV == AlignV.Bottom )
 				pt.Y -= height;
-			else if ( alignV == AlignV.Center )
+			else if ( _alignV == AlignV.Center )
 				pt.Y -= height / 2.0F;
 			
 			return pt;
@@ -520,8 +537,7 @@ namespace ZedGraph
 		/// <value>A <see cref="PointF"/> in pixel units.</value>
 		public PointF TransformBottomRight( PaneBase pane )
 		{
-			return Transform( pane, new PointF( this.X2, this.Y2 ),
-				this.coordinateFrame );
+			return Transform( pane, this.X2, this.Y2, _coordinateFrame );
 		}
 
 		/// <summary>

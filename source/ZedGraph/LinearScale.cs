@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2005  John Champion
+//Copyright © 2005  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -35,15 +35,20 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.8 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 1.9 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
-	class LinearScale : Scale, ISerializable, ICloneable
+	class LinearScale : Scale, ISerializable //, ICloneable
 	{
 
 	#region constructors
 
-		public LinearScale( Axis parentAxis )
-			: base( parentAxis )
+		/// <summary>
+		/// Default constructor that defines the owner <see cref="Axis" />
+		/// (containing object) for this new object.
+		/// </summary>
+		/// <param name="owner">The owner, or containing object, of this instance</param>
+		public LinearScale( Axis owner )
+			: base( owner )
 		{
 		}
 
@@ -51,31 +56,24 @@ namespace ZedGraph
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The <see cref="LinearScale" /> object from which to copy</param>
-		public LinearScale( Scale rhs )
-			: base( rhs )
+		/// <param name="owner">The <see cref="Axis" /> object that will own the
+		/// new instance of <see cref="LinearScale" /></param>
+		public LinearScale( Scale rhs, Axis owner )
+			: base( rhs, owner )
 		{
 		}
+
 
 		/// <summary>
-		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
+		/// Create a new clone of the current item, with a new owner assignment
 		/// </summary>
-		/// <returns>A deep copy of this object</returns>
-		object ICloneable.Clone()
+		/// <param name="owner">The new <see cref="Axis" /> instance that will be
+		/// the owner of the new Scale</param>
+		/// <returns>A new <see cref="Scale" /> clone.</returns>
+		public override Scale Clone( Axis owner )
 		{
-			return this.Clone();
+			return new LinearScale( this, owner );
 		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public LinearScale Clone()
-		{
-			return new LinearScale( this );
-		}
-
-
 	#endregion
 
 	#region properties
@@ -101,9 +99,9 @@ namespace ZedGraph
 		/// is called by the general <see cref="Scale.PickScale"/> method.  The scale range is chosen
 		/// based on increments of 1, 2, or 5 (because they are even divisors of 10).  This
 		/// method honors the <see cref="Scale.MinAuto"/>, <see cref="Scale.MaxAuto"/>,
-		/// and <see cref="Scale.StepAuto"/> autorange settings.
+		/// and <see cref="Scale.MajorStepAuto"/> autorange settings.
 		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.Step"/>
+		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.MajorStep"/>
 		/// setting is explicitly honored, and the remaining autorange settings (if any) will
 		/// be calculated to accomodate the non-autoranged values.  The basic defaults for
 		/// scale selection are defined using <see cref="Scale.Default.ZeroLever"/>,
@@ -112,10 +110,10 @@ namespace ZedGraph
 		/// <para>On Exit:</para>
 		/// <para><see cref="Scale.Min"/> is set to scale minimum (if <see cref="Scale.MinAuto"/> = true)</para>
 		/// <para><see cref="Scale.Max"/> is set to scale maximum (if <see cref="Scale.MaxAuto"/> = true)</para>
-		/// <para><see cref="Scale.Step"/> is set to scale step size (if <see cref="Scale.StepAuto"/> = true)</para>
+		/// <para><see cref="Scale.MajorStep"/> is set to scale step size (if <see cref="Scale.MajorStepAuto"/> = true)</para>
 		/// <para><see cref="Scale.MinorStep"/> is set to scale minor step size (if <see cref="Scale.MinorStepAuto"/> = true)</para>
-		/// <para><see cref="Scale.ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="Scale.ScaleFormat"/> is set to the display format for the values (this controls the
+		/// <para><see cref="Scale.Mag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="Scale.Format"/> is set to the display format for the values (this controls the
 		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object
@@ -138,60 +136,60 @@ namespace ZedGraph
 			base.PickScale( pane, g, scaleFactor );
 
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < 1.0e-30 )
+			if ( _max - _min < 1.0e-30 )
 			{
-				if ( this.maxAuto )
-					this.max = this.max + 0.2 * ( this.max == 0 ? 1.0 : Math.Abs( this.max ) );
-				if ( this.minAuto )
-					this.min = this.min - 0.2 * ( this.min == 0 ? 1.0 : Math.Abs( this.min ) );
+				if ( _maxAuto )
+					_max = _max + 0.2 * ( _max == 0 ? 1.0 : Math.Abs( _max ) );
+				if ( _minAuto )
+					_min = _min - 0.2 * ( _min == 0 ? 1.0 : Math.Abs( _min ) );
 			}
 
 			// This is the zero-lever test.  If minVal is within the zero lever fraction
 			// of the data range, then use zero.
 
-			if ( this.minAuto && this.min > 0 &&
-				this.min / ( this.max - this.min ) < Default.ZeroLever )
-				this.min = 0;
+			if ( _minAuto && _min > 0 &&
+				_min / ( _max - _min ) < Default.ZeroLever )
+				_min = 0;
 
 			// Repeat the zero-lever test for cases where the maxVal is less than zero
-			if ( this.maxAuto && this.max < 0 &&
-				Math.Abs( this.max / ( this.max - this.min ) ) <
+			if ( _maxAuto && _max < 0 &&
+				Math.Abs( _max / ( _max - _min ) ) <
 				Default.ZeroLever )
-				this.max = 0;
+				_max = 0;
 
 			// Calculate the new step size
-			if ( this.stepAuto )
+			if ( _majorStepAuto )
 			{
-				double targetSteps = ( parentAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
+				double targetSteps = ( _ownerAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
 
 				// Calculate the step size based on target steps
-				this.step = CalcStepSize( this.max - this.min, targetSteps );
+				_majorStep = CalcStepSize( _max - _min, targetSteps );
 
-				if ( this.isPreventLabelOverlap )
+				if ( _isPreventLabelOverlap )
 				{
 					// Calculate the maximum number of labels
 					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
-					if ( maxLabels < ( this.max - this.min ) / this.step )
-						this.step = CalcBoundedStepSize( this.max - this.min, maxLabels );
+					if ( maxLabels < ( _max - _min ) / _majorStep )
+						_majorStep = CalcBoundedStepSize( _max - _min, maxLabels );
 				}
 			}
 
 			// Calculate the new step size
-			if ( this.minorStepAuto )
-				this.minorStep = CalcStepSize( this.step,
-					( parentAxis is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
+			if ( _minorStepAuto )
+				_minorStep = CalcStepSize( _majorStep,
+					( _ownerAxis is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
 
 			// Calculate the scale minimum
-			if ( this.minAuto )
-				this.min = this.min - MyMod( this.min, this.step );
+			if ( _minAuto )
+				_min = _min - MyMod( _min, _majorStep );
 
 			// Calculate the scale maximum
-			if ( this.maxAuto )
-				this.max = MyMod( this.max, this.step ) == 0.0 ? this.max :
-					this.max + this.step - MyMod( this.max, this.step );
+			if ( _maxAuto )
+				_max = MyMod( _max, _majorStep ) == 0.0 ? _max :
+					_max + _majorStep - MyMod( _max, _majorStep );
 
-			SetScaleMag( this.min, this.max, this.step );
+			SetScaleMag( _min, _max, _majorStep );
 		}
 
 
@@ -201,7 +199,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects

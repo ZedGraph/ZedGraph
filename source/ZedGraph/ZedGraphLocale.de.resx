@@ -151,9 +151,9 @@
     <value>Y-Achse</value>
   </data>
   <data name="page_setup" xml:space="preserve">
-    <value>Page Setup...</value>
+    <value>Seite einrichten...</value>
   </data>
   <data name="print" xml:space="preserve">
-    <value>Print...</value>
+    <value>Drucken...</value>
   </data>
 </root>

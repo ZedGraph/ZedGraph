@@ -35,9 +35,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title = "Horizontal Bars with Value Labels Above Each Bar";
-			myPane.XAxis.Title = "Some Random Thing";
-			myPane.YAxis.Title = "Position Number";
+			myPane.Title.Text = "Horizontal Bars with Value Labels Above Each Bar";
+			myPane.XAxis.Title.Text = "Some Random Thing";
+			myPane.YAxis.Title.Text = "Position Number";
 
 			// Create data points for three BarItems using Random data
 			PointPairList list = new PointPairList();
@@ -66,15 +66,15 @@ namespace ZedGraph.Demo
 			myCurve3.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 90 );
 
 			// Set BarBase to the YAxis for horizontal bars
-			myPane.BarBase = BarBase.Y;
+			myPane.BarSettings.Base = BarBase.Y;
 
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.White,
+			myPane.Chart.Fill = new Fill( Color.White,
 				Color.FromArgb( 255, 255, 166), 45.0F );
 
 			base.ZedGraphControl.AxisChange();
 
-			// Create TextItem's to provide labels for each bar
+			// Create TextObj's to provide labels for each bar
 			CreateBarLabels( myPane, false, "N0" );
 		}
 
@@ -94,14 +94,14 @@ namespace ZedGraph.Demo
 		/// </param>
 		private void CreateBarLabels( GraphPane pane, bool isBarCenter, string valueFormat )
 		{
-			bool isVertical = pane.BarBase == BarBase.X;
+			bool isVertical = pane.BarSettings.Base == BarBase.X;
 
 			// Make the gap between the bars and the labels = 2% of the axis range
 			float labelOffset;
 			if ( isVertical )
-				labelOffset = (float) ( pane.YAxis.Max - pane.YAxis.Min ) * 0.02f;
+				labelOffset = (float) ( pane.YAxis.Scale.Max - pane.YAxis.Scale.Min ) * 0.02f;
 			else
-				labelOffset = (float) ( pane.XAxis.Max - pane.XAxis.Min ) * 0.02f;
+				labelOffset = (float) ( pane.XAxis.Scale.Max - pane.XAxis.Scale.Min ) * 0.02f;
 
 			// keep a count of the number of BarItems
 			int curveIndex = 0;
@@ -144,14 +144,14 @@ namespace ZedGraph.Demo
 						else
 							position = (float) hiVal + labelOffset;
 
-						// Create the new TextItem
-						TextItem label;
+						// Create the new TextObj
+						TextObj label;
 						if ( isVertical )
-							label = new TextItem( barLabelText, centerVal, position );
+							label = new TextObj( barLabelText, centerVal, position );
 						else
-							label = new TextItem( barLabelText, position, centerVal );
+							label = new TextObj( barLabelText, position, centerVal );
 
-						// Configure the TextItem
+						// Configure the TextObj
 						label.Location.CoordinateFrame	= CoordType.AxisXYScale;
 						label.FontSpec.Size					= 12;
 						label.FontSpec.FontColor			= Color.Black;
@@ -161,8 +161,8 @@ namespace ZedGraph.Demo
 						label.FontSpec.Border.IsVisible	= false;
 						label.FontSpec.Fill.IsVisible		= false;
 
-						// Add the TextItem to the GraphPane
-						pane.GraphItemList.Add( label );
+						// Add the TextObj to the GraphPane
+						pane.GraphObjList.Add( label );
 					}
 				}
 				curveIndex++;

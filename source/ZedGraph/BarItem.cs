@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -30,11 +30,11 @@ namespace ZedGraph
 	/// </summary>
 	/// <remarks>
 	/// The orientation of the bars depends on the state of
-	/// <see cref="GraphPane.BarBase"/>, and the bars can be stacked or
-	/// clustered, depending on the state of <see cref="GraphPane.BarType"/>
+	/// <see cref="BarSettings.Base"/>, and the bars can be stacked or
+	/// clustered, depending on the state of <see cref="BarSettings.Type"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -44,7 +44,7 @@ namespace ZedGraph
 		/// class defined for this <see cref="BarItem"/>.  Use the public
 		/// property <see cref="Bar"/> to access this value.
 		/// </summary>
-		protected Bar			bar;
+		protected Bar			_bar;
 	#endregion
 	
 	#region Properties
@@ -54,7 +54,7 @@ namespace ZedGraph
 		/// </summary>
 		public Bar Bar
 		{
-			get { return bar; }
+			get { return _bar; }
 		}
 
 		/// <summary>
@@ -65,7 +65,7 @@ namespace ZedGraph
 		/// <value>true if the Z data are included, false otherwise</value>
 		override internal bool IsZIncluded( GraphPane pane )
 		{
-			return pane.BarType == BarType.ClusterHiLow;
+			return pane._barSettings.Type == BarType.ClusterHiLow;
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace ZedGraph
 		/// <value>true if the X axis is independent, false otherwise</value>
 		override internal bool IsXIndependent( GraphPane pane )
 		{
-			return pane.BarBase == BarBase.X;
+			return pane._barSettings.Base == BarBase.X;
 		}
 		
 	#endregion
@@ -88,7 +88,7 @@ namespace ZedGraph
 		/// <param name="label">The label that will appear in the legend.</param>
 		public BarItem( string label ) : base( label )
 		{
-			this.bar = new Bar();
+			_bar = new Bar();
 		}
 		/// <summary>
 		/// Create a new <see cref="BarItem"/> using the specified properties.
@@ -118,7 +118,7 @@ namespace ZedGraph
 		public BarItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
-			bar = new Bar( color );
+			_bar = new Bar( color );
 		}
 		
 		/// <summary>
@@ -128,7 +128,7 @@ namespace ZedGraph
 		public BarItem( BarItem rhs ) : base( rhs )
 		{
 			//bar = new Bar( rhs.Bar );
-			bar = rhs.bar.Clone();
+			_bar = rhs._bar.Clone();
 		}
 
 		/// <summary>
@@ -156,7 +156,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -171,7 +171,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			bar = (Bar) info.GetValue( "bar", typeof(Bar) );
+			_bar = (Bar) info.GetValue( "bar", typeof(Bar) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -183,7 +183,7 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "bar", bar );
+			info.AddValue( "bar", _bar );
 		}
 	#endregion
 
@@ -214,8 +214,8 @@ namespace ZedGraph
 									float scaleFactor  )
 		{
 			// Pass the drawing onto the bar class
-			if ( this.isVisible )
-				bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
+			if ( _isVisible )
+				_bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
 								this.GetBarWidth( pane ), pos, scaleFactor );
 		}
 		
@@ -240,7 +240,169 @@ namespace ZedGraph
 		/// </param>
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor )
 		{
-			this.bar.Draw( g, pane, rect, scaleFactor, true, null );
+			_bar.Draw( g, pane, rect, scaleFactor, true, null );
+		}
+
+		/// <summary>
+		/// Create a <see cref="TextObj" /> for each bar in the <see cref="GraphPane" />.
+		/// </summary>
+		/// <remarks>
+		/// This method will go through the bars, create a label that corresponds to the bar value,
+		/// and place it on the graph depending on user preferences.  This works for horizontal or
+		/// vertical bars in clusters or stacks, but only for <see cref="BarItem" /> types.  This method
+		/// does not apply to <see cref="ErrorBarItem" /> or <see cref="HiLowBarItem" /> objects.
+		/// Call this method only after calling <see cref="GraphPane.AxisChange" />.
+		/// </remarks>
+		/// <param name="pane">The GraphPane in which to place the text labels.</param>
+		/// <param name="isBarCenter">true to center the labels inside the bars, false to
+		/// place the labels just above the top of the bar.</param>
+		/// <param name="valueFormat">The double.ToString string format to use for creating
+		/// the labels.
+		/// </param>
+		public static void CreateBarLabels( GraphPane pane, bool isBarCenter, string valueFormat )
+		{
+			bool isVertical = pane.BarSettings.Base == BarBase.X;
+
+			// Make the gap between the bars and the labels = 2% of the axis range
+			float labelOffset;
+			if ( isVertical )
+				labelOffset = (float)( pane.YAxis._scale._max - pane.YAxis._scale._min ) * 0.02f;
+			else
+				labelOffset = (float)( pane.XAxis._scale._max - pane.XAxis._scale._min ) * 0.02f;
+
+			// keep a count of the number of BarItems
+			int curveIndex = 0;
+
+			// Get a valuehandler to do some calculations for us
+			ValueHandler valueHandler = new ValueHandler( pane, true );
+
+			// Loop through each curve in the list
+			foreach ( CurveItem curve in pane.CurveList )
+			{
+				// work with BarItems only
+				BarItem bar = curve as BarItem;
+				if ( bar != null )
+				{
+					IPointList points = curve.Points;
+
+					// Loop through each point in the BarItem
+					for ( int i = 0; i < points.Count; i++ )
+					{
+						// Get the high, low and base values for the current bar
+						// note that this method will automatically calculate the "effective"
+						// values if the bar is stacked
+						double baseVal, lowVal, hiVal;
+						valueHandler.GetValues( curve, i, out baseVal, out lowVal, out hiVal );
+
+						// Get the value that corresponds to the center of the bar base
+						// This method figures out how the bars are positioned within a cluster
+						float centerVal = (float)valueHandler.BarCenterValue( bar,
+							bar.GetBarWidth( pane ), i, baseVal, curveIndex );
+
+						// Create a text label -- note that we have to go back to the original point
+						// data for this, since hiVal and lowVal could be "effective" values from a bar stack
+						string barLabelText = ( isVertical ? points[i].Y : points[i].X ).ToString( valueFormat );
+
+						// Calculate the position of the label -- this is either the X or the Y coordinate
+						// depending on whether they are horizontal or vertical bars, respectively
+						float position;
+						if ( isBarCenter )
+							position = (float)( hiVal + lowVal ) / 2.0f;
+						else
+							position = (float)hiVal + labelOffset;
+
+						// Create the new TextObj
+						TextObj label;
+						if ( isVertical )
+							label = new TextObj( barLabelText, centerVal, position );
+						else
+							label = new TextObj( barLabelText, position, centerVal );
+
+						// Configure the TextObj
+						label.Location.CoordinateFrame = CoordType.AxisXYScale;
+						label.FontSpec.Size = 12;
+						label.FontSpec.FontColor = Color.Black;
+						label.FontSpec.Angle = isVertical ? 90 : 0;
+						label.Location.AlignH = isBarCenter ? AlignH.Center : AlignH.Left;
+						label.Location.AlignV = AlignV.Center;
+						label.FontSpec.Border.IsVisible = false;
+						label.FontSpec.Fill.IsVisible = false;
+
+						// Add the TextObj to the GraphPane
+						pane.GraphObjList.Add( label );
+					}
+				}
+				curveIndex++;
+			}
+		}
+
+		/// <summary>
+		/// Determine the coords for the rectangle associated with a specified point for 
+		/// this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> to which this curve belongs</param>
+		/// <param name="i">The index of the point of interest</param>
+		/// <param name="coords">A list of coordinates that represents the "rect" for
+		/// this point (used in an html AREA tag)</param>
+		/// <returns>true if it's a valid point, false otherwise</returns>
+		override public bool GetCoords( GraphPane pane, int i, out string coords )
+		{
+			coords = string.Empty;
+
+			if ( i < 0 || i >= _points.Count )
+				return false;
+
+			Axis valueAxis = ValueAxis( pane );
+			Axis baseAxis = BaseAxis( pane );
+
+			// pixBase = pixel value for the bar center on the base axis
+			// pixHiVal = pixel value for the bar top on the value axis
+			// pixLowVal = pixel value for the bar bottom on the value axis
+			float pixBase, pixHiVal, pixLowVal;
+
+			float clusterWidth = pane.BarSettings.GetClusterWidth();
+			float barWidth = GetBarWidth( pane );
+			float clusterGap = pane._barSettings.MinClusterGap * barWidth;
+			float barGap = barWidth * pane._barSettings.MinBarGap;
+
+			// curBase = the scale value on the base axis of the current bar
+			// curHiVal = the scale value on the value axis of the current bar
+			// curLowVal = the scale value of the bottom of the bar
+			double curBase, curLowVal, curHiVal;
+			ValueHandler valueHandler = new ValueHandler( pane, false );
+			valueHandler.GetValues( this, i, out curBase, out curLowVal, out curHiVal );
+
+			// Any value set to double max is invalid and should be skipped
+			// This is used for calculated values that are out of range, divide
+			//   by zero, etc.
+			// Also, any value <= zero on a log scale is invalid
+
+			if ( !_points[i].IsInvalid3D )
+			{
+				// calculate a pixel value for the top of the bar on value axis
+				pixLowVal = valueAxis.Scale.Transform( _isOverrideOrdinal, i, curLowVal );
+				pixHiVal = valueAxis.Scale.Transform( _isOverrideOrdinal, i, curHiVal );
+				// calculate a pixel value for the center of the bar on the base axis
+				pixBase = baseAxis.Scale.Transform( _isOverrideOrdinal, i, curBase );
+
+				// Calculate the pixel location for the side of the bar (on the base axis)
+				float pixSide = pixBase - clusterWidth / 2.0F + clusterGap / 2.0F +
+								pane.CurveList.GetBarItemPos( pane, this ) * ( barWidth + barGap );
+
+				// Draw the bar
+				if ( pane._barSettings.Base == BarBase.X )
+					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+								pixSide, pixLowVal,
+								pixSide + barWidth, pixHiVal );
+				else
+					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+								pixLowVal, pixSide,
+								pixHiVal, pixSide + barWidth );
+
+				return true;
+			}
+
+			return false;
 		}
 
 	#endregion

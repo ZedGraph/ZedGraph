@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
 	public class LineItem : CurveItem, ICloneable, ISerializable
 	{
@@ -42,13 +42,13 @@ namespace ZedGraph
 		/// class defined for this <see cref="LineItem"/>.  Use the public
 		/// property <see cref="Symbol"/> to access this value.
 		/// </summary>
-		protected Symbol	symbol;
+		protected Symbol	_symbol;
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="ZedGraph.Line"/>
 		/// class defined for this <see cref="LineItem"/>.  Use the public
 		/// property <see cref="Line"/> to access this value.
 		/// </summary>
-		protected Line		line;
+		protected Line		_line;
 
 	#endregion
 
@@ -60,8 +60,8 @@ namespace ZedGraph
 		/// </summary>
 		public Symbol Symbol
 		{
-			get { return symbol; }
-			set { symbol = value; }
+			get { return _symbol; }
+			set { _symbol = value; }
 		}
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Line"/> class instance defined
@@ -69,8 +69,8 @@ namespace ZedGraph
 		/// </summary>
 		public Line Line
 		{
-			get { return line; }
-			set { line = value; }
+			get { return _line; }
+			set { _line = value; }
 		}
 
 		/// <summary>
@@ -101,17 +101,17 @@ namespace ZedGraph
 		/// <summary>
 		/// Create a new <see cref="LineItem"/>, specifying only the legend <see cref="CurveItem.Label" />.
 		/// </summary>
-		/// <param name="label">The label that will appear in the legend.</param>
+		/// <param name="label">The _label that will appear in the legend.</param>
 		public LineItem( string label ) : base( label )
 		{
-			this.symbol = new Symbol();
-			this.line = new Line();
+			_symbol = new Symbol();
+			_line = new Line();
 		}
 		
 		/// <summary>
 		/// Create a new <see cref="LineItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The label that will appear in the legend.</param>
+		/// <param name="label">The _label that will appear in the legend.</param>
 		/// <param name="x">An array of double precision values that define
 		/// the independent (X axis) values for this curve</param>
 		/// <param name="y">An array of double precision values that define
@@ -133,7 +133,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Create a new <see cref="LineItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The label that will appear in the legend.</param>
+		/// <param name="label">The _label that will appear in the legend.</param>
 		/// <param name="x">An array of double precision values that define
 		/// the independent (X axis) values for this curve</param>
 		/// <param name="y">An array of double precision values that define
@@ -152,7 +152,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Create a new <see cref="LineItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The label that will appear in the legend.</param>
+		/// <param name="label">The _label that will appear in the legend.</param>
 		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">A <see cref="Color"/> value that will be applied to
@@ -167,19 +167,19 @@ namespace ZedGraph
 		public LineItem( string label, IPointList points, Color color, SymbolType symbolType, float lineWidth )
 			: base( label, points )
 		{
-			line = new Line( color );
+			_line = new Line( color );
 			if ( lineWidth == 0 )
-				line.IsVisible = false;
+				_line.IsVisible = false;
 			else
-				line.Width = lineWidth;
+				_line.Width = lineWidth;
 
-			this.symbol = new Symbol( symbolType, color );
+			_symbol = new Symbol( symbolType, color );
 		}
 
 		/// <summary>
 		/// Create a new <see cref="LineItem"/> using the specified properties.
 		/// </summary>
-		/// <param name="label">The label that will appear in the legend.</param>
+		/// <param name="label">The _label that will appear in the legend.</param>
 		/// <param name="points">A <see cref="IPointList"/> of double precision value pairs that define
 		/// the X and Y values for this curve</param>
 		/// <param name="color">A <see cref="Color"/> value that will be applied to
@@ -199,8 +199,8 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="LineItem"/> object from which to copy</param>
 		public LineItem( LineItem rhs ) : base( rhs )
 		{
-			symbol = new Symbol( rhs.Symbol );
-			line = new Line( rhs.Line );
+			_symbol = new Symbol( rhs.Symbol );
+			_line = new Line( rhs.Line );
 		}
 
 		/// <summary>
@@ -228,7 +228,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -243,8 +243,8 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			symbol = (Symbol) info.GetValue( "symbol", typeof(Symbol) );
-			line = (Line) info.GetValue( "line", typeof(Line) );
+			_symbol = (Symbol) info.GetValue( "symbol", typeof(Symbol) );
+			_line = (Line) info.GetValue( "line", typeof(Line) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -256,8 +256,8 @@ namespace ZedGraph
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "symbol", symbol );
-			info.AddValue( "line", line );
+			info.AddValue( "symbol", _symbol );
+			info.AddValue( "line", _line );
 		}
 	#endregion
 
@@ -286,7 +286,7 @@ namespace ZedGraph
 		/// </param>
 		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
-			if ( this.isVisible )
+			if ( _isVisible )
 			{
 				Line.Draw( g, pane, this, scaleFactor );
 				
@@ -317,10 +317,17 @@ namespace ZedGraph
 		{
 			// Draw a sample curve to the left of the label text
 			float yMid = rect.Top + rect.Height / 2.0F;
-            this.Line.DrawSegment( g, pane, rect.Left, yMid, rect.Right, yMid, scaleFactor );
+			//RectangleF rect2 = rect;
+			//rect2.Y = yMid;
+			//rect2.Height = rect.Height / 2.0f;
+
+			_line.Fill.Draw( g, rect );
+
+			_line.DrawSegment( g, pane, rect.Left, yMid, rect.Right, yMid, scaleFactor );
 
             // Draw a sample symbol to the left of the label text				
-			this.Symbol.DrawSymbol( g, pane, rect.Left + rect.Width / 2.0F, yMid, scaleFactor, null );
+			_symbol.DrawSymbol( g, pane, rect.Left + rect.Width / 2.0F, yMid, scaleFactor, null );
+
 		}
 	
 		/// <summary>
@@ -338,6 +345,48 @@ namespace ZedGraph
 			this.Color			= rotator.NextColor;
 			this.Symbol.Type	= rotator.NextSymbol;
 		}
+
+		/// <summary>
+		/// Determine the coords for the rectangle associated with a specified point for 
+		/// this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> to which this curve belongs</param>
+		/// <param name="i">The index of the point of interest</param>
+		/// <param name="coords">A list of coordinates that represents the "rect" for
+		/// this point (used in an html AREA tag)</param>
+		/// <returns>true if it's a valid point, false otherwise</returns>
+		override public bool GetCoords( GraphPane pane, int i, out string coords )
+		{
+			coords = string.Empty;
+
+			if ( i < 0 || i >= _points.Count )
+				return false;
+
+			PointPair pt = _points[i];
+			if ( pt.IsInvalid )
+				return false;
+
+			double x, y, z;
+			ValueHandler valueHandler = new ValueHandler( pane, false );
+			valueHandler.GetValues( this, i, out x, out z, out y );
+
+			Axis yAxis = GetYAxis( pane );
+
+			PointF pixPt = new PointF( pane.XAxis.Scale.Transform( _isOverrideOrdinal, i, x ),
+							yAxis.Scale.Transform( _isOverrideOrdinal, i, y ) );
+			
+			if ( !pane.Chart.Rect.Contains( pixPt ) )
+				return false;
+
+			float halfSize = _symbol.Size * pane.CalcScaleFactor();
+
+			coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+					pixPt.X - halfSize, pixPt.Y - halfSize,
+					pixPt.X + halfSize, pixPt.Y + halfSize );
+
+			return true;
+		}
+
 	#endregion
 	}
 }

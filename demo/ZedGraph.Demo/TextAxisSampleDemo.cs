@@ -36,9 +36,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title = "My Test Date Graph";
-			myPane.XAxis.Title = "Label";
-			myPane.YAxis.Title = "My Y Axis";
+			myPane.Title.Text = "My Test Date Graph";
+			myPane.XAxis.Title.Text = "Label";
+			myPane.YAxis.Title.Text = "My Y Axis";
 			
 			// Make up some data points
 			string[] labels = { "USA", "Spain\nMadrid", "Qatar", "Morocco", "UK", "Uganda",
@@ -58,9 +58,9 @@ namespace ZedGraph.Demo
 			// Set the XAxis to Text type
 			myPane.XAxis.Type = AxisType.Text;
 			// Set the XAxis labels
-			myPane.XAxis.TextLabels = labels;
+			myPane.XAxis.Scale.TextLabels = labels;
 			// Set the labels at an angle so they don't overlap
-			myPane.XAxis.ScaleFontSpec.Angle = 40;
+			myPane.XAxis.Scale.FontSpec.Angle = 40;
 
 			base.ZedGraphControl.AxisChange();
 		}

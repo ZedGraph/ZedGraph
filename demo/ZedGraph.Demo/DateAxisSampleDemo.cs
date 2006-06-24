@@ -36,9 +36,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the titles and axis labels
-			myPane.Title = "My Test Date Graph";
-			myPane.XAxis.Title = "Date";
-			myPane.YAxis.Title = "My Y Axis";
+			myPane.Title.Text = "My Test Date Graph";
+			myPane.XAxis.Title.Text = "Date";
+			myPane.YAxis.Title.Text = "My Y Axis";
 			   
 			// Make up some data points based on the Sine function
 			PointPairList list = new PointPairList();

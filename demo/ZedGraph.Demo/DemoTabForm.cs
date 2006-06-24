@@ -25,7 +25,7 @@ namespace ZedGraph.Demo
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos </author>
-	/// <version> $Revision: 1.10 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 1.11 $ $Date: 2006-06-24 20:26:42 $ </version>
 	public class DemoTabForm : ChartTabForm
 	{
 	#region Constructor
@@ -76,19 +76,17 @@ namespace ZedGraph.Demo
 			loadDemo(new StackedBarSampleDemo());
 			loadDemo(new PercentStkBarDemo());
 			loadDemo(new PieSampleDemo());
-			loadDemo(new MasterSampleDemo());
+			loadDemo( new MasterSampleDemo() );
+			loadDemo( new SynchronizedPanes() );
+			loadDemo( new JapaneseCandleStickDemo() );
+			loadDemo( new CandleStickDemo() );
+			loadDemo( new ImageForSymbolDemo() );
+			loadDemo( new MasterPaneLayout() );
 			
 			// TODO: add more demos here
 			// ...
 		}
 	#endregion
 
-	#region Main
-		[STAThread]
-		static void Main() 
-		{
-			System.Windows.Forms.Application.Run(new DemoTabForm());
-		}
-	#endregion
 	}
 }

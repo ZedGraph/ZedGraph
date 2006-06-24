@@ -37,9 +37,9 @@ namespace ZedGraph.Demo
 			GraphPane myPane = base.GraphPane;
 
 			// Set the title and axis labels
-			myPane.Title = "PVT Properties";
-			myPane.XAxis.Title = "Pressure (atm)";
-			myPane.YAxis.Title = "Temperature (C)";
+			myPane.Title.Text = "PVT Properties";
+			myPane.XAxis.Title.Text = "Pressure (atm)";
+			myPane.YAxis.Title.Text = "Temperature (C)";
 			
 			// Enter some calculated data constants
 			double[] x = new double[84];
@@ -146,6 +146,7 @@ namespace ZedGraph.Demo
 			// a value of 34 or more will be blue, and values in between will be a
 			// linearly apportioned color between red and blue.
 			myCurve.Symbol.Fill.Type = FillType.GradientByZ;
+			//myCurve.Symbol.Fill.SecondaryValueGradientColor = Color.Empty;
 			myCurve.Symbol.Fill.RangeMin = 19;
 			myCurve.Symbol.Fill.RangeMax = 34;
 			//myCurve.Symbol.Fill.RangeDefault = 19;
@@ -154,37 +155,37 @@ namespace ZedGraph.Demo
 			myCurve.Line.IsVisible = false;
 
 			// Display a text item with "MW = 34" on the graph
-			TextItem text = new TextItem( "MW = 34", 12.9F, 110, CoordType.AxisXYScale );
+			TextObj text = new TextObj( "MW = 34", 12.9F, 110, CoordType.AxisXYScale );
 			text.FontSpec.FontColor = Color.Blue;
 			text.FontSpec.Border.IsVisible = false;
 			text.FontSpec.Fill.IsVisible = false;
 			text.FontSpec.Size = 14;
-			myPane.GraphItemList.Add( text );
+			myPane.GraphObjList.Add( text );
 
 			// Display a text item with "MW = 19" on the graph
-			text = new TextItem( "MW = 19", 25, 110, CoordType.AxisXYScale );
+			text = new TextObj( "MW = 19", 25, 110, CoordType.AxisXYScale );
 			text.FontSpec.FontColor = Color.Red;
 			text.FontSpec.Border.IsVisible = false;
 			text.FontSpec.Fill.IsVisible = false;
 			text.FontSpec.Size = 14;
-			myPane.GraphItemList.Add( text );
+			myPane.GraphObjList.Add( text );
 			
 			// Show the X and Y grids
-			myPane.XAxis.IsShowGrid = true;
-			myPane.YAxis.IsShowGrid = true;
+			myPane.XAxis.MajorGrid.IsVisible = true;
+			myPane.YAxis.MajorGrid.IsVisible = true;
 
 			// Set the x and y scale and title font sizes to 14
-			myPane.XAxis.ScaleFontSpec.Size = 14;
-			myPane.XAxis.TitleFontSpec.Size = 14;
-			myPane.YAxis.ScaleFontSpec.Size = 14;
-			myPane.YAxis.TitleFontSpec.Size = 14;
+			myPane.XAxis.Scale.FontSpec.Size = 14;
+			myPane.XAxis.Title.FontSpec.Size = 14;
+			myPane.YAxis.Scale.FontSpec.Size = 14;
+			myPane.YAxis.Title.FontSpec.Size = 14;
 			// Set the GraphPane title font size to 16
-			myPane.FontSpec.Size = 16;
+			myPane.Title.FontSpec.Size = 16;
 			// Turn off the legend
 			myPane.Legend.IsVisible = false;
 			
 			// Fill the axis background with a color gradient
-			myPane.AxisFill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
+			myPane.Chart.Fill = new Fill( Color.White, Color.FromArgb( 255, 255, 166), 90F );
 
 			base.ZedGraphControl.AxisChange();
 		}

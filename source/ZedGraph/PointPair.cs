@@ -1,6 +1,6 @@
 //============================================================================
 //PointPair Class
-//Copyright (C) 2004  Jerry Vos
+//Copyright © 2004  Jerry Vos
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ using System;
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Collections.Generic;
 using IComparer	= System.Collections.IComparer;
 
 namespace ZedGraph
@@ -31,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
 	public class PointPair : ISerializable
 	{
@@ -184,7 +185,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 1;
+		public const int schema = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -320,7 +321,7 @@ namespace ZedGraph
 		/// ascending order sort.
 		/// <seealso cref="System.Collections.ArrayList.Sort()"/>
 		/// </summary>
-		public class PointPairComparerY : IComparer 
+		public class PointPairComparerY : IComparer<PointPair>
 		{
 		
 			/// <summary>
@@ -329,7 +330,7 @@ namespace ZedGraph
 			/// <param name="l">Point to the left.</param>
 			/// <param name="r">Point to the right.</param>
 			/// <returns>-1, 0, or 1 depending on l.Y's relation to r.Y</returns>
-			int IComparer.Compare( object l, object r ) 
+			public int Compare( PointPair l, PointPair r ) 
 			{
 				if (l == null && r == null) 
 				{
@@ -344,8 +345,8 @@ namespace ZedGraph
 					return 1;
 				} 
 
-				double lY = ((PointPair) l).Y;
-				double rY = ((PointPair) r).Y;
+				double lY = l.Y;
+				double rY = r.Y;
 
 				if (System.Math.Abs(lY - rY) < .000000001)
 					return 0;
@@ -359,7 +360,7 @@ namespace ZedGraph
 		/// ascending order sort.
 		/// <seealso cref="System.Collections.ArrayList.Sort()"/>
 		/// </summary>
-		public class PointPairComparer : IComparer 
+		public class PointPairComparer : IComparer<PointPair>
 		{
 			private SortType sortType;
 			
@@ -378,7 +379,7 @@ namespace ZedGraph
 			/// <param name="l">Point to the left.</param>
 			/// <param name="r">Point to the right.</param>
 			/// <returns>-1, 0, or 1 depending on l.X's relation to r.X</returns>
-			int IComparer.Compare( object l, object r ) 
+			public int Compare( PointPair l, PointPair r ) 
 			{				 
 				if ( l == null && r == null ) 
 					return 0;
@@ -391,13 +392,13 @@ namespace ZedGraph
 			
 				if ( sortType == SortType.XValues )
 				{
-					lVal = ((PointPair) l).X;
-					rVal = ((PointPair) r).X;
+					lVal = l.X;
+					rVal = r.X;
 				}
 				else
 				{
-					lVal = ((PointPair) l).Y;
-					rVal = ((PointPair) r).Y;
+					lVal = l.Y;
+					rVal = r.Y;
 				}
 				
 				if ( lVal == PointPair.Missing || Double.IsInfinity( lVal ) || Double.IsNaN( lVal ) )

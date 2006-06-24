@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2005  John Champion
+//Copyright © 2005  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -36,15 +36,20 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion with contributions by jackply </author>
-	/// <version> $Revision: 1.6 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
-	class ExponentScale : Scale, ISerializable, ICloneable
+	class ExponentScale : Scale, ISerializable //, ICloneable
 	{
 
 	#region constructors
 
-		public ExponentScale( Axis parentAxis )
-			: base( parentAxis )
+		/// <summary>
+		/// Default constructor that defines the owner <see cref="Axis" />
+		/// (containing object) for this new object.
+		/// </summary>
+		/// <param name="owner">The owner, or containing object, of this instance</param>
+		public ExponentScale( Axis owner )
+			: base( owner )
 		{
 		}
 
@@ -52,28 +57,22 @@ namespace ZedGraph
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The <see cref="ExponentScale" /> object from which to copy</param>
-		public ExponentScale( Scale rhs )
-			: base( rhs )
+		/// <param name="owner">The <see cref="Axis" /> object that will own the
+		/// new instance of <see cref="ExponentScale" /></param>
+		public ExponentScale( Scale rhs, Axis owner )
+			: base( rhs, owner )
 		{
 		}
 
 		/// <summary>
-		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
-		/// calling the typed version of <see cref="Clone" />
+		/// Create a new clone of the current item, with a new owner assignment
 		/// </summary>
-		/// <returns>A deep copy of this object</returns>
-		object ICloneable.Clone()
+		/// <param name="owner">The new <see cref="Axis" /> instance that will be
+		/// the owner of the new Scale</param>
+		/// <returns>A new <see cref="Scale" /> clone.</returns>
+		public override Scale Clone( Axis owner )
 		{
-			return this.Clone();
-		}
-
-		/// <summary>
-		/// Typesafe, deep-copy clone method.
-		/// </summary>
-		/// <returns>A new, independent copy of this class</returns>
-		public ExponentScale Clone()
-		{
-			return new ExponentScale( this );
+			return new ExponentScale( this, owner );
 		}
 
 	#endregion
@@ -95,7 +94,7 @@ namespace ZedGraph
 		/// <remarks>
 		/// This method is typically called by the parent <see cref="GraphPane"/>
 		/// object as part of the <see cref="GraphPane.Draw"/> method.  It is also
-		/// called by <see cref="GraphPane.GeneralTransform"/> and
+		/// called by <see cref="GraphPane.GeneralTransform(double,double,CoordType)"/> and
 		/// <see cref="GraphPane.ReverseTransform( PointF, out double, out double, out double )"/>
 		/// methods to setup for coordinate transformations.
 		/// </remarks>
@@ -110,16 +109,45 @@ namespace ZedGraph
 		{
 			base.SetupScaleData( pane, axis );
 
-			if (  this.exponent > 0 )
+			if (  _exponent > 0 )
 			{
-				this.minScale = Math.Pow( this.min, exponent );
-				this.maxScale = Math.Pow( this.max, exponent );
+				_minLinTemp = Linearize( _min );
+				_maxLinTemp = Linearize( _max );
 			}
-			else if ( this.exponent < 0 )
+			else if ( _exponent < 0 )
 			{
-				this.minScale = Math.Pow( this.max, exponent );
-				this.maxScale = Math.Pow( this.min, exponent );
+				_minLinTemp = Linearize( _max );
+				_maxLinTemp = Linearize( _min );
 			}
+		}
+
+		/// <summary>
+		/// Convert a value to its linear equivalent for this type of scale.
+		/// </summary>
+		/// <remarks>
+		/// The default behavior is to just return the value unchanged.  However,
+		/// for <see cref="AxisType.Log" /> and <see cref="AxisType.Exponent" />,
+		/// it returns the log or power equivalent.
+		/// </remarks>
+		/// <param name="val">The value to be converted</param>
+		override public double Linearize( double val )
+		{
+			return SafeExp( val, _exponent );
+		}
+
+		/// <summary>
+		/// Convert a value from its linear equivalent to its actual scale value
+		/// for this type of scale.
+		/// </summary>
+		/// <remarks>
+		/// The default behavior is to just return the value unchanged.  However,
+		/// for <see cref="AxisType.Log" /> and <see cref="AxisType.Exponent" />,
+		/// it returns the anti-log or inverse-power equivalent.
+		/// </remarks>
+		/// <param name="val">The value to be converted</param>
+		override public double DeLinearize( double val )
+		{
+			return Math.Pow( val, 1 / _exponent );
 		}
 
 		/// <summary>
@@ -140,16 +168,16 @@ namespace ZedGraph
 		/// </returns>
 		override internal double CalcMajorTicValue( double baseVal, double tic )
 		{
-			if ( this.exponent > 0.0 )
+			if ( _exponent > 0.0 )
 			{
-				//return baseVal + Math.Pow ( (double) this.step * tic, exp );
+				//return baseVal + Math.Pow ( (double) this.majorStep * tic, exp );
 				//baseVal is got from CalBase..., and it is exp..
-				return Math.Pow( Math.Pow( baseVal, 1 / exponent ) + this.step * tic, exponent );
+				return Math.Pow( Math.Pow( baseVal, 1 / _exponent ) + _majorStep * tic, _exponent );
 			}
-			else if ( this.exponent < 0.0 )
+			else if ( _exponent < 0.0 )
 			{
 				//baseVal is got from CalBase..., and it is exp..
-				return Math.Pow( Math.Pow( baseVal, 1 / exponent ) + this.step * tic, exponent );
+				return Math.Pow( Math.Pow( baseVal, 1 / _exponent ) + _majorStep * tic, _exponent );
 			}
 
 			return 1.0;
@@ -174,7 +202,7 @@ namespace ZedGraph
 		/// </returns>
 		override internal double CalcMinorTicValue( double baseVal, int iTic )
 		{
-			return baseVal + Math.Pow( (double) this.step * (double) iTic, exponent );
+			return baseVal + Math.Pow( (double) _majorStep * (double) iTic, _exponent );
 		}
 
 		/// <summary>
@@ -190,7 +218,7 @@ namespace ZedGraph
 		/// </returns>
 		override internal int CalcMinorStart( double baseVal )
 		{
-			return (int) ( ( Math.Pow( this.min, exponent ) - baseVal ) / Math.Pow( this.minorStep, exponent ) );
+			return (int) ( ( Math.Pow( _min, _exponent ) - baseVal ) / Math.Pow( _minorStep, _exponent ) );
 		}
 
 		/// <summary>
@@ -201,18 +229,18 @@ namespace ZedGraph
 		/// is called by the general <see cref="Scale.PickScale"/> method.  The exponential scale
 		/// relies on the <see cref="Scale.Exponent" /> property to set the scaling exponent.  This
 		/// method honors the <see cref="Scale.MinAuto"/>, <see cref="Scale.MaxAuto"/>,
-		/// and <see cref="Scale.StepAuto"/> autorange settings.
+		/// and <see cref="Scale.MajorStepAuto"/> autorange settings.
 		/// In the event that any of the autorange settings are false, the
-		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.Step"/>
+		/// corresponding <see cref="Scale.Min"/>, <see cref="Scale.Max"/>, or <see cref="Scale.MajorStep"/>
 		/// setting is explicitly honored, and the remaining autorange settings (if any) will
 		/// be calculated to accomodate the non-autoranged values.  For log axes, the MinorStep
 		/// value is not used.
 		/// <para>On Exit:</para>
 		/// <para><see cref="Scale.Min"/> is set to scale minimum (if <see cref="Scale.MinAuto"/> = true)</para>
 		/// <para><see cref="Scale.Max"/> is set to scale maximum (if <see cref="Scale.MaxAuto"/> = true)</para>
-		/// <para><see cref="Scale.Step"/> is set to scale step size (if <see cref="Scale.StepAuto"/> = true)</para>
-		/// <para><see cref="Scale.ScaleMag"/> is set to a magnitude multiplier according to the data</para>
-		/// <para><see cref="Scale.ScaleFormat"/> is set to the display format for the values (this controls the
+		/// <para><see cref="Scale.MajorStep"/> is set to scale step size (if <see cref="Scale.MajorStepAuto"/> = true)</para>
+		/// <para><see cref="Scale.Mag"/> is set to a magnitude multiplier according to the data</para>
+		/// <para><see cref="Scale.Format"/> is set to the display format for the values (this controls the
 		/// number of decimal places, whether there are thousands separators, currency types, etc.)</para>
 		/// </remarks>
 		/// <seealso cref="Scale.PickScale"/>
@@ -223,70 +251,70 @@ namespace ZedGraph
 			base.PickScale( pane, g, scaleFactor );
 
 			// Test for trivial condition of range = 0 and pick a suitable default
-			if ( this.max - this.min < 1.0e-20 )
+			if ( _max - _min < 1.0e-20 )
 			{
-				if ( this.maxAuto )
-					this.max = this.max + 0.2 * ( this.max == 0 ? 1.0 : Math.Abs( this.max ) );
-				if ( this.minAuto )
-					this.min = this.min - 0.2 * ( this.min == 0 ? 1.0 : Math.Abs( this.min ) );
+				if ( _maxAuto )
+					_max = _max + 0.2 * ( _max == 0 ? 1.0 : Math.Abs( _max ) );
+				if ( _minAuto )
+					_min = _min - 0.2 * ( _min == 0 ? 1.0 : Math.Abs( _min ) );
 			}
 
 			// This is the zero-lever test.  If minVal is within the zero lever fraction
 			// of the data range, then use zero.
 
-			if ( this.minAuto && this.min > 0 &&
-				this.min / ( this.max - this.min ) < Default.ZeroLever )
-				this.min = 0;
+			if ( _minAuto && _min > 0 &&
+				_min / ( _max - _min ) < Default.ZeroLever )
+				_min = 0;
 
 			// Repeat the zero-lever test for cases where the maxVal is less than zero
-			if ( this.maxAuto && this.max < 0 &&
-				Math.Abs( this.max / ( this.max - this.min ) ) <
+			if ( _maxAuto && _max < 0 &&
+				Math.Abs( _max / ( _max - _min ) ) <
 				Default.ZeroLever )
-				this.max = 0;
+				_max = 0;
 
 			// Calculate the new step size
-			if ( this.stepAuto )
+			if ( _majorStepAuto )
 			{
-				double targetSteps = ( parentAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
+				double targetSteps = ( _ownerAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
 
 				// Calculate the step size based on target steps
-				this.step = CalcStepSize( this.max - this.min, targetSteps );
+				_majorStep = CalcStepSize( _max - _min, targetSteps );
 
-				if ( this.isPreventLabelOverlap )
+				if ( _isPreventLabelOverlap )
 				{
 					// Calculate the maximum number of labels
 					double maxLabels = (double) this.CalcMaxLabels( g, pane, scaleFactor );
 
-					if ( maxLabels < ( this.max - this.min ) / this.step )
-						this.step = CalcBoundedStepSize( this.max - this.min, maxLabels );
+					if ( maxLabels < ( _max - _min ) / _majorStep )
+						_majorStep = CalcBoundedStepSize( _max - _min, maxLabels );
 				}
 			}
 
 			// Calculate the new step size
-			if ( this.minorStepAuto )
-				this.minorStep = CalcStepSize( this.step,
-					( parentAxis is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
+			if ( _minorStepAuto )
+				_minorStep = CalcStepSize( _majorStep,
+					( _ownerAxis is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
 
 			// Calculate the scale minimum
-			if ( this.minAuto )
-				this.min = this.min - MyMod( this.min, this.step );
+			if ( _minAuto )
+				_min = _min - MyMod( _min, _majorStep );
 
 			// Calculate the scale maximum
-			if ( this.maxAuto )
-				this.max = MyMod( this.max, this.step ) == 0.0 ? this.max :
-					this.max + this.step - MyMod( this.max, this.step );
+			if ( _maxAuto )
+				_max = MyMod( _max, _majorStep ) == 0.0 ? _max :
+					_max + _majorStep - MyMod( _max, _majorStep );
 
 			// set the scale magnitude if required
-			if ( this.scaleMagAuto )
+			if ( _magAuto )
 			{
 				// Find the optimal scale display multiple
 				double mag = 0;
 				double mag2 = 0;
 
-				if ( Math.Abs( this.min ) > 1.0e-10 )
-					mag = Math.Floor( Math.Log10( Math.Abs( this.min ) ) );
-				if ( Math.Abs( this.max ) > 1.0e-10 )
-					mag2 = Math.Floor( Math.Log10( Math.Abs( this.max ) ) );
+				if ( Math.Abs( _min ) > 1.0e-10 )
+					mag = Math.Floor( Math.Log10( Math.Abs( _min ) ) );
+				if ( Math.Abs( _max ) > 1.0e-10 )
+					mag2 = Math.Floor( Math.Log10( Math.Abs( _max ) ) );
 				if ( Math.Abs( mag2 ) > Math.Abs( mag ) )
 					mag = mag2;
 
@@ -295,16 +323,16 @@ namespace ZedGraph
 					mag = 0;
 
 				// Use a power of 10 that is a multiple of 3 (engineering scale)
-				this.scaleMag = (int) ( Math.Floor( mag / 3.0 ) * 3.0 );
+				_mag = (int) ( Math.Floor( mag / 3.0 ) * 3.0 );
 			}
 
 			// Calculate the appropriate number of dec places to display if required
-			if ( this.scaleFormatAuto )
+			if ( _formatAuto )
 			{
-				int numDec = 0 - (int) ( Math.Floor( Math.Log10( this.step ) ) - this.scaleMag );
+				int numDec = 0 - (int) ( Math.Floor( Math.Log10( _majorStep ) ) - _mag );
 				if ( numDec < 0 )
 					numDec = 0;
-				this.scaleFormat = "f" + numDec.ToString();
+				_format = "f" + numDec.ToString();
 			}
 		}
 
@@ -320,20 +348,18 @@ namespace ZedGraph
 		/// cause the third value label on the axis to be generated.
 		/// </param>
 		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Axis.IsLog"/>)
-		/// and text (<see cref="Axis.IsText"/>) type axes.
+		/// The numeric value associated with the label.  This value is ignored for log (<see cref="Scale.IsLog"/>)
+		/// and text (<see cref="Scale.IsText"/>) type axes.
 		/// </param>
-		/// <param name="label">
-		/// Output only.  The resulting value label.
-		/// </param>
-		override internal void MakeLabel( GraphPane pane, int index, double dVal, out string label )
+		/// <returns>The resulting value label as a <see cref="string" /></returns>
+		override internal string MakeLabel( GraphPane pane, int index, double dVal )
 		{
-			if ( this.scaleFormat == null )
-				this.scaleFormat = Scale.Default.ScaleFormat;
+			if ( _format == null )
+				_format = Scale.Default.Format;
 
-			double scaleMult = Math.Pow( (double) 10.0, this.scaleMag );
-			double val = Math.Pow( dVal, 1 / exponent ) / scaleMult;
-			label = val.ToString( this.scaleFormat );
+			double scaleMult = Math.Pow( (double) 10.0, _mag );
+			double val = Math.Pow( dVal, 1 / _exponent ) / scaleMult;
+			return val.ToString( _format );
 		}
 
 
@@ -343,7 +369,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects

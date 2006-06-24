@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2005  John Champion
+//Copyright © 2005  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@
 #region Using directives
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -34,8 +34,8 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-02-14 06:14:22 $ </version>
-	public class ScrollRangeList : CollectionPlus, ICloneable
+	/// <version> $Revision: 3.3 $ $Date: 2006-06-24 20:26:43 $ </version>
+	public class ScrollRangeList : List<ScrollRange>, ICloneable
 	{
 
 	#region Constructors
@@ -88,40 +88,40 @@ namespace ZedGraph
 		/// <param name="index">The ordinal position (zero-based) of the
 		/// <see cref="ScrollRange"/> object to be accessed.</param>
 		/// <value>A <see cref="ScrollRange"/> object instance</value>
-		public ScrollRange this[ int index ]  
+		public new ScrollRange this[ int index ]  
 		{
 			get
 			{
 				if ( index < 0 || index >= this.Count )
 					return new ScrollRange( false );
 				else
-					return (ScrollRange) List[index];
+					return (ScrollRange) base[index];
 			}
-			set { List[index] = value; }
+			set { base[index] = value; }
 		}
 
-		/// <summary>
-		/// Add a <see cref="ScrollRange"/> object to the collection at the end of the list.
-		/// </summary>
-		/// <param name="item">The <see cref="ScrollRange"/> object to be added</param>
-		/// <seealso cref="IList.Add"/>
-		public int Add( ScrollRange item )
-		{
-			return List.Add( item );
-		}
-
-		/// <summary>
-		/// Insert a <see cref="ScrollRange"/> object into the collection at the specified
-		/// zero-based index location.
-		/// </summary>
-		/// <param name="index">The zero-based index location for insertion.</param>
-		/// <param name="item">The <see cref="ScrollRange"/> object that is to be
-		/// inserted.</param>
-		/// <seealso cref="IList.Insert"/>
-		public void Insert( int index, ScrollRange item )
-		{
-			List.Insert( index, item );
-		}
+		/*		/// <summary>
+				/// Add a <see cref="ScrollRange"/> object to the collection at the end of the list.
+				/// </summary>
+				/// <param name="item">The <see cref="ScrollRange"/> object to be added</param>
+				/// <seealso cref="IList.Add"/>
+				public int Add( ScrollRange item )
+				{
+					return List.Add( item );
+				}
+				/// <summary>
+				/// Insert a <see cref="ScrollRange"/> object into the collection at the specified
+				/// zero-based index location.
+				/// </summary>
+				/// <param name="index">The zero-based index location for insertion.</param>
+				/// <param name="item">The <see cref="ScrollRange"/> object that is to be
+				/// inserted.</param>
+				/// <seealso cref="IList.Insert"/>
+				public void Insert( int index, ScrollRange item )
+				{
+					List.Insert( index, item );
+				}
+		*/
 
 	#endregion
 

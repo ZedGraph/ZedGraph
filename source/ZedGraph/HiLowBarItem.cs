@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright (C) 2004  John Champion
+//Copyright © 2004  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -42,33 +42,33 @@ namespace ZedGraph
 	/// that is scaled using the regular scalefactor method (see
 	/// <see cref="PaneBase.CalcScaleFactor"/>).  In this manner, the bar widths
 	/// are set similar to symbol sizes.  The other method is to set
-	/// <see cref="HiLowBar.IsMaximumWidth"/> to true, which will cause the bars
+	/// <see cref="HiLowBar.IsAutoSize"/> to true, which will cause the bars
 	/// to be scaled just like a <see cref="BarItem"/> in which only one
 	/// bar series is present.  That is, the bars width will be the width of
-	/// a cluster less the clustergap (see <see cref="GraphPane.GetClusterWidth"/>
-	/// and <see cref="GraphPane.MinClusterGap"/>). The position of each bar is set
+	/// a cluster less the clustergap (see <see cref="BarSettings.GetClusterWidth"/>
+	/// and <see cref="BarSettings.MinClusterGap"/>). The position of each bar is set
 	/// according to the <see cref="PointPair"/> values.  The independent axis
-	/// is assigned with <see cref="GraphPane.BarBase"/>, and is a
-	/// <see cref="BarBase"/> enum type.  If <see cref="GraphPane.BarBase"/>
+	/// is assigned with <see cref="BarSettings.Base"/>, and is a
+	/// <see cref="BarBase"/> enum type.  If <see cref="BarSettings.Base"/>
 	/// is set to <see cref="ZedGraph.BarBase.Y"/> or <see cref="ZedGraph.BarBase.Y2"/>, then
 	/// the bars will actually be horizontal, since the X axis becomes the
 	/// value axis and the Y or Y2 axis becomes the independent axis.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2006-03-27 03:35:43 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2006-06-24 20:26:43 $ </version>
 	[Serializable]
 	public class HiLowBarItem : CurveItem, ICloneable, ISerializable
 	{
 
-		#region Fields
+	#region Fields
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="ZedGraph.HiLowBar"/>
 		/// class defined for this <see cref="HiLowBarItem"/>.  Use the public
 		/// property <see cref="Bar"/> to access this value.
 		/// </summary>
-		private HiLowBar bar;
-		#endregion
+		private HiLowBar _bar;
+	#endregion
 
-		#region Constructors
+	#region Constructors
 		/// <summary>
 		/// Create a new <see cref="HiLowBarItem"/> using the specified properties.
 		/// </summary>
@@ -100,7 +100,7 @@ namespace ZedGraph
 		public HiLowBarItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
-			bar = new HiLowBar( color );
+			_bar = new HiLowBar( color );
 		}
 
 		/// <summary>
@@ -109,7 +109,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="HiLowBarItem"/> object from which to copy</param>
 		public HiLowBarItem( HiLowBarItem rhs ) : base( rhs )
 		{
-			this.bar = rhs.bar.Clone(); // new HiLowBar( rhs.Bar );
+			_bar = rhs._bar.Clone(); // new HiLowBar( rhs.Bar );
 		}
 
 		/// <summary>
@@ -131,13 +131,13 @@ namespace ZedGraph
 			return new HiLowBarItem( this );
 		}
 
-		#endregion
+	#endregion
 
-		#region Serialization
+	#region Serialization
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 1;
+		public const int schema2 = 10;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -152,10 +152,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			bar = (HiLowBar) info.GetValue( "bar", typeof(HiLowBar) );
-
-			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
-			BarBase barBase = (BarBase) info.GetValue( "barBase", typeof(BarBase) );
+			_bar = (HiLowBar) info.GetValue( "bar", typeof(HiLowBar) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -166,22 +163,21 @@ namespace ZedGraph
 		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			base.GetObjectData( info, context );
+
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "bar", bar );
+			info.AddValue( "bar", _bar );
 
-			// BarBase is now just a dummy value, since the GraphPane.BarBase is used exclusively
-			info.AddValue( "barBase", BarBase.X );
 		}
-		#endregion
+	#endregion
 
-		#region Properties
+	#region Properties
 		/// <summary>
 		/// Gets a reference to the <see cref="HiLowBar"/> class defined
 		/// for this <see cref="HiLowBarItem"/>.
 		/// </summary>
 		public HiLowBar Bar
 		{
-			get { return bar; }
+			get { return _bar; }
 		}
 
 		/// <summary>
@@ -203,7 +199,7 @@ namespace ZedGraph
 		/// <value>true if the X axis is independent, false otherwise</value>
 		override internal bool IsXIndependent( GraphPane pane )
 		{
-			return pane.BarBase == BarBase.X;
+			return pane._barSettings.Base == BarBase.X;
 		}
 			
 	#endregion
@@ -233,8 +229,8 @@ namespace ZedGraph
 		/// </param>
 		override public void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor  )
 		{
-			if ( this.isVisible )
-				bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
+			if ( _isVisible )
+				_bar.DrawBars( g, pane, this, BaseAxis( pane ), ValueAxis( pane ),
 								GetBarWidth( pane ), pos, scaleFactor );
 		}		
 
@@ -260,7 +256,77 @@ namespace ZedGraph
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect,
 									float scaleFactor )
 		{
-			this.bar.Draw( g, pane, rect, scaleFactor, true, null );
+			_bar.Draw( g, pane, rect, scaleFactor, true, null );
+		}
+
+		/// <summary>
+		/// Determine the coords for the rectangle associated with a specified point for 
+		/// this <see cref="CurveItem" />
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> to which this curve belongs</param>
+		/// <param name="i">The index of the point of interest</param>
+		/// <param name="coords">A list of coordinates that represents the "rect" for
+		/// this point (used in an html AREA tag)</param>
+		/// <returns>true if it's a valid point, false otherwise</returns>
+		override public bool GetCoords( GraphPane pane, int i, out string coords )
+		{
+			coords = string.Empty;
+
+			if ( i < 0 || i >= _points.Count )
+				return false;
+
+			Axis valueAxis = ValueAxis( pane );
+			Axis baseAxis = BaseAxis( pane );
+
+			float	scaledSize = GetBarWidth( pane );
+
+			// pixBase = pixel value for the bar center on the base axis
+			// pixHiVal = pixel value for the bar top on the value axis
+			// pixLowVal = pixel value for the bar bottom on the value axis
+			float pixBase, pixHiVal, pixLowVal;
+
+			float clusterWidth = pane.BarSettings.GetClusterWidth();
+			float barWidth = GetBarWidth( pane );
+			float clusterGap = pane._barSettings.MinClusterGap * barWidth;
+			float barGap = barWidth * pane._barSettings.MinBarGap;
+
+			// curBase = the scale value on the base axis of the current bar
+			// curHiVal = the scale value on the value axis of the current bar
+			// curLowVal = the scale value of the bottom of the bar
+			double curBase, curLowVal, curHiVal;
+			ValueHandler valueHandler = new ValueHandler( pane, false );
+			valueHandler.GetValues( this, i, out curBase, out curLowVal, out curHiVal );
+
+			// Any value set to double max is invalid and should be skipped
+			// This is used for calculated values that are out of range, divide
+			//   by zero, etc.
+			// Also, any value <= zero on a log scale is invalid
+
+			if ( !_points[i].IsInvalid3D )
+			{
+				// calculate a pixel value for the top of the bar on value axis
+				pixLowVal = valueAxis.Scale.Transform( _isOverrideOrdinal, i, curLowVal );
+				pixHiVal = valueAxis.Scale.Transform( _isOverrideOrdinal, i, curHiVal );
+				// calculate a pixel value for the center of the bar on the base axis
+				pixBase = baseAxis.Scale.Transform( _isOverrideOrdinal, i, curBase );
+
+				// Calculate the pixel location for the side of the bar (on the base axis)
+				float pixSide = pixBase - scaledSize / 2.0F;
+
+				// Draw the bar
+				if ( baseAxis is XAxis )
+					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+								pixSide, pixLowVal,
+								pixSide + scaledSize, pixHiVal );
+				else
+					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
+								pixLowVal, pixSide,
+								pixHiVal, pixSide + scaledSize );
+
+				return true;
+			}
+
+			return false;
 		}
 
 	#endregion
