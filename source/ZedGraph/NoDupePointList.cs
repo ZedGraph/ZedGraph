@@ -46,7 +46,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.1.2.1 $ $Date: 2006-05-19 05:11:32 $ </version>
+	/// <version> $Revision: 1.1.2.2 $ $Date: 2006-06-24 18:28:39 $ </version>
 	[Serializable]
 	public class NoDupePointList : List<DataPoint>, IPointList, IPointListEdit
 	{
@@ -293,12 +293,14 @@ namespace ZedGraph
 			yAxis.Scale.SetupScaleData( pane, yAxis );
 
 			int n = _filterMode < 0 ? 0 : _filterMode;
+			int left = (int)pane.Chart.Rect.Left;
+			int top = (int)pane.Chart.Rect.Top;
 
 			for ( int i=0; i<base.Count; i++ )
 			{
 				DataPoint dp = base[i];
-				int x = (int)( xAxis.Scale.Transform( dp.X ) + 0.5 );
-				int y = (int)( yAxis.Scale.Transform( dp.Y ) + 0.5 );
+				int x = (int)( xAxis.Scale.Transform( dp.X ) + 0.5 ) - left;
+				int y = (int)( yAxis.Scale.Transform( dp.Y ) + 0.5 ) - top;
 
 				if ( x >= 0 && x < width && y >= 0 && y < height )
 				{

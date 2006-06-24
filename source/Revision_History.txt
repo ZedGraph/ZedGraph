@@ -1,6 +1,9 @@
 == Version 5 ==
 
-;20-Jun-2006 (by Champion) V5_BRANCH (dev release 4.9.9)
+;23-Jun-2006 (by Champion) V5_BRANCH (dev release 4.9.9)
+: [FIX] Minor correction to NoDupePointList FilterData() method
+
+;22-Jun-2006 (by Champion) V5_BRANCH
 : [FIX] Make sure axischange is called for all axes that are sync'd
 : [FIX] Provide default value for ClusterScaleWidth()
 : [FIX] Default basetic for ordinals is always 1

@@ -1,3 +1,4 @@
+#if false
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -37,13 +38,13 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DateAxis( zedGraphControl1 );
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
-			CreateGraph_DualYDemo( zedGraphControl1 );
+			//CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
-			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_Junk( zedGraphControl1 );
 			//CreateGraph_Junk2( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
@@ -505,8 +506,8 @@ namespace ZedGraph.ControlTest
 			StockPointList spl = new StockPointList();
 			Random rand = new Random();
 
-			// First day is feb 1st
-			XDate xDate = new XDate( 2006, 2, 1 );
+			// First day is jan 1st
+			XDate xDate = new XDate( 2006, 1, 1 );
 			double open = 50.0;
 
 			for ( int i = 0; i < 50; i++ )
@@ -527,21 +528,13 @@ namespace ZedGraph.ControlTest
 					xDate.AddDays( 2.0 );
 			}
 
-			StockPt spt = spl.GetAt( 5 );
-			spt.Close = spt.Open;
-
-			//CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Black );
 			JapaneseCandleStickItem myCurve = myPane.AddJapaneseCandleStick( "trades", spl );
-			//myCurve.Stick.Size = 3;
 			myCurve.Stick.IsAutoSize = true;
-			myCurve.Stick.PenWidth = 1.0f;
 			myCurve.Stick.Color = Color.Blue;
-			//myCurve.CandleStick.IsOpenCloseVisible = false;
 
 			// Use DateAsOrdinal to skip weekend gaps
 			myPane.XAxis.Type = AxisType.DateAsOrdinal;
-			//myPane.XAxis.Type = AxisType.Ordinal ;
-			//myPane.XAxis.Scale.MajorStep = 1.0;
+			myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
 
 			// pretty it up a little
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
@@ -2600,6 +2593,238 @@ namespace ZedGraph.ControlTest
 			}
 
 			return false;
+		}
+	}
+}
+
+#endif
+
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using ZedGraph;
+
+namespace ZedGraph.ControlTest
+{
+	public partial class Form1 : Form
+	{
+		const int NUMPOINTS = 10000;
+		public Form1()
+		{
+			InitializeComponent();
+
+			zedGraphControl1.GraphPane.CurveList.Clear();
+			zedGraphControl1.MasterPane.SetLayout( PaneLayout.SingleColumn );
+
+			//These curves will be missing the last few points 
+			AddCurve( 0, 0 );
+			AddCurve( 0, 1 );
+
+			//These curves will be missing all points 
+			AddCurve( 1, 0 );
+			AddCurve( 1, 1 );
+
+			//If you comment out these two lines, the curves on pane 0 will look ok 
+			UpdateAxes();
+			FilterAllCurves();
+
+			zedGraphControl1.Refresh();
+		}
+
+		private void AddCurve( int pane, int curve )
+		{
+			if ( pane > zedGraphControl1.MasterPane.PaneList.Count )
+			{
+				throw ( new System.Exception( "You can only add a pane to the end of the list" ) );
+			}
+			int i;
+			if ( pane >= zedGraphControl1.MasterPane.PaneList.Count )
+			{
+				GraphPane pane1 = new GraphPane();
+				zedGraphControl1.MasterPane.PaneList.Add( pane1 );
+
+				//Is this correct for the new layout? 
+				Graphics g = zedGraphControl1.CreateGraphics();
+				zedGraphControl1.MasterPane.DoLayout( g );
+				g.Dispose();
+
+				//New pane layout to refresh all the axes and filtered data 
+				//UpdateAxes();
+				//FilterAllCurves();
+			}
+
+			//Create the data 
+			NoDupePointList ndp1 = new NoDupePointList();
+			for ( i = 0; i < NUMPOINTS; i++ )
+			{
+				if ( ( curve & 1 ) == 0 )
+					ndp1.Add( i, -( NUMPOINTS / 2 ) + i );
+				else
+					ndp1.Add( i, ( NUMPOINTS / 2 ) - i );
+			}
+
+			//Create the curve 
+			zedGraphControl1.MasterPane.PaneList[pane].AddCurve( "ndp" + curve.ToString(), ndp1, Color.Red );
+
+			//New curve so update the axes and filtering for this pane 
+			UpdateAxes();
+			FilterCurves( pane );
+		}
+
+		private void FilterCurves( int pane )
+		{
+			int i;
+			for ( i = 0; i < zedGraphControl1.MasterPane.PaneList[pane].CurveList.Count; i++ )
+			{
+				NoDupePointList ndp = zedGraphControl1.MasterPane.PaneList[pane].CurveList[i].Points as NoDupePointList;
+				if ( ndp != null )
+				{
+					//If you comment this out you will see what it is supposed to look like 
+					ndp.FilterData( zedGraphControl1.MasterPane.PaneList[pane], zedGraphControl1.MasterPane.PaneList[pane].YAxis );
+				}
+			}
+		}
+
+		private void FilterAllCurves()
+		{
+			for ( int pane = 0; pane < zedGraphControl1.MasterPane.PaneList.Count; pane++ )
+			{
+				FilterCurves( pane );
+			}
+		}
+
+		private void UpdateAxes()
+		{
+			//Clear the filtering so that AxisChange has all the data to work with 
+			int curve, pane;
+			for ( pane = 0; pane < zedGraphControl1.MasterPane.PaneList.Count; pane++ )
+			{
+				for ( curve = 0; curve < zedGraphControl1.MasterPane.PaneList[pane].CurveList.Count; curve++ )
+				{
+					NoDupePointList ndp = zedGraphControl1.MasterPane.PaneList[pane].CurveList[curve].Points as NoDupePointList;
+					if ( ndp != null )
+					{
+						ndp.ClearFilter();
+					}
+				}
+			}
+			//Calculate new axes 
+			zedGraphControl1.AxisChange();
+		}
+
+		private void Form1_ResizeEnd( object sender, EventArgs e )
+		{
+			UpdateAxes();
+			FilterAllCurves();
+			zedGraphControl1.Refresh();
+		}
+
+		private void Form1_Load( object sender, EventArgs e )
+		{
+		}
+
+		private void zedGraphControl1_Paint( object sender, PaintEventArgs e )
+		{
+		}
+
+		private void Form1_MouseDown( object sender, MouseEventArgs e )
+		{
+			ZedGraph.ControlTest.Form2 form2 = new ZedGraph.ControlTest.Form2();
+			form2.Show();
+
+			form2.zg1 = zedGraphControl1;
+		}
+
+		private bool zedGraphControl1_MouseMoveEvent( ZedGraphControl sender, MouseEventArgs e )
+		{
+			// Save the mouse location
+			PointF mousePt = new PointF( e.X, e.Y );
+
+			// Find the Chart rect that contains the current mouse location
+			GraphPane pane = sender.MasterPane.FindChartRect( mousePt );
+
+			// If pane is non-null, we have a valid location.  Otherwise, the mouse is not
+			// within any chart rect.
+			if ( pane != null )
+			{
+				double x, y, y2;
+				// Convert the mouse location to X, Y, and Y2 scale values
+				pane.ReverseTransform( mousePt, out x, out y, out y2 );
+				// Format the status label text
+				toolStripStatusXY.Text = "(" + x.ToString( "f2" ) + ", " + y.ToString( "f2" ) + ")";
+			}
+			else
+				// If there is no valid data, then clear the status label text
+				toolStripStatusXY.Text = string.Empty;
+
+			// Return false to indicate we have not processed the MouseMoveEvent
+			// ZedGraphControl should still go ahead and handle it
+			return false;
+		}
+
+		private bool zedGraphControl1_MouseDownEvent( ZedGraphControl sender, MouseEventArgs e )
+		{
+			Point mousePt = new Point( e.X, e.Y );
+			CurveItem curve;
+			int iPt;
+			if ( sender.GraphPane.FindNearestPoint( mousePt, out curve, out iPt ) &&
+					Control.ModifierKeys == Keys.Alt )
+			{
+				IPointListEdit list = curve.Points as IPointListEdit;
+				if ( list == null )
+					return false;
+
+				for ( int i = 0; i < list.Count; i++ )
+					list[i].Z = 0;
+
+				list[iPt].Z = 1;
+				sender.Refresh();
+
+				return false;
+			}
+
+			return false;
+		}
+		private void Form1_Resize( object sender, EventArgs e )
+		{
+			SetSize();
+		}
+
+		private void SetSize()
+		{
+			Rectangle pageRect = this.ClientRectangle;
+			pageRect.Inflate( -10, -10 );
+			pageRect.Height -= 20;
+			//tabControl1.Size = formRect.Size;
+
+
+			//Rectangle pageRect = tabControl1.SelectedTab.ClientRectangle;
+			//pageRect.Inflate( -10, -10 );
+
+			if ( zedGraphControl1.Size != pageRect.Size )
+				zedGraphControl1.Size = pageRect.Size;
+
+			double junk = DateTime.Now.ToOADate();
+			// Fix the ellipseItem to a perfect circle by using a fixed height, but a variable
+			// width
+			if ( zedGraphControl1.GraphPane.GraphObjList.Count > 0 )
+			{
+				EllipseObj ellipse = zedGraphControl1.GraphPane.GraphObjList[0] as EllipseObj;
+				if ( ellipse != null )
+				{
+					GraphPane myPane = zedGraphControl1.GraphPane;
+					float dx = (float)( myPane.XAxis.Scale.Max - myPane.XAxis.Scale.Min );
+					float dy = (float)( myPane.YAxis.Scale.Max - myPane.YAxis.Scale.Min );
+					float xPix = myPane.Chart.Rect.Width * (float)ellipse.Location.Width / dx;
+					float yPix = myPane.Chart.Rect.Height * (float)ellipse.Location.Height / dy;
+
+					ellipse.Location.Width *= yPix / xPix;
+
+					// alternatively, use this to vary the height but fix the width
+					// (comment out the width line above)
+					//ellipse.Location.Height *= xPix / yPix;
+				}
+			}
 		}
 	}
 }
