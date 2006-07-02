@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="BarSettings.Type"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.18 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2006-07-02 06:42:01 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -266,9 +266,9 @@ namespace ZedGraph
 			// Make the gap between the bars and the labels = 2% of the axis range
 			float labelOffset;
 			if ( isVertical )
-				labelOffset = (float)( pane.YAxis._scale._max - pane.YAxis._scale._min ) * 0.02f;
+				labelOffset = (float)( pane.YAxis._scale._max - pane.YAxis._scale._min ) * 0.015f;
 			else
-				labelOffset = (float)( pane.XAxis._scale._max - pane.XAxis._scale._min ) * 0.02f;
+				labelOffset = (float)( pane.XAxis._scale._max - pane.XAxis._scale._min ) * 0.015f;
 
 			// keep a count of the number of BarItems
 			int curveIndex = 0;
@@ -308,8 +308,10 @@ namespace ZedGraph
 						float position;
 						if ( isBarCenter )
 							position = (float)( hiVal + lowVal ) / 2.0f;
-						else
+						else if ( hiVal >= 0 )
 							position = (float)hiVal + labelOffset;
+						else
+							position = (float)hiVal - labelOffset;
 
 						// Create the new TextObj
 						TextObj label;
@@ -323,7 +325,8 @@ namespace ZedGraph
 						label.FontSpec.Size = 12;
 						label.FontSpec.FontColor = Color.Black;
 						label.FontSpec.Angle = isVertical ? 90 : 0;
-						label.Location.AlignH = isBarCenter ? AlignH.Center : AlignH.Left;
+						label.Location.AlignH = isBarCenter ? AlignH.Center :
+									( hiVal >= 0 ? AlignH.Left : AlignH.Right );
 						label.Location.AlignV = AlignV.Center;
 						label.FontSpec.Border.IsVisible = false;
 						label.FontSpec.Fill.IsVisible = false;

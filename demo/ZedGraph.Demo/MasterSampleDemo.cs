@@ -116,11 +116,13 @@ namespace ZedGraph.Demo
 				myMaster.Add( myPane );
 			}
 
-			Graphics g = this.ZedGraphControl.CreateGraphics();
-			// Tell ZedGraph to auto layout the new GraphPanes
-			myMaster.SetLayout( PaneLayout.ExplicitRow32 );
-			myMaster.AxisChange( g );
-			g.Dispose();
+			using ( Graphics g = this.ZedGraphControl.CreateGraphics() )
+			{
+				// Tell ZedGraph to auto layout the new GraphPanes
+				myMaster.SetLayout( g, PaneLayout.ExplicitRow32 );
+				myMaster.AxisChange( g );
+				//g.Dispose();
+			}
 		}
 	}
 }

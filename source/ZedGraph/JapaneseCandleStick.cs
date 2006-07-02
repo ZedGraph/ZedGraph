@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-07-02 06:42:01 $ </version>
 	[Serializable]
 	public class JapaneseCandleStick : CandleStick, ICloneable, ISerializable
 	{
@@ -273,6 +273,7 @@ namespace ZedGraph
 		/// pixel units</param>
 		/// <param name="pixClose">The closing value position of the candlestick in
 		/// pixel units</param>
+		/// <param name="halfSize">The scaled width of one-half of a bar, in pixels</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
 		/// scaling factor is calculated by the <see cref="PaneBase.CalcScaleFactor"/> method.  The scale factor

@@ -31,7 +31,13 @@ namespace ZedGraph
 	/// </summary>
 	public struct DataPoint
 	{
+		/// <summary>
+		/// The X value for the point, stored as a double type.
+		/// </summary>
 		public double X;
+		/// <summary>
+		/// The Y value for the point, stored as a double type.
+		/// </summary>
 		public double Y;
 	}
 
@@ -46,14 +52,36 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-07-02 06:42:01 $ </version>
 	[Serializable]
 	public class NoDupePointList : List<DataPoint>, IPointList, IPointListEdit
 	{
+		/// <summary>
+		/// Protected field that stores a value indicating whether or not the data have been filtered.
+		/// If the data have not been filtered, then <see cref="Count" /> will be equal to
+		/// <see cref="TotalCount" />.  Use the public property <see cref="IsFiltered" /> to
+		/// access this value.
+		/// </summary>
 		protected bool _isFiltered;
+		/// <summary>
+		/// Protected field that stores the number of data points after filtering (e.g.,
+		/// <see cref="FilterData" /> has been called).  The <see cref="Count" /> property
+		/// returns the total count for an unfiltered dataset, or <see cref="_filteredCount" />
+		/// for a dataset that has been filtered.
+		/// </summary>
 		protected int _filteredCount;
+		/// <summary>
+		/// Protected array of indices for all the points that are currently visible.  This only
+		/// applies if <see cref="IsFiltered" /> is true.
+		/// </summary>
 		protected int[] _visibleIndicies;
 
+
+		/// <summary>
+		/// Protected field that stores a value that determines how close a point must be to a prior
+		/// neighbor in order to be filtered out.  Use the public property <see cref="FilterMode" />
+		/// to access this value.
+		/// </summary>
 		protected int _filterMode;
 
 
@@ -76,7 +104,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Gets a value indicated whether or not the data have been filtered.  If the data
+		/// Gets a value indicating whether or not the data have been filtered.  If the data
 		/// have not been filtered, then <see cref="Count" /> will be equal to
 		/// <see cref="TotalCount" />.
 		/// </summary>
@@ -152,7 +180,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Append a data point to the collection
 		/// </summary>
-		/// <param name="sample">The DataPoint to append</param>
+		/// <param name="pt">The <see cref="PointPair" /> value to append</param>
 		public void Add( PointPair pt )
 		{
 			DataPoint dp = new DataPoint();
@@ -257,7 +285,7 @@ namespace ZedGraph
 		/// been constructed.  You may need to call <see cref="FilterData" /> again if
 		/// you add points, or if the chart rect changes size (by resizing, printing,
 		/// image save, etc.), or if the scale range changes.
-		/// You must call <see cref="AxisChange" /> before calling
+		/// You must call <see cref="GraphPane.AxisChange" /> before calling
 		/// this method so that the <see cref="Chart.Rect">GraphPane.Chart.Rect</see>
 		/// and the scale ranges are valid.  This method is not valid for
 		/// ordinal axes (but ordinal axes don't make sense for very large datasets

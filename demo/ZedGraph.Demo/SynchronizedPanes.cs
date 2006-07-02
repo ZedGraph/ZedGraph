@@ -109,7 +109,7 @@ namespace ZedGraph.Demo
 			{
 				ZedGraphControl z1 = base.ZedGraphControl;
 
-				master.SetLayout( PaneLayout.SingleColumn );
+				master.SetLayout( g, PaneLayout.SingleColumn );
 				z1.AxisChange();
 
 				z1.IsAutoScrollRange = true;
@@ -117,7 +117,6 @@ namespace ZedGraph.Demo
 				z1.IsShowVScrollBar = true;
 				z1.IsSynchronizeXAxes = true;
 
-				g.Dispose();
 			}
 
 			base.ZedGraphControl.AxisChange();

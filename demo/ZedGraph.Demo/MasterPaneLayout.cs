@@ -58,7 +58,7 @@ namespace ZedGraph.Demo
 
 				//master.PaneLayoutMgr.SetLayout( PaneLayout.ExplicitRow32 );
 				//master.PaneLayoutMgr.SetLayout( 2, 4 );
-				master.SetLayout( false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
+				master.SetLayout( g, false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
 				master.IsCommonScaleFactor = true;
 				base.ZedGraphControl.AxisChange();
 

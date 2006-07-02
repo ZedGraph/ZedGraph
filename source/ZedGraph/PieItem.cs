@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.24 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 1.25 $ $Date: 2006-07-02 06:42:01 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem, ICloneable, ISerializable
 	{
@@ -938,13 +938,13 @@ namespace ZedGraph
 					curve._labelStr = ( curve._sweepAngle / 360 ).ToString( "P", labelFormat );
 					break;
 				case PieLabelType.Name_Value:
-					curve._labelStr = curve._label + ": " + curve._pieValue.ToString( "F", labelFormat );
+					curve._labelStr = curve._label._text + ": " + curve._pieValue.ToString( "F", labelFormat );
 					break;
 				case PieLabelType.Name_Percent:
-					curve._labelStr = curve._label + ": " + ( curve._sweepAngle / 360 ).ToString( "P", labelFormat );
+					curve._labelStr = curve._label._text +": " + ( curve._sweepAngle / 360 ).ToString( "P", labelFormat );
 					break;
 				case PieLabelType.Name_Value_Percent:
-					curve._labelStr = curve._label + ": " + curve._pieValue.ToString( "F", labelFormat ) +
+					curve._labelStr = curve._label._text + ": " + curve._pieValue.ToString( "F", labelFormat ) +
 						" (" + ( curve._sweepAngle / 360 ).ToString( "P", labelFormat ) + ")";
 					break;
 				case PieLabelType.Name:

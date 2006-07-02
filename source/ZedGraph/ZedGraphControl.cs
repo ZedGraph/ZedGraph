@@ -35,6 +35,29 @@ using System.Threading;
 namespace ZedGraph
 {
 	/// <summary>
+	/// 
+	/// </summary>
+	public struct DrawingThreadData
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		public Graphics _g;
+		/// <summary>
+		/// 
+		/// </summary>
+		public MasterPane _masterPane;
+/*
+		public DrawingThread( Graphics g, MasterPane masterPane )
+		{
+			_g = g;
+			_masterPane = masterPane;
+		}
+*/
+	}
+
+
+	/// <summary>
 	/// The ZedGraphControl class provides a UserControl interface to the
 	/// <see cref="ZedGraph"/> class library.  This allows ZedGraph to be installed
 	/// as a control in the Visual Studio toolbox.  You can use the control by simply
@@ -43,7 +66,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.63 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.64 $ $Date: 2006-07-02 06:42:01 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -1667,7 +1690,7 @@ namespace ZedGraph
 		/// false if no scrolling is taking place.
 		/// </summary>
 		/// <remarks>
-		/// This method just tests <see cref="ScrollBar.Capture" /> to see if the
+		/// This method just tests ScrollBar.Capture to see if the
 		/// mouse has been captured by the scroll bar.  If so, scrolling is active.
 		/// </remarks>
 		public Boolean IsScrolling
@@ -1796,6 +1819,58 @@ namespace ZedGraph
 				// Add a try/catch pair since the users of the control can't catch this one
 				try { _masterPane.Draw( e.Graphics ); }
 				catch { }
+			}
+
+/*
+			// first, see if an old thread is still running
+			if ( t != null && t.IsAlive )
+			{
+				t.Abort();
+			}
+
+			//dt = new DrawingThread( e.Graphics, _masterPane );
+			//g = e.Graphics;
+
+			// Fire off the new thread
+			t = new Thread( new ParameterizedThreadStart( DoDrawingThread ) );
+			//ct.ApartmentState = ApartmentState.STA;
+			//ct.SetApartmentState( ApartmentState.STA );
+			DrawingThreadData dtd;
+			dtd._g = e.Graphics;
+			dtd._masterPane = _masterPane;
+
+			t.Start( dtd );
+			//ct.Join();
+*/
+		}
+
+//		Thread t = null;
+		//DrawingThread dt = null;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="dtdobj"></param>
+		public void DoDrawingThread( object dtdobj )
+		{
+			try
+			{
+				DrawingThreadData dtd = (DrawingThreadData) dtdobj;
+
+				if ( dtd._g != null && dtd._masterPane != null )
+					dtd._masterPane.Draw( dtd._g );
+
+				/*
+								else
+								{
+									using ( Graphics g2 = CreateGraphics() )
+										_masterPane.Draw( g2 );
+								}
+				*/
+			}
+			catch
+			{
+
 			}
 		}
 
@@ -3104,6 +3179,7 @@ namespace ZedGraph
 						switch ( pane.ZoomStack.Top.Type )
 						{
 							case ZoomState.StateType.Zoom:
+							case ZoomState.StateType.WheelZoom:
 								menuStr = _resourceManager.GetString( "unzoom" );
 								break;
 							case ZoomState.StateType.Pan:
@@ -3292,7 +3368,8 @@ namespace ZedGraph
 		/// to full auto mode.  The <see cref="ZoomOutAll" /> method sets the scales to their initial
 		/// setting prior to any user actions (which may or may not be full auto mode).
 		/// </remarks>
-		/// <param name="pane">The <see cref="GraphPane" /> object which is to have the scale restored</param>
+		/// <param name="primaryPane">The <see cref="GraphPane" /> object which is to have the
+		/// scale restored</param>
 		public void RestoreScale( GraphPane primaryPane )
 		{
 			if ( primaryPane != null )

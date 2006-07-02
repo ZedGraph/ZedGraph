@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.63 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.64 $ $Date: 2006-07-02 06:42:00 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -1192,7 +1192,7 @@ namespace ZedGraph
 
 					double dVal = first;
 					float pixVal;
-					Pen pen = new Pen( _color, pane.ScaledPenWidth( MinorTic._penWidth, scaleFactor ) );
+					Pen pen = new Pen( _minorTic._color, pane.ScaledPenWidth( MinorTic._penWidth, scaleFactor ) );
 
 					Pen minorGridPen = _minorGrid.GetPen( pane, scaleFactor );
 
@@ -1314,7 +1314,8 @@ namespace ZedGraph
 		/// Make a value label for the axis at the specified ordinal position.
 		/// </summary>
 		/// <remarks>
-		/// This method properly accounts for <see cref="IsLog"/>, <see cref="IsText"/>,
+		/// This method properly accounts for <see cref="ZedGraph.Scale.IsLog"/>,
+		/// <see cref="ZedGraph.Scale.IsText"/>,
 		/// and other axis format settings.  It also implements the ScaleFormatEvent such that
 		/// custom labels can be created.
 		/// </remarks>
@@ -1327,8 +1328,9 @@ namespace ZedGraph
 		/// cause the third value label on the axis to be generated.
 		/// </param>
 		/// <param name="dVal">
-		/// The numeric value associated with the label.  This value is ignored for log (<see cref="IsLog"/>)
-		/// and text (<see cref="IsText"/>) type axes.
+		/// The numeric value associated with the label.  This value is ignored for log
+		/// (<see cref="ZedGraph.Scale.IsLog"/>)
+		/// and text (<see cref="ZedGraph.Scale.IsText"/>) type axes.
 		/// </param>
 		/// <returns>The resulting value label as a <see cref="string" /></returns>
 		internal string MakeLabelEventWorks( GraphPane pane, int index, double dVal )

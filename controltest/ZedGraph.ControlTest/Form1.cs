@@ -25,7 +25,7 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_Load( object sender, EventArgs e )
 		{
-			//CreateGraph_32kPoints( zedGraphControl2 );
+			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl2 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
@@ -44,7 +44,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
-			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_Junk( zedGraphControl1 );
 			//CreateGraph_Junk2( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
@@ -55,6 +55,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_NormalPane( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
 			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
+			CreateGraph_Pie( zedGraphControl1 );
 			//CreateGraph_PolyTest( zedGraphControl2 );
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
@@ -82,6 +83,12 @@ namespace ZedGraph.ControlTest
 
 		private void SetSize()
 		{
+			zedGraphControl1.Location = new Point( 10, 10 );
+			// Leave a small margin around the outside of the control
+			zedGraphControl1.Size = new Size( this.ClientRectangle.Width - 20,
+					this.ClientRectangle.Height - 40 );
+
+			/*
 			Rectangle pageRect = this.ClientRectangle;
 			pageRect.Inflate( -10, -10 );
 			pageRect.Height -= 20;
@@ -115,6 +122,7 @@ namespace ZedGraph.ControlTest
 					//ellipse.Location.Height *= xPix / yPix;
 				}
 			}
+			*/
 		}
 
 		private void Serialize( ZedGraphControl z1, string fileName )
@@ -319,7 +327,9 @@ namespace ZedGraph.ControlTest
 			z1.MasterPane.Add( pane.Clone() as GraphPane );
 			z1.MasterPane.Add( pane.Clone() as GraphPane );
 
-			z1.MasterPane.SetLayout( PaneLayout.ExplicitRow32 );
+			using ( Graphics g = z1.CreateGraphics() )
+				z1.MasterPane.SetLayout( g, PaneLayout.ExplicitRow32 );
+
 		}
 
 		// Basic curve test - Date Axis w/ Time Span
@@ -510,7 +520,7 @@ namespace ZedGraph.ControlTest
 			XDate xDate = new XDate( 2006, 1, 1 );
 			double open = 50.0;
 
-			for ( int i = 0; i < 50; i++ )
+			for ( int i = 0; i < 30; i++ )
 			{
 				double x = xDate.XLDate;
 				double close = open + rand.NextDouble() * 10.0 - 5.0;
@@ -607,6 +617,8 @@ namespace ZedGraph.ControlTest
 			myPane.GraphObjList.Add( arrow );
 
 			myPane.XAxis.Title.FontSpec.Family = "Tahoma";
+
+			//myPane.YAxis.Scale.IsReverse = true;
 
 			z1.AxisChange();
 
@@ -801,15 +813,17 @@ namespace ZedGraph.ControlTest
 				master.Add( AddGraph( j, rotator ) );
 			}
 
-			Graphics g = this.CreateGraphics();
+			using ( Graphics g = this.CreateGraphics() )
+			{
 
-			//master.PaneLayoutMgr.SetLayout( PaneLayout.ExplicitRow32 );
-			//master.PaneLayoutMgr.SetLayout( 2, 4 );
-			master.SetLayout( false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
-			master.IsCommonScaleFactor = true;
-			z1.AxisChange();
+				//master.PaneLayoutMgr.SetLayout( PaneLayout.ExplicitRow32 );
+				//master.PaneLayoutMgr.SetLayout( 2, 4 );
+				master.SetLayout( g, false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
+				//master.SetLayout( PaneLayout.SingleColumn );
+				master.IsCommonScaleFactor = true;
+				z1.AxisChange();
 
-			g.Dispose();
+			}
 
 		}
 
@@ -857,16 +871,17 @@ namespace ZedGraph.ControlTest
 			for ( int j = 0; j < 4; j++ )
 				master.Add( AddGraph( j, rotator ) );
 
-			Graphics g = this.CreateGraphics();
+			using ( Graphics g = this.CreateGraphics() )
+			{
 
-			//master.PaneLayoutMgr.SetLayout( PaneLayout.ExplicitRow32 );
-			//master.PaneLayoutMgr.SetLayout( 2, 4 );
-			master.SetLayout( PaneLayout.SquareColPreferred );
-			master.DoLayout( g );
-			master.IsCommonScaleFactor = true;
-			zedGraphControl1.AxisChange();
-			zedGraphControl1.Invalidate();
-			g.Dispose();
+				//master.PaneLayoutMgr.SetLayout( PaneLayout.ExplicitRow32 );
+				//master.PaneLayoutMgr.SetLayout( 2, 4 );
+				master.SetLayout( g, PaneLayout.SquareColPreferred );
+				//master.DoLayout( g );
+				master.IsCommonScaleFactor = true;
+				zedGraphControl1.AxisChange();
+				zedGraphControl1.Invalidate();
+			}
 		}
 
 		// masterpane test
@@ -911,13 +926,12 @@ namespace ZedGraph.ControlTest
 				master.Add( myPaneT );
 			}
 
-			Graphics g = this.CreateGraphics();
-
-			master.SetLayout( PaneLayout.SquareRowPreferred );
-			//master.IsCommonScaleFactor = true;
-			z1.AxisChange();
-
-			g.Dispose();
+			using ( Graphics g = this.CreateGraphics() )
+			{
+				master.SetLayout( g, PaneLayout.SquareRowPreferred );
+				//master.IsCommonScaleFactor = true;
+				z1.AxisChange();
+			}
 		}
 
 
@@ -1103,7 +1117,7 @@ namespace ZedGraph.ControlTest
 			using ( Graphics g = this.CreateGraphics() )
 			{
 
-				master.SetLayout( PaneLayout.SingleColumn );
+				master.SetLayout( g, PaneLayout.SingleColumn );
 				//master.SetLayout( PaneLayout.ExplicitRow32 );
 				//master.SetLayout( 2, 4 );
 				//master.SetLayout( false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
@@ -1278,6 +1292,81 @@ namespace ZedGraph.ControlTest
 
 		}
 
+		private void CreateGraph_Pie( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			// Set the GraphPane title
+			myPane.Title.Text = "2004 ZedGraph Sales by Region\n($M)";
+			myPane.Title.FontSpec.IsItalic = true;
+			myPane.Title.FontSpec.Size = 24f;
+			myPane.Title.FontSpec.Family = "Times New Roman";
+
+			// Fill the pane background with a color gradient
+			myPane.Fill = new Fill( Color.White, Color.Goldenrod, 45.0f );
+			// No fill for the axis background
+			myPane.Chart.Fill.Type = FillType.None;
+
+			// Set the legend to an arbitrary location
+			myPane.Legend.Position = LegendPos.Float;
+			myPane.Legend.Location = new Location( 0.95f, 0.15f, CoordType.PaneFraction,
+								AlignH.Right, AlignV.Top );
+			myPane.Legend.FontSpec.Size = 10f;
+			myPane.Legend.IsHStack = false;
+
+			// Add some pie slices
+			PieItem segment1 = myPane.AddPieSlice( 20, Color.Navy, Color.White, 45f, 0, "North" );
+			//segment1.Label = "North";
+			segment1.LabelType = PieLabelType.Name_Value_Percent;
+
+			PieItem segment3 = myPane.AddPieSlice( 30, Color.Purple, Color.White, 45f, .0, "East" );
+			segment3.LabelType = PieLabelType.Name_Percent;
+
+			PieItem segment4 = myPane.AddPieSlice( 10.21, Color.LimeGreen, Color.White, 45f, 0, "West" );
+			segment4.LabelType = PieLabelType.Percent;
+
+			PieItem segment2 = myPane.AddPieSlice( 40, Color.SandyBrown, Color.White, 45f, 0.2, "South" );
+			segment2.LabelType = PieLabelType.Value;
+
+			PieItem segment6 = myPane.AddPieSlice( 250, Color.Red, Color.White, 45f, 0, "Europe" );
+			segment6.LabelType = PieLabelType.Name_Value;
+
+			PieItem segment7 = myPane.AddPieSlice( 50, Color.Blue, Color.White, 45f, 0.2, "Pac Rim" );
+			segment7.LabelType = PieLabelType.Name;
+
+			PieItem segment8 = myPane.AddPieSlice( 400, Color.Green, Color.White, 45f, 0, "South America" );
+			segment8.LabelType = PieLabelType.None;
+
+			PieItem segment9 = myPane.AddPieSlice( 50, Color.Yellow, Color.White, 45f, 0.2, "Africa" );
+
+			segment2.LabelDetail.FontSpec.FontColor = Color.Red;
+
+			// Sum up the pie values																					
+			CurveList curves = myPane.CurveList;
+			double total = 0;
+			for ( int x = 0; x < curves.Count; x++ )
+				total += ( (PieItem)curves[x] ).Value;
+
+			// Make a text label to highlight the total value
+			TextObj text = new TextObj( "Total 2004 Sales\n" + "$" + total.ToString() + "M",
+								0.18F, 0.40F, CoordType.PaneFraction );
+			text.Location.AlignH = AlignH.Center;
+			text.Location.AlignV = AlignV.Bottom;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Fill = new Fill( Color.White, Color.FromArgb( 255, 100, 100 ), 45F );
+			text.FontSpec.StringAlignment = StringAlignment.Center;
+			myPane.GraphObjList.Add( text );
+
+			// Create a drop shadow for the total value text item
+			TextObj text2 = new TextObj( text );
+			text2.FontSpec.Fill = new Fill( Color.Black );
+			text2.Location.X += 0.008f;
+			text2.Location.Y += 0.01f;
+			myPane.GraphObjList.Add( text2 );
+
+			z1.AxisChange();
+		}
+
 		private void CreateGraph_PolyTest( ZedGraphControl z1 )
 		{
 			GraphPane junk = z1.GraphPane.Clone();
@@ -1406,6 +1495,8 @@ namespace ZedGraph.ControlTest
 
 			//myPane.CurveList.Move( 0, 3 );
 
+			myPane.XAxis.Scale.IsReverse = true;
+
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();
 			// Make sure the Graph gets redrawn
@@ -1421,10 +1512,26 @@ namespace ZedGraph.ControlTest
 			//z1.PointValueEvent += new ZedGraphControl.PointValueHandler( MyPointValueHandler );
 
 			// Add a custom context menu item
-			//z1.ContextMenuBuilder += new ZedGraphControl.ContextMenuBuilderEventHandler( MyContextMenuBuilder );
+			z1.ContextMenuBuilder += new ZedGraphControl.ContextMenuBuilderEventHandler( MyContextMenuBuilder );
 
 			//z1.ScrollEvent += new ZedGraph.ZedGraphControl.ScrollEventHandler( zedGraphControl1_ScrollEvent );
 		}
+
+		public void MyContextMenuBuilder( ZedGraphControl sender,
+			ContextMenuStrip menuStrip, Point mousePt )
+		{
+			foreach ( ToolStripMenuItem item in menuStrip.Items )
+			{
+				if ( (string) item.Tag == "set_default" )
+				{
+					// remove the menu item
+					menuStrip.Items.Remove( item );
+
+					break;
+				}
+			}
+		}
+
 
 		private void CreateGraph_ClusteredStackBar( ZedGraphControl z1 )
 		{
@@ -1803,7 +1910,7 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			Random rand = new Random();
 
-			for ( int i = 0; i < 70000; i++ )
+			for ( int i = 0; i < 100000; i++ )
 			{
 				double val = rand.NextDouble();
 				double x = (double)i;

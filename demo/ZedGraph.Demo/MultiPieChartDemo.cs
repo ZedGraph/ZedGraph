@@ -91,11 +91,12 @@ namespace ZedGraph.Demo
 			}
 			
 			// Tell ZedGraph to auto layout the graphpanes
-			Graphics g = this.ZedGraphControl.CreateGraphics();
-			myMaster.SetLayout( PaneLayout.ExplicitRow12 );
-			myMaster.AxisChange( g );
-			g.Dispose();
-
+			using ( Graphics g = this.ZedGraphControl.CreateGraphics() )
+			{
+				myMaster.SetLayout( g, PaneLayout.ExplicitRow12 );
+				myMaster.AxisChange( g );
+				//g.Dispose();
+			}
 		}
 	}
 }

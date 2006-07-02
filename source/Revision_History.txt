@@ -1,5 +1,12 @@
 == Version 5 ==
 
+;1-Jul-2006 (by Champion) (version 5.0.1)
+: [FIX] Add Graphics parameter to MasterPane.SetLayout(), and make SetLayout() always call DoLayout().
+: [FIX] BarItem.CreateBarLabels for negative bars
+: [FIX] use minortic color for minor tics (fix contributed by Steve Skillcorn)
+: [FIX] Add case option for wheel zoom, so unzoom context menu item does not disappear
+: [FIX] Fix Pie labels for types that include percent
+
 ;23-Jun-2006 (by Champion) V5_BRANCH (dev release 4.9.9)
 : [FIX] Minor correction to NoDupePointList FilterData() method
 
