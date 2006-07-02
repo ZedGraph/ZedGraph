@@ -39,6 +39,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
+			CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
@@ -55,7 +56,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_NormalPane( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
 			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
-			CreateGraph_Pie( zedGraphControl1 );
+			//CreateGraph_Pie( zedGraphControl1 );
 			//CreateGraph_PolyTest( zedGraphControl2 );
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
@@ -1251,6 +1252,31 @@ namespace ZedGraph.ControlTest
 			z1.Invalidate();
 
 
+		}
+
+		private void CreateGraph_FilteredPointList( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			const int count = 40;
+			double[] x = new double[count];
+			double[] y = new double[count];
+			Random rand = new Random();
+
+			for ( int i = 0; i < count; i++ )
+			{
+				double val = rand.NextDouble();
+				x[i] = (double)i;
+				y[i] = x[i] + val * val * val * 10;
+			}
+
+			FilteredPointList list = new FilteredPointList( x, y );
+			LineItem myCurve = z1.GraphPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			myCurve.Line.IsVisible = false;
+
+			list.IsApplyHighLowLogic = true;
+			list.SetBounds( -1000, 1000, 50 );
+			z1.AxisChange();
 		}
 
 		private void CreateGraph_GradientByZBars( ZedGraphControl z1 )
@@ -2630,6 +2656,10 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_MouseDown( object sender, MouseEventArgs e )
 		{
+			( this.zedGraphControl1.GraphPane.CurveList[0].Points as FilteredPointList ).SetBounds(
+					-2000, 20000, 50 );
+			Refresh();
+
 			//if ( Control.ModifierKeys == Keys.Shift )
 			//	SoapDeSerialize( zedGraphControl1, "savefile.soap" );
 			//else
@@ -2680,6 +2710,7 @@ namespace ZedGraph.ControlTest
 
 		private bool zedGraphControl1_MouseDownEvent( ZedGraphControl sender, MouseEventArgs e )
 		{
+			/*
 			Point mousePt = new Point( e.X, e.Y );
 			CurveItem curve;
 			int iPt;
@@ -2698,9 +2729,12 @@ namespace ZedGraph.ControlTest
 
 				return false;
 			}
+			
+			*/
 
 			return false;
 		}
+
 	}
 }
 

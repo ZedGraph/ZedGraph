@@ -1,6 +1,9 @@
 == Version 5 ==
 
 ;1-Jul-2006 (by Champion) (version 5.0.1)
+: [FIX] Fix FilteredPointList to handle wide bound range
+
+;1-Jul-2006 (by Champion)
 : [FIX] Add Graphics parameter to MasterPane.SetLayout(), and make SetLayout() always call DoLayout().
 : [FIX] BarItem.CreateBarLabels for negative bars
 : [FIX] use minortic color for minor tics (fix contributed by Steve Skillcorn)

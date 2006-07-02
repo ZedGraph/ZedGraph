@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	///
 	/// <author> John Champion with mods by Christophe Holmes</author>
-	/// <version> $Revision: 1.5 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2006-07-02 07:34:43 $ </version>
 	[Serializable]
 	public class FilteredPointList : IPointList
 	{
@@ -299,8 +299,15 @@ namespace ZedGraph
 			// assume data points are equally spaced, and calculate the X step size between
 			// each data point
 			double step = ( _x[ _x.Length - 1 ] - _x[0] ) / (double) _x.Length;
+
+			if ( min < _x[0] )
+				min = _x[0];
+			if ( max > _x[_x.Length - 1] )
+				max = _x[_x.Length - 1];
+
 			// calculate the index of the start of the bounded range
 			int first = (int) ( ( min - _x[0] ) / step );
+
 			// calculate the index of the last point of the bounded range
 			int last = (int) ( ( max - min ) / step + first );
 
