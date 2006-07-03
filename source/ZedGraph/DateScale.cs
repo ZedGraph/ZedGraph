@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 1.10 $ $Date: 2006-07-03 04:27:48 $ </version>
 	[Serializable]
 	class DateScale : Scale, ISerializable //, ICloneable
 	{
@@ -853,7 +853,7 @@ namespace ZedGraph
 		/// </returns>
 		private double GetUnitMultiple( DateUnit unit )
 		{
-			switch ( _majorUnit )
+			switch ( unit )
 			{
 				case DateUnit.Year:
 				default:

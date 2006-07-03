@@ -39,7 +39,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
-			CreateGraph_FilteredPointList( zedGraphControl1 );
+			//CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
@@ -62,7 +62,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_SplineTest( zedGraphControl1 );
-			//CreateGraph_StackedBars( zedGraphControl2 );
+			CreateGraph_StackedBars( zedGraphControl1 );
 			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_StickToCurve( zedGraphControl1 );
 			//CreateGraph_TestScroll( zedGraphControl1 );
@@ -1149,28 +1149,45 @@ namespace ZedGraph.ControlTest
 				double y = rand.NextDouble() * 1000;
 				double y2 = rand.NextDouble() * 1000;
 				double y3 = rand.NextDouble() * 1000;
-				list.Add( x, y );
-				list2.Add( x, y2 );
-				list3.Add( x, y3 );
+				list.Add( y, x );
+				list2.Add( y2, x );
+				list3.Add( y3, x );
 			}
 
 			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
 			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
 			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
-			myPane.BarSettings.Type = BarType.Stack;
-			myPane.BarSettings.Base = BarBase.X;
 
-			myPane.XAxis.MajorTic.IsBetweenLabels = true;
+			myCurve.Link.IsEnabled = true;
+			myCurve.Link.Target = "_blank";
+			myCurve.Link.Title = "Curve 1";
+			myCurve.Link.Url = "http://zedgraph.org/wiki/";
+			myCurve2.Link.IsEnabled = true;
+			myCurve2.Link.Target = "_blank";
+			myCurve2.Link.Title = "Curve 2";
+			myCurve2.Link.Url = "http://zedgraph.org/wiki/";
+			myCurve3.Link.IsEnabled = true;
+			myCurve3.Link.Target = "_blank";
+			myCurve3.Link.Title = "Curve 3";
+			myCurve3.Link.Url = "http://zedgraph.org/wiki/";
+
+
+			myPane.BarSettings.Type = BarType.Stack;
+			myPane.BarSettings.Base = BarBase.Y;
+
+			myPane.YAxis.MajorTic.IsBetweenLabels = true;
 			string[] labels = { "one", "two", "three", "four", "five", "six" };
-			myPane.XAxis.Scale.TextLabels = labels;
-			myPane.XAxis.Type = AxisType.Text;
+			myPane.YAxis.Scale.TextLabels = labels;
+			myPane.YAxis.Type = AxisType.Text;
 
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();
 			z1.Invalidate();
 
-
+			//z1.LinkEvent += new ZedGraphControl.LinkEventHandler(z1_LinkEvent);
 		}
+
+		//private void z1_LinkEvent(
 
 		private void CreateGraph_VerticalBars( ZedGraphControl z1 )
 		{
@@ -1548,7 +1565,7 @@ namespace ZedGraph.ControlTest
 		{
 			foreach ( ToolStripMenuItem item in menuStrip.Items )
 			{
-				if ( (string) item.Tag == "set_default" )
+				if ( (string)item.Tag == "set_default" )
 				{
 					// remove the menu item
 					menuStrip.Items.Remove( item );
@@ -1702,28 +1719,22 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			PointPairList list2 = new PointPairList();
 
-			double x = new XDate( 1990, 1, 2 );
-			double y = Math.Sin( 5 / 8.0 ) * 1000 + 1001;
-			list.Add( x, y );
-			x = new XDate( 1990, 1, 3 );
-			list.Add( x, y );
-			x = new XDate( 1990, 1, 8 );
-			list.Add( x, y );
-			x = new XDate( 1990, 1, 28 );
-			list.Add( x, y );
+			for ( int i = 0; i < 50; i++ )
+			{
+				double x = new XDate( 2005, 12+i, 15 );
+				double y = Math.Sin( i / 8.0 ) * 1000 + 1001;
+				list.Add( x, y, 1500 );
+				list2.Add( x, y * 1.2, 1500 );
+			}
 
-
-			/*			for ( int i = 0; i < 20; i++ )
-						{
-							double x = new XDate( 2005, 12, 30+i );
-							double y = Math.Sin( i / 8.0 ) * 1000 + 1001;
-							list.Add( x, y, 1500 );
-							list2.Add( x, y * 1.2, 1500 );
-						}
-			*/
 			LineItem line = myPane.AddCurve( "Line", list, Color.Blue, SymbolType.Diamond );
 			//myPane.XAxis.Scale.Format = "MMM\nyyyy";
 			myPane.XAxis.Type = AxisType.Date;
+
+			//myPane.XAxis.Scale.MajorStep = 1;
+			//myPane.XAxis.Scale.MajorUnit = DateUnit.Year;
+			myPane.XAxis.Scale.MinorStep = 1;
+			myPane.XAxis.Scale.MinorUnit = DateUnit.Month;
 
 			/*
 			BarItem myBar = myPane.AddBar( "Bar", list, Color.Blue );
@@ -1744,6 +1755,25 @@ namespace ZedGraph.ControlTest
 			arrow.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
 			arrow.IsClippedToChartRect = true;
 			myPane.GraphObjList.Add( arrow );
+
+			// Make the first year line
+			double xDate = new XDate(2006,1,1).XLDate;
+			LineObj myLine = new LineObj();
+			myLine.Location.X1 = xDate;
+			myLine.Location.Y1 = 0.0;
+			myLine.Location.Width = 0.0;
+			myLine.Location.Height = 1.0;
+			myLine.IsClippedToChartRect = true;
+			myLine.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
+			myLine.PenWidth = 2.0f;
+			myLine.Color = Color.Red;
+			myPane.GraphObjList.Add( myLine );
+
+			// Repeat for each Grid by cloning
+			xDate = new XDate( 2007, 1, 1 ).XLDate; ;
+			myLine = new LineObj( myLine );
+			myLine.Location.X1 = xDate;
+			myPane.GraphObjList.Add( myLine );
 
 		}
 

@@ -39,7 +39,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.2 $ $Date: 2006-06-24 20:26:49 $</version>
+	/// <version>$Revision: 1.3 $ $Date: 2006-07-03 04:27:48 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -1605,7 +1605,7 @@ namespace ZedGraph.Web
 					{
 						if ( curve.Link.IsActive && curve.IsVisible )
 						{
-							for ( int i = 0; i < curve.Points.Count; i++ )
+							for ( int i=0; i < curve.Points.Count; i++ )
 							{
 								//if ( curve.GetCoords( pane, i, pane.Rect.Left, pane.Rect.Top, out coords ) )
 								if ( curve.GetCoords( pane, i, out coords ) )
@@ -1621,11 +1621,7 @@ namespace ZedGraph.Web
 									{
 										// Add an "?index=4" type tag to the url to indicate which
 										// point was selected
-										string url = curve.Link.Url;
-										if ( url.Contains( "?" ) )
-											url += "&index=" + i.ToString();
-										else
-											url += "?index=" + i.ToString();
+										string url = curve.Link.MakeCurveItemUrl( pane, curve, i );
 
 										string title = curve.Link.Title;
 										if ( curve.Points[i].Tag is string )

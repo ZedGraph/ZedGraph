@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-07-03 04:27:48 $ </version>
 	// /// <seealso cref="ZedGraph.Web.IsImageMap"/>
 	[Serializable]
 	public class Link : ISerializable, ICloneable
@@ -205,6 +205,51 @@ namespace ZedGraph
 		}
 
 
+	#endregion
+
+	#region methods
+
+		/// <summary>
+		/// Create a URL for a <see cref="CurveItem" /> that includes the index of the
+		/// point that was selected.
+		/// </summary>
+		/// <remarks>
+		/// An "index" parameter is added to the <see cref="Url" /> property for this
+		/// link to indicate which point was selected.  Further, if the 
+		/// X or Y axes that correspond to this <see cref="CurveItem" /> are of
+		/// <see cref="AxisType.Text" />, then an
+		/// additional parameter will be added containing the text value that
+		/// corresponds to the <paramref name="index" /> of the selected point.
+		/// The <see cref="XAxis" /> text parameter will be labeled "xtext", and
+		/// the <see cref="YAxis" /> text parameter will be labeled "ytext".
+		/// </remarks>
+		/// <param name="index">The zero-based index of the selected point</param>
+		/// <param name="pane">The <see cref="GraphPane" /> of interest</param>
+		/// <param name="curve">The <see cref="CurveItem" /> for which to
+		/// make the url string.</param>
+		/// <returns>A string containing the url with an index parameter added.</returns>
+		public string MakeCurveItemUrl( GraphPane pane, CurveItem curve, int index )
+		{
+			string url = Url;
+
+			if ( url.Contains( "?" ) )
+				url += "&index=" + index.ToString();
+			else
+				url += "?index=" + index.ToString();
+
+			if (	pane.XAxis.Type == AxisType.Text && index >= 0 &&
+					pane.XAxis.Scale.TextLabels != null &&
+					index <= pane.XAxis.Scale.TextLabels.Length )
+				url += "&xtext=" + pane.XAxis.Scale.TextLabels[index];
+
+			Axis yAxis = curve.GetYAxis( pane );
+			if (	yAxis != null && yAxis.Type == AxisType.Text && index >= 0 &&
+					yAxis.Scale.TextLabels != null &&
+					index <= yAxis.Scale.TextLabels.Length )
+				url += "&ytext=" + yAxis.Scale.TextLabels[index];
+
+			return url;
+		}
 	#endregion
 
 	#region Serialization

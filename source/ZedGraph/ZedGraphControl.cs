@@ -66,7 +66,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.64 $ $Date: 2006-07-02 06:42:01 $ </version>
+	/// <version> $Revision: 3.65 $ $Date: 2006-07-03 04:27:48 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -1975,7 +1975,7 @@ namespace ZedGraph
 
 			// First, see if the click is within a Linkable object within any GraphPane
 			GraphPane pane = this.MasterPane.FindPane( mousePt );
-			if (	pane != null && this.LinkEvent != null &&
+			if (	pane != null &&
 					e.Button == _linkButtons && Control.ModifierKeys == _linkModifierKeys )
 			{
 				object source;
@@ -1986,12 +1986,20 @@ namespace ZedGraph
 					float scaleFactor = pane.CalcScaleFactor();
 					if ( pane.FindLinkableObject( mousePt, g, scaleFactor, out source, out link, out index ) )
 					{
-						if ( LinkEvent( this, pane, source, link, index ) )
+						if ( LinkEvent != null && LinkEvent( this, pane, source, link, index ) )
 							return;
 
-						if ( link._url != string.Empty )
+						string url;
+						CurveItem curve = source as CurveItem;
+
+						if ( curve != null )
+							url = link.MakeCurveItemUrl( pane, curve, index );
+						else
+							url = link._url;
+
+						if ( url != string.Empty )
 						{
-							System.Diagnostics.Process.Start( link._url );
+							System.Diagnostics.Process.Start( url );
 							// linkable objects override any other actions with mouse
 							return;
 						}

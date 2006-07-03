@@ -1,7 +1,9 @@
 == Version 5 ==
 
-;1-Jul-2006 (by Champion) (version 5.0.1)
+;2-Jul-2006 (by Champion) (version 5.0.1)
 : [FIX] Fix FilteredPointList to handle wide bound range
+: [FIX] Fix hard-wired majorunit in GetUnitMultiple()
+: [NEW] Add xtext and ytext parameters to Link Url's
 
 ;1-Jul-2006 (by Champion)
 : [FIX] Add Graphics parameter to MasterPane.SetLayout(), and make SetLayout() always call DoLayout().
