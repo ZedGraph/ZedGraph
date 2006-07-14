@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.12 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.13 $ $Date: 2006-07-14 06:44:06 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane _pane;
@@ -336,7 +336,8 @@ namespace ZedGraph
 										  double val, int iOrdinal )
 		{
 			Axis baseAxis = curve.BaseAxis( _pane );
-			if ( curve is ErrorBarItem || curve is HiLowBarItem )
+			if ( curve is ErrorBarItem || curve is HiLowBarItem ||
+					curve is CandleStickItem || curve is JapaneseCandleStickItem )
 			{
 				if ( baseAxis._scale.IsAnyOrdinal && iCluster >= 0 && !curve.IsOverrideOrdinal )
 					return (double) iCluster + 1.0;

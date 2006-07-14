@@ -75,7 +75,7 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ScrollMinX = 0;
 			this.zedGraphControl1.ScrollMinY = 0;
 			this.zedGraphControl1.ScrollMinY2 = 0;
-			this.zedGraphControl1.Size = new System.Drawing.Size( 500, 340 );
+			this.zedGraphControl1.Size = new System.Drawing.Size( 496, 368 );
 			this.zedGraphControl1.TabIndex = 0;
 			this.zedGraphControl1.ZoomButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.ZoomButtons2 = System.Windows.Forms.MouseButtons.None;
@@ -91,9 +91,9 @@ namespace ZedGraph.ControlTest
 			this.statusStrip1.Items.AddRange( new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
             this.toolStripStatusXY} );
-			this.statusStrip1.Location = new System.Drawing.Point( 0, 364 );
+			this.statusStrip1.Location = new System.Drawing.Point( 0, 393 );
 			this.statusStrip1.Name = "statusStrip1";
-			this.statusStrip1.Size = new System.Drawing.Size( 524, 22 );
+			this.statusStrip1.Size = new System.Drawing.Size( 520, 22 );
 			this.statusStrip1.TabIndex = 1;
 			this.statusStrip1.Text = "statusStrip1";
 			// 
@@ -113,7 +113,7 @@ namespace ZedGraph.ControlTest
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size( 524, 386 );
+			this.ClientSize = new System.Drawing.Size( 520, 415 );
 			this.Controls.Add( this.statusStrip1 );
 			this.Controls.Add( this.zedGraphControl1 );
 			this.Name = "Form1";

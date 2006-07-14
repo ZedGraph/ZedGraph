@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.63 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.64 $ $Date: 2006-07-14 06:44:06 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1950,7 +1950,8 @@ namespace ZedGraph
 							{
 
 								if ( curve.IsBar || curve is ErrorBarItem ||
-									curve is HiLowBarItem )
+									curve is HiLowBarItem || curve is CandleStickItem ||
+									curve is JapaneseCandleStickItem )
 								{
 									double baseVal, lowVal, hiVal;
 									valueHandler.GetValues( curve, iPt, out baseVal,

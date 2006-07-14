@@ -66,7 +66,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.65 $ $Date: 2006-07-03 04:27:48 $ </version>
+	/// <version> $Revision: 3.66 $ $Date: 2006-07-14 06:44:06 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -2263,6 +2263,17 @@ namespace ZedGraph
 								this.pointToolTip.SetToolTip( this,
 									( (PieItem)curve ).Value.ToString( _pointValueFormat ) );
 							}
+//							else if ( curve is CandleStickItem || curve is JapaneseCandleStickItem )
+//							{
+//								StockPt spt = (StockPt)curve.Points[iPt];
+//								this.pointToolTip.SetToolTip( this, ( (XDate) spt.Date ).ToString( "MM/dd/yyyy" ) + "\nOpen: $" +
+//								spt.Open.ToString( "N2" ) +
+//								"\nHigh: $" +
+//								spt.High.ToString( "N2" ) + "\nLow: $" +
+//								spt.Low.ToString( "N2" ) + "\nClose: $" +
+//								spt.Close.ToString
+//								( "N2" ) );
+//							}
 							else
 							{
 								PointPair pt = curve.Points[iPt];
