@@ -1,5 +1,11 @@
 == Version 5 ==
 
+;22-Jul-2006 (by Champion)
+: [UPD] Move Graph_PrintPage handler to PrintDocument property definition
+: [NEW] Add PointEditEvent
+: [FIX] When Link.Url is blank, don't do any launching and leave out href
+: [NEW] Add Italian translation (thanks to Ivo Muccioli)
+
 ;13-Jul-2006 (by Champion) (version 5.0.1)
 : [FIX] Fix FilteredPointList to handle wide bound range
 : [FIX] Fix hard-wired majorunit in GetUnitMultiple()

@@ -149,6 +149,9 @@
     <EmbeddedResource Include="ZedGraph\ZedGraphLocale.fr.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.it.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="ZedGraph\ZedGraphLocale.ja.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

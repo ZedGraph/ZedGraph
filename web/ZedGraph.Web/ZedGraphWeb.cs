@@ -39,7 +39,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.3 $ $Date: 2006-07-03 04:27:48 $</version>
+	/// <version>$Revision: 1.4 $ $Date: 2006-07-22 07:42:39 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -1621,7 +1621,11 @@ namespace ZedGraph.Web
 									{
 										// Add an "?index=4" type tag to the url to indicate which
 										// point was selected
-										string url = curve.Link.MakeCurveItemUrl( pane, curve, i );
+										string url;
+										if ( curve.Link.Url != string.Empty )
+											url = curve.Link.MakeCurveItemUrl( pane, curve, i );
+										else
+											url = "";
 
 										string title = curve.Link.Title;
 										if ( curve.Points[i].Tag is string )
@@ -1669,7 +1673,7 @@ namespace ZedGraph.Web
 
 			if ( url != string.Empty )
 				output.AddAttribute( HtmlTextWriterAttribute.Href, url );
-			if ( target != string.Empty )
+			if ( target != string.Empty && url != string.Empty )
 				output.AddAttribute( HtmlTextWriterAttribute.Target, target );
 			if ( title != string.Empty )
 				output.AddAttribute( HtmlTextWriterAttribute.Title, title );

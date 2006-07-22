@@ -45,7 +45,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
-			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_Junk( zedGraphControl1 );
 			//CreateGraph_Junk2( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
@@ -62,7 +62,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_SplineTest( zedGraphControl1 );
-			//CreateGraph_StackedBars( zedGraphControl1 );
+			CreateGraph_StackedBars( zedGraphControl1 );
 			//CreateGraph_StackedMultiBars( zedGraphControl1 );
 			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_StickToCurve( zedGraphControl1 );
@@ -212,7 +212,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 18; i++ )
 			{
-				x = new XDate( 1995, i, i + 5, i, i * 2, i * 3 );
+				x = new XDate( 1995, 8, 5, i, i * 2, i * 3 );
 				//x = (double) i;
 
 				y1 = ( Math.Sin( i / 9.0 * Math.PI ) + 1.1 ) * 1000.0;
@@ -252,7 +252,7 @@ namespace ZedGraph.ControlTest
 			//_fill.RangeMin = 1;
 			//_fill.RangeMax = 5;
 
-			myPane.XAxis.Scale.Format = "yyyy-MM-dd HH:MM";
+			myPane.XAxis.Scale.Format = "HHMM";
 			//myPane.XAxis.ScaleMag = 0;
 			myPane.XAxis.Type = AxisType.Date;
 			//myPane.YAxis.Max = 2499.9;
@@ -1149,9 +1149,9 @@ namespace ZedGraph.ControlTest
 				double y = rand.NextDouble() * 1000;
 				double y2 = rand.NextDouble() * 1000;
 				double y3 = rand.NextDouble() * 1000;
-				list.Add( y, x );
-				list2.Add( y2, x );
-				list3.Add( y3, x );
+				list.Add( x, y );
+				list2.Add( x, y2 );
+				list3.Add( x, y3 );
 			}
 
 			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
@@ -1173,18 +1173,24 @@ namespace ZedGraph.ControlTest
 
 
 			myPane.BarSettings.Type = BarType.Stack;
-			myPane.BarSettings.Base = BarBase.Y;
+			myPane.BarSettings.Base = BarBase.X;
 
-			myPane.YAxis.MajorTic.IsBetweenLabels = true;
+			myPane.XAxis.MajorTic.IsBetweenLabels = true;
 			string[] labels = { "one", "two", "three", "four", "five", "six" };
-			myPane.YAxis.Scale.TextLabels = labels;
-			myPane.YAxis.Type = AxisType.Text;
+			myPane.XAxis.Scale.TextLabels = labels;
+			myPane.XAxis.Type = AxisType.Text;
 
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();
 			z1.Invalidate();
 
 			//z1.LinkEvent += new ZedGraphControl.LinkEventHandler(z1_LinkEvent);
+		}
+
+		private bool z1_LinkEvent( ZedGraphControl sender, GraphPane pane,
+			object source, Link link, int index )
+		{
+			return false;
 		}
 
 		private void CreateGraph_StackedMultiBars( ZedGraphControl z1 )
@@ -2756,6 +2762,8 @@ namespace ZedGraph.ControlTest
 
 		private bool zedGraphControl1_MouseDownEvent( ZedGraphControl sender, MouseEventArgs e )
 		{
+			return false;
+
 			CurveItem dragCurve;
 			int dragIndex;
 			GraphPane myPane = this.zedGraphControl1.GraphPane;

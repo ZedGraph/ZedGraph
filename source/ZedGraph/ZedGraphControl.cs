@@ -66,7 +66,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.66 $ $Date: 2006-07-14 06:44:06 $ </version>
+	/// <version> $Revision: 3.67 $ $Date: 2006-07-22 07:42:39 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -730,6 +730,41 @@ namespace ZedGraph
 		[Bindable( true ), Category( "Events" )]
 		[Description( "Subscribe this event to be notified continuously as a scroll operation is taking place" )]
 		public event ScrollProgressHandler ScrollProgressEvent;
+
+		/// <summary>
+		/// A delegate that receives notification after a point-edit operation is completed.
+		/// </summary>
+		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="pane">The <see cref="GraphPane"/> object that contains the
+		/// point that has been edited</param>
+		/// <param name="curve">The <see cref="CurveItem"/> object that contains the point
+		/// that has been edited</param>
+		/// <param name="iPt">The integer index of the edited <see cref="PointPair"/> within the
+		/// <see cref="IPointList"/> of the selected <see cref="CurveItem"/>
+		/// </param>
+		/// <seealso cref="PointValueEvent" />
+		public delegate string PointEditHandler( ZedGraphControl sender, GraphPane pane,
+			CurveItem curve, int iPt );
+
+		/// <summary>
+		/// Subscribe to this event to receive notifcation and/or respond after a data
+		/// point has been edited via <see cref="IsEnableHEdit" /> and <see cref="IsEnableVEdit" />.
+		/// </summary>
+		/// <example>
+		/// <para>To subscribe to this event, use the following in your Form_Load method:</para>
+		/// <code>zedGraphControl1.PointEditEvent +=
+		/// new ZedGraphControl.PointEditHandler( MyPointEditHandler );</code>
+		/// <para>Add this method to your Form1.cs:</para>
+		/// <code>
+		///    private string MyPointEditHandler( object sender, GraphPane pane, CurveItem curve, int iPt )
+		///    {
+		///        PointPair pt = curve[iPt];
+		///        return "This value is " + pt.Y.ToString("f2") + " gallons";
+		///    }</code>
+		/// </example>
+		[Bindable( true ), Category( "Events" )]
+		[Description( "Subscribe to this event to respond to data point edit actions" )]
+		public event PointEditHandler PointEditEvent;
 
 		/// <summary>
 		/// A delegate that allows custom formatting of the point value tooltips
@@ -2654,7 +2689,8 @@ namespace ZedGraph
 
 		private void HandleEditFinish()
 		{
-			//Nothing to do here -- May want to add an undo option
+			if ( this.PointEditEvent != null )
+				this.PointEditEvent( this, _dragPane, _dragCurve, _dragIndex );
 		}
 
 		private void HandleEditCancel()
@@ -3714,7 +3750,10 @@ namespace ZedGraph
 			get
 			{
 				if ( _pdSave == null )
+				{
 					_pdSave = new PrintDocument();
+					_pdSave.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+				}
 				return _pdSave;
 			}
 			set { _pdSave = value; }
@@ -3762,7 +3801,7 @@ namespace ZedGraph
 
 			if ( pd != null )
 			{
-				pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+				//pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
 				PrintDialog pDlg = new PrintDialog();
 				pDlg.Document = pd;
 				if ( pDlg.ShowDialog() == DialogResult.OK )
@@ -3782,7 +3821,7 @@ namespace ZedGraph
 			if ( pd != null )
 			{
 				PrintPreviewDialog ppd = new PrintPreviewDialog();
-				pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+				//pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
 				ppd.Document = pd;
 				ppd.Show();
 			}
