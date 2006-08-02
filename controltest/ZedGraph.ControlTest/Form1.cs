@@ -36,6 +36,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_Contour( zedGraphControl2 );
 			//CreateGraph_DateAxis( zedGraphControl1 );
+			CreateGraph_DateAxisTutorial( zedGraphControl1 );
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
@@ -68,7 +69,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_StickToCurve( zedGraphControl1 );
 			//CreateGraph_TestScroll( zedGraphControl1 );
 			//CreateGraph_TextBasic( zedGraphControl2 );
-			CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
+			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
 			//CreateGraph_TwoTextAxes( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
 			//CreateGraph_DualY( zedGraphControl1 );
@@ -1120,7 +1121,7 @@ namespace ZedGraph.ControlTest
 				for ( int i = 0; i < 36; i++ )
 				{
 					x = (double)i + 5 + j * 3;
-					y = (j + 1) * (j + 1) * 10 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
+					y = ( j + 1 ) * ( j + 1 ) * 10 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
 					list.Add( x, y );
 				}
 
@@ -1867,6 +1868,41 @@ namespace ZedGraph.ControlTest
 			myLine.Location.X1 = xDate;
 			myPane.GraphObjList.Add( myLine );
 
+		}
+
+		private void CreateGraph_DateAxisTutorial( ZedGraphControl z1 )
+		{
+			// Get a reference to the GraphPane
+			GraphPane myPane = z1.GraphPane;
+
+			// Set the titles
+			myPane.Title.Text = "My Test Date Graph";
+			myPane.XAxis.Title.Text = "Date";
+			myPane.XAxis.Title.Text = "My Y Axis";
+
+			// Make up some random data points
+			double x, y;
+			PointPairList list = new PointPairList();
+			for ( int i = 0; i < 36; i++ )
+			{
+				x = (double)new XDate( 1995, 5, i + 11 );
+				y = Math.Sin( (double)i * Math.PI / 15.0 );
+				list.Add( x, y );
+			}
+
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			CurveItem myCurve = myPane.AddCurve( "My Curve",
+					list, Color.Red, SymbolType.Diamond );
+
+			// Set the XAxis to date type
+			myPane.XAxis.Type = AxisType.Date;
+			myPane.XAxis.Scale.Min = new XDate( 1995, 5, 20 );
+			myPane.XAxis.Scale.Max = new XDate( 1995, 6, 10 ); 
+
+			// Tell ZedGraph to refigure the axes since the data 
+			// have changed
+			z1.AxisChange();
 		}
 
 		// Basic curve test - Linear Axis

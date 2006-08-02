@@ -1,5 +1,8 @@
 == Version 5 ==
 
+;1-Aug-2006 (by Champion)
+: [FIX] fix the minauto/maxauto problem for date scales.
+
 ;28-Jul-2006 (by Champion)
 : [UPD] Enable cache for ImageMap=true
 : [UPD] Change prototype of FindNearestPoint to make the overloads non-ambiguous for VB
@@ -26,7 +29,7 @@
 : [FIX] Add case option for wheel zoom, so unzoom context menu item does not disappear
 : [FIX] Fix Pie labels for types that include percent
 
-;23-Jun-2006 (by Champion) V5_BRANCH (dev release 4.9.9)
+;23-Jun-2006 (by Champion) V5_BRANCH (version 5.0)
 : [FIX] Minor correction to NoDupePointList FilterData() method
 
 ;22-Jun-2006 (by Champion) V5_BRANCH
