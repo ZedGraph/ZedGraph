@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.64 $ $Date: 2006-07-02 06:42:00 $ </version>
+	/// <version> $Revision: 3.65 $ $Date: 2006-08-02 03:13:16 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -507,8 +507,8 @@ namespace ZedGraph
 		/// This term, expressed in
 		/// points (1/72 inch) and scaled according to <see cref="PaneBase.CalcScaleFactor"/>
 		/// for the <see cref="GraphPane"/>, determines the minimum amount of space
-		/// an axis must have between the <see cref="Chart.Rect"/> and the
-		/// <see cref="PaneBase.Rect"/>.  This minimum space
+		/// an axis must have between the <see cref="Chart.Rect">Chart.Rect</see> and the
+		/// <see cref="PaneBase.Rect">GraphPane.Rect</see>.  This minimum space
 		/// applies whether <see cref="IsVisible"/> is true or false.
 		/// </remarks>
 		public float MinSpace

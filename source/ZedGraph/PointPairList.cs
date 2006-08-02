@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.31 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.32 $ $Date: 2006-08-02 03:13:16 $ </version>
 	[Serializable]
 	public class PointPairList : List<PointPair>, IPointList, IPointListEdit
 	{
@@ -668,11 +668,11 @@ namespace ZedGraph
 		/// This method uses cardinal spline interpolation with a binary search algorithm.  It therefore
 		/// requires that the x data be monotonically increasing.  Missing values are not allowed.  This
 		/// method will not extrapolate outside the range of the PointPairList (it returns
-		/// <see cref="PointPair.Missing"/> if extrapolation would be required).  WARNING: Cardinal spline
-		/// interpolation can generate curves with non-unique X values for higher tension settings.  That is,
-		/// there may be multiple X values for the same Y value.  This routine follows the path of the
-		/// spline curve until it reaches the FIRST OCCURRENCE of the target X value.  It does not check
-		/// to see if other solutions are possible.
+		/// <see cref="PointPair.Missing"/> if extrapolation would be required).  WARNING: Cardinal
+		/// spline interpolation can generate curves with non-unique X values for higher tension
+		/// settings.  That is, there may be multiple X values for the same Y value.  This routine
+		/// follows the path of the spline curve until it reaches the FIRST OCCURRENCE of the
+		/// target X value.  It does not check to see if other solutions are possible.
 		/// </remarks>
 		/// <param name="xTarget">The target X value on which to interpolate</param>
 		/// <param name="tension">The tension setting that controls the curvature of the spline fit.

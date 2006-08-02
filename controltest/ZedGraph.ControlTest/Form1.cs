@@ -62,13 +62,13 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_SplineTest( zedGraphControl1 );
-			CreateGraph_StackedBars( zedGraphControl1 );
+			//CreateGraph_StackedBars( zedGraphControl1 );
 			//CreateGraph_StackedMultiBars( zedGraphControl1 );
 			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_StickToCurve( zedGraphControl1 );
 			//CreateGraph_TestScroll( zedGraphControl1 );
 			//CreateGraph_TextBasic( zedGraphControl2 );
-			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
+			CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
 			//CreateGraph_TwoTextAxes( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
 			//CreateGraph_DualY( zedGraphControl1 );
@@ -1045,44 +1045,60 @@ namespace ZedGraph.ControlTest
 		{
 			MasterPane master = z1.MasterPane;
 
+			// Fill the background
 			master.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
+			// Clear out the initial GraphPane
 			master.PaneList.Clear();
 
+			// Show the masterpane title
 			master.Title.IsVisible = true;
-			master.Title.Text = "Synchronized Graph Demo";
+			master.Title.Text = "Aligned Panes Demo";
 
+			// Leave a margin around the masterpane, but only a small gap between panes
 			master.Margin.All = 10;
-			master.InnerPaneGap = 0;
-			//master.Legend.IsVisible = true;
-			//master.Legend.Position = LegendPos.TopCenter;
+			master.InnerPaneGap = 5;
+
+			// The titles for the individual GraphPanes
+			string[] yLabels = { "Rate, m/s", "Pressure, dynes/cm", "Count, units/hr" };
 
 			ColorSymbolRotator rotator = new ColorSymbolRotator();
 
 			for ( int j = 0; j < 3; j++ )
 			{
-				// Create a new graph with topLeft at (40,40) and size 600x400
-				GraphPane myPaneT = new GraphPane( new Rectangle( 40, 40, 600, 400 ),
-					"Case #" + ( j + 1 ).ToString(),
+				// Create a new graph -- dimensions to be set later by MasterPane Layout
+				GraphPane myPaneT = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+					"",
 					"Time, Days",
-					"Rate, m/s" );
+					yLabels[j] );
 
 				//myPaneT.Fill = new Fill( Color.FromArgb( 230, 230, 255 ) );
 				myPaneT.Fill.IsVisible = false;
 
+				// Fill the Chart background
 				myPaneT.Chart.Fill = new Fill( Color.White, Color.LightYellow, 45.0F );
+				// Set the BaseDimension, so fonts are scale a little bigger
 				myPaneT.BaseDimension = 3.0F;
+
+				// Hide the XAxis scale and title
 				myPaneT.XAxis.Title.IsVisible = false;
 				myPaneT.XAxis.Scale.IsVisible = false;
+				// Hide the legend, border, and GraphPane title
 				myPaneT.Legend.IsVisible = false;
 				myPaneT.Border.IsVisible = false;
 				myPaneT.Title.IsVisible = false;
+				// Get rid of the tics that are outside the chart rect
 				myPaneT.XAxis.MajorTic.IsOutside = false;
 				myPaneT.XAxis.MinorTic.IsOutside = false;
+				// Show the X grids
 				myPaneT.XAxis.MajorGrid.IsVisible = true;
 				myPaneT.XAxis.MinorGrid.IsVisible = true;
+				// Remove all margins
 				myPaneT.Margin.All = 0;
+				// Except, leave some top margin on the first GraphPane
 				if ( j == 0 )
 					myPaneT.Margin.Top = 20;
+				// And some bottom margin on the last GraphPane
+				// Also, show the X title and scale on the last GraphPane only
 				if ( j == 2 )
 				{
 					myPaneT.XAxis.Title.IsVisible = true;
@@ -1095,7 +1111,7 @@ namespace ZedGraph.ControlTest
 
 				// This sets the minimum amount of space for the left and right side, respectively
 				// The reason for this is so that the ChartRect's all end up being the same size.
-				myPaneT.YAxis.MinSpace = 50;
+				myPaneT.YAxis.MinSpace = 80;
 				myPaneT.Y2Axis.MinSpace = 20;
 
 				// Make up some data arrays based on the Sine function
@@ -1104,7 +1120,7 @@ namespace ZedGraph.ControlTest
 				for ( int i = 0; i < 36; i++ )
 				{
 					x = (double)i + 5 + j * 3;
-					y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
+					y = (j + 1) * (j + 1) * 10 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
 					list.Add( x, y );
 				}
 
@@ -1122,14 +1138,15 @@ namespace ZedGraph.ControlTest
 				//master.SetLayout( PaneLayout.ExplicitRow32 );
 				//master.SetLayout( 2, 4 );
 				//master.SetLayout( false, new int[] { 1, 3, 2 }, new float[] { 2, 1, 3 } );
-				z1.AxisChange();
+				master.AxisChange( g );
 
+				// Synchronize the Axes
 				z1.IsAutoScrollRange = true;
 				z1.IsShowHScrollBar = true;
 				z1.IsShowVScrollBar = true;
 				z1.IsSynchronizeXAxes = true;
 
-				g.Dispose();
+				//g.Dispose();
 			}
 
 		}
@@ -1185,6 +1202,38 @@ namespace ZedGraph.ControlTest
 			z1.Invalidate();
 
 			//z1.LinkEvent += new ZedGraphControl.LinkEventHandler(z1_LinkEvent);
+
+			z1.DoubleClickEvent += new ZedGraphControl.ZedMouseEventHandler( z1_DoubleClickEvent );
+		}
+
+		bool z1_DoubleClickEvent( ZedGraphControl sender, MouseEventArgs e )
+		{
+			PointF pt = new PointF( e.X, e.Y );
+			GraphPane pane;
+			string thing = "nothing";
+
+			using ( Graphics g = CreateGraphics() )
+			{
+				object obj;
+				int i;
+
+				if ( sender.MasterPane.FindNearestPaneObject( pt, g, out pane, out obj, out i ) )
+				{
+					if ( obj != null )
+						thing = obj.ToString();
+				}
+				else
+				{
+					pane = sender.MasterPane.FindPane( pt );
+					if ( pane != null )
+						thing = "GraphPane";
+				}
+			}
+
+
+			MessageBox.Show( "You double clicked a " + thing );
+
+			return false;
 		}
 
 		private bool z1_LinkEvent( ZedGraphControl sender, GraphPane pane,

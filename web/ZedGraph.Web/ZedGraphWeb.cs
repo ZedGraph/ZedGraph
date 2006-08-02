@@ -39,7 +39,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.4 $ $Date: 2006-07-22 07:42:39 $</version>
+	/// <version>$Revision: 1.5 $ $Date: 2006-08-02 03:13:17 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -1478,7 +1478,7 @@ namespace ZedGraph.Web
 
 						//Should we use the cached image ?
 						if ( this.CacheDuration == 0 ||
-							!File.Exists( tempFilePathName ) || IsImageMap ||
+							!File.Exists( tempFilePathName ) || // IsImageMap ||
 							 File.GetCreationTimeUtc( tempFilePathName ).AddSeconds( this.CacheDuration )
 									< DateTime.Now.ToUniversalTime() )
 						{

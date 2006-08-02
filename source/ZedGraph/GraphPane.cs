@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.64 $ $Date: 2006-07-14 06:44:06 $ </version>
+	/// <version> $Revision: 3.65 $ $Date: 2006-08-02 03:13:16 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1780,6 +1780,9 @@ namespace ZedGraph
 		/// <see cref="Default.NearestTol"/> pixels of the screen point.
 		/// </remarks>
 		/// <param name="mousePt">The screen point, in pixel coordinates.</param>
+		/// <param name="nearestCurve">A reference to the <see cref="CurveItem"/>
+		/// instance that contains the closest point.  nearestCurve will be null if
+		/// no data points are available.</param>
 		/// <param name="targetCurve">A <see cref="CurveItem"/> object containing
 		/// the data points to be searched.</param>
 		/// <param name="iNearest">The index number of the closest point.  The
@@ -1789,10 +1792,9 @@ namespace ZedGraph
 		/// <returns>true if a point was found and that point lies within
 		/// <see cref="Default.NearestTol"/> pixels
 		/// of the screen point, false otherwise.</returns>
-		public bool FindNearestPoint( PointF mousePt, CurveItem targetCurve, out int iNearest )
+		public bool FindNearestPoint( PointF mousePt, CurveItem targetCurve,
+				out CurveItem nearestCurve, out int iNearest )
 		{
-			CurveItem nearestCurve;
-
 			CurveList targetCurveList = new CurveList();
 			targetCurveList.Add( targetCurve );
 			return FindNearestPoint( mousePt, targetCurveList,
@@ -2090,7 +2092,9 @@ namespace ZedGraph
 
 				if ( link.IsActive )
 				{
-					if ( FindNearestPoint( mousePt, curve, out index ) )
+					CurveItem nearestCurve;
+
+					if ( FindNearestPoint( mousePt, curve, out nearestCurve, out index ) )
 					{
 						source = curve;
 						return true;

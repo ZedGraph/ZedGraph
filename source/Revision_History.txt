@@ -1,6 +1,13 @@
 == Version 5 ==
 
-;22-Jul-2006 (by Champion)
+;28-Jul-2006 (by Champion)
+: [UPD] Enable cache for ImageMap=true
+: [UPD] Change prototype of FindNearestPoint to make the overloads non-ambiguous for VB
+: [NEW] Add ZedGraphControl.DoubleClickEvent
+: [UPD] Add DefaultValue attributes for ZedGraphControl properties
+: [NEW] Add Portugese language translation file (thanks to andredav)
+
+;21-Jul-2006 (by Champion)
 : [UPD] Move Graph_PrintPage handler to PrintDocument property definition
 : [NEW] Add PointEditEvent
 : [FIX] When Link.Url is blank, don't do any launching and leave out href
