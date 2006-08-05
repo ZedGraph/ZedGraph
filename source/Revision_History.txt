@@ -1,7 +1,8 @@
 == Version 5 ==
 
-;1-Aug-2006 (by Champion)
+;5-Aug-2006 (by Champion)
 : [FIX] fix the minauto/maxauto problem for date scales.
+: [FIX] LinearAsOrdinal and DateAsOrdinal display values for ZedGraphControl
 
 ;28-Jul-2006 (by Champion)
 : [UPD] Enable cache for ImageMap=true

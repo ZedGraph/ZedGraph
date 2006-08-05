@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.13 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 1.14 $ $Date: 2006-08-05 20:08:30 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -1264,7 +1264,9 @@ namespace ZedGraph
 		/// This property may be set automatically by ZedGraph, depending on the state of
 		/// <see cref="FormatAuto"/>.
 		/// </remarks>
-		/// <value>This format string is as defined for the <see cref="XDate.ToString()"/> function</value>
+		/// <value>This format string is as defined for the <see cref="XDate.ToString()"/> function.
+		/// The format string conforms to the <see cref="System.Globalization.DateTimeFormatInfo" />.
+		/// </value>
 		/// <seealso cref="Mag"/>
 		/// <seealso cref="FormatAuto"/>
 		/// <seealso cref="FontSpec"/>

@@ -66,7 +66,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.68 $ $Date: 2006-08-02 03:13:17 $ </version>
+	/// <version> $Revision: 3.69 $ $Date: 2006-08-05 20:08:30 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -1798,6 +1798,10 @@ namespace ZedGraph
 		/// Gets or sets the format for displaying tooltip values.
 		/// This format is passed to <see cref="PointPair.ToString(string)"/>.
 		/// </summary>
+		/// <remarks>
+		/// Use the <see cref="System.Globalization.NumberFormatInfo" /> type
+		/// to determine the format strings.
+		/// </remarks>
 		[	Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
 			DefaultValue( PointPair.DefaultFormat ),
 			Description( "Sets the numeric display format string for the point value tooltips" )]
@@ -1811,6 +1815,10 @@ namespace ZedGraph
 		/// Gets or sets the format for displaying tooltip values.
 		/// This format is passed to <see cref="XDate.ToString(string)"/>.
 		/// </summary>
+		/// <remarks>
+		/// Use the <see cref="System.Globalization.DateTimeFormatInfo" /> type
+		/// to determine the format strings.
+		/// </remarks>
 		[	Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
 			DefaultValue( XDate.DefaultFormatStr ),
 			Description( "Sets the date display format for the point value tooltips" )]
@@ -2263,7 +2271,7 @@ namespace ZedGraph
 		{
 			if ( axis != null )
 			{
-				if ( axis.Scale.IsDate )
+				if ( axis.Scale.IsDate || axis.Scale.Type == AxisType.DateAsOrdinal )
 				{
 					return XDate.ToString( val, _pointDateFormat );
 				}
@@ -2278,7 +2286,8 @@ namespace ZedGraph
 					else
 						return ( i + 1 ).ToString();
 				}
-				else if ( axis.Scale.IsAnyOrdinal && !isOverrideOrdinal )
+				else if ( axis.Scale.IsAnyOrdinal && axis.Scale.Type != AxisType.LinearAsOrdinal
+								&& !isOverrideOrdinal )
 				{
 					return iPt.ToString( _pointValueFormat );
 				}

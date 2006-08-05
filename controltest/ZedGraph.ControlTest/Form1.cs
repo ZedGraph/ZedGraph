@@ -26,7 +26,7 @@ namespace ZedGraph.ControlTest
 		private void Form1_Load( object sender, EventArgs e )
 		{
 			//CreateGraph_32kPoints( zedGraphControl1 );
-			//CreateGraph_BarJunk( zedGraphControl1 );
+			CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
@@ -36,7 +36,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_Contour( zedGraphControl2 );
 			//CreateGraph_DateAxis( zedGraphControl1 );
-			CreateGraph_DateAxisTutorial( zedGraphControl1 );
+			//CreateGraph_DateAxisTutorial( zedGraphControl1 );
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
@@ -218,8 +218,10 @@ namespace ZedGraph.ControlTest
 
 				y1 = ( Math.Sin( i / 9.0 * Math.PI ) + 1.1 ) * 1000.0;
 				y2 = ( Math.Cos( i / 9.0 * Math.PI ) + 1.1 ) * 1000.0;
-				list1.Add( x, y1 );
-				list2.Add( x, y2 );
+				double z = i > 9 ? 1 : 0;
+				list1.Add( x, y1, z );
+				list2.Add( x, y2, z );
+
 			}
 
 			LineItem myCurve = myPane.AddCurve( "Sine", list1, Color.Red, SymbolType.Circle );
@@ -246,12 +248,14 @@ namespace ZedGraph.ControlTest
 			//double[] zz = { 1, 2, 3, 4, 5, 5, 4, 3, 2, 1 };
 			//PointPairList list = new PointPairList( xx, yy, zz );
 
-			//Color[] colors = { Color.Red, Color.Green, Color.Blue,
-			//					Color.Yellow, Color.Orange };
-			//Fill _fill = new Fill( colors );
-			//_fill.Type = FillType.GradientByZ;
-			//_fill.RangeMin = 1;
-			//_fill.RangeMax = 5;
+			Color[] colors = { Color.Red, Color.Transparent };
+			Fill fill = new Fill( colors );
+			fill.Type = FillType.GradientByZ;
+			fill.SecondaryValueGradientColor = Color.Empty;
+			fill.RangeMin = 0;
+			fill.RangeMax = 1;
+			myCurve.Symbol.Fill = fill;
+			myCurve.Symbol.Border.IsVisible = false;
 
 			myPane.XAxis.Scale.Format = "HHMM";
 			//myPane.XAxis.ScaleMag = 0;
@@ -1645,6 +1649,7 @@ namespace ZedGraph.ControlTest
 
 			// Show tooltips when the mouse hovers over a point
 			z1.IsShowPointValues = true;
+			z1.PointValueFormat = "f2";
 			//z1.PointValueEvent += new ZedGraphControl.PointValueHandler( MyPointValueHandler );
 
 			// Add a custom context menu item
@@ -2309,14 +2314,14 @@ namespace ZedGraph.ControlTest
 			grPane.Legend.IsVisible = false;
 
 			PointPairList list = new PointPairList();
-			list.Add( 1, 10, 1 );
-			list.Add( 2, 20, 1 );
-			list.Add( 3, 15, 1 );
-			list.Add( 4, 35, 2 );
-			list.Add( 5, 22, 1 );
-			list.Add( 6, 8, 1 );
-			list.Add( 7, 12, 1 );
-			list.Add( 8, 29, 1 );
+			list.Add( 10, 10, 1 );
+			list.Add( 20, 20, 1 );
+			list.Add( 30, 15, 1 );
+			list.Add( 40, 35, 2 );
+			list.Add( 50, 22, 1 );
+			list.Add( 100, 8, 1 );
+			list.Add( 150, 12, 1 );
+			list.Add( 200, 29, 1 );
 
 			BarItem myCurve = grPane.AddBar( "My Curve", list, Color.Blue );
 
