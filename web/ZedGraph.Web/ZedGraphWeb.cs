@@ -39,7 +39,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.5 $ $Date: 2006-08-02 03:13:17 $</version>
+	/// <version>$Revision: 1.6 $ $Date: 2006-08-08 02:51:45 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -1483,10 +1483,12 @@ namespace ZedGraph.Web
 									< DateTime.Now.ToUniversalTime() )
 						{
 							//No: so recreate the image file
-							DesignTimeFileStream = new FileStream( tempFilePathName, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite );
+							DesignTimeFileStream = new FileStream( tempFilePathName, FileMode.Create,
+													FileAccess.ReadWrite, FileShare.ReadWrite );
 							DesignTimeFileStream.SetLength( 0 );
 							DesignTimeFileStream.Seek( 0, SeekOrigin.Begin );
-							//Because of a bug in .NET (deleting a file and creating a file with the same name results in the deleted file's CreationTime being returned)
+							//Because of a bug in .NET (deleting a file and creating a file with the same
+							//        name results in the deleted file's CreationTime being returned)
 							// we need to explicitely set the creation time.
 							File.SetCreationTimeUtc( tempFilePathName, DateTime.Now.ToUniversalTime() );
 						}

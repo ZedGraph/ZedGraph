@@ -26,7 +26,7 @@ namespace ZedGraph.ControlTest
 		private void Form1_Load( object sender, EventArgs e )
 		{
 			//CreateGraph_32kPoints( zedGraphControl1 );
-			CreateGraph_BarJunk( zedGraphControl1 );
+			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
@@ -62,7 +62,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
-			//CreateGraph_SplineTest( zedGraphControl1 );
+			CreateGraph_SplineTest( zedGraphControl1 );
 			//CreateGraph_StackedBars( zedGraphControl1 );
 			//CreateGraph_StackedMultiBars( zedGraphControl1 );
 			//CreateGraph_StackLine( zedGraphControl1 );
@@ -1772,7 +1772,7 @@ namespace ZedGraph.ControlTest
 			GraphPane myPane = z1.GraphPane;
 			PointPairList ppl = new PointPairList();
 
-			ppl.Add( 0, 713 );
+			ppl.Add( 4000, 150 );
 			ppl.Add( 7360, 333 );
 			ppl.Add( 10333.333, 45.333336 );
 			ppl.Add( 11666.667, 5 );
@@ -1781,32 +1781,42 @@ namespace ZedGraph.ControlTest
 			ppl.Add( 15800, 184.66667 );
 			//			ppl.Add( 18000, 187.5 );
 			ppl.Add( 18644.998, 186.33368 );
-			ppl.Add( 18770.002, 186.66664 );
-			ppl.Add( 18896.666, 187.08336 );
-			ppl.Add( 18993.334, 187.50002 );
+			//ppl.Add( 18770.002, 186.66664 );
+			//ppl.Add( 18896.666, 187.08336 );
+			//ppl.Add( 18993.334, 187.50002 );
 			ppl.Add( 19098.332, 188.08334 );
-			ppl.Add( 19285.002, 189.41634 );
-			ppl.Add( 19443.332, 190.83334 );
+			//ppl.Add( 19285.002, 189.41634 );
+			//ppl.Add( 19443.332, 190.83334 );
 			ppl.Add( 19633.334, 193.16634 );
-			ppl.Add( 19823.336, 196.49983 );
-			ppl.Add( 19940.002, 199.16669 );
-			ppl.Add( 20143.303, 204.66566 );
+			//ppl.Add( 19823.336, 196.49983 );
+			//ppl.Add( 19940.002, 199.16669 );
+			//ppl.Add( 20143.303, 204.66566 );
 			ppl.Add( 20350, 210.91667 );
 			//			ppl.Add( 21000, 232 );
 			//			ppl.Add( 23000, 296 );
-			ppl.Add( 36000, 713 );
+			ppl.Add( 24000, 100 );
 
-			double y1 = ppl.SplineInterpolateX( 18000, 0.4 );
-			double y2 = ppl.SplineInterpolateX( 21000, 0.4 );
-			double y3 = ppl.SplineInterpolateX( 23000, 0.4 );
-			ppl.Add( 18000, y1 );
-			ppl.Add( 21000, y2 );
-			ppl.Add( 23000, y3 );
-			ppl.Sort();
+			//double y1 = ppl.SplineInterpolateX( 18000, 0.2 );
+			//double y2 = ppl.SplineInterpolateX( 21000, 0.2 );
+			//double y3 = ppl.SplineInterpolateX( 23000, 0.2 );
+			//ppl.Add( 18000, y1 );
+			//ppl.Add( 21000, y2 );
+			//ppl.Add( 23000, y3 );
+			//ppl.Sort();
 
 			LineItem curve = myPane.AddCurve( "test", ppl, Color.Green, SymbolType.Default );
 			curve.Line.IsSmooth = true;
-			curve.Line.SmoothTension = 0.2F;
+			curve.Line.SmoothTension = 0.5F;
+
+			PointPairList ppl2 = new PointPairList();
+			for ( double x = 4100; x < 24000; x += 100 )
+			{
+				double y = ppl.SplineInterpolateX( x, 0.5 );
+				ppl2.Add( x, y );
+			}
+
+			LineItem curve2 = myPane.AddCurve( "interp", ppl2, Color.Red, SymbolType.Circle );
+
 		}
 
 		// Basic curve test - Date Axis

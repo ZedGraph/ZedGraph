@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.32 $ $Date: 2006-08-02 03:13:16 $ </version>
+	/// <version> $Revision: 3.33 $ $Date: 2006-08-08 02:51:45 $ </version>
 	[Serializable]
 	public class PointPairList : List<PointPair>, IPointList, IPointListEdit
 	{
@@ -682,6 +682,9 @@ namespace ZedGraph
 		/// <returns>The Y value that corresponds to the <see paramref="xTarget"/> value.</returns>
 		public double SplineInterpolateX( double xTarget, double tension )
 		{
+			// Scale the tension value to be compatible with the GDI+ values
+			tension /= 3.0;
+
 			int lo, mid, hi;
 			if ( this.Count < 2 )
 				throw new Exception( "Error: Not enough points in curve to interpolate" );
@@ -727,8 +730,8 @@ namespace ZedGraph
 			// and/or after point to fill in the four points
 			if ( lo == 0 )
 			{
-				X0 = X1 - ( X2 - X1 );
-				Y0 = Y1 - ( Y2 - Y1 );
+				X0 = X1 - ( X2 - X1 )/3;
+				Y0 = Y1 - ( Y2 - Y1 )/3;
 			}
 			else
 			{
@@ -738,8 +741,8 @@ namespace ZedGraph
 
 			if ( hi == this.Count - 1 )
 			{
-				X3 = X2 + ( X2 - X1 );
-				Y3 = Y2 + ( Y2 - Y1 );
+				X3 = X2 + ( X2 - X1 )/3;
+				Y3 = Y2 + ( Y2 - Y1 )/3;
 			}
 			else
 			{
@@ -748,8 +751,8 @@ namespace ZedGraph
 			}
 
 			double	newX, newY,
-					lastX = X1,
-					lastY = Y1;
+						lastX = X1,
+						lastY = Y1;
 
 			// Do 100 steps to find the result
 			for ( double t=0.01; t<=1; t+=0.01 )
@@ -834,6 +837,95 @@ namespace ZedGraph
 					( this[hi].X - this[lo].X ) + this[lo].X;
 
 		}
+
+		/// <summary>
+		/// Use linear regression to form a least squares fit of an existing
+		/// <see cref="IPointList"/> instance.
+		/// </summary>
+		/// <remarks>The output <see cref="PointPairList" /> will cover the
+		/// same X range of data as the original dataset.
+		/// </remarks>
+		/// <param name="points">An <see cref="IPointList" /> instance containing
+		/// the data to be regressed.</param>
+		/// <param name="pointCount">The number of desired points to be included
+		/// in the resultant <see cref="PointPairList" />.
+		/// </param>
+		/// <returns>A new <see cref="PointPairList" /> containing the resultant
+		/// data fit.
+		/// </returns>
+		public PointPairList LinearRegression( IPointList points, int pointCount )
+		{
+			double minX = double.MaxValue;
+			double maxX = double.MinValue;
+
+			for ( int i=0; i<points.Count; i++ )
+			{
+				PointPair pt = points[i];
+
+				if ( !pt.IsInvalid )
+				{
+					minX = pt.X < minX ? pt.X : minX;
+					maxX = pt.X > maxX ? pt.X : maxX;
+				}
+			}
+
+			return LinearRegression( points, pointCount, minX, maxX );
+		}
+
+
+		/// <summary>
+		/// Use linear regression to form a least squares fit of an existing
+		/// <see cref="IPointList"/> instance.
+		/// </summary>
+		/// <param name="points">An <see cref="IPointList" /> instance containing
+		/// the data to be regressed.</param>
+		/// <param name="pointCount">The number of desired points to be included
+		/// in the resultant <see cref="PointPairList" />.
+		/// </param>
+		/// <param name="maxX">The minimum X value of the resultant
+		/// <see cref="PointPairList" />.</param>
+		/// <param name="maxX">The maximum X value of the resultant
+		/// <see cref="PointPairList" />.</param>
+		/// <returns>A new <see cref="PointPairList" /> containing the resultant
+		/// data fit.
+		/// </returns>
+		/// <author> Brian Chappell - lazarusds
+		///          modified by John Champion</author>
+		public PointPairList LinearRegression( IPointList points, int pointCount,
+			double minX, double maxX )
+		{
+			double x = 0, y = 0, xx = 0, xy = 0, count = 0;
+			for ( int i = 0; i < points.Count; i++ )
+			{
+				PointPair pt = points[i];
+				if ( !pt.IsInvalid )
+				{
+					x += points[i].X;
+					y += points[i].Y;
+					xx += points[i].X * points[i].X;
+					xy += points[i].X * points[i].Y;
+					count++;
+				}
+			}
+
+			if ( count < 2 || maxX - minX < 1e-20 )
+				return null;
+
+			double slope = ( count * xy - x * y ) / ( count * xx - x * x );
+			double intercept = ( y - slope * x ) / count;
+
+			PointPairList newPoints = new PointPairList();
+			double stepSize = ( maxX - minX ) / pointCount;
+			double value = minX;
+			for ( int i = 0; i < pointCount; i++ )
+			{
+				newPoints.Add( new PointPair( value, value * slope + intercept ) );
+				value += stepSize;
+			}
+
+			return newPoints;
+		} 
+
 
 	#endregion
 	}

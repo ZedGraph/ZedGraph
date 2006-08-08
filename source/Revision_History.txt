@@ -1,8 +1,12 @@
 == Version 5 ==
 
+;7-Aug-2006 (by Champion)
+: [NEW] Add linear regression to PointPairList (from Brian Chappell)
+
 ;5-Aug-2006 (by Champion)
 : [FIX] fix the minauto/maxauto problem for date scales.
 : [FIX] LinearAsOrdinal and DateAsOrdinal display values for ZedGraphControl
+: [FIX] Change tension value in SplineInterpolateX() to be consistent with GDI+
 
 ;28-Jul-2006 (by Champion)
 : [UPD] Enable cache for ImageMap=true
