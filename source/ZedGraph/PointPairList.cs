@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.33 $ $Date: 2006-08-08 02:51:45 $ </version>
+	/// <version> $Revision: 3.34 $ $Date: 2006-08-25 05:19:09 $ </version>
 	[Serializable]
 	public class PointPairList : List<PointPair>, IPointList, IPointListEdit
 	{
@@ -882,7 +882,7 @@ namespace ZedGraph
 		/// <param name="pointCount">The number of desired points to be included
 		/// in the resultant <see cref="PointPairList" />.
 		/// </param>
-		/// <param name="maxX">The minimum X value of the resultant
+		/// <param name="minX">The minimum X value of the resultant
 		/// <see cref="PointPairList" />.</param>
 		/// <param name="maxX">The maximum X value of the resultant
 		/// <see cref="PointPairList" />.</param>

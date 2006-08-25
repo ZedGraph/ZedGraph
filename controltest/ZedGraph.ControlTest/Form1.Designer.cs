@@ -72,6 +72,7 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.ScrollMinY2 = 0;
 			this.zedGraphControl1.Size = new System.Drawing.Size( 496, 367 );
 			this.zedGraphControl1.TabIndex = 0;
+			this.zedGraphControl1.DoubleClickEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.z1_DoubleClickEvent );
 			this.zedGraphControl1.Paint += new System.Windows.Forms.PaintEventHandler( this.zedGraphControl1_Paint );
 			this.zedGraphControl1.MouseDownEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseDownEvent );
 			this.zedGraphControl1.MouseMoveEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseMoveEvent );

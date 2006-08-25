@@ -66,7 +66,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.69 $ $Date: 2006-08-05 20:08:30 $ </version>
+	/// <version> $Revision: 3.70 $ $Date: 2006-08-25 05:19:09 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -2929,6 +2929,16 @@ namespace ZedGraph
 		{
 			if ( this.GraphPane != null )
 			{
+/*
+				ScrollBar scrollBar = sender as ScrollBar;
+				bool clearZoomState = false;
+				//ZoomState curState = new ZoomState( this.GraphPane, ZoomState.StateType.Scroll );
+				if ( _zoomState == null ) //&& !scrollBar.Capture )
+				{
+					clearZoomState = true;
+					ZoomStateSave( this.GraphPane, ZoomState.StateType.Scroll );
+				}
+*/
 				for ( int i = 0; i < this.GraphPane.YAxisList.Count; i++ )
 				{
 					ScrollRange scroll = _yScrollRangeList[i];
@@ -2950,16 +2960,31 @@ namespace ZedGraph
 										!axis.Scale.IsReverse );
 					}
 				}
-			}
 
-			ApplyToAllPanes( this.GraphPane );
+				ApplyToAllPanes( this.GraphPane );
 
-			if ( _zoomState != null && this.GraphPane != null )
-			{
-				// Provide Callback to notify the user of pan events
-				if ( this.ScrollProgressEvent != null )
-					this.ScrollProgressEvent( this, vScrollBar1, _zoomState,
-								new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
+				if ( _zoomState != null ) // && ! clearZoomState && scrollBar.Capture )
+				{
+					// Provide Callback to notify the user of scroll events
+					if ( this.ScrollProgressEvent != null )
+						this.ScrollProgressEvent( this, vScrollBar1, _zoomState,
+									new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
+				}
+/*				else if ( clearZoomState && _zoomState != null && // !scrollBar.Capture &&
+								_zoomState.IsChanged( this.GraphPane ) )
+				{
+					//this.GraphPane.ZoomStack.Push( _zoomState );
+					ZoomStatePush( this.GraphPane );
+
+					// Provide Callback to notify the user of pan events
+					if ( this.ScrollDoneEvent != null )
+						this.ScrollDoneEvent( this, scrollBar, _zoomState,
+									new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
+				}
+
+				if ( clearZoomState )
+					_zoomState = null;
+*/
 			}
 		}
 

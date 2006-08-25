@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.36 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.37 $ $Date: 2006-08-25 05:19:09 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -389,112 +389,114 @@ namespace ZedGraph
 			maxPts = 1;
 			
 			// Loop over each curve in the collection and examine the data ranges
-			foreach( CurveItem curve in this )
+			foreach ( CurveItem curve in this )
 			{
-				// For stacked types, use the GetStackRange() method which accounts for accumulated values
-				// rather than simple curve values.
-				if ( ( ( curve is BarItem ) && ( pane._barSettings.Type == BarType.Stack ||
-						pane._barSettings.Type == BarType.PercentStack ) ) ||
-					( ( curve is LineItem ) && pane.LineType == LineType.Stack ) )
+				if ( curve.IsVisible )
 				{
-					GetStackRange( pane, curve, out tXMinVal, out tYMinVal,
-									out tXMaxVal, out tYMaxVal );
-				}
-				else
-				{
-					// Call the GetRange() member function for the current
-					// curve to get the min and max values
-					curve.GetRange( out tXMinVal, out tXMaxVal,
-									out tYMinVal, out tYMaxVal, bIgnoreInitial, true, pane );
-				}
-   				
-				// isYOrd is true if the Y axis is an ordinal type
-				Scale yScale = curve.GetYAxis( pane ).Scale;
-
-				Scale xScale = pane.XAxis.Scale;
-				bool isYOrd = yScale.IsAnyOrdinal;
-				// isXOrd is true if the X axis is an ordinal type
-				bool isXOrd = xScale.IsAnyOrdinal;
-   							
-				// For ordinal Axes, the data range is just 1 to Npts
-				if ( isYOrd && !curve.IsOverrideOrdinal )
-				{
-					tYMinVal = 1.0;
-					tYMaxVal = curve.NPts;
-				}
-				if ( isXOrd && !curve.IsOverrideOrdinal )
-				{
-					tXMinVal = 1.0;
-					tXMaxVal = curve.NPts;
-				}
-
-				// Bar types always include the Y=0 value
-				if ( curve.IsBar )
-				{
-					if ( pane._barSettings.Base == BarBase.X )
+					// For stacked types, use the GetStackRange() method which accounts for accumulated values
+					// rather than simple curve values.
+					if ( ( ( curve is BarItem ) && ( pane._barSettings.Type == BarType.Stack ||
+							pane._barSettings.Type == BarType.PercentStack ) ) ||
+						( ( curve is LineItem ) && pane.LineType == LineType.Stack ) )
 					{
-						if ( pane._barSettings.Type != BarType.ClusterHiLow )
-						{
-							if ( tYMinVal > 0 )
-								tYMinVal = 0;
-							else if ( tYMaxVal < 0 )
-								tYMaxVal = 0;
-						}
-   					
-						// for non-ordinal axes, expand the data range slightly for bar charts to
-						// account for the fact that the bar clusters have a width
-						if ( !isXOrd )
-						{
-							tXMinVal -= pane._barSettings._clusterScaleWidth / 2.0;
-							tXMaxVal += pane._barSettings._clusterScaleWidth / 2.0;
-						}
+						GetStackRange( pane, curve, out tXMinVal, out tYMinVal,
+										out tXMaxVal, out tYMaxVal );
 					}
 					else
 					{
-						if ( pane._barSettings.Type != BarType.ClusterHiLow )
+						// Call the GetRange() member function for the current
+						// curve to get the min and max values
+						curve.GetRange( out tXMinVal, out tXMaxVal,
+										out tYMinVal, out tYMaxVal, bIgnoreInitial, true, pane );
+					}
+
+					// isYOrd is true if the Y axis is an ordinal type
+					Scale yScale = curve.GetYAxis( pane ).Scale;
+
+					Scale xScale = pane.XAxis.Scale;
+					bool isYOrd = yScale.IsAnyOrdinal;
+					// isXOrd is true if the X axis is an ordinal type
+					bool isXOrd = xScale.IsAnyOrdinal;
+
+					// For ordinal Axes, the data range is just 1 to Npts
+					if ( isYOrd && !curve.IsOverrideOrdinal )
+					{
+						tYMinVal = 1.0;
+						tYMaxVal = curve.NPts;
+					}
+					if ( isXOrd && !curve.IsOverrideOrdinal )
+					{
+						tXMinVal = 1.0;
+						tXMaxVal = curve.NPts;
+					}
+
+					// Bar types always include the Y=0 value
+					if ( curve.IsBar )
+					{
+						if ( pane._barSettings.Base == BarBase.X )
 						{
-							if ( tXMinVal > 0 )
-								tXMinVal = 0;
-							else if ( tXMaxVal < 0 )
-								tXMaxVal = 0;
+							if ( pane._barSettings.Type != BarType.ClusterHiLow )
+							{
+								if ( tYMinVal > 0 )
+									tYMinVal = 0;
+								else if ( tYMaxVal < 0 )
+									tYMaxVal = 0;
+							}
+
+							// for non-ordinal axes, expand the data range slightly for bar charts to
+							// account for the fact that the bar clusters have a width
+							if ( !isXOrd )
+							{
+								tXMinVal -= pane._barSettings._clusterScaleWidth / 2.0;
+								tXMaxVal += pane._barSettings._clusterScaleWidth / 2.0;
+							}
 						}
-   						
-						// for non-ordinal axes, expand the data range slightly for bar charts to
-						// account for the fact that the bar clusters have a width
-						if ( !isYOrd )
+						else
 						{
-							tYMinVal -= pane._barSettings._clusterScaleWidth / 2.0;
-							tYMaxVal += pane._barSettings._clusterScaleWidth / 2.0;
+							if ( pane._barSettings.Type != BarType.ClusterHiLow )
+							{
+								if ( tXMinVal > 0 )
+									tXMinVal = 0;
+								else if ( tXMaxVal < 0 )
+									tXMaxVal = 0;
+							}
+
+							// for non-ordinal axes, expand the data range slightly for bar charts to
+							// account for the fact that the bar clusters have a width
+							if ( !isYOrd )
+							{
+								tYMinVal -= pane._barSettings._clusterScaleWidth / 2.0;
+								tYMaxVal += pane._barSettings._clusterScaleWidth / 2.0;
+							}
 						}
 					}
+
+					// determine which curve has the maximum number of points
+					if ( curve.NPts > maxPts )
+						maxPts = curve.NPts;
+
+					// If the min and/or max values from the current curve
+					// are the absolute min and/or max, then save the values
+					// Also, differentiate between Y and Y2 values
+
+					if ( tYMinVal < yScale._rangeMin )
+						yScale._rangeMin = tYMinVal;
+					if ( tYMaxVal > yScale._rangeMax )
+						yScale._rangeMax = tYMaxVal;
+
+
+					if ( tXMinVal < xScale._rangeMin )
+						xScale._rangeMin = tXMinVal;
+					if ( tXMaxVal > xScale._rangeMax )
+						xScale._rangeMax = tXMaxVal;
 				}
 
-				// determine which curve has the maximum number of points
-				if ( curve.NPts > maxPts )
-					maxPts = curve.NPts;
-
-				// If the min and/or max values from the current curve
-				// are the absolute min and/or max, then save the values
-				// Also, differentiate between Y and Y2 values
-				
-				if ( tYMinVal < yScale._rangeMin )
-					yScale._rangeMin = tYMinVal;
-				if ( tYMaxVal > yScale._rangeMax )
-					yScale._rangeMax = tYMaxVal;
-					
-				
-				if ( tXMinVal < xScale._rangeMin )
-					xScale._rangeMin = tXMinVal;
-				if ( tXMaxVal > xScale._rangeMax )
-					xScale._rangeMax = tXMaxVal;
+				pane.XAxis.Scale.SetRange( pane, pane.XAxis );
+				foreach ( YAxis axis in pane.YAxisList )
+					axis.Scale.SetRange( pane, axis );
+				foreach ( Y2Axis axis in pane.Y2AxisList )
+					axis.Scale.SetRange( pane, axis );
 			}
-		
-			pane.XAxis.Scale.SetRange( pane, pane.XAxis );
-			foreach ( YAxis axis in pane.YAxisList )
-				axis.Scale.SetRange( pane, axis );
-			foreach ( Y2Axis axis in pane.Y2AxisList )
-				axis.Scale.SetRange( pane, axis );
-
 		}
 
 		private void InitScale( Scale scale, bool isBoundedRanges )

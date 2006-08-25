@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.13 $ $Date: 2006-07-14 06:44:06 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2006-08-25 05:19:09 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane _pane;
@@ -104,7 +104,7 @@ namespace ZedGraph
 			lowVal = PointPair.Missing;
 			baseVal = PointPair.Missing;
 
-			if ( curve == null || curve.Points.Count <= iPt )
+			if ( curve == null || curve.Points.Count <= iPt || !curve.IsVisible )
 				return false;
 
 			Axis baseAxis = curve.BaseAxis( pane );
@@ -128,7 +128,7 @@ namespace ZedGraph
 				foreach ( CurveItem tmpCurve in pane.CurveList )
 				{
 					// Sum the value for the current curve only if it is a bar
-					if ( tmpCurve.IsBar )
+					if ( tmpCurve.IsBar && tmpCurve.IsVisible )
 					{
 						curVal = PointPair.Missing;
 						// For non-ordinal curves, find a matching base value (must match exactly)
@@ -237,7 +237,7 @@ namespace ZedGraph
 				foreach ( CurveItem tmpCurve in pane.CurveList )
 				{
 					// make sure the curve is a Line type
-					if ( tmpCurve is LineItem )
+					if ( tmpCurve is LineItem && tmpCurve.IsVisible )
 					{
 						curVal = PointPair.Missing;
 						// For non-ordinal curves, find a matching base value (must match exactly)

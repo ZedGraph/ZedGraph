@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	/// 
 	/// <author>Jerry Vos and John Champion</author>
-	/// <version> $Revision: 3.3 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2006-08-25 05:19:09 $ </version>
 	[Serializable]
 	public class RadarPointList : List<PointPair>, IPointList, IPointListEdit
 	{
@@ -54,7 +54,7 @@ namespace ZedGraph
 			{
 				int count = this.Count;
 				// The last point is a repeat of the first point
-				if ( index == count )
+				if ( index == count - 1 )
 					index = 0;
 
 				if ( index < 0 || index >= count )
@@ -70,7 +70,7 @@ namespace ZedGraph
 			{
 				int count = this.Count;
 				// The last point is a repeat of the first point
-				if ( index == count )
+				if ( index == count - 1 )
 					index = 0;
 
 				if ( index < 0 || index >= count )

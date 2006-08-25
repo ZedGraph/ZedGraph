@@ -1,7 +1,13 @@
 == Version 5 ==
 
+;22-Aug-2006 (by Champion)
+: [FIX] Repair index problem in RadarPointList indexer property
+: [UPD] Make Log scales honor step sizes other than 1
+: [UPD] Make GetRange() and ValueHandler (for stacks) honor the IsVisible property for curves
+
 ;7-Aug-2006 (by Champion)
 : [NEW] Add linear regression to PointPairList (from Brian Chappell)
+: [UPD] Increase max value in CalcNumTics from 500 to 1000
 
 ;5-Aug-2006 (by Champion)
 : [FIX] fix the minauto/maxauto problem for date scales.

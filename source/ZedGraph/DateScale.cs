@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.11 $ $Date: 2006-08-02 05:53:54 $ </version>
+	/// <version> $Revision: 1.12 $ $Date: 2006-08-25 05:19:09 $ </version>
 	[Serializable]
 	class DateScale : Scale, ISerializable //, ICloneable
 	{
@@ -365,8 +365,8 @@ namespace ZedGraph
 
 			if ( nTics < 1 )
 				nTics = 1;
-			else if ( nTics > 500 )
-				nTics = 500;
+			else if ( nTics > 1000 )
+				nTics = 1000;
 
 			return nTics;
 		}
