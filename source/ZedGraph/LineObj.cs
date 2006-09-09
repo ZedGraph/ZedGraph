@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// a single line segment, drawn as a "decoration" on the chart.</remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-09-09 17:32:01 $ </version>
 	[Serializable]
 	public class LineObj : GraphObj, ICloneable, ISerializable
 	{
@@ -148,7 +148,7 @@ namespace ZedGraph
 		/// <param name="y2">The y position of the ending point that defines the
 		/// line.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		public LineObj( Color color, float x1, float y1, float x2, float y2 )
+		public LineObj( Color color, double x1, double y1, double x2, double y2 )
 			: base( x1, y1, x2 - x1, y2 - y1 )
 		{
 			_penWidth = Default.PenWidth;
@@ -177,7 +177,7 @@ namespace ZedGraph
 		/// <param name="y2">The y position of the ending point that defines the
 		/// <see cref="LineObj"/>.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		public LineObj( float x1, float y1, float x2, float y2 )
+		public LineObj( double x1, double y1, double x2, double y2 )
 			: this( Default.Color, x1, y1, x2, y2 )
 		{
 		}

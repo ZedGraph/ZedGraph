@@ -27,7 +27,7 @@ namespace ZedGraph.ControlTest
 		{
 			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
-			//CreateGraph_BasicLinear( zedGraphControl1 );
+			CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl1 );
@@ -68,7 +68,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_SplineTest( zedGraphControl1 );
 			//CreateGraph_StackedBars( zedGraphControl1 );
 			//CreateGraph_StackedMultiBars( zedGraphControl1 );
-			CreateGraph_StackLine( zedGraphControl1 );
+			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_StickToCurve( zedGraphControl1 );
 			//CreateGraph_TestScroll( zedGraphControl1 );
 			//CreateGraph_TextBasic( zedGraphControl2 );
@@ -214,10 +214,10 @@ namespace ZedGraph.ControlTest
 			z1.IsEnableHZoom = true;
 			z1.IsEnableVZoom = true;
 
-			for ( int i = 0; i < 18; i++ )
+			for ( int i = 11; i < 16; i++ )
 			{
-				x = new XDate( 1995, 8, 5, i, i * 2, i * 3 );
-				//x = (double) i;
+				//x = new XDate( 1995, 8, 5, i, i * 2, i * 3 );
+				x = (double) i;
 
 				y1 = ( Math.Sin( i / 9.0 * Math.PI ) + 1.1 ) * 1000.0;
 				y2 = ( Math.Cos( i / 9.0 * Math.PI ) + 1.1 ) * 20.0 + 5.0;
@@ -260,13 +260,18 @@ namespace ZedGraph.ControlTest
 			myCurve.Symbol.Fill = fill;
 			myCurve.Symbol.Border.IsVisible = false;
 
-			myPane.XAxis.Scale.Format = "HHMM";
+			//myPane.XAxis.Scale.Format = "HHMM";
 			//myPane.XAxis.ScaleMag = 0;
-			myPane.XAxis.Type = AxisType.Date;
+			//myPane.XAxis.Type = AxisType.Date;
 			//myPane.YAxis.Max = 2499.9;
 			//myPane.YAxis.IsScaleVisible = false;
 			//myPane.YAxis.IsTic = false;
 			//myPane.YAxis.IsMinorTic = false;
+
+			myPane.XAxis.Scale.BaseTic = 10;
+			myPane.XAxis.Scale.Min = 10;
+			myPane.XAxis.Scale.Max = 16;
+			myPane.XAxis.Scale.MajorStep = 3;
 
 
 			myPane.Y2Axis.IsVisible = true;
@@ -580,6 +585,11 @@ namespace ZedGraph.ControlTest
 		// Basic curve test - Linear Axis
 		private void CreateGraph_BasicLinear( ZedGraphControl z1 )
 		{
+			Color rgb = Color.FromArgb( 123, 240, 098 );
+			HSBColor hsb = HSBColor.FromRGB( rgb );
+			Color rgb2 = hsb.ToRGB();
+
+
 			GraphPane myPane = z1.GraphPane;
 
 			//myTimer = new Timer();
@@ -587,12 +597,13 @@ namespace ZedGraph.ControlTest
 			//myTimer.Tick += new EventHandler( MyTimer_Tick );
 			//myTimer.Interval = 500;
 			//myTimer.Start();
-
+			myPane.XAxis.Type = AxisType.Date;
 
 			PointPairList list = new PointPairList();
 			for ( int i = 0; i < 36; i++ )
 			{
-				double x = (double)i + 5;
+				double x = XDate.CalendarDateToXLDate( 2006, i, 1, 0, 0, 0 );
+
 				double y = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.2 ) );
 				list.Add( x, y, 0 );
 			}
@@ -605,9 +616,9 @@ namespace ZedGraph.ControlTest
 			myCurve.Symbol.Fill.RangeDefault = 0;
 			myCurve.Symbol.Fill.SecondaryValueGradientColor = Color.Empty;
 
-			z1.IsShowHScrollBar = true;
-			z1.IsShowVScrollBar = true;
-			z1.IsAutoScrollRange = true;
+			//z1.IsShowHScrollBar = true;
+			//z1.IsShowVScrollBar = true;
+			//z1.IsAutoScrollRange = true;
 
 			z1.IsEnableVEdit = true;
 			//z1.IsEnableVEdit = false;
@@ -622,13 +633,36 @@ namespace ZedGraph.ControlTest
 			// line is black color, width is 2.0
 			// The line is located at X value = 10.0
 			// The line runs from 0 to 1 (chart fraction)
-			ArrowObj arrow = new ArrowObj( Color.Black, 2.0f, 10f, 0f, 10f, 1f );
-			arrow.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
-			myPane.GraphObjList.Add( arrow );
+			LineObj line = new LineObj();
+			line.Color = Color.Black;
+			line.Location.X1 = XDate.CalendarDateToXLDate( 2007, 1, 1, 0, 0, 0 );
+			line.Location.Y1 = 0;
+			line.Location.Width = 0;
+			line.Location.Height = 1;
+			line.PenWidth = 5.0f;
+			line.IsClippedToChartRect = true;
+			line.ZOrder = ZOrder.E_BehindAxis;
+			line.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
+			myPane.GraphObjList.Add( line );
 
 			myPane.XAxis.Title.FontSpec.Family = "Tahoma";
 
 			//myPane.YAxis.Scale.IsReverse = true;
+
+			myPane.Margin.Left = 50;
+			myPane.Margin.Bottom = 50;
+			myPane.Fill = new Fill( Color.White, Color.SkyBlue, 45.0f );
+
+			BoxObj box = new BoxObj( 0, 0, 1, 1, Color.Black, Color.Empty );
+			box.Location.CoordinateFrame = CoordType.PaneFraction;
+			box.ZOrder = ZOrder.F_BehindChartFill;
+			myPane.GraphObjList.Add( box );
+
+			box = new BoxObj( .05, .0, 1.0, 0.9, Color.Empty, Color.LightGoldenrodYellow );
+			box.Location.CoordinateFrame = CoordType.PaneFraction;
+			box.ZOrder = ZOrder.G_BehindAll;
+			myPane.GraphObjList.Add( box );
+
 
 			z1.AxisChange();
 
@@ -2247,17 +2281,14 @@ namespace ZedGraph.ControlTest
 
 		void zgc_Scroll( object sender, ScrollEventArgs e )
 		{
-			int i = 10 ;
 		}
 
 		void zgc_ScrollDoneEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState, ZoomState newState )
 		{
-			int i=5;
 		}
 
 		void zgc_ScrollProgressEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState, ZoomState newState )
 		{
-			int i=5;
 		}
 
 		// Basic curve test - two text axes

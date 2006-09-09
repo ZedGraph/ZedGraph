@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-09-09 17:32:01 $ </version>
 	[Serializable]
 	public class ArrowObj : LineObj, ICloneable, ISerializable
 	{
@@ -120,8 +120,9 @@ namespace ZedGraph
 		/// <param name="y2">The y position of the ending point that defines the
 		/// arrow.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		public ArrowObj( Color color, float size, float x1, float y1,
-					float x2, float y2 ) : base( color, x1, y1, x2, y2 )
+		public ArrowObj( Color color, float size, double x1, double y1,
+					double x2, double y2 )
+			: base( color, x1, y1, x2, y2 )
 		{
 			_isArrowHead = Default.IsArrowHead;
 			_size = size;
@@ -144,8 +145,8 @@ namespace ZedGraph
 		/// <param name="y2">The y position of the ending point that defines the
 		/// <see cref="ArrowObj"/>.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		public ArrowObj( float x1, float y1, float x2, float y2 ) :
-			this( LineObj.Default.Color, Default.Size, x1, y1, x2, y2 )
+		public ArrowObj( double x1, double y1, double x2, double y2 )
+			: this( LineObj.Default.Color, Default.Size, x1, y1, x2, y2 )
 		{
 		}
 

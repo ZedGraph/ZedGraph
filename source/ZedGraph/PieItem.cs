@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.25 $ $Date: 2006-07-02 06:42:01 $ </version>
+	/// <version> $Revision: 1.26 $ $Date: 2006-09-09 17:32:01 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem, ICloneable, ISerializable
 	{
@@ -62,7 +62,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Private	field	that stores the	<see cref="ZedGraph.Fill"/> data for this
-		/// <see	cref="PieItem"/>.	 Use	the public property <see	cref="Fill"/> to
+		/// <see	cref="PieItem"/>.	 Use the public property <see	cref="Fill"/> to
 		/// access this value.
 		/// </summary>
 		private Fill _fill;
@@ -241,7 +241,7 @@ namespace ZedGraph
 		/// </summary>
 		public GraphicsPath SlicePath
 		{
-			get { return ( _slicePath ); }
+			get { return _slicePath; }
 			//			set { this.slicePath = value; } 
 		}
 
@@ -251,7 +251,7 @@ namespace ZedGraph
 		/// </summary>
 		public TextObj LabelDetail
 		{
-			get { return ( _labelDetail ); }
+			get { return _labelDetail; }
 			set { _labelDetail = value; }
 		}
 
@@ -266,11 +266,21 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Gets or sets the <see cref="Fill" /> object which is used to fill the
+		/// pie slice with color.
+		/// </summary>
+		public Fill Fill
+		{
+			get { return _fill; }
+			set { _fill = value; }
+		}
+
+		/// <summary>
 		/// Gets or sets the arc length (in degrees) of this <see cref="PieItem"/>.
 		/// </summary>
 		private float SweepAngle
 		{
-			get { return ( _sweepAngle ); }
+			get { return _sweepAngle; }
 			set { _sweepAngle = value; }
 		}
 
@@ -941,7 +951,7 @@ namespace ZedGraph
 					curve._labelStr = curve._label._text + ": " + curve._pieValue.ToString( "F", labelFormat );
 					break;
 				case PieLabelType.Name_Percent:
-					curve._labelStr = curve._label._text +": " + ( curve._sweepAngle / 360 ).ToString( "P", labelFormat );
+					curve._labelStr = curve._label._text + ": " + ( curve._sweepAngle / 360 ).ToString( "P", labelFormat );
 					break;
 				case PieLabelType.Name_Value_Percent:
 					curve._labelStr = curve._label._text + ": " + curve._pieValue.ToString( "F", labelFormat ) +

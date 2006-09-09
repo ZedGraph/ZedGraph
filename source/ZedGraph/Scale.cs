@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.15 $ $Date: 2006-08-25 05:19:09 $ </version>
+	/// <version> $Revision: 1.16 $ $Date: 2006-09-09 17:32:01 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -1260,12 +1260,14 @@ namespace ZedGraph
 		/// The format of the <see cref="Axis"/> tic labels.
 		/// </summary>
 		/// <remarks>
-		/// This property is only used if the <see cref="Type"/> is set to <see cref="AxisType.Date"/>.
+		/// This property may be a date format or a numeric format, depending on the setting of
+		/// <see cref="Type">Scale.Type</see>.
 		/// This property may be set automatically by ZedGraph, depending on the state of
 		/// <see cref="FormatAuto"/>.
 		/// </remarks>
-		/// <value>This format string is as defined for the <see cref="XDate.ToString()"/> function.
-		/// The format string conforms to the <see cref="System.Globalization.DateTimeFormatInfo" />.
+		/// <value>The format string conforms to the
+		/// <see cref="System.Globalization.DateTimeFormatInfo" /> for date formats, and
+		/// <see cref="System.Globalization.NumberFormatInfo" /> for numeric formats.
 		/// </value>
 		/// <seealso cref="Mag"/>
 		/// <seealso cref="FormatAuto"/>

@@ -1,5 +1,11 @@
 == Version 5 ==
 
+;8-Sep-2006 (by Champion) (version 5.0.2)
+: [FIX] Predefine _clusterScaleWidth=1.0, then calculate it after picking scales to avoid invalid value issues
+: [UPD] Change Scale.Format documentation to reflect usage as Date and Numeric format modes
+: [UPD] Use doubles for location data in GraphObj constructors instead of floats
+: [UPD] Add the missing PieItem.Fill public property
+
 ;22-Aug-2006 (by Champion)
 : [FIX] Repair index problem in RadarPointList indexer property
 : [UPD] Make Log scales honor step sizes other than 1

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-09-09 17:32:02 $ </version>
 	[Serializable]
 	public class TextObj : GraphObj, ICloneable, ISerializable
 	{
@@ -188,8 +188,8 @@ namespace ZedGraph
 		/// <see cref="ZedGraph.Location.CoordinateFrame"/> property.  The text will be
 		/// aligned to this position based on the
 		/// <see cref="AlignV"/> property.</param>
-		public TextObj( string text, float x, float y ) :
-			base( x, y )
+		public TextObj( string text, double x, double y )
+			: base( x, y )
 		{
 			Init( text );
 		}
@@ -228,8 +228,8 @@ namespace ZedGraph
 		/// <param name="coordType">The <see cref="CoordType"/> enum value that
 		/// indicates what type of coordinate system the x and y parameters are
 		/// referenced to.</param>
-		public TextObj( string text, float x, float y, CoordType coordType ) :
-			base( x, y, coordType )
+		public TextObj( string text, double x, double y, CoordType coordType )
+			: base( x, y, coordType )
 		{
 			Init( text );
 		}
@@ -256,8 +256,8 @@ namespace ZedGraph
 		/// the horizontal alignment of the object with respect to the (x,y) location</param>
 		/// <param name="alignV">The <see cref="ZedGraph.AlignV"/> enum that specifies
 		/// the vertical alignment of the object with respect to the (x,y) location</param>
-		public TextObj( string text, float x, float y, CoordType coordType, AlignH alignH, AlignV alignV ) :
-			base( x, y, coordType, alignH, alignV )
+		public TextObj( string text, double x, double y, CoordType coordType, AlignH alignH, AlignV alignV )
+			: base( x, y, coordType, alignH, alignV )
 		{
 			Init( text );
 		}

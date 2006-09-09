@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-09-09 17:32:01 $ </version>
 	[Serializable]
 	public class ImageObj : GraphObj, ICloneable, ISerializable
 	{
@@ -167,8 +167,8 @@ namespace ZedGraph
 		/// <param name="height">The height of the rectangle that defines the
 		/// <see cref="ImageObj"/> location.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
-		public ImageObj( Image image, float left, float top,
-					float width, float height ) :
+		public ImageObj( Image image, double left, double top,
+					double width, double height ) :
 				base( left, top, width, height )
 		{
 			_image = image;
