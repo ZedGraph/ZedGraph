@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.14 $ $Date: 2006-08-25 05:19:09 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2006-09-25 02:57:53 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane _pane;
@@ -269,8 +269,15 @@ namespace ZedGraph
 						if ( tmpCurve == curve )
 						{
 							lowVal = stack;
-							hiVal = ( curVal == PointPair.Missing || stack == PointPair.Missing ) ?
-								PointPair.Missing : stack + curVal;
+//							if ( curVal < 0 && stack == 0 )
+//							{
+//								stack = curVal;
+//								lowVal = curVal;
+//								hiVal = curVal;
+//							}
+//							else
+								hiVal = ( curVal == PointPair.Missing || stack == PointPair.Missing ) ?
+									PointPair.Missing : stack + curVal;
 						}
 
 						// sum all the curves to a single total.  This includes both positive and

@@ -27,7 +27,7 @@ namespace ZedGraph.ControlTest
 		{
 			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
-			CreateGraph_BasicLinear( zedGraphControl1 );
+			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl1 );
@@ -68,7 +68,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_SplineTest( zedGraphControl1 );
 			//CreateGraph_StackedBars( zedGraphControl1 );
 			//CreateGraph_StackedMultiBars( zedGraphControl1 );
-			//CreateGraph_StackLine( zedGraphControl1 );
+			CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_StickToCurve( zedGraphControl1 );
 			//CreateGraph_TestScroll( zedGraphControl1 );
 			//CreateGraph_TextBasic( zedGraphControl2 );
@@ -620,6 +620,7 @@ namespace ZedGraph.ControlTest
 			//z1.IsShowVScrollBar = true;
 			//z1.IsAutoScrollRange = true;
 
+			z1.IsEnableHEdit = true;
 			z1.IsEnableVEdit = true;
 			//z1.IsEnableVEdit = false;
 
@@ -649,33 +650,59 @@ namespace ZedGraph.ControlTest
 
 			//myPane.YAxis.Scale.IsReverse = true;
 
-			myPane.Margin.Left = 50;
-			myPane.Margin.Bottom = 50;
+			myPane.Margin.Left = 40;
+			myPane.Margin.Bottom = 40;
+			myPane.XAxis.Title.IsVisible = false;
+			myPane.YAxis.Title.IsVisible = false;
 			myPane.Fill = new Fill( Color.White, Color.SkyBlue, 45.0f );
+
+			BoxObj box2 = new BoxObj( 0.4, 0.02, 0.2, 0.2, Color.Black, Color.Red );
+			box2.Location.CoordinateFrame = CoordType.PaneFraction;
+			box2.ZOrder = ZOrder.G_BehindAll;
+			z1.GraphPane.GraphObjList.Add( box2 );
 
 			BoxObj box = new BoxObj( 0, 0, 1, 1, Color.Black, Color.Empty );
 			box.Location.CoordinateFrame = CoordType.PaneFraction;
 			box.ZOrder = ZOrder.F_BehindChartFill;
 			myPane.GraphObjList.Add( box );
 
-			box = new BoxObj( .05, .0, 1.0, 0.9, Color.Empty, Color.LightGoldenrodYellow );
+			box = new BoxObj( .05, .0, 1.0, 0.92, Color.Empty, Color.LightGoldenrodYellow );
 			box.Location.CoordinateFrame = CoordType.PaneFraction;
 			box.ZOrder = ZOrder.G_BehindAll;
 			myPane.GraphObjList.Add( box );
 
-
+			//myPane.XAxis.Type = AxisType.Linear;
+			myPane.XAxis.Scale.Format = "HH:mm:ss.fff";
+			//myPane.XAxis.Scale.Format = "HH:mm";
+			//myPane.XAxis.Scale.Format = "h tt";
+			//myPane.XAxis.Scale.Format = "dd-MMM-yyyy";
+			//myPane.XAxis.Scale.Format = "y";
+			//myPane.XAxis.Scale.Format = "T";
+			//myPane.XAxis.Scale.Format = "g";
+			//myPane.XAxis.Scale.Format = "f";
+			//myPane.XAxis.Scale.Format = "D";
+			//myPane.XAxis.Scale.Format = "d";
+			//myPane.XAxis.Scale.Format = "e";
+			//myPane.XAxis.Scale.Format = "e2";
+			//myPane.XAxis.Scale.Format = "c0";
+			//myPane.XAxis.Scale.Format = "f2";
+			//myPane.XAxis.Scale.Format = "0.00'%'";
 			z1.AxisChange();
 
+			z1.GraphPane.XAxis.Color = Color.Red;
+			z1.GraphPane.XAxis.MajorTic.Color = Color.Blue;
+			z1.GraphPane.XAxis.MajorTic.PenWidth = 1.0f;
+			//z1.GraphPane.Chart.Border.IsVisible = false;
 			//z1.GraphPane.XAxis.Type = AxisType.Log;
 
-			//z1.MasterPane[0].XAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler( XScaleFormatEvent );
+			z1.GraphPane.XAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler( XScaleFormatEvent );
 			//z1.MasterPane[0].YAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler( YScaleFormatEvent );
 
 		}
 
 		public string XScaleFormatEvent( GraphPane pane, Axis axis, double val, int index )
 		{
-			return "( X= " + val.ToString() + ")";
+			return val.ToString("f2") + " cm";
 		}
 
 		public string YScaleFormatEvent( GraphPane pane, Axis axis, double val, int index )
@@ -792,14 +819,15 @@ namespace ZedGraph.ControlTest
 			PointPairList list2 = new PointPairList();
 			PointPairList list3 = new PointPairList();
 			PointPairList list4 = new PointPairList();
-			for ( int i = 0; i < 36; i++ )
+			for ( int i = 0; i < 36; i+=5 )
 			{
 				double x = (double)i + 5;
-				double y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) );
+				double y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) ) - 3.0;
 				if ( i == 15 )
 				{
 					list.Add( x, y );
-					list2.Add( x, PointPair.Missing );
+					//list2.Add( x, PointPair.Missing );
+					list2.Add( x, 1.0 );
 					list3.Add( x, 2 + Math.Sin( i * 0.2 + Math.PI ) );
 					list4.Add( x, 2.0 );
 				}
@@ -814,22 +842,30 @@ namespace ZedGraph.ControlTest
 			}
 			LineItem myCurve = myPane.AddCurve( "line 1", list, Color.Black, SymbolType.Diamond );
 			LineItem myCurve2 = myPane.AddCurve( "line 2", list2, Color.Black, SymbolType.Square );
-			LineItem myCurve3 = myPane.AddCurve( "line 3", list3, Color.Black, SymbolType.Circle );
-			LineItem myCurve4 = myPane.AddCurve( "line 4", list4, Color.Black, SymbolType.Triangle );
+			//LineItem myCurve3 = myPane.AddCurve( "line 3", list3, Color.Black, SymbolType.Circle );
+			//LineItem myCurve4 = myPane.AddCurve( "line 4", list4, Color.Black, SymbolType.Triangle );
 
+			//myCurve2.IsY2Axis = true;
 			myPane.LineType = LineType.Stack;
 
 			myCurve.Line.Fill = new Fill( Color.White, Color.Maroon, 45.0f );
 			myCurve2.Line.Fill = new Fill( Color.White, Color.Blue, 45.0f );
-			myCurve3.Line.Fill = new Fill( Color.White, Color.Green, 45.0f );
-			myCurve4.Line.Fill = new Fill( Color.White, Color.Red, 45.0f );
+			//myCurve3.Line.Fill = new Fill( Color.White, Color.Green, 45.0f );
+			//myCurve4.Line.Fill = new Fill( Color.White, Color.Red, 45.0f );
 			myCurve.Symbol.Fill = new Fill( Color.White );
 			myCurve2.Symbol.Fill = new Fill( Color.White );
-			myCurve3.Symbol.Fill = new Fill( Color.White );
-			myCurve4.Symbol.Fill = new Fill( Color.White );
+			myCurve.Line.SmoothTension = 0.5f;
+			myCurve2.Line.SmoothTension = 0.5f;
+			myCurve.Line.IsSmooth = true;
+			myCurve2.Line.IsSmooth = true;
+			//myCurve3.Symbol.Fill = new Fill( Color.White );
+			//myCurve4.Symbol.Fill = new Fill( Color.White );
 
-			EllipseObj ellipse = new EllipseObj( 20, 8, 10, 3, Color.Black, Color.White, Color.Blue );
-			myPane.GraphObjList.Add( ellipse );
+			//EllipseObj ellipse = new EllipseObj( 20, 8, 10, 3, Color.Black, Color.White, Color.Blue );
+			//myPane.GraphObjList.Add( ellipse );
+
+			myPane.YAxis.Color = Color.Red;
+			myPane.XAxis.Color = Color.Blue;
 
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();
@@ -2104,19 +2140,19 @@ namespace ZedGraph.ControlTest
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 
 			z1.IsShowHScrollBar = true;
-			z1.ScrollMinX = 0;
-			z1.ScrollMaxX = 550;
+			//z1.ScrollMinX = 0;
+			//z1.ScrollMaxX = 550;
 			//z1.IsShowVScrollBar = true;
 			//z1.IsAutoScrollRange = true;
 
 			//z1.GraphPane.IsBoundedRanges = false;
-			z1.GraphPane.XAxis.Scale.Min = 450;
-			z1.GraphPane.XAxis.Scale.MajorStep = 10;
-			z1.GraphPane.XAxis.Scale.Max = 550;
+			//z1.GraphPane.XAxis.Scale.Min = 450;
+			//z1.GraphPane.XAxis.Scale.MajorStep = 10;
+			//z1.GraphPane.XAxis.Scale.Max = 550;
 
 			z1.AxisChange();
 			//z1.GraphPane.XAxis.IsReverse = true;
-			//z1.GraphPane.XAxis.Type = AxisType.Log;
+			z1.GraphPane.XAxis.Type = AxisType.Date;
 			//z1.IsAutoScrollRange = true;
 			//z1.ScrollMinX = 1;
 			//z1.ScrollMaxX = 100;

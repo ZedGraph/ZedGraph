@@ -164,6 +164,9 @@
     <EmbeddedResource Include="ZedGraph\ZedGraphLocale.sv.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.tw.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="zedgraphkey.snk" />

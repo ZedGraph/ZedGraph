@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.37 $ $Date: 2006-08-25 05:19:09 $ </version>
+	/// <version> $Revision: 3.38 $ $Date: 2006-09-25 02:57:53 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -629,7 +629,8 @@ namespace ZedGraph
 			// Loop for each curve in reverse order to pick up the remaining curves
 			// The reverse order is done so that curves that are later in the list are plotted behind
 			// curves that are earlier in the list
-			for ( int i=this.Count-1; i>=0; i-- )
+
+			for ( int i = this.Count - 1; i >= 0; i-- )
 			{
 				CurveItem curve = this[i];
 				
@@ -639,10 +640,13 @@ namespace ZedGraph
 				// Render the curve
 
 				//	if it's a sorted overlay bar type, it's already been done above
-				if ( !( curve.IsBar && pane._barSettings.Type == BarType.SortedOverlay ) ) 
+				if ( !( curve.IsBar && pane._barSettings.Type == BarType.SortedOverlay ) )
+				{
 					curve.Draw( g, pane, pos, scaleFactor );
+				}
 			}
 		}
+
 
 		/// <summary>
 		/// Find the ordinal position of the specified <see cref="BarItem" /> within

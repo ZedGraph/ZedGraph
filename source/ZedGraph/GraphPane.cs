@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.66 $ $Date: 2006-09-09 17:32:01 $ </version>
+	/// <version> $Revision: 3.67 $ $Date: 2006-09-25 02:57:53 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -699,6 +699,9 @@ namespace ZedGraph
 			// Fill the axis background
 			_chart.Fill.Draw( g, _chart._rect );
 
+			// Border the axis itself
+			_chart.Border.Draw( g, this.IsPenWidthScaled, scaleFactor, _chart._rect );
+
 			if ( showGraf )
 			{
 				// Draw the GraphItems that are behind the Axis objects
@@ -732,9 +735,6 @@ namespace ZedGraph
 				// Draw the GraphItems that are behind the Axis border
 				_graphObjList.Draw( g, this, scaleFactor, ZOrder.C_BehindChartBorder );
 			}
-
-			// Border the axis itself
-			_chart.Border.Draw( g, this.IsPenWidthScaled, scaleFactor, _chart._rect );
 
 			if ( showGraf )
 			{

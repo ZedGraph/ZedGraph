@@ -1,4 +1,9 @@
 == Version 5 ==
+;24-Sep-2006 (by Champion)
+: [FIX] draw chart border before axes so it does not cover the axis
+: [UPD] Add zedgraph signing to ZedGraph.Web dll
+: [NEW] Add tw language locale file (thanks to zakfong)
+: [FIX] For stacked lines, don't allow first curve to fill negative values back up to zero line
 
 ;8-Sep-2006 (by Champion) (version 5.0.2)
 : [FIX] Predefine _clusterScaleWidth=1.0, then calculate it after picking scales to avoid invalid value issues

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.29 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.30 $ $Date: 2006-09-25 02:57:53 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -600,7 +600,22 @@ namespace ZedGraph
 					RectangleF rect = path.GetBounds();
 					using ( Brush brush = _fill.MakeBrush( rect ) )
 					{
-						g.FillPath( brush, path );
+						if ( pane.LineType == LineType.Stack && yAxis.Scale._min < 0 &&
+								this.IsFirstLine( pane, curve ) )
+						{
+							float zeroPix = yAxis.Scale.Transform( 0 );
+							RectangleF tRect = pane.Chart._rect;
+							tRect.Height = zeroPix - tRect.Top;
+							if ( tRect.Height > 0 )
+							{
+								Region reg = g.Clip;
+								g.SetClip( tRect );
+								g.FillPath( brush, path );
+								g.SetClip( pane.Chart._rect );
+							}
+						}
+						else
+							g.FillPath( brush, path );
 						//brush.Dispose();
 					}
 
@@ -624,6 +639,24 @@ namespace ZedGraph
 				else
 					DrawCurve( g, pane, curve, scaleFactor );
 			}
+		}
+
+		private bool IsFirstLine( GraphPane pane, CurveItem curve )
+		{
+			CurveList curveList = pane.CurveList;
+
+			for ( int j = 0; j < curveList.Count; j++ )
+			{
+				CurveItem tCurve = curveList[j];
+
+				if ( tCurve is LineItem && tCurve.IsY2Axis == curve.IsY2Axis &&
+						tCurve.YAxisIndex == curve.YAxisIndex )
+				{
+					return tCurve == curve;
+				}
+			}
+
+			return false;
 		}
 
 		/// <summary>
