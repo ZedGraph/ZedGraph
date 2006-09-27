@@ -27,6 +27,7 @@ namespace ZedGraph.ControlTest
 		{
 			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
+			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
@@ -39,7 +40,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DateAxisTutorial( zedGraphControl1 );
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
-			//CreateGraph_DualYDemo( zedGraphControl1 );
+			CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
@@ -68,7 +69,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_SplineTest( zedGraphControl1 );
 			//CreateGraph_StackedBars( zedGraphControl1 );
 			//CreateGraph_StackedMultiBars( zedGraphControl1 );
-			CreateGraph_StackLine( zedGraphControl1 );
+			//CreateGraph_StackLine( zedGraphControl1 );
 			//CreateGraph_StickToCurve( zedGraphControl1 );
 			//CreateGraph_TestScroll( zedGraphControl1 );
 			//CreateGraph_TextBasic( zedGraphControl2 );
@@ -865,6 +866,7 @@ namespace ZedGraph.ControlTest
 			//myPane.GraphObjList.Add( ellipse );
 
 			myPane.YAxis.Color = Color.Red;
+			myPane.XAxis.Scale.Align = AlignP.Inside;
 			myPane.XAxis.Color = Color.Blue;
 
 			// Tell ZedGraph to calculate the axis ranges
@@ -1716,7 +1718,7 @@ namespace ZedGraph.ControlTest
 			{
 				double x = (double)i * 5.0;
 				double y = Math.Sin( (double)i * Math.PI / 15.0 ) * 16.0;
-				double y2 = Math.Sin( (double)i * Math.PI / 15.0 + Math.PI * 0.5 ) * 160.0;
+				double y2 = Math.Sin( (double)i * Math.PI / 15.0 + Math.PI * 0.5 ) * 0.01;
 				double y3 = Math.Sin( (double)i * Math.PI / 15.0 + Math.PI ) * 16.0;
 				double y4 = Math.Sin( (double)i * Math.PI / 15.0 + Math.PI * 1.5 ) * 16.0;
 				list.Add( x, y );
@@ -1738,10 +1740,11 @@ namespace ZedGraph.ControlTest
 			myCurve.IsY2Axis = true;
 
 			// Generate a blue curve with circle symbols, and "Beta" in the _legend
-			myCurve = myPane.AddCurve( "Gamma", list3, Color.Green, SymbolType.Square );
-			myCurve = myPane.AddCurve( "Delta", list4, Color.Violet, SymbolType.Triangle );
+		//	myCurve = myPane.AddCurve( "Gamma", list3, Color.Green, SymbolType.Square );
+		//	myCurve = myPane.AddCurve( "Delta", list4, Color.Violet, SymbolType.Triangle );
 
-
+			myCurve.Line.Style = DashStyle.DashDotDot;
+			//myCurve.Line.
 
 			// Show the x axis grid
 			myPane.XAxis.MajorGrid.IsVisible = true;
@@ -1757,9 +1760,8 @@ namespace ZedGraph.ControlTest
 			// Align the Y axis labels so they are flush to the axis
 			myPane.YAxis.Scale.Align = AlignP.Inside;
 			// Manually set the axis range
-			myPane.YAxis.Scale.Min = -30;
-			myPane.YAxis.Scale.Max = 30;
-
+		//	myPane.YAxis.Scale.Min = -30;
+		//	myPane.YAxis.Scale.Max = 30;
 			// Enable the Y2 axis display
 			myPane.Y2Axis.IsVisible = true;
 			// Make the Y2 axis scale blue
@@ -2625,6 +2627,33 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 		}
 
+		private void CreateGraph_BarJunk2( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+			myPane.CurveList.Clear();
+			PointPairList list = new PointPairList();
+
+			list.Clear();
+			list.Add( 4, 0 );
+			list.Add( -2, 1 );
+			list.Add( 5, 2 );
+			list.Add( 3, 3 );
+			string[] labels = { "bar one", "bar two", "bar three", "bar four" };
+			myPane.YAxis.Scale.TextLabels = labels;
+			myPane.YAxis.Type = AxisType.Text;
+
+			//myPane.YAxis.Cross = 0.0;
+			myPane.XAxis.MajorGrid.IsZeroLine = true;
+
+			BarItem myCurve2 = myPane.AddBar( "curve 2", list, Color.Red );
+			myCurve2.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 90 );
+
+			// Set BarBase to the YAxis for horizontal bars 
+			myPane.BarSettings.Base = BarBase.Y;
+
+			z1.AxisChange();
+			z1.Refresh();
+		}
 
 		public void CreateGraph_Contour( ZedGraphControl z1 )
 		{

@@ -1,4 +1,8 @@
 == Version 5 ==
+
+;26-Sep-2006 (by Champion)
+: [FIX] don't call Scale.SetRange() until all curves are processed in CurveList.GetRange()
+
 ;24-Sep-2006 (by Champion)
 : [FIX] draw chart border before axes so it does not cover the axis
 : [UPD] Add zedgraph signing to ZedGraph.Web dll

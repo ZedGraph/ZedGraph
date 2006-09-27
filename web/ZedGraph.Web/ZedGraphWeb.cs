@@ -39,7 +39,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.6 $ $Date: 2006-08-08 02:51:45 $</version>
+	/// <version>$Revision: 1.7 $ $Date: 2006-09-27 05:49:23 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -861,7 +861,8 @@ namespace ZedGraph.Web
 	#region Behavior Properties
 
 		/// <summary>
-		/// 
+		/// Optional setting that determines how long the cached image will remain valid. 
+		/// A zero value disables caching.
 		/// </summary>
 		/// <value></value>
 		[Category( "Behavior" ), NotifyParentProperty( true ),
@@ -876,6 +877,25 @@ namespace ZedGraph.Web
 			}
 			set { ViewState["CacheDuration"] = value; }
 		}
+
+		/// <summary>
+		/// Optional cache file suffix that can be used to modify the output cache file name
+		/// to make it unique.
+		/// </summary>
+		/// <value></value>
+		[Category( "Behavior" ), NotifyParentProperty( true ),
+		Description( "Optional cache file suffix that can be used to modify the output cache file name" +
+					" to make it unique." )]
+		public string CacheSuffix
+		{
+			get
+			{
+				string x = ViewState["CacheSuffix"] as string;
+				return ( x == null ) ? "" : x;
+			}
+			set { ViewState["CacheSuffix"] = value; }
+		}
+
 		/// <summary>
 		/// Gets or sets a boolean flag value that, if true, will cause the
 		/// <see cref="ZedGraph.GraphPane.AxisChange"/> method to be called when
@@ -1472,7 +1492,9 @@ namespace ZedGraph.Web
 					else
 					{
 						//System.Guid.NewGuid().ToString()
-						tempFileName = this.ClientID + "." + this.ImageFormatFileExtension;
+						tempFileName = this.ClientID +
+							( this.CacheSuffix != null && this.CacheSuffix.Length > 0 ? this.CacheSuffix : "" ) +
+							"." + this.ImageFormatFileExtension;
 						tempFilePathName = Context.Server.MapPath( this.RenderedImagePath );
 						tempFilePathName = Path.Combine( tempFilePathName, tempFileName );
 

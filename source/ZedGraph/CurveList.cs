@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.38 $ $Date: 2006-09-25 02:57:53 $ </version>
+	/// <version> $Revision: 3.39 $ $Date: 2006-09-27 05:49:23 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -490,13 +490,13 @@ namespace ZedGraph
 					if ( tXMaxVal > xScale._rangeMax )
 						xScale._rangeMax = tXMaxVal;
 				}
-
-				pane.XAxis.Scale.SetRange( pane, pane.XAxis );
-				foreach ( YAxis axis in pane.YAxisList )
-					axis.Scale.SetRange( pane, axis );
-				foreach ( Y2Axis axis in pane.Y2AxisList )
-					axis.Scale.SetRange( pane, axis );
 			}
+
+			pane.XAxis.Scale.SetRange( pane, pane.XAxis );
+			foreach ( YAxis axis in pane.YAxisList )
+				axis.Scale.SetRange( pane, axis );
+			foreach ( Y2Axis axis in pane.Y2AxisList )
+				axis.Scale.SetRange( pane, axis );
 		}
 
 		private void InitScale( Scale scale, bool isBoundedRanges )
