@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.28 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.29 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -396,11 +396,12 @@ namespace ZedGraph
 				if ( _isAntiAlias )
 					g.SmoothingMode = SmoothingMode.HighQuality;
 
-				Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-				GraphicsPath path = this.MakePath( g, scaleFactor );
-				Brush brush = this.Fill.MakeBrush( path.GetBounds(), dataValue );
-
-				DrawSymbol( g, x, y, path, pen, brush );
+				using ( Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+				using ( GraphicsPath path = this.MakePath( g, scaleFactor ) )
+				using ( Brush brush = this.Fill.MakeBrush( path.GetBounds(), dataValue ) )
+				{
+					DrawSymbol( g, x, y, path, pen, brush );
+				}
 
 				g.SmoothingMode = sModeSave;
 			}
@@ -523,65 +524,75 @@ namespace ZedGraph
 				// For the sake of speed, go ahead and create a solid brush and a pen
 				// If it's a gradient fill, it will be created on the fly for each symbol
 				//SolidBrush	brush = new SolidBrush( this.fill.Color );
-				Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-            //Pen pen = new Pen( this.border.Color, pane.ScaledPenWidth(_border.PenWidth * scaleFactor) );
-				
-				GraphicsPath path = MakePath( g, scaleFactor );
-				RectangleF rect = path.GetBounds();
-				Brush brush = this.Fill.MakeBrush( rect );
-				ValueHandler valueHandler = new ValueHandler( pane, false );
-				Scale xScale = pane.XAxis.Scale;
-				Scale yScale = curve.GetYAxis( pane ).Scale;
 
-				bool xIsLog = xScale.IsLog;
-				bool yIsLog = yScale.IsLog;
-
-				// Loop over each defined point							
-				for ( int i=0; i<points.Count; i++ )
+				using ( Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+				using ( GraphicsPath path = MakePath( g, scaleFactor ) )
 				{
-					// Get the user scale values for the current point
-					// use the valueHandler only for stacked types
-					if ( pane.LineType == LineType.Stack )
-					{
-						valueHandler.GetValues( curve, i, out curX, out lowVal, out curY );
-					}
-					// otherwise, just access the values directly.  Avoiding the valueHandler for
-					// non-stacked types is an optimization to minimize overhead in case there are
-					// a large number of points.
-					else
-					{
-						curX = points[i].X;
-						if ( curve is StickItem )
-							curY = points[i].Z;
-						else
-							curY = points[i].Y;
-					}
-				
-					// Any value set to double max is invalid and should be skipped
-					// This is used for calculated values that are out of range, divide
-					//   by zero, etc.
-					// Also, any value <= zero on a log scale is invalid
-				
-					if (	curX != PointPair.Missing &&
-							curY != PointPair.Missing &&
-							!System.Double.IsNaN( curX ) &&
-							!System.Double.IsNaN( curY ) &&
-							!System.Double.IsInfinity( curX ) &&
-							!System.Double.IsInfinity( curY ) &&
-							( curX > 0 || !xIsLog ) &&
-							( !yIsLog || curY > 0.0 ) )
-					{
-						// Transform the user scale values to pixel locations
-						tmpX = xScale.Transform( curve.IsOverrideOrdinal, i, curX );
-						tmpY = yScale.Transform( curve.IsOverrideOrdinal, i, curY );
+					RectangleF rect = path.GetBounds();
 
-						// If the fill type for this symbol is a Gradient by value type,
-						// the make a brush corresponding to the appropriate current value
-						if ( _fill.IsGradientValueType )
-							brush = _fill.MakeBrush( rect, points[i] );
-						// Otherwise, the brush is already defined
-						// Draw the symbol at the specified pixel location
-						this.DrawSymbol( g, tmpX, tmpY, path, pen, brush );		
+					using ( Brush brush = this.Fill.MakeBrush( rect ) )
+					{
+						ValueHandler valueHandler = new ValueHandler( pane, false );
+						Scale xScale = pane.XAxis.Scale;
+						Scale yScale = curve.GetYAxis( pane ).Scale;
+
+						bool xIsLog = xScale.IsLog;
+						bool yIsLog = yScale.IsLog;
+
+						// Loop over each defined point							
+						for ( int i = 0; i < points.Count; i++ )
+						{
+							// Get the user scale values for the current point
+							// use the valueHandler only for stacked types
+							if ( pane.LineType == LineType.Stack )
+							{
+								valueHandler.GetValues( curve, i, out curX, out lowVal, out curY );
+							}
+							// otherwise, just access the values directly.  Avoiding the valueHandler for
+							// non-stacked types is an optimization to minimize overhead in case there are
+							// a large number of points.
+							else
+							{
+								curX = points[i].X;
+								if ( curve is StickItem )
+									curY = points[i].Z;
+								else
+									curY = points[i].Y;
+							}
+
+							// Any value set to double max is invalid and should be skipped
+							// This is used for calculated values that are out of range, divide
+							//   by zero, etc.
+							// Also, any value <= zero on a log scale is invalid
+
+							if ( curX != PointPair.Missing &&
+									curY != PointPair.Missing &&
+									!System.Double.IsNaN( curX ) &&
+									!System.Double.IsNaN( curY ) &&
+									!System.Double.IsInfinity( curX ) &&
+									!System.Double.IsInfinity( curY ) &&
+									( curX > 0 || !xIsLog ) &&
+									( !yIsLog || curY > 0.0 ) )
+							{
+								// Transform the user scale values to pixel locations
+								tmpX = xScale.Transform( curve.IsOverrideOrdinal, i, curX );
+								tmpY = yScale.Transform( curve.IsOverrideOrdinal, i, curY );
+
+								// If the fill type for this symbol is a Gradient by value type,
+								// the make a brush corresponding to the appropriate current value
+								if ( _fill.IsGradientValueType )
+								{
+									using ( Brush tBrush = _fill.MakeBrush( rect, points[i] ) )
+										this.DrawSymbol( g, tmpX, tmpY, path, pen, tBrush );
+								}
+								else
+								{
+									// Otherwise, the brush is already defined
+									// Draw the symbol at the specified pixel location
+									this.DrawSymbol( g, tmpX, tmpY, path, pen, brush );
+								}
+							}
+						}
 					}
 				}
 

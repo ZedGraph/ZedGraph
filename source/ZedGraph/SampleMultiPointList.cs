@@ -52,7 +52,7 @@ namespace ZedGraph
 	/// Sample data structure containing a variety of data values, in this case the values
 	/// are related in that they correspond to the same time value.
 	/// </summary>
-	public struct PerformanceData
+	public class PerformanceData
 	{
 		/// <summary>
 		/// The time (seconds) at which these data are measured

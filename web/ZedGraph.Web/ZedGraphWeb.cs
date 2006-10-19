@@ -23,6 +23,7 @@ using System.Web.UI.WebControls;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 using System.IO;
 using System.Collections;
 using ZedGraph;
@@ -39,7 +40,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.7 $ $Date: 2006-09-27 05:49:23 $</version>
+	/// <version>$Revision: 1.8 $ $Date: 2006-10-19 04:40:15 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -1417,11 +1418,11 @@ namespace ZedGraph.Web
 					if ( stream == null )
 						throw new Exception( "Does the Build Action of the resource " + resourceName + " is set to Embedded Resource ?" );
 
-					System.Drawing.Image brushImage = new Bitmap( stream );
-					TextureBrush brush = new TextureBrush( brushImage, System.Drawing.Drawing2D.WrapMode.Tile );
-					g.FillRectangle( brush, 0, 0, this.Width, this.Height );
-					brush.Dispose();
-					brushImage.Dispose();
+					using ( System.Drawing.Image brushImage = new Bitmap( stream ) )
+					using ( TextureBrush brush = new TextureBrush( brushImage, WrapMode.Tile ) )
+					{
+						g.FillRectangle( brush, 0, 0, this.Width, this.Height );
+					}
 					stream.Close();
 				}
 				mp.Draw( g );

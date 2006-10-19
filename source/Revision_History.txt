@@ -1,5 +1,11 @@
 == Version 5 ==
 
+;18-Oct-2006 (by Champion)
+: [UPD] add using constructs for most temporary Pen, Brush, GraphicsPath instances
+: [NEW] add hungarian language locale file (thanks to cocinerox)
+: [FIX] use ppd.Show(this) to avoid sending print preview to background (thanks to Alexander Sosedkin)
+: [FIX] use tmpFont.StringAlignment = StringAlignment.Near for legend labels to fix X position
+
 ;26-Sep-2006 (by Champion)
 : [FIX] don't call Scale.SetRange() until all curves are processed in CurveList.GetRange()
 

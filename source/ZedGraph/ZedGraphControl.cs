@@ -34,6 +34,7 @@ using System.Threading;
 
 namespace ZedGraph
 {
+/*
 	/// <summary>
 	/// 
 	/// </summary>
@@ -47,15 +48,14 @@ namespace ZedGraph
 		/// 
 		/// </summary>
 		public MasterPane _masterPane;
-/*
-		public DrawingThread( Graphics g, MasterPane masterPane )
-		{
-			_g = g;
-			_masterPane = masterPane;
-		}
-*/
-	}
 
+//		public DrawingThread( Graphics g, MasterPane masterPane )
+//		{
+//			_g = g;
+//			_masterPane = masterPane;
+//		}
+	}
+*/
 
 	/// <summary>
 	/// The ZedGraphControl class provides a UserControl interface to the
@@ -66,7 +66,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.70 $ $Date: 2006-08-25 05:19:09 $ </version>
+	/// <version> $Revision: 3.71 $ $Date: 2006-10-19 04:40:14 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -1948,6 +1948,7 @@ namespace ZedGraph
 //		Thread t = null;
 		//DrawingThread dt = null;
 
+/*
 		/// <summary>
 		/// 
 		/// </summary>
@@ -1961,19 +1962,18 @@ namespace ZedGraph
 				if ( dtd._g != null && dtd._masterPane != null )
 					dtd._masterPane.Draw( dtd._g );
 
-				/*
-								else
-								{
-									using ( Graphics g2 = CreateGraphics() )
-										_masterPane.Draw( g2 );
-								}
-				*/
+				//				else
+				//				{
+				//					using ( Graphics g2 = CreateGraphics() )
+				//						_masterPane.Draw( g2 );
+				//				}
 			}
 			catch
 			{
 
 			}
 		}
+*/
 
 		/// <summary>
 		/// Called when the control has been resized.
@@ -3922,7 +3922,7 @@ namespace ZedGraph
 				PrintPreviewDialog ppd = new PrintPreviewDialog();
 				//pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
 				ppd.Document = pd;
-				ppd.Show();
+				ppd.Show( this );
 			}
 		}
 

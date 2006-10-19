@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.15 $ $Date: 2006-09-25 02:57:53 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2006-10-19 04:40:14 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane _pane;
@@ -50,7 +50,9 @@ namespace ZedGraph
 			if ( initialize )
 			{
 				// just create a dummy image, which results in a full draw operation
-				Image image = pane.GetImage();
+				using ( Image image = pane.GetImage() )
+				{
+				}
 			}
 		}
 

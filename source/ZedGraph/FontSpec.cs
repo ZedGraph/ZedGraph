@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.21 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -818,9 +818,6 @@ namespace ZedGraph
 			Matrix saveMatrix = g.Transform;
 			g.Transform = SetupMatrix( g.Transform, x, y, sizeF, alignH, alignV, _angle );
 
-			// make a solid brush for rendering the font itself
-			SolidBrush brush = new SolidBrush( _fontColor );
-
 			// Create a rectangle representing the border around the
 			// text.  Note that, while the text is drawn based on the
 			// TopCenter position, the rectangle is drawn based on
@@ -850,25 +847,26 @@ namespace ZedGraph
 			// CenterTop of the text needs to be.
 			if ( _isDropShadow )
 			{
+				float xShift = (float)( Math.Cos( _dropShadowAngle ) *
+							_dropShadowOffset * _font.Height );
+				float yShift = (float)( Math.Sin( _dropShadowAngle ) *
+							_dropShadowOffset * _font.Height );
+				RectangleF rectD = rectF;
+				rectD.Offset( xShift, yShift );
 				// make a solid brush for rendering the font itself
 				using ( SolidBrush brushD = new SolidBrush( _dropShadowColor ) )
-				{
-					float xShift = (float)( Math.Cos( _dropShadowAngle ) *
-								_dropShadowOffset * _font.Height );
-					float yShift = (float)( Math.Sin( _dropShadowAngle ) *
-								_dropShadowOffset * _font.Height );
-					RectangleF rectD = rectF;
-					rectD.Offset( xShift, yShift );
 					g.DrawString( text, _font, brushD, rectD, strFormat );
-					//brushD.Dispose();
-				}
 			}
 
-			// Draw the actual text.  Note that the coordinate system
-			// is set up such that 0,0 is at the location where the
-			// CenterTop of the text needs to be.
-			//RectangleF layoutArea = new RectangleF( 0.0F, 0.0F, sizeF.Width, sizeF.Height );
-			g.DrawString( text, _font, brush, rectF, strFormat );
+			// make a solid brush for rendering the font itself
+			using ( SolidBrush brush = new SolidBrush( _fontColor ) )
+			{
+				// Draw the actual text.  Note that the coordinate system
+				// is set up such that 0,0 is at the location where the
+				// CenterTop of the text needs to be.
+				//RectangleF layoutArea = new RectangleF( 0.0F, 0.0F, sizeF.Width, sizeF.Height );
+				g.DrawString( text, _font, brush, rectF, strFormat );
+			}
 
 			// Restore the transform matrix back to original
 			g.Transform = saveMatrix;
@@ -936,9 +934,6 @@ namespace ZedGraph
 
 			g.Transform = SetupMatrix( g.Transform, x, y, totSize, alignH, alignV, _angle );
 
-			// make a solid brush for rendering the font itself
-			SolidBrush brush = new SolidBrush( _fontColor );
-
 			// make a center justified StringFormat alignment
 			// for drawing the text
 			StringFormat strFormat = new StringFormat();
@@ -958,16 +953,20 @@ namespace ZedGraph
 			// Draw the border around the text if required
 			_border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rectF );
 
-			// Draw the actual text.  Note that the coordinate system
-			// is set up such that 0,0 is at the location where the
-			// CenterTop of the text needs to be.
-			g.DrawString( "10", _font, brush,
-							( -totSize.Width + size10.Width ) / 2.0F,
-							sizeText.Height * Default.SuperShift, strFormat );
-			g.DrawString( text, _superScriptFont, brush,
-							( totSize.Width - sizeText.Width - charWidth ) / 2.0F,
-							0.0F,
-							strFormat );
+			// make a solid brush for rendering the font itself
+			using ( SolidBrush brush = new SolidBrush( _fontColor ) )
+			{
+				// Draw the actual text.  Note that the coordinate system
+				// is set up such that 0,0 is at the location where the
+				// CenterTop of the text needs to be.
+				g.DrawString( "10", _font, brush,
+								( -totSize.Width + size10.Width ) / 2.0F,
+								sizeText.Height * Default.SuperShift, strFormat );
+				g.DrawString( text, _superScriptFont, brush,
+								( totSize.Width - sizeText.Width - charWidth ) / 2.0F,
+								0.0F,
+								strFormat );
+			}
 
 			// Restore the transform matrix back to original
 			g.Transform = saveMatrix;

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.32 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.33 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -511,49 +511,54 @@ namespace ZedGraph
 			float	x, y;
 			
 			// Get a brush for the legend label text
-			SolidBrush brushB = new SolidBrush( Color.Black );
-			
-			foreach ( GraphPane tmpPane in paneList )
+			using ( SolidBrush brushB = new SolidBrush( Color.Black ) )
 			{
-				// Loop for each curve in the CurveList collection
-				foreach ( CurveItem curve in tmpPane.CurveList )
+				foreach ( GraphPane tmpPane in paneList )
 				{
-					if ( curve._label._text != "" && curve._label._isVisible )
+					// Loop for each curve in the CurveList collection
+					foreach ( CurveItem curve in tmpPane.CurveList )
 					{
-						// Calculate the x,y (TopLeft) location of the current
-						// curve legend label
-						// assuming:
-						//  charHeight/2 for the left margin, plus legendWidth for each
-						//    horizontal column
-						//  legendHeight is the line spacing, with no extra margin above
+						if ( curve._label._text != "" && curve._label._isVisible )
+						{
+							// Calculate the x,y (TopLeft) location of the current
+							// curve legend label
+							// assuming:
+							//  charHeight/2 for the left margin, plus legendWidth for each
+							//    horizontal column
+							//  legendHeight is the line spacing, with no extra margin above
 
-						x = _rect.Left + halfGap / 2.0F +
-							( iEntry % _hStack ) * _legendItemWidth;
-						y = _rect.Top + (int) ( iEntry / _hStack ) * _legendItemHeight;
+							x = _rect.Left + halfGap / 2.0F +
+								( iEntry % _hStack ) * _legendItemWidth;
+							y = _rect.Top + (int)( iEntry / _hStack ) * _legendItemHeight;
 
-						// Draw the legend label for the current curve
-						FontSpec tmpFont = ( curve._label._fontSpec != null ) ?
-									curve._label._fontSpec : this.FontSpec;
+							// Draw the legend label for the current curve
+							FontSpec tmpFont = ( curve._label._fontSpec != null ) ?
+										curve._label._fontSpec : this.FontSpec;
 
-						tmpFont.Draw( g, pane.IsPenWidthScaled, curve._label._text,
-								x + 2.5F * _tmpSize, y + _legendItemHeight / 2.0F,
-								AlignH.Left, AlignV.Center, scaleFactor );
+							// This is required because, for long labels, the centering can affect the
+							// position in GDI+.
+							tmpFont.StringAlignment = StringAlignment.Near;
 
-						RectangleF rect = new RectangleF( x, y + _legendItemHeight / 4.0F,
-							2 * _tmpSize, _legendItemHeight / 2.0F );
-						curve.DrawLegendKey( g, tmpPane, rect, scaleFactor );
+							tmpFont.Draw( g, pane.IsPenWidthScaled, curve._label._text,
+									x + 2.5F * _tmpSize, y + _legendItemHeight / 2.0F,
+									AlignH.Left, AlignV.Center, scaleFactor );
 
-						// maintain a curve count for positioning
-						iEntry++;
+							RectangleF rect = new RectangleF( x, y + _legendItemHeight / 4.0F,
+								2 * _tmpSize, _legendItemHeight / 2.0F );
+							curve.DrawLegendKey( g, tmpPane, rect, scaleFactor );
+
+							// maintain a curve count for positioning
+							iEntry++;
+						}
 					}
+					if ( pane is MasterPane && ( (MasterPane)pane ).IsUniformLegendEntries )
+						break;
 				}
-				if ( pane is MasterPane && ((MasterPane)pane).IsUniformLegendEntries )	
-					break ;
-			}
 
-			// Draw a border around the legend if required
-			if ( iEntry > 0 )
-				this.Border.Draw( g, pane.IsPenWidthScaled, scaleFactor, _rect );
+				// Draw a border around the legend if required
+				if ( iEntry > 0 )
+					this.Border.Draw( g, pane.IsPenWidthScaled, scaleFactor, _rect );
+			}
 		}
 
 		private float GetMaxHeight( PaneList paneList, Graphics g, float scaleFactor )

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.26 $ $Date: 2006-09-09 17:32:01 $ </version>
+	/// <version> $Revision: 1.27 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem, ICloneable, ISerializable
 	{
@@ -604,10 +604,11 @@ namespace ZedGraph
 
 						if ( this.Border.IsVisible )
 						{
-							Pen borderPen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-							g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height,
-								this.StartAngle, this.SweepAngle );
-							borderPen.Dispose();
+							using ( Pen borderPen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+							{
+								g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height,
+									this.StartAngle, this.SweepAngle );
+							}
 						}
 
 						if ( _labelType != PieLabelType.None )
@@ -779,13 +780,14 @@ namespace ZedGraph
 			if ( !_labelDetail.IsVisible )
 				return;
 
-			Pen labelPen = this.Border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+			using ( Pen labelPen = this.Border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+			{
+				//draw line from intersection point to pivot point -
+				g.DrawLine( labelPen, _intersectionPoint, _pivotPoint );
 
-			//draw line from intersection point to pivot point -
-			g.DrawLine( labelPen, _intersectionPoint, _pivotPoint );
-
-			//draw horizontal line to move label away from pie...
-			g.DrawLine( labelPen, _pivotPoint, _endPoint );
+				//draw horizontal line to move label away from pie...
+				g.DrawLine( labelPen, _pivotPoint, _endPoint );
+			}
 
 			//draw the label (TextObj)
 			_labelDetail.Draw( g, pane, scaleFactor );

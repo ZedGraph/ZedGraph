@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	public class Border : ISerializable, ICloneable
 	{
@@ -297,7 +297,8 @@ namespace ZedGraph
 				float		scaledInflate = (float) ( _inflateFactor * scaleFactor );
 				tRect.Inflate( scaledInflate, scaledInflate );
 
-				g.DrawRectangle( MakePen(isPenWidthScaled, scaleFactor), tRect.X, tRect.Y, tRect.Width, tRect.Height );
+				using ( Pen pen = MakePen(isPenWidthScaled, scaleFactor) )
+					g.DrawRectangle( pen, tRect.X, tRect.Y, tRect.Width, tRect.Height );
 			}
 		}
 

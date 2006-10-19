@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.30 $ $Date: 2006-09-25 02:57:53 $ </version>
+	/// <version> $Revision: 3.31 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -486,9 +486,11 @@ namespace ZedGraph
         {
 			if ( _isVisible && !this.Color.IsEmpty )
 			{
-				Pen pen = new Pen( _color, pane.ScaledPenWidth(_width, scaleFactor) );
-				pen.DashStyle = this.Style;
-				g.DrawLine( pen, x1, y1, x2, y2 );
+				using ( Pen pen = new Pen( _color, pane.ScaledPenWidth( _width, scaleFactor ) ) )
+				{
+					pen.DashStyle = this.Style;
+					g.DrawLine( pen, x1, y1, x2, y2 );
+				}
 			}
 		}
 
@@ -516,33 +518,35 @@ namespace ZedGraph
 		{
 			Axis yAxis = curve.GetYAxis( pane );
 			float basePix = yAxis.Scale.Transform( 0.0 );
-			Pen pen = new Pen( _color, pane.ScaledPenWidth(_width, scaleFactor) );
-			pen.DashStyle = this.Style;
-
-			for ( int i=0; i<curve.Points.Count; i++ )
+			using ( Pen pen = new Pen( _color, pane.ScaledPenWidth( _width, scaleFactor ) ) )
 			{
-				PointPair pt = curve.Points[i];
+				pen.DashStyle = this.Style;
 
-				if ( 	pt.X != PointPair.Missing &&
-						pt.Y != PointPair.Missing &&
-						!System.Double.IsNaN( pt.X ) &&
-						!System.Double.IsNaN( pt.Y ) &&
-						!System.Double.IsInfinity( pt.X ) &&
-						!System.Double.IsInfinity( pt.Y ) &&
-						( !pane.XAxis._scale.IsLog || pt.X > 0.0 ) &&
-						( !yAxis._scale.IsLog || pt.Y > 0.0 ) )
+				for ( int i = 0; i < curve.Points.Count; i++ )
 				{
-					float pixY = yAxis.Scale.Transform( curve.IsOverrideOrdinal, i, pt.Y );
-					float pixX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, pt.X );
+					PointPair pt = curve.Points[i];
 
-					if ( pixX >= pane.Chart._rect.Left && pixX <= pane.Chart._rect.Right )
+					if ( pt.X != PointPair.Missing &&
+							pt.Y != PointPair.Missing &&
+							!System.Double.IsNaN( pt.X ) &&
+							!System.Double.IsNaN( pt.Y ) &&
+							!System.Double.IsInfinity( pt.X ) &&
+							!System.Double.IsInfinity( pt.Y ) &&
+							( !pane.XAxis._scale.IsLog || pt.X > 0.0 ) &&
+							( !yAxis._scale.IsLog || pt.Y > 0.0 ) )
 					{
-						if ( pixY > pane.Chart._rect.Bottom )
-							pixY = pane.Chart._rect.Bottom;
-						if ( pixY < pane.Chart._rect.Top )
-							pixY = pane.Chart._rect.Top;
+						float pixY = yAxis.Scale.Transform( curve.IsOverrideOrdinal, i, pt.Y );
+						float pixX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, pt.X );
 
-						g.DrawLine( pen, pixX, pixY, pixX, basePix );
+						if ( pixX >= pane.Chart._rect.Left && pixX <= pane.Chart._rect.Right )
+						{
+							if ( pixY > pane.Chart._rect.Bottom )
+								pixY = pane.Chart._rect.Bottom;
+							if ( pixY < pane.Chart._rect.Top )
+								pixY = pane.Chart._rect.Top;
+
+							g.DrawLine( pen, pixX, pixY, pixX, basePix );
+						}
 					}
 				}
 			}
@@ -591,36 +595,38 @@ namespace ZedGraph
 				{
 					Axis yAxis = curve.GetYAxis( pane );
 
-					GraphicsPath path = new GraphicsPath( FillMode.Winding );
-					path.AddCurve( arrPoints, 0, count-2, tension );
-
-					double yMin = yAxis._scale._min < 0 ? 0.0 : yAxis._scale._min;
-					CloseCurve( pane, curve, arrPoints, count, yMin, path );
-				
-					RectangleF rect = path.GetBounds();
-					using ( Brush brush = _fill.MakeBrush( rect ) )
+					using ( GraphicsPath path = new GraphicsPath( FillMode.Winding ) )
 					{
-						if ( pane.LineType == LineType.Stack && yAxis.Scale._min < 0 &&
-								this.IsFirstLine( pane, curve ) )
-						{
-							float zeroPix = yAxis.Scale.Transform( 0 );
-							RectangleF tRect = pane.Chart._rect;
-							tRect.Height = zeroPix - tRect.Top;
-							if ( tRect.Height > 0 )
-							{
-								Region reg = g.Clip;
-								g.SetClip( tRect );
-								g.FillPath( brush, path );
-								g.SetClip( pane.Chart._rect );
-							}
-						}
-						else
-							g.FillPath( brush, path );
-						//brush.Dispose();
-					}
+						path.AddCurve( arrPoints, 0, count - 2, tension );
 
-					// restore the zero line if needed (since the fill tends to cover it up)
-					yAxis.FixZeroLine( g, pane, scaleFactor, rect.Left, rect.Right );
+						double yMin = yAxis._scale._min < 0 ? 0.0 : yAxis._scale._min;
+						CloseCurve( pane, curve, arrPoints, count, yMin, path );
+
+						RectangleF rect = path.GetBounds();
+						using ( Brush brush = _fill.MakeBrush( rect ) )
+						{
+							if ( pane.LineType == LineType.Stack && yAxis.Scale._min < 0 &&
+									this.IsFirstLine( pane, curve ) )
+							{
+								float zeroPix = yAxis.Scale.Transform( 0 );
+								RectangleF tRect = pane.Chart._rect;
+								tRect.Height = zeroPix - tRect.Top;
+								if ( tRect.Height > 0 )
+								{
+									Region reg = g.Clip;
+									g.SetClip( tRect );
+									g.FillPath( brush, path );
+									g.SetClip( pane.Chart._rect );
+								}
+							}
+							else
+								g.FillPath( brush, path );
+							//brush.Dispose();
+						}
+
+						// restore the zero line if needed (since the fill tends to cover it up)
+						yAxis.FixZeroLine( g, pane, scaleFactor, rect.Left, rect.Right );
+					}
 				}
 
 				// If it's a smooth curve, go ahead and render the path.  Otherwise, use the
@@ -699,90 +705,92 @@ namespace ZedGraph
 			bool xIsLog = pane.XAxis._scale.IsLog;
 			bool yIsLog = yAxis._scale.IsLog;
 
-			Pen pen = new Pen( _color, pane.ScaledPenWidth( _width, scaleFactor ) );
-			pen.DashStyle = this.Style;
-
-			if ( points != null && !_color.IsEmpty && this.IsVisible )
+			using ( Pen pen = new Pen( _color, pane.ScaledPenWidth( _width, scaleFactor ) ) )
 			{
-				// Loop over each point in the curve
-				for ( int i=0; i<points.Count; i++ )
+				pen.DashStyle = this.Style;
+
+				if ( points != null && !_color.IsEmpty && this.IsVisible )
 				{
-					if ( pane.LineType == LineType.Stack )
+					// Loop over each point in the curve
+					for ( int i = 0; i < points.Count; i++ )
 					{
-						if ( !valueHandler.GetValues( curve, i, out curX, out lowVal, out curY ) )
+						if ( pane.LineType == LineType.Stack )
 						{
-							curX = PointPair.Missing;
-							curY = PointPair.Missing;
-						}
-					}
-					else
-					{
-						curX = points[i].X;
-						curY = points[i].Y;
-					}
-					
-					// Any value set to double max is invalid and should be skipped
-					// This is used for calculated values that are out of range, divide
-					//   by zero, etc.
-					// Also, any value <= zero on a log scale is invalid
-					if ( 	curX == PointPair.Missing ||
-							curY == PointPair.Missing ||
-							System.Double.IsNaN( curX ) ||
-							System.Double.IsNaN( curY ) ||
-							System.Double.IsInfinity( curX ) ||
-							System.Double.IsInfinity( curY ) ||
-							( xIsLog && curX <= 0.0 ) ||
-							( yIsLog && curY <= 0.0 ) )
-					{
-						// If the point is invalid, then make a linebreak only if IsIgnoreMissing is false
-						// LastX and LastY are always the last valid point, so this works out
-						lastBad = lastBad || !pane.IsIgnoreMissing;
-					}
-					else
-					{
-						// Transform the current point from user scale units to
-						// screen coordinates
-						tmpX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curX );
-						tmpY = yAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curY );
-
-						if ( !lastBad )
-						{
-							try
+							if ( !valueHandler.GetValues( curve, i, out curX, out lowVal, out curY ) )
 							{
-								// GDI+ plots the data wrong and/or throws an exception for
-								// outrageous coordinates, so we do a sanity check here
-								if ( lastX > 5000000 || lastX < -5000000 ||
-										lastY > 5000000 || lastY < -5000000 ||
-										tmpX > 5000000 || tmpX < -5000000 ||
-										tmpY > 5000000 || tmpY < -5000000 )
-									InterpolatePoint( g, pane, pen, lastX, lastY, tmpX, tmpY );
-								else
+								curX = PointPair.Missing;
+								curY = PointPair.Missing;
+							}
+						}
+						else
+						{
+							curX = points[i].X;
+							curY = points[i].Y;
+						}
+
+						// Any value set to double max is invalid and should be skipped
+						// This is used for calculated values that are out of range, divide
+						//   by zero, etc.
+						// Also, any value <= zero on a log scale is invalid
+						if ( curX == PointPair.Missing ||
+								curY == PointPair.Missing ||
+								System.Double.IsNaN( curX ) ||
+								System.Double.IsNaN( curY ) ||
+								System.Double.IsInfinity( curX ) ||
+								System.Double.IsInfinity( curY ) ||
+								( xIsLog && curX <= 0.0 ) ||
+								( yIsLog && curY <= 0.0 ) )
+						{
+							// If the point is invalid, then make a linebreak only if IsIgnoreMissing is false
+							// LastX and LastY are always the last valid point, so this works out
+							lastBad = lastBad || !pane.IsIgnoreMissing;
+						}
+						else
+						{
+							// Transform the current point from user scale units to
+							// screen coordinates
+							tmpX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curX );
+							tmpY = yAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curY );
+
+							if ( !lastBad )
+							{
+								try
 								{
+									// GDI+ plots the data wrong and/or throws an exception for
+									// outrageous coordinates, so we do a sanity check here
+									if ( lastX > 5000000 || lastX < -5000000 ||
+											lastY > 5000000 || lastY < -5000000 ||
+											tmpX > 5000000 || tmpX < -5000000 ||
+											tmpY > 5000000 || tmpY < -5000000 )
+										InterpolatePoint( g, pane, pen, lastX, lastY, tmpX, tmpY );
+									else
+									{
 
-									if ( this.StepType == StepType.ForwardStep )
-									{
-										g.DrawLine( pen, lastX, lastY, tmpX, lastY );
-										g.DrawLine( pen, tmpX, lastY, tmpX, tmpY );
+										if ( this.StepType == StepType.ForwardStep )
+										{
+											g.DrawLine( pen, lastX, lastY, tmpX, lastY );
+											g.DrawLine( pen, tmpX, lastY, tmpX, tmpY );
+										}
+										else if ( this.StepType == StepType.RearwardStep )
+										{
+											g.DrawLine( pen, lastX, lastY, lastX, tmpY );
+											g.DrawLine( pen, lastX, tmpY, tmpX, tmpY );
+										}
+										else 		// non-step
+											g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
 									}
-									else if ( this.StepType == StepType.RearwardStep )
-									{
-										g.DrawLine( pen, lastX, lastY, lastX, tmpY );
-										g.DrawLine( pen, lastX, tmpY, tmpX, tmpY );
-									}
-									else 		// non-step
-										g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
+
 								}
+								catch
+								{
+									InterpolatePoint( g, pane, pen, lastX, lastY, tmpX, tmpY );
+								}
+							}
 
-							}
-							catch
-							{
-								InterpolatePoint( g, pane, pen, lastX, lastY, tmpX, tmpY );
-							}
+							lastX = tmpX;
+							lastY = tmpY;
+							lastBad = false;
 						}
-
-						lastX = tmpX;
-						lastY = tmpY;
-						lastBad = false;
 					}
 				}
 			}

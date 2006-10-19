@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	public class CandleStick : ICloneable, ISerializable
 	{
@@ -392,49 +392,51 @@ namespace ZedGraph
 
 			if ( curve.Points != null )
 			{
-				Pen pen = new Pen( _color, _penWidth );
 				//float halfSize = _size * scaleFactor;
 				float halfSize = GetBarWidth( pane, baseAxis, scaleFactor );
 
-				// Loop over each defined point							
-				for ( int i = 0; i < curve.Points.Count; i++ )
+				using ( Pen pen = new Pen( _color, _penWidth ) )
 				{
-					PointPair pt = curve.Points[i];
-					double date = pt.X;
-					double high = pt.Y;
-					double low = pt.Z;
-					double open = PointPair.Missing;
-					double close = PointPair.Missing;
-					if ( pt is StockPt )
+					// Loop over each defined point							
+					for ( int i = 0; i < curve.Points.Count; i++ )
 					{
-						open = ( pt as StockPt ).Open;
-						close = ( pt as StockPt ).Close;
-					}
+						PointPair pt = curve.Points[i];
+						double date = pt.X;
+						double high = pt.Y;
+						double low = pt.Z;
+						double open = PointPair.Missing;
+						double close = PointPair.Missing;
+						if ( pt is StockPt )
+						{
+							open = ( pt as StockPt ).Open;
+							close = ( pt as StockPt ).Close;
+						}
 
-					// Any value set to double max is invalid and should be skipped
-					// This is used for calculated values that are out of range, divide
-					//   by zero, etc.
-					// Also, any value <= zero on a log scale is invalid
+						// Any value set to double max is invalid and should be skipped
+						// This is used for calculated values that are out of range, divide
+						//   by zero, etc.
+						// Also, any value <= zero on a log scale is invalid
 
-					if ( !curve.Points[i].IsInvalid3D &&
-							( date > 0 || !baseAxis._scale.IsLog ) &&
-							( ( high > 0 && low > 0 ) || !valueAxis._scale.IsLog ) )
-					{
-						pixBase = baseAxis.Scale.Transform( curve.IsOverrideOrdinal, i, date );
-						pixHigh = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, high );
-						pixLow = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, low );
-						if ( PointPair.IsValueInvalid( open ) )
-							pixOpen = Single.MaxValue;
-						else
-							pixOpen = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, open );
+						if ( !curve.Points[i].IsInvalid3D &&
+								( date > 0 || !baseAxis._scale.IsLog ) &&
+								( ( high > 0 && low > 0 ) || !valueAxis._scale.IsLog ) )
+						{
+							pixBase = baseAxis.Scale.Transform( curve.IsOverrideOrdinal, i, date );
+							pixHigh = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, high );
+							pixLow = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, low );
+							if ( PointPair.IsValueInvalid( open ) )
+								pixOpen = Single.MaxValue;
+							else
+								pixOpen = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, open );
 
-						if ( PointPair.IsValueInvalid( close ) )
-							pixClose = Single.MaxValue;
-						else
-							pixClose = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, close );
+							if ( PointPair.IsValueInvalid( close ) )
+								pixClose = Single.MaxValue;
+							else
+								pixClose = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, close );
 
-						Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
-								pixClose, halfSize, pen );
+							Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
+									pixClose, halfSize, pen );
+						}
 					}
 				}
 			}

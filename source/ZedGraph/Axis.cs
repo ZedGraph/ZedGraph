@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.65 $ $Date: 2006-08-02 03:13:16 $ </version>
+	/// <version> $Revision: 3.66 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -1192,36 +1192,39 @@ namespace ZedGraph
 
 					double dVal = first;
 					float pixVal;
-					Pen pen = new Pen( _minorTic._color, pane.ScaledPenWidth( MinorTic._penWidth, scaleFactor ) );
-
-					Pen minorGridPen = _minorGrid.GetPen( pane, scaleFactor );
 
 					int iTic = _scale.CalcMinorStart( baseVal );
 					int MajorTic = 0;
 					double majorVal = _scale.CalcMajorTicValue( baseVal, MajorTic );
 
-					// Draw the minor tic marks
-					while ( dVal < last && iTic < 5000 )
+					using ( Pen	pen = new Pen( _minorTic._color,
+										pane.ScaledPenWidth( MinorTic._penWidth, scaleFactor ) ) )
+					using ( Pen minorGridPen = _minorGrid.GetPen( pane, scaleFactor ) )
 					{
-						// Calculate the scale value for the current tic
-						dVal = _scale.CalcMinorTicValue( baseVal, iTic );
-						// Maintain a value for the current major tic
-						if ( dVal > majorVal )
-							majorVal = _scale.CalcMajorTicValue( baseVal, ++MajorTic );
 
-						// Make sure that the current value does not match up with a major tic
-						if ( ( ( Math.Abs( dVal ) < 1e-20 && Math.Abs( dVal - majorVal ) > 1e-20 ) ||
-							( Math.Abs( dVal ) > 1e-20 && Math.Abs( ( dVal - majorVal ) / dVal ) > 1e-10 ) ) &&
-							( dVal >= first && dVal <= last ) )
+						// Draw the minor tic marks
+						while ( dVal < last && iTic < 5000 )
 						{
-							pixVal = _scale.LocalTransform( dVal );
+							// Calculate the scale value for the current tic
+							dVal = _scale.CalcMinorTicValue( baseVal, iTic );
+							// Maintain a value for the current major tic
+							if ( dVal > majorVal )
+								majorVal = _scale.CalcMajorTicValue( baseVal, ++MajorTic );
 
-							_minorGrid.Draw( g, minorGridPen, pixVal, topPix );
+							// Make sure that the current value does not match up with a major tic
+							if ( ( ( Math.Abs( dVal ) < 1e-20 && Math.Abs( dVal - majorVal ) > 1e-20 ) ||
+								( Math.Abs( dVal ) > 1e-20 && Math.Abs( ( dVal - majorVal ) / dVal ) > 1e-10 ) ) &&
+								( dVal >= first && dVal <= last ) )
+							{
+								pixVal = _scale.LocalTransform( dVal );
 
-							_minorTic.Draw( g, pane, pen, pixVal, topPix, shift, minorScaledTic );
+								_minorGrid.Draw( g, minorGridPen, pixVal, topPix );
+
+								_minorTic.Draw( g, pane, pen, pixVal, topPix, shift, minorScaledTic );
+							}
+
+							iTic++;
 						}
-
-						iTic++;
 					}
 				}
 			}

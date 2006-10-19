@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// a single line segment, drawn as a "decoration" on the chart.</remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-09-09 17:32:01 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	public class LineObj : GraphObj, ICloneable, ISerializable
 	{
@@ -313,10 +313,12 @@ namespace ZedGraph
 				g.RotateTransform( angle );
 
 				// get a pen according to this arrow properties
-				Pen pen = new Pen( _color, pane.ScaledPenWidth( _penWidth, scaleFactor ) );
-				pen.DashStyle = _style;
+				using ( Pen pen = new Pen( _color, pane.ScaledPenWidth( _penWidth, scaleFactor ) ) )
+				{
+					pen.DashStyle = _style;
 
-				g.DrawLine( pen, 0, 0, length, 0 );
+					g.DrawLine( pen, 0, 0, length, 0 );
+				}
 
 				// Restore the transform matrix back to its original state
 				g.Transform = transform;
@@ -356,10 +358,14 @@ namespace ZedGraph
 			PointF pix = _location.TransformTopLeft( pane );
 			PointF pix2 = _location.TransformBottomRight( pane );
 
-			Pen pen = new Pen( Color.Black, (float)GraphPane.Default.NearestTol * 2.0F );
-			GraphicsPath path = new GraphicsPath();
-			path.AddLine( pix, pix2 );
-			return path.IsOutlineVisible( pt, pen );
+			using ( Pen pen = new Pen( Color.Black, (float)GraphPane.Default.NearestTol * 2.0F ) )
+			{
+				using ( GraphicsPath path = new GraphicsPath() )
+				{
+					path.AddLine( pix, pix2 );
+					return path.IsOutlineVisible( pt, pen );
+				}
+			}
 		}
 
 		/// <summary>

@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	public class PolyObj : BoxObj, ICloneable, ISerializable
 	{
@@ -218,17 +218,15 @@ namespace ZedGraph
 					// Fill or draw the symbol as required
 					if ( _fill.IsVisible )
 					{
-						Brush brush = this.Fill.MakeBrush( path.GetBounds() );
-						g.FillPath( brush, path );
+						using ( Brush brush = this.Fill.MakeBrush( path.GetBounds() ) )
+							g.FillPath( brush, path );
 					}
 
 					if ( _border.IsVisible )
 					{
-						Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-						g.DrawPath( pen, path );
+						using ( Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+							g.DrawPath( pen, path );
 					}
-
-					//path.Dispose();
 				}
 			}
 		}
@@ -291,9 +289,8 @@ namespace ZedGraph
 				if ( ! base.PointInBox(pt, pane, g, scaleFactor ) )
 					return false;
 
-				GraphicsPath path = MakePath( pane );
-
-				return path.IsVisible( pt );
+				using ( GraphicsPath path = MakePath( pane ) )
+					return path.IsVisible( pt );
 			}
 			else
 				return false;

@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// <seealso cref="FilteredPointList" />
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.5 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2006-10-19 04:40:14 $ </version>
 	public interface IPointListEdit : IPointList
 	{
 		/// <summary>
@@ -53,8 +53,7 @@ namespace ZedGraph
 		/// </remarks>
 		/// <param name="index">The ordinal position (zero-based) of the
 		/// data point to be accessed.</param>
-		/// <value>A <see cref="PointPair"/> object instance.  Note that <see cref="PointPair" />
-		/// is a struct, so this a value object.</value>
+		/// <value>A <see cref="PointPair"/> object instance.</value>
 		new PointPair this[int index] { get; set; }
 
 		/// <summary>

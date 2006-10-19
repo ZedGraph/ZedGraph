@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.16 $ $Date: 2006-09-09 17:32:01 $ </version>
+	/// <version> $Revision: 1.17 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -637,8 +637,8 @@ namespace ZedGraph
 			_isSkipLastLabel = false;
 			_isSkipCrossLabel = false;
 
-			_majorUnit = DateUnit.Year;
-			_minorUnit = DateUnit.Year;
+			_majorUnit = DateUnit.Day;
+			_minorUnit = DateUnit.Day;
 
 			_format = null;
 			_textLabels = null;
@@ -1918,98 +1918,99 @@ namespace ZedGraph
 
 			double scaleMult = Math.Pow( (double)10.0, _mag );
 
-			Pen ticPen = tic.GetPen( pane, scaleFactor );
-			Pen gridPen = grid.GetPen( pane, scaleFactor );
-
-			// get the Y position of the center of the axis labels
-			// (the axis itself is referenced at zero)
-			SizeF maxLabelSize = GetScaleMaxSpace( g, pane, scaleFactor, true );
-			float charHeight = _fontSpec.GetHeight( scaleFactor );
-			float maxSpace = maxLabelSize.Height;
-
-			float edgeTolerance = Default.EdgeTolerance * scaleFactor;
-			double rangeTol = ( _maxLinTemp - _minLinTemp ) * 0.001;
-
-			int firstTic = (int)( ( _minLinTemp - baseVal ) / _majorStep + 0.99 );
-			if ( firstTic < 0 )
-				firstTic = 0;
-
-			// save the position of the previous tic
-			float lastPixVal = -10000;
-
-			// loop for each major tic
-			for ( int i = firstTic; i < nTics + firstTic; i++ )
+			using ( Pen ticPen = tic.GetPen( pane, scaleFactor ) )
+			using ( Pen gridPen = grid.GetPen( pane, scaleFactor ) )
 			{
-				dVal = CalcMajorTicValue( baseVal, i );
+				// get the Y position of the center of the axis labels
+				// (the axis itself is referenced at zero)
+				SizeF maxLabelSize = GetScaleMaxSpace( g, pane, scaleFactor, true );
+				float charHeight = _fontSpec.GetHeight( scaleFactor );
+				float maxSpace = maxLabelSize.Height;
 
-				// If we're before the start of the scale, just go to the next tic
-				if ( dVal < _minLinTemp )
-					continue;
-				// if we've already past the end of the scale, then we're done
-				if ( dVal > _maxLinTemp + rangeTol )
-					break;
+				float edgeTolerance = Default.EdgeTolerance * scaleFactor;
+				double rangeTol = ( _maxLinTemp - _minLinTemp ) * 0.001;
 
-				// convert the value to a pixel position
-				pixVal = LocalTransform( dVal );
+				int firstTic = (int)( ( _minLinTemp - baseVal ) / _majorStep + 0.99 );
+				if ( firstTic < 0 )
+					firstTic = 0;
 
-				// see if the tic marks will be drawn between the labels instead of at the labels
-				// (this applies only to AxisType.Text
-				if ( tic._isBetweenLabels && IsText )
+				// save the position of the previous tic
+				float lastPixVal = -10000;
+
+				// loop for each major tic
+				for ( int i = firstTic; i < nTics + firstTic; i++ )
 				{
-					// We need one extra tic in order to draw the tics between labels
-					// so provide an exception here
-					if ( i == 0 )
-					{
-						dVal2 = CalcMajorTicValue( baseVal, -0.5 );
-						if ( dVal2 >= _minLinTemp )
-						{
-							pixVal2 = LocalTransform( dVal2 );
-							tic.Draw( g, pane, ticPen, pixVal2, topPix, shift, scaledTic );
+					dVal = CalcMajorTicValue( baseVal, i );
 
-							grid.Draw( g, gridPen, pixVal2, topPix );
-						}
-					}
-
-					dVal2 = CalcMajorTicValue( baseVal, (double)i + 0.5 );
-					if ( dVal2 > _maxLinTemp )
-						break;
-					pixVal2 = LocalTransform( dVal2 );
-				}
-				else
-					pixVal2 = pixVal;
-
-				tic.Draw( g, pane, ticPen, pixVal2, topPix, shift, scaledTic );
-
-				// draw the grid
-				grid.Draw( g, gridPen, pixVal2, topPix );
-
-				bool isMaxValueAtMaxPix = ( ( _ownerAxis is XAxis || _ownerAxis is Y2Axis ) &&
-														!IsReverse ) ||
-											( _ownerAxis is Y2Axis && IsReverse );
-
-				bool isSkipZone = ( ( ( _isSkipFirstLabel && isMaxValueAtMaxPix ) ||
-										( _isSkipLastLabel && !isMaxValueAtMaxPix ) ) &&
-											pixVal < edgeTolerance ) ||
-									( ( ( _isSkipLastLabel && isMaxValueAtMaxPix ) ||
-										( _isSkipFirstLabel && !isMaxValueAtMaxPix ) ) &&
-											pixVal > _maxPix - _minPix - edgeTolerance );
-
-				bool isSkipCross = _isSkipCrossLabel && !_ownerAxis._crossAuto &&
-								Math.Abs( _ownerAxis._cross - dVal ) < rangeTol * 10.0;
-
-				isSkipZone = isSkipZone || isSkipCross;
-
-				if ( _isVisible && !isSkipZone )
-				{
-					// For exponential scales, just skip any label that would overlap with the previous one
-					// This is because exponential scales have varying label spacing
-					if ( IsPreventLabelOverlap &&
-							Math.Abs( pixVal - lastPixVal ) < maxLabelSize.Width )
+					// If we're before the start of the scale, just go to the next tic
+					if ( dVal < _minLinTemp )
 						continue;
+					// if we've already past the end of the scale, then we're done
+					if ( dVal > _maxLinTemp + rangeTol )
+						break;
 
-					DrawLabel( g, pane, i, dVal, pixVal, shift, maxSpace, scaledTic, charHeight, scaleFactor );
+					// convert the value to a pixel position
+					pixVal = LocalTransform( dVal );
 
-					lastPixVal = pixVal;
+					// see if the tic marks will be drawn between the labels instead of at the labels
+					// (this applies only to AxisType.Text
+					if ( tic._isBetweenLabels && IsText )
+					{
+						// We need one extra tic in order to draw the tics between labels
+						// so provide an exception here
+						if ( i == 0 )
+						{
+							dVal2 = CalcMajorTicValue( baseVal, -0.5 );
+							if ( dVal2 >= _minLinTemp )
+							{
+								pixVal2 = LocalTransform( dVal2 );
+								tic.Draw( g, pane, ticPen, pixVal2, topPix, shift, scaledTic );
+
+								grid.Draw( g, gridPen, pixVal2, topPix );
+							}
+						}
+
+						dVal2 = CalcMajorTicValue( baseVal, (double)i + 0.5 );
+						if ( dVal2 > _maxLinTemp )
+							break;
+						pixVal2 = LocalTransform( dVal2 );
+					}
+					else
+						pixVal2 = pixVal;
+
+					tic.Draw( g, pane, ticPen, pixVal2, topPix, shift, scaledTic );
+
+					// draw the grid
+					grid.Draw( g, gridPen, pixVal2, topPix );
+
+					bool isMaxValueAtMaxPix = ( ( _ownerAxis is XAxis || _ownerAxis is Y2Axis ) &&
+															!IsReverse ) ||
+												( _ownerAxis is Y2Axis && IsReverse );
+
+					bool isSkipZone = ( ( ( _isSkipFirstLabel && isMaxValueAtMaxPix ) ||
+											( _isSkipLastLabel && !isMaxValueAtMaxPix ) ) &&
+												pixVal < edgeTolerance ) ||
+										( ( ( _isSkipLastLabel && isMaxValueAtMaxPix ) ||
+											( _isSkipFirstLabel && !isMaxValueAtMaxPix ) ) &&
+												pixVal > _maxPix - _minPix - edgeTolerance );
+
+					bool isSkipCross = _isSkipCrossLabel && !_ownerAxis._crossAuto &&
+									Math.Abs( _ownerAxis._cross - dVal ) < rangeTol * 10.0;
+
+					isSkipZone = isSkipZone || isSkipCross;
+
+					if ( _isVisible && !isSkipZone )
+					{
+						// For exponential scales, just skip any label that would overlap with the previous one
+						// This is because exponential scales have varying label spacing
+						if ( IsPreventLabelOverlap &&
+								Math.Abs( pixVal - lastPixVal ) < maxLabelSize.Width )
+							continue;
+
+						DrawLabel( g, pane, i, dVal, pixVal, shift, maxSpace, scaledTic, charHeight, scaleFactor );
+
+						lastPixVal = pixVal;
+					}
 				}
 			}
 		}
@@ -2126,18 +2127,20 @@ namespace ZedGraph
 			// get the first major tic value
 			double baseVal = CalcBaseTic();
 
-			Pen pen = new Pen( _ownerAxis.Color,
-						pane.ScaledPenWidth( majorTic._penWidth, scaleFactor ) );
-
-			// redraw the axis border
-			if ( _ownerAxis.IsAxisSegmentVisible )
-				g.DrawLine( pen, 0.0F, shiftPos, rightPix, shiftPos );
-
-			// Draw a zero-value line if needed
-			if ( majorGrid._isZeroLine && _min < 0.0 && _max > 0.0 )
+			using ( Pen pen = new Pen( _ownerAxis.Color,
+						pane.ScaledPenWidth( majorTic._penWidth, scaleFactor ) ) )
 			{
-				float zeroPix = LocalTransform( 0.0 );
-				g.DrawLine( pen, zeroPix, 0.0F, zeroPix, topPix );
+
+				// redraw the axis border
+				if ( _ownerAxis.IsAxisSegmentVisible )
+					g.DrawLine( pen, 0.0F, shiftPos, rightPix, shiftPos );
+
+				// Draw a zero-value line if needed
+				if ( majorGrid._isZeroLine && _min < 0.0 && _max > 0.0 )
+				{
+					float zeroPix = LocalTransform( 0.0 );
+					g.DrawLine( pen, zeroPix, 0.0F, zeroPix, topPix );
+				}
 			}
 
 			// draw the major tics and labels

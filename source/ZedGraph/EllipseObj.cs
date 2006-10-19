@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	public class EllipseObj : BoxObj, ICloneable, ISerializable
 	{
@@ -207,13 +207,13 @@ namespace ZedGraph
 					Math.Abs( pixRect.Right ) < 100000 &&
 					Math.Abs( pixRect.Bottom ) < 100000 )
 			{
-				Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
-				Brush brush = _fill.MakeBrush( pixRect );
-
 				if ( _fill.IsVisible )
-					g.FillEllipse( brush, pixRect );
+					using ( Brush brush = _fill.MakeBrush( pixRect ) )
+						g.FillEllipse( brush, pixRect );
+
 				if ( _border.IsVisible )
-					g.DrawEllipse( pen, pixRect );
+					using ( Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+						g.DrawEllipse( pen, pixRect );
 			}
 		}
 		
@@ -246,9 +246,11 @@ namespace ZedGraph
 			// coordinate frame to the screen pixel location
 			RectangleF pixRect = _location.TransformRect( pane );
 
-			GraphicsPath path = new GraphicsPath();
-			path.AddEllipse( pixRect );
-			return path.IsVisible( pt );
+			using ( GraphicsPath path = new GraphicsPath() )
+			{
+				path.AddEllipse( pixRect );
+				return path.IsVisible( pt );
+			}
 		}
 		
 	#endregion

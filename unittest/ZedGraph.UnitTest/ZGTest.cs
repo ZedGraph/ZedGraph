@@ -99,7 +99,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion	</author>
-	/// <version> $Revision: 3.18 $ $Date: 2006-06-24 20:26:49 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2006-10-19 04:40:15 $ </version>
 	[TestFixture]
 	public	class ControlTest
 	{
@@ -205,7 +205,7 @@ namespace ZedGraph.UnitTest
 			arrow.PenWidth =	2.0F;
 			testee.GraphObjList.Add( arrow );
 			text = new TextObj("Confidential", 0.8F, -0.03F );
-			text.Location.CoordinateFrame =	CoordType.AxisFraction;
+			text.Location.CoordinateFrame =	CoordType.ChartFraction;
 			text.FontSpec.Angle = 15.0F;
 			text.FontSpec.FontColor =	Color.Red;
 			text.FontSpec.IsBold	=	true;
@@ -234,7 +234,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.18 $ $Date: 2006-06-24 20:26:49 $ </version>
+	/// <version>	$Revision: 3.19 $ $Date: 2006-10-19 04:40:15 $ </version>
 	[TestFixture]
 	public	class LibraryTest
 	{
@@ -1012,7 +1012,7 @@ namespace ZedGraph.UnitTest
 			testee.GraphObjList.Add( arrow );
 
 			text = new TextObj("Confidential", 0.8F, -0.03F );
-			text.Location.CoordinateFrame =	CoordType.AxisFraction;
+			text.Location.CoordinateFrame =	CoordType.ChartFraction;
 
 			text.FontSpec.Angle = 15.0F;
 			text.FontSpec.FontColor =	Color.Red;
@@ -1318,7 +1318,7 @@ namespace ZedGraph.UnitTest
 			//	Set the XAxis	to date type
 			testee.XAxis.Type =	AxisType.Date;
 			testee.XAxis.Scale.Min = x[0] - 1 ;
-			myCurve.ErrorBar.PenWidth = 2;
+			myCurve.Bar.PenWidth = 2;
 			
 			testee.YAxis.MajorGrid.IsVisible = true ;
 			testee.YAxis.MinorGrid.IsVisible = true ;
@@ -1388,7 +1388,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.18 $ $Date: 2006-06-24 20:26:49 $ </version>
+	/// <version>	$Revision: 3.19 $ $Date: 2006-10-19 04:40:15 $ </version>
 	[TestFixture]
 	public	class LongFeatureTest
 	{
@@ -1908,7 +1908,7 @@ namespace ZedGraph.UnitTest
 			TextObj text	=	new TextObj( "ZedGraph TextObj", 0.5F, 0.5F );
 			testee.GraphObjList.Add( text );
 			
-			text.Location.CoordinateFrame =	CoordType.AxisFraction;
+			text.Location.CoordinateFrame =	CoordType.ChartFraction;
 			text.FontSpec.IsItalic	=	false;
 			text.FontSpec.IsUnderline	=	false;
 			text.FontSpec.Angle = 0.0F;
@@ -2018,7 +2018,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.18 $ $Date: 2006-06-24 20:26:49 $ </version>
+	/// <version>	$Revision: 3.19 $ $Date: 2006-10-19 04:40:15 $ </version>
 	[TestFixture]
 	public	class FindNearestTest
 	{
@@ -2220,7 +2220,7 @@ namespace ZedGraph.UnitTest
 			testee.GraphObjList.Add( arrow );
 
 			text = new TextObj("Confidential", 0.8F, -0.03F );
-			text.Location.CoordinateFrame = CoordType.AxisFraction;
+			text.Location.CoordinateFrame = CoordType.ChartFraction;
 
 			text.FontSpec.Angle = 15.0F;
 			text.FontSpec.FontColor = Color.Red;
@@ -2236,8 +2236,7 @@ namespace ZedGraph.UnitTest
 			
 			testee.IsPenWidthScaled = false ;
 
-			RectangleF rect = new RectangleF( 500, 50, 200, 20 );
-			EllipseObj ellipse = new EllipseObj( rect, Color.Blue, 
+			EllipseObj ellipse = new EllipseObj( 500, 50, 200, 20, Color.Blue, 
 				Color.Goldenrod );
 			ellipse.Location.CoordinateFrame = CoordType.AxisXYScale;
 			ellipse.Tag = "Ellipse";
@@ -2247,7 +2246,7 @@ namespace ZedGraph.UnitTest
 			Bitmap bm = new Bitmap( @"c:\windows\winnt256.bmp" );
 			Image image = Image.FromHbitmap( bm.GetHbitmap() );
 			ImageObj imageItem = new ImageObj( image, new RectangleF( 0.8F, 0.8F, 0.2F, 0.2F ),
-				CoordType.AxisFraction, AlignH.Left, AlignV.Top );
+				CoordType.ChartFraction, AlignH.Left, AlignV.Top );
 			imageItem.IsScaled = true;
 			imageItem.Tag = "Bitmap";
 			testee.GraphObjList.Add( imageItem );

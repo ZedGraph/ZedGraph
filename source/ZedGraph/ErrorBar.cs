@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2006-10-19 04:40:14 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -346,33 +346,35 @@ namespace ZedGraph
 		
 			if ( curve.Points != null && this.IsVisible )
 			{
-				Pen pen = new Pen( _color, _penWidth );
-				
-				// Loop over each defined point							
-				for ( int i=0; i<curve.Points.Count; i++ )
+				using ( Pen pen = new Pen( _color, _penWidth ) )
 				{
-					valueHandler.GetValues( curve, i, out scaleBase,
-								out scaleLowValue, out scaleValue );
 
-					// Any value set to double max is invalid and should be skipped
-					// This is used for calculated values that are out of range, divide
-					//   by zero, etc.
-					// Also, any value <= zero on a log scale is invalid
-				
-					if (	!curve.Points[i].IsInvalid3D &&
-							( scaleBase > 0 || !baseAxis._scale.IsLog ) &&
-							( ( scaleValue > 0 && scaleLowValue > 0 ) || !valueAxis._scale.IsLog ) )
+					// Loop over each defined point							
+					for ( int i = 0; i < curve.Points.Count; i++ )
 					{
-						pixBase = baseAxis.Scale.Transform( curve.IsOverrideOrdinal, i, scaleBase );
-						pixValue = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, scaleValue );
-						pixLowValue = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, scaleLowValue );
+						valueHandler.GetValues( curve, i, out scaleBase,
+									out scaleLowValue, out scaleValue );
 
-						//if ( this.fill.IsGradientValueType )
-						//	brush = fill.MakeBrush( _rect, _points[i] );
+						// Any value set to double max is invalid and should be skipped
+						// This is used for calculated values that are out of range, divide
+						//   by zero, etc.
+						// Also, any value <= zero on a log scale is invalid
 
-						this.Draw( g, pane, baseAxis is XAxis, pixBase, pixValue,
-										pixLowValue, scaleFactor, pen,
-										curve.Points[i] );		
+						if ( !curve.Points[i].IsInvalid3D &&
+								( scaleBase > 0 || !baseAxis._scale.IsLog ) &&
+								( ( scaleValue > 0 && scaleLowValue > 0 ) || !valueAxis._scale.IsLog ) )
+						{
+							pixBase = baseAxis.Scale.Transform( curve.IsOverrideOrdinal, i, scaleBase );
+							pixValue = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, scaleValue );
+							pixLowValue = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, scaleLowValue );
+
+							//if ( this.fill.IsGradientValueType )
+							//	brush = fill.MakeBrush( _rect, _points[i] );
+
+							this.Draw( g, pane, baseAxis is XAxis, pixBase, pixValue,
+											pixLowValue, scaleFactor, pen,
+											curve.Points[i] );
+						}
 					}
 				}
 			}

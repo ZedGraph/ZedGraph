@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.OleDb;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
@@ -29,6 +30,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
+			CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl1 );
@@ -40,7 +42,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DateAxisTutorial( zedGraphControl1 );
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
-			CreateGraph_DualYDemo( zedGraphControl1 );
+			//CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
@@ -51,7 +53,11 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_Junk( zedGraphControl1 );
 			//CreateGraph_Junk2( zedGraphControl1 );
+			//CreateGraph_Junk4( zedGraphControl1 );
+			//CreateGraph_junk5( zedGraphControl1 );
+			//CreateGraph_junk6( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
+			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
 			//CreateGraph_MasterWithPies( zedGraphControl1 );
 			//CreateGraph_MultiYDemo( zedGraphControl1 );
@@ -701,6 +707,39 @@ namespace ZedGraph.ControlTest
 
 		}
 
+		// Basic curve test - Linear Axis
+		private void CreateGraph_BasicLinear3Curve( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+			for ( int i = 0; i < 36; i++ )
+			{
+				double x = i + 100;
+
+				double y = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.2 ) );
+				double y2 = 200.0 * ( 2.0 + Math.Sin( (double)i * 0.3 ) );
+				double y3 = 100.0 * ( 3.0 + Math.Sin( (double)i * 0.4 ) );
+				list.Add( x, y );
+				list2.Add( x, y2 );
+				list3.Add( x, y3 );
+			}
+			//list = new PointPairList();
+			//list2 = new PointPairList();
+			//list3 = new PointPairList();
+			LineItem myCurve = myPane.AddCurve( "curve 1", list, Color.Blue, SymbolType.Diamond );
+			LineItem myCurve2 = myPane.AddCurve( "Here's a really long curve name that should stand out quite a bit", list2, Color.Red, SymbolType.Diamond );
+			LineItem myCurve3 = myPane.AddCurve( "curve 3", list3, Color.Green, SymbolType.Diamond );
+
+			myPane.Legend.Position = LegendPos.Bottom;
+			myPane.Legend.IsHStack = false;
+
+			z1.AxisChange();
+
+		}
+
 		public string XScaleFormatEvent( GraphPane pane, Axis axis, double val, int index )
 		{
 			return val.ToString("f2") + " cm";
@@ -830,29 +869,43 @@ namespace ZedGraph.ControlTest
 					//list2.Add( x, PointPair.Missing );
 					list2.Add( x, 1.0 );
 					list3.Add( x, 2 + Math.Sin( i * 0.2 + Math.PI ) );
-					list4.Add( x, 2.0 );
+					list4.Add( x, 7.0 );
 				}
 				else
 				{
 					list.Add( x, y );
 					list2.Add( x, 1.0 );
 					list3.Add( x, 2 + Math.Sin( i * 0.2 + Math.PI ) );
-					list4.Add( x, 2.0 );
+					list4.Add( x, 7.0 );
 				}
 
 			}
 			LineItem myCurve = myPane.AddCurve( "line 1", list, Color.Black, SymbolType.Diamond );
 			LineItem myCurve2 = myPane.AddCurve( "line 2", list2, Color.Black, SymbolType.Square );
 			//LineItem myCurve3 = myPane.AddCurve( "line 3", list3, Color.Black, SymbolType.Circle );
-			//LineItem myCurve4 = myPane.AddCurve( "line 4", list4, Color.Black, SymbolType.Triangle );
+
+			myPane.LineType = LineType.Stack;
+			myPane.YAxis.Color = Color.Red;
+			myPane.XAxis.Scale.Align = AlignP.Inside;
+			myPane.XAxis.Color = Color.Blue;
+			myPane.YAxis.Scale.IsReverse = true;
+			z1.AxisChange();
+
+
+			myPane.YAxis.Scale.MaxAuto = false;
+			//int l = ColorSymbolRotator.COLORS.Length;
+			//LineObj line = new LineObj();
+			//line.IsClippedToChartRect = true;
+
+			LineItem myCurve4 = myPane.AddCurve( "   line 4", list4, Color.Black, SymbolType.Triangle );
+			myCurve4.Label.Text = myCurve4.Label.Text.Trim();
 
 			//myCurve2.IsY2Axis = true;
-			myPane.LineType = LineType.Stack;
 
 			myCurve.Line.Fill = new Fill( Color.White, Color.Maroon, 45.0f );
 			myCurve2.Line.Fill = new Fill( Color.White, Color.Blue, 45.0f );
 			//myCurve3.Line.Fill = new Fill( Color.White, Color.Green, 45.0f );
-			//myCurve4.Line.Fill = new Fill( Color.White, Color.Red, 45.0f );
+			myCurve4.Line.Fill = new Fill( Color.White, Color.Red, 45.0f );
 			myCurve.Symbol.Fill = new Fill( Color.White );
 			myCurve2.Symbol.Fill = new Fill( Color.White );
 			myCurve.Line.SmoothTension = 0.5f;
@@ -865,10 +918,8 @@ namespace ZedGraph.ControlTest
 			//EllipseObj ellipse = new EllipseObj( 20, 8, 10, 3, Color.Black, Color.White, Color.Blue );
 			//myPane.GraphObjList.Add( ellipse );
 
-			myPane.YAxis.Color = Color.Red;
-			myPane.XAxis.Scale.Align = AlignP.Inside;
-			myPane.XAxis.Color = Color.Blue;
-
+			myPane.Legend.IsHStack = false;
+			myPane.Legend.Position = LegendPos.Left;
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();
 			z1.Invalidate();
@@ -968,6 +1019,100 @@ namespace ZedGraph.ControlTest
 				zedGraphControl1.Invalidate();
 			}
 		}
+
+		// Call this method from the Form_Load method, passing your ZedGraphControl
+		public void CreateGraph_MasterPane_Tutorial( ZedGraphControl zgc )
+		{
+			MasterPane myMaster = zgc.MasterPane;
+
+			myMaster.PaneList.Clear();
+
+			// Set the masterpane title
+			myMaster.Title.Text = "ZedGraph MasterPane Example";
+			myMaster.Title.IsVisible = true;
+
+			// Fill the masterpane background with a color gradient
+			myMaster.Fill = new Fill( Color.White, Color.MediumSlateBlue, 45.0F );
+
+			// Set the margins to 10 points
+			myMaster.Margin.All = 10;
+
+			// Enable the masterpane legend
+			myMaster.Legend.IsVisible = true;
+			myMaster.Legend.Position = LegendPos.TopCenter;
+
+			// Add a priority stamp
+			TextObj text = new TextObj( "Priority", 0.88F, 0.12F );
+			text.Location.CoordinateFrame = CoordType.PaneFraction;
+			text.FontSpec.Angle = 15.0F;
+			text.FontSpec.FontColor = Color.Red;
+			text.FontSpec.IsBold = true;
+			text.FontSpec.Size = 16;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Border.Color = Color.Red;
+			text.FontSpec.Fill.IsVisible = false;
+			text.Location.AlignH = AlignH.Left;
+			text.Location.AlignV = AlignV.Bottom;
+			myMaster.GraphObjList.Add( text );
+
+			// Add a draft watermark
+			text = new TextObj( "DRAFT", 0.5F, 0.5F );
+			text.Location.CoordinateFrame = CoordType.PaneFraction;
+			text.FontSpec.Angle = 30.0F;
+			text.FontSpec.FontColor = Color.FromArgb( 70, 255, 100, 100 );
+			text.FontSpec.IsBold = true;
+			text.FontSpec.Size = 100;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.Fill.IsVisible = false;
+			text.Location.AlignH = AlignH.Center;
+			text.Location.AlignV = AlignV.Center;
+			text.ZOrder = ZOrder.A_InFront;
+			myMaster.GraphObjList.Add( text );
+
+			// Initialize a color and symbol type rotator
+			ColorSymbolRotator rotator = new ColorSymbolRotator();
+
+			// Create some new GraphPanes
+			for ( int j = 0; j < 5; j++ )
+			{
+				// Create a new graph - rect dimensions do not matter here, since it
+				// will be resized by MasterPane.AutoPaneLayout()
+				GraphPane myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+					"Case #" + ( j + 1 ).ToString(),
+					"Time, Days",
+					"Rate, m/s" );
+
+				// Fill the GraphPane background with a color gradient
+				myPane.Fill = new Fill( Color.White, Color.LightYellow, 45.0F );
+				myPane.BaseDimension = 6.0F;
+
+				// Make up some data arrays based on the Sine function
+				PointPairList list = new PointPairList();
+				for ( int i = 0; i < 36; i++ )
+				{
+					double x = (double)i + 5;
+					double y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
+					list.Add( x, y );
+				}
+
+				// Add a curve to the Graph, use the next sequential color and symbol
+				LineItem myCurve = myPane.AddCurve( "Type " + j.ToString(),
+					list, rotator.NextColor, rotator.NextSymbol );
+				// Fill the symbols with white to make them opaque
+				myCurve.Symbol.Fill = new Fill( Color.White );
+
+				// Add the GraphPane to the MasterPane
+				myMaster.Add( myPane );
+			}
+
+			using ( Graphics g = this.CreateGraphics() )
+			{
+				// Tell ZedGraph to auto layout the new GraphPanes
+				myMaster.SetLayout( g, PaneLayout.ExplicitRow32 );
+			}
+			zgc.AxisChange();
+		}
+
 
 		// masterpane test
 		private void CreateGraph_MasterPane_Square( ZedGraphControl z1 )
@@ -1123,6 +1268,150 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 		}
 
+		private void CreateGraph_Junk4( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+			myPane.XAxis.Title.Text = "date time";
+			myPane.YAxis.Title.Text = "Rate";
+			Random rd = new Random( 1 );
+			RollingPointPairList list = new RollingPointPairList( 1200 );
+			DateTime mynow2 = DateTime.Now;
+
+			list.Add( mynow2.ToOADate(), 15 );
+			list.Add( mynow2.AddSeconds(10).ToOADate(), 25 );
+			LineItem myCurve = myPane.AddCurve( "Rate", list, Color.Green, SymbolType.None );
+
+			myPane.Legend.IsVisible = false;
+			myPane.Title.IsVisible = false;
+
+			myPane.XAxis.MajorGrid.IsVisible = true;
+			myPane.XAxis.MajorGrid.Color = Color.Green;
+			myPane.XAxis.MajorGrid.PenWidth = 1;
+
+			myPane.XAxis.Scale.FontSpec.Angle = 65;
+
+			myPane.YAxis.MajorGrid.IsVisible = true;
+			myPane.YAxis.MajorGrid.Color = Color.Green;
+			myPane.YAxis.MajorGrid.PenWidth = 1;
+
+			myPane.YAxis.Scale.FontSpec.FontColor = Color.Red;
+			myPane.YAxis.Title.FontSpec.FontColor = Color.Red;
+			myPane.YAxis.MajorTic.IsOpposite = false;
+			myPane.YAxis.MinorTic.IsOpposite = false;
+			myPane.YAxis.MajorGrid.IsZeroLine = false;
+			myPane.YAxis.Scale.Align = AlignP.Inside;
+			myPane.YAxis.MajorGrid.IsVisible = true;
+
+			myPane.Chart.Fill = new Fill( Color.Black );
+			//timer1.Interval = 500;
+			//timer1.Enabled = true;
+			//timer1.Start();
+
+			//double gMinTime = new XDate( mynow );
+			//double gMaxTime = new XDate( mynow.AddSeconds( 30 ) );
+			//double PerSecd = gMaxTime - gMinTime;
+
+			DateTime mynow = DateTime.Now;
+			myPane.XAxis.Type = AxisType.Date;
+			myPane.XAxis.Scale.Format = "T";
+			myPane.XAxis.Scale.MajorUnit = DateUnit.Second;
+			myPane.XAxis.Scale.MinorUnit = DateUnit.Second;
+			myPane.XAxis.Scale.Min = mynow.ToOADate();
+			myPane.XAxis.Scale.Max = mynow.AddSeconds(30).ToOADate();
+			myPane.XAxis.Scale.MinorStep = 1;	// 1 second
+			myPane.XAxis.Scale.MajorStep = 5;   // 5 seconds
+			//mynow.AddMilliseconds( -mynow.Millisecond );
+			mynow.AddSeconds( -5 );
+			myPane.XAxis.Scale.BaseTic = mynow.ToOADate();
+
+			z1.AxisChange();
+
+			foreach ( GraphObj obj in myPane.GraphObjList )
+			{
+				if ( obj is TextObj )
+				{
+					TextObj text = obj as TextObj;
+					text.FontSpec.Size = 12;
+					text.FontSpec.IsBold = true;
+				}
+			}
+
+		}
+
+		public void CreateGraph_junk5( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			// Set the title and axis labels 
+			myPane.Title.Text = "Japanese Candlestick Chart Demo";
+			myPane.XAxis.Title.Text = "Trading Date";
+			myPane.YAxis.Title.Text = "Share Price, $US";
+
+			StockPointList spl = new StockPointList();
+			Random rand = new Random();
+
+			// First day is jan 1st 
+			XDate xDate = new XDate( 2006, 1, 1 );
+			double open = 50.0;
+
+			for ( int i = 0; i < 50; i++ )
+			{
+				double x = xDate.XLDate;
+				double close = open + rand.NextDouble() * 10.0 - 5.0;
+				double hi = Math.Max( open, close ) + rand.NextDouble() * 5.0;
+				double low = Math.Min( open, close ) - rand.NextDouble() * 5.0;
+
+				StockPt pt = new StockPt( x, hi, low, open, close, 100000 );
+				spl.Add( pt );
+
+				open = close;
+				// Advance one day 
+				xDate.AddDays( 1.0 );
+				// but skip the weekends 
+				if ( XDate.XLDateToDayOfWeek( xDate.XLDate ) == 6 )
+					xDate.AddDays( 2.0 );
+			}
+
+			JapaneseCandleStickItem myCurve = myPane.AddJapaneseCandleStick( "trades", spl );
+			myCurve.Stick.IsAutoSize = true;
+			myCurve.Stick.Color = Color.Blue;
+
+			// Use DateAsOrdinal to skip weekend gaps 
+			myPane.XAxis.Type = AxisType.DateAsOrdinal;
+			myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
+
+			// pretty it up a little 
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+			myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
+
+			PointPairList ppl = new PointPairList();
+
+			for ( int i = 19; i < spl.Count; i++ )
+			{
+				double avg = 0.0;
+				for ( int j = 0; j < 20; j++ )
+					avg += spl.GetAt( i - j ).Close;
+				ppl.Add( i + 1, avg / 20.0 );
+			}
+			LineItem item = myPane.AddCurve( "MA-20", ppl, Color.Red );
+			item.IsOverrideOrdinal = true;
+			item.Line.Width = 3;
+			item.Symbol.Type = SymbolType.None;
+			item.Line.IsSmooth = true;
+
+			// Tell ZedGraph to calculate the axis ranges 
+			zgc.AxisChange();
+			zgc.Invalidate();
+
+		}
+
+		private void CreateGraph_junk6( ZedGraphControl z1 )
+		{
+			z1.GraphPane.Title.Text = "My Test Graph\n(For CodeProject Sample)";
+			z1.GraphPane.XAxis.Title.Text = "My X-Axis";
+			z1.GraphPane.YAxis.Title.Text = "My Y-Axis";
+			z1.Refresh();
+		}
 
 		// masterpane with three vertical panes
 		private void CreateGraph_ThreeVerticalPanes( ZedGraphControl z1 )
@@ -1136,7 +1425,7 @@ namespace ZedGraph.ControlTest
 
 			// Show the masterpane title
 			master.Title.IsVisible = true;
-			master.Title.Text = "Aligned Panes Demo";
+			master.Title.Text = "Synchronized Panes Demo";
 
 			// Leave a margin around the masterpane, but only a small gap between panes
 			master.Margin.All = 10;
@@ -1198,6 +1487,8 @@ namespace ZedGraph.ControlTest
 				myPaneT.YAxis.MinSpace = 80;
 				myPaneT.Y2Axis.MinSpace = 20;
 
+				myPaneT.XAxis.Scale.FontSpec.Angle = 90;
+
 				// Make up some data arrays based on the Sine function
 				double x, y;
 				PointPairList list = new PointPairList();
@@ -1227,7 +1518,7 @@ namespace ZedGraph.ControlTest
 				// Synchronize the Axes
 				z1.IsAutoScrollRange = true;
 				z1.IsShowHScrollBar = true;
-				z1.IsShowVScrollBar = true;
+				//z1.IsShowVScrollBar = true;
 				z1.IsSynchronizeXAxes = true;
 
 				//g.Dispose();
@@ -2548,17 +2839,52 @@ namespace ZedGraph.ControlTest
 
 			myPane.Title.Text = "DataSourcePointList Test";
 			myPane.XAxis.Title.Text = "Date";
-			myPane.YAxis.Title.Text = "Number of Orders";
+			myPane.YAxis.Title.Text = "Freight Charges ($US)";
 
+			// Create a new DataSourcePointList to handle the database connection
 			DataSourcePointList dspl = new DataSourcePointList();
+			// Create a TableAdapter instance to access the database
 			ZedGraph.ControlTest.NorthwindDataSetTableAdapters.OrdersTableAdapter adapter =
 						new ZedGraph.ControlTest.NorthwindDataSetTableAdapters.OrdersTableAdapter();
-			ZedGraph.ControlTest.NorthwindDataSet.OrdersDataTable table = adapter.MyQuery();
+			// Create a DataTable and fill it with data from the database
+			ZedGraph.ControlTest.NorthwindDataSet.OrdersDataTable table = adapter.GetData();
 
+			//NorthwindDataSet ds = ZedGraph.ControlTest.NorthwindDataSet;
+			//DataTable dt = ds.Tables["Orders"];
+			//dt.Select( "SELECT *" );
+
+			//DataTable dt = ds.Tables[
+			//dt.
+
+			//string strConn = "Provider=SQLOLEDB;Data Source=(local)\\NetSDK;" +
+			//		"Initial Catalog=Northwind;Trusted_Connection=Yes;";
+			//string strSQL = "SELECT CustomerID, CompanyName, ContactName, Phone " +
+			//		"FROM Customers";
+			//OleDbDataAdapter da = new OleDbDataAdapter( strSQL, strConn );
+			//DataSet ds = new DataSet();
+			//da.Fill( ds, "Customers" );
+
+//			string cn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source = Northwind.mdb;Persist Security Info=False";
+//			string sql = "SELECT * FROM Orders";
+//			OleDbConnection con = new OleDbConnection( cn );
+//			OleDbDataAdapter adapt = new OleDbDataAdapter();
+//			adapt.SelectCommand = new OleDbCommand( sql, con );
+			
+//			DataSet ds = new DataSet(); ;
+			//DataTable dt = new DataTable();
+
+//			adapt.Fill( ds, "Orders" );
+			
+			// Specify the table as the data source
 			dspl.DataSource = table;
+			// The X data will come from the "OrderDate" column
 			dspl.XDataMember = "OrderDate";
+			// The Y data will come from the "Freight" column
 			dspl.YDataMember = "Freight";
+			// The Z data are not used
 			dspl.ZDataMember = null;
+			// The Tag data will come from the "ShipName" column
+			// (note that this will just set PointPair.Tag = ShipName)
 			dspl.TagDataMember = "ShipName";
 
 			//List<Sample> sampleList = new List<Sample>();
@@ -2587,13 +2913,20 @@ namespace ZedGraph.ControlTest
 
 			//int count = table.Count;
 
-
+			// X axis will be dates
 			z1.GraphPane.XAxis.Type = AxisType.Date;
 
+			// Make a curve
 			LineItem myCurve = z1.GraphPane.AddCurve( "Orders", dspl, Color.Blue );
+			// Turn off the line so it's a scatter plot
 			myCurve.Line.IsVisible = false;
-			z1.AxisChange();
 
+			// Show the point values.  These are derived from the "ShipName" database column,
+			// which is set as the "Tag" property.
+			z1.IsShowPointValues = true;
+
+			// Auto set the scale ranges
+			z1.AxisChange();
 		}
 
 		private void CreateGraph_BarJunk( ZedGraphControl z1 )
