@@ -30,7 +30,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
-			CreateGraph_BasicLinear3Curve( zedGraphControl1 );
+			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl1 );
@@ -508,22 +508,26 @@ namespace ZedGraph.ControlTest
 
 			//CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Black );
 			CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Blue );
-			//myCurve.Stick.Size = 10;
+			//myCurve.Stick.Size = 20;
 			myCurve.Stick.IsAutoSize = true;
 			//myCurve.CandleStick.PenWidth = 2;
 			//myCurve.CandleStick.IsOpenCloseVisible = false;
-
 			// Use DateAsOrdinal to skip weekend gaps
 			myPane.XAxis.Type = AxisType.DateAsOrdinal;
-			myPane.XAxis.Scale.MajorStep = 1.0;
+			//myPane.XAxis.Type = AxisType.Date;
+			//myPane.XAxis.Scale.MajorStep = 1.0;
 
 			// pretty it up a little
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
 			myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
 
+			BoxObj box = new BoxObj( 4, 60, 5, 50000 );
+			myPane.GraphObjList.Add( box );
+
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();
 			z1.Invalidate();
+
 		}
 
 		// Japanese Candlestick
@@ -1903,6 +1907,7 @@ namespace ZedGraph.ControlTest
 
 			PieItem segment2 = myPane.AddPieSlice( 40, Color.SandyBrown, Color.White, 45f, 0.2, "South" );
 			segment2.LabelType = PieLabelType.Value;
+			segment2.Link = new Link( "Poop", "http://yahoo.com", "_blank" );
 
 			PieItem segment6 = myPane.AddPieSlice( 250, Color.Red, Color.White, 45f, 0, "Europe" );
 			segment6.LabelType = PieLabelType.Name_Value;
@@ -1939,6 +1944,8 @@ namespace ZedGraph.ControlTest
 			text2.Location.X += 0.008f;
 			text2.Location.Y += 0.01f;
 			myPane.GraphObjList.Add( text2 );
+
+			z1.LinkEvent += new ZedGraphControl.LinkEventHandler(z1_LinkEvent);
 
 			z1.AxisChange();
 		}

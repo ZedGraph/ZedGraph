@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2006-10-26 05:08:10 $ </version>
 	[Serializable]
 	public class BoxObj : GraphObj, ICloneable, ISerializable
 	{
@@ -276,6 +276,11 @@ namespace ZedGraph
 			// Convert the arrow coordinates from the user coordinate system
 			// to the screen coordinate system
 			RectangleF pixRect = this.Location.TransformRect( pane );
+
+			// Clip the rect to just outside the PaneRect so we don't end up with wild coordinates.
+			RectangleF tmpRect = pane.Rect;
+			tmpRect.Inflate( 20, 20 );
+			pixRect.Intersect( tmpRect );
 
 			if (	Math.Abs( pixRect.Left ) < 100000 &&
 					Math.Abs( pixRect.Top ) < 100000 &&

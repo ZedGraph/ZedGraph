@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.27 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 1.28 $ $Date: 2006-10-26 05:08:10 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem, ICloneable, ISerializable
 	{
@@ -1040,12 +1040,6 @@ namespace ZedGraph
 		override public bool GetCoords( GraphPane pane, int i, out string coords )
 		{
 			coords = string.Empty;
-
-			if ( i < 0 || i >= _points.Count )
-				return false;
-
-			if ( _points[i].IsInvalid )
-				return false;
 
 			PointF pt = _boundingRectangle.Location;
 			pt.X += _boundingRectangle.Width / 2.0f;

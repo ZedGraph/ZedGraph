@@ -1,5 +1,9 @@
 == Version 5 ==
 
+;23-Oct-2006 (by Champion)
+: [UPD] Add clipping to boxObj's so wild coordinates don't cull them
+: [FIX] don't rely on PointPairList points for PieItem image map
+
 ;18-Oct-2006 (by Champion)
 : [UPD] add using constructs for most temporary Pen, Brush, GraphicsPath instances
 : [NEW] add hungarian language locale file (thanks to cocinerox)

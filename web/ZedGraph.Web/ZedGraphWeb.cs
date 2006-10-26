@@ -40,7 +40,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.8 $ $Date: 2006-10-19 04:40:15 $</version>
+	/// <version>$Revision: 1.9 $ $Date: 2006-10-26 05:08:10 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -1630,7 +1630,7 @@ namespace ZedGraph.Web
 					{
 						if ( curve.Link.IsActive && curve.IsVisible )
 						{
-							for ( int i=0; i < curve.Points.Count; i++ )
+							for ( int i=0; i < (curve is PieItem ? 1 : curve.Points.Count); i++ )
 							{
 								//if ( curve.GetCoords( pane, i, pane.Rect.Left, pane.Rect.Top, out coords ) )
 								if ( curve.GetCoords( pane, i, out coords ) )
