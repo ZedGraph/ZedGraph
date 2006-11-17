@@ -29,7 +29,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
-			//CreateGraph_BasicLinear( zedGraphControl1 );
+			CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
@@ -56,6 +56,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_Junk4( zedGraphControl1 );
 			//CreateGraph_junk5( zedGraphControl1 );
 			//CreateGraph_junk6( zedGraphControl1 );
+			//CreateGraph_junk7( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
@@ -681,6 +682,25 @@ namespace ZedGraph.ControlTest
 			box.Location.CoordinateFrame = CoordType.PaneFraction;
 			box.ZOrder = ZOrder.G_BehindAll;
 			myPane.GraphObjList.Add( box );
+			box.Fill = new Fill( new Color[] { 
+    Color.FromArgb(0, Color.Black), 
+    Color.FromArgb(20, Color.Black), 
+    Color.FromArgb(36, 219, 170), 
+    Color.FromArgb(38, 225, 175), 
+    Color.FromArgb(33, 204, 157), 
+    Color.FromArgb(32, 194, 149),
+    Color.FromArgb(60, Color.Black), 
+    Color.FromArgb(0, Color.Black)
+}, new float[] {
+    0f,
+    0.1428f,
+    0.1785f,
+    0.3214f,
+    0.5714f,
+    0.75f,
+    0.7857f,
+    1f 
+} );
 
 			//myPane.XAxis.Type = AxisType.Linear;
 			myPane.XAxis.Scale.Format = "HH:mm:ss.fff";
@@ -699,6 +719,7 @@ namespace ZedGraph.ControlTest
 			//myPane.XAxis.Scale.Format = "f2";
 			//myPane.XAxis.Scale.Format = "0.00'%'";
 			z1.AxisChange();
+			z1.IsAntiAlias = true;
 
 			z1.GraphPane.XAxis.Color = Color.Red;
 			z1.GraphPane.XAxis.MajorTic.Color = Color.Blue;
@@ -1417,6 +1438,39 @@ namespace ZedGraph.ControlTest
 			z1.Refresh();
 		}
 
+		private void CreateGraph_junk7( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+			PointPairList list = new PointPairList();
+			double x, y;
+			double minX, maxX;
+
+			double curDate = DateTime.Now.ToOADate();
+			minX = curDate - 550; //labels are displayed properly 
+			//MinX = New XDate(DateAdd(DateInterval.Day, -550, Now)) 'not displayed properly 
+			maxX = curDate;
+
+			x = minX;
+			for ( int i=1; i<700; i++ )
+			{
+				x++;
+				y = Math.Sin(i * Math.PI / 45.0) * 16.0; 
+				list.Add(x, y) ;
+			}
+ 
+			LineItem myCurve = myPane.AddCurve("", list, Color.Blue, SymbolType.None);
+			myPane.XAxis.Type = AxisType.Date;
+			myPane.XAxis.Scale.Min = minX; 
+			myPane.XAxis.Scale.Max = maxX; 
+			myPane.XAxis.Scale.MajorUnit = DateUnit.Month; 
+			myPane.XAxis.Scale.MinorUnit = DateUnit.Month; 
+			myPane.XAxis.Scale.MajorStep = 1.0; 
+			myPane.XAxis.Scale.MinorStep = 1.0; 
+			myPane.XAxis.Scale.Format = "MMM-yy"; 
+			z1.AxisChange(); 
+		} 
+ 
+ 
 		// masterpane with three vertical panes
 		private void CreateGraph_ThreeVerticalPanes( ZedGraphControl z1 )
 		{
@@ -1589,6 +1643,26 @@ namespace ZedGraph.ControlTest
 		{
 			ZedGraphControl zg1 = zedGraphControl1;
 
+			float pixValX = e.X;
+			double xVal = zg1.GraphPane.XAxis.Scale.ReverseTransform( pixValX );
+			float pixValY = e.Y;
+			double yVal = zg1.GraphPane.YAxis.Scale.ReverseTransform( pixValY );
+			Image poop;
+//			int tick = Environment.TickCount;
+//			for ( int i = 0; i < 300; i++ )
+//			{
+				poop = zg1.GraphPane.GetImage( 500, 500, 96 );
+//			}
+
+//			MessageBox.Show( "Ticks = " + (Environment.TickCount - tick).ToString() );
+
+			double xVal2 = zg1.GraphPane.XAxis.Scale.ReverseTransform( pixValX );
+			double yVal2 = zg1.GraphPane.YAxis.Scale.ReverseTransform( pixValY );
+
+			MessageBox.Show( "x1 = " + xVal.ToString() + "  x2 = " + xVal2.ToString() +
+				"   y1 = " + yVal.ToString() + "  y2 = " + yVal2.ToString()  );
+			return true;
+
 			if ( sender == zg1 )
 			{
 				GraphPane myPane = zg1.GraphPane;
@@ -1696,6 +1770,8 @@ namespace ZedGraph.ControlTest
 			BarItem myCurve5 = myPane.AddBar( "Data 5", list[4], Color.Gray );
 			BarItem myCurve6 = myPane.AddBar( "Data 6", list[5], Color.Fuchsia );
 			BarItem myCurve7 = myPane.AddBar( "Data 7", list[6], Color.Navy );
+			//myCurve7.IsOverrideOrdinal = true;
+			//list[6][0].X = 1.5;
 
 			myPane.BarSettings.Type = BarType.Stack;
 			myPane.BarSettings.Base = BarBase.X;

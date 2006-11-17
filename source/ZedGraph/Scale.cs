@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.17 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 1.18 $ $Date: 2006-11-17 15:20:16 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -1594,14 +1594,14 @@ namespace ZedGraph
 
 		}
 
-		internal void ResetScaleData()
+/*		internal void ResetScaleData()
 		{
 			_minPix = float.NaN;
 			_maxPix = float.NaN;
 			_minLinTemp = double.NaN;
 			_maxLinTemp = double.NaN;
 		}
-
+*/
 		/// <summary>
 		/// Convert a value to its linear equivalent for this type of scale.
 		/// </summary>

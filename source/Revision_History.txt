@@ -1,5 +1,16 @@
 == Version 5 ==
 
+;11-Nov-2006 (by Champion)
+: [NEW] Add ZedGraphControl.IsAntiAlias property as a master override
+: [UPD] Add try/catch pairs around print operations
+: [FIX] Call AxisChange() when mousewheel zoom happens
+: [UPD] Change ZedGraphWeb to a UserControl instead of Control
+: [FIX] Fix CreateBarLabels() to work if there are non-bars present
+
+;28-Oct-2006 (by Champion)
+: [FIX] Make PaneBase.GetImage() save Chart.Rect so coords aren't messed up
+: [FIX] Make FontSpec.IsAntiAlias use g.TextRenderingHint = TextRenderingHint.AntiAlias (thanks to floreseken)
+
 ;23-Oct-2006 (by Champion)
 : [UPD] Add clipping to boxObj's so wild coordinates don't cull them
 : [FIX] don't rely on PointPairList points for PieItem image map

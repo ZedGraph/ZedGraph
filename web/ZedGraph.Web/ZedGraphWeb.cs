@@ -40,14 +40,14 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.9 $ $Date: 2006-10-26 05:08:10 $</version>
+	/// <version>$Revision: 1.10 $ $Date: 2006-11-17 15:20:19 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
 		//DefaultProperty("Title"),
 	ToolboxData( "<{0}:ZedGraphWeb runat=server></{0}:ZedGraphWeb>" )
 	]
-	public class ZedGraphWeb : Control, INamingContainer, IDisposable
+	public class ZedGraphWeb : UserControl, INamingContainer, IDisposable
 	{
 		/// <summary>
 		/// Override the <see cref="ToString"/> method to do nothing.

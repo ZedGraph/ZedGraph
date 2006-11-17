@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.67 $ $Date: 2006-09-25 02:57:53 $ </version>
+	/// <version> $Revision: 3.68 $ $Date: 2006-11-17 15:20:13 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -79,7 +79,7 @@ namespace ZedGraph
 
 		// Chart Properties //////////////////////////////////////////////////////////////
 
-		private Chart _chart;
+		internal Chart _chart;
 
 		internal BarSettings _barSettings;
 

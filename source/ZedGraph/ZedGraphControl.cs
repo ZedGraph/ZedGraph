@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Drawing.Imaging;
 using System.Drawing.Printing;
 using System.Data;
@@ -66,7 +68,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.71 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.72 $ $Date: 2006-11-17 15:20:17 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -79,6 +81,12 @@ namespace ZedGraph
 		/// disposed.
 		/// </summary>
 		private MasterPane _masterPane;
+
+		/// <summary>
+		/// private field that determines if anti-aliased drawing will be forced on.  Use the
+		/// public property <see cref="ZedGraphControl.IsAntiAlias"/> to access this value.
+		/// </summary>
+		private bool _isAntiAlias = false;
 
 		/// <summary>
 		/// private field that determines whether or not tooltips will be displayed
@@ -1136,6 +1144,22 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Gets or sets a value that determines if all drawing operations for this control
+		/// will be forced to operate in Anti-alias mode.  Note that if this value is set to
+		/// "true", it overrides the setting for sub-objects.  Otherwise, the sub-object settings
+		/// (such as <see cref="FontSpec.IsAntiAlias"/>)
+		/// will be honored.
+		/// </summary>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
+		 DefaultValue( false ),
+		 Description( "true to force all objects to be draw in anti-alias mode" )]
+		public bool IsAntiAlias
+		{
+			get { return _isAntiAlias; }
+			set { _isAntiAlias = value; }
+		}
+
+		/// <summary>
 		/// Gets or sets a value that determines whether or not tooltips will be displayed
 		/// when the mouse hovers over data values.
 		/// </summary>
@@ -1915,11 +1939,21 @@ namespace ZedGraph
 						_yScrollRangeList[0].Max );
 				}
 
+				SmoothingMode sModeSave = e.Graphics.SmoothingMode;
+				TextRenderingHint sHintSave = e.Graphics.TextRenderingHint;
+				if ( _isAntiAlias )
+				{
+					e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
+					e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
+				}
 				base.OnPaint( e );
 
 				// Add a try/catch pair since the users of the control can't catch this one
 				try { _masterPane.Draw( e.Graphics ); }
 				catch { }
+
+				e.Graphics.SmoothingMode = sModeSave;
+				e.Graphics.TextRenderingHint = sHintSave;
 			}
 
 /*
@@ -2470,6 +2504,18 @@ namespace ZedGraph
 					ZoomPane( pane, zoomFraction, centerPoint, _isZoomOnMouseCenter, false );
 
 					ApplyToAllPanes( pane );
+
+					using ( Graphics g = this.CreateGraphics() )
+					{
+						// always AxisChange() the dragPane
+						pane.AxisChange( g );
+
+						foreach ( GraphPane tempPane in _masterPane._paneList )
+						{
+							if ( tempPane != pane && ( _isSynchronizeXAxes || _isSynchronizeYAxes ) )
+								tempPane.AxisChange( g );
+						}
+					}
 
 					ZoomStatePush( pane );
 
@@ -3848,11 +3894,20 @@ namespace ZedGraph
 		{
 			get
 			{
-				if ( _pdSave == null )
+				// Add a try/catch pair since the users of the control can't catch this one
+				try
 				{
-					_pdSave = new PrintDocument();
-					_pdSave.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+					if ( _pdSave == null )
+					{
+						_pdSave = new PrintDocument();
+						_pdSave.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+					}
 				}
+				catch ( Exception exception )
+				{
+					MessageBox.Show( exception.Message );
+				}
+
 				return _pdSave;
 			}
 			set { _pdSave = value; }
@@ -3866,26 +3921,36 @@ namespace ZedGraph
 		{
 			PrintDocument pd = PrintDocument;
 
-			if ( pd != null )
+			// Add a try/catch pair since the users of the control can't catch this one
+			try
 			{
-				//pd.PrintPage += new PrintPageEventHandler( GraphPrintPage );
-				PageSetupDialog setupDlg = new PageSetupDialog();
-				setupDlg.Document = pd;
-				if ( setupDlg.ShowDialog() == DialogResult.OK )
+				if ( pd != null )
 				{
-					pd.PrinterSettings = setupDlg.PrinterSettings;
-					pd.DefaultPageSettings = setupDlg.PageSettings;
+					//pd.PrintPage += new PrintPageEventHandler( GraphPrintPage );
+					PageSetupDialog setupDlg = new PageSetupDialog();
+					setupDlg.Document = pd;
 
-					// BUG in PrintDocument!!!  Converts in/mm repeatedly
-					// http://support.microsoft.com/?id=814355
-					// from http://www.vbinfozine.com/tpagesetupdialog.shtml, by Palo Mraz
-					//if ( System.Globalization.RegionInfo.CurrentRegion.IsMetric )
-					//{
-					//	setupDlg.Document.DefaultPageSettings.Margins = PrinterUnitConvert.Convert(
-					//	setupDlg.Document.DefaultPageSettings.Margins,
-					//	PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter );
-					//}
+					if ( setupDlg.ShowDialog() == DialogResult.OK )
+					{
+						pd.PrinterSettings = setupDlg.PrinterSettings;
+						pd.DefaultPageSettings = setupDlg.PageSettings;
+
+						// BUG in PrintDocument!!!  Converts in/mm repeatedly
+						// http://support.microsoft.com/?id=814355
+						// from http://www.vbinfozine.com/tpagesetupdialog.shtml, by Palo Mraz
+						//if ( System.Globalization.RegionInfo.CurrentRegion.IsMetric )
+						//{
+						//	setupDlg.Document.DefaultPageSettings.Margins = PrinterUnitConvert.Convert(
+						//	setupDlg.Document.DefaultPageSettings.Margins,
+						//	PrinterUnit.Display, PrinterUnit.TenthsOfAMillimeter );
+						//}
+					}
 				}
+			}
+
+			catch ( Exception exception )
+			{
+				MessageBox.Show( exception.Message );
 			}
 		}
 
@@ -3896,16 +3961,25 @@ namespace ZedGraph
 		/// </summary>
 		public void DoPrint()
 		{
-			PrintDocument pd = PrintDocument;
-
-			if ( pd != null )
+			// Add a try/catch pair since the users of the control can't catch this one
+			try
 			{
-				//pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
-				PrintDialog pDlg = new PrintDialog();
-				pDlg.Document = pd;
-				if ( pDlg.ShowDialog() == DialogResult.OK )
-					pd.Print();
+				PrintDocument pd = PrintDocument;
+
+				if ( pd != null )
+				{
+					//pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+					PrintDialog pDlg = new PrintDialog();
+					pDlg.Document = pd;
+					if ( pDlg.ShowDialog() == DialogResult.OK )
+						pd.Print();
+				}
 			}
+			catch ( Exception exception )
+			{
+				MessageBox.Show( exception.Message );
+			}
+
 		}
 
 		/// <summary>
@@ -3915,14 +3989,22 @@ namespace ZedGraph
 		/// </summary>
 		public void DoPrintPreview()
 		{
-			PrintDocument pd = PrintDocument;
-
-			if ( pd != null )
+			// Add a try/catch pair since the users of the control can't catch this one
+			try
 			{
-				PrintPreviewDialog ppd = new PrintPreviewDialog();
-				//pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
-				ppd.Document = pd;
-				ppd.Show( this );
+				PrintDocument pd = PrintDocument;
+
+				if ( pd != null )
+				{
+					PrintPreviewDialog ppd = new PrintPreviewDialog();
+					//pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
+					ppd.Document = pd;
+					ppd.Show( this );
+				}
+			}
+			catch ( Exception exception )
+			{
+				MessageBox.Show( exception.Message );
 			}
 		}
 

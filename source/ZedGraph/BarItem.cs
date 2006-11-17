@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="BarSettings.Type"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.19 $ $Date: 2006-07-02 06:42:01 $ </version>
+	/// <version> $Revision: 3.20 $ $Date: 2006-11-17 15:20:13 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -334,8 +334,8 @@ namespace ZedGraph
 						// Add the TextObj to the GraphPane
 						pane.GraphObjList.Add( label );
 					}
+					curveIndex++;
 				}
-				curveIndex++;
 			}
 		}
 

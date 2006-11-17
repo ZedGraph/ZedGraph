@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.22 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.23 $ $Date: 2006-11-17 15:20:15 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -838,22 +838,31 @@ namespace ZedGraph
 			{
 				//bitmapGraphics.SmoothingMode = SmoothingMode.AntiAlias;
 
-				// Clone the GraphPane so we don't mess up the minPix and maxPix values or
-				// the rect/ChartRect calculations of the original
-
-				//PaneBase tempPane = (PaneBase) ((ICloneable)this).Clone();
 				// This is actually a shallow clone, so we don't duplicate all the data, curveLists, etc.
 				PaneBase tempPane = this.ShallowClone();
 
+				// Clone the Chart object for GraphPanes so we don't mess up the minPix and maxPix values or
+				// the rect/ChartRect calculations of the original
+				RectangleF saveRect = new RectangleF();
+				if ( this is GraphPane )
+					saveRect = ( this as GraphPane ).Chart.Rect;
+
 				tempPane.ReSize( bitmapGraphics, new RectangleF( 0, 0, width, height ) );
 
-				//tempPane.AxisChange( bitmapGraphics );
 				tempPane.Draw( bitmapGraphics );
-				//this.Draw( bitmapGraphics );
+
+				if ( this is GraphPane )
+				{
+					GraphPane gPane = this as GraphPane;
+					gPane.Chart.Rect = saveRect;
+					gPane.XAxis.Scale.SetupScaleData( gPane, gPane.XAxis );
+					foreach ( Axis axis in gPane.YAxisList )
+						axis.Scale.SetupScaleData( gPane, axis );
+					foreach ( Axis axis in gPane.Y2AxisList )
+						axis.Scale.SetupScaleData( gPane, axis );
+				}
 
 				this.ReSize( bitmapGraphics, this.Rect );
-
-				//bitmapGraphics.Dispose();
 			}
 
 			return bitmap;

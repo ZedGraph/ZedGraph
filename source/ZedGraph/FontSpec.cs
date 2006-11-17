@@ -20,6 +20,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
@@ -34,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.22 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.23 $ $Date: 2006-11-17 15:20:13 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -805,8 +806,12 @@ namespace ZedGraph
 			//Remake( scaleFactor, this.Size, ref this.scaledSize, ref this.font );
 
 			SmoothingMode sModeSave = g.SmoothingMode;
+			TextRenderingHint sHintSave = g.TextRenderingHint;
 			if ( _isAntiAlias )
+			{
 				g.SmoothingMode = SmoothingMode.HighQuality;
+				g.TextRenderingHint = TextRenderingHint.AntiAlias;
+			}
 
 			SizeF sizeF;
 			if ( layoutArea.IsEmpty )
@@ -872,6 +877,7 @@ namespace ZedGraph
 			g.Transform = saveMatrix;
 
 			g.SmoothingMode = sModeSave;
+			g.TextRenderingHint = sHintSave;
 		}
 
 		/// <summary>
@@ -913,8 +919,12 @@ namespace ZedGraph
 			float scaleFactor )
 		{
 			SmoothingMode sModeSave = g.SmoothingMode;
+			TextRenderingHint sHintSave = g.TextRenderingHint;
 			if ( _isAntiAlias )
+			{
 				g.SmoothingMode = SmoothingMode.HighQuality;
+				g.TextRenderingHint = TextRenderingHint.AntiAlias;
+			}
 
 			// make sure the font size is properly scaled
 			Remake( scaleFactor, this.Size, ref _scaledSize, ref _font );
@@ -972,6 +982,7 @@ namespace ZedGraph
 			g.Transform = saveMatrix;
 
 			g.SmoothingMode = sModeSave;
+			g.TextRenderingHint = sHintSave;
 		}
 	#endregion
 
