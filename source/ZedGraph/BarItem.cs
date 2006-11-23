@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="BarSettings.Type"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.20 $ $Date: 2006-11-17 15:20:13 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2006-11-23 19:46:50 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -261,6 +261,37 @@ namespace ZedGraph
 		/// </param>
 		public static void CreateBarLabels( GraphPane pane, bool isBarCenter, string valueFormat )
 		{
+			CreateBarLabels( pane, isBarCenter, valueFormat, TextObj.Default.FontFamily,
+					TextObj.Default.FontSize, TextObj.Default.FontColor, TextObj.Default.FontBold,
+					TextObj.Default.FontItalic, TextObj.Default.FontUnderline );
+		}
+
+		/// <summary>
+		/// Create a <see cref="TextObj" /> for each bar in the <see cref="GraphPane" />.
+		/// </summary>
+		/// <remarks>
+		/// This method will go through the bars, create a label that corresponds to the bar value,
+		/// and place it on the graph depending on user preferences.  This works for horizontal or
+		/// vertical bars in clusters or stacks, but only for <see cref="BarItem" /> types.  This method
+		/// does not apply to <see cref="ErrorBarItem" /> or <see cref="HiLowBarItem" /> objects.
+		/// Call this method only after calling <see cref="GraphPane.AxisChange" />.
+		/// </remarks>
+		/// <param name="pane">The GraphPane in which to place the text labels.</param>
+		/// <param name="isBarCenter">true to center the labels inside the bars, false to
+		/// place the labels just above the top of the bar.</param>
+		/// <param name="valueFormat">The double.ToString string format to use for creating
+		/// the labels.
+		/// </param>
+		/// <param name="fontColor">The color in which to draw the labels</param>
+		/// <param name="fontFamily">The string name of the font family to use for the labels</param>
+		/// <param name="fontSize">The floating point size of the font, in scaled points</param>
+		/// <param name="isBold">true for a bold font type, false otherwise</param>
+		/// <param name="isItalic">true for an italic font type, false otherwise</param>
+		/// <param name="isUnderline">true for an underline font type, false otherwise</param>
+		public static void CreateBarLabels( GraphPane pane, bool isBarCenter, string valueFormat,
+			string fontFamily, float fontSize, Color fontColor, bool isBold, bool isItalic,
+			bool isUnderline )
+		{
 			bool isVertical = pane.BarSettings.Base == BarBase.X;
 
 			// Make the gap between the bars and the labels = 2% of the axis range
@@ -320,10 +351,15 @@ namespace ZedGraph
 						else
 							label = new TextObj( barLabelText, position, centerVal );
 
+						label.FontSpec.Family = fontFamily;
 						// Configure the TextObj
 						label.Location.CoordinateFrame = CoordType.AxisXYScale;
-						label.FontSpec.Size = 12;
-						label.FontSpec.FontColor = Color.Black;
+						label.FontSpec.Size = fontSize;
+						label.FontSpec.FontColor = fontColor;
+						label.FontSpec.IsItalic = isItalic;
+						label.FontSpec.IsBold = isBold;
+						label.FontSpec.IsUnderline = isUnderline;
+
 						label.FontSpec.Angle = isVertical ? 90 : 0;
 						label.Location.AlignH = isBarCenter ? AlignH.Center :
 									( hiVal >= 0 ? AlignH.Left : AlignH.Right );

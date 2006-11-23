@@ -1,5 +1,12 @@
 == Version 5 ==
 
+;21-Nov-2006 (by Champion)
+: [NEW] Add CreateBarLabels overload that controls more font options
+: [NEW] Add option to color sticks in JapaneseCandleStick for rise vs fall (thanks i4xcoder)
+: [UPD] Many FontSpec's now have set properties, but not allowed to be null (thanks okrumnow)
+: [NEW] Add AlignH property to Scale (thanks to i4xcoder)
+: [NEW] Add DashOn and DashOff properties to Line to support DashStyle.Custom
+
 ;11-Nov-2006 (by Champion)
 : [NEW] Add ZedGraphControl.IsAntiAlias property as a master override
 : [UPD] Add try/catch pairs around print operations

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2006-11-23 19:46:50 $ </version>
 	[Serializable]
 	public class JapaneseCandleStick : CandleStick, ICloneable, ISerializable
 	{
@@ -71,6 +71,12 @@ namespace ZedGraph
 		/// </summary>
 		private Border _fallingBorder;
 
+		/// <summary>
+		/// Private field that stores the CandleStick color when the <see cref="StockPt.Close" /> 
+		/// value is less than the <see cref="StockPt.Open" /> value.  Use the public
+		/// property <see cref="FallingColor"/> to access this value.
+		/// </summary>
+		protected Color _fallingColor;
 	#endregion
 
 	#region Defaults
@@ -150,6 +156,21 @@ namespace ZedGraph
 			set { _fallingBorder = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the <see cref="System.Drawing.Color"/> data for this
+		/// <see cref="JapaneseCandleStick"/> when the value of the candlestick is
+		/// falling.
+		/// </summary>
+		/// <remarks>This property only controls the color of
+		/// the vertical line when the value is falling.  The rising color is controlled
+		/// by the <see cref="CandleStick.Color" /> property.
+		/// </remarks>
+		public Color FallingColor
+		{
+			get { return _fallingColor; }
+			set { _fallingColor = value; }
+		}
+
 	#endregion
 
 	#region Constructors
@@ -165,6 +186,8 @@ namespace ZedGraph
 
 			_risingBorder = new Border( Default.RisingBorder, CandleStick.Default.PenWidth );
 			_fallingBorder = new Border( Default.FallingBorder, CandleStick.Default.PenWidth );
+
+			_fallingColor = Default.FallingColor;
 		}
 
 		/// <summary>
@@ -178,6 +201,8 @@ namespace ZedGraph
 
 			_risingBorder = rhs._risingBorder.Clone();
 			_fallingBorder = rhs._fallingBorder.Clone();
+
+			_fallingColor = rhs._fallingColor;
 		}
 
 		/// <summary>
@@ -206,7 +231,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 10;
+		public const int schema2 = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -226,6 +251,9 @@ namespace ZedGraph
 			_fallingFill = (Fill)info.GetValue( "fallingFill", typeof( Fill ) );
 			_risingBorder = (Border)info.GetValue( "risingBorder", typeof( Border ) );
 			_fallingBorder = (Border)info.GetValue( "fallingBorder", typeof( Border ) );
+
+			if ( schema2 >= 11 )
+				_fallingColor = (Color) info.GetValue( "fallingColor", typeof( Color ) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -242,6 +270,7 @@ namespace ZedGraph
 			info.AddValue( "fallingFill", _fallingFill );
 			info.AddValue( "risingBorder", _risingBorder );
 			info.AddValue( "fallingBorder", _fallingBorder );
+			info.AddValue( "fallingColor", _fallingColor );
 		}
 
 	#endregion
@@ -367,7 +396,8 @@ namespace ZedGraph
 				//float halfSize = _size * scaleFactor;
 				float halfSize = GetBarWidth( pane, baseAxis, scaleFactor );
 
-				using ( Pen pen = new Pen( _color, _penWidth ) )
+				using ( Pen risingPen = new Pen(  _color, _penWidth ) )
+				using ( Pen fallingPen = new Pen( _fallingColor, _penWidth ) )
 				{
 					// Loop over each defined point							
 					for ( int i = 0; i < curve.Points.Count; i++ )
@@ -407,7 +437,8 @@ namespace ZedGraph
 								pixClose = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, close );
 
 							Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
-									pixClose, halfSize, scaleFactor, pen,
+									pixClose, halfSize, scaleFactor,
+									( close > open ? risingPen : fallingPen ),
 									( close > open ? _risingFill : _fallingFill ),
 									( close > open ? _risingBorder : _fallingBorder ), pt );
 						}

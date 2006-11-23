@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-09-09 17:32:02 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2006-11-23 19:46:50 $ </version>
 	[Serializable]
 	public class TextObj : GraphObj, ICloneable, ISerializable
 	{
@@ -169,6 +169,12 @@ namespace ZedGraph
 		public FontSpec FontSpec
 		{
 			get { return _fontSpec; }
+			set
+			{
+				if ( value == null )
+					throw new ArgumentNullException( "Uninitialized FontSpec in TextObj" );
+				_fontSpec = value;
+			}
 		}
 	#endregion
 	

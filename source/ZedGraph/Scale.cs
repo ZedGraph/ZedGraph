@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.18 $ $Date: 2006-11-17 15:20:16 $ </version>
+	/// <version> $Revision: 1.19 $ $Date: 2006-11-23 19:46:50 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -121,10 +121,18 @@ namespace ZedGraph
 
 		/// <summary> Private field for the alignment of the <see cref="Axis"/> tic labels.
 		/// This fields controls whether the inside, center, or outside edges of the text labels are aligned.
-		/// Use the public property <see cref="Scale.Align"/>
+		/// Use the public property <see cref="Scale.AlignP"/>
 		/// for access to this value. </summary>
 		/// <seealso cref="FormatAuto"/>
 		internal AlignP _align;
+
+		/// <summary> Private field for the alignment of the <see cref="Axis"/> tic labels.
+		/// This fields controls whether the left, center, or right edges of the text labels are aligned.
+		/// Use the public property <see cref="Scale.AlignH"/>
+		/// for access to this value. </summary>
+		/// <seealso cref="FormatAuto"/>
+		internal AlignH _alignH;
+
 
 		/// <summary> Private fields for the <see cref="Axis"/> font specificatios.
 		/// Use the public properties <see cref="FontSpec"/> and
@@ -507,8 +515,13 @@ namespace ZedGraph
 			/// <summary> The default alignment of the <see cref="Axis"/> tic labels.
 			/// This value controls whether the inside, center, or outside edges of the text labels are aligned.
 			/// </summary>
-			/// <seealso cref="Align"/>
+			/// <seealso cref="AlignP"/>
 			public static AlignP Align = AlignP.Center;
+			/// <summary> The default alignment of the <see cref="Axis"/> tic labels.
+			/// This value controls whether the left, center, or right edges of the text labels are aligned.
+			/// </summary>
+			/// <seealso cref="AlignH"/>
+			public static AlignH AlignH = AlignH.Center;
 			/// <summary>
 			/// The default font family for the <see cref="Axis"/> scale values
 			/// font specification <see cref="FontSpec"/>
@@ -645,6 +658,8 @@ namespace ZedGraph
 
 			_isLabelsInside = Default.IsLabelsInside;
 			_align = Default.Align;
+			_alignH = Default.AlignH;
+
 			_fontSpec = new FontSpec(
 				Default.FontFamily, Default.FontSize,
 				Default.FontColor, Default.FontBold,
@@ -701,6 +716,8 @@ namespace ZedGraph
 
 			_isLabelsInside = rhs._isLabelsInside;
 			_align = rhs._align;
+			_alignH = rhs._alignH;
+
 			_fontSpec = (FontSpec) rhs._fontSpec.Clone();
 
 			_labelGap = rhs._labelGap;
@@ -790,7 +807,7 @@ namespace ZedGraph
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
 		// schema changed to 2 with isScaleVisible
-		public const int schema = 10;
+		public const int schema = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -844,6 +861,9 @@ namespace ZedGraph
 
 			_isLabelsInside = info.GetBoolean( "isLabelsInside" );
 			_align = (AlignP)info.GetValue( "align", typeof( AlignP ) );
+			if ( schema >= 11 )
+				_alignH = (AlignH)info.GetValue( "alignH", typeof( AlignH ) );
+
 			_fontSpec = (FontSpec)info.GetValue( "fontSpec", typeof( FontSpec ) );
 			_labelGap = info.GetSingle( "labelGap" );
 
@@ -896,6 +916,7 @@ namespace ZedGraph
 
 			info.AddValue( "isLabelsInside", _isLabelsInside );
 			info.AddValue( "align", _align );
+			info.AddValue( "alignH", _alignH );
 			info.AddValue( "fontSpec", _fontSpec );
 			info.AddValue( "labelGap", _labelGap );
 		}
@@ -1370,6 +1391,18 @@ namespace ZedGraph
 			set { _align = value; }
 		}
 
+		/// <summary> Controls the alignment of the <see cref="Axis"/> tic labels.
+		/// </summary>
+		/// <remarks>
+		/// This property controls whether the left, center, or right edges of the
+		/// text labels are aligned.
+		/// </remarks>
+		public AlignH AlignH
+		{
+			get { return _alignH; }
+			set { _alignH = value; }
+		}
+
 		/// <summary>
 		/// Gets a reference to the <see cref="ZedGraph.FontSpec"/> class used to render
 		/// the scale values
@@ -1383,6 +1416,12 @@ namespace ZedGraph
 		public FontSpec FontSpec
 		{
 			get { return _fontSpec; }
+			set
+			{
+				if ( value == null )
+					throw new ArgumentNullException( "Uninitialized FontSpec in Scale" );
+				_fontSpec = value;
+			}
 		}
 
 		/// <summary>
@@ -2046,16 +2085,23 @@ namespace ZedGraph
 			else
 				textCenter = shift + textCenter;
 
+			AlignV av = AlignV.Center;
+			AlignH ah = AlignH.Center;
+
+			if ( _ownerAxis is XAxis )
+				ah = _alignH;
+			else
+				av = _alignH == AlignH.Left ? AlignV.Top : ( _alignH == AlignH.Right ? AlignV.Bottom : AlignV.Center );
 
 			if ( this.IsLog && _isUseTenPower )
 				_fontSpec.DrawTenPower( g, pane, tmpStr,
 					pixVal, textCenter,
-					AlignH.Center, AlignV.Center,
+					ah, av,
 					scaleFactor );
 			else
 				_fontSpec.Draw( g, pane.IsPenWidthScaled, tmpStr,
 					pixVal, textCenter,
-					AlignH.Center, AlignV.Center,
+					ah, av,
 					scaleFactor );
 		}
 

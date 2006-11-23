@@ -67,7 +67,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_OnePoint( zedGraphControl1 );
 			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
 			//CreateGraph_Pie( zedGraphControl1 );
-			//CreateGraph_PolyTest( zedGraphControl2 );
+			//CreateGraph_PolyTest( zedGraphControl1 );
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
@@ -617,14 +617,23 @@ namespace ZedGraph.ControlTest
 				double x = XDate.CalendarDateToXLDate( 2006, i, 1, 0, 0, 0 );
 
 				double y = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.2 ) );
-				list.Add( x, y, 0 );
+
+				string tag;
+				tag = "Point #" + i.ToString() + "\n" + XDate.ToString( x, "g" ) + "\n" + y.ToString() +
+					"Line 4\nLine 5\nLine 6";
+
+				if ( i == 10 )
+					y = PointPair.Missing;
+				list.Add( x, y, i/36.0, tag );
 			}
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			myPane.IsIgnoreMissing = true;
+			myPane.XAxis.Type = AxisType.Ordinal;
 
 			myCurve.Symbol.Fill = new Fill( Color.White, Color.Red );
 			myCurve.Symbol.Fill.Type = FillType.GradientByZ;
 			myCurve.Symbol.Fill.RangeMin = 0;
-			myCurve.Symbol.Fill.RangeMax = 1;
+			myCurve.Symbol.Fill.RangeMax = 4;
 			myCurve.Symbol.Fill.RangeDefault = 0;
 			myCurve.Symbol.Fill.SecondaryValueGradientColor = Color.Empty;
 
@@ -658,6 +667,10 @@ namespace ZedGraph.ControlTest
 			line.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
 			myPane.GraphObjList.Add( line );
 
+			LineObj myLine = new LineObj( Color.Red, 0, 20, 1, 20 );
+			myLine.Location.CoordinateFrame = CoordType.XChartFractionYScale;
+			myPane.GraphObjList.Add( myLine );
+
 			myPane.XAxis.Title.FontSpec.Family = "Tahoma";
 
 			//myPane.YAxis.Scale.IsReverse = true;
@@ -677,30 +690,38 @@ namespace ZedGraph.ControlTest
 			box.Location.CoordinateFrame = CoordType.PaneFraction;
 			box.ZOrder = ZOrder.F_BehindChartFill;
 			myPane.GraphObjList.Add( box );
+//			Brush brush = new HatchBrush( HatchStyle.BackwardDiagonal, Color.Blue, Color.White );
+//			box.Fill = new Fill( brush );
 
 			box = new BoxObj( .05, .0, 1.0, 0.92, Color.Empty, Color.LightGoldenrodYellow );
 			box.Location.CoordinateFrame = CoordType.PaneFraction;
 			box.ZOrder = ZOrder.G_BehindAll;
 			myPane.GraphObjList.Add( box );
 			box.Fill = new Fill( new Color[] { 
-    Color.FromArgb(0, Color.Black), 
-    Color.FromArgb(20, Color.Black), 
-    Color.FromArgb(36, 219, 170), 
-    Color.FromArgb(38, 225, 175), 
-    Color.FromArgb(33, 204, 157), 
-    Color.FromArgb(32, 194, 149),
-    Color.FromArgb(60, Color.Black), 
-    Color.FromArgb(0, Color.Black)
-}, new float[] {
-    0f,
-    0.1428f,
-    0.1785f,
-    0.3214f,
-    0.5714f,
-    0.75f,
-    0.7857f,
-    1f 
-} );
+				 Color.FromArgb(0, Color.Black), 
+				 Color.FromArgb(20, Color.Black), 
+				 Color.FromArgb(36, 219, 170), 
+				 Color.FromArgb(38, 225, 175), 
+				 Color.FromArgb(33, 204, 157), 
+				 Color.FromArgb(32, 194, 149),
+				 Color.FromArgb(60, Color.Black), 
+				 Color.FromArgb(0, Color.Black)
+			}, new float[] {
+				 0f,
+				 0.1428f,
+				 0.1785f,
+				 0.3214f,
+				 0.5714f,
+				 0.75f,
+				 0.7857f,
+				 1f 
+			} );
+
+			myPane.XAxis.Scale.AlignH = AlignH.Right;
+			myPane.YAxis.Scale.AlignH = AlignH.Right;
+			myPane.Y2Axis.IsVisible = true;
+
+			myPane.Y2Axis.Scale.AlignH = AlignH.Right;
 
 			//myPane.XAxis.Type = AxisType.Linear;
 			myPane.XAxis.Scale.Format = "HH:mm:ss.fff";
@@ -730,6 +751,16 @@ namespace ZedGraph.ControlTest
 			z1.GraphPane.XAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler( XScaleFormatEvent );
 			//z1.MasterPane[0].YAxis.ScaleFormatEvent += new Axis.ScaleFormatHandler( YScaleFormatEvent );
 
+			z1.PointValueEvent += new ZedGraphControl.PointValueHandler(z1_PointValueEvent);
+		}
+
+		private string z1_PointValueEvent( ZedGraphControl z1, GraphPane pane,
+			CurveItem curve, int index )
+		{
+			PointPair pt = curve.Points[index];
+
+			return "Point #" + index.ToString() + "\n" + XDate.ToString( pt.X, "g" ) + "\n" +
+				pt.Y.ToString() + "Line 4\nLine 5\nLine 6\nLine 7";
 		}
 
 		// Basic curve test - Linear Axis
@@ -2065,10 +2096,10 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 			z1.Refresh();
 
-			Serialize( z1, "junk.bin" );
-			z1.MasterPane.PaneList.Clear();
+			//Serialize( z1, "junk.bin" );
+			//z1.MasterPane.PaneList.Clear();
 
-			DeSerialize( z1, "junk.bin" );
+			//DeSerialize( z1, "junk.bin" );
 		}
 
 		private void CreateGraph_DualYDemo( ZedGraphControl z1 )
@@ -2105,13 +2136,16 @@ namespace ZedGraph.ControlTest
 			LineItem myCurve = myPane.AddCurve( "Alpha", list, Color.Red, SymbolType.Diamond );
 			// Fill the symbols with white
 			myCurve.Symbol.Fill = new Fill( Color.White );
+			myCurve.Line.Style = DashStyle.Custom;
+			myCurve.Line.DashOff = 5;
+			myCurve.Line.DashOn = 5;
 
 			// Generate a blue curve with circle symbols, and "Beta" in the _legend
 			myCurve = myPane.AddCurve( "Beta", list2, Color.Blue, SymbolType.Circle );
 			// Fill the symbols with white
 			myCurve.Symbol.Fill = new Fill( Color.White );
 			// Associate this curve with the Y2 axis
-			myCurve.IsY2Axis = true;
+			//myCurve.IsY2Axis = true;
 
 			// Generate a blue curve with circle symbols, and "Beta" in the _legend
 		//	myCurve = myPane.AddCurve( "Gamma", list3, Color.Green, SymbolType.Square );
@@ -2134,8 +2168,8 @@ namespace ZedGraph.ControlTest
 			// Align the Y axis labels so they are flush to the axis
 			myPane.YAxis.Scale.Align = AlignP.Inside;
 			// Manually set the axis range
-		//	myPane.YAxis.Scale.Min = -30;
-		//	myPane.YAxis.Scale.Max = 30;
+			myPane.Y2Axis.Scale.Min = -10;
+			myPane.Y2Axis.Scale.Max = 10;
 			// Enable the Y2 axis display
 			myPane.Y2Axis.IsVisible = true;
 			// Make the Y2 axis scale blue
@@ -2148,6 +2182,7 @@ namespace ZedGraph.ControlTest
 			myPane.Y2Axis.MajorGrid.IsVisible = true;
 			// Align the Y2 axis labels so they are flush to the axis
 			myPane.Y2Axis.Scale.Align = AlignP.Inside;
+
 
 			// Fill the axis background with a gradient
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGray, 45.0f );
@@ -3464,12 +3499,12 @@ namespace ZedGraph.ControlTest
 
 			z1.Refresh();
 
-			for ( int i = 0; i < 100000000; i++ )
-				;
+			//for ( int i = 0; i < 10000000; i++ )
+			//	;
 
-			myPane.Y2AxisList.RemoveAt( myPane.Y2AxisList.Count - 1 );
 			//myPane.Y2AxisList.RemoveAt( myPane.Y2AxisList.Count - 1 );
-
+			//myPane.Y2AxisList.RemoveAt( myPane.Y2AxisList.Count - 1 );
+			//z1.Refresh();
 
 		}
 
@@ -3553,6 +3588,12 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_MouseDown( object sender, MouseEventArgs e )
 		{
+			this.zedGraphControl1.GraphPane.Y2AxisList.Clear();
+			this.zedGraphControl1.GraphPane.Y2AxisList.Add( "My Title" );
+			//this.zedGraphControl1.GraphPane.Y2AxisList.RemoveAt( this.zedGraphControl1.GraphPane.Y2AxisList.Count - 1 );
+			//myPane.Y2AxisList.RemoveAt( myPane.Y2AxisList.Count - 1 );
+			this.zedGraphControl1.Refresh();
+
 		}
 
 		private bool zedGraphControl1_MouseMoveEvent( ZedGraphControl sender, MouseEventArgs e )

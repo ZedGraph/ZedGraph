@@ -31,11 +31,11 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.31 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.32 $ $Date: 2006-11-23 19:46:50 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
-	#region Fields
+		#region Fields
 		/// <summary>
 		/// Private field that stores the pen width for this
 		/// <see cref="Line"/>.  Use the public
@@ -48,6 +48,17 @@ namespace ZedGraph
 		/// property <see cref="Style"/> to access this value.
 		/// </summary>
 		private DashStyle _style;
+		/// <summary>
+		/// private field that stores the "Dash On" length for drawing the line.  Use the
+		/// public property <see cref="DashOn" /> to access this value.
+		/// </summary>
+		private float _dashOn;
+		/// <summary>
+		/// private field that stores the "Dash Off" length for drawing the line.  Use the
+		/// public property <see cref="DashOff" /> to access this value.
+		/// </summary>
+		private float _dashOff;
+
 		/// <summary>
 		/// Private field that stores the visibility of this
 		/// <see cref="Line"/>.  Use the public
@@ -92,17 +103,17 @@ namespace ZedGraph
 		/// <see cref="CurveItem"/>.  Use the public
 		/// property <see cref="StepType"/> to access this value.
 		/// </summary>
-		private StepType	_stepType;
+		private StepType _stepType;
 		/// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="Line"/>.  Use the public property <see cref="Fill"/> to
 		/// access this value.
 		/// </summary>
-		private Fill		_fill;
+		private Fill _fill;
 
-	#endregion
-	
-	#region Defaults
+		#endregion
+
+		#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
 		/// default property values for the <see cref="Line"/> class.
@@ -136,8 +147,8 @@ namespace ZedGraph
 			public static bool IsVisible = true;
 			/// <summary>
 			/// The default width for line segments (<see cref="Line.Width"/> property).
-            /// Units are points (1/72 inch).
-            /// </summary>
+			/// Units are points (1/72 inch).
+			/// </summary>
 			public static float Width = 1;
 			/// <summary>
 			/// The default value for the <see cref="Line.IsAntiAlias"/>
@@ -159,6 +170,17 @@ namespace ZedGraph
 			/// </summary>
 			public static DashStyle Style = DashStyle.Solid;
 			/// <summary>
+			/// The default "dash on" size for drawing the <see cref="LineItem"/>
+			/// (<see cref="Line.DashOn"/> property). Units are in points (1/72 inch).
+			/// </summary>
+			public static float DashOn = 1.0F;
+			/// <summary>
+			/// The default "dash off" size for drawing the the <see cref="LineItem"/>
+			/// (<see cref="MinorGrid.DashOff"/> property). Units are in points (1/72 inch).
+			/// </summary>
+			public static float DashOff = 1.0F;
+
+			/// <summary>
 			/// Default value for the curve type property
 			/// (<see cref="Line.StepType"/>).  This determines if the curve
 			/// will be drawn by directly connecting the points from the
@@ -174,9 +196,9 @@ namespace ZedGraph
 			/// <value><see cref="StepType"/> enum value</value>
 			public static StepType StepType = StepType.NonStep;
 		}
-	#endregion
+		#endregion
 
-	#region Properties
+		#region Properties
 		/// <summary>
 		/// The color of the <see cref="Line"/>
 		/// </summary>
@@ -191,14 +213,52 @@ namespace ZedGraph
 		/// This allows the line to be solid, dashed, or dotted.
 		/// </summary>
 		/// <seealso cref="Default.Style"/>
+		/// <see also cref="DashOn" />
+		/// <see also cref="DashOff" />
 		public DashStyle Style
 		{
 			get { return _style; }
-			set { _style = value;}
+			set { _style = value; }
+		}
+
+		/// <summary>
+		/// The "Dash On" mode for drawing the line.
+		/// </summary>
+		/// <remarks>
+		/// This is the distance, in points (1/72 inch), of the dash segments that make up
+		/// the dashed grid lines.  This setting is only valid if 
+		/// <see cref="Style" /> is set to <see cref="DashStyle.Custom" />.
+		/// </remarks>
+		/// <value>The dash on length is defined in points (1/72 inch)</value>
+		/// <seealso cref="DashOff"/>
+		/// <seealso cref="IsVisible"/>
+		/// <seealso cref="Default.DashOn"/>.
+		public float DashOn
+		{
+			get { return _dashOn; }
+			set { _dashOn = value; }
 		}
 		/// <summary>
-        /// The pen width used to draw the <see cref="Line"/>, in points (1/72 inch)
-        /// </summary>
+		/// The "Dash Off" mode for drawing the line.
+		/// </summary>
+		/// <remarks>
+		/// This is the distance, in points (1/72 inch), of the spaces between the dash
+		/// segments that make up the dashed grid lines.  This setting is only valid if 
+		/// <see cref="Style" /> is set to <see cref="DashStyle.Custom" />.
+		/// </remarks>
+		/// <value>The dash off length is defined in points (1/72 inch)</value>
+		/// <seealso cref="DashOn"/>
+		/// <seealso cref="IsVisible"/>
+		/// <seealso cref="Default.DashOff"/>.
+		public float DashOff
+		{
+			get { return _dashOff; }
+			set { _dashOff = value; }
+		}
+
+		/// <summary>
+		/// The pen width used to draw the <see cref="Line"/>, in points (1/72 inch)
+		/// </summary>
 		/// <seealso cref="Default.Width"/>
 		public float Width
 		{
@@ -282,27 +342,28 @@ namespace ZedGraph
 		public StepType StepType
 		{
 			get { return _stepType; }
-			set { _stepType = value;}
+			set { _stepType = value; }
 		}
 
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="Line"/>.
 		/// </summary>
-		public Fill	Fill
+		public Fill Fill
 		{
 			get { return _fill; }
 			set { _fill = value; }
 		}
 
-	#endregion
-	
-	#region Constructors
+		#endregion
+
+		#region Constructors
 		/// <summary>
 		/// Default constructor that sets all <see cref="Line"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		public Line() : this( Color.Empty )
+		public Line()
+			: this( Color.Empty )
 		{
 		}
 
@@ -316,6 +377,8 @@ namespace ZedGraph
 		{
 			_width = Default.Width;
 			_style = Default.Style;
+			_dashOn = Default.DashOn;
+			_dashOff = Default.DashOff;
 			_isVisible = Default.IsVisible;
 			_color = color.IsEmpty ? Default.Color : color;
 			_stepType = Default.StepType;
@@ -333,6 +396,9 @@ namespace ZedGraph
 		{
 			_width = rhs._width;
 			_style = rhs._style;
+			_dashOn = rhs._dashOn;
+			_dashOff = rhs._dashOff;
+
 			_isVisible = rhs._isVisible;
 			_color = rhs._color;
 			_stepType = rhs._stepType;
@@ -361,13 +427,13 @@ namespace ZedGraph
 			return new Line( this );
 		}
 
-	#endregion
+		#endregion
 
-	#region Serialization
+		#region Serialization
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 10;
+		public const int schema = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -383,26 +449,33 @@ namespace ZedGraph
 			int sch = info.GetInt32( "schema" );
 
 			_width = info.GetSingle( "width" );
-			_style = (DashStyle) info.GetValue( "style", typeof(DashStyle) );
+			_style = (DashStyle)info.GetValue( "style", typeof( DashStyle ) );
+			if ( schema >= 11 )
+			{
+				_dashOn = info.GetSingle( "dashOn" );
+				_dashOff = info.GetSingle( "dashOff" );
+			}
 			_isVisible = info.GetBoolean( "isVisible" );
 			_isAntiAlias = info.GetBoolean( "isAntiAlias" );
 			_isSmooth = info.GetBoolean( "isSmooth" );
 			_smoothTension = info.GetSingle( "smoothTension" );
-			_color = (Color) info.GetValue( "color", typeof(Color) );
-			_stepType = (StepType) info.GetValue( "stepType", typeof(StepType) );
-			_fill = (Fill) info.GetValue( "fill", typeof(Fill) );
+			_color = (Color)info.GetValue( "color", typeof( Color ) );
+			_stepType = (StepType)info.GetValue( "stepType", typeof( StepType ) );
+			_fill = (Fill)info.GetValue( "fill", typeof( Fill ) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
-		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
 			info.AddValue( "width", _width );
 			info.AddValue( "style", _style );
+			info.AddValue( "dashOn", _dashOn );
+			info.AddValue( "dashOff", _dashOff );
 			info.AddValue( "isVisible", _isVisible );
 			info.AddValue( "isAntiAlias", _isAntiAlias );
 			info.AddValue( "isSmooth", _isSmooth );
@@ -411,9 +484,9 @@ namespace ZedGraph
 			info.AddValue( "stepType", _stepType );
 			info.AddValue( "fill", _fill );
 		}
-	#endregion
+		#endregion
 
-	#region Rendering Methods
+		#region Rendering Methods
 		/// <summary>
 		/// Do all rendering associated with this <see cref="Line"/> to the specified
 		/// <see cref="Graphics"/> device.  This method is normally only
@@ -423,20 +496,20 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-        /// <param name="scaleFactor">
-        /// The scaling factor to be used for rendering objects.  This is calculated and
-        /// passed down by the parent <see cref="GraphPane"/> object using the
-        /// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-        /// font sizes, etc. according to the actual size of the graph.
-        /// </param>
-        /// <param name="pane">
-        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
 		/// <param name="curve">A <see cref="LineItem"/> representing this
 		/// curve.</param>
 		public void Draw( Graphics g, GraphPane pane, CurveItem curve, float scaleFactor )
-        {
+		{
 			// If the line is being shown, draw it
 			if ( this.IsVisible )
 			{
@@ -452,8 +525,8 @@ namespace ZedGraph
 					DrawCurve( g, pane, curve, scaleFactor );
 
 				g.SmoothingMode = sModeSave;
-         }
-		}		
+			}
+		}
 
 		/// <summary>
 		/// Render a single <see cref="Line"/> segment to the specified
@@ -463,32 +536,31 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-        /// <param name="pane">
-        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
-        /// owner of this object.
-        /// </param>
-        /// <param name="scaleFactor">
-        /// The scaling factor to be used for rendering objects.  This is calculated and
-        /// passed down by the parent <see cref="GraphPane"/> object using the
-        /// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-        /// font sizes, etc. according to the actual size of the graph.
-        /// </param>
-        /// <param name="x1">The x position of the starting point that defines the
-        /// line segment in screen pixel units</param>
+		/// <param name="pane">
+		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <param name="x1">The x position of the starting point that defines the
+		/// line segment in screen pixel units</param>
 		/// <param name="y1">The y position of the starting point that defines the
 		/// line segment in screen pixel units</param>
 		/// <param name="x2">The x position of the ending point that defines the
 		/// line segment in screen pixel units</param>
 		/// <param name="y2">The y position of the ending point that defines the
 		/// line segment in screen pixel units</param>
-        public void DrawSegment( Graphics g, GraphPane pane, float x1, float y1,
-                            float x2, float y2, float scaleFactor )
-        {
+		public void DrawSegment( Graphics g, GraphPane pane, float x1, float y1,
+								  float x2, float y2, float scaleFactor )
+		{
 			if ( _isVisible && !this.Color.IsEmpty )
 			{
-				using ( Pen pen = new Pen( _color, pane.ScaledPenWidth( _width, scaleFactor ) ) )
+				using ( Pen pen = GetPen( pane, scaleFactor ) )
 				{
-					pen.DashStyle = this.Style;
 					g.DrawLine( pen, x1, y1, x2, y2 );
 				}
 			}
@@ -502,26 +574,24 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-        /// <param name="pane">
-        /// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
-        /// owner of this object.
-        /// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
 		/// <param name="curve">A <see cref="CurveItem"/> representing this
 		/// curve.</param>
-        /// <param name="scaleFactor">
-        /// The scaling factor to be used for rendering objects.  This is calculated and
-        /// passed down by the parent <see cref="GraphPane"/> object using the
-        /// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-        /// font sizes, etc. according to the actual size of the graph.
-        /// </param>
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
 		public void DrawSticks( Graphics g, GraphPane pane, CurveItem curve, float scaleFactor )
 		{
 			Axis yAxis = curve.GetYAxis( pane );
 			float basePix = yAxis.Scale.Transform( 0.0 );
-			using ( Pen pen = new Pen( _color, pane.ScaledPenWidth( _width, scaleFactor ) ) )
+			using ( Pen pen = GetPen( pane, scaleFactor ) )
 			{
-				pen.DashStyle = this.Style;
-
 				for ( int i = 0; i < curve.Points.Count; i++ )
 				{
 					PointPair pt = curve.Points[i];
@@ -565,23 +635,23 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-        /// <param name="scaleFactor">
-        /// The scaling factor to be used for rendering objects.  This is calculated and
-        /// passed down by the parent <see cref="GraphPane"/> object using the
-        /// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-        /// font sizes, etc. according to the actual size of the graph.
-        /// </param>
-        /// <param name="pane">
-        /// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
 		/// <param name="curve">A <see cref="LineItem"/> representing this
 		/// curve.</param>
 		public void DrawSmoothFilledCurve( Graphics g, GraphPane pane,
                                 CurveItem curve, float scaleFactor )
-        {
-			PointF[]	arrPoints;
-			int			count;
+		{
+			PointF[] arrPoints;
+			int count;
 			IPointList points = curve.Points;
 
 			if ( this.IsVisible && !this.Color.IsEmpty && points != null &&
@@ -589,7 +659,7 @@ namespace ZedGraph
 				count > 2 )
 			{
 				float tension = _isSmooth ? _smoothTension : 0f;
-				
+
 				// Fill the curve if needed
 				if ( this.Fill.IsVisible )
 				{
@@ -633,9 +703,8 @@ namespace ZedGraph
 				// standard drawcurve method just in case there are missing values.
 				if ( _isSmooth )
 				{
-					using ( Pen pen = new Pen( this.Color, pane.ScaledPenWidth( _width, scaleFactor ) ) )
+					using ( Pen pen = GetPen( pane, scaleFactor ) )
 					{
-						pen.DashStyle = this.Style;
 						// Stroke the curve
 						g.DrawCurve( pen, arrPoints, 0, count - 2, tension );
 
@@ -645,6 +714,30 @@ namespace ZedGraph
 				else
 					DrawCurve( g, pane, curve, scaleFactor );
 			}
+		}
+
+		internal Pen GetPen( GraphPane pane, float scaleFactor )
+		{
+			Pen pen = new Pen( _color,
+						pane.ScaledPenWidth( _width, scaleFactor ) );
+
+			pen.DashStyle = _style;
+
+			if ( _style == DashStyle.Custom )
+			{
+				if ( _dashOff > 1e-10 && _dashOn > 1e-10 )
+				{
+					pen.DashStyle = DashStyle.Custom;
+					float[] pattern = new float[2];
+					pattern[0] = _dashOn;
+					pattern[1] = _dashOff;
+					pen.DashPattern = pattern;
+				}
+				else
+					pen.DashStyle = DashStyle.Solid;
+			}
+
+			return pen;
 		}
 
 		private bool IsFirstLine( GraphPane pane, CurveItem curve )
@@ -678,26 +771,26 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-        /// <param name="scaleFactor">
-        /// The scaling factor to be used for rendering objects.  This is calculated and
-        /// passed down by the parent <see cref="GraphPane"/> object using the
-        /// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-        /// font sizes, etc. according to the actual size of the graph.
-        /// </param>
-        /// <param name="pane">
-        /// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// <param name="scaleFactor">
+		/// The scaling factor to be used for rendering objects.  This is calculated and
+		/// passed down by the parent <see cref="GraphPane"/> object using the
+		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
+		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
 		/// <param name="curve">A <see cref="LineItem"/> representing this
 		/// curve.</param>
 		public void DrawCurve( Graphics g, GraphPane pane,
-                                CurveItem curve, float scaleFactor)
-        {
-			float	tmpX, tmpY,
+                                CurveItem curve, float scaleFactor )
+		{
+			float tmpX, tmpY,
 					lastX = float.MaxValue,
 					lastY = float.MaxValue;
-			double	curX, curY, lowVal;
-			bool	lastBad = true;
+			double curX, curY, lowVal;
+			bool lastBad = true;
 			IPointList points = curve.Points;
 			ValueHandler valueHandler = new ValueHandler( pane, false );
 			Axis yAxis = curve.GetYAxis( pane );
@@ -705,10 +798,8 @@ namespace ZedGraph
 			bool xIsLog = pane.XAxis._scale.IsLog;
 			bool yIsLog = yAxis._scale.IsLog;
 
-			using ( Pen pen = new Pen( _color, pane.ScaledPenWidth( _width, scaleFactor ) ) )
+			using ( Pen pen = GetPen( pane, scaleFactor ) )
 			{
-				pen.DashStyle = this.Style;
-
 				if ( points != null && !_color.IsEmpty && this.IsVisible )
 				{
 					// Loop over each point in the curve
@@ -825,12 +916,12 @@ namespace ZedGraph
 					if ( Math.Abs( lastX ) > Math.Abs( lastY ) )
 					{
 						newX = lastX < 0 ? chartRect.Left : chartRect.Right;
-						newY = lastY + (tmpY - lastY) * (newX - lastX) / (tmpX - lastX);
+						newY = lastY + ( tmpY - lastY ) * ( newX - lastX ) / ( tmpX - lastX );
 					}
 					else
 					{
 						newY = lastY < 0 ? chartRect.Top : chartRect.Bottom;
-						newX = lastX + (tmpX - lastX) * (newY - lastY) / (tmpY - lastY);
+						newX = lastX + ( tmpX - lastX ) * ( newY - lastY ) / ( tmpY - lastY );
 					}
 
 					lastX = newX;
@@ -897,20 +988,20 @@ namespace ZedGraph
 
 			if ( this.IsVisible && !this.Color.IsEmpty && points != null )
 			{
-				int		index = 0;
-				float		curX, curY,
+				int index = 0;
+				float curX, curY,
 							lastX = 0,
 							lastY = 0;
-				double	x, y, lowVal;
+				double x, y, lowVal;
 				ValueHandler valueHandler = new ValueHandler( pane, false );
 
 				// Step type plots get twice as many points.  Always add three points so there is
 				// room to close out the curve for area fills.
-				arrPoints = new PointF[ ( _stepType == ZedGraph.StepType.NonStep ? 1 : 2 ) *
-											points.Count + 1 ];
+				arrPoints = new PointF[( _stepType == ZedGraph.StepType.NonStep ? 1 : 2 ) *
+											points.Count + 1];
 
 				// Loop over all points in the curve
-				for ( int i=0; i<points.Count; i++ )
+				for ( int i = 0; i < points.Count; i++ )
 				{
 					// make sure that the current point is valid
 					if ( !points[i].IsInvalid )
@@ -932,7 +1023,7 @@ namespace ZedGraph
 
 						if ( x == PointPair.Missing || y == PointPair.Missing )
 							continue;
-						
+
 						// Transform the user scale values to pixel locations
 						curX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, x );
 						Axis yAxis = curve.GetYAxis( pane );
@@ -940,7 +1031,7 @@ namespace ZedGraph
 
 						if ( curX < -1000000 || curY < -1000000 || curX > 1000000 || curY > 1000000 )
 							continue;
-						
+
 						// Add the pixel value pair into the points array
 						// Two points are added for step type curves
 						// ignore step-type setting for smooth curves
@@ -969,7 +1060,7 @@ namespace ZedGraph
 						lastX = curX;
 						lastY = curY;
 						index++;
-						
+
 					}
 
 				}
@@ -977,11 +1068,11 @@ namespace ZedGraph
 				// Make sure there is at least one valid point
 				if ( index == 0 )
 					return false;
-					
+
 				// Add an extra point at the end, since the smoothing algorithm requires it
-				arrPoints[index] = arrPoints[index-1];
+				arrPoints[index] = arrPoints[index - 1];
 				index++;
-				
+
 				count = index;
 				return true;
 			}
@@ -1016,23 +1107,23 @@ namespace ZedGraph
 
 			if ( this.IsVisible && !this.Color.IsEmpty && points != null )
 			{
-				int		index = 0;
-				float	curX, curY,
+				int index = 0;
+				float curX, curY,
 						lastX = 0,
 						lastY = 0;
-				double	x, y, hiVal;
+				double x, y, hiVal;
 				ValueHandler valueHandler = new ValueHandler( pane, false );
 
 				// Step type plots get twice as many points.  Always add three points so there is
 				// room to close out the curve for area fills.
-				arrPoints = new PointF[ ( _stepType == ZedGraph.StepType.NonStep ? 1 : 2 ) *
+				arrPoints = new PointF[( _stepType == ZedGraph.StepType.NonStep ? 1 : 2 ) *
 					( pane.LineType == LineType.Stack ? 2 : 1 ) *
-					points.Count + 1 ];
+					points.Count + 1];
 
 				// Loop backwards over all points in the curve
 				// In this case an array of points was already built forward by BuildPointsArray().
 				// This time we build backwards to complete a loop around the area between two curves.
-				for ( int i=points.Count-1; i>=0; i-- )
+				for ( int i = points.Count - 1; i >= 0; i-- )
 				{
 					// Make sure the current point is valid
 					if ( !points[i].IsInvalid )
@@ -1076,7 +1167,7 @@ namespace ZedGraph
 						lastX = curX;
 						lastY = curY;
 						index++;
-						
+
 					}
 
 				}
@@ -1084,11 +1175,11 @@ namespace ZedGraph
 				// Make sure there is at least one valid point
 				if ( index == 0 )
 					return false;
-					
+
 				// Add an extra point at the end, since the smoothing algorithm requires it
-				arrPoints[index] = arrPoints[index-1];
+				arrPoints[index] = arrPoints[index - 1];
 				index++;
-				
+
 				count = index;
 				return true;
 			}
@@ -1126,45 +1217,45 @@ namespace ZedGraph
 				// Add three points to the path to move from the end of the curve (as defined by
 				// arrPoints) to the X axis, from there to the start of the curve at the X axis,
 				// and from there back up to the beginning of the curve.
-				path.AddLine( arrPoints[count-1].X, arrPoints[count-1].Y, arrPoints[count-1].X, yBase );
-				path.AddLine( arrPoints[count-1].X, yBase, arrPoints[0].X, yBase );
+				path.AddLine( arrPoints[count - 1].X, arrPoints[count - 1].Y, arrPoints[count - 1].X, yBase );
+				path.AddLine( arrPoints[count - 1].X, yBase, arrPoints[0].X, yBase );
 				path.AddLine( arrPoints[0].X, yBase, arrPoints[0].X, arrPoints[0].Y );
 			}
 			// For stacked line types, the fill area is the area between this curve and the curve below it
 			else
 			{
-				PointF[]	arrPoints2;
-				int			count2;
-				
-				float		tension = _isSmooth ? _smoothTension : 0f;
-				
+				PointF[] arrPoints2;
+				int count2;
+
+				float tension = _isSmooth ? _smoothTension : 0f;
+
 				// Find the next lower curve in the curveList that is also a LineItem type, and use
 				// its smoothing properties for the lower side of the filled area.
 				int index = pane.CurveList.IndexOf( curve );
 				if ( index > 0 )
 				{
 					CurveItem tmpCurve;
-					for ( int i=index-1; i>=0; i-- )
+					for ( int i = index - 1; i >= 0; i-- )
 					{
 						tmpCurve = pane.CurveList[i];
 						if ( tmpCurve is LineItem )
 						{
-							tension = ((LineItem)tmpCurve).Line.IsSmooth ? ((LineItem)tmpCurve).Line.SmoothTension : 0f;
+							tension = ( (LineItem)tmpCurve ).Line.IsSmooth ? ( (LineItem)tmpCurve ).Line.SmoothTension : 0f;
 							break;
 						}
 					}
 				}
-				
+
 				// Build another points array consisting of the low points (which are actually the points for
 				// the curve below the current curve)
 				BuildLowPointsArray( pane, curve, out arrPoints2, out count2 );
-				
+
 				// Add the new points to the GraphicsPath
-				path.AddCurve( arrPoints2, 0, count2-2, tension );
+				path.AddCurve( arrPoints2, 0, count2 - 2, tension );
 			}
-			
+
 		}
 
-	#endregion
+		#endregion
 	}
 }
