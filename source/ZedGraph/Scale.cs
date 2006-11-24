@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.19 $ $Date: 2006-11-23 19:46:50 $ </version>
+	/// <version> $Revision: 1.20 $ $Date: 2006-11-24 15:56:55 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -121,7 +121,7 @@ namespace ZedGraph
 
 		/// <summary> Private field for the alignment of the <see cref="Axis"/> tic labels.
 		/// This fields controls whether the inside, center, or outside edges of the text labels are aligned.
-		/// Use the public property <see cref="Scale.AlignP"/>
+		/// Use the public property <see cref="Scale.Align"/>
 		/// for access to this value. </summary>
 		/// <seealso cref="FormatAuto"/>
 		internal AlignP _align;

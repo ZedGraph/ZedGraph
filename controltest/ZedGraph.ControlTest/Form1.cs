@@ -3625,6 +3625,19 @@ namespace ZedGraph.ControlTest
 
 		private bool zedGraphControl1_MouseDownEvent( ZedGraphControl sender, MouseEventArgs e )
 		{
+			sender.GraphPane.GetImage( 640, 480, 96 ).Save( "myfile.jpg", ImageFormat.Jpeg );
+			//sender.GraphPane.CurveList.Clear();
+			//CreateGraph_DualYDemo( sender );
+			//sender.Invalidate();
+			//return true;
+
+			sender.GraphPane = new GraphPane();
+			CreateGraph_DualYDemo( sender );
+			//SetSize();
+			sender.Refresh();
+			return false;
+
+
 			double x, y, y2;
 			sender.GraphPane.ReverseTransform( new PointF( e.X, e.Y ), out x, out y, out y2 );
 

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.32 $ $Date: 2006-11-23 19:46:50 $ </version>
+	/// <version> $Revision: 3.33 $ $Date: 2006-11-24 15:56:55 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -213,8 +213,8 @@ namespace ZedGraph
 		/// This allows the line to be solid, dashed, or dotted.
 		/// </summary>
 		/// <seealso cref="Default.Style"/>
-		/// <see also cref="DashOn" />
-		/// <see also cref="DashOff" />
+		/// <seealso cref="DashOn" />
+		/// <seealso cref="DashOff" />
 		public DashStyle Style
 		{
 			get { return _style; }
