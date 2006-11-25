@@ -32,11 +32,12 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2006-11-25 17:17:27 $ </version>
 	[Serializable]
 	public class XAxis : Axis, ICloneable, ISerializable
 	{
-	#region Defaults
+
+		#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
 		/// default property values for the <see cref="XAxis"/> class.
@@ -58,15 +59,16 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsZeroLine = false;
 		}
-	#endregion
+		#endregion
 
-	#region Constructors
+		#region Constructors
 
 		/// <summary>
 		/// Default constructor that sets all <see cref="XAxis"/> properties to
 		/// default values as defined in the <see cref="Default"/> class
 		/// </summary>
-		public XAxis() : this( "X Axis" )
+		public XAxis()
+			: this( "X Axis" )
 		{
 		}
 
@@ -76,7 +78,8 @@ namespace ZedGraph
 		/// for the axis title
 		/// </summary>
 		/// <param name="title">The <see cref="Axis.Title"/> for this axis</param>
-		public XAxis( string title ) : base( title )
+		public XAxis( string title )
+			: base( title )
 		{
 			_isVisible = Default.IsVisible;
 			_majorGrid._isZeroLine = Default.IsZeroLine;
@@ -87,7 +90,8 @@ namespace ZedGraph
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The XAxis object from which to copy</param>
-		public XAxis( XAxis rhs ) : base( rhs )
+		public XAxis( XAxis rhs )
+			: base( rhs )
 		{
 		}
 
@@ -110,9 +114,9 @@ namespace ZedGraph
 			return new XAxis( this );
 		}
 
-	#endregion
+		#endregion
 
-	#region Serialization
+		#region Serialization
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
@@ -125,7 +129,8 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
-		protected XAxis( SerializationInfo info, StreamingContext context ) : base( info, context )
+		protected XAxis( SerializationInfo info, StreamingContext context )
+			: base( info, context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
@@ -137,15 +142,15 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
-		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
 		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema2 );
 		}
-	#endregion
+		#endregion
 
-	#region Methods
+		#region Methods
 		/// <summary>
 		/// Setup the Transform Matrix to handle drawing of this <see cref="XAxis"/>
 		/// </summary>
@@ -211,18 +216,23 @@ namespace ZedGraph
 			else
 				return 0;
 		}
-/*
-		override internal bool IsCrossed( GraphPane pane )
+		/*
+				override internal bool IsCrossed( GraphPane pane )
+				{
+					return !this.crossAuto && this.cross > pane.YAxis.Min && this.cross < pane.YAxis.Max;
+				}
+		*/
+		override internal Axis GetCrossAxis( GraphPane pane )
 		{
-			return !this.crossAuto && this.cross > pane.YAxis.Min && this.cross < pane.YAxis.Max;
+			return pane.YAxis;
 		}
-*/
-        override internal Axis GetCrossAxis( GraphPane pane )
-        {
-            return pane.YAxis;
-        }
 
-	#endregion
+//		override internal float GetMinPix( GraphPane pane )
+//		{
+//			return pane.Chart._rect.Left;
+//		}
+
+		#endregion
 	}
 }
 

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.66 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.67 $ $Date: 2006-11-25 17:17:27 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -826,6 +826,7 @@ namespace ZedGraph
 
 		abstract internal Axis GetCrossAxis( GraphPane pane );
 
+//		abstract internal float GetMinPix( GraphPane pane );
 
 		//abstract internal float CalcCrossFraction( GraphPane pane );
 

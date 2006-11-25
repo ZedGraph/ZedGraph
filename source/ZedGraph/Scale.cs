@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.20 $ $Date: 2006-11-24 15:56:55 $ </version>
+	/// <version> $Revision: 1.21 $ $Date: 2006-11-25 17:17:27 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -158,7 +158,7 @@ namespace ZedGraph
 		/// Pixel positions at the minimum and maximum value for this scale.
 		/// These are temporary values used/valid only during the Draw process.
 		/// </summary>
-		internal float	_minPix,
+		internal float _minPix,
 							_maxPix;
 	
 		/// <summary>

@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.23 $ $Date: 2006-11-17 15:20:15 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2006-11-25 17:17:27 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -843,26 +843,37 @@ namespace ZedGraph
 
 				// Clone the Chart object for GraphPanes so we don't mess up the minPix and maxPix values or
 				// the rect/ChartRect calculations of the original
-				RectangleF saveRect = new RectangleF();
-				if ( this is GraphPane )
-					saveRect = ( this as GraphPane ).Chart.Rect;
+				//RectangleF saveRect = new RectangleF();
+				//if ( this is GraphPane )
+				//	saveRect = ( this as GraphPane ).Chart.Rect;
 
 				tempPane.ReSize( bitmapGraphics, new RectangleF( 0, 0, width, height ) );
 
 				tempPane.Draw( bitmapGraphics );
 
-				if ( this is GraphPane )
+				//if ( this is GraphPane )
+				//{
+				//	GraphPane gPane = this as GraphPane;
+				//	gPane.Chart.Rect = saveRect;
+				//	gPane.XAxis.Scale.SetupScaleData( gPane, gPane.XAxis );
+				//	foreach ( Axis axis in gPane.YAxisList )
+				//		axis.Scale.SetupScaleData( gPane, axis );
+				//	foreach ( Axis axis in gPane.Y2AxisList )
+				//		axis.Scale.SetupScaleData( gPane, axis );
+				//}
+
+				// To restore all the various state variables, you must redraw the graph in it's
+				// original form.  For this we create a 1x1 bitmap (it doesn't matter what size you use,
+				// since we're only mimicing the draw.  If you use the 'bitmapGraphics' already created,
+				// then you will be drawing back into the bitmap that will be returned.
+
+				Bitmap bm = new Bitmap( 1, 1 );
+				using ( Graphics bmg = Graphics.FromImage( bm ) )
 				{
-					GraphPane gPane = this as GraphPane;
-					gPane.Chart.Rect = saveRect;
-					gPane.XAxis.Scale.SetupScaleData( gPane, gPane.XAxis );
-					foreach ( Axis axis in gPane.YAxisList )
-						axis.Scale.SetupScaleData( gPane, axis );
-					foreach ( Axis axis in gPane.Y2AxisList )
-						axis.Scale.SetupScaleData( gPane, axis );
+					this.ReSize( bmg, this.Rect );
+					this.Draw( bmg );
 				}
 
-				this.ReSize( bitmapGraphics, this.Rect );
 			}
 
 			return bitmap;

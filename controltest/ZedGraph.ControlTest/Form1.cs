@@ -717,11 +717,22 @@ namespace ZedGraph.ControlTest
 				 1f 
 			} );
 
-			myPane.XAxis.Scale.AlignH = AlignH.Right;
-			myPane.YAxis.Scale.AlignH = AlignH.Right;
-			myPane.Y2Axis.IsVisible = true;
+			PointD[] points = new PointD[5];
+			points[0] = new PointD( 3, 100 );
+			points[1] = new PointD( 5, 150 );
+			points[2] = new PointD( 7, 300 );
+			points[3] = new PointD( 9, 50 );
+			points[4] = new PointD( 6, 10 );
+			PolyObj poly = new PolyObj( points, Color.Black, Color.White, Color.Red );
+			poly.IsClosedFigure = false;
+			poly.Fill.IsVisible = false;
+			myPane.GraphObjList.Add( poly );
 
-			myPane.Y2Axis.Scale.AlignH = AlignH.Right;
+			//myPane.XAxis.Scale.AlignH = AlignH.Right;
+			//myPane.YAxis.Scale.AlignH = AlignH.Right;
+			//myPane.Y2Axis.IsVisible = true;
+
+			//myPane.Y2Axis.Scale.AlignH = AlignH.Right;
 
 			//myPane.XAxis.Type = AxisType.Linear;
 			myPane.XAxis.Scale.Format = "HH:mm:ss.fff";
@@ -3588,6 +3599,7 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_MouseDown( object sender, MouseEventArgs e )
 		{
+
 			this.zedGraphControl1.GraphPane.Y2AxisList.Clear();
 			this.zedGraphControl1.GraphPane.Y2AxisList.Add( "My Title" );
 			//this.zedGraphControl1.GraphPane.Y2AxisList.RemoveAt( this.zedGraphControl1.GraphPane.Y2AxisList.Count - 1 );
@@ -3625,6 +3637,22 @@ namespace ZedGraph.ControlTest
 
 		private bool zedGraphControl1_MouseDownEvent( ZedGraphControl sender, MouseEventArgs e )
 		{
+			double xvalue1 = zedGraphControl1.GraphPane.XAxis.Scale.ReverseTransform( 245 );
+			float xpix1 = zedGraphControl1.GraphPane.XAxis.Scale.Transform( xvalue1 );
+
+			zedGraphControl1.MasterPane.GetImage( 6400, 4800, 72 ).Save( "poop.jpg", ImageFormat.Gif );
+
+			double xvalue2 = zedGraphControl1.GraphPane.XAxis.Scale.ReverseTransform( 245 );
+			float xpix2 = zedGraphControl1.GraphPane.XAxis.Scale.Transform( xvalue2 );
+
+			//output:
+			//xvalue1=19,89
+			//xpic1 = 245
+			//xvalue2= 47,17
+			//output xpic2 = 245
+
+			return true;
+
 			sender.GraphPane.GetImage( 640, 480, 96 ).Save( "myfile.jpg", ImageFormat.Jpeg );
 			//sender.GraphPane.CurveList.Clear();
 			//CreateGraph_DualYDemo( sender );

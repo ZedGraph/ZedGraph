@@ -1,6 +1,10 @@
 == Version 5 ==
 
-;21-Nov-2006 (by Champion)
+;25-Nov-2006 (by Champion)
+: [NEW] Add IsClosedFigure property to PolyObj
+: [FIX] Switch back to redrawing the graph after a GetImage() to restore states
+
+;21-Nov-2006 (by Champion) (release 5.0.4)
 : [NEW] Add CreateBarLabels overload that controls more font options
 : [NEW] Add option to color sticks in JapaneseCandleStick for rise vs fall (thanks i4xcoder)
 : [UPD] Many FontSpec's now have set properties, but not allowed to be null (thanks okrumnow)

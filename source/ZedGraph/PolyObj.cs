@@ -33,13 +33,22 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2006-11-25 17:17:27 $ </version>
 	[Serializable]
 	public class PolyObj : BoxObj, ICloneable, ISerializable
 	{
 
 	#region Fields
+
 		private PointD[] _points;
+
+		/// <summary>
+		/// private value that determines if the polygon will be automatically closed.
+		/// true to close the figure, false to leave it "open."  Use the public property
+		/// <see cref="IsClosedFigure" /> to access this value.
+		/// </summary>
+		private bool _isClosedFigure = true;
+
 	#endregion
 
 	#region Properties
@@ -53,6 +62,25 @@ namespace ZedGraph
 		{
 			get { return _points; }
 			set { _points = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines if the polygon will be automatically closed.
+		/// true to close the figure, false to leave it "open."
+		/// </summary>
+		/// <remarks>
+		/// This boolean determines whether or not the CloseFigure() method will be called
+		/// to fully close the path of the polygon.  This value defaults to true, and for any
+		/// closed figure it should fine.  If you want to draw a line that does not close into
+		/// a shape, then you should set this value to false.  For a figure that is naturally
+		/// closed (e.g., the first point of the polygon is the same as the last point),
+		/// leaving this value set to false may result in minor pixel artifacts due to
+		/// rounding.
+		/// </remarks>
+		public bool IsClosedFigure
+		{
+			get { return _isClosedFigure; }
+			set { _isClosedFigure = value; }
 		}
 
 	#endregion
@@ -127,6 +155,7 @@ namespace ZedGraph
 		public PolyObj( PolyObj rhs ) : base( rhs )
 		{
 			rhs._points = (PointD[]) _points.Clone();
+			rhs._isClosedFigure = _isClosedFigure;
 		}
 
 		/// <summary>
@@ -154,7 +183,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema3 = 10;
+		public const int schema3 = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -171,6 +200,9 @@ namespace ZedGraph
 
 			_points = (PointD[]) info.GetValue( "points", typeof(PointD[]) );
 
+			if ( schema3 >= 11 )
+				_isClosedFigure = info.GetBoolean( "isClosedFigure" );
+
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -184,6 +216,7 @@ namespace ZedGraph
 			info.AddValue( "schema3", schema3 );
 
 			info.AddValue( "points", _points );
+			info.AddValue( "isClosedFigure", _isClosedFigure );
 		}
 	#endregion
 	
@@ -257,7 +290,8 @@ namespace ZedGraph
 				}
 			}
 
-			path.CloseFigure();
+			if ( _isClosedFigure )
+				path.CloseFigure();
 
 			return path;
 		}
