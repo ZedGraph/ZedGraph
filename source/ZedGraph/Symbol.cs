@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.29 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.30 $ $Date: 2007-01-01 02:56:01 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -539,6 +539,9 @@ namespace ZedGraph
 						bool xIsLog = xScale.IsLog;
 						bool yIsLog = yScale.IsLog;
 
+						double xMin = xScale.Min;
+						double xMax = xScale.Max;
+
 						// Loop over each defined point							
 						for ( int i = 0; i < points.Count; i++ )
 						{
@@ -572,7 +575,8 @@ namespace ZedGraph
 									!System.Double.IsInfinity( curX ) &&
 									!System.Double.IsInfinity( curY ) &&
 									( curX > 0 || !xIsLog ) &&
-									( !yIsLog || curY > 0.0 ) )
+									( !yIsLog || curY > 0.0 ) &&
+									curX >= xMin && curX <= xMax )
 							{
 								// Transform the user scale values to pixel locations
 								tmpX = xScale.Transform( curve.IsOverrideOrdinal, i, curX );

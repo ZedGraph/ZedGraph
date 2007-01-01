@@ -1,8 +1,18 @@
 == Version 5 ==
 
+;28-Dec-2006 (by Champion)
+: [NEW] Add GasGaugeRegion, GasGaugeNeedle classes (thanks Jay Mistry)
+: [UPD] Some speed optimizations in DrawSymbol and DrawCurve
+: [FIX] Fix Pie chart image map calculations
+: [UPD] Make DataSourcePointList handle null input --> PointPair.Missing
+
+;12-Dec-2006 (by Champion)
+: [UPD] Make Link.MakeCurveItemURL virtual
+
 ;25-Nov-2006 (by Champion)
 : [NEW] Add IsClosedFigure property to PolyObj
 : [FIX] Switch back to redrawing the graph after a GetImage() to restore states
+: [FIX] Remove MaxBound & MinBound properties from FilteredPointList
 
 ;21-Nov-2006 (by Champion) (release 5.0.4)
 : [NEW] Add CreateBarLabels overload that controls more font options
@@ -238,6 +248,13 @@
 : [FIX] CloseFigure on PolyObj
 : [NEW] Add DataSourcePointList with data binding
 : [NEW] Add designer attributes for ZedGraphControl
+
+== Version 4.5 ==
+
+;28-Dec-2006 (by Champion) release version 4.5.0
+: [UPD] Major Update! Backported version 5.0.4 to .Net 1.1
+:       Limitation: No ZedGraphControl.ScrollDoneEvent
+:       Limitation: No Web Control
 
 == Version 4.3 ==
 

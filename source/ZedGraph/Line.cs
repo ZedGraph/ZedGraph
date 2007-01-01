@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.33 $ $Date: 2006-11-24 15:56:55 $ </version>
+	/// <version> $Revision: 3.34 $ $Date: 2007-01-01 02:56:01 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
@@ -798,6 +798,9 @@ namespace ZedGraph
 			bool xIsLog = pane.XAxis._scale.IsLog;
 			bool yIsLog = yAxis._scale.IsLog;
 
+			float minX = pane.Chart.Rect.Left;
+			float maxX = pane.Chart.Rect.Right;
+
 			using ( Pen pen = GetPen( pane, scaleFactor ) )
 			{
 				if ( points != null && !_color.IsEmpty && this.IsVisible )
@@ -854,7 +857,7 @@ namespace ZedGraph
 											tmpX > 5000000 || tmpX < -5000000 ||
 											tmpY > 5000000 || tmpY < -5000000 )
 										InterpolatePoint( g, pane, pen, lastX, lastY, tmpX, tmpY );
-									else
+									else if ( tmpX >= minX && tmpX <= maxX )
 									{
 
 										if ( this.StepType == StepType.ForwardStep )

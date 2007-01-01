@@ -68,7 +68,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.72 $ $Date: 2006-11-17 15:20:17 $ </version>
+	/// <version> $Revision: 3.73 $ $Date: 2007-01-01 02:56:01 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -813,8 +813,10 @@ namespace ZedGraph
 		/// <code>
 		///    private string MyPointValueHandler( object sender, GraphPane pane, CurveItem curve, int iPt )
 		///    {
+		///    #region
 		///        PointPair pt = curve[iPt];
 		///        return "This value is " + pt.Y.ToString("f2") + " gallons";
+		///    #endregion
 		///    }</code>
 		/// </example>
 		[	Bindable( true ), Category( "Events" ),
@@ -3174,7 +3176,8 @@ namespace ZedGraph
 		/// each corresponding <see cref="Axis" />.
 		/// </summary>
 		/// <remarks>
-		/// This method is called automatically by <see cref="AxisChange" /> if <see cref="IsAutoScrollRange" />
+		/// This method is called automatically by <see cref="AxisChange" /> if
+		/// <see cref="IsAutoScrollRange" />
 		/// is true.  Note that this will not be called if you call AxisChange directly from the
 		/// <see cref="GraphPane" />.  For example, zedGraphControl1.AxisChange() works properly, but
 		/// zedGraphControl1.GraphPane.AxisChange() does not.</remarks>

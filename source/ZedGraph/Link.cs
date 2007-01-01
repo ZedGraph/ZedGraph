@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2006-07-22 07:42:39 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2007-01-01 02:56:01 $ </version>
 	// /// <seealso cref="ZedGraph.Web.IsImageMap"/>
 	[Serializable]
 	public class Link : ISerializable, ICloneable
@@ -228,7 +228,7 @@ namespace ZedGraph
 		/// <param name="curve">The <see cref="CurveItem" /> for which to
 		/// make the url string.</param>
 		/// <returns>A string containing the url with an index parameter added.</returns>
-		public string MakeCurveItemUrl( GraphPane pane, CurveItem curve, int index )
+		public virtual string MakeCurveItemUrl( GraphPane pane, CurveItem curve, int index )
 		{
 			string url = _url;
 

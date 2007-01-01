@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.28 $ $Date: 2006-10-26 05:08:10 $ </version>
+	/// <version> $Revision: 1.29 $ $Date: 2007-01-01 02:56:01 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem, ICloneable, ISerializable
 	{
@@ -1045,23 +1045,35 @@ namespace ZedGraph
 			pt.X += _boundingRectangle.Width / 2.0f;
 			pt.Y += _boundingRectangle.Height / 2.0f;
 
+			float radius = _boundingRectangle.Width / 2.0f;
 			Matrix matrix = new Matrix();
-			matrix.Rotate( this.StartAngle, MatrixOrder.Prepend );
 
 			// Move the coordinate system to local coordinates
 			// of this text object (that is, at the specified
 			// x,y location)
-			matrix.Translate( -pt.X, -pt.Y, MatrixOrder.Prepend );
+			matrix.Translate( pt.X, pt.Y );
 
-			PointF[] pts = new PointF[3];
+			matrix.Rotate( this.StartAngle );
+			//One mark every 5'ish degrees
+			int count = (int)Math.Floor ( SweepAngle / 5 ) + 1;
+			PointF[] pts = new PointF[2 + count];
 			pts[0] = new PointF( 0, 0 );
-			pts[1] = new PointF( _boundingRectangle.Width, 0 );
-			pts[2] = new PointF( _boundingRectangle.Width * (float)Math.Cos( SweepAngle * Math.PI / 180.0 ),
-										_boundingRectangle.Width * (float)Math.Sin( SweepAngle * Math.PI / 180.0 ) );
+			pts[1] = new PointF( radius, 0 );
+			double angle = 0.0;
+			for ( int j = 2; j < count + 2; j++ )
+			{
+				angle += SweepAngle / count;
+
+				pts[j] = new PointF(radius * (float)Math.Cos(angle * Math.PI / 180.0),
+											radius * (float)Math.Sin( angle * Math.PI / 180.0 ) );
+			}
+
 			matrix.TransformPoints( pts );
 
-			coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0},{4:f0},{5:f0}",
-						pts[0].X, pts[0].Y, pts[1].X, pts[1].Y, pts[2].X, pts[2].Y );
+			coords = String.Format("{0:f0},{1:f0},{2:f0},{3:f0},",
+						pts[0].X, pts[0].Y, pts[1].X, pts[1].Y );
+			for (int j = 2; j < count + 2; j++)
+				coords += String.Format(j > count ? "{0:f0},{1:f0}" : "{0:f0},{1:f0},", pts[j].X, pts[j].Y);
 
 			return true;
 		}

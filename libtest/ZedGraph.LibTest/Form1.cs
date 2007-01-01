@@ -38,13 +38,16 @@ namespace ZedGraph.LibTest
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
+
+			CreateGraph_BasicDate();
+
 			Trace.Listeners.Add(new TextWriterTraceListener( @"myTrace.txt" ) );
 			Trace.AutoFlush = true;
 
 			memGraphics.CreateDoubleBuffer(this.CreateGraphics(),
 				this.ClientRectangle.Width, this.ClientRectangle.Height);
 
-#if true	// Multi Y Axis demo
+#if false	// Multi Y Axis demo
 			myPane = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
 				"Demonstration of Multi Y Graph",
 				"Time, s",
@@ -1013,42 +1016,6 @@ namespace ZedGraph.LibTest
 
 #endif
 
-#if false	// Basic curve test - Date Axis
-
-			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
-
-			PointPairList list = new PointPairList();
-
-			for ( int i=0; i<100; i++ )
-			{
-				//double x = (double) i;
-				double x = new XDate( 2005, 12, 25, 4, 5, 6, i );
-				double y = Math.Sin( i / 8.0 ) * 1 + 1;
-				list.Add( x, y );
-				double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
-			}
-
-			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
-
-			myPane.XAxis.IsSkipLastLabel = false;
-			//myPane.XAxis.IsPreventLabelOverlap = false;
-			myPane.XAxis.ScaleFormat = "dd/MM HH:mm:ss.ff";
-			myPane.XAxis.Type = AxisType.Date;
-			myPane.XAxis.Min = new XDate( 2005, 12, 25, 4, 5, 6, 0 );
-			myPane.XAxis.Max = new XDate( 2005, 12, 25, 4, 5, 6, 100 );
-			myPane.XAxis.Step = 0.025;
-			myPane.XAxis.MinorStep = 0.005;
-			myPane.XAxis.MajorUnit = DateUnit.Second;
-			myPane.XAxis.MinorUnit = DateUnit.Second;
-			myPane.AxisChange( this.CreateGraphics() );
-
-			myPane.YAxis.ScaleFormat = "0.0'%'";
-			trackBar1.Minimum = 0;
-			trackBar1.Maximum = 100;
-			trackBar1.Value = 50;
-
-#endif
-
 #if false	// Basic curve test - Date Axis w/ Time Span
 
 			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
@@ -1902,6 +1869,44 @@ namespace ZedGraph.LibTest
       
 		}
 
+		private void CreateGraph_BasicDate()
+		{
+			// Basic curve test - Date Axis
+
+			myPane = new GraphPane( new RectangleF( 0, 0, 640, 480 ), "Title", "XAxis", "YAxis" );
+
+			PointPairList list = new PointPairList();
+
+			for ( int i=0; i<100; i++ )
+			{
+				//double x = (double) i;
+				double x = new XDate( 2005, 12, 25, 4, 5, 6, i );
+				double y = Math.Sin( i / 8.0 ) * 1 + 1;
+				list.Add( x, y );
+				double z = Math.Abs( Math.Cos( i / 8.0 ) ) * y;
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			myPane.XAxis.Scale.IsSkipLastLabel = false;
+			//myPane.XAxis.IsPreventLabelOverlap = false;
+			myPane.XAxis.Scale.Format = "dd/MM HH:mm:ss.ff";
+			myPane.XAxis.Type = AxisType.Date;
+			myPane.XAxis.Scale.Min = new XDate( 2005, 12, 25, 4, 5, 6, 0 );
+			myPane.XAxis.Scale.Max = new XDate( 2005, 12, 25, 4, 5, 6, 100 );
+			myPane.XAxis.Scale.MajorStep = 0.025;
+			myPane.XAxis.Scale.MinorStep = 0.005;
+			myPane.XAxis.Scale.MajorUnit = DateUnit.Second;
+			myPane.XAxis.Scale.MinorUnit = DateUnit.Second;
+			myPane.AxisChange( this.CreateGraphics() );
+
+			myPane.YAxis.Scale.Format = "0.0'%'";
+			trackBar1.Minimum = 0;
+			trackBar1.Maximum = 100;
+			trackBar1.Value = 50;
+
+		}
+
 		private void Form1_Paint(object sender, PaintEventArgs e)
 		{
 			SetSize();
@@ -1915,6 +1920,7 @@ namespace ZedGraph.LibTest
 			paneRect.Height -= 30;
 
 			Graphics g = this.CreateGraphics();
+
 			memGraphics.CreateDoubleBuffer( g, this.ClientRectangle.Width, this.ClientRectangle.Height );
 
 			if ( this.master != null )

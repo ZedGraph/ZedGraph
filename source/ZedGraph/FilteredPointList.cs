@@ -27,7 +27,7 @@ namespace ZedGraph
 	/// <remarks>
 	/// This class will refilter the data points each time <see cref="SetBounds" /> is called.  The
 	/// data are filtered down to <see cref="MaxPts" /> points, within the data bounds of
-	/// <see cref="XMinBound" /> and <see cref="XMaxBound" />.  The data are filtered by simply skipping
+	/// a minimum and maximum data range.  The data are filtered by simply skipping
 	/// points to achieve the desired total number of points.  Input arrays are assumed to be
 	/// monotonically increasing in X, and evenly spaced in X.
 	/// </remarks>
@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	///
 	/// <author> John Champion with mods by Christophe Holmes</author>
-	/// <version> $Revision: 1.6 $ $Date: 2006-07-02 07:34:43 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2007-01-01 02:56:01 $ </version>
 	[Serializable]
 	public class FilteredPointList : IPointList
 	{
@@ -52,17 +52,18 @@ namespace ZedGraph
 		/// Instance of an array of x values
 		/// </summary>
 		private double[] _y;
-
+		/*
 		/// <summary>
 		/// This is the minimum value of the range of interest (typically the minimum of
 		/// the range that you have zoomed into)
 		/// </summary>
-		private double _xMinBound = double.MinValue;
+		//private double _xMinBound = double.MinValue;
 		/// <summary>
 		/// This is the maximum value of the range of interest (typically the maximum of
 		/// the range that you have zoomed into)
 		/// </summary>
-		private double _xMaxBound = double.MaxValue;
+		//private double _xMaxBound = double.MaxValue;
+		*/
 		/// <summary>
 		/// This is the maximum number of points that you want to see in the filtered dataset
 		/// </summary>
@@ -204,24 +205,25 @@ namespace ZedGraph
 		{
 			get { return _maxPts; }
 		}
-
+		/*
 		/// <summary>
 		/// Gets the minimum value for the range of X data that are included in the filtered result.
 		/// You can set this value by calling <see cref="SetBounds" />.
 		/// </summary>
-		public double XMinBound
-		{
-			get { return _xMinBound; }
-		}
+		//public double XMinBound
+		//{
+	//		get { return _xMinBound; }
+	//	}
 
 		/// <summary>
 		/// Gets the maximum value for the range of X data that are included in the filtered result.
 		/// You can set this value by calling <see cref="SetBounds" />.
 		/// </summary>
-		public double XMaxBound
-		{
-			get { return _xMaxBound; }
-		}
+		//public double XMaxBound
+		//{
+		//	get { return _xMaxBound; }
+		//}
+		*/
 
 		/// <summary>
 		/// Gets or sets a value that determines if the High-Low filtering logic will be
@@ -260,8 +262,8 @@ namespace ZedGraph
 		{
 			_x = (double[]) rhs._x.Clone();
 			_y = (double[]) rhs._y.Clone();
-			_xMinBound = rhs._xMinBound;
-			_xMaxBound = rhs._xMaxBound;
+			//_xMinBound = rhs._xMinBound;
+			//_xMaxBound = rhs._xMaxBound;
 			_minBoundIndex = rhs._minBoundIndex;
 			_maxBoundIndex = rhs._maxBoundIndex;
 			_maxPts = rhs._maxPts;

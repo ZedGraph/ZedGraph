@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2007-01-01 02:56:01 $ </version>
 	[Serializable]
 	public class DataSourcePointList : IPointList
 	{
@@ -245,13 +245,16 @@ namespace ZedGraph
 				val = pInfo.GetValue( row, null );
 			else if ( drv != null )
 				val = drv[dataMember];
-
-			if ( val == null )
+			else if ( pInfo == null )
 				throw new System.Exception( "Can't find DataMember '" + dataMember + "' in DataSource" );
 
+			//			if ( val == null )
+			//				throw new System.Exception( "Can't find DataMember '" + dataMember + "' in DataSource" );
 
 			double x;
-			if ( val.GetType() == typeof( DateTime ) )
+			if ( val == null )
+				x = PointPair.Missing;
+			else if ( val.GetType() == typeof( DateTime ) )
 				x = ( (DateTime)val ).ToOADate();
 			else
 				x = Convert.ToDouble( val );

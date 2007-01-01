@@ -85,6 +85,8 @@ namespace ZedGraph.Demo
 			// X axis step size is 1 day
 			myPane.XAxis.Scale.MajorStep = 1;
 			myPane.XAxis.Scale.MajorUnit = DateUnit.Day ;
+			myPane.XAxis.Scale.MinorStep = 0.5;
+			myPane.XAxis.Scale.MajorUnit = DateUnit.Day;
 			// tilt the x axis labels to an angle of 65 degrees
 			myPane.XAxis.Scale.FontSpec.Angle = 65 ;
 			myPane.XAxis.Scale.FontSpec.IsBold = true ;

@@ -40,7 +40,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.10 $ $Date: 2006-11-17 15:20:19 $</version>
+	/// <version>$Revision: 1.11 $ $Date: 2007-01-01 02:56:01 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -1111,7 +1111,7 @@ namespace ZedGraph.Web
 			}
 			catch ( Exception )
 			{
-				throw;
+				//throw;
 			}
 		}
 
