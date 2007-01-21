@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.34 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.35 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -72,6 +72,25 @@ namespace ZedGraph
 		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
 		/// </summary>
 		protected bool		_isVisible;
+
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Protected field that stores the boolean value that determines whether this
+		/// <see cref="CurveItem"/> is selected on the graph.
+		/// Use the public property <see cref="IsSelected"/> to access this value.
+		/// Note that this value changes the curve display color, but it does not
+		/// affect the display of the legend entry.  To hide the legend entry, you
+		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
+		/// </summary>
+		protected bool _isSelected;
+
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Protected field that stores the boolean value that determines whether this
+		/// <see cref="CurveItem"/> can be selected in the graph.
+		/// </summary>
+		protected bool _isSelectable;
+
 		/// <summary>
 		/// protected field that stores a boolean value which allows you to override the normal
 		/// ordinal axis behavior.  Use the public property <see cref="IsOverrideOrdinal"/> to
@@ -359,6 +378,49 @@ namespace ZedGraph
 		{
 			get { return _isVisible; }
 			set { _isVisible = value; }
+		}
+
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Determines whether this <see cref="CurveItem"/> is selected on the graph.
+		/// Note that this value changes the curve displayed color, but it does not
+		/// affect the display of the legend entry. To hide the legend entry, you
+		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
+		/// </summary>
+		public bool IsSelected
+		{
+			get { return _isSelected; }
+			set
+			{
+				_isSelected = value;
+
+				/*
+				if ( this is BarItem )
+				{
+					( (BarItem)this ).Bar.Fill.UseInactiveColor = !value;
+				}
+				else if ( this is LineItem )
+				{
+					( (LineItem)this ).Line.Fill.UseInactiveColor = !value;
+					( (LineItem)this ).Symbol.Fill.UseInactiveColor = !value;
+					( (LineItem)this ).Symbol.Fill.UseInactiveColor = !value;
+				}
+				else if ( this is HiLowBarItem )
+					( (HiLowBarItem)this ).Bar.Fill.UseInactiveColor = !value;
+				else if ( this is PieItem )
+					( (PieItem)this ).Fill.UseInactiveColor = !value;
+				*/
+			}
+		}
+
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Determines whether this <see cref="CurveItem"/> can be selected in the graph.
+		/// </summary>
+		public bool IsSelectable
+		{
+			get { return _isSelectable; }
+			set { _isSelectable = value; }
 		}
 
 		/// <summary>

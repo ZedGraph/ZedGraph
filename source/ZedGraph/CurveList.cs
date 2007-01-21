@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.39 $ $Date: 2006-09-27 05:49:23 $ </version>
+	/// <version> $Revision: 3.40 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -170,7 +170,35 @@ namespace ZedGraph
 
 		
 	#endregion
-	
+
+	#region IEnumerable Methods
+
+		//CJBL
+		/// <summary>
+		/// Iterate backwards through the <see cref="CurveList" /> items.
+		/// </summary>
+		public IEnumerable<CurveItem> Backward
+		{
+			get
+			{
+				for ( int i = this.Count - 1; i >= 0; i-- )
+					yield return this[i];
+			}
+		}
+		/// <summary>
+		/// Iterate forward through the <see cref="CurveList" /> items.
+		/// </summary>
+		public IEnumerable<CurveItem> Forward
+		{
+			get
+			{
+				for ( int i = 0; i < this.Count; i++ )
+					yield return this[i];
+			}
+		}
+
+	#endregion
+
 	#region List Methods
 /*
 		/// <summary>

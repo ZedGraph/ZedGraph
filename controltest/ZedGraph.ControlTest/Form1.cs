@@ -14,6 +14,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.IO;
+using ZedGraph;
 
 namespace ZedGraph.ControlTest
 {
@@ -29,7 +30,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
-			//CreateGraph_BasicLinear( zedGraphControl1 );
+			CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
@@ -71,7 +72,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_NormalPane( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
 			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
-			CreateGraph_Pie( zedGraphControl1 );
+			//CreateGraph_Pie( zedGraphControl1 );
 			//CreateGraph_PolyTest( zedGraphControl1 );
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
@@ -660,6 +661,13 @@ namespace ZedGraph.ControlTest
 
 
 			GraphPane myPane = z1.GraphPane;
+			z1.IsEnableSelection = true;
+
+			Selection.Fill = new Fill( Color.Red );
+			Selection.Line.Color = Color.Red;
+			Selection.Line.DashOn = 1;
+			Selection.Line.DashOff = 1;
+			Selection.Line.Width = 3;
 
 			//myTimer = new Timer();
 			//myTimer.Enabled = true;
@@ -669,6 +677,8 @@ namespace ZedGraph.ControlTest
 			myPane.XAxis.Type = AxisType.Date;
 
 			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
 			const int count = 10;
 
 			for ( int i = 0; i < count; i++ )
@@ -684,8 +694,12 @@ namespace ZedGraph.ControlTest
 				if ( i == 10 )
 					y = PointPair.Missing;
 				list.Add( x, y, i / 36.0, tag );
+				list2.Add( x, y + 50, i / 36.0 );
+				list3.Add( x, y + 150, i / 36.0 );
 			}
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			LineItem myCurve2 = myPane.AddCurve( "curve2", list2, Color.Red, SymbolType.Circle );
+			LineItem myCurve3 = myPane.AddCurve( "curve3", list3, Color.Green, SymbolType.Square );
 			myPane.IsIgnoreMissing = true;
 			//myPane.XAxis.Type = AxisType.Ordinal;
 
@@ -707,6 +721,13 @@ namespace ZedGraph.ControlTest
 				text.FontSpec.Fill.IsVisible = false;
 
 				myPane.GraphObjList.Add( text );
+			}
+
+
+			foreach ( GraphObj obj in myPane.GraphObjList )
+			{
+				if ( obj is TextObj )
+					( obj as TextObj ).FontSpec.Angle = 90;
 			}
 
 			//z1.IsShowHScrollBar = true;
@@ -845,6 +866,7 @@ namespace ZedGraph.ControlTest
 			box.Location.CoordinateFrame = CoordType.XChartFractionYScale;
 			box.IsVisible = false;
 			myPane.GraphObjList.Add( box );
+
 		}
 
 		BoxObj box;
@@ -952,10 +974,21 @@ namespace ZedGraph.ControlTest
 
 			//z1.IsEnableZoom = true;
 			myPane.IsBoundedRanges = false;
+			myPane.YAxis.Scale.IsUseTenPower = false;
 
+			myPane.YAxis.Scale.Min = 1000;
+			myPane.YAxis.Scale.MinAuto = false;
+			myPane.YAxis.Scale.MajorStep = 1;
 			z1.AxisChange();
 
-			myPane.XAxis.Scale.MajorStep = 100;
+			//myPane.XAxis.Scale.MajorStep = 100;
+
+			//myPane.YAxis.ScaleFormatEvent +=new Axis.ScaleFormatHandler( YScaleLog_FormatEvent );
+		}
+
+		public string YScaleLog_FormatEvent( GraphPane pane, Axis axis, double val, int index )
+		{
+			return "( Y= " + val.ToString() + ")";
 		}
 
 		// Basic curve test with images for symbols
@@ -1223,6 +1256,7 @@ namespace ZedGraph.ControlTest
 			text.Location.AlignH = AlignH.Center;
 			text.Location.AlignV = AlignV.Center;
 			text.ZOrder = ZOrder.A_InFront;
+
 			myMaster.GraphObjList.Add( text );
 
 			// Initialize a color and symbol type rotator
@@ -1510,7 +1544,7 @@ namespace ZedGraph.ControlTest
 			XDate xDate = new XDate( 2006, 1, 1 );
 			double open = 50.0;
 
-			for ( int i = 0; i < 50; i++ )
+			for ( int i = 0; i < 1000; i++ )
 			{
 				double x = xDate.XLDate;
 				double close = open + rand.NextDouble() * 10.0 - 5.0;
@@ -1521,11 +1555,16 @@ namespace ZedGraph.ControlTest
 				spl.Add( pt );
 
 				open = close;
-				// Advance one day 
-				xDate.AddDays( 1.0 );
-				// but skip the weekends 
-				if ( XDate.XLDateToDayOfWeek( xDate.XLDate ) == 6 )
-					xDate.AddDays( 2.0 );
+				if ( xDate.DateTime.Hour < 23 )
+					xDate.AddHours( 1.0 );
+				else
+				{
+					// Advance one day 
+					xDate.AddHours( 1.0 );
+					// but skip the weekends 
+					if ( XDate.XLDateToDayOfWeek( xDate.XLDate ) == 6 )
+						xDate.AddDays( 2.0 );
+				}
 			}
 
 			JapaneseCandleStickItem myCurve = myPane.AddJapaneseCandleStick( "trades", spl );
@@ -1535,6 +1574,7 @@ namespace ZedGraph.ControlTest
 			// Use DateAsOrdinal to skip weekend gaps 
 			myPane.XAxis.Type = AxisType.DateAsOrdinal;
 			myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
+			myPane.XAxis.Scale.Format = "dd-MMM-yy hh:mm";
 
 			// pretty it up a little 
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
@@ -2355,7 +2395,7 @@ namespace ZedGraph.ControlTest
 		}
 
 		public void MyContextMenuBuilder( ZedGraphControl sender,
-			ContextMenuStrip menuStrip, Point mousePt )
+			ContextMenuStrip menuStrip, Point mousePt, ZedGraphControl.ContextMenuObjectState objState )
 		{
 			foreach ( ToolStripMenuItem item in menuStrip.Items )
 			{
@@ -2368,7 +2408,6 @@ namespace ZedGraph.ControlTest
 				}
 			}
 		}
-
 
 		private void CreateGraph_ClusteredStackBar( ZedGraphControl z1 )
 		{
@@ -3825,6 +3864,8 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_MouseDown( object sender, MouseEventArgs e )
 		{
+			zedGraphControl1.MasterPane.GetMetafile().Save( "poop.emf" );
+			return;
 
 			this.zedGraphControl1.GraphPane.Y2AxisList.Clear();
 			this.zedGraphControl1.GraphPane.Y2AxisList.Add( "My Title" );

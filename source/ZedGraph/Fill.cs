@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.19 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.20 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class Fill : ISerializable, ICloneable
 	{
@@ -1098,6 +1098,8 @@ namespace ZedGraph
 		/// to be filled</param>
 		public void Draw( Graphics g, RectangleF rect )
 		{
+			Draw( g, rect, null );
+			/*
 			if ( this.IsVisible )
 			{
 				using( Brush brush = this.MakeBrush( rect ) )
@@ -1106,6 +1108,7 @@ namespace ZedGraph
 					//brush.Dispose();
 				}
 			}
+			*/
 		}
 
 		/// <summary>
@@ -1128,10 +1131,10 @@ namespace ZedGraph
 				using ( Brush brush = this.MakeBrush( rect, pt ) )
 				{
 					g.FillRectangle( brush, rect );
-					//brush.Dispose();
 				}
 			}
 		}
+
 
 	#endregion
 	}

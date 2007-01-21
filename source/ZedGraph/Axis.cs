@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.67 $ $Date: 2006-11-25 17:17:27 $ </version>
+	/// <version> $Revision: 3.68 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -150,6 +150,25 @@ namespace ZedGraph
 		/// Subscribe to this event to handle custom formatting of the scale labels.
 		/// </summary>
 		public event ScaleFormatHandler ScaleFormatEvent;
+
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Allow customization of title based on user preferences.
+		/// </summary>
+		/// <param name="axis">The <see cref="Axis" /> of interest.</param>
+		/// <returns>
+		/// A string value representing the label, or null if the ZedGraph should go ahead
+		/// and generate the label according to the current settings.  To make the title
+		/// blank, return "".</returns>
+		/// <seealso cref="ScaleFormatEvent" />
+		public delegate string ScaleTitleEventHandler( Axis axis );
+
+		//Revision: JCarpenter 10/06
+		/// <summary>
+		/// Allow customization of the title when the scale is very large
+		/// Subscribe to this event to handle custom formatting of the scale axis label.
+		/// </summary>
+		public event ScaleTitleEventHandler ScaleTitleEvent;
 
 	#endregion
 
@@ -1307,6 +1326,19 @@ namespace ZedGraph
 
 		private string MakeTitle()
 		{
+			// Revision: JCarpenter 10/06
+			// Allow customization of the modified title when the scale is very large
+			// The event handler can edit the full label.  If the handler returns
+			// null, then the title will be the default.
+			if ( ScaleTitleEvent != null )
+			{
+				string label = ScaleTitleEvent( this );
+				if ( label != null )
+					return label;
+			}
+
+			// If the Mag is non-zero and IsOmitMag == false, and IsLog == false,
+			// then add the mag indicator to the title.
 			if ( _scale._mag != 0 && !_title._isOmitMag && !_scale.IsLog )
 				return _title._text + String.Format( " (10^{0})", _scale._mag );
 			else

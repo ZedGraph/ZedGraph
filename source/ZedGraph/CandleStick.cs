@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class CandleStick : ICloneable, ISerializable
 	{
@@ -395,7 +395,9 @@ namespace ZedGraph
 				//float halfSize = _size * scaleFactor;
 				float halfSize = GetBarWidth( pane, baseAxis, scaleFactor );
 
-				using ( Pen pen = new Pen( _color, _penWidth ) )
+				using ( Pen pen = !curve.IsSelected ? new Pen( _color, _penWidth ) :
+						new Pen( Selection.Border.Color, Selection.Border.PenWidth ) )
+//				using ( Pen pen = new Pen( _color, _penWidth ) )
 				{
 					// Loop over each defined point							
 					for ( int i = 0; i < curve.Points.Count; i++ )

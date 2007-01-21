@@ -26,6 +26,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.IO;
 
 #endregion
 
@@ -37,7 +38,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.24 $ $Date: 2006-11-25 17:17:27 $ </version>
+	/// <version> $Revision: 3.25 $ $Date: 2007-01-21 07:49:05 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -52,11 +53,11 @@ namespace ZedGraph
 		/// <summary>Private field that holds the main title of the pane.  Use the
 		/// public property <see cref="Title"/> to access this value.
 		/// </summary>
-		protected GapLabel		_title;
+		protected GapLabel _title;
 		
 		/// <summary>Private field instance of the <see cref="ZedGraph.Legend"/> class.  Use the
 		/// public property <see cref="PaneBase.Legend"/> to access this class.</summary>
-		protected Legend		_legend;
+		protected Legend _legend;
 
 		/// <summary>
 		/// Private field that stores the user-defined tag for this <see cref="PaneBase"/>.  This tag
@@ -78,7 +79,7 @@ namespace ZedGraph
 		/// Use the public property <see cref="IsFontsScaled"/> to access this value. </summary>
 		/// <seealso cref="CalcScaleFactor"/>
 		/// <seealso cref="IsPenWidthScaled"/>
-		protected bool		_isFontsScaled;
+		protected bool _isFontsScaled;
 		/// <summary>
 		/// Private field that controls whether or not pen widths are scaled according to the
 		/// size of the graph.  This value is only applicable if <see cref="IsFontsScaled"/>
@@ -102,18 +103,18 @@ namespace ZedGraph
 		/// <see cref="Rect"/> border.  Use the public property <see cref="Border"/> to
 		/// access this value.
 		/// </summary>
-		protected Border	_border;
+		protected Border _border;
 
 		/// <summary>Private field instance of the <see cref="ZedGraph.GraphObjList"/> class.  Use the
 		/// public property <see cref="GraphObjList"/> to access this class.</summary>
-		protected GraphObjList	_graphObjList;
+		protected GraphObjList _graphObjList;
 
 		/// <summary>Private field that determines the base size of the pane, in inches.
 		/// Fonts, tics, gaps, etc. are scaled according to this base size.
 		/// Use the public property <see cref="BaseDimension"/> to access this value. </summary>
 		/// <seealso cref="_isFontsScaled"/>
 		/// <seealso cref="CalcScaleFactor"/>
-		protected float		_baseDimension;
+		protected float _baseDimension;
 
 		/// <summary>
 		/// private field that stores the gap between the bottom of the pane title and the
@@ -809,6 +810,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <value>A <see cref="Bitmap"/> object rendered with the current graph.</value>
 		/// <seealso cref="GetImage(int,int,float)"/>
+		/// <seealso cref="GetMetafile()"/>
+		/// <seealso cref="GetMetafile(int,int)"/>
 		public Bitmap GetImage()
 		{
 			Bitmap bitmap = new Bitmap( (int)_rect.Width, (int)_rect.Height );
@@ -816,7 +819,6 @@ namespace ZedGraph
 			{
 				bitmapGraphics.TranslateTransform( -_rect.Left, -_rect.Top );
 				this.Draw( bitmapGraphics );
-				//bitmapGraphics.Dispose();
 			}
 
 			return bitmap;
@@ -829,6 +831,8 @@ namespace ZedGraph
 		/// <param name="height">The scaled height of the bitmap in pixels</param>
 		/// <param name="dpi">The resolution of the bitmap, in dots per inch</param>
 		/// <seealso cref="GetImage()"/>
+		/// <seealso cref="GetMetafile()"/>
+		/// <seealso cref="GetMetafile(int,int)"/>
 		/// <seealso cref="Bitmap"/>
 		public Bitmap GetImage( int width, int height, float dpi )
 		{
@@ -836,53 +840,196 @@ namespace ZedGraph
 			bitmap.SetResolution( dpi, dpi );
 			using ( Graphics bitmapGraphics = Graphics.FromImage( bitmap ) )
 			{
-				//bitmapGraphics.SmoothingMode = SmoothingMode.AntiAlias;
-
-				// This is actually a shallow clone, so we don't duplicate all the data, curveLists, etc.
-				PaneBase tempPane = this.ShallowClone();
-
-				// Clone the Chart object for GraphPanes so we don't mess up the minPix and maxPix values or
-				// the rect/ChartRect calculations of the original
-				//RectangleF saveRect = new RectangleF();
-				//if ( this is GraphPane )
-				//	saveRect = ( this as GraphPane ).Chart.Rect;
-
-				tempPane.ReSize( bitmapGraphics, new RectangleF( 0, 0, width, height ) );
-
-				tempPane.Draw( bitmapGraphics );
-
-				//if ( this is GraphPane )
-				//{
-				//	GraphPane gPane = this as GraphPane;
-				//	gPane.Chart.Rect = saveRect;
-				//	gPane.XAxis.Scale.SetupScaleData( gPane, gPane.XAxis );
-				//	foreach ( Axis axis in gPane.YAxisList )
-				//		axis.Scale.SetupScaleData( gPane, axis );
-				//	foreach ( Axis axis in gPane.Y2AxisList )
-				//		axis.Scale.SetupScaleData( gPane, axis );
-				//}
-
-				// To restore all the various state variables, you must redraw the graph in it's
-				// original form.  For this we create a 1x1 bitmap (it doesn't matter what size you use,
-				// since we're only mimicing the draw.  If you use the 'bitmapGraphics' already created,
-				// then you will be drawing back into the bitmap that will be returned.
-
-				Bitmap bm = new Bitmap( 1, 1 );
-				using ( Graphics bmg = Graphics.FromImage( bm ) )
-				{
-					this.ReSize( bmg, this.Rect );
-					this.Draw( bmg );
-				}
-
+				MakeImage( bitmapGraphics, width, height );
 			}
 
 			return bitmap;
 		}
 
+		private void MakeImage( Graphics g, int width, int height )
+		{
+			//g.SmoothingMode = SmoothingMode.AntiAlias;
+
+			// This is actually a shallow clone, so we don't duplicate all the data, curveLists, etc.
+			PaneBase tempPane = this.ShallowClone();
+
+			// Clone the Chart object for GraphPanes so we don't mess up the minPix and maxPix values or
+			// the rect/ChartRect calculations of the original
+			//RectangleF saveRect = new RectangleF();
+			//if ( this is GraphPane )
+			//	saveRect = ( this as GraphPane ).Chart.Rect;
+
+			tempPane.ReSize( g, new RectangleF( 0, 0, width, height ) );
+
+			tempPane.Draw( g );
+
+			//if ( this is GraphPane )
+			//{
+			//	GraphPane gPane = this as GraphPane;
+			//	gPane.Chart.Rect = saveRect;
+			//	gPane.XAxis.Scale.SetupScaleData( gPane, gPane.XAxis );
+			//	foreach ( Axis axis in gPane.YAxisList )
+			//		axis.Scale.SetupScaleData( gPane, axis );
+			//	foreach ( Axis axis in gPane.Y2AxisList )
+			//		axis.Scale.SetupScaleData( gPane, axis );
+			//}
+
+			// To restore all the various state variables, you must redraw the graph in it's
+			// original form.  For this we create a 1x1 bitmap (it doesn't matter what size you use,
+			// since we're only mimicing the draw.  If you use the 'bitmapGraphics' already created,
+			// then you will be drawing back into the bitmap that will be returned.
+
+			Bitmap bm = new Bitmap( 1, 1 );
+			using ( Graphics bmg = Graphics.FromImage( bm ) )
+			{
+				this.ReSize( bmg, this.Rect );
+				this.Draw( bmg );
+			}
+		}
+
+		/// <summary>
+		/// Gets an enhanced metafile image for the current GraphPane, scaled to the specified size.
+		/// </summary>
+		/// <remarks>
+		/// By definition, a Metafile is a vector drawing, and therefore scaling should not matter.
+		/// However, this method is provided because certain options in Zedgraph, such as
+		/// <see cref="IsFontsScaled" /> are affected by the size of the expected image.
+		/// </remarks>
+		/// <param name="width">The "effective" scaled width of the bitmap in pixels</param>
+		/// <param name="height">The "effective" scaled height of the bitmap in pixels</param>
+		/// <seealso cref="GetImage()"/>
+		/// <seealso cref="GetImage(int,int)"/>
+		/// <seealso cref="GetMetafile()"/>
+		public Metafile GetMetafile( int width, int height )
+		{
+			Bitmap bm = new Bitmap( 1, 1 );
+			using ( Graphics g = Graphics.FromImage( bm ) )
+			{
+				IntPtr hdc = g.GetHdc();
+				Stream stream = new MemoryStream();
+				Metafile metafile = new Metafile( stream, hdc, _rect,
+							MetafileFrameUnit.Pixel, EmfType.EmfPlusDual );
+				g.ReleaseHdc( hdc );
+
+				using ( Graphics metafileGraphics = Graphics.FromImage( metafile ) )
+				{
+					//metafileGraphics.TranslateTransform( -_rect.Left, -_rect.Top );
+					metafileGraphics.PageUnit = System.Drawing.GraphicsUnit.Pixel;
+					PointF P = new PointF( width, height );
+					PointF[] PA = new PointF[] { P };
+					metafileGraphics.TransformPoints( CoordinateSpace.Page, CoordinateSpace.Device, PA );
+					//metafileGraphics.PageScale = 1f;
+
+					// output
+					MakeImage( metafileGraphics, width, height );
+					//this.Draw( metafileGraphics );
+
+					return metafile;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets an enhanced metafile image for the current GraphPane.
+		/// </summary>
+		/// <seealso cref="GetImage()"/>
+		/// <seealso cref="GetImage(int,int)"/>
+		/// <seealso cref="GetMetafile(int,int)"/>
+		public Metafile GetMetafile()
+		{
+			Bitmap bm = new Bitmap( 1, 1 );
+			using ( Graphics g = Graphics.FromImage( bm ) )
+			{
+				IntPtr hdc = g.GetHdc();
+				Stream stream = new MemoryStream();
+				Metafile metafile = new Metafile( stream, hdc, _rect,
+							MetafileFrameUnit.Pixel, EmfType.EmfPlusDual );
+				g.ReleaseHdc( hdc );
+
+				using ( Graphics metafileGraphics = Graphics.FromImage( metafile ) )
+				{
+					metafileGraphics.TranslateTransform( -_rect.Left, -_rect.Top );
+					metafileGraphics.PageUnit = System.Drawing.GraphicsUnit.Pixel;
+					PointF P = new PointF( _rect.Width, _rect.Height );
+					PointF[] PA = new PointF[] { P };
+					metafileGraphics.TransformPoints( CoordinateSpace.Page, CoordinateSpace.Device, PA );
+					//metafileGraphics.PageScale = 1f;
+
+					// output
+					this.Draw( metafileGraphics );
+
+					return metafile;
+				}
+			}
+		}
+		
+/*
+				/// <summary>
+				/// Function to export the Diagram as WMF file
+				/// see http://www.codeproject.com/showcase/pdfrasterizer.asp?print=true
+				/// </summary>
+				/// <param name="filename">
+				/// filename is the name to export to
+				/// </param>
+				public bool ExporttoWmf( string filename )
+				{
+					string p;
+
+					//FileInfo TheFile = new FileInfo(filename);
+					p = Path.GetDirectoryName( filename );
+					if ( p != "" )
+					{
+						DirectoryInfo TheDir = new DirectoryInfo( p );
+						if ( TheDir.Exists )
+						{
+							System.Drawing.Imaging.Metafile metafile = null;
+
+							// create a Metafile object that is compatible with the surface of this 
+							// form
+							using ( Graphics graphics = this.CreateGraphics() )
+							{
+								System.IntPtr hdc = graphics.GetHdc();
+								metafile = new Metafile( filename, hdc, new Rectangle( 0, 0,
+									( ( (int)this.ClientRectangle.Width ) ),
+									( ( (int)this.ClientRectangle.Height ) ) ),
+									MetafileFrameUnit.Point );
+								graphics.ReleaseHdc( hdc );
+							}
+
+							// draw to the metafile
+							using ( Graphics metafileGraphics = Graphics.FromImage( metafile ) )
+							{
+								metafileGraphics.PageUnit = System.Drawing.GraphicsUnit.Point;
+								PointF P = new Point( this.ClientRectangle.Width, this.ClientRectangle.Height );
+								PointF[] PA = new PointF[] { P };
+								metafileGraphics.TransformPoints( CoordinateSpace.Page, CoordinateSpace.Device, PA );
+								metafileGraphics.PageScale = 1f;
+								metafileGraphics.SmoothingMode = SmoothingMode.AntiAlias; // smooth the 
+								// output
+								this.masterPane.Draw( metafileGraphics );
+								metafileGraphics.DrawRectangle( new System.Drawing.Pen( Color.Gray ), this.ClientRectangle );
+								metafile.Dispose();
+
+							}
+
+							return true;
+						}
+						else
+						{
+							return false;
+						}
+					}
+					else
+					{
+						//no directory given
+						return false;
+					}
+				}
+		*/
 		internal PointF TransformCoord( double x, double y, CoordType coord )
 		{
 			// If the Transformation is an illegal type, just stick it in the middle
-			if ( !(this is GraphPane) && !( coord == CoordType.PaneFraction ) )
+			if ( !( this is GraphPane ) && !( coord == CoordType.PaneFraction ) )
 			{
 				coord = CoordType.PaneFraction;
 				x = 0.5;
@@ -902,8 +1049,8 @@ namespace ZedGraph
 
 			if ( coord == CoordType.ChartFraction )
 			{
-				ptPix.X = (float)(chartRect.Left + x * chartRect.Width);
-				ptPix.Y = (float)(chartRect.Top + y * chartRect.Height);
+				ptPix.X = (float)( chartRect.Left + x * chartRect.Width );
+				ptPix.Y = (float)( chartRect.Top + y * chartRect.Height );
 			}
 			else if ( coord == CoordType.AxisXYScale )
 			{
@@ -918,32 +1065,32 @@ namespace ZedGraph
 			else if ( coord == CoordType.XScaleYChartFraction )
 			{
 				ptPix.X = gPane.XAxis.Scale.Transform( x );
-				ptPix.Y = (float)(chartRect.Top + y * chartRect.Height);
+				ptPix.Y = (float)( chartRect.Top + y * chartRect.Height );
 			}
 			else if ( coord == CoordType.XChartFractionYScale )
 			{
-				ptPix.X = (float)(chartRect.Left + x * chartRect.Width);
+				ptPix.X = (float)( chartRect.Left + x * chartRect.Width );
 				ptPix.Y = gPane.YAxis.Scale.Transform( y );
 			}
 			else if ( coord == CoordType.XChartFractionY2Scale )
 			{
-				ptPix.X = (float)(chartRect.Left + x * chartRect.Width);
+				ptPix.X = (float)( chartRect.Left + x * chartRect.Width );
 				ptPix.Y = gPane.Y2Axis.Scale.Transform( y );
 			}
 			else if ( coord == CoordType.XChartFractionYPaneFraction )
 			{
-				ptPix.X = (float)(chartRect.Left + x * chartRect.Width);
-				ptPix.Y = (float)(this.Rect.Top + y * _rect.Height);
+				ptPix.X = (float)( chartRect.Left + x * chartRect.Width );
+				ptPix.Y = (float)( this.Rect.Top + y * _rect.Height );
 			}
 			else if ( coord == CoordType.XPaneFractionYChartFraction )
 			{
-				ptPix.X = (float)(this.Rect.Left + x * _rect.Width);
-				ptPix.Y = (float)(chartRect.Top + y * chartRect.Height);
+				ptPix.X = (float)( this.Rect.Left + x * _rect.Width );
+				ptPix.Y = (float)( chartRect.Top + y * chartRect.Height );
 			}
 			else	// PaneFraction
 			{
-				ptPix.X = (float)(_rect.Left + x * _rect.Width);
-				ptPix.Y = (float)(_rect.Top + y * _rect.Height);
+				ptPix.X = (float)( _rect.Left + x * _rect.Width );
+				ptPix.Y = (float)( _rect.Top + y * _rect.Height );
 			}
 
 			return ptPix;

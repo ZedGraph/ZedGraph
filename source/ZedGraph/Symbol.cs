@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.30 $ $Date: 2007-01-01 02:56:01 $ </version>
+	/// <version> $Revision: 3.31 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -334,7 +334,7 @@ namespace ZedGraph
 		/// <param name="brush">A <see cref="Brush"/> class representing a default solid brush for this symbol
 		/// If this symbol uses a <see cref="LinearGradientBrush"/>, it will be created on the fly for
 		/// each point, since it has to be scaled to the individual point coordinates.</param>
-		public void DrawSymbol( Graphics g, float x, float y, GraphicsPath path,
+		private void DrawSymbol( Graphics g, float x, float y, GraphicsPath path,
 							Pen pen, Brush brush )
 		{
 			// Only draw if the symbol is visible
@@ -384,8 +384,12 @@ namespace ZedGraph
 		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
 		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
 		public void DrawSymbol( Graphics g, GraphPane pane, float x, float y,
-							float scaleFactor, PointPair dataValue )
+							float scaleFactor, bool isSelected, PointPair dataValue )
 		{
+			Symbol source = this;
+			if ( isSelected )
+				source = Selection.Symbol;
+
 			// Only draw if the symbol is visible
 			if (	_isVisible &&
 					this.Type != SymbolType.None &&
@@ -509,12 +513,17 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void Draw( Graphics g, GraphPane pane, LineItem curve, float scaleFactor )
+		public void Draw( Graphics g, GraphPane pane, LineItem curve, float scaleFactor,
+			bool isSelected )
 		{
-			float	tmpX, tmpY;
-			double	curX, curY, lowVal;
+			Symbol source = this;
+			if ( isSelected )
+				source = Selection.Symbol;
+
+			float tmpX, tmpY;
+			double curX, curY, lowVal;
 			IPointList points = curve.Points;
-		
+
 			if ( points != null && ( _border.IsVisible || _fill.IsVisible ) )
 			{
 				SmoothingMode sModeSave = g.SmoothingMode;
@@ -525,12 +534,12 @@ namespace ZedGraph
 				// If it's a gradient fill, it will be created on the fly for each symbol
 				//SolidBrush	brush = new SolidBrush( this.fill.Color );
 
-				using ( Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+				using ( Pen pen = source._border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
 				using ( GraphicsPath path = MakePath( g, scaleFactor ) )
 				{
 					RectangleF rect = path.GetBounds();
 
-					using ( Brush brush = this.Fill.MakeBrush( rect ) )
+					using ( Brush brush = source.Fill.MakeBrush( rect ) )
 					{
 						ValueHandler valueHandler = new ValueHandler( pane, false );
 						Scale xScale = pane.XAxis.Scale;

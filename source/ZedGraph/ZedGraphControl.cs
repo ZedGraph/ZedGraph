@@ -68,7 +68,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.73 $ $Date: 2007-01-01 02:56:01 $ </version>
+	/// <version> $Revision: 3.74 $ $Date: 2007-01-21 07:49:05 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -208,6 +208,12 @@ namespace ZedGraph
 		/// </summary>
 		private bool _isEnableVPan = true;
 
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Internal variable that indicates if the control can manage selections. 
+		/// </summary>
+		private bool _isEnableSelection = false;
+
 		private double _zoomStepFraction = 0.1;
 
 		private ScrollRange _xScrollRange;
@@ -246,6 +252,12 @@ namespace ZedGraph
 		//private PrinterSettings printSave = null;
 		//private PageSettings pageSave = null;
 
+		/// <summary>
+		/// This private field contains a list of selected CurveItems.
+		/// </summary>
+		//private List<CurveItem> _selection = new List<CurveItem>();
+		private Selection _selection = new Selection();
+
 	#endregion
 
 	#region Fields: Buttons & Keys Properties
@@ -283,6 +295,27 @@ namespace ZedGraph
 		/// </remarks>
 		/// <seealso cref="EditButtons" />
 		private Keys _editModifierKeys = Keys.Alt;
+
+		/// <summary>
+		/// Gets or sets a value that determines which mouse button will be used to select
+		/// <see cref="CurveItem" />'s.
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableSelection" /> is true.
+		/// </remarks>
+		/// <seealso cref="SelectModifierKeys" />
+		private MouseButtons _selectButtons = MouseButtons.Left;
+		/// <summary>
+		/// Gets or sets a value that determines which modifier keys will be used to select
+		/// <see cref="CurveItem" />'s.
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableSelection" /> is true.
+		/// </remarks>
+		/// <seealso cref="SelectButtons" />
+		private Keys _selectModifierKeys = Keys.Shift;
+
+		private Keys _selectAppendModifierKeys = Keys.Shift | Keys.Control;
 
 		/// <summary>
 		/// Gets or sets a value that determines which Mouse button will be used to perform
@@ -365,7 +398,7 @@ namespace ZedGraph
 		/// <seealso cref="PanButtons" />
 		/// <seealso cref="PanButtons2" />
 		/// <seealso cref="PanModifierKeys2" />
-		private Keys _panModifierKeys = Keys.Shift;
+		private Keys _panModifierKeys = Keys.Control;
 
 		/// <summary>
 		/// Gets or sets a value that determines which Mouse button will be used as a
@@ -530,7 +563,7 @@ namespace ZedGraph
 		/// of <see cref="PanButtons"/> to <see cref="MouseButtons.None"/>.
 		/// </remarks>
 		[	Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
-			DefaultValue( Keys.Shift ),
+			DefaultValue( Keys.Control ),
 			Description( "Determines which modifier key is used as the primary for panning" )]
 		public Keys PanModifierKeys
 		{
@@ -566,9 +599,9 @@ namespace ZedGraph
 		/// <see cref="IsEnableVEdit" /> are true.
 		/// </remarks>
 		/// <seealso cref="EditModifierKeys" />
-		[	Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
-			DefaultValue( MouseButtons.Right ),
-			Description( "Specify mouse button for point editing" )]
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
+		 DefaultValue( MouseButtons.Right ),
+		 Description( "Specify mouse button for point editing" )]
 		public MouseButtons EditButtons
 		{
 			get { return _editButtons; }
@@ -583,13 +616,54 @@ namespace ZedGraph
 		/// <see cref="IsEnableVEdit" /> are true.
 		/// </remarks>
 		/// <seealso cref="EditButtons" />
-		[	Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
-			DefaultValue( Keys.Alt ),
-			Description( "Specify modifier key for point editing" )]
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
+		 DefaultValue( Keys.Alt ),
+		 Description( "Specify modifier key for point editing" )]
 		public Keys EditModifierKeys
 		{
 			get { return _editModifierKeys; }
 			set { _editModifierKeys = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines which Mouse button will be used to 
+		/// select <see cref="CurveItem" />'s.
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableSelection" /> is true.
+		/// </remarks>
+		/// <seealso cref="SelectModifierKeys" />
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
+		 DefaultValue( MouseButtons.Left ),
+		 Description( "Specify mouse button for curve selection" )]
+		public MouseButtons SelectButtons
+		{
+			get { return _selectButtons; }
+			set { _selectButtons = value; }
+		}
+		/// <summary>
+		/// Gets or sets a value that determines which Mouse button will be used to 
+		/// select <see cref="CurveItem" />'s.
+		/// </summary>
+		/// <remarks>
+		/// This setting only applies if <see cref="IsEnableSelection" /> is true.
+		/// </remarks>
+		/// <seealso cref="SelectButtons" />
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
+		 DefaultValue( Keys.Shift ),
+		 Description( "Specify modifier key for curve selection" )]
+		public Keys SelectModifierKeys
+		{
+			get { return _selectModifierKeys; }
+			set { _selectModifierKeys = value; }
+		}
+
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
+		 DefaultValue( Keys.Shift | Keys.Alt ),
+		 Description( "Specify modifier key for append curve selection" )]
+		public Keys SelectAppendModifierKeys
+		{
+			get { return _selectAppendModifierKeys; }
 		}
 
 		/// <summary>
@@ -640,6 +714,12 @@ namespace ZedGraph
 		/// </summary>
 		private bool _isEditing = false;
 
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Internal variable that indicates the control is currently using selection. 
+		/// </summary>
+		private bool _isSelecting = false;
+
 		/// <summary>
 		/// Internal variable that stores the <see cref="GraphPane"/> reference for the Pane that is
 		/// currently being zoomed or panned.
@@ -681,7 +761,7 @@ namespace ZedGraph
 		/// <param name="mousePt">The point at which the mouse was clicked</param>
 		/// <seealso cref="ContextMenuBuilder" />
 		public delegate void ContextMenuBuilderEventHandler( ZedGraphControl sender,
-			ContextMenuStrip menuStrip, Point mousePt );
+			ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState );
 		/// <summary>
 		/// Subscribe to this event to be able to modify the ZedGraph context menu.
 		/// </summary>
@@ -1915,6 +1995,43 @@ namespace ZedGraph
 			}
 		}
 
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Readonly property that gets the list of selected CurveItems
+		/// </summary>
+		public Selection Selection
+		{
+			get { return _selection; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value that determines whether or not selection is allowed for the control.
+		/// </summary>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
+			DefaultValue( false ),
+			Description( "true to allow selecting Curves" )]
+		public bool IsEnableSelection
+		{
+			get { return _isEnableSelection; }
+			set
+			{
+				_isEnableSelection = value;
+
+				/*
+				if ( value )
+				{
+					this.Cursor = Cursors.Default;
+					this.IsEnableZoom = false;
+				}
+				else
+				{
+					this.Cursor = Cursors.Cross;
+					this.IsEnableZoom = true;
+				}
+				*/
+			}
+		}
+
 	#endregion
 
 	#region Methods
@@ -2096,6 +2213,7 @@ namespace ZedGraph
 			_isPanning = false;
 			_isZooming = false;
 			_isEditing = false;
+			_isSelecting = false;
 			_dragPane = null;
 
 			Point mousePt = new Point( e.X, e.Y );
@@ -2178,6 +2296,17 @@ namespace ZedGraph
 				_dragPane = pane;
 				ZoomStateSave( _dragPane, ZoomState.StateType.Zoom );
 			}
+			//Revision: JCarpenter 10/06
+			else if ( pane != null && _isEnableSelection && e.Button == _selectButtons &&
+				( Control.ModifierKeys == _selectModifierKeys ||
+					Control.ModifierKeys == _selectAppendModifierKeys ))
+			{
+				_isSelecting = true;
+				_dragStartPt = mousePt;
+				_dragEndPt = mousePt;
+				_dragEndPt.Offset( 1, 1 );
+				_dragPane = pane;
+			}
 			else if ( pane != null && ( _isEnableHEdit || _isEnableVEdit ) &&
 				 ( e.Button == EditButtons && Control.ModifierKeys == EditModifierKeys ) )
 			{
@@ -2216,6 +2345,8 @@ namespace ZedGraph
 					this.Cursor = Cursors.Hand;
 				else if ( ( _isEnableVZoom || _isEnableHZoom ) && ( pane != null || _isZooming ) )
 					this.Cursor = Cursors.Cross;
+				else if ( _isEnableSelection && ( pane != null || _isSelecting ) )
+					this.Cursor = Cursors.Cross;
 
 				//			else if ( isZoomMode || isPanMode )
 				//				this.Cursor = Cursors.No;
@@ -2249,10 +2380,14 @@ namespace ZedGraph
 					HandleZoomCancel();
 				if ( _isEditing )
 					HandleEditCancel();
+				//if ( _isSelecting )
+				// Esc always cancels the selection
+				HandleSelectionCancel();
 
 				_isZooming = false;
 				_isPanning = false;
 				_isEditing = false;
+				_isSelecting = false;
 
 				Refresh();
 			}
@@ -2281,6 +2416,9 @@ namespace ZedGraph
 					HandlePanFinish();
 				else if ( _isEditing )
 					HandleEditFinish();
+				//Revision: JCarpenter 10/06
+				else if ( _isSelecting )
+					HandleSelectionFinish( sender, e );
 			}
 
 			// Reset the rectangle.
@@ -2289,8 +2427,9 @@ namespace ZedGraph
 			_isZooming = false;
 			_isPanning = false;
 			_isEditing = false;
-			Cursor.Current = Cursors.Default;
+			_isSelecting = false;
 
+			Cursor.Current = Cursors.Default;
 		}
 
 		/// <summary>
@@ -2370,6 +2509,9 @@ namespace ZedGraph
 					HandleCursorValues( mousePt );
 				else if ( _isShowPointValues )
 					HandlePointValues( mousePt );
+				//Revision: JCarpenter 10/06
+				else if ( _isSelecting )
+					HandleZoomDrag( mousePt );
 			}
 		}
 
@@ -2952,21 +3094,164 @@ namespace ZedGraph
 			Size size = new Size( mousePt2.X - mousePt1.X, mousePt2.Y - mousePt1.Y );
 			Rectangle rect = new Rectangle( screenPt, size );
 
-			Rectangle chartRect = Rectangle.Round( _dragPane.Chart._rect );
+			if ( _isZooming )
+			{
+				Rectangle chartRect = Rectangle.Round( _dragPane.Chart._rect );
 
-			Point chartPt = PointToScreen( chartRect.Location );
-			if ( !_isEnableVZoom )
-			{
-				rect.Y = chartPt.Y;
-				rect.Height = chartRect.Height + 1;
-			}
-			else if ( !_isEnableHZoom )
-			{
-				rect.X = chartPt.X;
-				rect.Width = chartRect.Width + 1;
+				Point chartPt = PointToScreen( chartRect.Location );
+
+				if ( !_isEnableVZoom )
+				{
+					rect.Y = chartPt.Y;
+					rect.Height = chartRect.Height + 1;
+				}
+				else if ( !_isEnableHZoom )
+				{
+					rect.X = chartPt.X;
+					rect.Width = chartRect.Width + 1;
+				}
 			}
 
 			return rect;
+		}
+
+	#endregion
+
+	#region Selection Events
+
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Perform selection on curves within the drag pane, or under the mouse click.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void HandleSelectionFinish( object sender, MouseEventArgs e )
+		{
+			if ( e.Button != _selectButtons )
+			{
+				Refresh();
+				return;
+			}
+
+			PointF mousePtF = BoundPointToRect( new Point( e.X, e.Y ), _dragPane.Chart._rect );
+
+			PointF mousePt = BoundPointToRect( new Point( e.X, e.Y ), _dragPane.Rect );
+
+			Point curPt = ( (Control)sender ).PointToScreen( Point.Round( mousePt ) );
+
+			// Only accept a drag if it covers at least 5 pixels in each direction
+			//Point curPt = ( (Control)sender ).PointToScreen( Point.Round( mousePt ) );
+			if ( ( Math.Abs( mousePtF.X - _dragStartPt.X ) > 4 ) &&
+					  ( Math.Abs( mousePtF.Y - _dragStartPt.Y ) > 4 ) )
+			{
+
+				#region New Code to Select on Rubber Band
+
+				double x1, x2;
+				double[] y1, y2, yy1, yy2;
+				PointF startPoint = ( (Control)sender ).PointToClient( new Point( Convert.ToInt32( this._dragPane.Rect.X ), Convert.ToInt32( this._dragPane.Rect.Y ) ) );
+
+				_dragPane.ReverseTransform( _dragStartPt, out x1, out y1, out yy1 );
+				_dragPane.ReverseTransform( mousePtF, out x2, out y2, out yy2 );
+
+				List<CurveItem> objects = new List<CurveItem>();
+
+				double left = Math.Min( x1, x2 );
+				double right = Math.Max( x1, x2 );
+
+				double top = 0;
+				double bottom = 0;
+
+				for ( int i = 0; i < y1.Length; i++ )
+				{
+					bottom = Math.Min( y1[i], y2[i] );
+					top = Math.Max( y1[i], y2[i] );
+				}
+
+				for ( int i = 0; i < yy1.Length; i++ )
+				{
+					bottom = Math.Min( bottom, yy2[i] );
+					bottom = Math.Min( yy1[i], bottom );
+					top = Math.Max( top, yy2[i] );
+					top = Math.Max( yy1[i], top );
+				}
+
+				double w = right - left;
+				double h = bottom - top;
+
+				RectangleF rF = new RectangleF( (float)left, (float)top, (float)w, (float)h );
+
+				_dragPane.FindContainedObjects( rF, this.CreateGraphics(), out objects );
+
+				if ( Control.ModifierKeys == _selectAppendModifierKeys )
+					_selection.AddToSelection( _masterPane, objects );
+				else
+					_selection.Select( _masterPane, objects );
+				//				this.Select( objects );
+
+				//Graphics g = this.CreateGraphics();
+				//this._dragPane.AxisChange( g );
+				//g.Dispose();
+
+				#endregion
+			}
+			else   // It's a single-select
+			{
+				#region New Code to Single Select
+
+				//Point mousePt = new Point( e.X, e.Y );
+
+				int iPt;
+				GraphPane pane;
+				object nearestObj;
+
+				using ( Graphics g = this.CreateGraphics() )
+				{
+					if ( this.MasterPane.FindNearestPaneObject( mousePt, g, out pane,
+								out nearestObj, out iPt ) )
+					{
+						if ( nearestObj is CurveItem && iPt >= 0 )
+						{
+							if ( Control.ModifierKeys == _selectAppendModifierKeys )
+								_selection.AddToSelection( _masterPane, nearestObj as CurveItem );
+							else
+								_selection.Select( _masterPane, nearestObj as CurveItem );
+						}
+						else
+							_selection.ClearSelection( _masterPane );
+
+						Refresh();
+					}
+					else
+					{
+						_selection.ClearSelection( _masterPane );
+					}
+				}
+				#endregion New Code to Single Select
+			}
+
+			using ( Graphics g = this.CreateGraphics() )
+			{
+				// always AxisChange() the dragPane
+				_dragPane.AxisChange( g );
+
+				foreach ( GraphPane pane in _masterPane._paneList )
+				{
+					if ( pane != _dragPane && ( _isSynchronizeXAxes || _isSynchronizeYAxes ) )
+						pane.AxisChange( g );
+				}
+			}
+
+			Refresh();
+		}
+
+		private void HandleSelectionCancel()
+		{
+			_isSelecting = false;
+
+			_selection.ClearSelection( _masterPane );
+
+			Refresh();
 		}
 
 	#endregion
@@ -3309,6 +3594,61 @@ namespace ZedGraph
 
 	#region ContextMenu
 
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Public enumeration that specifies the type of 
+		/// object present at the Context Menu's mouse location
+		/// </summary>
+		public enum ContextMenuObjectState
+		{
+			/// <summary>
+			/// The object is an Inactive Curve Item at the Context Menu's mouse position
+			/// </summary>
+			InactiveSelection,
+			/// <summary>
+			/// The object is an active Curve Item at the Context Menu's mouse position
+			/// </summary>
+			ActiveSelection,
+			/// <summary>
+			/// There is no selectable object present at the Context Menu's mouse position
+			/// </summary>
+			Background
+		}
+
+		//Revision: JCarpenter 10/06
+		/// <summary>
+		/// Find the object currently under the mouse cursor, and return its state.
+		/// </summary>
+		private ContextMenuObjectState GetObjectState()
+		{
+			ContextMenuObjectState objState = ContextMenuObjectState.Background;
+
+			// Determine object state
+			Point mousePt = this.PointToClient( Control.MousePosition );
+			int iPt;
+			GraphPane pane;
+			object nearestObj;
+
+			using ( Graphics g = this.CreateGraphics() )
+			{
+				if ( this.MasterPane.FindNearestPaneObject( mousePt, g, out pane,
+						out nearestObj, out iPt ) )
+				{
+					CurveItem item = nearestObj as CurveItem;
+
+					if ( item != null && iPt >= 0 )
+					{
+						if ( item.IsSelected )
+							objState = ContextMenuObjectState.ActiveSelection;
+						else
+							objState = ContextMenuObjectState.InactiveSelection;
+					}
+				}
+			}
+
+			return objState;
+		}
+
 		/// <summary>
 		/// protected method to handle the popup context menu in the <see cref="ZedGraphControl"/>.
 		/// </summary>
@@ -3319,6 +3659,9 @@ namespace ZedGraph
 			// disable context menu by default
 			e.Cancel = true;
 			ContextMenuStrip menuStrip = sender as ContextMenuStrip;
+
+			//Revision: JCarpenter 10/06
+			ContextMenuObjectState objState = GetObjectState();
 
 			if ( _masterPane != null && menuStrip != null )
 			{
@@ -3427,8 +3770,9 @@ namespace ZedGraph
 					e.Cancel = false;
 
 					// Provide Callback for User to edit the context menu
+					//Revision: JCarpenter 10/06 - add ContextMenuObjectState objState
 					if ( this.ContextMenuBuilder != null )
-						this.ContextMenuBuilder( this, menuStrip, _menuClickPt );
+						this.ContextMenuBuilder( this, menuStrip, _menuClickPt, objState );
 				}
 			}
 		}
@@ -3524,6 +3868,29 @@ namespace ZedGraph
 					{
 						_masterPane.GetImage().Save( myStream, format );
 						myStream.Close();
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Handler for a "Save As..." context menu that saves to an Emf format instead of a
+		/// Bitmap format (e.g., <see cref="SaveAs" />).
+		/// </summary>
+		public void SaveAsEmf()
+		{
+			if ( _masterPane != null )
+			{
+				SaveFileDialog saveDlg = new SaveFileDialog();
+				saveDlg.Filter = "Emf Format (*.emf)|*.emf";
+
+				if ( saveDlg.ShowDialog() == DialogResult.OK )
+				{
+					Stream myStream = saveDlg.OpenFile();
+					if ( myStream != null )
+					{
+						myStream.Close();
+						_masterPane.GetMetafile().Save( saveDlg.FileName );
 					}
 				}
 			}

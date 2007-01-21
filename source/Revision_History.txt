@@ -1,5 +1,13 @@
 == Version 5 ==
 
+;20-Jan-2007 (by Champion)
+: [NEW] Add in selection logic to ZedGraphControl based on code from JCarpenter
+
+;4-Jan-2007 (by Champion)
+: [NEW] Added Legend.IsReverse property to reverse order of legend items (thanks blumenstock)
+: [UPD] Get rid of web control border with BORDER=0 tag (thanks blumenstock)
+: [UPD] Add Tag to the url in ImageMap if it is a string type.
+
 ;28-Dec-2006 (by Champion)
 : [NEW] Add GasGaugeRegion, GasGaugeNeedle classes (thanks Jay Mistry)
 : [UPD] Some speed optimizations in DrawSymbol and DrawCurve
@@ -250,6 +258,9 @@
 : [NEW] Add designer attributes for ZedGraphControl
 
 == Version 4.5 ==
+
+;19-Jan-2007 (by Champion) release version 4.5.1
+: [UPD] Add in Web Control
 
 ;28-Dec-2006 (by Champion) release version 4.5.0
 : [UPD] Major Update! Backported version 5.0.4 to .Net 1.1

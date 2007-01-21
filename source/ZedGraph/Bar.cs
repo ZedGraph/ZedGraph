@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.25 $ $Date: 2006-06-24 20:26:43 $ </version>
+   /// <version> $Revision: 3.26 $ $Date: 2007-01-21 07:49:05 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -244,7 +244,7 @@ namespace ZedGraph
 		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
 		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
 		public void Draw( Graphics g, GraphPane pane, float left, float right, float top,
-							float bottom, float scaleFactor, bool fullFrame,
+							float bottom, float scaleFactor, bool fullFrame, bool isSelected,
 							PointPair dataValue )
 		{
 			// Do a sanity check to make sure the top < bottom.  If not, reverse them
@@ -283,7 +283,7 @@ namespace ZedGraph
 			// Make a rectangle for the bar and draw it
 			RectangleF rect = new RectangleF( left, top, right - left, bottom - top );
 
-			Draw( g, pane, rect, scaleFactor, fullFrame, dataValue );      
+			Draw( g, pane, rect, scaleFactor, fullFrame, isSelected, dataValue );      
 		}
 
 		/// <summary>
@@ -310,23 +310,18 @@ namespace ZedGraph
 		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
 		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
 		public void Draw( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor,
-							bool fullFrame, PointPair dataValue )
+							bool fullFrame, bool isSelected, PointPair dataValue )
 		{
-			_fill.Draw( g, rect, dataValue );
-
-			// Fill the Bar
-			//if ( this.fill.IsVisible )
-			//{
-			//	// just avoid height/width being less than 0.1 so GDI+ doesn't cry
-			//	Brush brush = this.fill.MakeBrush( _rect, dataValue );
-			//	g.FillRectangle( brush, rect );
-			//	brush.Dispose();
-			//}
-
-			// Border the Bar
-			//if ( !this.border.Color.IsEmpty )
-			_border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
-
+			if ( isSelected )
+			{
+				Selection.Fill.Draw( g, rect, dataValue );
+				Selection.Border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
+			}
+			else
+			{
+				_fill.Draw( g, rect, dataValue );
+				_border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
+			}
 		}
 
 		/// <summary>
@@ -507,11 +502,11 @@ namespace ZedGraph
 				// Draw the bar
 				if ( pane._barSettings.Base == BarBase.X )
 					this.Draw( g, pane, pixSide, pixSide + barWidth, pixLowVal,
-							pixHiVal, scaleFactor, true,
+							pixHiVal, scaleFactor, true, curve.IsSelected,
 							curve.Points[index] );
 				else
 					this.Draw( g, pane, pixLowVal, pixHiVal, pixSide, pixSide + barWidth,
-							scaleFactor, true,
+							scaleFactor, true, curve.IsSelected,
 							curve.Points[index] );
 			}
 		}

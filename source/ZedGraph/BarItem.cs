@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="BarSettings.Type"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.21 $ $Date: 2006-11-23 19:46:50 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -240,7 +240,7 @@ namespace ZedGraph
 		/// </param>
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor )
 		{
-			_bar.Draw( g, pane, rect, scaleFactor, true, null );
+			_bar.Draw( g, pane, rect, scaleFactor, true, false, null );
 		}
 
 		/// <summary>

@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.68 $ $Date: 2006-11-17 15:20:13 $ </version>
+	/// <version> $Revision: 3.69 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -171,11 +171,11 @@ namespace ZedGraph
 			/// candidate.
 			/// </summary>
 			public static double NearestTol = 7.0;
+
 		}
-		#endregion
+	#endregion
 
-	#region public Class Instance Properties
-
+	#region Class Instance Properties
 		/// <summary>
 		/// Gets or sets the list of <see cref="CurveItem"/> items for this <see cref="GraphPane"/>
 		/// </summary>
@@ -2125,6 +2125,36 @@ namespace ZedGraph
 			index = -1;
 			return false;
 
+		}
+
+		// Revision: JCarpenter 10/06
+		/// <summary>
+		/// Find any objects that exist within the specified (screen) rectangle.
+		/// This method will search through all of the graph objects, such as
+		/// <see cref="Axis"/>, <see cref="Legend"/>, <see cref="PaneBase.Title"/>,
+		/// <see cref="GraphObj"/>, and <see cref="CurveItem"/>.
+		/// and see if the objects' bounding boxes are within the specified (screen) rectangle
+		/// This method returns true if any are found.
+		/// </summary>
+		public bool FindContainedObjects( RectangleF rectF, Graphics g,
+			 out System.Collections.Generic.List<CurveItem> containedObjs )
+		{
+			containedObjs = new System.Collections.Generic.List<CurveItem>();
+
+			foreach ( CurveItem ci in this.CurveList )
+			{
+				for ( int i = 0; i < ci.Points.Count; i++ )
+				{
+					if ( ci.Points[i].X > rectF.Left &&
+						 ci.Points[i].X < rectF.Right &&
+						 ci.Points[i].Y > rectF.Bottom &&
+						 ci.Points[i].Y < rectF.Top )
+					{
+						containedObjs.Add( ci );
+					}
+				}
+			}
+			return ( containedObjs.Count > 0 );
 		}
 
 	#endregion

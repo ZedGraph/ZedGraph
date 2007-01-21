@@ -40,7 +40,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.11 $ $Date: 2007-01-01 02:56:01 $</version>
+	/// <version>$Revision: 1.12 $ $Date: 2007-01-21 07:49:06 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -1565,6 +1565,8 @@ namespace ZedGraph.Web
 					output.AddAttribute( HtmlTextWriterAttribute.Height, this.Height.ToString() );
 					output.AddAttribute( HtmlTextWriterAttribute.Src, src );
 					output.AddAttribute( HtmlTextWriterAttribute.Alt, String.Empty );
+					output.AddAttribute( HtmlTextWriterAttribute.Border, "0" ); //CJBL
+
 					if ( this.IsImageMap && masterPane != null )
 						output.AddAttribute( HtmlTextWriterAttribute.Usemap, "#" + tempFileName + ".map" );
 					output.RenderBeginTag( HtmlTextWriterTag.Img );
@@ -1605,7 +1607,7 @@ namespace ZedGraph.Web
 					{
 						obj.GetCoords( masterPane, g, masterScale, out shape, out coords );
 						MakeAreaTag( shape, coords, obj.Link.Url, obj.Link.Target,
-							obj.Link.Title, output );
+							obj.Link.Title, obj.Link.Tag, output );
 					}
 				}
 
@@ -1621,7 +1623,7 @@ namespace ZedGraph.Web
 						{
 							obj.GetCoords( pane, g, scaleFactor, out shape, out coords );
 							MakeAreaTag( shape, coords, obj.Link.Url, obj.Link.Target,
-								obj.Link.Title, output );
+								obj.Link.Title, obj.Link.Tag, output );
 						}
 					}
 
@@ -1638,7 +1640,7 @@ namespace ZedGraph.Web
 									if ( curve is PieItem )
 									{
 										MakeAreaTag( "poly", coords, curve.Link.Url,
-												curve.Link.Target, curve.Link.Title, output );
+												curve.Link.Target, curve.Link.Title, curve.Link.Tag, output );
 										// only one point for PieItems
 										break;
 									}
@@ -1656,7 +1658,7 @@ namespace ZedGraph.Web
 										if ( curve.Points[i].Tag is string )
 											title = curve.Points[i].Tag as string;
 										MakeAreaTag( "rect", coords, url,
-												curve.Link.Target, title, output );
+												curve.Link.Target, title, curve.Points[i].Tag, output );
 									}
 								}
 							}
@@ -1670,7 +1672,7 @@ namespace ZedGraph.Web
 						{
 							obj.GetCoords( pane, g, scaleFactor, out shape, out coords );
 							MakeAreaTag( shape, coords, obj.Link.Url, obj.Link.Target,
-								obj.Link.Title, output );
+								obj.Link.Title, obj.Link.Tag, output );
 						}
 					}
 
@@ -1683,7 +1685,7 @@ namespace ZedGraph.Web
 					{
 						obj.GetCoords( masterPane, g, masterScale, out shape, out coords );
 						MakeAreaTag( shape, coords, obj.Link.Url, obj.Link.Target,
-							obj.Link.Title, output );
+							obj.Link.Title, obj.Link.Tag, output );
 					}
 				}
 
@@ -1691,13 +1693,18 @@ namespace ZedGraph.Web
 		}
 
 		private void MakeAreaTag( string shape, string coords, string url, string target,
-			string title, HtmlTextWriter output )
+			string title, object tag, HtmlTextWriter output )
 		{
 			output.AddAttribute( HtmlTextWriterAttribute.Shape, shape );
 			output.AddAttribute( HtmlTextWriterAttribute.Coords, coords );
 
 			if ( url != string.Empty )
-				output.AddAttribute( HtmlTextWriterAttribute.Href, url );
+			{
+				if ( tag is string )
+					output.AddAttribute( HtmlTextWriterAttribute.Href, url + "&" + tag );
+				else
+					output.AddAttribute( HtmlTextWriterAttribute.Href, url );
+			}
 			if ( target != string.Empty && url != string.Empty )
 				output.AddAttribute( HtmlTextWriterAttribute.Target, target );
 			if ( title != string.Empty )

@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.16 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -290,24 +290,24 @@ namespace ZedGraph
 		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
 		public void Draw( Graphics g, GraphPane pane, bool isXBase,
 								float pixBase, float pixValue,
-								float pixLowValue, float scaleFactor, Pen pen,
+								float pixLowValue, float scaleFactor, Pen pen, bool isSelected,
 								PointPair dataValue )
 		{
 			if ( isXBase )
 			{
 				g.DrawLine( pen, pixBase, pixValue, pixBase, pixLowValue );
 				_symbol.DrawSymbol( g, pane, pixBase, pixValue,
-							scaleFactor, dataValue );
+							scaleFactor, isSelected, dataValue );
 				_symbol.DrawSymbol( g, pane, pixBase, pixLowValue,
-							scaleFactor, dataValue );
+							scaleFactor, isSelected, dataValue );
 			}
 			else
 			{
 				g.DrawLine( pen, pixValue, pixBase, pixLowValue, pixBase );
 				_symbol.DrawSymbol( g, pane, pixValue, pixBase,
-							scaleFactor, dataValue );
+							scaleFactor, isSelected, dataValue );
 				_symbol.DrawSymbol( g, pane, pixLowValue, pixBase,
-							scaleFactor, dataValue );
+							scaleFactor, isSelected, dataValue );
 			}
 		}
 
@@ -346,9 +346,9 @@ namespace ZedGraph
 		
 			if ( curve.Points != null && this.IsVisible )
 			{
-				using ( Pen pen = new Pen( _color, _penWidth ) )
+				using ( Pen pen = !curve.IsSelected ? new Pen( _color, _penWidth ) :
+						new Pen( Selection.Border.Color, Selection.Border.PenWidth ) )
 				{
-
 					// Loop over each defined point							
 					for ( int i = 0; i < curve.Points.Count; i++ )
 					{
@@ -372,7 +372,7 @@ namespace ZedGraph
 							//	brush = fill.MakeBrush( _rect, _points[i] );
 
 							this.Draw( g, pane, baseAxis is XAxis, pixBase, pixValue,
-											pixLowValue, scaleFactor, pen,
+											pixLowValue, scaleFactor, pen, curve.IsSelected,
 											curve.Points[i] );
 						}
 					}

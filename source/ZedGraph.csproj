@@ -116,6 +116,7 @@
     <Compile Include="ZedGraph\ScaleStateList.cs" />
     <Compile Include="ZedGraph\ScrollRange.cs" />
     <Compile Include="ZedGraph\ScrollRangeList.cs" />
+    <Compile Include="ZedGraph\Selection.cs" />
     <Compile Include="ZedGraph\StickItem.cs" />
     <Compile Include="ZedGraph\StockPointList.cs" />
     <Compile Include="ZedGraph\StockPt.cs" />

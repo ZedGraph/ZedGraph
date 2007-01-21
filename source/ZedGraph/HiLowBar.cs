@@ -37,10 +37,11 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
+
 	#region Fields
 		/// <summary>
 		/// Private field that stores the size (width) of this
@@ -327,11 +328,11 @@ namespace ZedGraph
 				// Draw the bar
 				if ( baseAxis is XAxis )
 					this.Draw( g, pane, pixSide, pixSide + barWidth, pixLowVal,
-								pixHiVal, scaleFactor, true,
+								pixHiVal, scaleFactor, true, curve.IsSelected,
 								curve.Points[index] );
 				else
 					this.Draw( g, pane, pixLowVal, pixHiVal, pixSide, pixSide + barWidth,
-								scaleFactor, true,
+								scaleFactor, true, curve.IsSelected,
 								curve.Points[index] );
 		   }
 	   }

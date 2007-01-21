@@ -21,6 +21,7 @@ using System;
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Collections.Generic;
 
 namespace ZedGraph
 {
@@ -30,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.34 $ $Date: 2006-11-23 19:46:50 $ </version>
+	/// <version> $Revision: 3.35 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -108,6 +109,12 @@ namespace ZedGraph
 		/// Private field to store the gap between the legend and the chart rectangle.
 		/// </summary>
 		private float _gap;
+
+		// CJBL
+		/// <summary>
+		/// Private field to select output order of legend entries.
+		/// </summary>
+		private bool _isReverse;
 
 		/// <summary>
 		/// Private temporary field to maintain the characteristic "gap" for the legend.
@@ -241,6 +248,11 @@ namespace ZedGraph
 			/// This is the default value of <see cref="Legend.Gap" />.
 			/// </summary>
 			public static float Gap = 0.5f;
+
+			/// <summary>
+			/// Default value for the <see cref="Legend.IsReverse" /> property.
+			/// </summary>
+			public static bool IsReverse = false;
 		}
 	#endregion
 
@@ -349,9 +361,18 @@ namespace ZedGraph
 			set { _gap = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a value that determines if the legend entries are displayed in normal order
+		/// (matching the order in the <see cref="CurveList" />, or in reverse order.
+		/// </summary>
+		public bool IsReverse
+		{
+			get { return _isReverse; }
+			set { _isReverse = value; }
+		}
 
 	#endregion
-	
+
 	#region Constructors
 		/// <summary>
 		/// Default constructor that sets all <see cref="Legend"/> properties to default
@@ -375,6 +396,8 @@ namespace ZedGraph
 			_fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
 
 			_gap = Default.Gap;
+
+			_isReverse = Default.IsReverse;
 		}
 
 		/// <summary>
@@ -395,6 +418,8 @@ namespace ZedGraph
 			_fontSpec = rhs.FontSpec.Clone();
 
 			_gap = rhs._gap;
+
+			_isReverse = rhs._isReverse;
 		}
 
 		/// <summary>
@@ -422,7 +447,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 10;
+		public const int schema = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -446,6 +471,9 @@ namespace ZedGraph
 			_location = (Location) info.GetValue( "location", typeof(Location) );
 
 			_gap = info.GetSingle( "gap" );
+
+			if ( schema >= 11 )
+				_isReverse = info.GetBoolean( "isReverse" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -465,10 +493,12 @@ namespace ZedGraph
 			info.AddValue( "location", _location );
 
 			info.AddValue( "gap", _gap );
+			info.AddValue( "isReverse", _isReverse );
 		}
 	#endregion
 
 	#region Rendering Methods
+
 		/// <summary>
 		/// Render the <see cref="Legend"/> to the specified <see cref="Graphics"/> device.
 		/// </summary>
@@ -723,7 +753,8 @@ namespace ZedGraph
 			{
 				// Loop through each curve in the curve list
 				// Find the maximum width of the legend labels
-				foreach ( CurveItem curve in tmpPane.CurveList )
+				//foreach ( CurveItem curve in tmpPane.CurveList )
+				foreach ( CurveItem curve in GetIterator( tmpPane.CurveList, _isReverse ) )
 				{
 					if ( curve._label._text != string.Empty && curve._label._isVisible )
 					{
@@ -920,6 +951,18 @@ namespace ZedGraph
 			
 			_rect = newRect;
 		}
+
+		/// <summary>
+		/// Private method to the render region that gives the iterator depending on the attribute
+		/// </summary>
+		/// <param name="c"></param>
+		/// <param name="forward"></param>
+		/// <returns></returns>
+		private IEnumerable<CurveItem> GetIterator(CurveList c, bool forward)
+		{
+			return forward ? c.Forward : c.Backward;
+		}
+
 	#endregion
 	}
 }

@@ -31,11 +31,13 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.34 $ $Date: 2007-01-01 02:56:01 $ </version>
+	/// <version> $Revision: 3.35 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class Line : ICloneable, ISerializable
 	{
-		#region Fields
+
+	#region Fields
+
 		/// <summary>
 		/// Private field that stores the pen width for this
 		/// <see cref="Line"/>.  Use the public
@@ -111,9 +113,10 @@ namespace ZedGraph
 		/// </summary>
 		private Fill _fill;
 
-		#endregion
+	#endregion
 
-		#region Defaults
+	#region Defaults
+
 		/// <summary>
 		/// A simple struct that defines the
 		/// default property values for the <see cref="Line"/> class.
@@ -196,9 +199,11 @@ namespace ZedGraph
 			/// <value><see cref="StepType"/> enum value</value>
 			public static StepType StepType = StepType.NonStep;
 		}
-		#endregion
 
-		#region Properties
+	#endregion
+
+	#region Properties
+
 		/// <summary>
 		/// The color of the <see cref="Line"/>
 		/// </summary>
@@ -355,9 +360,10 @@ namespace ZedGraph
 			set { _fill = value; }
 		}
 
-		#endregion
+	#endregion
 
-		#region Constructors
+	#region Constructors
+
 		/// <summary>
 		/// Default constructor that sets all <see cref="Line"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
@@ -427,9 +433,10 @@ namespace ZedGraph
 			return new Line( this );
 		}
 
-		#endregion
+	#endregion
 
-		#region Serialization
+	#region Serialization
+
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
@@ -484,9 +491,11 @@ namespace ZedGraph
 			info.AddValue( "stepType", _stepType );
 			info.AddValue( "fill", _fill );
 		}
-		#endregion
 
-		#region Rendering Methods
+	#endregion
+
+	#region Rendering Methods
+
 		/// <summary>
 		/// Do all rendering associated with this <see cref="Line"/> to the specified
 		/// <see cref="Graphics"/> device.  This method is normally only
@@ -513,6 +522,10 @@ namespace ZedGraph
 			// If the line is being shown, draw it
 			if ( this.IsVisible )
 			{
+				//How to handle fill vs nofill?
+				//if ( isSelected )
+				//	GraphPane.Default.SelectedLine.
+
 				SmoothingMode sModeSave = g.SmoothingMode;
 				if ( _isAntiAlias )
 					g.SmoothingMode = SmoothingMode.HighQuality;
@@ -588,9 +601,13 @@ namespace ZedGraph
 		/// </param>
 		public void DrawSticks( Graphics g, GraphPane pane, CurveItem curve, float scaleFactor )
 		{
+			Line source = this;
+			if ( curve.IsSelected )
+				source = Selection.Line;
+
 			Axis yAxis = curve.GetYAxis( pane );
 			float basePix = yAxis.Scale.Transform( 0.0 );
-			using ( Pen pen = GetPen( pane, scaleFactor ) )
+			using ( Pen pen = source.GetPen( pane, scaleFactor ) )
 			{
 				for ( int i = 0; i < curve.Points.Count; i++ )
 				{
@@ -650,6 +667,10 @@ namespace ZedGraph
 		public void DrawSmoothFilledCurve( Graphics g, GraphPane pane,
                                 CurveItem curve, float scaleFactor )
 		{
+			Line source = this;
+			if ( curve.IsSelected )
+				source = Selection.Line;
+
 			PointF[] arrPoints;
 			int count;
 			IPointList points = curve.Points;
@@ -673,7 +694,7 @@ namespace ZedGraph
 						CloseCurve( pane, curve, arrPoints, count, yMin, path );
 
 						RectangleF rect = path.GetBounds();
-						using ( Brush brush = _fill.MakeBrush( rect ) )
+						using ( Brush brush = source._fill.MakeBrush( rect ) )
 						{
 							if ( pane.LineType == LineType.Stack && yAxis.Scale._min < 0 &&
 									this.IsFirstLine( pane, curve ) )
@@ -786,6 +807,10 @@ namespace ZedGraph
 		public void DrawCurve( Graphics g, GraphPane pane,
                                 CurveItem curve, float scaleFactor )
 		{
+			Line source = this;
+			if ( curve.IsSelected )
+				source = Selection.Line;
+
 			float tmpX, tmpY,
 					lastX = float.MaxValue,
 					lastY = float.MaxValue;
@@ -801,7 +826,7 @@ namespace ZedGraph
 			float minX = pane.Chart.Rect.Left;
 			float maxX = pane.Chart.Rect.Right;
 
-			using ( Pen pen = GetPen( pane, scaleFactor ) )
+			using ( Pen pen = source.GetPen( pane, scaleFactor ) )
 			{
 				if ( points != null && !_color.IsEmpty && this.IsVisible )
 				{
@@ -1259,6 +1284,6 @@ namespace ZedGraph
 
 		}
 
-		#endregion
+	#endregion
 	}
 }

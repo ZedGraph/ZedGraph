@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.29 $ $Date: 2007-01-01 02:56:01 $ </version>
+	/// <version> $Revision: 1.30 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem, ICloneable, ISerializable
 	{
@@ -594,7 +594,15 @@ namespace ZedGraph
 					SmoothingMode sMode = g.SmoothingMode;
 					g.SmoothingMode = SmoothingMode.AntiAlias;
 
-					using ( Brush brush = _fill.MakeBrush( _boundingRectangle ) )
+					Fill tFill = _fill;
+					Border tBorder = _border;
+					if ( this.IsSelected )
+					{
+						tFill = Selection.Fill;
+						tBorder = Selection.Border;
+					}
+
+					using ( Brush brush = tFill.MakeBrush( _boundingRectangle ) )
 					{
 						g.FillPie( brush, tRect.X, tRect.Y, tRect.Width, tRect.Height, this.StartAngle, this.SweepAngle );
 
@@ -604,7 +612,7 @@ namespace ZedGraph
 
 						if ( this.Border.IsVisible )
 						{
-							using ( Pen borderPen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+							using ( Pen borderPen = tBorder.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
 							{
 								g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height,
 									this.StartAngle, this.SweepAngle );

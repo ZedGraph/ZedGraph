@@ -3536,6 +3536,7 @@ namespace ZedGraph.Web
 			this.FontSpec.Fill.Color = Legend.Default.FontFillColor;
 			this.FontSpec.IsItalic = Legend.Default.FontItalic;
 			this.FontSpec.Size = Legend.Default.FontSize;
+			this.IsReverse = Legend.Default.IsReverse;
 		}
 
 		/// <summary>
@@ -3548,6 +3549,7 @@ namespace ZedGraph.Web
 			item.IsVisible = this.IsVisible;
 			item.Position = this.Position;
 			item.IsHStack = this.IsHStack;
+			item.IsReverse = this.IsReverse;
 			//this.Rect.CopyTo( item.Rect );
 			this.FontSpec.CopyTo( item.FontSpec );
 			this.Border.CopyTo( item.Border );
@@ -3690,7 +3692,25 @@ namespace ZedGraph.Web
 			set { ViewState["Position"] = value; }
 		}
 
-		#endregion
+		// CJBL
+		/// <summary>
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Legend.IsReverse"/>
+		/// </summary>
+		[
+		NotifyParentProperty( true ),
+		Description( "True to reverse order of legend items" )
+		]
+		public bool IsReverse
+		{
+			get
+			{
+				object x = ViewState["IsReverse"];
+				return ( null == x ) ? Legend.Default.IsReverse : (bool)x;
+			}
+			set { ViewState["IsReverse"] = value; }
+		}
+
+	#endregion
 	}
 	#endregion
 

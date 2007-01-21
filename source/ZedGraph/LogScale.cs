@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9 $ $Date: 2006-08-25 05:19:09 $ </version>
+	/// <version> $Revision: 1.10 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	class LogScale : Scale, ISerializable //, ICloneable
 	{
@@ -192,7 +192,13 @@ namespace ZedGraph
 		/// </returns>
 		override internal double CalcMajorTicValue( double baseVal, double tic )
 		{
-			return baseVal + (double) tic * CyclesPerStep;
+			return baseVal + (double)tic * CyclesPerStep;
+
+		//	double val = baseVal + (double)tic * CyclesPerStep;
+
+		//	double frac = val - Math.Floor( val );
+
+
 		}
 
 		/// <summary>
@@ -274,8 +280,9 @@ namespace ZedGraph
 			//iStart = (int) ( Math.Ceiling( SafeLog( this.min ) - 1.0e-12 ) );
 			//iEnd = (int) ( Math.Floor( SafeLog( this.max ) + 1.0e-12 ) );
 
-			nTics = (int) ( ( Math.Floor( Scale.SafeLog( _max ) + 1.0e-12 ) ) -
-					( Math.Ceiling( Scale.SafeLog( _min ) - 1.0e-12 ) ) + 1 ) / CyclesPerStep;
+			//nTics = (int)( ( Math.Floor( Scale.SafeLog( _max ) + 1.0e-12 ) ) -
+			//		( Math.Ceiling( Scale.SafeLog( _min ) - 1.0e-12 ) ) + 1 ) / CyclesPerStep;
+			nTics = (int)( ( Scale.SafeLog( _max ) - Scale.SafeLog( _min ) ) / CyclesPerStep ) + 1;
 
 			if ( nTics < 1 )
 				nTics = 1;
@@ -285,9 +292,10 @@ namespace ZedGraph
 			return nTics;
 		}
 
-		private int CyclesPerStep
+		private double CyclesPerStep
 		{
-			get { return (int)Math.Max( Math.Floor( Scale.SafeLog( _majorStep ) ), 1 ); }
+			//get { return (int)Math.Max( Math.Floor( Scale.SafeLog( _majorStep ) ), 1 ); }
+			get { return _majorStep; }
 		}
 
 		/// <summary>

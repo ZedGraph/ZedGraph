@@ -49,7 +49,7 @@ namespace ZedGraph
 	/// is assigned with <see cref="BarSettings.Base"/>, and is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class ErrorBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -284,7 +284,7 @@ namespace ZedGraph
 			using ( Pen pen = new Pen( _bar.Color, _bar.PenWidth ) )
 			{
 				this.Bar.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixValue,
-									pixLowValue, scaleFactor, pen, null );
+									pixLowValue, scaleFactor, pen, false, null );
 			}
 		}
 

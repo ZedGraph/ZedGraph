@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2006-11-23 19:46:50 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2007-01-21 07:49:05 $ </version>
 	[Serializable]
 	public class JapaneseCandleStick : CandleStick, ICloneable, ISerializable
 	{
@@ -396,8 +396,27 @@ namespace ZedGraph
 				//float halfSize = _size * scaleFactor;
 				float halfSize = GetBarWidth( pane, baseAxis, scaleFactor );
 
-				using ( Pen risingPen = new Pen(  _color, _penWidth ) )
-				using ( Pen fallingPen = new Pen( _fallingColor, _penWidth ) )
+				Color tColor = _color;
+				Color tFallingColor = _fallingColor;
+				float tPenWidth = _penWidth;
+				Fill tRisingFill = _risingFill;
+				Fill tFallingFill = _fallingFill;
+				Border tRisingBorder = _risingBorder;
+				Border tFallingBorder = _fallingBorder;
+				if ( curve.IsSelected )
+				{
+					tColor = Selection.Border.Color;
+					tFallingColor = Selection.Border.Color;
+					tPenWidth = Selection.Border.PenWidth;
+					tRisingFill = Selection.Fill;
+					tFallingFill = Selection.Fill;
+					tRisingBorder = Selection.Border;
+					tFallingBorder = Selection.Border;
+
+				}
+
+				using ( Pen risingPen = new Pen(  tColor, tPenWidth ) )
+				using ( Pen fallingPen = new Pen( tFallingColor, tPenWidth ) )
 				{
 					// Loop over each defined point							
 					for ( int i = 0; i < curve.Points.Count; i++ )
@@ -439,8 +458,8 @@ namespace ZedGraph
 							Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
 									pixClose, halfSize, scaleFactor,
 									( close > open ? risingPen : fallingPen ),
-									( close > open ? _risingFill : _fallingFill ),
-									( close > open ? _risingBorder : _fallingBorder ), pt );
+									( close > open ? tRisingFill : tFallingFill ),
+									( close > open ? tRisingBorder : tFallingBorder ), pt );
 						}
 					}
 				}
