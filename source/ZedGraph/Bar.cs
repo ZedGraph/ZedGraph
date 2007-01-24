@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.26 $ $Date: 2007-01-21 07:49:05 $ </version>
+   /// <version> $Revision: 3.27 $ $Date: 2007-01-24 08:14:36 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -243,6 +243,9 @@ namespace ZedGraph
 		/// <param name="dataValue">The data value to be used for a value-based
 		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
 		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
+		/// <param name="isSelected">Indicates that the <see cref="Bar" /> should be drawn
+		/// with attributes from the <see cref="Selection" /> class.
+		/// </param>
 		public void Draw( Graphics g, GraphPane pane, float left, float right, float top,
 							float bottom, float scaleFactor, bool fullFrame, bool isSelected,
 							PointPair dataValue )
@@ -309,6 +312,9 @@ namespace ZedGraph
 		/// <param name="dataValue">The data value to be used for a value-based
 		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
 		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
+		/// <param name="isSelected">Indicates that the <see cref="Bar" /> should be drawn
+		/// with attributes from the <see cref="Selection" /> class.
+		/// </param>
 		public void Draw( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor,
 							bool fullFrame, bool isSelected, PointPair dataValue )
 		{

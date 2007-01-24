@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.31 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.32 $ $Date: 2007-01-24 08:14:36 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -383,6 +383,9 @@ namespace ZedGraph
 		/// <param name="dataValue">The data value to be used for a value-based
 		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
 		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
+		/// <param name="isSelected">Indicates that the <see cref="Symbol" /> should be drawn
+		/// with attributes from the <see cref="Selection" /> class.
+		/// </param>
 		public void DrawSymbol( Graphics g, GraphPane pane, float x, float y,
 							float scaleFactor, bool isSelected, PointPair dataValue )
 		{
@@ -512,6 +515,9 @@ namespace ZedGraph
 		/// passed down by the parent <see cref="GraphPane"/> object using the
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
+		/// </param>
+		/// <param name="isSelected">Indicates that the <see cref="Symbol" /> should be drawn
+		/// with attributes from the <see cref="Selection" /> class.
 		/// </param>
 		public void Draw( Graphics g, GraphPane pane, LineItem curve, float scaleFactor,
 			bool isSelected )

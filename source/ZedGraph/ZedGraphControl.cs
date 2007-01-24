@@ -68,7 +68,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.74 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.75 $ $Date: 2007-01-24 08:14:36 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -642,7 +642,7 @@ namespace ZedGraph
 			set { _selectButtons = value; }
 		}
 		/// <summary>
-		/// Gets or sets a value that determines which Mouse button will be used to 
+		/// Gets or sets a value that determines which Modifier keys will be used to 
 		/// select <see cref="CurveItem" />'s.
 		/// </summary>
 		/// <remarks>
@@ -658,6 +658,10 @@ namespace ZedGraph
 			set { _selectModifierKeys = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a value that determines which Modifier keys will be used to 
+		/// append a <see cref="CurveItem" /> to the selection list.
+		/// </summary>
 		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
 		 DefaultValue( Keys.Shift | Keys.Alt ),
 		 Description( "Specify modifier key for append curve selection" )]
@@ -759,6 +763,7 @@ namespace ZedGraph
 		/// that contains the context menu.
 		/// </param>
 		/// <param name="mousePt">The point at which the mouse was clicked</param>
+		/// <param name="objState">The current context menu state</param>
 		/// <seealso cref="ContextMenuBuilder" />
 		public delegate void ContextMenuBuilderEventHandler( ZedGraphControl sender,
 			ContextMenuStrip menuStrip, Point mousePt, ContextMenuObjectState objState );
@@ -1490,7 +1495,7 @@ namespace ZedGraph
 		[	Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
 			DefaultValue( true ),
 			Description( "true to force font and pen width scaling when printing" )]
-		bool IsPrintScaleAll
+		public bool IsPrintScaleAll
 		{
 			get { return _isPrintScaleAll; }
 			set { _isPrintScaleAll = value; }

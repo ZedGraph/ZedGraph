@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion and JCarpenter </author>
-	/// <version> $Revision: 3.1 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2007-01-24 08:14:36 $ </version>
 	public class Selection : List<CurveItem>
 	{
 		// Revision: JCarpenter 10/06
@@ -72,6 +72,13 @@ namespace ZedGraph
 
 	#region Methods
 
+		/// <summary>
+		/// Place a <see cref="CurveItem" /> in the selection list, removing all other
+		/// items.
+		/// </summary>
+		/// <param name="master">The <see cref="MasterPane" /> that is the "owner"
+		/// of the <see cref="CurveItem" />'s.</param>
+		/// <param name="ci">The <see cref="CurveItem" /> to be added to the list.</param>
 		public void Select( MasterPane master, CurveItem ci )
 		{
 			//Clear the selection, but don't send the event,
@@ -81,6 +88,13 @@ namespace ZedGraph
 			AddToSelection( master, ci );
 		}
 
+		/// <summary>
+		/// Place a list of <see cref="CurveItem" />'s in the selection list, removing all other
+		/// items.
+		/// </summary>
+		/// <param name="master">The <see cref="MasterPane" /> that is the "owner"
+		/// of the <see cref="CurveItem" />'s.</param>
+		/// <param name="ciList">The list of <see cref="CurveItem" /> to be added to the list.</param>
 		public void Select( MasterPane master, List<CurveItem> ciList )
 		{
 			//Clear the selection, but don't send the event,
@@ -90,6 +104,12 @@ namespace ZedGraph
 			AddToSelection( master, ciList );
 		}
 
+		/// <summary>
+		/// Add a <see cref="CurveItem" /> to the selection list.
+		/// </summary>
+		/// <param name="master">The <see cref="MasterPane" /> that is the "owner"
+		/// of the <see cref="CurveItem" />'s.</param>
+		/// <param name="ci">The <see cref="CurveItem" /> to be added to the list.</param>
 		public void AddToSelection( MasterPane master, CurveItem ci )
 		{
 			if ( this.Contains( ci ) == false )
@@ -98,6 +118,12 @@ namespace ZedGraph
 			UpdateSelection( master );
 		}
 
+		/// <summary>
+		/// Add a list of <see cref="CurveItem" />'s to the selection list.
+		/// </summary>
+		/// <param name="master">The <see cref="MasterPane" /> that is the "owner"
+		/// of the <see cref="CurveItem" />'s.</param>
+		/// <param name="ciList">The list of <see cref="CurveItem" />'s to be added to the list.</param>
 		public void AddToSelection( MasterPane master, List<CurveItem> ciList )
 		{
 			foreach ( CurveItem ci in ciList )
@@ -109,6 +135,12 @@ namespace ZedGraph
 			UpdateSelection( master );
 		}
 
+		/// <summary>
+		/// Remove the specified <see cref="CurveItem" /> from the selection list.
+		/// </summary>
+		/// <param name="master">The <see cref="MasterPane" /> that is the "owner"
+		/// of the <see cref="CurveItem" />'s.</param>
+		/// <param name="ci">The <see cref="CurveItem" /> to be removed from the list.</param>
 		public void RemoveFromSelection( MasterPane master, CurveItem ci )
 		{
 			if ( this.Contains( ci ) )
@@ -118,11 +150,21 @@ namespace ZedGraph
 
 		}
 
+		/// <summary>
+		/// Clear the selection list and trigger a <see cref="SelectionChangedEvent" />.
+		/// </summary>
+		/// <param name="master">The <see cref="MasterPane" /> that "owns" the selection list.</param>
 		public void ClearSelection( MasterPane master )
 		{
 			ClearSelection( master, true );
 		}
 
+		/// <summary>
+		/// Clear the selection list and optionally trigger a <see cref="SelectionChangedEvent" />.
+		/// </summary>
+		/// <param name="master">The <see cref="MasterPane" /> that "owns" the selection list.</param>
+		/// <param name="sendEvent">true to trigger a <see cref="SelectionChangedEvent" />,
+		/// false otherwise.</param>
 		public void ClearSelection( MasterPane master, bool sendEvent )
 		{
 			this.Clear();
@@ -142,6 +184,11 @@ namespace ZedGraph
 			}
 		}
 
+		/// <summary>
+		/// Mark the <see cref="CurveItem" />'s that are included in the selection list
+		/// by setting the <see cref="CurveItem.IsSelected" /> property to true.
+		/// </summary>
+		/// <param name="master">The <see cref="MasterPane" /> that "owns" the selection list.</param>
 		public void UpdateSelection( MasterPane master )
 		{
 			if ( Count <= 0 )

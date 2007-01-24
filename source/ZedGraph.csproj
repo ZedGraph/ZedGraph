@@ -172,6 +172,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ZedGraph\ZedGraphLocale.tw.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ZedGraphLocale.tw.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

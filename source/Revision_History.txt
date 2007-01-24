@@ -2,6 +2,7 @@
 
 ;20-Jan-2007 (by Champion)
 : [NEW] Add in selection logic to ZedGraphControl based on code from JCarpenter
+: [UPD] Make ZedGraphControl.IsPrintScaleAll public
 
 ;4-Jan-2007 (by Champion)
 : [NEW] Added Legend.IsReverse property to reverse order of legend items (thanks blumenstock)

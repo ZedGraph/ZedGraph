@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "" )]
 [assembly: AssemblyProduct( "ZedGraph Library Demo" )]
-[assembly: AssemblyCopyright( "Copyright ©  2005-2006 Jerry Vos, John Champion" )]
+[assembly: AssemblyCopyright( "Copyright ©  2005-2007 Jerry Vos, John Champion" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion( "5.0.2.*" )]
+[assembly: AssemblyVersion( "5.0.5.*" )]
 //[assembly: AssemblyFileVersion( "1.0.0.0" )]

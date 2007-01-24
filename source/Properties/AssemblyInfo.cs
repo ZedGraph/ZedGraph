@@ -11,7 +11,7 @@ using System.Security;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "" )]
 [assembly: AssemblyProduct( "ZedGraph Library" )]
-[assembly: AssemblyCopyright( "Copyright © 2003-2006 John Champion" )]
+[assembly: AssemblyCopyright( "Copyright © 2003-2007 John Champion" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 
@@ -32,6 +32,6 @@ using System.Security;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion( "5.0.4.*" )]
+[assembly: AssemblyVersion( "5.0.5.*" )]
 //[assembly: AssemblyFileVersion( "4.9.7.0" )]
 //[assembly: AllowPartiallyTrustedCallers ]

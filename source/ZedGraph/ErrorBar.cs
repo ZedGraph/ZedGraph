@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2007-01-24 08:14:36 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -288,6 +288,9 @@ namespace ZedGraph
 		/// <param name="dataValue">The data value to be used for a value-based
 		/// color gradient.  This is only applicable for <see cref="FillType.GradientByX"/>,
 		/// <see cref="FillType.GradientByY"/> or <see cref="FillType.GradientByZ"/>.</param>
+		/// <param name="isSelected">Indicates that the <see cref="ErrorBar" /> should be drawn
+		/// with attributes from the <see cref="Selection" /> class.
+		/// </param>
 		public void Draw( Graphics g, GraphPane pane, bool isXBase,
 								float pixBase, float pixValue,
 								float pixLowValue, float scaleFactor, Pen pen, bool isSelected,

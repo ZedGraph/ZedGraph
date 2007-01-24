@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.25 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.26 $ $Date: 2007-01-24 08:14:36 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -898,7 +898,7 @@ namespace ZedGraph
 		/// <param name="width">The "effective" scaled width of the bitmap in pixels</param>
 		/// <param name="height">The "effective" scaled height of the bitmap in pixels</param>
 		/// <seealso cref="GetImage()"/>
-		/// <seealso cref="GetImage(int,int)"/>
+		/// <seealso cref="GetImage(int,int,float)"/>
 		/// <seealso cref="GetMetafile()"/>
 		public Metafile GetMetafile( int width, int height )
 		{
@@ -933,7 +933,7 @@ namespace ZedGraph
 		/// Gets an enhanced metafile image for the current GraphPane.
 		/// </summary>
 		/// <seealso cref="GetImage()"/>
-		/// <seealso cref="GetImage(int,int)"/>
+		/// <seealso cref="GetImage(int,int,float)"/>
 		/// <seealso cref="GetMetafile(int,int)"/>
 		public Metafile GetMetafile()
 		{
