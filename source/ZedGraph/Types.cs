@@ -129,7 +129,22 @@ namespace ZedGraph
 		/// <seealso cref="Fill.RangeMin"/>
 		/// <seealso cref="Fill.RangeMax"/>
 		/// <seealso cref="Fill.RangeDefault"/>
-		GradientByZ
+		GradientByZ,
+		/// <summary>
+		/// Fill with a single solid color based on the "ColorValue" property of the data.</summary>
+		/// <remarks>The "ColorValue" property is
+		/// used to determine the color value based on a gradient brush, and using a data range
+		/// of <see cref="Fill.RangeMin"/> and <see cref="Fill.RangeMax"/>.  You can create a multicolor
+		/// range by initializing the <see cref="Fill"/> class with your own custom
+		/// <see cref="Brush"/> object based on a <see cref="ColorBlend"/>.  In cases where a
+		/// data value makes no sense (<see cref="PaneBase.Fill"/>, <see cref="Legend.Fill"/>,
+		/// etc.), a default value of 50% of the range is assumed.  The default range is 0 to 1.
+		/// </remarks>
+		/// <seealso cref="Fill.RangeMin"/>
+		/// <seealso cref="Fill.RangeMax"/>
+		/// <seealso cref="Fill.RangeDefault"/>
+		GradientByColorValue
+
 	}
 
 	/// <summary>
@@ -278,19 +293,19 @@ namespace ZedGraph
 		/// <summary>
 		/// Position the text so that its left edge is aligned with the
 		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
+		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Left,
 		/// <summary>
 		/// Position the text so that its center is aligned (horizontally) with the
 		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
+		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Center,
 		/// <summary>
 		/// Position the text so that its right edge is aligned with the
 		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
+		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Right
 	}
@@ -329,25 +344,25 @@ namespace ZedGraph
 	/// Enumeration type for the different vertical text alignment options
 	/// </summary>
 	/// specified X,Y location.  Used by the
-	/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
+	/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
 	public enum AlignV
 	{
 		/// <summary>
 		/// Position the text so that its top edge is aligned with the
 		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
+		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Top,
 		/// <summary>
 		/// Position the text so that its center is aligned (vertically) with the
 		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
+		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Center,
 		/// <summary>
 		/// Position the text so that its bottom edge is aligned with the
 		/// specified X,Y location.  Used by the
-		/// <see cref="FontSpec.Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
+		/// <see cref="FontSpec.Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
 		/// </summary>
 		Bottom
 	}

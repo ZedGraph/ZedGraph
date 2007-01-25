@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// <see cref="GasGaugeRegion"/>s.
 	/// </summary>
 	/// <author> Jay Mistry </author>
-	/// <version> $Revision: 3.1 $ $Date: 2007-01-01 02:56:01 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	public class GasGaugeRegion : CurveItem, ICloneable, ISerializable
 	{
@@ -423,7 +423,7 @@ namespace ZedGraph
 
 					if ( this.Border.IsVisible )
 					{
-						Pen borderPen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor );
+						Pen borderPen = _border.GetPen( pane, scaleFactor );
 						g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height,
 							 -0.0f, -180.0f );
 						borderPen.Dispose();
@@ -470,7 +470,7 @@ namespace ZedGraph
 
 			// Border the bar
 			if ( !_border.Color.IsEmpty )
-				_border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
+				_border.Draw( g, pane, scaleFactor, rect );
 		}
 
 		/// <summary>

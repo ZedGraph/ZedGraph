@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.18 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2007-01-25 07:56:09 $ </version>
 	[Serializable]
 	public class PointPair : ISerializable
 	{
@@ -63,6 +63,21 @@ namespace ZedGraph
 		/// for <see cref="HiLowBarItem"/> charts.
 		/// </summary>
 		public double Z;
+
+		/// <summary>
+		/// The ColorValue property is just an alias for the <see cref="PointPair.Z" />
+		/// property.
+		/// </summary>
+		/// <remarks>
+		/// For other types, such as the <see cref="StockPt"/>, the <see cref="StockPt" />
+		/// can be mapped to a unique value.  This is used with the
+		/// <see cref="FillType.GradientByColorValue" /> option.
+		/// </remarks>
+		public double ColorValue
+		{
+			get { return Z; }
+			set { Z = value; }
+		}
 
 		/// <summary>
 		/// A tag object for use by the user.  This can be used to store additional

@@ -57,7 +57,7 @@ namespace ZedGraph.Demo
 			myCurve.Bar.PenWidth = 1f;
 			// Use the HDash symbol so that the error bars look like I-beams
 			myCurve.Bar.Symbol.Type = SymbolType.HDash;
-			myCurve.Bar.Symbol.Border.PenWidth = .1f;
+			myCurve.Bar.Symbol.Border.Width = .1f;
 			myCurve.Bar.Symbol.IsVisible = true;
 			myCurve.Bar.Symbol.Size = 4;
 			

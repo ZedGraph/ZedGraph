@@ -133,7 +133,7 @@ namespace ZedGraph.Demo
 			// Add an arrow pointer for the above text item
 			arrow = new ArrowObj( Color.Black, 15, 700, 53, 700, 80 );
 			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
-			arrow.PenWidth = 2.0F;
+			arrow.Line.Width = 2.0F;
 			myPane.GraphObjList.Add( arrow );
 
 			// Add a text "Confidential" stamp to the graph

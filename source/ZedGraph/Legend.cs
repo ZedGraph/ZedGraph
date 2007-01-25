@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.35 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.36 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -135,12 +135,12 @@ namespace ZedGraph
 			// Default Legend properties
 			/// <summary>
 			/// The default pen width for the <see cref="Legend"/> border border.
-			/// (<see cref="ZedGraph.Border.PenWidth"/> property).  Units are in pixels.
+			/// (<see cref="ZedGraph.LineBase.Width"/> property).  Units are in pixels.
 			/// </summary>
 			public static float BorderWidth = 1;
 			/// <summary>
 			/// The default color for the <see cref="Legend"/> border border.
-			/// (<see cref="ZedGraph.Border.Color"/> property). 
+			/// (<see cref="ZedGraph.LineBase.Color"/> property). 
 			/// </summary>
 			public static Color BorderColor = Color.Black;
 			/// <summary>
@@ -166,7 +166,7 @@ namespace ZedGraph
 			public static LegendPos Position = LegendPos.Top;
 			/// <summary>
 			/// The default border mode for the <see cref="Legend"/>.
-			/// (<see cref="ZedGraph.Border.IsVisible"/> property). true
+			/// (<see cref="ZedGraph.LineBase.IsVisible"/> property). true
 			/// to draw a border around the <see cref="Legend.Rect"/>,
 			/// false otherwise.
 			/// </summary>
@@ -575,7 +575,7 @@ namespace ZedGraph
 							// position in GDI+.
 							tmpFont.StringAlignment = StringAlignment.Near;
 
-							tmpFont.Draw( g, pane.IsPenWidthScaled, curve._label._text,
+							tmpFont.Draw( g, pane, curve._label._text,
 									x + 2.5F * _tmpSize, y + _legendItemHeight / 2.0F,
 									AlignH.Left, AlignV.Center, scaleFactor );
 
@@ -593,7 +593,7 @@ namespace ZedGraph
 
 				// Draw a border around the legend if required
 				if ( iEntry > 0 )
-					this.Border.Draw( g, pane.IsPenWidthScaled, scaleFactor, _rect );
+					this.Border.Draw( g, pane, scaleFactor, _rect );
 			}
 		}
 

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2006-11-23 19:46:50 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2007-01-25 07:56:09 $ </version>
 	[Serializable]
 	public class TextObj : GraphObj, ICloneable, ISerializable
 	{
@@ -381,7 +381,7 @@ namespace ZedGraph
 				//	this.FontSpec.Draw( g, pane.IsPenWidthScaled, this.text, pix.X, pix.Y,
 				//		this.location.AlignH, this.location.AlignV, scaleFactor );
 				//else
-					this.FontSpec.Draw( g, pane.IsPenWidthScaled, _text, pix.X, pix.Y,
+					this.FontSpec.Draw( g, pane, _text, pix.X, pix.Y,
 						_location.AlignH, _location.AlignV, scaleFactor, _layoutArea );
 
 			}

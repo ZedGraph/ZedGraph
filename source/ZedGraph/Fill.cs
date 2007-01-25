@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.20 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	public class Fill : ISerializable, ICloneable
 	{
@@ -932,11 +932,13 @@ namespace ZedGraph
 			return new SolidBrush( Color.White );
 		}
 
-		private Color GetGradientColor( PointPair dataValue )
+		internal Color GetGradientColor( PointPair dataValue )
 		{
 			double val;
 
-			if ( _type == FillType.GradientByZ )
+			if ( _type == FillType.GradientByColorValue )
+				val = dataValue.ColorValue;
+			else if ( _type == FillType.GradientByZ )
 				val = dataValue.Z;
 			else if ( _type == FillType.GradientByY )
 				val = dataValue.Y;
@@ -946,7 +948,7 @@ namespace ZedGraph
 			return GetGradientColor( val );
 		}
 
-		private Color GetGradientColor( double val )
+		internal Color GetGradientColor( double val )
 		{
 			double valueFraction;
 

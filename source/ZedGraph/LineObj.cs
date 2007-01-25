@@ -36,96 +36,34 @@ namespace ZedGraph
 	/// a single line segment, drawn as a "decoration" on the chart.</remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2007-01-25 07:56:09 $ </version>
 	[Serializable]
 	public class LineObj : GraphObj, ICloneable, ISerializable
 	{
 	#region Fields
 
 		/// <summary>
-		/// Private field that stores the color of the arrow.
-		/// Use the public property <see cref="Color"/> to access this value.
+		/// protected field that maintains the attributes of the line using an
+		/// instance of the <see cref="LineBase" /> class.
 		/// </summary>
-		/// <value>The color value is declared with a <see cref="System.Drawing.Color"/>
-		/// specification</value>
-		protected Color _color;
-		/// <summary>
-		/// Private field that stores the width of the pen for drawing the line
-		/// segment of the arrow.
-		/// Use the public property <see cref="PenWidth"/> to access this value.
-		/// </summary>
-		/// <value> The width is defined in point units (1/72 inch) </value>
-		protected float _penWidth;
-
-		/// <summary>
-		/// Private field that stores the <see cref="DashStyle"/> for this
-		/// <see cref="LineObj"/>.  Use the public
-		/// property <see cref="Style"/> to access this value.
-		/// </summary>
-		protected DashStyle _style;
-
-	#endregion
-
-	#region Defaults
-
-		/// <summary>
-		/// A simple struct that defines the
-		/// default property values for the <see cref="LineObj"/> class.
-		/// </summary>
-		new public struct Default
-		{
-			/// <summary>
-			/// The default pen width used for the <see cref="LineObj"/> line segment
-			/// (<see cref="LineObj.PenWidth"/> property).  Units are points (1/72 inch).
-			/// </summary>
-			public static float PenWidth = 1.0F;
-			/// <summary>
-			/// The default color used for the <see cref="LineObj"/> line segment
-			/// and arrowhead (<see cref="LineObj.Color"/> property).
-			/// </summary>
-			public static Color Color = Color.Red;
-			/// <summary>
-			/// The default drawing style for the line (<see cref="LineObj.Style"/> property).
-			/// This is defined with the <see cref="DashStyle"/> enumeration.
-			/// </summary>
-			public static DashStyle Style = DashStyle.Solid;
-		}
+		protected LineBase _line;
 
 	#endregion
 
 	#region Properties
+
 		/// <summary>
-		/// The width of the line segment for the <see cref="LineObj"/>
+		/// A <see cref="LineBase" /> class that contains the attributes for drawing this
+		/// <see cref="LineObj" />.
 		/// </summary>
-		/// <value> The width is defined in points (1/72 inch) </value>
-		/// <seealso cref="Default.PenWidth"/>
-		public float PenWidth
+		public LineBase Line
 		{
-			get { return _penWidth; }
-			set { _penWidth = value; }
+			get { return _line; }
+			set { _line = value; }
 		}
-		/// <summary>
-		/// The <see cref="System.Drawing.Color"/> of the line segment
-		/// </summary>
-		/// <value> The color is defined using the
-		/// <see cref="System.Drawing.Color"/> class </value>
-		/// <seealso cref="Default.Color"/>
-		public Color Color
-		{
-			get { return _color; }
-			set { _color = value; }
-		}
-		/// <summary>
-		/// The style of the <see cref="LineObj"/> line, defined as a <see cref="DashStyle"/> enum.
-		/// This allows the line to be solid, dashed, or dotted.
-		/// </summary>
-		/// <seealso cref="Default.Style"/>
-		public DashStyle Style
-		{
-			get { return _style; }
-			set { _style = value; }
-		}
+
 	#endregion
+
 
 	#region Constructors
 
@@ -151,13 +89,9 @@ namespace ZedGraph
 		public LineObj( Color color, double x1, double y1, double x2, double y2 )
 			: base( x1, y1, x2 - x1, y2 - y1 )
 		{
-			_penWidth = Default.PenWidth;
-
-			_color = color;
+			_line = new LineBase( color );
 			this.Location.AlignH = AlignH.Left;
 			this.Location.AlignV = AlignV.Top;
-
-			_style = Default.Style;
 		}
 
 		/// <summary>
@@ -178,7 +112,7 @@ namespace ZedGraph
 		/// <see cref="LineObj"/>.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		public LineObj( double x1, double y1, double x2, double y2 )
-			: this( Default.Color, x1, y1, x2, y2 )
+			: this( LineBase.Default.Color, x1, y1, x2, y2 )
 		{
 		}
 
@@ -186,7 +120,7 @@ namespace ZedGraph
 		/// Default constructor -- places the <see cref="LineObj"/> at location
 		/// (0,0) to (1,1).  All other values are defaulted.
 		/// </summary>
-		public LineObj() : this( Default.Color, 0, 0, 1, 1 )
+		public LineObj() : this( LineBase.Default.Color, 0, 0, 1, 1 )
 		{
 		}
 
@@ -196,9 +130,7 @@ namespace ZedGraph
 		/// <param name="rhs">The <see cref="LineObj"/> object from which to copy</param>
 		public LineObj( LineObj rhs ) : base( rhs )
 		{
-			_color = rhs.Color;
-			_penWidth = rhs.PenWidth;
-			_style = rhs._style;
+			_line = new LineBase( rhs._line );
 		}
 
 		/// <summary>
@@ -228,7 +160,7 @@ namespace ZedGraph
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
 		// changed to 2 with addition of Style property
-		public const int schema2 = 10;
+		public const int schema2 = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -243,9 +175,7 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			_color = (Color)info.GetValue( "color", typeof( Color ) );
-			_penWidth = info.GetSingle( "penWidth" );
-			_style = (DashStyle)info.GetValue( "style", typeof( DashStyle ) );
+			_line = (LineBase)info.GetValue( "line", typeof( LineBase ) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -259,9 +189,7 @@ namespace ZedGraph
 
 			info.AddValue( "schema2", schema2 );
 
-			info.AddValue( "color", _color );
-			info.AddValue( "penWidth", _penWidth );
-			info.AddValue( "style", _style );
+			info.AddValue( "line", _line );
 		}
 	#endregion
 
@@ -313,9 +241,10 @@ namespace ZedGraph
 				g.RotateTransform( angle );
 
 				// get a pen according to this arrow properties
-				using ( Pen pen = new Pen( _color, pane.ScaledPenWidth( _penWidth, scaleFactor ) ) )
+				using ( Pen pen = _line.GetPen( pane, scaleFactor ) )
+				//new Pen( _line._color, pane.ScaledPenWidth( _line._width, scaleFactor ) ) )
 				{
-					pen.DashStyle = _style;
+					//pen.DashStyle = _style;
 
 					g.DrawLine( pen, 0, 0, length, 0 );
 				}

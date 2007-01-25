@@ -31,11 +31,11 @@ namespace ZedGraph
 	/// attributes, colors, border and fill modes, font size, and angle information.
 	/// This class can render text with a variety of alignment options using the
 	/// <see cref="AlignH"/> and <see cref="AlignV"/> parameters in the
-	/// <see cref="Draw(Graphics,bool,string,float,float,AlignH,AlignV,float)"/> method.
+	/// <see cref="Draw(Graphics,PaneBase,string,float,float,AlignH,AlignV,float)"/> method.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.23 $ $Date: 2006-11-17 15:20:13 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	public class FontSpec : ICloneable, ISerializable
 	{
@@ -248,7 +248,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The color of the font characters for this <see cref="FontSpec"/>.
 		/// Note that the border and background
-		/// colors are set using the <see cref="ZedGraph.Border.Color"/> and
+		/// colors are set using the <see cref="ZedGraph.LineBase.Color"/> and
 		/// <see cref="ZedGraph.Fill.Color"/> properties, respectively.
 		/// </summary>
 		/// <value>A system <see cref="System.Drawing.Color"/> reference.</value>
@@ -732,9 +732,9 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="isPenWidthScaled">
-		/// Set to true to have the <see cref="Border"/> pen width scaled with the
-		/// scaleFactor.
+		/// <param name="pane">
+		/// A reference to the <see cref="PaneBase"/> object that is the parent or
+		/// owner of this object.
 		/// </param>
 		/// <param name="text">A string value containing the text to be
 		/// displayed.  This can be multiple lines, separated by newline ('\n')
@@ -755,11 +755,11 @@ namespace ZedGraph
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void Draw( Graphics g, bool isPenWidthScaled, string text, float x,
+		public void Draw( Graphics g, PaneBase pane, string text, float x,
 			float y, AlignH alignH, AlignV alignV,
 			float scaleFactor )
 		{
-			this.Draw( g, isPenWidthScaled, text, x, y, alignH, alignV,
+			this.Draw( g, pane, text, x, y, alignH, alignV,
 						scaleFactor, new SizeF() );
 		}
 
@@ -772,9 +772,9 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="isPenWidthScaled">
-		/// Set to true to have the <see cref="Border"/> pen width scaled with the
-		/// scaleFactor.
+		/// <param name="pane">
+		/// A reference to the <see cref="PaneBase"/> object that is the parent or
+		/// owner of this object.
 		/// </param>
 		/// <param name="text">A string value containing the text to be
 		/// displayed.  This can be multiple lines, separated by newline ('\n')
@@ -798,7 +798,7 @@ namespace ZedGraph
 		/// <param name="layoutArea">The limiting area (<see cref="SizeF"/>) into which the text
 		/// must fit.  The actual rectangle may be smaller than this, but the text will be wrapped
 		/// to accomodate the area.</param>
-		public void Draw( Graphics g, bool isPenWidthScaled, string text, float x,
+		public void Draw( Graphics g, PaneBase pane, string text, float x,
 			float y, AlignH alignH, AlignV alignV,
 			float scaleFactor, SizeF layoutArea )
 		{
@@ -835,7 +835,7 @@ namespace ZedGraph
 			_fill.Draw( g, rectF );
 
 			// Draw the border around the text if required
-			_border.Draw( g, isPenWidthScaled, scaleFactor, rectF );
+			_border.Draw( g, pane, scaleFactor, rectF );
 
 			// make a center justified StringFormat alignment
 			// for drawing the text
@@ -961,7 +961,7 @@ namespace ZedGraph
 			_fill.Draw( g, rectF );
 
 			// Draw the border around the text if required
-			_border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rectF );
+			_border.Draw( g, pane, scaleFactor, rectF );
 
 			// make a solid brush for rendering the font itself
 			using ( SolidBrush brush = new SolidBrush( _fontColor ) )

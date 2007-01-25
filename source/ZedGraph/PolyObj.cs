@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2006-11-25 17:17:27 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2007-01-25 07:56:09 $ </version>
 	[Serializable]
 	public class PolyObj : BoxObj, ICloneable, ISerializable
 	{
@@ -257,7 +257,7 @@ namespace ZedGraph
 
 					if ( _border.IsVisible )
 					{
-						using ( Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+						using ( Pen pen = _border.GetPen( pane, scaleFactor ) )
 							g.DrawPath( pen, path );
 					}
 				}

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	public class ArrowObj : LineObj, ICloneable, ISerializable
 	{
@@ -146,7 +146,7 @@ namespace ZedGraph
 		/// <see cref="ArrowObj"/>.  The units of this position are specified by the
 		/// <see cref="Location.CoordinateFrame"/> property.</param>
 		public ArrowObj( double x1, double y1, double x2, double y2 )
-			: this( LineObj.Default.Color, Default.Size, x1, y1, x2, y2 )
+			: this( LineBase.Default.Color, Default.Size, x1, y1, x2, y2 )
 		{
 		}
 
@@ -156,7 +156,7 @@ namespace ZedGraph
 		/// </summary>
 		public ArrowObj()
 			:
-			this( LineObj.Default.Color, Default.Size, 0, 0, 1, 1 )
+			this( LineBase.Default.Color, Default.Size, 0, 0, 1, 1 )
 		{
 		}
 
@@ -281,9 +281,10 @@ namespace ZedGraph
 				g.RotateTransform( angle );
 
 				// get a pen according to this arrow properties
-				using ( Pen pen = new Pen( _color, pane.ScaledPenWidth( _penWidth, scaleFactor ) ) )
+				using ( Pen pen = _line.GetPen( pane, scaleFactor ) )
+					//new Pen( _color, pane.ScaledPenWidth( _penWidth, scaleFactor ) ) )
 				{
-					pen.DashStyle = _style;
+					//pen.DashStyle = _style;
 
 					// Only show the arrowhead if required
 					if ( _isArrowHead )
@@ -303,7 +304,7 @@ namespace ZedGraph
 						polyPt[2].Y = -hsize;
 						polyPt[3] = polyPt[0];
 
-						using ( SolidBrush brush = new SolidBrush( _color ) )
+						using ( SolidBrush brush = new SolidBrush( _line._color ) )
 							// render the arrowhead
 							g.FillPolygon( brush, polyPt );
 					}

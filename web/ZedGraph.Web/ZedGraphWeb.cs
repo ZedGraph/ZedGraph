@@ -40,7 +40,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.12 $ $Date: 2007-01-21 07:49:06 $</version>
+	/// <version>$Revision: 1.13 $ $Date: 2007-01-25 07:56:09 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -83,14 +83,14 @@ namespace ZedGraph.Web
 			vsassist.Register( 'm', typeof( ZedGraphWebRect ) );
 
 			this.ChartBorder.Color = ZedGraph.Chart.Default.BorderColor;
-			this.ChartBorder.PenWidth = ZedGraph.Chart.Default.BorderPenWidth;
+			this.ChartBorder.Width = ZedGraph.Chart.Default.BorderPenWidth;
 			this.ChartBorder.IsVisible = true;
 			this.ChartFill.Brush = ZedGraph.Chart.Default.FillBrush;
 			this.ChartFill.Color = ZedGraph.Chart.Default.FillColor;
 			this.ChartFill.Type = ZedGraph.Chart.Default.FillType;
 
 			this.PaneBorder.Color = ZedGraph.PaneBase.Default.BorderColor;
-			this.PaneBorder.PenWidth = ZedGraph.PaneBase.Default.BorderPenWidth;
+			this.PaneBorder.Width = ZedGraph.PaneBase.Default.BorderPenWidth;
 			this.PaneBorder.IsVisible = true;
 			this.PaneFill.Color = ZedGraph.PaneBase.Default.FillColor;
 
@@ -225,7 +225,7 @@ namespace ZedGraph.Web
 			// Add an arrow pointer for the above text item
 			arrow = new ArrowObj( Color.Black, 15, 700, 53, 700, 80 );
 			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
-			arrow.PenWidth = 2.0F;
+			arrow.Line.Width = 2.0F;
 			pane.GraphObjList.Add( arrow );
 
 			// Add a text "Confidential" stamp to the graph

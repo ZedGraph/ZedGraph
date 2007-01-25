@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.32 $ $Date: 2007-01-24 08:14:36 $ </version>
+	/// <version> $Revision: 3.33 $ $Date: 2007-01-25 07:56:09 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -93,7 +93,7 @@ namespace ZedGraph
 			public static float Size = 7;
 			/// <summary>
 			/// The default pen width to be used for drawing curve symbols
-			/// (<see cref="ZedGraph.Border.PenWidth"/> property).  Units are points.
+			/// (<see cref="ZedGraph.LineBase.Width"/> property).  Units are points.
 			/// </summary>
 			public static float PenWidth = 1.0F;
 			/// <summary>
@@ -126,12 +126,12 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsVisible = true;
 			/// <summary>
-			/// The default for drawing frames around symbols (<see cref="ZedGraph.Border.IsVisible"/> property).
+			/// The default for drawing frames around symbols (<see cref="ZedGraph.LineBase.IsVisible"/> property).
 			/// true to display symbol frames, false to hide them.
 			/// </summary>
 			public static bool IsBorderVisible = true;
 			/// <summary>
-			/// The default color for drawing symbols (<see cref="ZedGraph.Border.Color"/> property).
+			/// The default color for drawing symbols (<see cref="ZedGraph.LineBase.Color"/> property).
 			/// </summary>
 			public static Color BorderColor = Color.Red;
 		}
@@ -403,7 +403,7 @@ namespace ZedGraph
 				if ( _isAntiAlias )
 					g.SmoothingMode = SmoothingMode.HighQuality;
 
-				using ( Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+				using ( Pen pen = _border.GetPen( pane, scaleFactor, dataValue ) )
 				using ( GraphicsPath path = this.MakePath( g, scaleFactor ) )
 				using ( Brush brush = this.Fill.MakeBrush( path.GetBounds(), dataValue ) )
 				{
@@ -540,7 +540,7 @@ namespace ZedGraph
 				// If it's a gradient fill, it will be created on the fly for each symbol
 				//SolidBrush	brush = new SolidBrush( this.fill.Color );
 
-				using ( Pen pen = source._border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+				using ( Pen pen = source._border.GetPen( pane, scaleFactor ) )
 				using ( GraphicsPath path = MakePath( g, scaleFactor ) )
 				{
 					RectangleF rect = path.GetBounds();
@@ -599,10 +599,11 @@ namespace ZedGraph
 
 								// If the fill type for this symbol is a Gradient by value type,
 								// the make a brush corresponding to the appropriate current value
-								if ( _fill.IsGradientValueType )
+								if ( _fill.IsGradientValueType || _border._gradientFill.IsGradientValueType )
 								{
 									using ( Brush tBrush = _fill.MakeBrush( rect, points[i] ) )
-										this.DrawSymbol( g, tmpX, tmpY, path, pen, tBrush );
+									using ( Pen tPen = _border.GetPen( pane, scaleFactor, points[i] ) )
+										this.DrawSymbol( g, tmpX, tmpY, path, tPen, tBrush );
 								}
 								else
 								{

@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.21 $ $Date: 2006-11-25 17:17:27 $ </version>
+	/// <version> $Revision: 1.22 $ $Date: 2007-01-25 07:56:09 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -2099,7 +2099,7 @@ namespace ZedGraph
 					ah, av,
 					scaleFactor );
 			else
-				_fontSpec.Draw( g, pane.IsPenWidthScaled, tmpStr,
+				_fontSpec.Draw( g, pane, tmpStr,
 					pixVal, textCenter,
 					ah, av,
 					scaleFactor );

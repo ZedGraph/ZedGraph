@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.35 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.36 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -329,8 +329,9 @@ namespace ZedGraph
 		/// <summary>
 		/// The <see cref="Line"/>/<see cref="Symbol"/>/<see cref="Bar"/> 
 		/// color (FillColor for the Bar).  This is a common access to
-		/// <see cref="ZedGraph.Line.Color"/>, <see cref="ZedGraph.Border.Color"/>, and
-		/// <see cref="ZedGraph.Fill.Color"/> properties for this curve.
+		/// <see cref="ZedGraph.LineBase.Color">Line.Color</see>,
+		/// <see cref="ZedGraph.LineBase.Color">Border.Color</see>, and
+		/// <see cref="ZedGraph.Fill.Color">Fill.Color</see> properties for this curve.
 		/// </summary>
 		public Color Color
 		{

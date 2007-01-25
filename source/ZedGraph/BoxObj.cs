@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-10-26 05:08:10 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	public class BoxObj : GraphObj, ICloneable, ISerializable
 	{
@@ -63,12 +63,12 @@ namespace ZedGraph
 		{
 			/// <summary>
 			/// The default pen width used for the <see cref="BoxObj"/> border
-            /// (<see cref="ZedGraph.Border.PenWidth"/> property).  Units are points (1/72 inch).
+            /// (<see cref="ZedGraph.LineBase.Width"/> property).  Units are points (1/72 inch).
             /// </summary>
 			public static float PenWidth = 1.0F;
 			/// <summary>
 			/// The default color used for the <see cref="BoxObj"/> border
-			/// (<see cref="ZedGraph.Border.Color"/> property).
+			/// (<see cref="ZedGraph.LineBase.Color"/> property).
 			/// </summary>
 			public static Color BorderColor = Color.Black;
 			/// <summary>
@@ -291,7 +291,7 @@ namespace ZedGraph
 				_fill.Draw( g, pixRect );
 				
 				// Draw the border around the box if required
-				_border.Draw( g, pane.IsPenWidthScaled, scaleFactor, pixRect );
+				_border.Draw( g, pane, scaleFactor, pixRect );
 			}
 		}
 		

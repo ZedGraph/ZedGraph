@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.26 $ $Date: 2007-01-24 08:14:36 $ </version>
+	/// <version> $Revision: 3.27 $ $Date: 2007-01-25 07:56:09 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -688,7 +688,7 @@ namespace ZedGraph
 			// actually 101 pixels wide.
 			RectangleF rect = new RectangleF( _rect.X, _rect.Y, _rect.Width - 1, _rect.Height - 1 );
 
-			_border.Draw( g, IsPenWidthScaled, scaleFactor, rect );
+			_border.Draw( g, this, scaleFactor, rect );
 		}
 
 		/// <summary>
@@ -712,7 +712,7 @@ namespace ZedGraph
 				
 				// use the internal fontSpec class to draw the text using user-specified and/or
 				// default attributes.
-				_title._fontSpec.Draw( g, _isPenWidthScaled, _title._text,
+				_title._fontSpec.Draw( g, this, _title._text,
 					( _rect.Left + _rect.Right ) / 2,
 					_rect.Top + _margin.Top * (float) scaleFactor + size.Height / 2.0F,
 					AlignH.Center, AlignV.Center, scaleFactor );

@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 1.6 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 1.7 $ $Date: 2007-01-25 07:56:09 $ </version>
 	[Serializable]
 	public class StickItem : LineItem, ICloneable, ISerializable
 	{
@@ -96,7 +96,7 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="lineWidth">The width (in points) to be used for the <see cref="Line"/>.  This
 		/// width is scaled based on <see cref="PaneBase.CalcScaleFactor"/>.  Use a value of zero to
-		/// hide the line (see <see cref="ZedGraph.Line.IsVisible"/>).</param>
+		/// hide the line (see <see cref="ZedGraph.LineBase.IsVisible"/>).</param>
 		public StickItem( string label, double[] x, double[] y, Color color, float lineWidth )
 			: this( label, new PointPairList( x, y ), color, lineWidth )
 		{
@@ -128,7 +128,7 @@ namespace ZedGraph
 		/// the <see cref="Line"/> and <see cref="Symbol"/> properties.
 		/// </param>
 		public StickItem( string label, IPointList points, Color color )
-			: this( label, points, color, ZedGraph.Line.Default.Width )
+			: this( label, points, color, ZedGraph.LineBase.Default.Width )
 		{
 		}
 
@@ -143,7 +143,7 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="lineWidth">The width (in points) to be used for the <see cref="Line"/>.  This
 		/// width is scaled based on <see cref="PaneBase.CalcScaleFactor"/>.  Use a value of zero to
-		/// hide the line (see <see cref="ZedGraph.Line.IsVisible"/>).</param>
+		/// hide the line (see <see cref="ZedGraph.LineBase.IsVisible"/>).</param>
 		public StickItem( string label, IPointList points, Color color, float lineWidth )
 			: base( label, points, color, Symbol.Default.Type, lineWidth )
 		{

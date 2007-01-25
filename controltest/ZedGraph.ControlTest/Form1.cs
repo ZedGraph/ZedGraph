@@ -509,7 +509,7 @@ namespace ZedGraph.ControlTest
 			for ( int i = 0; i < 10; i++ )
 			{
 				LineObj line = new ArrowObj( 0, 0, (float)rpl[i].X, (float)rpl[i].Y );
-				line.Color = Color.LightBlue;
+				line.Line.Color = Color.LightBlue;
 				line.ZOrder = ZOrder.D_BehindCurves;
 				myPane.GraphObjList.Add( line );
 			}
@@ -2522,7 +2522,7 @@ namespace ZedGraph.ControlTest
 			{
 				ArrowObj arrow = new ArrowObj( 0, 0, (float)rpl[i].X, (float)rpl[i].Y );
 				arrow.IsArrowHead = false;
-				arrow.Color = Color.LightGray;
+				arrow.Line.Color = Color.LightGray;
 				arrow.ZOrder = ZOrder.D_BehindCurves;
 				myPane.GraphObjList.Add( arrow );
 			}
@@ -2668,8 +2668,8 @@ namespace ZedGraph.ControlTest
 			myLine.Location.Height = 1.0;
 			myLine.IsClippedToChartRect = true;
 			myLine.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
-			myLine.PenWidth = 2.0f;
-			myLine.Color = Color.Red;
+			myLine.Line.Width = 2.0f;
+			myLine.Line.Color = Color.Red;
 			myPane.GraphObjList.Add( myLine );
 
 			// Repeat for each Grid by cloning

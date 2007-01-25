@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// <see cref="GasGuageNeedle"/>s.
 	/// </summary>
 	/// <author> Jay Mistry </author>
-	/// <version> $Revision: 3.1 $ $Date: 2007-01-01 02:56:01 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	public class GasGuageNeedle : CurveItem, ICloneable, ISerializable
 	{
@@ -320,19 +320,20 @@ namespace ZedGraph
 
 			/// <summary>
 			/// The default pen width to be used for drawing the border around the GasGuageNeedle
-			/// (<see cref="ZedGraph.Border.PenWidth"/> property). Units are points.
+			/// (<see cref="ZedGraph.LineBase.Width"/> property). Units are points.
 			/// </summary>
 			public static float BorderWidth = 1.0F;
 
 			/// <summary>
-			/// The default border mode for GasGuageNeedle (<see cref="ZedGraph.Border.IsVisible"/> property).
+			/// The default border mode for GasGuageNeedle (<see cref="ZedGraph.LineBase.IsVisible"/>
+			/// property).
 			/// true to display frame around GasGuageNeedle, false otherwise
 			/// </summary>
 			public static bool IsBorderVisible = true;
 
 			/// <summary>
 			/// The default color for drawing frames around GasGuageNeedle
-			/// (<see cref="ZedGraph.Border.Color"/> property).
+			/// (<see cref="ZedGraph.LineBase.Color"/> property).
 			/// </summary>
 			public static Color BorderColor = Color.Gray;
 

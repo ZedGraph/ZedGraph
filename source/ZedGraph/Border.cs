@@ -32,21 +32,11 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.16 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
-	public class Border : ISerializable, ICloneable
+	public class Border : LineBase, ISerializable, ICloneable
 	{
 	#region Fields
-		/// <summary>
-		/// Private field that stores the Border color.  Use the public
-		/// property <see cref="Color"/> to access this value.
-		/// </summary>
-		private Color	_color;
-		/// <summary>
-		/// Private field that stores the pen width for this Border.  Use the public
-		/// property <see cref="PenWidth"/> to access this value.
-		/// </summary>
-		private float	_penWidth;
 
 		/// <summary>
 		/// Private field that stores the amount of inflation to be done on the rectangle
@@ -55,12 +45,7 @@ namespace ZedGraph
 		/// to access this value.
 		/// </summary>
 		private float	_inflateFactor;
-		/// <summary>
-		/// Private field that determines if the Border will be drawn.  The Border will only
-		/// be drawn if this value is true.  Use the public property <see cref="IsVisible"/>
-		/// for access to this value.
-		/// </summary>
-		private bool	_isVisible;
+
 	#endregion
 
 	#region Defaults
@@ -68,29 +53,13 @@ namespace ZedGraph
 		/// A simple struct that defines the
 		/// default property values for the <see cref="Fill"/> class.
 		/// </summary>
-		public struct Default
+		new public struct Default
 		{
-			// Default Fill properties
-			/// <summary>
-			/// The default visibility for drawing the Border.
-			/// See the <see cref="IsVisible"/> property.
-			/// </summary>
-			public static bool IsVisible = false;
-			/// <summary>
-            /// The default pen width, in points (1/72 inch), for the Border.  See the <see cref="PenWidth"/>
-            /// property.
-			/// </summary>
-			public static float PenWidth = 1.0F;
-
 			/// <summary>
 			/// The default value for <see cref="Border.InflateFactor"/>, in units of points (1/72 inch).
 			/// </summary>
 			/// <seealso cref="Border.InflateFactor"/>
 			public static float InflateFactor = 0.0F;
-			/// <summary>
-			/// The default color for the Border.  See the <see cref="Color"/> property.
-			/// </summary>
-			public static Color Color = Color.Black;
 		}
 	#endregion
 		
@@ -98,11 +67,8 @@ namespace ZedGraph
 		/// <summary>
 		/// The default constructor.  Initialized to default values.
 		/// </summary>
-		public Border()
+		public Border() : base()
 		{
-			_isVisible = Default.IsVisible;
-			_color = Default.Color;
-			_penWidth = Default.PenWidth;
 			_inflateFactor = Default.InflateFactor;
 		}
 
@@ -111,22 +77,21 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="isVisible">Determines whether or not the Border will be drawn.</param>
 		/// <param name="color">The color of the Border</param>
-        /// <param name="penWidth">The width, in points (1/72 inch), for the Border.</param>
-        public Border( bool isVisible, Color color, float penWidth )
+        /// <param name="width">The width, in points (1/72 inch), for the Border.</param>
+        public Border( bool isVisible, Color color, float width ) :
+			  base( color )
 		{
-			_color = color.IsEmpty ? Default.Color : color;
-			_penWidth = penWidth;
+			_width = width;
 			_isVisible = isVisible;
-			_inflateFactor = Default.InflateFactor;
 		}
 
 		/// <summary>
 		/// Constructor that specifies the color and penWidth of the Border.
 		/// </summary>
 		/// <param name="color">The color of the Border</param>
-        /// <param name="penWidth">The width, in points (1/72 inch), for the Border.</param>
-        public Border( Color color, float penWidth ) :
-				this( !color.IsEmpty, color, penWidth )
+        /// <param name="width">The width, in points (1/72 inch), for the Border.</param>
+        public Border( Color color, float width ) :
+				this( !color.IsEmpty, color, width )
 		{
 		}
 
@@ -134,11 +99,8 @@ namespace ZedGraph
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The Border object from which to copy</param>
-		public Border( Border rhs )
+		public Border( Border rhs ) : base( rhs )
 		{
-			_color = rhs.Color;
-			_penWidth = rhs.PenWidth;
-			_isVisible = rhs.IsVisible;
 			_inflateFactor = rhs._inflateFactor;
 		}
 
@@ -167,7 +129,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 10;
+		public const int schema = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -176,15 +138,13 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
-		protected Border( SerializationInfo info, StreamingContext context )
+		protected Border( SerializationInfo info, StreamingContext context ) :
+			base( info, context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			_color = (Color) info.GetValue( "color", typeof(Color) );
-			_penWidth = info.GetSingle( "penWidth" );
-			_isVisible = info.GetBoolean( "isVisible" );
 			_inflateFactor = info.GetSingle( "inflateFactor" );
 		}
 		/// <summary>
@@ -193,34 +153,14 @@ namespace ZedGraph
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
 		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
-		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
+		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
-			info.AddValue( "color", _color );
-			info.AddValue( "penWidth", _penWidth );
-			info.AddValue( "isVisible", _isVisible );
 			info.AddValue( "inflateFactor", _inflateFactor );
 		}
 	#endregion
 		
 	#region Properties
-		/// <summary>
-		/// Determines the <see cref="System.Drawing.Color"/> of the <see cref="Pen"/> used to
-		/// draw this Border.
-		/// </summary>
-		public Color Color
-		{
-			get { return _color; }
-			set { _color = value; }
-		}
-		/// <summary>
-        /// Gets or sets the width, in points (1/72 inch), of the <see cref="Pen"/> used to draw this Border.
-        /// </summary>
-		public float PenWidth
-		{
-			get { return _penWidth; }
-			set { _penWidth = value; }
-		}
 		/// <summary>
 		/// Gets or sets the amount of inflation to be done on the rectangle
 		/// before rendering.
@@ -233,18 +173,10 @@ namespace ZedGraph
 			get { return _inflateFactor; }
 			set { _inflateFactor = value; }
 		}
-		/// <summary>
-		/// Determines whether or not the Border will be drawn.  true to draw the Border,
-		/// false otherwise
-		/// </summary>
-		public bool IsVisible
-		{
-			get { return _isVisible; }
-			set { _isVisible = value; }
-		}
 	#endregion
 
 	#region Methods
+		/*
 		/// <summary>
 		/// Create a new <see cref="Pen"/> object from the properties of this
 		/// <see cref="Border"/> object.
@@ -261,13 +193,14 @@ namespace ZedGraph
 		/// <returns>A <see cref="Pen"/> object with the proper color and pen width.</returns>
 		public Pen MakePen( bool isPenWidthScaled, float scaleFactor )
 		{
-			float scaledPenWidth = _penWidth;
+			float scaledPenWidth = _width;
 			if ( isPenWidthScaled )
-				scaledPenWidth = (float)(_penWidth * scaleFactor);
+				scaledPenWidth = (float)(_width * scaleFactor);
 			
 			return new Pen( _color, scaledPenWidth );
 		}
-				
+		*/
+		
 		/// <summary>
 		/// Draw the specified Border (<see cref="RectangleF"/>) using the properties of
 		/// this <see cref="Border"/> object.
@@ -276,9 +209,9 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="isPenWidthScaled">
-		/// Set to true to have the <see cref="Border"/> pen width scaled with the
-		/// scaleFactor.
+		/// <param name="pane">
+		/// A reference to the <see cref="PaneBase"/> object that is the parent or
+		/// owner of this object.
 		/// </param>
 		/// <param name="scaleFactor">
 		/// The scaling factor for the features of the graph based on the <see cref="PaneBase.BaseDimension"/>.  This
@@ -286,7 +219,7 @@ namespace ZedGraph
 		/// represents a linear multiple to be applied to font sizes, symbol sizes, etc.
 		/// </param>
 		/// <param name="rect">A <see cref="RectangleF"/> struct to be drawn.</param>
-		public void Draw( Graphics g, bool isPenWidthScaled, float scaleFactor, RectangleF rect )
+		public void Draw( Graphics g, PaneBase pane, float scaleFactor, RectangleF rect )
 		{
 			// Need to use the RectangleF props since rounding it can cause the axisFrame to
 			// not line up properly with the last tic mark
@@ -297,7 +230,7 @@ namespace ZedGraph
 				float		scaledInflate = (float) ( _inflateFactor * scaleFactor );
 				tRect.Inflate( scaledInflate, scaledInflate );
 
-				using ( Pen pen = MakePen(isPenWidthScaled, scaleFactor) )
+				using ( Pen pen = GetPen( pane, scaleFactor) )
 					g.DrawRectangle( pen, tRect.X, tRect.Y, tRect.Width, tRect.Height );
 			}
 		}

@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -102,7 +102,7 @@ namespace ZedGraph
 		/// <see cref="HiLowBar"/> properties to default
 		/// values as defined in the <see cref="Bar.Default"/> class.
 		/// The specified color is only applied to the
-		/// <see cref="ZedGraph.Fill.Color"/>, and the <see cref="ZedGraph.Border.Color"/>
+		/// <see cref="ZedGraph.Fill.Color"/>, and the <see cref="ZedGraph.LineBase.Color"/>
 		/// will be defaulted.
 		/// </summary>
 		/// <param name="color">A <see cref="Color"/> value indicating
@@ -119,7 +119,7 @@ namespace ZedGraph
 		/// <see cref="HiLowBar"/> properties to default
 		/// values as defined in the <see cref="Bar.Default"/> class.
 		/// The specified color is only applied to the
-		/// <see cref="ZedGraph.Fill.Color"/>, and the <see cref="ZedGraph.Border.Color"/>
+		/// <see cref="ZedGraph.Fill.Color"/>, and the <see cref="ZedGraph.LineBase.Color"/>
 		/// will be defaulted.
 		/// </summary>
 		/// <param name="color">A <see cref="Color"/> value indicating

@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.18 $ $Date: 2007-01-24 08:14:36 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -350,7 +350,7 @@ namespace ZedGraph
 			if ( curve.Points != null && this.IsVisible )
 			{
 				using ( Pen pen = !curve.IsSelected ? new Pen( _color, _penWidth ) :
-						new Pen( Selection.Border.Color, Selection.Border.PenWidth ) )
+						new Pen( Selection.Border.Color, Selection.Border.Width ) )
 				{
 					// Loop over each defined point							
 					for ( int i = 0; i < curve.Points.Count; i++ )

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.68 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.69 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -1319,7 +1319,7 @@ namespace ZedGraph
 				y += scaledTitleGap;
 
 				// Draw the title
-				this.Title.FontSpec.Draw( g, pane.IsPenWidthScaled, str, x, y,
+				this.Title.FontSpec.Draw( g, pane, str, x, y,
 							AlignH.Center, alignV, scaleFactor );
 			}
 		}

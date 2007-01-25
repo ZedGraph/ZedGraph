@@ -99,7 +99,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos revised by John Champion	</author>
-	/// <version> $Revision: 3.19 $ $Date: 2006-10-19 04:40:15 $ </version>
+	/// <version> $Revision: 3.20 $ $Date: 2007-01-25 07:56:09 $ </version>
 	[TestFixture]
 	public	class ControlTest
 	{
@@ -202,7 +202,7 @@ namespace ZedGraph.UnitTest
 			
 			arrow = new ArrowObj( Color.Black,	15, 700, 53,	700, 80 );
 			arrow.Location.CoordinateFrame	=	CoordType.AxisXYScale;
-			arrow.PenWidth =	2.0F;
+			arrow.Line.Width =	2.0F;
 			testee.GraphObjList.Add( arrow );
 			text = new TextObj("Confidential", 0.8F, -0.03F );
 			text.Location.CoordinateFrame =	CoordType.ChartFraction;
@@ -234,7 +234,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.19 $ $Date: 2006-10-19 04:40:15 $ </version>
+	/// <version>	$Revision: 3.20 $ $Date: 2007-01-25 07:56:09 $ </version>
 	[TestFixture]
 	public	class LibraryTest
 	{
@@ -1008,7 +1008,7 @@ namespace ZedGraph.UnitTest
 
 			arrow = new ArrowObj( Color.Black,	15, 700, 53,	700, 80 );
 			arrow.Location.CoordinateFrame	=	CoordType.AxisXYScale;
-			arrow.PenWidth =	2.0F;
+			arrow.Line.Width =	2.0F;
 			testee.GraphObjList.Add( arrow );
 
 			text = new TextObj("Confidential", 0.8F, -0.03F );
@@ -1388,7 +1388,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.19 $ $Date: 2006-10-19 04:40:15 $ </version>
+	/// <version>	$Revision: 3.20 $ $Date: 2007-01-25 07:56:09 $ </version>
 	[TestFixture]
 	public	class LongFeatureTest
 	{
@@ -2018,7 +2018,7 @@ namespace ZedGraph.UnitTest
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version>	$Revision: 3.19 $ $Date: 2006-10-19 04:40:15 $ </version>
+	/// <version>	$Revision: 3.20 $ $Date: 2007-01-25 07:56:09 $ </version>
 	[TestFixture]
 	public	class FindNearestTest
 	{
@@ -2215,7 +2215,7 @@ namespace ZedGraph.UnitTest
 
 			arrow = new ArrowObj( Color.Black, 15, 700, 53, 700, 80 );
 			arrow.Location.CoordinateFrame = CoordType.AxisXYScale;
-			arrow.PenWidth = 2.0F;
+			arrow.Line.Width = 2.0F;
 			arrow.Tag = "Arrow";
 			testee.GraphObjList.Add( arrow );
 

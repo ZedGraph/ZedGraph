@@ -85,6 +85,7 @@
     <Compile Include="ZedGraph\Line.cs" />
     <Compile Include="ZedGraph\LinearAsOrdinalScale.cs" />
     <Compile Include="ZedGraph\LinearScale.cs" />
+    <Compile Include="ZedGraph\LineBase.cs" />
     <Compile Include="ZedGraph\LineItem.cs" />
     <Compile Include="ZedGraph\LineObj.cs" />
     <Compile Include="ZedGraph\Link.cs" />

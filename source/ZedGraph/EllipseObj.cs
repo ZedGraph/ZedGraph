@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	public class EllipseObj : BoxObj, ICloneable, ISerializable
 	{
@@ -212,7 +212,7 @@ namespace ZedGraph
 						g.FillEllipse( brush, pixRect );
 
 				if ( _border.IsVisible )
-					using ( Pen pen = _border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+					using ( Pen pen = _border.GetPen( pane, scaleFactor ) )
 						g.DrawEllipse( pen, pixRect );
 			}
 		}

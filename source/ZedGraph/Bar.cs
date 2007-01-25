@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.27 $ $Date: 2007-01-24 08:14:36 $ </version>
+   /// <version> $Revision: 3.28 $ $Date: 2007-01-25 07:56:08 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -61,7 +61,7 @@ namespace ZedGraph
 			// Default Bar properties
 			/// <summary>
 			/// The default pen width to be used for drawing the border around the bars
-			/// (<see cref="ZedGraph.Border.PenWidth"/> property).  Units are points.
+			/// (<see cref="ZedGraph.LineBase.Width"/> property).  Units are points.
 			/// </summary>
 			public static float BorderWidth = 1.0F;
 			/// <summary>
@@ -69,13 +69,13 @@ namespace ZedGraph
 			/// </summary>
 			public static FillType FillType = FillType.Brush;
 			/// <summary>
-			/// The default border mode for bars (<see cref="ZedGraph.Border.IsVisible"/> property).
+			/// The default border mode for bars (<see cref="ZedGraph.LineBase.IsVisible"/> property).
 			/// true to display frames around bars, false otherwise
 			/// </summary>
 			public static bool IsBorderVisible = true;
 			/// <summary>
 			/// The default color for drawing frames around bars
-			/// (<see cref="ZedGraph.Border.Color"/> property).
+			/// (<see cref="ZedGraph.LineBase.Color"/> property).
 			/// </summary>
 			public static Color BorderColor = Color.Black;
 			/// <summary>
@@ -107,7 +107,7 @@ namespace ZedGraph
 		/// <see cref="Bar"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// The specified color is only applied to the
-		/// <see cref="ZedGraph.Fill.Color"/>, and the <see cref="ZedGraph.Border.Color"/>
+		/// <see cref="ZedGraph.Fill.Color"/>, and the <see cref="ZedGraph.LineBase.Color"/>
 		/// will be defaulted.
 		/// </summary>
 		/// <param name="color">A <see cref="Color"/> value indicating
@@ -321,12 +321,12 @@ namespace ZedGraph
 			if ( isSelected )
 			{
 				Selection.Fill.Draw( g, rect, dataValue );
-				Selection.Border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
+				Selection.Border.Draw( g, pane, scaleFactor, rect );
 			}
 			else
 			{
 				_fill.Draw( g, rect, dataValue );
-				_border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
+				_border.Draw( g, pane, scaleFactor, rect );
 			}
 		}
 

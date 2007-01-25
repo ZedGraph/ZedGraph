@@ -156,7 +156,8 @@ namespace ZedGraph.Web
 		/// </summary>
 		/// <remarks> The <see cref="LineItem.Line"/>/<see cref="LineItem.Symbol"/>/<see cref="BarItem.Bar"/> 
 		/// color (FillColor for the Bar).  This is a common access to
-		/// <see cref="ZedGraph.Line.Color"/>, <see cref="ZedGraph.Border.Color"/>, and
+		/// <see cref="ZedGraph.LineBase.Color">Line.Color</see>,
+		/// <see cref="ZedGraph.LineBase.Color">Border.Color</see>, and
 		/// <see cref="ZedGraph.Fill.Color"/> properties for this curve
 		/// </remarks>
 		/// <seealso cref="CurveItem.Color"/>
@@ -299,12 +300,12 @@ namespace ZedGraph.Web
 		{
 			item.Color = this.Color;
 			item.IsVisible = this.IsVisible;
-			item.PenWidth = this.PenWidth;
+			item.Width = this.Width;
 			item.InflateFactor = this.InflateFactor;
 		}
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="Border.Color"/>.
+		/// Proxy property that gets or sets the value of <see cref="LineBase.Color"/>.
 		/// </summary>
 		/// <remarks> Determines the <see cref="System.Drawing.Color"/> of the <see cref="Pen"/> used to
 		/// draw this Border.
@@ -318,13 +319,13 @@ namespace ZedGraph.Web
 			get
 			{
 				object x = ViewState["Color"];
-				return ( null == x ) ? Border.Default.Color : (Color)x;
+				return ( null == x ) ? LineBase.Default.Color : (Color)x;
 			}
 			set { ViewState["Color"] = value; }
 		}
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="Border.IsVisible"/>.
+		/// Proxy property that gets or sets the value of <see cref="LineBase.IsVisible"/>.
 		/// </summary>
 		/// <remarks> Determines whether or not the Border will be drawn.  true to draw the Border,
 		/// false otherwise.
@@ -338,13 +339,13 @@ namespace ZedGraph.Web
 			get
 			{
 				object x = ViewState["IsVisible"];
-				return ( null == x ) ? Border.Default.IsVisible : (bool)x;
+				return ( null == x ) ? LineBase.Default.IsVisible : (bool)x;
 			}
 			set { ViewState["IsVisible"] = value; }
 		}
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="Border.PenWidth"/>.
+		/// Proxy property that gets or sets the value of <see cref="LineBase.Width"/>.
 		/// </summary>
 		/// <remarks> Gets or sets the width, in points (1/72 inch), of the <see cref="Pen"/>
 		/// used to draw this Border.
@@ -353,14 +354,14 @@ namespace ZedGraph.Web
 		NotifyParentProperty( true ),
 		Description( "The width of the pen used to draw the border, in points (1/72nd inch)" )
 		]
-		public float PenWidth
+		public float Width
 		{
 			get
 			{
-				object x = ViewState["PenWidth"];
-				return ( null == x ) ? Border.Default.PenWidth : (float)x;
+				object x = ViewState["Width"];
+				return ( null == x ) ? LineBase.Default.Width : (float)x;
 			}
-			set { ViewState["PenWidth"] = value; }
+			set { ViewState["Width"] = value; }
 		}
 
 		/// <summary>
@@ -851,7 +852,7 @@ namespace ZedGraph.Web
 			Register( 'b', typeof( ZedGraphWebBorder ) );
 			Register( 'f', typeof( ZedGraphWebFill ) );
 
-			this.Border.PenWidth = ZedGraph.Bar.Default.BorderWidth;
+			this.Border.Width = ZedGraph.Bar.Default.BorderWidth;
 			this.Border.Color = ZedGraph.Bar.Default.BorderColor;
 			this.Fill.Color = ZedGraph.Bar.Default.FillColor;
 			this.Fill.Type = ZedGraph.Bar.Default.FillType;
@@ -1277,11 +1278,11 @@ namespace ZedGraph.Web
 		}
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Line.Width"/>.
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.LineBase.Width"/>.
 		/// </summary>
 		/// <remarks> The pen width used to draw the <see cref="Line"/>, in points (1/72 inch)
 		/// </remarks>
-		/// <seealso cref="ZedGraph.Line.Width"/>
+		/// <seealso cref="ZedGraph.LineBase.Width"/>
 		[
 		NotifyParentProperty( true ),
 		Description( "Sets the pen width for the curve, in points" )
@@ -1291,7 +1292,7 @@ namespace ZedGraph.Web
 			get
 			{
 				object x = ViewState["Width"];
-				return ( null == x ) ? Line.Default.Width : (float)x;
+				return ( null == x ) ? LineBase.Default.Width : (float)x;
 			}
 			set { ViewState["Width"] = value; }
 		}
@@ -1326,12 +1327,12 @@ namespace ZedGraph.Web
 		}
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.Line.Style"/>.
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.LineBase.Style"/>.
 		/// </summary>
 		/// <remarks> The style of the <see cref="Line"/>, defined as a <see cref="DashStyle"/> enum.
 		/// This allows the line to be solid, dashed, or dotted.
 		/// </remarks>
-		/// <seealso cref="ZedGraph.Line.Style"/>
+		/// <seealso cref="ZedGraph.LineBase.Style"/>
 		[
 		NotifyParentProperty( true ),
 		Description( "Set the dash style for the line" )
@@ -1341,7 +1342,7 @@ namespace ZedGraph.Web
 			get
 			{
 				object x = ViewState["DashStyle"];
-				return ( null == x ) ? Line.Default.Style : (DashStyle)x;
+				return ( null == x ) ? LineBase.Default.Style : (DashStyle)x;
 			}
 			set { ViewState["DashStyle"] = value; }
 		}
@@ -1445,7 +1446,7 @@ namespace ZedGraph.Web
 			Register( 't', typeof( ZedGraphWebTextObj ) );
 
 			this.Border.IsVisible = ZedGraph.PieItem.Default.IsBorderVisible;
-			this.Border.PenWidth = ZedGraph.PieItem.Default.BorderWidth;
+			this.Border.Width = ZedGraph.PieItem.Default.BorderWidth;
 			this.Border.Color = ZedGraph.PieItem.Default.BorderColor;
 			this.LabelDetail.FontSpec.Size = ZedGraph.PieItem.Default.FontSize;
 		}
@@ -3524,7 +3525,7 @@ namespace ZedGraph.Web
 			Register( 'l', typeof( ZedGraphWebLocation ) );
 
 			this.Border.Color = Legend.Default.BorderColor;
-			this.Border.PenWidth = Legend.Default.BorderWidth;
+			this.Border.Width = Legend.Default.BorderWidth;
 			this.Border.IsVisible = Legend.Default.IsBorderVisible;
 			this.Fill.Brush = Legend.Default.FillBrush;
 			this.Fill.Color = Legend.Default.FillColor;
@@ -3843,7 +3844,7 @@ namespace ZedGraph.Web
 		/// </summary>
 		/// <remarks> The color of the font characters for this <see cref="FontSpec"/>.
 		/// Note that the border and background
-		/// colors are set using the <see cref="ZedGraph.Border.Color"/> and
+		/// colors are set using the <see cref="ZedGraph.LineBase.Color"/> and
 		/// <see cref="ZedGraph.Fill.Color"/> properties, respectively.
 		/// </remarks>
 		/// <value>A system <see cref="System.Drawing.Color"/> reference.</value>
@@ -4359,8 +4360,8 @@ namespace ZedGraph.Web
 		{
 			base.CopyTo( item );
 			item.Size = this.Size;
-			item.PenWidth = this.PenWidth;
-			item.Color = this.Color;
+			item.Line.Width = this.PenWidth;
+			item.Line.Color = this.Color;
 			item.IsArrowHead = this.IsArrowHead;
 		}
 
@@ -4386,7 +4387,7 @@ namespace ZedGraph.Web
 		}
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.LineObj.PenWidth"/>.
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.LineBase.Width"/>.
 		/// </summary>
 		/// <remarks> The width of the pen, expressed in points (1/72nd inch), used to draw the
 		/// arrow line segment.
@@ -4400,13 +4401,13 @@ namespace ZedGraph.Web
 			get
 			{
 				object x = ViewState["PenWidth"];
-				return ( null == x ) ? LineObj.Default.PenWidth : (float)x;
+				return ( null == x ) ? LineBase.Default.Width : (float)x;
 			}
 			set { ViewState["PenWidth"] = value; }
 		}
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.LineObj.Color"/>.
+		/// Proxy property that gets or sets the value of <see cref="ZedGraph.LineBase.Color"/>.
 		/// </summary>
 		/// <remarks> The <see cref="System.Drawing.Color"/> value used to draw the <see cref="ZedGraph.ArrowObj"/>.
 		/// </remarks>
@@ -4419,7 +4420,7 @@ namespace ZedGraph.Web
 			get
 			{
 				object x = ViewState["Color"];
-				return ( null == x ) ? LineObj.Default.Color : (Color)x;
+				return ( null == x ) ? LineBase.Default.Color : (Color)x;
 			}
 			set { ViewState["Color"] = value; }
 		}

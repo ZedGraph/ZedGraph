@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.69 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.70 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -700,7 +700,7 @@ namespace ZedGraph
 			_chart.Fill.Draw( g, _chart._rect );
 
 			// Border the axis itself
-			_chart.Border.Draw( g, this.IsPenWidthScaled, scaleFactor, _chart._rect );
+			_chart.Border.Draw( g, this, scaleFactor, _chart._rect );
 
 			if ( showGraf )
 			{

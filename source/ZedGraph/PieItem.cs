@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.30 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 1.31 $ $Date: 2007-01-25 07:56:09 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem, ICloneable, ISerializable
 	{
@@ -166,7 +166,7 @@ namespace ZedGraph
 
 			/// <summary>
 			/// The default pen width	to be used for drawing the	border around	the PieItem
-			/// (<see cref="ZedGraph.Border.PenWidth"/>	property).	 Units	are	points.
+			/// (<see cref="ZedGraph.LineBase.Width"/> property). Units are points.
 			/// </summary>
 			public static float BorderWidth = 1.0F;
 			/// <summary>
@@ -174,17 +174,17 @@ namespace ZedGraph
 			/// </summary>
 			public static FillType FillType = FillType.Brush;
 			/// <summary>
-			/// The default border	mode	for	PieItem	(<see cref="ZedGraph.Border.IsVisible"/> property).
-			/// true to	display frame	around PieItem,	false otherwise
+			/// The default border mode for PieItem (<see cref="ZedGraph.LineBase.IsVisible"/> property).
+			/// true to	display frame around PieItem, false otherwise
 			/// </summary>
 			public static bool IsBorderVisible = true;
 			/// <summary>
-			/// The default color	for	drawing	frames around	PieItem
-			/// (<see cref="ZedGraph.Border.Color"/> property).
+			/// The default color for drawing	frames around	PieItem
+			/// (<see cref="ZedGraph.LineBase.Color"/> property).
 			/// </summary>
 			public static Color BorderColor = Color.Black;
 			/// <summary>
-			/// The default color	for	filling in	the PieItem
+			/// The default color for filling in	the PieItem
 			/// (<see cref="ZedGraph.Fill.Color"/>	property).
 			/// </summary>
 			public static Color FillColor = Color.Red;
@@ -612,7 +612,7 @@ namespace ZedGraph
 
 						if ( this.Border.IsVisible )
 						{
-							using ( Pen borderPen = tBorder.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+							using ( Pen borderPen = tBorder.GetPen( pane, scaleFactor ) )
 							{
 								g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height,
 									this.StartAngle, this.SweepAngle );
@@ -788,7 +788,7 @@ namespace ZedGraph
 			if ( !_labelDetail.IsVisible )
 				return;
 
-			using ( Pen labelPen = this.Border.MakePen( pane.IsPenWidthScaled, scaleFactor ) )
+			using ( Pen labelPen = this.Border.GetPen( pane, scaleFactor ) )
 			{
 				//draw line from intersection point to pivot point -
 				g.DrawLine( labelPen, _intersectionPoint, _pivotPoint );
@@ -1033,7 +1033,7 @@ namespace ZedGraph
 
 			// Border the bar
 			if ( !_border.Color.IsEmpty )
-				_border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
+				_border.Draw( g, pane, scaleFactor, rect );
 		}
 
 		/// <summary>

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2007-01-25 07:56:08 $ </version>
 	[Serializable]
 	public class JapaneseCandleStick : CandleStick, ICloneable, ISerializable
 	{
@@ -354,7 +354,7 @@ namespace ZedGraph
 						rect.Height = 1;
 
 					fill.Draw( g, rect, pt );
-					border.Draw( g, pane.IsPenWidthScaled, scaleFactor, rect );
+					border.Draw( g, pane, scaleFactor, rect );
 				}
 			}
 		}
@@ -407,7 +407,7 @@ namespace ZedGraph
 				{
 					tColor = Selection.Border.Color;
 					tFallingColor = Selection.Border.Color;
-					tPenWidth = Selection.Border.PenWidth;
+					tPenWidth = Selection.Border.Width;
 					tRisingFill = Selection.Fill;
 					tFallingFill = Selection.Fill;
 					tRisingBorder = Selection.Border;
