@@ -54,14 +54,14 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_Histogram( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
-			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_Junk( zedGraphControl1 );
 			//CreateGraph_Junk2( zedGraphControl1 );
 			//CreateGraph_Junk4( zedGraphControl1 );
 			//CreateGraph_junk5( zedGraphControl1 );
 			//CreateGraph_junk6( zedGraphControl1 );
 			//CreateGraph_junk7( zedGraphControl1 );
-			//CreateGraph_junk8( zedGraphControl1 );
+			CreateGraph_junk8( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );

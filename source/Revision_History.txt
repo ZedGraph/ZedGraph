@@ -10,6 +10,7 @@
 : [UPD] Rename CandleStick to OHLCBar
 : [UPD] Add Emf format capability to "Save As" context menu (STILL NEEDS WORK)
 : [UPD] Modify RollingPointPairList to improve memory efficiency
+: [UPD] Move order of Chart border draw
 
 ;4-Jan-2007 (by Champion)
 : [NEW] Added Legend.IsReverse property to reverse order of legend items (thanks blumenstock)
