@@ -33,7 +33,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.21 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2007-01-26 09:01:49 $ </version>
 	[Serializable]
 	public class Fill : ISerializable, ICloneable
 	{
@@ -780,7 +780,7 @@ namespace ZedGraph
 		public bool IsGradientValueType
 		{
 			get { return _type == FillType.GradientByX || _type == FillType.GradientByY ||
-					_type == FillType.GradientByZ; }
+					_type == FillType.GradientByZ || _type == FillType.GradientByColorValue; }
 		}
 
 		/// <summary>
@@ -936,7 +936,9 @@ namespace ZedGraph
 		{
 			double val;
 
-			if ( _type == FillType.GradientByColorValue )
+			if ( dataValue == null )
+				val = _rangeDefault;
+			else if ( _type == FillType.GradientByColorValue )
 				val = dataValue.ColorValue;
 			else if ( _type == FillType.GradientByZ )
 				val = dataValue.Z;

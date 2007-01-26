@@ -25,7 +25,7 @@ namespace ZedGraph.Demo
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos </author>
-	/// <version> $Revision: 1.11 $ $Date: 2006-06-24 20:26:42 $ </version>
+	/// <version> $Revision: 1.12 $ $Date: 2007-01-26 09:01:49 $ </version>
 	public class DemoTabForm : ChartTabForm
 	{
 	#region Constructor
@@ -79,7 +79,7 @@ namespace ZedGraph.Demo
 			loadDemo( new MasterSampleDemo() );
 			loadDemo( new SynchronizedPanes() );
 			loadDemo( new JapaneseCandleStickDemo() );
-			loadDemo( new CandleStickDemo() );
+			loadDemo( new OHLCBarDemo() );
 			loadDemo( new ImageForSymbolDemo() );
 			loadDemo( new MasterPaneLayout() );
 			

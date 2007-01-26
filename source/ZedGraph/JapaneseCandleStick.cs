@@ -31,13 +31,13 @@ using System.Security.Permissions;
 namespace ZedGraph
 {
 	/// <summary>
-	/// This class handles the drawing of the curve <see cref="CandleStick"/> objects.
+	/// This class handles the drawing of the curve <see cref="JapaneseCandleStick"/> objects.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.6 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.7 $ $Date: 2007-01-26 09:01:49 $ </version>
 	[Serializable]
-	public class JapaneseCandleStick : CandleStick, ICloneable, ISerializable
+	public class JapaneseCandleStick : OHLCBar, ICloneable, ISerializable
 	{
 	#region Fields
 
@@ -163,7 +163,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>This property only controls the color of
 		/// the vertical line when the value is falling.  The rising color is controlled
-		/// by the <see cref="CandleStick.Color" /> property.
+		/// by the <see cref="OHLCBar.Color" /> property.
 		/// </remarks>
 		public Color FallingColor
 		{
@@ -184,8 +184,8 @@ namespace ZedGraph
 			_risingFill = new Fill( Default.RisingColor );
 			_fallingFill = new Fill( Default.FallingColor );
 
-			_risingBorder = new Border( Default.RisingBorder, CandleStick.Default.PenWidth );
-			_fallingBorder = new Border( Default.FallingBorder, CandleStick.Default.PenWidth );
+			_risingBorder = new Border( Default.RisingBorder, OHLCBar.Default.PenWidth );
+			_fallingBorder = new Border( Default.FallingBorder, OHLCBar.Default.PenWidth );
 
 			_fallingColor = Default.FallingColor;
 		}

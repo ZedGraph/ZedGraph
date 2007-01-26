@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2007-01-26 09:01:49 $ </version>
 	[Serializable]
 	public class StockPt : PointPair, ISerializable
 	{
@@ -64,6 +64,12 @@ namespace ZedGraph
 		/// This daily trading volume
 		/// </summary>
 		public double Vol;
+
+		/// <summary>
+		/// This is a user value that can be anything.  It is used to provide special 
+		/// property-based coloration to the graph elements.
+		/// </summary>
+		private double _colorValue;
 
 	#endregion
 
@@ -220,6 +226,16 @@ namespace ZedGraph
 		{
 			get { return Z; }
 			set { Z = value; }
+		}
+
+		/// <summary>
+		/// This is a user value that can be anything.  It is used to provide special 
+		/// property-based coloration to the graph elements.
+		/// </summary>
+		new public double ColorValue
+		{
+			get { return _colorValue; }
+			set { _colorValue = value; }
 		}
 
 		/// <summary>

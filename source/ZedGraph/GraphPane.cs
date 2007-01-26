@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.70 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.71 $ $Date: 2007-01-26 09:01:49 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1118,7 +1118,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Add a candlestick graph (<see cref="CandleStickItem"/> object) to the plot with
+		/// Add a candlestick graph (<see cref="OHLCBarItem"/> object) to the plot with
 		/// the given data points (<see cref="IPointList"/>) and properties.
 		/// </summary>
 		/// <remarks>
@@ -1138,10 +1138,10 @@ namespace ZedGraph
 		/// <returns>A <see cref="CurveItem"/> class for the newly created curve.
 		/// This can then be used to access all of the curve properties that
 		/// are not defined as arguments to the
-		/// <see cref="AddCandleStick(string,IPointList,Color)"/> method.</returns>
-		public CandleStickItem AddCandleStick( string label, IPointList points, Color color )
+		/// <see cref="AddOHLCBar(string,IPointList,Color)"/> method.</returns>
+		public OHLCBarItem AddOHLCBar( string label, IPointList points, Color color )
 		{
-			CandleStickItem curve = new CandleStickItem( label, points, color );
+			OHLCBarItem curve = new OHLCBarItem( label, points, color );
 			_curveList.Add( curve );
 
 			return curve;
@@ -1954,7 +1954,7 @@ namespace ZedGraph
 							{
 
 								if ( curve.IsBar || curve is ErrorBarItem ||
-									curve is HiLowBarItem || curve is CandleStickItem ||
+									curve is HiLowBarItem || curve is OHLCBarItem ||
 									curve is JapaneseCandleStickItem )
 								{
 									double baseVal, lowVal, hiVal;

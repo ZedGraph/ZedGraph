@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// <remarks>For this type to work properly, your <see cref="IPointList" /> must contain
 	/// <see cref="StockPt" /> objects, rather than ordinary <see cref="PointPair" /> types.
-	/// This is because the <see cref="CandleStickItem"/> type actually displays 5 data values
+	/// This is because the <see cref="OHLCBarItem"/> type actually displays 5 data values
 	/// but the <see cref="PointPair" /> only stores 3 data values.  The <see cref="StockPt" />
 	/// stores <see cref="StockPt.Date" />, <see cref="StockPt.Close" />,
 	/// <see cref="StockPt.Open" />, <see cref="StockPt.High" />, and
@@ -49,22 +49,22 @@ namespace ZedGraph
 	/// higher than <see cref="StockPt.Open" />, and
 	/// <see cref="ZedGraph.JapaneseCandleStick.FallingFill" />
 	/// for the reverse.  The width of the bar is controlled
-	/// by the <see cref="ZedGraph.CandleStick.Size" /> property, which is specified in
+	/// by the <see cref="ZedGraph.OHLCBar.Size" /> property, which is specified in
 	/// points (1/72nd inch), and scaled according to <see cref="PaneBase.CalcScaleFactor" />.
 	/// The candlesticks are drawn horizontally or vertically depending on the
 	/// value of <see cref="BarSettings.Base"/>, which is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-01-26 09:01:49 $ </version>
 	[Serializable]
 	public class JapaneseCandleStickItem : CurveItem, ICloneable, ISerializable
 	{
 	#region Fields
 
 		/// <summary>
-		/// Private field that stores a reference to the <see cref="ZedGraph.CandleStick"/>
-		/// class defined for this <see cref="CandleStickItem"/>.  Use the public
-		/// property <see cref="CandleStick"/> to access this value.
+		/// Private field that stores a reference to the <see cref="ZedGraph.OHLCBar"/>
+		/// class defined for this <see cref="OHLCBarItem"/>.  Use the public
+		/// property <see cref="OHLCBar"/> to access this value.
 		/// </summary>
 		/// 
 		private JapaneseCandleStick _stick;
@@ -111,7 +111,7 @@ namespace ZedGraph
 	#region Constructors
 
 		/// <summary>
-		/// Create a new <see cref="CandleStickItem"/>, specifying only the legend label.
+		/// Create a new <see cref="OHLCBarItem"/>, specifying only the legend label.
 		/// </summary>
 		/// <param name="label">The label that will appear in the legend.</param>
 		public JapaneseCandleStickItem( string label )
@@ -209,7 +209,7 @@ namespace ZedGraph
 	#region Methods
 
 		/// <summary>
-		/// Do all rendering associated with this <see cref="CandleStickItem"/> to the specified
+		/// Do all rendering associated with this <see cref="OHLCBarItem"/> to the specified
 		/// <see cref="Graphics"/> device.  This method is normally only
 		/// called by the Draw method of the parent <see cref="ZedGraph.CurveList"/>
 		/// collection object.
@@ -222,7 +222,7 @@ namespace ZedGraph
 		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <param name="pos">The ordinal position of the current <see cref="CandleStickItem"/>
+		/// <param name="pos">The ordinal position of the current <see cref="OHLCBarItem"/>
 		/// curve.</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
@@ -240,7 +240,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Draw a legend key entry for this <see cref="CandleStickItem"/> at the specified location
+		/// Draw a legend key entry for this <see cref="OHLCBarItem"/> at the specified location
 		/// </summary>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.36 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.37 $ $Date: 2007-01-26 09:01:49 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -719,9 +719,9 @@ namespace ZedGraph
 												lastX, lastY, tmpX, tmpY );
 								}
 
-								lastPt = curPt;
 							}
 
+							lastPt = curPt;
 							lastX = tmpX;
 							lastY = tmpY;
 							lastBad = false;

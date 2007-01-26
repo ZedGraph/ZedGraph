@@ -49,8 +49,8 @@
     <Compile Include="ZedGraph\BasicArrayPointList.cs" />
     <Compile Include="ZedGraph\Border.cs" />
     <Compile Include="ZedGraph\BoxObj.cs" />
-    <Compile Include="ZedGraph\CandleStick.cs" />
-    <Compile Include="ZedGraph\CandleStickItem.cs" />
+    <Compile Include="ZedGraph\OHLCBar.cs" />
+    <Compile Include="ZedGraph\OHLCBarItem.cs" />
     <Compile Include="ZedGraph\Chart.cs" />
     <Compile Include="ZedGraph\CollectionPlus.cs" />
     <Compile Include="ZedGraph\ColorSymbolRotator.cs" />
@@ -171,10 +171,8 @@
     <EmbeddedResource Include="ZedGraph\ZedGraphLocale.sv.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.tw.resx">
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.zh-tw.resx">
       <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>ZedGraphLocale.tw.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

@@ -41,7 +41,7 @@
     <Compile Include="ZedGraph.Demo\BarChartSampleDemo.cs" />
     <Compile Include="ZedGraph.Demo\BarGraphBandDemo.cs" />
     <Compile Include="ZedGraph.Demo\BaseTicDemo.cs" />
-    <Compile Include="ZedGraph.Demo\CandleStickDemo.cs" />
+    <Compile Include="ZedGraph.Demo\OHLCBarDemo.cs" />
     <Compile Include="ZedGraph.Demo\ChartTabForm.cs">
       <SubType>Form</SubType>
     </Compile>

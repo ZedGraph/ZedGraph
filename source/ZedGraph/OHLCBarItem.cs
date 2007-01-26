@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// <remarks>For this type to work properly, your <see cref="IPointList" /> must contain
 	/// <see cref="StockPt" /> objects, rather than ordinary <see cref="PointPair" /> types.
-	/// This is because the <see cref="CandleStickItem"/> type actually displays 5 data values
+	/// This is because the <see cref="OHLCBarItem"/> type actually displays 5 data values
 	/// but the <see cref="PointPair" /> only stores 3 data values.  The <see cref="StockPt" />
 	/// stores <see cref="StockPt.Date" />, <see cref="StockPt.Close" />,
 	/// <see cref="StockPt.Open" />, <see cref="StockPt.High" />, and
@@ -45,36 +45,36 @@ namespace ZedGraph
 	/// For a vertical CandleStick chart, the opening value is drawn as a horizontal line
 	/// segment to the left of the vertical range bar, and the closing value is a horizontal
 	/// line segment to the right.  The total length of these two line segments is controlled
-	/// by the <see cref="ZedGraph.CandleStick.Size" /> property, which is specified in
+	/// by the <see cref="ZedGraph.OHLCBar.Size" /> property, which is specified in
 	/// points (1/72nd inch), and scaled according to <see cref="PaneBase.CalcScaleFactor" />.
 	/// The candlesticks are drawn horizontally or vertically depending on the
 	/// value of <see cref="BarSettings.Base"/>, which is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2007-01-26 09:01:49 $ </version>
 	[Serializable]
-	public class CandleStickItem : CurveItem, ICloneable, ISerializable
+	public class OHLCBarItem : CurveItem, ICloneable, ISerializable
 	{
 	#region Fields
 
 		/// <summary>
-		/// Private field that stores a reference to the <see cref="ZedGraph.CandleStick"/>
-		/// class defined for this <see cref="CandleStickItem"/>.  Use the public
-		/// property <see cref="CandleStick"/> to access this value.
+		/// Private field that stores a reference to the <see cref="ZedGraph.OHLCBar"/>
+		/// class defined for this <see cref="OHLCBarItem"/>.  Use the public
+		/// property <see cref="OHLCBar"/> to access this value.
 		/// </summary>
 		/// 
-		protected CandleStick _stick;
+		protected OHLCBar _bar;
 
 	#endregion
 
 	#region Properties
 		/// <summary>
-		/// Gets a reference to the <see cref="CandleStick"/> class defined
-		/// for this <see cref="CandleStickItem"/>.
+		/// Gets a reference to the <see cref="OHLCBar"/> class defined
+		/// for this <see cref="OHLCBarItem"/>.
 		/// </summary>
-		public CandleStick Stick
+		public OHLCBar Bar
 		{
-			get { return _stick; }
+			get { return _bar; }
 		}
 
 		/// <summary>
@@ -92,7 +92,7 @@ namespace ZedGraph
 		/// Gets a flag indicating if the Z data range should be included in the axis scaling calculations.
 		/// </summary>
 		/// <remarks>
-		/// IsZIncluded is true for <see cref="CandleStickItem" /> objects, since the Y and Z
+		/// IsZIncluded is true for <see cref="OHLCBarItem" /> objects, since the Y and Z
 		/// values are defined as the High and Low values for the day.</remarks>
 		/// <param name="pane">The parent <see cref="GraphPane" /> of this <see cref="CurveItem" />.
 		/// </param>
@@ -106,17 +106,17 @@ namespace ZedGraph
 
 	#region Constructors
 		/// <summary>
-		/// Create a new <see cref="CandleStickItem"/>, specifying only the legend label.
+		/// Create a new <see cref="OHLCBarItem"/>, specifying only the legend label.
 		/// </summary>
 		/// <param name="label">The label that will appear in the legend.</param>
-		public CandleStickItem( string label )
+		public OHLCBarItem( string label )
 			: base( label )
 		{
-			_stick = new CandleStick();
+			_bar = new OHLCBar();
 		}
 
 		/// <summary>
-		/// Create a new <see cref="CandleStickItem"/> using the specified properties.
+		/// Create a new <see cref="OHLCBarItem"/> using the specified properties.
 		/// </summary>
 		/// <param name="label">The _label that will appear in the legend.</param>
 		/// <param name="points">An <see cref="IPointList"/> of double precision values that define
@@ -126,20 +126,20 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="color">
 		/// The <see cref="System.Drawing.Color" /> to use for drawing the candlesticks.</param>
-		public CandleStickItem( string label, IPointList points, Color color )
+		public OHLCBarItem( string label, IPointList points, Color color )
 			: base( label, points )
 		{
-			_stick = new CandleStick( color );
+			_bar = new OHLCBar( color );
 		}
 
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The <see cref="CandleStickItem"/> object from which to copy</param>
-		public CandleStickItem( CandleStickItem rhs )
+		/// <param name="rhs">The <see cref="OHLCBarItem"/> object from which to copy</param>
+		public OHLCBarItem( OHLCBarItem rhs )
 			: base( rhs )
 		{
-			_stick = rhs._stick.Clone();
+			_bar = rhs._bar.Clone();
 		}
 
 		/// <summary>
@@ -156,9 +156,9 @@ namespace ZedGraph
 		/// Typesafe, deep-copy clone method.
 		/// </summary>
 		/// <returns>A new, independent copy of this class</returns>
-		public CandleStickItem Clone()
+		public OHLCBarItem Clone()
 		{
-			return new CandleStickItem( this );
+			return new OHLCBarItem( this );
 		}
 
 	#endregion
@@ -177,14 +177,14 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
-		protected CandleStickItem( SerializationInfo info, StreamingContext context )
+		protected OHLCBarItem( SerializationInfo info, StreamingContext context )
 			: base( info, context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema2" );
 
-			_stick = (CandleStick)info.GetValue( "stick", typeof( CandleStick ) );
+			_bar = (OHLCBar)info.GetValue( "stick", typeof( OHLCBar ) );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -197,7 +197,7 @@ namespace ZedGraph
 			base.GetObjectData( info, context );
 
 			info.AddValue( "schema2", schema2 );
-			info.AddValue( "stick", _stick );
+			info.AddValue( "stick", _bar );
 		}
 
 	#endregion
@@ -205,7 +205,7 @@ namespace ZedGraph
 	#region Methods
 
 		/// <summary>
-		/// Do all rendering associated with this <see cref="CandleStickItem"/> to the specified
+		/// Do all rendering associated with this <see cref="OHLCBarItem"/> to the specified
 		/// <see cref="Graphics"/> device.  This method is normally only
 		/// called by the Draw method of the parent <see cref="ZedGraph.CurveList"/>
 		/// collection object.
@@ -218,7 +218,7 @@ namespace ZedGraph
 		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <param name="pos">The ordinal position of the current <see cref="CandleStickItem"/>
+		/// <param name="pos">The ordinal position of the current <see cref="OHLCBarItem"/>
 		/// curve.</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
@@ -230,13 +230,13 @@ namespace ZedGraph
 		{
 			if ( _isVisible )
 			{
-				_stick.Draw( g, pane, this, this.BaseAxis( pane ),
+				_bar.Draw( g, pane, this, this.BaseAxis( pane ),
 									this.ValueAxis( pane ), scaleFactor );
 			}
 		}
 
 		/// <summary>
-		/// Draw a legend key entry for this <see cref="CandleStickItem"/> at the specified location
+		/// Draw a legend key entry for this <see cref="OHLCBarItem"/> at the specified location
 		/// </summary>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -276,9 +276,9 @@ namespace ZedGraph
 				pixClose = pixLow + rect.Width / 3;
 			}
 
-			using ( Pen pen = new Pen( _stick.Color, _stick.PenWidth ) )
+			using ( Pen pen = new Pen( _bar.Color, _bar.PenWidth ) )
 			{
-				_stick.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixHigh,
+				_bar.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixHigh,
 								pixLow, pixOpen, pixClose, scaleFactor, pen );
 			}
 		}
@@ -302,7 +302,7 @@ namespace ZedGraph
 			Axis valueAxis = ValueAxis( pane );
 			Axis baseAxis = BaseAxis( pane );
 
-			float halfSize = _stick.Size * pane.CalcScaleFactor();
+			float halfSize = _bar.Size * pane.CalcScaleFactor();
 
 			PointPair pt = _points[i];
 			double date = pt.X;

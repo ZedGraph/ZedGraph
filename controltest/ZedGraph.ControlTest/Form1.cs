@@ -30,7 +30,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
-			CreateGraph_BasicLinear( zedGraphControl1 );
+			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
@@ -54,13 +54,14 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_Histogram( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
-			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_Junk( zedGraphControl1 );
 			//CreateGraph_Junk2( zedGraphControl1 );
 			//CreateGraph_Junk4( zedGraphControl1 );
 			//CreateGraph_junk5( zedGraphControl1 );
 			//CreateGraph_junk6( zedGraphControl1 );
 			//CreateGraph_junk7( zedGraphControl1 );
+			//CreateGraph_junk8( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
@@ -565,12 +566,12 @@ namespace ZedGraph.ControlTest
 					xDate.AddDays( 2.0 );
 			}
 
-			//CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Black );
-			CandleStickItem myCurve = myPane.AddCandleStick( "trades", spl, Color.Blue );
-			//myCurve.Stick.Size = 20;
-			myCurve.Stick.IsAutoSize = true;
-			//myCurve.CandleStick.PenWidth = 2;
-			//myCurve.CandleStick.IsOpenCloseVisible = false;
+			//OHLCBarItem myCurve = myPane.AddOHLCBar( "trades", spl, Color.Black );
+			OHLCBarItem myCurve = myPane.AddOHLCBar( "trades", spl, Color.Blue );
+			//myCurve.Bar.Size = 20;
+			myCurve.Bar.IsAutoSize = true;
+			//myCurve.Bar.PenWidth = 2;
+			//myCurve.Bar.IsOpenCloseVisible = false;
 			// Use DateAsOrdinal to skip weekend gaps
 			myPane.XAxis.Type = AxisType.DateAsOrdinal;
 			//myPane.XAxis.Type = AxisType.Date;
@@ -694,11 +695,16 @@ namespace ZedGraph.ControlTest
 				if ( i == 10 )
 					y = PointPair.Missing;
 				list.Add( x, y, i / 36.0, tag );
-				list2.Add( x, y + 50, i / 36.0 );
+				list2.Add( x, y + 50, (count - i) * 70.0 );
 				list3.Add( x, y + 150, i / 36.0 );
 			}
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 			LineItem myCurve2 = myPane.AddCurve( "curve2", list2, Color.Red, SymbolType.Circle );
+			Fill fill = new Fill( Color.Red, Color.Yellow, Color.Blue );
+			fill.RangeMin = 300;
+			fill.RangeMax = 700;
+			fill.Type = FillType.GradientByColorValue;
+			myCurve2.Line.GradientFill = fill;
 			LineItem myCurve3 = myPane.AddCurve( "curve3", list3, Color.Green, SymbolType.Square );
 			myPane.IsIgnoreMissing = true;
 			//myPane.XAxis.Type = AxisType.Ordinal;
@@ -1639,6 +1645,19 @@ namespace ZedGraph.ControlTest
 			myPane.XAxis.Scale.MinorStep = 1.0;
 			myPane.XAxis.Scale.Format = "MMM-yy";
 			z1.AxisChange();
+		}
+
+		private void CreateGraph_junk8( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+			double[] x6 = { 65, 80 };
+			double[] y6 = { 5000, 5000 };
+			LineItem lineAOW = myPane.AddCurve( "AOW", x6, y6, Color.Blue );
+			lineAOW.Line.Width = 2;
+			lineAOW.Line.Fill = new Fill( Color.LightGreen );
+			lineAOW.Symbol.IsVisible = false;
+			myPane.YAxis.Scale.Min = 4990;
+			myPane.YAxis.Scale.Max = 5010;
 		}
 
 
@@ -3193,11 +3212,12 @@ namespace ZedGraph.ControlTest
 		}
 
 		//using ZedGraph.ControlTest.DataSet2TableAdapters;
-
 		private void CreateGraph_DataSource( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.GraphPane;
+		}
 
+/*
 			myPane.Title.Text = "DataSourcePointList Test";
 			myPane.XAxis.Title.Text = "Date";
 			myPane.YAxis.Title.Text = "Freight Charges ($US)";
@@ -3289,7 +3309,7 @@ namespace ZedGraph.ControlTest
 			// Auto set the scale ranges
 			z1.AxisChange();
 		}
-
+*/
 		private void CreateGraph_DataSourcePointList( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.MasterPane[0];

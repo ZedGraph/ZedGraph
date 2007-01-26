@@ -68,7 +68,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.75 $ $Date: 2007-01-24 08:14:36 $ </version>
+	/// <version> $Revision: 3.76 $ $Date: 2007-01-26 09:01:49 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -124,6 +124,8 @@ namespace ZedGraph
 		/// in response to a Copy action.
 		/// </remarks>
 		private bool _isShowCopyMessage = true;
+
+		private SaveFileDialog _saveFileDialog = new SaveFileDialog();
 
 		/// <summary>
 		/// private field that determines whether the settings of
@@ -1434,13 +1436,30 @@ namespace ZedGraph
 		/// Note that, if this property is set to false, the user will receive no
 		/// indicative feedback in response to a Copy action.
 		/// </remarks>
-		[	Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
-			DefaultValue( true ),
-			Description( "true to show a message box after a 'Copy' context menu action completes" )]
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
+		 DefaultValue( true ),
+		 Description( "true to show a message box after a 'Copy' context menu action completes" )]
 		public bool IsShowCopyMessage
 		{
 			get { return _isShowCopyMessage; }
 			set { _isShowCopyMessage = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="SaveFileDialog" /> instance that will be used
+		/// by the "Save As..." context menu item.
+		/// </summary>
+		/// <remarks>
+		/// This provides the opportunity to modify the dialog, such as setting the
+		/// <see cref="FileDialog.InitialDirectory" /> property.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
+		 DefaultValue( true ),
+		 Description( "Provides access to the SaveFileDialog for the 'Save As' menu item" )]
+		public SaveFileDialog SaveFileDialog
+		{
+			get { return _saveFileDialog; }
+			set { _saveFileDialog = value; }
 		}
 
 		/// <summary>
@@ -2555,7 +2574,7 @@ namespace ZedGraph
 								this.pointToolTip.SetToolTip( this,
 									( (PieItem)curve ).Value.ToString( _pointValueFormat ) );
 							}
-//							else if ( curve is CandleStickItem || curve is JapaneseCandleStickItem )
+//							else if ( curve is OHLCBarItem || curve is JapaneseCandleStickItem )
 //							{
 //								StockPt spt = (StockPt)curve.Points[iPt];
 //								this.pointToolTip.SetToolTip( this, ( (XDate) spt.Date ).ToString( "MM/dd/yyyy" ) + "\nOpen: $" +
@@ -3843,32 +3862,86 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Handler for the "Save Image As" context menu item.  Copies the current image to the selected
-		/// file.
+		/// file in either the Emf (vector), or a variety of Bitmap formats.
 		/// </summary>
+		/// <remarks>
+		/// Note that <see cref="SaveAsBitmap" /> and <see cref="SaveAsEmf" /> methods are provided
+		/// which allow for Bitmap-only or Emf-only handling of the "Save As" context menu item.
+		/// </remarks>
 		public void SaveAs()
 		{
 			if ( _masterPane != null )
 			{
-				SaveFileDialog saveDlg = new SaveFileDialog();
-				saveDlg.Filter = "PNG Format (*.png)|*.png|" +
+				_saveFileDialog.Filter =
+					"Emf Format (*.emf)|*.emf|" +
+					"PNG Format (*.png)|*.png|" +
 					"Gif Format (*.gif)|*.gif|" +
 					"Jpeg Format (*.jpg)|*.jpg|" +
 					"Tiff Format (*.tif)|*.tif|" +
 					"Bmp Format (*.bmp)|*.bmp";
 
-				if ( saveDlg.ShowDialog() == DialogResult.OK )
+				if ( _saveFileDialog.ShowDialog() == DialogResult.OK )
+				{
+					Stream myStream = _saveFileDialog.OpenFile();
+					if ( myStream != null )
+					{
+						if ( _saveFileDialog.FilterIndex == 1 )
+						{
+							myStream.Close();
+							_masterPane.GetMetafile().Save( _saveFileDialog.FileName );
+						}
+						else
+						{
+							ImageFormat format = ImageFormat.Png;
+							if ( _saveFileDialog.FilterIndex == 3 )
+								format = ImageFormat.Gif;
+							else if ( _saveFileDialog.FilterIndex == 4 )
+								format = ImageFormat.Jpeg;
+							else if ( _saveFileDialog.FilterIndex == 5 )
+								format = ImageFormat.Tiff;
+							else if ( _saveFileDialog.FilterIndex == 6 )
+								format = ImageFormat.Bmp;
+
+							_masterPane.GetImage().Save( myStream, format );
+							myStream.Close();
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Handler for the "Save Image As" context menu item.  Copies the current image to the selected
+		/// Bitmap file.
+		/// </summary>
+		/// <remarks>
+		/// Note that this handler saves as a bitmap only.  The default handler is
+		/// <see cref="SaveAs" />, which allows for Bitmap or EMF formats
+		/// </remarks>
+		public void SaveAsBitmap()
+		{
+			if ( _masterPane != null )
+			{
+				_saveFileDialog.Filter =
+					"PNG Format (*.png)|*.png|" +
+					"Gif Format (*.gif)|*.gif|" +
+					"Jpeg Format (*.jpg)|*.jpg|" +
+					"Tiff Format (*.tif)|*.tif|" +
+					"Bmp Format (*.bmp)|*.bmp";
+
+				if ( _saveFileDialog.ShowDialog() == DialogResult.OK )
 				{
 					ImageFormat format = ImageFormat.Png;
-					if ( saveDlg.FilterIndex == 2 )
+					if ( _saveFileDialog.FilterIndex == 2 )
 						format = ImageFormat.Gif;
-					else if ( saveDlg.FilterIndex == 3 )
+					else if ( _saveFileDialog.FilterIndex == 3 )
 						format = ImageFormat.Jpeg;
-					else if ( saveDlg.FilterIndex == 4 )
+					else if ( _saveFileDialog.FilterIndex == 4 )
 						format = ImageFormat.Tiff;
-					else if ( saveDlg.FilterIndex == 5 )
+					else if ( _saveFileDialog.FilterIndex == 5 )
 						format = ImageFormat.Bmp;
 
-					Stream myStream = saveDlg.OpenFile();
+					Stream myStream = _saveFileDialog.OpenFile();
 					if ( myStream != null )
 					{
 						_masterPane.GetImage().Save( myStream, format );
@@ -3879,23 +3952,26 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Handler for a "Save As..." context menu that saves to an Emf format instead of a
-		/// Bitmap format (e.g., <see cref="SaveAs" />).
+		/// Handler for the "Save Image As" context menu item.  Copies the current image to the selected
+		/// Emf format file.
 		/// </summary>
+		/// <remarks>
+		/// Note that this handler saves as an Emf format only.  The default handler is
+		/// <see cref="SaveAs" />, which allows for Bitmap or EMF formats.
+		/// </remarks>
 		public void SaveAsEmf()
 		{
 			if ( _masterPane != null )
 			{
-				SaveFileDialog saveDlg = new SaveFileDialog();
-				saveDlg.Filter = "Emf Format (*.emf)|*.emf";
+				_saveFileDialog.Filter = "Emf Format (*.emf)|*.emf";
 
-				if ( saveDlg.ShowDialog() == DialogResult.OK )
+				if ( _saveFileDialog.ShowDialog() == DialogResult.OK )
 				{
-					Stream myStream = saveDlg.OpenFile();
+					Stream myStream = _saveFileDialog.OpenFile();
 					if ( myStream != null )
 					{
 						myStream.Close();
-						_masterPane.GetMetafile().Save( saveDlg.FileName );
+						_masterPane.GetMetafile().Save( _saveFileDialog.FileName );
 					}
 				}
 			}

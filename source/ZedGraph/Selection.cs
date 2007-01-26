@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion and JCarpenter </author>
-	/// <version> $Revision: 3.2 $ $Date: 2007-01-24 08:14:36 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-01-26 09:01:49 $ </version>
 	public class Selection : List<CurveItem>
 	{
 		// Revision: JCarpenter 10/06
@@ -45,7 +45,7 @@ namespace ZedGraph
 		/// <summary>
 		/// The <see cref="Border" /> type to be used for drawing "selected"
 		/// <see cref="PieItem" />, <see cref="BarItem" />, <see cref="HiLowBarItem" />,
-		/// <see cref="CandleStickItem" />, and <see cref="JapaneseCandleStickItem" /> item types.
+		/// <see cref="OHLCBarItem" />, and <see cref="JapaneseCandleStickItem" /> item types.
 		/// </summary>
 		public static Border Border = new Border( Color.Gray, 1.0f );
 		/// <summary>

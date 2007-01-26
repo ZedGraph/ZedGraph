@@ -31,30 +31,30 @@ using System.Security.Permissions;
 namespace ZedGraph
 {
 	/// <summary>
-	/// This class handles the drawing of the curve <see cref="CandleStick"/> objects.
+	/// This class handles the drawing of the curve <see cref="OHLCBar"/> objects.
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2007-01-26 09:01:49 $ </version>
 	[Serializable]
-	public class CandleStick : ICloneable, ISerializable
+	public class OHLCBar : ICloneable, ISerializable
 	{
 	#region Fields
 
 		/// <summary>
-		/// Private field that stores the visibility of the <see cref="CandleStick"/> open and
+		/// Private field that stores the visibility of the <see cref="OHLCBar"/> open and
 		/// close line segments ("wings").  Use the public
 		/// property <see cref="IsOpenCloseVisible"/> to access this value.  If this value is
 		/// false, the wings will not be shown.
 		/// </summary>
 		protected bool _isOpenCloseVisible;
 		/// <summary>
-		/// Private field that stores the CandleStick color.  Use the public
+		/// Private field that stores the OHLCBar color.  Use the public
 		/// property <see cref="Color"/> to access this value.
 		/// </summary>
 		protected Color _color;
 		/// <summary>
-		/// Private field that stores the pen width for this CandleStick.  Use the public
+		/// Private field that stores the pen width for this OHLCBar.  Use the public
 		/// property <see cref="PenWidth"/> to access this value.
 		/// </summary>
 		protected float _penWidth;
@@ -83,33 +83,33 @@ namespace ZedGraph
 
 		/// <summary>
 		/// A simple struct that defines the
-		/// default property values for the <see cref="ZedGraph.CandleStick"/> class.
+		/// default property values for the <see cref="ZedGraph.OHLCBar"/> class.
 		/// </summary>
 		public struct Default
 		{
 			// Default Symbol properties
 			/// <summary>
-			/// The default width for the candlesticks (see <see cref="CandleStick.Size" />),
+			/// The default width for the candlesticks (see <see cref="OHLCBar.Size" />),
 			/// in units of points.
 			/// </summary>
 			public static float Size = 12;
 			/// <summary>
 			/// The default pen width to be used for drawing candlesticks
-			/// (<see cref="CandleStick.PenWidth"/> property).  Units are points.
+			/// (<see cref="OHLCBar.PenWidth"/> property).  Units are points.
 			/// </summary>
 			public static float PenWidth = 1.0F;
 			/// <summary>
-			/// The default display mode for symbols (<see cref="CandleStick.IsOpenCloseVisible"/> property).
+			/// The default display mode for symbols (<see cref="OHLCBar.IsOpenCloseVisible"/> property).
 			/// true to display symbols, false to hide them.
 			/// </summary>
 			public static bool IsOpenCloseVisible = true;
 			/// <summary>
-			/// The default color for drawing CandleSticks (<see cref="CandleStick.Color"/> property).
+			/// The default color for drawing CandleSticks (<see cref="OHLCBar.Color"/> property).
 			/// </summary>
 			public static Color Color = Color.Black;
 
 			/// <summary>
-			/// The default value for the <see cref="ZedGraph.CandleStick.IsAutoSize" /> property.
+			/// The default value for the <see cref="ZedGraph.OHLCBar.IsAutoSize" /> property.
 			/// </summary>
 			public static Boolean IsAutoSize = true;
 		}
@@ -119,7 +119,7 @@ namespace ZedGraph
 	#region Properties
 
 		/// <summary>
-		/// Gets or sets a property that shows or hides the <see cref="CandleStick"/> open/close "wings".
+		/// Gets or sets a property that shows or hides the <see cref="OHLCBar"/> open/close "wings".
 		/// </summary>
 		/// <value>true to show the CandleStick wings, false to hide them</value>
 		/// <seealso cref="Default.IsOpenCloseVisible"/>
@@ -131,7 +131,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Gets or sets the <see cref="System.Drawing.Color"/> data for this
-		/// <see cref="CandleStick"/>.
+		/// <see cref="OHLCBar"/>.
 		/// </summary>
 		/// <remarks>This property only controls the color of
 		/// the vertical line.  The symbol color is controlled separately in
@@ -143,7 +143,7 @@ namespace ZedGraph
 			set { _color = value; }
 		}
 		/// <summary>
-		/// The pen width to be used for drawing <see cref="CandleStick" /> items.
+		/// The pen width to be used for drawing <see cref="OHLCBar" /> items.
 		/// Units are points.
 		/// </summary>
 		/// <remarks>This property only controls the pen width for the
@@ -157,7 +157,7 @@ namespace ZedGraph
 		}
 		/// <summary>
 		/// Gets or sets the total width to be used for drawing the opening/closing line
-		/// segments ("wings") of the <see cref="CandleStick" /> items. Units are points.
+		/// segments ("wings") of the <see cref="OHLCBar" /> items. Units are points.
 		/// </summary>
 		/// <remarks>The size of the candlesticks can be set by this value, which
 		/// is then scaled according to the scaleFactor (see
@@ -194,10 +194,10 @@ namespace ZedGraph
 	#region Constructors
 
 		/// <summary>
-		/// Default constructor that sets all <see cref="CandleStick"/> properties to
+		/// Default constructor that sets all <see cref="OHLCBar"/> properties to
 		/// default values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		public CandleStick()
+		public OHLCBar()
 			: this( Default.Color )
 		{
 		}
@@ -205,13 +205,13 @@ namespace ZedGraph
 		/// <summary>
 		/// Default constructor that sets the
 		/// <see cref="Color"/> as specified, and the remaining
-		/// <see cref="CandleStick"/> properties to default
+		/// <see cref="OHLCBar"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
 		/// </summary>
 		/// <param name="color">A <see cref="Color"/> value indicating
 		/// the color of the symbol
 		/// </param>
-		public CandleStick( Color color )
+		public OHLCBar( Color color )
 		{
 			_size = Default.Size;
 			_isAutoSize = Default.IsAutoSize;
@@ -223,8 +223,8 @@ namespace ZedGraph
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The <see cref="CandleStick"/> object from which to copy</param>
-		public CandleStick( CandleStick rhs )
+		/// <param name="rhs">The <see cref="OHLCBar"/> object from which to copy</param>
+		public OHLCBar( OHLCBar rhs )
 		{
 			_color = rhs._color;
 			_isOpenCloseVisible = rhs._isOpenCloseVisible;
@@ -247,9 +247,9 @@ namespace ZedGraph
 		/// Typesafe, deep-copy clone method.
 		/// </summary>
 		/// <returns>A new, independent copy of this class</returns>
-		public CandleStick Clone()
+		public OHLCBar Clone()
 		{
-			return new CandleStick( this );
+			return new OHLCBar( this );
 		}
 
 	#endregion
@@ -268,7 +268,7 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
-		protected CandleStick( SerializationInfo info, StreamingContext context )
+		protected OHLCBar( SerializationInfo info, StreamingContext context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
@@ -302,7 +302,7 @@ namespace ZedGraph
 
 
 		/// <summary>
-		/// Draw the <see cref="CandleStick"/> to the specified <see cref="Graphics"/>
+		/// Draw the <see cref="OHLCBar"/> to the specified <see cref="Graphics"/>
 		/// device at the specified location.
 		/// </summary>
 		/// <param name="g">
@@ -314,7 +314,7 @@ namespace ZedGraph
 		/// owner of this object.
 		/// </param>
 		/// <param name="isXBase">boolean value that indicates if the "base" axis for this
-		/// <see cref="CandleStick"/> is the X axis.  True for an <see cref="XAxis"/> base,
+		/// <see cref="OHLCBar"/> is the X axis.  True for an <see cref="XAxis"/> base,
 		/// false for a <see cref="YAxis"/> or <see cref="Y2Axis"/> base.</param>
 		/// <param name="pixBase">The independent axis position of the center of the candlestick in
 		/// pixel units</param>
@@ -329,7 +329,7 @@ namespace ZedGraph
 		/// <param name="halfSize">
 		/// The scaled width of the candlesticks, pixels</param>
 		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
-		/// <see cref="PenWidth"/> for this <see cref="CandleStick"/></param>
+		/// <see cref="PenWidth"/> for this <see cref="OHLCBar"/></param>
 		public void Draw( Graphics g, GraphPane pane, bool isXBase,
 								float pixBase, float pixHigh, float pixLow,
 								float pixOpen, float pixClose,
@@ -360,7 +360,7 @@ namespace ZedGraph
 
 
 		/// <summary>
-		/// Draw all the <see cref="CandleStick"/>'s to the specified <see cref="Graphics"/>
+		/// Draw all the <see cref="OHLCBar"/>'s to the specified <see cref="Graphics"/>
 		/// device as a candlestick at each defined point.
 		/// </summary>
 		/// <param name="g">
@@ -371,19 +371,19 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <param name="curve">A <see cref="CandleStickItem"/> object representing the
-		/// <see cref="CandleStick"/>'s to be drawn.</param>
+		/// <param name="curve">A <see cref="OHLCBarItem"/> object representing the
+		/// <see cref="OHLCBar"/>'s to be drawn.</param>
 		/// <param name="baseAxis">The <see cref="Axis"/> class instance that defines the base (independent)
-		/// axis for the <see cref="CandleStick"/></param>
+		/// axis for the <see cref="OHLCBar"/></param>
 		/// <param name="valueAxis">The <see cref="Axis"/> class instance that defines the value (dependent)
-		/// axis for the <see cref="CandleStick"/></param>
+		/// axis for the <see cref="OHLCBar"/></param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects.  This is calculated and
 		/// passed down by the parent <see cref="GraphPane"/> object using the
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
 		/// </param>
-		public void Draw( Graphics g, GraphPane pane, CandleStickItem curve,
+		public void Draw( Graphics g, GraphPane pane, OHLCBarItem curve,
 							Axis baseAxis, Axis valueAxis, float scaleFactor )
 		{
 			//ValueHandler valueHandler = new ValueHandler( pane, false );

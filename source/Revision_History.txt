@@ -5,6 +5,10 @@
 : [UPD] Make ZedGraphControl.IsPrintScaleAll public
 : [NEW] Add LineBase class, giving common attributes to Line, LineObj, ArrowObj, and Border classes
 : [NEW] Add GradientByColorValue capacity
+: [FIX] fix tw locale file (thanks to Zak Fong)
+: [NEW] Add ZedGraphControl.SaveFileDialog property to allow user mods to dialog setup
+: [UPD] Rename CandleStick to OHLCBar
+: [UPD] Add Emf format capability to "Save As" context menu (STILL NEEDS WORK)
 
 ;4-Jan-2007 (by Champion)
 : [NEW] Added Legend.IsReverse property to reverse order of legend items (thanks blumenstock)

@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.27 $ $Date: 2007-01-25 07:56:09 $ </version>
+	/// <version> $Revision: 3.28 $ $Date: 2007-01-26 09:01:49 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -943,7 +943,7 @@ namespace ZedGraph
 				IntPtr hdc = g.GetHdc();
 				Stream stream = new MemoryStream();
 				Metafile metafile = new Metafile( stream, hdc, _rect,
-							MetafileFrameUnit.Pixel, EmfType.EmfPlusDual );
+							MetafileFrameUnit.Pixel, EmfType.EmfOnly );
 				g.ReleaseHdc( hdc );
 
 				using ( Graphics metafileGraphics = Graphics.FromImage( metafile ) )
@@ -962,6 +962,52 @@ namespace ZedGraph
 				}
 			}
 		}
+
+		/*
+		         System.Drawing.Imaging.Metafile metafile = null; 
+   
+               // create a Metafile object that is compatible with the surface of this 
+               // form
+               using ( Graphics graphics = this.CreateGraphics() )
+               { 
+                  System.IntPtr hdc = graphics.GetHdc(); 
+                  metafile = new Metafile(filename, hdc, new Rectangle( 0, 0, 
+                     (((int) this.ClientRectangle.Width)), 
+							(((int) this.ClientRectangle.Height ))), 
+							MetafileFrameUnit.Point ); 
+                  graphics.ReleaseHdc( hdc );
+               }
+
+               // draw to the metafile
+               using ( Graphics metafileGraphics = Graphics.FromImage( metafile ) )
+               {
+                  metafileGraphics.PageUnit=System.Drawing.GraphicsUnit.Point;
+                  PointF P=new Point(this.ClientRectangle.Width,this.ClientRectangle.Height);
+                  PointF[] PA=new PointF[]{P};
+                  metafileGraphics.TransformPoints(CoordinateSpace.Page, CoordinateSpace.Device, PA); 
+                  metafileGraphics.PageScale=1f;
+                  metafileGraphics.SmoothingMode = SmoothingMode.AntiAlias; // smooth the 
+                  // output
+                  this.masterPane.Draw( metafileGraphics );
+                  metafileGraphics.DrawRectangle(new System.Drawing.Pen( Color.Gray),this.ClientRectangle);
+                  metafile.Dispose();
+                  
+               }
+
+               return true;
+            }
+            else
+            {
+               return false;
+            }
+         }
+         else
+         {
+            //no directory given
+            return false;
+         }
+		 */
+
 		
 /*
 				/// <summary>
