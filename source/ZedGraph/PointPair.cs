@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.20 $ $Date: 2007-01-26 09:01:49 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2007-01-26 10:08:24 $ </version>
 	[Serializable]
 	public class PointPair : ISerializable
 	{
@@ -85,12 +85,8 @@ namespace ZedGraph
 		/// <summary>
 		/// Default Constructor
 		/// </summary>
-		public PointPair()
+		public PointPair() : this( 0, 0, 0, null )
 		{
-			this.X = 0;
-			this.Y = 0;
-			this.Z = 0;
-			this.Tag = null;
 		}
 
 		/// <summary>
@@ -99,11 +95,8 @@ namespace ZedGraph
 		/// <param name="x">This pair's x coordinate.</param>
 		/// <param name="y">This pair's y coordinate.</param>
 		public PointPair( double x, double y )
+			: this ( x, y, 0, null )
 		{
-			this.X = x;
-			this.Y = y;
-			this.Z = 0;
-			this.Tag = null;
 		}
 
 		/// <summary>
@@ -114,11 +107,8 @@ namespace ZedGraph
 		/// <param name="y">This pair's y coordinate.</param>
 		/// <param name="label">This pair's string label (<see cref="Tag"/>)</param>
 		public PointPair( double x, double y, string label )
+			: this( x, y, 0, label as object )
 		{
-			this.X = x;
-			this.Y = y;
-			this.Z = 0;
-			this.Tag = label;
 		}
 
 		/// <summary>
@@ -128,27 +118,37 @@ namespace ZedGraph
 		/// <param name="y">This pair's y coordinate.</param>
 		/// <param name="z">This pair's z or lower dependent coordinate.</param>
 		public PointPair( double x, double y, double z )
+			: this( x, y, z, null )
 		{
-			this.X = x;
-			this.Y = y;
-			this.Z = z;
-			this.Tag = null;
 		}
 
 		/// <summary>
 		/// Creates a point pair with the specified X, Y, base value, and
-		/// label (<see cref="Tag"/>).
+		/// string label (<see cref="Tag"/>).
 		/// </summary>
 		/// <param name="x">This pair's x coordinate.</param>
 		/// <param name="y">This pair's y coordinate.</param>
 		/// <param name="z">This pair's z or lower dependent coordinate.</param>
 		/// <param name="label">This pair's string label (<see cref="Tag"/>)</param>
 		public PointPair( double x, double y, double z, string label )
+			: this( x, y, z, label as object )
+		{
+		}
+
+		/// <summary>
+		/// Creates a point pair with the specified X, Y, base value, and
+		/// (<see cref="Tag"/>).
+		/// </summary>
+		/// <param name="x">This pair's x coordinate.</param>
+		/// <param name="y">This pair's y coordinate.</param>
+		/// <param name="z">This pair's z or lower dependent coordinate.</param>
+		/// <param name="tag">This pair's <see cref="Tag"/> property</param>
+		public PointPair( double x, double y, double z, object tag )
 		{
 			this.X = x;
 			this.Y = y;
 			this.Z = z;
-			this.Tag = label;
+			this.Tag = tag;
 		}
 
 		/// <summary>
@@ -156,12 +156,8 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="pt">The <see cref="PointF"/> struct from which to get the
 		/// new <see cref="PointPair"/> values.</param>
-		public PointPair( PointF pt )
+		public PointPair( PointF pt ) : this( pt.X, pt.Y, 0, null )
 		{
-			this.X = pt.X;
-			this.Y = pt.Y;
-			this.Z = 0;
-			this.Tag = null;
 		}
 
 		/// <summary>

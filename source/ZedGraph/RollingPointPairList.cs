@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// interface.
 	/// 
 	/// <author>Colin Green with mods by John Champion</author>
-	/// <version> $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Date: 2007-01-26 10:08:24 $ </version>
 	/// </summary>
 	[Serializable]
 	public class RollingPointPairList : IPointList, ISerializable, IPointListEdit
@@ -70,11 +70,35 @@ namespace ZedGraph
 		/// <summary>
 		/// Constructs an empty buffer with the specified capacity.
 		/// </summary>
-		/// <param name="capacity"></param>
+		/// <param name="capacity">Number of elements in the rolling list.  This number
+		/// cannot be changed once the RollingPointPairList is constructed.</param>
 		public RollingPointPairList( int capacity )
+			: this( capacity, false )
 		{
 			_mBuffer = new PointPair[capacity];
 			_headIdx = _tailIdx = -1;
+		}
+
+		/// <summary>
+		/// Constructs an empty buffer with the specified capacity.  Pre-allocates space
+		/// for all PointPair's in the list if <paramref name="preLoad"/> is true.
+		/// </summary>
+		/// <param name="capacity">Number of elements in the rolling list.  This number
+		/// cannot be changed once the RollingPointPairList is constructed.</param>
+		/// <param name="preLoad">true to pre-allocate all PointPair instances in
+		/// the list, false otherwise.  Note that in order to be memory efficient,
+		/// the <see cref="Add(double,double,double)"/> method should be used to add
+		/// data.  Avoid the <see cref="Add(PointPair)"/> method.
+		/// </param>
+		/// <seealso cref="Add(double,double,double)"/>
+		public RollingPointPairList( int capacity, bool preLoad )
+		{
+			_mBuffer = new PointPair[capacity];
+			_headIdx = _tailIdx = -1;
+
+			if ( preLoad )
+				for ( int i = 0; i < capacity; i++ )
+					_mBuffer[i] = new PointPair();
 		}
 
 		/// <summary>
@@ -205,11 +229,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Add a <see cref="PointPair"/> onto the head of the queue,
-		/// overwriting old values if the buffer is full.
+		/// Calculate that the next index in the buffer that should receive a new data point.
+		/// Note that this method actually advances the buffer, so a datapoint should be
+		/// added at _mBuffer[_headIdx].
 		/// </summary>
-		/// <param name="item">The <see cref="PointPair" /> to be added.</param>
-		public void Add( PointPair item )
+		/// <returns>The index position of the new head element</returns>
+		private int GetNextIndex()
 		{
 			if ( _headIdx == -1 )
 			{	// buffer is currently empty.
@@ -232,7 +257,29 @@ namespace ZedGraph
 				}
 			}
 
-			_mBuffer[_headIdx] = item;
+			return _headIdx;
+		}
+
+		/// <summary>
+		/// Add a <see cref="PointPair"/> onto the head of the queue,
+		/// overwriting old values if the buffer is full.
+		/// </summary>
+		/// <param name="item">The <see cref="PointPair" /> to be added.</param>
+		public void Add( PointPair item )
+		{
+			_mBuffer[ GetNextIndex() ] = item;
+		}
+
+		/// <summary>
+		/// Add an <see cref="IPointList"/> object to the head of the queue.
+		/// </summary>
+		/// <param name="pointList">A reference to the <see cref="IPointList"/> object to
+		/// be added</param>
+		public void Add( IPointList pointList )
+		{   // A slightly more efficient approach would be to determine where the new points should placed within
+			// the buffer and to then copy them in directly - updating the head and tail indexes appropriately.
+			for ( int i = 0; i < pointList.Count; i++ )
+				Add( pointList[i] );
 		}
 
 		/// <summary>
@@ -344,59 +391,104 @@ namespace ZedGraph
 	#region Auxilliary Methods
 
 		/// <summary>
-		/// Add an <see cref="IPointList"/> object to the head of the queue.
+		/// Add a set of values onto the head of the queue,
+		/// overwriting old values if the buffer is full.
 		/// </summary>
-		/// <param name="pointList">A reference to the <see cref="IPointList"/> object to
-		/// be added</param>
-		public void Add( IPointList pointList )
-		{   // A slightly more efficient approach would be to determine where the new points should placed within
-			// the buffer and to then copy them in directly - updating the head and tail indexes appropriately.
-			for ( int i = 0; i < pointList.Count; i++ )
-				Add( pointList[i] );
+		/// <remarks>
+		/// This method is much more efficient that the <see cref="Add(PointPair)">Add(PointPair)</see>
+		/// method, since it does not require that a new PointPair instance be provided.
+		/// If the buffer already contains a <see cref="PointPair"/> at the head position,
+		/// then the x, y, z, and tag values will be copied into the existing PointPair.
+		/// Otherwise, a new PointPair instance must be created.
+		/// In this way, each PointPair position in the rolling list will only be allocated one time.
+		/// To truly be memory efficient, the <see cref="Remove" />, <see cref="RemoveAt" />,
+		/// and <see cref="Pop" /> methods should be avoided.  Also, the <paramref name="tag"/> property
+		/// for this method should be null, since it is a reference type.
+		/// </remarks>
+		/// <param name="x">The X value</param>
+		/// <param name="y">The Y value</param>
+		/// <param name="z">The Z value</param>
+		/// <param name="tag">The Tag value for the PointPair</param>
+		public void Add( double x, double y, double z, object tag )
+		{
+			// advance the rolling list
+			GetNextIndex();
+
+			if ( _mBuffer[_headIdx] == null )
+				_mBuffer[_headIdx] = new PointPair( x, y, z, tag );
+			else
+			{
+				_mBuffer[_headIdx].X = x;
+				_mBuffer[_headIdx].Y = y;
+				_mBuffer[_headIdx].Z = z;
+				_mBuffer[_headIdx].Tag = tag;
+			}
 		}
 
 		/// <summary>
-		/// Add a new <see cref="PointPair"/> object.
+		/// Add a set of values onto the head of the queue,
+		/// overwriting old values if the buffer is full.
 		/// </summary>
+		/// <remarks>
+		/// This method is much more efficient that the <see cref="Add(PointPair)">Add(PointPair)</see>
+		/// method, since it does not require that a new PointPair instance be provided.
+		/// If the buffer already contains a <see cref="PointPair"/> at the head position,
+		/// then the x, y, z, and tag values will be copied into the existing PointPair.
+		/// Otherwise, a new PointPair instance must be created.
+		/// In this way, each PointPair position in the rolling list will only be allocated one time.
+		/// To truly be memory efficient, the <see cref="Remove" />, <see cref="RemoveAt" />,
+		/// and <see cref="Pop" /> methods should be avoided.
+		/// </remarks>
 		/// <param name="x">The X value</param>
 		/// <param name="y">The Y value</param>
 		public void Add( double x, double y )
 		{
-			Add( new PointPair( x, y ) );
+			Add( x, y, PointPair.Missing, null );
 		}
 
 		/// <summary>
-		/// Add a new <see cref="PointPair"/> object.
+		/// Add a set of values onto the head of the queue,
+		/// overwriting old values if the buffer is full.
 		/// </summary>
+		/// <remarks>
+		/// This method is much more efficient that the <see cref="Add(PointPair)">Add(PointPair)</see>
+		/// method, since it does not require that a new PointPair instance be provided.
+		/// If the buffer already contains a <see cref="PointPair"/> at the head position,
+		/// then the x, y, z, and tag values will be copied into the existing PointPair.
+		/// Otherwise, a new PointPair instance must be created.
+		/// In this way, each PointPair position in the rolling list will only be allocated one time.
+		/// To truly be memory efficient, the <see cref="Remove" />, <see cref="RemoveAt" />,
+		/// and <see cref="Pop" /> methods should be avoided.  Also, the <paramref name="tag"/> property
+		/// for this method should be null, since it is a reference type.
+		/// </remarks>
 		/// <param name="x">The X value</param>
 		/// <param name="y">The Y value</param>
 		/// <param name="tag">The Tag value for the PointPair</param>
-		public void Add( double x, double y, string tag )
+		public void Add( double x, double y, object tag )
 		{
-			Add( new PointPair( x, y, tag ) );
+			Add( x, y, PointPair.Missing, tag );
 		}
 
 		/// <summary>
-		/// Enqueue a new <see cref="PointPair"/> object.
+		/// Add a set of values onto the head of the queue,
+		/// overwriting old values if the buffer is full.
 		/// </summary>
+		/// <remarks>
+		/// This method is much more efficient that the <see cref="Add(PointPair)">Add(PointPair)</see>
+		/// method, since it does not require that a new PointPair instance be provided.
+		/// If the buffer already contains a <see cref="PointPair"/> at the head position,
+		/// then the x, y, z, and tag values will be copied into the existing PointPair.
+		/// Otherwise, a new PointPair instance must be created.
+		/// In this way, each PointPair position in the rolling list will only be allocated one time.
+		/// To truly be memory efficient, the <see cref="Remove" />, <see cref="RemoveAt" />,
+		/// and <see cref="Pop" /> methods should be avoided.
+		/// </remarks>
 		/// <param name="x">The X value</param>
 		/// <param name="y">The Y value</param>
 		/// <param name="z">The Z value</param>
 		public void Add( double x, double y, double z )
 		{
-			Add( new PointPair( x, y, z ) );
-		}
-
-		/// <summary>
-		/// Add a new <see cref="PointPair"/> object.
-		/// </summary>
-		/// <param name="x">The X value</param>
-		/// <param name="y">The Y value</param>
-		/// <param name="z">The Z value</param>
-		/// <param name="tag">The Tag value for the PointPair</param>
-		public void Add( double x, double y, double z, string tag )
-		{
-			Add( new PointPair( x, y, z, tag ) );
+			Add( x, y, z, null );
 		}
 
 		/// <summary>
