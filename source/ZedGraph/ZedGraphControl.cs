@@ -68,7 +68,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.77 $ $Date: 2007-01-30 09:05:04 $ </version>
+	/// <version> $Revision: 3.78 $ $Date: 2007-01-30 09:08:59 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -3555,7 +3555,7 @@ namespace ZedGraph
 			if ( Math.Abs( max - min ) < 1e-30 )
 			{
 				if ( Math.Abs( max ) < 1e-30 )
-					return 1;
+					return _scrollGrace;
 				else
 					return max * _scrollGrace;
 			}
