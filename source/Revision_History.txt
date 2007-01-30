@@ -1,4 +1,7 @@
 == Version 5 ==
+;29-Jan-2007 (by Champion)
+: [UPD] Make OHLCBar use integers for pixBase for more consistent appearance
+: [FIX] Proper implementation of LineBase in OHLCBar and JapaneseCandleStick
 
 ;20-Jan-2007 (by Champion)
 : [NEW] Add in selection logic to ZedGraphControl based on code from JCarpenter

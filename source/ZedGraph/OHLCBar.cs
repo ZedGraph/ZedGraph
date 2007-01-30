@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2007-01-30 08:02:12 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-01-30 08:42:40 $ </version>
 	[Serializable]
 	public class OHLCBar : LineBase, ICloneable, ISerializable
 	{
@@ -153,7 +153,7 @@ namespace ZedGraph
 		/// Default constructor that sets all <see cref="OHLCBar"/> properties to
 		/// default values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		public OHLCBar() : base()
+		public OHLCBar() : this( LineBase.Default.Color )
 		{
 		}
 
@@ -371,7 +371,8 @@ namespace ZedGraph
 								( date > 0 || !baseAxis._scale.IsLog ) &&
 								( ( high > 0 && low > 0 ) || !valueAxis._scale.IsLog ) )
 						{
-							pixBase = baseAxis.Scale.Transform( curve.IsOverrideOrdinal, i, date );
+							pixBase = (int)( baseAxis.Scale.Transform( curve.IsOverrideOrdinal, i, date ) + 0.5 );
+							//pixBase = baseAxis.Scale.Transform( curve.IsOverrideOrdinal, i, date );
 							pixHigh = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, high );
 							pixLow = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, low );
 							if ( PointPair.IsValueInvalid( open ) )

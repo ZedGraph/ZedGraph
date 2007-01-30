@@ -36,7 +36,6 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl1 );
 			//CreateGraph_BasicStick( zedGraphControl2 );
-			CreateGraph_OHLCBar( zedGraphControl1 );
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_Clone( zedGraphControl1 );
 			//CreateGraph_Contour( zedGraphControl2 );
@@ -54,7 +53,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_Histogram( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
-			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_Junk( zedGraphControl1 );
 			//CreateGraph_Junk2( zedGraphControl1 );
 			//CreateGraph_Junk4( zedGraphControl1 );
@@ -62,6 +61,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_junk6( zedGraphControl1 );
 			//CreateGraph_junk7( zedGraphControl1 );
 			//CreateGraph_junk8( zedGraphControl1 );
+			//CreateGraph_OHLCBar( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
@@ -613,7 +613,7 @@ namespace ZedGraph.ControlTest
 			XDate xDate = new XDate( 2006, 1, 1 );
 			double open = 50.0;
 
-			for ( int i = 0; i < 30; i++ )
+			for ( int i = 0; i < 100; i++ )
 			{
 				double x = xDate.XLDate;
 				double close = open + rand.NextDouble() * 10.0 - 5.0;
