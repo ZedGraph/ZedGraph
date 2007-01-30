@@ -36,7 +36,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl1 );
 			//CreateGraph_BasicStick( zedGraphControl2 );
-			//CreateGraph_CandleStick( zedGraphControl1 );
+			CreateGraph_OHLCBar( zedGraphControl1 );
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_Clone( zedGraphControl1 );
 			//CreateGraph_Contour( zedGraphControl2 );
@@ -61,7 +61,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_junk5( zedGraphControl1 );
 			//CreateGraph_junk6( zedGraphControl1 );
 			//CreateGraph_junk7( zedGraphControl1 );
-			CreateGraph_junk8( zedGraphControl1 );
+			//CreateGraph_junk8( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
@@ -532,12 +532,12 @@ namespace ZedGraph.ControlTest
 			myPane.YAxis.Scale.IsSkipCrossLabel = true;
 		}
 
-		// Traditional Candlestick
-		private void CreateGraph_CandleStick( ZedGraphControl z1 )
+		// Traditional Open-High-Low-Close Bar chart
+		private void CreateGraph_OHLCBar( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.GraphPane;
 
-			myPane.Title.Text = "Candlestick Chart Demo";
+			myPane.Title.Text = "OHLC Chart Demo";
 			myPane.XAxis.Title.Text = "Trading Date";
 			myPane.YAxis.Title.Text = "Share Price, $US";
 
@@ -572,6 +572,13 @@ namespace ZedGraph.ControlTest
 			myCurve.Bar.IsAutoSize = true;
 			//myCurve.Bar.PenWidth = 2;
 			//myCurve.Bar.IsOpenCloseVisible = false;
+
+			Fill fill = new Fill( Color.Red, Color.Yellow, Color.Blue ); 
+			fill.RangeMin = 40; 
+			fill.RangeMax = 70;
+			fill.Type = FillType.GradientByY;
+			myCurve.Bar.GradientFill = fill; 
+
 			// Use DateAsOrdinal to skip weekend gaps
 			myPane.XAxis.Type = AxisType.DateAsOrdinal;
 			//myPane.XAxis.Type = AxisType.Date;
@@ -581,8 +588,8 @@ namespace ZedGraph.ControlTest
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
 			myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
 
-			BoxObj box = new BoxObj( 4, 60, 5, 50000 );
-			myPane.GraphObjList.Add( box );
+			//BoxObj box = new BoxObj( 4, 60, 5, 50000 );
+			//myPane.GraphObjList.Add( box );
 
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();

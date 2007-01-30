@@ -35,9 +35,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2007-01-26 09:01:49 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2007-01-30 08:02:12 $ </version>
 	[Serializable]
-	public class OHLCBar : ICloneable, ISerializable
+	public class OHLCBar : LineBase, ICloneable, ISerializable
 	{
 	#region Fields
 
@@ -48,16 +48,7 @@ namespace ZedGraph
 		/// false, the wings will not be shown.
 		/// </summary>
 		protected bool _isOpenCloseVisible;
-		/// <summary>
-		/// Private field that stores the OHLCBar color.  Use the public
-		/// property <see cref="Color"/> to access this value.
-		/// </summary>
-		protected Color _color;
-		/// <summary>
-		/// Private field that stores the pen width for this OHLCBar.  Use the public
-		/// property <see cref="PenWidth"/> to access this value.
-		/// </summary>
-		protected float _penWidth;
+
 		/// <summary>
 		/// Private field that stores the total width for the Opening/Closing line
 		/// segments.  Use the public property <see cref="Size"/> to access this value.
@@ -85,7 +76,7 @@ namespace ZedGraph
 		/// A simple struct that defines the
 		/// default property values for the <see cref="ZedGraph.OHLCBar"/> class.
 		/// </summary>
-		public struct Default
+		new public struct Default
 		{
 			// Default Symbol properties
 			/// <summary>
@@ -94,19 +85,10 @@ namespace ZedGraph
 			/// </summary>
 			public static float Size = 12;
 			/// <summary>
-			/// The default pen width to be used for drawing candlesticks
-			/// (<see cref="OHLCBar.PenWidth"/> property).  Units are points.
-			/// </summary>
-			public static float PenWidth = 1.0F;
-			/// <summary>
 			/// The default display mode for symbols (<see cref="OHLCBar.IsOpenCloseVisible"/> property).
 			/// true to display symbols, false to hide them.
 			/// </summary>
 			public static bool IsOpenCloseVisible = true;
-			/// <summary>
-			/// The default color for drawing CandleSticks (<see cref="OHLCBar.Color"/> property).
-			/// </summary>
-			public static Color Color = Color.Black;
 
 			/// <summary>
 			/// The default value for the <see cref="ZedGraph.OHLCBar.IsAutoSize" /> property.
@@ -129,32 +111,6 @@ namespace ZedGraph
 			set { _isOpenCloseVisible = value; }
 		}
 
-		/// <summary>
-		/// Gets or sets the <see cref="System.Drawing.Color"/> data for this
-		/// <see cref="OHLCBar"/>.
-		/// </summary>
-		/// <remarks>This property only controls the color of
-		/// the vertical line.  The symbol color is controlled separately in
-		/// the <see cref="Symbol"/> property.
-		/// </remarks>
-		public Color Color
-		{
-			get { return _color; }
-			set { _color = value; }
-		}
-		/// <summary>
-		/// The pen width to be used for drawing <see cref="OHLCBar" /> items.
-		/// Units are points.
-		/// </summary>
-		/// <remarks>This property only controls the pen width for the
-		/// vertical line.  The pen width for the symbol outline is
-		/// controlled separately by the <see cref="Symbol"/> property.
-		/// </remarks>
-		public float PenWidth
-		{
-			get { return _penWidth; }
-			set { _penWidth = value; }
-		}
 		/// <summary>
 		/// Gets or sets the total width to be used for drawing the opening/closing line
 		/// segments ("wings") of the <see cref="OHLCBar" /> items. Units are points.
@@ -197,8 +153,7 @@ namespace ZedGraph
 		/// Default constructor that sets all <see cref="OHLCBar"/> properties to
 		/// default values as defined in the <see cref="Default"/> class.
 		/// </summary>
-		public OHLCBar()
-			: this( Default.Color )
+		public OHLCBar() : base()
 		{
 		}
 
@@ -211,12 +166,10 @@ namespace ZedGraph
 		/// <param name="color">A <see cref="Color"/> value indicating
 		/// the color of the symbol
 		/// </param>
-		public OHLCBar( Color color )
+		public OHLCBar( Color color ) : base( color )
 		{
 			_size = Default.Size;
 			_isAutoSize = Default.IsAutoSize;
-			_color = color;
-			_penWidth = Default.PenWidth;
 			_isOpenCloseVisible = Default.IsOpenCloseVisible;
 		}
 
@@ -224,11 +177,9 @@ namespace ZedGraph
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The <see cref="OHLCBar"/> object from which to copy</param>
-		public OHLCBar( OHLCBar rhs )
+		public OHLCBar( OHLCBar rhs ) : base( rhs )
 		{
-			_color = rhs._color;
 			_isOpenCloseVisible = rhs._isOpenCloseVisible;
-			_penWidth = rhs._penWidth;
 			_size = rhs._size;
 			_isAutoSize = rhs._isAutoSize;
 		}
@@ -268,15 +219,14 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
-		protected OHLCBar( SerializationInfo info, StreamingContext context )
+		protected OHLCBar( SerializationInfo info, StreamingContext context ) :
+			base( info, context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
 			_isOpenCloseVisible = info.GetBoolean( "isOpenCloseVisible" );
-			_color = (Color)info.GetValue( "color", typeof( Color ) );
-			_penWidth = info.GetSingle( "penWidth" );
 			_size = info.GetSingle( "size" );
 			_isAutoSize = info.GetBoolean( "isAutoSize" );
 		}
@@ -286,12 +236,10 @@ namespace ZedGraph
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
 		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
-		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
+		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
 			info.AddValue( "isOpenCloseVisible", _isOpenCloseVisible );
-			info.AddValue( "color", _color );
-			info.AddValue( "penWidth", _penWidth );
 			info.AddValue( "size", _size );
 			info.AddValue( "isAutoSize", _isAutoSize );
 		}
@@ -329,7 +277,7 @@ namespace ZedGraph
 		/// <param name="halfSize">
 		/// The scaled width of the candlesticks, pixels</param>
 		/// <param name="pen">A pen with attributes of <see cref="Color"/> and
-		/// <see cref="PenWidth"/> for this <see cref="OHLCBar"/></param>
+		/// <see cref="LineBase.Width"/> for this <see cref="OHLCBar"/></param>
 		public void Draw( Graphics g, GraphPane pane, bool isXBase,
 								float pixBase, float pixHigh, float pixLow,
 								float pixOpen, float pixClose,
@@ -395,7 +343,7 @@ namespace ZedGraph
 				//float halfSize = _size * scaleFactor;
 				float halfSize = GetBarWidth( pane, baseAxis, scaleFactor );
 
-				using ( Pen pen = !curve.IsSelected ? new Pen( _color, _penWidth ) :
+				using ( Pen pen = !curve.IsSelected ? new Pen( _color, _width ) :
 						new Pen( Selection.Border.Color, Selection.Border.Width ) )
 //				using ( Pen pen = new Pen( _color, _penWidth ) )
 				{
@@ -436,8 +384,15 @@ namespace ZedGraph
 							else
 								pixClose = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, close );
 
-							Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
-									pixClose, halfSize, pen );
+							if ( !curve.IsSelected && this._gradientFill.IsGradientValueType )
+							{
+								using ( Pen tPen = GetPen( pane, scaleFactor, pt ) )
+									Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
+											pixClose, halfSize, tPen );
+							}
+							else
+								Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
+										pixClose, halfSize, pen );
 						}
 					}
 				}

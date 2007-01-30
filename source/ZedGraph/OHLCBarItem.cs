@@ -51,7 +51,7 @@ namespace ZedGraph
 	/// value of <see cref="BarSettings.Base"/>, which is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2007-01-26 09:01:49 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2007-01-30 08:02:12 $ </version>
 	[Serializable]
 	public class OHLCBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -276,7 +276,7 @@ namespace ZedGraph
 				pixClose = pixLow + rect.Width / 3;
 			}
 
-			using ( Pen pen = new Pen( _bar.Color, _bar.PenWidth ) )
+			using ( Pen pen = new Pen( _bar.Color, _bar._width ) )
 			{
 				_bar.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixHigh,
 								pixLow, pixOpen, pixClose, scaleFactor, pen );

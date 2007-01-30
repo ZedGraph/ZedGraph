@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.7 $ $Date: 2007-01-26 09:01:49 $ </version>
+	/// <version> $Revision: 3.8 $ $Date: 2007-01-30 08:02:12 $ </version>
 	[Serializable]
 	public class JapaneseCandleStick : OHLCBar, ICloneable, ISerializable
 	{
@@ -163,7 +163,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>This property only controls the color of
 		/// the vertical line when the value is falling.  The rising color is controlled
-		/// by the <see cref="OHLCBar.Color" /> property.
+		/// by the <see cref="LineBase.Color" /> property.
 		/// </remarks>
 		public Color FallingColor
 		{
@@ -184,8 +184,8 @@ namespace ZedGraph
 			_risingFill = new Fill( Default.RisingColor );
 			_fallingFill = new Fill( Default.FallingColor );
 
-			_risingBorder = new Border( Default.RisingBorder, OHLCBar.Default.PenWidth );
-			_fallingBorder = new Border( Default.FallingBorder, OHLCBar.Default.PenWidth );
+			_risingBorder = new Border( Default.RisingBorder, LineBase.Default.Width );
+			_fallingBorder = new Border( Default.FallingBorder, LineBase.Default.Width );
 
 			_fallingColor = Default.FallingColor;
 		}
@@ -398,7 +398,7 @@ namespace ZedGraph
 
 				Color tColor = _color;
 				Color tFallingColor = _fallingColor;
-				float tPenWidth = _penWidth;
+				float tPenWidth = _width;
 				Fill tRisingFill = _risingFill;
 				Fill tFallingFill = _fallingFill;
 				Border tRisingBorder = _risingBorder;
@@ -455,7 +455,17 @@ namespace ZedGraph
 							else
 								pixClose = valueAxis.Scale.Transform( curve.IsOverrideOrdinal, i, close );
 
-							Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
+							if ( !curve.IsSelected && this._gradientFill.IsGradientValueType )
+							{
+								using ( Pen tPen = GetPen( pane, scaleFactor, pt ) )
+									Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
+										pixClose, halfSize, scaleFactor,
+										( tPen ),
+										( close > open ? tRisingFill : tFallingFill ),
+										( close > open ? tRisingBorder : tFallingBorder ), pt );
+							}
+							else
+								Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
 									pixClose, halfSize, scaleFactor,
 									( close > open ? risingPen : fallingPen ),
 									( close > open ? tRisingFill : tFallingFill ),
