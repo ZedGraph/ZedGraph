@@ -68,7 +68,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.76 $ $Date: 2007-01-26 09:01:49 $ </version>
+	/// <version> $Revision: 3.77 $ $Date: 2007-01-30 09:05:04 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -227,6 +227,8 @@ namespace ZedGraph
 		private bool _isShowVScrollBar = false;
 		//private bool		isScrollY2 = false;
 		private bool _isAutoScrollRange = false;
+
+		private double _scrollGrace = 0.05;
 
 		private bool _isSynchronizeXAxes = false;
 		private bool _isSynchronizeYAxes = false;
@@ -1545,6 +1547,21 @@ namespace ZedGraph
 		{
 			get { return _isAutoScrollRange; }
 			set { _isAutoScrollRange = value; }
+		}
+
+		/// <summary>
+		/// Set a "grace" value that leaves a buffer area around the data when
+		/// <see cref="IsAutoScrollRange" /> is true.
+		/// </summary>
+		/// <remarks>
+		/// This value represents a fraction of the total range around each axis.  For example, if the
+		/// axis ranges from 0 to 100, then a 0.05 value for ScrollGrace would set the scroll range
+		/// to -5 to 105.
+		/// </remarks>
+		public double ScrollGrace
+		{
+			get { return _scrollGrace; }
+			set { _scrollGrace = value; }
 		}
 
 		/// <summary>
@@ -3494,15 +3511,20 @@ namespace ZedGraph
 		{
 			if ( this.GraphPane != null )
 			{
-				_xScrollRange.Min = this.GraphPane.XAxis.Scale._rangeMin;
-				_xScrollRange.Max = this.GraphPane.XAxis.Scale._rangeMax;
+				double grace = CalcScrollGrace( this.GraphPane.XAxis.Scale._rangeMin,
+							this.GraphPane.XAxis.Scale._rangeMax );
+
+				_xScrollRange.Min = this.GraphPane.XAxis.Scale._rangeMin - grace;
+				_xScrollRange.Max = this.GraphPane.XAxis.Scale._rangeMax + grace;
 				_xScrollRange.IsScrollable = true;
 
 				for ( int i = 0; i < this.GraphPane.YAxisList.Count; i++ )
 				{
 					Axis axis = this.GraphPane.YAxisList[i];
-					ScrollRange range = new ScrollRange( axis.Scale._rangeMin, axis.Scale._rangeMax,
-															_yScrollRangeList[i].IsScrollable );
+					grace = CalcScrollGrace( axis.Scale._rangeMin, axis.Scale._rangeMax );
+					ScrollRange range = new ScrollRange( axis.Scale._rangeMin - grace,
+						axis.Scale._rangeMax + grace, _yScrollRangeList[i].IsScrollable );
+
 					if ( i >= _yScrollRangeList.Count )
 						_yScrollRangeList.Add( range );
 					else
@@ -3512,8 +3534,10 @@ namespace ZedGraph
 				for ( int i = 0; i < this.GraphPane.Y2AxisList.Count; i++ )
 				{
 					Axis axis = this.GraphPane.Y2AxisList[i];
-					ScrollRange range = new ScrollRange( axis.Scale._rangeMin, axis.Scale._rangeMax,
-															_y2ScrollRangeList[i].IsScrollable );
+					grace = CalcScrollGrace( axis.Scale._rangeMin, axis.Scale._rangeMax );
+					ScrollRange range = new ScrollRange( axis.Scale._rangeMin - grace,
+							axis.Scale._rangeMax + grace, _y2ScrollRangeList[i].IsScrollable );
+
 					if ( i >= _y2ScrollRangeList.Count )
 						_y2ScrollRangeList.Add( range );
 					else
@@ -3524,6 +3548,19 @@ namespace ZedGraph
 				//		out scrollMinY, out scrollMaxY, out scrollMinY2, out scrollMaxY2, false, false,
 				//		this.GraphPane );
 			}
+		}
+
+		private double CalcScrollGrace( double min, double max )
+		{
+			if ( Math.Abs( max - min ) < 1e-30 )
+			{
+				if ( Math.Abs( max ) < 1e-30 )
+					return 1;
+				else
+					return max * _scrollGrace;
+			}
+			else
+				return ( max - min ) * _scrollGrace;
 		}
 
 		private void SetScroll( ScrollBar scrollBar, Axis axis, double scrollMin, double scrollMax )

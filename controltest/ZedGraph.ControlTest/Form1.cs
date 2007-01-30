@@ -33,7 +33,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
-			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
+			CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl1 );
 			//CreateGraph_BasicStick( zedGraphControl2 );
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
@@ -53,7 +53,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_Histogram( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
-			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_Junk( zedGraphControl1 );
 			//CreateGraph_Junk2( zedGraphControl1 );
 			//CreateGraph_Junk4( zedGraphControl1 );
@@ -2760,10 +2760,10 @@ namespace ZedGraph.ControlTest
 			z1.IsShowHScrollBar = true;
 			//z1.ScrollMinX = 0;
 			//z1.ScrollMaxX = 550;
-			//z1.IsShowVScrollBar = true;
-			//z1.IsAutoScrollRange = true;
+			z1.IsShowVScrollBar = true;
+			z1.IsAutoScrollRange = true;
 
-			//z1.GraphPane.IsBoundedRanges = false;
+			z1.GraphPane.IsBoundedRanges = true;
 			//z1.GraphPane.XAxis.Scale.Min = 450;
 			//z1.GraphPane.XAxis.Scale.MajorStep = 10;
 			//z1.GraphPane.XAxis.Scale.Max = 550;
