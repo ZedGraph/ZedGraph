@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion based on code by Jerry Vos</author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2007-02-05 06:29:40 $ </version>
 	[Serializable]
 	public class StockPointList : List<StockPt>, IPointList, IPointListEdit
 	{
@@ -100,8 +100,19 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="point">The <see cref="StockPt"/> object to
 		/// be added</param>
+		new public void Add( StockPt point )
+		{
+			base.Add( new StockPt( point ) );
+		}
+
+		/// <summary>
+		/// Add a <see cref="PointPair"/> object to the collection at the end of the list.
+		/// </summary>
+		/// <param name="point">The <see cref="PointPair"/> object to be added</param>
 		public void Add( PointPair point )
 		{
+//			throw new ArgumentException( "Error: Only the StockPt type can be added to StockPointList" +
+//				".  An ordinary PointPair is not allowed" );
 			base.Add( new StockPt( point ) );
 		}
 

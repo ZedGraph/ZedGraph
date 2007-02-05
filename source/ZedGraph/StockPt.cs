@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2007-01-26 09:01:49 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-02-05 06:29:40 $ </version>
 	[Serializable]
 	public class StockPt : PointPair, ISerializable
 	{
@@ -95,11 +95,8 @@ namespace ZedGraph
 		/// <param name="low">The daily low stock price</param>
 		/// <param name="vol">The daily trading volume</param>
 		public StockPt( double date, double high, double low, double open, double close, double vol )
-			: base( date, high, low )
+			: this( date, high, low, open, close, vol, null )
 		{
-			this.Open = open;
-			this.Close = close;
-			this.Vol = vol;
 		}
 
 		/// <summary>
@@ -119,6 +116,7 @@ namespace ZedGraph
 			this.Open = open;
 			this.Close = close;
 			this.Vol = vol;
+			this.ColorValue = PointPair.Missing;
 		}
 
 		/// <summary>
@@ -131,6 +129,7 @@ namespace ZedGraph
 			this.Open = rhs.Open;
 			this.Close = rhs.Close;
 			this.Vol = rhs.Vol;
+			this.ColorValue = rhs.ColorValue;
 		}
 
 		/// <summary>
@@ -146,12 +145,14 @@ namespace ZedGraph
 				this.Open = pt.Open;
 				this.Close = pt.Close;
 				this.Vol = pt.Vol;
+				this.ColorValue = rhs.ColorValue;
 			}
 			else
 			{
 				this.Open = PointPair.Missing;
 				this.Close = PointPair.Missing;
 				this.Vol = PointPair.Missing;
+				this.ColorValue = PointPair.Missing;
 			}
 		}
 

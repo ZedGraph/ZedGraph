@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.28 $ $Date: 2007-01-26 09:01:49 $ </version>
+	/// <version> $Revision: 3.29 $ $Date: 2007-02-05 06:29:40 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -944,7 +944,6 @@ namespace ZedGraph
 				Stream stream = new MemoryStream();
 				Metafile metafile = new Metafile( stream, hdc, _rect,
 							MetafileFrameUnit.Pixel, EmfType.EmfOnly );
-				g.ReleaseHdc( hdc );
 
 				using ( Graphics metafileGraphics = Graphics.FromImage( metafile ) )
 				{
@@ -958,6 +957,7 @@ namespace ZedGraph
 					// output
 					this.Draw( metafileGraphics );
 
+					g.ReleaseHdc( hdc );
 					return metafile;
 				}
 			}

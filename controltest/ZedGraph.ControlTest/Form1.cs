@@ -33,7 +33,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
-			CreateGraph_BasicLinearScroll( zedGraphControl1 );
+			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl1 );
 			//CreateGraph_BasicStick( zedGraphControl2 );
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
@@ -61,7 +61,6 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_junk6( zedGraphControl1 );
 			//CreateGraph_junk7( zedGraphControl1 );
 			//CreateGraph_junk8( zedGraphControl1 );
-			//CreateGraph_OHLCBar( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
@@ -71,6 +70,8 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_NegativeHorizontalBars( zedGraphControl1 );
 			//CreateGraph_NoDupePointList( zedGraphControl1 );
 			//CreateGraph_NormalPane( zedGraphControl1 );
+			//CreateGraph_OHLCBar( zedGraphControl1 );
+			CreateGraph_OHLCBarGradient( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
 			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
 			//CreateGraph_Pie( zedGraphControl1 );
@@ -229,30 +230,30 @@ namespace ZedGraph.ControlTest
 			master.Legend.IsVisible = true;
 			master.Legend.Position = ZedGraph.LegendPos.TopCenter;
 			GraphPane[] myPane = new GraphPane[3];
-			for ( int j=0; j<3; j++ )
+			for ( int j = 0; j < 3; j++ )
 			{
-				if ( j<2 )
-					myPane[j] = new GraphPane(new RectangleF(40, 40, 150, 100), "", "", "");
+				if ( j < 2 )
+					myPane[j] = new GraphPane( new RectangleF( 40, 40, 150, 100 ), "", "", "" );
 				else
-					myPane[j] = new GraphPane(new RectangleF(40, 40, 300, 100), "", "", "");
+					myPane[j] = new GraphPane( new RectangleF( 40, 40, 300, 100 ), "", "", "" );
 
-				myPane[j].Fill = new Fill(Color.BlanchedAlmond) ;
+				myPane[j].Fill = new Fill( Color.BlanchedAlmond );
 
 				// myPane(j).AxisFill = New ZedGraph.Fill(Color.SeaGreen) 
 				myPane[j].BaseDimension = 6.0F;
 				myPane[j].XAxis.Title.IsVisible = true;
-				myPane[j].XAxis.Scale.IsVisible = true; 
-				myPane[j].Legend.IsVisible = false; 
-				myPane[j].Border.IsVisible = false; 
-				myPane[j].Title.IsVisible = true; 
+				myPane[j].XAxis.Scale.IsVisible = true;
+				myPane[j].Legend.IsVisible = false;
+				myPane[j].Border.IsVisible = false;
+				myPane[j].Title.IsVisible = true;
 				myPane[j].Margin.All = 0;
- 
+
 				// This sets the minimum amount of space for the left and right side, respectively 
 				// The reason for this is so that the AxisRects all end up being the same size. 
- 
+
 				myPane[j].YAxis.MinSpace = 50;
 				myPane[j].Y2Axis.MinSpace = 20;
-				master.Add(myPane[j]);
+				master.Add( myPane[j] );
 			}
 
 			using ( Graphics g = CreateGraphics() )
@@ -261,9 +262,9 @@ namespace ZedGraph.ControlTest
 			//myPane[0] = zgHistogram.GraphPane.Clone;
 			//myPane[1] = zgProbability.GraphPane.Clone;
 			//myPane[2] = zgTimeSeries.GraphPane.Clone; 
- 
+
 			// instead of  
-			 
+
 			// Call CreateGraph_TimeSeries(zgM, myPane(2)) 
 			// Call CreateGraph_Probability(zgM, myPane(1)) 
 			// Call CreateGraph_Histogram(zgM, myPane(0)) 
@@ -573,11 +574,11 @@ namespace ZedGraph.ControlTest
 			//myCurve.Bar.PenWidth = 2;
 			//myCurve.Bar.IsOpenCloseVisible = false;
 
-			Fill fill = new Fill( Color.Red, Color.Yellow, Color.Blue ); 
-			fill.RangeMin = 40; 
+			Fill fill = new Fill( Color.Red, Color.Yellow, Color.Blue );
+			fill.RangeMin = 40;
 			fill.RangeMax = 70;
 			fill.Type = FillType.GradientByY;
-			myCurve.Bar.GradientFill = fill; 
+			myCurve.Bar.GradientFill = fill;
 
 			// Use DateAsOrdinal to skip weekend gaps
 			myPane.XAxis.Type = AxisType.DateAsOrdinal;
@@ -595,6 +596,71 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 			z1.Invalidate();
 
+		}
+
+		public void CreateGraph_OHLCBarGradient( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			// Set the title and axis labels   
+			myPane.Title.Text = "OHLC Chart Demo";
+			myPane.XAxis.Title.Text = "Date";
+			myPane.YAxis.Title.Text = "Price";
+
+			//Load a StockPointList with random data.........................
+			StockPointList spl = new StockPointList();
+			Random rand = new Random();
+
+			// First day is jan 1st
+			XDate xDate = new XDate( 2006, 1, 1 );
+			double open = 50.0;
+			double prevClose = 0;
+
+			for ( int i = 0; i < 50; i++ )
+			{
+				double x = xDate.XLDate;
+				double close = open + rand.NextDouble() * 10.0 - 5.0;
+				double hi = Math.Max( open, close ) + rand.NextDouble() * 5.0;
+				double low = Math.Min( open, close ) - rand.NextDouble() * 5.0;
+
+				StockPt pt = new StockPt( x, hi, low, open, close, 100000 );
+				//if price is increasing color=black, else color=red
+				pt.ColorValue = close > prevClose ? 2 : 1;
+				spl.Add( pt );
+
+				prevClose = close;
+				open = close;
+				// Advance one day
+				xDate.AddDays( 1.0 );
+				// but skip the weekends
+				if ( XDate.XLDateToDayOfWeek( xDate.XLDate ) == 6 )
+					xDate.AddDays( 2.0 );
+			}
+
+			//Setup the gradient fill..............
+			Color[] colors = { Color.Red, Color.Black };
+			Fill myFill = new Fill( colors );
+			myFill.Type = FillType.GradientByColorValue;
+			myFill.SecondaryValueGradientColor = Color.Empty;
+			myFill.RangeMin = 1;
+			myFill.RangeMax = 2;
+
+			//Create the OHLC and assign it a Fill
+			OHLCBarItem myCurve = myPane.AddOHLCBar( "Price", spl, Color.Empty );
+			myCurve.Bar.GradientFill = myFill;
+			myCurve.Bar.IsAutoSize = true;
+
+			// Use DateAsOrdinal to skip weekend gaps
+			myPane.XAxis.Type = AxisType.DateAsOrdinal;
+			myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
+
+			// pretty it up a little
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+			myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
+
+			// Tell ZedGraph to calculate the axis ranges
+			zgc.AxisChange();
+			zgc.Invalidate();
 		}
 
 		// Japanese Candlestick
@@ -702,7 +768,7 @@ namespace ZedGraph.ControlTest
 				if ( i == 10 )
 					y = PointPair.Missing;
 				list.Add( x, y, i / 36.0, tag );
-				list2.Add( x, y + 50, (count - i) * 70.0 );
+				list2.Add( x, y + 50, ( count - i ) * 70.0 );
 				list3.Add( x, y + 150, i / 36.0 );
 			}
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
@@ -3060,7 +3126,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < numPoints; i++ )
 			{
-				double val = Math.Sin( Math.PI * 10.0 * (double) i / (double) numPoints ); // rand.NextDouble();
+				double val = Math.Sin( Math.PI * 10.0 * (double)i / (double)numPoints ); // rand.NextDouble();
 				double x = (double)i;
 				double y = val; // x + val * val * val * 10;
 
@@ -3224,99 +3290,99 @@ namespace ZedGraph.ControlTest
 			GraphPane myPane = z1.GraphPane;
 		}
 
-/*
-			myPane.Title.Text = "DataSourcePointList Test";
-			myPane.XAxis.Title.Text = "Date";
-			myPane.YAxis.Title.Text = "Freight Charges ($US)";
+		/*
+					myPane.Title.Text = "DataSourcePointList Test";
+					myPane.XAxis.Title.Text = "Date";
+					myPane.YAxis.Title.Text = "Freight Charges ($US)";
 
-			// Create a new DataSourcePointList to handle the database connection
-			DataSourcePointList dspl = new DataSourcePointList();
-			// Create a TableAdapter instance to access the database
-			ZedGraph.ControlTest.NorthwindDataSetTableAdapters.OrdersTableAdapter adapter =
-						new ZedGraph.ControlTest.NorthwindDataSetTableAdapters.OrdersTableAdapter();
-			// Create a DataTable and fill it with data from the database
-			ZedGraph.ControlTest.NorthwindDataSet.OrdersDataTable table = adapter.GetData();
+					// Create a new DataSourcePointList to handle the database connection
+					DataSourcePointList dspl = new DataSourcePointList();
+					// Create a TableAdapter instance to access the database
+					ZedGraph.ControlTest.NorthwindDataSetTableAdapters.OrdersTableAdapter adapter =
+								new ZedGraph.ControlTest.NorthwindDataSetTableAdapters.OrdersTableAdapter();
+					// Create a DataTable and fill it with data from the database
+					ZedGraph.ControlTest.NorthwindDataSet.OrdersDataTable table = adapter.GetData();
 
-			//NorthwindDataSet ds = ZedGraph.ControlTest.NorthwindDataSet;
-			//DataTable dt = ds.Tables["Orders"];
-			//dt.Select( "SELECT *" );
+					//NorthwindDataSet ds = ZedGraph.ControlTest.NorthwindDataSet;
+					//DataTable dt = ds.Tables["Orders"];
+					//dt.Select( "SELECT *" );
 
-			//DataTable dt = ds.Tables[
-			//dt.
+					//DataTable dt = ds.Tables[
+					//dt.
 
-			//string strConn = "Provider=SQLOLEDB;Data Source=(local)\\NetSDK;" +
-			//		"Initial Catalog=Northwind;Trusted_Connection=Yes;";
-			//string strSQL = "SELECT CustomerID, CompanyName, ContactName, Phone " +
-			//		"FROM Customers";
-			//OleDbDataAdapter da = new OleDbDataAdapter( strSQL, strConn );
-			//DataSet ds = new DataSet();
-			//da.Fill( ds, "Customers" );
+					//string strConn = "Provider=SQLOLEDB;Data Source=(local)\\NetSDK;" +
+					//		"Initial Catalog=Northwind;Trusted_Connection=Yes;";
+					//string strSQL = "SELECT CustomerID, CompanyName, ContactName, Phone " +
+					//		"FROM Customers";
+					//OleDbDataAdapter da = new OleDbDataAdapter( strSQL, strConn );
+					//DataSet ds = new DataSet();
+					//da.Fill( ds, "Customers" );
 
-			//			string cn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source = Northwind.mdb;Persist Security Info=False";
-			//			string sql = "SELECT * FROM Orders";
-			//			OleDbConnection con = new OleDbConnection( cn );
-			//			OleDbDataAdapter adapt = new OleDbDataAdapter();
-			//			adapt.SelectCommand = new OleDbCommand( sql, con );
+					//			string cn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source = Northwind.mdb;Persist Security Info=False";
+					//			string sql = "SELECT * FROM Orders";
+					//			OleDbConnection con = new OleDbConnection( cn );
+					//			OleDbDataAdapter adapt = new OleDbDataAdapter();
+					//			adapt.SelectCommand = new OleDbCommand( sql, con );
 
-			//			DataSet ds = new DataSet(); ;
-			//DataTable dt = new DataTable();
+					//			DataSet ds = new DataSet(); ;
+					//DataTable dt = new DataTable();
 
-			//			adapt.Fill( ds, "Orders" );
+					//			adapt.Fill( ds, "Orders" );
 
-			// Specify the table as the data source
-			dspl.DataSource = table;
-			// The X data will come from the "OrderDate" column
-			dspl.XDataMember = "OrderDate";
-			// The Y data will come from the "Freight" column
-			dspl.YDataMember = "Freight";
-			// The Z data are not used
-			dspl.ZDataMember = null;
-			// The Tag data will come from the "ShipName" column
-			// (note that this will just set PointPair.Tag = ShipName)
-			dspl.TagDataMember = "ShipName";
+					// Specify the table as the data source
+					dspl.DataSource = table;
+					// The X data will come from the "OrderDate" column
+					dspl.XDataMember = "OrderDate";
+					// The Y data will come from the "Freight" column
+					dspl.YDataMember = "Freight";
+					// The Z data are not used
+					dspl.ZDataMember = null;
+					// The Tag data will come from the "ShipName" column
+					// (note that this will just set PointPair.Tag = ShipName)
+					dspl.TagDataMember = "ShipName";
 
-			//List<Sample> sampleList = new List<Sample>();
+					//List<Sample> sampleList = new List<Sample>();
 
-			//ArrayList arrayList = new ArrayList();
-			//DateTime dt = new DateTime( 2006, 3, 1 );
-			//for ( int i = 0; i < 50; i++ )
-			//{
-			//	double x = i;
-			//	double y = Math.Sin( i / 5 );
-			//	Sample sample = new Sample();
-			//	sample.Time = dt.AddDays( i );
-			//	sample.Position = x;
-			//	sample.Velocity = y;
-			//arrayList.Add( sample );
-			//	sampleList.Add( sample );
-			//}
+					//ArrayList arrayList = new ArrayList();
+					//DateTime dt = new DateTime( 2006, 3, 1 );
+					//for ( int i = 0; i < 50; i++ )
+					//{
+					//	double x = i;
+					//	double y = Math.Sin( i / 5 );
+					//	Sample sample = new Sample();
+					//	sample.Time = dt.AddDays( i );
+					//	sample.Position = x;
+					//	sample.Velocity = y;
+					//arrayList.Add( sample );
+					//	sampleList.Add( sample );
+					//}
 
-			//dspl.DataSource = sampleList;
-			//dspl.XDataMember = "Time";
-			//dspl.YDataMember = "Position";
-			//dspl.ZDataMember = "Velocity";
-			//dspl.TagDataMember = null;
+					//dspl.DataSource = sampleList;
+					//dspl.XDataMember = "Time";
+					//dspl.YDataMember = "Position";
+					//dspl.ZDataMember = "Velocity";
+					//dspl.TagDataMember = null;
 
 
 
-			//int count = table.Count;
+					//int count = table.Count;
 
-			// X axis will be dates
-			z1.GraphPane.XAxis.Type = AxisType.Date;
+					// X axis will be dates
+					z1.GraphPane.XAxis.Type = AxisType.Date;
 
-			// Make a curve
-			LineItem myCurve = z1.GraphPane.AddCurve( "Orders", dspl, Color.Blue );
-			// Turn off the line so it's a scatter plot
-			myCurve.Line.IsVisible = false;
+					// Make a curve
+					LineItem myCurve = z1.GraphPane.AddCurve( "Orders", dspl, Color.Blue );
+					// Turn off the line so it's a scatter plot
+					myCurve.Line.IsVisible = false;
 
-			// Show the point values.  These are derived from the "ShipName" database column,
-			// which is set as the "Tag" property.
-			z1.IsShowPointValues = true;
+					// Show the point values.  These are derived from the "ShipName" database column,
+					// which is set as the "Tag" property.
+					z1.IsShowPointValues = true;
 
-			// Auto set the scale ranges
-			z1.AxisChange();
-		}
-*/
+					// Auto set the scale ranges
+					z1.AxisChange();
+				}
+		*/
 		private void CreateGraph_DataSourcePointList( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.MasterPane[0];
