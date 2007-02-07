@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2007-02-05 06:29:40 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2007-02-07 07:46:46 $ </version>
 	[Serializable]
 	public class StockPt : PointPair, ISerializable
 	{
@@ -43,12 +43,12 @@ namespace ZedGraph
 	#region Member variables
 
 		// member variable mapping:
-		//   X = Date
-		//   Y = High
-		//   Z = Low
+		//   Date = X
+		//   High = Y
+		//   Low = Z
 		//   Open = Open
 		//   Close = Close
-		//   Vol = Volume
+		//   Vol = Vol
 
 		/// <summary>
 		/// This opening value
@@ -78,11 +78,8 @@ namespace ZedGraph
 		/// <summary>
 		/// Default Constructor
 		/// </summary>
-		public StockPt() : base()
+		public StockPt() : this( 0, 0, 0, 0, 0, 0, null )
 		{
-			this.Open = 0;
-			this.Close = 0;
-			this.Vol = 0;
 		}
 
 		/// <summary>
@@ -111,12 +108,14 @@ namespace ZedGraph
 		/// <param name="tag">The user-defined <see cref="PointPair.Tag" /> property.</param>
 		public StockPt( double date, double high, double low, double open, double close, double vol,
 					string tag )
-			: base( date, high, low, tag )
+			: base( date, high )
 		{
+			this.Low = low;
 			this.Open = open;
 			this.Close = close;
 			this.Vol = vol;
 			this.ColorValue = PointPair.Missing;
+			this.Tag = tag;
 		}
 
 		/// <summary>
@@ -126,10 +125,16 @@ namespace ZedGraph
 		public StockPt( StockPt rhs )
 			: base( rhs )
 		{
+			this.Low = rhs.Low;
 			this.Open = rhs.Open;
 			this.Close = rhs.Close;
 			this.Vol = rhs.Vol;
 			this.ColorValue = rhs.ColorValue;
+
+			if ( rhs.Tag is ICloneable )
+				this.Tag = ( (ICloneable)rhs.Tag ).Clone();
+			else
+				this.Tag = rhs.Tag;
 		}
 
 		/// <summary>
@@ -163,7 +168,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 10;
+		public const int schema3 = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -177,12 +182,14 @@ namespace ZedGraph
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
-			int sch = info.GetInt32( "schema2" );
+			int sch = info.GetInt32( "schema3" );
 
 			Open = info.GetDouble( "Open" );
 			Close = info.GetDouble( "Close" );
 			Vol = info.GetDouble( "Vol" );
+			ColorValue = info.GetDouble( "ColorValue" );
 		}
+
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
 		/// </summary>
@@ -192,10 +199,11 @@ namespace ZedGraph
 		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			base.GetObjectData( info, context );
-			info.AddValue( "schema2", schema2 );
+			info.AddValue( "schema3", schema2 );
 			info.AddValue( "Open", Open );
 			info.AddValue( "Close", Close );
 			info.AddValue( "Vol", Vol );
+			info.AddValue( "ColorValue", ColorValue );
 		}
 
 	#endregion
@@ -230,10 +238,10 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// This is a user value that can be anything.  It is used to provide special 
-		/// property-based coloration to the graph elements.
+		/// The ColorValue property.  This is used with the
+		/// <see cref="FillType.GradientByColorValue" /> option.
 		/// </summary>
-		new public double ColorValue
+		override public double ColorValue
 		{
 			get { return _colorValue; }
 			set { _colorValue = value; }
@@ -278,7 +286,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="isShowAll">true to show all the value coordinates</param>
 		/// <returns>A string representation of the <see cref="StockPt" />.</returns>
-		public new string ToString( bool isShowAll )
+		override public string ToString( bool isShowAll )
 		{
 			return this.ToString( PointPair.DefaultFormat, isShowAll );
 		}
@@ -293,7 +301,7 @@ namespace ZedGraph
 		/// the two double type values (see <see cref="System.Double.ToString()"/>).</param>
 		/// <returns>A string representation of the PointPair</returns>
 		/// <param name="isShowAll">true to show all the value coordinates</param>
-		public new string ToString( string format, bool isShowAll )
+		override public string ToString( string format, bool isShowAll )
 		{
 			return "( " + XDate.ToString( this.Date,  "g" ) +
 					", " + this.Close.ToString( format ) +

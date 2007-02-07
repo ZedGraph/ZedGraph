@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.34 $ $Date: 2006-08-25 05:19:09 $ </version>
+	/// <version> $Revision: 3.35 $ $Date: 2007-02-07 07:46:46 $ </version>
 	[Serializable]
 	public class PointPairList : List<PointPair>, IPointList, IPointListEdit
 	{
@@ -468,7 +468,7 @@ namespace ZedGraph
 			if ( _sorted )
 				return true;
 
-			this.Sort( new PointPair.PointPairComparer( SortType.XValues ) );
+			Sort( new PointPair.PointPairComparer( SortType.XValues ) );
 			return false;
 		}
 		

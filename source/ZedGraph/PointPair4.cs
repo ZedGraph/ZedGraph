@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2007-02-07 07:46:46 $ </version>
 	[Serializable]
 	public class PointPair4 : PointPair, ISerializable
 	{
@@ -98,7 +98,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 10;
+		public const int schema3 = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -111,7 +111,7 @@ namespace ZedGraph
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
-			int sch = info.GetInt32( "schema2" );
+			int sch = info.GetInt32( "schema3" );
 
 			T = info.GetDouble( "T" );
 		}
@@ -123,7 +123,7 @@ namespace ZedGraph
 		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
 		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
-			info.AddValue( "schema2", schema2 );
+			info.AddValue( "schema2", schema3 );
 			info.AddValue( "T", T );
 		}
 

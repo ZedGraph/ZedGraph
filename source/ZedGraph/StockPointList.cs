@@ -29,10 +29,11 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion based on code by Jerry Vos</author>
-	/// <version> $Revision: 3.2 $ $Date: 2007-02-05 06:29:40 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-02-07 07:46:46 $ </version>
 	[Serializable]
 	public class StockPointList : List<StockPt>, IPointList, IPointListEdit
 	{
+
 	#region Properties
 
 		/// <summary>

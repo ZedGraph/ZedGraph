@@ -27,40 +27,19 @@ using IComparer	= System.Collections.IComparer;
 namespace ZedGraph
 {
 	/// <summary>
-	/// A simple point represented by an (X,Y) pair of
-	/// double values.
+	/// A simple point represented by an (X,Y,Z) group of double values.
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.21 $ $Date: 2007-01-26 10:08:24 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2007-02-07 07:46:46 $ </version>
 	[Serializable]
-	public class PointPair : ISerializable
+	public class PointPair : PointPairBase, ISerializable
 	{
 	#region Member variables
-		/// <summary>
-		/// Missing values are represented internally using <see cref="System.Double.MaxValue"/>.
-		/// </summary>
-		public const double Missing = Double.MaxValue;
-
-		/// <summary>
-		/// The default format to be used for displaying point values via the
-		/// <see cref="ToString()"/> method.
-		/// </summary>
-		public const string DefaultFormat = "G";
-
-		/// <summary>
-		/// This PointPair's X coordinate
-		/// </summary>
-		public double X;
-
-		/// <summary>
-		/// This PointPair's Y coordinate
-		/// </summary>
-		public double Y;
 		
 		/// <summary>
 		/// This PointPair's Z coordinate.  Also used for the lower value (dependent axis)
-		/// for <see cref="HiLowBarItem"/> charts.
+		/// for <see cref="HiLowBarItem"/> and <see cref="ErrorBarItem" /> charts.
 		/// </summary>
 		public double Z;
 
@@ -144,9 +123,8 @@ namespace ZedGraph
 		/// <param name="z">This pair's z or lower dependent coordinate.</param>
 		/// <param name="tag">This pair's <see cref="Tag"/> property</param>
 		public PointPair( double x, double y, double z, object tag )
+			: base( x, y )
 		{
-			this.X = x;
-			this.Y = y;
 			this.Z = z;
 			this.Tag = tag;
 		}
@@ -164,10 +142,8 @@ namespace ZedGraph
 		/// The PointPair copy constructor.
 		/// </summary>
 		/// <param name="rhs">The basis for the copy.</param>
-		public PointPair( PointPair rhs )
+		public PointPair( PointPair rhs ) : base( rhs )
 		{
-			this.X = rhs.X;
-			this.Y = rhs.Y;
 			this.Z = rhs.Z;
 
 			if ( rhs.Tag is ICloneable )
@@ -175,13 +151,14 @@ namespace ZedGraph
 			else
 				this.Tag = rhs.Tag;
 		}
+
 	#endregion
 
 	#region Serialization
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 10;
+		public const int schema2 = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -191,15 +168,13 @@ namespace ZedGraph
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
 		protected PointPair( SerializationInfo info, StreamingContext context )
+			: base( info, context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
 			// backwards compatible as new member variables are added to classes
-			int sch = info.GetInt32( "schema" );
+			int sch = info.GetInt32( "schema2" );
 
-			X = info.GetDouble( "X" );
-			Y = info.GetDouble( "Y" );
 			Z = info.GetDouble( "Z" );
-
 			Tag = info.GetValue( "Tag", typeof(object) );
 		}
 		/// <summary>
@@ -208,59 +183,15 @@ namespace ZedGraph
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
 		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
-		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
+		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
-			info.AddValue( "schema", schema );
-			info.AddValue( "X", X );
-			info.AddValue( "Y", Y );
+			info.AddValue( "schema2", schema2 );
 			info.AddValue( "Z", Z );
 			info.AddValue( "Tag", Tag );
 		}
 	#endregion
 
 	#region Properties
-		/// <summary>
-		/// Readonly value that determines if either the X or the Y
-		/// coordinate in this PointPair is a missing value.
-		/// </summary>
-		/// <returns>true if either value is missing</returns>
-		public bool IsMissing
-		{
-			get { return this.X == PointPair.Missing || this.Y == PointPair.Missing; }
-		}
-
-		/// <summary>
-		/// Readonly value that determines if either the X or the Y
-		/// coordinate in this PointPair is an invalid (not plotable) value.
-		/// It is considered invalid if it is missing (equal to System.Double.Max),
-		/// Infinity, or NaN.
-		/// </summary>
-		/// <returns>true if either value is invalid</returns>
-		public bool IsInvalid
-		{
-			get { return	this.X == PointPair.Missing ||
-							this.Y == PointPair.Missing ||
-							Double.IsInfinity( this.X ) ||
-							Double.IsInfinity( this.Y ) ||
-							Double.IsNaN( this.X ) ||
-							Double.IsNaN( this.Y );
-				}
-		}
-
-		/// <summary>
-		/// static method to determine if the specified point value is invalid.
-		/// </summary>
-		/// <remarks>The value is considered invalid if it is <see cref="PointPair.Missing"/>,
-		/// <see cref="Double.PositiveInfinity"/>, <see cref="Double.NegativeInfinity"/>
-		/// or <see cref="Double.NaN"/>.</remarks>
-		/// <param name="value">The value to be checked for validity.</param>
-		/// <returns>true if the value is invalid, false otherwise</returns>
-		public static bool IsValueInvalid( double value )
-		{
-			return ( value == PointPair.Missing ||
-					Double.IsInfinity( value ) ||
-					Double.IsNaN( value ) );
-		}
 
 		/// <summary>
 		/// Readonly value that determines if either the X, Y, or Z
@@ -303,7 +234,7 @@ namespace ZedGraph
 		/// can be mapped to a unique value.  This is used with the
 		/// <see cref="FillType.GradientByColorValue" /> option.
 		/// </remarks>
-		public double ColorValue
+		virtual public double ColorValue
 		{
 			get { return Z; }
 			set { Z = value; }
@@ -311,22 +242,8 @@ namespace ZedGraph
 
 	#endregion
 
-	#region Operator Overloads
-		/// <summary>
-		/// Implicit conversion from PointPair to PointF.  Note that this conversion
-		/// can result in data loss, since the data are being cast from a type
-		/// double (64 bit) to a float (32 bit).
-		/// </summary>
-		/// <param name="pair">The PointPair struct on which to operate</param>
-		/// <returns>A PointF struct equivalent to the PointPair</returns>
-		public static implicit operator PointF( PointPair pair )
-		{
-			return new PointF( (float) pair.X, (float) pair.Y );
-		}
-
-	#endregion
-
 	#region Inner classes
+
 		/// <summary>
 		/// Compares points based on their y values.  Is setup to be used in an
 		/// ascending order sort.
@@ -334,38 +251,38 @@ namespace ZedGraph
 		/// </summary>
 		public class PointPairComparerY : IComparer<PointPair>
 		{
-		
+
 			/// <summary>
 			/// Compares two <see cref="PointPair"/>s.
 			/// </summary>
 			/// <param name="l">Point to the left.</param>
 			/// <param name="r">Point to the right.</param>
 			/// <returns>-1, 0, or 1 depending on l.Y's relation to r.Y</returns>
-			public int Compare( PointPair l, PointPair r ) 
+			public int Compare( PointPair l, PointPair r )
 			{
-				if (l == null && r == null) 
+				if ( l == null && r == null )
 				{
 					return 0;
-				} 
-				else if (l == null && r != null) 
+				}
+				else if ( l == null && r != null )
 				{
 					return -1;
-				} 
-				else if (l != null && r == null) 
+				}
+				else if ( l != null && r == null )
 				{
 					return 1;
-				} 
+				}
 
 				double lY = l.Y;
 				double rY = r.Y;
 
-				if (System.Math.Abs(lY - rY) < .000000001)
+				if ( System.Math.Abs( lY - rY ) < .000000001 )
 					return 0;
-				
+
 				return lY < rY ? -1 : 1;
 			}
 		}
-	
+
 		/// <summary>
 		/// Compares points based on their x values.  Is setup to be used in an
 		/// ascending order sort.
@@ -374,7 +291,7 @@ namespace ZedGraph
 		public class PointPairComparer : IComparer<PointPair>
 		{
 			private SortType sortType;
-			
+
 			/// <summary>
 			/// Constructor for PointPairComparer.
 			/// </summary>
@@ -383,24 +300,24 @@ namespace ZedGraph
 			{
 				this.sortType = type;
 			}
-			
+
 			/// <summary>
 			/// Compares two <see cref="PointPair"/>s.
 			/// </summary>
 			/// <param name="l">Point to the left.</param>
 			/// <param name="r">Point to the right.</param>
 			/// <returns>-1, 0, or 1 depending on l.X's relation to r.X</returns>
-			public int Compare( PointPair l, PointPair r ) 
-			{				 
-				if ( l == null && r == null ) 
+			public int Compare( PointPair l, PointPair r )
+			{
+				if ( l == null && r == null )
 					return 0;
-				else if ( l == null && r != null ) 
+				else if ( l == null && r != null )
 					return -1;
-				else if ( l != null && r == null ) 
+				else if ( l != null && r == null )
 					return 1;
 
 				double lVal, rVal;
-			
+
 				if ( sortType == SortType.XValues )
 				{
 					lVal = l.X;
@@ -411,7 +328,7 @@ namespace ZedGraph
 					lVal = l.Y;
 					rVal = r.Y;
 				}
-				
+
 				if ( lVal == PointPair.Missing || Double.IsInfinity( lVal ) || Double.IsNaN( lVal ) )
 					l = null;
 				if ( rVal == PointPair.Missing || Double.IsInfinity( rVal ) || Double.IsNaN( rVal ) )
@@ -419,18 +336,19 @@ namespace ZedGraph
 
 				if ( ( l == null && r == null ) || ( System.Math.Abs( lVal - rVal ) < 1e-10 ) )
 					return 0;
-				else if ( l == null && r != null ) 
+				else if ( l == null && r != null )
 					return -1;
-				else if ( l != null && r == null ) 
+				else if ( l != null && r == null )
 					return 1;
 				else
 					return lVal < rVal ? -1 : 1;
 			}
 		}
-	
+
 	#endregion
 
 	#region Methods
+
 		/// <summary>
 		/// Compare two <see cref="PointPair"/> objects for equality.  To be equal, X, Y, and Z
 		/// must be exactly the same between the two objects.
@@ -449,17 +367,7 @@ namespace ZedGraph
 		/// <returns></returns>
 		public override int GetHashCode()
 		{
-			return base.GetHashCode ();
-		}
-
-		/// <summary>
-		/// Format this PointPair value using the default format.  Example:  "( 12.345, -16.876 )".
-		/// The two double values are formatted with the "g" format type.
-		/// </summary>
-		/// <returns>A string representation of the PointPair</returns>
-		public override string ToString()
-		{
-			return this.ToString( PointPair.DefaultFormat, false );
+			return base.GetHashCode();
 		}
 
 		/// <summary>
@@ -468,21 +376,9 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="isShowZ">true to show the third "Z" or low dependent value coordinate</param>
 		/// <returns>A string representation of the PointPair</returns>
-		public string ToString( bool isShowZ )
+		virtual public string ToString( bool isShowZ )
 		{
 			return this.ToString( PointPair.DefaultFormat, isShowZ );
-		}
-
-		/// <summary>
-		/// Format this PointPair value using a general format string.
-		/// Example:  a format string of "e2" would give "( 1.23e+001, -1.69e+001 )".
-		/// </summary>
-		/// <param name="format">A format string that will be used to format each of
-		/// the two double type values (see <see cref="System.Double.ToString()"/>).</param>
-		/// <returns>A string representation of the PointPair</returns>
-		public string ToString( string format )
-		{
-			return this.ToString( format, false );
 		}
 
 		/// <summary>
@@ -495,29 +391,12 @@ namespace ZedGraph
 		/// the two double type values (see <see cref="System.Double.ToString()"/>).</param>
 		/// <returns>A string representation of the PointPair</returns>
 		/// <param name="isShowZ">true to show the third "Z" or low dependent value coordinate</param>
-		public string ToString( string format, bool isShowZ )
+		virtual public string ToString( string format, bool isShowZ )
 		{
 			return "( " + this.X.ToString( format ) +
 					", " + this.Y.ToString( format ) + 
 					( isShowZ ? ( ", " + this.Z.ToString( format ) ) : "" )
 					+ " )";
-		}
-
-		/// <summary>
-		/// Format this PointPair value using different general format strings for the X and Y values.
-		/// Example:  a format string of "e2" would give "( 1.23e+001, -1.69e+001 )".
-		/// The Z value is not displayed (see <see cref="ToString( string, string, string )"/>).
-		/// </summary>
-		/// <param name="formatX">A format string that will be used to format the X
-		/// double type value (see <see cref="System.Double.ToString()"/>).</param>
-		/// <param name="formatY">A format string that will be used to format the Y
-		/// double type value (see <see cref="System.Double.ToString()"/>).</param>
-		/// <returns>A string representation of the PointPair</returns>
-		public string ToString( string formatX, string formatY )
-		{
-			return "( " + this.X.ToString( formatX ) +
-					", " + this.Y.ToString( formatY ) + 
-					" )";
 		}
 
 		/// <summary>
@@ -538,6 +417,8 @@ namespace ZedGraph
 					", " + this.Z.ToString( formatZ ) + 
 					" )";
 		}
+
 	#endregion
+
 	}
 }
