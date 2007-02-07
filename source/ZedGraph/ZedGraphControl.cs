@@ -68,7 +68,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.78 $ $Date: 2007-01-30 09:08:59 $ </version>
+	/// <version> $Revision: 3.79 $ $Date: 2007-02-07 08:17:13 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -2388,6 +2388,8 @@ namespace ZedGraph
 					this.Cursor = Cursors.Cross;
 				else if ( _isEnableSelection && ( pane != null || _isSelecting ) )
 					this.Cursor = Cursors.Cross;
+				else
+					this.Cursor = Cursors.Default;
 
 				//			else if ( isZoomMode || isPanMode )
 				//				this.Cursor = Cursors.No;

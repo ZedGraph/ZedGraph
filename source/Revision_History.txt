@@ -3,6 +3,7 @@
 ;6-Feb-2007 (by Champion)
 : [NEW] Add PointPairBase
 : [FIX] Make ColorValue property virtual/override in PointPair/StockPt
+: [FIX] add Cursor.Default else clause to SetCursor() in ZedGraphControl
 
 ;29-Jan-2007 (by Champion)
 : [UPD] Make OHLCBar use integers for pixBase for more consistent appearance

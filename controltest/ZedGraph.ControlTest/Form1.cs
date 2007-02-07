@@ -48,7 +48,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_GasGauge( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl1 );
-			//CreateGraph_GrowingData( zedGraphControl1 );
+			CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_Histogram( zedGraphControl1 );
@@ -71,7 +71,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_NoDupePointList( zedGraphControl1 );
 			//CreateGraph_NormalPane( zedGraphControl1 );
 			//CreateGraph_OHLCBar( zedGraphControl1 );
-			CreateGraph_OHLCBarGradient( zedGraphControl1 );
+			//CreateGraph_OHLCBarGradient( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
 			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
 			//CreateGraph_Pie( zedGraphControl1 );
@@ -714,7 +714,7 @@ namespace ZedGraph.ControlTest
 			z1.Invalidate();
 		}
 
-		//Timer myTimer;
+		Timer myTimer;
 
 		private void MyTimer_Tick( object sender, EventArgs e )
 		{
@@ -723,7 +723,9 @@ namespace ZedGraph.ControlTest
 			// Get the PointPairList
 			PointPairList list = curve.Points as PointPairList;
 			//list.Add( xvalue, (double)cpuUsagePerformanceCounter.NextValue() );
-			list.Add( 1, 1 );
+			list.Add( list.Count+1, Math.Sin(list.Count/6.0) );
+			zedGraphControl1.AxisChange();
+			Refresh();
 		}
 
 		// Basic curve test - Linear Axis
@@ -2557,13 +2559,11 @@ namespace ZedGraph.ControlTest
 
 		private void CreateGraph_GrowingData( ZedGraphControl z1 )
 		{
-			/*
 			myTimer = new Timer();
 			myTimer.Enabled = true;
-			myTimer.Tick += new EventHandler( myTimer_Tick );
-			myTimer.Interval = 100;
+			myTimer.Tick += new EventHandler( MyTimer_Tick );
+			myTimer.Interval = 50;
 			myTimer.Start();
-			*/
 
 			GraphPane myPane = z1.GraphPane;
 
@@ -2583,12 +2583,12 @@ namespace ZedGraph.ControlTest
 			//myPane.YAxis.Scale.Min = -250;
 			//Time(Now)
 			//myPane.XAxis.Scale.MajorStep = 2.0;
-			myPane.XAxis.Scale.MajorUnit = DateUnit.Minute;
+			//myPane.XAxis.Scale.MajorUnit = DateUnit.Minute;
 			// Set the minor step to 1 hour
 			//myPane.XAxis.Scale.MinorStep = 1.0;
-			myPane.XAxis.Scale.MinorUnit = DateUnit.Minute;
-			myPane.XAxis.Scale.Format = "HH:mm:ss";
-			myPane.XAxis.Type = AxisType.Date;
+			//myPane.XAxis.Scale.MinorUnit = DateUnit.Minute;
+			//myPane.XAxis.Scale.Format = "HH:mm:ss";
+			//myPane.XAxis.Type = AxisType.Date;
 
 			z1.AxisChange();
 			z1.Invalidate();
