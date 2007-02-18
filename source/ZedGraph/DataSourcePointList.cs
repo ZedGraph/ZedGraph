@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.2 $ $Date: 2007-01-01 02:56:01 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-02-18 05:51:53 $ </version>
 	[Serializable]
 	public class DataSourcePointList : IPointList
 	{
@@ -121,7 +121,7 @@ namespace ZedGraph
 		/// The <see cref="string" /> name of the property or column from which to obtain the
 		/// X data values for the chart.
 		/// </summary>
-		/// <remarks>Set this to null leave the X data values set to <see cref="PointPair.Missing" />
+		/// <remarks>Set this to null leave the X data values set to <see cref="PointPairBase.Missing" />
 		/// </remarks>
 		public string XDataMember
 		{
@@ -133,7 +133,7 @@ namespace ZedGraph
 		/// The <see cref="string" /> name of the property or column from which to obtain the
 		/// Y data values for the chart.
 		/// </summary>
-		/// <remarks>Set this to null leave the Y data values set to <see cref="PointPair.Missing" />
+		/// <remarks>Set this to null leave the Y data values set to <see cref="PointPairBase.Missing" />
 		/// </remarks>
 		public string YDataMember
 		{
@@ -145,7 +145,7 @@ namespace ZedGraph
 		/// The <see cref="string" /> name of the property or column from which to obtain the
 		/// Z data values for the chart.
 		/// </summary>
-		/// <remarks>Set this to null leave the Z data values set to <see cref="PointPair.Missing" />
+		/// <remarks>Set this to null leave the Z data values set to <see cref="PointPairBase.Missing" />
 		/// </remarks>
 		public string ZDataMember
 		{

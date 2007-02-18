@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.72 $ $Date: 2007-01-26 10:24:11 $ </version>
+	/// <version> $Revision: 3.73 $ $Date: 2007-02-18 05:51:53 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -89,7 +89,7 @@ namespace ZedGraph
 		/// this value. </summary>
 		private bool _isIgnoreInitial;
 		/// <summary>Private field that determines whether or not initial
-		/// <see cref="PointPair.Missing"/> values will cause the line segments of
+		/// <see cref="PointPairBase.Missing"/> values will cause the line segments of
 		/// a curve to be discontinuous.  If this field is true, then the curves
 		/// will be plotted as continuous lines as if the Missing values did not
 		/// exist.
@@ -281,7 +281,7 @@ namespace ZedGraph
 			set { _isBoundedRanges = value; }
 		}
 		/// <summary>Gets or sets a value that determines whether or not initial
-		/// <see cref="PointPair.Missing"/> values will cause the line segments of
+		/// <see cref="PointPairBase.Missing"/> values will cause the line segments of
 		/// a curve to be discontinuous.
 		/// </summary>
 		/// <remarks>If this field is true, then the curves
@@ -701,8 +701,20 @@ namespace ZedGraph
 
 			if ( showGraf )
 			{
+				// Draw the GraphItems that are behind the CurveItems
+				_graphObjList.Draw( g, this, scaleFactor, ZOrder.E_BehindCurves );
+
+				// Clip the points to the actual plot area
+				g.SetClip( _chart._rect );
+				_curveList.Draw( g, this, scaleFactor );
+				g.SetClip( _rect );
+
+			}
+
+			if ( showGraf )
+			{
 				// Draw the GraphItems that are behind the Axis objects
-				_graphObjList.Draw( g, this, scaleFactor, ZOrder.E_BehindAxis );
+				_graphObjList.Draw( g, this, scaleFactor, ZOrder.D_BehindAxis );
 
 				// Draw the Axes
 				_xAxis.Draw( g, this, scaleFactor, 0.0f );
@@ -720,14 +732,6 @@ namespace ZedGraph
 					axis.Draw( g, this, scaleFactor, yPos );
 					yPos += axis._tmpSpace;
 				}
-
-				// Draw the GraphItems that are behind the CurveItems
-				_graphObjList.Draw( g, this, scaleFactor, ZOrder.D_BehindCurves );
-
-				// Clip the points to the actual plot area
-				g.SetClip( _chart._rect );
-				_curveList.Draw( g, this, scaleFactor );
-				g.SetClip( _rect );
 
 				// Draw the GraphItems that are behind the Axis border
 				_graphObjList.Draw( g, this, scaleFactor, ZOrder.C_BehindChartBorder );
@@ -1710,7 +1714,7 @@ namespace ZedGraph
 					{
 						tmpRect = new RectangleF( left - width, tmpChartRect.Top,
 							width, tmpChartRect.Height );
-						if ( saveZOrder <= ZOrder.E_BehindAxis && tmpRect.Contains( mousePt ) )
+						if ( saveZOrder <= ZOrder.D_BehindAxis && tmpRect.Contains( mousePt ) )
 						{
 							nearestObj = yAxis;
 							index = yIndex;
@@ -1732,7 +1736,7 @@ namespace ZedGraph
 					{
 						tmpRect = new RectangleF( left, tmpChartRect.Top,
 							width, tmpChartRect.Height );
-						if ( saveZOrder <= ZOrder.E_BehindAxis && tmpRect.Contains( mousePt ) )
+						if ( saveZOrder <= ZOrder.D_BehindAxis && tmpRect.Contains( mousePt ) )
 						{
 							nearestObj = y2Axis;
 							index = yIndex;
@@ -1746,7 +1750,7 @@ namespace ZedGraph
 				// See if the point is in the X Axis
 				tmpRect = new RectangleF( tmpChartRect.Left, tmpChartRect.Bottom,
 					tmpChartRect.Width, _rect.Bottom - tmpChartRect.Bottom );
-				if ( saveZOrder <= ZOrder.E_BehindAxis && tmpRect.Contains( mousePt ) )
+				if ( saveZOrder <= ZOrder.D_BehindAxis && tmpRect.Contains( mousePt ) )
 				{
 					nearestObj = this.XAxis;
 					return true;
@@ -1754,7 +1758,7 @@ namespace ZedGraph
 
 				CurveItem curve;
 				// See if it's a data point
-				if ( saveZOrder <= ZOrder.D_BehindCurves && FindNearestPoint( mousePt, out curve, out index ) )
+				if ( saveZOrder <= ZOrder.E_BehindCurves && FindNearestPoint( mousePt, out curve, out index ) )
 				{
 					nearestObj = curve;
 					return true;

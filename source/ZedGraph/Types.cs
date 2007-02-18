@@ -670,16 +670,16 @@ namespace ZedGraph
 	   /// (see <see cref="Chart.Fill"/>).
 	   /// </summary>
 	   F_BehindChartFill,
-	   /// <summary>
+		/// <summary>
+		/// Specifies that the <see cref="GraphObj"/> will be behind the
+		/// <see cref="CurveItem"/> objects.
+		/// </summary>
+		E_BehindCurves,
+		/// <summary>
 	   /// Specifies that the <see cref="GraphObj"/> will be behind the
 	   /// <see cref="Axis"/> objects.
 	   /// </summary>
-	   E_BehindAxis,
-	   /// <summary>
-	   /// Specifies that the <see cref="GraphObj"/> will be behind the
-	   /// <see cref="CurveItem"/> objects.
-	   /// </summary>
-	   D_BehindCurves,
+	   D_BehindAxis,
 	   /// <summary>
 	   /// Specifies that the <see cref="GraphObj"/> will be behind the
 	   /// <see cref="Chart"/> border.

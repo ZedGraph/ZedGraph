@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	///
 	/// <author> John Champion with mods by Christophe Holmes</author>
-	/// <version> $Revision: 1.7 $ $Date: 2007-01-01 02:56:01 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2007-02-18 05:51:53 $ </version>
 	[Serializable]
 	public class FilteredPointList : IPointList
 	{
@@ -98,7 +98,7 @@ namespace ZedGraph
 		/// its ordinal position in the list.
 		/// </summary>
 		/// <remarks>
-		/// Returns <see cref="PointPair.Missing" /> for any value of <see paramref="index" />
+		/// Returns <see cref="PointPairBase.Missing" /> for any value of <see paramref="index" />
 		/// that is outside of its corresponding array bounds.
 		/// </remarks>
 		/// <param name="index">The ordinal position (zero-based) of the

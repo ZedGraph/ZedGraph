@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.17 $ $Date: 2007-01-26 09:01:49 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2007-02-18 05:51:54 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane _pane;
@@ -72,7 +72,7 @@ namespace ZedGraph
 		/// <param name="hiVal">A <see cref="Double"/> value representing the upper
 		/// value for the dependent axis.</param>
 		/// <returns>true if the data point is value, false for
-		/// <see cref="PointPair.Missing"/>, invalid, etc. data.</returns>
+		/// <see cref="PointPairBase.Missing"/>, invalid, etc. data.</returns>
 		public bool GetValues( CurveItem curve, int iPt, out double baseVal,
 							out double lowVal, out double hiVal )
 		{
@@ -98,7 +98,7 @@ namespace ZedGraph
 		/// <param name="hiVal">A <see cref="Double"/> value representing the upper
 		/// value for the dependent axis.</param>
 		/// <returns>true if the data point is value, false for
-		/// <see cref="PointPair.Missing"/>, invalid, etc. data.</returns>
+		/// <see cref="PointPairBase.Missing"/>, invalid, etc. data.</returns>
 		public static bool GetValues( GraphPane pane, CurveItem curve, int iPt,
 							out double baseVal, out double lowVal, out double hiVal )
 		{

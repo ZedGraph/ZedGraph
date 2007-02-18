@@ -68,7 +68,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.79 $ $Date: 2007-02-07 08:17:13 $ </version>
+	/// <version> $Revision: 3.80 $ $Date: 2007-02-18 05:51:54 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -102,7 +102,7 @@ namespace ZedGraph
 		private bool _isShowCursorValues = false;
 		/// <summary>
 		/// private field that determines the format for displaying tooltip values.
-		/// This format is passed to <see cref="PointPair.ToString(string)"/>.
+		/// This format is passed to <see cref="PointPairBase.ToString(string)"/>.
 		/// Use the public property <see cref="PointValueFormat"/> to access this
 		/// value.
 		/// </summary>
@@ -228,7 +228,7 @@ namespace ZedGraph
 		//private bool		isScrollY2 = false;
 		private bool _isAutoScrollRange = false;
 
-		private double _scrollGrace = 0.05;
+		private double _scrollGrace = 0.00; //0.05;
 
 		private bool _isSynchronizeXAxes = false;
 		private bool _isSynchronizeYAxes = false;
@@ -1255,7 +1255,7 @@ namespace ZedGraph
 		/// when the mouse hovers over data values.
 		/// </summary>
 		/// <remarks>The displayed values are taken from <see cref="PointPair.Tag"/>
-		/// if it is a <see cref="System.String"/> type, or <see cref="PointPair.ToString()"/>
+		/// if it is a <see cref="System.String"/> type, or <see cref="PointPairBase.ToString()"/>
 		/// otherwise (using the <see cref="PointValueFormat" /> as a format string).
 		/// Additionally, the user can custom format the values using the
 		/// <see cref="PointValueEvent" /> event.  Note that <see cref="IsShowPointValues" />
@@ -1943,7 +1943,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Gets or sets the format for displaying tooltip values.
-		/// This format is passed to <see cref="PointPair.ToString(string)"/>.
+		/// This format is passed to <see cref="PointPairBase.ToString(string)"/>.
 		/// </summary>
 		/// <remarks>
 		/// Use the <see cref="System.Globalization.NumberFormatInfo" /> type

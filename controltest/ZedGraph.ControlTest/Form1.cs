@@ -33,7 +33,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
-			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
+			CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl1 );
 			//CreateGraph_BasicStick( zedGraphControl2 );
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
@@ -48,7 +48,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_GasGauge( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl1 );
-			CreateGraph_GrowingData( zedGraphControl1 );
+			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_Histogram( zedGraphControl1 );
@@ -512,7 +512,7 @@ namespace ZedGraph.ControlTest
 			{
 				LineObj line = new ArrowObj( 0, 0, (float)rpl[i].X, (float)rpl[i].Y );
 				line.Line.Color = Color.LightBlue;
-				line.ZOrder = ZOrder.D_BehindCurves;
+				line.ZOrder = ZOrder.E_BehindCurves;
 				myPane.GraphObjList.Add( line );
 			}
 
@@ -2615,7 +2615,7 @@ namespace ZedGraph.ControlTest
 				ArrowObj arrow = new ArrowObj( 0, 0, (float)rpl[i].X, (float)rpl[i].Y );
 				arrow.IsArrowHead = false;
 				arrow.Line.Color = Color.LightGray;
-				arrow.ZOrder = ZOrder.D_BehindCurves;
+				arrow.ZOrder = ZOrder.E_BehindCurves;
 				myPane.GraphObjList.Add( arrow );
 			}
 
@@ -2814,29 +2814,38 @@ namespace ZedGraph.ControlTest
 
 			PointPairList list = new PointPairList();
 
-			for ( int i = 1; i < 500; i++ )
+			for ( int i = 1; i < 50; i++ )
 			{
 				double x = i;
-				double y = Math.Sin( i / 8.0 ) * 100000 + 100001;
+				double y = Math.Sin( i / 8.0 ) * 100 + 101;
 				list.Add( x, y );
 			}
 
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			myCurve.Line.Width = 3.0f;
+			myCurve.Line.Fill = new Fill( Color.Red, Color.White );
+			myPane.Chart.Border.IsVisible = false;
+
+			//LineObj line = new LineObj( Color.Black, 0, 0, 1, 0 );
+			//line.Location.CoordinateFrame = CoordType.ChartFraction;
+			//line.ZOrder = ZOrder.A_InFront;
+
+			myPane.YAxis.Cross = 20;
 
 			z1.IsShowHScrollBar = true;
-			//z1.ScrollMinX = 0;
-			//z1.ScrollMaxX = 550;
+			//z1.ScrollMinX = 100;
+			//z1.ScrollMaxX = 300;
 			z1.IsShowVScrollBar = true;
 			z1.IsAutoScrollRange = true;
 
-			z1.GraphPane.IsBoundedRanges = true;
-			//z1.GraphPane.XAxis.Scale.Min = 450;
+			//z1.GraphPane.IsBoundedRanges = true;
+			//z1.GraphPane.XAxis.Scale.Min = 100;
 			//z1.GraphPane.XAxis.Scale.MajorStep = 10;
-			//z1.GraphPane.XAxis.Scale.Max = 550;
+			//z1.GraphPane.XAxis.Scale.Max = 300;
 
 			z1.AxisChange();
 			//z1.GraphPane.XAxis.IsReverse = true;
-			z1.GraphPane.XAxis.Type = AxisType.Date;
+			//z1.GraphPane.XAxis.Type = AxisType.Date;
 			//z1.IsAutoScrollRange = true;
 			//z1.ScrollMinX = 1;
 			//z1.ScrollMaxX = 100;

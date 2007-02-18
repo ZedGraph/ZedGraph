@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.37 $ $Date: 2007-01-26 09:01:49 $ </version>
+	/// <version> $Revision: 3.38 $ $Date: 2007-02-18 05:51:53 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -846,7 +846,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Build an array of <see cref="PointF"/> values (pixel coordinates) that represents
-		/// the current curve.  Note that this drawing routine ignores <see cref="PointPair.Missing"/>
+		/// the current curve.  Note that this drawing routine ignores <see cref="PointPairBase.Missing"/>
 		/// values, but it does not "break" the line to indicate values are missing.
 		/// </summary>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object that is the parent or
@@ -965,7 +965,7 @@ namespace ZedGraph
 		/// Build an array of <see cref="PointF"/> values (pixel coordinates) that represents
 		/// the low values for the current curve.
 		/// </summary>
-		/// <remarks>Note that this drawing routine ignores <see cref="PointPair.Missing"/>
+		/// <remarks>Note that this drawing routine ignores <see cref="PointPairBase.Missing"/>
 		/// values, but it does not "break" the line to indicate values are missing.
 		/// </remarks>
 		/// <param name="pane">A reference to the <see cref="GraphPane"/> object that is the parent or

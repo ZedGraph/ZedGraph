@@ -75,7 +75,7 @@ namespace ZedGraph.Demo
 					Color.FromArgb( 150, Color.LightGreen ) );
 			box.Fill = new Fill( Color.White, Color.FromArgb( 200, Color.LightGreen ), 45.0F );
 			// Use the BehindAxis zorder to draw the highlight beneath the grid lines
-			box.ZOrder = ZOrder.E_BehindAxis;
+			box.ZOrder = ZOrder.D_BehindAxis;
 			myPane.GraphObjList.Add( box );
 
 			// Add a text item to label the highlighted range

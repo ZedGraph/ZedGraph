@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// 
 	/// <author> Jerry Vos based on code by John Champion
 	/// modified by John Champion</author>
-	/// <version> $Revision: 3.35 $ $Date: 2007-02-07 07:46:46 $ </version>
+	/// <version> $Revision: 3.36 $ $Date: 2007-02-18 05:51:54 $ </version>
 	[Serializable]
 	public class PointPairList : List<PointPair>, IPointList, IPointListEdit
 	{
@@ -176,7 +176,7 @@ namespace ZedGraph
 		/// If either array is null, then a set of ordinal values is automatically
 		/// generated in its place (see <see cref="AxisType.Ordinal"/>.
 		/// If the arrays are of different size, then the larger array prevails and the
-		/// smaller array is padded with <see cref="PointPair.Missing"/> values.
+		/// smaller array is padded with <see cref="PointPairBase.Missing"/> values.
 		/// </summary>
 		/// <param name="x">A double[] array of X values</param>
 		/// <param name="y">A double[] array of Y values</param>
@@ -220,7 +220,7 @@ namespace ZedGraph
 		/// generated in its place (see <see cref="AxisType.Ordinal"/>.  If the <see paramref="baseVal"/>
 		/// is null, then it is set to zero.
 		/// If the arrays are of different size, then the larger array prevails and the
-		/// smaller array is padded with <see cref="PointPair.Missing"/> values.
+		/// smaller array is padded with <see cref="PointPairBase.Missing"/> values.
 		/// </summary>
 		/// <param name="x">A double[] array of X values</param>
 		/// <param name="y">A double[] array of Y values</param>
@@ -668,7 +668,7 @@ namespace ZedGraph
 		/// This method uses cardinal spline interpolation with a binary search algorithm.  It therefore
 		/// requires that the x data be monotonically increasing.  Missing values are not allowed.  This
 		/// method will not extrapolate outside the range of the PointPairList (it returns
-		/// <see cref="PointPair.Missing"/> if extrapolation would be required).  WARNING: Cardinal
+		/// <see cref="PointPairBase.Missing"/> if extrapolation would be required).  WARNING: Cardinal
 		/// spline interpolation can generate curves with non-unique X values for higher tension
 		/// settings.  That is, there may be multiple X values for the same Y value.  This routine
 		/// follows the path of the spline curve until it reaches the FIRST OCCURRENCE of the

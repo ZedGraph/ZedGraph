@@ -2006,7 +2006,7 @@ namespace ZedGraph.Web
 		#region Properties
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="PointPair.X"/>
+		/// Proxy property that gets or sets the value of <see cref="PointPairBase.X"/>
 		/// </summary>
 		[
 		NotifyParentProperty( true ),
@@ -2023,7 +2023,7 @@ namespace ZedGraph.Web
 		}
 
 		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="PointPair.Y"/>
+		/// Proxy property that gets or sets the value of <see cref="PointPairBase.Y"/>
 		/// </summary>
 		[
 		NotifyParentProperty( true ),

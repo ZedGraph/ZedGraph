@@ -162,7 +162,7 @@ namespace ZedGraph.Demo
 			box.Location.AlignH = AlignH.Left;
 			box.Location.AlignV = AlignV.Top;
 			// place the box behind the axis items, so the grid is drawn on top of it
-			box.ZOrder = ZOrder.E_BehindAxis;
+			box.ZOrder = ZOrder.D_BehindAxis;
 			myPane.GraphObjList.Add( box );
 			
 			// Add some text inside the above box to indicate "Peak Range"

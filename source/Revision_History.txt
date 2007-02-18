@@ -1,5 +1,8 @@
 == Version 5 ==
 
+;17-Feb-2007 (by Champion)
+: [UPD] Change draw order to put curves behind axes
+
 ;6-Feb-2007 (by Champion)
 : [NEW] Add PointPairBase
 : [FIX] Make ColorValue property virtual/override in PointPair/StockPt
@@ -277,6 +280,9 @@
 : [NEW] Add designer attributes for ZedGraphControl
 
 == Version 4.5 ==
+
+;15-Feb-2007 (by Champion)
+: [UPD] Move order of Chart border draw
 
 ;19-Jan-2007 (by Champion) release version 4.5.1
 : [UPD] Add in Web Control

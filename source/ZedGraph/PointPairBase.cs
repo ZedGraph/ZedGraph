@@ -32,12 +32,10 @@ namespace ZedGraph
 	/// </summary>
 	/// <remarks>
 	/// This class is typically a base class for actual <see cref="PointPair" /> type implementations.
-	/// This class does not implement the <see cref="IPointPair" /> interface, but it is a base
-	/// class for <see cref="PointPair" /> and <see cref="StockPt" />.
 	/// </remarks>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 1.1 $ $Date: 2007-02-07 14:29:54 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2007-02-18 05:51:54 $ </version>
 	[Serializable]
 	public class PointPairBase : ISerializable
 	{
@@ -254,7 +252,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Format this PointPair value using different general format strings for the X and Y values.
 		/// Example:  a format string of "e2" would give "( 1.23e+001, -1.69e+001 )".
-		/// The Z value is not displayed (see <see cref="ToString( string, string, string )"/>).
+		/// The Z value is not displayed (see <see cref="PointPair.ToString( string, string, string )"/>).
 		/// </summary>
 		/// <param name="formatX">A format string that will be used to format the X
 		/// double type value (see <see cref="System.Double.ToString()"/>).</param>

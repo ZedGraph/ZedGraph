@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.22 $ $Date: 2007-01-25 07:56:09 $ </version>
+	/// <version> $Revision: 1.23 $ $Date: 2007-02-18 05:51:54 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -1110,9 +1110,9 @@ namespace ZedGraph
 		/// For example, on a scale range with <see cref="Min"/> = 0, <see cref="Max"/> = 1000,
 		/// and <see cref="MajorStep"/> = 200, a <see cref="BaseTic"/> value of 50 would cause
 		/// the scale labels to appear at values 50, 250, 450, 650, and 850.  Note that the
-		/// default value for this property is <see cref="PointPair.Missing"/>, which means the
+		/// default value for this property is <see cref="PointPairBase.Missing"/>, which means the
 		/// value is not used.  Setting this property to any value other than
-		/// <see cref="PointPair.Missing"/> will activate the effect.  The value specified must
+		/// <see cref="PointPairBase.Missing"/> will activate the effect.  The value specified must
 		/// coincide with the first major tic.  That is, if <see cref="BaseTic"/> were set to
 		/// 650 in the example above, then the major tics would only occur at 650 and 850.  This
 		/// setting may affect the minor tics, since the minor tics are always referenced to the

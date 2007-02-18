@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.21 $ $Date: 2006-07-02 06:42:01 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2007-02-18 05:51:53 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -541,8 +541,8 @@ namespace ZedGraph
 			// For the MasterPane, All GraphItems go behind the GraphPanes, except those that
 			// are explicity declared as ZOrder.AInFront
 			_graphObjList.Draw( g, this, scaleFactor, ZOrder.F_BehindChartFill );
-			_graphObjList.Draw( g, this, scaleFactor, ZOrder.E_BehindAxis );
-			_graphObjList.Draw( g, this, scaleFactor, ZOrder.D_BehindCurves );
+			_graphObjList.Draw( g, this, scaleFactor, ZOrder.E_BehindCurves );
+			_graphObjList.Draw( g, this, scaleFactor, ZOrder.D_BehindAxis );
 			_graphObjList.Draw( g, this, scaleFactor, ZOrder.C_BehindChartBorder );
 
 			// Reset the clipping

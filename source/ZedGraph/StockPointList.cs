@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion based on code by Jerry Vos</author>
-	/// <version> $Revision: 3.3 $ $Date: 2007-02-07 07:46:46 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2007-02-18 05:51:54 $ </version>
 	[Serializable]
 	public class StockPointList : List<StockPt>, IPointList, IPointListEdit
 	{
@@ -120,7 +120,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Add a <see cref="StockPt"/> object to the collection at the end of the list using
 		/// the specified values.  The unspecified values (low, open, close) are all set to
-		/// <see cref="PointPair.Missing" />.
+		/// <see cref="PointPairBase.Missing" />.
 		/// </summary>
 		/// <param name="date">An <see cref="XDate" /> value</param>
 		/// <param name="high">The high value for the day</param>

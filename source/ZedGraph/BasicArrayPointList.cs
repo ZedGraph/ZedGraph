@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointList" />
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.3 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2007-02-18 05:51:53 $ </version>
 	[Serializable]
 	public class BasicArrayPointList : IPointList
 	{
@@ -57,7 +57,7 @@ namespace ZedGraph
 		/// its ordinal position in the list.
 		/// </summary>
 		/// <remarks>
-		/// Returns <see cref="PointPair.Missing" /> for any value of <see paramref="index" />
+		/// Returns <see cref="PointPairBase.Missing" /> for any value of <see paramref="index" />
 		/// that is outside of its corresponding array bounds.
 		/// </remarks>
 		/// <param name="index">The ordinal position (zero-based) of the

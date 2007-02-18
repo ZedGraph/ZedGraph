@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.36 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.37 $ $Date: 2007-02-18 05:51:53 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -104,7 +104,7 @@ namespace ZedGraph
 		/// The size of this list determines the number of points that are
 		/// plotted.  Note that values defined as
 		/// System.Double.MaxValue are considered "missing" values
-		/// (see <see cref="PointPair.Missing"/>),
+		/// (see <see cref="PointPairBase.Missing"/>),
 		/// and are not plotted.  The curve will have a break at these points
 		/// to indicate the values are missing.
 		/// </summary>

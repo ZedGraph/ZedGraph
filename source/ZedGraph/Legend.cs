@@ -21,7 +21,6 @@ using System;
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
-using System.Collections.Generic;
 
 namespace ZedGraph
 {
@@ -31,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.36 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.37 $ $Date: 2007-02-18 05:51:53 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -552,8 +551,12 @@ namespace ZedGraph
 				foreach ( GraphPane tmpPane in paneList )
 				{
 					// Loop for each curve in the CurveList collection
-					foreach ( CurveItem curve in tmpPane.CurveList )
+					//foreach ( CurveItem curve in tmpPane.CurveList )
+					int count = tmpPane.CurveList.Count;
+					for ( int i = 0; i < count; i++ )
 					{
+						CurveItem curve = tmpPane.CurveList[_isReverse ? count - i - 1 : i];
+
 						if ( curve._label._text != "" && curve._label._isVisible )
 						{
 							// Calculate the x,y (TopLeft) location of the current
@@ -754,8 +757,11 @@ namespace ZedGraph
 				// Loop through each curve in the curve list
 				// Find the maximum width of the legend labels
 				//foreach ( CurveItem curve in tmpPane.CurveList )
-				foreach ( CurveItem curve in GetIterator( tmpPane.CurveList, _isReverse ) )
+				//foreach ( CurveItem curve in GetIterator( tmpPane.CurveList, _isReverse ) )
+				int count = tmpPane.CurveList.Count;
+				for ( int i = 0; i < count; i++ )
 				{
+					CurveItem curve = tmpPane.CurveList[_isReverse ? count - i - 1 : i];
 					if ( curve._label._text != string.Empty && curve._label._isVisible )
 					{
 						// Calculate the width of the label save the max width
@@ -952,16 +958,16 @@ namespace ZedGraph
 			_rect = newRect;
 		}
 
-		/// <summary>
-		/// Private method to the render region that gives the iterator depending on the attribute
-		/// </summary>
-		/// <param name="c"></param>
-		/// <param name="forward"></param>
-		/// <returns></returns>
-		private IEnumerable<CurveItem> GetIterator(CurveList c, bool forward)
-		{
-			return forward ? c.Forward : c.Backward;
-		}
+//		/// <summary>
+//		/// Private method to the render region that gives the iterator depending on the attribute
+//		/// </summary>
+//		/// <param name="c"></param>
+//		/// <param name="forward"></param>
+//		/// <returns></returns>
+//		private IEnumerable<CurveItem> GetIterator(CurveList c, bool forward)
+//		{
+//			return forward ? c.Forward : c.Backward;
+//		}
 
 	#endregion
 	}

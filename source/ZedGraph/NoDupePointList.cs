@@ -52,7 +52,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-07-02 06:42:01 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-02-18 05:51:54 $ </version>
 	[Serializable]
 	public class NoDupePointList : List<DataPoint>, IPointList, IPointListEdit
 	{
@@ -125,7 +125,7 @@ namespace ZedGraph
 		/// <param name="index">The ordinal position in the list of points</param>
 		/// <returns>Returns a <see cref="PointPair" /> instance.  The <see cref="PointPair.Z" />
 		/// and <see cref="PointPair.Tag" /> properties will be defaulted to
-		/// <see cref="PointPair.Missing" /> and null, respectively.
+		/// <see cref="PointPairBase.Missing" /> and null, respectively.
 		/// </returns>
 		public new PointPair this[int index]
 		{

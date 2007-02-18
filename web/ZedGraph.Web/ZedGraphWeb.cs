@@ -40,7 +40,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.13 $ $Date: 2007-01-25 07:56:09 $</version>
+	/// <version>$Revision: 1.14 $ $Date: 2007-02-18 05:51:54 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -254,7 +254,7 @@ namespace ZedGraph.Web
 			box.Location.AlignH = AlignH.Left;
 			box.Location.AlignV = AlignV.Top;
 			// place the box behind the axis items, so the grid is drawn on top of it
-			box.ZOrder = ZOrder.E_BehindAxis;
+			box.ZOrder = ZOrder.D_BehindAxis;
 			pane.GraphObjList.Add( box );
 
 			// Add some text inside the above box to indicate "Peak Range"
