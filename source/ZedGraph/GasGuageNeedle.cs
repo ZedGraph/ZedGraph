@@ -19,7 +19,6 @@
 using System.Runtime.Serialization;
 using System.Drawing.Drawing2D;
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
 using System.Security.Permissions;
@@ -31,7 +30,7 @@ namespace ZedGraph
 	/// <see cref="GasGuageNeedle"/>s.
 	/// </summary>
 	/// <author> Jay Mistry </author>
-	/// <version> $Revision: 3.2 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-02-19 08:05:23 $ </version>
 	[Serializable]
 	public class GasGuageNeedle : CurveItem, ICloneable, ISerializable
 	{

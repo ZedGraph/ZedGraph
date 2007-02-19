@@ -18,7 +18,6 @@
 //=============================================================================
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -68,7 +67,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.80 $ $Date: 2007-02-18 05:51:54 $ </version>
+	/// <version> $Revision: 3.81 $ $Date: 2007-02-19 08:05:24 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -3197,7 +3196,7 @@ namespace ZedGraph
 				_dragPane.ReverseTransform( _dragStartPt, out x1, out y1, out yy1 );
 				_dragPane.ReverseTransform( mousePtF, out x2, out y2, out yy2 );
 
-				List<CurveItem> objects = new List<CurveItem>();
+				CurveList objects = new CurveList();
 
 				double left = Math.Min( x1, x2 );
 				double right = Math.Max( x1, x2 );

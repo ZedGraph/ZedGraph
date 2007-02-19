@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.10 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 1.11 $ $Date: 2007-02-19 08:05:24 $ </version>
 	[Serializable]
 	class LogScale : Scale, ISerializable //, ICloneable
 	{
@@ -195,10 +195,7 @@ namespace ZedGraph
 			return baseVal + (double)tic * CyclesPerStep;
 
 		//	double val = baseVal + (double)tic * CyclesPerStep;
-
 		//	double frac = val - Math.Floor( val );
-
-
 		}
 
 		/// <summary>

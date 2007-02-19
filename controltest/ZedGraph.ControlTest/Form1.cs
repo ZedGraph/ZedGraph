@@ -510,7 +510,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 10; i++ )
 			{
-				LineObj line = new ArrowObj( 0, 0, (float)rpl[i].X, (float)rpl[i].Y );
+				LineObj line = new LineObj( 0, 0, (float)rpl[i].X, (float)rpl[i].Y );
 				line.Line.Color = Color.LightBlue;
 				line.ZOrder = ZOrder.E_BehindCurves;
 				myPane.GraphObjList.Add( line );

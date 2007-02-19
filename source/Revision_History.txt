@@ -281,7 +281,35 @@
 
 == Version 4.5 ==
 
-;15-Feb-2007 (by Champion)
+;18-Feb-2007 (by Champion)  v4.5.2
+: [UPD] Copy over mods from V5.0.5
+: [NEW] Add PointPairBase
+: [FIX] Make ColorValue property virtual/override in PointPair/StockPt
+: [FIX] add Cursor.Default else clause to SetCursor() in ZedGraphControl
+: [UPD] Make OHLCBar use integers for pixBase for more consistent appearance
+: [FIX] Proper implementation of LineBase in OHLCBar and JapaneseCandleStick
+: [NEW] Add ZedGraphControl.ScrollGrace to manage "grace" for IsAutoScrollRange
+: [NEW] Add in selection logic to ZedGraphControl based on code from JCarpenter
+: [UPD] Make ZedGraphControl.IsPrintScaleAll public
+: [NEW] Add LineBase class, giving common attributes to Line, LineObj, ArrowObj, and Border classes
+: [NEW] Add GradientByColorValue capacity
+: [FIX] fix tw locale file (thanks to Zak Fong)
+: [NEW] Add ZedGraphControl.SaveFileDialog property to allow user mods to dialog setup
+: [UPD] Rename CandleStick to OHLCBar
+: [UPD] Add Emf format capability to "Save As" context menu (STILL NEEDS WORK)
+: [UPD] Modify RollingPointPairList to improve memory efficiency
+: [UPD] Move order of Chart border draw
+: [NEW] Added Legend.IsReverse property to reverse order of legend items (thanks blumenstock)
+: [UPD] Get rid of web control border with BORDER=0 tag (thanks blumenstock)
+: [UPD] Add Tag to the url in ImageMap if it is a string type.
+: [NEW] Add GasGaugeRegion, GasGaugeNeedle classes (thanks Jay Mistry)
+: [UPD] Some speed optimizations in DrawSymbol and DrawCurve
+: [FIX] Fix Pie chart image map calculations
+: [UPD] Make DataSourcePointList handle null input --> PointPair.Missing
+: [UPD] Make Link.MakeCurveItemURL virtual
+: [NEW] Add IsClosedFigure property to PolyObj
+: [FIX] Switch back to redrawing the graph after a GetImage() to restore states
+: [FIX] Remove MaxBound & MinBound properties from FilteredPointList
 : [UPD] Move order of Chart border draw
 
 ;19-Jan-2007 (by Champion) release version 4.5.1

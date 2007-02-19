@@ -20,7 +20,6 @@
 #region Using directives
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 #endregion
@@ -38,7 +37,7 @@ namespace ZedGraph
 	/// <see cref="Scale.MaxAuto"/>, <see cref="Scale.MinorStepAuto"/>,
 	/// and <see cref="Scale.MajorStepAuto"/>.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2007-02-19 08:05:24 $ </version>
 	public class ScaleState : ICloneable
 	{
 		/// <summary>

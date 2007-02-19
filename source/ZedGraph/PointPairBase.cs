@@ -21,7 +21,6 @@ using System;
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
-using System.Collections.Generic;
 using IComparer = System.Collections.IComparer;
 
 namespace ZedGraph
@@ -35,7 +34,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 1.2 $ $Date: 2007-02-18 05:51:54 $ </version>
+	/// <version> $Revision: 1.3 $ $Date: 2007-02-19 08:05:24 $ </version>
 	[Serializable]
 	public class PointPairBase : ISerializable
 	{

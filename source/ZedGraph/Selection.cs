@@ -20,7 +20,6 @@
 using System;
 using System.Drawing;
 using System.Collections;
-using System.Collections.Generic;
 
 namespace ZedGraph
 {
@@ -30,8 +29,8 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion and JCarpenter </author>
-	/// <version> $Revision: 3.3 $ $Date: 2007-01-26 09:01:49 $ </version>
-	public class Selection : List<CurveItem>
+	/// <version> $Revision: 3.4 $ $Date: 2007-02-19 08:05:24 $ </version>
+	public class Selection : CurveList
 	{
 		// Revision: JCarpenter 10/06
 		/// <summary>
@@ -95,7 +94,7 @@ namespace ZedGraph
 		/// <param name="master">The <see cref="MasterPane" /> that is the "owner"
 		/// of the <see cref="CurveItem" />'s.</param>
 		/// <param name="ciList">The list of <see cref="CurveItem" /> to be added to the list.</param>
-		public void Select( MasterPane master, List<CurveItem> ciList )
+		public void Select( MasterPane master, CurveList ciList )
 		{
 			//Clear the selection, but don't send the event,
 			//the event will be sent in "AddToSelection" by calling "UpdateSelection"
@@ -124,7 +123,7 @@ namespace ZedGraph
 		/// <param name="master">The <see cref="MasterPane" /> that is the "owner"
 		/// of the <see cref="CurveItem" />'s.</param>
 		/// <param name="ciList">The list of <see cref="CurveItem" />'s to be added to the list.</param>
-		public void AddToSelection( MasterPane master, List<CurveItem> ciList )
+		public void AddToSelection( MasterPane master, CurveList ciList )
 		{
 			foreach ( CurveItem ci in ciList )
 			{

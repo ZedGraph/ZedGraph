@@ -20,7 +20,6 @@
 #region Using directives
 
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 #endregion
@@ -38,7 +37,7 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.13 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.14 $ $Date: 2007-02-19 08:05:24 $ </version>
 	public class ZoomState : ICloneable
 	{
 		/// <summary>

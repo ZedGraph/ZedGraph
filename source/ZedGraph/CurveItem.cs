@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.37 $ $Date: 2007-02-18 05:51:53 $ </version>
+	/// <version> $Revision: 3.38 $ $Date: 2007-02-19 08:05:23 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -1014,7 +1014,7 @@ namespace ZedGraph
 		abstract public bool GetCoords( GraphPane pane, int i, out string coords );
 
 	#endregion
-	
+
 	#region Inner classes
 		/// <summary>
 		/// Compares <see cref="CurveItem"/>'s based on the point value at the specified

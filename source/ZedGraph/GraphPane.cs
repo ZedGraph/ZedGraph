@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.73 $ $Date: 2007-02-18 05:51:53 $ </version>
+	/// <version> $Revision: 3.74 $ $Date: 2007-02-19 08:05:23 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -2141,9 +2141,9 @@ namespace ZedGraph
 		/// This method returns true if any are found.
 		/// </summary>
 		public bool FindContainedObjects( RectangleF rectF, Graphics g,
-			 out System.Collections.Generic.List<CurveItem> containedObjs )
+			 out CurveList containedObjs )
 		{
-			containedObjs = new System.Collections.Generic.List<CurveItem>();
+			containedObjs = new CurveList();
 
 			foreach ( CurveItem ci in this.CurveList )
 			{

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2007-01-01 02:56:01 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2007-02-19 08:05:23 $ </version>
 	// /// <seealso cref="ZedGraph.Web.IsImageMap"/>
 	[Serializable]
 	public class Link : ISerializable, ICloneable
@@ -232,7 +232,7 @@ namespace ZedGraph
 		{
 			string url = _url;
 
-			if ( url.Contains( "?" ) )
+			if ( url.IndexOf( '?' ) >= 0 )
 				url += "&index=" + index.ToString();
 			else
 				url += "?index=" + index.ToString();

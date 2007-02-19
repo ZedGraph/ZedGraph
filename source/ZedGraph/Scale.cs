@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.23 $ $Date: 2007-02-18 05:51:54 $ </version>
+	/// <version> $Revision: 1.24 $ $Date: 2007-02-19 08:05:24 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -722,7 +722,7 @@ namespace ZedGraph
 
 			_labelGap = rhs._labelGap;
 
-			if ( rhs._textLabels is string[] )
+			if ( rhs._textLabels != null )
 				_textLabels = (string[])rhs._textLabels.Clone();
 			else
 				_textLabels = null;
