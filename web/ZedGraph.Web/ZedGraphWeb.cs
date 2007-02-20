@@ -40,7 +40,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.14 $ $Date: 2007-02-18 05:51:54 $</version>
+	/// <version>$Revision: 1.15 $ $Date: 2007-02-20 02:23:42 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -1362,7 +1362,7 @@ namespace ZedGraph.Web
 		/// <param name="OutputStream">A <see cref="Stream"/> in which to output the ZedGraph
 		/// <see cref="System.Drawing.Image"/>.</param>
 		/// <param name="Format">The <see cref="ImageFormat"/> type to be output.</param>
-		protected MasterPane CreateGraph( System.IO.Stream OutputStream, ImageFormat Format )
+		public MasterPane CreateGraph( System.IO.Stream OutputStream, ImageFormat Format )
 		{
 			return CreateGraph( OutputStream, Format, false );
 		}
@@ -1592,7 +1592,7 @@ namespace ZedGraph.Web
 			}
 		}
 
-		private void MakeImageMap( MasterPane masterPane, HtmlTextWriter output )
+		public void MakeImageMap( MasterPane masterPane, HtmlTextWriter output )
 		{
 			string shape;
 			string coords;

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.38 $ $Date: 2007-02-18 05:51:53 $ </version>
+	/// <version> $Revision: 3.39 $ $Date: 2007-02-20 02:23:42 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -621,6 +621,9 @@ namespace ZedGraph
 			{
 				if ( points != null && !_color.IsEmpty && this.IsVisible )
 				{
+					bool lastOut = false;
+					bool isOut;
+
 					// Loop over each point in the curve
 					for ( int i = 0; i < points.Count; i++ )
 					{
@@ -655,6 +658,7 @@ namespace ZedGraph
 							// If the point is invalid, then make a linebreak only if IsIgnoreMissing is false
 							// LastX and LastY are always the last valid point, so this works out
 							lastBad = lastBad || !pane.IsIgnoreMissing;
+							isOut = true;
 						}
 						else
 						{
@@ -662,6 +666,7 @@ namespace ZedGraph
 							// screen coordinates
 							tmpX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curX );
 							tmpY = yAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curY );
+							isOut = (tmpX < minX || tmpX > maxX);
 
 							if ( !lastBad )
 							{
@@ -675,7 +680,7 @@ namespace ZedGraph
 											tmpY > 5000000 || tmpY < -5000000 )
 										InterpolatePoint( g, pane, curve, lastPt, scaleFactor, pen,
 														lastX, lastY, tmpX, tmpY );
-									else if ( tmpX >= minX && tmpX <= maxX )
+									else if ( !lastOut || !isOut )
 									{
 										if ( !curve.IsSelected && this._gradientFill.IsGradientValueType )
 										{
@@ -725,6 +730,7 @@ namespace ZedGraph
 							lastX = tmpX;
 							lastY = tmpY;
 							lastBad = false;
+							lastOut = isOut;
 						}
 					}
 				}

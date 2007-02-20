@@ -107,6 +107,7 @@
     <Compile Include="ZedGraph\PointPair.cs" />
     <Compile Include="ZedGraph\PointPair4.cs" />
     <Compile Include="ZedGraph\PointPairBase.cs" />
+    <Compile Include="ZedGraph\PointPairCV.cs" />
     <Compile Include="ZedGraph\PointPairList.cs" />
     <Compile Include="ZedGraph\PolyObj.cs" />
     <Compile Include="ZedGraph\RadarPointList.cs" />

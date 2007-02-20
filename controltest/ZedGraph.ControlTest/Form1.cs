@@ -33,7 +33,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
-			CreateGraph_BasicLinearScroll( zedGraphControl1 );
+			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl1 );
 			//CreateGraph_BasicStick( zedGraphControl2 );
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
@@ -61,6 +61,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_junk6( zedGraphControl1 );
 			//CreateGraph_junk7( zedGraphControl1 );
 			//CreateGraph_junk8( zedGraphControl1 );
+			CreateGraph_junk9( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
@@ -1735,6 +1736,27 @@ namespace ZedGraph.ControlTest
 			myPane.YAxis.Scale.Max = 5010;
 		}
 
+		public void CreateGraph_junk9( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+			PointPairList ppl = new PointPairList();
+			PointPairCV pp1 = new PointPairCV( 20, 50, 40 );
+			PointPairCV pp2 = new PointPairCV( 30, 30, 15 );
+			pp1.ColorValue = 1; //this line distorts HiLow bars.
+			ppl.Add( pp1 );
+			ppl.Add( pp2 );
+
+			Color[] colors = { Color.Red, Color.Black };
+			Fill myFill = new Fill( colors );
+			myFill.Type = FillType.GradientByColorValue;
+			myFill.SecondaryValueGradientColor = Color.Empty;
+			myFill.RangeMin = 1;
+			myFill.RangeMax = 2;
+
+			HiLowBarItem myCurve = myPane.AddHiLowBar( "Curve 1", ppl, Color.Empty );
+			myCurve.Bar.Fill = myFill;
+
+		}
 
 		// masterpane with three vertical panes
 		private void CreateGraph_ThreeVerticalPanes( ZedGraphControl z1 )
@@ -2823,25 +2845,32 @@ namespace ZedGraph.ControlTest
 
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 			myCurve.Line.Width = 3.0f;
-			myCurve.Line.Fill = new Fill( Color.Red, Color.White );
+			//myCurve.Line.Fill = new Fill( Color.Red, Color.White );
 			myPane.Chart.Border.IsVisible = false;
 
 			//LineObj line = new LineObj( Color.Black, 0, 0, 1, 0 );
 			//line.Location.CoordinateFrame = CoordType.ChartFraction;
 			//line.ZOrder = ZOrder.A_InFront;
 
-			myPane.YAxis.Cross = 20;
+			//myPane.YAxis.Cross = 20;
 
+			// Show the horizontal scrollbar
 			z1.IsShowHScrollBar = true;
-			//z1.ScrollMinX = 100;
-			//z1.ScrollMaxX = 300;
-			z1.IsShowVScrollBar = true;
+			//z1.ScrollMinX = 20;
+			//z1.ScrollMaxX = 30;
+			//z1.IsShowVScrollBar = true;
+			// Tell ZedGraph to automatically set the range of the scrollbar according to the data range
 			z1.IsAutoScrollRange = true;
+			// Make the scroll cover slightly more than the range of the data
+			z1.ScrollGrace = .05;
+
 
 			//z1.GraphPane.IsBoundedRanges = true;
-			//z1.GraphPane.XAxis.Scale.Min = 100;
 			//z1.GraphPane.XAxis.Scale.MajorStep = 10;
-			//z1.GraphPane.XAxis.Scale.Max = 300;
+
+			// Set the initial x range
+			z1.GraphPane.XAxis.Scale.Min = 20;
+			z1.GraphPane.XAxis.Scale.Max = 30;
 
 			z1.AxisChange();
 			//z1.GraphPane.XAxis.IsReverse = true;
@@ -3966,6 +3995,14 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_MouseDown( object sender, MouseEventArgs e )
 		{
+			Scale xScale = zedGraphControl1.GraphPane.XAxis.Scale;
+			double range = xScale.Max - xScale.Min;
+			xScale.Min = 10;
+			xScale.Max = 10 + range;
+			Refresh();
+
+			return;
+
 			zedGraphControl1.MasterPane.GetMetafile().Save( "poop.emf" );
 			return;
 

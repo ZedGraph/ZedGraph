@@ -1,5 +1,10 @@
 == Version 5 ==
 
+;18-Feb-2007 (by Champion)
+: [NEW] add PointPairCV class with mapped color value property
+: [FIX] fix chart rect bounding so it doesn't clip lines that cross the chart edge boundary
+: [UPD] make ZedGraphWeb.MakeImageMap() public
+
 ;17-Feb-2007 (by Champion)
 : [UPD] Change draw order to put curves behind axes
 
