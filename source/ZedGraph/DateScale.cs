@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.12 $ $Date: 2006-08-25 05:19:09 $ </version>
+	/// <version> $Revision: 1.13 $ $Date: 2007-03-11 02:08:16 $ </version>
 	[Serializable]
 	class DateScale : Scale, ISerializable //, ICloneable
 	{
@@ -161,6 +161,9 @@ namespace ZedGraph
 				case DateUnit.Second:
 					xDate.AddSeconds( tic * _majorStep );
 					break;
+				case DateUnit.Millisecond:
+					xDate.AddMilliseconds( tic * _majorStep );
+					break;
 			}
 
 			return xDate.XLDate;
@@ -262,33 +265,36 @@ namespace ZedGraph
 				return _baseTic;
 			else
 			{
-				int year, month, day, hour, minute, second;
+				int year, month, day, hour, minute, second, millisecond;
 				XDate.XLDateToCalendarDate( _min, out year, out month, out day, out hour, out minute,
-											out second );
+											out second, out millisecond );
 				switch ( _majorUnit )
 				{
 					case DateUnit.Year:
 					default:
-						month = 1; day = 1; hour = 0; minute = 0; second = 0;
+						month = 1; day = 1; hour = 0; minute = 0; second = 0; millisecond = 0;
 						break;
 					case DateUnit.Month:
-						day = 1; hour = 0; minute = 0; second = 0;
+						day = 1; hour = 0; minute = 0; second = 0; millisecond = 0;
 						break;
 					case DateUnit.Day:
-						hour = 0; minute = 0; second = 0;
+						hour = 0; minute = 0; second = 0; millisecond = 0;
 						break;
 					case DateUnit.Hour:
-						minute = 0; second = 0;
+						minute = 0; second = 0; millisecond = 0;
 						break;
 					case DateUnit.Minute:
-						second = 0;
+						second = 0; millisecond = 0;
 						break;
 					case DateUnit.Second:
+						millisecond = 0;
+						break;
+					case DateUnit.Millisecond:
 						break;
 
 				}
 
-				double xlDate = XDate.CalendarDateToXLDate( year, month, day, hour, minute, second );
+				double xlDate = XDate.CalendarDateToXLDate( year, month, day, hour, minute, second, millisecond );
 				if ( xlDate < _min )
 				{
 					switch ( _majorUnit )
@@ -312,10 +318,13 @@ namespace ZedGraph
 						case DateUnit.Second:
 							second++;
 							break;
+						case DateUnit.Millisecond:
+							millisecond++;
+							break;
 
 					}
 
-					xlDate = XDate.CalendarDateToXLDate( year, month, day, hour, minute, second );
+					xlDate = XDate.CalendarDateToXLDate( year, month, day, hour, minute, second, millisecond );
 				}
 
 				return xlDate;
@@ -333,12 +342,12 @@ namespace ZedGraph
 			int nTics = 1;
 
 			int year1, year2, month1, month2, day1, day2, hour1, hour2, minute1, minute2;
-			double second1, second2;
+			int second1, second2, millisecond1, millisecond2;
 
 			XDate.XLDateToCalendarDate( _min, out year1, out month1, out day1,
-										out hour1, out minute1, out second1 );
+										out hour1, out minute1, out second1, out millisecond1 );
 			XDate.XLDateToCalendarDate( _max, out year2, out month2, out day2,
-										out hour2, out minute2, out second2 );
+										out hour2, out minute2, out second2, out millisecond2 );
 
 			switch ( _majorUnit )
 			{
@@ -359,7 +368,10 @@ namespace ZedGraph
 					nTics = (int) ( ( _max - _min ) / ( _majorStep / XDate.MinutesPerDay ) + 1.001 );
 					break;
 				case DateUnit.Second:
-					nTics = (int) ( ( _max - _min ) / ( _majorStep / XDate.SecondsPerDay ) + 1.001 );
+					nTics = (int)( ( _max - _min ) / ( _majorStep / XDate.SecondsPerDay ) + 1.001 );
+					break;
+				case DateUnit.Millisecond:
+					nTics = (int)( ( _max - _min ) / ( _majorStep / XDate.MillisecondsPerDay ) + 1.001 );
 					break;
 			}
 
@@ -690,7 +702,7 @@ namespace ZedGraph
 						scale._minorStep = 1.0;
 				}
 			}
-			else // SecondSecond
+			else  if ( range > Default.RangeSecondSecond ) // SecondSecond
 			{
 				scale._majorUnit = DateUnit.Second;
 				if ( scale._formatAuto )
@@ -718,6 +730,21 @@ namespace ZedGraph
 						scale._minorStep = 5.0;
 				}
 			}
+			else // MilliSecond
+			{
+				scale._majorUnit = DateUnit.Millisecond;
+				if ( scale._formatAuto )
+					scale._format = Default.FormatMillisecond;
+
+				tempStep = CalcStepSize( range * XDate.MillisecondsPerDay, Default.TargetXSteps );
+
+				if ( scale._minorStepAuto )
+				{
+					scale._minorStep = CalcStepSize( tempStep,
+							( scale._ownerAxis is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
+					scale._minorUnit = DateUnit.Millisecond;
+				}
+			}
 
 			return tempStep;
 		}
@@ -735,10 +762,10 @@ namespace ZedGraph
 		/// <returns>The calculated date</returns>
 		protected double CalcEvenStepDate( double date, int direction )
 		{
-			int year, month, day, hour, minute, second;
+			int year, month, day, hour, minute, second, millisecond;
 
 			XDate.XLDateToCalendarDate( date, out year, out month, out day,
-										out hour, out minute, out second );
+										out hour, out minute, out second, out millisecond );
 
 			// If the direction is -1, then it is sufficient to go to the beginning of
 			// the current time period, .e.g., for 15-May-95, and monthly steps, we
@@ -789,6 +816,10 @@ namespace ZedGraph
 				case DateUnit.Second:
 					return XDate.CalendarDateToXLDate( year, month, day, hour,
 													minute, second + direction );
+
+				case DateUnit.Millisecond:
+					return XDate.CalendarDateToXLDate( year, month, day, hour,
+													minute, second, millisecond + direction );
 
 			}
 		}
@@ -868,6 +899,8 @@ namespace ZedGraph
 					return 1.0 / XDate.MinutesPerDay;
 				case DateUnit.Second:
 					return 1.0 / XDate.SecondsPerDay;
+				case DateUnit.Millisecond:
+					return 1.0 / XDate.MillisecondsPerDay;
 			}
 		}
 

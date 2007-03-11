@@ -1,5 +1,14 @@
 == Version 5 ==
 
+;10-Mar-2007 (by Champion) V5.0.6 Release
+: [FIX] Problem with GraphPane.Clone() for null title text
+: [UPD] Place Grid behind curves, leaving Axis & tics in front of curves
+: [UPD] Honor multiline curve labels in legend (per suggestion from Olaf Krumnow
+: [NEW] Added TmpImageDuration logic to web control to handle simultaneous user image files (Pavel Mazac)
+
+;26-Feb-2007 (by Champion)
+: [FIX] make datescale handle milliseconds, add DateUnit.Millisecond
+
 ;18-Feb-2007 (by Champion)
 : [NEW] add PointPairCV class with mapped color value property
 : [FIX] fix chart rect bounding so it doesn't clip lines that cross the chart edge boundary
@@ -285,6 +294,10 @@
 : [NEW] Add designer attributes for ZedGraphControl
 
 == Version 4.5 ==
+
+;10-Mar-2007 (by Champion) v4.5.6
+: [UPD] This version is a .net 1.1 mirror of v 5.0.6
+: [UPD] The files are identical, except for the collection classes
 
 ;18-Feb-2007 (by Champion)  v4.5.2
 : [UPD] Copy over mods from V5.0.5

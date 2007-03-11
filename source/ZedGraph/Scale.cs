@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.24 $ $Date: 2007-02-19 08:05:24 $ </version>
+	/// <version> $Revision: 1.25 $ $Date: 2007-03-11 02:08:16 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -388,6 +388,16 @@ namespace ZedGraph
 			/// This value is used by the <see cref="DateScale.CalcDateStepSize"/> method.
 			/// </summary>
 			public static double RangeMinuteSecond = 2.083e-3;  // 3 Minutes
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// If the total span of data exceeds this number (in days), then the auto-range
+			/// code will select <see cref="MajorUnit"/> = <see cref="DateUnit.Second"/>
+			/// and <see cref="MinorUnit"/> = <see cref="DateUnit.Second"/>.
+			/// This value normally defaults to 3.472e-5 days (3 seconds).
+			/// This value is used by the <see cref="DateScale.CalcDateStepSize"/> method.
+			/// </summary>
+			public static double RangeSecondSecond = 3.472e-5;  // 3 Seconds
 
 			/// <summary>
 			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
@@ -499,6 +509,17 @@ namespace ZedGraph
 			/// </summary>
 			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
 			public static string FormatSecondSecond = "mm:ss";
+			/// <summary>
+			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
+			/// This values applies only to Date-Time type axes.
+			/// This is the format used for the scale values when auto-ranging code
+			/// selects a <see cref="Format"/> of <see cref="DateUnit.Millisecond"/>
+			/// for <see cref="MajorUnit"/> and <see cref="DateUnit.Millisecond"/> for 
+			/// for <see cref="MinorUnit"/>.
+			/// This value is used by the <see cref="DateScale.CalcDateStepSize"/> method.
+			/// </summary>
+			/// <seealso cref="System.Globalization.DateTimeFormatInfo"/>
+			public static string FormatMillisecond = "ss.fff";
 
 			/*  Prior format assignments using original XDate.ToString()
 					this.scaleFormat = "&yyyy";
@@ -1949,7 +1970,7 @@ namespace ZedGraph
 						float topPix, float shift, float scaleFactor )
 		{
 			MajorTic tic = _ownerAxis._majorTic;
-			MajorGrid grid = _ownerAxis._majorGrid;
+//			MajorGrid grid = _ownerAxis._majorGrid;
 
 			double dVal, dVal2;
 			float pixVal, pixVal2;
@@ -1958,7 +1979,7 @@ namespace ZedGraph
 			double scaleMult = Math.Pow( (double)10.0, _mag );
 
 			using ( Pen ticPen = tic.GetPen( pane, scaleFactor ) )
-			using ( Pen gridPen = grid.GetPen( pane, scaleFactor ) )
+//			using ( Pen gridPen = grid.GetPen( pane, scaleFactor ) )
 			{
 				// get the Y position of the center of the axis labels
 				// (the axis itself is referenced at zero)
@@ -2005,7 +2026,7 @@ namespace ZedGraph
 								pixVal2 = LocalTransform( dVal2 );
 								tic.Draw( g, pane, ticPen, pixVal2, topPix, shift, scaledTic );
 
-								grid.Draw( g, gridPen, pixVal2, topPix );
+//								grid.Draw( g, gridPen, pixVal2, topPix );
 							}
 						}
 
@@ -2020,7 +2041,7 @@ namespace ZedGraph
 					tic.Draw( g, pane, ticPen, pixVal2, topPix, shift, scaledTic );
 
 					// draw the grid
-					grid.Draw( g, gridPen, pixVal2, topPix );
+//					grid.Draw( g, gridPen, pixVal2, topPix );
 
 					bool isMaxValueAtMaxPix = ( ( _ownerAxis is XAxis || _ownerAxis is Y2Axis ) &&
 															!IsReverse ) ||
@@ -2050,6 +2071,82 @@ namespace ZedGraph
 
 						lastPixVal = pixVal;
 					}
+				}
+			}
+		}
+
+		internal void DrawGrid( Graphics g, GraphPane pane, float scaleFactor )
+		{
+			MajorTic tic = _ownerAxis._majorTic;
+			MajorGrid grid = _ownerAxis._majorGrid;
+
+			float topPix, rightPix;
+			GetTopRightPix( pane, out topPix, out rightPix );
+			double baseVal = CalcBaseTic();
+			int nTics = CalcNumTics();
+
+			double dVal, dVal2;
+			float pixVal, pixVal2;
+
+			using ( Pen gridPen = grid.GetPen( pane, scaleFactor ) )
+			{
+				// get the Y position of the center of the axis labels
+				// (the axis itself is referenced at zero)
+//				SizeF maxLabelSize = GetScaleMaxSpace( g, pane, scaleFactor, true );
+//				float charHeight = _fontSpec.GetHeight( scaleFactor );
+//				float maxSpace = maxLabelSize.Height;
+
+//				float edgeTolerance = Default.EdgeTolerance * scaleFactor;
+				double rangeTol = ( _maxLinTemp - _minLinTemp ) * 0.001;
+
+				int firstTic = (int)( ( _minLinTemp - baseVal ) / _majorStep + 0.99 );
+				if ( firstTic < 0 )
+					firstTic = 0;
+
+				// save the position of the previous tic
+//				float lastPixVal = -10000;
+
+				// loop for each major tic
+				for ( int i = firstTic; i < nTics + firstTic; i++ )
+				{
+					dVal = CalcMajorTicValue( baseVal, i );
+
+					// If we're before the start of the scale, just go to the next tic
+					if ( dVal < _minLinTemp )
+						continue;
+					// if we've already past the end of the scale, then we're done
+					if ( dVal > _maxLinTemp + rangeTol )
+						break;
+
+					// convert the value to a pixel position
+					pixVal = LocalTransform( dVal );
+
+					// see if the tic marks will be drawn between the labels instead of at the labels
+					// (this applies only to AxisType.Text
+					if ( tic._isBetweenLabels && IsText )
+					{
+						// We need one extra tic in order to draw the tics between labels
+						// so provide an exception here
+						if ( i == 0 )
+						{
+							dVal2 = CalcMajorTicValue( baseVal, -0.5 );
+							if ( dVal2 >= _minLinTemp )
+							{
+								pixVal2 = LocalTransform( dVal2 );
+								grid.Draw( g, gridPen, pixVal2, topPix );
+							}
+						}
+
+						dVal2 = CalcMajorTicValue( baseVal, (double)i + 0.5 );
+						if ( dVal2 > _maxLinTemp )
+							break;
+						pixVal2 = LocalTransform( dVal2 );
+					}
+					else
+						pixVal2 = pixVal;
+
+					// draw the grid
+					grid.Draw( g, gridPen, pixVal2, topPix );
 				}
 			}
 		}
@@ -2136,36 +2233,7 @@ namespace ZedGraph
 			float rightPix,
 					topPix;
 
-			if ( _ownerAxis is XAxis )
-			{
-				rightPix = pane.Chart._rect.Width;
-				topPix = -pane.Chart._rect.Height;
-			}
-			else
-			{
-				rightPix = pane.Chart._rect.Height;
-				topPix = -pane.Chart._rect.Width;
-			}
-
-			// sanity check
-			if ( _min >= _max )
-				return;
-
-			// if the step size is outrageous, then quit
-			// (step size not used for log scales)
-			if ( !IsLog )
-			{
-				if ( _majorStep <= 0 || _minorStep <= 0 )
-					return;
-
-				double tMajor = ( _max - _min ) / ( _majorStep * MajorUnitMultiplier );
-				double tMinor = ( _max - _min ) / ( _minorStep * MinorUnitMultiplier );
-
-				if ( tMajor > 1000 ||
-					( ( minorTic.IsOutside || minorTic.IsInside || minorTic.IsOpposite )
-					&& tMinor > 5000 ) )
-					return;
-			}
+			GetTopRightPix( pane, out topPix, out rightPix );
 
 			// calculate the total number of major tics required
 			int nTics = CalcNumTics();
@@ -2195,6 +2263,42 @@ namespace ZedGraph
 			_ownerAxis.DrawMinorTics( g, pane, baseVal, shiftPos, scaleFactor, topPix );
 
 			_ownerAxis.DrawTitle( g, pane, shiftPos, scaleFactor );
+		}
+
+		internal void GetTopRightPix( GraphPane pane, out float topPix, out float rightPix )
+		{
+			if ( _ownerAxis is XAxis )
+			{
+				rightPix = pane.Chart._rect.Width;
+				topPix = -pane.Chart._rect.Height;
+			}
+			else
+			{
+				rightPix = pane.Chart._rect.Height;
+				topPix = -pane.Chart._rect.Width;
+			}
+
+			// sanity check
+			if ( _min >= _max )
+				return;
+
+			// if the step size is outrageous, then quit
+			// (step size not used for log scales)
+			if ( !IsLog )
+			{
+				if ( _majorStep <= 0 || _minorStep <= 0 )
+					return;
+
+				double tMajor = ( _max - _min ) / ( _majorStep * MajorUnitMultiplier );
+				double tMinor = ( _max - _min ) / ( _minorStep * MinorUnitMultiplier );
+
+				MinorTic minorTic = _ownerAxis._minorTic;
+
+				if ( tMajor > 1000 ||
+					( ( minorTic.IsOutside || minorTic.IsInside || minorTic.IsOpposite )
+					&& tMinor > 5000 ) )
+					return;
+			}
 		}
 
 		/// <summary>

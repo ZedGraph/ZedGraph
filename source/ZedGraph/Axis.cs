@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.69 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.70 $ $Date: 2007-03-11 02:08:16 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -772,6 +772,17 @@ namespace ZedGraph
 
 				//DrawTitle( g, pane, scaleFactor );
 
+				g.Transform = saveMatrix;
+			}
+		}
+
+		internal void DrawGrid( Graphics g, GraphPane pane, float scaleFactor )
+		{
+			if ( _isVisible )
+			{
+				Matrix saveMatrix = g.Transform;
+				SetTransformMatrix( g, pane, scaleFactor );
+				_scale.DrawGrid( g, pane, scaleFactor );
 				g.Transform = saveMatrix;
 			}
 		}

@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.74 $ $Date: 2007-02-19 08:05:23 $ </version>
+	/// <version> $Revision: 3.75 $ $Date: 2007-03-11 02:08:16 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -701,6 +701,8 @@ namespace ZedGraph
 
 			if ( showGraf )
 			{
+				DrawGrid( g, scaleFactor );
+
 				// Draw the GraphItems that are behind the CurveItems
 				_graphObjList.Draw( g, this, scaleFactor, ZOrder.E_BehindCurves );
 
@@ -765,6 +767,15 @@ namespace ZedGraph
 			foreach ( Axis axis in _y2AxisList )
 				axis.Scale.ResetScaleData();
 			*/
+		}
+
+		internal void DrawGrid( Graphics g, float scaleFactor )
+		{
+			_xAxis.DrawGrid( g, this, scaleFactor );
+			foreach ( YAxis yAxis in _yAxisList )
+				yAxis.DrawGrid( g, this, scaleFactor );
+			foreach ( Y2Axis y2Axis in _y2AxisList )
+				y2Axis.DrawGrid( g, this, scaleFactor );
 		}
 
 		private bool AxisRangesValid()

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2006-06-24 20:26:44 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2007-03-11 02:08:16 $ </version>
 	[Serializable]
 	public class Label : ICloneable, ISerializable
 	{
@@ -93,7 +93,11 @@ namespace ZedGraph
 		/// <param name="rhs">the <see cref="Label" /> instance to be copied.</param>
 		public Label( Label rhs )
 		{
-			_text = (string) rhs._text.Clone();
+			if (rhs._text != null)
+				_text = (string)rhs._text.Clone();
+			else
+				_text = string.Empty;
+
 			_isVisible = rhs._isVisible;
 			if ( rhs._fontSpec != null )
 				_fontSpec = rhs._fontSpec.Clone();

@@ -18,10 +18,14 @@
 //=============================================================================
 
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+
+#if ( !DOTNET1 )	// Is this a .Net 2 compilation?
+using System.Collections.Generic;
+#endif
 
 namespace ZedGraph
 {

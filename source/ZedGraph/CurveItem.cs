@@ -19,9 +19,13 @@
 
 using System;
 using System.Drawing;
-using System.Collections.Generic;
+using System.Collections;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+
+#if ( !DOTNET1 )	// Is this a .Net 2 compilation?
+using System.Collections.Generic;
+#endif
 
 namespace ZedGraph
 {
@@ -34,7 +38,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.38 $ $Date: 2007-02-19 08:05:23 $ </version>
+	/// <version> $Revision: 3.39 $ $Date: 2007-03-11 02:08:16 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -1016,6 +1020,85 @@ namespace ZedGraph
 	#endregion
 
 	#region Inner classes
+
+	#if ( DOTNET1 ) // Is this a .Net 1.1 compilation?
+	
+		/// <summary>
+		/// Compares <see cref="CurveItem"/>'s based on the point value at the specified
+		/// index and for the specified axis.
+		/// <seealso cref="System.Collections.ArrayList.Sort()"/>
+		/// </summary>
+		public class Comparer : IComparer
+		{
+			private int index;
+			private SortType sortType;
+			
+			/// <summary>
+			/// Constructor for Comparer.
+			/// </summary>
+			/// <param name="type">The axis type on which to sort.</param>
+			/// <param name="index">The index number of the point on which to sort</param>
+			public Comparer( SortType type, int index )
+			{
+				this.sortType = type;
+				this.index = index;
+			}
+			
+			/// <summary>
+			/// Compares two <see cref="CurveItem"/>s using the previously specified index value
+			/// and axis.  Sorts in descending order.
+			/// </summary>
+			/// <param name="l">Curve to the left.</param>
+			/// <param name="r">Curve to the right.</param>
+			/// <returns>-1, 0, or 1 depending on l.X's relation to r.X</returns>
+			public int Compare( object l, object r ) 
+			{
+				CurveItem cl = (CurveItem) l;
+				CurveItem cr = (CurveItem) r;
+
+				if (cl == null && cr == null )
+					return 0;
+				else if (cl == null && cr != null ) 
+					return -1;
+				else if (cl != null && cr == null) 
+					return 1;
+
+				if ( cr != null && cr.NPts <= index )
+					cr = null;
+				if ( cl != null && cl.NPts <= index )
+					cl = null;
+						
+				double lVal, rVal;
+
+				if ( sortType == SortType.XValues )
+				{
+					lVal = System.Math.Abs( cl[index].X );
+					rVal = System.Math.Abs( cr[index].X );
+				}
+				else
+				{
+					lVal = System.Math.Abs( cl[index].Y );
+					rVal = System.Math.Abs( cr[index].Y );
+				}
+				
+				if ( lVal == PointPair.Missing || Double.IsInfinity( lVal ) || Double.IsNaN( lVal ) )
+					cl = null;
+				if ( rVal == PointPair.Missing || Double.IsInfinity( rVal ) || Double.IsNaN( rVal ) )
+					cr = null;
+					
+				if ( ( cl == null && cr == null) || ( System.Math.Abs( lVal - rVal ) < 1e-10 ) )
+					return 0;
+				else if ( cl == null && cr != null ) 
+					return -1;
+				else if ( cl != null && r == null ) 
+					return 1;
+				else
+					return rVal < lVal ? -1 : 1;
+			}
+		}
+	
+	#else		// Otherwise, it's .Net 2.0 so use generics
+
 		/// <summary>
 		/// Compares <see cref="CurveItem"/>'s based on the point value at the specified
 		/// index and for the specified axis.
@@ -1086,6 +1169,8 @@ namespace ZedGraph
 					return rVal < lVal ? -1 : 1;
 			}
 		}
+
+	#endif
 	
 	#endregion
 

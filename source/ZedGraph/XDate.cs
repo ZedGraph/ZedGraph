@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// eachother.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.19 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 3.20 $ $Date: 2007-03-11 02:08:16 $ </version>
 	public struct XDate //: ICloneable
 	{
 	#region Fields & Constants
@@ -1163,7 +1163,18 @@ namespace ZedGraph
 		// =========================================================================
 		// Math Routines
 		// =========================================================================
-	
+
+		/// <summary>
+		/// Add the specified number of milliseconds (can be fractional) to the current XDate instance.
+		/// </summary>
+		/// <param name="dMilliseconds">
+		/// The incremental number of milliseconds (negative or positive) in floating point double format.
+		/// </param>
+		public void AddMilliseconds( double dMilliseconds )
+		{
+			_xlDate += dMilliseconds / MillisecondsPerDay;
+		}
+
 		/// <summary>
 		/// Add the specified number of seconds (can be fractional) to the current XDate instance.
 		/// </summary>
@@ -1172,9 +1183,9 @@ namespace ZedGraph
 		/// </param>
 		public void AddSeconds( double dSeconds )
 		{
-			_xlDate += dSeconds / 86400.0;
+			_xlDate += dSeconds / SecondsPerDay;
 		}
-		
+
 		/// <summary>
 		/// Add the specified number of minutes (can be fractional) to the current XDate instance.
 		/// </summary>
@@ -1183,7 +1194,7 @@ namespace ZedGraph
 		/// </param>
 		public void AddMinutes( double dMinutes )
 		{
-			_xlDate += dMinutes / 1440.0;
+			_xlDate += dMinutes / MinutesPerDay;
 		}
 		
 		/// <summary>

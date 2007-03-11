@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.37 $ $Date: 2007-02-18 05:51:53 $ </version>
+	/// <version> $Revision: 3.38 $ $Date: 2007-03-11 02:08:16 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -603,24 +603,30 @@ namespace ZedGraph
 		private float GetMaxHeight( PaneList paneList, Graphics g, float scaleFactor )
 		{
 			// Set up some scaled dimensions for calculating sizes and locations
-			float charHeight = this.FontSpec.GetHeight( scaleFactor );
+			float defaultCharHeight = this.FontSpec.GetHeight( scaleFactor );
+			float maxCharHeight = defaultCharHeight;
 
 			// Find the largest charHeight, just in case the curves have individual fonts defined
 			foreach ( GraphPane tmpPane in paneList )
 			{
 				foreach ( CurveItem curve in tmpPane.CurveList )
 				{
-					if ( curve._label._text != string.Empty && curve._label._isVisible &&
-									curve._label._fontSpec != null )
+					if ( curve._label._text != string.Empty && curve._label._isVisible )
 					{
-						float tmpHeight = curve._label._fontSpec.GetHeight( scaleFactor );
-						if ( tmpHeight > charHeight )
-							charHeight = tmpHeight;
+						float tmpHeight = defaultCharHeight;
+						if ( curve._label._fontSpec != null )
+							tmpHeight = curve._label._fontSpec.GetHeight( scaleFactor );
+
+						// Account for multiline legend entries
+						tmpHeight *= curve._label._text.Split( '\n' ).Length;
+
+						if ( tmpHeight > maxCharHeight )
+							maxCharHeight = tmpHeight;
 					}
 				}
 			}
 
-			return charHeight;
+			return maxCharHeight;
 		}
 
 		/// <summary>

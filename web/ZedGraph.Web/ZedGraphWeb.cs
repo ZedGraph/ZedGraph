@@ -40,7 +40,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.15 $ $Date: 2007-02-20 02:23:42 $</version>
+	/// <version>$Revision: 1.16 $ $Date: 2007-03-11 02:08:16 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -58,7 +58,18 @@ namespace ZedGraph.Web
 			return String.Empty;
 		}
 
-		#region Constructors
+	#region Private Fields
+
+		/// <summary>
+		/// This private field contains duration (in hours) of a temp file generated 
+		/// by control in mode "ImageTag"
+		/// </summary>
+		private double _tmpImageDuration = 12;
+
+	#endregion
+
+	#region Constructors
+
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
@@ -117,9 +128,10 @@ namespace ZedGraph.Web
 			margins.Top = ZedGraph.Margin.Default.Top;
 			margins.Bottom = ZedGraph.Margin.Default.Bottom;
 		}
-		#endregion
 
-		#region RenderDemo
+	#endregion
+
+	#region RenderDemo
 		/// <summary>
 		/// Renders the demo graph with one call.
 		/// </summary>
@@ -341,6 +353,17 @@ namespace ZedGraph.Web
 		{
 			get { return (ZedGraphWebGraphObjCollection)vsassist.GetValue( 'g', this.IsTrackingViewState ); }
 		}
+
+		/// <summary>
+		/// Gets or sets a value that determines the duration (in hours) of a temporary file generated 
+		/// by control in mode "ImageTag"
+		/// </summary>
+		public double TmpImageDuration
+		{
+			get { return _tmpImageDuration; }
+			set { _tmpImageDuration = value; }
+		}
+
 
 	#endregion
 
@@ -1492,12 +1515,21 @@ namespace ZedGraph.Web
 					}
 					else
 					{
-						//System.Guid.NewGuid().ToString()
-						tempFileName = this.ClientID +
+						tempFileName = this.ClientID + System.Guid.NewGuid().ToString() +
 							( this.CacheSuffix != null && this.CacheSuffix.Length > 0 ? this.CacheSuffix : "" ) +
 							"." + this.ImageFormatFileExtension;
 						tempFilePathName = Context.Server.MapPath( this.RenderedImagePath );
 						tempFilePathName = Path.Combine( tempFilePathName, tempFileName );
+
+						// Insert FileDestructor into cache
+						TempFileDestructor tfd = new TempFileDestructor( tempFilePathName );
+						System.Web.Caching.CacheItemRemovedCallback onRemove = new System.Web.Caching.CacheItemRemovedCallback( tfd.RemovedCallback );
+						Page.Cache.Add( tempFileName, tfd, null, DateTime.Now.AddHours( _tmpImageDuration ), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, onRemove );
+
+						//System.Guid.NewGuid().ToString()
+						//tempFileName = this.ClientID +
+						//	( this.CacheSuffix != null && this.CacheSuffix.Length > 0 ? this.CacheSuffix : "" ) +
+						//	"." + this.ImageFormatFileExtension;
 
 						//Should we use the cached image ?
 						if ( this.CacheDuration == 0 ||
@@ -1568,7 +1600,8 @@ namespace ZedGraph.Web
 					output.AddAttribute( HtmlTextWriterAttribute.Border, "0" ); //CJBL
 
 					if ( this.IsImageMap && masterPane != null )
-						output.AddAttribute( HtmlTextWriterAttribute.Usemap, "#" + tempFileName + ".map" );
+						output.AddAttribute( "usemap", "#" + tempFileName + ".map" );
+//						output.AddAttribute( HtmlTextWriterAttribute.Usemap, "#" + tempFileName + ".map" );
 					output.RenderBeginTag( HtmlTextWriterTag.Img );
 					output.RenderEndTag();
 
@@ -1592,6 +1625,13 @@ namespace ZedGraph.Web
 			}
 		}
 
+		/// <summary>
+		/// Generate an ImageMap as Html tags
+		/// </summary>
+		/// <param name="masterPane">The source <see cref="MasterPane" /> to be
+		/// image mapped.</param>
+		/// <param name="output">An <see cref="HtmlTextWriter" /> instance in which
+		/// the html tags will be written for the image map.</param>
 		public void MakeImageMap( MasterPane masterPane, HtmlTextWriter output )
 		{
 			string shape;
@@ -1695,8 +1735,10 @@ namespace ZedGraph.Web
 		private void MakeAreaTag( string shape, string coords, string url, string target,
 			string title, object tag, HtmlTextWriter output )
 		{
-			output.AddAttribute( HtmlTextWriterAttribute.Shape, shape );
-			output.AddAttribute( HtmlTextWriterAttribute.Coords, coords );
+//			output.AddAttribute( HtmlTextWriterAttribute.Shape, shape );
+			output.AddAttribute( "shape", shape );
+//			output.AddAttribute( HtmlTextWriterAttribute.Coords, coords );
+			output.AddAttribute( "coords", coords );
 
 			if ( url != string.Empty )
 			{

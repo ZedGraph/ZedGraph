@@ -29,7 +29,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion and JCarpenter </author>
-	/// <version> $Revision: 3.4 $ $Date: 2007-02-19 08:05:24 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2007-03-11 02:08:16 $ </version>
 	public class Selection : CurveList
 	{
 		// Revision: JCarpenter 10/06
@@ -133,6 +133,19 @@ namespace ZedGraph
 
 			UpdateSelection( master );
 		}
+
+#if ( DOTNET1 )
+
+		// Define a "Contains" method so that this class works with .Net 1.1 or 2.0
+		internal bool Contains( CurveItem item )
+		{
+			foreach ( CurveItem ci in this )
+				if ( item == ci )
+					return true;
+
+			return false;
+		}
+#endif
 
 		/// <summary>
 		/// Remove the specified <see cref="CurveItem" /> from the selection list.

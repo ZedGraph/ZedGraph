@@ -21,8 +21,13 @@ using System;
 using System.Drawing;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
-using System.Collections.Generic;
+using System.Collections;
 using IComparer	= System.Collections.IComparer;
+
+#if ( !DOTNET1 )	// Is this a .Net 2 compilation?
+using System.Collections.Generic;
+#endif
+
 
 namespace ZedGraph
 {
@@ -31,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.22 $ $Date: 2007-02-07 07:46:46 $ </version>
+	/// <version> $Revision: 3.23 $ $Date: 2007-03-11 02:08:16 $ </version>
 	[Serializable]
 	public class PointPair : PointPairBase, ISerializable
 	{
@@ -244,6 +249,117 @@ namespace ZedGraph
 
 	#region Inner classes
 
+	#if ( DOTNET1 )	// Is this a .Net 1.1 compilation?
+
+		/// <summary>
+		/// Compares points based on their y values.  Is setup to be used in an
+		/// ascending order sort.
+		/// <seealso cref="System.Collections.ArrayList.Sort()"/>
+		/// </summary>
+		public class PointPairComparerY : IComparer
+		{
+		
+			/// <summary>
+			/// Compares two <see cref="PointPair"/>s.
+			/// </summary>
+			/// <param name="l">Point to the left.</param>
+			/// <param name="r">Point to the right.</param>
+			/// <returns>-1, 0, or 1 depending on l.Y's relation to r.Y</returns>
+			public int Compare( object l, object r ) 
+			{
+				PointPair pl = (PointPair) l;
+				PointPair pr = (PointPair) r;
+
+				if (pl == null && pr == null) 
+				{
+					return 0;
+				} 
+				else if (pl == null && pr != null) 
+				{
+					return -1;
+				} 
+				else if (pl != null && pr == null) 
+				{
+					return 1;
+				} 
+
+				double lY = pl.Y;
+				double rY = pr.Y;
+
+				if (System.Math.Abs(lY - rY) < .000000001)
+					return 0;
+				
+				return lY < rY ? -1 : 1;
+			}
+		}
+	
+		/// <summary>
+		/// Compares points based on their x values.  Is setup to be used in an
+		/// ascending order sort.
+		/// <seealso cref="System.Collections.ArrayList.Sort()"/>
+		/// </summary>
+		public class PointPairComparer : IComparer
+		{
+			private SortType sortType;
+			
+			/// <summary>
+			/// Constructor for PointPairComparer.
+			/// </summary>
+			/// <param name="type">The axis type on which to sort.</param>
+			public PointPairComparer( SortType type )
+			{
+				this.sortType = type;
+			}
+			
+			/// <summary>
+			/// Compares two <see cref="PointPair"/>s.
+			/// </summary>
+			/// <param name="l">Point to the left.</param>
+			/// <param name="r">Point to the right.</param>
+			/// <returns>-1, 0, or 1 depending on l.X's relation to r.X</returns>
+			public int Compare( object l, object r ) 
+			{				 
+				PointPair pl = (PointPair) l;
+				PointPair pr = (PointPair) r;
+
+				if ( pl == null && pr == null ) 
+					return 0;
+				else if ( pl == null && pr != null ) 
+					return -1;
+				else if ( pl != null && pr == null ) 
+					return 1;
+
+				double lVal, rVal;
+			
+				if ( sortType == SortType.XValues )
+				{
+					lVal = pl.X;
+					rVal = pr.X;
+				}
+				else
+				{
+					lVal = pl.Y;
+					rVal = pr.Y;
+				}
+				
+				if ( lVal == PointPair.Missing || Double.IsInfinity( lVal ) || Double.IsNaN( lVal ) )
+					pl = null;
+				if ( rVal == PointPair.Missing || Double.IsInfinity( rVal ) || Double.IsNaN( rVal ) )
+					pr = null;
+
+				if ( ( pl == null && pr == null ) || ( System.Math.Abs( lVal - rVal ) < 1e-10 ) )
+					return 0;
+				else if ( pl == null && pr != null ) 
+					return -1;
+				else if ( pl != null && pr == null ) 
+					return 1;
+				else
+					return lVal < rVal ? -1 : 1;
+			}
+		}
+	
+	#else		// Otherwise, it's .Net 2.0, so use generics
+
 		/// <summary>
 		/// Compares points based on their y values.  Is setup to be used in an
 		/// ascending order sort.
@@ -344,6 +460,8 @@ namespace ZedGraph
 					return lVal < rVal ? -1 : 1;
 			}
 		}
+
+	#endif
 
 	#endregion
 

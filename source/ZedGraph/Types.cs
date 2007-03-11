@@ -169,7 +169,10 @@ namespace ZedGraph
 		Minute,
 		/// <summary> Second units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
 		/// </summary>
-		Second
+		Second,
+		/// <summary> Millisecond units <see cref="Scale.MajorUnit"/> and <see cref="Scale.MinorUnit"/>
+		/// </summary>
+		Millisecond
 	}
 
 	/// <summary>

@@ -27,6 +27,7 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_Load( object sender, EventArgs e )
 		{
+			CreateGraph( zedGraphControl1 );
 			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
@@ -61,7 +62,8 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_junk6( zedGraphControl1 );
 			//CreateGraph_junk7( zedGraphControl1 );
 			//CreateGraph_junk8( zedGraphControl1 );
-			CreateGraph_junk9( zedGraphControl1 );
+			//CreateGraph_junk9( zedGraphControl1 );
+			//CreateGraph_junk10( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
@@ -214,6 +216,78 @@ namespace ZedGraph.ControlTest
 				//trigger a resize event
 				z1.Size = z1.Size;
 			}
+		}
+
+		// Build the Chart
+		private void CreateGraph( ZedGraphControl zg1 )
+		{
+			// get a reference to the GraphPane
+			GraphPane myPane = zg1.GraphPane;
+
+			// Set the Titles
+			myPane.Title.Text = "My Test Bar Graph";
+			myPane.XAxis.Title.Text = "Label";
+			myPane.YAxis.Title.Text = "My Y Axis";
+
+			// Make up some random data points
+			string[] labels = { "Panther", "Lion", "Cheetah", 
+                      "Cougar", "Tiger", "Leopard" };
+			double[] y = { 100, 115, 75, 22, 98, 40 };
+			double[] y2 = { 90, 100, 95, 35, 80, 35 };
+			double[] y3 = { 80, 110, 65, 15, 54, 67 };
+			double[] y4 = { 120, 125, 100, 40, 105, 75 };
+
+			// Generate a red bar with "Curve 1" in the legend
+			BarItem myBar = myPane.AddBar( "Curve 1 label is long\nsecond line", null, y,
+																	  Color.Red );
+			myBar.Bar.Fill = new Fill( Color.Red, Color.White,
+																	  Color.Red );
+
+			// Generate a blue bar with "Curve 2" in the legend
+			myBar = myPane.AddBar( "Curve 2", null, y2, Color.Blue );
+			myBar.Bar.Fill = new Fill( Color.Blue, Color.White,
+																	  Color.Blue );
+
+			// Generate a green bar with "Curve 3" in the legend
+			myBar = myPane.AddBar( "Curve 3\ntwo lines", null, y3, Color.Green );
+			myBar.Bar.Fill = new Fill( Color.Green, Color.White,
+																	  Color.Green );
+
+			// Generate a black line with "Curve 4" in the legend
+			LineItem myCurve = myPane.AddCurve( "Curve 4",
+					null, y4, Color.Black, SymbolType.Circle );
+			myCurve.Line.Fill = new Fill( Color.White,
+										 Color.LightSkyBlue, -45F );
+
+			// Fix up the curve attributes a little
+			myCurve.Symbol.Size = 8.0F;
+			myCurve.Symbol.Fill = new Fill( Color.White );
+			myCurve.Line.Width = 2.0F;
+
+			// Draw the X tics between the labels instead of 
+			// at the labels
+			myPane.XAxis.MajorTic.IsBetweenLabels = true;
+
+			// Set the XAxis labels
+			myPane.XAxis.Scale.TextLabels = labels;
+			// Set the XAxis to Text type
+			myPane.XAxis.Type = AxisType.Text;
+
+			// Fill the Axis and Pane backgrounds
+			myPane.Chart.Fill = new Fill( Color.White,
+					Color.FromArgb( 255, 255, 166 ), 90F );
+			myPane.Fill = new Fill( Color.FromArgb( 250, 250, 255 ) );
+
+			myPane.XAxis.MajorGrid.IsVisible = true;
+			myPane.YAxis.MajorGrid.IsVisible = true;
+
+//            myPane.Title.Text = null;
+
+  //          GraphPane newOne = myPane.Clone();
+            
+            // Tell ZedGraph to refigure the
+			// axes since the data have changed
+			zg1.AxisChange();
 		}
 
 		private void CreateGraph_Clone( ZedGraphControl z1 )
@@ -1758,6 +1832,185 @@ namespace ZedGraph.ControlTest
 
 		}
 
+		private void CreateGraph_junk10( ZedGraphControl zgc )
+		{
+			//Create a Masterpane
+			MasterPane myMaster = zgc.MasterPane;
+			myMaster.SetLayout( zgc.CreateGraphics(), false, new int[] { 3 }, new float[] { 1, 1, 4 } );
+			myMaster.IsFontsScaled = false;
+
+			myMaster.PaneList.Clear();
+
+			GraphPane myPaneII = new GraphPane( new Rectangle( new Point( 0, 0 ),
+				new Size( 400, 350 / 2 ) ), "", "", "" );
+			GraphPane myPane = new GraphPane( new Rectangle( new Point( 0, 0 ),
+				new Size( 400, 350 / 2 ) ), "", "", "" );
+
+			myPane.Margin.All = 0;
+			myPaneII.Margin.All = 0;
+			myMaster.Margin.All = 0;
+
+			myPane.Border.IsVisible = false;
+			myPaneII.Border.IsVisible = false;
+			myMaster.Border.IsVisible = false;
+
+
+			//myPane 
+			//General
+			myPane.Title.Text = "TLV-Resolver";
+			myPane.Title.FontSpec.Size = 50;
+			myPane.Legend.FontSpec.Size = 50;
+
+			//XAxis
+			myPane.XAxis.Title.Text = "Date";
+			myPane.XAxis.Title.IsVisible = false;
+
+			myPane.XAxis.Type = AxisType.Date;
+			//myPane.XAxis.Scale.MinAuto = true;
+			//myPane.XAxis.Scale.MinorUnit = DateUnit.Millisecond;
+			//myPane.XAxis.Scale.MajorUnit = DateUnit.Millisecond;
+			//myPane.XAxis.Scale.Format = "mm:ss.fff";
+			myPane.XAxis.Scale.FontSpec.Size = 50;
+			//myPane.XAxis.Scale.MajorStep = 5;
+			//myPane.XAxis.Scale.MinorStep = 0.5;
+			myPane.XAxis.Scale.IsVisible = true;
+
+			myPane.XAxis.IsVisible = true;
+			myPane.XAxis.MajorGrid.IsVisible = true;
+			myPane.XAxis.MinorGrid.IsVisible = true;
+			myPane.XAxis.Scale.IsPreventLabelOverlap = false;
+
+			//YAxis
+			myPane.YAxis.Title.Text = "Status";
+			myPane.YAxis.Scale.Max = 1;
+			myPane.YAxis.Scale.FontSpec.Size = 50;
+			myPane.YAxis.Scale.MajorStep = 2;
+			myPane.YAxis.Scale.MinorStep = 1;
+			myPane.YAxis.IsVisible = true;
+			myPane.YAxis.Title.FontSpec.Size = 50;
+			myPane.YAxis.MinorGrid.IsVisible = true;
+			myPane.YAxis.MajorGrid.IsVisible = true;
+
+
+
+			//2.Pane
+			//General
+			myPaneII.Title.Text = "COM-Resolver";
+			myPaneII.Title.IsVisible = true;
+			myPaneII.Title.FontSpec.Size = 50;
+			myPaneII.Legend.FontSpec.Size = 50;
+
+
+			//XAxis
+			myPaneII.XAxis.Title.Text = "Date";
+			myPaneII.XAxis.Title.IsVisible = false;
+			myPaneII.XAxis.Type = AxisType.Date;
+			//myPaneII.XAxis.Scale.MinorUnit = DateUnit.Millisecond;
+			//myPaneII.XAxis.Scale.MajorUnit = DateUnit.Millisecond;
+			//myPaneII.XAxis.Scale.Format = "mm:ss.fff";
+
+			myPaneII.XAxis.MajorGrid.IsVisible = true;
+			myPaneII.XAxis.MinorGrid.IsVisible = true;
+			//myPaneII.XAxis.Scale.MajorStep = 5;
+			//myPaneII.XAxis.Scale.MinorStep = 0.5;
+			myPaneII.XAxis.Scale.FontSpec.Size = 50;
+			myPaneII.XAxis.IsVisible = true;
+			myPaneII.XAxis.Scale.IsVisible = true;
+
+			//YAxis
+			myPaneII.YAxis.Title.Text = "Status";
+			myPaneII.YAxis.Title.FontSpec.Size = 50;
+			myPaneII.YAxis.Scale.MajorStep = 1;
+			myPaneII.YAxis.Scale.MinorStep = 1;
+			myPaneII.YAxis.Scale.Max = 1;
+			myPaneII.YAxis.Scale.FontSpec.Size = 50;
+
+
+
+
+
+			// Make up some data arrays based on the Sine function
+			double x, x2;
+			int y1 = 0, y2 = 1;
+			PointPairList list1 = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			for ( int i = 0; i < 1000; i++ )
+			{
+				int year = DateTime.Now.Year, month = DateTime.Now.Month, day = DateTime.Now.Day, hour = DateTime.Now.Hour, minute = DateTime.Now.Minute, second = DateTime.Now.Second, mil = DateTime.Now.Millisecond;
+
+				//System.Threading.Thread.Sleep( 10 );
+
+				//Getting just time value exapmle(0.1248874895d)
+				double myDate = DateTime.Now.ToOADate();
+				double mySubtrahend = Convert.ToDouble( DateTime.Now.ToOADate().ToString().Trim().Substring( 0, myDate.ToString().Trim().IndexOf( "." ) ) );
+				myDate = myDate - mySubtrahend;
+
+				x = myDate;
+
+				x2 = DateTime.FromOADate( myDate ).AddMilliseconds( 347 ).ToOADate();
+
+				switch ( y1 )
+				{
+					case 0:
+						y1 = 1;
+						break;
+					case 1:
+						y1 = 0;
+						break;
+					default:
+						y1 = 0;
+						break;
+				}
+
+				switch ( y2 )
+				{
+					case 0:
+						y2 = 1;
+						break;
+					case 1:
+						y2 = 0;
+						break;
+					default:
+						y2 = 0;
+						break;
+				}
+
+				list1.Add( x, y1, DateTime.FromOADate( x ).ToLongTimeString() + ";" + DateTime.FromOADate( x ).Millisecond.ToString() );
+				list2.Add( x2, y2, DateTime.FromOADate( x2 ).ToLongTimeString() + ";" + DateTime.FromOADate( x2 ).Millisecond.ToString() );
+			}
+
+			// Generate a red curve with diamond
+			// symbols, and "Laser" in the legend
+			LineItem myCurve = myPane.AddCurve( "Laser",
+				list1, Color.Red, SymbolType.Diamond );
+
+			//myCurve.Label.FontSpec = new FontSpec( "Arial", 20, Color.Black, true, false, false );
+			myPane.Legend.FontSpec.Size = 100;
+
+			// Generate a blue curve with circle
+			// symbols, and "Shutter" in the legend
+			LineItem myCurveII = myPaneII.AddCurve( "Shutter", list2, Color.Blue, SymbolType.Circle );
+
+			zgc.MasterPane.InnerPaneGap = 0;
+			myMaster.PaneList.Add( myPane );
+			myMaster.PaneList.Add( myPaneII );
+
+			zgc.IsShowHScrollBar = false;
+
+			zgc.IsSynchronizeXAxes = true;
+			zgc.IsSynchronizeYAxes = true;
+
+			zgc.IsEnableHZoom = true;
+
+			zgc.IsEnableVZoom = false;
+			zgc.IsEnableVPan = false;
+
+			//zgc.ContextMenu.MenuItems.Clear();
+
+			zgc.IsZoomOnMouseCenter = false;
+			zgc.AxisChange();
+		}
+
 		// masterpane with three vertical panes
 		private void CreateGraph_ThreeVerticalPanes( ZedGraphControl z1 )
 		{
@@ -2088,12 +2341,12 @@ namespace ZedGraph.ControlTest
 			PointPairList list3 = new PointPairList();
 			Random rand = new Random();
 
-			for ( int i = 0; i < 5; i++ )
+			for ( int i = 0; i < 9; i++ )
 			{
 				double x = (double)i / 3 + 4;
-				double y = rand.NextDouble() * 1000;
-				double y2 = rand.NextDouble() * 1000;
-				double y3 = rand.NextDouble() * 1000;
+				double y = rand.NextDouble() * .1;
+				double y2 = rand.NextDouble() * .1;
+				double y3 = rand.NextDouble() * .1;
 				list.Add( x, y );
 				list2.Add( x, y2 );
 				list3.Add( x, y3 );
@@ -2108,6 +2361,9 @@ namespace ZedGraph.ControlTest
 			string[] labels = { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
 			myPane.XAxis.Scale.TextLabels = labels;
 			myPane.XAxis.Type = AxisType.Text;
+
+			z1.AxisChange();
+			BarItem.CreateBarLabels( myPane, false, "f2" );
 
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();
