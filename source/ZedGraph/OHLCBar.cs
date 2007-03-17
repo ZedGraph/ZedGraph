@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2007-01-30 08:42:40 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2007-03-17 18:43:44 $ </version>
 	[Serializable]
 	public class OHLCBar : LineBase, ICloneable, ISerializable
 	{
@@ -238,6 +238,7 @@ namespace ZedGraph
 		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
 		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
+			base.GetObjectData( info, context );
 			info.AddValue( "schema", schema );
 			info.AddValue( "isOpenCloseVisible", _isOpenCloseVisible );
 			info.AddValue( "size", _size );

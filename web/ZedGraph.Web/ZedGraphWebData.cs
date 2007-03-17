@@ -2591,6 +2591,7 @@ namespace ZedGraph.Web
 			this.FontSpec.IsUnderline = ZedGraph.Scale.Default.FontUnderline;
 			this.FontSpec.Fill.Color = ZedGraph.Scale.Default.FillColor;
 			this.FontSpec.Fill.Type = ZedGraph.Scale.Default.FillType;
+			this.FontSpec.Border.IsVisible = false;
 
 		}
 
@@ -3074,6 +3075,7 @@ namespace ZedGraph.Web
 			this.FontSpec.IsUnderline = ZedGraph.Axis.Default.TitleFontUnderline;
 			this.FontSpec.Fill.Color = ZedGraph.Axis.Default.TitleFillColor;
 			this.FontSpec.Fill.Type = ZedGraph.Axis.Default.TitleFillType;
+			this.FontSpec.Border.IsVisible = false;
 		}
 
 		/// <summary>
@@ -3537,6 +3539,7 @@ namespace ZedGraph.Web
 			this.FontSpec.Fill.Color = Legend.Default.FontFillColor;
 			this.FontSpec.IsItalic = Legend.Default.FontItalic;
 			this.FontSpec.Size = Legend.Default.FontSize;
+			this.FontSpec.Border.IsVisible = false;
 			this.IsReverse = Legend.Default.IsReverse;
 		}
 

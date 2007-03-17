@@ -40,7 +40,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.16 $ $Date: 2007-03-11 02:08:16 $</version>
+	/// <version>$Revision: 1.17 $ $Date: 2007-03-17 18:43:44 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -112,6 +112,7 @@ namespace ZedGraph.Web
 			this.FontSpec.Size = ZedGraph.PaneBase.Default.FontSize;
 			this.FontSpec.IsUnderline = ZedGraph.PaneBase.Default.FontUnderline;
 			this.FontSpec.Fill.Type = FillType.None;	// no fill
+			this.FontSpec.Border.IsVisible = false;
 
 			this.XAxis.IsVisible = ZedGraph.XAxis.Default.IsVisible;
 			this.XAxis.IsZeroLine = ZedGraph.XAxis.Default.IsZeroLine;
@@ -1085,7 +1086,7 @@ namespace ZedGraph.Web
 				//TODO: verify callback regression test
 				// Add custom callback tweeking next
 				if ( handler != null )
-					handler( g, mp );
+					handler( this, g, mp );
 
 				// Set the layout according to user preferences
 				mp.ReSize( g );
@@ -1962,8 +1963,10 @@ namespace ZedGraph.Web
 	/// <summary>
 	/// A delegate to handle the rendering event for this control.
 	/// </summary>
+	/// <param name="webObject">A reference to this <see cref="ZedGraphWeb" /> object</param>
 	/// <param name="g">A <see cref="Graphics"/> object for which the drawing will be done.</param>
 	/// <param name="pane">A reference to the <see cref="GraphPane"/>
 	/// class to be rendered.</param>
-	public delegate void ZedGraphWebControlEventHandler( Graphics g, MasterPane pane );
+	public delegate void ZedGraphWebControlEventHandler( ZedGraphWeb webObject,
+			Graphics g, MasterPane pane );
 }

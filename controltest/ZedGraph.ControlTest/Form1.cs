@@ -27,7 +27,7 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_Load( object sender, EventArgs e )
 		{
-			CreateGraph( zedGraphControl1 );
+			//CreateGraph( zedGraphControl1 );
 			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
@@ -64,7 +64,8 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_junk8( zedGraphControl1 );
 			//CreateGraph_junk9( zedGraphControl1 );
 			//CreateGraph_junk10( zedGraphControl1 );
-			//CreateGraph_MasterPane( zedGraphControl1 );
+			//CreateGraph_LineWithBandDemo( zedGraphControl1 );
+			CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
 			//CreateGraph_MasterWithPies( zedGraphControl1 );
@@ -208,11 +209,11 @@ namespace ZedGraph.ControlTest
 					FileAccess.Read, FileShare.Read );
 
 				MasterPane master = (MasterPane)mySerializer.Deserialize( myReader );
-				z1.Refresh();
 
 				myReader.Close();
 
 				z1.MasterPane = master;
+				z1.Refresh();
 				//trigger a resize event
 				z1.Size = z1.Size;
 			}
@@ -280,6 +281,12 @@ namespace ZedGraph.ControlTest
 
 			myPane.XAxis.MajorGrid.IsVisible = true;
 			myPane.YAxis.MajorGrid.IsVisible = true;
+
+			LineObj line = new LineObj( Color.Black, 2.3, 0, 2.3, 1 );
+			line.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
+			line.Line.Width = 2.0f;
+			myPane.GraphObjList.Add( line );
+
 
 //            myPane.Title.Text = null;
 
@@ -2011,6 +2018,68 @@ namespace ZedGraph.ControlTest
 			zgc.AxisChange();
 		}
 
+		public void CreateGraph_LineWithBandDemo( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			// Set the title and axis labels
+			myPane.Title.Text = "Line Graph with Band Demo";
+			myPane.Fill = new Fill( Color.LightBlue, Color.White );
+			myPane.XAxis.Title.Text = "Sequence";
+			myPane.YAxis.Title.Text = "Temperature, C";
+
+			// Enter some random data values
+			double[] y = { 100, 115, 75, 22, 98, 40, 10 };
+			double[] y2 = { 90, 100, 95, 35, 80, 35, 35 };
+			double[] y3 = { 80, 110, 65, 15, 54, 67, 18 };
+			double[] x = { 100, 200, 300, 400, 500, 600, 700 };
+
+			// Fill the axis background with a color gradient
+			myPane.Chart.Fill = new Fill( Color.FromArgb( 255, 255, 245 ), Color.FromArgb( 255, 255, 190 ), 90F );
+
+			// Generate a red curve with "Curve 1" in the legend
+			LineItem myCurve = myPane.AddCurve( "Curve 1", x, y, Color.Red );
+			// Make the symbols opaque by filling them with white
+			myCurve.Symbol.Fill = new Fill( Color.White );
+
+			// Generate a blue curve with "Curve 2" in the legend
+			myCurve = myPane.AddCurve( "Curve 2", x, y2, Color.Blue );
+			// Make the symbols opaque by filling them with white
+			myCurve.Symbol.Fill = new Fill( Color.White );
+
+			// Generate a green curve with "Curve 3" in the legend
+			myCurve = myPane.AddCurve( "Curve 3", x, y3, Color.Green );
+			// Make the symbols opaque by filling them with white
+			myCurve.Symbol.Fill = new Fill( Color.White );
+
+			// Manually set the x axis range
+			myPane.XAxis.Scale.Min = 0;
+			myPane.XAxis.Scale.Max = 800;
+			// Display the Y axis grid lines
+			myPane.YAxis.MajorGrid.IsVisible = true;
+			myPane.YAxis.MinorGrid.IsVisible = true;
+
+			// Draw a box item to highlight a value range
+			BoxObj box = new BoxObj( 0, 100, 800, 30, Color.Empty,
+					Color.FromArgb( 150, Color.LightGreen ) );
+			box.Fill = new Fill( Color.White, Color.FromArgb( 200, Color.LightGreen ), 45.0F );
+			// Use the BehindAxis zorder to draw the highlight beneath the grid lines
+			box.ZOrder = ZOrder.E_BehindCurves;
+			myPane.GraphObjList.Add( box );
+
+			// Add a text item to label the highlighted range
+			TextObj text = new TextObj( "Optimal\nRange", 750, 85, CoordType.AxisXYScale,
+									AlignH.Right, AlignV.Center );
+			text.FontSpec.Fill.IsVisible = false;
+			text.FontSpec.Border.IsVisible = false;
+			text.FontSpec.IsBold = true;
+			text.FontSpec.IsItalic = true;
+			myPane.GraphObjList.Add( text );
+
+			// Calculate the Axis Scale Ranges
+			z1.AxisChange();
+		}
+		
 		// masterpane with three vertical panes
 		private void CreateGraph_ThreeVerticalPanes( ZedGraphControl z1 )
 		{
@@ -4251,6 +4320,14 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_MouseDown( object sender, MouseEventArgs e )
 		{
+			ZedGraphControl zg1 = zedGraphControl1;
+
+			Serialize( zg1, "junk.bin" );
+			zg1.MasterPane.PaneList.Clear();
+			DeSerialize( zg1, "junk.bin" );
+
+			return;
+
 			Scale xScale = zedGraphControl1.GraphPane.XAxis.Scale;
 			double range = xScale.Max - xScale.Min;
 			xScale.Min = 10;

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2007-03-17 18:43:44 $ </version>
 	[Serializable]
 	public class Border : LineBase, ISerializable, ICloneable
 	{
@@ -155,6 +155,8 @@ namespace ZedGraph
 		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
 		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
+			base.GetObjectData( info, context );
+
 			info.AddValue( "schema", schema );
 			info.AddValue( "inflateFactor", _inflateFactor );
 		}

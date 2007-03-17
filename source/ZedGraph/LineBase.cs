@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// This is the base class for <see cref="Line" /> and <see cref="Border" /> classes.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.1 $ $Date: 2007-01-25 07:56:09 $ </version>
+	/// <version> $Revision: 3.2 $ $Date: 2007-03-17 18:43:44 $ </version>
 	[Serializable]
 	public class LineBase : ICloneable, ISerializable
 	{
@@ -383,6 +383,7 @@ namespace ZedGraph
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema0", schema0 );
+
 			info.AddValue( "width", _width );
 			info.AddValue( "style", _style );
 			info.AddValue( "dashOn", _dashOn );

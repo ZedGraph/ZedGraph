@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2007-02-07 07:46:46 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-03-17 18:43:44 $ </version>
 	[Serializable]
 	public class PointPair4 : PointPair, ISerializable
 	{
@@ -123,6 +123,7 @@ namespace ZedGraph
 		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
 		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
+			base.GetObjectData( info, context );
 			info.AddValue( "schema2", schema3 );
 			info.AddValue( "T", T );
 		}

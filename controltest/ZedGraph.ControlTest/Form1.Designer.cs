@@ -64,6 +64,7 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.EditButtons = System.Windows.Forms.MouseButtons.Left;
 			this.zedGraphControl1.Location = new System.Drawing.Point( 12, 12 );
 			this.zedGraphControl1.Name = "zedGraphControl1";
+			this.zedGraphControl1.ScrollGrace = 0;
 			this.zedGraphControl1.ScrollMaxX = 0;
 			this.zedGraphControl1.ScrollMaxY = 0;
 			this.zedGraphControl1.ScrollMaxY2 = 0;

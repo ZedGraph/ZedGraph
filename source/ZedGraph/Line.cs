@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.39 $ $Date: 2007-02-20 02:23:42 $ </version>
+	/// <version> $Revision: 3.40 $ $Date: 2007-03-17 18:43:44 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -291,6 +291,8 @@ namespace ZedGraph
 		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
 		public override void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
+			base.GetObjectData( info, context );
+
 			info.AddValue( "schema", schema );
 			info.AddValue( "isSmooth", _isSmooth );
 			info.AddValue( "smoothTension", _smoothTension );
