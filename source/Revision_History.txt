@@ -5,6 +5,7 @@
 : [FIX] Locale issue for 4.5.X (resource name needs to include folder "ZedGraph_v5")
 : [FIX] Border default problem for webcontrol fontspecs
 : [UPD] Add ZedGraphWeb instance as parameter to OnRenderGraph
+: [NEW] Add Turkish locale (thanks to Olcay Seker)
 
 ;10-Mar-2007 (by Champion) V5.0.6 Release
 : [FIX] Problem with GraphPane.Clone() for null title text
