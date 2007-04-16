@@ -1,5 +1,15 @@
 == Version 5 ==
 
+;15-Apr-2007 (By Champion) v5.0.9 release
+: [FIX] Handle null reference in CurveItem comparer for sortedoverlay bars
+: [NEW] Add Chinese Locale (thanks to Daniel Leonard)
+: [NEW] Add starting angle and rotation direction for RadarPointList (thanks to jongalloway)
+
+;3-Apr-2007 (By Champion) V5.0.8 Dev Release
+: [NEW] Add X2 Axis functionality (Cross property still needs some work)
+: [UPD] Update French Locale (thanks to wick95)
+: [FIX] Change WebControl inheritance to regular Control instead of UserControl (thanks Stefan Wiggershaus)
+
 ;16-Mar-2007 (by Champion) V5.0.7 Release
 : [FIX] Serialization call to base.GetObjectData( info, context ) for derived classes
 : [FIX] Locale issue for 4.5.X (resource name needs to include folder "ZedGraph_v5")

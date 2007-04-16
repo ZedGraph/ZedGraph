@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2007-02-19 08:05:23 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2007-04-16 00:03:02 $ </version>
 	// /// <seealso cref="ZedGraph.Web.IsImageMap"/>
 	[Serializable]
 	public class Link : ISerializable, ICloneable
@@ -237,10 +237,11 @@ namespace ZedGraph
 			else
 				url += "?index=" + index.ToString();
 
-			if (	pane.XAxis.Type == AxisType.Text && index >= 0 &&
-					pane.XAxis.Scale.TextLabels != null &&
-					index <= pane.XAxis.Scale.TextLabels.Length )
-				url += "&xtext=" + pane.XAxis.Scale.TextLabels[index];
+			Axis xAxis = curve.GetXAxis( pane );
+			if (	xAxis.Type == AxisType.Text && index >= 0 &&
+					xAxis.Scale.TextLabels != null &&
+					index <= xAxis.Scale.TextLabels.Length )
+				url += "&xtext=" + xAxis.Scale.TextLabels[index];
 
 			Axis yAxis = curve.GetYAxis( pane );
 			if (	yAxis != null && yAxis.Type == AxisType.Text && index >= 0 &&

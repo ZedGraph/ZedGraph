@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.18 $ $Date: 2007-02-18 05:51:54 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2007-04-16 00:03:02 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane _pane;
@@ -112,7 +112,7 @@ namespace ZedGraph
 			Axis baseAxis = curve.BaseAxis( pane );
 			Axis valueAxis = curve.ValueAxis( pane );
 
-			if ( baseAxis is XAxis )
+			if ( baseAxis is XAxis || baseAxis is X2Axis )
 				baseVal = curve.Points[iPt].X;
 			else
 				baseVal = curve.Points[iPt].Y;
@@ -140,12 +140,12 @@ namespace ZedGraph
 
 							for ( int i=0; i<points.Count; i++ )
 							{
-								if ( baseAxis is XAxis && points[i].X == baseVal )
+								if ( ( baseAxis is XAxis || baseAxis is X2Axis ) && points[i].X == baseVal )
 								{
 									curVal = points[i].Y;
 									break;
 								}
-								else if ( !(baseAxis is XAxis) && points[i].Y == baseVal )
+								else if ( !(baseAxis is XAxis || baseAxis is X2Axis) && points[i].Y == baseVal )
 								{
 									curVal = points[i].X;
 									break;
@@ -156,7 +156,7 @@ namespace ZedGraph
 						else if ( iPt < tmpCurve.Points.Count )
 						{
 							// Get the value for the appropriate value axis
-							if ( baseAxis is XAxis )
+							if ( baseAxis is XAxis || baseAxis is X2Axis )
 								curVal = tmpCurve.Points[iPt].Y;
 							else
 								curVal = tmpCurve.Points[iPt].X;
@@ -303,7 +303,7 @@ namespace ZedGraph
 				else
 					lowVal = curve.Points[iPt].LowValue;
 
-				if ( baseAxis is XAxis )
+				if ( baseAxis is XAxis || baseAxis is X2Axis )
 					hiVal = curve.Points[iPt].Y;
 				else
 					hiVal = curve.Points[iPt].X;

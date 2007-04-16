@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.40 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.41 $ $Date: 2007-04-16 00:03:01 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -407,6 +407,7 @@ namespace ZedGraph
 						tYMaxVal;
 
 			InitScale( pane.XAxis.Scale, isBoundedRanges );
+			InitScale( pane.X2Axis.Scale, isBoundedRanges );
 
 			foreach ( YAxis axis in pane.YAxisList )
 				InitScale( axis.Scale, isBoundedRanges );
@@ -441,7 +442,7 @@ namespace ZedGraph
 					// isYOrd is true if the Y axis is an ordinal type
 					Scale yScale = curve.GetYAxis( pane ).Scale;
 
-					Scale xScale = pane.XAxis.Scale;
+					Scale xScale = curve.GetXAxis( pane ).Scale;
 					bool isYOrd = yScale.IsAnyOrdinal;
 					// isXOrd is true if the X axis is an ordinal type
 					bool isXOrd = xScale.IsAnyOrdinal;
@@ -521,6 +522,8 @@ namespace ZedGraph
 			}
 
 			pane.XAxis.Scale.SetRange( pane, pane.XAxis );
+			pane.X2Axis.Scale.SetRange( pane, pane.X2Axis );
+
 			foreach ( YAxis axis in pane.YAxisList )
 				axis.Scale.SetRange( pane, axis );
 			foreach ( Y2Axis axis in pane.Y2AxisList )
@@ -563,7 +566,8 @@ namespace ZedGraph
 			tXMaxVal = tYMaxVal = Double.MinValue;
 
 			ValueHandler valueHandler = new ValueHandler( pane, false );
-			bool isXBase = curve.BaseAxis(pane) is XAxis;
+			Axis baseAxis = curve.BaseAxis( pane );
+			bool isXBase = baseAxis is XAxis || baseAxis is X2Axis;
 
 			double lowVal, baseVal, hiVal;
 

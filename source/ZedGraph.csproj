@@ -128,6 +128,7 @@
     <Compile Include="ZedGraph\TextScale.cs" />
     <Compile Include="ZedGraph\Types.cs" />
     <Compile Include="ZedGraph\ValueHandler.cs" />
+    <Compile Include="ZedGraph\X2Axis.cs" />
     <Compile Include="ZedGraph\XAxis.cs" />
     <Compile Include="ZedGraph\XDate.cs" />
     <Compile Include="ZedGraph\Y2Axis.cs" />
@@ -171,6 +172,12 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ZedGraph\ZedGraphLocale.sv.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.tr.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.zh-cn.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ZedGraph\ZedGraphLocale.zh-tw.resx">

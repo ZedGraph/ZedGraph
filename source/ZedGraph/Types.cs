@@ -516,8 +516,8 @@ namespace ZedGraph
 	
 	/// <summary>
 	/// Enumeration type that defines the base axis from which <see cref="Bar"/> graphs
-	/// are displayed. The bars can be drawn on any of the three axes (<see cref="XAxis"/>,
-	/// <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
+	/// are displayed. The bars can be drawn on any of the four axes (<see cref="XAxis"/>,
+	/// <see cref="X2Axis"/>, <see cref="YAxis"/>, and <see cref="Y2Axis"/>).
 	/// </summary>
 	/// <seealso cref="BarSettings.Base"/>
 	public enum BarBase
@@ -526,6 +526,10 @@ namespace ZedGraph
 		/// Draw the <see cref="Bar"/> chart based from the <see cref="XAxis"/>.
 		/// </summary>
 		X,
+		/// <summary>
+		/// Draw the <see cref="Bar"/> chart based from the <see cref="X2Axis"/>.
+		/// </summary>
+		X2,
 		/// <summary>
 		/// Draw the <see cref="Bar"/> chart based from the <see cref="YAxis"/>.
 		/// </summary>

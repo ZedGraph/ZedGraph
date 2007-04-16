@@ -67,7 +67,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.81 $ $Date: 2007-02-19 08:05:24 $ </version>
+	/// <version> $Revision: 3.82 $ $Date: 2007-04-16 00:03:06 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -2619,7 +2619,7 @@ namespace ZedGraph
 									else
 										valueHandler.GetValues( curve, iPt, out xVal, out lowVal, out yVal );
 
-									string xStr = MakeValueLabel( pane.XAxis, xVal, iPt,
+									string xStr = MakeValueLabel( curve.GetXAxis( pane ), xVal, iPt,
 										curve.IsOverrideOrdinal );
 									string yStr = MakeValueLabel( curve.GetYAxis( pane ), yVal, iPt,
 										curve.IsOverrideOrdinal );
@@ -2650,8 +2650,8 @@ namespace ZedGraph
 			GraphPane pane = _masterPane.FindPane( mousePt );
 			if ( pane != null && pane.Chart._rect.Contains( mousePt ) )
 			{
-				double x, y, y2;
-				pane.ReverseTransform( mousePt, out x, out y, out y2 );
+				double x, x2, y, y2;
+				pane.ReverseTransform( mousePt, out x, out x2, out y, out y2 );
 				string xStr = MakeValueLabel( pane.XAxis, x, -1, true );
 				string yStr = MakeValueLabel( pane.YAxis, y, -1, true );
 				string y2Str = MakeValueLabel( pane.Y2Axis, y2, -1, true );
@@ -2739,13 +2739,17 @@ namespace ZedGraph
 					bool isZoomOnCenter, bool isRefresh )
 		{
 			double x;
+			double x2;
 			double[] y;
 			double[] y2;
 
-			pane.ReverseTransform( centerPt, out x, out y, out y2 );
+			pane.ReverseTransform( centerPt, out x, out x2, out y, out y2 );
 
 			if ( _isEnableHZoom )
+			{
 				ZoomScale( pane.XAxis, zoomFraction, x, isZoomOnCenter );
+				ZoomScale( pane.X2Axis, zoomFraction, x2, isZoomOnCenter );
+			}
 			if ( _isEnableVZoom )
 			{
 				for ( int i = 0; i < pane.YAxisList.Count; i++ )
@@ -2850,17 +2854,18 @@ namespace ZedGraph
 
 		private Point HandlePanDrag( Point mousePt )
 		{
-			double x1, x2;
+			double x1, x2, xx1, xx2;
 			double[] y1, y2, yy1, yy2;
 			//PointF endPoint = mousePt;
 			//PointF startPoint = ( (Control)sender ).PointToClient( this.dragRect.Location );
 
-			_dragPane.ReverseTransform( _dragStartPt, out x1, out y1, out yy1 );
-			_dragPane.ReverseTransform( mousePt, out x2, out y2, out yy2 );
+			_dragPane.ReverseTransform( _dragStartPt, out x1, out xx1, out y1, out yy1 );
+			_dragPane.ReverseTransform( mousePt, out x2, out xx2, out y2, out yy2 );
 
 			if ( _isEnableHPan )
 			{
 				PanScale( _dragPane.XAxis, x1, x2 );
+				PanScale( _dragPane.X2Axis, xx1, xx2 );
 				this.SetScroll( this.hScrollBar1, _dragPane.XAxis, _xScrollRange.Min, _xScrollRange.Max );
 			}
 			if ( _isEnableVPan )
@@ -2965,16 +2970,16 @@ namespace ZedGraph
 		{
 			// get the scale values that correspond to the current point
 			double curX, curY;
-			_dragPane.ReverseTransform( mousePt, _dragCurve.IsY2Axis, _dragCurve.YAxisIndex,
-					out curX, out curY );
+			_dragPane.ReverseTransform( mousePt, _dragCurve.IsX2Axis, _dragCurve.IsY2Axis,
+					_dragCurve.YAxisIndex, out curX, out curY );
 			double startX, startY;
-			_dragPane.ReverseTransform( _dragStartPt, _dragCurve.IsY2Axis, _dragCurve.YAxisIndex,
-					out startX, out startY );
+			_dragPane.ReverseTransform( _dragStartPt, _dragCurve.IsX2Axis, _dragCurve.IsY2Axis,
+					_dragCurve.YAxisIndex, out startX, out startY );
 
 			// calculate the new scale values for the point
 			PointPair newPt = new PointPair( _dragStartPair );
 
-			Scale xScale = _dragPane.XAxis._scale;
+			Scale xScale = _dragCurve.GetXAxis( _dragPane )._scale;
 			if ( _isEnableHEdit )
 				newPt.X = xScale.DeLinearize( xScale.Linearize( newPt.X ) +
 							xScale.Linearize( curX )- xScale.Linearize( startX ) );
@@ -3043,12 +3048,12 @@ namespace ZedGraph
 				//ControlPaint.DrawReversibleFrame( this.dragRect,
 				//	this.BackColor, FrameStyle.Dashed );
 
-				double x1, x2;
+				double x1, x2, xx1, xx2;
 				double[] y1, y2, yy1, yy2;
 				//PointF startPoint = ( (Control)sender ).PointToClient( this.dragRect.Location );
 
-				_dragPane.ReverseTransform( _dragStartPt, out x1, out y1, out yy1 );
-				_dragPane.ReverseTransform( mousePtF, out x2, out y2, out yy2 );
+				_dragPane.ReverseTransform( _dragStartPt, out x1, out xx1, out y1, out yy1 );
+				_dragPane.ReverseTransform( mousePtF, out x2, out xx2, out y2, out yy2 );
 
 				ZoomStatePush( _dragPane );
 				//ZoomState oldState = _dragPane.ZoomStack.Push( _dragPane,
@@ -3058,9 +3063,13 @@ namespace ZedGraph
 				{
 					_dragPane.XAxis._scale._min = Math.Min( x1, x2 );
 					_dragPane.XAxis._scale._minAuto = false;
-
 					_dragPane.XAxis._scale._max = Math.Max( x1, x2 );
 					_dragPane.XAxis._scale._maxAuto = false;
+
+					_dragPane.X2Axis._scale._min = Math.Min( xx1, xx2 );
+					_dragPane.X2Axis._scale._minAuto = false;
+					_dragPane.X2Axis._scale._max = Math.Max( xx1, xx2 );
+					_dragPane.X2Axis._scale._maxAuto = false;
 				}
 				if ( _isEnableVZoom )
 				{
@@ -3189,12 +3198,12 @@ namespace ZedGraph
 
 				#region New Code to Select on Rubber Band
 
-				double x1, x2;
+				double x1, x2, xx1, xx2;
 				double[] y1, y2, yy1, yy2;
 				PointF startPoint = ( (Control)sender ).PointToClient( new Point( Convert.ToInt32( this._dragPane.Rect.X ), Convert.ToInt32( this._dragPane.Rect.Y ) ) );
 
-				_dragPane.ReverseTransform( _dragStartPt, out x1, out y1, out yy1 );
-				_dragPane.ReverseTransform( mousePtF, out x2, out y2, out yy2 );
+				_dragPane.ReverseTransform( _dragStartPt, out x1, out xx1, out y1, out yy1 );
+				_dragPane.ReverseTransform( mousePtF, out x2, out xx2, out y2, out yy2 );
 
 				CurveList objects = new CurveList();
 
@@ -4096,6 +4105,7 @@ namespace ZedGraph
 		private void ResetAutoScale( GraphPane pane, Graphics g )
 		{
 			pane.XAxis.ResetAutoScale( pane, g );
+			pane.X2Axis.ResetAutoScale( pane, g );
 			foreach ( YAxis axis in pane.YAxisList )
 				axis.ResetAutoScale( pane, g );
 			foreach ( Y2Axis axis in pane.Y2AxisList )

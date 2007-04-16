@@ -33,10 +33,23 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	/// 
 	/// <author>Jerry Vos and John Champion</author>
-	/// <version> $Revision: 3.4 $ $Date: 2006-08-25 05:19:09 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	public class RadarPointList : List<PointPair>, IPointList, IPointListEdit
 	{
+
+	#region Fields
+		/// <summary>
+		/// Default to clockwise rotation as this is the standard for radar charts
+		/// </summary>
+		private bool _clockwise = true;
+
+		/// <summary>
+		/// Default to 90 degree rotation so main axis is in the 12 o'clock position,
+		/// which is the standard for radar charts.
+		/// </summary>
+		private double _rotation = 90;
+	#endregion
 
 	#region Properties
 
@@ -61,7 +74,10 @@ namespace ZedGraph
 					return null;
 
 				PointPair pt = (PointPair)base[index];
-				double theta = (double) index / (double) count * 2.0 * Math.PI;
+//				double theta = (double) index / (double) count * 2.0 * Math.PI;
+				double rotationRadians = _rotation * Math.PI / 180;
+				double theta = rotationRadians + ( _clockwise ? -1.0d : 1.0d ) *
+						( (double) index / (double) (count-1) * 2.0 * Math.PI);
 				double x = pt.Y * Math.Cos( theta );
 				double y = pt.Y * Math.Sin( theta );
 				return new PointPair( x, y, pt.Z, (string) pt.Tag );
@@ -79,6 +95,24 @@ namespace ZedGraph
 				PointPair pt = (PointPair)base[index];
 				pt.Y = Math.Sqrt( value.X * value.X + value.Y * value.Y );
 			}
+		}
+
+		/// <summary>
+		/// Indicates if points should be added in clockwise or counter-clockwise order
+		/// </summary>
+		public bool Clockwise
+		{
+			get { return _clockwise; }
+			set { _clockwise = value; }
+		}
+
+		/// <summary>
+		/// Sets the angular rotation (starting angle) for the initial axis
+		/// </summary>
+		public double Rotation
+		{
+			get { return _rotation; }
+			set { _rotation = value; }
 		}
 
 		/// <summary>

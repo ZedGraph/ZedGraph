@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.7 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	class OrdinalScale : Scale, ISerializable //, ICloneable
 	{
@@ -158,7 +158,8 @@ namespace ZedGraph
 				{
 					// Calculate the step size based on targetSteps
 					scale._majorStep = Scale.CalcStepSize( scale._max - scale._min,
-						( scale._ownerAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps );
+						( scale._ownerAxis is XAxis || scale._ownerAxis is X2Axis ) ?
+								Default.TargetXSteps : Default.TargetYSteps );
 
 					if ( scale.IsPreventLabelOverlap )
 					{
@@ -182,7 +183,8 @@ namespace ZedGraph
 				// Calculate the new minor step size
 				if ( scale._minorStepAuto )
 					scale._minorStep = Scale.CalcStepSize( scale._majorStep,
-						( scale._ownerAxis is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
+						( scale._ownerAxis is XAxis || scale._ownerAxis is X2Axis ) ?
+								Default.TargetMinorXSteps : Default.TargetMinorYSteps );
 
 				if ( scale._minAuto )
 					scale._min -= 0.5;

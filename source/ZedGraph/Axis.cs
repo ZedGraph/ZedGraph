@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.70 $ $Date: 2007-03-11 02:08:16 $ </version>
+	/// <version> $Revision: 3.71 $ $Date: 2007-04-16 00:03:01 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -854,7 +854,22 @@ namespace ZedGraph
 		/// <returns>The shift amount measured in pixels</returns>
 		abstract internal float CalcCrossShift( GraphPane pane );
 
-		abstract internal Axis GetCrossAxis( GraphPane pane );
+		/// <summary>
+		/// Gets the "Cross" axis that corresponds to this axis.
+		/// </summary>
+		/// <remarks>
+		/// The cross axis is the axis which determines the of this Axis when the
+		/// <see cref="Axis.Cross" >Axis.Cross</see> property is used.  The
+		/// cross axis for any <see cref="XAxis" /> or <see cref="X2Axis" />
+		/// is always the primary <see cref="YAxis" />, and
+		/// the cross axis for any <see cref="YAxis" /> or <see cref="Y2Axis" /> is
+		/// always the primary <see cref="XAxis" />.
+		/// </remarks>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		abstract public Axis GetCrossAxis( GraphPane pane );
 
 //		abstract internal float GetMinPix( GraphPane pane );
 
@@ -876,7 +891,7 @@ namespace ZedGraph
 
 			if ( _crossAuto )
 			{
-				if ( crossAxis._scale.IsReverse == ( this is Y2Axis ) )
+				if ( crossAxis._scale.IsReverse == ( this is Y2Axis || this is X2Axis ) )
 					return max;
 				else
 					return min;
@@ -902,7 +917,7 @@ namespace ZedGraph
 			{
 				Axis crossAxis = GetCrossAxis( pane );
 				if ( ( ( this is XAxis || this is YAxis ) && !crossAxis._scale.IsReverse ) ||
-					( this is Y2Axis && crossAxis._scale.IsReverse ) )
+					( ( this is X2Axis || this is Y2Axis ) && crossAxis._scale.IsReverse ) )
 				{
 					if ( _cross <= crossAxis._scale._min )
 						return false;
@@ -945,7 +960,7 @@ namespace ZedGraph
 			float frac;
 
 			if ( ( ( this is XAxis || this is YAxis ) && _scale._isLabelsInside == crossAxis._scale.IsReverse ) ||
-				 ( this is Y2Axis && _scale._isLabelsInside != crossAxis._scale.IsReverse ) )
+				 ( ( this is X2Axis || this is Y2Axis ) && _scale._isLabelsInside != crossAxis._scale.IsReverse ) )
 				frac = (float)( ( effCross - min ) / ( max - min ) );
 			else
 				frac = (float)( ( max - effCross ) / ( max - min ) );

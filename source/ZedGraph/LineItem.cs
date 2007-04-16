@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.20 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	public class LineItem : CurveItem, ICloneable, ISerializable
 	{
@@ -372,8 +372,9 @@ namespace ZedGraph
 			valueHandler.GetValues( this, i, out x, out z, out y );
 
 			Axis yAxis = GetYAxis( pane );
+			Axis xAxis = GetXAxis( pane );
 
-			PointF pixPt = new PointF( pane.XAxis.Scale.Transform( _isOverrideOrdinal, i, x ),
+			PointF pixPt = new PointF( xAxis.Scale.Transform( _isOverrideOrdinal, i, x ),
 							yAxis.Scale.Transform( _isOverrideOrdinal, i, y ) );
 			
 			if ( !pane.Chart.Rect.Contains( pixPt ) )

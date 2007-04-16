@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.25 $ $Date: 2007-03-11 02:08:16 $ </version>
+	/// <version> $Revision: 1.26 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -1625,7 +1625,7 @@ namespace ZedGraph
 		/// This method is typically called by the parent <see cref="GraphPane"/>
 		/// object as part of the <see cref="GraphPane.Draw"/> method.  It is also
 		/// called by <see cref="GraphPane.GeneralTransform(double,double,CoordType)"/> and
-		/// <see cref="GraphPane.ReverseTransform( PointF, out double, out double, out double )"/>
+		/// <see cref="GraphPane.ReverseTransform( PointF, out double, out double )"/>
 		/// methods to setup for coordinate transformations.
 		/// </remarks>
 		/// <param name="pane">
@@ -1638,7 +1638,7 @@ namespace ZedGraph
 		virtual public void SetupScaleData( GraphPane pane, Axis axis )
 		{
 			// save the ChartRect data for transforming scale values to pixels
-			if ( axis is XAxis )
+			if ( axis is XAxis || axis is X2Axis )
 			{
 				_minPix = pane.Chart._rect.Left;
 				_maxPix = pane.Chart._rect.Right;
@@ -2185,7 +2185,7 @@ namespace ZedGraph
 			AlignV av = AlignV.Center;
 			AlignH ah = AlignH.Center;
 
-			if ( _ownerAxis is XAxis )
+			if ( _ownerAxis is XAxis || _ownerAxis is X2Axis )
 				ah = _alignH;
 			else
 				av = _alignH == AlignH.Left ? AlignV.Top : ( _alignH == AlignH.Right ? AlignV.Bottom : AlignV.Center );
@@ -2267,7 +2267,7 @@ namespace ZedGraph
 
 		internal void GetTopRightPix( GraphPane pane, out float topPix, out float rightPix )
 		{
-			if ( _ownerAxis is XAxis )
+			if ( _ownerAxis is XAxis || _ownerAxis is X2Axis )
 			{
 				rightPix = pane.Chart._rect.Width;
 				topPix = -pane.Chart._rect.Height;
@@ -2481,7 +2481,7 @@ namespace ZedGraph
 			// Calculate the maximum number of labels
 			double width;
 			RectangleF chartRect = pane.Chart._rect;
-			if ( _ownerAxis is XAxis )
+			if ( _ownerAxis is XAxis || _ownerAxis is X2Axis )
 				width = ( chartRect.Width == 0 ) ? pane.Rect.Width * 0.75 : chartRect.Width;
 			else
 				width = ( chartRect.Height == 0 ) ? pane.Rect.Height * 0.75 : chartRect.Height;
@@ -2655,14 +2655,14 @@ namespace ZedGraph
 			if ( _rangeMin >= Double.MaxValue || _rangeMax <= Double.MinValue )
 			{
 				// If this is a Y axis, and the main Y axis is valid, use it for defaults
-				if ( axis != pane.XAxis &&
+				if ( axis != pane.XAxis && axis != pane.X2Axis &&
 					pane.YAxis.Scale._rangeMin < double.MaxValue && pane.YAxis.Scale._rangeMax > double.MinValue )
 				{
 					_rangeMin = pane.YAxis.Scale._rangeMin;
 					_rangeMax = pane.YAxis.Scale._rangeMax;
 				}
 				// Otherwise, if this is a Y axis, and the main Y2 axis is valid, use it for defaults
-				else if ( axis != pane.XAxis &&
+				else if ( axis != pane.XAxis && axis != pane.X2Axis &&
 					pane.Y2Axis.Scale._rangeMin < double.MaxValue && pane.Y2Axis.Scale._rangeMax > double.MinValue )
 				{
 					_rangeMin = pane.Y2Axis.Scale._rangeMin;
@@ -2736,7 +2736,16 @@ namespace ZedGraph
 			double ratio = ( Linearize( x ) - _minLinTemp ) /
 							( _maxLinTemp - _minLinTemp );
 
-			if ( _isReverse == _ownerAxis is XAxis )
+			// _isReverse   axisType    Eqn
+			//     T          XAxis     _maxPix - ...
+			//     F          YAxis     _maxPix - ...
+			//     F          Y2Axis    _maxPix - ...
+
+			//     T          YAxis     _minPix + ...
+			//     T          Y2Axis    _minPix + ...
+			//     F          XAxis     _minPix + ...
+
+			if ( _isReverse == ( _ownerAxis is XAxis || _ownerAxis is X2Axis ) )
 				return (float) ( _maxPix - ( _maxPix - _minPix ) * ratio );
 			else
 				return (float) ( _minPix + ( _maxPix - _minPix ) * ratio );
@@ -2797,7 +2806,7 @@ namespace ZedGraph
 			double val;
 
 			// see if the sign of the equation needs to be reversed
-			if ( ( _isReverse ) == ( _ownerAxis is XAxis ) )
+			if ( ( _isReverse ) == ( _ownerAxis is XAxis || _ownerAxis is X2Axis ) )
 				val = (double) ( pixVal - _maxPix )
 						/ (double) ( _minPix - _maxPix )
 						* ( _maxLinTemp - _minLinTemp ) + _minLinTemp;
@@ -2842,10 +2851,10 @@ namespace ZedGraph
 			ratio = ( x - _minLinTemp ) /
 						( _maxLinTemp - _minLinTemp );
 
-			if ( _isReverse != ( _ownerAxis is YAxis ) )
-				rv = (float) ( ( _maxPix - _minPix ) * ( 1.0F - ratio ) );
-			else
+			if ( _isReverse == ( _ownerAxis is YAxis || _ownerAxis is X2Axis ) )
 				rv = (float) ( ( _maxPix - _minPix ) * ratio );
+			else
+				rv = (float)( ( _maxPix - _minPix ) * ( 1.0F - ratio ) );
 
 			return rv;
 		}

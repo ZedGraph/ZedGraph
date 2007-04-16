@@ -40,14 +40,14 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.17 $ $Date: 2007-03-17 18:43:44 $</version>
+	/// <version>$Revision: 1.18 $ $Date: 2007-04-16 00:03:07 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
 		//DefaultProperty("Title"),
 	ToolboxData( "<{0}:ZedGraphWeb runat=server></{0}:ZedGraphWeb>" )
 	]
-	public class ZedGraphWeb : UserControl, INamingContainer, IDisposable
+	public class ZedGraphWeb : Control, INamingContainer, IDisposable
 	{
 		/// <summary>
 		/// Override the <see cref="ToString"/> method to do nothing.
@@ -431,7 +431,6 @@ namespace ZedGraph.Web
 		{
 			get { return (ZedGraphWebBorder2)vsassist.GetValue( 'C', this.IsTrackingViewState ); }
 		}
-
 
 		/// <summary>
 		/// Proxy property that gets or sets the width of the <see cref="PaneBase.Rect"/>.

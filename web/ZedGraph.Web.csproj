@@ -41,7 +41,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ZedGraph.Web\TempFileDestructor.cs" />
     <Compile Include="ZedGraph.Web\ZedGraphWeb.cs">
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="ZedGraph.Web\ZedGraphWebData.cs" />
     <Compile Include="ZedGraph.Web\ZedGraphWebTools.cs" />

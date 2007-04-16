@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// the <see cref="YAxis"/>, and the <see cref="Y2Axis"/>.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.14 $ $Date: 2007-02-19 08:05:24 $ </version>
+	/// <version> $Revision: 3.15 $ $Date: 2007-04-16 00:03:07 $ </version>
 	public class ZoomState : ICloneable
 	{
 		/// <summary>
@@ -67,7 +67,7 @@ namespace ZedGraph
 		/// <summary>
 		/// <see cref="ScaleState"/> objects to store the state data from the axes.
 		/// </summary>
-		private ScaleState	_xAxis;
+		private ScaleState	_xAxis, _x2Axis;
 		private ScaleStateList _yAxis, _y2Axis;
 		/// <summary>
 		/// An enum value indicating the type of adjustment being made to the
@@ -122,6 +122,7 @@ namespace ZedGraph
 		{
 
 			_xAxis = new ScaleState( pane.XAxis );
+			_x2Axis = new ScaleState( pane.X2Axis );
 			_yAxis = new ScaleStateList( pane.YAxisList );
 			_y2Axis = new ScaleStateList( pane.Y2AxisList );
 			_type = type;
@@ -134,6 +135,7 @@ namespace ZedGraph
 		public ZoomState( ZoomState rhs )
 		{
 			_xAxis = new ScaleState( rhs._xAxis );
+			_x2Axis = new ScaleState( rhs._x2Axis );
 			_yAxis = new ScaleStateList( rhs._yAxis );
 			_y2Axis = new ScaleStateList( rhs._y2Axis );
 		}
@@ -166,6 +168,7 @@ namespace ZedGraph
 		public void ApplyState( GraphPane pane )
 		{
 			_xAxis.ApplyScale( pane.XAxis );
+			_x2Axis.ApplyScale( pane.X2Axis );
 			_yAxis.ApplyScale( pane.YAxisList );
 			_y2Axis.ApplyScale( pane.Y2AxisList );
 		}
@@ -178,7 +181,8 @@ namespace ZedGraph
 		/// <returns>true if the states are different, false otherwise</returns>
 		public bool IsChanged( GraphPane pane )
 		{
-			return	_xAxis.IsChanged( pane.XAxis ) ||
+			return _xAxis.IsChanged( pane.XAxis ) ||
+					_x2Axis.IsChanged( pane.X2Axis ) ||
 					_yAxis.IsChanged( pane.YAxisList ) ||
 					_y2Axis.IsChanged( pane.Y2AxisList );
 		}

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.15 $ $Date: 2006-11-25 17:17:27 $ </version>
+	/// <version> $Revision: 3.16 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	public class XAxis : Axis, ICloneable, ISerializable
 	{
@@ -222,7 +222,22 @@ namespace ZedGraph
 					return !this.crossAuto && this.cross > pane.YAxis.Min && this.cross < pane.YAxis.Max;
 				}
 		*/
-		override internal Axis GetCrossAxis( GraphPane pane )
+		/// <summary>
+		/// Gets the "Cross" axis that corresponds to this axis.
+		/// </summary>
+		/// <remarks>
+		/// The cross axis is the axis which determines the of this Axis when the
+		/// <see cref="Axis.Cross" >Axis.Cross</see> property is used.  The
+		/// cross axis for any <see cref="XAxis" /> or <see cref="X2Axis" />
+		/// is always the primary <see cref="YAxis" />, and
+		/// the cross axis for any <see cref="YAxis" /> or <see cref="Y2Axis" /> is
+		/// always the primary <see cref="XAxis" />.
+		/// </remarks>
+		/// <param name="pane">
+		/// A reference to the <see cref="GraphPane"/> object that is the parent or
+		/// owner of this object.
+		/// </param>
+		override public Axis GetCrossAxis( GraphPane pane )
 		{
 			return pane.YAxis;
 		}

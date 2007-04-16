@@ -49,7 +49,7 @@ namespace ZedGraph
 	/// is assigned with <see cref="BarSettings.Base"/>, and is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.18 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.19 $ $Date: 2007-04-16 00:03:01 $ </version>
 	[Serializable]
 	public class ErrorBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -343,7 +343,7 @@ namespace ZedGraph
 				float pixSide = pixBase - scaledSize / 2.0F;
 
 				// Draw the bar
-				if ( baseAxis is XAxis )
+				if ( baseAxis is XAxis || baseAxis is X2Axis )
 					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
 								pixSide, pixLowVal,
 								pixSide + scaledSize, pixHiVal );

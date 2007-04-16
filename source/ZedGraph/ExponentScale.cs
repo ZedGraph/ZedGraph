@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion with contributions by jackply </author>
-	/// <version> $Revision: 1.7 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 1.8 $ $Date: 2007-04-16 00:03:01 $ </version>
 	[Serializable]
 	class ExponentScale : Scale, ISerializable //, ICloneable
 	{
@@ -95,7 +95,7 @@ namespace ZedGraph
 		/// This method is typically called by the parent <see cref="GraphPane"/>
 		/// object as part of the <see cref="GraphPane.Draw"/> method.  It is also
 		/// called by <see cref="GraphPane.GeneralTransform(double,double,CoordType)"/> and
-		/// <see cref="GraphPane.ReverseTransform( PointF, out double, out double, out double )"/>
+		/// <see cref="GraphPane.ReverseTransform( PointF, out double, out double )"/>
 		/// methods to setup for coordinate transformations.
 		/// </remarks>
 		/// <param name="pane">
@@ -275,7 +275,8 @@ namespace ZedGraph
 			// Calculate the new step size
 			if ( _majorStepAuto )
 			{
-				double targetSteps = ( _ownerAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
+				double targetSteps = ( _ownerAxis is XAxis || _ownerAxis is X2Axis ) ?
+						Default.TargetXSteps : Default.TargetYSteps;
 
 				// Calculate the step size based on target steps
 				_majorStep = CalcStepSize( _max - _min, targetSteps );
@@ -293,7 +294,8 @@ namespace ZedGraph
 			// Calculate the new step size
 			if ( _minorStepAuto )
 				_minorStep = CalcStepSize( _majorStep,
-					( _ownerAxis is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
+					( _ownerAxis is XAxis || _ownerAxis is X2Axis ) ?
+							Default.TargetMinorXSteps : Default.TargetMinorYSteps );
 
 			// Calculate the scale minimum
 			if ( _minAuto )

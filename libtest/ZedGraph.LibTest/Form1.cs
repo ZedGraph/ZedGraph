@@ -2432,9 +2432,9 @@ namespace ZedGraph.LibTest
 				}
 				else
 				{
-					double x1, x2, y1, y2, y3, y4;
-					myPane.ReverseTransform( startPt, out x1, out y1, out y3 );
-					myPane.ReverseTransform( mousePt, out x2, out y2, out y4 );
+					double x1, x2, x3, x4, y1, y2, y3, y4;
+					myPane.ReverseTransform( startPt, out x1, out x3, out y1, out y3 );
+					myPane.ReverseTransform( mousePt, out x2, out x4, out y2, out y4 );
 					double width = Math.Abs( x1 - x2 );
 					double height = Math.Abs( y1 - y2 );
 					x1 = Math.Min( x1, x2 );

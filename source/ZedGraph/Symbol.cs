@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.33 $ $Date: 2007-01-25 07:56:09 $ </version>
+	/// <version> $Revision: 3.34 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -548,7 +548,7 @@ namespace ZedGraph
 					using ( Brush brush = source.Fill.MakeBrush( rect ) )
 					{
 						ValueHandler valueHandler = new ValueHandler( pane, false );
-						Scale xScale = pane.XAxis.Scale;
+						Scale xScale = curve.GetXAxis( pane ).Scale;
 						Scale yScale = curve.GetYAxis( pane ).Scale;
 
 						bool xIsLog = xScale.IsLog;

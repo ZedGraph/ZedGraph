@@ -52,7 +52,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2007-02-18 05:51:54 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	public class NoDupePointList : List<DataPoint>, IPointList, IPointListEdit
 	{
@@ -298,7 +298,11 @@ namespace ZedGraph
 		/// <see cref="Y2Axis" />, and can be a primary or secondary axis (if multiple Y or Y2
 		/// axes are being used).
 		/// </param>
-		public void FilterData( GraphPane pane, Axis yAxis )
+		/// <param name="xAxis">The <see cref="Axis" /> class to be used in the X direction
+		/// for plotting these data.  This can be an <see cref="XAxis" /> or a 
+		/// <see cref="X2Axis" />.
+		/// </param>
+		public void FilterData( GraphPane pane, Axis xAxis, Axis yAxis )
 		{
 			if ( _visibleIndicies == null || _visibleIndicies.Length < base.Count )
 				_visibleIndicies = new int[base.Count];
@@ -316,8 +320,7 @@ namespace ZedGraph
 				for ( int j = 0; j < height; j++ )
 					usedArray[i, j] = false;
 
-			Axis xAxis = pane.XAxis;
-			xAxis.Scale.SetupScaleData( pane, pane.XAxis );
+			xAxis.Scale.SetupScaleData( pane, xAxis );
 			yAxis.Scale.SetupScaleData( pane, yAxis );
 
 			int n = _filterMode < 0 ? 0 : _filterMode;

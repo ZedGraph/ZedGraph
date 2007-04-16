@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.2 $ $Date: 2006-07-02 06:42:01 $ </version>
+	/// <version> $Revision: 3.3 $ $Date: 2007-04-16 00:03:01 $ </version>
 	[Serializable]
 	public class BarSettings : ISerializable
 	{
@@ -357,7 +357,7 @@ namespace ZedGraph
 				if ( !pt.IsInvalid || !lastPt.IsInvalid )
 				{
 					double step;
-					if ( baseAxis is XAxis )
+					if ( baseAxis is XAxis || baseAxis is X2Axis )
 						step = pt.X - lastPt.X;
 					else
 						step = pt.Y - lastPt.Y;
@@ -412,6 +412,8 @@ namespace ZedGraph
 				barAxis = _ownerPane.YAxis;
 			else if ( _base == BarBase.Y2 )
 				barAxis = _ownerPane.Y2Axis;
+			else if ( _base == BarBase.X2 )
+				barAxis = _ownerPane.X2Axis;
 			else
 				barAxis = _ownerPane.XAxis;
 

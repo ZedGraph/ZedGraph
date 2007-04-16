@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.16 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.17 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -326,7 +326,7 @@ namespace ZedGraph
 				float pixSide = pixBase - barWidth / 2.0F;
 
 				// Draw the bar
-				if ( baseAxis is XAxis )
+				if ( baseAxis is XAxis || baseAxis is X2Axis )
 					this.Draw( g, pane, pixSide, pixSide + barWidth, pixLowVal,
 								pixHiVal, scaleFactor, true, curve.IsSelected,
 								curve.Points[index] );

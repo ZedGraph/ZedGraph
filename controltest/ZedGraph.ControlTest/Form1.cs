@@ -65,7 +65,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_junk9( zedGraphControl1 );
 			//CreateGraph_junk10( zedGraphControl1 );
 			//CreateGraph_LineWithBandDemo( zedGraphControl1 );
-			CreateGraph_MasterPane( zedGraphControl1 );
+			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
 			//CreateGraph_MasterWithPies( zedGraphControl1 );
@@ -84,11 +84,14 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_ScrollProblem( zedGraphControl1 );
+			//CreateGraph_SortedOverlayBars( zedGraphControl1 );
 			//CreateGraph_SpiderPlot( zedGraphControl1 );
 			//CreateGraph_SplineTest( zedGraphControl1 );
 			//CreateGraph_StackedBars( zedGraphControl1 );
+			//CreateGraph_StackedLinearBars( zedGraphControl1 );
 			//CreateGraph_StackedMultiBars( zedGraphControl1 );
 			//CreateGraph_StackLine( zedGraphControl1 );
+			CreateGraph_StepChartDemo( zedGraphControl1 );
 			//CreateGraph_StickToCurve( zedGraphControl1 );
 			//CreateGraph_TestScroll( zedGraphControl1 );
 			//CreateGraph_TextBasic( zedGraphControl2 );
@@ -229,34 +232,41 @@ namespace ZedGraph.ControlTest
 			myPane.Title.Text = "My Test Bar Graph";
 			myPane.XAxis.Title.Text = "Label";
 			myPane.YAxis.Title.Text = "My Y Axis";
+			myPane.X2Axis.Title.Text = "The Top X Axis";
+			myPane.Y2Axis.Title.Text = "Y2 Axis";
+
+			myPane.X2Axis.IsVisible = true;
+			myPane.X2Axis.Scale.IsReverse = true;
+			myPane.Y2Axis.IsVisible = true;
 
 			// Make up some random data points
 			string[] labels = { "Panther", "Lion", "Cheetah", 
                       "Cougar", "Tiger", "Leopard" };
+			double[] x = { 1, 2, 3, 4, 5, 6 };
 			double[] y = { 100, 115, 75, 22, 98, 40 };
 			double[] y2 = { 90, 100, 95, 35, 80, 35 };
 			double[] y3 = { 80, 110, 65, 15, 54, 67 };
 			double[] y4 = { 120, 125, 100, 40, 105, 75 };
 
 			// Generate a red bar with "Curve 1" in the legend
-			BarItem myBar = myPane.AddBar( "Curve 1 label is long\nsecond line", null, y,
-																	  Color.Red );
-			myBar.Bar.Fill = new Fill( Color.Red, Color.White,
-																	  Color.Red );
+			//BarItem myBar = myPane.AddBar( "Curve 1 label is long\nsecond line", null, y, Color.Red );
+			BarItem myBar = myPane.AddBar( "Curve 1", null, y, Color.Red );
+			myBar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red );
 
 			// Generate a blue bar with "Curve 2" in the legend
 			myBar = myPane.AddBar( "Curve 2", null, y2, Color.Blue );
-			myBar.Bar.Fill = new Fill( Color.Blue, Color.White,
-																	  Color.Blue );
+			myBar.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue );
 
 			// Generate a green bar with "Curve 3" in the legend
-			myBar = myPane.AddBar( "Curve 3\ntwo lines", null, y3, Color.Green );
-			myBar.Bar.Fill = new Fill( Color.Green, Color.White,
-																	  Color.Green );
+			//myBar = myPane.AddBar( "Curve 3\ntwo lines", null, y3, Color.Green );
+			myBar = myPane.AddBar( "Curve 3", null, y3, Color.Green );
+			myBar.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green );
 
 			// Generate a black line with "Curve 4" in the legend
 			LineItem myCurve = myPane.AddCurve( "Curve 4",
-					null, y4, Color.Black, SymbolType.Circle );
+					x, y4, Color.Black, SymbolType.Circle );
+			myCurve.IsX2Axis = true;
+
 			myCurve.Line.Fill = new Fill( Color.White,
 										 Color.LightSkyBlue, -45F );
 
@@ -287,6 +297,18 @@ namespace ZedGraph.ControlTest
 			line.Line.Width = 2.0f;
 			myPane.GraphObjList.Add( line );
 
+
+			//Image image = Image.FromFile( @"c:\temp\vtx1330.jpg" );
+			Image image = Bitmap.FromFile( @"c:\temp\vtx1300crop.jpg" );
+
+			ImageObj imageObj = new ImageObj( image, new RectangleF( 3, 120, 2, 100 ) );
+			imageObj.IsScaled = false;
+//			imageObj.IsVisible = true;
+			imageObj.ZOrder = ZOrder.E_BehindCurves;
+//			imageObj.Location.CoordinateFrame = CoordType.ChartFraction;
+			myPane.GraphObjList.Add( imageObj );
+
+//			myPane.Chart.Fill = new Fill( image, WrapMode.Tile );
 
 //            myPane.Title.Text = null;
 
@@ -794,6 +816,8 @@ namespace ZedGraph.ControlTest
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();
 			z1.Invalidate();
+
+			z1.PointValueEvent += new ZedGraphControl.PointValueHandler(z1_PointValueEvent);
 		}
 
 		Timer myTimer;
@@ -1037,6 +1061,18 @@ namespace ZedGraph.ControlTest
 		private string z1_PointValueEvent( ZedGraphControl z1, GraphPane pane,
 			CurveItem curve, int index )
 		{
+			StockPt spt = curve.Points[index] as StockPt;
+			if ( spt != null )
+			{
+				return XDate.ToString( spt.Date, "g" ) + "\n" +
+						"Open = " + spt.Open.ToString( "f2" ) + "\n" +
+						"High = " + spt.High.ToString( "f2" ) + "\n" +
+						"Low = " + spt.Low.ToString( "f2" ) + "\n" +
+						"Close = " + spt.Close.ToString( "f2" );
+			}
+			else
+				return "Invalid Data";
+
 			PointPair pt = curve.Points[index];
 
 			box.IsVisible = true;
@@ -2079,6 +2115,52 @@ namespace ZedGraph.ControlTest
 			// Calculate the Axis Scale Ranges
 			z1.AxisChange();
 		}
+
+
+		public void CreateGraph_SortedOverlayBars( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			// Set the title and axis labels
+			myPane.Title.Text = "My Test Sorted Overlay Bar Graph";
+			myPane.XAxis.Title.Text = "Label";
+			myPane.YAxis.Title.Text = "My Y Axis";
+
+			// Enter some data values
+			string[] labels = { "Panther", "Lion", "Cheetah", "Cougar", "Tiger", "Leopard", "Kitty" };
+			double[] y = { 100, 115, 75, -22, 98, 40, -10 };
+			double[] y2 = { 90, 100, 95, -35, /*80,*/ 35, 35 };
+			double[] y3 = { 80, 110, 65, -15, 104, 67, 18 };
+
+			// Generate a red bar with "Curve 1" in the legend
+			CurveItem myCurve = myPane.AddBar( "Curve 1", null, y, Color.Red );
+
+			// Generate a blue bar with "Curve 2" in the legend
+			myCurve = myPane.AddBar( "Curve 2", null, y2, Color.Blue );
+
+			// Generate a green bar with "Curve 3" in the legend
+			myCurve = myPane.AddBar( "Curve 3", null, y3, Color.Green );
+
+			// Draw the X tics between the labels instead of at the labels
+			myPane.XAxis.MajorTic.IsBetweenLabels = true;
+
+			// Set the XAxis to Text type
+			myPane.XAxis.Type = AxisType.Text;
+			// Set the XAxis labels
+			myPane.XAxis.Scale.TextLabels = labels;
+			myPane.XAxis.Scale.FontSpec.Size = 10.0F;
+
+			// Make the bars a sorted overlay type so that they are drawn on top of eachother
+			// (without summing), and each stack is sorted so the shorter bars are in front
+			// of the taller bars
+			myPane.BarSettings.Type = BarType.SortedOverlay;
+
+			// Fill the axis background with a color gradient
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0F );
+
+			// Calculate the Axis Scale Ranges
+			zgc.AxisChange();
+		}
 		
 		// masterpane with three vertical panes
 		private void CreateGraph_ThreeVerticalPanes( ZedGraphControl z1 )
@@ -2353,6 +2435,47 @@ namespace ZedGraph.ControlTest
 			return false;
 		}
 
+		private void CreateGraph_StackedLinearBars( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+			Random rand = new Random();
+
+			for ( int i = 0; i < 5; i++ )
+			{
+				double x = (double)i / 3 + 4;
+				double y = rand.NextDouble() * 1000;
+				double y2 = rand.NextDouble() * 1000;
+				double y3 = rand.NextDouble() * 1000;
+				list.Add( x, y );
+				list2.Add( x, y2 );
+				list3.Add( x+0.1, y3 );
+			}
+
+			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
+			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
+			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
+
+			myPane.BarSettings.Type = BarType.Stack;
+			myPane.BarSettings.Base = BarBase.X;
+
+			//myPane.XAxis.MajorTic.IsBetweenLabels = true;
+			//string[] labels = { "one", "two", "three", "four", "five", "six" };
+			//myPane.XAxis.Scale.TextLabels = labels;
+			//myPane.XAxis.Type = AxisType.Text;
+
+			// Tell ZedGraph to calculate the axis ranges
+			z1.AxisChange();
+//			z1.Invalidate();
+
+//			z1.LinkEvent += new ZedGraphControl.LinkEventHandler( z1_LinkEvent );
+
+			//z1.DoubleClickEvent += new ZedGraphControl.ZedMouseEventHandler( z1_DoubleClickEvent );
+		}
+
 		private void CreateGraph_StackedMultiBars( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.GraphPane;
@@ -2399,6 +2522,40 @@ namespace ZedGraph.ControlTest
 
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();
+		}
+
+		public void CreateGraph_StepChartDemo( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			// Set the title and axis labels
+			myPane.Title.Text = "Demo for Step Charts";
+			myPane.XAxis.Title.Text = "Time, Days";
+			myPane.YAxis.Title.Text = "Widget Production (units/hour)";
+
+			// Generate some sine-based data values
+			PointPairList list = new PointPairList();
+			for ( double i = 0; i < 36; i++ )
+			{
+				double x = i * 5.0;
+				double y = Math.Sin( i * Math.PI / 15.0 ) * 16.0;
+				list.Add( x, y );
+			}
+
+			// Add a red curve with circle symbols
+			LineItem curve = myPane.AddCurve( "Step", list, Color.Red, SymbolType.Circle );
+			curve.Line.Width = 1.5F;
+			// Fill the area under the curve
+			curve.Line.Fill = new Fill( Color.White, Color.FromArgb( 60, 190, 50 ), 90F );
+			// Fill the symbols with white to make them opaque
+			curve.Symbol.Fill = new Fill( Color.White );
+			curve.Symbol.Size = 5;
+
+			// Set the curve type to forward steps
+			curve.Line.StepType = StepType.RearwardStep;
+
+			// Calculate the Axis Scale Ranges
+			zgc.AxisChange();
 		}
 
 		private void CreateGraph_VerticalBars( ZedGraphControl z1 )
@@ -3134,8 +3291,8 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			for ( int i = 0; i < 36; i++ )
 			{
-				x = (double)new XDate( 1995, 5, i + 11 );
-				y = Math.Sin( (double)i * Math.PI / 15.0 );
+				x = (double)new XDate( 1995, 5, 11, 15, 27, 10+i );
+				y = 15 + i; // Math.Sin( (double)i * Math.PI / 15.0 );
 				list.Add( x, y );
 			}
 
@@ -3146,8 +3303,19 @@ namespace ZedGraph.ControlTest
 
 			// Set the XAxis to date type
 			myPane.XAxis.Type = AxisType.Date;
-			myPane.XAxis.Scale.Min = new XDate( 1995, 5, 20 );
-			myPane.XAxis.Scale.Max = new XDate( 1995, 6, 10 );
+//			myPane.XAxis.Scale.Min = new XDate( 1995, 5, 20 );
+//			myPane.XAxis.Scale.Max = new XDate( 1995, 6, 10 );
+
+			IPointListEdit listE = myCurve.Points as IPointListEdit;
+			listE.Add( new XDate( 1995, 5, 11, 15, 27, 46 ), 51 );
+			listE.Add( new XDate( 1995, 5, 11, 15, 27, 47 ), 52 );
+			listE.Add( new XDate( 1995, 5, 11, 15, 27, 48 ), 53 );
+			listE.Add( new XDate( 1995, 5, 11, 15, 27, 49 ), 54 );
+			listE.Add( new XDate( 1995, 5, 11, 15, 27, 50 ), 55 );
+			listE.Add( new XDate( 1995, 5, 11, 15, 27, 51 ), 56 );
+			listE.Add( new XDate( 1995, 5, 11, 15, 27, 52 ), 57 );
+			listE.Add( new XDate( 1995, 5, 11, 15, 27, 53 ), 58 );
+
 
 			// Tell ZedGraph to refigure the axes since the data 
 			// have changed
@@ -3471,7 +3639,7 @@ namespace ZedGraph.ControlTest
 
 			z1.AxisChange();
 			list.FilterMode = 3;
-			list.FilterData( myPane, myPane.YAxis );
+			list.FilterData( myPane, myPane.XAxis, myPane.YAxis );
 
 			MessageBox.Show( list.Count.ToString() );
 			int count = list.Count;
@@ -4359,9 +4527,9 @@ namespace ZedGraph.ControlTest
 			// within any chart rect.
 			if ( pane != null )
 			{
-				double x, y, y2;
+				double x, x2, y, y2;
 				// Convert the mouse location to X, Y, and Y2 scale values
-				pane.ReverseTransform( mousePt, out x, out y, out y2 );
+				pane.ReverseTransform( mousePt, out x, out x2, out y, out y2 );
 				// Format the status label text
 				toolStripStatusXY.Text = "(" + x.ToString( "f2" ) + ", " + y.ToString( "f2" ) + ")";
 			}
@@ -4407,8 +4575,8 @@ namespace ZedGraph.ControlTest
 			return false;
 
 
-			double x, y, y2;
-			sender.GraphPane.ReverseTransform( new PointF( e.X, e.Y ), out x, out y, out y2 );
+			double x, y, x2, y2;
+			sender.GraphPane.ReverseTransform( new PointF( e.X, e.Y ), out x, out x2, out y, out y2 );
 
 			return false;
 
@@ -4446,7 +4614,7 @@ namespace ZedGraph.ControlTest
 
 				// Convert the pixel location back to an axis, but this time make sure it
 				// is always assigned to the primary Y axis no matter which curve the data came from
-				myPane.ReverseTransform( ptScrXY, false, 0, out dx, out dy );
+				myPane.ReverseTransform( ptScrXY, false, false, 0, out dx, out dy );
 
 				TextObj text = new TextObj( "Test Label", (float)dx, (float)dy, CoordType.AxisXYScale,
 					AlignH.Left, AlignV.Bottom );

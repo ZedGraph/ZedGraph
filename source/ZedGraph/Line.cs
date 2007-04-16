@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.40 $ $Date: 2007-03-17 18:43:44 $ </version>
+	/// <version> $Revision: 3.41 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -414,6 +414,8 @@ namespace ZedGraph
 				source = Selection.Line;
 
 			Axis yAxis = curve.GetYAxis( pane );
+			Axis xAxis = curve.GetXAxis( pane );
+
 			float basePix = yAxis.Scale.Transform( 0.0 );
 			using ( Pen pen = source.GetPen( pane, scaleFactor ) )
 			{
@@ -427,11 +429,11 @@ namespace ZedGraph
 							!System.Double.IsNaN( pt.Y ) &&
 							!System.Double.IsInfinity( pt.X ) &&
 							!System.Double.IsInfinity( pt.Y ) &&
-							( !pane.XAxis._scale.IsLog || pt.X > 0.0 ) &&
+							( !xAxis._scale.IsLog || pt.X > 0.0 ) &&
 							( !yAxis._scale.IsLog || pt.Y > 0.0 ) )
 					{
 						float pixY = yAxis.Scale.Transform( curve.IsOverrideOrdinal, i, pt.Y );
-						float pixX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, pt.X );
+						float pixX = xAxis.Scale.Transform( curve.IsOverrideOrdinal, i, pt.X );
 
 						if ( pixX >= pane.Chart._rect.Left && pixX <= pane.Chart._rect.Right )
 						{
@@ -612,8 +614,9 @@ namespace ZedGraph
 			IPointList points = curve.Points;
 			ValueHandler valueHandler = new ValueHandler( pane, false );
 			Axis yAxis = curve.GetYAxis( pane );
+			Axis xAxis = curve.GetXAxis( pane );
 
-			bool xIsLog = pane.XAxis._scale.IsLog;
+			bool xIsLog = xAxis._scale.IsLog;
 			bool yIsLog = yAxis._scale.IsLog;
 
 			float minX = pane.Chart.Rect.Left;
@@ -666,7 +669,7 @@ namespace ZedGraph
 						{
 							// Transform the current point from user scale units to
 							// screen coordinates
-							tmpX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curX );
+							tmpX = xAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curX );
 							tmpY = yAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curY );
 							isOut = (tmpX < minX || tmpX > maxX);
 
@@ -912,7 +915,8 @@ namespace ZedGraph
 							continue;
 
 						// Transform the user scale values to pixel locations
-						curX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, x );
+						Axis xAxis = curve.GetXAxis( pane );
+						curX = xAxis.Scale.Transform( curve.IsOverrideOrdinal, i, x );
 						Axis yAxis = curve.GetYAxis( pane );
 						curY = yAxis.Scale.Transform( curve.IsOverrideOrdinal, i, y );
 
@@ -1022,7 +1026,8 @@ namespace ZedGraph
 							continue;
 
 						// Transform the user scale values to pixel locations
-						curX = pane.XAxis.Scale.Transform( curve.IsOverrideOrdinal, i, x );
+						Axis xAxis = curve.GetXAxis( pane );
+						curX = xAxis.Scale.Transform( curve.IsOverrideOrdinal, i, x );
 						Axis yAxis = curve.GetYAxis( pane );
 						curY = yAxis.Scale.Transform( curve.IsOverrideOrdinal, i, y );
 

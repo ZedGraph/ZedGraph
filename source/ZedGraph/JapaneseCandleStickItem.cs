@@ -55,7 +55,7 @@ namespace ZedGraph
 	/// value of <see cref="BarSettings.Base"/>, which is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2007-01-30 08:02:12 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	public class JapaneseCandleStickItem : CurveItem, ICloneable, ISerializable
 	{
@@ -331,7 +331,7 @@ namespace ZedGraph
 				float pixSide = pixBase - halfSize;
 
 				// Draw the bar
-				if ( baseAxis is XAxis )
+				if ( baseAxis is XAxis || baseAxis is X2Axis )
 					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
 								pixSide, pixLow,
 								pixSide + halfSize * 2, pixHigh );

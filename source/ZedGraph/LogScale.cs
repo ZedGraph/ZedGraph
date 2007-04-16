@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.11 $ $Date: 2007-02-19 08:05:24 $ </version>
+	/// <version> $Revision: 1.12 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	class LogScale : Scale, ISerializable //, ICloneable
 	{
@@ -127,7 +127,7 @@ namespace ZedGraph
 		/// This method is typically called by the parent <see cref="GraphPane"/>
 		/// object as part of the <see cref="GraphPane.Draw"/> method.  It is also
 		/// called by <see cref="GraphPane.GeneralTransform(double,double,CoordType)"/> and
-		/// <see cref="GraphPane.ReverseTransform( PointF, out double, out double, out double )"/>
+		/// <see cref="GraphPane.ReverseTransform( PointF, out double, out double )"/>
 		/// methods to setup for coordinate transformations.
 		/// </remarks>
 		/// <param name="pane">

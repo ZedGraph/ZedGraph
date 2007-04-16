@@ -1,6 +1,6 @@
 //============================================================================
 //ZedGraph Class Library - A Flexible Line Graph/Bar Graph Library in C#
-//Copyright © 2004  John Champion
+//Copyright © 2007  John Champion
 //
 //This library is free software; you can redistribute it and/or
 //modify it under the terms of the GNU Lesser General Public
@@ -25,72 +25,73 @@ using System.Security.Permissions;
 namespace ZedGraph
 {
 	/// <summary>
-	/// <see cref="YAxis"/> inherits from <see cref="Axis"/>, and defines the
-	/// special characteristics of a vertical axis, specifically located on
-	/// the right side of the <see cref="Chart.Rect"/> of the <see cref="GraphPane"/>
+	/// <see cref="X2Axis"/> inherits from <see cref="Axis"/>, and defines the
+	/// special characteristics of a horizontal axis, specifically located at
+	/// the top of the <see cref="Chart.Rect"/> of the <see cref="GraphPane"/>
 	/// object
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.16 $ $Date: 2007-04-16 00:03:06 $ </version>
+	/// <version> $Revision: 3.1 $ $Date: 2007-04-16 00:03:07 $ </version>
 	[Serializable]
-	public class YAxis : Axis, ICloneable, ISerializable
+	public class X2Axis : Axis, ICloneable, ISerializable
 	{
+
 		#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
-		/// default property values for the <see cref="YAxis"/> class.
+		/// default property values for the <see cref="X2Axis"/> class.
 		/// </summary>
 		public new struct Default
 		{
-			// Default Y Axis properties
+			// Default X2 Axis properties
 			/// <summary>
-			/// The default display mode for the <see cref="YAxis"/>
+			/// The default display mode for the <see cref="X2Axis"/>
 			/// (<see cref="Axis.IsVisible"/> property). true to display the scale
 			/// values, title, tic marks, false to hide the axis entirely.
 			/// </summary>
-			public static bool IsVisible = true;
+			public static bool IsVisible = false;
 			/// <summary>
 			/// Determines if a line will be drawn at the zero value for the 
-			/// <see cref="YAxis"/>, that is, a line that
+			/// <see cref="X2Axis"/>, that is, a line that
 			/// divides the negative values from positive values.
 			/// <seealso cref="MajorGrid.IsZeroLine"/>.
 			/// </summary>
-			public static bool IsZeroLine = true;
+			public static bool IsZeroLine = false;
 		}
 		#endregion
 
 		#region Constructors
 
 		/// <summary>
-		/// Default constructor that sets all <see cref="YAxis"/> properties to
+		/// Default constructor that sets all <see cref="X2Axis"/> properties to
 		/// default values as defined in the <see cref="Default"/> class
 		/// </summary>
-		public YAxis()
-			: this( "Y Axis" )
+		public X2Axis()
+			: this( "X2 Axis" )
 		{
 		}
 
 		/// <summary>
-		/// Default constructor that sets all <see cref="YAxis"/> properties to
+		/// Default constructor that sets all <see cref="X2Axis"/> properties to
 		/// default values as defined in the <see cref="Default"/> class, except
 		/// for the axis title
 		/// </summary>
 		/// <param name="title">The <see cref="Axis.Title"/> for this axis</param>
-		public YAxis( string title )
+		public X2Axis( string title )
 			: base( title )
 		{
 			_isVisible = Default.IsVisible;
 			_majorGrid._isZeroLine = Default.IsZeroLine;
-			_scale._fontSpec.Angle = 90.0F;
-			_title._fontSpec.Angle = -180F;
+			_scale._fontSpec.Angle = 180F;
+			_title._fontSpec.Angle = 180F;
 		}
 
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="rhs">The YAxis object from which to copy</param>
-		public YAxis( YAxis rhs )
+		/// <param name="rhs">The X2Axis object from which to copy</param>
+		public X2Axis( X2Axis rhs )
 			: base( rhs )
 		{
 		}
@@ -109,9 +110,9 @@ namespace ZedGraph
 		/// Typesafe, deep-copy clone method.
 		/// </summary>
 		/// <returns>A new, independent copy of this class</returns>
-		public YAxis Clone()
+		public X2Axis Clone()
 		{
-			return new YAxis( this );
+			return new X2Axis( this );
 		}
 
 		#endregion
@@ -120,7 +121,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema2 = 10;
+		public const int schema2 = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -129,7 +130,7 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
 		/// </param>
-		protected YAxis( SerializationInfo info, StreamingContext context )
+		protected X2Axis( SerializationInfo info, StreamingContext context )
 			: base( info, context )
 		{
 			// The schema value is just a file version parameter.  You can use it to make future versions
@@ -152,7 +153,7 @@ namespace ZedGraph
 
 		#region Methods
 		/// <summary>
-		/// Setup the Transform Matrix to handle drawing of this <see cref="YAxis"/>
+		/// Setup the Transform Matrix to handle drawing of this <see cref="X2Axis"/>
 		/// </summary>
 		/// <param name="g">
 		/// A graphic device object to be drawn into.  This is normally e.Graphics from the
@@ -171,17 +172,19 @@ namespace ZedGraph
 		override public void SetTransformMatrix( Graphics g, GraphPane pane, float scaleFactor )
 		{
 			// Move the origin to the TopLeft of the ChartRect, which is the left
-			// side of the axis (facing from the label side)
-			g.TranslateTransform( pane.Chart._rect.Left, pane.Chart._rect.Top );
-			// rotate so this axis is in the left-right direction
-			g.RotateTransform( 90 );
+			// side of the X2 axis (facing from the label side)
+			g.TranslateTransform( pane.Chart._rect.Right, pane.Chart._rect.Top );
+			//g.ScaleTransform( 1.0f, -1.0f );
+			// rotate so this axis is in the right-left direction
+			g.RotateTransform( 180 );
 		}
 
 		/// <summary>
 		/// Determines if this <see cref="Axis" /> object is a "primary" one.
 		/// </summary>
 		/// <remarks>
-		/// The primary axes are the <see cref="XAxis" /> (always), the first
+		/// The primary axes are the <see cref="XAxis" /> (always),
+		/// the <see cref="X2Axis" /> (always), the first
 		/// <see cref="YAxis" /> in the <see cref="GraphPane.YAxisList" /> 
 		/// (<see cref="CurveItem.YAxisIndex" /> = 0),  and the first
 		/// <see cref="Y2Axis" /> in the <see cref="GraphPane.Y2AxisList" /> 
@@ -193,10 +196,11 @@ namespace ZedGraph
 		/// A reference to the <see cref="GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <returns>true for a primary <see cref="Axis" />, false otherwise</returns>
+		/// <returns>true for a primary <see cref="Axis" /> (for the <see cref="X2Axis" />,
+		/// this is always true), false otherwise</returns>
 		override internal bool IsPrimary( GraphPane pane )
 		{
-			return this == pane.YAxis;
+			return this == pane.X2Axis;
 		}
 
 		/// <summary>
@@ -213,14 +217,14 @@ namespace ZedGraph
 			double effCross = EffectiveCrossValue( pane );
 
 			if ( !_crossAuto )
-				return pane.XAxis.Scale._minPix - pane.XAxis.Scale.Transform( effCross );
+				return pane.YAxis.Scale.Transform( effCross ) - pane.YAxis.Scale._maxPix;
 			else
 				return 0;
 		}
 		/*
 				override internal bool IsCrossed( GraphPane pane )
 				{
-					return !this.crossAuto && this.cross > pane.XAxis.Min && this.cross < pane.XAxis.Max;
+					return !this.crossAuto && this.cross > pane.YAxis.Min && this.cross < pane.YAxis.Max;
 				}
 		*/
 		/// <summary>
@@ -240,16 +244,17 @@ namespace ZedGraph
 		/// </param>
 		override public Axis GetCrossAxis( GraphPane pane )
 		{
-			return pane.XAxis;
+			return pane.YAxis;
 		}
 
 		//		override internal float GetMinPix( GraphPane pane )
 		//		{
-		//			return pane.Chart._rect.Top;
+		//			return pane.Chart._rect.Left;
 		//		}
-
 
 		#endregion
 	}
 }
+
+
 

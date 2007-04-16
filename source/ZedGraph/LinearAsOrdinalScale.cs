@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 1.10 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	class LinearAsOrdinalScale : Scale, ISerializable //, ICloneable
 	{
@@ -144,10 +144,11 @@ namespace ZedGraph
 			{
 				if ( ( _ownerAxis is Y2Axis && curve.IsY2Axis ) ||
 						( _ownerAxis is YAxis && !curve.IsY2Axis ) ||
-						( _ownerAxis is XAxis ) )
+						( _ownerAxis is X2Axis && curve.IsX2Axis ) ||
+						( _ownerAxis is XAxis && !curve.IsX2Axis ) )
 				{
 					curve.GetRange( out xMin, out xMax, out yMin, out yMax, false, false, pane );
-					if ( _ownerAxis is XAxis )
+					if ( _ownerAxis is XAxis || _ownerAxis is X2Axis )
 					{
 						tMin = xMin;
 						tMax = xMax;

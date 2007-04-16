@@ -94,7 +94,7 @@ namespace ZedGraph.Demo
 			box.Border.IsVisible = false;
 			box.Location.AlignH = AlignH.Left;
 			box.Location.AlignV = AlignV.Top;
-			box.ZOrder = ZOrder.D_BehindAxis;
+			box.ZOrder = ZOrder.E_BehindCurves;
 			myPane.GraphObjList.Add( box );
 
 			base.ZedGraphControl.AxisChange();

@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.9 $ $Date: 2006-06-24 20:26:43 $ </version>
+	/// <version> $Revision: 1.10 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	class LinearScale : Scale, ISerializable //, ICloneable
 	{
@@ -160,7 +160,8 @@ namespace ZedGraph
 			// Calculate the new step size
 			if ( _majorStepAuto )
 			{
-				double targetSteps = ( _ownerAxis is XAxis ) ? Default.TargetXSteps : Default.TargetYSteps;
+				double targetSteps = ( _ownerAxis is XAxis || _ownerAxis is X2Axis ) ?
+							Default.TargetXSteps : Default.TargetYSteps;
 
 				// Calculate the step size based on target steps
 				_majorStep = CalcStepSize( _max - _min, targetSteps );
@@ -178,7 +179,8 @@ namespace ZedGraph
 			// Calculate the new step size
 			if ( _minorStepAuto )
 				_minorStep = CalcStepSize( _majorStep,
-					( _ownerAxis is XAxis ) ? Default.TargetMinorXSteps : Default.TargetMinorYSteps );
+					( _ownerAxis is XAxis || _ownerAxis is X2Axis ) ?
+							Default.TargetMinorXSteps : Default.TargetMinorYSteps );
 
 			// Calculate the scale minimum
 			if ( _minAuto )

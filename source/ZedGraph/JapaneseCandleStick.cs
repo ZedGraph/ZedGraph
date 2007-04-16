@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.9 $ $Date: 2007-01-30 08:42:40 $ </version>
+	/// <version> $Revision: 3.10 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	public class JapaneseCandleStick : OHLCBar, ICloneable, ISerializable
 	{
@@ -459,14 +459,16 @@ namespace ZedGraph
 							if ( !curve.IsSelected && this._gradientFill.IsGradientValueType )
 							{
 								using ( Pen tPen = GetPen( pane, scaleFactor, pt ) )
-									Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
+									Draw( g, pane, baseAxis is XAxis || baseAxis is X2Axis,
+										pixBase, pixHigh, pixLow, pixOpen,
 										pixClose, halfSize, scaleFactor,
 										( tPen ),
 										( close > open ? tRisingFill : tFallingFill ),
 										( close > open ? tRisingBorder : tFallingBorder ), pt );
 							}
 							else
-								Draw( g, pane, baseAxis is XAxis, pixBase, pixHigh, pixLow, pixOpen,
+								Draw( g, pane, baseAxis is XAxis || baseAxis is X2Axis,
+									pixBase, pixHigh, pixLow, pixOpen,
 									pixClose, halfSize, scaleFactor,
 									( close > open ? risingPen : fallingPen ),
 									( close > open ? tRisingFill : tFallingFill ),

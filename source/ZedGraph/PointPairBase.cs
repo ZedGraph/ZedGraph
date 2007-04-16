@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 1.3 $ $Date: 2007-02-19 08:05:24 $ </version>
+	/// <version> $Revision: 1.4 $ $Date: 2007-04-16 00:03:02 $ </version>
 	[Serializable]
 	public class PointPairBase : ISerializable
 	{
@@ -93,6 +93,16 @@ namespace ZedGraph
 		public PointPairBase( PointF pt )
 			: this( pt.X, pt.Y )
 		{
+		}
+
+		/// <summary>
+		/// The PointPairBase copy constructor.
+		/// </summary>
+		/// <param name="rhs">The basis for the copy.</param>
+		public PointPairBase( PointPairBase rhs )
+		{
+			this.X = rhs.X;
+			this.Y = rhs.Y;
 		}
 
 	#endregion

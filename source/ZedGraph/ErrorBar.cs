@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.19 $ $Date: 2007-01-25 07:56:08 $ </version>
+	/// <version> $Revision: 3.20 $ $Date: 2007-04-16 00:03:01 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -374,7 +374,7 @@ namespace ZedGraph
 							//if ( this.fill.IsGradientValueType )
 							//	brush = fill.MakeBrush( _rect, _points[i] );
 
-							this.Draw( g, pane, baseAxis is XAxis, pixBase, pixValue,
+							this.Draw( g, pane, baseAxis is XAxis || baseAxis is X2Axis, pixBase, pixValue,
 											pixLowValue, scaleFactor, pen, curve.IsSelected,
 											curve.Points[i] );
 						}
