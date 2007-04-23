@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.26 $ $Date: 2007-04-16 00:03:02 $ </version>
+	/// <version> $Revision: 1.27 $ $Date: 2007-04-23 03:51:06 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -2406,6 +2406,20 @@ namespace ZedGraph
 				// Do not let the grace value extend the axis above zero when all the values were negative
 				if ( numType && ( _max > 0 || maxVal + _maxGrace * range <= 0.0 ) )
 					_max = maxVal + _maxGrace * range;
+			}
+
+			if ( _max == _min && _maxAuto && _minAuto )
+			{
+				if ( _max > 1e-100 )
+				{
+					_max *= 1.05;
+					_min *= 0.95;
+				}
+				else
+				{
+					_max = 1.0;
+					_min = -1.0;
+				}
 			}
 
 			if ( _max <= _min )

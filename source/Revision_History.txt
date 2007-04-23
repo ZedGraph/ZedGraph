@@ -4,6 +4,8 @@
 : [FIX] Handle null reference in CurveItem comparer for sortedoverlay bars
 : [NEW] Add Chinese Locale (thanks to Daniel Leonard)
 : [NEW] Add starting angle and rotation direction for RadarPointList (thanks to jongalloway)
+: [UPD] Make pick scale try to center flatlined data according to a rules
+: [NEW] Add Russian Local (thanks to Alexander Gorbylev)
 
 ;3-Apr-2007 (By Champion) V5.0.8 Dev Release
 : [NEW] Add X2 Axis functionality (Cross property still needs some work)
