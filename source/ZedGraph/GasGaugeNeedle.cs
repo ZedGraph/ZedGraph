@@ -1,5 +1,5 @@
 //============================================================================
-//GasGaugeRegion Class
+//GasGaugeNeedle Class
 //Copyright © 2006 Jay Mistry
 //
 //This library is free software; you can redistribute it and/or
@@ -26,145 +26,86 @@ using System.Security.Permissions;
 namespace ZedGraph
 {
 	/// <summary>
-	/// A class representing a region on the GasGuage chart
-	/// <see cref="GasGaugeRegion"/>s.
+	/// A class representing a needle on the GasGuage chart
+	/// <see cref="GasGaugeNeedle"/>s.
 	/// </summary>
 	/// <author> Jay Mistry </author>
-	/// <version> $Revision: 3.3 $ $Date: 2007-02-19 08:05:23 $ </version>
+	/// <version> $Revision: 1.1 $ $Date: 2007-04-29 02:07:03 $ </version>
 	[Serializable]
-	public class GasGaugeRegion : CurveItem, ICloneable, ISerializable
+	public class GasGaugeNeedle : CurveItem, ICloneable, ISerializable
 	{
-		#region Fields
+	#region Fields
 
 		/// <summary>
-		/// Defines the minimum value of this <see cref="GasGaugeRegion"/>
+		/// Value of this needle
 		/// </summary>
-		private double _minValue;
+		private double _needleValue;
 
 		/// <summary>
-		/// Defines the maximum value of this <see cref="GasGaugeRegion"/>
+		/// Width of the line being drawn
 		/// </summary>
-		private double _maxValue;
+		private float _needleWidth;
 
 		/// <summary>
-		/// Defines the Color of this <see cref="GasGaugeRegion"/>
+		/// Color of the needle line
 		/// </summary>
 		private Color _color;
 
 		/// <summary>
-		/// Internally calculated; Start angle of this pie that defines this <see cref="GasGaugeRegion"/>
-		/// </summary>
-		private float _startAngle;
-
-		/// <summary>
-		/// Internally calculated; Sweep angle of this pie that defines this <see cref="GasGaugeRegion"/>
+		/// Internally calculated angle that places this needle relative to the MinValue and
+		/// MaxValue of 180 degree GasGuage
 		/// </summary>
 		private float _sweepAngle;
 
 		/// <summary>
-		/// Private	field	that stores the	<see cref="ZedGraph.Fill"/> data for this
-		/// <see cref="GasGaugeRegion"/>.	 Use the public property <see	cref="Fill"/> to
+		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
+		/// <see cref="GasGaugeNeedle"/>. Use the public property <see cref="Fill"/> to
 		/// access this value.
 		/// </summary>
 		private Fill _fill;
 
 		/// <summary>
 		/// A <see cref="ZedGraph.TextObj"/> which will customize the label display of this
-		/// <see cref="GasGaugeRegion"/>
+		/// <see cref="GasGaugeNeedle"/>
 		/// </summary>
 		private TextObj _labelDetail;
 
 		/// <summary>
-		/// Private	field	that stores the	<see cref="Border"/> class that defines	the
-		/// properties of the	border around	this <see cref="GasGaugeRegion"/>. Use the public
-		/// property	<see cref="Border"/> to access this value.
+		/// Private field that stores the <see cref="Border"/> class that defines the
+		/// properties of the border around this <see cref="GasGaugeNeedle"/>. Use the public
+		/// property <see cref="Border"/> to access this value.
 		/// </summary>
 		private Border _border;
 
 		/// <summary>
-		/// The bounding rectangle for this <see cref="GasGaugeRegion"/>.
+		/// The bounding rectangle for this <see cref="GasGaugeNeedle"/>.
 		/// </summary>
 		private RectangleF _boundingRectangle;
 
 		/// <summary>
-		/// Private field to hold the GraphicsPath of this <see cref="GasGaugeRegion"/> to be
+		/// Private field to hold the GraphicsPath of this <see cref="GasGaugeNeedle"/> to be
 		/// used for 'hit testing'.
 		/// </summary>
 		private GraphicsPath _slicePath;
 
-		#endregion
+	#endregion
 
-		#region Serialization
-		/// <summary>
-		/// Current schema value that defines the version of the serialized file
-		/// </summary>
-		public const int schema2 = 10;
+	#region Constructors
 
 		/// <summary>
-		/// Constructor for deserializing objects
+		/// Create a new <see cref="GasGaugeNeedle"/>
 		/// </summary>
-		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
-		/// </param>
-		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
-		/// </param>
-		protected GasGaugeRegion( SerializationInfo info, StreamingContext context )
-			: base( info, context )
-		{
-			// The schema value is just a file version parameter. You can use it to make future versions
-			// backwards compatible as new member variables are added to classes
-			int sch = info.GetInt32( "schema2" );
-
-			_labelDetail = (TextObj)info.GetValue( "labelDetail", typeof( TextObj ) );
-			_fill = (Fill)info.GetValue( "fill", typeof( Fill ) );
-			_border = (Border)info.GetValue( "border", typeof( Border ) );
-			_color = (Color)info.GetValue( "color", typeof( Color ) );
-			_minValue = info.GetDouble( "minValue" );
-			_maxValue = info.GetDouble( "maxValue" );
-			_startAngle = (float)info.GetDouble( "startAngle" );
-			_sweepAngle = (float)info.GetDouble( "sweepAngle" );
-			_boundingRectangle = (RectangleF)info.GetValue( "boundingRectangle", typeof( RectangleF ) );
-			_slicePath = (GraphicsPath)info.GetValue( "slicePath", typeof( GraphicsPath ) );
-		}
-
-		/// <summary>
-		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
-		/// </summary>
-		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
-		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
-		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
-		public override void GetObjectData( SerializationInfo info, StreamingContext context )
-		{
-			base.GetObjectData( info, context );
-			info.AddValue( "schema2", schema2 );
-			info.AddValue( "labelDetail", _labelDetail );
-			info.AddValue( "fill", _fill );
-			info.AddValue( "color", _color );
-			info.AddValue( "border", _border );
-			info.AddValue( "minVal", _minValue );
-			info.AddValue( "maxVal", _maxValue );
-			info.AddValue( "startAngle", _startAngle );
-			info.AddValue( "sweepAngle", _sweepAngle );
-			info.AddValue( "boundingRectangle", _boundingRectangle );
-			info.AddValue( "slicePath", _slicePath );
-		}
-		#endregion
-
-		#region Constructors
-
-		/// <summary>
-		/// Create a new <see cref="GasGaugeRegion"/>
-		/// </summary>
-		/// <param name="label">The value associated with this <see cref="GasGaugeRegion"/> instance.</param>
-		/// <param name="color">The display color for this <see cref="GasGaugeRegion"/> instance.</param>
-		/// <param name="minVal">The minimum value of this <see cref="GasGuageNeedle"/>.</param>
-		/// <param name="maxVal">The maximum value of this <see cref="GasGuageNeedle"/>.</param>
-		public GasGaugeRegion( string label, double minVal, double maxVal, Color color )
+		/// <param name="label">The value associated with this <see cref="GasGaugeNeedle"/>
+		/// instance.</param>
+		/// <param name="color">The display color for this <see cref="GasGaugeNeedle"/>
+		/// instance.</param>
+		/// <param name="val">The value of this <see cref="GasGaugeNeedle"/>.</param>
+		public GasGaugeNeedle( string label, double val, Color color )
 			: base( label )
 		{
-			MinValue = minVal;
-			MaxValue = maxVal;
-			RegionColor = color;
-			StartAngle = 0f;
+			NeedleValue = val;
+			NeedleColor = color;
+			NeedleWidth = Default.NeedleWidth;
 			SweepAngle = 0f;
 			_border = new Border( Default.BorderColor, Default.BorderWidth );
 			_labelDetail = new TextObj();
@@ -175,17 +116,17 @@ namespace ZedGraph
 		/// <summary>
 		/// The Copy Constructor
 		/// </summary>
-		/// <param name="ggr">The <see cref="GasGaugeRegion"/> object from which to copy</param>
-		public GasGaugeRegion( GasGaugeRegion ggr )
-			: base( ggr )
+		/// <param name="ggn">The <see cref="GasGaugeNeedle"/> object from which to copy</param>
+		public GasGaugeNeedle( GasGaugeNeedle ggn )
+			: base( ggn )
 		{
-			_minValue = ggr._minValue;
-			_maxValue = ggr._maxValue;
-			_color = ggr._color;
-			_startAngle = ggr._startAngle;
-			_sweepAngle = ggr._sweepAngle;
-			_border = ggr._border.Clone();
-			_labelDetail = ggr._labelDetail.Clone();
+			NeedleValue = ggn.NeedleValue;
+			NeedleColor = ggn.NeedleColor;
+			NeedleWidth = ggn.NeedleWidth;
+			SweepAngle = ggn.SweepAngle;
+			_border = ggn.Border.Clone();
+			_labelDetail = ggn.LabelDetail.Clone();
+			_labelDetail.FontSpec.Size = ggn.LabelDetail.FontSpec.Size;
 		}
 
 		/// <summary>
@@ -202,33 +143,26 @@ namespace ZedGraph
 		/// Typesafe, deep-copy clone method.
 		/// </summary>
 		/// <returns>A new, independent copy of this class</returns>
-		public GasGaugeRegion Clone()
+		public GasGaugeNeedle Clone()
 		{
-			return new GasGaugeRegion( this );
+			return new GasGaugeNeedle( this );
 		}
-		#endregion
 
-		#region Properties
+	#endregion
+
+	#region Properties
 
 		/// <summary>
-		/// Gets or sets the SlicePath of this <see cref="GasGaugeRegion"/>
+		/// Gets or Sets the NeedleWidth of this <see cref="GasGaugeNeedle"/>
 		/// </summary>
-		public GraphicsPath SlicePath
+		public float NeedleWidth
 		{
-			get { return _slicePath; }
+			get { return _needleWidth; }
+			set { _needleWidth = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the LabelDetail of this <see cref="GasGaugeRegion"/>
-		/// </summary>
-		public TextObj LabelDetail
-		{
-			get { return _labelDetail; }
-			set { _labelDetail = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets the Border of this <see cref="GasGaugeRegion"/>
+		/// Gets or Sets the Border of this <see cref="GasGaugeNeedle"/>
 		/// </summary>
 		public Border Border
 		{
@@ -237,9 +171,27 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Gets or sets the RegionColor of this <see cref="GasGaugeRegion"/>
+		/// Gets or Sets the SlicePath of this <see cref="GasGaugeNeedle"/>
 		/// </summary>
-		public Color RegionColor
+		public GraphicsPath SlicePath
+		{
+			get { return _slicePath; }
+		}
+
+		/// <summary>
+		/// Gets or Sets the LableDetail of this <see cref="GasGaugeNeedle"/>
+		/// </summary>
+		public TextObj LabelDetail
+		{
+			get { return _labelDetail; }
+			set { _labelDetail = value; }
+		}
+
+
+		/// <summary>
+		/// Gets or Sets the NeedelColor of this <see cref="GasGaugeNeedle"/>
+		/// </summary>
+		public Color NeedleColor
 		{
 			get { return _color; }
 			set
@@ -250,7 +202,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Gets or sets the Fill of this <see cref="GasGaugeRegion"/>
+		/// Gets or Sets the Fill of this <see cref="GasGaugeNeedle"/>
 		/// </summary>
 		public Fill Fill
 		{
@@ -259,7 +211,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Gets or sets the SweepAngle of this <see cref="GasGaugeRegion"/>
+		/// Private property that Gets or Sets the SweepAngle of this <see cref="GasGaugeNeedle"/>
 		/// </summary>
 		private float SweepAngle
 		{
@@ -268,30 +220,12 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Gets or sets the StartAngle of this <see cref="GasGaugeRegion"/>
+		/// Gets or Sets the NeedleValue of this <see cref="GasGaugeNeedle"/>
 		/// </summary>
-		private float StartAngle
+		public double NeedleValue
 		{
-			get { return ( _startAngle ); }
-			set { _startAngle = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets the MinValue of this <see cref="GasGaugeRegion"/>
-		/// </summary>
-		public double MinValue
-		{
-			get { return ( _minValue ); }
-			set { _minValue = value > 0 ? value : 0; }
-		}
-
-		/// <summary>
-		/// Gets or sets the MaxValue of this <see cref="GasGaugeRegion"/>
-		/// </summary>
-		public double MaxValue
-		{
-			get { return ( _maxValue ); }
-			set { _maxValue = value > 0 ? value : 0; }
+			get { return ( _needleValue ); }
+			set { _needleValue = value > 0 ? value : 0; }
 		}
 
 		/// <summary>
@@ -318,52 +252,121 @@ namespace ZedGraph
 
 	#endregion
 
-	#region Defaults
+	#region Serialization
 
 		/// <summary>
-		/// Specify the default property values for the <see cref="GasGaugeRegion"/> class.
+		/// Current schema value that defines the version of the serialized file
+		/// </summary>
+		public const int schema2 = 10;
+
+		/// <summary>
+		/// Constructor for deserializing objects
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data
+		/// </param>
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data
+		/// </param>
+		protected GasGaugeNeedle( SerializationInfo info, StreamingContext context )
+			: base( info, context )
+		{
+			// The schema value is just a file version parameter. You can use it to make future versions
+			// backwards compatible as new member variables are added to classes
+			int sch = info.GetInt32( "schema2" );
+
+			_labelDetail = (TextObj)info.GetValue( "labelDetail", typeof( TextObj ) );
+			_fill = (Fill)info.GetValue( "fill", typeof( Fill ) );
+			_border = (Border)info.GetValue( "border", typeof( Border ) );
+			_needleValue = info.GetDouble( "needleValue" );
+			_boundingRectangle = (RectangleF)info.GetValue( "boundingRectangle", typeof( RectangleF ) );
+			_slicePath = (GraphicsPath)info.GetValue( "slicePath", typeof( GraphicsPath ) );
+			_sweepAngle = (float)info.GetDouble( "sweepAngle" );
+			_color = (Color)info.GetValue( "color", typeof( Color ) );
+		}
+
+		/// <summary>
+		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
+		/// </summary>
+		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
+		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
+		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
+		public override void GetObjectData( SerializationInfo info, StreamingContext context )
+		{
+			base.GetObjectData( info, context );
+			info.AddValue( "schema2", schema2 );
+			info.AddValue( "labelDetail", _labelDetail );
+			info.AddValue( "fill", _fill );
+			info.AddValue( "border", _border );
+			info.AddValue( "needleValue", _needleValue );
+			info.AddValue( "boundingRectangle", _boundingRectangle );
+			info.AddValue( "slicePath", _slicePath );
+			info.AddValue( "sweepAngle", _sweepAngle );
+		}
+
+	#endregion
+
+	#region Default
+
+		/// <summary>
+		/// Specify the default property values for the <see cref="GasGaugeNeedle"/> class.
 		/// </summary>
 		public struct Default
 		{
 			/// <summary>
-			/// The default border pen width for the <see cref="GasGaugeRegion"/>
+			/// The default width of the gas gauge needle.  Units are points, scaled according
+			/// to <see cref="PaneBase.CalcScaleFactor" />
+			/// </summary>
+			public static float NeedleWidth = 10.0F;
+
+			/// <summary>
+			/// The default pen width to be used for drawing the border around the GasGaugeNeedle
+			/// (<see cref="ZedGraph.LineBase.Width"/> property). Units are points.
 			/// </summary>
 			public static float BorderWidth = 1.0F;
 
 			/// <summary>
-			/// The default fill type for the <see cref="GasGaugeRegion"/>
-			/// </summary>
-			public static FillType FillType = FillType.Brush;
-
-			/// <summary>
-			/// The default value for the visibility of the <see cref="GasGaugeRegion"/> border.
+			/// The default border mode for GasGaugeNeedle (<see cref="ZedGraph.LineBase.IsVisible"/>
+			/// property).
+			/// true to display frame around GasGaugeNeedle, false otherwise
 			/// </summary>
 			public static bool IsBorderVisible = true;
 
 			/// <summary>
-			/// The default value for the color of the <see cref="GasGaugeRegion"/> border
+			/// The default color for drawing frames around GasGaugeNeedle
+			/// (<see cref="ZedGraph.LineBase.Color"/> property).
 			/// </summary>
 			public static Color BorderColor = Color.Gray;
 
 			/// <summary>
-			/// The default value for the color of the <see cref="GasGaugeRegion"/> fill
+			/// The default fill type for filling the GasGaugeNeedle.
+			/// </summary>
+			public static FillType FillType = FillType.Brush;
+
+			/// <summary>
+			/// The default color for filling in the GasGaugeNeedle
+			/// (<see cref="ZedGraph.Fill.Color"/> property).
 			/// </summary>
 			public static Color FillColor = Color.Empty;
 
 			/// <summary>
-			/// The default value for the fill brush of the <see cref="GasGaugeRegion"/>
+			/// The default custom brush for filling in the GasGaugeNeedle.
+			/// (<see cref="ZedGraph.Fill.Brush"/> property).
 			/// </summary>
 			public static Brush FillBrush = null;
 
 			/// <summary>
-			/// The default value for the visibility of the <see cref="GasGaugeRegion"/> fill.
+			///Default value for controlling <see cref="GasGaugeNeedle"/> display.
 			/// </summary>
 			public static bool isVisible = true;
 
+//			/// <summary>
+//			/// Default value for <see cref="GasGaugeNeedle.LabelType"/>.
+//			/// </summary>
 //			public static PieLabelType LabelType = PieLabelType.Name;
 
 			/// <summary>
-			/// The default value for the font size of the <see cref="GasGaugeRegion"/> labels.
+			/// The default font size for <see cref="GasGaugeNeedle.LabelDetail"/> entries
+			/// (<see cref="ZedGraph.FontSpec.Size"/> property). Units are
+			/// in points (1/72 inch).
 			/// </summary>
 			public static float FontSize = 10;
 		}
@@ -373,7 +376,7 @@ namespace ZedGraph
 	#region Methods
 
 		/// <summary>
-		/// Do all rendering associated with this <see cref="GasGaugeRegion"/> item to the specified
+		/// Do all rendering associated with this <see cref="GasGaugeNeedle"/> item to the specified
 		/// <see cref="Graphics"/> device. This method is normally only
 		/// called by the Draw method of the parent <see cref="ZedGraph.CurveList"/>
 		/// collection object.
@@ -386,13 +389,8 @@ namespace ZedGraph
 		/// A reference to the <see cref="ZedGraph.GraphPane"/> object that is the parent or
 		/// owner of this object.
 		/// </param>
-		/// <param name="pos">Not used for rendering GasGuageNeedle</param>
-		/// <param name="scaleFactor">
-		/// The scaling factor to be used for rendering objects. This is calculated and
-		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
-		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
-		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>	
+		/// <param name="pos">Not used for rendering GasGaugeNeedle</param>
+		/// <param name="scaleFactor">Not used for rendering GasGaugeNeedle</param>
 		public override void Draw( Graphics g, GraphPane pane, int pos, float scaleFactor )
 		{
 			if ( pane.Chart._rect.Width <= 0 && pane.Chart._rect.Height <= 0 )
@@ -415,18 +413,31 @@ namespace ZedGraph
 					SmoothingMode sMode = g.SmoothingMode;
 					g.SmoothingMode = SmoothingMode.AntiAlias;
 
-					_slicePath.AddPie( tRect.X, tRect.Y, tRect.Width, tRect.Height,
-															 -0.0f, -180.0f );
+					Matrix matrix = new Matrix();
 
-					g.FillPie( Fill.MakeBrush( _boundingRectangle ), tRect.X, tRect.Y, tRect.Width, tRect.Height, -StartAngle, -SweepAngle );
+					matrix.Translate( tRect.X + ( tRect.Width / 2 ), tRect.Y + ( tRect.Height / 2 ), MatrixOrder.Prepend );
 
-					if ( this.Border.IsVisible )
-					{
-						Pen borderPen = _border.GetPen( pane, scaleFactor );
-						g.DrawPie( borderPen, tRect.X, tRect.Y, tRect.Width, tRect.Height,
-							 -0.0f, -180.0f );
-						borderPen.Dispose();
-					}
+					PointF[] pts = new PointF[2];
+					pts[0] = new PointF( ( ( tRect.Height * .10f ) / 2.0f ) * (float)Math.Cos( -SweepAngle * Math.PI / 180.0f ),
+					( ( tRect.Height * .10f ) / 2.0f ) * (float)Math.Sin( -SweepAngle * Math.PI / 180.0f ) );
+					pts[1] = new PointF( ( tRect.Width / 2.0f ) * (float)Math.Cos( -SweepAngle * Math.PI / 180.0f ),
+					( tRect.Width / 2.0f ) * (float)Math.Sin( -SweepAngle * Math.PI / 180.0f ) );
+
+					matrix.TransformPoints( pts );
+
+					Pen p = new Pen( NeedleColor, ( ( tRect.Height * .10f ) / 2.0f ) );
+					p.EndCap = LineCap.ArrowAnchor;
+					g.DrawLine( p, pts[0].X, pts[0].Y, pts[1].X, pts[1].Y );
+
+					//Fill center 10% with Black dot;
+					Fill f = new Fill( Color.Black );
+					RectangleF r = new RectangleF( ( tRect.X + ( tRect.Width / 2 ) ) - 1.0f, ( tRect.Y + ( tRect.Height / 2 ) ) - 1.0f, 1.0f, 1.0f );
+					r.Inflate( ( tRect.Height * .10f ), ( tRect.Height * .10f ) );
+					Brush b = f.MakeBrush( r );
+					g.FillPie( b, r.X, r.Y, r.Width, r.Height, 0.0f, -180.0f );
+
+					Pen borderPen = new Pen( Color.White, 2.0f );
+					g.DrawPie( borderPen, r.X, r.Y, r.Width, r.Height, 0.0f, -180.0f );
 
 					g.SmoothingMode = sMode;
 				}
@@ -434,7 +445,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Render the label for this <see cref="GasGaugeRegion"/>.
+		/// Render the label for this <see cref="GasGaugeNeedle"/>.
 		/// </summary>
 		/// <param name="g">
 		/// A graphic device object to be drawn into. This is normally e.Graphics from the
@@ -444,32 +455,25 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into. This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		/// <param name="rect">Bounding rectangle for this <see cref="GasGaugeRegion"/>.</param>
+		/// <param name="rect">Bounding rectangle for this <see cref="GasGaugeNeedle"/>.</param>
 		/// <param name="scaleFactor">
 		/// The scaling factor to be used for rendering objects. This is calculated and
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>		
+		/// </param> 
 		public override void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor )
 		{
 			if ( !_isVisible )
 				return;
 
-			// Fill the slice
-			if ( _fill.IsVisible )
-			{
-				// just avoid height/width being less than 0.1 so GDI+ doesn't cry
-				using ( Brush brush = _fill.MakeBrush( rect ) )
-				{
-					g.FillRectangle( brush, rect );
-					//brush.Dispose();
-				}
-			}
+			float yMid = rect.Top + rect.Height / 2.0F;
 
-			// Border the bar
-			if ( !_border.Color.IsEmpty )
-				_border.Draw( g, pane, scaleFactor, rect );
+			Pen pen = new Pen( NeedleColor, pane.ScaledPenWidth( NeedleWidth / 2, scaleFactor ) );
+			pen.StartCap = LineCap.Round;
+			pen.EndCap = LineCap.ArrowAnchor;
+			pen.DashStyle = DashStyle.Solid;
+			g.DrawLine( pen, rect.Left, yMid, rect.Right, yMid );
 		}
 
 		/// <summary>
@@ -488,7 +492,7 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Calculate the values needed to properly display this <see cref="GasGaugeRegion"/>.
+		/// Calculate the values needed to properly display this <see cref="GasGaugeNeedle"/>.
 		/// </summary>
 		/// <param name="pane">
 		/// A graphic device object to be drawn into. This is normally e.Graphics from the
@@ -510,28 +514,21 @@ namespace ZedGraph
 						minVal = ggr.MinValue;
 				}
 
-			//Calculate start and sweep angles for each of the GasGaugeRegion based on teh min and max value
+			//Set Needle Sweep angle values here based on the min and max values of the GasGuage
 			foreach ( CurveItem curve in pane.CurveList )
 			{
-				if ( curve is GasGaugeRegion )
+				if ( curve is GasGaugeNeedle )
 				{
-					GasGaugeRegion ggr = (GasGaugeRegion)curve;
-					float start = ( ( (float)ggr.MinValue ) - ( (float)minVal ) ) / ( (float)maxVal ) * 180.0f;
-					float sweep = ( ( (float)ggr.MaxValue ) - ( (float)minVal ) ) / ( (float)maxVal ) * 180.0f;
-					sweep = sweep - start;
-
-					Fill f = new Fill( Color.White, ggr.RegionColor, -( sweep / 2f ) );
-					ggr.Fill = f;
-
-					ggr.StartAngle = start;
-					ggr.SweepAngle = sweep;
+					GasGaugeNeedle ggn = (GasGaugeNeedle)curve;
+					float sweep = ( ( (float)ggn.NeedleValue ) - ( (float)minVal ) ) / ( (float)maxVal ) * 180.0f;
+					ggn.SweepAngle = sweep;
 				}
 			}
 		}
 
 		/// <summary>
 		/// Calculate the <see cref="RectangleF"/> that will be used to define the bounding rectangle of
-		/// the GasGuageNeedle.
+		/// the GasGaugeNeedle.
 		/// </summary>
 		/// <remarks>This rectangle always lies inside of the <see cref="Chart.Rect"/>, and it is
 		/// normally a square so that the pie itself is not oval-shaped.</remarks>
@@ -548,7 +545,7 @@ namespace ZedGraph
 		/// passed down by the parent <see cref="ZedGraph.GraphPane"/> object using the
 		/// <see cref="PaneBase.CalcScaleFactor"/> method, and is used to proportionally adjust
 		/// font sizes, etc. according to the actual size of the graph.
-		/// </param>				
+		/// </param> 
 		/// <param name="chartRect">The <see cref="RectangleF"/> (normally the <see cref="Chart.Rect"/>)
 		/// that bounds this pie.</param>
 		/// <returns></returns>
@@ -573,19 +570,17 @@ namespace ZedGraph
 
 			//Align Horizontally
 			nonExpRect.X += xDelta;
-			//nonExpRect.Y += -(float)0.025F * nonExpRect.Height;
-			//nonExpRect.Y += ((chartRect.Height) - (nonExpRect.Height / 2)) - 10.0f;
 
 			nonExpRect.Inflate( -(float)0.05F * nonExpRect.Height, -(float)0.05 * nonExpRect.Width );
 
-			GasGaugeRegion.CalculateGasGuageParameters( pane );
+			GasGaugeNeedle.CalculateGasGuageParameters( pane );
 
 			foreach ( CurveItem curve in pane.CurveList )
 			{
-				if ( curve is GasGaugeRegion )
+				if ( curve is GasGaugeNeedle )
 				{
-					GasGaugeRegion gg = (GasGaugeRegion)curve;
-					gg._boundingRectangle = nonExpRect;
+					GasGaugeNeedle ggn = (GasGaugeNeedle)curve;
+					ggn._boundingRectangle = nonExpRect;
 				}
 			}
 
@@ -593,6 +588,6 @@ namespace ZedGraph
 
 		}
 
-		#endregion
+	#endregion
 	}
 }

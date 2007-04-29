@@ -32,6 +32,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
+			CreateGraph_FlatLine( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
@@ -91,7 +92,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_StackedLinearBars( zedGraphControl1 );
 			//CreateGraph_StackedMultiBars( zedGraphControl1 );
 			//CreateGraph_StackLine( zedGraphControl1 );
-			CreateGraph_StepChartDemo( zedGraphControl1 );
+			//CreateGraph_StepChartDemo( zedGraphControl1 );
 			//CreateGraph_StickToCurve( zedGraphControl1 );
 			//CreateGraph_TestScroll( zedGraphControl1 );
 			//CreateGraph_TextBasic( zedGraphControl2 );
@@ -1218,6 +1219,23 @@ namespace ZedGraph.ControlTest
 
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
 			myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 255, 255 ), 45.0f );
+
+		}
+
+		// Basic curve test with no data Range
+		private void CreateGraph_FlatLine( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			const double val = -2;
+
+			PointPairList list = new PointPairList();
+			list.Add( 1, val );
+			list.Add( 2, val );
+			list.Add( 3, val );
+			list.Add( 4, val );
+			list.Add( 5, val );
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Black, SymbolType.Circle );
 
 		}
 
@@ -2554,6 +2572,13 @@ namespace ZedGraph.ControlTest
 			// Set the curve type to forward steps
 			curve.Line.StepType = StepType.RearwardStep;
 
+			myPane.Legend.Position = LegendPos.Float;
+			myPane.Legend.Location.AlignH = AlignH.Left;
+			myPane.Legend.Location.AlignV = AlignV.Top;
+			myPane.Legend.Location.X = 0.05;
+			myPane.Legend.Location.Y = 0.95;
+			myPane.Legend.Location.CoordinateFrame = CoordType.PaneFraction;
+
 			// Calculate the Axis Scale Ranges
 			zgc.AxisChange();
 		}
@@ -2700,8 +2725,8 @@ namespace ZedGraph.ControlTest
 			myPane.YAxis.IsVisible = false;
 
 			//Define needles; can add more than one
-			GasGuageNeedle gg1 = new GasGuageNeedle( "Cereal", 30.0f, Color.Black );
-			GasGuageNeedle gg2 = new GasGuageNeedle( "Milk", 80.0f, Color.Lime );
+			GasGaugeNeedle gg1 = new GasGaugeNeedle( "Cereal", 30.0f, Color.Black );
+			GasGaugeNeedle gg2 = new GasGaugeNeedle( "Milk", 80.0f, Color.Lime );
 			myPane.CurveList.Add( gg1 );
 			myPane.CurveList.Add( gg2 );
 

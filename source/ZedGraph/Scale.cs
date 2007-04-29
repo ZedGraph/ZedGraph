@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.27 $ $Date: 2007-04-23 03:51:06 $ </version>
+	/// <version> $Revision: 1.28 $ $Date: 2007-04-29 02:07:03 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -2410,10 +2410,10 @@ namespace ZedGraph
 
 			if ( _max == _min && _maxAuto && _minAuto )
 			{
-				if ( _max > 1e-100 )
+				if ( Math.Abs( _max ) > 1e-100 )
 				{
-					_max *= 1.05;
-					_min *= 0.95;
+					_max *= ( _min < 0 ? 0.95 : 1.05 );
+					_min *= ( _min < 0 ? 1.05 : 0.95 );
 				}
 				else
 				{
