@@ -7,6 +7,7 @@
 : [UPD] Make pick scale try to center flatlined data according to a rules
 : [NEW] Add Russian Local (thanks to Alexander Gorbylev)
 : [UPD] Rename GasGuageNeedle class to GasGaugeNeedle, and rename both GasGauge cs files
+: [NEW] Add AxisChangeEvent
 
 ;3-Apr-2007 (By Champion) V5.0.8 Dev Release
 : [NEW] Add X2 Axis functionality (Cross property still needs some work)

@@ -32,7 +32,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
-			CreateGraph_FlatLine( zedGraphControl1 );
+			//CreateGraph_FlatLine( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
@@ -99,6 +99,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
 			//CreateGraph_TwoTextAxes( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
+			CreateGraph_VerticalLinearBars( zedGraphControl1 );
 			//CreateGraph_DualY( zedGraphControl1 );
 
 
@@ -2615,6 +2616,49 @@ namespace ZedGraph.ControlTest
 
 			z1.AxisChange();
 			BarItem.CreateBarLabels( myPane, false, "f2" );
+
+			// Tell ZedGraph to calculate the axis ranges
+			z1.AxisChange();
+			z1.Invalidate();
+
+
+		}
+
+
+		private void CreateGraph_VerticalLinearBars( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+			Random rand = new Random();
+
+			for ( int i = 0; i < 9; i++ )
+			{
+				double x = (double)i / 3 + 4;
+				double x2 = x+.2;
+				double x3 = x+.4;
+				double y = rand.NextDouble() * .1;
+				double y2 = rand.NextDouble() * .1;
+				double y3 = rand.NextDouble() * .1;
+				list.Add( x, y );
+				list2.Add( x2, y2 );
+				list3.Add( x3, y3 );
+			}
+
+			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
+			BarItem myCurve2 = myPane.AddBar( "curve 2", list2, Color.Red );
+			BarItem myCurve3 = myPane.AddBar( "curve 3", list3, Color.Green );
+			//myCurve.IsOverrideOrdinal = true;
+
+			//myPane.XAxis.MajorTic.IsBetweenLabels = true;
+			//string[] labels = { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+			//myPane.XAxis.Scale.TextLabels = labels;
+			//myPane.XAxis.Type = AxisType.Text;
+
+			z1.AxisChange();
+			//BarItem.CreateBarLabels( myPane, false, "f2" );
 
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();

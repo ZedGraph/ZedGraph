@@ -48,10 +48,28 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.76 $ $Date: 2007-04-16 00:03:01 $ </version>
+	/// <version> $Revision: 3.77 $ $Date: 2007-05-15 04:42:23 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
+
+	#region Events
+
+		/// <summary>
+		/// A delegate to provide notification through the <see cref="AxisChangeEvent" />
+		/// when <see cref="AxisChange" /> is called.
+		/// </summary>
+		/// <param name="pane">The <see cref="GraphPane" /> for which AxisChange() has
+		/// been called.</param>
+		/// <seealso cref="AxisChangeEvent" />
+		public delegate void AxisChangeEventHandler( GraphPane pane );
+
+		/// <summary>
+		/// Subscribe to this event to be notified when <see cref="AxisChange" /> is called.
+		/// </summary>
+		public event AxisChangeEventHandler AxisChangeEvent;
+
+	#endregion
 
 	#region Private Fields
 
@@ -603,6 +621,11 @@ namespace ZedGraph
 
 			// Set the ClusterScaleWidth, if needed
 			_barSettings.CalcClusterScaleWidth();
+
+			// Trigger the AxisChangeEvent
+			if ( this.AxisChangeEvent != null )
+				this.AxisChangeEvent( this );
+
 		}
 
 		private void PickScale( Graphics g, float scaleFactor )
