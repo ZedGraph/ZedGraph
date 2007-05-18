@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.28 $ $Date: 2007-04-29 02:07:03 $ </version>
+	/// <version> $Revision: 1.29 $ $Date: 2007-05-18 13:28:17 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -2075,14 +2075,11 @@ namespace ZedGraph
 			}
 		}
 
-		internal void DrawGrid( Graphics g, GraphPane pane, float scaleFactor )
+		internal void DrawGrid( Graphics g, GraphPane pane, double baseVal, float topPix, float scaleFactor )
 		{
 			MajorTic tic = _ownerAxis._majorTic;
 			MajorGrid grid = _ownerAxis._majorGrid;
 
-			float topPix, rightPix;
-			GetTopRightPix( pane, out topPix, out rightPix );
-			double baseVal = CalcBaseTic();
 			int nTics = CalcNumTics();
 
 			double dVal, dVal2;
@@ -2260,7 +2257,7 @@ namespace ZedGraph
 			// draw the major tics and labels
 			DrawLabels( g, pane, baseVal, nTics, topPix, shiftPos, scaleFactor );
 
-			_ownerAxis.DrawMinorTics( g, pane, baseVal, shiftPos, scaleFactor, topPix );
+//			_ownerAxis.DrawMinorTics( g, pane, baseVal, shiftPos, scaleFactor, topPix );
 
 			_ownerAxis.DrawTitle( g, pane, shiftPos, scaleFactor );
 		}

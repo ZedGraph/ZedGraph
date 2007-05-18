@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.29 $ $Date: 2007-02-05 06:29:40 $ </version>
+	/// <version> $Revision: 3.30 $ $Date: 2007-05-18 13:28:17 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -606,7 +606,7 @@ namespace ZedGraph
 			g.SetClip( _rect );
 
 			// Draw the GraphItems that are behind everything
-			_graphObjList.Draw( g, this, scaleFactor, ZOrder.G_BehindAll );
+			_graphObjList.Draw( g, this, scaleFactor, ZOrder.H_BehindAll );
 
 			// Draw the Pane Title
 			DrawTitle( g, scaleFactor );

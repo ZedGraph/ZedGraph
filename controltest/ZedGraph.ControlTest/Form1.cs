@@ -29,6 +29,7 @@ namespace ZedGraph.ControlTest
 		{
 			//CreateGraph( zedGraphControl1 );
 			//CreateGraph_32kPoints( zedGraphControl1 );
+			//CreateGraph_AxisCrossDemo( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
@@ -65,7 +66,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_junk8( zedGraphControl1 );
 			//CreateGraph_junk9( zedGraphControl1 );
 			//CreateGraph_junk10( zedGraphControl1 );
-			//CreateGraph_LineWithBandDemo( zedGraphControl1 );
+			CreateGraph_LineWithBandDemo( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
@@ -99,12 +100,11 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
 			//CreateGraph_TwoTextAxes( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
-			CreateGraph_VerticalLinearBars( zedGraphControl1 );
+			//CreateGraph_VerticalLinearBars( zedGraphControl1 );
 			//CreateGraph_DualY( zedGraphControl1 );
 
-
-			zedGraphControl1.AxisChange();
 			SetSize();
+			zedGraphControl1.AxisChange();
 		}
 
 		private void Form1_Resize( object sender, EventArgs e )
@@ -305,20 +305,56 @@ namespace ZedGraph.ControlTest
 
 			ImageObj imageObj = new ImageObj( image, new RectangleF( 3, 120, 2, 100 ) );
 			imageObj.IsScaled = false;
-//			imageObj.IsVisible = true;
+			//			imageObj.IsVisible = true;
 			imageObj.ZOrder = ZOrder.E_BehindCurves;
-//			imageObj.Location.CoordinateFrame = CoordType.ChartFraction;
+			//			imageObj.Location.CoordinateFrame = CoordType.ChartFraction;
 			myPane.GraphObjList.Add( imageObj );
 
-//			myPane.Chart.Fill = new Fill( image, WrapMode.Tile );
+			//			myPane.Chart.Fill = new Fill( image, WrapMode.Tile );
 
-//            myPane.Title.Text = null;
+			//            myPane.Title.Text = null;
 
-  //          GraphPane newOne = myPane.Clone();
-            
-            // Tell ZedGraph to refigure the
+			//          GraphPane newOne = myPane.Clone();
+
+			// Tell ZedGraph to refigure the
 			// axes since the data have changed
 			zg1.AxisChange();
+		}
+		public void CreateGraph_AxisCrossDemo( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			// Set the titles and axis labels
+			myPane.Title.Text = "Axis Cross Demo";
+			myPane.XAxis.Title.Text = "My X Axis";
+			myPane.YAxis.Title.Text = "My Y Axis";
+
+			// Make up some data arrays based on the Sine function
+			double x, y;
+			PointPairList list = new PointPairList();
+			for ( int i = 0; i < 37; i++ )
+			{
+				x = ( (double)i - 18.0 ) / 5.0;
+				y = x * x + 1.0;
+				list.Add( x, y );
+			}
+
+			// Generate a red curve with diamond
+			// symbols, and "Porsche" in the legend
+			LineItem myCurve = myPane.AddCurve( "Parabola",
+				list, Color.Green, SymbolType.Diamond );
+
+			// Set the Y axis intersect the X axis at an X value of 0.0
+			myPane.YAxis.Cross = 0.0;
+			// Turn off the axis frame and all the opposite side tics
+			myPane.Chart.Border.IsVisible = false;
+			myPane.XAxis.MajorTic.IsOpposite = false;
+			myPane.XAxis.MinorTic.IsOpposite = false;
+			myPane.YAxis.MajorTic.IsOpposite = false;
+			myPane.YAxis.MinorTic.IsOpposite = false;
+
+			// Calculate the Axis Scale Ranges
+			zgc.AxisChange();
 		}
 
 		private void CreateGraph_Clone( ZedGraphControl z1 )
@@ -819,7 +855,7 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 			z1.Invalidate();
 
-			z1.PointValueEvent += new ZedGraphControl.PointValueHandler(z1_PointValueEvent);
+			z1.PointValueEvent += new ZedGraphControl.PointValueHandler( z1_PointValueEvent );
 		}
 
 		Timer myTimer;
@@ -831,7 +867,7 @@ namespace ZedGraph.ControlTest
 			// Get the PointPairList
 			PointPairList list = curve.Points as PointPairList;
 			//list.Add( xvalue, (double)cpuUsagePerformanceCounter.NextValue() );
-			list.Add( list.Count+1, Math.Sin(list.Count/6.0) );
+			list.Add( list.Count + 1, Math.Sin( list.Count / 6.0 ) );
 			zedGraphControl1.AxisChange();
 			Refresh();
 		}
@@ -1055,6 +1091,7 @@ namespace ZedGraph.ControlTest
 			box.Location.CoordinateFrame = CoordType.XChartFractionYScale;
 			box.IsVisible = false;
 			myPane.GraphObjList.Add( box );
+			
 
 		}
 
@@ -2106,6 +2143,7 @@ namespace ZedGraph.ControlTest
 			myCurve = myPane.AddCurve( "Curve 3", x, y3, Color.Green );
 			// Make the symbols opaque by filling them with white
 			myCurve.Symbol.Fill = new Fill( Color.White );
+			myCurve.Line.Width = 4.0f;
 
 			// Manually set the x axis range
 			myPane.XAxis.Scale.Min = 0;
@@ -2114,17 +2152,23 @@ namespace ZedGraph.ControlTest
 			myPane.YAxis.MajorGrid.IsVisible = true;
 			myPane.YAxis.MinorGrid.IsVisible = true;
 
+			myPane.YAxis.MajorGrid.DashOff = 0;
+			myPane.YAxis.MinorGrid.DashOff = 0;
+
 			// Draw a box item to highlight a value range
-			BoxObj box = new BoxObj( 0, 100, 800, 30, Color.Empty,
+			BoxObj box = new BoxObj( 0.2, 100, 0.6, 30, Color.Empty,
 					Color.FromArgb( 150, Color.LightGreen ) );
-			box.Fill = new Fill( Color.White, Color.FromArgb( 200, Color.LightGreen ), 45.0F );
+			box.Fill = new Fill( Color.White, Color.FromArgb( 255, Color.LightGreen ), 45.0F );
 			// Use the BehindAxis zorder to draw the highlight beneath the grid lines
-			box.ZOrder = ZOrder.E_BehindCurves;
+			box.ZOrder = ZOrder.F_BehindGrid;
+			box.Location.CoordinateFrame = CoordType.XChartFractionYScale;
+			box.IsClippedToChartRect = true;
 			myPane.GraphObjList.Add( box );
 
 			// Add a text item to label the highlighted range
-			TextObj text = new TextObj( "Optimal\nRange", 750, 85, CoordType.AxisXYScale,
+			TextObj text = new TextObj( "Optimal\nRange", .95, 85, CoordType.XChartFractionYScale,
 									AlignH.Right, AlignV.Center );
+			text.IsClippedToChartRect = true;
 			text.FontSpec.Fill.IsVisible = false;
 			text.FontSpec.Border.IsVisible = false;
 			text.FontSpec.IsBold = true;
@@ -2180,7 +2224,7 @@ namespace ZedGraph.ControlTest
 			// Calculate the Axis Scale Ranges
 			zgc.AxisChange();
 		}
-		
+
 		// masterpane with three vertical panes
 		private void CreateGraph_ThreeVerticalPanes( ZedGraphControl z1 )
 		{
@@ -2471,7 +2515,7 @@ namespace ZedGraph.ControlTest
 				double y3 = rand.NextDouble() * 1000;
 				list.Add( x, y );
 				list2.Add( x, y2 );
-				list3.Add( x+0.1, y3 );
+				list3.Add( x + 0.1, y3 );
 			}
 
 			BarItem myCurve = myPane.AddBar( "curve 1", list, Color.Blue );
@@ -2488,9 +2532,9 @@ namespace ZedGraph.ControlTest
 
 			// Tell ZedGraph to calculate the axis ranges
 			z1.AxisChange();
-//			z1.Invalidate();
+			//			z1.Invalidate();
 
-//			z1.LinkEvent += new ZedGraphControl.LinkEventHandler( z1_LinkEvent );
+			//			z1.LinkEvent += new ZedGraphControl.LinkEventHandler( z1_LinkEvent );
 
 			//z1.DoubleClickEvent += new ZedGraphControl.ZedMouseEventHandler( z1_DoubleClickEvent );
 		}
@@ -2637,8 +2681,8 @@ namespace ZedGraph.ControlTest
 			for ( int i = 0; i < 9; i++ )
 			{
 				double x = (double)i / 3 + 4;
-				double x2 = x+.2;
-				double x3 = x+.4;
+				double x2 = x + .2;
+				double x3 = x + .4;
 				double y = rand.NextDouble() * .1;
 				double y2 = rand.NextDouble() * .1;
 				double y3 = rand.NextDouble() * .1;
@@ -2737,7 +2781,7 @@ namespace ZedGraph.ControlTest
 		{
 			GraphPane myPane = z1.GraphPane;
 
-			const int count = 1000;
+			const int count = 10000;
 			double[] x = new double[count];
 			double[] y = new double[count];
 			Random rand = new Random();
@@ -2745,16 +2789,26 @@ namespace ZedGraph.ControlTest
 			for ( int i = 0; i < count; i++ )
 			{
 				double val = rand.NextDouble();
-				x[i] = (double)i;
-				y[i] = x[i] + val * val * val * 10;
+				x[i] = (double)i + 50.0;
+				//y[i] = x[i] * x[i] * x[i] + val * x[i];
+				y[i] = Math.Log( x[i] ) * ( 1 + ( val - 0.5 ) * 0.1 );
 			}
 
+			// FilteredPointList requires that the data are monotonically increasing in X, and the
+			// X values are evenly spaced.
 			FilteredPointList list = new FilteredPointList( x, y );
 			LineItem myCurve = z1.GraphPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
-			//myCurve.Line.IsVisible = false;
+			myCurve.Line.IsVisible = false;
+			
 
-			list.IsApplyHighLowLogic = true;
-			list.SetBounds( 100, 900, 50 );
+			// Apply logic that alternately keeps the highest or lowest point within each "bin" of data
+			//list.IsApplyHighLowLogic = true;
+
+			// Set the range of data of interest.  In effect you can limit the plotted data to only a
+			// certain window within the total data range.  In this case, I set the minimum and maximum
+			// bounds to include all data points.  Also, only show 100 data points on the plot.
+			list.SetBounds( -1e20, 1e20, 100 );
+
 			z1.AxisChange();
 		}
 
@@ -3360,7 +3414,7 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			for ( int i = 0; i < 36; i++ )
 			{
-				x = (double)new XDate( 1995, 5, 11, 15, 27, 10+i );
+				x = (double)new XDate( 1995, 5, 11, 15, 27, 10 + i );
 				y = 15 + i; // Math.Sin( (double)i * Math.PI / 15.0 );
 				list.Add( x, y );
 			}
@@ -3372,8 +3426,8 @@ namespace ZedGraph.ControlTest
 
 			// Set the XAxis to date type
 			myPane.XAxis.Type = AxisType.Date;
-//			myPane.XAxis.Scale.Min = new XDate( 1995, 5, 20 );
-//			myPane.XAxis.Scale.Max = new XDate( 1995, 6, 10 );
+			//			myPane.XAxis.Scale.Min = new XDate( 1995, 5, 20 );
+			//			myPane.XAxis.Scale.Max = new XDate( 1995, 6, 10 );
 
 			IPointListEdit listE = myCurve.Points as IPointListEdit;
 			listE.Add( new XDate( 1995, 5, 11, 15, 27, 46 ), 51 );
@@ -3656,6 +3710,7 @@ namespace ZedGraph.ControlTest
 			line.Location.CoordinateFrame = CoordType.XChartFractionYScale;
 			myPane.GraphObjList.Add( line );
 
+			
 			z1.AxisChange();
 		}
 

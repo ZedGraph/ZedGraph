@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.77 $ $Date: 2007-05-15 04:42:23 $ </version>
+	/// <version> $Revision: 3.78 $ $Date: 2007-05-18 13:28:17 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -741,13 +741,16 @@ namespace ZedGraph
 
 			// Draw the GraphItems that are behind the Axis objects
 			if ( showGraf )
-				_graphObjList.Draw( g, this, scaleFactor, ZOrder.F_BehindChartFill );
+				_graphObjList.Draw( g, this, scaleFactor, ZOrder.G_BehindChartFill );
 
 			// Fill the axis background
 			_chart.Fill.Draw( g, _chart._rect );
 
 			if ( showGraf )
 			{
+				// Draw the GraphItems that are behind the CurveItems
+				_graphObjList.Draw( g, this, scaleFactor, ZOrder.F_BehindGrid );
+
 				DrawGrid( g, scaleFactor );
 
 				// Draw the GraphItems that are behind the CurveItems
@@ -819,12 +822,22 @@ namespace ZedGraph
 
 		internal void DrawGrid( Graphics g, float scaleFactor )
 		{
-			_xAxis.DrawGrid( g, this, scaleFactor );
-			_x2Axis.DrawGrid( g, this, scaleFactor );
+			_xAxis.DrawGrid( g, this, scaleFactor, 0.0f );
+			_x2Axis.DrawGrid( g, this, scaleFactor, 0.0f );
+
+			float shiftPos = 0.0f;
 			foreach ( YAxis yAxis in _yAxisList )
-				yAxis.DrawGrid( g, this, scaleFactor );
+			{
+				yAxis.DrawGrid( g, this, scaleFactor, shiftPos );
+				shiftPos += yAxis._tmpSpace;
+			}
+
+			shiftPos = 0.0f;
 			foreach ( Y2Axis y2Axis in _y2AxisList )
-				y2Axis.DrawGrid( g, this, scaleFactor );
+			{
+				y2Axis.DrawGrid( g, this, scaleFactor, shiftPos );
+				shiftPos += y2Axis._tmpSpace;
+			}
 		}
 
 		private bool AxisRangesValid()
@@ -1772,7 +1785,7 @@ namespace ZedGraph
 				RectangleF tmpRect;
 				GraphObj saveGraphItem = null;
 				int saveIndex = -1;
-				ZOrder saveZOrder = ZOrder.G_BehindAll;
+				ZOrder saveZOrder = ZOrder.H_BehindAll;
 
 				// Calculate the chart rect, deducting the area for the scales, titles, legend, etc.
 				RectangleF tmpChartRect = CalcChartRect( g, scaleFactor );
@@ -1795,7 +1808,7 @@ namespace ZedGraph
 				}
 
 				// See if the point is in the Pane Title
-				if ( saveZOrder <= ZOrder.G_BehindAll && _title._isVisible )
+				if ( saveZOrder <= ZOrder.H_BehindAll && _title._isVisible )
 				{
 					SizeF size = _title._fontSpec.BoundingBox( g, _title._text, scaleFactor );
 					tmpRect = new RectangleF( ( _rect.Left + _rect.Right - size.Width ) / 2,

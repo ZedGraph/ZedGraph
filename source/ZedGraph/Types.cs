@@ -659,7 +659,7 @@ namespace ZedGraph
 	/// values are applicable.  For a <see cref="MasterPane"/>-based
 	/// <see cref="GraphObj"/>, any <see cref="ZOrder"/> value can be used, but there
 	/// are really only three depths:
-	/// <list><see cref="ZOrder.G_BehindAll"/> will place the item behind the pane title,
+	/// <list><see cref="ZOrder.H_BehindAll"/> will place the item behind the pane title,
 	/// <see cref="ZOrder.A_InFront"/> will place on top of all other graph features,
 	/// any other value places the object above the pane title, but behind the <see cref="GraphPane"/>'s.
 	/// </list>
@@ -670,13 +670,17 @@ namespace ZedGraph
 	   /// Specifies that the <see cref="GraphObj"/> will be behind all other
 	   /// objects (including the <see cref="PaneBase"/> <see cref="PaneBase.Title"/>).
 	   /// </summary>
-	   G_BehindAll,
+	   H_BehindAll,
 	   /// <summary>
 	   /// Specifies that the <see cref="GraphObj"/> will be behind the
 	   /// <see cref="Chart.Rect"/> background <see cref="Fill"/>
 	   /// (see <see cref="Chart.Fill"/>).
 	   /// </summary>
-	   F_BehindChartFill,
+	   G_BehindChartFill,
+		/// <summary>
+		/// Specifies that the <see cref="GraphObj"/> will be behind the grid lines.
+		/// </summary>
+		F_BehindGrid,
 		/// <summary>
 		/// Specifies that the <see cref="GraphObj"/> will be behind the
 		/// <see cref="CurveItem"/> objects.
