@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.72 $ $Date: 2007-05-18 13:28:17 $ </version>
+	/// <version> $Revision: 3.73 $ $Date: 2007-05-19 06:06:05 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -896,8 +896,11 @@ namespace ZedGraph
 		internal double EffectiveCrossValue( GraphPane pane )
 		{
 			Axis crossAxis = GetCrossAxis( pane );
-			double min = crossAxis._scale._minLinTemp;
-			double max = crossAxis._scale._maxLinTemp;
+
+			// Use Linearize here instead of _minLinTemp because this method is called
+			// as part of CalcRect() before scale is fully setup
+			double min = crossAxis._scale.Linearize( _scale._min );
+			double max = crossAxis._scale.Linearize( _scale._max );
 
 			if ( _crossAuto )
 			{
@@ -965,8 +968,12 @@ namespace ZedGraph
 			double effCross = EffectiveCrossValue( pane );
 			Axis crossAxis = GetCrossAxis( pane );
 
-			double max = crossAxis._scale._maxLinTemp;
-			double min = crossAxis._scale._minLinTemp;
+			// Use Linearize here instead of _minLinTemp because this method is called
+			// as part of CalcRect() before scale is fully setup
+			//			double max = crossAxis._scale._maxLinTemp;
+			//			double min = crossAxis._scale._minLinTemp;
+			double max = crossAxis._scale.Linearize( _scale._min );
+			double min = crossAxis._scale.Linearize( _scale._max );
 			float frac;
 
 			if ( ( ( this is XAxis || this is YAxis ) && _scale._isLabelsInside == crossAxis._scale.IsReverse ) ||

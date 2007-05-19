@@ -9,6 +9,7 @@
 : [UPD] Rename GasGuageNeedle class to GasGaugeNeedle, and rename both GasGauge cs files
 : [NEW] Add AxisChangeEvent
 : [UPD] Draw minor and major grid at the same zorder (behind the curves), and add a new ZOrder level
+: [FIX] CalcRect setup problem -- use Scale.Linearize instead of _minLinTemp in any Cross calculations
 
 ;3-Apr-2007 (By Champion) V5.0.8 Dev Release
 : [NEW] Add X2 Axis functionality (Cross property still needs some work)

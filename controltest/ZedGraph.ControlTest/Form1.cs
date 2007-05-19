@@ -29,7 +29,7 @@ namespace ZedGraph.ControlTest
 		{
 			//CreateGraph( zedGraphControl1 );
 			//CreateGraph_32kPoints( zedGraphControl1 );
-			//CreateGraph_AxisCrossDemo( zedGraphControl1 );
+			CreateGraph_AxisCrossDemo( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
@@ -66,7 +66,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_junk8( zedGraphControl1 );
 			//CreateGraph_junk9( zedGraphControl1 );
 			//CreateGraph_junk10( zedGraphControl1 );
-			CreateGraph_LineWithBandDemo( zedGraphControl1 );
+			//CreateGraph_LineWithBandDemo( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
@@ -355,6 +355,7 @@ namespace ZedGraph.ControlTest
 
 			// Calculate the Axis Scale Ranges
 			zgc.AxisChange();
+//			zgc.Refresh();
 		}
 
 		private void CreateGraph_Clone( ZedGraphControl z1 )
@@ -2133,6 +2134,10 @@ namespace ZedGraph.ControlTest
 			LineItem myCurve = myPane.AddCurve( "Curve 1", x, y, Color.Red );
 			// Make the symbols opaque by filling them with white
 			myCurve.Symbol.Fill = new Fill( Color.White );
+			myCurve.Line.Style = DashStyle.DashDot;
+			myCurve.Line.DashOn = 3.0f;
+			myCurve.Line.DashOff = 5.0f;
+
 
 			// Generate a blue curve with "Curve 2" in the legend
 			myCurve = myPane.AddCurve( "Curve 2", x, y2, Color.Blue );
