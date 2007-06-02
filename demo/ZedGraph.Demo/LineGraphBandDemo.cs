@@ -74,8 +74,8 @@ namespace ZedGraph.Demo
 			BoxObj box = new BoxObj( 0, 100, 800, 30, Color.Empty, 
 					Color.FromArgb( 150, Color.LightGreen ) );
 			box.Fill = new Fill( Color.White, Color.FromArgb( 200, Color.LightGreen ), 45.0F );
-			// Use the BehindAxis zorder to draw the highlight beneath the grid lines
-			box.ZOrder = ZOrder.D_BehindAxis;
+			// Use the BehindGrid zorder to draw the highlight beneath the grid lines
+			box.ZOrder = ZOrder.F_BehindGrid;
 			myPane.GraphObjList.Add( box );
 
 			// Add a text item to label the highlighted range
