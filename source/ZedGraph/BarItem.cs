@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="BarSettings.Type"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.22 $ $Date: 2007-01-21 07:49:05 $ </version>
+	/// <version> $Revision: 3.23 $ $Date: 2007-06-02 06:56:03 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -251,7 +251,7 @@ namespace ZedGraph
 		/// and place it on the graph depending on user preferences.  This works for horizontal or
 		/// vertical bars in clusters or stacks, but only for <see cref="BarItem" /> types.  This method
 		/// does not apply to <see cref="ErrorBarItem" /> or <see cref="HiLowBarItem" /> objects.
-		/// Call this method only after calling <see cref="GraphPane.AxisChange" />.
+		/// Call this method only after calling <see cref="GraphPane.AxisChange()" />.
 		/// </remarks>
 		/// <param name="pane">The GraphPane in which to place the text labels.</param>
 		/// <param name="isBarCenter">true to center the labels inside the bars, false to
@@ -274,7 +274,7 @@ namespace ZedGraph
 		/// and place it on the graph depending on user preferences.  This works for horizontal or
 		/// vertical bars in clusters or stacks, but only for <see cref="BarItem" /> types.  This method
 		/// does not apply to <see cref="ErrorBarItem" /> or <see cref="HiLowBarItem" /> objects.
-		/// Call this method only after calling <see cref="GraphPane.AxisChange" />.
+		/// Call this method only after calling <see cref="GraphPane.AxisChange()" />.
 		/// </remarks>
 		/// <param name="pane">The GraphPane in which to place the text labels.</param>
 		/// <param name="isBarCenter">true to center the labels inside the bars, false to

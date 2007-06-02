@@ -52,7 +52,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2007-04-16 00:03:02 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2007-06-02 06:56:03 $ </version>
 	[Serializable]
 	public class NoDupePointList : List<DataPoint>, IPointList, IPointListEdit
 	{
@@ -285,7 +285,7 @@ namespace ZedGraph
 		/// been constructed.  You may need to call <see cref="FilterData" /> again if
 		/// you add points, or if the chart rect changes size (by resizing, printing,
 		/// image save, etc.), or if the scale range changes.
-		/// You must call <see cref="GraphPane.AxisChange" /> before calling
+		/// You must call <see cref="GraphPane.AxisChange()" /> before calling
 		/// this method so that the <see cref="Chart.Rect">GraphPane.Chart.Rect</see>
 		/// and the scale ranges are valid.  This method is not valid for
 		/// ordinal axes (but ordinal axes don't make sense for very large datasets

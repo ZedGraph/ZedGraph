@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2007-04-16 00:03:01 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2007-06-02 06:56:03 $ </version>
 	[Serializable]
 	public class BarSettings : ISerializable
 	{
@@ -183,7 +183,7 @@ namespace ZedGraph
 		/// from the minimum difference found between any two points on the <see cref="Base" />
 		/// <see cref="Axis" /> for any <see cref="BarItem" /> in the
 		/// <see cref="GraphPane.CurveList" />.  The ClusterScaleWidth is set automatically
-		/// each time <see cref="GraphPane.AxisChange" /> is called.  Calculations are
+		/// each time <see cref="GraphPane.AxisChange()" /> is called.  Calculations are
 		/// done by the <see cref="BarSettings.CalcClusterScaleWidth" /> method.
 		/// </remarks>
 		/// <seealso cref="Default.ClusterScaleWidth"/>
@@ -282,7 +282,7 @@ namespace ZedGraph
 		/// from the minimum difference found between any two points on the <see cref="Base" />
 		/// <see cref="Axis" /> for any <see cref="BarItem" /> in the
 		/// <see cref="GraphPane.CurveList" />.  The ClusterScaleWidth is set automatically
-		/// each time <see cref="GraphPane.AxisChange" /> is called.
+		/// each time <see cref="GraphPane.AxisChange()" /> is called.
 		/// </remarks>
 		/// <seealso cref="Default.ClusterScaleWidth"/>
 		/// <seealso cref="ClusterScaleWidthAuto"/>

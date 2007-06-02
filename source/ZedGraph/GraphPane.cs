@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.78 $ $Date: 2007-05-18 13:28:17 $ </version>
+	/// <version> $Revision: 3.79 $ $Date: 2007-06-02 06:56:03 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -57,7 +57,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// A delegate to provide notification through the <see cref="AxisChangeEvent" />
-		/// when <see cref="AxisChange" /> is called.
+		/// when <see cref="AxisChange()" /> is called.
 		/// </summary>
 		/// <param name="pane">The <see cref="GraphPane" /> for which AxisChange() has
 		/// been called.</param>
@@ -65,7 +65,7 @@ namespace ZedGraph
 		public delegate void AxisChangeEventHandler( GraphPane pane );
 
 		/// <summary>
-		/// Subscribe to this event to be notified when <see cref="AxisChange" /> is called.
+		/// Subscribe to this event to be notified when <see cref="AxisChange()" /> is called.
 		/// </summary>
 		public event AxisChangeEventHandler AxisChangeEvent;
 
@@ -329,7 +329,7 @@ namespace ZedGraph
 		/// major grid lines, line up.
 		/// </summary>
 		/// <remarks>
-		/// This property affects the way that <see cref="AxisChange" /> selects the scale
+		/// This property affects the way that <see cref="AxisChange()" /> selects the scale
 		/// ranges for the Y and Y2 axes.  It applies to the scale ranges of all Y and Y2 axes,
 		/// but only if the <see cref="Scale.MaxAuto" /> is set to true.<br />
 		/// </remarks>
@@ -556,6 +556,29 @@ namespace ZedGraph
 	#endregion
 
 	#region Rendering Methods
+
+		/// <summary>
+		/// AxisChange causes the axes scale ranges to be recalculated based on the current data range.
+		/// </summary>
+		/// <remarks>
+		/// There is no obligation to call AxisChange() for manually scaled axes.  AxisChange() is only
+		/// intended to handle auto scaling operations.  Call this function anytime you change, add, or
+		/// remove curve data to insure that the scale range of the axes are appropriate for the data range.
+		/// This method calculates
+		/// a scale minimum, maximum, and step size for each axis based on the current curve data.
+		/// Only the axis attributes (min, max, step) that are set to auto-range
+		/// (<see cref="Scale.MinAuto"/>, <see cref="Scale.MaxAuto"/>, <see cref="Scale.MajorStepAuto"/>)
+		/// will be modified.  You must call <see cref="Control.Invalidate()"/> after calling
+		/// AxisChange to make sure the display gets updated.<br />
+		/// This overload of AxisChange just uses the default Graphics instance for the screen.
+		/// If you have a Graphics instance available from your Windows Form, you should use
+		/// the <see cref="AxisChange(Graphics)" /> overload instead.
+		/// </remarks>
+		public void AxisChange()
+		{
+			using ( Graphics g = Graphics.FromHwnd( IntPtr.Zero ) )
+				AxisChange( g );
+		}
 
 		/// <summary>
 		/// AxisChange causes the axes scale ranges to be recalculated based on the current data range.
@@ -1485,7 +1508,7 @@ namespace ZedGraph
 		/// (<see cref="CoordType"/>) to screen coordinates (pixels).
 		/// </summary>
 		/// <remarks>This method implicitly assumes that <see cref="ZedGraph.Chart.Rect"/>
-		/// has already been calculated via <see cref="AxisChange"/> or
+		/// has already been calculated via <see cref="AxisChange()"/> or
 		/// <see cref="Draw"/> methods, or the <see cref="ZedGraph.Chart.Rect"/> is
 		/// set manually (see <see cref="ZedGraph.Chart.IsRectAuto"/>).</remarks>
 		/// <param name="ptF">The X,Y pair that defines the point in user
@@ -1511,7 +1534,7 @@ namespace ZedGraph
 		/// (<see cref="CoordType"/>) to screen coordinates (pixels).
 		/// </summary>
 		/// <remarks>This method implicitly assumes that <see cref="ZedGraph.Chart.Rect"/>
-		/// has already been calculated via <see cref="AxisChange"/> or
+		/// has already been calculated via <see cref="AxisChange()"/> or
 		/// <see cref="Draw"/> methods, or the <see cref="ZedGraph.Chart.Rect"/> is
 		/// set manually (see <see cref="ZedGraph.Chart.IsRectAuto"/>).
 		/// Note that this method is more accurate than the <see cref="GeneralTransform(PointF,CoordType)" />
@@ -1542,7 +1565,7 @@ namespace ZedGraph
 		/// <see cref="XAxis" /> and <see cref="YAxis" />.
 		/// </summary>
 		/// <remarks>This method implicitly assumes that <see cref="ZedGraph.Chart.Rect"/>
-		/// has already been calculated via <see cref="AxisChange"/> or
+		/// has already been calculated via <see cref="AxisChange()"/> or
 		/// <see cref="Draw"/> methods, or the <see cref="ZedGraph.Chart.Rect"/> is
 		/// set manually (see <see cref="ZedGraph.Chart.IsRectAuto"/>).</remarks>
 		/// <param name="ptF">The X,Y pair that defines the screen coordinate
@@ -1566,7 +1589,7 @@ namespace ZedGraph
 		/// coordinate position (pixels).
 		/// </summary>
 		/// <remarks>This method implicitly assumes that <see cref="ZedGraph.Chart.Rect"/>
-		/// has already been calculated via <see cref="AxisChange"/> or
+		/// has already been calculated via <see cref="AxisChange()"/> or
 		/// <see cref="Draw"/> methods, or the <see cref="ZedGraph.Chart.Rect"/> is
 		/// set manually (see <see cref="ZedGraph.Chart.IsRectAuto"/>).</remarks>
 		/// <param name="ptF">The X,Y pair that defines the screen coordinate
@@ -1599,7 +1622,7 @@ namespace ZedGraph
 		/// coordinate position (pixels).
 		/// </summary>
 		/// <remarks>This method implicitly assumes that <see cref="ZedGraph.Chart.Rect"/>
-		/// has already been calculated via <see cref="AxisChange"/> or
+		/// has already been calculated via <see cref="AxisChange()"/> or
 		/// <see cref="Draw"/> methods, or the <see cref="ZedGraph.Chart.Rect"/> is
 		/// set manually (see <see cref="ZedGraph.Chart.IsRectAuto"/>).</remarks>
 		/// <param name="ptF">The X,Y pair that defines the screen coordinate
@@ -1646,7 +1669,7 @@ namespace ZedGraph
 		/// coordinate position (pixels) for all y axes.
 		/// </summary>
 		/// <remarks>This method implicitly assumes that <see cref="ZedGraph.Chart.Rect"/>
-		/// has already been calculated via <see cref="AxisChange"/> or
+		/// has already been calculated via <see cref="AxisChange()"/> or
 		/// <see cref="Draw"/> methods, or the <see cref="ZedGraph.Chart.Rect"/> is
 		/// set manually (see <see cref="ZedGraph.Chart.IsRectAuto"/>).</remarks>
 		/// <param name="ptF">The X,Y pair that defines the screen coordinate

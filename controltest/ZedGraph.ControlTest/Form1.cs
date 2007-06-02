@@ -29,7 +29,7 @@ namespace ZedGraph.ControlTest
 		{
 			//CreateGraph( zedGraphControl1 );
 			//CreateGraph_32kPoints( zedGraphControl1 );
-			CreateGraph_AxisCrossDemo( zedGraphControl1 );
+			//CreateGraph_AxisCrossDemo( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
@@ -57,6 +57,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_Histogram( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			//CreateGraph_JapaneseCandleStickDemo( zedGraphControl1 );
 			//CreateGraph_Junk( zedGraphControl1 );
 			//CreateGraph_Junk2( zedGraphControl1 );
 			//CreateGraph_Junk4( zedGraphControl1 );
@@ -86,6 +87,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_ScrollProblem( zedGraphControl1 );
+			CreateGraph_ScrollSample( zedGraphControl1 );
 			//CreateGraph_SortedOverlayBars( zedGraphControl1 );
 			//CreateGraph_SpiderPlot( zedGraphControl1 );
 			//CreateGraph_SplineTest( zedGraphControl1 );
@@ -857,6 +859,61 @@ namespace ZedGraph.ControlTest
 			z1.Invalidate();
 
 			z1.PointValueEvent += new ZedGraphControl.PointValueHandler( z1_PointValueEvent );
+		}
+
+		// Call this method from the Form_Load method, passing your ZedGraphControl
+		public void CreateGraph_JapaneseCandleStickDemo( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			// Set the title and axis labels   
+			myPane.Title.Text = "Japanese Candlestick Chart Demo";
+			myPane.XAxis.Title.Text = "Trading Date";
+			myPane.YAxis.Title.Text = "Share Price, $US";
+
+			StockPointList spl = new StockPointList();
+			Random rand = new Random();
+
+			// First day is jan 1st
+			XDate xDate = new XDate( 2006, 1, 1 );
+			double open = 50.0;
+
+			for ( int i = 0; i < 50; i++ )
+			{
+				double x = xDate.XLDate;
+				double close = open + rand.NextDouble() * 10.0 - 5.0;
+				double hi = Math.Max( open, close ) + rand.NextDouble() * 5.0;
+				double low = Math.Min( open, close ) - rand.NextDouble() * 5.0;
+
+				StockPt pt = new StockPt( x, hi, low, open, close, 100000 );
+				spl.Add( pt );
+
+				open = close;
+				// Advance one day
+				//xDate.AddDays( 1 + 0.4 * rand.NextDouble() - 0.2 );
+				xDate.AddDays( 1 );
+				// but skip the weekends
+				if ( XDate.XLDateToDayOfWeek( xDate.XLDate ) == 6 )
+					xDate.AddDays( 2.0 );
+			}
+
+			JapaneseCandleStickItem myCurve = myPane.AddJapaneseCandleStick( "trades", spl );
+			myCurve.Stick.IsAutoSize = true;
+			myCurve.Stick.Color = Color.Blue;
+
+			// Use DateAsOrdinal to skip weekend gaps
+			//myPane.XAxis.Type = AxisType.DateAsOrdinal;
+			myPane.XAxis.Type = AxisType.Date;
+			myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
+
+			// pretty it up a little
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+			myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
+
+			// Tell ZedGraph to calculate the axis ranges
+			zgc.AxisChange();
+			zgc.Invalidate();
+
 		}
 
 		Timer myTimer;
@@ -3658,16 +3715,89 @@ namespace ZedGraph.ControlTest
 			zgc.Scroll += new ScrollEventHandler( zgc_Scroll );
 		}
 
+		// Sample scrollable graph
+		private void CreateGraph_ScrollSample( ZedGraphControl zgc )
+		{
+			// show the horizontal scroll bar
+			zgc.IsShowHScrollBar = true;
+
+			// manually set the scroll range
+			zgc.ScrollMinX = -50;
+			zgc.ScrollMaxX = 550;
+
+			// automatically set the scrollable range to cover the data range from the curves
+			//zgc.IsAutoScrollRange = true;
+			// Add 10% to scale range
+			//zgc.ScrollGrace = 0.1;
+
+			// Horizontal pan and zoom allowed
+			zgc.IsEnableHPan = true;
+			zgc.IsEnableHZoom = true;
+
+			// Vertical pan and zoom not allowed
+			zgc.IsEnableVPan = false;
+			zgc.IsEnableVZoom = false;
+
+			// Set the initial viewed range
+			zgc.GraphPane.XAxis.Scale.Min = 50.0;
+			zgc.GraphPane.XAxis.Scale.Max = 250.0;
+
+			ScrollSample_Setup( zgc );
+		}
+
+		private void ScrollSample_Setup( ZedGraphControl zgc )
+		{
+			// get a reference to the GraphPane
+			GraphPane myPane = zgc.GraphPane;
+
+			// Set the titles
+			myPane.Title.Text = "Sample ScrollBar Graph";
+			myPane.XAxis.Title.Text = "Index";
+			myPane.XAxis.Title.Text = "Phased Sine Data";
+
+			// Generate some sample sine data in PointPairList's
+			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+
+			for ( int i = 0; i < 100; i++ )
+			{
+				double x = (double)i * 5.0 + 25.0;
+				double y = Math.Sin( (double)i * Math.PI / 25.0 ) * 16.0;
+				double y2 = Math.Sin( (double)i * Math.PI / 25.0 + 30.0 ) * 12.0;
+				double y3 = Math.Sin( (double)i * Math.PI / 25.0 + 60.0 ) * 8.0;
+				list.Add( x, y );
+				list2.Add( x, y2 );
+				list3.Add( x, y3 );
+			}
+
+			// create three curves from the above data sets
+			LineItem myCurve = myPane.AddCurve( "Alpha", list, Color.Red, SymbolType.Diamond );
+			myCurve = myPane.AddCurve( "Beta", list2, Color.Blue, SymbolType.Plus );
+			myCurve = myPane.AddCurve( "Sigma", list3, Color.Green, SymbolType.XCross );
+
+			// scale the axes base on the data
+			//zgc.AxisChange();
+			zgc.GraphPane.AxisChange();
+
+			zgc.ScrollProgressEvent += new ZedGraphControl.ScrollProgressHandler( zgc_ScrollProgressEvent );
+			zgc.ScrollDoneEvent += new ZedGraphControl.ScrollDoneHandler( zgc_ScrollDoneEvent );
+			//zgc.Scroll += new ScrollEventHandler( zgc_Scroll );
+		}
+
 		void zgc_Scroll( object sender, ScrollEventArgs e )
 		{
+			this.toolStripStatusLabel1.Text = e.NewValue.ToString();
 		}
 
 		void zgc_ScrollDoneEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState, ZoomState newState )
 		{
+			MessageBox.Show( "Scrolling is done" );
 		}
 
 		void zgc_ScrollProgressEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState, ZoomState newState )
 		{
+			this.toolStripStatusLabel1.Text = sender.GraphPane.XAxis.Scale.Max.ToString();
 		}
 
 		// Basic curve test - two text axes
@@ -4618,6 +4748,9 @@ namespace ZedGraph.ControlTest
 		private void Form1_MouseDown( object sender, MouseEventArgs e )
 		{
 			ZedGraphControl zg1 = zedGraphControl1;
+
+			zg1.GraphPane = new GraphPane();
+			return;
 
 			Serialize( zg1, "junk.bin" );
 			zg1.MasterPane.PaneList.Clear();

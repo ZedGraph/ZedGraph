@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.23 $ $Date: 2007-05-18 13:28:17 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2007-06-02 06:56:03 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -414,7 +414,22 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Call <see cref="GraphPane.AxisChange"/> for all <see cref="GraphPane"/> objects in the
+		/// Call <see cref="GraphPane.AxisChange()"/> for all <see cref="GraphPane"/> objects in the
+		/// <see cref="PaneList"/> list.
+		/// </summary>
+		/// <remarks>
+		/// This overload of AxisChange just uses the default Graphics instance for the screen.
+		/// If you have a Graphics instance available from your Windows Form, you should use
+		/// the <see cref="AxisChange(Graphics)" /> overload instead.
+		/// </remarks>
+		public void AxisChange()
+		{
+			using ( Graphics g = Graphics.FromHwnd( IntPtr.Zero ) )
+				AxisChange( g );
+		}
+
+		/// <summary>
+		/// Call <see cref="GraphPane.AxisChange()"/> for all <see cref="GraphPane"/> objects in the
 		/// <see cref="PaneList"/> list.
 		/// </summary>
 		/// <param name="g">

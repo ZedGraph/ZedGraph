@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.29 $ $Date: 2007-05-18 13:28:17 $ </version>
+	/// <version> $Revision: 1.30 $ $Date: 2007-06-02 06:56:03 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -1556,7 +1556,7 @@ namespace ZedGraph
 		/// ZedGraph will adjust the step size to prevent overlap.
 		/// </summary>
 		/// <remarks>
-		/// The process of checking for overlap is done during the <see cref="GraphPane.AxisChange"/>
+		/// The process of checking for overlap is done during the <see cref="GraphPane.AxisChange()"/>
 		/// method call, and affects the selection of the major step size (<see cref="MajorStep"/>).
 		/// </remarks>
 		/// <value> boolean value; true to check for overlap, false otherwise</value>
