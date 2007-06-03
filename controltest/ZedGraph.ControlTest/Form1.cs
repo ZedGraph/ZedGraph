@@ -42,6 +42,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_Clone( zedGraphControl1 );
 			//CreateGraph_Contour( zedGraphControl2 );
+			CreateGraph_DateAsOrdinal( zedGraphControl1 );
 			//CreateGraph_DateAxis( zedGraphControl1 );
 			//CreateGraph_DateAxisTutorial( zedGraphControl1 );
 			//CreateGraph_DataSource( zedGraphControl1 );
@@ -87,7 +88,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_ScrollProblem( zedGraphControl1 );
-			CreateGraph_ScrollSample( zedGraphControl1 );
+			//CreateGraph_ScrollSample( zedGraphControl1 );
 			//CreateGraph_SortedOverlayBars( zedGraphControl1 );
 			//CreateGraph_SpiderPlot( zedGraphControl1 );
 			//CreateGraph_SplineTest( zedGraphControl1 );
@@ -588,6 +589,28 @@ namespace ZedGraph.ControlTest
 			myPane.XAxis.Scale.Format = "[d].[h]:[m]:[s]";
 			z1.PointDateFormat = "[d].[hh]:[mm]:[ss]";
 			myPane.XAxis.Type = AxisType.Date;
+			z1.AxisChange();
+
+			//myPane.YAxis.Scale.Format = "0.0'%'";
+		}
+
+		// Basic curve test - Line Graph with DateAsOrdinal
+		private void CreateGraph_DateAsOrdinal( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+
+			for ( int i = 0; i < 100; i++ )
+			{
+				double x = new XDate( 2007, 6, 3+i );
+				double y = Math.Sin( i / 8.0 ) * 1 + 1;
+				list.Add( x, y );
+			}
+
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			myPane.XAxis.Type = AxisType.DateAsOrdinal;
 			z1.AxisChange();
 
 			//myPane.YAxis.Scale.Format = "0.0'%'";
@@ -1149,7 +1172,6 @@ namespace ZedGraph.ControlTest
 			box.Location.CoordinateFrame = CoordType.XChartFractionYScale;
 			box.IsVisible = false;
 			myPane.GraphObjList.Add( box );
-			
 
 		}
 
@@ -3754,6 +3776,8 @@ namespace ZedGraph.ControlTest
 			myPane.Title.Text = "Sample ScrollBar Graph";
 			myPane.XAxis.Title.Text = "Index";
 			myPane.XAxis.Title.Text = "Phased Sine Data";
+
+			myPane.YAxis.MajorGrid.IsZeroLine = false;
 
 			// Generate some sample sine data in PointPairList's
 			PointPairList list = new PointPairList();

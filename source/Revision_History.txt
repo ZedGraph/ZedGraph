@@ -1,5 +1,8 @@
 == Version 5 ==
 
+;3-Jun-2007 (By Champion)
+: [FIX] Symbols not shown on ordinal scales due to optimization
+
 ;1-Jun-2007 (By Champion) v5.0.9 release
 : [FIX] Handle null reference in CurveItem comparer for sortedoverlay bars
 : [NEW] Add Chinese Locale (thanks to Daniel Leonard)
