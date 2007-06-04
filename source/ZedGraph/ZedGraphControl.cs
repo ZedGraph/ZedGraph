@@ -67,7 +67,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.82 $ $Date: 2007-04-16 00:03:06 $ </version>
+	/// <version> $Revision: 3.83 $ $Date: 2007-06-04 15:59:50 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -3034,6 +3034,8 @@ namespace ZedGraph
 			ControlPaint.DrawReversibleFrame( rect, this.BackColor, FrameStyle.Dashed );
 		}
 
+		private const double ZoomResolution = 1e-300;
+
 		private void HandleZoomFinish( object sender, MouseEventArgs e )
 		{
 			PointF mousePtF = BoundPointToRect( new Point( e.X, e.Y ), _dragPane.Chart._rect );
@@ -3055,65 +3057,104 @@ namespace ZedGraph
 				_dragPane.ReverseTransform( _dragStartPt, out x1, out xx1, out y1, out yy1 );
 				_dragPane.ReverseTransform( mousePtF, out x2, out xx2, out y2, out yy2 );
 
-				ZoomStatePush( _dragPane );
-				//ZoomState oldState = _dragPane.ZoomStack.Push( _dragPane,
-				//			ZoomState.StateType.Zoom );
+				bool zoomLimitExceeded = false;
 
 				if ( _isEnableHZoom )
 				{
-					_dragPane.XAxis._scale._min = Math.Min( x1, x2 );
-					_dragPane.XAxis._scale._minAuto = false;
-					_dragPane.XAxis._scale._max = Math.Max( x1, x2 );
-					_dragPane.XAxis._scale._maxAuto = false;
+					double min1 = Math.Min( x1, x2 );
+					double max1 = Math.Max( x1, x2 );
+					double min2 = Math.Min( xx1, xx2 );
+					double max2 = Math.Max( xx1, xx2 );
 
-					_dragPane.X2Axis._scale._min = Math.Min( xx1, xx2 );
-					_dragPane.X2Axis._scale._minAuto = false;
-					_dragPane.X2Axis._scale._max = Math.Max( xx1, xx2 );
-					_dragPane.X2Axis._scale._maxAuto = false;
+					if ( Math.Abs( x1 - x2 ) < ZoomResolution || Math.Abs( xx1 - xx2 ) < ZoomResolution )
+						zoomLimitExceeded = true;
 				}
-				if ( _isEnableVZoom )
+
+				if ( _isEnableVZoom && !zoomLimitExceeded )
 				{
 					for ( int i = 0; i < y1.Length; i++ )
 					{
-						_dragPane.YAxisList[i]._scale._min = Math.Min( y1[i], y2[i] );
-						_dragPane.YAxisList[i]._scale._max = Math.Max( y1[i], y2[i] );
-						_dragPane.YAxisList[i]._scale._minAuto = false;
-						_dragPane.YAxisList[i]._scale._maxAuto = false;
+						if ( Math.Abs( y1[i] - y2[i] ) < ZoomResolution )
+						{
+							zoomLimitExceeded = true;
+							break;
+						}
 					}
 					for ( int i = 0; i < yy1.Length; i++ )
 					{
-						_dragPane.Y2AxisList[i]._scale._min = Math.Min( yy1[i], yy2[i] );
-						_dragPane.Y2AxisList[i]._scale._max = Math.Max( yy1[i], yy2[i] );
-						_dragPane.Y2AxisList[i]._scale._minAuto = false;
-						_dragPane.Y2AxisList[i]._scale._maxAuto = false;
+						if ( Math.Abs( yy1[i] - yy2[i] ) < ZoomResolution )
+						{
+							zoomLimitExceeded = true;
+							break;
+						}
 					}
 				}
 
-				this.SetScroll( this.hScrollBar1, _dragPane.XAxis, _xScrollRange.Min, _xScrollRange.Max );
-				this.SetScroll( this.vScrollBar1, _dragPane.YAxis, _yScrollRangeList[0].Min,
-					_yScrollRangeList[0].Max );
-
-				ApplyToAllPanes( _dragPane );
-
-				// Provide Callback to notify the user of zoom events
-				if ( this.ZoomEvent != null )
-					this.ZoomEvent( this, _zoomState, //oldState,
-						new ZoomState( _dragPane, ZoomState.StateType.Zoom ) );
-
-				using ( Graphics g = this.CreateGraphics() )
+				if ( !zoomLimitExceeded )
 				{
-					// always AxisChange() the dragPane
-					_dragPane.AxisChange( g );
 
-					foreach ( GraphPane pane in _masterPane._paneList )
+					ZoomStatePush( _dragPane );
+					//ZoomState oldState = _dragPane.ZoomStack.Push( _dragPane,
+					//			ZoomState.StateType.Zoom );
+
+
+					if ( _isEnableHZoom )
 					{
-						if ( pane != _dragPane && ( _isSynchronizeXAxes || _isSynchronizeYAxes ) )
+						_dragPane.XAxis._scale._min = Math.Min( x1, x2 );
+						_dragPane.XAxis._scale._minAuto = false;
+						_dragPane.XAxis._scale._max = Math.Max( x1, x2 );
+						_dragPane.XAxis._scale._maxAuto = false;
+
+						_dragPane.X2Axis._scale._min = Math.Min( xx1, xx2 );
+						_dragPane.X2Axis._scale._minAuto = false;
+						_dragPane.X2Axis._scale._max = Math.Max( xx1, xx2 );
+						_dragPane.X2Axis._scale._maxAuto = false;
+					}
+
+					if ( _isEnableVZoom )
+					{
+						for ( int i = 0; i < y1.Length; i++ )
+						{
+							_dragPane.YAxisList[i]._scale._min = Math.Min( y1[i], y2[i] );
+							_dragPane.YAxisList[i]._scale._max = Math.Max( y1[i], y2[i] );
+							_dragPane.YAxisList[i]._scale._minAuto = false;
+							_dragPane.YAxisList[i]._scale._maxAuto = false;
+						}
+						for ( int i = 0; i < yy1.Length; i++ )
+						{
+							_dragPane.Y2AxisList[i]._scale._min = Math.Min( yy1[i], yy2[i] );
+							_dragPane.Y2AxisList[i]._scale._max = Math.Max( yy1[i], yy2[i] );
+							_dragPane.Y2AxisList[i]._scale._minAuto = false;
+							_dragPane.Y2AxisList[i]._scale._maxAuto = false;
+						}
+					}
+
+					this.SetScroll( this.hScrollBar1, _dragPane.XAxis, _xScrollRange.Min, _xScrollRange.Max );
+					this.SetScroll( this.vScrollBar1, _dragPane.YAxis, _yScrollRangeList[0].Min,
+						_yScrollRangeList[0].Max );
+
+					ApplyToAllPanes( _dragPane );
+
+					// Provide Callback to notify the user of zoom events
+					if ( this.ZoomEvent != null )
+						this.ZoomEvent( this, _zoomState, //oldState,
+							new ZoomState( _dragPane, ZoomState.StateType.Zoom ) );
+
+					using ( Graphics g = this.CreateGraphics() )
+					{
+						// always AxisChange() the dragPane
+						_dragPane.AxisChange( g );
+
+						foreach ( GraphPane pane in _masterPane._paneList )
+						{
+							if ( pane != _dragPane && ( _isSynchronizeXAxes || _isSynchronizeYAxes ) )
 								pane.AxisChange( g );
+						}
 					}
 				}
-			}
 
-			Refresh();
+				Refresh();
+			}
 		}
 
 		private void HandleZoomCancel()

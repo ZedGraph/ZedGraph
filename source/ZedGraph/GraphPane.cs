@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.79 $ $Date: 2007-06-02 06:56:03 $ </version>
+	/// <version> $Revision: 3.80 $ $Date: 2007-06-04 15:59:50 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -868,10 +868,10 @@ namespace ZedGraph
 			bool showGraf = _xAxis._scale._min < _xAxis._scale._max &&
 					_x2Axis._scale._min < _x2Axis._scale._max;
 			foreach ( Axis axis in _yAxisList )
-				if ( axis._scale._min > axis._scale._max )
+				if ( axis._scale._min >= axis._scale._max )
 					showGraf = false;
 			foreach ( Axis axis in _y2AxisList )
-				if ( axis._scale._min > axis._scale._max )
+				if ( axis._scale._min >= axis._scale._max )
 					showGraf = false;
 
 			return showGraf;

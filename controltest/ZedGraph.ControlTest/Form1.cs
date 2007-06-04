@@ -32,7 +32,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_AxisCrossDemo( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
-			//CreateGraph_BasicLinear( zedGraphControl1 );
+			CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
@@ -42,7 +42,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_ClusteredStackBar( zedGraphControl1 );
 			//CreateGraph_Clone( zedGraphControl1 );
 			//CreateGraph_Contour( zedGraphControl2 );
-			CreateGraph_DateAsOrdinal( zedGraphControl1 );
+			//CreateGraph_DateAsOrdinal( zedGraphControl1 );
 			//CreateGraph_DateAxis( zedGraphControl1 );
 			//CreateGraph_DateAxisTutorial( zedGraphControl1 );
 			//CreateGraph_DataSource( zedGraphControl1 );
@@ -963,6 +963,7 @@ namespace ZedGraph.ControlTest
 
 			GraphPane myPane = z1.GraphPane;
 			z1.IsEnableSelection = true;
+			z1.IsZoomOnMouseCenter = true;
 
 			Selection.Fill = new Fill( Color.Red );
 			Selection.Line.Color = Color.Red;
@@ -1040,11 +1041,11 @@ namespace ZedGraph.ControlTest
 			//z1.IsShowVScrollBar = true;
 			//z1.IsAutoScrollRange = true;
 
-			z1.IsEnableHEdit = true;
-			z1.IsEnableVEdit = true;
+			//z1.IsEnableHEdit = true;
+			//z1.IsEnableVEdit = true;
 			//z1.IsEnableVEdit = false;
 
-			z1.IsEnableVZoom = false;
+			//z1.IsEnableVZoom = false;
 			z1.GraphPane.IsBoundedRanges = false;
 
 			//z1.GraphPane.IsBoundedRanges = false;

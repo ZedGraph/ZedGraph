@@ -151,9 +151,9 @@
     <value>Eje Y</value>
   </data>
   <data name="page_setup" xml:space="preserve">
-    <value>Page Setup...</value>
+    <value>Configurar Página...</value>
   </data>
   <data name="print" xml:space="preserve">
-    <value>Print...</value>
+    <value>Imprimir...</value>
   </data>
 </root>
