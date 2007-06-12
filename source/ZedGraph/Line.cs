@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.41 $ $Date: 2007-04-16 00:03:02 $ </version>
+	/// <version> $Revision: 3.42 $ $Date: 2007-06-12 06:20:01 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -621,12 +621,14 @@ namespace ZedGraph
 
 			float minX = pane.Chart.Rect.Left;
 			float maxX = pane.Chart.Rect.Right;
+			float minY = pane.Chart.Rect.Top;
+			float maxY = pane.Chart.Rect.Bottom;
 
 			using ( Pen pen = source.GetPen( pane, scaleFactor ) )
 			{
 				if ( points != null && !_color.IsEmpty && this.IsVisible )
 				{
-					bool lastOut = false;
+					//bool lastOut = false;
 					bool isOut;
 
 					// Loop over each point in the curve
@@ -671,7 +673,8 @@ namespace ZedGraph
 							// screen coordinates
 							tmpX = xAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curX );
 							tmpY = yAxis.Scale.Transform( curve.IsOverrideOrdinal, i, curY );
-							isOut = (tmpX < minX || tmpX > maxX);
+							isOut = (tmpX < minX && lastX < minX) || (tmpX > maxX && lastX > maxX) ||
+								( tmpY < minY && lastY < minY ) || ( tmpY > maxY && lastY > maxY );
 
 							if ( !lastBad )
 							{
@@ -685,7 +688,7 @@ namespace ZedGraph
 											tmpY > 5000000 || tmpY < -5000000 )
 										InterpolatePoint( g, pane, curve, lastPt, scaleFactor, pen,
 														lastX, lastY, tmpX, tmpY );
-									else if ( !lastOut || !isOut )
+									else if ( !isOut )
 									{
 										if ( !curve.IsSelected && this._gradientFill.IsGradientValueType )
 										{
@@ -735,7 +738,7 @@ namespace ZedGraph
 							lastX = tmpX;
 							lastY = tmpY;
 							lastBad = false;
-							lastOut = isOut;
+							//lastOut = isOut;
 						}
 					}
 				}
