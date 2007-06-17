@@ -511,7 +511,21 @@ namespace ZedGraph
 		/// Draw the <see cref="CurveItem"/> as an ordinary line, in which the
 		/// points are connected directly by line segments.
 		/// </summary>
-		NonStep
+		NonStep,
+		/// <summary>
+		/// Draw the <see cref="CurveItem"/> as a segment in which each point defines the
+		/// beginning (left side) of a new "stair."  This implies the points are defined
+		/// at the beginning of an "event."  Note that ForwardSegment is different
+		/// from ForwardStep in that it does not draw the vertical portion of the step.
+		/// </summary>
+		ForwardSegment,
+		/// <summary>
+		/// Draw the <see cref="CurveItem"/> as a segment in which each point defines the
+		/// end (right side) of a new "stair."  This implies the points are defined
+		/// at the end of an "event."  Note that RearwardSegment is different
+		/// from RearwardStep in that it does not draw the vertical portion of the step.
+		/// </summary>
+		RearwardSegment
 	}
 	
 	/// <summary>

@@ -32,7 +32,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_AxisCrossDemo( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
-			CreateGraph_BasicLinear( zedGraphControl1 );
+			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
@@ -68,7 +68,9 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_junk8( zedGraphControl1 );
 			//CreateGraph_junk9( zedGraphControl1 );
 			//CreateGraph_junk10( zedGraphControl1 );
+			//CreateGraph_LabeledPointsDemo( zedGraphControl1 );
 			//CreateGraph_LineWithBandDemo( zedGraphControl1 );
+			CreateGraph_LineColorGradient( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
@@ -86,6 +88,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_PolyTest( zedGraphControl1 );
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
+			//CreateGraph_ScatterPlot( zedGraphControl1 );
 			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_ScrollProblem( zedGraphControl1 );
 			//CreateGraph_ScrollSample( zedGraphControl1 );
@@ -784,6 +787,7 @@ namespace ZedGraph.ControlTest
 			double open = 50.0;
 			double prevClose = 0;
 
+			// Loop to make 50 days of data
 			for ( int i = 0; i < 50; i++ )
 			{
 				double x = xDate.XLDate;
@@ -791,7 +795,9 @@ namespace ZedGraph.ControlTest
 				double hi = Math.Max( open, close ) + rand.NextDouble() * 5.0;
 				double low = Math.Min( open, close ) - rand.NextDouble() * 5.0;
 
+				// Create a StockPt instead of a PointPair so we can carry 6 properties
 				StockPt pt = new StockPt( x, hi, low, open, close, 100000 );
+				
 				//if price is increasing color=black, else color=red
 				pt.ColorValue = close > prevClose ? 2 : 1;
 				spl.Add( pt );
@@ -805,7 +811,8 @@ namespace ZedGraph.ControlTest
 					xDate.AddDays( 2.0 );
 			}
 
-			//Setup the gradient fill..............
+			// Setup the gradient fill...
+			// Use Red for negative days and black for positive days
 			Color[] colors = { Color.Red, Color.Black };
 			Fill myFill = new Fill( colors );
 			myFill.Type = FillType.GradientByColorValue;
@@ -820,11 +827,22 @@ namespace ZedGraph.ControlTest
 
 			// Use DateAsOrdinal to skip weekend gaps
 			myPane.XAxis.Type = AxisType.DateAsOrdinal;
-			myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
+			//myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
 
 			// pretty it up a little
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
 			myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
+			myPane.Title.FontSpec.Size = 20.0f;
+			myPane.XAxis.Title.FontSpec.Size = 18.0f;
+			myPane.XAxis.Scale.FontSpec.Size = 16.0f;
+			myPane.YAxis.Title.FontSpec.Size = 18.0f;
+			myPane.YAxis.Scale.FontSpec.Size = 16.0f;
+			myPane.Legend.IsVisible = false;
+
+//			BoxObj box = new BoxObj( 4.5, 0.0, 1.0, 1.0, Color.Transparent, 
+//					Color.FromArgb( 100, Color.LightBlue ) );
+//			box.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
+//			myPane.GraphObjList.Add( box );
 
 			// Tell ZedGraph to calculate the axis ranges
 			zgc.AxisChange();
@@ -952,6 +970,39 @@ namespace ZedGraph.ControlTest
 			zedGraphControl1.AxisChange();
 			Refresh();
 		}
+
+		// Basic curve test - Line Color Gradient
+		private void CreateGraph_LineColorGradient( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			PointPairList list = new PointPairList();
+			const int count = 36;
+
+			for ( int i = 0; i < count; i++ )
+			{
+				double x = i + 1;
+
+				double y = 5 * Math.Sin( (double)i * Math.PI * 3 / count );
+
+				list.Add( x, y, y < 0 ? -1.0 : 1.0 );
+			}
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+			Fill fill = new Fill( Color.Red, Color.Green );
+			fill.RangeMin = -1;
+			fill.RangeMax = 1;
+			fill.Type = FillType.GradientByZ;
+			myCurve.Line.GradientFill = fill;
+			myCurve.Symbol.IsVisible = false;
+			myCurve.Line.Fill = fill;
+
+			myCurve.Line.StepType = StepType.ForwardStep;
+
+			zgc.AxisChange();
+		}
+
+
 
 		// Basic curve test - Linear Axis
 		private void CreateGraph_BasicLinear( ZedGraphControl z1 )
@@ -2191,6 +2242,72 @@ namespace ZedGraph.ControlTest
 			zgc.AxisChange();
 		}
 
+		// Call this method from the Form_Load method, passing your ZedGraphControl
+		public void CreateGraph_LabeledPointsDemo( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			// Set the titles and axis labels
+			myPane.Title.Text = "Demo of Labeled Points";
+			myPane.XAxis.Title.Text = "Time, Seconds";
+			myPane.YAxis.Title.Text = "Pressure, Psia";
+
+			// Build a PointPairList with points based on Sine wave
+			PointPairList list = new PointPairList();
+			const int count = 15;
+			for ( int i = 0; i < count; i++ )
+			{
+				double x = i + 1;
+
+				double y = 21.1 * ( 1.0 + Math.Sin( (double)i * 0.15 ) );
+
+				list.Add( x, y );
+			}
+
+			// Hide the legend
+			myPane.Legend.IsVisible = false;
+
+			// Add a curve
+			LineItem curve = myPane.AddCurve( "label", list, Color.Red, SymbolType.Circle );
+			curve.Line.Width = 2.0F;
+			curve.Line.IsAntiAlias = true;
+			curve.Symbol.Fill = new Fill( Color.White );
+			curve.Symbol.Size = 7;
+
+			// Fill the axis background with a gradient
+			myPane.Chart.Fill = new Fill( Color.White, Color.FromArgb( 255, Color.ForestGreen ), 45.0F );
+
+			// Offset Y space between point and label
+			// NOTE:  This offset is in Y scale units, so it depends on your actual data
+			const double offset = 1.0;
+
+			// Loop to add text labels to the points
+			for ( int i = 0; i < count; i++ )
+			{
+				// Get the pointpair
+				PointPair pt = curve.Points[i];
+
+				// Create a text label from the Y data value
+				TextObj text = new TextObj( pt.Y.ToString( "f2" ), pt.X, pt.Y + offset,
+					CoordType.AxisXYScale, AlignH.Left, AlignV.Center );
+				text.ZOrder = ZOrder.A_InFront;
+				// Hide the border and the fill
+				text.FontSpec.Border.IsVisible = false;
+				text.FontSpec.Fill.IsVisible = false;
+				//text.FontSpec.Fill = new Fill( Color.FromArgb( 100, Color.White ) );
+				// Rotate the text to 90 degrees
+				text.FontSpec.Angle = 90;
+
+				myPane.GraphObjList.Add( text );
+			}
+
+			// Leave some extra space on top for the labels to fit within the chart rect
+			myPane.YAxis.Scale.MaxGrace = 0.2;
+
+			// Calculate the Axis Scale Ranges
+			zgc.AxisChange();
+		}
+
 		public void CreateGraph_LineWithBandDemo( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.GraphPane;
@@ -2685,7 +2802,7 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			for ( double i = 0; i < 36; i++ )
 			{
-				double x = i * 5.0;
+				double x = ( i - 10.0 ) * 5.0;
 				double y = Math.Sin( i * Math.PI / 15.0 ) * 16.0;
 				list.Add( x, y );
 			}
@@ -2700,7 +2817,8 @@ namespace ZedGraph.ControlTest
 			curve.Symbol.Size = 5;
 
 			// Set the curve type to forward steps
-			curve.Line.StepType = StepType.RearwardStep;
+			curve.Line.StepType = StepType.RearwardSegment;
+			//curve.Line.IsSmooth = true;
 
 			myPane.Legend.Position = LegendPos.Float;
 			myPane.Legend.Location.AlignH = AlignH.Left;
@@ -2897,19 +3015,26 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 		}
 
-		private void CreateGraph_GasGauge( ZedGraphControl z1 )
+		private void CreateGraph_GasGauge( ZedGraphControl zgc )
 		{
-			GraphPane myPane = z1.GraphPane;
+			GraphPane myPane = zgc.GraphPane;
 
+			// Define the title
+			myPane.Title.Text = "Gas Gauge Demo";
+
+			// Fill the pane with gray
 			myPane.Fill = new Fill( Color.LightGray, Color.White, 45.0f );
+			// Fill the chart rect with blue
 			myPane.Chart.Fill = new Fill( Color.White, Color.SkyBlue, 45.0f );
+
+			// Don't show any axes for the gas gauge
 			myPane.XAxis.IsVisible = false;
 			myPane.Y2Axis.IsVisible = false;
 			myPane.YAxis.IsVisible = false;
 
 			//Define needles; can add more than one
 			GasGaugeNeedle gg1 = new GasGaugeNeedle( "Cereal", 30.0f, Color.Black );
-			GasGaugeNeedle gg2 = new GasGaugeNeedle( "Milk", 80.0f, Color.Lime );
+			GasGaugeNeedle gg2 = new GasGaugeNeedle( "Milk", 80.0f, Color.DarkGreen );
 			myPane.CurveList.Add( gg1 );
 			myPane.CurveList.Add( gg2 );
 
@@ -2918,11 +3043,12 @@ namespace ZedGraph.ControlTest
 			GasGaugeRegion ggr2 = new GasGaugeRegion( "Yellow", 33.0f, 66.0f, Color.Yellow );
 			GasGaugeRegion ggr3 = new GasGaugeRegion( "Green", 66.0f, 100.0f, Color.Green );
 
+			// Add the curves
 			myPane.CurveList.Add( ggr1 );
 			myPane.CurveList.Add( ggr2 );
 			myPane.CurveList.Add( ggr3 );
 
-			z1.AxisChange();
+			zgc.AxisChange();
 		}
 
 		private void CreateGraph_GradientByZBars( ZedGraphControl z1 )
@@ -3618,6 +3744,44 @@ namespace ZedGraph.ControlTest
 			//z1.ScrollMaxX = 100;
 			//z1.IsShowHScrollBar = true;
 			//z1.IsEnableVZoom = false;
+		}
+
+		// Basic curve test with images for symbols
+		private void CreateGraph_ScatterPlot( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			// Set the titles
+			myPane.Title.Text = "Scatter Plot Demo";
+			myPane.XAxis.Title.Text = "Pressure, Atm";
+			myPane.YAxis.Title.Text = "Flow Rate, cc/hr";
+
+			// Get a random number generator
+			Random rand = new Random();
+
+			// Populate a PointPairList with a log-based function and some random variability
+			PointPairList list = new PointPairList();
+			for ( int i = 0; i < 200; i++ )
+			{
+				double x = rand.NextDouble() * 20.0 + 1;
+				double y = Math.Log( 10.0 * ( x - 1.0 ) + 1.0 ) * ( rand.NextDouble() * 0.2 + 0.9 );
+				list.Add( x, y );
+			}
+
+			// Add the curve
+			LineItem myCurve = myPane.AddCurve( "Performance", list, Color.Black, SymbolType.Diamond );
+			// Don't display the line (This makes a scatter plot)
+			myCurve.Line.IsVisible = false;
+			// Hide the symbol outline
+			myCurve.Symbol.Border.IsVisible = false;
+			// Fill the symbol interior with color
+			myCurve.Symbol.Fill = new Fill( Color.Firebrick );
+
+			// Fill the background of the chart rect and pane
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+			myPane.Fill = new Fill( Color.White, Color.SlateGray, 45.0f );
+
+			zgc.AxisChange();
 		}
 
 		private void CreateGraph_ScrollTest( ZedGraphControl z1 )

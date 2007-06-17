@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.42 $ $Date: 2007-06-12 06:20:01 $ </version>
+	/// <version> $Revision: 3.43 $ $Date: 2007-06-17 06:03:36 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -694,7 +694,11 @@ namespace ZedGraph
 										{
 											using ( Pen tPen = GetPen( pane, scaleFactor, lastPt ) )
 											{
-												if ( this.StepType == StepType.ForwardStep )
+												if ( this.StepType == StepType.NonStep )
+												{
+													g.DrawLine( tPen, lastX, lastY, tmpX, tmpY );
+												}
+												else if ( this.StepType == StepType.ForwardStep )
 												{
 													g.DrawLine( tPen, lastX, lastY, tmpX, lastY );
 													g.DrawLine( tPen, tmpX, lastY, tmpX, tmpY );
@@ -704,13 +708,23 @@ namespace ZedGraph
 													g.DrawLine( tPen, lastX, lastY, lastX, tmpY );
 													g.DrawLine( tPen, lastX, tmpY, tmpX, tmpY );
 												}
-												else 		// non-step
-													g.DrawLine( tPen, lastX, lastY, tmpX, tmpY );
+												else if ( this.StepType == StepType.ForwardSegment )
+												{
+													g.DrawLine( tPen, lastX, lastY, tmpX, lastY );
+												}
+												else
+												{
+													g.DrawLine( tPen, lastX, tmpY, tmpX, tmpY );
+												}
 											}
 										}
 										else
 										{
-											if ( this.StepType == StepType.ForwardStep )
+											if ( this.StepType == StepType.NonStep )
+											{
+												g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
+											}
+											else if ( this.StepType == StepType.ForwardStep )
 											{
 												g.DrawLine( pen, lastX, lastY, tmpX, lastY );
 												g.DrawLine( pen, tmpX, lastY, tmpX, tmpY );
@@ -720,8 +734,14 @@ namespace ZedGraph
 												g.DrawLine( pen, lastX, lastY, lastX, tmpY );
 												g.DrawLine( pen, lastX, tmpY, tmpX, tmpY );
 											}
-											else 		// non-step
-												g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
+											else if ( this.StepType == StepType.ForwardSegment )
+											{
+												g.DrawLine( pen, lastX, lastY, tmpX, lastY );
+											}
+											else if ( this.StepType == StepType.RearwardSegment )
+											{
+												g.DrawLine( pen, lastX, tmpY, tmpX, tmpY );
+											}
 										}
 									}
 
@@ -823,7 +843,11 @@ namespace ZedGraph
 				{
 					using ( Pen tPen = GetPen( pane, scaleFactor, lastPt ) )
 					{
-						if ( this.StepType == StepType.ForwardStep )
+						if ( this.StepType == StepType.NonStep )
+						{
+							g.DrawLine( tPen, lastX, lastY, tmpX, tmpY );
+						}
+						else if ( this.StepType == StepType.ForwardStep )
 						{
 							g.DrawLine( tPen, lastX, lastY, tmpX, lastY );
 							g.DrawLine( tPen, tmpX, lastY, tmpX, tmpY );
@@ -833,13 +857,23 @@ namespace ZedGraph
 							g.DrawLine( tPen, lastX, lastY, lastX, tmpY );
 							g.DrawLine( tPen, lastX, tmpY, tmpX, tmpY );
 						}
-						else 		// non-step
-							g.DrawLine( tPen, lastX, lastY, tmpX, tmpY );
+						else if ( this.StepType == StepType.ForwardSegment )
+						{
+							g.DrawLine( tPen, lastX, lastY, tmpX, lastY );
+						}
+						else
+						{
+							g.DrawLine( tPen, lastX, tmpY, tmpX, tmpY );
+						}
 					}
 				}
 				else
 				{
-					if ( this.StepType == StepType.ForwardStep )
+					if ( this.StepType == StepType.NonStep )
+					{
+						g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
+					}
+					else if ( this.StepType == StepType.ForwardStep )
 					{
 						g.DrawLine( pen, lastX, lastY, tmpX, lastY );
 						g.DrawLine( pen, tmpX, lastY, tmpX, tmpY );
@@ -849,8 +883,14 @@ namespace ZedGraph
 						g.DrawLine( pen, lastX, lastY, lastX, tmpY );
 						g.DrawLine( pen, lastX, tmpY, tmpX, tmpY );
 					}
-					else 		// non-step
-						g.DrawLine( pen, lastX, lastY, tmpX, tmpY );
+					else if ( this.StepType == StepType.ForwardSegment )
+					{
+						g.DrawLine( pen, lastX, lastY, tmpX, lastY );
+					}
+					else if ( this.StepType == StepType.RearwardSegment )
+					{
+						g.DrawLine( pen, lastX, tmpY, tmpX, tmpY );
+					}
 				}
 
 			}
@@ -934,7 +974,8 @@ namespace ZedGraph
 							arrPoints[index].X = curX;
 							arrPoints[index].Y = curY;
 						}
-						else if ( this.StepType == StepType.ForwardStep )
+						else if ( this.StepType == StepType.ForwardStep ||
+										this.StepType == StepType.ForwardSegment )
 						{
 							arrPoints[index].X = curX;
 							arrPoints[index].Y = lastY;
@@ -942,7 +983,8 @@ namespace ZedGraph
 							arrPoints[index].X = curX;
 							arrPoints[index].Y = curY;
 						}
-						else if ( this.StepType == StepType.RearwardStep )
+						else if ( this.StepType == StepType.RearwardStep ||
+										this.StepType == StepType.RearwardSegment )
 						{
 							arrPoints[index].X = lastX;
 							arrPoints[index].Y = curY;

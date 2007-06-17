@@ -32,6 +32,6 @@ using System.Security;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion( "5.0.9.*" )]
+[assembly: AssemblyVersion( "5.0.10.*" )]
 //[assembly: AssemblyFileVersion( "4.9.7.*" )]
 //[assembly: AllowPartiallyTrustedCallers]
