@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.40 $ $Date: 2007-04-16 00:03:01 $ </version>
+	/// <version> $Revision: 3.41 $ $Date: 2007-06-29 15:39:06 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -891,6 +891,9 @@ namespace ZedGraph
 			bool isXIndependent = this.IsXIndependent( pane );
 			bool isXLog = xAxis.Scale.IsLog;
 			bool isYLog = yAxis.Scale.IsLog;
+			bool isXOrdinal = xAxis.Scale.IsAnyOrdinal;
+			bool isYOrdinal = yAxis.Scale.IsAnyOrdinal;
+			bool isZOrdinal = ( isXIndependent ? yAxis : xAxis ).Scale.IsAnyOrdinal;
 
 			// Loop over each point in the arrays
 			//foreach ( PointPair point in this.Points )
@@ -898,9 +901,9 @@ namespace ZedGraph
 			{
 				PointPair point = this.Points[i];
 
-				double curX = point.X;
-				double curY = point.Y;
-				double curZ = point.Z;
+				double curX = isXOrdinal ? i + 1 : point.X;
+				double curY = isYOrdinal ? i + 1 : point.Y;
+				double curZ = isZOrdinal ? i + 1 : point.Z;
 
 				bool outOfBounds = curX < xLBound || curX > xUBound ||
 					curY < yLBound || curY > yUBound ||

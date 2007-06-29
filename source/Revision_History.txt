@@ -1,6 +1,11 @@
 == Version 5 ==
 
-;16-Jun-2007 (By Champion)
+;29-Jun-2007 (By Champion)
+: [FIX] MinAuto/MaxAuto automatically set to false when Min/Max changed in DateAsOrdinal Scale
+: [FIX] GetRange() for IsBoundedRanges ordinal scales
+: [UPD] Make PointPair cloneable
+
+;16-Jun-2007 (By Champion) v5.0.10 Release
 : [FIX] Symbols not shown on ordinal scales due to optimization
 : [UPD] Fix Spanish locale for print commands (thanks to URE)
 : [FIX] Disable zoom when difference is below a zoom limit resolution

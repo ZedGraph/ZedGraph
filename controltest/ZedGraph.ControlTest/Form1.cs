@@ -50,6 +50,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_FilteredPointList( zedGraphControl1 );
+			//CreateGraph_Gantt( zedGraphControl1 );
 			//CreateGraph_GasGauge( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
@@ -70,7 +71,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_junk10( zedGraphControl1 );
 			//CreateGraph_LabeledPointsDemo( zedGraphControl1 );
 			//CreateGraph_LineWithBandDemo( zedGraphControl1 );
-			CreateGraph_LineColorGradient( zedGraphControl1 );
+			//CreateGraph_LineColorGradient( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
@@ -82,6 +83,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_NormalPane( zedGraphControl1 );
 			//CreateGraph_OHLCBar( zedGraphControl1 );
 			//CreateGraph_OHLCBarGradient( zedGraphControl1 );
+			//CreateGraph_OHLCBarMaster( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
 			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
 			//CreateGraph_Pie( zedGraphControl1 );
@@ -89,7 +91,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScatterPlot( zedGraphControl1 );
-			//CreateGraph_ScrollTest( zedGraphControl1 );
+			CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_ScrollProblem( zedGraphControl1 );
 			//CreateGraph_ScrollSample( zedGraphControl1 );
 			//CreateGraph_SortedOverlayBars( zedGraphControl1 );
@@ -847,6 +849,219 @@ namespace ZedGraph.ControlTest
 			// Tell ZedGraph to calculate the axis ranges
 			zgc.AxisChange();
 			zgc.Invalidate();
+		}
+
+		// Make a masterpane with 3 charts
+		// Top = OHLC Bar Chart
+		// Mid = Volume Chart
+		// Bot = Price Change
+		public void CreateGraph_OHLCBarMaster( ZedGraphControl zgc )
+		{
+			// ================================================
+			// First, set up some lists with random data...
+			// ================================================
+			StockPointList spl = new StockPointList();
+			PointPairList volList = new PointPairList();
+			PointPairList changeList = new PointPairList();
+
+			Random rand = new Random();
+
+			// First day is jan 1st
+			XDate xDate = new XDate( 2006, 1, 1 );
+			double open = 50.0;
+			double prevClose = 50.0;
+			const int numDays = 365;
+
+			// Loop to make 365 days of data
+			for ( int i = 0; i < numDays; i++ )
+			{
+				double x = xDate.XLDate;
+				//double close = open + rand.NextDouble() * 10.0 - 5.0;
+				double close = open * ( 0.95 + rand.NextDouble() * 0.1 );
+				//double hi = Math.Max( open, close ) + rand.NextDouble() * 5.0;
+				//double low = Math.Min( open, close ) - rand.NextDouble() * 5.0;
+				double hi = Math.Max( open, close ) * ( 1.0 + rand.NextDouble() * 0.05 );
+				double low = Math.Min( open, close ) * ( 0.95 + rand.NextDouble() * 0.05 );
+				double vol = 25.0 + rand.NextDouble() * 100.0;
+				double change = close - prevClose;
+
+				// Create a StockPt instead of a PointPair so we can carry 6 properties
+				StockPt pt = new StockPt( x, hi, low, open, close, vol );
+
+				//if price is increasing color=black, else color=red
+				pt.ColorValue = close > prevClose ? 2 : 1;
+				spl.Add( pt );
+
+				volList.Add( x, vol );
+				changeList.Add( x, change );
+
+				prevClose = close;
+				open = close;
+				// Advance one day
+				xDate.AddDays( 1.0 );
+				// but skip the weekends
+				if ( XDate.XLDateToDayOfWeek( xDate.XLDate ) == 6 )
+					xDate.AddDays( 2.0 );
+			}
+
+			// ================================================
+			// Create 3 GraphPanes to display the data
+			// ================================================
+
+			// get a reference to the masterpane
+			MasterPane master = zgc.MasterPane;
+
+			// The first chart is already in the MasterPane, so add the other two charts
+			master.Add( new GraphPane() );
+			master.Add( new GraphPane() );
+
+			// ================================================
+			// The first pane is an OHLCBarItem
+			// ================================================
+
+			// Get a reference to the pane
+			GraphPane pane = master[0];
+
+			// Set the title and axis labels   
+			pane.Title.Text = "Open-High-Low-Close History";
+			pane.XAxis.Title.Text = "Date";
+			pane.YAxis.Title.Text = "Price";
+
+			// Setup the gradient fill...
+			// Use Red for negative days and black for positive days
+			Color[] colors = { Color.Red, Color.Black };
+			Fill myFill = new Fill( colors );
+			myFill.Type = FillType.GradientByColorValue;
+			myFill.SecondaryValueGradientColor = Color.Empty;
+			myFill.RangeMin = 1;
+			myFill.RangeMax = 2;
+
+			//Create the OHLC and assign it a Fill
+			OHLCBarItem ohlcCurve = pane.AddOHLCBar( "Price", spl, Color.Empty );
+			ohlcCurve.Bar.GradientFill = myFill;
+			ohlcCurve.Bar.IsAutoSize = true;
+			// Create a JapaneseCandleStick
+			//JapaneseCandleStickItem jcsCurve = pane.AddJapaneseCandleStick( "Price", spl );
+			//jcsCurve.Stick.IsAutoSize = false;
+
+			// ================================================
+			// The second pane is a regular BarItem to show daily volume
+			// ================================================
+
+			// Get a reference to the pane
+			pane = master[1];
+
+			// Set the title and axis labels   
+			pane.Title.Text = "Daily Volume";
+			pane.XAxis.Title.Text = "Date";
+			pane.YAxis.Title.Text = "Volume, thousands";
+
+			BarItem volBar = pane.AddBar( "Volume", volList, Color.Blue );
+
+			// ================================================
+			// The third pane is a LineItem to show daily price change
+			// ================================================
+
+			// Get a reference to the pane
+			pane = master[2];
+
+			// Set the title and axis labels   
+			pane.Title.Text = "Price Change";
+			pane.XAxis.Title.Text = "Date";
+			pane.YAxis.Title.Text = "Price Change, $";
+
+			LineItem changeCurve = pane.AddCurve( "Price Change", changeList, Color.Green, SymbolType.None );
+
+			// ================================================
+			// These settings are common to all three panes
+			// ================================================
+
+			foreach ( GraphPane paneT in master.PaneList )
+			{
+				// Use DateAsOrdinal to skip weekend gaps
+				paneT.XAxis.Type = AxisType.DateAsOrdinal;
+				// Use only visible data to define Y scale range
+				paneT.IsBoundedRanges = true;
+				// Define a minimum buffer space to the axes can be aligned
+				paneT.YAxis.MinSpace = 80;
+				paneT.Y2Axis.MinSpace = 50;
+
+				// pretty it up a little
+				paneT.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+				paneT.Title.FontSpec.Size = 20.0f;
+				paneT.XAxis.Title.FontSpec.Size = 18.0f;
+				paneT.XAxis.Scale.FontSpec.Size = 16.0f;
+				paneT.YAxis.Title.FontSpec.Size = 18.0f;
+				paneT.YAxis.Scale.FontSpec.Size = 16.0f;
+				paneT.Legend.IsVisible = false;
+				paneT.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
+
+				// Set the initial scroll position and range
+				// Note that the min and max for DateAsOrdinal scale will be ordinal values, not dates
+				paneT.XAxis.Scale.Min = 1.0;
+				// default range is 30 days
+				paneT.XAxis.Scale.Max = 30.0;
+
+			}
+
+			// ================================================
+			// Set up the MasterPane Layout
+			// ================================================
+
+			// Make sure that fonts and dimensions are the same for all three charts
+			master.IsCommonScaleFactor = true;
+
+			// Show the masterpane title
+			master.Title.IsVisible = true;
+			master.Title.Text = "Wacky Widget Company Stock Performance";
+			master.Fill = new Fill( Color.White, Color.SlateBlue, 45.0f );
+
+			// Leave a margin around the masterpane, but only a small gap between panes
+			master.Margin.All = 10;
+			master.InnerPaneGap = 5;
+
+			using ( Graphics g = this.CreateGraphics() )
+			{
+
+				master.SetLayout( g, PaneLayout.SingleColumn );
+
+				// Synchronize the Axes
+				zgc.IsAutoScrollRange = true;
+				zgc.IsShowHScrollBar = true;
+				zgc.IsSynchronizeXAxes = true;
+				// Scale range will extend about 1 day before and after the actual data range
+				zgc.ScrollGrace = 1.0 / numDays;
+			}
+
+			// Tell ZedGraph to calculate the axis ranges
+			zgc.AxisChange();
+
+//			master[0].XAxis.Scale.Min = new XDate( 2006, 1, 1 ).XLDate;
+//			master[0].XAxis.Scale.Max = master[0].XAxis.Scale.Min + 30.0;
+//			master[1].XAxis.Scale.Min = new XDate( 2006, 1, 1 ).XLDate;
+//			master[1].XAxis.Scale.Max = master[1].XAxis.Scale.Min + 30.0;
+//			master[2].XAxis.Scale.Min = new XDate( 2006, 1, 1 ).XLDate;
+//			master[2].XAxis.Scale.Max = master[2].XAxis.Scale.Min + 30.0;
+
+			//zgc.ScrollDoneEvent += new ZedGraphControl.ScrollDoneHandler( zgc_ScrollDoneEvent );
+			zgc.ScrollProgressEvent += new ZedGraphControl.ScrollProgressHandler( zgc_ScrollProgressEvent );
+		}
+
+		void zgc_ScrollProgressEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState,
+						ZoomState newState )
+		{
+			//this.toolStripStatusLabel1.Text = sender.GraphPane.XAxis.Scale.Max.ToString();
+			// When scroll action is finished, recalculate the axis ranges
+			sender.AxisChange();
+			sender.Refresh();
+		}
+
+		void zgc_ScrollDoneEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState,
+						ZoomState newState )
+		{
+			// When scroll action is finished, recalculate the axis ranges
+			sender.AxisChange();
+			sender.Refresh();
 		}
 
 		// Japanese Candlestick
@@ -2044,22 +2259,39 @@ namespace ZedGraph.ControlTest
 		public void CreateGraph_junk9( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.GraphPane;
+			myPane.BarSettings.Base = BarBase.Y;
 			PointPairList ppl = new PointPairList();
-			PointPairCV pp1 = new PointPairCV( 20, 50, 40 );
-			PointPairCV pp2 = new PointPairCV( 30, 30, 15 );
-			pp1.ColorValue = 1; //this line distorts HiLow bars.
+			PointPairCV pp1 = new PointPairCV( 20, 25, 10 );
+			PointPairCV pp2 = new PointPairCV( 30, 30, 20 );
+			PointPairCV pp3 = new PointPairCV( 40, 35, 15 );
+			PointPairCV pp4 = new PointPairCV( 50, 40, 30 );
+			PointPairCV pp5 = new PointPairCV( 60, 45, 10 );
+			pp1.ColorValue = 1;
+			pp2.ColorValue = 2;
+			pp3.ColorValue = 3;
+			pp4.ColorValue = 4;
+			pp5.ColorValue = 5;
 			ppl.Add( pp1 );
 			ppl.Add( pp2 );
+			ppl.Add( pp3 );
+			ppl.Add( pp4 );
+			ppl.Add( pp5 );
 
-			Color[] colors = { Color.Red, Color.Black };
+			XDate myXDate = new XDate( 2007, 5, 6 );
+			double poop = myXDate.XLDate;
+
+//			double cv = ( ppl[3] as PointPairCV ).ColorValue;
+
+			Color[] colors = { Color.Red, Color.Green, Color.Blue, Color.Cyan, Color.LightGreen };
 			Fill myFill = new Fill( colors );
 			myFill.Type = FillType.GradientByColorValue;
-			myFill.SecondaryValueGradientColor = Color.Empty;
+			myFill.SecondaryValueGradientColor = Color.White;
 			myFill.RangeMin = 1;
-			myFill.RangeMax = 2;
+			myFill.RangeMax = 5;
 
 			HiLowBarItem myCurve = myPane.AddHiLowBar( "Curve 1", ppl, Color.Empty );
 			myCurve.Bar.Fill = myFill;
+			myCurve.Bar.Size = 20;
 
 		}
 
@@ -2502,6 +2734,7 @@ namespace ZedGraph.ControlTest
 				myPaneT.Y2Axis.MinSpace = 20;
 
 				myPaneT.XAxis.Scale.FontSpec.Angle = 90;
+				myPaneT.XAxis.Scale.IsVisible = true;
 
 				// Make up some data arrays based on the Sine function
 				double x, y;
@@ -3013,6 +3246,68 @@ namespace ZedGraph.ControlTest
 			list.SetBounds( -1e20, 1e20, 100 );
 
 			z1.AxisChange();
+		}
+
+		private void CreateGraph_Gantt( ZedGraphControl zg1 )
+		{
+			GraphPane myPane = zg1.GraphPane;
+
+			// Setup the titles
+			myPane.Title.Text = "Gantt Chart";
+			myPane.XAxis.Title.Text = "Date";
+			myPane.YAxis.Title.Text = "Project";
+
+			// XAxis is Date type
+			myPane.XAxis.Type = AxisType.Date;
+			// Y Axis is Text type (ordinal)
+			myPane.YAxis.Type = AxisType.Text;
+			// Bars will be horizontal
+			myPane.BarSettings.Base = BarBase.Y;
+
+			// Set the Y axis text labels
+			string[] labels = { "Project 1", "Project 2" };
+			myPane.YAxis.Scale.TextLabels = labels;
+			myPane.YAxis.MajorTic.IsBetweenLabels = true;
+
+			// First, define all the bars that you want to be red
+			PointPairList ppl = new PointPairList();
+			XDate start = new XDate( 2005, 10, 31 );
+			XDate end = new XDate( 2005, 11, 15 );
+			// x is start of bar, y is project number, z is end of bar
+			// Define this first one using start/end variables for illustration
+			ppl.Add( start, 1.0, end );
+			// add another red bar, assigned to project 2
+			// Didn't use start/end variables here, but it's the same concept
+			ppl.Add( new XDate( 2005, 12, 16 ), 2.0, new XDate( 2005, 12, 31 ) );
+			HiLowBarItem myBar = myPane.AddHiLowBar( "job 1", ppl, Color.Red );
+			// This tells the bar that we want to manually define the Y position
+			// Y is AxisType.Text, which is ordinal, so a Y value of 1.0 goes with the first label,
+			// 2.0 with the second, etc.
+			myBar.IsOverrideOrdinal = true;
+			myBar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 90.0f );
+			// This size is the width of the bar
+			myBar.Bar.Size = 20f;
+
+			// Now, define all the bars that you want to be Green
+			ppl = new PointPairList();
+			ppl.Add( new XDate( 2005, 11, 16 ), 2.0, new XDate( 2005, 11, 26 ) );
+			myBar = myPane.AddHiLowBar( "job 2", ppl, Color.Green );
+			myBar.IsOverrideOrdinal = true;
+			myBar.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 90.0f );
+			myBar.Bar.Size = 20f;
+
+			// Define all the bars that you want to be blue
+			ppl = new PointPairList();
+			ppl.Add( new XDate( 2005, 11, 27 ), 1.0, new XDate( 2005, 12, 15 ) );
+			myBar = myPane.AddHiLowBar( "job 3", ppl, Color.Blue );
+			myBar.IsOverrideOrdinal = true;
+			myBar.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 90.0f );
+			myBar.Bar.Size = 20f;
+
+			myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+
+			zg1.AxisChange();
 		}
 
 		private void CreateGraph_GasGauge( ZedGraphControl zgc )
@@ -3826,7 +4121,7 @@ namespace ZedGraph.ControlTest
 			Random random = new Random();
 			for ( int i = 0; i < labels.Length; i++ )
 			{
-				labels[i] = "A";
+				labels[i] = i.ToString();
 				y[i] = random.NextDouble() * 50;
 			}
 			BarItem myBar = myPane.AddBar( "Testing", null, y, Color.Red );
@@ -3834,10 +4129,32 @@ namespace ZedGraph.ControlTest
 			myPane.XAxis.MajorTic.IsBetweenLabels = true;
 			myPane.XAxis.Type = AxisType.Text;
 			myPane.XAxis.Scale.TextLabels = labels;
+			myPane.XAxis.Scale.Min = 20;
+			myPane.XAxis.Scale.Max = 30;
 			myPane.BarSettings.MinClusterGap = 2;
 			z1.AxisChange();
 
+			z1.Scroll += new ScrollEventHandler( ScrollTest_Scroll );
+			z1.ScrollDoneEvent += new ZedGraphControl.ScrollDoneHandler( ScrollTest_ScrollDoneEvent );
+			z1.ScrollProgressEvent += new ZedGraphControl.ScrollProgressHandler( ScrollTest_ScrollProgressEvent );
+
 			//this.Refresh();
+		}
+
+		void ScrollTest_ScrollProgressEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState, ZoomState newState )
+		{
+			//MessageBox.Show( "ScrollProgressEvent" );
+		}
+
+		void ScrollTest_ScrollDoneEvent( ZedGraphControl sender, ScrollBar scrollBar,
+					ZoomState oldState, ZoomState newState )
+		{
+			//MessageBox.Show( "ScrollDoneEvent" );
+		}
+
+		void ScrollTest_Scroll( object sender, ScrollEventArgs e )
+		{
+			//MessageBox.Show( "Scroll" );
 		}
 
 		private void CreateGraph_ScrollProblem( ZedGraphControl zgc )
@@ -3977,16 +4294,6 @@ namespace ZedGraph.ControlTest
 		void zgc_Scroll( object sender, ScrollEventArgs e )
 		{
 			this.toolStripStatusLabel1.Text = e.NewValue.ToString();
-		}
-
-		void zgc_ScrollDoneEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState, ZoomState newState )
-		{
-			MessageBox.Show( "Scrolling is done" );
-		}
-
-		void zgc_ScrollProgressEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState, ZoomState newState )
-		{
-			this.toolStripStatusLabel1.Text = sender.GraphPane.XAxis.Scale.Max.ToString();
 		}
 
 		// Basic curve test - two text axes

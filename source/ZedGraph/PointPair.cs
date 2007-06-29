@@ -36,9 +36,9 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.24 $ $Date: 2007-03-17 18:43:44 $ </version>
+	/// <version> $Revision: 3.25 $ $Date: 2007-06-29 15:39:07 $ </version>
 	[Serializable]
-	public class PointPair : PointPairBase, ISerializable
+	public class PointPair : PointPairBase, ISerializable, ICloneable
 	{
 	#region Member variables
 		
@@ -155,6 +155,25 @@ namespace ZedGraph
 				this.Tag = ((ICloneable) rhs.Tag).Clone();
 			else
 				this.Tag = rhs.Tag;
+		}
+
+		/// <summary>
+		/// Implement the <see cref="ICloneable" /> interface in a typesafe manner by just
+		/// calling the typed version of <see cref="Clone" />
+		/// </summary>
+		/// <returns>A deep copy of this object</returns>
+		object ICloneable.Clone()
+		{
+			return this.Clone();
+		}
+
+		/// <summary>
+		/// Typesafe, deep-copy clone method.
+		/// </summary>
+		/// <returns>A new, independent copy of this class</returns>
+		public PointPair Clone()
+		{
+			return new PointPair( this );
 		}
 
 	#endregion

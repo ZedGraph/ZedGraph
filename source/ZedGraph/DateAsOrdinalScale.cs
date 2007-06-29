@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.10 $ $Date: 2007-04-16 00:03:01 $ </version>
+	/// <version> $Revision: 1.11 $ $Date: 2007-06-29 15:39:07 $ </version>
 	[Serializable]
 	class DateAsOrdinalScale : Scale, ISerializable //, ICloneable
 	{
@@ -102,7 +102,7 @@ namespace ZedGraph
 		public override double Min
 		{
 			get { return _min; }
-			set { _min = XDate.MakeValidDate( value ); }
+			set { _min = XDate.MakeValidDate( value ); _minAuto = false; }
 		}
 
 		/// <summary>
@@ -116,7 +116,7 @@ namespace ZedGraph
 		public override double Max
 		{
 			get { return _max; }
-			set { _max = XDate.MakeValidDate( value ); }
+			set { _max = XDate.MakeValidDate( value ); _maxAuto = false; }
 		}
 
 	#endregion
