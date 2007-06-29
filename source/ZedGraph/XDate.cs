@@ -42,7 +42,7 @@ namespace ZedGraph
 	/// eachother.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.21 $ $Date: 2007-06-17 06:03:36 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2007-06-29 15:43:35 $ </version>
 	public struct XDate //: ICloneable
 	{
 	#region Fields & Constants
@@ -1155,7 +1155,8 @@ namespace ZedGraph
 		/// floating point format</returns>
 		public static double DateTimeToXLDate( DateTime dt )
 		{
-			return CalendarDateToXLDate( dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second );
+			return CalendarDateToXLDate( dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second,
+										dt.Millisecond );
 		}
 	#endregion
 	
