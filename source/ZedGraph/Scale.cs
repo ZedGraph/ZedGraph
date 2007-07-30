@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.30 $ $Date: 2007-06-02 06:56:03 $ </version>
+	/// <version> $Revision: 1.31 $ $Date: 2007-07-30 06:45:11 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -2744,8 +2744,12 @@ namespace ZedGraph
 		public float Transform( double x )
 		{
 			// Must take into account Log, and Reverse Axes
-			double ratio = ( Linearize( x ) - _minLinTemp ) /
-							( _maxLinTemp - _minLinTemp );
+			double denom = ( _maxLinTemp - _minLinTemp );
+			double ratio;
+			if ( denom > 1e-100 )
+				ratio = ( Linearize( x ) - _minLinTemp ) / denom;
+			else
+				ratio = 0;
 
 			// _isReverse   axisType    Eqn
 			//     T          XAxis     _maxPix - ...

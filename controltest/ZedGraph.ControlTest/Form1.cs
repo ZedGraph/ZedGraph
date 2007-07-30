@@ -30,7 +30,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph( zedGraphControl1 );
 			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_AxisCrossDemo( zedGraphControl1 );
-			//CreateGraph_BarJunk( zedGraphControl1 );
+			CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
@@ -86,7 +86,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_OHLCBarMaster( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
 			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
-			CreateGraph_Pie( zedGraphControl1 );
+			//CreateGraph_Pie( zedGraphControl1 );
 			//CreateGraph_PolyTest( zedGraphControl1 );
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
@@ -4709,14 +4709,17 @@ namespace ZedGraph.ControlTest
 			grPane.Legend.IsVisible = false;
 
 			PointPairList list = new PointPairList();
-			list.Add( 10, 10, 1 );
-			list.Add( 20, 20, 1 );
-			list.Add( 30, 15, 1 );
-			list.Add( 40, 35, 2 );
-			list.Add( 50, 22, 1 );
-			list.Add( 100, 8, 1 );
-			list.Add( 150, 12, 1 );
-			list.Add( 200, 29, 1 );
+			list.Add( 10, 1, 1 );
+//			list.Add( 20, 20, 1 );
+//			list.Add( 30, 15, 1 );
+//			list.Add( 40, 35, 2 );
+//			list.Add( 50, 22, 1 );
+//			list.Add( 100, -5, 1 );
+//			list.Add( 150, 12, 1 );
+//			list.Add( 200, 29, 1 );
+
+//			grPane.YAxis.Scale.Min = 0;
+//			grPane.YAxis.Scale.Max = 0;
 
 			BarItem myCurve = grPane.AddBar( "My Curve", list, Color.Blue );
 
@@ -4729,7 +4732,10 @@ namespace ZedGraph.ControlTest
 
 			grPane.Chart.Fill = new Fill( Color.White, Color.FromArgb( 255, 255, 166 ), 45.0F );
 
-			grPane.XAxis.Type = AxisType.LinearAsOrdinal;
+			grPane.XAxis.Type = AxisType.Text;
+			grPane.YAxis.Type = AxisType.Log;
+			string[] labels = { "Hey" };
+			grPane.XAxis.Scale.TextLabels = labels;
 			z1.AxisChange();
 		}
 
