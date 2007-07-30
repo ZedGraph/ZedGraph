@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// <see cref="PieItem"/>s.
 	/// </summary>
 	/// <author> Bob Kaye </author>
-	/// <version> $Revision: 1.31 $ $Date: 2007-01-25 07:56:09 $ </version>
+	/// <version> $Revision: 1.32 $ $Date: 2007-07-30 05:26:23 $ </version>
 	[Serializable]
 	public class PieItem : CurveItem, ICloneable, ISerializable
 	{
@@ -237,12 +237,11 @@ namespace ZedGraph
 		}
 
 		/// <summary>
-		/// Gets or sets a path representing this <see cref="PieItem"/>
+		/// Gets a path representing this <see cref="PieItem"/>
 		/// </summary>
 		public GraphicsPath SlicePath
 		{
 			get { return _slicePath; }
-			//			set { this.slicePath = value; } 
 		}
 
 		/// <summary>
@@ -509,7 +508,7 @@ namespace ZedGraph
 			_boundingRectangle = (RectangleF)info.GetValue( "boundingRectangle", typeof( RectangleF ) );
 			_pivotPoint = (PointF)info.GetValue( "pivotPoint", typeof( PointF ) );
 			_endPoint = (PointF)info.GetValue( "endPoint", typeof( PointF ) );
-			_slicePath = (GraphicsPath)info.GetValue( "slicePath", typeof( GraphicsPath ) );
+			// _slicePath = (GraphicsPath)info.GetValue( "slicePath", typeof( GraphicsPath ) );
 			_startAngle = (float)info.GetDouble( "startAngle" );
 			_sweepAngle = (float)info.GetDouble( "sweepAngle" );
 			_midAngle = (float)info.GetDouble( "midAngle" );
@@ -537,7 +536,7 @@ namespace ZedGraph
 			info.AddValue( "boundingRectangle", _boundingRectangle );
 			info.AddValue( "pivotPoint", _pivotPoint );
 			info.AddValue( "endPoint", _endPoint );
-			info.AddValue( "slicePath", _slicePath );
+			// info.AddValue( "slicePath", _slicePath );
 			info.AddValue( "startAngle", _startAngle );
 			info.AddValue( "sweepAngle", _sweepAngle );
 			info.AddValue( "midAngle", _midAngle );

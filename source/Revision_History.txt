@@ -1,10 +1,12 @@
 == Version 5 ==
 
-;29-Jun-2007 (By Champion)
+;29-Jul-2007 (By Champion)
 : [FIX] MinAuto/MaxAuto automatically set to false when Min/Max changed in DateAsOrdinal Scale
 : [FIX] GetRange() for IsBoundedRanges ordinal scales
 : [UPD] Make PointPair cloneable
 : [FIX] DateTimeToXLDate(DateTime) missing milliseconds
+: [FIX] GasGaugeRegion range was implicitly assumed to start at zero.  Fixed so it can start at any value.
+: [FIX] PieItem serialization was saving the _slicePath, which is not serializable.
 
 ;16-Jun-2007 (By Champion) v5.0.10 Release
 : [FIX] Symbols not shown on ordinal scales due to optimization

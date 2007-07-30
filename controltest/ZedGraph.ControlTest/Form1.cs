@@ -86,12 +86,12 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_OHLCBarMaster( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
 			//CreateGraph_OverlayBarDemo( zedGraphControl1 );
-			//CreateGraph_Pie( zedGraphControl1 );
+			CreateGraph_Pie( zedGraphControl1 );
 			//CreateGraph_PolyTest( zedGraphControl1 );
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScatterPlot( zedGraphControl1 );
-			CreateGraph_ScrollTest( zedGraphControl1 );
+			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_ScrollProblem( zedGraphControl1 );
 			//CreateGraph_ScrollSample( zedGraphControl1 );
 			//CreateGraph_SortedOverlayBars( zedGraphControl1 );
@@ -2675,7 +2675,7 @@ namespace ZedGraph.ControlTest
 
 			// Leave a margin around the masterpane, but only a small gap between panes
 			master.Margin.All = 10;
-			master.InnerPaneGap = 5;
+			master.InnerPaneGap = -5;
 
 			// The titles for the individual GraphPanes
 			string[] yLabels = { "Rate, m/s", "Pressure, dynes/cm", "Count, units/hr" };
@@ -2733,8 +2733,8 @@ namespace ZedGraph.ControlTest
 				myPaneT.YAxis.MinSpace = 80;
 				myPaneT.Y2Axis.MinSpace = 20;
 
-				myPaneT.XAxis.Scale.FontSpec.Angle = 90;
-				myPaneT.XAxis.Scale.IsVisible = true;
+				//myPaneT.XAxis.Scale.FontSpec.Angle = 90;
+				//myPaneT.XAxis.Scale.IsVisible = true;
 
 				// Make up some data arrays based on the Sine function
 				double x, y;
@@ -3334,7 +3334,7 @@ namespace ZedGraph.ControlTest
 			myPane.CurveList.Add( gg2 );
 
 			//Define all regions
-			GasGaugeRegion ggr1 = new GasGaugeRegion( "Red", 0.0f, 33.0f, Color.Red );
+			GasGaugeRegion ggr1 = new GasGaugeRegion( "Red", 20f, 33.0f, Color.Red );
 			GasGaugeRegion ggr2 = new GasGaugeRegion( "Yellow", 33.0f, 66.0f, Color.Yellow );
 			GasGaugeRegion ggr3 = new GasGaugeRegion( "Green", 66.0f, 100.0f, Color.Green );
 
@@ -5245,11 +5245,14 @@ namespace ZedGraph.ControlTest
 		{
 			ZedGraphControl zg1 = zedGraphControl1;
 
-			zg1.GraphPane = new GraphPane();
-			return;
+			//zg1.GraphPane = new GraphPane();
+			//return;
 
 			Serialize( zg1, "junk.bin" );
 			zg1.MasterPane.PaneList.Clear();
+			zg1.Refresh();
+			MessageBox.Show( "PaneList Cleared" );
+
 			DeSerialize( zg1, "junk.bin" );
 
 			return;

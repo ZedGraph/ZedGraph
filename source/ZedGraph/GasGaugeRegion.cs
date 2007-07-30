@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// <see cref="GasGaugeRegion"/>s.
 	/// </summary>
 	/// <author> Jay Mistry </author>
-	/// <version> $Revision: 1.1 $ $Date: 2007-04-29 02:07:03 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2007-07-30 05:26:23 $ </version>
 	[Serializable]
 	public class GasGaugeRegion : CurveItem, ICloneable, ISerializable
 	{
@@ -497,8 +497,8 @@ namespace ZedGraph
 		public static void CalculateGasGuageParameters( GraphPane pane )
 		{
 			//loop thru slices and get total value and maxDisplacement
-			double minVal = 0;
-			double maxVal = 0;
+			double minVal = double.MaxValue;
+			double maxVal = double.MinValue;
 			foreach ( CurveItem curve in pane.CurveList )
 				if ( curve is GasGaugeRegion )
 				{
@@ -516,8 +516,8 @@ namespace ZedGraph
 				if ( curve is GasGaugeRegion )
 				{
 					GasGaugeRegion ggr = (GasGaugeRegion)curve;
-					float start = ( ( (float)ggr.MinValue ) - ( (float)minVal ) ) / ( (float)maxVal ) * 180.0f;
-					float sweep = ( ( (float)ggr.MaxValue ) - ( (float)minVal ) ) / ( (float)maxVal ) * 180.0f;
+					float start = ( (float)ggr.MinValue - (float)minVal ) / ( (float)maxVal - (float)minVal ) * 180.0f;
+					float sweep = ( (float)ggr.MaxValue - (float)minVal ) / ( (float)maxVal - (float)minVal ) * 180.0f;
 					sweep = sweep - start;
 
 					Fill f = new Fill( Color.White, ggr.RegionColor, -( sweep / 2f ) );
