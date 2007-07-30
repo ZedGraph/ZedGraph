@@ -135,10 +135,25 @@
     <Compile Include="ZedGraph\Y2AxisList.cs" />
     <Compile Include="ZedGraph\YAxis.cs" />
     <Compile Include="ZedGraph\YAxisList.cs" />
+    <Compile Include="ZedGraph\ZedGraphControl.ContextMenu.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="ZedGraph\ZedGraphControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ZedGraph\ZedGraphControl.Designer.cs" />
+    <Compile Include="ZedGraph\ZedGraphControl.Events.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ZedGraph\ZedGraphControl.Printing.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ZedGraph\ZedGraphControl.Properties.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ZedGraph\ZedGraphControl.ScrollBars.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="ZedGraph\ZedGraphException.cs" />
     <Compile Include="ZedGraph\ZoomState.cs" />
     <Compile Include="ZedGraph\ZoomStateStack.cs" />
