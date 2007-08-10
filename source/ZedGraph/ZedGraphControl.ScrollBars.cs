@@ -34,16 +34,12 @@ namespace ZedGraph
 		{
 			if ( this.GraphPane != null )
 			{
-				/*
-								ScrollBar scrollBar = sender as ScrollBar;
-								bool clearZoomState = false;
-								//ZoomState curState = new ZoomState( this.GraphPane, ZoomState.StateType.Scroll );
-								if ( _zoomState == null ) //&& !scrollBar.Capture )
-								{
-									clearZoomState = true;
-									ZoomStateSave( this.GraphPane, ZoomState.StateType.Scroll );
-								}
-				*/
+				if ( ( e.Type != ScrollEventType.ThumbPosition &&
+						 e.Type != ScrollEventType.ThumbTrack ) ||
+					  ( e.Type == ScrollEventType.ThumbTrack &&
+						 _zoomState == null ) )
+					ZoomStateSave( this.GraphPane, ZoomState.StateType.Scroll );
+
 				for ( int i = 0; i < this.GraphPane.YAxisList.Count; i++ )
 				{
 					ScrollRange scroll = _yScrollRangeList[i];
@@ -68,28 +64,7 @@ namespace ZedGraph
 
 				ApplyToAllPanes( this.GraphPane );
 
-				if ( _zoomState != null ) // && ! clearZoomState && scrollBar.Capture )
-				{
-					// Provide Callback to notify the user of scroll events
-					if ( this.ScrollProgressEvent != null )
-						this.ScrollProgressEvent( this, vScrollBar1, _zoomState,
-									new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
-				}
-				/*				else if ( clearZoomState && _zoomState != null && // !scrollBar.Capture &&
-												_zoomState.IsChanged( this.GraphPane ) )
-								{
-									//this.GraphPane.ZoomStack.Push( _zoomState );
-									ZoomStatePush( this.GraphPane );
-
-									// Provide Callback to notify the user of pan events
-									if ( this.ScrollDoneEvent != null )
-										this.ScrollDoneEvent( this, scrollBar, _zoomState,
-													new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
-								}
-
-								if ( clearZoomState )
-									_zoomState = null;
-				*/
+				ProcessEventStuff( vScrollBar1, e );
 			}
 		}
 
@@ -123,26 +98,56 @@ namespace ZedGraph
 		{
 			if ( this.GraphPane != null )
 			{
+				if ( ( e.Type != ScrollEventType.ThumbPosition &&
+						 e.Type != ScrollEventType.ThumbTrack ) ||
+					  ( e.Type == ScrollEventType.ThumbTrack &&
+						 _zoomState == null ) )
+					ZoomStateSave( this.GraphPane, ZoomState.StateType.Scroll );
+
 				HandleScroll( this.GraphPane.XAxis, e.NewValue, _xScrollRange.Min, _xScrollRange.Max,
-							hScrollBar1.LargeChange, this.GraphPane.XAxis.Scale.IsReverse );
+								hScrollBar1.LargeChange, this.GraphPane.XAxis.Scale.IsReverse );
+
+				ApplyToAllPanes( this.GraphPane );
+
+				ProcessEventStuff( hScrollBar1, e );
 			}
+		}
 
-			ApplyToAllPanes( this.GraphPane );
-
-			if ( _zoomState != null && this.GraphPane != null )
+		private void ProcessEventStuff( ScrollBar scrollBar, ScrollEventArgs e )
+		{
+			if ( e.Type == ScrollEventType.ThumbTrack )
 			{
-				// Provide Callback to notify the user of pan events
 				if ( this.ScrollProgressEvent != null )
 					this.ScrollProgressEvent( this, hScrollBar1, _zoomState,
 								new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
 			}
-		}
+			else // if ( e.Type == ScrollEventType.ThumbPosition )
+			{
+				if ( _zoomState != null && _zoomState.IsChanged( this.GraphPane ) )
+				{
+					//this.GraphPane.ZoomStack.Push( _zoomState );
+					ZoomStatePush( this.GraphPane );
 
+					// Provide Callback to notify the user of pan events
+					if ( this.ScrollDoneEvent != null )
+						this.ScrollDoneEvent( this, hScrollBar1, _zoomState,
+									new ZoomState( this.GraphPane, ZoomState.StateType.Scroll ) );
+
+					_zoomState = null;
+				}
+			}
+
+			if ( this.ScrollEvent != null )
+				this.ScrollEvent( scrollBar, e );
+		}
+/*
 		/// <summary>
 		/// Use the MouseCaptureChanged as an indicator for the start and end of a scrolling operation
 		/// </summary>
 		private void ScrollBarMouseCaptureChanged( object sender, EventArgs e )
 		{
+			return;
+
 			ScrollBar scrollBar = sender as ScrollBar;
 			if ( scrollBar != null )
 			{
@@ -172,6 +177,7 @@ namespace ZedGraph
 				}
 			}
 		}
+*/
 
 		private void HandleScroll( Axis axis, int newValue, double scrollMin, double scrollMax,
 									int largeChange, bool reverse )

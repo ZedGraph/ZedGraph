@@ -30,7 +30,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph( zedGraphControl1 );
 			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_AxisCrossDemo( zedGraphControl1 );
-			CreateGraph_BarJunk( zedGraphControl1 );
+			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
@@ -69,6 +69,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_junk8( zedGraphControl1 );
 			//CreateGraph_junk9( zedGraphControl1 );
 			//CreateGraph_junk10( zedGraphControl1 );
+			//CreateGraph_junk11( zedGraphControl1 );
 			//CreateGraph_LabeledPointsDemo( zedGraphControl1 );
 			//CreateGraph_LineWithBandDemo( zedGraphControl1 );
 			//CreateGraph_LineColorGradient( zedGraphControl1 );
@@ -91,7 +92,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScatterPlot( zedGraphControl1 );
-			//CreateGraph_ScrollTest( zedGraphControl1 );
+			CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_ScrollProblem( zedGraphControl1 );
 			//CreateGraph_ScrollSample( zedGraphControl1 );
 			//CreateGraph_SortedOverlayBars( zedGraphControl1 );
@@ -363,7 +364,7 @@ namespace ZedGraph.ControlTest
 
 			// Calculate the Axis Scale Ranges
 			zgc.AxisChange();
-//			zgc.Refresh();
+			//			zgc.Refresh();
 		}
 
 		private void CreateGraph_Clone( ZedGraphControl z1 )
@@ -608,7 +609,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 100; i++ )
 			{
-				double x = new XDate( 2007, 6, 3+i );
+				double x = new XDate( 2007, 6, 3 + i );
 				double y = Math.Sin( i / 8.0 ) * 1 + 1;
 				list.Add( x, y );
 			}
@@ -799,7 +800,7 @@ namespace ZedGraph.ControlTest
 
 				// Create a StockPt instead of a PointPair so we can carry 6 properties
 				StockPt pt = new StockPt( x, hi, low, open, close, 100000 );
-				
+
 				//if price is increasing color=black, else color=red
 				pt.ColorValue = close > prevClose ? 2 : 1;
 				spl.Add( pt );
@@ -841,10 +842,10 @@ namespace ZedGraph.ControlTest
 			myPane.YAxis.Scale.FontSpec.Size = 16.0f;
 			myPane.Legend.IsVisible = false;
 
-//			BoxObj box = new BoxObj( 4.5, 0.0, 1.0, 1.0, Color.Transparent, 
-//					Color.FromArgb( 100, Color.LightBlue ) );
-//			box.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
-//			myPane.GraphObjList.Add( box );
+			//			BoxObj box = new BoxObj( 4.5, 0.0, 1.0, 1.0, Color.Transparent, 
+			//					Color.FromArgb( 100, Color.LightBlue ) );
+			//			box.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
+			//			myPane.GraphObjList.Add( box );
 
 			// Tell ZedGraph to calculate the axis ranges
 			zgc.AxisChange();
@@ -1036,12 +1037,12 @@ namespace ZedGraph.ControlTest
 			// Tell ZedGraph to calculate the axis ranges
 			zgc.AxisChange();
 
-//			master[0].XAxis.Scale.Min = new XDate( 2006, 1, 1 ).XLDate;
-//			master[0].XAxis.Scale.Max = master[0].XAxis.Scale.Min + 30.0;
-//			master[1].XAxis.Scale.Min = new XDate( 2006, 1, 1 ).XLDate;
-//			master[1].XAxis.Scale.Max = master[1].XAxis.Scale.Min + 30.0;
-//			master[2].XAxis.Scale.Min = new XDate( 2006, 1, 1 ).XLDate;
-//			master[2].XAxis.Scale.Max = master[2].XAxis.Scale.Min + 30.0;
+			//			master[0].XAxis.Scale.Min = new XDate( 2006, 1, 1 ).XLDate;
+			//			master[0].XAxis.Scale.Max = master[0].XAxis.Scale.Min + 30.0;
+			//			master[1].XAxis.Scale.Min = new XDate( 2006, 1, 1 ).XLDate;
+			//			master[1].XAxis.Scale.Max = master[1].XAxis.Scale.Min + 30.0;
+			//			master[2].XAxis.Scale.Min = new XDate( 2006, 1, 1 ).XLDate;
+			//			master[2].XAxis.Scale.Max = master[2].XAxis.Scale.Min + 30.0;
 
 			//zgc.ScrollDoneEvent += new ZedGraphControl.ScrollDoneHandler( zgc_ScrollDoneEvent );
 			zgc.ScrollProgressEvent += new ZedGraphControl.ScrollProgressHandler( zgc_ScrollProgressEvent );
@@ -2280,7 +2281,7 @@ namespace ZedGraph.ControlTest
 			XDate myXDate = new XDate( 2007, 5, 6 );
 			double poop = myXDate.XLDate;
 
-//			double cv = ( ppl[3] as PointPairCV ).ColorValue;
+			//			double cv = ( ppl[3] as PointPairCV ).ColorValue;
 
 			Color[] colors = { Color.Red, Color.Green, Color.Blue, Color.Cyan, Color.LightGreen };
 			Fill myFill = new Fill( colors );
@@ -2473,6 +2474,108 @@ namespace ZedGraph.ControlTest
 			zgc.IsZoomOnMouseCenter = false;
 			zgc.AxisChange();
 		}
+
+		public void CreateGraph_junk11( ZedGraphControl zgc )
+		{
+			string[] labels = { "BLACKBERRY SERVICES", "DNS ADD/CHANGE", "FILE SERVER CONSOLIDATED", "FIREWALL RULE CHANGE", "GROUPWISE--CONSOLIDATED", "INFOPAC SERVICES", "TELWFAC" };
+
+			//PaneBase pb = new PaneBase(); 
+
+			GraphPane myGraphPane = zgc.GraphPane;
+			myGraphPane.XAxis.Title.Text = "SLA's";
+			myGraphPane.YAxis.Title.Text = "Hours";
+
+
+
+
+			//Set bars 
+
+			BarItem myBar;
+			BarItem myBar2;
+
+
+			//HoldGraphValues();
+			double[] axValues = { 0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5 };
+			double[] ayValues1 = { 1, 2, 3, 4, 5, 6, 7 };
+			double[] ayValues2 = { 2, 3, 4, 5, 6, 7, 8 };
+			double[] ayValues3 = { 3, 4, 5, 6, 7, 8, 9 };
+			double[] ayValues4 = { 4, 5, 6, 7, 8, 9, 10 };
+
+			PointPairList List1 = new PointPairList( ayValues1, axValues );
+			PointPairList List2 = new PointPairList( ayValues2, axValues );
+			PointPairList List3 = new PointPairList( ayValues3, axValues );
+			PointPairList List4 = new PointPairList( ayValues4, axValues );
+
+
+
+			myBar = myGraphPane.AddBar( "Goals", List1, Color.Red );
+			myBar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
+
+			myBar2 = myGraphPane.AddBar( "Average Time", List2, Color.Blue );
+			myBar2.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 00 );
+
+			//myBar.GetBarWidth(myGraphPane); 
+			//myBar2.GetBarWidth(myGraphPane); 
+
+
+
+			// //set X axis 
+
+			myGraphPane.X2Axis.IsVisible = false;
+			myGraphPane.X2Axis.IsAxisSegmentVisible = false;
+			myGraphPane.XAxis.Scale.Min = 0;
+			myGraphPane.XAxis.Scale.MaxAuto = true;
+			//myGraphPane.XAxis.Scale.TextLabels = labels; 
+			myGraphPane.XAxis.Scale.MinAuto = false;
+			//myGraphPane.XAxis.Scale.Min = 0; 
+			//myGraphPane.XAxis.Type = AxisType.Text; 
+			//myGraphPane.XAxis.Scale.FontSpec.Size = 6; 
+			//myGraphPane.XAxis.Scale.FontSpec.Angle = 85; 
+			//myGraphPane.XAxis.MajorTic.IsCrossOutside=false; 
+			//myGraphPane.XAxis.MinorTic.IsCrossOutside = false; 
+			myGraphPane.XAxis.MajorGrid.IsZeroLine = true;
+			zgc.AxisChange();
+			myGraphPane.XAxis.Scale.Max += myGraphPane.YAxis.Scale.MajorStep;
+
+			// //set Y axis 
+			myGraphPane.YAxis.Scale.MajorStep = 1;
+			myGraphPane.YAxis.Scale.Min = 0;
+			myGraphPane.YAxis.Scale.MaxAuto = true;
+			myGraphPane.YAxis.Scale.MinAuto = false;
+			myGraphPane.YAxis.Scale.FontSpec.Size = 6;
+			myGraphPane.YAxis.Scale.FontSpec.Angle = 90;
+			myGraphPane.YAxis.Scale.TextLabels = labels;
+			myGraphPane.YAxis.Type = AxisType.Text;
+			myGraphPane.Chart.IsRectAuto = true;
+			myGraphPane.Y2Axis.IsVisible = false;
+			myGraphPane.Y2Axis.IsAxisSegmentVisible = false;
+			//myGraphPane.YAxis.Scale.Max += myGraphPane.YAxis.Scale.MajorStep; 
+			myGraphPane.YAxis.MajorGrid.IsZeroLine = true;
+			myGraphPane.BarSettings.Base = BarBase.Y;
+
+
+			myGraphPane.YAxis.Scale.FontSpec.Size = 9;
+
+			myGraphPane.YAxis.MajorGrid.IsZeroLine = true;
+
+			myGraphPane.ScaledPenWidth( 1, 8 );
+
+
+
+			myGraphPane.Chart.Fill = new Fill( Color.White, Color.FromArgb( 255, 255, 255, 255 ), 90f );
+			myGraphPane.Fill = new Fill( Color.FromArgb( 250, 250, 255 ) );
+
+			zgc.AxisChange(); 
+			BarItem.CreateBarLabels( myGraphPane, false, "f2", "Arial", 9, Color.Black, false, false, false );
+			//myMaster.Add(myGraphPane); 
+
+
+			//zgc.AxisChange(); 
+
+			//SetSize( zd );
+			//Controls.Add(zd); 
+		}
+
 
 		// Call this method from the Form_Load method, passing your ZedGraphControl
 		public void CreateGraph_LabeledPointsDemo( ZedGraphControl zgc )
@@ -3235,7 +3338,7 @@ namespace ZedGraph.ControlTest
 			FilteredPointList list = new FilteredPointList( x, y );
 			LineItem myCurve = z1.GraphPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 			myCurve.Line.IsVisible = false;
-			
+
 
 			// Apply logic that alternately keeps the highest or lowest point within each "bin" of data
 			//list.IsApplyHighLowLogic = true;
@@ -4084,7 +4187,7 @@ namespace ZedGraph.ControlTest
 			GraphPane myPane = z1.GraphPane;
 
 			z1.IsAutoScrollRange = true;
-			z1.IsEnableHPan = false;
+			z1.IsEnableHPan = true;
 			z1.IsEnableHZoom = true;
 			z1.IsEnableVPan = false;
 			z1.IsEnableVZoom = false;
@@ -4134,14 +4237,15 @@ namespace ZedGraph.ControlTest
 			myPane.BarSettings.MinClusterGap = 2;
 			z1.AxisChange();
 
-			z1.Scroll += new ScrollEventHandler( ScrollTest_Scroll );
+			z1.ScrollEvent += new ScrollEventHandler( ScrollTest_Scroll );
 			z1.ScrollDoneEvent += new ZedGraphControl.ScrollDoneHandler( ScrollTest_ScrollDoneEvent );
 			z1.ScrollProgressEvent += new ZedGraphControl.ScrollProgressHandler( ScrollTest_ScrollProgressEvent );
 
 			//this.Refresh();
 		}
 
-		void ScrollTest_ScrollProgressEvent( ZedGraphControl sender, ScrollBar scrollBar, ZoomState oldState, ZoomState newState )
+		void ScrollTest_ScrollProgressEvent( ZedGraphControl sender, ScrollBar scrollBar,
+					ZoomState oldState, ZoomState newState )
 		{
 			//MessageBox.Show( "ScrollProgressEvent" );
 		}
@@ -4341,7 +4445,7 @@ namespace ZedGraph.ControlTest
 			line.Location.CoordinateFrame = CoordType.XChartFractionYScale;
 			myPane.GraphObjList.Add( line );
 
-			
+
 			z1.AxisChange();
 		}
 
@@ -4710,16 +4814,16 @@ namespace ZedGraph.ControlTest
 
 			PointPairList list = new PointPairList();
 			list.Add( 10, 1, 1 );
-//			list.Add( 20, 20, 1 );
-//			list.Add( 30, 15, 1 );
-//			list.Add( 40, 35, 2 );
-//			list.Add( 50, 22, 1 );
-//			list.Add( 100, -5, 1 );
-//			list.Add( 150, 12, 1 );
-//			list.Add( 200, 29, 1 );
+			//			list.Add( 20, 20, 1 );
+			//			list.Add( 30, 15, 1 );
+			//			list.Add( 40, 35, 2 );
+			//			list.Add( 50, 22, 1 );
+			//			list.Add( 100, -5, 1 );
+			//			list.Add( 150, 12, 1 );
+			//			list.Add( 200, 29, 1 );
 
-//			grPane.YAxis.Scale.Min = 0;
-//			grPane.YAxis.Scale.Max = 0;
+			//			grPane.YAxis.Scale.Min = 0;
+			//			grPane.YAxis.Scale.Max = 0;
 
 			BarItem myCurve = grPane.AddBar( "My Curve", list, Color.Blue );
 

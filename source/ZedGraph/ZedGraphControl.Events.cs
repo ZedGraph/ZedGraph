@@ -116,6 +116,14 @@ namespace ZedGraph
 		public event ScrollProgressHandler ScrollProgressEvent;
 
 		/// <summary>
+		/// Subscribe to this event to be notified when the <see cref="GraphPane"/> is scrolled by the user
+		/// using the scrollbars.
+		/// </summary>
+		[Bindable( true ), Category( "Events" ),
+		 Description( "Subscribe this event to be notified of general scroll events" )]
+		public event ScrollEventHandler ScrollEvent;
+
+		/// <summary>
 		/// A delegate that receives notification after a point-edit operation is completed.
 		/// </summary>
 		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>

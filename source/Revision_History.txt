@@ -9,6 +9,8 @@
 : [FIX] PieItem serialization was saving the _slicePath, which is not serializable.
 : [UPD] Split ZedGraphControl into partial classes for smaller files
 : [FIX] Protect Transform() from divide by zero errors
+: [UPD] Fix ScrollDoneEvent and ScrollProgressEvent to include all scroll actions
+: [NEW] Add ScrollEvent to pass-thru horizontal and vertical Scroll events
 
 ;16-Jun-2007 (By Champion) v5.0.10 Release
 : [FIX] Symbols not shown on ordinal scales due to optimization
