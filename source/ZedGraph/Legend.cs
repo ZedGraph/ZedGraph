@@ -30,79 +30,79 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.38 $ $Date: 2007-03-11 02:08:16 $ </version>
+	/// <version> $Revision: 3.39 $ $Date: 2007-08-10 16:22:54 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
-	#region private Fields
-	
+		#region private Fields
+
 		/// <summary> Private field to hold the bounding rectangle around the legend.
 		/// This bounding rectangle varies with the number of legend entries, font sizes,
 		/// etc., and is re-calculated by <see cref="Legend.CalcRect"/> at each redraw.
 		/// Use the public readonly property <see cref="Legend.Rect"/> to access this
 		/// rectangle.
 		/// </summary>
-		private RectangleF	_rect;
+		private RectangleF _rect;
 		/// <summary>Private field to hold the legend location setting.  This field
 		/// contains the <see cref="LegendPos"/> enum type to specify the area of
 		/// the graph where the legend will be positioned.  Use the public property
 		/// <see cref="LegendPos"/> to access this value.
 		/// </summary>
 		/// <seealso cref="Default.Position"/>
-		private LegendPos	_position;
+		private LegendPos _position;
 		/// <summary>
 		/// Private field to enable/disable horizontal stacking of the legend entries.
 		/// If this value is false, then the legend entries will always be a single column.
 		/// Use the public property <see cref="IsHStack"/> to access this value.
 		/// </summary>
 		/// <seealso cref="Default.IsHStack"/>
-		private bool		_isHStack;
+		private bool _isHStack;
 		/// <summary>
 		/// Private field to enable/disable drawing of the entire legend.
 		/// If this value is false, then the legend will not be drawn.
 		/// Use the public property <see cref="IsVisible"/> to access this value.
 		/// </summary>
-		private bool		_isVisible;
+		private bool _isVisible;
 		/// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="Legend"/>.  Use the public property <see cref="Fill"/> to
 		/// access this value.
 		/// </summary>
-		private Fill		_fill;
+		private Fill _fill;
 		/// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Border"/> data for this
 		/// <see cref="Legend"/>.  Use the public property <see cref="Border"/> to
 		/// access this value.
 		/// </summary>
-		private Border		_border;		
+		private Border _border;
 		/// <summary>
 		/// Private field to maintain the <see cref="FontSpec"/> class that
 		/// maintains font attributes for the entries in this legend.  Use
 		/// the <see cref="FontSpec"/> property to access this class.
 		/// </summary>
-		private FontSpec	_fontSpec;
+		private FontSpec _fontSpec;
 		/// <summary>
 		/// Private field to maintain the <see cref="Legend"/> location.  This object
 		/// is only applicable if the <see cref="Position"/> property is set to
 		/// <see cref="LegendPos.Float"/>.
 		/// </summary>
-		private Location	_location;
+		private Location _location;
 
 		/// <summary>
 		/// Private temporary field to maintain the number of columns (horizontal stacking) to be used
 		/// for drawing the <see cref="Legend"/>.  This value is only valid during a draw operation.
 		/// </summary>
-		private int			_hStack;
+		private int _hStack;
 		/// <summary>
 		/// Private temporary field to maintain the width of each column in the
 		/// <see cref="Legend"/>.  This value is only valid during a draw operation.
 		/// </summary>
-		private float		_legendItemWidth;
+		private float _legendItemWidth;
 		/// <summary>
 		/// Private temporary field to maintain the height of each row in the
 		/// <see cref="Legend"/>.  This value is only valid during a draw operation.
 		/// </summary>
-		private float		_legendItemHeight;
+		private float _legendItemHeight;
 
 		/// <summary>
 		/// Private field to store the gap between the legend and the chart rectangle.
@@ -120,11 +120,11 @@ namespace ZedGraph
 		/// This is normal the height of the largest font in the legend.
 		/// This value is only valid during a draw operation.
 		/// </summary>
-		private float		_tmpSize;
+		private float _tmpSize;
 
-	#endregion
+		#endregion
 
-	#region Defaults
+		#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
 		/// default property values for the <see cref="Legend"/> class.
@@ -253,9 +253,9 @@ namespace ZedGraph
 			/// </summary>
 			public static bool IsReverse = false;
 		}
-	#endregion
+		#endregion
 
-	#region Properties
+		#region Properties
 		/// <summary>
 		/// Get the bounding rectangle for the <see cref="Legend"/> in screen coordinates
 		/// </summary>
@@ -302,17 +302,17 @@ namespace ZedGraph
 		{
 			get { return _border; }
 			set { _border = value; }
-		}		
+		}
 		/// <summary>
 		/// Gets or sets the <see cref="ZedGraph.Fill"/> data for this
 		/// <see cref="Legend"/> background.
 		/// </summary>
-		public Fill	Fill
+		public Fill Fill
 		{
 			get { return _fill; }
 			set { _fill = value; }
 		}
-		
+
 		/// <summary>
 		/// Sets or gets a property that allows the <see cref="Legend"/> items to
 		/// stack horizontally in addition to the vertical stacking
@@ -370,9 +370,9 @@ namespace ZedGraph
 			set { _isReverse = value; }
 		}
 
-	#endregion
+		#endregion
 
-	#region Constructors
+		#region Constructors
 		/// <summary>
 		/// Default constructor that sets all <see cref="Legend"/> properties to default
 		/// values as defined in the <see cref="Default"/> class.
@@ -383,14 +383,14 @@ namespace ZedGraph
 			_isHStack = Default.IsHStack;
 			_isVisible = Default.IsVisible;
 			this.Location = new Location( 0, 0, CoordType.PaneFraction );
-			
+
 			_fontSpec = new FontSpec( Default.FontFamily, Default.FontSize,
 				Default.FontColor, Default.FontBold,
 				Default.FontItalic, Default.FontUnderline,
 				Default.FontFillColor, Default.FontFillBrush,
-				Default.FontFillType );						
+				Default.FontFillType );
 			_fontSpec.Border.IsVisible = false;
-			
+
 			_border = new Border( Default.IsBorderVisible, Default.BorderColor, Default.BorderWidth );
 			_fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
 
@@ -409,11 +409,11 @@ namespace ZedGraph
 			_position = rhs.Position;
 			_isHStack = rhs.IsHStack;
 			_isVisible = rhs.IsVisible;
-			
+
 			_location = rhs.Location;
 			_border = rhs.Border.Clone();
 			_fill = rhs.Fill.Clone();
-			
+
 			_fontSpec = rhs.FontSpec.Clone();
 
 			_gap = rhs._gap;
@@ -442,7 +442,7 @@ namespace ZedGraph
 
 		#endregion
 
-	#region Serialization
+		#region Serialization
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
@@ -461,13 +461,13 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			_position = (LegendPos) info.GetValue( "position", typeof(LegendPos) );
+			_position = (LegendPos)info.GetValue( "position", typeof( LegendPos ) );
 			_isHStack = info.GetBoolean( "isHStack" );
 			_isVisible = info.GetBoolean( "isVisible" );
-			_fill = (Fill) info.GetValue( "fill", typeof(Fill) );
-			_border = (Border) info.GetValue( "border", typeof(Border) );
-			_fontSpec = (FontSpec) info.GetValue( "fontSpec", typeof(FontSpec) );
-			_location = (Location) info.GetValue( "location", typeof(Location) );
+			_fill = (Fill)info.GetValue( "fill", typeof( Fill ) );
+			_border = (Border)info.GetValue( "border", typeof( Border ) );
+			_fontSpec = (FontSpec)info.GetValue( "fontSpec", typeof( FontSpec ) );
+			_location = (Location)info.GetValue( "location", typeof( Location ) );
 
 			_gap = info.GetSingle( "gap" );
 
@@ -479,7 +479,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="info">A <see cref="SerializationInfo"/> instance that defines the serialized data</param>
 		/// <param name="context">A <see cref="StreamingContext"/> instance that contains the serialized data</param>
-		[SecurityPermissionAttribute(SecurityAction.Demand,SerializationFormatter=true)]
+		[SecurityPermissionAttribute( SecurityAction.Demand, SerializationFormatter = true )]
 		public virtual void GetObjectData( SerializationInfo info, StreamingContext context )
 		{
 			info.AddValue( "schema", schema );
@@ -494,9 +494,9 @@ namespace ZedGraph
 			info.AddValue( "gap", _gap );
 			info.AddValue( "isReverse", _isReverse );
 		}
-	#endregion
+		#endregion
 
-	#region Rendering Methods
+		#region Rendering Methods
 
 		/// <summary>
 		/// Render the <see cref="Legend"/> to the specified <see cref="Graphics"/> device.
@@ -522,12 +522,12 @@ namespace ZedGraph
 		public void Draw( Graphics g, PaneBase pane, float scaleFactor )
 		{
 			// if the legend is not visible, do nothing
-			if ( ! _isVisible )
+			if ( !_isVisible )
 				return;
-								
+
 			// Fill the background with the specified color if required
 			_fill.Draw( g, _rect );
-		
+
 			PaneList paneList = GetPaneList( pane );
 
 			float halfGap = _tmpSize / 2.0F;
@@ -542,9 +542,9 @@ namespace ZedGraph
 
 			//float gap = pane.ScaledGap( scaleFactor );
 
-			int		iEntry = 0;
-			float	x, y;
-			
+			int iEntry = 0;
+			float x, y;
+
 			// Get a brush for the legend label text
 			using ( SolidBrush brushB = new SolidBrush( Color.Black ) )
 			{
@@ -654,16 +654,16 @@ namespace ZedGraph
 		public bool FindPoint( PointF mousePt, PaneBase pane, float scaleFactor, out int index )
 		{
 			index = -1;
-			
+
 			if ( _rect.Contains( mousePt ) )
 			{
-				int j = (int) ( ( mousePt.Y - _rect.Top ) / _legendItemHeight );
-				int i = (int) ( ( mousePt.X - _rect.Left - _tmpSize / 2.0f ) / _legendItemWidth );
+				int j = (int)( ( mousePt.Y - _rect.Top ) / _legendItemHeight );
+				int i = (int)( ( mousePt.X - _rect.Left - _tmpSize / 2.0f ) / _legendItemWidth );
 				if ( i < 0 )
 					i = 0;
 				if ( i >= _hStack )
 					i = _hStack - 1;
-					
+
 				int pos = i + j * _hStack;
 				index = 0;
 
@@ -688,21 +688,21 @@ namespace ZedGraph
 			else
 				return false;
 		}
-		
+
 		private PaneList GetPaneList( PaneBase pane )
 		{
 			// For a single GraphPane, create a PaneList to contain it
 			// Otherwise, just use the paneList from the MasterPane
 			PaneList paneList;
-			
+
 			if ( pane is GraphPane )
 			{
 				paneList = new PaneList();
-				paneList.Add( (GraphPane) pane );
+				paneList.Add( (GraphPane)pane );
 			}
 			else
-				paneList = ((MasterPane)pane).PaneList;
-			
+				paneList = ( (MasterPane)pane ).PaneList;
+
 			return paneList;
 		}
 
@@ -743,17 +743,17 @@ namespace ZedGraph
 			_legendItemHeight = 0;
 
 			RectangleF clientRect = pane.CalcClientRect( g, scaleFactor );
-				
+
 			// If the legend is invisible, don't do anything
 			if ( !_isVisible )
 				return;
-		
-			int		nCurve = 0;
+
+			int nCurve = 0;
 
 			PaneList paneList = GetPaneList( pane );
 			_tmpSize = GetMaxHeight( paneList, g, scaleFactor );
 
-			float	halfGap = _tmpSize / 2.0F,
+			float halfGap = _tmpSize / 2.0F,
 					maxWidth = 0,
 					tmpWidth,
 					gapPix = _gap * _tmpSize;
@@ -780,47 +780,47 @@ namespace ZedGraph
 							maxWidth = tmpWidth;
 
 						// Save the maximum symbol height for line-type curves
-						if ( curve is LineItem && ( (LineItem) curve ).Symbol.Size > _legendItemHeight )
-							_legendItemHeight = ( (LineItem) curve ).Symbol.Size;
+						if ( curve is LineItem && ( (LineItem)curve ).Symbol.Size > _legendItemHeight )
+							_legendItemHeight = ( (LineItem)curve ).Symbol.Size;
 
 						nCurve++;
 					}
 				}
 
-				if ( pane is MasterPane && ((MasterPane)pane).IsUniformLegendEntries )				
-					break ;
+				if ( pane is MasterPane && ( (MasterPane)pane ).IsUniformLegendEntries )
+					break;
 			}
 
 			float widthAvail;
-		
+
 			// Is this legend horizontally stacked?
-			
+
 			if ( _isHStack )
 			{
 				// Determine the available space for horizontal stacking
-				switch( _position )
+				switch ( _position )
 				{
-						// Never stack if the legend is to the right or left
+					// Never stack if the legend is to the right or left
 					case LegendPos.Right:
 					case LegendPos.Left:
 						widthAvail = 0;
 						break;
-		
-						// for the top & bottom, the axis border width is available
+
+					// for the top & bottom, the axis border width is available
 					case LegendPos.Top:
 					case LegendPos.TopCenter:
 					case LegendPos.Bottom:
-					case LegendPos.BottomCenter :
+					case LegendPos.BottomCenter:
 						widthAvail = tChartRect.Width;
 						break;
-		
-						// for the top & bottom flush left, the panerect less margins is available
+
+					// for the top & bottom flush left, the panerect less margins is available
 					case LegendPos.TopFlushLeft:
 					case LegendPos.BottomFlushLeft:
 						widthAvail = clientRect.Width;
 						break;
-		
-						// for inside the axis area or Float, use 1/2 of the axis border width
+
+					// for inside the axis area or Float, use 1/2 of the axis border width
 					case LegendPos.InsideTopRight:
 					case LegendPos.InsideTopLeft:
 					case LegendPos.InsideBotRight:
@@ -828,13 +828,13 @@ namespace ZedGraph
 					case LegendPos.Float:
 						widthAvail = tChartRect.Width / 2;
 						break;
-		
-						// shouldn't ever happen
+
+					// shouldn't ever happen
 					default:
 						widthAvail = 0;
 						break;
 				}
-		
+
 				// width of one legend entry
 				_legendItemWidth = 3 * _tmpSize + maxWidth;
 
@@ -842,19 +842,19 @@ namespace ZedGraph
 				// Normally, the legend is:
 				//     available width / ( max width of any entry + space for line&symbol )
 				if ( maxWidth > 0 )
-					_hStack = (int) ( (widthAvail - halfGap) / _legendItemWidth );
-		
+					_hStack = (int)( ( widthAvail - halfGap ) / _legendItemWidth );
+
 				// You can never have more columns than legend entries
 				if ( _hStack > nCurve )
 					_hStack = nCurve;
-		
+
 				// a saftey check
 				if ( _hStack == 0 )
 					_hStack = 1;
 			}
 			else
 				_legendItemWidth = 3.5F * _tmpSize + maxWidth;
-		
+
 			// legend is:
 			//   item:     space  line  space  text   space
 			//   width:     wid  4*wid   wid  maxWid   wid 
@@ -864,19 +864,19 @@ namespace ZedGraph
 			//
 			// The height of the legend is the actual height of the lines of text
 			//   (nCurve * hite) plus wid on top and wid on the bottom
-		
+
 			// total legend width
-			float totLegWidth = _hStack * _legendItemWidth;	
-		
+			float totLegWidth = _hStack * _legendItemWidth;
+
 			// The total legend height
-			_legendItemHeight = _legendItemHeight * (float) scaleFactor + halfGap;
+			_legendItemHeight = _legendItemHeight * (float)scaleFactor + halfGap;
 			if ( _tmpSize > _legendItemHeight )
 				_legendItemHeight = _tmpSize;
-			float totLegHeight = (float) Math.Ceiling( (double) nCurve / (double) _hStack )
+			float totLegHeight = (float)Math.Ceiling( (double)nCurve / (double)_hStack )
 				* _legendItemHeight;
-			
+
 			RectangleF newRect = new RectangleF();
-			
+
 			// Now calculate the legend rect based on the above determined parameters
 			// Also, adjust the ChartRect to reflect the space for the legend
 			if ( nCurve > 0 )
@@ -885,7 +885,7 @@ namespace ZedGraph
 
 				// The switch statement assigns the left and top edges, and adjusts the ChartRect
 				// as required.  The right and bottom edges are calculated at the bottom of the switch.
-				switch( _position )
+				switch ( _position )
 				{
 					case LegendPos.Right:
 						newRect.X = clientRect.Right - totLegWidth;
@@ -960,22 +960,22 @@ namespace ZedGraph
 						break;
 				}
 			}
-			
+
 			_rect = newRect;
 		}
 
-//		/// <summary>
-//		/// Private method to the render region that gives the iterator depending on the attribute
-//		/// </summary>
-//		/// <param name="c"></param>
-//		/// <param name="forward"></param>
-//		/// <returns></returns>
-//		private IEnumerable<CurveItem> GetIterator(CurveList c, bool forward)
-//		{
-//			return forward ? c.Forward : c.Backward;
-//		}
+		//		/// <summary>
+		//		/// Private method to the render region that gives the iterator depending on the attribute
+		//		/// </summary>
+		//		/// <param name="c"></param>
+		//		/// <param name="forward"></param>
+		//		/// <returns></returns>
+		//		private IEnumerable<CurveItem> GetIterator(CurveList c, bool forward)
+		//		{
+		//			return forward ? c.Forward : c.Backward;
+		//		}
 
-	#endregion
+		#endregion
 	}
 }
 

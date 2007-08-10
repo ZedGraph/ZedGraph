@@ -41,7 +41,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.20 $ $Date: 2007-04-16 00:03:01 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2007-08-10 16:22:54 $ </version>
 	[Serializable]
 	public class ErrorBar : ICloneable, ISerializable
 	{
@@ -299,17 +299,17 @@ namespace ZedGraph
 			if ( isXBase )
 			{
 				g.DrawLine( pen, pixBase, pixValue, pixBase, pixLowValue );
-				_symbol.DrawSymbol( g, pane, pixBase, pixValue,
+				_symbol.DrawSymbol( g, pane, (int)pixBase, (int)pixValue,
 							scaleFactor, isSelected, dataValue );
-				_symbol.DrawSymbol( g, pane, pixBase, pixLowValue,
+				_symbol.DrawSymbol( g, pane, (int)pixBase, (int)pixLowValue,
 							scaleFactor, isSelected, dataValue );
 			}
 			else
 			{
 				g.DrawLine( pen, pixValue, pixBase, pixLowValue, pixBase );
-				_symbol.DrawSymbol( g, pane, pixValue, pixBase,
+				_symbol.DrawSymbol( g, pane, (int)pixValue, (int)pixBase,
 							scaleFactor, isSelected, dataValue );
-				_symbol.DrawSymbol( g, pane, pixLowValue, pixBase,
+				_symbol.DrawSymbol( g, pane, (int)pixLowValue, (int)pixBase,
 							scaleFactor, isSelected, dataValue );
 			}
 		}

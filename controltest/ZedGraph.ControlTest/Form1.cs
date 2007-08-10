@@ -28,7 +28,7 @@ namespace ZedGraph.ControlTest
 		private void Form1_Load( object sender, EventArgs e )
 		{
 			//CreateGraph( zedGraphControl1 );
-			//CreateGraph_32kPoints( zedGraphControl1 );
+			CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_AxisCrossDemo( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
@@ -92,7 +92,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScatterPlot( zedGraphControl1 );
-			CreateGraph_ScrollTest( zedGraphControl1 );
+			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_ScrollProblem( zedGraphControl1 );
 			//CreateGraph_ScrollSample( zedGraphControl1 );
 			//CreateGraph_SortedOverlayBars( zedGraphControl1 );
@@ -2693,13 +2693,13 @@ namespace ZedGraph.ControlTest
 			myPane.YAxis.MinorGrid.DashOff = 0;
 
 			// Draw a box item to highlight a value range
-			BoxObj box = new BoxObj( 0.2, 100, 0.6, 30, Color.Empty,
+			BoxObj box = new BoxObj( 0.2, 100, 900, 30, Color.Empty,
 					Color.FromArgb( 150, Color.LightGreen ) );
 			box.Fill = new Fill( Color.White, Color.FromArgb( 255, Color.LightGreen ), 45.0F );
 			// Use the BehindAxis zorder to draw the highlight beneath the grid lines
 			box.ZOrder = ZOrder.F_BehindGrid;
-			box.Location.CoordinateFrame = CoordType.XChartFractionYScale;
-			box.IsClippedToChartRect = true;
+			//box.Location.CoordinateFrame = CoordType.XChartFractionYScale;
+			//box.IsClippedToChartRect = true;
 			myPane.GraphObjList.Add( box );
 
 			// Add a text item to label the highlighted range
@@ -4523,14 +4523,14 @@ namespace ZedGraph.ControlTest
 				list.Add( x, y );
 			}
 
-			myPane.XAxis.Scale.Min = 400000;
-			myPane.XAxis.Scale.Max = 600000;
+			//myPane.XAxis.Scale.Min = 400000;
+			//myPane.XAxis.Scale.Max = 600000;
 
 			//myPane.XAxis.Type = AxisType.Log;
 
 			LineItem myCurve = z1.GraphPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 			//myCurve.Line.IsVisible = false;
-			myCurve.Symbol.IsVisible = false;
+			//myCurve.Symbol.IsVisible = false;
 			z1.IsShowCopyMessage = false;
 
 			z1.AxisChange();
@@ -5354,6 +5354,14 @@ namespace ZedGraph.ControlTest
 		private void Form1_MouseDown( object sender, MouseEventArgs e )
 		{
 			ZedGraphControl zg1 = zedGraphControl1;
+
+			int start = Environment.TickCount;
+			Invalidate();
+			Refresh();
+
+			MessageBox.Show( "time= " + ( Environment.TickCount - start ).ToString() + " msec" );
+
+			return;
 
 			//zg1.GraphPane = new GraphPane();
 			//return;

@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.35 $ $Date: 2007-06-03 14:06:15 $ </version>
+	/// <version> $Revision: 3.36 $ $Date: 2007-08-10 16:22:54 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -334,27 +334,27 @@ namespace ZedGraph
 		/// <param name="brush">A <see cref="Brush"/> class representing a default solid brush for this symbol
 		/// If this symbol uses a <see cref="LinearGradientBrush"/>, it will be created on the fly for
 		/// each point, since it has to be scaled to the individual point coordinates.</param>
-		private void DrawSymbol( Graphics g, float x, float y, GraphicsPath path,
+		private void DrawSymbol( Graphics g, int x, int y, GraphicsPath path,
 							Pen pen, Brush brush )
 		{
 			// Only draw if the symbol is visible
-			if (	_isVisible &&
+			if ( _isVisible &&
 					this.Type != SymbolType.None &&
 					x < 100000 && x > -100000 &&
 					y < 100000 && y > -100000 )
 			{
 				Matrix saveMatrix = g.Transform;
 				g.TranslateTransform( x, y );
-			
+
 				// Fill or draw the symbol as required
-				if ( _fill.IsVisible)
+				if ( _fill.IsVisible )
 					g.FillPath( brush, path );
-					//FillPoint( g, x, y, scaleFactor, pen, brush );
-				
+				//FillPoint( g, x, y, scaleFactor, pen, brush );
+
 				if ( _border.IsVisible )
 					g.DrawPath( pen, path );
-					//DrawPoint( g, x, y, scaleFactor, pen );
-				
+				//DrawPoint( g, x, y, scaleFactor, pen );
+
 				g.Transform = saveMatrix;
 			}
 		}
@@ -386,7 +386,7 @@ namespace ZedGraph
 		/// <param name="isSelected">Indicates that the <see cref="Symbol" /> should be drawn
 		/// with attributes from the <see cref="Selection" /> class.
 		/// </param>
-		public void DrawSymbol( Graphics g, GraphPane pane, float x, float y,
+		public void DrawSymbol( Graphics g, GraphPane pane, int x, int y,
 							float scaleFactor, bool isSelected, PointPair dataValue )
 		{
 			Symbol source = this;
@@ -526,7 +526,16 @@ namespace ZedGraph
 			if ( isSelected )
 				source = Selection.Symbol;
 
-			float tmpX, tmpY;
+			int tmpX, tmpY;
+
+			int minX = (int)pane.Chart.Rect.Left;
+			int maxX = (int)pane.Chart.Rect.Right;
+			int minY = (int)pane.Chart.Rect.Top;
+			int maxY = (int)pane.Chart.Rect.Bottom;
+
+			// (Dale-a-b) we'll set an element to true when it has been drawn	
+			bool[,] isPixelDrawn = new bool[maxX + 1, maxY + 1];
+
 			double curX, curY, lowVal;
 			IPointList points = curve.Points;
 
@@ -595,8 +604,16 @@ namespace ZedGraph
 									( xIsOrdinal || ( curX >= xMin && curX <= xMax ) ) )
 							{
 								// Transform the user scale values to pixel locations
-								tmpX = xScale.Transform( curve.IsOverrideOrdinal, i, curX );
-								tmpY = yScale.Transform( curve.IsOverrideOrdinal, i, curY );
+								tmpX = (int) xScale.Transform( curve.IsOverrideOrdinal, i, curX );
+								tmpY = (int) yScale.Transform( curve.IsOverrideOrdinal, i, curY );
+
+								// Maintain an array of "used" pixel locations to avoid duplicate drawing operations
+								if ( tmpX >= minX && tmpX <= maxX && tmpY >= minY && tmpY <= maxY ) // guard against the zoom-in case
+								{
+									if ( isPixelDrawn[tmpX, tmpY] )
+										continue;
+									isPixelDrawn[tmpX, tmpY] = true;
+								}
 
 								// If the fill type for this symbol is a Gradient by value type,
 								// the make a brush corresponding to the appropriate current value

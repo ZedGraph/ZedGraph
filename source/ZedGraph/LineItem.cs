@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.21 $ $Date: 2007-04-16 00:03:02 $ </version>
+	/// <version> $Revision: 3.22 $ $Date: 2007-08-10 16:22:54 $ </version>
 	[Serializable]
 	public class LineItem : CurveItem, ICloneable, ISerializable
 	{
@@ -316,7 +316,8 @@ namespace ZedGraph
 		override public void DrawLegendKey( Graphics g, GraphPane pane, RectangleF rect, float scaleFactor )
 		{
 			// Draw a sample curve to the left of the label text
-			float yMid = rect.Top + rect.Height / 2.0F;
+			int xMid = (int)( rect.Left + rect.Width / 2.0F );
+			int yMid = (int) (rect.Top + rect.Height / 2.0F);
 			//RectangleF rect2 = rect;
 			//rect2.Y = yMid;
 			//rect2.Height = rect.Height / 2.0f;
@@ -326,8 +327,7 @@ namespace ZedGraph
 			_line.DrawSegment( g, pane, rect.Left, yMid, rect.Right, yMid, scaleFactor );
 
             // Draw a sample symbol to the left of the label text				
-			_symbol.DrawSymbol( g, pane, rect.Left + rect.Width / 2.0F, yMid, scaleFactor,
-										false, null );
+			_symbol.DrawSymbol( g, pane, xMid, yMid, scaleFactor, false, null );
 
 		}
 	
