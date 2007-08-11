@@ -28,13 +28,13 @@ namespace ZedGraph.ControlTest
 		private void Form1_Load( object sender, EventArgs e )
 		{
 			//CreateGraph( zedGraphControl1 );
-			CreateGraph_32kPoints( zedGraphControl1 );
+			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_AxisCrossDemo( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
-			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
+			CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl1 );
@@ -1494,11 +1494,12 @@ namespace ZedGraph.ControlTest
 			//list2 = new PointPairList();
 			//list3 = new PointPairList();
 			LineItem myCurve = myPane.AddCurve( "curve 1", list, Color.Blue, SymbolType.Diamond );
-			LineItem myCurve2 = myPane.AddCurve( "Here's a really long curve name that should stand out quite a bit", list2, Color.Red, SymbolType.Diamond );
+			LineItem myCurve2 = myPane.AddCurve( "Here's a really long curve name", list2, Color.Red, SymbolType.Diamond );
 			LineItem myCurve3 = myPane.AddCurve( "curve 3", list3, Color.Green, SymbolType.Diamond );
 
 			myPane.Legend.Position = LegendPos.Bottom;
 			myPane.Legend.IsHStack = false;
+			//myPane.Legend.IsShowLegendSymbols = false;
 
 			z1.AxisChange();
 

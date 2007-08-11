@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.40 $ $Date: 2007-08-11 19:12:13 $ </version>
+	/// <version> $Revision: 3.41 $ $Date: 2007-08-11 19:24:55 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
@@ -631,7 +631,7 @@ namespace ZedGraph
 									tmpFont.FontColor = curve.Color;
 
 								tmpFont.Draw(g, pane, curve._label._text,
-									x + 0.5F * _tmpSize, y + _legendItemHeight / 2.0F,
+									x + 0.0F * _tmpSize, y + _legendItemHeight / 2.0F,
 									AlignH.Left, AlignV.Center, scaleFactor);
 							}
 
@@ -886,9 +886,9 @@ namespace ZedGraph
 
 				// width of one legend entry
 				if ( _isShowLegendSymbols )
-					_legendItemWidth = 3* _tmpSize + maxWidth;
+					_legendItemWidth = 3.0f * _tmpSize + maxWidth;
 				else
-					_legendItemWidth = _tmpSize + maxWidth;
+					_legendItemWidth = 0.5f * _tmpSize + maxWidth;
 
 				// Calculate the number of columns in the legend
 				// Normally, the legend is:
@@ -907,9 +907,9 @@ namespace ZedGraph
 			else
 			{
 				if ( _isShowLegendSymbols )
-					_legendItemWidth = 3.5F * _tmpSize + maxWidth;
+					_legendItemWidth = 3.0F * _tmpSize + maxWidth;
 				else
-					_legendItemWidth = 1.5F * _tmpSize + maxWidth;
+					_legendItemWidth = 0.5F * _tmpSize + maxWidth;
 			}
 
 			// legend is:
