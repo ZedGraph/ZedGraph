@@ -30,11 +30,11 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.39 $ $Date: 2007-08-10 16:22:54 $ </version>
+	/// <version> $Revision: 3.40 $ $Date: 2007-08-11 19:12:13 $ </version>
 	[Serializable]
 	public class Legend : ICloneable, ISerializable
 	{
-		#region private Fields
+	#region private Fields
 
 		/// <summary> Private field to hold the bounding rectangle around the legend.
 		/// This bounding rectangle varies with the number of legend entries, font sizes,
@@ -122,9 +122,15 @@ namespace ZedGraph
 		/// </summary>
 		private float _tmpSize;
 
-		#endregion
+		/// <summary>
+		/// Private field to enable/diable drawing the line and symbol samples in the
+		/// legend.
+		/// </summary>
+		private bool _isShowLegendSymbols;
 
-		#region Defaults
+	#endregion
+
+	#region Defaults
 		/// <summary>
 		/// A simple struct that defines the
 		/// default property values for the <see cref="Legend"/> class.
@@ -252,6 +258,11 @@ namespace ZedGraph
 			/// Default value for the <see cref="Legend.IsReverse" /> property.
 			/// </summary>
 			public static bool IsReverse = false;
+
+			/// <summary>
+			/// Default value for the <see cref="Legend.IsShowLegendSymbols" /> property.
+			/// </summary>
+			public static bool IsShowLegendSymbols = true;
 		}
 		#endregion
 
@@ -370,6 +381,24 @@ namespace ZedGraph
 			set { _isReverse = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a value that determines whether the line and symbol keys will be displayed
+		/// in the legend.
+		/// </summary>
+		/// <remarks>
+		/// Note: If this value is set to false (so that only the curve label text is displayed
+		/// with no legend keys), then the color of the font for the legend entry of each curve
+		/// will automatically be set to match the <see cref="CurveItem.Color"/> setting for that curve.
+		/// You can override this behavior by specifying a specific font to be used for each
+		/// individual curve with the <see cref="ZedGraph.Label.FontSpec">CurveItem.Label.FontSpec</see>
+		/// property.
+		/// </remarks>
+		public bool IsShowLegendSymbols
+		{
+			get { return _isShowLegendSymbols; }
+			set { _isShowLegendSymbols = value; }
+		}
+
 		#endregion
 
 		#region Constructors
@@ -397,6 +426,8 @@ namespace ZedGraph
 			_gap = Default.Gap;
 
 			_isReverse = Default.IsReverse;
+
+			_isShowLegendSymbols = Default.IsShowLegendSymbols;
 		}
 
 		/// <summary>
@@ -419,6 +450,8 @@ namespace ZedGraph
 			_gap = rhs._gap;
 
 			_isReverse = rhs._isReverse;
+
+			_isShowLegendSymbols = rhs._isShowLegendSymbols;
 		}
 
 		/// <summary>
@@ -446,7 +479,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 11;
+		public const int schema = 12;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -473,6 +506,9 @@ namespace ZedGraph
 
 			if ( schema >= 11 )
 				_isReverse = info.GetBoolean( "isReverse" );
+
+			if ( schema >= 12 )
+				_isShowLegendSymbols = info.GetBoolean( "isShowLegendSymbols" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -493,6 +529,7 @@ namespace ZedGraph
 
 			info.AddValue( "gap", _gap );
 			info.AddValue( "isReverse", _isReverse );
+			info.AddValue( "isShowLegendSymbols", _isShowLegendSymbols );
 		}
 		#endregion
 
@@ -578,13 +615,25 @@ namespace ZedGraph
 							// position in GDI+.
 							tmpFont.StringAlignment = StringAlignment.Near;
 
-							tmpFont.Draw( g, pane, curve._label._text,
-									x + 2.5F * _tmpSize, y + _legendItemHeight / 2.0F,
-									AlignH.Left, AlignV.Center, scaleFactor );
+							if ( _isShowLegendSymbols )
+							{
+								tmpFont.Draw( g, pane, curve._label._text,
+										x + 2.5F * _tmpSize, y + _legendItemHeight / 2.0F,
+										AlignH.Left, AlignV.Center, scaleFactor );
 
-							RectangleF rect = new RectangleF( x, y + _legendItemHeight / 4.0F,
-								2 * _tmpSize, _legendItemHeight / 2.0F );
-							curve.DrawLegendKey( g, tmpPane, rect, scaleFactor );
+								RectangleF rect = new RectangleF( x, y + _legendItemHeight / 4.0F,
+									2 * _tmpSize, _legendItemHeight / 2.0F );
+								curve.DrawLegendKey( g, tmpPane, rect, scaleFactor );
+							}
+							else
+							{
+								if ( curve._label._fontSpec == null )
+									tmpFont.FontColor = curve.Color;
+
+								tmpFont.Draw(g, pane, curve._label._text,
+									x + 0.5F * _tmpSize, y + _legendItemHeight / 2.0F,
+									AlignH.Left, AlignV.Center, scaleFactor);
+							}
 
 							// maintain a curve count for positioning
 							iEntry++;
@@ -836,7 +885,10 @@ namespace ZedGraph
 				}
 
 				// width of one legend entry
-				_legendItemWidth = 3 * _tmpSize + maxWidth;
+				if ( _isShowLegendSymbols )
+					_legendItemWidth = 3* _tmpSize + maxWidth;
+				else
+					_legendItemWidth = _tmpSize + maxWidth;
 
 				// Calculate the number of columns in the legend
 				// Normally, the legend is:
@@ -853,7 +905,12 @@ namespace ZedGraph
 					_hStack = 1;
 			}
 			else
-				_legendItemWidth = 3.5F * _tmpSize + maxWidth;
+			{
+				if ( _isShowLegendSymbols )
+					_legendItemWidth = 3.5F * _tmpSize + maxWidth;
+				else
+					_legendItemWidth = 1.5F * _tmpSize + maxWidth;
+			}
 
 			// legend is:
 			//   item:     space  line  space  text   space

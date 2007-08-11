@@ -12,7 +12,7 @@
 : [FIX] Protect Transform() from divide by zero errors
 : [UPD] Fix ScrollDoneEvent and ScrollProgressEvent to include all scroll actions
 : [NEW] Add ScrollEvent to pass-thru horizontal and vertical Scroll events
-: [NEW] Add Legend.LabelsInLineColor option (thanks to mfunduc)
+: [NEW] Add Legend.IsShowLegendSymbols option (thanks to mfunduc)
 : [UPD] Add speed optimization to LineItem draw by culling duplicate points (thanks to Dale-a-b)
 : [UPD] Add speed optimization to Symbol draw by culling duplicate points (thanks to Dale-a-b)
 
