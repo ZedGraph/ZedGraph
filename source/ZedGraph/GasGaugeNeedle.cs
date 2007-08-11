@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// <see cref="GasGaugeNeedle"/>s.
 	/// </summary>
 	/// <author> Jay Mistry </author>
-	/// <version> $Revision: 1.1 $ $Date: 2007-04-29 02:07:03 $ </version>
+	/// <version> $Revision: 1.2 $ $Date: 2007-08-11 14:37:47 $ </version>
 	[Serializable]
 	public class GasGaugeNeedle : CurveItem, ICloneable, ISerializable
 	{
@@ -498,11 +498,11 @@ namespace ZedGraph
 		/// A graphic device object to be drawn into. This is normally e.Graphics from the
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
-		public static void CalculateGasGuageParameters( GraphPane pane )
+		public static void CalculateGasGaugeParameters( GraphPane pane )
 		{
 			//loop thru slices and get total value and maxDisplacement
-			double minVal = 0;
-			double maxVal = 0;
+			double minVal = double.MaxValue;
+			double maxVal = double.MinValue;
 			foreach ( CurveItem curve in pane.CurveList )
 				if ( curve is GasGaugeRegion )
 				{
@@ -520,7 +520,8 @@ namespace ZedGraph
 				if ( curve is GasGaugeNeedle )
 				{
 					GasGaugeNeedle ggn = (GasGaugeNeedle)curve;
-					float sweep = ( ( (float)ggn.NeedleValue ) - ( (float)minVal ) ) / ( (float)maxVal ) * 180.0f;
+					float sweep = ( (float)ggn.NeedleValue - (float)minVal ) /
+										( (float)maxVal - (float)minVal ) * 180.0f;
 					ggn.SweepAngle = sweep;
 				}
 			}
@@ -573,7 +574,7 @@ namespace ZedGraph
 
 			nonExpRect.Inflate( -(float)0.05F * nonExpRect.Height, -(float)0.05 * nonExpRect.Width );
 
-			GasGaugeNeedle.CalculateGasGuageParameters( pane );
+			GasGaugeNeedle.CalculateGasGaugeParameters( pane );
 
 			foreach ( CurveItem curve in pane.CurveList )
 			{
