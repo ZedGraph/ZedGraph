@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.44 $ $Date: 2007-08-10 16:22:54 $ </version>
+	/// <version> $Revision: 3.45 $ $Date: 2007-08-12 01:16:21 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -68,6 +68,12 @@ namespace ZedGraph
 		/// access this value.
 		/// </summary>
 		private Fill _fill;
+		/// <summary>
+		/// Private field that determines if this <see cref="Line"/> will be drawn with
+		/// optimizations enabled.  Use the public
+		/// property <see cref="IsOptimizedDraw"/> to access this value.
+		/// </summary>
+		private bool _isOptimizedDraw;
 
 	#endregion
 
@@ -109,6 +115,10 @@ namespace ZedGraph
 			/// The default value for the <see cref="Line.SmoothTension"/> property.
 			/// </summary>
 			public static float SmoothTension = 0.5F;
+			/// <summary>
+			/// The default value for the <see cref="Line.IsOptimizedDraw"/> property.
+			/// </summary>
+			public static bool IsOptimizedDraw = true;
 
 			/// <summary>
 			/// Default value for the curve type property
@@ -196,6 +206,23 @@ namespace ZedGraph
 			set { _fill = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a boolean value that determines if this <see cref="Line"/> will be drawn with
+		/// optimizations enabled.
+		/// </summary>
+		/// <remarks>
+		/// Normally, the optimizations can be used without a problem, and
+		/// they are particularly helpful with very large datasets.  However, if the data are very
+		/// discontinuous, then the optimizations can cause drawing artifacts in the form of
+		/// missing line segments.  This is generally very unlikely to happen, so the default
+		/// value is true.
+		/// </remarks>
+		public bool IsOptimizedDraw
+		{
+			get { return _isOptimizedDraw; }
+			set { _isOptimizedDraw = value; }
+		}
+
 	#endregion
 
 	#region Constructors
@@ -221,6 +248,7 @@ namespace ZedGraph
 			_stepType = Default.StepType;
 			_isSmooth = Default.IsSmooth;
 			_smoothTension = Default.SmoothTension;
+			_isOptimizedDraw = Default.IsOptimizedDraw;
 			_fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
 		}
 
@@ -232,6 +260,7 @@ namespace ZedGraph
 		{
 			_stepType = rhs._stepType;
 			_isSmooth = rhs._isSmooth;
+			_isOptimizedDraw = rhs._isOptimizedDraw;
 			_smoothTension = rhs._smoothTension;
 			_fill = rhs._fill.Clone();
 		}
@@ -262,7 +291,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 12;
+		public const int schema = 13;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -282,6 +311,9 @@ namespace ZedGraph
 			_smoothTension = info.GetSingle( "smoothTension" );
 			_stepType = (StepType)info.GetValue( "stepType", typeof( StepType ) );
 			_fill = (Fill)info.GetValue( "fill", typeof( Fill ) );
+
+			if ( sch >= 13 )
+				_isOptimizedDraw = info.GetBoolean( "isOptimizedDraw" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -298,6 +330,8 @@ namespace ZedGraph
 			info.AddValue( "smoothTension", _smoothTension );
 			info.AddValue( "stepType", _stepType );
 			info.AddValue( "fill", _fill );
+
+			info.AddValue( "isOptimizedDraw", _isOptimizedDraw );
 		}
 
 	#endregion
@@ -635,7 +669,10 @@ namespace ZedGraph
 					bool isOut;
 
 					// (Dale-a-b) we'll set an element to true when it has been drawn	
-					bool[,] isPixelDrawn = new bool[maxX + 1, maxY + 1]; 
+					bool[,] isPixelDrawn = null;
+					
+					if ( _isOptimizedDraw )
+						isPixelDrawn = new bool[maxX + 1, maxY + 1]; 
 					
 					// Loop over each point in the curve
 					for ( int i = 0; i < points.Count; i++ )
@@ -682,7 +719,8 @@ namespace ZedGraph
 
 							// Maintain an array of "used" pixel locations to avoid duplicate drawing operations
 							// contributed by Dale-a-b
-							if ( tmpX >= minX && tmpX <= maxX && tmpY >= minY && tmpY <= maxY ) // guard against the zoom-in case
+							if ( _isOptimizedDraw && tmpX >= minX && tmpX <= maxX &&
+										tmpY >= minY && tmpY <= maxY ) // guard against the zoom-in case
 							{
 								if ( isPixelDrawn[tmpX, tmpY] )
 									continue;

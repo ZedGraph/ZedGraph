@@ -15,6 +15,7 @@
 : [NEW] Add Legend.IsShowLegendSymbols option (thanks to mfunduc)
 : [UPD] Add speed optimization to LineItem draw by culling duplicate points (thanks to Dale-a-b)
 : [UPD] Add speed optimization to Symbol draw by culling duplicate points (thanks to Dale-a-b)
+: [NEW] Add Line.IsOptimizedDraw to disable optimizations for highly discontinuous datasets
 
 ;16-Jun-2007 (By Champion) v5.0.10 Release
 : [FIX] Symbols not shown on ordinal scales due to optimization

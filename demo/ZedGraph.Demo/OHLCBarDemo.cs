@@ -71,7 +71,6 @@ namespace ZedGraph.Demo
 
 			// Use DateAsOrdinal to skip weekend gaps
 			myPane.XAxis.Type = AxisType.DateAsOrdinal;
-			myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
 
 			// pretty it up a little
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );

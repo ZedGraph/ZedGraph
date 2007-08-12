@@ -34,7 +34,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
-			CreateGraph_BasicLinear3Curve( zedGraphControl1 );
+			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
 			//CreateGraph_BasicLinearScroll( zedGraphControl1 );
 			//CreateGraph_BasicLog( zedGraphControl1 );
@@ -60,7 +60,8 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStickDemo( zedGraphControl1 );
-			//CreateGraph_Junk( zedGraphControl1 );
+			//CreateGraph_JapaneseCandleStickDemo2( zedGraphControl1 );
+			CreateGraph_Junk( zedGraphControl1 );
 			//CreateGraph_Junk2( zedGraphControl1 );
 			//CreateGraph_Junk4( zedGraphControl1 );
 			//CreateGraph_junk5( zedGraphControl1 );
@@ -1159,9 +1160,9 @@ namespace ZedGraph.ControlTest
 			myCurve.Stick.Color = Color.Blue;
 
 			// Use DateAsOrdinal to skip weekend gaps
-			//myPane.XAxis.Type = AxisType.DateAsOrdinal;
-			myPane.XAxis.Type = AxisType.Date;
-			myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
+			myPane.XAxis.Type = AxisType.DateAsOrdinal;
+			//myPane.XAxis.Type = AxisType.Date;
+			//myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
 
 			// pretty it up a little
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
@@ -1171,6 +1172,54 @@ namespace ZedGraph.ControlTest
 			zgc.AxisChange();
 			zgc.Invalidate();
 
+		}
+
+		private void CreateGraph_JapaneseCandleStickDemo2( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			myPane.Title.Text = "Japanese Candlestick Chart Demo";
+			myPane.XAxis.Title.Text = "Trading Date";
+			myPane.YAxis.Title.Text = "Share Price, $US";
+
+			StockPointList spl = new StockPointList();
+			Random rand = new Random();
+
+			// First day is jan 1st
+			XDate xDate = new XDate( 2006, 1, 1 );
+			double open = 50.0;
+
+			for ( int i = 0; i < 50; i++ )
+			{
+				double x = xDate.XLDate;
+				double close = open + rand.NextDouble() * 10.0 - 5.0;
+				double hi = Math.Max( open, close ) + rand.NextDouble() * 5.0;
+				double low = Math.Min( open, close ) - rand.NextDouble() * 5.0;
+
+				StockPt pt = new StockPt( x, hi, low, open, close, 100000 );
+				spl.Add( pt );
+
+				open = close;
+				// Advance one day
+				xDate.AddDays( 1.0 );
+				// but skip the weekends
+				if ( XDate.XLDateToDayOfWeek( xDate.XLDate ) == 6 )
+					xDate.AddDays( 2.0 );
+			}
+
+			JapaneseCandleStickItem myCurve = myPane.AddJapaneseCandleStick( "trades", spl );
+			myCurve.Stick.IsAutoSize = true;
+			myCurve.Stick.Color = Color.Blue;
+
+			// Use DateAsOrdinal to skip weekend gaps
+			myPane.XAxis.Type = AxisType.DateAsOrdinal;
+			myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
+
+			// pretty it up a little
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+			myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
+
+			zgc.AxisChange();
 		}
 
 		Timer myTimer;
@@ -1964,7 +2013,7 @@ namespace ZedGraph.ControlTest
 		{
 			GraphPane myPane = z1.GraphPane;
 
-			int j = 5;
+			int count = 36;
 
 			myPane.Title.Text = "Case #6";
 			myPane.XAxis.Title.Text = "Time, Days";
@@ -1974,19 +2023,23 @@ namespace ZedGraph.ControlTest
 			myPane.BaseDimension = 6.0F;
 
 			// Make up some data arrays based on the Sine function
-			double x, y;
+			double angle = 0;
+			double radius = 5;
 			PointPairList list = new PointPairList();
-			for ( int i = 0; i < 36; i++ )
+
+			for ( int i = 0; i < count; i++ )
 			{
-				x = (double)i + 5;
-				y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
-				list.Add( x, y );
+				double x = radius * Math.Cos( angle );
+				double y = radius * Math.Sin( angle );
+				list.Add( 10.0, 10.0 );
+				list.Add( 10.0 + x, 10.0 + y );
+				list.Add( PointPair.Missing, PointPair.Missing );
+				angle += 2 * Math.PI / count;
 			}
 
-			LineItem myCurve = myPane.AddCurve( "Type 5",
-				list, Color.Pink, SymbolType.Triangle );
-			myCurve.Symbol.Fill = new Fill( Color.White );
-
+			LineItem myCurve = myPane.AddCurve( "Type 5", list, Color.Pink, SymbolType.Triangle );
+			//myCurve.Symbol.Fill = new Fill( Color.White );
+			//myCurve.Line.IsOptimizedDraw = false;
 
 			z1.AxisChange();
 		}
