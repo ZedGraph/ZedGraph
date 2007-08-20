@@ -33,6 +33,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
+			CreateGraph_BasicLinearSimple( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
@@ -61,7 +62,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStickDemo( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStickDemo2( zedGraphControl1 );
-			CreateGraph_Junk( zedGraphControl1 );
+			//CreateGraph_Junk( zedGraphControl1 );
 			//CreateGraph_Junk2( zedGraphControl1 );
 			//CreateGraph_Junk4( zedGraphControl1 );
 			//CreateGraph_junk5( zedGraphControl1 );
@@ -1489,6 +1490,33 @@ namespace ZedGraph.ControlTest
 			box.Location.CoordinateFrame = CoordType.XChartFractionYScale;
 			box.IsVisible = false;
 			myPane.GraphObjList.Add( box );
+
+		}
+
+
+		// Basic curve test - Linear Axis
+		private void CreateGraph_BasicLinearSimple( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList list = new PointPairList();
+			const int count = 10;
+
+			for ( int i = 0; i < count; i++ )
+			{
+				double x = i;
+
+				double y = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.2 ) );
+
+				list.Add( x, y, i / 36.0 );
+			}
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+
+
+			//myPane.XAxis.Scale.MajorStep = 1e-301;
+
+			z1.AxisChange();
+
 
 		}
 

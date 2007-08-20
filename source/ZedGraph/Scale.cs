@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.31 $ $Date: 2007-07-30 06:45:11 $ </version>
+	/// <version> $Revision: 1.32 $ $Date: 2007-08-20 03:42:12 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -1084,7 +1084,18 @@ namespace ZedGraph
 		public double MajorStep
 		{
 			get { return _majorStep; }
-			set { _majorStep = value; _majorStepAuto = false; }
+			set
+			{
+				if ( value < 1e-300 )
+				{
+					_majorStepAuto = true;
+				}
+				else
+				{
+					_majorStep = value;
+					_majorStepAuto = false;
+				}
+			}
 		}
 		/// <summary>
 		/// Gets or sets the scale minor step size for this <see cref="Scale" /> (the spacing between
@@ -1105,7 +1116,18 @@ namespace ZedGraph
 		public double MinorStep
 		{
 			get { return _minorStep; }
-			set { _minorStep = value; _minorStepAuto = false; }
+			set
+			{
+				if ( value < 1e-300 )
+				{
+					_minorStepAuto = true;
+				}
+				else
+				{
+					_minorStep = value;
+					_minorStepAuto = false;
+				}
+			}
 		}
 		/// <summary>
 		/// Gets or sets the scale exponent value.  This only applies to <see cref="AxisType.Exponent" />. 
