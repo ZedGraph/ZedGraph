@@ -1,4 +1,6 @@
 == Version 5 ==
+;15-Aug-2007 (By Champion)
+: [FIX] Add CacheItemPriority.NotRemovable to protect temp images from premature removal (thanks to nocnoc)
 
 ;11-Aug-2007 (By Champion) v5.1.0 Release
 : [FIX] MinAuto/MaxAuto automatically set to false when Min/Max changed in DateAsOrdinal Scale

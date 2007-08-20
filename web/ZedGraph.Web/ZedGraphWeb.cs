@@ -40,7 +40,7 @@ namespace ZedGraph.Web
 	/// property.
 	/// </summary>
 	/// <author>Darren Martz revised by John Champion revised by Benjamin Mayrargue</author>
-	/// <version>$Revision: 1.19 $ $Date: 2007-06-02 06:56:03 $</version>
+	/// <version>$Revision: 1.20 $ $Date: 2007-08-20 03:23:42 $</version>
 	[
 	ParseChildren( true ),
 	PersistChildren( false ),
@@ -1524,8 +1524,22 @@ namespace ZedGraph.Web
 
 						// Insert FileDestructor into cache
 						TempFileDestructor tfd = new TempFileDestructor( tempFilePathName );
-						System.Web.Caching.CacheItemRemovedCallback onRemove = new System.Web.Caching.CacheItemRemovedCallback( tfd.RemovedCallback );
-						Page.Cache.Add( tempFileName, tfd, null, DateTime.Now.AddHours( _tmpImageDuration ), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.Normal, onRemove );
+						System.Web.Caching.CacheItemRemovedCallback onRemove =
+								new System.Web.Caching.CacheItemRemovedCallback( tfd.RemovedCallback );
+
+						// Following mods are from sourceforge tracker
+						//    [ 1731227 ] Potential ASP.Net cache issue with ZedGraph entries
+						// Thanks to nocnoc and intasoft
+						Page.Cache.Add( tempFileName, tfd, null,
+								DateTime.Now.AddHours( _tmpImageDuration ),
+								System.Web.Caching.Cache.NoSlidingExpiration,
+								System.Web.Caching.CacheItemPriority.NotRemovable,
+								onRemove );
+//						Page.Cache.Add( tempFileName, tfd, null,
+//							DateTime.Now.AddHours( _tmpImageDuration ),
+//							System.Web.Caching.Cache.NoSlidingExpiration,
+//							System.Web.Caching.CacheItemPriority.Normal,
+//							onRemove );
 
 						//System.Guid.NewGuid().ToString()
 						//tempFileName = this.ClientID +
