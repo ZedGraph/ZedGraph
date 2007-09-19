@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.46 $ $Date: 2007-09-19 06:41:56 $ </version>
+	/// <version> $Revision: 3.47 $ $Date: 2007-09-19 06:52:38 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -118,7 +118,7 @@ namespace ZedGraph
 			/// <summary>
 			/// The default value for the <see cref="Line.IsOptimizedDraw"/> property.
 			/// </summary>
-			public static bool IsOptimizedDraw = true;
+			public static bool IsOptimizedDraw = false;
 
 			/// <summary>
 			/// Default value for the curve type property
@@ -211,11 +211,14 @@ namespace ZedGraph
 		/// optimizations enabled.
 		/// </summary>
 		/// <remarks>
-		/// Normally, the optimizations can be used without a problem, and
-		/// they are particularly helpful with very large datasets.  However, if the data are very
-		/// discontinuous, then the optimizations can cause drawing artifacts in the form of
-		/// missing line segments.  This is generally very unlikely to happen, so the default
-		/// value is true.
+		/// Normally, the optimizations can be used without a problem, especially if the data
+		/// are sorted.  The optimizations are particularly helpful with very large datasets.
+		/// However, if the data are very discontinuous (for example, a curve that doubles back
+		/// on itself), then the optimizations can cause drawing artifacts in the form of
+		/// missing line segments.  The default option for this mode is false, so you must
+		/// explicitly enable it for each <see cref="LineItem.Line">LineItem.Line</see>.
+		/// Also note that, even if the optimizations are enabled explicitly, no actual
+		/// optimization will be done for datasets of less than 1000 points.
 		/// </remarks>
 		public bool IsOptimizedDraw
 		{
