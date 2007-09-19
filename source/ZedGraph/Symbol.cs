@@ -32,7 +32,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.36 $ $Date: 2007-08-10 16:22:54 $ </version>
+	/// <version> $Revision: 3.37 $ $Date: 2007-09-19 06:41:56 $ </version>
 	[Serializable]
 	public class Symbol : ICloneable, ISerializable
 	{
@@ -76,6 +76,12 @@ namespace ZedGraph
 		/// access this value.
 		/// </summary>
 		private Border		_border;
+		/// <summary>
+		/// Private field that stores the user defined <see cref="GraphicsPath"/> data for this
+		/// <see cref="Symbol"/>.  Use the public property <see cref="UserSymbol"/> to
+		/// access this value.
+		/// </summary>
+		private GraphicsPath _userSymbol;
 	#endregion
 
 	#region Defaults
@@ -202,6 +208,19 @@ namespace ZedGraph
 			get { return _border; }
 			set { _border = value; }
 		}
+		/// <summary>
+		/// Gets or sets the <see cref="GraphicsPath"/> data for this
+		/// <see cref="Symbol"/>, describing the user-defined symbol type.
+		/// </summary>
+		/// <remarks>
+		/// This value only applies if <see cref="Symbol.Type">Symbol.Type</see>
+		/// is <see cref="SymbolType.UserDefined">SymbolType.UserDefined</see>
+		/// </remarks>
+		public GraphicsPath UserSymbol
+		{
+			get { return _userSymbol; }
+			set { _userSymbol = value; }
+		}
 
 		#endregion
 	
@@ -233,6 +252,7 @@ namespace ZedGraph
 			_isVisible = Default.IsVisible;
 			_border = new Border( Default.IsBorderVisible, color, Default.PenWidth );
 			_fill = new Fill( color, Default.FillBrush, Default.FillType );
+			_userSymbol = null;
 		}
 
 		/// <summary>
@@ -247,6 +267,11 @@ namespace ZedGraph
 			_isVisible = rhs.IsVisible;
 			_fill = rhs.Fill.Clone();
 			_border = rhs.Border.Clone();
+
+			if ( rhs.UserSymbol != null )
+				_userSymbol = rhs.UserSymbol.Clone() as GraphicsPath;
+			else
+				_userSymbol = null;
 		}
 
 		/// <summary>
@@ -274,7 +299,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 10;
+		public const int schema = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -295,6 +320,11 @@ namespace ZedGraph
 			_isVisible = info.GetBoolean( "isVisible" );
 			_fill = (Fill) info.GetValue( "fill", typeof(Fill) );
 			_border = (Border) info.GetValue( "border", typeof(Border) );
+
+			if ( sch >= 11 )
+				_userSymbol = (GraphicsPath)info.GetValue( "userSymbol", typeof( GraphicsPath ) );
+			else
+				_userSymbol = null;
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -311,6 +341,7 @@ namespace ZedGraph
 			info.AddValue( "isVisible", _isVisible );
 			info.AddValue( "fill", _fill );
 			info.AddValue( "border", _border );
+			info.AddValue( "userSymbol", _userSymbol );
 		}
 	#endregion
 
@@ -435,7 +466,7 @@ namespace ZedGraph
 			
 			GraphicsPath path = new GraphicsPath();
 			
-			switch( _type == SymbolType.Default ? Default.Type : _type )
+			switch( _type == SymbolType.Default || ( _type == SymbolType.UserDefined && _userSymbol == null ) ? Default.Type : _type )
 			{
 			case SymbolType.Square:
 				path.AddLine( -hsize, -hsize, hsize, -hsize );
@@ -486,6 +517,11 @@ namespace ZedGraph
 				break;
 			case SymbolType.VDash:
 				path.AddLine( 0, -hsize, 0, hsize1 );
+				break;
+			case SymbolType.UserDefined:
+				path = _userSymbol.Clone() as GraphicsPath;
+				Matrix scaleTransform = new Matrix( scaledSize, 0.0f, 0.0f, scaledSize, 0.0f, 0.0f );
+				path.Transform( scaleTransform );
 				break;
 			}
 			

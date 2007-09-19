@@ -211,6 +211,11 @@ namespace ZedGraph
 		/// filled since it has no outline.
 		/// </summary>
 		VDash,
+		/// <summary> A symbol defined by the <see cref="Symbol.UserSymbol"/> propery.
+		/// If no symbol is defined, the <see cref="Symbol.Default.Type"/>. symbol will
+		/// be used.
+		/// </summary>
+		UserDefined,
 		/// <summary> A Default symbol type (the symbol type will be obtained
 		/// from <see cref="Symbol.Default.Type"/>. </summary>
 		Default,

@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.32 $ $Date: 2007-08-20 03:42:12 $ </version>
+	/// <version> $Revision: 1.33 $ $Date: 2007-09-19 06:41:56 $ </version>
 	[Serializable]
 	abstract public class Scale : ISerializable
 	{
@@ -314,20 +314,20 @@ namespace ZedGraph
 			/// If the total span of data exceeds this number (in days), then the auto-range
 			/// code will select <see cref="MajorUnit"/> = <see cref="DateUnit.Year"/>
 			/// and <see cref="MinorUnit"/> = <see cref="DateUnit.Month"/>.
-			/// This value normally defaults to 365 days (1 year).
+			/// This value normally defaults to 730 days (2 years).
 			/// This value is used by the <see cref="DateScale.CalcDateStepSize"/> method.
 			/// </summary>
-			public static double RangeYearMonth = 365;  // 1 year
+			public static double RangeYearMonth = 730;  // 2 years
 			/// <summary>
 			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
 			/// This values applies only to Date-Time type axes.
 			/// If the total span of data exceeds this number (in days), then the auto-range
 			/// code will select <see cref="MajorUnit"/> = <see cref="DateUnit.Month"/>
 			/// and <see cref="MinorUnit"/> = <see cref="DateUnit.Month"/>.
-			/// This value normally defaults to 90 days (3 months).
+			/// This value normally defaults to 300 days (10 months).
 			/// This value is used by the <see cref="DateScale.CalcDateStepSize"/> method.
 			/// </summary>
-			public static double RangeMonthMonth = 90;  // 3 months
+			public static double RangeMonthMonth = 300;  // 10 months
 			/// <summary>
 			/// A default setting for the <see cref="AxisType.Date"/> auto-ranging code.
 			/// This values applies only to Date-Time type axes.

@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.45 $ $Date: 2007-08-12 01:16:21 $ </version>
+	/// <version> $Revision: 3.46 $ $Date: 2007-09-19 06:41:56 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -668,10 +668,12 @@ namespace ZedGraph
 					//bool lastOut = false;
 					bool isOut;
 
+					bool isOptDraw = _isOptimizedDraw && points.Count > 1000;
+
 					// (Dale-a-b) we'll set an element to true when it has been drawn	
 					bool[,] isPixelDrawn = null;
 					
-					if ( _isOptimizedDraw )
+					if ( isOptDraw )
 						isPixelDrawn = new bool[maxX + 1, maxY + 1]; 
 					
 					// Loop over each point in the curve
@@ -719,7 +721,7 @@ namespace ZedGraph
 
 							// Maintain an array of "used" pixel locations to avoid duplicate drawing operations
 							// contributed by Dale-a-b
-							if ( _isOptimizedDraw && tmpX >= minX && tmpX <= maxX &&
+							if ( isOptDraw && tmpX >= minX && tmpX <= maxX &&
 										tmpY >= minY && tmpY <= maxY ) // guard against the zoom-in case
 							{
 								if ( isPixelDrawn[tmpX, tmpY] )

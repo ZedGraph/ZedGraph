@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.11 $ $Date: 2007-06-29 15:39:07 $ </version>
+	/// <version> $Revision: 1.12 $ $Date: 2007-09-19 06:41:56 $ </version>
 	[Serializable]
 	class DateAsOrdinalScale : Scale, ISerializable //, ICloneable
 	{
@@ -182,11 +182,68 @@ namespace ZedGraph
 			}
 
 			// Set the DateFormat by calling CalcDateStepSize
-			DateScale.CalcDateStepSize( range, Default.TargetXSteps, this );
+			//			DateScale.CalcDateStepSize( range, Default.TargetXSteps, this );
+			SetDateFormat( pane );
 
 			// Now, set the axis range based on a ordinal scale
 			base.PickScale( pane, g, scaleFactor );
 			OrdinalScale.PickScale( pane, g, scaleFactor, this );
+		}
+
+		internal void SetDateFormat( GraphPane pane )
+		{
+			if ( _formatAuto )
+			{
+				double range = 10;
+
+				if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > 1 )
+				{
+					double val1, val2;
+
+					if ( _ownerAxis is XAxis || _ownerAxis is X2Axis )
+					{
+						val1 = pane.CurveList[0].Points[0].X;
+						val2 = pane.CurveList[0].Points[ pane.CurveList[0].Points.Count - 1 ].X;
+					}
+					else
+					{
+						val1 = pane.CurveList[0].Points[0].Y;
+						val2 = pane.CurveList[0].Points[pane.CurveList[0].Points.Count].Y;
+					}
+
+					if (	val1 != PointPair.Missing &&
+							val2 != PointPair.Missing &&
+							!Double.IsNaN( val1 ) &&
+							!Double.IsNaN( val2 ) &&
+							!Double.IsInfinity( val1 ) &&
+							!Double.IsInfinity( val2 ) &&
+							Math.Abs( val2 - val1 ) > 1e-10 )
+						range = Math.Abs( val2 - val1 );
+				}
+
+				if ( range > Default.RangeYearYear )
+					_format = Default.FormatYearYear;
+				else if ( range > Default.RangeYearMonth )
+					_format = Default.FormatYearMonth;
+				else if ( range > Default.RangeMonthMonth )
+					_format = Default.FormatMonthMonth;
+				else if ( range > Default.RangeDayDay )
+					_format = Default.FormatDayDay;
+				else if ( range > Default.RangeDayHour )
+					_format = Default.FormatDayHour;
+				else if ( range > Default.RangeHourHour )
+					_format = Default.FormatHourHour;
+				else if ( range > Default.RangeHourMinute )
+					_format = Default.FormatHourMinute;
+				else if ( range > Default.RangeMinuteMinute )
+					_format = Default.FormatMinuteMinute;
+				else if ( range > Default.RangeMinuteSecond )
+					_format = Default.FormatMinuteSecond;
+				else if ( range > Default.RangeSecondSecond )
+					_format = Default.FormatSecondSecond;
+				else // MilliSecond
+					_format = Default.FormatMillisecond;
+			}
 		}
 
 		/// <summary>
@@ -217,7 +274,10 @@ namespace ZedGraph
 
 			if ( pane.CurveList.Count > 0 && pane.CurveList[0].Points.Count > tmpIndex )
 			{
+				if ( _ownerAxis is XAxis || _ownerAxis is X2Axis )
 				val = pane.CurveList[0].Points[tmpIndex].X;
+				else
+					val = pane.CurveList[0].Points[tmpIndex].Y;
 				return XDate.ToString( val, _format );
 			}
 			else

@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.14 $ $Date: 2007-04-16 00:03:01 $ </version>
+	/// <version> $Revision: 1.15 $ $Date: 2007-09-19 06:41:56 $ </version>
 	[Serializable]
 	class DateScale : Scale, ISerializable //, ICloneable
 	{
@@ -442,14 +442,16 @@ namespace ZedGraph
 					_min = _min - 0.2 * ( _min == 0 ? 1.0 : Math.Abs( _min ) );
 			}
 
+			double targetSteps = ( _ownerAxis is XAxis || _ownerAxis is X2Axis ) ?
+						Default.TargetXSteps : Default.TargetYSteps;
+
+			// Calculate the step size based on target steps
+			double tempStep = CalcDateStepSize( _max - _min, targetSteps );
+
 			// Calculate the new step size
 			if ( _majorStepAuto )
 			{
-				double targetSteps = ( _ownerAxis is XAxis || _ownerAxis is X2Axis ) ?
-							Default.TargetXSteps : Default.TargetYSteps;
-
-				// Calculate the step size based on target steps
-				_majorStep = CalcDateStepSize( _max - _min, targetSteps );
+				_majorStep = tempStep;
 
 				if ( _isPreventLabelOverlap )
 				{
