@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="BarSettings.Type"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.23 $ $Date: 2007-06-02 06:56:03 $ </version>
+	/// <version> $Revision: 3.24 $ $Date: 2007-09-22 23:07:11 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -294,13 +294,6 @@ namespace ZedGraph
 		{
 			bool isVertical = pane.BarSettings.Base == BarBase.X;
 
-			// Make the gap between the bars and the labels = 2% of the axis range
-			float labelOffset;
-			if ( isVertical )
-				labelOffset = (float)( pane.YAxis._scale._max - pane.YAxis._scale._min ) * 0.015f;
-			else
-				labelOffset = (float)( pane.XAxis._scale._max - pane.XAxis._scale._min ) * 0.015f;
-
 			// keep a count of the number of BarItems
 			int curveIndex = 0;
 
@@ -315,6 +308,15 @@ namespace ZedGraph
 				if ( bar != null )
 				{
 					IPointList points = curve.Points;
+
+					// ADD JKB 9/21/07
+					// The labelOffset should depend on whether the curve is YAxis or Y2Axis.
+					// JHC - Generalize to any value axis
+					// Make the gap between the bars and the labels = 1.5% of the axis range
+					float labelOffset;
+
+					Scale scale = curve.ValueAxis( pane ).Scale;
+					labelOffset = (float)( scale._max - scale._min ) * 0.015f;
 
 					// Loop through each point in the BarItem
 					for ( int i = 0; i < points.Count; i++ )
@@ -352,8 +354,14 @@ namespace ZedGraph
 							label = new TextObj( barLabelText, position, centerVal );
 
 						label.FontSpec.Family = fontFamily;
+
 						// Configure the TextObj
-						label.Location.CoordinateFrame = CoordType.AxisXYScale;
+
+                  // CHANGE JKB 9/21/07
+                  // CoordinateFrame should depend on whether curve is YAxis or Y2Axis.
+						label.Location.CoordinateFrame =
+							(isVertical && curve.IsY2Axis) ? CoordType.AxisXY2Scale : CoordType.AxisXYScale;
+
 						label.FontSpec.Size = fontSize;
 						label.FontSpec.FontColor = fontColor;
 						label.FontSpec.IsItalic = isItalic;

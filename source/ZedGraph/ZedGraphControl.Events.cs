@@ -639,11 +639,11 @@ namespace ZedGraph
 		{
 			if ( _masterPane != null )
 			{
+				Point mousePt = new Point( e.X, e.Y );
+
 				// Provide Callback for MouseMove events
 				if ( this.MouseMoveEvent != null && this.MouseMoveEvent( this, e ) )
 					return;
-
-				Point mousePt = new Point( e.X, e.Y );
 
 				//Point tempPt = this.PointToClient( Control.MousePosition );
 

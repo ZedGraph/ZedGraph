@@ -1,5 +1,5 @@
 == Version 5 ==
-;17-Sep-2007 (By Champion)
+;20-Sep-2007 (By Champion)
 : [FIX] Add CacheItemPriority.NotRemovable to protect temp images from premature removal (thanks to nocnoc)
 : [FIX] Protect MinorStep and MajorStep properties from values below 1e-300 to avoid lockup
 : [UPD] Make DataSourcePointList generate ordinals instead of PointPair.Missing for missing arrays
@@ -9,6 +9,7 @@
 : [FIX] DateAsOrdinal.MakeLabel() method needs to use X for XAxis and Y for YAxis
 : [FIX] Have DateScale.PickScale() automatically set Scale.Format even if _majorStepAuto is false.
 : [NEW] Add SymbolType.UserDefined and Symbol.UserSymbol (thanks to Magnus Bernhardsson)
+: [FIX] Fix CreateBarLabels settings for Y2 axis curves (thanks to jakeab)
 
 ;11-Aug-2007 (By Champion) v5.1.0 Release
 : [FIX] MinAuto/MaxAuto automatically set to false when Min/Max changed in DateAsOrdinal Scale
