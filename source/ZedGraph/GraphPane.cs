@@ -48,7 +48,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.80 $ $Date: 2007-06-04 15:59:50 $ </version>
+	/// <version> $Revision: 3.81 $ $Date: 2007-09-30 07:44:11 $ </version>
 	[Serializable]
 	public class GraphPane : PaneBase, ICloneable, ISerializable
 	{
@@ -1822,6 +1822,7 @@ namespace ZedGraph
 					saveIndex = index;
 					saveZOrder = saveGraphItem.ZOrder;
 				}
+
 				// See if the point is in the legend
 				if ( saveZOrder <= ZOrder.B_BehindLegend &&
 					this.Legend.FindPoint( mousePt, this, scaleFactor, out index ) )
@@ -1831,12 +1832,12 @@ namespace ZedGraph
 				}
 
 				// See if the point is in the Pane Title
+				SizeF paneTitleBox = _title._fontSpec.BoundingBox( g, _title._text, scaleFactor );
 				if ( saveZOrder <= ZOrder.H_BehindAll && _title._isVisible )
 				{
-					SizeF size = _title._fontSpec.BoundingBox( g, _title._text, scaleFactor );
-					tmpRect = new RectangleF( ( _rect.Left + _rect.Right - size.Width ) / 2,
+					tmpRect = new RectangleF( ( _rect.Left + _rect.Right - paneTitleBox.Width ) / 2,
 						_rect.Top + _margin.Top * scaleFactor,
-						size.Width, size.Height );
+						paneTitleBox.Width, paneTitleBox.Height );
 					if ( tmpRect.Contains( mousePt ) )
 					{
 						nearestObj = this;
@@ -1889,11 +1890,27 @@ namespace ZedGraph
 				}
 
 				// See if the point is in the X Axis
+				float height = _xAxis._tmpSpace;
+
 				tmpRect = new RectangleF( tmpChartRect.Left, tmpChartRect.Bottom,
-					tmpChartRect.Width, _rect.Bottom - tmpChartRect.Bottom );
+					tmpChartRect.Width, height ); //_rect.Bottom - tmpChartRect.Bottom );
+
 				if ( saveZOrder <= ZOrder.D_BehindAxis && tmpRect.Contains( mousePt ) )
 				{
 					nearestObj = this.XAxis;
+					return true;
+				}
+
+				// See if the point is in the X2 Axis
+				height = _x2Axis._tmpSpace;
+
+				tmpRect = new RectangleF( tmpChartRect.Left,
+						tmpChartRect.Top - height,
+						tmpChartRect.Width,
+						height );
+				if ( saveZOrder <= ZOrder.D_BehindAxis && tmpRect.Contains( mousePt ) )
+				{
+					nearestObj = this.X2Axis;
 					return true;
 				}
 
@@ -2024,11 +2041,10 @@ namespace ZedGraph
 
 			ValueHandler valueHandler = new ValueHandler( this, false );
 
-			double xPixPerUnit = _chart._rect.Width / ( _xAxis._scale._max - _xAxis._scale._min );
 			//double	yPixPerUnit = chartRect.Height / ( yAxis.Max - yAxis.Min );
 			//double	y2PixPerUnit; // = chartRect.Height / ( y2Axis.Max - y2Axis.Min );
 
-			double yPixPerUnitAct, yAct, yMinAct, yMaxAct;
+			double yPixPerUnitAct, yAct, yMinAct, yMaxAct, xAct;
 			double minDist = 1e20;
 			double xVal, yVal, dist = 99999, distX, distY;
 			double tolSquared = Default.NearestTol * Default.NearestTol;
@@ -2053,6 +2069,7 @@ namespace ZedGraph
 				{
 					int yIndex = curve.GetYAxisIndex( this );
 					Axis yAxis = curve.GetYAxis( this );
+					Axis xAxis = curve.GetXAxis( this );
 
 					if ( curve.IsY2Axis )
 					{
@@ -2069,6 +2086,9 @@ namespace ZedGraph
 
 					yPixPerUnitAct = _chart._rect.Height / ( yMaxAct - yMinAct );
 
+					double xPixPerUnit = _chart._rect.Width / ( xAxis._scale._max - xAxis._scale._min );
+					xAct = xAxis is XAxis ? x : x2;
+
 					IPointList points = curve.Points;
 					float barWidth = curve.GetBarWidth( this );
 					double barWidthUserHalf;
@@ -2084,7 +2104,7 @@ namespace ZedGraph
 						for ( int iPt = 0; iPt < curve.NPts; iPt++ )
 						{
 							// xVal is the user scale X value of the current point
-							if ( _xAxis._scale.IsAnyOrdinal && !curve.IsOverrideOrdinal )
+							if ( xAxis._scale.IsAnyOrdinal && !curve.IsOverrideOrdinal )
 								xVal = (double)iPt + 1.0;
 							else
 								xVal = points[iPt].X;
@@ -2119,8 +2139,8 @@ namespace ZedGraph
 
 										double centerVal = valueHandler.BarCenterValue( curve, barWidth, iPt, xVal, iBar );
 
-										if ( x < centerVal - barWidthUserHalf ||
-												x > centerVal + barWidthUserHalf ||
+										if ( xAct < centerVal - barWidthUserHalf ||
+												xAct > centerVal + barWidthUserHalf ||
 												yAct < lowVal || yAct > hiVal )
 											continue;
 									}
@@ -2130,7 +2150,7 @@ namespace ZedGraph
 
 										if ( yAct < centerVal - barWidthUserHalf ||
 												yAct > centerVal + barWidthUserHalf ||
-												x < lowVal || x > hiVal )
+												xAct < lowVal || xAct > hiVal )
 											continue;
 									}
 
@@ -2140,7 +2160,7 @@ namespace ZedGraph
 										nearestBar = curve;
 									}
 								}
-								else if ( xVal >= _xAxis._scale._min && xVal <= _xAxis._scale._max &&
+								else if ( xVal >= xAxis._scale._min && xVal <= xAxis._scale._max &&
 											yVal >= yMinAct && yVal <= yMaxAct )
 								{
 									if ( curve is LineItem && _lineType == LineType.Stack )
@@ -2149,7 +2169,7 @@ namespace ZedGraph
 										valueHandler.GetValues( curve, iPt, out xVal, out zVal, out yVal );
 									}
 
-									distX = ( xVal - x ) * xPixPerUnit;
+									distX = ( xVal - xAct ) * xPixPerUnit;
 									distY = ( yVal - yAct ) * yPixPerUnitAct;
 									dist = distX * distX + distY * distY;
 

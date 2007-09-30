@@ -27,7 +27,6 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_Load( object sender, EventArgs e )
 		{
-			//CreateGraph( zedGraphControl1 );
 			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_AxisCrossDemo( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
@@ -63,6 +62,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_Histogram( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
+			//CreateGraph_ImageObj( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStickDemo( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStickDemo2( zedGraphControl1 );
@@ -98,7 +98,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_RadarPlot( zedGraphControl1 );
 			//CreateGraph_SamplePointListDemo( zedGraphControl1 );
 			//CreateGraph_ScatterPlot( zedGraphControl1 );
-			CreateGraph_ScrollTest( zedGraphControl1 );
+			//CreateGraph_ScrollTest( zedGraphControl1 );
 			//CreateGraph_ScrollProblem( zedGraphControl1 );
 			//CreateGraph_ScrollSample( zedGraphControl1 );
 			//CreateGraph_SortedOverlayBars( zedGraphControl1 );
@@ -117,6 +117,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_VerticalBars( zedGraphControl1 );
 			//CreateGraph_VerticalLinearBars( zedGraphControl1 );
 			//CreateGraph_DualY( zedGraphControl1 );
+			CreateGraph_X2Axis( zedGraphControl1 );
 
 			SetSize();
 			zedGraphControl1.AxisChange();
@@ -241,102 +242,6 @@ namespace ZedGraph.ControlTest
 			}
 		}
 
-		// Build the Chart
-		private void CreateGraph( ZedGraphControl zg1 )
-		{
-			// get a reference to the GraphPane
-			GraphPane myPane = zg1.GraphPane;
-
-			// Set the Titles
-			myPane.Title.Text = "My Test Bar Graph";
-			myPane.XAxis.Title.Text = "Label";
-			myPane.YAxis.Title.Text = "My Y Axis";
-			myPane.X2Axis.Title.Text = "The Top X Axis";
-			myPane.Y2Axis.Title.Text = "Y2 Axis";
-
-			myPane.X2Axis.IsVisible = true;
-			myPane.X2Axis.Scale.IsReverse = true;
-			myPane.Y2Axis.IsVisible = true;
-
-			// Make up some random data points
-			string[] labels = { "Panther", "Lion", "Cheetah", 
-                      "Cougar", "Tiger", "Leopard" };
-			double[] x = { 1, 2, 3, 4, 5, 6 };
-			double[] y = { 100, 115, 75, 22, 98, 40 };
-			double[] y2 = { 90, 100, 95, 35, 80, 35 };
-			double[] y3 = { 80, 110, 65, 15, 54, 67 };
-			double[] y4 = { 120, 125, 100, 40, 105, 75 };
-
-			// Generate a red bar with "Curve 1" in the legend
-			//BarItem myBar = myPane.AddBar( "Curve 1 label is long\nsecond line", null, y, Color.Red );
-			BarItem myBar = myPane.AddBar( "Curve 1", null, y, Color.Red );
-			myBar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red );
-
-			// Generate a blue bar with "Curve 2" in the legend
-			myBar = myPane.AddBar( "Curve 2", null, y2, Color.Blue );
-			myBar.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue );
-
-			// Generate a green bar with "Curve 3" in the legend
-			//myBar = myPane.AddBar( "Curve 3\ntwo lines", null, y3, Color.Green );
-			myBar = myPane.AddBar( "Curve 3", null, y3, Color.Green );
-			myBar.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green );
-
-			// Generate a black line with "Curve 4" in the legend
-			LineItem myCurve = myPane.AddCurve( "Curve 4",
-					x, y4, Color.Black, SymbolType.Circle );
-			myCurve.IsX2Axis = true;
-
-			myCurve.Line.Fill = new Fill( Color.White,
-										 Color.LightSkyBlue, -45F );
-
-			// Fix up the curve attributes a little
-			myCurve.Symbol.Size = 8.0F;
-			myCurve.Symbol.Fill = new Fill( Color.White );
-			myCurve.Line.Width = 2.0F;
-
-			// Draw the X tics between the labels instead of 
-			// at the labels
-			myPane.XAxis.MajorTic.IsBetweenLabels = true;
-
-			// Set the XAxis labels
-			myPane.XAxis.Scale.TextLabels = labels;
-			// Set the XAxis to Text type
-			myPane.XAxis.Type = AxisType.Text;
-
-			// Fill the Axis and Pane backgrounds
-			myPane.Chart.Fill = new Fill( Color.White,
-					Color.FromArgb( 255, 255, 166 ), 90F );
-			myPane.Fill = new Fill( Color.FromArgb( 250, 250, 255 ) );
-
-			myPane.XAxis.MajorGrid.IsVisible = true;
-			myPane.YAxis.MajorGrid.IsVisible = true;
-
-			LineObj line = new LineObj( Color.Black, 2.3, 0, 2.3, 1 );
-			line.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
-			line.Line.Width = 2.0f;
-			myPane.GraphObjList.Add( line );
-
-
-			//Image image = Image.FromFile( @"c:\temp\vtx1330.jpg" );
-			Image image = Bitmap.FromFile( @"c:\temp\vtx1300crop.jpg" );
-
-			ImageObj imageObj = new ImageObj( image, new RectangleF( 3, 120, 2, 100 ) );
-			imageObj.IsScaled = false;
-			//			imageObj.IsVisible = true;
-			imageObj.ZOrder = ZOrder.E_BehindCurves;
-			//			imageObj.Location.CoordinateFrame = CoordType.ChartFraction;
-			myPane.GraphObjList.Add( imageObj );
-
-			//			myPane.Chart.Fill = new Fill( image, WrapMode.Tile );
-
-			//            myPane.Title.Text = null;
-
-			//          GraphPane newOne = myPane.Clone();
-
-			// Tell ZedGraph to refigure the
-			// axes since the data have changed
-			zg1.AxisChange();
-		}
 		public void CreateGraph_AxisCrossDemo( ZedGraphControl zgc )
 		{
 			GraphPane myPane = zgc.GraphPane;
@@ -4881,6 +4786,103 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 		}
 
+		// Build the Chart
+		private void CreateGraph_ImageObj( ZedGraphControl zg1 )
+		{
+			// get a reference to the GraphPane
+			GraphPane myPane = zg1.GraphPane;
+
+			// Set the Titles
+			myPane.Title.Text = "My Test Bar Graph";
+			myPane.XAxis.Title.Text = "Label";
+			myPane.YAxis.Title.Text = "My Y Axis";
+			myPane.X2Axis.Title.Text = "The Top X Axis";
+			myPane.Y2Axis.Title.Text = "Y2 Axis";
+
+			myPane.X2Axis.IsVisible = true;
+			myPane.X2Axis.Scale.IsReverse = true;
+			myPane.Y2Axis.IsVisible = true;
+
+			// Make up some random data points
+			string[] labels = { "Panther", "Lion", "Cheetah", 
+                      "Cougar", "Tiger", "Leopard" };
+			double[] x = { 1, 2, 3, 4, 5, 6 };
+			double[] y = { 100, 115, 75, 22, 98, 40 };
+			double[] y2 = { 90, 100, 95, 35, 80, 35 };
+			double[] y3 = { 80, 110, 65, 15, 54, 67 };
+			double[] y4 = { 120, 125, 100, 40, 105, 75 };
+
+			// Generate a red bar with "Curve 1" in the legend
+			//BarItem myBar = myPane.AddBar( "Curve 1 label is long\nsecond line", null, y, Color.Red );
+			BarItem myBar = myPane.AddBar( "Curve 1", null, y, Color.Red );
+			myBar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red );
+
+			// Generate a blue bar with "Curve 2" in the legend
+			myBar = myPane.AddBar( "Curve 2", null, y2, Color.Blue );
+			myBar.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue );
+
+			// Generate a green bar with "Curve 3" in the legend
+			//myBar = myPane.AddBar( "Curve 3\ntwo lines", null, y3, Color.Green );
+			myBar = myPane.AddBar( "Curve 3", null, y3, Color.Green );
+			myBar.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green );
+
+			// Generate a black line with "Curve 4" in the legend
+			LineItem myCurve = myPane.AddCurve( "Curve 4",
+					x, y4, Color.Black, SymbolType.Circle );
+			myCurve.IsX2Axis = true;
+
+			myCurve.Line.Fill = new Fill( Color.White,
+										 Color.LightSkyBlue, -45F );
+
+			// Fix up the curve attributes a little
+			myCurve.Symbol.Size = 8.0F;
+			myCurve.Symbol.Fill = new Fill( Color.White );
+			myCurve.Line.Width = 2.0F;
+
+			// Draw the X tics between the labels instead of 
+			// at the labels
+			myPane.XAxis.MajorTic.IsBetweenLabels = true;
+
+			// Set the XAxis labels
+			myPane.XAxis.Scale.TextLabels = labels;
+			// Set the XAxis to Text type
+			myPane.XAxis.Type = AxisType.Text;
+
+			// Fill the Axis and Pane backgrounds
+			myPane.Chart.Fill = new Fill( Color.White,
+					Color.FromArgb( 255, 255, 166 ), 90F );
+			myPane.Fill = new Fill( Color.FromArgb( 250, 250, 255 ) );
+
+			myPane.XAxis.MajorGrid.IsVisible = true;
+			myPane.YAxis.MajorGrid.IsVisible = true;
+
+			LineObj line = new LineObj( Color.Black, 2.3, 0, 2.3, 1 );
+			line.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
+			line.Line.Width = 2.0f;
+			myPane.GraphObjList.Add( line );
+
+
+			//Image image = Image.FromFile( @"c:\temp\vtx1330.jpg" );
+			Image image = Bitmap.FromFile( @"c:\temp\vtx1300crop.jpg" );
+
+			ImageObj imageObj = new ImageObj( image, new RectangleF( 3, 120, 2, 100 ) );
+			imageObj.IsScaled = false;
+			//			imageObj.IsVisible = true;
+			imageObj.ZOrder = ZOrder.E_BehindCurves;
+			//			imageObj.Location.CoordinateFrame = CoordType.ChartFraction;
+			myPane.GraphObjList.Add( imageObj );
+
+			//			myPane.Chart.Fill = new Fill( image, WrapMode.Tile );
+
+			//            myPane.Title.Text = null;
+
+			//          GraphPane newOne = myPane.Clone();
+
+			// Tell ZedGraph to refigure the
+			// axes since the data have changed
+			zg1.AxisChange();
+		}
+
 		// Basic curve test - text
 		private void CreateGraph_TextBasic( ZedGraphControl z1 )
 		{
@@ -5579,6 +5581,36 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 		}
 
+		// Basic curve test - Linear Axis
+		private void CreateGraph_X2Axis( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			PointPairList listX = new PointPairList();
+			PointPairList listX2 = new PointPairList();
+			const int count = 20;
+
+			for ( int i = 0; i < count; i++ )
+			{
+				double x = i;
+				double y = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.2 ) );
+
+				double x2 = i * 100;
+				double y2 = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.4 + Math.PI ) );
+
+				listX.Add( x, y );
+				listX2.Add( x2, y2 );
+			}
+
+			LineItem myCurve = myPane.AddCurve( "X Axis Curve", listX, Color.Blue, SymbolType.Diamond );
+			LineItem myCurve2 = myPane.AddCurve( "X2 Axis Curve", listX2, Color.Red, SymbolType.Diamond );
+
+			myPane.X2Axis.IsVisible = true;
+			myCurve2.IsX2Axis = true;
+
+			z1.AxisChange();
+		}
+
 		private Boolean removeGraphByName( ZedGraphControl z1, string sOpName )
 		{
 			try
@@ -5660,7 +5692,7 @@ namespace ZedGraph.ControlTest
 
 		}
 
-		private bool old_zedGraphControl1_MouseMoveEvent( ZedGraphControl sender, MouseEventArgs e )
+		private bool zedGraphControl1_MouseMoveEvent( ZedGraphControl sender, MouseEventArgs e )
 		{
 			// Save the mouse location
 			PointF mousePt = new PointF( e.X, e.Y );
@@ -5682,13 +5714,24 @@ namespace ZedGraph.ControlTest
 				// If there is no valid data, then clear the status label text
 				toolStripStatusXY.Text = string.Empty;
 
+			object nearestObj;
+			int index;
+			if ( sender.GraphPane.FindNearestObject( mousePt, this.CreateGraphics(), out nearestObj, out index ) )
+				statusLabelLastClick.Text = nearestObj.ToString();
+			else
+				statusLabelLastClick.Text = "";
+
 			// Return false to indicate we have not processed the MouseMoveEvent
 			// ZedGraphControl should still go ahead and handle it
 			return false;
 		}
 
-		private bool old_zedGraphControl1_MouseDownEvent( ZedGraphControl sender, MouseEventArgs e )
+		private bool zedGraphControl1_MouseDownEvent( ZedGraphControl sender, MouseEventArgs e )
 		{
+			// Save the mouse location
+			PointF mousePt = new PointF( e.X, e.Y );
+
+
 			return false;
 
 			double xvalue1 = zedGraphControl1.GraphPane.XAxis.Scale.ReverseTransform( 245 );
@@ -5729,7 +5772,6 @@ namespace ZedGraph.ControlTest
 			int dragIndex;
 			GraphPane myPane = this.zedGraphControl1.GraphPane;
 			PointPair startPair;
-			PointF mousePt = new PointF( e.X, e.Y );
 
 			// find the point that was clicked, and make sure the point list is editable
 			// and that it's a primary Y axis (the first Y or Y2 axis)
@@ -5779,7 +5821,7 @@ namespace ZedGraph.ControlTest
 		int dragIndex;
 		PointPair startPair;
 
-		private bool zedGraphControl1_MouseDownEvent( ZedGraphControl control, MouseEventArgs e )
+		private bool old_zedGraphControl1_MouseDownEvent( ZedGraphControl control, MouseEventArgs e )
 		{
 			// point-dragging is activated by an 'Alt' key and mousedown combination
 			if ( Control.ModifierKeys == Keys.Alt )
@@ -5812,7 +5854,7 @@ namespace ZedGraph.ControlTest
 			return false;
 		}
 
-		private bool zedGraphControl1_MouseMoveEvent( ZedGraphControl control, MouseEventArgs e )
+		private bool old_zedGraphControl1_MouseMoveEvent( ZedGraphControl control, MouseEventArgs e )
 		{
 			GraphPane myPane = control.GraphPane;
 			PointF mousePt = new PointF( e.X, e.Y );
@@ -5865,6 +5907,7 @@ namespace ZedGraph.ControlTest
 
 			return false;
 		}
+
 	}
 }
 
