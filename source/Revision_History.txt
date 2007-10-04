@@ -1,5 +1,9 @@
 == Version 5 ==
-;25-Sep-2007 (By Champion)
+
+;3-Oct-2007 (By Champion)
+: [FIX] DataSourcePointList problem with accessing reflection data & name "Item"
+
+;25-Sep-2007 (By Champion) v5.1.1 Release
 : [FIX] Add CacheItemPriority.NotRemovable to protect temp images from premature removal (thanks to nocnoc)
 : [FIX] Protect MinorStep and MajorStep properties from values below 1e-300 to avoid lockup
 : [UPD] Make DataSourcePointList generate ordinals instead of PointPair.Missing for missing arrays

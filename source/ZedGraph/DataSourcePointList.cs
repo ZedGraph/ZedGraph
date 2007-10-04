@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" /> 
 	///  
 	/// <author>John Champion</author> 
-	/// <version> $Revision: 3.4 $ $Date: 2007-09-19 06:41:56 $ </version> 
+	/// <version> $Revision: 3.5 $ $Date: 2007-10-04 01:31:18 $ </version> 
 	[Serializable]
 	public class DataSourcePointList : IPointList
 	{
@@ -239,8 +239,11 @@ namespace ZedGraph
 			if ( dataMember == null || dataMember == string.Empty )
 				return index + 1;
 
-			PropertyInfo pInfo = row.GetType().GetProperty( dataMember );
+			//Type myType = row.GetType();
 			DataRowView drv = row as DataRowView;
+			PropertyInfo pInfo = null;
+			if ( drv == null )
+				pInfo = row.GetType().GetProperty( dataMember );
 
 			object val = null;
 

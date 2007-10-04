@@ -33,6 +33,7 @@ namespace ZedGraph.ControlTest
 			this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
 			this.toolStripStatusXY = new System.Windows.Forms.ToolStripStatusLabel();
 			this.zedGraphControl1 = new ZedGraph.ZedGraphControl();
+			this.statusLabelLastClick = new System.Windows.Forms.ToolStripStatusLabel();
 			this.statusStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -40,7 +41,8 @@ namespace ZedGraph.ControlTest
 			// 
 			this.statusStrip1.Items.AddRange( new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
-            this.toolStripStatusXY} );
+            this.toolStripStatusXY,
+            this.statusLabelLastClick} );
 			this.statusStrip1.Location = new System.Drawing.Point( 0, 393 );
 			this.statusStrip1.Name = "statusStrip1";
 			this.statusStrip1.Size = new System.Drawing.Size( 520, 22 );
@@ -78,6 +80,12 @@ namespace ZedGraph.ControlTest
 			this.zedGraphControl1.MouseDownEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseDownEvent );
 			this.zedGraphControl1.MouseMoveEvent += new ZedGraph.ZedGraphControl.ZedMouseEventHandler( this.zedGraphControl1_MouseMoveEvent );
 			// 
+			// statusLabelLastClick
+			// 
+			this.statusLabelLastClick.Name = "statusLabelLastClick";
+			this.statusLabelLastClick.Size = new System.Drawing.Size( 103, 17 );
+			this.statusLabelLastClick.Text = "statusLabelLastClick";
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
@@ -103,6 +111,7 @@ namespace ZedGraph.ControlTest
 		private System.Windows.Forms.StatusStrip statusStrip1;
 		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
 		private System.Windows.Forms.ToolStripStatusLabel toolStripStatusXY;
+		private System.Windows.Forms.ToolStripStatusLabel statusLabelLastClick;
 	}
 }
 

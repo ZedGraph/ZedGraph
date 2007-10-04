@@ -49,6 +49,8 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DateAxisTutorial( zedGraphControl1 );
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DataSourcePointList( zedGraphControl1 );
+			CreateGraph_DataSourcePointListTest( zedGraphControl1 );
+			//CreateGraph_DataSourcePointListArrayList( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_FilteredPointList( zedGraphControl1 );
@@ -117,7 +119,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_VerticalBars( zedGraphControl1 );
 			//CreateGraph_VerticalLinearBars( zedGraphControl1 );
 			//CreateGraph_DualY( zedGraphControl1 );
-			CreateGraph_X2Axis( zedGraphControl1 );
+			//CreateGraph_X2Axis( zedGraphControl1 );
 
 			SetSize();
 			zedGraphControl1.AxisChange();
@@ -5045,6 +5047,94 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 		}
 
+		private void CreateGraph_DataSourcePointListTest( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+			myPane.Title.Text = "DataSourcePointList Test";
+			myPane.XAxis.Title.Text = "Item";
+			myPane.YAxis.Title.Text = "Quantity";
+
+			DataSourcePointList dspl = new DataSourcePointList();
+			DataTable productsTable = new DataTable();
+			productsTable.Columns.Add( "Item", typeof( double ) );
+			productsTable.Columns.Add( "Quantity", typeof( double ) );
+			productsTable.Rows.Add( 1, 10.0 );
+			productsTable.Rows.Add( 2, 20.0 );
+			productsTable.Rows.Add( 3, 50.0 );
+			productsTable.Rows.Add( 4, 40.0 );
+			productsTable.Rows.Add( 5, 10.0 );
+			productsTable.Rows.Add( 6, 70.0 );
+			productsTable.Rows.Add( 7, 30.0 );
+			productsTable.Rows.Add( 8, 20.0 );
+			productsTable.Rows.Add( 9, 40.0 );
+
+			//Dim ProductsTable As DataTable = GetProductsData()
+
+			DataRow dr = productsTable.Rows[0];
+			//DataRowView drv = productsTable.Rows[2] as DataRowView;
+			//System.Reflection.PropertyInfo pInfo = dr.GetType().GetProperty( "Item" );
+
+			//System.Reflection.PropertyInfo pInfo = dr[0].GetType();
+
+			double x1 = (double)dr["Item"];
+
+			double x = (double)dr[0];
+			double y = (double)dr[1];
+
+			dspl.DataSource = productsTable;
+			dspl.XDataMember = "Item";
+			dspl.YDataMember = "Quantity";
+			dspl.ZDataMember = null;
+			//dspl.TagDataMember = "Item";
+
+			myPane.XAxis.Type = AxisType.Text;
+			LineItem myCurve = myPane.AddCurve( "Item", dspl, Color.Blue );
+			myCurve.Line.IsVisible = false;
+			z1.IsShowPointValues = true;
+			z1.AxisChange();
+		}
+
+		private void CreateGraph_DataSourcePointListArrayList( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+			myPane.Title.Text = "DataSourcePointList Test";
+			myPane.XAxis.Title.Text = "Item";
+			myPane.YAxis.Title.Text = "Quantity";
+
+			DataSourcePointList dspl = new DataSourcePointList();
+			List<MySimplePoint> list = new List<MySimplePoint>();
+			list.Add( new MySimplePoint( 1, 10.0, "Point #1" ) );
+			list.Add( new MySimplePoint( 2, 20.0, "Point #2" ) );
+			list.Add( new MySimplePoint( 3, 50.0, "Point #3" ) );
+			list.Add( new MySimplePoint( 4, 40.0, "Point #4" ) );
+			list.Add( new MySimplePoint( 5, 10.0, "Point #5" ) );
+			list.Add( new MySimplePoint( 6, 70.0, "Point #6" ) );
+			list.Add( new MySimplePoint( 7, 30.0, "Point #7" ) );
+			list.Add( new MySimplePoint( 8, 20.0, "Point #8" ) );
+			list.Add( new MySimplePoint( 9, 40.0, "Point #9" ) );
+
+			dspl.DataSource = list;
+			dspl.XDataMember = "X";
+			dspl.YDataMember = "Y";
+			dspl.ZDataMember = null;
+			dspl.TagDataMember = "Tag";
+
+			//System.Reflection.PropertyInfo pInfo = dr.GetType().GetProperty( "ItemX" );
+
+			//System.Reflection.PropertyInfo pInfo = dr[0].GetType();
+
+			//double x1 = (double)dr["Itemx"];
+
+			//double x = (double)dr[0];
+			//double y = (double)dr[1];
+
+			myPane.XAxis.Type = AxisType.Text;
+			LineItem myCurve = myPane.AddCurve( "Item", dspl, Color.Blue );
+			myCurve.Line.IsVisible = false;
+			z1.IsShowPointValues = true;
+			z1.AxisChange();
+		}
+
 		private void CreateGraph_BarJunk( ZedGraphControl z1 )
 		{
 			GraphPane grPane = z1.GraphPane;
@@ -5907,7 +5997,47 @@ namespace ZedGraph.ControlTest
 
 			return false;
 		}
+	}
 
+	public struct MySimplePoint
+	{
+		private double _x;
+		private double _y;
+		private string _tag;
+
+//		public MySimplePoint() : this( PointPair.Missing, PointPair.Missing, null )
+//		{
+//		}
+
+		public MySimplePoint( double x, double y )
+			: this( x, y, null )
+		{
+		}
+
+		public MySimplePoint( double x, double y, string tag )
+		{
+			_x = x;
+			_y = y;
+			_tag = tag;
+		}
+
+		public double X
+		{
+			get { return _x; }
+			set { _x = value; }
+		}
+
+		public double Y
+		{
+			get { return _y; }
+			set { _y = value; }
+		}
+
+		public string Tag
+		{
+			get { return _tag; }
+			set { _tag = value; }
+		}
 	}
 }
 
