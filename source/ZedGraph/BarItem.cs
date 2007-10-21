@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="BarSettings.Type"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.24 $ $Date: 2007-09-22 23:07:11 $ </version>
+	/// <version> $Revision: 3.25 $ $Date: 2007-10-21 04:00:33 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -259,11 +259,39 @@ namespace ZedGraph
 		/// <param name="valueFormat">The double.ToString string format to use for creating
 		/// the labels.
 		/// </param>
-		public static void CreateBarLabels( GraphPane pane, bool isBarCenter, string valueFormat )
+		public static void CreateBarLabels(GraphPane pane, bool isBarCenter, string valueFormat)
 		{
-			CreateBarLabels( pane, isBarCenter, valueFormat, TextObj.Default.FontFamily,
+			bool isVertical = pane.BarSettings.Base == BarBase.X;
+
+			CreateBarLabels(pane, isBarCenter, valueFormat, isVertical, TextObj.Default.FontFamily,
 					TextObj.Default.FontSize, TextObj.Default.FontColor, TextObj.Default.FontBold,
-					TextObj.Default.FontItalic, TextObj.Default.FontUnderline );
+					TextObj.Default.FontItalic, TextObj.Default.FontUnderline);
+		}
+
+		/// <summary>
+		/// Create a <see cref="TextObj" /> for each bar in the <see cref="GraphPane" />.
+		/// </summary>
+		/// <remarks>
+		/// This method will go through the bars, create a label that corresponds to the bar value,
+		/// and place it on the graph depending on user preferences.  This works for horizontal or
+		/// vertical bars in clusters or stacks, but only for <see cref="BarItem" /> types.  This method
+		/// does not apply to <see cref="ErrorBarItem" /> or <see cref="HiLowBarItem" /> objects.
+		/// Call this method only after calling <see cref="GraphPane.AxisChange()" />.
+		/// </remarks>
+		/// <param name="pane">The GraphPane in which to place the text labels.</param>
+		/// <param name="isBarCenter">true to center the labels inside the bars, false to
+		/// place the labels just above the top of the bar.</param>
+		/// <param name="isVertical">true to make the text orientation vertical, false
+		/// for horizontal</param>
+		/// <param name="valueFormat">The double.ToString string format to use for creating
+		/// the labels.
+		/// </param>
+		public static void CreateBarLabels(GraphPane pane, bool isBarCenter, string valueFormat,
+				bool isVertical )
+		{
+			CreateBarLabels(pane, isBarCenter, valueFormat, isVertical, TextObj.Default.FontFamily,
+					TextObj.Default.FontSize, TextObj.Default.FontColor, TextObj.Default.FontBold,
+					TextObj.Default.FontItalic, TextObj.Default.FontUnderline);
 		}
 
 		/// <summary>
@@ -294,6 +322,39 @@ namespace ZedGraph
 		{
 			bool isVertical = pane.BarSettings.Base == BarBase.X;
 
+			CreateBarLabels(pane, isBarCenter, valueFormat, isVertical, TextObj.Default.FontFamily,
+					TextObj.Default.FontSize, TextObj.Default.FontColor, TextObj.Default.FontBold,
+					TextObj.Default.FontItalic, TextObj.Default.FontUnderline);
+		}
+
+		/// <summary>
+		/// Create a <see cref="TextObj" /> for each bar in the <see cref="GraphPane" />.
+		/// </summary>
+		/// <remarks>
+		/// This method will go through the bars, create a label that corresponds to the bar value,
+		/// and place it on the graph depending on user preferences.  This works for horizontal or
+		/// vertical bars in clusters or stacks, but only for <see cref="BarItem" /> types.  This method
+		/// does not apply to <see cref="ErrorBarItem" /> or <see cref="HiLowBarItem" /> objects.
+		/// Call this method only after calling <see cref="GraphPane.AxisChange()" />.
+		/// </remarks>
+		/// <param name="pane">The GraphPane in which to place the text labels.</param>
+		/// <param name="isBarCenter">true to center the labels inside the bars, false to
+		/// place the labels just above the top of the bar.</param>
+		/// <param name="valueFormat">The double.ToString string format to use for creating
+		/// the labels.
+		/// </param>
+		/// <param name="isVertical">true to make the text orientation vertical, false
+		/// for horizontal</param>
+		/// <param name="fontColor">The color in which to draw the labels</param>
+		/// <param name="fontFamily">The string name of the font family to use for the labels</param>
+		/// <param name="fontSize">The floating point size of the font, in scaled points</param>
+		/// <param name="isBold">true for a bold font type, false otherwise</param>
+		/// <param name="isItalic">true for an italic font type, false otherwise</param>
+		/// <param name="isUnderline">true for an underline font type, false otherwise</param>
+		public static void CreateBarLabels( GraphPane pane, bool isBarCenter, string valueFormat,
+			bool isVertical, string fontFamily, float fontSize, Color fontColor, bool isBold, bool isItalic,
+			bool isUnderline )
+		{
 			// keep a count of the number of BarItems
 			int curveIndex = 0;
 

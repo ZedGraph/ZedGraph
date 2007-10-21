@@ -67,7 +67,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.84 $ $Date: 2007-07-30 05:53:03 $ </version>
+	/// <version> $Revision: 3.85 $ $Date: 2007-10-21 04:00:33 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -182,6 +182,13 @@ namespace ZedGraph
 		/// value.
 		/// </summary>
 		private bool _isEnableHZoom = true;
+
+		/// <summary>
+		/// private value that determines whether or not zooming is enabled with the mousewheel.
+		/// Note that this property is used in combination with the <see cref="IsEnableHZoom"/> and
+		/// <see cref="IsEnableVZoom" /> properties to control zoom options.
+		/// </summary>
+		private bool _isEnableWheelZoom = true;
 
 		/// <summary>
 		/// private value that determines whether or not point editing is enabled in the

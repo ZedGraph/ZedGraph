@@ -786,7 +786,7 @@ namespace ZedGraph
 		/// <param name="e">A <see cref="MouseEventArgs" /> instance</param>
 		protected void ZedGraphControl_MouseWheel( object sender, MouseEventArgs e )
 		{
-			if ( ( _isEnableVZoom || _isEnableHZoom ) && _masterPane != null )
+			if ( ( _isEnableVZoom || _isEnableHZoom ) && _isEnableWheelZoom && _masterPane != null )
 			{
 				GraphPane pane = this.MasterPane.FindChartRect( new PointF( e.X, e.Y ) );
 				if ( pane != null && e.Delta != 0 )

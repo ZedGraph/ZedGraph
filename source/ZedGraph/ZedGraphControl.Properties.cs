@@ -509,6 +509,24 @@ namespace ZedGraph
 			get { return _isEnableVZoom; }
 			set { _isEnableVZoom = value; }
 		}
+
+		/// <summary>
+		/// Gets or sets a value that determines whether or not zooming is allowed via the mouse wheel.
+		/// </summary>
+		/// <remarks>
+		/// Wheel zooming is done by rotating the mouse wheel.
+		/// Note that this property is used in combination with the <see cref="IsEnableHZoom"/> and
+		/// <see cref="IsEnableVZoom" /> properties to control zoom options.
+		/// </remarks>
+		[Bindable( true ), Category( "Display" ), NotifyParentProperty( true ),
+		 DefaultValue( true ),
+		 Description( "true to allow zooming with the mouse wheel" )]
+		public bool IsEnableWheelZoom
+		{
+			get { return _isEnableWheelZoom; }
+			set { _isEnableWheelZoom = value; }
+		}
+
 		/// <summary>
 		/// Gets or sets a value that determines whether or not panning is allowed for the control in
 		/// the horizontal direction.

@@ -1,8 +1,9 @@
 == Version 5 ==
 
-;3-Oct-2007 (By Champion)
+;18-Oct-2007 (By Champion)
 : [FIX] DataSourcePointList problem with accessing reflection data & name "Item"
 : [FIX] Add protection for DBNull to DataSourcePointList
+: [UPD] Add isVertical overloads for BarItem.CreateBarLabels
 
 ;25-Sep-2007 (By Champion) v5.1.1 Release
 : [FIX] Add CacheItemPriority.NotRemovable to protect temp images from premature removal (thanks to nocnoc)

@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.OleDb;
+using System.Data.Sql;
+using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
@@ -33,7 +35,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BarJunk3( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
-			//CreateGraph_BasicLinearSimple( zedGraphControl1 );
+			CreateGraph_BasicLinearSimple( zedGraphControl1 );
 			//CreateGraph_BasicLinearSimpleUserSymbol( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
@@ -49,7 +51,8 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DateAxisTutorial( zedGraphControl1 );
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DataSourcePointList( zedGraphControl1 );
-			CreateGraph_DataSourcePointListTest( zedGraphControl1 );
+			//CreateGraph_DataSourcePointListTest( zedGraphControl1 );
+			//CreateGraph_DataSourcePointListQuery( zedGraphControl1 );
 			//CreateGraph_DataSourcePointListArrayList( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
@@ -1250,6 +1253,7 @@ namespace ZedGraph.ControlTest
 			GraphPane myPane = z1.GraphPane;
 			z1.IsEnableSelection = true;
 			z1.IsZoomOnMouseCenter = true;
+			z1.IsEnableWheelZoom = false;
 
 			Selection.Fill = new Fill( Color.Red );
 			Selection.Line.Color = Color.Red;
@@ -1357,23 +1361,129 @@ namespace ZedGraph.ControlTest
 			GraphPane myPane = z1.GraphPane;
 
 			PointPairList list = new PointPairList();
+			PointPairList list2 = new PointPairList();
 			const int count = 10;
 
 			for ( int i = 0; i < count; i++ )
 			{
 				double x = i;
+				double x2 = i + 0.4;
 
-				double y = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.2 ) );
+				double y = 300.0 * (1.0 + Math.Sin(x * 0.2));
+				double y2 = 250.0 * (1.0 + Math.Sin(x2 * 0.2) );
 
-				list.Add( x, y, i / 36.0 );
+				list.Add(x, y, i / 36.0);
+				list2.Add(x2, y2, i / 36.0);
 			}
-			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			LineItem myCurve = myPane.AddCurve("curve", list, Color.Blue, SymbolType.Diamond);
+			LineItem myCurve2 = myPane.AddCurve("curve 2", list2, Color.Green, SymbolType.Circle);
 
+			// Just a placeholder for the LineObj that will show the cursor location
+			LineObj cursorLine = new LineObj(Color.Black, 1.0, 0.0, 1.0, 1.0);
+			// Location will be actual X Scale value, but will value will be chart fraction from 0 to 1
+			cursorLine.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
+			// Start with the cursor line hidden
+			cursorLine.IsVisible = false;
+			// Make the cursorline dashed
+			cursorLine.Line.DashOff = 5;
+			cursorLine.Line.DashOn = 1;
+			cursorLine.Line.Style = DashStyle.Custom;
+
+			// Add a tag so we can easily find the lineobj in MouseMove handler
+			cursorLine.Tag = "cursorLine";
+			myPane.GraphObjList.Add(cursorLine);
 
 			//myPane.XAxis.Scale.MajorStep = 1e-301;
 
 			z1.AxisChange();
 
+			z1.MouseMoveEvent += new ZedGraphControl.ZedMouseEventHandler(BasicLinear_MouseMoveEvent);
+		}
+
+		CurveItem nearestCurve = null;
+		int nearestIndex = -1;
+		double nearestX = 1e300;
+
+		private bool BasicLinear_MouseMoveEvent(ZedGraphControl sender, MouseEventArgs e)
+		{
+			// Save the mouse location
+			PointF mousePt = new PointF(e.X, e.Y);
+
+			// Find the Chart rect that contains the current mouse location
+			GraphPane pane = sender.MasterPane.FindChartRect(mousePt);
+
+			// If pane is non-null, we have a valid location.  Otherwise, the mouse is not
+			// within any chart rect.
+			if (pane != null)
+			{
+				LineObj cursorLine = pane.GraphObjList["cursorLine"] as LineObj;
+
+				// NOTE: the above line will throw an exception if the "cursorLine" tag can't be found
+				// (if it was deleted or something)
+
+				cursorLine.IsVisible = false;
+
+				nearestCurve = null;
+				nearestIndex = -1;
+				nearestX = 1e300;
+
+				double x, x2, y, y2;
+				// Convert the mouse location to X, Y, and Y2 scale values
+				pane.ReverseTransform(mousePt, out x, out x2, out y, out y2);
+
+				foreach (CurveItem curve in pane.CurveList)
+				{
+					IPointList pointList = curve.Points;
+					for (int i = 0; i < pointList.Count; i++)
+					{
+						PointPair pt = pointList[i];
+						if (Math.Abs(x - pt.X) < nearestX)
+						{
+							nearestCurve = curve;
+							nearestIndex = i;
+							nearestX = Math.Abs(x - pt.X);
+						}
+					}
+				}
+
+
+				if (nearestIndex >= 0 && nearestCurve != null)
+				{
+					PointPair pt = nearestCurve.Points[nearestIndex];
+
+					// Format the status label text
+					toolStripStatusXY.Text = "(" + pt.X.ToString("f2") + ", " + pt.Y.ToString("f2") + ")";
+
+					cursorLine.Location.X1 = pt.X;
+					cursorLine.Location.Width = 0;
+					cursorLine.IsVisible = true;
+
+					this.Cursor = Cursors.Cross;
+				}
+				else
+				{
+					toolStripStatusXY.Text = string.Empty;
+					this.Cursor = Cursors.Default;
+				}
+
+				statusStrip1.Refresh();
+				sender.Refresh();
+				//sender.Invalidate();
+				return true;
+			}
+			else
+			{
+				// If there is no valid data, then clear the status label text
+				toolStripStatusXY.Text = string.Empty;
+
+				sender.Refresh();
+
+				this.Cursor = Cursors.Default;
+
+				// Return false to indicate we have not processed the MouseMoveEvent
+				// ZedGraphControl should still go ahead and handle it
+				return false;
+			}
 
 		}
 
@@ -5094,6 +5204,77 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 		}
 
+		private void CreateGraph_DataSourcePointListQuery( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+			myPane.Title.Text = "DataSourcePointList Test";
+			myPane.XAxis.Title.Text = "Item";
+			myPane.YAxis.Title.Text = "Quantity";
+
+			DataSourcePointList dspl = new DataSourcePointList();
+
+
+			string connStr = @"server=(local)\SQLExpress;AttachDbFileName=c:\temp\testdb.mdb;" + 
+				"Integrated Security=true;User Instance=true";
+
+			SqlConnection connection = new SqlConnection(connStr);
+			connection.Open();
+
+
+			//string strConn = "Provider=SQLOLEDB;Data Source=(local)\\NetSDK;" +
+			//		"Initial Catalog=Northwind;Trusted_Connection=Yes;";
+			//string strSQL = "SELECT CustomerID, CompanyName, ContactName, Phone " +
+			//		"FROM Customers";
+			//OleDbDataAdapter da = new OleDbDataAdapter( strSQL, strConn );
+			//DataSet ds = new DataSet();
+			//da.Fill( ds, "Customers" );
+
+			//			string cn = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source = Northwind.mdb;Persist Security Info=False";
+			//			string sql = "SELECT * FROM Orders";
+			//			OleDbConnection con = new OleDbConnection( cn );
+			//			OleDbDataAdapter adapt = new OleDbDataAdapter();
+			//			adapt.SelectCommand = new OleDbCommand( sql, con );
+
+			DataTable productsTable = new DataTable();
+			productsTable.Columns.Add( "Item", typeof( double ) );
+			productsTable.Columns.Add( "Quantity", typeof( double ) );
+			productsTable.Rows.Add( 1, 10.0 );
+			productsTable.Rows.Add( 2, 20.0 );
+			productsTable.Rows.Add( 3, 50.0 );
+			productsTable.Rows.Add( 4, 40.0 );
+			productsTable.Rows.Add( 5, 10.0 );
+			productsTable.Rows.Add( 6, 70.0 );
+			productsTable.Rows.Add( 7, 30.0 );
+			productsTable.Rows.Add( 8, 20.0 );
+			productsTable.Rows.Add( 9, 40.0 );
+
+			//Dim ProductsTable As DataTable = GetProductsData()
+
+			DataRow dr = productsTable.Rows[0];
+			//DataRowView drv = productsTable.Rows[2] as DataRowView;
+			//System.Reflection.PropertyInfo pInfo = dr.GetType().GetProperty( "Item" );
+
+			//System.Reflection.PropertyInfo pInfo = dr[0].GetType();
+
+			double x1 = (double)dr["Item"];
+
+			double x = (double)dr[0];
+			double y = (double)dr[1];
+
+			dspl.DataSource = productsTable;
+			dspl.XDataMember = "Item";
+			dspl.YDataMember = "Quantity";
+			dspl.ZDataMember = null;
+			//dspl.TagDataMember = "Item";
+
+			myPane.XAxis.Type = AxisType.Text;
+			LineItem myCurve = myPane.AddCurve( "Item", dspl, Color.Blue );
+			myCurve.Line.IsVisible = false;
+			z1.IsShowPointValues = true;
+			z1.AxisChange();
+		}
+
+		//CreateGraph_DataSourcePointListTest( zedGraphControl1 );
 		private void CreateGraph_DataSourcePointListArrayList( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.GraphPane;
@@ -5822,6 +6003,7 @@ namespace ZedGraph.ControlTest
 			PointF mousePt = new PointF( e.X, e.Y );
 
 
+/*
 			return false;
 
 			double xvalue1 = zedGraphControl1.GraphPane.XAxis.Scale.ReverseTransform( 245 );
@@ -5857,7 +6039,7 @@ namespace ZedGraph.ControlTest
 			sender.GraphPane.ReverseTransform( new PointF( e.X, e.Y ), out x, out x2, out y, out y2 );
 
 			return false;
-
+*/
 			CurveItem dragCurve;
 			int dragIndex;
 			GraphPane myPane = this.zedGraphControl1.GraphPane;
