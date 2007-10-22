@@ -1378,6 +1378,8 @@ namespace ZedGraph.ControlTest
 			LineItem myCurve = myPane.AddCurve("curve", list, Color.Blue, SymbolType.Diamond);
 			LineItem myCurve2 = myPane.AddCurve("curve 2", list2, Color.Green, SymbolType.Circle);
 
+			myCurve.Line.IsAntiAlias = true;
+/*
 			// Just a placeholder for the LineObj that will show the cursor location
 			LineObj cursorLine = new LineObj(Color.Black, 1.0, 0.0, 1.0, 1.0);
 			// Location will be actual X Scale value, but will value will be chart fraction from 0 to 1
@@ -1394,10 +1396,10 @@ namespace ZedGraph.ControlTest
 			myPane.GraphObjList.Add(cursorLine);
 
 			//myPane.XAxis.Scale.MajorStep = 1e-301;
-
+*/
 			z1.AxisChange();
 
-			z1.MouseMoveEvent += new ZedGraphControl.ZedMouseEventHandler(BasicLinear_MouseMoveEvent);
+//			z1.MouseMoveEvent += new ZedGraphControl.ZedMouseEventHandler(BasicLinear_MouseMoveEvent);
 		}
 
 		CurveItem nearestCurve = null;
@@ -3260,7 +3262,7 @@ namespace ZedGraph.ControlTest
 			PointPairList list3 = new PointPairList();
 			Random rand = new Random();
 
-			for ( int i = 0; i < 9; i++ )
+			for ( int i = 0; i < 5; i++ )
 			{
 				double x = (double)i / 3 + 4;
 				double y = rand.NextDouble() * .1;
@@ -3277,7 +3279,7 @@ namespace ZedGraph.ControlTest
 			//myCurve.IsOverrideOrdinal = true;
 
 			myPane.XAxis.MajorTic.IsBetweenLabels = true;
-			string[] labels = { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+			string[] labels = { "one", "two", "three", "four", "five" };
 			myPane.XAxis.Scale.TextLabels = labels;
 			myPane.XAxis.Type = AxisType.Text;
 
@@ -3425,12 +3427,12 @@ namespace ZedGraph.ControlTest
 
 
 			// Apply logic that alternately keeps the highest or lowest point within each "bin" of data
-			//list.IsApplyHighLowLogic = true;
+			list.IsApplyHighLowLogic = true;
 
 			// Set the range of data of interest.  In effect you can limit the plotted data to only a
 			// certain window within the total data range.  In this case, I set the minimum and maximum
 			// bounds to include all data points.  Also, only show 100 data points on the plot.
-			list.SetBounds( -1e20, 1e20, 100 );
+			list.SetBounds( -1e20, 1e20, 1000 );
 
 			z1.AxisChange();
 		}

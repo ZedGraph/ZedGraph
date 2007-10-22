@@ -2198,8 +2198,8 @@ namespace ZedGraph.LibTest
 			Graphics g = this.CreateGraphics();
 			IntPtr hdc = g.GetHdc();
 			//metaFile = new Metafile( hdc, EmfType.EmfPlusDual, "ZedGraph" );
-			Metafile metaFile = new Metafile( hdc, EmfType.EmfPlusOnly );
-			g.ReleaseHdc( hdc );
+			Metafile metaFile = new Metafile(hdc, EmfType.EmfPlusOnly);
+			g.ReleaseHdc(hdc);
 			g.Dispose();
 
 			Graphics gMeta = Graphics.FromImage( metaFile );

@@ -22,6 +22,10 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Text;
+
+using System.Runtime.InteropServices;
+//using System.Diagnostics;
 
 namespace ZedGraph
 {
@@ -262,6 +266,59 @@ namespace ZedGraph
 		}
 
 		/// <summary>
+		/// Special handler that copies the current image to an Emf file on the clipboard.
+		/// </summary>
+		/// <remarks>This version is similar to the regular <see cref="Copy" /> method, except that
+		/// it will place an Emf image (vector) on the ClipBoard instead of the regular bitmap.</remarks>
+		/// <param name="isShowMessage">boolean value that determines whether or not a prompt will be
+		/// displayed.  true to show a message of "Image Copied to ClipBoard".</param>
+		public void CopyEmf(bool isShowMessage)
+		{
+			if (_masterPane != null)
+			{
+				// Threaded copy mode to avoid crash with MTA
+				// Contributed by Dave Moor
+				Thread ct = new Thread(new ThreadStart(this.ClipboardCopyThreadEmf));
+				//ct.ApartmentState = ApartmentState.STA;
+				ct.SetApartmentState(ApartmentState.STA);
+				ct.Start();
+				ct.Join();
+
+				if (isShowMessage)
+				{
+					string str = _resourceManager.GetString("copied_to_clip");
+					MessageBox.Show(str);
+				}
+			}
+		}
+
+		/// <summary>
+		/// A threaded version of the copy method to avoid crash with MTA
+		/// </summary>
+		private void ClipboardCopyThreadEmf()
+		{
+			using (Graphics g = this.CreateGraphics())
+			{
+				IntPtr hdc = g.GetHdc();
+				//metaFile = new Metafile( hdc, EmfType.EmfPlusDual, "ZedGraph" );
+				Metafile metaFile = new Metafile(hdc, EmfType.EmfPlusOnly);
+				g.ReleaseHdc(hdc);
+
+				using (Graphics gMeta = Graphics.FromImage(metaFile))
+				{
+					this._masterPane.Draw(gMeta);
+					//gMeta.Dispose();
+				}
+
+				//IntPtr hMeta = metaFile.GetHenhmetafile();
+				ClipboardMetafileHelper.PutEnhMetafileOnClipboard( this.Handle, metaFile );
+				//System.Windows.Forms.Clipboard.SetDataObject(hMeta, true);
+
+				//g.Dispose();
+			}
+		}
+
+		/// <summary>
 		/// Handler for the "Save Image As" context menu item.  Copies the current image to the selected
 		/// file.
 		/// </summary>
@@ -282,6 +339,25 @@ namespace ZedGraph
 		/// </remarks>
 		public void SaveAs()
 		{
+			SaveAs( null );
+		}
+
+		/// <summary>
+		/// Copies the current image to the selected file in  
+		/// Emf (vector), or a variety of Bitmap formats.
+		/// </summary>
+		/// <param name="DefaultFileName">
+		/// Accepts a default file name for the file dialog (if "" or null, default is not used)
+		/// </param>
+		/// <returns>
+		/// The file name saved, or "" if cancelled.
+		/// </returns>
+		/// <remarks>
+		/// Note that <see cref="SaveAsBitmap" /> and <see cref="SaveAsEmf" /> methods are provided
+		/// which allow for Bitmap-only or Emf-only handling of the "Save As" context menu item.
+		/// </remarks>
+		public String SaveAs( String DefaultFileName )
+		{
 			if ( _masterPane != null )
 			{
 				_saveFileDialog.Filter =
@@ -292,6 +368,27 @@ namespace ZedGraph
 					"Tiff Format (*.tif)|*.tif|" +
 					"Bmp Format (*.bmp)|*.bmp";
 
+				if ( DefaultFileName != null && DefaultFileName.Length > 0 )
+				{
+					String ext = System.IO.Path.GetExtension( DefaultFileName ).ToLower();
+					switch (ext)
+					{
+						case ".emf": _saveFileDialog.FilterIndex = 1; break;
+						case ".png": _saveFileDialog.FilterIndex = 2; break;
+						case ".gif": _saveFileDialog.FilterIndex = 3; break;
+						case ".jpeg":
+						case ".jpg": _saveFileDialog.FilterIndex = 4; break;
+						case ".tiff":
+						case ".tif": _saveFileDialog.FilterIndex = 5; break;
+						case ".bmp": _saveFileDialog.FilterIndex = 6; break;
+					}
+					//If we were passed a file name, not just an extension, use it
+					if ( DefaultFileName.Length > ext.Length )
+					{
+						_saveFileDialog.FileName = DefaultFileName;
+					}
+				}
+
 				if ( _saveFileDialog.ShowDialog() == DialogResult.OK )
 				{
 					Stream myStream = _saveFileDialog.OpenFile();
@@ -300,26 +397,29 @@ namespace ZedGraph
 						if ( _saveFileDialog.FilterIndex == 1 )
 						{
 							myStream.Close();
-							_masterPane.GetMetafile().Save( _saveFileDialog.FileName );
+							//_masterPane.GetMetafile().Save( _saveFileDialog.FileName );
+							SaveEmfFile(_saveFileDialog.FileName);
 						}
 						else
 						{
 							ImageFormat format = ImageFormat.Png;
-							if ( _saveFileDialog.FilterIndex == 3 )
-								format = ImageFormat.Gif;
-							else if ( _saveFileDialog.FilterIndex == 4 )
-								format = ImageFormat.Jpeg;
-							else if ( _saveFileDialog.FilterIndex == 5 )
-								format = ImageFormat.Tiff;
-							else if ( _saveFileDialog.FilterIndex == 6 )
-								format = ImageFormat.Bmp;
+                            switch (_saveFileDialog.FilterIndex)
+							{
+								case 2: format = ImageFormat.Png; break;
+								case 3: format = ImageFormat.Gif; break;
+								case 4: format = ImageFormat.Jpeg; break;
+								case 5: format = ImageFormat.Tiff; break;
+								case 6: format = ImageFormat.Bmp; break;
+							}
 
 							_masterPane.GetImage().Save( myStream, format );
 							myStream.Close();
 						}
+                        return _saveFileDialog.FileName;
 					}
 				}
 			}
+			return "";
 		}
 
 		/// <summary>
@@ -383,9 +483,112 @@ namespace ZedGraph
 					if ( myStream != null )
 					{
 						myStream.Close();
-						_masterPane.GetMetafile().Save( _saveFileDialog.FileName );
+						//_masterPane.GetMetafile().Save( _saveFileDialog.FileName );
+						SaveEmfFile(_saveFileDialog.FileName);
 					}
 				}
+			}
+		}
+
+//		protected void SaveEMFFile(object sender, System.EventArgs e)
+		protected void SaveEmfFile( string fileName )
+		{
+			using (Graphics g = this.CreateGraphics())
+			{
+				IntPtr hdc = g.GetHdc();
+				Metafile metaFile = new Metafile(hdc, EmfType.EmfPlusOnly);
+				using (Graphics gMeta = Graphics.FromImage(metaFile))
+				{
+					//gMeta.CompositingMode = CompositingMode.SourceCopy; 
+					gMeta.CompositingQuality = CompositingQuality.HighQuality;
+					gMeta.InterpolationMode = InterpolationMode.HighQualityBicubic;
+					gMeta.SmoothingMode = SmoothingMode.AntiAlias;
+					//gMeta.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality; 
+					this._masterPane.Draw(gMeta);
+					//gMeta.Dispose();
+				}
+
+				ClipboardMetafileHelper.SaveEnhMetafileToFile(metaFile, fileName );
+
+				g.ReleaseHdc(hdc);
+				//g.Dispose();
+			}
+
+		}
+
+		public class ClipboardMetafileHelper
+		{
+			[DllImport("user32.dll")]
+			static extern bool OpenClipboard(IntPtr hWndNewOwner);
+			[DllImport("user32.dll")]
+			static extern bool EmptyClipboard();
+			[DllImport("user32.dll")]
+			static extern IntPtr SetClipboardData(uint uFormat, IntPtr hMem);
+			[DllImport("user32.dll")]
+			static extern bool CloseClipboard();
+			[DllImport("gdi32.dll")]
+			static extern IntPtr CopyEnhMetaFile(IntPtr hemfSrc, System.Text.StringBuilder hNULL);
+			[DllImport("gdi32.dll")]
+			static extern bool DeleteEnhMetaFile(IntPtr hemf);
+
+			static public bool SaveEnhMetafileToFile( Metafile mf, string fileName )
+			{
+				bool bResult = false;
+				IntPtr hEMF;
+				hEMF = mf.GetHenhmetafile(); // invalidates mf 
+				if (!hEMF.Equals(new IntPtr(0)))
+				{
+					StringBuilder tempName = new StringBuilder(fileName);
+					CopyEnhMetaFile(hEMF, tempName);
+					DeleteEnhMetaFile(hEMF);
+				}
+				return bResult;
+			}
+
+			static public bool SaveEnhMetafileToFile(Metafile mf)
+			{
+				bool bResult = false;
+				IntPtr hEMF;
+				hEMF = mf.GetHenhmetafile(); // invalidates mf 
+				if (!hEMF.Equals(new IntPtr(0)))
+				{
+					SaveFileDialog sfd = new SaveFileDialog();
+					sfd.Filter = "Extended Metafile (*.emf)|*.emf";
+					sfd.DefaultExt = ".emf";
+					if (sfd.ShowDialog() == DialogResult.OK)
+					{
+						StringBuilder temp = new StringBuilder(sfd.FileName);
+						CopyEnhMetaFile(hEMF, temp);
+					}
+					DeleteEnhMetaFile(hEMF);
+				}
+				return bResult;
+			}
+
+			// Metafile mf is set to a state that is not valid inside this function. 
+			static public bool PutEnhMetafileOnClipboard(IntPtr hWnd, Metafile mf)
+			{
+				bool bResult = false;
+				IntPtr hEMF, hEMF2;
+				hEMF = mf.GetHenhmetafile(); // invalidates mf 
+				if (!hEMF.Equals(new IntPtr(0)))
+				{
+					hEMF2 = CopyEnhMetaFile(hEMF, null);
+					if (!hEMF2.Equals(new IntPtr(0)))
+					{
+						if (OpenClipboard(hWnd))
+						{
+							if (EmptyClipboard())
+							{
+								IntPtr hRes = SetClipboardData(14 /*CF_ENHMETAFILE*/, hEMF2);
+								bResult = hRes.Equals(hEMF2);
+								CloseClipboard();
+							}
+						}
+					}
+					DeleteEnhMetaFile(hEMF);
+				}
+				return bResult;
 			}
 		}
 

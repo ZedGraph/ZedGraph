@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	///
 	/// <author> John Champion with mods by Christophe Holmes</author>
-	/// <version> $Revision: 1.8 $ $Date: 2007-02-18 05:51:53 $ </version>
+	/// <version> $Revision: 1.9 $ $Date: 2007-10-22 07:41:49 $ </version>
 	[Serializable]
 	public class FilteredPointList : IPointList
 	{
@@ -294,32 +294,61 @@ namespace ZedGraph
 		/// <param name="max">The upper bound for the X data of interest</param>
 		/// <param name="maxPts">The maximum number of points allowed to be
 		/// output by the filter</param>
+		// New code mods by ingineer
 		public void SetBounds( double min, double max, int maxPts )
 		{
 			_maxPts = maxPts;
-			
-			// assume data points are equally spaced, and calculate the X step size between
-			// each data point
-			double step = ( _x[ _x.Length - 1 ] - _x[0] ) / (double) _x.Length;
 
-			if ( min < _x[0] )
-				min = _x[0];
-			if ( max > _x[_x.Length - 1] )
-				max = _x[_x.Length - 1];
-
-			// calculate the index of the start of the bounded range
-			int first = (int) ( ( min - _x[0] ) / step );
-
-			// calculate the index of the last point of the bounded range
-			int last = (int) ( ( max - min ) / step + first );
+			// find the index of the start and end of the bounded range
+			int first = Array.BinarySearch( _x, min );
+			int last = Array.BinarySearch( _x, max );
 
 			// Make sure the bounded indices are legitimate
-			first = Math.Max( Math.Min( first, _x.Length ), 0 );
-			last = Math.Max( Math.Min( last, _x.Length ), 0 );
+			// if BinarySearch() doesn't find the value, it returns the bitwise
+			// complement of the index of the 1st element larger than the sought value
+
+			if (first < 0)
+			{
+				if (first == -1)
+					first = 0;
+				else
+					first = ~(first + 1);
+			}
+
+			if ( last < 0 )
+			last = ~last;
 
 			_minBoundIndex = first;
 			_maxBoundIndex = last;
 		}
+
+		// The old version, as of 21-Oct-2007
+		//public void SetBounds2(double min, double max, int maxPts)
+		//{
+		//    _maxPts = maxPts;
+
+		//    // assume data points are equally spaced, and calculate the X step size between
+		//    // each data point
+		//    double step = (_x[_x.Length - 1] - _x[0]) / (double)_x.Length;
+
+		//    if (min < _x[0])
+		//        min = _x[0];
+		//    if (max > _x[_x.Length - 1])
+		//        max = _x[_x.Length - 1];
+
+		//    // calculate the index of the start of the bounded range
+		//    int first = (int)((min - _x[0]) / step);
+
+		//    // calculate the index of the last point of the bounded range
+		//    int last = (int)((max - min) / step + first);
+
+		//    // Make sure the bounded indices are legitimate
+		//    first = Math.Max(Math.Min(first, _x.Length), 0);
+		//    last = Math.Max(Math.Min(last, _x.Length), 0);
+
+		//    _minBoundIndex = first;
+		//    _maxBoundIndex = last;
+		//}
 
 	#endregion
 

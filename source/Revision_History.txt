@@ -3,7 +3,10 @@
 ;18-Oct-2007 (By Champion)
 : [FIX] DataSourcePointList problem with accessing reflection data & name "Item"
 : [FIX] Add protection for DBNull to DataSourcePointList
-: [UPD] Add isVertical overloads for BarItem.CreateBarLabels
+: [UPD] Add ZedGraphControl.SaveAs() overload with default name (thanks to Mark Gray)
+: [UPD] Modify FilteredPointList to handle non-equal-spaced data (thanks to ingineer)
+: [ADD] Add ZedGraphControl.CopyEmf to supply Emf format to clipboard
+: [UPD] Use helper class to add Emf output data from ZedGraphControl.SaveAs()
 
 ;25-Sep-2007 (By Champion) v5.1.1 Release
 : [FIX] Add CacheItemPriority.NotRemovable to protect temp images from premature removal (thanks to nocnoc)
