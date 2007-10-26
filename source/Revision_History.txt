@@ -1,6 +1,6 @@
 == Version 5 ==
 
-;25-Oct-2007 (By Champion)
+;25-Oct-2007 (By Champion) v5.1.2 Release
 : [FIX] DataSourcePointList problem with accessing reflection data & name "Item"
 : [FIX] Add protection for DBNull to DataSourcePointList
 : [UPD] Add ZedGraphControl.SaveAs() overload with default name (thanks to Mark Gray)
@@ -39,6 +39,8 @@
 : [UPD] Add speed optimization to LineItem draw by culling duplicate points (thanks to Dale-a-b)
 : [UPD] Add speed optimization to Symbol draw by culling duplicate points (thanks to Dale-a-b)
 : [NEW] Add Line.IsOptimizedDraw to disable optimizations for highly discontinuous datasets
+
+== Version 5 ==
 
 ;16-Jun-2007 (By Champion) v5.0.10 Release
 : [FIX] Symbols not shown on ordinal scales due to optimization
