@@ -428,7 +428,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// Note that this handler saves as a bitmap only.  The default handler is
-		/// <see cref="SaveAs" />, which allows for Bitmap or EMF formats
+		/// <see cref="SaveAs()" />, which allows for Bitmap or EMF formats
 		/// </remarks>
 		public void SaveAsBitmap()
 		{
@@ -469,7 +469,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <remarks>
 		/// Note that this handler saves as an Emf format only.  The default handler is
-		/// <see cref="SaveAs" />, which allows for Bitmap or EMF formats.
+		/// <see cref="SaveAs()" />, which allows for Bitmap or EMF formats.
 		/// </remarks>
 		public void SaveAsEmf()
 		{
@@ -490,8 +490,15 @@ namespace ZedGraph
 			}
 		}
 
-//		protected void SaveEMFFile(object sender, System.EventArgs e)
-		protected void SaveEmfFile( string fileName )
+		/// <summary>
+		/// Save the current Graph to the specified filename in EMF (vector) format.
+		/// See <see cref="SaveAsEmf()" /> for public access.
+		/// </summary>
+		/// <remarks>
+		/// Note that this handler saves as an Emf format only.  The default handler is
+		/// <see cref="SaveAs()" />, which allows for Bitmap or EMF formats.
+		/// </remarks>
+		internal void SaveEmfFile( string fileName )
 		{
 			using (Graphics g = this.CreateGraphics())
 			{
@@ -516,7 +523,7 @@ namespace ZedGraph
 
 		}
 
-		public class ClipboardMetafileHelper
+		internal class ClipboardMetafileHelper
 		{
 			[DllImport("user32.dll")]
 			static extern bool OpenClipboard(IntPtr hWndNewOwner);
@@ -531,7 +538,7 @@ namespace ZedGraph
 			[DllImport("gdi32.dll")]
 			static extern bool DeleteEnhMetaFile(IntPtr hemf);
 
-			static public bool SaveEnhMetafileToFile( Metafile mf, string fileName )
+			static internal bool SaveEnhMetafileToFile( Metafile mf, string fileName )
 			{
 				bool bResult = false;
 				IntPtr hEMF;
@@ -545,7 +552,7 @@ namespace ZedGraph
 				return bResult;
 			}
 
-			static public bool SaveEnhMetafileToFile(Metafile mf)
+			static internal bool SaveEnhMetafileToFile(Metafile mf)
 			{
 				bool bResult = false;
 				IntPtr hEMF;
@@ -566,7 +573,7 @@ namespace ZedGraph
 			}
 
 			// Metafile mf is set to a state that is not valid inside this function. 
-			static public bool PutEnhMetafileOnClipboard(IntPtr hWnd, Metafile mf)
+			static internal bool PutEnhMetafileOnClipboard(IntPtr hWnd, Metafile mf)
 			{
 				bool bResult = false;
 				IntPtr hEMF, hEMF2;

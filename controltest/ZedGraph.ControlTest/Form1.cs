@@ -65,6 +65,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_GradientByZPoints( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
+			CreateGraph_HiLowBar( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_Histogram( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
@@ -1359,6 +1360,14 @@ namespace ZedGraph.ControlTest
 		// Basic curve test - Linear Axis
 		private void CreateGraph_BasicLinearSimple( ZedGraphControl z1 )
 		{
+			z1.IsEnableSelection = true;
+
+			Selection.Fill = new Fill( Color.Red );
+			Selection.Line.Color = Color.Red;
+			Selection.Line.DashOn = 1;
+			Selection.Line.DashOff = 1;
+			Selection.Line.Width = 3;
+
 			GraphPane myPane = z1.GraphPane;
 
 			PointPairList list = new PointPairList();
@@ -4966,6 +4975,66 @@ namespace ZedGraph.ControlTest
 				Color.FromArgb( 255, 255, 166 ), 45.0F );
 
 			z1.AxisChange();
+		}
+
+		private void CreateGraph_HiLowBar( ZedGraphControl z1 )
+		{
+			Random rand = new Random();
+			GraphPane myPane = z1.GraphPane;
+
+			// Set the title and axis labels
+			myPane.Title.Text = "Hi-Low Bar Graph Demo";
+			myPane.XAxis.Title.Text = "Event";
+			myPane.YAxis.Title.Text = "Range of Values";
+
+			// Make up some data points based on the Sine function
+			PointPairList list1 = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+
+			for ( int i = 0; i < 7; i++ )
+			{
+				double y1 = Math.Sin( (double)i * Math.PI / 15.0 );
+				double y2 = Math.Sin( (double)i * Math.PI / 15.0 );
+				double y3 = Math.Sin( (double)i * Math.PI / 15.0 );
+				list1.Add( i, y1, y1 - 0.4 );
+				list2.Add( i, y2 + 0.2, y2 - 0.2 );
+				list3.Add( i, y3 + 0.1, y3 - 0.3 );
+			}
+
+			// Generate a red bar with "Curve 1" in the legend
+			HiLowBarItem myBar1 = myPane.AddHiLowBar( "Bar 1", list1, Color.Red );
+			HiLowBarItem myBar2 = myPane.AddHiLowBar( "Bar 2", list2, Color.Blue );
+			HiLowBarItem myBar3 = myPane.AddHiLowBar( "Bar 3", list3, Color.Green );
+			//BarItem myBar1 = myPane.AddBar( "Bar 1", list1, Color.Red );
+			//BarItem myBar2 = myPane.AddBar( "Bar 2", list2, Color.Blue );
+			//BarItem myBar3 = myPane.AddBar( "Bar 3", list3, Color.Green );
+
+			// Fill the bar with a red-white-red gradient for a 3d look
+			myBar1.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
+			myBar2.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 0 );
+			myBar3.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 0 );
+
+			// Make the bar width based on the available space, rather than a size in points
+			//myBar1.Bar.IsAutoSize = true;
+			//myBar2.Bar.IsAutoSize = true;
+			//myBar3.Bar.IsAutoSize = true;
+			myPane.BarSettings.ClusterScaleWidthAuto = true;
+			//myPane.BarSettings.Type = BarType.Stack;
+			myPane.BarSettings.Type = BarType.ClusterHiLow;
+			myPane.XAxis.Type = AxisType.Text;
+
+			// Fill the axis background with a color gradient
+			myPane.Chart.Fill = new Fill( Color.White,
+				Color.FromArgb( 255, 255, 166 ), 45.0F );
+
+			string[] labels = { "One", "Two", "Three", "Four", "Five", "Six", "Seven" };
+			myPane.XAxis.Scale.TextLabels = labels;
+
+			z1.AxisChange();
+
+			CurveItem c = myPane.CurveList[0];
+			c.AddPoint( 3, 20 );
 		}
 
 		// Build the Chart

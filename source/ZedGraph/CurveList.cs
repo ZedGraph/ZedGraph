@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.41 $ $Date: 2007-04-16 00:03:01 $ </version>
+	/// <version> $Revision: 3.42 $ $Date: 2007-10-26 08:19:49 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -52,7 +52,8 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Read only property that returns the number of curves in the list that are of
-		/// type <see cref="Bar"/>.
+		/// type <see cref="BarItem"/>. This does not include <see cref="HiLowBarItem" /> or
+		/// <see cref="ErrorBarItem" /> types.
 		/// </summary>
 		public int NumBars
 		{
@@ -68,6 +69,31 @@ namespace ZedGraph
 				return count;
 			}
 		}
+
+		/// <summary>
+		/// Read only property that returns the number of curves in the list that are
+		/// potentially "clusterable", which includes <see cref="BarItem"/> and
+		/// <see cref="HiLowBarItem" /> types. This does not include <see cref="ErrorBarItem" />,
+		/// <see cref="OHLCBarItem" />, <see cref="JapaneseCandleStickItem" />, etc. types.
+		/// </summary>
+		/// <remarks>Note that this property is only the number of bars that COULD BE clustered.  The
+		/// actual cluster settings are not considered.</remarks>
+		public int NumClusterableBars
+		{
+			get
+			{
+				int count = 0;
+				foreach ( CurveItem curve in this )
+				{
+					if ( curve.IsBar || curve is HiLowBarItem )
+						count++;
+				}
+
+				return count;
+			}
+		}
+
+
 
 		/// <summary>
 		/// Read only property that returns the number of pie slices in the list (class type is
@@ -666,7 +692,7 @@ namespace ZedGraph
 			{
 				CurveItem curve = this[i];
 				
-				if ( curve.IsBar )
+				if ( curve.IsBar)
 					pos--;
 					
 				// Render the curve

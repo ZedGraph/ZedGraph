@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.41 $ $Date: 2007-06-29 15:39:06 $ </version>
+	/// <version> $Revision: 3.42 $ $Date: 2007-10-26 08:19:49 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -516,13 +516,12 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Determines whether this <see cref="CurveItem"/>
-		/// is a <see cref="BarItem"/>.  This does not include <see cref="HiLowBarItem"/>'s
-		/// or <see cref="ErrorBarItem"/>'s.
+		/// is a <see cref="BarItem"/>.
 		/// </summary>
 		/// <value>true for a bar chart, or false for a line or pie graph</value>
 		public bool IsBar
 		{
-			get { return this is BarItem; }
+			get { return this is BarItem || this is HiLowBarItem || this is ErrorBarItem; }
 		}
 		
 		/// <summary>
@@ -1030,7 +1029,7 @@ namespace ZedGraph
 			if ( this is ErrorBarItem )
 				barWidth = (float) ( ((ErrorBarItem)this).Bar.Symbol.Size *
 						pane.CalcScaleFactor() );
-			else if ( this is HiLowBarItem )
+			else if ( this is HiLowBarItem && pane._barSettings.Type != BarType.ClusterHiLow )
 //				barWidth = (float) ( ((HiLowBarItem)this).Bar.GetBarWidth( pane,
 //						((HiLowBarItem)this).BaseAxis(pane), pane.CalcScaleFactor() ) );
 				barWidth = (float) ( ((HiLowBarItem)this).Bar.Size *
@@ -1040,7 +1039,7 @@ namespace ZedGraph
 				// For stacked bar types, the bar width will be based on a single bar
 				float numBars = 1.0F;
 				if ( pane._barSettings.Type == BarType.Cluster || pane._barSettings.Type == BarType.ClusterHiLow )
-					numBars = pane.CurveList.NumBars;
+					numBars = pane.CurveList.NumClusterableBars;
 
 				float denom = numBars * ( 1.0F + pane._barSettings.MinBarGap ) -
 							pane._barSettings.MinBarGap + pane._barSettings.MinClusterGap;

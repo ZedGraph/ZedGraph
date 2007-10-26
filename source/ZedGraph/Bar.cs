@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.28 $ $Date: 2007-01-25 07:56:08 $ </version>
+   /// <version> $Revision: 3.29 $ $Date: 2007-10-26 08:19:49 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -367,10 +367,12 @@ namespace ZedGraph
 								Axis baseAxis, Axis valueAxis,
 								float barWidth, int pos, float scaleFactor )
 		{
-			// For Overlay and Stack bars, the position is always zero since the bars are on top
+			// For non-cluster bar types, the position is always zero since the bars are on top
 			// of eachother
-			if ( pane._barSettings.Type == BarType.Overlay || pane._barSettings.Type == BarType.Stack ||
-					pane._barSettings.Type == BarType.PercentStack )
+			BarType barType = pane._barSettings.Type;
+			if ( barType == BarType.Overlay || barType == BarType.Stack || barType == BarType.PercentStack ||
+					barType == BarType.SortedOverlay ||
+					( barType != BarType.ClusterHiLow && this is HiLowBar ) )
 				pos = 0;
 
 			// Loop over each defined point and draw the corresponding bar                

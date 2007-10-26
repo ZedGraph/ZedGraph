@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.17 $ $Date: 2007-04-16 00:03:02 $ </version>
+	/// <version> $Revision: 3.18 $ $Date: 2007-10-26 08:19:49 $ </version>
 	[Serializable]
 	public class HiLowBar : Bar, ICloneable, ISerializable
 	{
@@ -244,6 +244,7 @@ namespace ZedGraph
 	#endregion
 
 	#region Methods
+		/*
 		/// <summary>
 		/// Protected internal routine that draws the specified single bar (an individual "point")
 		/// of this series to the specified <see cref="Graphics"/> device.
@@ -325,6 +326,10 @@ namespace ZedGraph
 				// Calculate the pixel location for the side of the bar (on the base axis)
 				float pixSide = pixBase - barWidth / 2.0F;
 
+				// Calculate the pixel location for the side of the bar (on the base axis)
+				float pixSide = pixBase - clusterWidth / 2.0F + clusterGap / 2.0F +
+								pos * ( barWidth + barGap );
+
 				// Draw the bar
 				if ( baseAxis is XAxis || baseAxis is X2Axis )
 					this.Draw( g, pane, pixSide, pixSide + barWidth, pixLowVal,
@@ -336,7 +341,8 @@ namespace ZedGraph
 								curve.Points[index] );
 		   }
 	   }
-		
+		*/
+
 		/// <summary>
 		/// Returns the width of the bar, in pixels, based on the settings for
 		/// <see cref="Size"/> and <see cref="IsAutoSize"/>.

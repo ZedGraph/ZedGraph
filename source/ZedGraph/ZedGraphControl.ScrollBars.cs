@@ -38,8 +38,9 @@ namespace ZedGraph
 						 e.Type != ScrollEventType.ThumbTrack ) ||
 					  ( e.Type == ScrollEventType.ThumbTrack &&
 						 _zoomState == null ) )
+				{
 					ZoomStateSave( this.GraphPane, ZoomState.StateType.Scroll );
-
+				}
 				for ( int i = 0; i < this.GraphPane.YAxisList.Count; i++ )
 				{
 					ScrollRange scroll = _yScrollRangeList[i];
