@@ -35,7 +35,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BarJunk3( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
-			CreateGraph_BasicLinearSimple( zedGraphControl1 );
+			//CreateGraph_BasicLinearSimple( zedGraphControl1 );
 			//CreateGraph_BasicLinearSimpleUserSymbol( zedGraphControl1 );
 			//CreateGraph_BasicLinear3Curve( zedGraphControl1 );
 			//CreateGraph_BasicLinearReverse( zedGraphControl1 );
@@ -52,13 +52,14 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DataSourcePointList( zedGraphControl1 );
 			//CreateGraph_DataSourcePointListTest( zedGraphControl1 );
-			//CreateGraph_DataSourcePointListQuery( zedGraphControl1 );
+			CreateGraph_DataSourcePointListQuery( zedGraphControl1 );
 			//CreateGraph_DataSourcePointListArrayList( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
 			//CreateGraph_Gantt( zedGraphControl1 );
+			//CreateGraph_Gantt2( zedGraphControl1 );
 			//CreateGraph_GasGauge( zedGraphControl1 );
 			//CreateGraph_GradientByZBars( zedGraphControl1 );
 			//CreateGraph_GradientByZPoints( zedGraphControl1 );
@@ -216,7 +217,7 @@ namespace ZedGraph.ControlTest
 				Stream myReader = new FileStream( fileName, FileMode.Open,
 					FileAccess.Read, FileShare.Read );
 
-				MasterPane master = (MasterPane)mySerializer.Deserialize( myReader );
+				MasterPane master = (MasterPane) mySerializer.Deserialize( myReader );
 				z1.Refresh();
 
 				myReader.Close();
@@ -236,7 +237,7 @@ namespace ZedGraph.ControlTest
 				Stream myReader = new FileStream( fileName, FileMode.Open,
 					FileAccess.Read, FileShare.Read );
 
-				MasterPane master = (MasterPane)mySerializer.Deserialize( myReader );
+				MasterPane master = (MasterPane) mySerializer.Deserialize( myReader );
 
 				myReader.Close();
 
@@ -261,7 +262,7 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			for ( int i = 0; i < 37; i++ )
 			{
-				x = ( (double)i - 18.0 ) / 5.0;
+				x = ( (double) i - 18.0 ) / 5.0;
 				y = x * x + 1.0;
 				list.Add( x, y );
 			}
@@ -360,7 +361,7 @@ namespace ZedGraph.ControlTest
 			for ( int i = 11; i < 16; i++ )
 			{
 				//x = new XDate( 1995, 8, 5, i, i * 2, i * 3 );
-				x = (double)i;
+				x = (double) i;
 
 				y1 = ( Math.Sin( i / 9.0 * Math.PI ) + 1.1 ) * 1000.0;
 				y2 = ( Math.Cos( i / 9.0 * Math.PI ) + 1.1 ) * 20.0 + 5.0;
@@ -500,7 +501,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 100; i++ )
 			{
-				double x = (double)i / 123.0;
+				double x = (double) i / 123.0;
 				//double x = new XDate( 0, 0, i, i*3, i*2, i );
 				double y = Math.Sin( i / 8.0 ) * 1 + 1;
 				list.Add( x, y );
@@ -602,7 +603,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 10; i++ )
 			{
-				LineObj line = new LineObj( 0, 0, (float)rpl[i].X, (float)rpl[i].Y );
+				LineObj line = new LineObj( 0, 0, (float) rpl[i].X, (float) rpl[i].Y );
 				line.Line.Color = Color.LightBlue;
 				line.ZOrder = ZOrder.E_BehindCurves;
 				myPane.GraphObjList.Add( line );
@@ -1221,7 +1222,7 @@ namespace ZedGraph.ControlTest
 			{
 				double x = i + 1;
 
-				double y = 5 * Math.Sin( (double)i * Math.PI * 3 / count );
+				double y = 5 * Math.Sin( (double) i * Math.PI * 3 / count );
 
 				list.Add( x, y, y < 0 ? -1.0 : 1.0 );
 			}
@@ -1274,9 +1275,9 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < count; i++ )
 			{
-				double x = XDate.CalendarDateToXLDate( 2006, 4, 15, 3+i, 0, 0 );
+				double x = XDate.CalendarDateToXLDate( 2006, 4, 15, 3 + i, 0, 0 );
 
-				double y = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.2 ) );
+				double y = 300.0 * ( 1.0 + Math.Sin( (double) i * 0.2 ) );
 
 				string tag;
 				tag = "Point #" + i.ToString() + "\n" + XDate.ToString( x, "g" ) + "\n" + y.ToString() +
@@ -1369,54 +1370,54 @@ namespace ZedGraph.ControlTest
 				double x = i;
 				double x2 = i + 0.4;
 
-				double y = 300.0 * (1.0 + Math.Sin(x * 0.2));
-				double y2 = 250.0 * (1.0 + Math.Sin(x2 * 0.2) );
+				double y = 300.0 * ( 1.0 + Math.Sin( x * 0.2 ) );
+				double y2 = 250.0 * ( 1.0 + Math.Sin( x2 * 0.2 ) );
 
-				list.Add(x, y, i / 36.0);
-				list2.Add(x2, y2, i / 36.0);
+				list.Add( x, y, i / 36.0 );
+				list2.Add( x2, y2, i / 36.0 );
 			}
-			LineItem myCurve = myPane.AddCurve("curve", list, Color.Blue, SymbolType.Diamond);
-			LineItem myCurve2 = myPane.AddCurve("curve 2", list2, Color.Green, SymbolType.Circle);
+			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			LineItem myCurve2 = myPane.AddCurve( "curve 2", list2, Color.Green, SymbolType.Circle );
 
 			myCurve.Line.IsAntiAlias = true;
-/*
-			// Just a placeholder for the LineObj that will show the cursor location
-			LineObj cursorLine = new LineObj(Color.Black, 1.0, 0.0, 1.0, 1.0);
-			// Location will be actual X Scale value, but will value will be chart fraction from 0 to 1
-			cursorLine.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
-			// Start with the cursor line hidden
-			cursorLine.IsVisible = false;
-			// Make the cursorline dashed
-			cursorLine.Line.DashOff = 5;
-			cursorLine.Line.DashOn = 1;
-			cursorLine.Line.Style = DashStyle.Custom;
+			/*
+						// Just a placeholder for the LineObj that will show the cursor location
+						LineObj cursorLine = new LineObj(Color.Black, 1.0, 0.0, 1.0, 1.0);
+						// Location will be actual X Scale value, but will value will be chart fraction from 0 to 1
+						cursorLine.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
+						// Start with the cursor line hidden
+						cursorLine.IsVisible = false;
+						// Make the cursorline dashed
+						cursorLine.Line.DashOff = 5;
+						cursorLine.Line.DashOn = 1;
+						cursorLine.Line.Style = DashStyle.Custom;
 
-			// Add a tag so we can easily find the lineobj in MouseMove handler
-			cursorLine.Tag = "cursorLine";
-			myPane.GraphObjList.Add(cursorLine);
+						// Add a tag so we can easily find the lineobj in MouseMove handler
+						cursorLine.Tag = "cursorLine";
+						myPane.GraphObjList.Add(cursorLine);
 
-			//myPane.XAxis.Scale.MajorStep = 1e-301;
-*/
+						//myPane.XAxis.Scale.MajorStep = 1e-301;
+			*/
 			z1.AxisChange();
 
-//			z1.MouseMoveEvent += new ZedGraphControl.ZedMouseEventHandler(BasicLinear_MouseMoveEvent);
+			//			z1.MouseMoveEvent += new ZedGraphControl.ZedMouseEventHandler(BasicLinear_MouseMoveEvent);
 		}
 
 		CurveItem nearestCurve = null;
 		int nearestIndex = -1;
 		double nearestX = 1e300;
 
-		private bool BasicLinear_MouseMoveEvent(ZedGraphControl sender, MouseEventArgs e)
+		private bool BasicLinear_MouseMoveEvent( ZedGraphControl sender, MouseEventArgs e )
 		{
 			// Save the mouse location
-			PointF mousePt = new PointF(e.X, e.Y);
+			PointF mousePt = new PointF( e.X, e.Y );
 
 			// Find the Chart rect that contains the current mouse location
-			GraphPane pane = sender.MasterPane.FindChartRect(mousePt);
+			GraphPane pane = sender.MasterPane.FindChartRect( mousePt );
 
 			// If pane is non-null, we have a valid location.  Otherwise, the mouse is not
 			// within any chart rect.
-			if (pane != null)
+			if ( pane != null )
 			{
 				LineObj cursorLine = pane.GraphObjList["cursorLine"] as LineObj;
 
@@ -1431,30 +1432,30 @@ namespace ZedGraph.ControlTest
 
 				double x, x2, y, y2;
 				// Convert the mouse location to X, Y, and Y2 scale values
-				pane.ReverseTransform(mousePt, out x, out x2, out y, out y2);
+				pane.ReverseTransform( mousePt, out x, out x2, out y, out y2 );
 
-				foreach (CurveItem curve in pane.CurveList)
+				foreach ( CurveItem curve in pane.CurveList )
 				{
 					IPointList pointList = curve.Points;
-					for (int i = 0; i < pointList.Count; i++)
+					for ( int i = 0; i < pointList.Count; i++ )
 					{
 						PointPair pt = pointList[i];
-						if (Math.Abs(x - pt.X) < nearestX)
+						if ( Math.Abs( x - pt.X ) < nearestX )
 						{
 							nearestCurve = curve;
 							nearestIndex = i;
-							nearestX = Math.Abs(x - pt.X);
+							nearestX = Math.Abs( x - pt.X );
 						}
 					}
 				}
 
 
-				if (nearestIndex >= 0 && nearestCurve != null)
+				if ( nearestIndex >= 0 && nearestCurve != null )
 				{
 					PointPair pt = nearestCurve.Points[nearestIndex];
 
 					// Format the status label text
-					toolStripStatusXY.Text = "(" + pt.X.ToString("f2") + ", " + pt.Y.ToString("f2") + ")";
+					toolStripStatusXY.Text = "(" + pt.X.ToString( "f2" ) + ", " + pt.Y.ToString( "f2" ) + ")";
 
 					cursorLine.Location.X1 = pt.X;
 					cursorLine.Location.Width = 0;
@@ -1501,7 +1502,7 @@ namespace ZedGraph.ControlTest
 			{
 				double x = i;
 
-				double y = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.2 ) );
+				double y = 300.0 * ( 1.0 + Math.Sin( (double) i * 0.2 ) );
 
 				list.Add( x, y, i / 36.0 );
 			}
@@ -1562,9 +1563,9 @@ namespace ZedGraph.ControlTest
 			{
 				double x = i + 100;
 
-				double y = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.2 ) );
-				double y2 = 200.0 * ( 2.0 + Math.Sin( (double)i * 0.3 ) );
-				double y3 = 100.0 * ( 3.0 + Math.Sin( (double)i * 0.4 ) );
+				double y = 300.0 * ( 1.0 + Math.Sin( (double) i * 0.2 ) );
+				double y2 = 200.0 * ( 2.0 + Math.Sin( (double) i * 0.3 ) );
+				double y3 = 100.0 * ( 3.0 + Math.Sin( (double) i * 0.4 ) );
 				list.Add( x, y );
 				list2.Add( x, y2 );
 				list3.Add( x, y3 );
@@ -1602,8 +1603,8 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			for ( int i = 0; i < 36; i++ )
 			{
-				double x = (double)i + 5;
-				double y = 300.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) );
+				double x = (double) i + 5;
+				double y = 300.0 * ( 1.5 + Math.Sin( (double) i * 0.2 ) );
 				list.Add( x, y, 0 );
 			}
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
@@ -1623,8 +1624,8 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			for ( int i = 0; i < 36; i++ )
 			{
-				double x = (double)i * 1000 + 100;
-				double y = 3000.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) ) + 1.0;
+				double x = (double) i * 1000 + 100;
+				double y = 3000.0 * ( 1.5 + Math.Sin( (double) i * 0.2 ) ) + 1.0;
 				list.Add( x, y );
 			}
 			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
@@ -1669,8 +1670,8 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			for ( int i = 0; i < 20; i++ )
 			{
-				double x = (double)i + 5;
-				double y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.4 ) );
+				double x = (double) i + 5;
+				double y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.4 ) );
 				list.Add( x, y );
 			}
 			LineItem myCurve = myPane.AddCurve( "Smile! It's only data", list, Color.Black, SymbolType.Square );
@@ -1733,8 +1734,8 @@ namespace ZedGraph.ControlTest
 			PointPairList list4 = new PointPairList();
 			for ( int i = 0; i < 36; i += 5 )
 			{
-				double x = (double)i + 5;
-				double y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 ) ) - 3.0;
+				double x = (double) i + 5;
+				double y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 ) ) - 3.0;
 				if ( i == 15 )
 				{
 					list.Add( x, y );
@@ -1851,8 +1852,8 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			for ( int i = 0; i < 36; i++ )
 			{
-				x = (double)i + 5;
-				y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
+				x = (double) i + 5;
+				y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 + (double) j ) );
 				list.Add( x, y );
 			}
 
@@ -1963,8 +1964,8 @@ namespace ZedGraph.ControlTest
 				PointPairList list = new PointPairList();
 				for ( int i = 0; i < 36; i++ )
 				{
-					double x = (double)i + 5;
-					double y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
+					double x = (double) i + 5;
+					double y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 + (double) j ) );
 					list.Add( x, y );
 				}
 
@@ -2017,8 +2018,8 @@ namespace ZedGraph.ControlTest
 				PointPairList list = new PointPairList();
 				for ( int i = 0; i < 36; i++ )
 				{
-					x = (double)i + 5;
-					y = 3.0 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
+					x = (double) i + 5;
+					y = 3.0 * ( 1.5 + Math.Sin( (double) i * 0.2 + (double) j ) );
 					list.Add( x, y );
 				}
 
@@ -2649,7 +2650,7 @@ namespace ZedGraph.ControlTest
 			myGraphPane.Chart.Fill = new Fill( Color.White, Color.FromArgb( 255, 255, 255, 255 ), 90f );
 			myGraphPane.Fill = new Fill( Color.FromArgb( 250, 250, 255 ) );
 
-			zgc.AxisChange(); 
+			zgc.AxisChange();
 			BarItem.CreateBarLabels( myGraphPane, false, "f2", "Arial", 9, Color.Black, false, false, false );
 			//myMaster.Add(myGraphPane); 
 
@@ -2678,7 +2679,7 @@ namespace ZedGraph.ControlTest
 			{
 				double x = i + 1;
 
-				double y = 21.1 * ( 1.0 + Math.Sin( (double)i * 0.15 ) );
+				double y = 21.1 * ( 1.0 + Math.Sin( (double) i * 0.15 ) );
 
 				list.Add( x, y );
 			}
@@ -2930,8 +2931,8 @@ namespace ZedGraph.ControlTest
 				PointPairList list = new PointPairList();
 				for ( int i = 0; i < 36; i++ )
 				{
-					x = (double)i + 5 + j * 3;
-					y = ( j + 1 ) * ( j + 1 ) * 10 * ( 1.5 + Math.Sin( (double)i * 0.2 + (double)j ) );
+					x = (double) i + 5 + j * 3;
+					y = ( j + 1 ) * ( j + 1 ) * 10 * ( 1.5 + Math.Sin( (double) i * 0.2 + (double) j ) );
 					list.Add( x, y );
 				}
 
@@ -2973,7 +2974,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 5; i++ )
 			{
-				double x = (double)i / 3 + 4;
+				double x = (double) i / 3 + 4;
 				double y = rand.NextDouble() * 1000;
 				double y2 = rand.NextDouble() * 1000;
 				double y3 = rand.NextDouble() * 1000;
@@ -3076,7 +3077,7 @@ namespace ZedGraph.ControlTest
 					}
 				}
 				else if ( obj is CurveItem )
-					nearestCurve = (CurveItem)obj;
+					nearestCurve = (CurveItem) obj;
 
 				if ( nearestCurve != null )
 				{
@@ -3133,7 +3134,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 5; i++ )
 			{
-				double x = (double)i / 3 + 4;
+				double x = (double) i / 3 + 4;
 				double y = rand.NextDouble() * 1000;
 				double y2 = rand.NextDouble() * 1000;
 				double y3 = rand.NextDouble() * 1000;
@@ -3264,7 +3265,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 5; i++ )
 			{
-				double x = (double)i / 3 + 4;
+				double x = (double) i / 3 + 4;
 				double y = rand.NextDouble() * .1;
 				double y2 = rand.NextDouble() * .1;
 				double y3 = rand.NextDouble() * .1;
@@ -3305,7 +3306,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 9; i++ )
 			{
-				double x = (double)i / 3 + 4;
+				double x = (double) i / 3 + 4;
 				double x2 = x + .2;
 				double x3 = x + .4;
 				double y = rand.NextDouble() * .1;
@@ -3345,7 +3346,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 20; i++ )
 			{
-				list.Add( (double)i + 1.0, rand.NextDouble() * 100.0 + 20.0 );
+				list.Add( (double) i + 1.0, rand.NextDouble() * 100.0 + 20.0 );
 			}
 
 			BarItem myBar = myPane.AddBar( "histogram", list, Color.Blue );
@@ -3369,7 +3370,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 5; i++ )
 			{
-				double y = (double)i;
+				double y = (double) i;
 				double x = rand.NextDouble() * 1000;
 				double x2 = rand.NextDouble() * 1000;
 				double x3 = rand.NextDouble() * 1000;
@@ -3414,7 +3415,7 @@ namespace ZedGraph.ControlTest
 			for ( int i = 0; i < count; i++ )
 			{
 				double val = rand.NextDouble();
-				x[i] = (double)i + 50.0;
+				x[i] = (double) i + 50.0;
 				//y[i] = x[i] * x[i] * x[i] + val * x[i];
 				y[i] = Math.Log( x[i] ) * ( 1 + ( val - 0.5 ) * 0.1 );
 			}
@@ -3499,6 +3500,72 @@ namespace ZedGraph.ControlTest
 			zg1.AxisChange();
 		}
 
+		private void CreateGraph_Gantt2( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.MasterPane[0];
+
+			// Set the title and axis labels 
+			myPane.Title.Text = "Tony's TimeLine";
+			myPane.XAxis.Title.Text = "Time";
+			myPane.YAxis.Title.Text = "Case";
+
+			string[] str = { "Tony", "Alex", "Judy", "Kenny" };
+
+			// Create points for three BarItems 
+			PointPairList list1 = new PointPairList();
+			PointPairList list2 = new PointPairList();
+			PointPairList list3 = new PointPairList();
+
+			// Use random data values 
+			Random rand = new Random();
+			double xStart1 = new XDate( 2007, 1, 1 );
+			double xStart2 = new XDate( 2007, 2, 2 );
+			double xStart3 = new XDate( 2007, 3, 3 );
+			double xEnd1, xEnd2, xEnd3;
+
+			for ( int i = 1; i < 5; i++ )
+			{
+				double y = (double) i;
+
+				// define the end of each bar (up to 50 days long)
+				xEnd1 = xStart1 + rand.NextDouble() * 40.0 + 10.0;
+				xEnd2 = xStart2 + rand.NextDouble() * 40.0 + 10.0;
+				xEnd3 = xStart3 + rand.NextDouble() * 40.0 + 10.0;
+
+				list1.Add( xStart1, y, xEnd1 );
+				list2.Add( xStart2, y, xEnd2 );
+				list3.Add( xStart3, y, xEnd3 );
+
+				// Next bar starts 10 to 30 days later
+				xStart1 = xEnd1 + rand.NextDouble() * 20.0 + 10.0;
+				xStart2 = xEnd2 + rand.NextDouble() * 20.0 + 10.0;
+				xStart3 = xEnd3 + rand.NextDouble() * 20.0 + 10.0;
+			}
+
+			// Create the three BarItems, change the fill properties so the angle is at 90 
+			// degrees for horizontal bars 
+			HiLowBarItem bar1 = myPane.AddHiLowBar( "File No", list1, Color.Red );
+			bar1.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 90 );
+			HiLowBarItem bar2 = myPane.AddHiLowBar( "IELTS Notice", list2, Color.Blue );
+			bar2.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 90 );
+			HiLowBarItem bar3 = myPane.AddHiLowBar( "Pre Visa", list3, Color.Green );
+			bar3.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 90 );
+
+			// Set the XAxis to Text type 
+			myPane.XAxis.Type = AxisType.Date;
+
+			// Set the YAxis labels 
+			myPane.YAxis.Type = AxisType.Text;
+			myPane.YAxis.Scale.TextLabels = str;
+
+			myPane.Border.IsVisible = false;
+
+			// Set BarBase to the YAxis for horizontal bars 
+			myPane.BarSettings.Base = BarBase.Y;
+
+			zgc.AxisChange();
+		}
+
 		private void CreateGraph_GasGauge( ZedGraphControl zgc )
 		{
 			GraphPane myPane = zgc.GraphPane;
@@ -3547,7 +3614,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 16; i++ )
 			{
-				double x = (double)i + 1;
+				double x = (double) i + 1;
 				double y = rand.NextDouble() * 1000;
 				double z = i / 4.0;
 				list.Add( x, y, z );
@@ -3796,7 +3863,7 @@ namespace ZedGraph.ControlTest
 			CurveList curves = myPane.CurveList;
 			double total = 0;
 			for ( int x = 0; x < curves.Count; x++ )
-				total += ( (PieItem)curves[x] ).Value;
+				total += ( (PieItem) curves[x] ).Value;
 
 			// Make a text label to highlight the total value
 			TextObj text = new TextObj( "Total 2004 Sales\n" + "$" + total.ToString() + "M",
@@ -3884,11 +3951,11 @@ namespace ZedGraph.ControlTest
 			PointPairList list4 = new PointPairList();
 			for ( int i = 0; i < 100; i++ )
 			{
-				double x = (double)i * 5.0;
-				double y = Math.Sin( (double)i * Math.PI / 15.0 ) * 16.0;
-				double y2 = Math.Sin( (double)i * Math.PI / 15.0 + Math.PI * 0.5 ) * 0.01;
-				double y3 = Math.Sin( (double)i * Math.PI / 15.0 + Math.PI ) * 16.0;
-				double y4 = Math.Sin( (double)i * Math.PI / 15.0 + Math.PI * 1.5 ) * 16.0;
+				double x = (double) i * 5.0;
+				double y = Math.Sin( (double) i * Math.PI / 15.0 ) * 16.0;
+				double y2 = Math.Sin( (double) i * Math.PI / 15.0 + Math.PI * 0.5 ) * 0.01;
+				double y3 = Math.Sin( (double) i * Math.PI / 15.0 + Math.PI ) * 16.0;
+				double y4 = Math.Sin( (double) i * Math.PI / 15.0 + Math.PI * 1.5 ) * 16.0;
 				list.Add( x, y );
 				list2.Add( x, y2 );
 				list3.Add( x, y3 );
@@ -3980,7 +4047,7 @@ namespace ZedGraph.ControlTest
 		{
 			foreach ( ToolStripMenuItem item in menuStrip.Items )
 			{
-				if ( (string)item.Tag == "set_default" )
+				if ( (string) item.Tag == "set_default" )
 				{
 					// remove the menu item
 					menuStrip.Items.Remove( item );
@@ -4099,7 +4166,7 @@ namespace ZedGraph.ControlTest
 			// Add the spokes as GraphItems 
 			for ( int i = 0; i < 7; i++ )
 			{
-				ArrowObj arrow = new ArrowObj( 0, 0, (float)rpl[i].X, (float)rpl[i].Y );
+				ArrowObj arrow = new ArrowObj( 0, 0, (float) rpl[i].X, (float) rpl[i].Y );
 				arrow.IsArrowHead = false;
 				arrow.Line.Color = Color.LightGray;
 				arrow.ZOrder = ZOrder.E_BehindCurves;
@@ -4232,7 +4299,7 @@ namespace ZedGraph.ControlTest
 
 			XDate now = new XDate( DateTime.Now );
 			ArrowObj arrow = new ArrowObj( Color.Black,
-					2.0f, (float)now.XLDate, 0.0f, (float)now.XLDate, 1.0f );
+					2.0f, (float) now.XLDate, 0.0f, (float) now.XLDate, 1.0f );
 			arrow.IsArrowHead = false;
 			arrow.Location.CoordinateFrame = CoordType.XScaleYChartFraction;
 			arrow.IsClippedToChartRect = true;
@@ -4252,7 +4319,8 @@ namespace ZedGraph.ControlTest
 			myPane.GraphObjList.Add( myLine );
 
 			// Repeat for each Grid by cloning
-			xDate = new XDate( 2007, 1, 1 ).XLDate; ;
+			xDate = new XDate( 2007, 1, 1 ).XLDate;
+			;
 			myLine = new LineObj( myLine );
 			myLine.Location.X1 = xDate;
 			myPane.GraphObjList.Add( myLine );
@@ -4274,7 +4342,7 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			for ( int i = 0; i < 36; i++ )
 			{
-				x = (double)new XDate( 1995, 5, 11, 15, 27, 10 + i );
+				x = (double) new XDate( 1995, 5, 11, 15, 27, 10 + i );
 				y = 15 + i; // Math.Sin( (double)i * Math.PI / 15.0 );
 				list.Add( x, y );
 			}
@@ -4553,8 +4621,8 @@ namespace ZedGraph.ControlTest
 			*/
 			for ( int i = 0; i < 36; i++ )
 			{
-				double x = (double)i * 5.0;
-				double y = Math.Sin( (double)i * Math.PI / 15.0 ) * 16.0;
+				double x = (double) i * 5.0;
+				double y = Math.Sin( (double) i * Math.PI / 15.0 ) * 16.0;
 				double y2 = x * 13.5;
 				double y3 = Math.Log( 100 * x );
 				list.Add( x, y );
@@ -4628,10 +4696,10 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 100; i++ )
 			{
-				double x = (double)i * 5.0 + 25.0;
-				double y = Math.Sin( (double)i * Math.PI / 25.0 ) * 16.0;
-				double y2 = Math.Sin( (double)i * Math.PI / 25.0 + 30.0 ) * 12.0;
-				double y3 = Math.Sin( (double)i * Math.PI / 25.0 + 60.0 ) * 8.0;
+				double x = (double) i * 5.0 + 25.0;
+				double y = Math.Sin( (double) i * Math.PI / 25.0 ) * 16.0;
+				double y2 = Math.Sin( (double) i * Math.PI / 25.0 + 30.0 ) * 12.0;
+				double y3 = Math.Sin( (double) i * Math.PI / 25.0 + 60.0 ) * 8.0;
 				list.Add( x, y );
 				list2.Add( x, y2 );
 				list3.Add( x, y3 );
@@ -4689,7 +4757,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 20; i++ )
 			{
-				list.Add( (double)i + 1.0, rand.NextDouble() * 200.0 - 100.0, 50.0 );
+				list.Add( (double) i + 1.0, rand.NextDouble() * 200.0 - 100.0, 50.0 );
 			}
 
 			HiLowBarItem myBar = myPane.AddHiLowBar( "histogram", list, Color.Blue );
@@ -4714,7 +4782,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 20; i++ )
 			{
-				list.Add( rand.NextDouble() * 200.0 - 100.0, (double)i + 1.0, 50.0 );
+				list.Add( rand.NextDouble() * 200.0 - 100.0, (double) i + 1.0, 50.0 );
 			}
 
 			list.Sort( SortType.XValues );
@@ -4772,8 +4840,8 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < numPoints; i++ )
 			{
-				double val = Math.Sin( Math.PI * 10.0 * (double)i / (double)numPoints ); // rand.NextDouble();
-				double x = (double)i;
+				double val = Math.Sin( Math.PI * 10.0 * (double) i / (double) numPoints ); // rand.NextDouble();
+				double x = (double) i;
 				double y = val; // x + val * val * val * 10;
 
 				list.Add( x, y );
@@ -4838,7 +4906,7 @@ namespace ZedGraph.ControlTest
 				string lab = y3[i].ToString( "F1" );
 				// create the text item (assumes the x axis is ordinal or text)
 				// for negative bars, the label appears just above the zero value
-				TextObj text = new TextObj( lab, (float)( i + 1 ), (float)( y3[i] < 0 ? 0.0 : y3[i] ) + shift );
+				TextObj text = new TextObj( lab, (float) ( i + 1 ), (float) ( y3[i] < 0 ? 0.0 : y3[i] ) + shift );
 				// tell Zedgraph to use user scale units for locating the TextObj
 				text.Location.CoordinateFrame = CoordType.AxisXYScale;
 				// AlignH the left-center of the text to the specified point
@@ -4877,9 +4945,9 @@ namespace ZedGraph.ControlTest
 			PointPairList list = new PointPairList();
 			for ( int i = 1; i < 45; i++ )
 			{
-				double y = Math.Sin( (double)i * Math.PI / 15.0 );
+				double y = Math.Sin( (double) i * Math.PI / 15.0 );
 				double yBase = y - 0.4;
-				list.Add( (double)i * 100, y, yBase );
+				list.Add( (double) i * 100, y, yBase );
 			}
 
 			// Generate a red bar with "Curve 1" in the legend
@@ -5009,7 +5077,7 @@ namespace ZedGraph.ControlTest
 			for ( int i = 0; i < 10; i++ )
 			{
 				double val = rand.NextDouble();
-				double x = (double)i;
+				double x = (double) i;
 				double y = x + val * val * val * 10;
 
 				list.Add( x, y );
@@ -5188,10 +5256,10 @@ namespace ZedGraph.ControlTest
 
 			//System.Reflection.PropertyInfo pInfo = dr[0].GetType();
 
-			double x1 = (double)dr["Item"];
+			double x1 = (double) dr["Item"];
 
-			double x = (double)dr[0];
-			double y = (double)dr[1];
+			double x = (double) dr[0];
+			double y = (double) dr[1];
 
 			dspl.DataSource = productsTable;
 			dspl.XDataMember = "Item";
@@ -5215,13 +5283,21 @@ namespace ZedGraph.ControlTest
 
 			DataSourcePointList dspl = new DataSourcePointList();
 
+			//string connStr = @"server=tonydev;database=northwind;uid=tony;pwd=hrmmm";
+			//string connStr = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=c:\temp\testdb.mdb;Mode=Read";
+			//string connStr = @"server=(local)\SQLExpress;AttachDbFileName=c:\temp\testdb.mdb;" +
+			//	"Integrated Security=true;User Instance=true";
+			//string connStr = @"Data Source=.\SQLExpress;" + //User ID=sa;Password=;" +
+			//	@"AttachDbFileName=C:\SQL Server 2000 Sample Databases\Northwind.mdf;" +
+			//	@"Initial Catalog=northwind; User Instance=true";
+				//@"Integrated Security=true;User Instance=true";
 
-			string connStr = @"server=(local)\SQLExpress;AttachDbFileName=c:\temp\testdb.mdb;" + 
-				"Integrated Security=true;User Instance=true";
+			//string connStr = @"server=.\\SQLExpress;uid=testuser;pwd=testuser;database=Northwind;";
+			string connStr = @"Driver=Microsoft.Jet.OLEDB.4.0;" +
+				@"Data Source=e:\My Documents\db1.mdb";
 
-			SqlConnection connection = new SqlConnection(connStr);
+			SqlConnection connection = new SqlConnection( connStr );
 			connection.Open();
-
 
 			//string strConn = "Provider=SQLOLEDB;Data Source=(local)\\NetSDK;" +
 			//		"Initial Catalog=Northwind;Trusted_Connection=Yes;";
@@ -5258,10 +5334,10 @@ namespace ZedGraph.ControlTest
 
 			//System.Reflection.PropertyInfo pInfo = dr[0].GetType();
 
-			double x1 = (double)dr["Item"];
+			double x1 = (double) dr["Item"];
 
-			double x = (double)dr[0];
-			double y = (double)dr[1];
+			double x = (double) dr[0];
+			double y = (double) dr[1];
 
 			dspl.DataSource = productsTable;
 			dspl.XDataMember = "Item";
@@ -5526,7 +5602,7 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 30; i++ )
 			{
-				double xFactor = (double)i;
+				double xFactor = (double) i;
 				vList.Add( xFactor, 15 );
 				aList.Add( xFactor, 150 );
 				dList.Add( xFactor, 1500 );
@@ -5640,7 +5716,7 @@ namespace ZedGraph.ControlTest
 			// Fabricate some data values
 			for ( int i = 0; i < 30; i++ )
 			{
-				double time = (double)i;
+				double time = (double) i;
 				double acceleration = 2.0;
 				double velocity = acceleration * time;
 				double distance = acceleration * time * time / 2.0;
@@ -5822,8 +5898,8 @@ namespace ZedGraph.ControlTest
 			PointPairList list2 = new PointPairList();
 			for ( int i = 0; i < 36; i++ )
 			{
-				double x = (double)i * 5.0;
-				double y = Math.Sin( (double)i * Math.PI / 15.0 ) * 16.0;
+				double x = (double) i * 5.0;
+				double y = Math.Sin( (double) i * Math.PI / 15.0 ) * 16.0;
 				double y2 = y * 13.5;
 				list.Add( x, y );
 				list2.Add( x, y2 );
@@ -5866,10 +5942,10 @@ namespace ZedGraph.ControlTest
 			for ( int i = 0; i < count; i++ )
 			{
 				double x = i;
-				double y = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.2 ) );
+				double y = 300.0 * ( 1.0 + Math.Sin( (double) i * 0.2 ) );
 
 				double x2 = i * 100;
-				double y2 = 300.0 * ( 1.0 + Math.Sin( (double)i * 0.4 + Math.PI ) );
+				double y2 = 300.0 * ( 1.0 + Math.Sin( (double) i * 0.4 + Math.PI ) );
 
 				listX.Add( x, y );
 				listX2.Add( x2, y2 );
@@ -6005,43 +6081,43 @@ namespace ZedGraph.ControlTest
 			PointF mousePt = new PointF( e.X, e.Y );
 
 
-/*
-			return false;
+			/*
+						return false;
 
-			double xvalue1 = zedGraphControl1.GraphPane.XAxis.Scale.ReverseTransform( 245 );
-			float xpix1 = zedGraphControl1.GraphPane.XAxis.Scale.Transform( xvalue1 );
+						double xvalue1 = zedGraphControl1.GraphPane.XAxis.Scale.ReverseTransform( 245 );
+						float xpix1 = zedGraphControl1.GraphPane.XAxis.Scale.Transform( xvalue1 );
 
-			zedGraphControl1.MasterPane.GetImage( 6400, 4800, 72 ).Save( "poop.jpg", ImageFormat.Gif );
+						zedGraphControl1.MasterPane.GetImage( 6400, 4800, 72 ).Save( "poop.jpg", ImageFormat.Gif );
 
-			double xvalue2 = zedGraphControl1.GraphPane.XAxis.Scale.ReverseTransform( 245 );
-			float xpix2 = zedGraphControl1.GraphPane.XAxis.Scale.Transform( xvalue2 );
+						double xvalue2 = zedGraphControl1.GraphPane.XAxis.Scale.ReverseTransform( 245 );
+						float xpix2 = zedGraphControl1.GraphPane.XAxis.Scale.Transform( xvalue2 );
 
-			//output:
-			//xvalue1=19,89
-			//xpic1 = 245
-			//xvalue2= 47,17
-			//output xpic2 = 245
+						//output:
+						//xvalue1=19,89
+						//xpic1 = 245
+						//xvalue2= 47,17
+						//output xpic2 = 245
 
-			return false;
+						return false;
 
-			sender.GraphPane.GetImage( 640, 480, 96 ).Save( "myfile.jpg", ImageFormat.Jpeg );
-			//sender.GraphPane.CurveList.Clear();
-			//CreateGraph_DualYDemo( sender );
-			//sender.Invalidate();
-			//return true;
+						sender.GraphPane.GetImage( 640, 480, 96 ).Save( "myfile.jpg", ImageFormat.Jpeg );
+						//sender.GraphPane.CurveList.Clear();
+						//CreateGraph_DualYDemo( sender );
+						//sender.Invalidate();
+						//return true;
 
-			sender.GraphPane = new GraphPane();
-			CreateGraph_DualYDemo( sender );
-			//SetSize();
-			sender.Refresh();
-			return false;
+						sender.GraphPane = new GraphPane();
+						CreateGraph_DualYDemo( sender );
+						//SetSize();
+						sender.Refresh();
+						return false;
 
 
-			double x, y, x2, y2;
-			sender.GraphPane.ReverseTransform( new PointF( e.X, e.Y ), out x, out x2, out y, out y2 );
+						double x, y, x2, y2;
+						sender.GraphPane.ReverseTransform( new PointF( e.X, e.Y ), out x, out x2, out y, out y2 );
 
-			return false;
-*/
+						return false;
+			*/
 			CurveItem dragCurve;
 			int dragIndex;
 			GraphPane myPane = this.zedGraphControl1.GraphPane;
@@ -6077,7 +6153,7 @@ namespace ZedGraph.ControlTest
 				// is always assigned to the primary Y axis no matter which curve the data came from
 				myPane.ReverseTransform( ptScrXY, false, false, 0, out dx, out dy );
 
-				TextObj text = new TextObj( "Test Label", (float)dx, (float)dy, CoordType.AxisXYScale,
+				TextObj text = new TextObj( "Test Label", (float) dx, (float) dy, CoordType.AxisXYScale,
 					AlignH.Left, AlignV.Bottom );
 
 				myPane.GraphObjList.Add( text );
@@ -6144,7 +6220,7 @@ namespace ZedGraph.ControlTest
 					curY = curY2;
 				// calculate the new scale values for the point
 				PointPair newPt = new PointPair( startPair.X + curX - startX,
-						(int)( startPair.Y + curY - startY + 0.5 ) );
+						(int) ( startPair.Y + curY - startY + 0.5 ) );
 				// save the data back to the point list
 				( dragCurve.Points as PointPairList )[dragIndex] = newPt;
 				// force a redraw
@@ -6189,9 +6265,9 @@ namespace ZedGraph.ControlTest
 		private double _y;
 		private string _tag;
 
-//		public MySimplePoint() : this( PointPair.Missing, PointPair.Missing, null )
-//		{
-//		}
+		//		public MySimplePoint() : this( PointPair.Missing, PointPair.Missing, null )
+		//		{
+		//		}
 
 		public MySimplePoint( double x, double y )
 			: this( x, y, null )
@@ -6207,20 +6283,38 @@ namespace ZedGraph.ControlTest
 
 		public double X
 		{
-			get { return _x; }
-			set { _x = value; }
+			get
+			{
+				return _x;
+			}
+			set
+			{
+				_x = value;
+			}
 		}
 
 		public double Y
 		{
-			get { return _y; }
-			set { _y = value; }
+			get
+			{
+				return _y;
+			}
+			set
+			{
+				_y = value;
+			}
 		}
 
 		public string Tag
 		{
-			get { return _tag; }
-			set { _tag = value; }
+			get
+			{
+				return _tag;
+			}
+			set
+			{
+				_tag = value;
+			}
 		}
 	}
 }
