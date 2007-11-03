@@ -32,7 +32,7 @@ namespace ZedGraph
    /// </summary>
    /// 
    /// <author> John Champion </author>
-   /// <version> $Revision: 3.29 $ $Date: 2007-10-26 08:19:49 $ </version>
+   /// <version> $Revision: 3.30 $ $Date: 2007-11-03 04:41:28 $ </version>
    [Serializable]
    public class Bar : ICloneable, ISerializable
    {
@@ -371,8 +371,7 @@ namespace ZedGraph
 			// of eachother
 			BarType barType = pane._barSettings.Type;
 			if ( barType == BarType.Overlay || barType == BarType.Stack || barType == BarType.PercentStack ||
-					barType == BarType.SortedOverlay ||
-					( barType != BarType.ClusterHiLow && this is HiLowBar ) )
+					barType == BarType.SortedOverlay )
 				pos = 0;
 
 			// Loop over each defined point and draw the corresponding bar                

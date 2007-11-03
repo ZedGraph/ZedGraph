@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos</author>
-	/// <version> $Revision: 3.42 $ $Date: 2007-10-26 08:19:49 $ </version>
+	/// <version> $Revision: 3.43 $ $Date: 2007-11-03 04:41:28 $ </version>
 	[Serializable]
 	public class CurveList : List<CurveItem>, ICloneable
 	{
@@ -488,9 +488,11 @@ namespace ZedGraph
 					// Bar types always include the Y=0 value
 					if ( curve.IsBar )
 					{
-						if ( pane._barSettings.Base == BarBase.X )
+						if ( pane._barSettings.Base == BarBase.X ||
+								pane._barSettings.Base == BarBase.X2 )
 						{
-							if ( pane._barSettings.Type != BarType.ClusterHiLow )
+							// Only force z=0 for BarItems, not HiLowBarItems
+							if ( ! (curve is HiLowBarItem)  )
 							{
 								if ( tYMinVal > 0 )
 									tYMinVal = 0;
@@ -508,7 +510,8 @@ namespace ZedGraph
 						}
 						else
 						{
-							if ( pane._barSettings.Type != BarType.ClusterHiLow )
+							// Only force z=0 for BarItems, not HiLowBarItems
+							if ( !( curve is HiLowBarItem ) )
 							{
 								if ( tXMinVal > 0 )
 									tXMinVal = 0;

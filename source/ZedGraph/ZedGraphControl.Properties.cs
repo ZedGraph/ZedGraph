@@ -380,8 +380,8 @@ namespace ZedGraph
 		 Description( "true to force all objects to be draw in anti-alias mode" )]
 		public bool IsAntiAlias
 		{
-			get { return _isAntiAlias; }
-			set { _isAntiAlias = value; }
+			get { return _masterPane.IsAntiAlias; }
+			set { _masterPane.IsAntiAlias = value; }
 		}
 
 		/// <summary>

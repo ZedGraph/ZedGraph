@@ -67,7 +67,7 @@ namespace ZedGraph
 	/// property.
 	/// </summary>
 	/// <author> John Champion revised by Jerry Vos </author>
-	/// <version> $Revision: 3.85 $ $Date: 2007-10-21 04:00:33 $ </version>
+	/// <version> $Revision: 3.86 $ $Date: 2007-11-03 04:41:29 $ </version>
 	public partial class ZedGraphControl : UserControl
 	{
 
@@ -80,12 +80,6 @@ namespace ZedGraph
 		/// disposed.
 		/// </summary>
 		private MasterPane _masterPane;
-
-		/// <summary>
-		/// private field that determines if anti-aliased drawing will be forced on.  Use the
-		/// public property <see cref="ZedGraphControl.IsAntiAlias"/> to access this value.
-		/// </summary>
-		private bool _isAntiAlias = false;
 
 		/// <summary>
 		/// private field that determines whether or not tooltips will be displayed
@@ -609,21 +603,11 @@ namespace ZedGraph
 						_yScrollRangeList[0].Max );
 				}
 
-				SmoothingMode sModeSave = e.Graphics.SmoothingMode;
-				TextRenderingHint sHintSave = e.Graphics.TextRenderingHint;
-				if ( _isAntiAlias )
-				{
-					e.Graphics.SmoothingMode = SmoothingMode.HighQuality;
-					e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
-				}
 				base.OnPaint( e );
 
 				// Add a try/catch pair since the users of the control can't catch this one
 				try { _masterPane.Draw( e.Graphics ); }
 				catch { }
-
-				e.Graphics.SmoothingMode = sModeSave;
-				e.Graphics.TextRenderingHint = sHintSave;
 			}
 
 /*

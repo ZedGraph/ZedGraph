@@ -22,6 +22,9 @@
 using System;
 using System.Text;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Drawing.Text;
 using System.Collections;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -36,7 +39,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.24 $ $Date: 2007-06-02 06:56:03 $ </version>
+	/// <version> $Revision: 3.25 $ $Date: 2007-11-03 04:41:28 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -105,6 +108,12 @@ namespace ZedGraph
 		/// </summary>
 		private PaneLayoutMgr _paneLayoutMgr;
 */
+		/// <summary>
+		/// private field that determines if anti-aliased drawing will be forced on.  Use the
+		/// public property <see cref="IsAntiAlias"/> to access this value.
+		/// </summary>
+		private bool _isAntiAlias = false;
+
 	#endregion
 
 	#region Defaults
@@ -225,6 +234,18 @@ namespace ZedGraph
 			set { _isCommonScaleFactor = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a value that determines if all drawing operations for this
+		/// <see cref="Masterpane" /> will be forced to operate in Anti-alias mode.
+		/// Note that if this value is set to "true", it overrides the setting for sub-objects.
+		/// Otherwise, the sub-object settings (such as <see cref="FontSpec.IsAntiAlias"/>)
+		/// will be honored.
+		/// </summary>
+		public bool IsAntiAlias
+		{
+			get { return _isAntiAlias; }
+			set { _isAntiAlias = value; }
+		}
 
 	#endregion
 	
@@ -253,6 +274,8 @@ namespace ZedGraph
 			_paneList = new PaneList();
 
 			_legend.IsVisible = Default.IsShowLegend;
+
+			_isAntiAlias = false;
 
 			InitLayout();
 		}
@@ -284,6 +307,7 @@ namespace ZedGraph
 			_countList = rhs._countList;
 			_isColumnSpecified = rhs._isColumnSpecified;
 			_prop = rhs._prop;
+			_isAntiAlias = rhs._isAntiAlias;
 		}
 
 		/// <summary>
@@ -312,7 +336,8 @@ namespace ZedGraph
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
 		// schema changed to 2 with addition of 'prop'
-		public const int schema2 = 10;
+		// schema changed to 11 with addition of 'isAntiAlias'
+		public const int schema2 = 11;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -339,6 +364,9 @@ namespace ZedGraph
 
 			_isColumnSpecified = info.GetBoolean( "isColumnSpecified" );
 			_prop = (float[])info.GetValue( "prop", typeof( float[] ) );
+
+			if ( sch >= 11 )
+				_isAntiAlias = info.GetBoolean( "isAntiAlias" );
 		}
 		/// <summary>
 		/// Populates a <see cref="SerializationInfo"/> instance with the data needed to serialize the target object
@@ -362,6 +390,8 @@ namespace ZedGraph
 			info.AddValue( "countList", _countList );
 			info.AddValue( "isColumnSpecified", _isColumnSpecified );
 			info.AddValue( "prop", _prop );
+
+			info.AddValue( "isAntiAlias", _isAntiAlias );
 		}
 
 		/// <summary>
@@ -540,7 +570,15 @@ namespace ZedGraph
 		/// PaintEventArgs argument to the Paint() method.
 		/// </param>
 		public override void Draw( Graphics g )
-		{			
+		{
+			// Save current AntiAlias mode
+			SmoothingMode sModeSave = g.SmoothingMode;
+			TextRenderingHint sHintSave = g.TextRenderingHint;
+			CompositingQuality sCompQual = g.CompositingQuality;
+			InterpolationMode sInterpMode = g.InterpolationMode;
+
+			SetAntiAliasMode( g, _isAntiAlias );
+
 			// Draw the pane border & background fill, the title, and the GraphObj objects that lie at
 			// ZOrder.GBehindAll
 			base.Draw( g );
@@ -583,6 +621,13 @@ namespace ZedGraph
 			
 			// Reset the clipping
 			g.ResetClip();
+
+			// Restore original anti-alias mode
+			g.SmoothingMode = sModeSave;
+			g.TextRenderingHint = sHintSave;
+			g.CompositingQuality = sCompQual;
+			g.InterpolationMode = sInterpMode;
+
 		}
 
 		/// <summary>

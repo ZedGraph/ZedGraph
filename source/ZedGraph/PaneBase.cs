@@ -23,6 +23,7 @@ using System;
 using System.Text;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Drawing.Imaging;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -38,7 +39,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.30 $ $Date: 2007-05-18 13:28:17 $ </version>
+	/// <version> $Revision: 3.31 $ $Date: 2007-11-03 04:41:28 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -814,11 +815,47 @@ namespace ZedGraph
 		/// <seealso cref="GetMetafile(int,int)"/>
 		public Bitmap GetImage()
 		{
-			Bitmap bitmap = new Bitmap( (int)_rect.Width, (int)_rect.Height );
+			return GetImage( false );
+		}
+
+		/// <summary>
+		/// Build a <see cref="Bitmap"/> object containing the graphical rendering of
+		/// all the <see cref="GraphPane"/> objects in this list.
+		/// </summary>
+		/// <value>A <see cref="Bitmap"/> object rendered with the current graph.</value>
+		/// <seealso cref="GetImage(int,int,float)"/>
+		/// <seealso cref="GetMetafile()"/>
+		/// <seealso cref="GetMetafile(int,int)"/>
+		public Bitmap GetImage( bool isAntiAlias )
+		{
+			Bitmap bitmap = new Bitmap( (int) _rect.Width, (int) _rect.Height );
 			using ( Graphics bitmapGraphics = Graphics.FromImage( bitmap ) )
 			{
 				bitmapGraphics.TranslateTransform( -_rect.Left, -_rect.Top );
 				this.Draw( bitmapGraphics );
+			}
+
+			return bitmap;
+		}
+
+		/// <summary>
+		/// Gets an image for the current GraphPane, scaled to the specified size and resolution.
+		/// </summary>
+		/// <param name="width">The scaled width of the bitmap in pixels</param>
+		/// <param name="height">The scaled height of the bitmap in pixels</param>
+		/// <param name="dpi">The resolution of the bitmap, in dots per inch</param>
+		/// <param name="isAntiAlias">true for anti-aliased rendering, false otherwise</param>
+		/// <seealso cref="GetImage()"/>
+		/// <seealso cref="GetMetafile()"/>
+		/// <seealso cref="GetMetafile(int,int)"/>
+		/// <seealso cref="Bitmap"/>
+		public Bitmap GetImage( int width, int height, float dpi, bool isAntiAlias )
+		{
+			Bitmap bitmap = new Bitmap( width, height );
+			bitmap.SetResolution( dpi, dpi );
+			using ( Graphics bitmapGraphics = Graphics.FromImage( bitmap ) )
+			{
+				MakeImage( bitmapGraphics, width, height, isAntiAlias );
 			}
 
 			return bitmap;
@@ -836,19 +873,34 @@ namespace ZedGraph
 		/// <seealso cref="Bitmap"/>
 		public Bitmap GetImage( int width, int height, float dpi )
 		{
-			Bitmap bitmap = new Bitmap( width, height );
-			bitmap.SetResolution( dpi, dpi );
-			using ( Graphics bitmapGraphics = Graphics.FromImage( bitmap ) )
-			{
-				MakeImage( bitmapGraphics, width, height );
-			}
-
-			return bitmap;
+			return GetImage( width, height, dpi, false );
 		}
 
-		private void MakeImage( Graphics g, int width, int height )
+		/// <summary>
+		/// Setup a <see cref="Graphics" /> instance with appropriate antialias settings.
+		/// </summary>
+		/// <remarks>
+		/// No settings are modified if <paramref name="isAntiAlias"/> is set to false.  This method
+		/// does not restore original settings, it presumes that the Graphics instance will be
+		/// disposed.</remarks>
+		/// <param name="g">An existing <see cref="Graphics" /> instance</param>
+		/// <param name="isAntiAlias">true to render in anti-alias mode, false otherwise</param>
+		internal void SetAntiAliasMode( Graphics g, bool isAntiAlias )
+		{
+			if ( isAntiAlias )
+			{
+				g.SmoothingMode = SmoothingMode.HighQuality;
+				//g.SmoothingMode = SmoothingMode.AntiAlias;
+				g.TextRenderingHint = TextRenderingHint.AntiAlias;
+				g.CompositingQuality = CompositingQuality.HighQuality;
+				g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+			}
+		}
+
+		private void MakeImage( Graphics g, int width, int height, bool antiAlias )
 		{
 			//g.SmoothingMode = SmoothingMode.AntiAlias;
+			SetAntiAliasMode( g, antiAlias );
 
 			// This is actually a shallow clone, so we don't duplicate all the data, curveLists, etc.
 			PaneBase tempPane = this.ShallowClone();
@@ -883,6 +935,7 @@ namespace ZedGraph
 			using ( Graphics bmg = Graphics.FromImage( bm ) )
 			{
 				this.ReSize( bmg, this.Rect );
+				SetAntiAliasMode( bmg, antiAlias );
 				this.Draw( bmg );
 			}
 		}
@@ -900,7 +953,7 @@ namespace ZedGraph
 		/// <seealso cref="GetImage()"/>
 		/// <seealso cref="GetImage(int,int,float)"/>
 		/// <seealso cref="GetMetafile()"/>
-		public Metafile GetMetafile( int width, int height )
+		public Metafile GetMetafile( int width, int height, bool isAntiAlias )
 		{
 			Bitmap bm = new Bitmap( 1, 1 );
 			using ( Graphics g = Graphics.FromImage( bm ) )
@@ -921,12 +974,30 @@ namespace ZedGraph
 					//metafileGraphics.PageScale = 1f;
 
 					// output
-					MakeImage( metafileGraphics, width, height );
+					MakeImage( metafileGraphics, width, height, isAntiAlias );
 					//this.Draw( metafileGraphics );
 
 					return metafile;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Gets an enhanced metafile image for the current GraphPane, scaled to the specified size.
+		/// </summary>
+		/// <remarks>
+		/// By definition, a Metafile is a vector drawing, and therefore scaling should not matter.
+		/// However, this method is provided because certain options in Zedgraph, such as
+		/// <see cref="IsFontsScaled" /> are affected by the size of the expected image.
+		/// </remarks>
+		/// <param name="width">The "effective" scaled width of the bitmap in pixels</param>
+		/// <param name="height">The "effective" scaled height of the bitmap in pixels</param>
+		/// <seealso cref="GetImage()"/>
+		/// <seealso cref="GetImage(int,int,float)"/>
+		/// <seealso cref="GetMetafile()"/>
+		public Metafile GetMetafile( int width, int height )
+		{
+			return GetMetafile( width, height, false );
 		}
 
 		/// <summary>

@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// clustered, depending on the state of <see cref="BarSettings.Type"/>
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.26 $ $Date: 2007-10-22 07:41:49 $ </version>
+	/// <version> $Revision: 3.27 $ $Date: 2007-11-03 04:41:28 $ </version>
 	[Serializable]
 	public class BarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -65,7 +65,7 @@ namespace ZedGraph
 		/// <value>true if the Z data are included, false otherwise</value>
 		override internal bool IsZIncluded( GraphPane pane )
 		{
-			return pane._barSettings.Type == BarType.ClusterHiLow;
+			return this is HiLowBarItem;
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace ZedGraph
 		/// <value>true if the X axis is independent, false otherwise</value>
 		override internal bool IsXIndependent( GraphPane pane )
 		{
-			return pane._barSettings.Base == BarBase.X;
+			return pane._barSettings.Base == BarBase.X || pane._barSettings.Base == BarBase.X2;
 		}
 		
 	#endregion
@@ -437,7 +437,7 @@ namespace ZedGraph
 								pane.CurveList.GetBarItemPos( pane, this ) * ( barWidth + barGap );
 
 				// Draw the bar
-				if ( pane._barSettings.Base == BarBase.X )
+				if ( baseAxis is XAxis || baseAxis is X2Axis )
 					coords = String.Format( "{0:f0},{1:f0},{2:f0},{3:f0}",
 								pixSide, pixLowVal,
 								pixSide + barWidth, pixHiVal );

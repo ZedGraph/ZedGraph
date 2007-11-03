@@ -38,7 +38,7 @@ namespace ZedGraph
 	/// 
 	/// <author> John Champion
 	/// modified by Jerry Vos </author>
-	/// <version> $Revision: 3.42 $ $Date: 2007-10-26 08:19:49 $ </version>
+	/// <version> $Revision: 3.43 $ $Date: 2007-11-03 04:41:28 $ </version>
 	[Serializable]
 	abstract public class CurveItem : ISerializable, ICloneable
 	{
@@ -1029,16 +1029,16 @@ namespace ZedGraph
 			if ( this is ErrorBarItem )
 				barWidth = (float) ( ((ErrorBarItem)this).Bar.Symbol.Size *
 						pane.CalcScaleFactor() );
-			else if ( this is HiLowBarItem && pane._barSettings.Type != BarType.ClusterHiLow )
+//			else if ( this is HiLowBarItem && pane._barSettings.Type != BarType.ClusterHiLow )
 //				barWidth = (float) ( ((HiLowBarItem)this).Bar.GetBarWidth( pane,
 //						((HiLowBarItem)this).BaseAxis(pane), pane.CalcScaleFactor() ) );
-				barWidth = (float) ( ((HiLowBarItem)this).Bar.Size *
-						pane.CalcScaleFactor() );
+//				barWidth = (float) ( ((HiLowBarItem)this).Bar.Size *
+//						pane.CalcScaleFactor() );
 			else // BarItem or LineItem
 			{
 				// For stacked bar types, the bar width will be based on a single bar
 				float numBars = 1.0F;
-				if ( pane._barSettings.Type == BarType.Cluster || pane._barSettings.Type == BarType.ClusterHiLow )
+				if ( pane._barSettings.Type == BarType.Cluster )
 					numBars = pane.CurveList.NumClusterableBars;
 
 				float denom = numBars * ( 1.0F + pane._barSettings.MinBarGap ) -

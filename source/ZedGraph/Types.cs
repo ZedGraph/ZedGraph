@@ -586,13 +586,6 @@ namespace ZedGraph
 		/// </summary>
 		Cluster,
 		/// <summary>
-		/// Draw each <see cref="BarItem"/> side by side in clusters, also use the "Z" value from the
-		/// <see cref="IPointList"/> to define the bottom of each bar.  This is very similar to
-		/// a <see cref="HiLowBarItem"/>, except that multiple bars will be automatically clustered, and
-		/// the bar width is defined according to available space rather than as a fixed width setting.
-		/// </summary>
-		ClusterHiLow,
-		/// <summary>
 		/// Draw the <see cref="BarItem"/> bars one on top of the other.  The bars will
 		/// be drawn such that the last bar in the <see cref="CurveList"/> will be behind
 		/// all other bars.  Note that the bar values are not summed up for the overlay

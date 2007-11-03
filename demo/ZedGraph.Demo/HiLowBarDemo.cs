@@ -53,7 +53,7 @@ namespace ZedGraph.Demo
 			// Fill the bar with a red-white-red gradient for a 3d look
 			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
 			// Make the bar width based on the available space, rather than a size in points
-			myCurve.Bar.IsAutoSize = true;
+//			myCurve.Bar.IsAutoSize = true;
 
 			// Fill the axis background with a color gradient
 			myPane.Chart.Fill = new Fill( Color.White,

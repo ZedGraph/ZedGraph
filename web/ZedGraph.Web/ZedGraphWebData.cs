@@ -1090,59 +1090,6 @@ namespace ZedGraph.Web
 
 		#region Properties
 
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="ZedGraph.HiLowBar.IsAutoSize"/>.
-		/// </summary>
-		/// <remarks> Determines whether the bar width will be based on
-		/// the <see cref="Size"/> value, or it will be based on available
-		/// space similar to <see cref="BarItem"/> objects.
-		/// </remarks>
-		/// <value>If true, then the value
-		/// of <see cref="Size"/> is ignored.  If this value is true, then
-		/// <see cref="BarSettings.MinClusterGap"/> will be used to determine the total
-		/// space between each bar.
-		/// </value>
-		[
-		NotifyParentProperty( true ),
-		Description( "Set to true to use the maximum available width for this Hi-Low bar" )
-		]
-		public bool IsMaximumWidth
-		{
-			get
-			{
-				object x = ViewState["IsAutoSize"];
-				return ( null == x ) ? true : (bool)x;
-			}
-			set { ViewState["IsAutoSize"] = value; }
-		}
-
-		/// <summary>
-		/// Proxy property that gets or sets the value of <see cref="HiLowBar.Size"/>.
-		/// </summary>
-		/// <remarks>The size of the bars can be set by this value, which
-		/// is then scaled according to the scaleFactor (see
-		/// <see cref="PaneBase.CalcScaleFactor"/>).  Alternatively,
-		/// if <see cref="ZedGraph.HiLowBar.IsAutoSize"/> is true, the bar width will
-		/// be set according to the maximum available cluster width less
-		/// the cluster gap (see <see cref="BarSettings.GetClusterWidth"/>
-		/// and <see cref="BarSettings.MinClusterGap"/>).  That is, if
-		/// <see cref="ZedGraph.HiLowBar.IsAutoSize"/> is true, then the value of
-		/// <see cref="Size"/> will be ignored.
-		/// </remarks>
-		/// <value>Size in points (1/72 inch)</value>
-		[
-		NotifyParentProperty( true ),
-		Description( "The fixed-size setting for width of this Hi-Low bar" )
-		]
-		public float Size
-		{
-			get
-			{
-				object x = ViewState["Size"];
-				return ( null == x ) ? ZedGraph.HiLowBar.Default.Size : (float)x;
-			}
-			set { ViewState["Size"] = value; }
-		}
 		#endregion
 
 		#region Border

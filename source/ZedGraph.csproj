@@ -49,6 +49,9 @@
     <Compile Include="ZedGraph\BasicArrayPointList.cs" />
     <Compile Include="ZedGraph\Border.cs" />
     <Compile Include="ZedGraph\BoxObj.cs" />
+    <Compile Include="ZedGraph\HiLowBarItem.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ZedGraph\OHLCBar.cs" />
     <Compile Include="ZedGraph\OHLCBarItem.cs" />
     <Compile Include="ZedGraph\Chart.cs" />
@@ -72,8 +75,6 @@
     <Compile Include="ZedGraph\GraphObj.cs" />
     <Compile Include="ZedGraph\GraphObjList.cs" />
     <Compile Include="ZedGraph\GraphPane.cs" />
-    <Compile Include="ZedGraph\HiLowBar.cs" />
-    <Compile Include="ZedGraph\HiLowBarItem.cs" />
     <Compile Include="ZedGraph\HSBColor.cs" />
     <Compile Include="ZedGraph\ImageObj.cs" />
     <Compile Include="ZedGraph\IPointList.cs" />

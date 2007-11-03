@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.4 $ $Date: 2007-06-02 06:56:03 $ </version>
+	/// <version> $Revision: 3.5 $ $Date: 2007-11-03 04:41:28 $ </version>
 	[Serializable]
 	public class BarSettings : ISerializable
 	{
@@ -319,13 +319,14 @@ namespace ZedGraph
 			{
 				IPointList list = curve.Points;
 
-				if ( curve is HiLowBarItem &&
-						(curve as HiLowBarItem).Bar.IsAutoSize )
-				{
-					( curve as HiLowBarItem ).Bar._userScaleSize =
-								GetMinStepSize( list, baseAxis );
-				}
-				else if ( curve is JapaneseCandleStickItem &&
+//				if ( curve is HiLowBarItem &&
+//						(curve as HiLowBarItem).Bar.IsAutoSize )
+//				{
+//					( curve as HiLowBarItem ).Bar._userScaleSize =
+//								GetMinStepSize( list, baseAxis );
+//				}
+//				else if ( curve is JapaneseCandleStickItem &&
+				if ( curve is JapaneseCandleStickItem &&
 						(curve as JapaneseCandleStickItem).Stick.IsAutoSize )
 				{
 					( curve as JapaneseCandleStickItem ).Stick._userScaleSize =

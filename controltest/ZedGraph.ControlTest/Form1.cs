@@ -11,11 +11,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Text;
-using System.Windows.Forms;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.IO;
+using System.Windows.Forms;
 using ZedGraph;
 
 namespace ZedGraph.ControlTest
@@ -34,6 +34,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
 			//CreateGraph_BarJunk3( zedGraphControl1 );
+			//CreateGraph_BarJunk4( zedGraphControl1 );
 			//CreateGraph_BasicLinear( zedGraphControl1 );
 			//CreateGraph_BasicLinearSimple( zedGraphControl1 );
 			//CreateGraph_BasicLinearSimpleUserSymbol( zedGraphControl1 );
@@ -52,9 +53,10 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DataSourcePointList( zedGraphControl1 );
 			//CreateGraph_DataSourcePointListTest( zedGraphControl1 );
-			CreateGraph_DataSourcePointListQuery( zedGraphControl1 );
+			//CreateGraph_DataSourcePointListQuery( zedGraphControl1 );
 			//CreateGraph_DataSourcePointListArrayList( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
+			CreateGraph_DifferencePlot( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
@@ -65,7 +67,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_GradientByZPoints( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
-			CreateGraph_HiLowBar( zedGraphControl1 );
+			//CreateGraph_HiLowBar( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_Histogram( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
@@ -406,7 +408,7 @@ namespace ZedGraph.ControlTest
 			myCurve.Symbol.Border.IsVisible = false;
 
 			//myPane.XAxis.Scale.Format = "HHMM";
-			//myPane.XAxis.ScaleMag = 0;
+			//myPane.XAxis.Scale.Mag = 0;
 			//myPane.XAxis.Type = AxisType.Date;
 			//myPane.YAxis.Max = 2499.9;
 			//myPane.YAxis.IsScaleVisible = false;
@@ -540,6 +542,102 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 
 			//myPane.YAxis.Scale.Format = "0.0'%'";
+		}
+
+		// Simple plot with interpolated difference curve
+		private void CreateGraph_DifferencePlot( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			// Generate the first data set
+			PointPairList list1 = new PointPairList();
+			for ( int i = 0; i < 13; i++ )
+			{
+				double x = i + 11.0;
+				double y = 150.0 * ( 1.0 + Math.Sin( i * 0.3 ) );
+				list1.Add( x, y );
+			}
+
+			// Generate a second data set that is unrelated to the first
+			PointPairList list2 = new PointPairList();
+			for ( int i = 0; i < 15; i++ )
+			{
+				double x = i * 1.2 + 10.0;
+				double y = 250.0 * ( 1.0 + Math.Sin( x * 0.5 ) );
+
+				list2.Add( x, y );
+			}
+
+			// Make sure the data are sorted and monotonically increasing
+			list1.Sort();
+			list2.Sort();
+			// Get the lower and upper limit of the data
+			// This code can throw an exception if either list is empty
+			double xMin = Math.Min( list1[0].X, list2[0].X );
+			double xMax = Math.Max( list1[list1.Count - 1].X, list2[list2.Count - 1].X );
+
+			// Create a new list that will hold the difference points
+			PointPairList diffList = new PointPairList();
+
+			// Select the number of points for the new difference curve
+			// This is completely arbitrary, but more points will make it smoother in the
+			// case of SplineInterpolation
+			const int count = 50;
+
+			// Loop for each data point to be created in the new PointPairList
+			for ( int i=0; i<count; i++ )
+			{
+				// Calculated X values are evenly spaced
+				double x = xMin + (double) i * ( xMax - xMin ) / count;
+
+				// Use spline interpolation to create the Y values for the new curve
+				// Note that this allows extrapolation beyond the actual data available
+				// A tension value of 0.5 is used, but anywhere between 0 and 1 is reasonable
+				//double y = list1.InterpolateX( x );
+				double y1 = list1.InterpolateX( x );
+				double y2 = list2.SplineInterpolateX( x, 0.5 );
+
+				// Add the new Point to the list taking the difference between the Y values
+				// If either value is Missing, it means that a point was extrapolated beyond
+				// the available data, which is not allowed for SplineInterpolateX()
+				// This won't happen with InterpolateX, since it allows extrapolation
+				if ( y1 == PointPair.Missing || y2 == PointPair.Missing )
+					diffList.Add( x, PointPair.Missing, PointPair.Missing );
+				else
+					diffList.Add( x, y1 - y2, (y1-y2) > 0 ? 1 : 0 );
+			}
+
+			// Create the three curves -- two datasets, plus a difference curve
+			LineItem diffCurve = myPane.AddCurve( "diff", diffList, Color.Red, SymbolType.None );
+			LineItem myCurve1 = myPane.AddCurve( "curve", list1, Color.Blue, SymbolType.Diamond );
+			LineItem myCurve2 = myPane.AddCurve( "curve 2", list2, Color.Green, SymbolType.Circle );
+			Color[] colors = { Color.Red, Color.Green };
+			diffCurve.Line.Fill = new Fill( colors, 90 );
+			diffCurve.Line.Fill.RangeMin = 0;
+			diffCurve.Line.Fill.RangeMax = 1;
+			diffCurve.Line.Fill.Type = FillType.GradientByZ;
+
+			//diffCurve.Line.GradientFill = new Fill( colors, 90 );
+			//diffCurve.Line.GradientFill.RangeMin = -100;
+			//diffCurve.Line.GradientFill.RangeMax = 200;
+
+			//diffCurve.Line.IsOptimizedDraw = true;
+
+			// Add some "pretty" stuff (optional)
+			myCurve1.Symbol.Fill = new Fill( Color.White );
+			myCurve2.Symbol.Fill = new Fill( Color.White );
+			diffCurve.Line.Width = 2.0f;
+			//diffCurve.Symbol.Fill = new Fill( Color.White );
+			myPane.Title.Text = "Interpolated Data Curve";
+			myPane.XAxis.Title.Text = "Period";
+			myPane.YAxis.Title.Text = "Response";
+			myPane.Legend.FontSpec.Size = 14;
+			myPane.Fill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			myPane.Chart.Fill = new Fill( Color.FromArgb( 255, 255, 245 ),
+			   Color.FromArgb( 255, 255, 190 ), 90F );
+
+			z1.IsAntiAlias = true;
+			z1.AxisChange();
 		}
 
 		private void CreateGraph_SamplePointListDemo( ZedGraphControl z1 )
@@ -1370,7 +1468,7 @@ namespace ZedGraph.ControlTest
 
 			GraphPane myPane = z1.GraphPane;
 
-			PointPairList list = new PointPairList();
+			PointPairList list1 = new PointPairList();
 			PointPairList list2 = new PointPairList();
 			const int count = 10;
 
@@ -1382,11 +1480,28 @@ namespace ZedGraph.ControlTest
 				double y = 300.0 * ( 1.0 + Math.Sin( x * 0.2 ) );
 				double y2 = 250.0 * ( 1.0 + Math.Sin( x2 * 0.2 ) );
 
-				list.Add( x, y, i / 36.0 );
+				list1.Add( x, y, i / 36.0 );
 				list2.Add( x2, y2, i / 36.0 );
 			}
-			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
+			LineItem myCurve = myPane.AddCurve( "curve", list1, Color.Blue, SymbolType.Diamond );
 			LineItem myCurve2 = myPane.AddCurve( "curve 2", list2, Color.Green, SymbolType.Circle );
+
+			// Assume that list1 and list2 are existing PointPairLists for which you want the difference
+			// Create a new list that will hold the difference points
+			PointPairList diffList = new PointPairList();
+			// list1 will be the "Master" list that defines the actual X locations for the new list
+			// list1 also sets the range for the new list
+			foreach ( PointPair pt in list1 )
+			{
+				// Calculate a Y value for list2 based on linear interpolation at the current X value
+				// Note that you can also use list2.SplineInterpolateX() to use spline fitted data
+				//    with a tension value
+				double y2 = list2.InterpolateX(pt.X);
+				// Add the new Point to the list taking the difference between the Y values
+				diffList.Add( pt.X, pt.Y - y2 );
+			}
+			
+			LineItem diffCurve = myPane.AddCurve( "diff", diffList, Color.Red, SymbolType.Square );
 
 			myCurve.Line.IsAntiAlias = true;
 			/*
@@ -2386,7 +2501,7 @@ namespace ZedGraph.ControlTest
 
 			HiLowBarItem myCurve = myPane.AddHiLowBar( "Curve 1", ppl, Color.Empty );
 			myCurve.Bar.Fill = myFill;
-			myCurve.Bar.Size = 20;
+			//			myCurve.Bar.Size = 20;
 
 		}
 
@@ -3485,7 +3600,7 @@ namespace ZedGraph.ControlTest
 			myBar.IsOverrideOrdinal = true;
 			myBar.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 90.0f );
 			// This size is the width of the bar
-			myBar.Bar.Size = 20f;
+			//			myBar.Bar.Size = 20f;
 
 			// Now, define all the bars that you want to be Green
 			ppl = new PointPairList();
@@ -3493,7 +3608,7 @@ namespace ZedGraph.ControlTest
 			myBar = myPane.AddHiLowBar( "job 2", ppl, Color.Green );
 			myBar.IsOverrideOrdinal = true;
 			myBar.Bar.Fill = new Fill( Color.Green, Color.White, Color.Green, 90.0f );
-			myBar.Bar.Size = 20f;
+			//			myBar.Bar.Size = 20f;
 
 			// Define all the bars that you want to be blue
 			ppl = new PointPairList();
@@ -3501,7 +3616,7 @@ namespace ZedGraph.ControlTest
 			myBar = myPane.AddHiLowBar( "job 3", ppl, Color.Blue );
 			myBar.IsOverrideOrdinal = true;
 			myBar.Bar.Fill = new Fill( Color.Blue, Color.White, Color.Blue, 90.0f );
-			myBar.Bar.Size = 20f;
+			//			myBar.Bar.Size = 20f;
 
 			myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
@@ -4107,7 +4222,7 @@ namespace ZedGraph.ControlTest
 			foreach ( HiLowBarItem curve in myPane.CurveList )
 			{
 				curve.IsOverrideOrdinal = true;
-				curve.Bar.Size = 30;
+				//				curve.Bar.Size = 30;
 			}
 
 			string[] labels = { "Q1", "Q2", "Q3", "Q4" };
@@ -4964,7 +5079,7 @@ namespace ZedGraph.ControlTest
 			// Fill the bar with a red-white-red gradient for a 3d look
 			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
 			// Make the bar width based on the available space, rather than a size in points
-			myCurve.Bar.IsAutoSize = true;
+			//			myCurve.Bar.IsAutoSize = true;
 			myPane.BarSettings.ClusterScaleWidthAuto = true;
 			//myPane.XAxis.Type = AxisType.Ordinal;
 
@@ -4994,9 +5109,9 @@ namespace ZedGraph.ControlTest
 
 			for ( int i = 0; i < 7; i++ )
 			{
-				double y1 = Math.Sin( (double)i * Math.PI / 15.0 );
-				double y2 = Math.Sin( (double)i * Math.PI / 15.0 );
-				double y3 = Math.Sin( (double)i * Math.PI / 15.0 );
+				double y1 = Math.Sin( (double) i * Math.PI / 15.0 );
+				double y2 = Math.Sin( (double) i * Math.PI / 15.0 );
+				double y3 = Math.Sin( (double) i * Math.PI / 15.0 );
 				list1.Add( i, y1, y1 - 0.4 );
 				list2.Add( i, y2 + 0.2, y2 - 0.2 );
 				list3.Add( i, y3 + 0.1, y3 - 0.3 );
@@ -5021,7 +5136,7 @@ namespace ZedGraph.ControlTest
 			//myBar3.Bar.IsAutoSize = true;
 			myPane.BarSettings.ClusterScaleWidthAuto = true;
 			//myPane.BarSettings.Type = BarType.Stack;
-			myPane.BarSettings.Type = BarType.ClusterHiLow;
+			//			myPane.BarSettings.Type = BarType.ClusterHiLow;
 			myPane.XAxis.Type = AxisType.Text;
 
 			// Fill the axis background with a color gradient
@@ -5032,9 +5147,6 @@ namespace ZedGraph.ControlTest
 			myPane.XAxis.Scale.TextLabels = labels;
 
 			z1.AxisChange();
-
-			CurveItem c = myPane.CurveList[0];
-			c.AddPoint( 3, 20 );
 		}
 
 		// Build the Chart
@@ -5359,7 +5471,7 @@ namespace ZedGraph.ControlTest
 			//string connStr = @"Data Source=.\SQLExpress;" + //User ID=sa;Password=;" +
 			//	@"AttachDbFileName=C:\SQL Server 2000 Sample Databases\Northwind.mdf;" +
 			//	@"Initial Catalog=northwind; User Instance=true";
-				//@"Integrated Security=true;User Instance=true";
+			//@"Integrated Security=true;User Instance=true";
 
 			//string connStr = @"server=.\\SQLExpress;uid=testuser;pwd=testuser;database=Northwind;";
 			string connStr = @"Driver=Microsoft.Jet.OLEDB.4.0;" +
@@ -5446,6 +5558,11 @@ namespace ZedGraph.ControlTest
 			dspl.YDataMember = "Y";
 			dspl.ZDataMember = null;
 			dspl.TagDataMember = "Tag";
+
+			DataSourcePoi
+			BindingSource bSource = dspl.BindingSource as BindingSource;
+			bSource.ResetBindings( false );
+			Invalidate();
 
 			//System.Reflection.PropertyInfo pInfo = dr.GetType().GetProperty( "ItemX" );
 
@@ -5556,6 +5673,42 @@ namespace ZedGraph.ControlTest
 			BarItem.CreateBarLabels( myPane, false, "f2" );
 		}
 
+		private void CreateGraph_BarJunk4( ZedGraphControl zg1 )
+		{
+			GraphPane gp = zg1.MasterPane[0];
+			Random rnd = new Random();
+			DateTime entryDate = DateTime.Now;
+
+			//All bars displays in a cluster bartype.
+			//Only bars that have the same x-date as the first bar are displayed in a Stack BarType.
+
+			gp.BarSettings.Type = BarType.Stack;
+			gp.XAxis.Type = AxisType.Date;
+
+			ZedGraph.PointPairList bar1 = new PointPairList();
+			ZedGraph.PointPairList bar2 = new PointPairList();
+			ZedGraph.PointPairList bar3 = new PointPairList();
+
+			//Fill three pointpairlists with some data.
+			//Make the second pointpairlist with one less point then the other two.
+			//This will also cause the third bar not to display for this missing point in the second bar.
+			for ( int index = 0; index < 6; index++ )
+			{
+				entryDate = entryDate.AddDays( -1 );
+				if ( index != 4 )
+				{
+					bar2.Add( new PointPair( entryDate.ToOADate(), rnd.NextDouble() * 10 + 1 ) );
+				}
+				bar1.Add( new PointPair( entryDate.ToOADate(), rnd.NextDouble() * 10 + 1 ) );
+				bar3.Add( new PointPair( entryDate.ToOADate(), rnd.NextDouble() * 10 + 1 ) );
+			}
+
+			ZedGraph.BarItem bar;
+			bar = gp.AddBar( "Bar 1", bar1, Color.Red );
+			bar = gp.AddBar( "Bar 2", bar2, Color.Blue );
+			bar = gp.AddBar( "Bar 3", bar3, Color.Green );
+			zg1.AxisChange( );
+		}
 
 		public void CreateGraph_Contour( ZedGraphControl z1 )
 		{
@@ -6076,6 +6229,8 @@ namespace ZedGraph.ControlTest
 			Refresh();
 
 			MessageBox.Show( "time= " + ( Environment.TickCount - start ).ToString() + " msec" );
+
+			zg1.SaveAs();
 
 			return;
 

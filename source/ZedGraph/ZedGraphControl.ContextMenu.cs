@@ -18,6 +18,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Text;
 using System.Windows.Forms;
 using System.Threading;
 using System.Drawing.Imaging;
@@ -262,7 +263,18 @@ namespace ZedGraph
 		/// </summary>
 		private void ClipboardCopyThread()
 		{
-			Clipboard.SetDataObject( _masterPane.GetImage(), true );
+			Clipboard.SetDataObject( ImageRender(), true );
+		}
+
+		// 
+		/// <summary>
+		/// Setup for creation of a new image, applying appropriate anti-alias properties and
+		/// returning the resultant image file
+		/// </summary>
+		/// <returns></returns>
+		private Image ImageRender()
+		{
+			return _masterPane.GetImage( _masterPane.IsAntiAlias );
 		}
 
 		/// <summary>
@@ -300,14 +312,12 @@ namespace ZedGraph
 			using (Graphics g = this.CreateGraphics())
 			{
 				IntPtr hdc = g.GetHdc();
-				//metaFile = new Metafile( hdc, EmfType.EmfPlusDual, "ZedGraph" );
 				Metafile metaFile = new Metafile(hdc, EmfType.EmfPlusOnly);
 				g.ReleaseHdc(hdc);
 
 				using (Graphics gMeta = Graphics.FromImage(metaFile))
 				{
-					this._masterPane.Draw(gMeta);
-					//gMeta.Dispose();
+					this._masterPane.Draw( gMeta );
 				}
 
 				//IntPtr hMeta = metaFile.GetHenhmetafile();
@@ -397,8 +407,7 @@ namespace ZedGraph
 						if ( _saveFileDialog.FilterIndex == 1 )
 						{
 							myStream.Close();
-							//_masterPane.GetMetafile().Save( _saveFileDialog.FileName );
-							SaveEmfFile(_saveFileDialog.FileName);
+							SaveEmfFile( _saveFileDialog.FileName );
 						}
 						else
 						{
@@ -412,7 +421,8 @@ namespace ZedGraph
 								case 6: format = ImageFormat.Bmp; break;
 							}
 
-							_masterPane.GetImage().Save( myStream, format );
+							ImageRender().Save( myStream, format );
+							//_masterPane.GetImage().Save( myStream, format );
 							myStream.Close();
 						}
                         return _saveFileDialog.FileName;
@@ -456,7 +466,8 @@ namespace ZedGraph
 					Stream myStream = _saveFileDialog.OpenFile();
 					if ( myStream != null )
 					{
-						_masterPane.GetImage().Save( myStream, format );
+						//_masterPane.GetImage().Save( myStream, format );
+						ImageRender().Save( myStream, format );
 						myStream.Close();
 					}
 				}
@@ -506,10 +517,11 @@ namespace ZedGraph
 				Metafile metaFile = new Metafile(hdc, EmfType.EmfPlusOnly);
 				using (Graphics gMeta = Graphics.FromImage(metaFile))
 				{
+					//PaneBase.SetAntiAliasMode( gMeta, IsAntiAlias );
 					//gMeta.CompositingMode = CompositingMode.SourceCopy; 
-					gMeta.CompositingQuality = CompositingQuality.HighQuality;
-					gMeta.InterpolationMode = InterpolationMode.HighQualityBicubic;
-					gMeta.SmoothingMode = SmoothingMode.AntiAlias;
+					//gMeta.CompositingQuality = CompositingQuality.HighQuality;
+					//gMeta.InterpolationMode = InterpolationMode.HighQualityBicubic;
+					//gMeta.SmoothingMode = SmoothingMode.AntiAlias;
 					//gMeta.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality; 
 					this._masterPane.Draw(gMeta);
 					//gMeta.Dispose();
