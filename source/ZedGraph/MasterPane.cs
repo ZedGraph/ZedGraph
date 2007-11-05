@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.25 $ $Date: 2007-11-03 04:41:28 $ </version>
+	/// <version> $Revision: 3.26 $ $Date: 2007-11-05 18:28:56 $ </version>
 	[Serializable]
 	public class MasterPane : PaneBase, ICloneable, ISerializable, IDeserializationCallback
 	{
@@ -236,7 +236,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Gets or sets a value that determines if all drawing operations for this
-		/// <see cref="Masterpane" /> will be forced to operate in Anti-alias mode.
+		/// <see cref="MasterPane" /> will be forced to operate in Anti-alias mode.
 		/// Note that if this value is set to "true", it overrides the setting for sub-objects.
 		/// Otherwise, the sub-object settings (such as <see cref="FontSpec.IsAntiAlias"/>)
 		/// will be honored.

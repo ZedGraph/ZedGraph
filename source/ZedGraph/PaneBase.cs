@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author>John Champion</author>
-	/// <version> $Revision: 3.31 $ $Date: 2007-11-03 04:41:28 $ </version>
+	/// <version> $Revision: 3.32 $ $Date: 2007-11-05 18:28:56 $ </version>
 	abstract public class PaneBase : ICloneable
 	{
 
@@ -950,6 +950,7 @@ namespace ZedGraph
 		/// </remarks>
 		/// <param name="width">The "effective" scaled width of the bitmap in pixels</param>
 		/// <param name="height">The "effective" scaled height of the bitmap in pixels</param>
+		/// <param name="isAntiAlias">true to use anti-aliased drawing mode, false otherwise</param>
 		/// <seealso cref="GetImage()"/>
 		/// <seealso cref="GetImage(int,int,float)"/>
 		/// <seealso cref="GetMetafile()"/>
