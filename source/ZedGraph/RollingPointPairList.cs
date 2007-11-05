@@ -40,7 +40,7 @@ namespace ZedGraph
 	/// interface.
 	/// 
 	/// <author>Colin Green with mods by John Champion</author>
-	/// <version> $Date: 2007-02-18 05:51:54 $ </version>
+	/// <version> $Date: 2007-11-05 04:33:26 $ </version>
 	/// </summary>
 	[Serializable]
 	public class RollingPointPairList : IPointList, ISerializable, IPointListEdit
@@ -341,6 +341,31 @@ namespace ZedGraph
 
 			// Remove the item from the head (it's been duplicated already)
 			Pop();
+		}
+
+		/// <summary>
+		/// Remove a range of <see cref="PointPair" /> objects starting at the specified index
+		/// </summary>
+		/// <remarks>
+		/// All items in the queue that lie after <paramref name="index"/> will
+		/// be shifted back, and the queue will be <paramref name="count" /> items shorter.
+		/// </remarks>
+		/// <param name="index">The ordinal position of the item to be removed.
+		/// Throws an <see cref="ArgumentOutOfRangeException" /> if index is less than
+		/// zero or greater than or equal to <see cref="Count" />
+		/// </param>
+		/// <param name="count">The number of items to be removed.  Throws an
+		/// <see cref="ArgumentOutOfRangeException" /> if <paramref name="count" /> is less than zero
+		/// or greater than the total available items in the queue</param>
+		public void RemoveRange( int index, int count )
+		{
+			int totalCount = this.Count;
+
+			if ( index >= totalCount || index < 0 || count < 0 || count > totalCount )
+				throw new ArgumentOutOfRangeException();
+
+			for ( int i = 0; i < count; i++ )
+				this.RemoveAt( index );
 		}
 
 		/// <summary>

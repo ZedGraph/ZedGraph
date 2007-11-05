@@ -1,10 +1,12 @@
 == Version 5.1 ==
 
-;26-Oct-2007 (By Champion)
+;3-Nov-2007 (By Champion)
 : [UPD] HiLowBarItem is now the same as BarItem except for the Z value (Size & AutoSize are gone)
 : [UPD] BarType.HiLowCluster is no longer needed
 : [UPD] Move IsAntiAlias functionality to MasterPane and propogate properties
 : [UPD] Make clipboard and saveas() methods for ZedGraphControl honor AntiAlias settings for MasterPane
+: [UPD] Change DataSourcePointList public property BindingSource to a BindingSource type (instead of object)
+: [NEW] Add RollingPointPairList.RemoveRange() (thanks to bc)
 
 ;25-Oct-2007 (By Champion) v5.1.2 Release
 : [FIX] DataSourcePointList problem with accessing reflection data & name "Item"

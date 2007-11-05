@@ -1522,6 +1522,10 @@ namespace ZedGraph.ControlTest
 
 						//myPane.XAxis.Scale.MajorStep = 1e-301;
 			*/
+
+			//BoxObj box = new BoxObj();
+			//myGraphObj.IsClippedToChartRect = true;
+
 			z1.AxisChange();
 
 			//			z1.MouseMoveEvent += new ZedGraphControl.ZedMouseEventHandler(BasicLinear_MouseMoveEvent);
@@ -5558,11 +5562,6 @@ namespace ZedGraph.ControlTest
 			dspl.YDataMember = "Y";
 			dspl.ZDataMember = null;
 			dspl.TagDataMember = "Tag";
-
-			DataSourcePoi
-			BindingSource bSource = dspl.BindingSource as BindingSource;
-			bSource.ResetBindings( false );
-			Invalidate();
 
 			//System.Reflection.PropertyInfo pInfo = dr.GetType().GetProperty( "ItemX" );
 

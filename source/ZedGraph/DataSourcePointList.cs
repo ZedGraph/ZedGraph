@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" /> 
 	///  
 	/// <author>John Champion</author> 
-	/// <version> $Revision: 3.6 $ $Date: 2007-10-06 16:45:11 $ </version> 
+	/// <version> $Revision: 3.7 $ $Date: 2007-11-05 04:33:26 $ </version> 
 	[Serializable]
 	public class DataSourcePointList : IPointList
 	{
@@ -99,7 +99,7 @@ namespace ZedGraph
 		/// to the name of the datatable within the 
 		/// <see cref="System.Windows.Forms.BindingSource.DataSource" />, 
 		/// if applicable.</remarks> 
-		public object BindingSource
+		public BindingSource BindingSource
 		{
 			get { return _bindingSource; }
 		}
