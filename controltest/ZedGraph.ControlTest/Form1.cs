@@ -636,6 +636,20 @@ namespace ZedGraph.ControlTest
 			myPane.Chart.Fill = new Fill( Color.FromArgb( 255, 255, 245 ),
 			   Color.FromArgb( 255, 255, 190 ), 90F );
 
+			XDate xx = new XDate( 2007, 11, 9 );
+			XDate x2 = new XDate( 2007, 11, 9 );
+			XDate x3 = new XDate( 2007, 11, 9, 1, 1, 1 );
+
+			object junk = new object();
+
+			int i1 = xx.CompareTo( xx );
+			int i2 = xx.CompareTo( x2 );
+			int i3 = xx.CompareTo( x3 );
+			int i4 = x2.CompareTo( xx );
+			int i5 = x2.CompareTo( x3 );
+			int i6 = x3.CompareTo( x2 );
+			int i7 = x3.CompareTo( junk );
+
 			z1.IsAntiAlias = true;
 			z1.AxisChange();
 		}

@@ -42,8 +42,8 @@ namespace ZedGraph
 	/// eachother.
 	/// </remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.22 $ $Date: 2007-06-29 15:43:35 $ </version>
-	public struct XDate //: ICloneable
+	/// <version> $Revision: 3.23 $ $Date: 2007-11-11 06:56:34 $ </version>
+	public struct XDate : IComparable
 	{
 	#region Fields & Constants
 		// =========================================================================
@@ -1432,6 +1432,26 @@ namespace ZedGraph
 		{
 			return _xlDate.GetHashCode();
 		}
+
+		/// <summary>
+		/// Compares one <see cref="XDate" /> object to another.
+		/// </summary>
+		/// <remarks>
+		/// This method will throw an exception if <paramref name="target"/> is not an
+		/// <see cref="XDate"/> object.
+		/// </remarks>
+		/// <param name="target">The second <see cref="XDate" /> object to be compared.</param>
+		/// <returns>zero if <paramref name="target" /> is equal to the current instance,
+		/// -1 if <paramref name="target"/> is less than the current instance, and
+		/// 1 if <paramref name="target"/> is greater than the current instance.</returns>
+		public int CompareTo( object target )
+		{
+			if ( ! (target is XDate) )
+				throw new ArgumentException();
+
+			return ( this.XLDate ).CompareTo( ((XDate)target).XLDate );
+		}
+
 	#endregion
 	
 	#region String Format Conversion Methods
