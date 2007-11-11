@@ -56,8 +56,9 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DataSourcePointListQuery( zedGraphControl1 );
 			//CreateGraph_DataSourcePointListArrayList( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
-			CreateGraph_DifferencePlot( zedGraphControl1 );
+			//CreateGraph_DifferencePlot( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
+			//CreateGraph_ErrorBarDemo( zedGraphControl1 );
 			//CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
 			//CreateGraph_Gantt( zedGraphControl1 );
@@ -67,6 +68,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_GradientByZPoints( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
+			CreateGraph_HiLowBarDemo2( zedGraphControl1 );
 			//CreateGraph_HiLowBar( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_Histogram( zedGraphControl1 );
@@ -3545,6 +3547,45 @@ namespace ZedGraph.ControlTest
 
 		}
 
+		// Call this method from the Form_Load method, passing your ZedGraphControl
+		public void CreateGraph_ErrorBarDemo( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			// Set the titles and axis labels
+			myPane.Title.Text = "Error Bar Demo Chart";
+			myPane.XAxis.Title.Text = "Label";
+			myPane.YAxis.Title.Text = "My Y Axis";
+
+			// Make up some data points based on the Sine function
+			PointPairList list = new PointPairList();
+			for ( int i = 0; i < 44; i++ )
+			{
+				double x = i / 44.0;
+				double y = Math.Sin( (double) i * Math.PI / 15.0 );
+				double yBase = y - 0.4;
+				list.Add( x, y, yBase );
+			}
+
+			// Generate a red bar with "Curve 1" in the legend
+			ErrorBarItem myCurve = myPane.AddErrorBar( "Curve 1", list, Color.Red );
+			// Make the X axis the base for this curve (this is the default)
+			myPane.BarSettings.Base = BarBase.X;
+			myCurve.Bar.PenWidth = 1f;
+			// Use the HDash symbol so that the error bars look like I-beams
+			myCurve.Bar.Symbol.Type = SymbolType.HDash;
+			myCurve.Bar.Symbol.Border.Width = .1f;
+			myCurve.Bar.Symbol.IsVisible = true;
+			myCurve.Bar.Symbol.Size = 4;
+
+			// Fill the axis background with a color gradient
+			myPane.Chart.Fill = new Fill( Color.White,
+			   Color.LightGoldenrodYellow, 45.0F );
+
+			// Calculate the Axis Scale Ranges
+			zgc.AxisChange();
+		}
+		
 		private void CreateGraph_FilteredPointList( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.GraphPane;
@@ -5074,9 +5115,10 @@ namespace ZedGraph.ControlTest
 			myPane.YAxis.Scale.Max += myPane.YAxis.Scale.MajorStep;
 		}
 
-		private void CreateGraph_HiLowBarDemo( ZedGraphControl z1 )
+		// Call this method from the Form_Load method, passing your ZedGraphControl
+		public void CreateGraph_HiLowBarDemo( ZedGraphControl zgc )
 		{
-			GraphPane myPane = z1.GraphPane;
+			GraphPane myPane = zgc.GraphPane;
 
 			// Set the title and axis labels
 			myPane.Title.Text = "Hi-Low Bar Graph Demo";
@@ -5089,7 +5131,7 @@ namespace ZedGraph.ControlTest
 			{
 				double y = Math.Sin( (double) i * Math.PI / 15.0 );
 				double yBase = y - 0.4;
-				list.Add( (double) i * 100, y, yBase );
+				list.Add( (double) i, y, yBase );
 			}
 
 			// Generate a red bar with "Curve 1" in the legend
@@ -5097,17 +5139,47 @@ namespace ZedGraph.ControlTest
 			// Fill the bar with a red-white-red gradient for a 3d look
 			myCurve.Bar.Fill = new Fill( Color.Red, Color.White, Color.Red, 0 );
 			// Make the bar width based on the available space, rather than a size in points
-			//			myCurve.Bar.IsAutoSize = true;
-			myPane.BarSettings.ClusterScaleWidthAuto = true;
-			//myPane.XAxis.Type = AxisType.Ordinal;
-
-			myPane.BarSettings.Base = BarBase.Y;
+			//myCurve.Bar.IsAutoSize = true;
 
 			// Fill the axis background with a color gradient
 			myPane.Chart.Fill = new Fill( Color.White,
-				Color.FromArgb( 255, 255, 166 ), 45.0F );
+			   Color.FromArgb( 255, 255, 166 ), 45.0F );
 
-			z1.AxisChange();
+			// Calculate the Axis Scale Ranges
+			zgc.AxisChange();
+		}
+
+		// Call this method from the Form_Load method, passing your ZedGraphControl
+		public void CreateGraph_HiLowBarDemo2( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			// Set the titles and axis labels
+			myPane.Title.Text = "Error Bar Demo Chart";
+			myPane.XAxis.Title.Text = "Label";
+			myPane.YAxis.Title.Text = "My Y Axis";
+
+			// Make up some data points based on the Sine function
+			PointPairList list = new PointPairList();
+			for ( int i = 0; i < 44; i++ )
+			{
+				double x = i / 44.0;
+				double y = Math.Sin( (double) i * Math.PI / 15.0 );
+				double yBase = y - 0.4;
+				list.Add( x, y, yBase );
+			}
+
+			// Generate a red bar with "Curve 1" in the legend
+			HiLowBarItem myCurve = myPane.AddHiLowBar( "Curve 1", list, Color.Red );
+			// Make the X axis the base for this curve (this is the default)
+			myPane.BarSettings.Base = BarBase.X;
+
+			// Fill the axis background with a color gradient
+			myPane.Chart.Fill = new Fill( Color.White,
+			   Color.LightGoldenrodYellow, 45.0F );
+
+			// Calculate the Axis Scale Ranges
+			zgc.AxisChange();
 		}
 
 		private void CreateGraph_HiLowBar( ZedGraphControl z1 )

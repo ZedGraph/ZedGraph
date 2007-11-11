@@ -34,7 +34,7 @@ namespace ZedGraph
 	/// <seealso cref="BasicArrayPointList" />
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 1.5 $ $Date: 2006-10-19 04:40:14 $ </version>
+	/// <version> $Revision: 1.6 $ $Date: 2007-11-11 07:29:43 $ </version>
 	public interface IPointList : ICloneable
 	{
 		/// <summary>
@@ -53,19 +53,5 @@ namespace ZedGraph
 		/// Gets the number of points available in the list.
 		/// </summary>
 		int Count { get; }
-/*
-		/// <summary>
-		/// Appends a point to the end of the list.  The data are passed in as a <see cref="PointPair" />
-		/// object.
-		/// </summary>
-		/// <param name="point">The <see cref="PointPair" /> object containing the data to be added.</param>
-		/// <returns>The ordinal position (zero-based), at which the new point was added.</returns>
-		//int Add( PointPair point );
-		/// <summary>
-		/// Clears all data points from the list.  After calling this method, <see cref="Count" /> will
-		/// be zero.
-		/// </summary>
-		//void Clear();
-*/
 	}
 }
