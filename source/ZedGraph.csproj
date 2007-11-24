@@ -101,7 +101,6 @@
     <Compile Include="ZedGraph\NoDupePointList.cs" />
     <Compile Include="ZedGraph\OrdinalScale.cs" />
     <Compile Include="ZedGraph\PaneBase.cs" />
-    <Compile Include="ZedGraph\PaneLayoutMgr.cs" />
     <Compile Include="ZedGraph\PaneList.cs" />
     <Compile Include="ZedGraph\PieItem.cs" />
     <Compile Include="ZedGraph\PointD.cs" />

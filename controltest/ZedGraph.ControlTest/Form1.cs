@@ -59,7 +59,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DifferencePlot( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_ErrorBarDemo( zedGraphControl1 );
-			//CreateGraph_FilteredPointList( zedGraphControl1 );
+			CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
 			//CreateGraph_Gantt( zedGraphControl1 );
 			//CreateGraph_Gantt2( zedGraphControl1 );
@@ -68,7 +68,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_GradientByZPoints( zedGraphControl1 );
 			//CreateGraph_GrowingData( zedGraphControl1 );
 			//CreateGraph_HiLowBarDemo( zedGraphControl1 );
-			CreateGraph_HiLowBarDemo2( zedGraphControl1 );
+			//CreateGraph_HiLowBarDemo2( zedGraphControl1 );
 			//CreateGraph_HiLowBar( zedGraphControl1 );
 			//CreateGraph_HorizontalBars( zedGraphControl1 );
 			//CreateGraph_Histogram( zedGraphControl1 );
@@ -91,6 +91,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_LineWithBandDemo( zedGraphControl1 );
 			//CreateGraph_LineColorGradient( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
+			//CreateGraph_MasterPaneTest( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
 			//CreateGraph_MasterWithPies( zedGraphControl1 );
@@ -2037,6 +2038,144 @@ namespace ZedGraph.ControlTest
 			}
 		}
 
+		private void CreateGraph_MasterPaneTest( ZedGraphControl z1 )
+		{
+			MasterPane master = z1.MasterPane;
+
+			// Fill the background
+			master.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
+			// Clear out the initial GraphPane
+			master.PaneList.Clear();
+
+			// Show the masterpane title
+			master.Title.IsVisible = true;
+			master.Title.Text = "Synchronized Graph Demo";
+
+			// Leave a margin around the masterpane, but only a small gap between panes
+			master.Margin.All = 10;
+			master.InnerPaneGap = 5;
+
+			// The titles for the individual GraphPanes
+			string[] yLabels = { "Rate, m/s", "Press, d/cm" };
+
+			ColorSymbolRotator rotator = new ColorSymbolRotator();
+
+			for ( int j = 0; j < 2; j++ )
+			{
+				// Create a new graph -- dimensions to be set later by MasterPane Layout
+				GraphPane myPaneT = new GraphPane( new Rectangle( 10, 10, 10, 10 ),
+				   "",
+				   "Time, Days",
+				   yLabels[j] );
+
+				//myPaneT.Fill = new Fill( Color.FromArgb( 230, 230, 255 ) );
+				myPaneT.Fill.IsVisible = false;
+
+				// Fill the Chart background
+				myPaneT.Chart.Fill = new Fill( Color.White, Color.LightYellow, 45.0F );
+				// Set the BaseDimension, so fonts are scale a little bigger
+				myPaneT.BaseDimension = 3.0F;
+
+				// Hide the XAxis scale and title
+				myPaneT.XAxis.Title.IsVisible = false;
+				myPaneT.XAxis.Scale.IsVisible = false;
+				// Hide the legend, border, and GraphPane title
+				myPaneT.Legend.IsVisible = false;
+				myPaneT.Border.IsVisible = false;
+				myPaneT.Title.IsVisible = false;
+				// Get rid of the tics that are outside the chart rect
+				myPaneT.XAxis.MajorTic.IsOutside = false;
+				myPaneT.XAxis.MinorTic.IsOutside = false;
+				// Show the X grids
+				myPaneT.XAxis.MajorGrid.IsVisible = true;
+				myPaneT.XAxis.MinorGrid.IsVisible = true;
+				// Remove all margins
+				myPaneT.Margin.All = 10;
+				// Also, show the X title and scale on the last GraphPane only
+				if ( j == 1 )
+				{
+					myPaneT.XAxis.Title.IsVisible = true;
+					myPaneT.XAxis.Scale.IsVisible = true;
+					myPaneT.YAxis.Scale.IsSkipLastLabel = true;
+				}
+
+				// This sets the minimum amount of space for the left and right side, respectively
+				// The reason for this is so that the ChartRect's all end up being the same size.
+				myPaneT.YAxis.MinSpace = 80;
+				myPaneT.Y2Axis.MinSpace = 20;
+
+				// Make up some data arrays based on the Sine function
+				PointPairList list = new PointPairList();
+				for ( int i = 0; i < 36; i++ )
+				{
+					double x = (double) i + 5 + j * 3;
+					double y = ( j + 1 ) * ( j + 1 ) * 10 *
+						  ( 1.5 + Math.Sin( (double) i * 0.2 + (double) j ) );
+					list.Add( x, y );
+				}
+
+				// Create a curve
+				LineItem myCurve = myPaneT.AddCurve( "Type " + j.ToString(),
+				   list, rotator.NextColor, rotator.NextSymbol );
+				// Fill the curve symbols with white
+				myCurve.Symbol.Fill = new Fill( Color.White );
+
+				// Add the GraphPane to the MasterPane.PaneList
+				master.Add( myPaneT );
+			}
+
+			using ( Graphics g = this.CreateGraphics() )
+			{
+				// Align the GraphPanes vertically
+				//master.SetLayout( g, false, new int[] { 3 }, new float[] { 1, 1, 1 } );
+				//master.SetLayout( g, true, new int[] { 3 }, new float[] { 1, 1, 1 } );
+				master.SetLayout( g, PaneLayout.SingleColumn );
+				master.AxisChange( g );
+
+				// call Draw() to force the ChartRect to be calculated
+				master.Draw( g );
+
+				float h1 = master[0].Chart.Rect.Height;
+				float h2 = master[1].Chart.Rect.Height;
+
+				RectangleF rect0 = master[0].Rect;
+				rect0.Height += h2 - h1;
+				master[0].Rect = rect0;
+				RectangleF rect1 = master[1].Rect;
+				rect1.Height += h1 - h2;
+				master[1].Rect = rect1;
+
+				//master.AxisChange( g );
+
+				//master[0].Margin.Top = h1 - h2;
+
+//				float h3 = 100.0f / master[2].Chart.Rect.Height;
+
+//				master.SetLayout( g, false, new int[] { 3 }, new float[] { h1, h2, h3 } );
+//				master.AxisChange( g );
+			}
+
+			GraphPane myPane = master[0];
+
+			int position = myPane.CurveList.IndexOf( "Exact Name of Curve" );
+			if ( position >= 0 )
+			{
+				// Move the curve to the beginning of the list
+				myPane.CurveList.Move( position, -999 );
+
+				// We now know that the curve of interest is the first one in the list, since
+				// we just moved it there
+				LineItem myCurve = myPane.CurveList[0] as LineItem;
+				// make sure it's a valid LineItem (this would fail if it's a baritem, for example)
+				if ( myCurve != null )
+				{
+					// change the curve color & thickness
+					myCurve.Line.Color = Color.Red;
+					myCurve.Line.Width = 3.0f;
+				}
+			}
+		}
+
 		// Call this method from the Form_Load method, passing your ZedGraphControl
 		public void CreateGraph_MasterPane_Tutorial( ZedGraphControl zgc )
 		{
@@ -3588,35 +3727,59 @@ namespace ZedGraph.ControlTest
 		
 		private void CreateGraph_FilteredPointList( ZedGraphControl z1 )
 		{
+			// Get a reference to the GraphPane
 			GraphPane myPane = z1.GraphPane;
 
-			const int count = 10000;
-			double[] x = new double[count];
-			double[] y = new double[count];
+			// The data will have 10000 points, generated randomly
+			const int count = 100000;
 			Random rand = new Random();
 
+			// FilteredPointList stores the data as ordinary arrays
+			double[] x = new double[count];
+			double[] y = new double[count];
+
+			// Loop to calculate all the data values
 			for ( int i = 0; i < count; i++ )
 			{
+				// data are random
 				double val = rand.NextDouble();
-				x[i] = (double) i + 50.0;
-				//y[i] = x[i] * x[i] * x[i] + val * x[i];
-				y[i] = Math.Log( x[i] ) * ( 1 + ( val - 0.5 ) * 0.1 );
+				double time = Math.Pow( (double) i, 1.5 ) / 1e6;
+				x[i] = time + 2.0;
+				y[i] = Math.Log( time * 1e6 ) * ( 1 + ( val - 0.5 ) * 0.1 );
 			}
 
-			// FilteredPointList requires that the data are monotonically increasing in X, and the
-			// X values are evenly spaced.
+			// FilteredPointList requires that the data are monotonically increasing in X
+			// FilteredPointList stores its data internally as an ordinary array.  The X, Y arrays
+			// below are saved as references (not copies).
 			FilteredPointList list = new FilteredPointList( x, y );
+
+			// Create a curve, and show only the symbols with no lines
 			LineItem myCurve = z1.GraphPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 			myCurve.Line.IsVisible = false;
 
 
-			// Apply logic that alternately keeps the highest or lowest point within each "bin" of data
-			list.IsApplyHighLowLogic = true;
+			// The IsApplyHighLowLogic property does not work properly.  This option has been removed as
+			// of ZedGraph version 5.1.4.  In the meantime, you should disable it as follows
+			//list.IsApplyHighLowLogic = false;
 
 			// Set the range of data of interest.  In effect you can limit the plotted data to only a
 			// certain window within the total data range.  In this case, I set the minimum and maximum
-			// bounds to include all data points.  Also, only show 100 data points on the plot.
-			list.SetBounds( -1e20, 1e20, 1000 );
+			// bounds to include all data points.  Also, all points are initially visible since the
+			// maxPts is set to a large value.
+			list.SetBounds( 2, 2.5, 5000 );
+
+			// Pretty it up
+			//myPane.Title.Text = "FilteredPointList Example\n100,000 Points Total, Filtered to 400 Points Visible";
+			myPane.Title.Text = "FilteredPointList Example\n100,000 Points Total, 2.5 seconds of data";
+			myPane.Title.FontSpec.Size = 18;
+			myPane.XAxis.Title.Text = "Time Span, seconds";
+			myPane.YAxis.Title.Text = "Signal Strength";
+			myPane.YAxis.Scale.Min = 0;
+			myPane.Legend.IsVisible = false;
+			myPane.Fill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			myPane.Chart.Fill = new Fill( Color.FromArgb( 255, 255, 245 ),
+			   Color.FromArgb( 255, 255, 190 ), 90F );
+			z1.IsAntiAlias = true;
 
 			z1.AxisChange();
 		}
