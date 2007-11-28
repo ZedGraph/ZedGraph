@@ -36,7 +36,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> Jerry Vos modified by John Champion </author>
-	/// <version> $Revision: 3.25 $ $Date: 2007-06-29 15:39:07 $ </version>
+	/// <version> $Revision: 3.26 $ $Date: 2007-11-28 02:38:22 $ </version>
 	[Serializable]
 	public class PointPair : PointPairBase, ISerializable, ICloneable
 	{
@@ -470,7 +470,7 @@ namespace ZedGraph
 				if ( rVal == PointPair.Missing || Double.IsInfinity( rVal ) || Double.IsNaN( rVal ) )
 					r = null;
 
-				if ( ( l == null && r == null ) || ( System.Math.Abs( lVal - rVal ) < 1e-10 ) )
+				if ( ( l == null && r == null ) || ( System.Math.Abs( lVal - rVal ) < 1e-100 ) )
 					return 0;
 				else if ( l == null && r != null )
 					return -1;

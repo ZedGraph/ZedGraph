@@ -59,7 +59,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DifferencePlot( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
 			//CreateGraph_ErrorBarDemo( zedGraphControl1 );
-			CreateGraph_FilteredPointList( zedGraphControl1 );
+			//CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
 			//CreateGraph_Gantt( zedGraphControl1 );
 			//CreateGraph_Gantt2( zedGraphControl1 );
@@ -90,6 +90,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_LabeledPointsDemo( zedGraphControl1 );
 			//CreateGraph_LineWithBandDemo( zedGraphControl1 );
 			//CreateGraph_LineColorGradient( zedGraphControl1 );
+			//CreateGraph_LineColorGradient2( zedGraphControl1 );
 			//CreateGraph_MasterPane( zedGraphControl1 );
 			//CreateGraph_MasterPaneTest( zedGraphControl1 );
 			//CreateGraph_MasterPane_Tutorial( zedGraphControl1 );
@@ -114,6 +115,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_ScrollProblem( zedGraphControl1 );
 			//CreateGraph_ScrollSample( zedGraphControl1 );
 			//CreateGraph_SortedOverlayBars( zedGraphControl1 );
+			CreateGraph_SortedOverlayBars2( zedGraphControl1 );
 			//CreateGraph_SpiderPlot( zedGraphControl1 );
 			//CreateGraph_SplineTest( zedGraphControl1 );
 			//CreateGraph_StackedBars( zedGraphControl1 );
@@ -1332,32 +1334,134 @@ namespace ZedGraph.ControlTest
 			GraphPane myPane = zgc.GraphPane;
 
 			PointPairList list = new PointPairList();
-			const int count = 36;
+			const int count = 30;
 
 			for ( int i = 0; i < count; i++ )
 			{
+				// Use an ordinary sine function to generate the curve
 				double x = i + 1;
+				double y = 5 * Math.Sin( (double) i * Math.PI * 3 / count ) + 5.0;
 
-				double y = 5 * Math.Sin( (double) i * Math.PI * 3 / count );
-
-				list.Add( x, y, y < 0 ? -1.0 : 1.0 );
+				// Set the Z value to be 2.0 if y is between 4 and 6, otherwise, it's 1.0
+				list.Add( x, y, y > 4 && y < 6 ? 2.0 : 1.0 );
 			}
-			LineItem myCurve = myPane.AddCurve( "curve", list, Color.Blue, SymbolType.Diamond );
 
-			Fill fill = new Fill( Color.Red, Color.Green );
-			fill.RangeMin = -1;
-			fill.RangeMax = 1;
+			// Create a curve
+			LineItem myCurve = myPane.AddCurve( "Test Curve", list, Color.Red, SymbolType.Diamond );
+
+			// use a gradient fill to color the each line segment according to its Z value
+			// Color will be blue for Z = 2, and red for Z = 1
+			Fill fill = new Fill( Color.Red, Color.Blue );
+			fill.RangeMin = 1;
+			fill.RangeMax = 2;
 			fill.Type = FillType.GradientByZ;
 			myCurve.Line.GradientFill = fill;
-			myCurve.Symbol.IsVisible = false;
-			myCurve.Line.Fill = fill;
+			// make the line fat
+			myCurve.Line.Width = 2.0f;
 
-			myCurve.Line.StepType = StepType.ForwardStep;
+			// Fill the symbols with white
+			myCurve.Symbol.Fill = new Fill( Color.White );
+
+			// Create a band of green to show the highlighted region
+			BoxObj box = new BoxObj( 0.0, 6.0, 1.0, 2.0, Color.Empty,
+					Color.FromArgb( 150, Color.LightGreen ) );
+			// Use CoordType.XChartFractionYScale, so that Y values are regular scale values, and
+			// X values are chart fraction, ranging from 0 to 1
+			box.Location.CoordinateFrame = CoordType.XChartFractionYScale;
+			box.Fill = new Fill( Color.White, Color.FromArgb( 200, Color.LightGreen ), 45.0F );
+			box.ZOrder = ZOrder.F_BehindGrid;
+			box.IsClippedToChartRect = true;
+			myPane.GraphObjList.Add( box );
+
+			// Pretty it up
+			myPane.Title.Text = "Line Segments Colored by Value";
+			myPane.Title.FontSpec.Size = 18;
+			myPane.XAxis.Title.Text = "Time, seconds";
+			myPane.YAxis.Title.Text = "Potential, volts";
+			myPane.Legend.IsVisible = false;
+			myPane.Fill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			myPane.Chart.Fill = new Fill( Color.FromArgb( 255, 255, 245 ),
+			   Color.FromArgb( 255, 255, 190 ), 90F );
+			zgc.IsAntiAlias = true;
 
 			zgc.AxisChange();
 		}
 
 
+		private void CreateGraph_LineColorGradient2( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			PointPairList list = new PointPairList();
+			const int count = 30;
+
+			for ( int i = 0; i < count; i++ )
+			{
+				// Use an ordinary sine function to generate the curve
+				double x = i + 1;
+				double y = 5 * Math.Sin( (double) i * Math.PI * 3 / count ) + 5.0;
+
+				// Set the Z value to be 2.0 if y is between 4 and 6, otherwise, it's 1.0
+				list.Add( x, y, y > 4 && y < 6 ? 2.0 : 1.0 );
+			}
+
+			// Create a curve with symbols only
+			LineItem myCurve = myPane.AddCurve( "Test Curve", list, Color.Red, SymbolType.Diamond );
+			myCurve.Line.IsVisible = false;
+			myCurve.Symbol.Fill = new Fill( Color.White );
+
+			// Create a second curve, with lots of extra points
+			const int count2 = 1000;
+			PointPairList list2 = new PointPairList();
+			// Points are equal-spaced, across all the X range
+			double dx = ( list[list.Count - 1].X - list[0].X ) / (double) count2;
+
+			// Calculate the extra points values using linear interpolation
+			for ( int i = 0; i <= count2; i++ )
+			{
+				double x2 = list[0].X + dx * (double) i;
+				double y2 = list.InterpolateX( x2 );
+
+				list2.Add( x2, y2, y2 > 4 && y2 < 6 ? 2.0 : 1.0 );
+			}
+
+			// Add the second curve with no symbols
+			LineItem myCurve2 = myPane.AddCurve( "Curve2", list2, Color.Blue, SymbolType.None );
+
+			// use a gradient fill to color the each line segment according to its Z value
+			// Color will be blue for Z = 2, and red for Z = 1
+			Fill fill = new Fill( Color.Red, Color.Blue );
+			fill.RangeMin = 1;
+			fill.RangeMax = 2;
+			fill.Type = FillType.GradientByZ;
+			myCurve2.Line.GradientFill = fill;
+			// make the line fat
+			myCurve2.Line.Width = 2.0f;
+
+			// Create a band of green to show the highlighted region
+			BoxObj box = new BoxObj( 0.0, 6.0, 1.0, 2.0, Color.Empty,
+					Color.FromArgb( 150, Color.LightGreen ) );
+			// Use CoordType.XChartFractionYScale, so that Y values are regular scale values, and
+			// X values are chart fraction, ranging from 0 to 1
+			box.Location.CoordinateFrame = CoordType.XChartFractionYScale;
+			box.Fill = new Fill( Color.White, Color.FromArgb( 200, Color.LightGreen ), 45.0F );
+			box.ZOrder = ZOrder.F_BehindGrid;
+			box.IsClippedToChartRect = true;
+			myPane.GraphObjList.Add( box );
+
+			// Pretty it up
+			myPane.Title.Text = "Line Segments Colored by Value\nExtra Points Are Interpolated";
+			myPane.Title.FontSpec.Size = 18;
+			myPane.XAxis.Title.Text = "Time, seconds";
+			myPane.YAxis.Title.Text = "Potential, volts";
+			myPane.Legend.IsVisible = false;
+			myPane.Fill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			myPane.Chart.Fill = new Fill( Color.FromArgb( 255, 255, 245 ),
+			   Color.FromArgb( 255, 255, 190 ), 90F );
+			zgc.IsAntiAlias = true;
+
+			zgc.AxisChange();
+		}
 
 		// Basic curve test - Linear Axis
 		private void CreateGraph_BasicLinear( ZedGraphControl z1 )
@@ -3011,77 +3115,68 @@ namespace ZedGraph.ControlTest
 			zgc.AxisChange();
 		}
 
-		public void CreateGraph_LineWithBandDemo( ZedGraphControl z1 )
+		// Call this method from the Form_Load method, passing your ZedGraphControl
+		public void CreateGraph_LineWithBandDemo( ZedGraphControl zgc )
 		{
-			GraphPane myPane = z1.GraphPane;
-
+			GraphPane myPane = zgc.GraphPane;
 			// Set the title and axis labels
 			myPane.Title.Text = "Line Graph with Band Demo";
-			myPane.Fill = new Fill( Color.LightBlue, Color.White );
 			myPane.XAxis.Title.Text = "Sequence";
 			myPane.YAxis.Title.Text = "Temperature, C";
-
 			// Enter some random data values
 			double[] y = { 100, 115, 75, 22, 98, 40, 10 };
 			double[] y2 = { 90, 100, 95, 35, 80, 35, 35 };
 			double[] y3 = { 80, 110, 65, 15, 54, 67, 18 };
 			double[] x = { 100, 200, 300, 400, 500, 600, 700 };
-
 			// Fill the axis background with a color gradient
 			myPane.Chart.Fill = new Fill( Color.FromArgb( 255, 255, 245 ), Color.FromArgb( 255, 255, 190 ), 90F );
-
 			// Generate a red curve with "Curve 1" in the legend
 			LineItem myCurve = myPane.AddCurve( "Curve 1", x, y, Color.Red );
 			// Make the symbols opaque by filling them with white
 			myCurve.Symbol.Fill = new Fill( Color.White );
-			myCurve.Line.Style = DashStyle.DashDot;
-			myCurve.Line.DashOn = 3.0f;
-			myCurve.Line.DashOff = 5.0f;
-
-
 			// Generate a blue curve with "Curve 2" in the legend
 			myCurve = myPane.AddCurve( "Curve 2", x, y2, Color.Blue );
 			// Make the symbols opaque by filling them with white
 			myCurve.Symbol.Fill = new Fill( Color.White );
-
 			// Generate a green curve with "Curve 3" in the legend
 			myCurve = myPane.AddCurve( "Curve 3", x, y3, Color.Green );
 			// Make the symbols opaque by filling them with white
 			myCurve.Symbol.Fill = new Fill( Color.White );
-			myCurve.Line.Width = 4.0f;
-
 			// Manually set the x axis range
 			myPane.XAxis.Scale.Min = 0;
 			myPane.XAxis.Scale.Max = 800;
 			// Display the Y axis grid lines
 			myPane.YAxis.MajorGrid.IsVisible = true;
 			myPane.YAxis.MinorGrid.IsVisible = true;
-
-			myPane.YAxis.MajorGrid.DashOff = 0;
-			myPane.YAxis.MinorGrid.DashOff = 0;
-
 			// Draw a box item to highlight a value range
-			BoxObj box = new BoxObj( 0.2, 100, 900, 30, Color.Empty,
+			BoxObj box = new BoxObj( 0, 100, 1, 30, Color.Empty,
 					Color.FromArgb( 150, Color.LightGreen ) );
-			box.Fill = new Fill( Color.White, Color.FromArgb( 255, Color.LightGreen ), 45.0F );
+			box.Fill = new Fill( Color.White, Color.FromArgb( 200, Color.LightGreen ), 45.0F );
 			// Use the BehindAxis zorder to draw the highlight beneath the grid lines
-			box.ZOrder = ZOrder.F_BehindGrid;
-			//box.Location.CoordinateFrame = CoordType.XChartFractionYScale;
-			//box.IsClippedToChartRect = true;
+			box.ZOrder = ZOrder.E_BehindCurves;
+			// Make sure that the boxObj does not extend outside the chart rect if the chart is zoomed
+			box.IsClippedToChartRect = true;
+			// Use a hybrid coordinate system so the X axis always covers the full x range
+			// from chart fraction 0.0 to 1.0
+			box.Location.CoordinateFrame = CoordType.XChartFractionYScale;
 			myPane.GraphObjList.Add( box );
-
 			// Add a text item to label the highlighted range
-			TextObj text = new TextObj( "Optimal\nRange", .95, 85, CoordType.XChartFractionYScale,
+			TextObj text = new TextObj( "Optimal\nRange", 0.95f, 85, CoordType.AxisXYScale,
 									AlignH.Right, AlignV.Center );
-			text.IsClippedToChartRect = true;
 			text.FontSpec.Fill.IsVisible = false;
 			text.FontSpec.Border.IsVisible = false;
 			text.FontSpec.IsBold = true;
 			text.FontSpec.IsItalic = true;
+			text.Location.CoordinateFrame = CoordType.XChartFractionYScale;
+			text.IsClippedToChartRect = true;
 			myPane.GraphObjList.Add( text );
-
+			// Fill the pane background with a gradient
+			myPane.Fill = new Fill( Color.WhiteSmoke, Color.Lavender, 0F );
+			zgc.IsAntiAlias = true;
 			// Calculate the Axis Scale Ranges
-			z1.AxisChange();
+			zgc.AxisChange();
+			zgc.GraphPane = new GraphPane( zgc.GraphPane );
+			zgc.AxisChange();
 		}
 
 
@@ -3130,6 +3225,47 @@ namespace ZedGraph.ControlTest
 			zgc.AxisChange();
 		}
 
+		public void CreateGraph_SortedOverlayBars2( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+			const int count = 52 * 3;
+			PointPairList ppl1 = new PointPairList();
+			PointPairList ppl2 = new PointPairList();
+			PointPairList ppl3 = new PointPairList();
+			double val1 = 50.0;
+			double val2 = 50.0;
+			double val3 = 50.0;
+			Random rand = new Random();
+			for ( int i = 0; i < count; i++ )
+			{
+				//double x = i + 1;
+				double x = new XDate( 2005, 1, i*7 + 1 );
+				val1 += rand.NextDouble() * 10.0 - 5.0;
+				val2 += rand.NextDouble() * 10.0 - 5.0;
+				val3 += rand.NextDouble() * 10.0 - 5.0;
+				//double hi = Math.Max( open, close ) + rand.NextDouble() * 5.0;
+				//double low = Math.Min( open, close ) - rand.NextDouble() * 5.0;
+				ppl1.Add( x, val1 );
+				ppl2.Add( x, val2 );
+				ppl3.Add( x, val3 );
+			}
+			// Generate a red bar with "Curve 1" in the legend
+			CurveItem myCurve = myPane.AddBar( "Curve 1", ppl1, Color.Red );
+			// Generate a blue bar with "Curve 2" in the legend
+			myCurve = myPane.AddBar( "Curve 2", ppl2, Color.Blue );
+			// Generate a green bar with "Curve 3" in the legend
+			myCurve = myPane.AddBar( "Curve 3", ppl3, Color.Green );
+			//myPane.XAxis.Type = AxisType.DateAsOrdinal;
+			myPane.XAxis.Type = AxisType.Date;
+			// Make the bars a sorted overlay type so that they are drawn on top of eachother
+			// (without summing), and each stack is sorted so the shorter bars are in front
+			// of the taller bars
+			myPane.BarSettings.Type = BarType.SortedOverlay;
+			// Fill the axis background with a color gradient
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0F );
+			// Calculate the Axis Scale Ranges
+			zgc.AxisChange();
+		}
 		// masterpane with three vertical panes
 		private void CreateGraph_ThreeVerticalPanes( ZedGraphControl z1 )
 		{

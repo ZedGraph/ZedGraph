@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.47 $ $Date: 2007-09-19 06:52:38 $ </version>
+	/// <version> $Revision: 3.48 $ $Date: 2007-11-28 02:38:22 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -251,8 +251,8 @@ namespace ZedGraph
 			_stepType = Default.StepType;
 			_isSmooth = Default.IsSmooth;
 			_smoothTension = Default.SmoothTension;
-			_isOptimizedDraw = Default.IsOptimizedDraw;
 			_fill = new Fill( Default.FillColor, Default.FillBrush, Default.FillType );
+			_isOptimizedDraw = Default.IsOptimizedDraw;
 		}
 
 		/// <summary>
@@ -261,11 +261,12 @@ namespace ZedGraph
 		/// <param name="rhs">The Line object from which to copy</param>
 		public Line( Line rhs )
 		{
+			_color = rhs._color;
 			_stepType = rhs._stepType;
 			_isSmooth = rhs._isSmooth;
-			_isOptimizedDraw = rhs._isOptimizedDraw;
 			_smoothTension = rhs._smoothTension;
 			_fill = rhs._fill.Clone();
+			_isOptimizedDraw = rhs._isOptimizedDraw;
 		}
 
 		/// <summary>
@@ -294,7 +295,7 @@ namespace ZedGraph
 		/// <summary>
 		/// Current schema value that defines the version of the serialized file
 		/// </summary>
-		public const int schema = 13;
+		public const int schema = 14;
 
 		/// <summary>
 		/// Constructor for deserializing objects
@@ -310,9 +311,11 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
+			if ( sch >= 14 )
+				_color = (Color) info.GetValue( "color", typeof( Color ) );
+			_stepType = (StepType)info.GetValue( "stepType", typeof( StepType ) );
 			_isSmooth = info.GetBoolean( "isSmooth" );
 			_smoothTension = info.GetSingle( "smoothTension" );
-			_stepType = (StepType)info.GetValue( "stepType", typeof( StepType ) );
 			_fill = (Fill)info.GetValue( "fill", typeof( Fill ) );
 
 			if ( sch >= 13 )
@@ -329,9 +332,10 @@ namespace ZedGraph
 			base.GetObjectData( info, context );
 
 			info.AddValue( "schema", schema );
+			info.AddValue( "color", _color );
+			info.AddValue( "stepType", _stepType );
 			info.AddValue( "isSmooth", _isSmooth );
 			info.AddValue( "smoothTension", _smoothTension );
-			info.AddValue( "stepType", _stepType );
 			info.AddValue( "fill", _fill );
 
 			info.AddValue( "isOptimizedDraw", _isOptimizedDraw );

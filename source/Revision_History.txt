@@ -2,6 +2,10 @@
 
 ;10-Nov-2007 (By Champion)
 : [NEW] Add XDate.CompareTo() method with IComparable interface (thanks to Stefan)
+: [FIX] Copy constructor for CurveItem was missing _color
+: [FIX] PointPairList sort for small values (less than 1e-10)
+: [FIX] DateAsOrdinalScale.SetDateFormat() to handle GraphPane.IsBoundedRanges
+: [NEW] Add Slovak language locale file (thanks to thetamius)
 
 ;3-Nov-2007 (By Champion) v5.1.3 Release
 : [UPD] HiLowBarItem is now the same as BarItem except for the Z value (Size & AutoSize are gone)

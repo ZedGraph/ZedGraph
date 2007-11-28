@@ -39,7 +39,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion  </author>
-	/// <version> $Revision: 1.12 $ $Date: 2007-09-19 06:41:56 $ </version>
+	/// <version> $Revision: 1.13 $ $Date: 2007-11-28 02:38:22 $ </version>
 	[Serializable]
 	class DateAsOrdinalScale : Scale, ISerializable //, ICloneable
 	{
@@ -159,7 +159,7 @@ namespace ZedGraph
 			// call the base class first
 			base.PickScale( pane, g, scaleFactor );
 
-			// First, get the date ranges from the first curve in the list
+/*			// First, get the date ranges from the first curve in the list
 			double xMin; // = Double.MaxValue;
 			double xMax; // = Double.MinValue;
 			double yMin; // = Double.MaxValue;
@@ -173,14 +173,14 @@ namespace ZedGraph
 						( _ownerAxis is X2Axis && curve.IsX2Axis ) ||
 						( _ownerAxis is XAxis && !curve.IsX2Axis ) )
 				{
-					curve.GetRange( out xMin, out xMax, out yMin, out yMax, false, false, pane );
+					curve.GetRange( out xMin, out xMax, out yMin, out yMax, false, pane.IsBoundedRanges, pane );
 					if ( _ownerAxis is XAxis || _ownerAxis is X2Axis )
 						range = xMax - xMin;
 					else
 						range = yMax - yMin;
 				}
 			}
-
+*/
 			// Set the DateFormat by calling CalcDateStepSize
 			//			DateScale.CalcDateStepSize( range, Default.TargetXSteps, this );
 			SetDateFormat( pane );
@@ -200,15 +200,31 @@ namespace ZedGraph
 				{
 					double val1, val2;
 
+					PointPair pt1 = pane.CurveList[0].Points[0];
+					PointPair pt2 = pane.CurveList[0].Points[pane.CurveList[0].Points.Count - 1];
+					int p1 = 1;
+					int p2 = pane.CurveList[0].Points.Count;
+					if ( pane.IsBoundedRanges )
+					{
+						p1 = (int) Math.Floor( _ownerAxis.Scale.Min );
+						p2 = (int) Math.Ceiling( _ownerAxis.Scale.Max );
+						p1 = Math.Min( Math.Max( p1, 1 ), pane.CurveList[0].Points.Count );
+						p2 = Math.Min( Math.Max( p2, 1 ), pane.CurveList[0].Points.Count );
+						if ( p2 > p1 )
+						{
+							pt1 = pane.CurveList[0].Points[p1-1];
+							pt2 = pane.CurveList[0].Points[p2-1];
+						}
+					}
 					if ( _ownerAxis is XAxis || _ownerAxis is X2Axis )
 					{
-						val1 = pane.CurveList[0].Points[0].X;
-						val2 = pane.CurveList[0].Points[ pane.CurveList[0].Points.Count - 1 ].X;
+						val1 = pt1.X;
+						val2 = pt2.X;
 					}
 					else
 					{
-						val1 = pane.CurveList[0].Points[0].Y;
-						val2 = pane.CurveList[0].Points[pane.CurveList[0].Points.Count].Y;
+						val1 = pt1.Y;
+						val2 = pt2.Y;
 					}
 
 					if (	val1 != PointPair.Missing &&
