@@ -1,6 +1,6 @@
 == Version 5.1 ==
 
-;10-Nov-2007 (By Champion)
+;28-Nov-2007 (By Champion) v5.1.4 Release
 : [NEW] Add XDate.CompareTo() method with IComparable interface (thanks to Stefan)
 : [FIX] Copy constructor for CurveItem was missing _color
 : [FIX] PointPairList sort for small values (less than 1e-10)

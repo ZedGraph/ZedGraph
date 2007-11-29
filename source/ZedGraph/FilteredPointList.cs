@@ -37,7 +37,7 @@ namespace ZedGraph
 	/// <seealso cref="IPointListEdit" />
 	///
 	/// <author> John Champion with mods by Christophe Holmes</author>
-	/// <version> $Revision: 1.10 $ $Date: 2007-11-24 03:45:18 $ </version>
+	/// <version> $Revision: 1.11 $ $Date: 2007-11-29 02:15:39 $ </version>
 	[Serializable]
 	public class FilteredPointList : IPointList
 	{
@@ -207,20 +207,6 @@ namespace ZedGraph
 			get { return _maxPts; }
 		}
 
-//		/// <summary>
-//		/// Gets or sets a value that determines if the High-Low filtering logic will be
-//		/// applied.
-//		/// </summary>
-//		/// <remarks>
-//		/// The high-low filtering logic alternately takes the highest or lowest Y value
-//		/// within the subrange of points to be skipped.  Set this value to true to apply
-//		/// this logic, or false to just use whatever value lies in the middle of the skipped
-//		/// range.</remarks>
-//		public bool IsApplyHighLowLogic
-//		{
-//			get { return _isApplyHighLowLogic; }
-//			set { _isApplyHighLowLogic = value; }
-//		}
 
 	#endregion
 
@@ -248,7 +234,6 @@ namespace ZedGraph
 			_maxBoundIndex = rhs._maxBoundIndex;
 			_maxPts = rhs._maxPts;
 
-//			_isApplyHighLowLogic = rhs._isApplyHighLowLogic;
 		}
 
 		/// <summary>
