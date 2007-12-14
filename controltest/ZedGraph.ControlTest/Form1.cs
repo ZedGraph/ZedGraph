@@ -53,11 +53,14 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DataSource( zedGraphControl1 );
 			//CreateGraph_DataSourcePointList( zedGraphControl1 );
 			//CreateGraph_DataSourcePointListTest( zedGraphControl1 );
+			//CreateGraph_DataSourcePointListTestDual( zedGraphControl1 );
 			//CreateGraph_DataSourcePointListQuery( zedGraphControl1 );
 			//CreateGraph_DataSourcePointListArrayList( zedGraphControl1 );
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
 			//CreateGraph_DifferencePlot( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
+			CreateGraph_DualYSimple( zedGraphControl1 );
+			//CreateGraph_DualY( zedGraphControl1 );
 			//CreateGraph_ErrorBarDemo( zedGraphControl1 );
 			//CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
@@ -115,7 +118,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_ScrollProblem( zedGraphControl1 );
 			//CreateGraph_ScrollSample( zedGraphControl1 );
 			//CreateGraph_SortedOverlayBars( zedGraphControl1 );
-			CreateGraph_SortedOverlayBars2( zedGraphControl1 );
+			//CreateGraph_SortedOverlayBars2( zedGraphControl1 );
 			//CreateGraph_SpiderPlot( zedGraphControl1 );
 			//CreateGraph_SplineTest( zedGraphControl1 );
 			//CreateGraph_StackedBars( zedGraphControl1 );
@@ -1823,8 +1826,11 @@ namespace ZedGraph.ControlTest
 			//list2 = new PointPairList();
 			//list3 = new PointPairList();
 			LineItem myCurve = myPane.AddCurve( "curve 1", list, Color.Blue, SymbolType.Diamond );
+			myCurve.Symbol.Fill = new Fill( Color.White );
 			LineItem myCurve2 = myPane.AddCurve( "Here's a really long curve name", list2, Color.Red, SymbolType.Diamond );
+			myCurve2.Symbol.Fill = new Fill( Color.White );
 			LineItem myCurve3 = myPane.AddCurve( "curve 3", list3, Color.Green, SymbolType.Diamond );
+			myCurve3.Symbol.Fill = new Fill( Color.White );
 
 			myPane.Legend.Position = LegendPos.Bottom;
 			myPane.Legend.IsHStack = false;
@@ -3228,7 +3234,7 @@ namespace ZedGraph.ControlTest
 		public void CreateGraph_SortedOverlayBars2( ZedGraphControl zgc )
 		{
 			GraphPane myPane = zgc.GraphPane;
-			const int count = 52 * 3;
+			const int count = 52;
 			PointPairList ppl1 = new PointPairList();
 			PointPairList ppl2 = new PointPairList();
 			PointPairList ppl3 = new PointPairList();
@@ -3236,18 +3242,24 @@ namespace ZedGraph.ControlTest
 			double val2 = 50.0;
 			double val3 = 50.0;
 			Random rand = new Random();
+			XDate xDate = new XDate( 2005, 1, 1 );
 			for ( int i = 0; i < count; i++ )
 			{
 				//double x = i + 1;
-				double x = new XDate( 2005, 1, i*7 + 1 );
 				val1 += rand.NextDouble() * 10.0 - 5.0;
 				val2 += rand.NextDouble() * 10.0 - 5.0;
 				val3 += rand.NextDouble() * 10.0 - 5.0;
+
+				if ( i == 30 )
+					xDate.AddDays( 7 );
+
 				//double hi = Math.Max( open, close ) + rand.NextDouble() * 5.0;
 				//double low = Math.Min( open, close ) - rand.NextDouble() * 5.0;
-				ppl1.Add( x, val1 );
-				ppl2.Add( x, val2 );
-				ppl3.Add( x, val3 );
+				ppl1.Add( xDate, val1 );
+				ppl2.Add( xDate, val2 );
+				ppl3.Add( xDate, val3 );
+
+				xDate.AddDays( 7 );
 			}
 			// Generate a red bar with "Curve 1" in the legend
 			CurveItem myCurve = myPane.AddBar( "Curve 1", ppl1, Color.Red );
@@ -5844,6 +5856,42 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 		}
 
+		private void CreateGraph_DataSourcePointListTestDual( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+			myPane.Title.Text = "DataSourcePointList Test";
+			myPane.XAxis.Title.Text = "Item";
+			myPane.YAxis.Title.Text = "Quantity or Value";
+
+			DataTable productsTable = new DataTable();
+			productsTable.Columns.Add( "Item", typeof( double ) );
+			productsTable.Columns.Add( "Quantity", typeof( double ) );
+			productsTable.Columns.Add( "Value", typeof( double ) );
+			productsTable.Rows.Add( 1, 10.0, 20.0 );
+			productsTable.Rows.Add( 2, 20.0, 23.0 );
+			productsTable.Rows.Add( 3, 50.0, 25.0 );
+			productsTable.Rows.Add( 4, 40.0, 33.0 );
+			productsTable.Rows.Add( 5, 10.0, 31.0 );
+			productsTable.Rows.Add( 6, 70.0, 38.0 );
+			productsTable.Rows.Add( 7, 30.0, 42.0 );
+			productsTable.Rows.Add( 8, 20.0, 44.0 );
+			productsTable.Rows.Add( 9, 40.0, 50.0 );
+
+			DataSourcePointList dspl = new DataSourcePointList();
+			dspl.DataSource = productsTable;
+			dspl.XDataMember = "Item";
+			dspl.YDataMember = "Quantity";
+			LineItem myCurve = myPane.AddCurve( "Quantity", dspl, Color.Blue );
+
+			DataSourcePointList dspl2 = new DataSourcePointList();
+			dspl2.DataSource = productsTable;
+			dspl2.XDataMember = "Item";
+			dspl2.YDataMember = "Value";
+			LineItem myCurve2 = myPane.AddCurve( "Value", dspl2, Color.Red );
+
+			z1.AxisChange();
+		}
+
 		private void CreateGraph_DataSourcePointListQuery( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.GraphPane;
@@ -6303,6 +6351,33 @@ namespace ZedGraph.ControlTest
 
 		}
 
+		public void CreateGraph_DualYSimple( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+			// Make up some data points based on the Sine function
+			PointPairList vList = new PointPairList();
+			PointPairList aList = new PointPairList();
+
+			for ( int i = 0; i < 30; i++ )
+			{
+				double xFactor = (double) i;
+				vList.Add( xFactor, Math.Sin(i/3.0) * 10.0 + 10.0 );
+				aList.Add( xFactor, Math.Cos(i/3.0) * 100.0 + 100.0 );
+			}
+
+			// Generate a blue curve with "Curve 2" in the legend
+			LineItem myCurve = myPane.AddCurve( "Curve 1", vList, Color.Blue );
+
+			LineItem myCurve2 = myPane.AddCurve( "Curve 2", aList, Color.Green );
+			myCurve2.IsY2Axis = true;
+
+			myPane.Y2Axis.IsVisible = true;
+			myPane.Y2Axis.Cross = 20.0;
+
+			z1.AxisChange();
+			z1.Invalidate();
+		}
+
 		private void CreateGraph_MultiYDemo( ZedGraphControl z1 )
 		{
 			GraphPane myPane = z1.GraphPane;
@@ -6653,6 +6728,7 @@ namespace ZedGraph.ControlTest
 		{
 			// Save the mouse location
 			PointF mousePt = new PointF( e.X, e.Y );
+			return false;
 
 			// Find the Chart rect that contains the current mouse location
 			GraphPane pane = sender.MasterPane.FindChartRect( mousePt );
@@ -6687,7 +6763,7 @@ namespace ZedGraph.ControlTest
 		{
 			// Save the mouse location
 			PointF mousePt = new PointF( e.X, e.Y );
-
+			return false;
 
 			/*
 						return false;

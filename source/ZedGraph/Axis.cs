@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.73 $ $Date: 2007-05-19 06:06:05 $ </version>
+	/// <version> $Revision: 3.74 $ $Date: 2007-12-14 22:41:53 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -899,8 +899,8 @@ namespace ZedGraph
 
 			// Use Linearize here instead of _minLinTemp because this method is called
 			// as part of CalcRect() before scale is fully setup
-			double min = crossAxis._scale.Linearize( _scale._min );
-			double max = crossAxis._scale.Linearize( _scale._max );
+			double min = crossAxis._scale.Linearize( crossAxis._scale._min );
+			double max = crossAxis._scale.Linearize( crossAxis._scale._max );
 
 			if ( _crossAuto )
 			{
@@ -972,8 +972,8 @@ namespace ZedGraph
 			// as part of CalcRect() before scale is fully setup
 			//			double max = crossAxis._scale._maxLinTemp;
 			//			double min = crossAxis._scale._minLinTemp;
-			double max = crossAxis._scale.Linearize( _scale._min );
-			double min = crossAxis._scale.Linearize( _scale._max );
+			double max = crossAxis._scale.Linearize( crossAxis._scale._min );
+			double min = crossAxis._scale.Linearize( crossAxis._scale._max );
 			float frac;
 
 			if ( ( ( this is XAxis || this is YAxis ) && _scale._isLabelsInside == crossAxis._scale.IsReverse ) ||

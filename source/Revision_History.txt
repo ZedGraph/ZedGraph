@@ -1,5 +1,8 @@
 == Version 5.1 ==
 
+;14-Dec-2007 (By Champion)
+; [FIX] Fix Cross axis problem for Y2 Axes (thanks to jim (jjs9) for the fix)
+
 ;28-Nov-2007 (By Champion) v5.1.4 Release
 : [NEW] Add XDate.CompareTo() method with IComparable interface (thanks to Stefan)
 : [FIX] Copy constructor for CurveItem was missing _color
