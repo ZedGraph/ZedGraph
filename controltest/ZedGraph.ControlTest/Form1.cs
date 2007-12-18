@@ -59,10 +59,10 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DateWithTimeSpan( zedGraphControl1 );
 			//CreateGraph_DifferencePlot( zedGraphControl1 );
 			//CreateGraph_DualYDemo( zedGraphControl1 );
-			CreateGraph_DualYSimple( zedGraphControl1 );
+			//CreateGraph_DualYSimple( zedGraphControl1 );
 			//CreateGraph_DualY( zedGraphControl1 );
 			//CreateGraph_ErrorBarDemo( zedGraphControl1 );
-			//CreateGraph_FilteredPointList( zedGraphControl1 );
+			CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
 			//CreateGraph_Gantt( zedGraphControl1 );
 			//CreateGraph_Gantt2( zedGraphControl1 );
@@ -6718,15 +6718,15 @@ namespace ZedGraph.ControlTest
 		{
 			ZedGraphControl zg1 = zedGraphControl1;
 
-			int start = Environment.TickCount;
-			Invalidate();
-			Refresh();
+			//int start = Environment.TickCount;
+			//Invalidate();
+			//Refresh();
 
-			MessageBox.Show( "time= " + ( Environment.TickCount - start ).ToString() + " msec" );
+			//MessageBox.Show( "time= " + ( Environment.TickCount - start ).ToString() + " msec" );
 
-			zg1.SaveAs();
+			//zg1.SaveAs();
 
-			return;
+			//return;
 
 			//zg1.GraphPane = new GraphPane();
 			//return;

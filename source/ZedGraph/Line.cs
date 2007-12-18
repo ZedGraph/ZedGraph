@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.48 $ $Date: 2007-11-28 02:38:22 $ </version>
+	/// <version> $Revision: 3.49 $ $Date: 2007-12-18 02:06:34 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -311,8 +311,8 @@ namespace ZedGraph
 			// backwards compatible as new member variables are added to classes
 			int sch = info.GetInt32( "schema" );
 
-			if ( sch >= 14 )
-				_color = (Color) info.GetValue( "color", typeof( Color ) );
+			//if ( sch >= 14 )
+			//	_color = (Color) info.GetValue( "color", typeof( Color ) );
 			_stepType = (StepType)info.GetValue( "stepType", typeof( StepType ) );
 			_isSmooth = info.GetBoolean( "isSmooth" );
 			_smoothTension = info.GetSingle( "smoothTension" );
@@ -332,7 +332,7 @@ namespace ZedGraph
 			base.GetObjectData( info, context );
 
 			info.AddValue( "schema", schema );
-			info.AddValue( "color", _color );
+			//info.AddValue( "color", _color );
 			info.AddValue( "stepType", _stepType );
 			info.AddValue( "isSmooth", _isSmooth );
 			info.AddValue( "smoothTension", _smoothTension );
