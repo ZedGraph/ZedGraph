@@ -100,6 +100,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
 			//CreateGraph_MasterWithPies( zedGraphControl1 );
 			//CreateGraph_MultiYDemo( zedGraphControl1 );
+			CreateGraph_MulticolorFilledBarDemo( zedGraphControl1 );
 			//CreateGraph_NegativeBars( zedGraphControl1 );
 			//CreateGraph_NegativeHorizontalBars( zedGraphControl1 );
 			//CreateGraph_NoDupePointList( zedGraphControl1 );
@@ -6569,6 +6570,40 @@ namespace ZedGraph.ControlTest
 			//myPane.Y2AxisList.RemoveAt( myPane.Y2AxisList.Count - 1 );
 			//z1.Refresh();
 
+		}
+
+		private void CreateGraph_MulticolorFilledBarDemo( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.MasterPane[0];
+
+//			string subChartName = ( SubReport.Visible ) ? " - " + SubReport.SelectedItem.Text : string.Empty;
+			myPane.Title.Text = "My Report Name";
+			myPane.XAxis.Title.Text = "Bar Number";
+			myPane.YAxis.Title.Text = "Value";
+
+			double[] y = new double[] {1.0,2.0,0,1.0,1.0,2.0,0,0,1.0,0,1.0,0,1.0,0,1.0,
+							2.0,2.0,1.0,2.0,4.0,15.0,6.0,3.0,9.0 };
+			string[] str = new string[] { "Bangladesh", "Indian", "Asian Other", "Pakistani",
+						"African", "Caribbean", "Black Other", "Somalian", "Chinese", "Chinese Other",
+						"Albanian", "Kosovan", "European Other", "Romanian", "Filled by Client",
+						"Asian / White", "Black Caribbean/ White", "Black African/ White", "Mixed Other",
+						"Prefer Not To Say", "British", "Irish", "White Other", "Not Recorded" };
+
+			BarItem myCurve = myPane.AddBar( "Curve 1", null, y, Color.Red );
+
+			myPane.XAxis.MajorTic.IsBetweenLabels = false;
+			myPane.XAxis.Type = AxisType.Text;
+
+			myPane.XAxis.Scale.TextLabels = str;
+			myPane.XAxis.Scale.Align = AlignP.Outside;
+			myPane.XAxis.Scale.FontSpec.Angle = 90f;
+
+			myPane.Legend.IsVisible = false;
+
+			myPane.Chart.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45 );
+			myPane.Fill = new Fill( Color.White, Color.FromArgb( 255, 255, 225 ), 45 );
+
+			myPane.AxisChange();
 		}
 
 		private void CreateGraph_TestScroll( ZedGraphControl z1 )
