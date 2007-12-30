@@ -62,7 +62,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_DualYSimple( zedGraphControl1 );
 			//CreateGraph_DualY( zedGraphControl1 );
 			//CreateGraph_ErrorBarDemo( zedGraphControl1 );
-			CreateGraph_FilteredPointList( zedGraphControl1 );
+			//CreateGraph_FilteredPointList( zedGraphControl1 );
 			//CreateGraph_FlatLine( zedGraphControl1 );
 			//CreateGraph_Gantt( zedGraphControl1 );
 			//CreateGraph_Gantt2( zedGraphControl1 );
@@ -77,7 +77,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_Histogram( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
 			//CreateGraph_ImageObj( zedGraphControl1 );
-			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStickDemo( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStickDemo2( zedGraphControl1 );
 			//CreateGraph_Junk( zedGraphControl1 );
@@ -100,7 +100,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_MasterPane_Square( zedGraphControl1 );
 			//CreateGraph_MasterWithPies( zedGraphControl1 );
 			//CreateGraph_MultiYDemo( zedGraphControl1 );
-			CreateGraph_MulticolorFilledBarDemo( zedGraphControl1 );
+			//CreateGraph_MulticolorFilledBarDemo( zedGraphControl1 );
 			//CreateGraph_NegativeBars( zedGraphControl1 );
 			//CreateGraph_NegativeHorizontalBars( zedGraphControl1 );
 			//CreateGraph_NoDupePointList( zedGraphControl1 );
@@ -1178,7 +1178,7 @@ namespace ZedGraph.ControlTest
 			XDate xDate = new XDate( 2006, 1, 1 );
 			double open = 50.0;
 
-			for ( int i = 0; i < 100; i++ )
+			for ( int i = 0; i < 5000; i++ )
 			{
 				double x = xDate.XLDate;
 				double close = open + rand.NextDouble() * 10.0 - 5.0;
@@ -1190,10 +1190,10 @@ namespace ZedGraph.ControlTest
 
 				open = close;
 				// Advance one day
-				xDate.AddDays( 1.0 );
+				xDate.AddMinutes( 1.0 );
 				// but skip the weekends
 				if ( XDate.XLDateToDayOfWeek( xDate.XLDate ) == 6 )
-					xDate.AddDays( 2.0 );
+					xDate.AddMinutes( 2.0 );
 			}
 
 			JapaneseCandleStickItem myCurve = myPane.AddJapaneseCandleStick( "trades", spl );
@@ -1201,8 +1201,9 @@ namespace ZedGraph.ControlTest
 			myCurve.Stick.Color = Color.Blue;
 
 			// Use DateAsOrdinal to skip weekend gaps
-			myPane.XAxis.Type = AxisType.DateAsOrdinal;
-			myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
+			//myPane.XAxis.Type = AxisType.DateAsOrdinal;
+			myPane.XAxis.Type = AxisType.Date;
+			//myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
 
 			// pretty it up a little
 			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
@@ -1212,7 +1213,7 @@ namespace ZedGraph.ControlTest
 			z1.AxisChange();
 			z1.Invalidate();
 
-			z1.PointValueEvent += new ZedGraphControl.PointValueHandler( z1_PointValueEvent );
+			//z1.PointValueEvent += new ZedGraphControl.PointValueHandler( z1_PointValueEvent );
 		}
 
 		// Call this method from the Form_Load method, passing your ZedGraphControl
@@ -2420,6 +2421,7 @@ namespace ZedGraph.ControlTest
 				LineItem myCurve = myPaneT.AddCurve( "Type " + j.ToString(),
 					list, rotator.NextColor, rotator.NextSymbol );
 				myCurve.Symbol.Fill = new Fill( Color.White );
+				myCurve.Line.IsVisible = false;
 
 				master.Add( myPaneT );
 			}
@@ -2430,6 +2432,7 @@ namespace ZedGraph.ControlTest
 				//master.IsCommonScaleFactor = true;
 				z1.AxisChange();
 			}
+
 		}
 
 
@@ -2721,6 +2724,9 @@ namespace ZedGraph.ControlTest
 			myPane.XAxis.Scale.MinorStep = 1.0;
 			myPane.XAxis.Scale.Format = "MMM-yy";
 			z1.AxisChange();
+
+			DateUnit unit = myPane.XAxis.Scale.MajorUnit;
+
 		}
 
 		private void CreateGraph_junk8( ZedGraphControl z1 )
@@ -4461,6 +4467,7 @@ namespace ZedGraph.ControlTest
 			LineItem myCurve = myPane.AddCurve( "Alpha", list, Color.Red, SymbolType.Diamond );
 			// Fill the symbols with white
 			myCurve.Symbol.Fill = new Fill( Color.White );
+		//	myCurve.Line.Style = DashStyle.DashDot;
 			myCurve.Line.Style = DashStyle.Custom;
 			myCurve.Line.DashOff = 5;
 			myCurve.Line.DashOn = 5;

@@ -30,7 +30,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2007-11-03 04:41:28 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2007-12-30 23:27:39 $ </version>
 	[Serializable]
 	public class BarSettings : ISerializable
 	{
@@ -373,7 +373,8 @@ namespace ZedGraph
 			double range = baseAxis.Scale._maxLinearized - baseAxis.Scale._minLinearized;
 			if ( range <= 0 )
 				minStep = 1.0;
-			else if ( minStep <= 0 || minStep < 0.001 * range || minStep > range )
+//			else if ( minStep <= 0 || minStep < 0.001 * range || minStep > range )
+			else if ( minStep <= 0 || minStep > range )
 				minStep = 0.1 * range;
 
 			return minStep;

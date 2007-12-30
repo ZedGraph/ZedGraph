@@ -1,8 +1,10 @@
 == Version 5.1 ==
 
-;14-Dec-2007 (By Champion)
+;30-Dec-2007 (By Champion)
 ; [FIX] Fix Cross axis problem for Y2 Axes (thanks to jim (jjs9) for the fix)
 ; [FIX] Remove color from Line (it's already in LineBase) for Serialization
+; [FIX] remove arbitrary limit on step size in BarSettings.cs (thanks to James Dunkerley)
+; [FIX] Make Line.cs copy constructor call LineBase copy constructor
 
 ;28-Nov-2007 (By Champion) v5.1.4 Release
 : [NEW] Add XDate.CompareTo() method with IComparable interface (thanks to Stefan)

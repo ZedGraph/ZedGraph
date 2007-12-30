@@ -31,7 +31,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.49 $ $Date: 2007-12-18 02:06:34 $ </version>
+	/// <version> $Revision: 3.50 $ $Date: 2007-12-30 23:27:39 $ </version>
 	[Serializable]
 	public class Line : LineBase, ICloneable, ISerializable
 	{
@@ -259,7 +259,7 @@ namespace ZedGraph
 		/// The Copy Constructor
 		/// </summary>
 		/// <param name="rhs">The Line object from which to copy</param>
-		public Line( Line rhs )
+		public Line( Line rhs ) : base( rhs )
 		{
 			_color = rhs._color;
 			_stepType = rhs._stepType;
