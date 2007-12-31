@@ -5,6 +5,8 @@
 ; [FIX] Remove color from Line (it's already in LineBase) for Serialization
 ; [FIX] remove arbitrary limit on step size in BarSettings.cs (thanks to James Dunkerley)
 ; [FIX] Make Line.cs copy constructor call LineBase copy constructor
+; [FIX] Use fixed width for candlestick legend entries (thanks to brien)
+; [FIX] Use wider width for OHLC legend entries (similar to Candlesticks)
 
 ;28-Nov-2007 (By Champion) v5.1.4 Release
 : [NEW] Add XDate.CompareTo() method with IComparable interface (thanks to Stefan)

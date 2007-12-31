@@ -51,7 +51,7 @@ namespace ZedGraph
 	/// value of <see cref="BarSettings.Base"/>, which is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.3 $ $Date: 2007-04-16 00:03:02 $ </version>
+	/// <version> $Revision: 3.4 $ $Date: 2007-12-31 00:23:05 $ </version>
 	[Serializable]
 	public class OHLCBarItem : CurveItem, ICloneable, ISerializable
 	{
@@ -264,22 +264,24 @@ namespace ZedGraph
 				pixBase = rect.Left + rect.Width / 2.0F;
 				pixHigh = rect.Top;
 				pixLow = rect.Bottom;
-				pixOpen = pixHigh + rect.Height / 3;
-				pixClose = pixLow - rect.Height / 3;
+				pixOpen = pixHigh + rect.Height / 4;
+				pixClose = pixLow - rect.Height / 4;
 			}
 			else
 			{
 				pixBase = rect.Top + rect.Height / 2.0F;
 				pixHigh = rect.Right;
 				pixLow = rect.Left;
-				pixOpen = pixHigh - rect.Width / 3;
-				pixClose = pixLow + rect.Width / 3;
+				pixOpen = pixHigh - rect.Width / 4;
+				pixClose = pixLow + rect.Width / 4;
 			}
+
+			float halfSize = 2.0f * scaleFactor;
 
 			using ( Pen pen = new Pen( _bar.Color, _bar._width ) )
 			{
 				_bar.Draw( g, pane, pane._barSettings.Base == BarBase.X, pixBase, pixHigh,
-								pixLow, pixOpen, pixClose, scaleFactor, pen );
+								pixLow, pixOpen, pixClose, halfSize, pen );
 			}
 		}
 

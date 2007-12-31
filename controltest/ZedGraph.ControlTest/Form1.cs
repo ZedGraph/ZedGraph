@@ -77,7 +77,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_Histogram( zedGraphControl1 );
 			//CreateGraph_ImageSymbols( zedGraphControl1 );
 			//CreateGraph_ImageObj( zedGraphControl1 );
-			CreateGraph_JapaneseCandleStick( zedGraphControl1 );
+			//CreateGraph_JapaneseCandleStick( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStickDemo( zedGraphControl1 );
 			//CreateGraph_JapaneseCandleStickDemo2( zedGraphControl1 );
 			//CreateGraph_Junk( zedGraphControl1 );
@@ -106,6 +106,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_NoDupePointList( zedGraphControl1 );
 			//CreateGraph_NormalPane( zedGraphControl1 );
 			//CreateGraph_OHLCBar( zedGraphControl1 );
+			CreateGraph_OHLCBarTest( zedGraphControl1 );
 			//CreateGraph_OHLCBarGradient( zedGraphControl1 );
 			//CreateGraph_OHLCBarMaster( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
@@ -813,6 +814,61 @@ namespace ZedGraph.ControlTest
 
 		}
 
+		// OHLC Bar Test
+		private void CreateGraph_OHLCBarTest( ZedGraphControl z1 )
+		{
+			GraphPane myPane = z1.GraphPane;
+
+			myPane.Title.Text = "OHLC Chart Demo";
+			myPane.XAxis.Title.Text = "Trading Date";
+			myPane.YAxis.Title.Text = "Share Price, $US";
+
+			StockPointList spl = new StockPointList();
+			Random rand = new Random();
+
+			// First day is jan 1st
+			XDate xDate = new XDate( 2006, 1, 1 );
+			double open = 50.0;
+
+			for ( int i = 0; i < 50; i++ )
+			{
+				double x = xDate.XLDate;
+				double close = open + rand.NextDouble() * 10.0 - 5.0;
+				double hi = Math.Max( open, close ) + rand.NextDouble() * 5.0;
+				double low = Math.Min( open, close ) - rand.NextDouble() * 5.0;
+
+				StockPt pt = new StockPt( x, hi, low, open, close, 100000 );
+				spl.Add( pt );
+
+				open = close;
+				// Advance one day
+				//xDate.AddMinutes( 1.0 );
+				xDate.AddDays( 1.0 );
+				// but skip the weekends
+				//if ( XDate.XLDateToDayOfWeek( xDate.XLDate ) == 6 )
+				//	xDate.AddMinutes( 2.0 );
+			}
+
+			OHLCBarItem myCurve = myPane.AddOHLCBar( "trades", spl, Color.Blue);
+			//myCurve.Bar.IsAutoSize = true;
+			myCurve.Bar.Color = Color.Blue;
+
+			// Use DateAsOrdinal to skip weekend gaps
+			//myPane.XAxis.Type = AxisType.DateAsOrdinal;
+			myPane.XAxis.Type = AxisType.Date;
+			//myPane.XAxis.Scale.Min = new XDate( 2006, 1, 1 );
+
+			// pretty it up a little
+			myPane.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow, 45.0f );
+			myPane.Fill = new Fill( Color.White, Color.FromArgb( 220, 220, 255 ), 45.0f );
+
+			// Tell ZedGraph to calculate the axis ranges
+			z1.AxisChange();
+			z1.Invalidate();
+
+			//z1.PointValueEvent += new ZedGraphControl.PointValueHandler( z1_PointValueEvent );
+		}
+
 		public void CreateGraph_OHLCBarGradient( ZedGraphControl zgc )
 		{
 			GraphPane myPane = zgc.GraphPane;
@@ -1178,7 +1234,7 @@ namespace ZedGraph.ControlTest
 			XDate xDate = new XDate( 2006, 1, 1 );
 			double open = 50.0;
 
-			for ( int i = 0; i < 5000; i++ )
+			for ( int i = 0; i < 500; i++ )
 			{
 				double x = xDate.XLDate;
 				double close = open + rand.NextDouble() * 10.0 - 5.0;

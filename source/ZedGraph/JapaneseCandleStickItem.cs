@@ -55,7 +55,7 @@ namespace ZedGraph
 	/// value of <see cref="BarSettings.Base"/>, which is a
 	/// <see cref="ZedGraph.BarBase"/> enum type.</remarks>
 	/// <author> John Champion </author>
-	/// <version> $Revision: 3.5 $ $Date: 2007-04-16 00:03:02 $ </version>
+	/// <version> $Revision: 3.6 $ $Date: 2007-12-31 00:23:05 $ </version>
 	[Serializable]
 	public class JapaneseCandleStickItem : CurveItem, ICloneable, ISerializable
 	{
@@ -281,7 +281,8 @@ namespace ZedGraph
 			}
 
 			Axis baseAxis = BaseAxis( pane );
-			float halfSize = _stick.GetBarWidth( pane, baseAxis, scaleFactor );
+			//float halfSize = _stick.GetBarWidth( pane, baseAxis, scaleFactor );
+			float halfSize = 2 * scaleFactor;
 
 			using ( Pen pen = new Pen( _stick.Color, _stick._width ) )
 			{
