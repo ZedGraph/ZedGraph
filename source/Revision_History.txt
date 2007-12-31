@@ -7,6 +7,7 @@
 ; [FIX] Make Line.cs copy constructor call LineBase copy constructor
 ; [FIX] Use fixed width for candlestick legend entries (thanks to brien)
 ; [FIX] Use wider width for OHLC legend entries (similar to Candlesticks)
+; [NEW] Add custom CursorValueEvent to ZedGraphControl
 
 ;28-Nov-2007 (By Champion) v5.1.4 Release
 : [NEW] Add XDate.CompareTo() method with IComparable interface (thanks to Stefan)

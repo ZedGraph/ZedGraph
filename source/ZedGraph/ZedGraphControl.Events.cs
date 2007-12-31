@@ -192,6 +192,38 @@ namespace ZedGraph
 		public event PointValueHandler PointValueEvent;
 
 		/// <summary>
+		/// A delegate that allows custom formatting of the cursor value tooltips
+		/// </summary>
+		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
+		/// <param name="pane">The <see cref="GraphPane"/> object that contains the cursor of interest</param>
+		/// <param name="curve">The <see cref="Point"/> object that represents the cursor value location</param>
+		/// <seealso cref="CursorValueEvent" />
+		public delegate string CursorValueHandler( ZedGraphControl sender, GraphPane pane,
+			Point mousePt );
+
+		/// <summary>
+		/// Subscribe to this event to provide custom formatting for the cursor value tooltips
+		/// </summary>
+		/// <example>
+		/// <para>To subscribe to this event, use the following in your FormLoad method:</para>
+		/// <code>zedGraphControl1.CursorValueEvent +=
+		/// new ZedGraphControl.CursorValueHandler( MyCursorValueHandler );</code>
+		/// <para>Add this method to your Form1.cs:</para>
+		/// <code>
+		///    private string MyCursorValueHandler( object sender, GraphPane pane, Point mousePt )
+		///    {
+		///    #region
+		///		double x, y;
+		///		pane.ReverseTransform( mousePt, out x, out y );
+		///		return "( " + x.ToString( "f2" ) + ", " + y.ToString( "f2" ) + " )";
+		///    #endregion
+		///    }</code>
+		/// </example>
+		[Bindable( true ), Category( "Events" ),
+		 Description( "Subscribe to this event to provide custom-formatting for cursor value tooltips" )]
+		public event CursorValueHandler CursorValueEvent;
+
+		/// <summary>
 		/// A delegate that allows notification of mouse events on Graph objects.
 		/// </summary>
 		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
@@ -760,17 +792,33 @@ namespace ZedGraph
 			GraphPane pane = _masterPane.FindPane( mousePt );
 			if ( pane != null && pane.Chart._rect.Contains( mousePt ) )
 			{
-				double x, x2, y, y2;
-				pane.ReverseTransform( mousePt, out x, out x2, out y, out y2 );
-				string xStr = MakeValueLabel( pane.XAxis, x, -1, true );
-				string yStr = MakeValueLabel( pane.YAxis, y, -1, true );
-				string y2Str = MakeValueLabel( pane.Y2Axis, y2, -1, true );
+				// Provide Callback for User to customize the tooltips
+				if ( this.CursorValueEvent != null )
+				{
+					string label = this.CursorValueEvent( this, pane, mousePt );
+					if ( label != null && label.Length > 0 )
+					{
+						this.pointToolTip.SetToolTip( this, label );
+						this.pointToolTip.Active = true;
+					}
+					else
+						this.pointToolTip.Active = false;
+				}
+				else
+				{
+					double x, x2, y, y2;
+					pane.ReverseTransform( mousePt, out x, out x2, out y, out y2 );
+					string xStr = MakeValueLabel( pane.XAxis, x, -1, true );
+					string yStr = MakeValueLabel( pane.YAxis, y, -1, true );
+					string y2Str = MakeValueLabel( pane.Y2Axis, y2, -1, true );
 
-				this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + ", " + y2Str + " )" );
-				this.pointToolTip.Active = true;
+					this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + ", " + y2Str + " )" );
+					this.pointToolTip.Active = true;
+				}
 			}
 			else
 				this.pointToolTip.Active = false;
+
 			return mousePt;
 		}
 

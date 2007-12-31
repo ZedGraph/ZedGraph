@@ -29,7 +29,7 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_Load( object sender, EventArgs e )
 		{
-			//CreateGraph_32kPoints( zedGraphControl1 );
+			CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_AxisCrossDemo( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
@@ -106,7 +106,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_NoDupePointList( zedGraphControl1 );
 			//CreateGraph_NormalPane( zedGraphControl1 );
 			//CreateGraph_OHLCBar( zedGraphControl1 );
-			CreateGraph_OHLCBarTest( zedGraphControl1 );
+			//CreateGraph_OHLCBarTest( zedGraphControl1 );
 			//CreateGraph_OHLCBarGradient( zedGraphControl1 );
 			//CreateGraph_OHLCBarMaster( zedGraphControl1 );
 			//CreateGraph_OnePoint( zedGraphControl1 );
@@ -5389,7 +5389,7 @@ namespace ZedGraph.ControlTest
 		// Basic curve test - 32000 points
 		private void CreateGraph_32kPoints( ZedGraphControl z1 )
 		{
-			const int numPoints = 1000000;
+			const int numPoints = 1000;
 
 			GraphPane myPane = z1.GraphPane;
 
@@ -5414,8 +5414,17 @@ namespace ZedGraph.ControlTest
 			//myCurve.Line.IsVisible = false;
 			//myCurve.Symbol.IsVisible = false;
 			z1.IsShowCopyMessage = false;
-
+			z1.IsShowCursorValues = true;
 			z1.AxisChange();
+
+			z1.CursorValueEvent += new ZedGraphControl.CursorValueHandler(z1_CursorValueEvent);
+		}
+
+		private string z1_CursorValueEvent( ZedGraphControl z1, GraphPane pane, Point mousePt )
+		{
+			double x, y;
+			pane.ReverseTransform( mousePt, out x, out y );
+			return "( " + x.ToString( "f2" ) + ", " + y.ToString( "f2" ) + " )";
 		}
 
 		private void CreateGraph_OverlayBarDemo( ZedGraphControl z1 )
