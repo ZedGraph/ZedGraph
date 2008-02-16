@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.74 $ $Date: 2007-12-14 22:41:53 $ </version>
+	/// <version> $Revision: 3.75 $ $Date: 2008-02-16 20:58:33 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -1123,7 +1123,8 @@ namespace ZedGraph
 
 				// Only add space for the title if there is one
 				// Axis Title gets actual height
-				if ( str.Length > 0 && _title._isVisible )
+				// if ( str.Length > 0 && _title._isVisible )
+				if ( !string.IsNullOrEmpty( str ) && _title._isVisible )
 				{
 					//tmpSpace += this.TitleFontSpec.BoundingBox( g, str, scaleFactor ).Height;
 					fixedSpace = this.Title.FontSpec.BoundingBox( g, str, scaleFactor ).Height +
@@ -1322,7 +1323,8 @@ namespace ZedGraph
 			string str = MakeTitle();
 
 			// If the Axis is visible, draw the title
-			if ( _isVisible && _title._isVisible && str.Length > 0 )
+			//if ( _isVisible && _title._isVisible && str.Length > 0 )
+			if ( _isVisible && _title._isVisible && !string.IsNullOrEmpty( str ) )
 			{
 				bool hasTic = ( _scale._isLabelsInside ?
 						( this.MajorTic.IsInside || this.MajorTic._isCrossInside ||

@@ -1,5 +1,8 @@
 == Version 5.1 ==
 
+;16-Feb-2008 (By Champion)
+; [FIX] Fix exeption on null string (by Colin Dabritz)
+
 ;30-Dec-2007 (By Champion)
 ; [FIX] Fix Cross axis problem for Y2 Axes (thanks to jim (jjs9) for the fix)
 ; [FIX] Remove color from Line (it's already in LineBase) for Serialization
