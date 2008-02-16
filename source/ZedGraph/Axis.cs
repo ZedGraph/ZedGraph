@@ -35,7 +35,7 @@ namespace ZedGraph
 	/// </remarks>
 	/// 
 	/// <author> John Champion modified by Jerry Vos </author>
-	/// <version> $Revision: 3.75 $ $Date: 2008-02-16 20:58:33 $ </version>
+	/// <version> $Revision: 3.76 $ $Date: 2008-02-16 23:21:48 $ </version>
 	[Serializable]
 	abstract public class Axis : ISerializable, ICloneable
 	{
@@ -1371,6 +1371,9 @@ namespace ZedGraph
 
 		private string MakeTitle()
 		{
+			if ( _title._text == null )
+				_title._text = "";
+
 			// Revision: JCarpenter 10/06
 			// Allow customization of the modified title when the scale is very large
 			// The event handler can edit the full label.  If the handler returns

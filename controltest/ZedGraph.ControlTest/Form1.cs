@@ -29,7 +29,7 @@ namespace ZedGraph.ControlTest
 
 		private void Form1_Load( object sender, EventArgs e )
 		{
-			CreateGraph_32kPoints( zedGraphControl1 );
+			//CreateGraph_32kPoints( zedGraphControl1 );
 			//CreateGraph_AxisCrossDemo( zedGraphControl1 );
 			//CreateGraph_BarJunk( zedGraphControl1 );
 			//CreateGraph_BarJunk2( zedGraphControl1 );
@@ -131,6 +131,7 @@ namespace ZedGraph.ControlTest
 			//CreateGraph_StickToCurve( zedGraphControl1 );
 			//CreateGraph_TestScroll( zedGraphControl1 );
 			//CreateGraph_TextBasic( zedGraphControl2 );
+			CreateGraph_TextTutorial( zedGraphControl1 );
 			//CreateGraph_ThreeVerticalPanes( zedGraphControl1 );
 			//CreateGraph_TwoTextAxes( zedGraphControl1 );
 			//CreateGraph_VerticalBars( zedGraphControl1 );
@@ -5748,6 +5749,44 @@ namespace ZedGraph.ControlTest
 			myPane.XAxis.MajorGrid.IsVisible = true;
 
 			z1.AxisChange();
+		}
+
+		// Call this method from the Form_Load method, passing your ZedGraphControl
+		public void CreateGraph_TextTutorial( ZedGraphControl zgc )
+		{
+			GraphPane myPane = zgc.GraphPane;
+
+			// Set the title and axis labels
+			myPane.Title.Text = "My Test Date Graph";
+			myPane.XAxis.Title.Text = "Label";
+			myPane.YAxis.Title.Text = "My Y Axis";
+
+			// Make up some data points
+			string[] labels = { "USA", "Spain\nMadrid", "Qatar", "Morocco", "UK", "Uganda",
+                    "Cambodia", "Malaysia", "Australia", "Ecuador" };
+			double[] y = new double[10];
+			for ( int i = 0; i < 10; i++ )
+				y[i] = Math.Sin( (double) i * Math.PI / 2.0 );
+
+			// Generate a red curve with diamond
+			// symbols, and "My Curve" in the legend
+			LineItem myCurve = myPane.AddCurve( "My Curve",
+			   null, y, Color.Red, SymbolType.Diamond );
+
+			//Make the curve smooth
+			myCurve.Line.IsSmooth = true;
+
+			// Set the XAxis to Text type
+			myPane.XAxis.Type = AxisType.Text;
+			// Set the XAxis labels
+			myPane.XAxis.Scale.TextLabels = labels;
+			// Set the labels at an angle so they don't overlap
+			myPane.XAxis.Scale.FontSpec.Angle = 40;
+
+			// Calculate the Axis Scale Ranges
+			zgc.AxisChange();
+
+			zgc.IsShowCursorValues = true;
 		}
 
 		//using ZedGraph.ControlTest.DataSet2TableAdapters;
