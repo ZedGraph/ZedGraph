@@ -28,7 +28,7 @@ namespace ZedGraph
 	/// </summary>
 	/// 
 	/// <author> John Champion</author>
-	/// <version> $Revision: 3.20 $ $Date: 2007-11-03 04:41:29 $ </version>
+	/// <version> $Revision: 3.21 $ $Date: 2008-12-02 12:55:34 $ </version>
 	public class ValueHandler
 	{
 		private GraphPane _pane;
@@ -298,7 +298,7 @@ namespace ZedGraph
 			// otherwise, the curve is not a stacked type (not a stacked bar or stacked line)
 			else
 			{
-				if ( ! (curve is HiLowBarItem) )
+                if ((!(curve is HiLowBarItem)) && (!(curve is ErrorBarItem)))
 					lowVal = 0;
 				else
 					lowVal = curve.Points[iPt].LowValue;
