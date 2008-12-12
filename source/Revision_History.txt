@@ -1,6 +1,6 @@
 == Version 5.1 ==
 
-;02-Dec-2008 (By rjosulli)
+;02-Dec-2008 (By rjosulli) v5.1.5 Release
 ; [FIX] Ensure error bars do not always render with 0 as the lowest value
 
 ;16-Feb-2008 (By Champion)
