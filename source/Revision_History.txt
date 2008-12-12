@@ -1,5 +1,8 @@
 == Version 5.1 ==
 
+;02-Dec-2008 (By rjosulli)
+; [FIX] Ensure error bars do not always render with 0 as the lowest value
+
 ;16-Feb-2008 (By Champion)
 ; [FIX] Fix exeption on null string (by Colin Dabritz)
 ; [FIX] Make MakeTitle convert nulls to empty strings (By James Dunkerley)

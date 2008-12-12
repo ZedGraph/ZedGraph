@@ -196,7 +196,7 @@ namespace ZedGraph
 		/// </summary>
 		/// <param name="sender">The source <see cref="ZedGraphControl"/> object</param>
 		/// <param name="pane">The <see cref="GraphPane"/> object that contains the cursor of interest</param>
-		/// <param name="curve">The <see cref="Point"/> object that represents the cursor value location</param>
+        /// <param name="mousePt">The <see cref="Point"/> object that represents the cursor value location</param>
 		/// <seealso cref="CursorValueEvent" />
 		public delegate string CursorValueHandler( ZedGraphControl sender, GraphPane pane,
 			Point mousePt );
