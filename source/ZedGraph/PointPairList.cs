@@ -41,6 +41,7 @@ namespace ZedGraph
 		/// <see cref="PointPairList"/>.  Use the public property
 		/// <see cref="Sorted"/> to access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected bool _sorted = true;
 	#endregion
 

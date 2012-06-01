@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Resources;
+using System;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -10,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyTitle( "ZedGraph" )]
 [assembly: AssemblyDescription( "ZedGraph Library" )]
 [assembly: AssemblyConfiguration( "" )]
-[assembly: AssemblyCompany( "" )]
+[assembly: AssemblyCompany( "John Champion, et al." )]
 [assembly: AssemblyProduct( "ZedGraph Library" )]
 [assembly: AssemblyCopyright( "Copyright © 2003-2007 John Champion" )]
 [assembly: AssemblyTrademark( "" )]
@@ -37,3 +38,5 @@ using System.Resources;
 //[assembly: AssemblyFileVersion( "4.9.7.0" )]
 //[assembly: AllowPartiallyTrustedCallers ]
 [assembly: NeutralResourcesLanguageAttribute( "" )]
+
+[assembly: CLSCompliant( true )]

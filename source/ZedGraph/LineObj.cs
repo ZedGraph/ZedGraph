@@ -46,6 +46,7 @@ namespace ZedGraph
 		/// protected field that maintains the attributes of the line using an
 		/// instance of the <see cref="LineBase" /> class.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected LineBase _line;
 
 	#endregion

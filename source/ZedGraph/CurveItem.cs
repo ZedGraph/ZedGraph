@@ -58,12 +58,14 @@ namespace ZedGraph
 		/// <see cref="CurveItem"/> is on the bottom X axis or the top X axis (X2).
 		/// Use the public property <see cref="IsX2Axis"/> to access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected bool _isX2Axis;
 		/// <summary>
 		/// protected field that stores the boolean value that determines whether this
 		/// <see cref="CurveItem"/> is on the left Y axis or the right Y axis (Y2).
 		/// Use the public property <see cref="IsY2Axis"/> to access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected bool _isY2Axis;
 
 		/// <summary>
@@ -71,7 +73,8 @@ namespace ZedGraph
 		/// <see cref="CurveItem" /> belongs.  Use the public property <see cref="YAxisIndex" />
 		/// to access this value.
 		/// </summary>
-		protected int		_yAxisIndex;
+		[CLSCompliant(false)]
+		protected int _yAxisIndex;
 
 		/// <summary>
 		/// protected field that stores the boolean value that determines whether this
@@ -81,7 +84,8 @@ namespace ZedGraph
 		/// affect the display of the legend entry.  To hide the legend entry, you
 		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
 		/// </summary>
-		protected bool		_isVisible;
+		[CLSCompliant(false)]
+		protected bool _isVisible;
 
 		// Revision: JCarpenter 10/06
 		/// <summary>
@@ -92,6 +96,7 @@ namespace ZedGraph
 		/// affect the display of the legend entry.  To hide the legend entry, you
 		/// have to set <see cref="ZedGraph.Label.IsVisible"/> to false.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected bool _isSelected;
 
 		// Revision: JCarpenter 10/06
@@ -99,6 +104,7 @@ namespace ZedGraph
 		/// Protected field that stores the boolean value that determines whether this
 		/// <see cref="CurveItem"/> can be selected in the graph.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected bool _isSelectable;
 
 		/// <summary>
@@ -106,7 +112,8 @@ namespace ZedGraph
 		/// ordinal axis behavior.  Use the public property <see cref="IsOverrideOrdinal"/> to
 		/// access this value.
 		/// </summary>
-		protected bool		_isOverrideOrdinal;
+		[CLSCompliant(false)]
+		protected bool _isOverrideOrdinal;
 		
 		/// <summary>
 		/// The <see cref="IPointList"/> of value sets that
@@ -118,6 +125,7 @@ namespace ZedGraph
 		/// and are not plotted.  The curve will have a break at these points
 		/// to indicate the values are missing.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected IPointList _points;
 
 		/// <summary>

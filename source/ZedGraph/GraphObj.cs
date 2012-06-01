@@ -42,6 +42,7 @@ namespace ZedGraph
 		/// Protected field that stores the location of this <see cref="GraphObj"/>.
 		/// Use the public property <see cref="Location"/> to access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected Location _location;
 
 		/// <summary>
@@ -49,6 +50,7 @@ namespace ZedGraph
 		/// is visible in the graph.  Use the public property <see cref="IsVisible"/> to
 		/// access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected bool _isVisible;
 		
 		/// <summary>
@@ -56,6 +58,7 @@ namespace ZedGraph
 		/// will be clipped to the ChartRect.  Use the public property <see cref="IsClippedToChartRect"/> to
 		/// access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected bool _isClippedToChartRect;
 		
 		/// <summary>

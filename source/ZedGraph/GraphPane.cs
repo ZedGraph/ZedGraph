@@ -570,13 +570,14 @@ namespace ZedGraph
 		/// (<see cref="Scale.MinAuto"/>, <see cref="Scale.MaxAuto"/>, <see cref="Scale.MajorStepAuto"/>)
 		/// will be modified.  You must call <see cref="Control.Invalidate()"/> after calling
 		/// AxisChange to make sure the display gets updated.<br />
-		/// This overload of AxisChange just uses the default Graphics instance for the screen.
+		/// This overload of AxisChange just uses a throw-away bitmap as Graphics.
 		/// If you have a Graphics instance available from your Windows Form, you should use
 		/// the <see cref="AxisChange(Graphics)" /> overload instead.
 		/// </remarks>
 		public void AxisChange()
 		{
-			using ( Graphics g = Graphics.FromHwnd( IntPtr.Zero ) )
+			using (var img = new Bitmap((int)this.Rect.Width, (int)this.Rect.Height))
+			using (Graphics g = Graphics.FromImage(img))
 				AxisChange( g );
 		}
 

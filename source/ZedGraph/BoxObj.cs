@@ -44,12 +44,14 @@ namespace ZedGraph
 		/// <see cref="BoxObj"/>.  Use the public property <see cref="Fill"/> to
 		/// access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected Fill _fill;
 		/// <summary>
 		/// Private field that determines the properties of the border around this
 		/// <see cref="BoxObj"/>
 		/// Use the public property <see cref="Border"/> to access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected Border _border;
 
 	#endregion
