@@ -40,7 +40,8 @@ namespace ZedGraph
 		/// <see cref="Margin.Top"/>, <see cref="Margin.Bottom"/> to access these values.
 		/// </summary>
 		/// <value>Units are points (1/72 inch)</value>
-		protected float	_left,
+		[CLSCompliant(false)]
+		protected float _left,
 								_right,
 								_top,
 								_bottom;

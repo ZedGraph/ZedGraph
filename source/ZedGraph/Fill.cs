@@ -58,7 +58,8 @@ namespace ZedGraph
 		/// only applicable if the 
 		/// <see cref="Type"/> property is set to <see cref="ZedGraph.FillType.Brush"/>.
 		/// </summary>
-		protected Brush	_brush;
+		[CLSCompliant(false)]
+		protected Brush _brush;
 		/// <summary>
 		/// Private field that determines the type of color fill.  Use the public
 		/// property <see cref="Type"/> to access this value.  The fill color

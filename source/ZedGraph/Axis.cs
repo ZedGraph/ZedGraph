@@ -86,12 +86,14 @@ namespace ZedGraph
 		/// Use the public properties <see cref="IsVisible"/>, <see cref="IsAxisSegmentVisible"/>
 		/// for access to these values.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected bool _isVisible,
 							_isAxisSegmentVisible;
 
 		/// <summary> Private field for the <see cref="Axis"/> title string.
 		/// Use the public property <see cref="Title"/> for access to this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected AxisLabel _title;
 
 		/// <summary>

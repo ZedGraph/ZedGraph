@@ -47,12 +47,14 @@ namespace ZedGraph
 		/// property <see cref="IsOpenCloseVisible"/> to access this value.  If this value is
 		/// false, the wings will not be shown.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected bool _isOpenCloseVisible;
 
 		/// <summary>
 		/// Private field that stores the total width for the Opening/Closing line
 		/// segments.  Use the public property <see cref="Size"/> to access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected float _size;
 
 		/// <summary>
@@ -60,6 +62,7 @@ namespace ZedGraph
 		/// calculated automatically based on the minimum axis scale step size between
 		/// bars.  Use the public property <see cref="IsAutoSize" /> to access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected Boolean _isAutoSize;
 
 		/// <summary>

@@ -49,15 +49,18 @@ namespace ZedGraph
 		/// The rectangle that defines the full area into which the pane is rendered.  Units are pixels.
 		/// Use the public property <see cref="Rect"/> to access this value.
 		/// </summary>
-		protected RectangleF	_rect;
+		[CLSCompliant(false)]
+		protected RectangleF _rect;
 		
 		/// <summary>Private field that holds the main title of the pane.  Use the
 		/// public property <see cref="Title"/> to access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected GapLabel _title;
 		
 		/// <summary>Private field instance of the <see cref="ZedGraph.Legend"/> class.  Use the
 		/// public property <see cref="PaneBase.Legend"/> to access this class.</summary>
+		[CLSCompliant(false)]
 		protected Legend _legend;
 
 		/// <summary>
@@ -66,6 +69,7 @@ namespace ZedGraph
 		/// a parameter to the <see cref="PaneList.IndexOfTag"/> method.  Use the public property
 		/// <see cref="Tag"/> to access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected object _tag;
 
 		/// <summary>
@@ -80,6 +84,7 @@ namespace ZedGraph
 		/// Use the public property <see cref="IsFontsScaled"/> to access this value. </summary>
 		/// <seealso cref="CalcScaleFactor"/>
 		/// <seealso cref="IsPenWidthScaled"/>
+		[CLSCompliant(false)]
 		protected bool _isFontsScaled;
 		/// <summary>
 		/// Private field that controls whether or not pen widths are scaled according to the
@@ -91,6 +96,7 @@ namespace ZedGraph
 		/// false otherwise.</value>
 		/// <seealso cref="IsFontsScaled"/>
 		/// <seealso cref="CalcScaleFactor"/>
+		[CLSCompliant(false)]
 		protected bool _isPenWidthScaled;
 
 		/// <summary>
@@ -98,16 +104,19 @@ namespace ZedGraph
 		/// <see cref="Rect"/> background.  Use the public property <see cref="Fill"/> to
 		/// access this value.
 		/// </summary>
-		protected Fill	_fill;
+		[CLSCompliant(false)]
+		protected Fill _fill;
 		/// <summary>
 		/// Private field that stores the <see cref="ZedGraph.Border"/> data for the
 		/// <see cref="Rect"/> border.  Use the public property <see cref="Border"/> to
 		/// access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected Border _border;
 
 		/// <summary>Private field instance of the <see cref="ZedGraph.GraphObjList"/> class.  Use the
 		/// public property <see cref="GraphObjList"/> to access this class.</summary>
+		[CLSCompliant(false)]
 		protected GraphObjList _graphObjList;
 
 		/// <summary>Private field that determines the base size of the pane, in inches.
@@ -115,12 +124,14 @@ namespace ZedGraph
 		/// Use the public property <see cref="BaseDimension"/> to access this value. </summary>
 		/// <seealso cref="_isFontsScaled"/>
 		/// <seealso cref="CalcScaleFactor"/>
+		[CLSCompliant(false)]
 		protected float _baseDimension;
 
 		/// <summary>
 		/// private field that stores the gap between the bottom of the pane title and the
 		/// client area of the pane.  This is expressed as a fraction of the title character height.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected float _titleGap;
 
 	#endregion

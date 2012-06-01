@@ -42,13 +42,15 @@ namespace ZedGraph
 		/// class defined for this <see cref="LineItem"/>.  Use the public
 		/// property <see cref="Symbol"/> to access this value.
 		/// </summary>
-		protected Symbol	_symbol;
+		[CLSCompliant(false)]
+		protected Symbol _symbol;
 		/// <summary>
 		/// Private field that stores a reference to the <see cref="ZedGraph.Line"/>
 		/// class defined for this <see cref="LineItem"/>.  Use the public
 		/// property <see cref="Line"/> to access this value.
 		/// </summary>
-		protected Line		_line;
+		[CLSCompliant(false)]
+		protected Line _line;
 
 	#endregion
 

@@ -51,16 +51,19 @@ namespace ZedGraph
 		/// <summary>
 		/// An array of PointPair objects that acts as the underlying buffer.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected PointPair[] _mBuffer;
 
 		/// <summary>
 		/// The index of the previously enqueued item. -1 if buffer is empty.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected int _headIdx;
 
 		/// <summary>
 		/// The index of the next item to be dequeued. -1 if buffer is empty.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected int _tailIdx;
 
 	#endregion
