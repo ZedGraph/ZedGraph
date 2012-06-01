@@ -76,6 +76,7 @@ namespace ZedGraph
 		/// value is less than the <see cref="StockPt.Open" /> value.  Use the public
 		/// property <see cref="FallingColor"/> to access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected Color _fallingColor;
 	#endregion
 

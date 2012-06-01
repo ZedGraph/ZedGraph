@@ -63,6 +63,7 @@ namespace ZedGraph
 		/// property <see cref="OHLCBar"/> to access this value.
 		/// </summary>
 		/// 
+		[CLSCompliant(false)]
 		protected OHLCBar _bar;
 
 	#endregion

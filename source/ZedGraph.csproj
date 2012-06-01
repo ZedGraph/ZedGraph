@@ -216,7 +216,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ZedGraph.csproj.nuspec" />
+    <None Include="ZedGraph.csproj.nuspec">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="zedgraphkey.snk" />
   </ItemGroup>
   <ItemGroup>

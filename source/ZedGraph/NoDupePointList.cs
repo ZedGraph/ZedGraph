@@ -62,6 +62,7 @@ namespace ZedGraph
 		/// <see cref="TotalCount" />.  Use the public property <see cref="IsFiltered" /> to
 		/// access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected bool _isFiltered;
 		/// <summary>
 		/// Protected field that stores the number of data points after filtering (e.g.,
@@ -69,11 +70,13 @@ namespace ZedGraph
 		/// returns the total count for an unfiltered dataset, or <see cref="_filteredCount" />
 		/// for a dataset that has been filtered.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected int _filteredCount;
 		/// <summary>
 		/// Protected array of indices for all the points that are currently visible.  This only
 		/// applies if <see cref="IsFiltered" /> is true.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected int[] _visibleIndicies;
 
 
@@ -82,6 +85,7 @@ namespace ZedGraph
 		/// neighbor in order to be filtered out.  Use the public property <see cref="FilterMode" />
 		/// to access this value.
 		/// </summary>
+		[CLSCompliant(false)]
 		protected int _filterMode;
 
 

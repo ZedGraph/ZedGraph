@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
 using System.Resources;
+using System;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -37,3 +38,5 @@ using System.Resources;
 //[assembly: AssemblyFileVersion( "4.9.7.0" )]
 //[assembly: AllowPartiallyTrustedCallers ]
 [assembly: NeutralResourcesLanguageAttribute( "" )]
+
+[assembly: CLSCompliant( true )]

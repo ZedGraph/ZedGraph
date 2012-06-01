@@ -44,7 +44,8 @@ namespace ZedGraph
 		/// class defined for this <see cref="BarItem"/>.  Use the public
 		/// property <see cref="Bar"/> to access this value.
 		/// </summary>
-		protected Bar			_bar;
+		[CLSCompliant(false)]
+		protected Bar _bar;
 	#endregion
 	
 	#region Properties
