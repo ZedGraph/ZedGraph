@@ -448,14 +448,15 @@ namespace ZedGraph
 		/// <see cref="PaneList"/> list.
 		/// </summary>
 		/// <remarks>
-		/// This overload of AxisChange just uses the default Graphics instance for the screen.
+		/// This overload of AxisChange just uses a throw-away bitmap as Graphics.
 		/// If you have a Graphics instance available from your Windows Form, you should use
 		/// the <see cref="AxisChange(Graphics)" /> overload instead.
 		/// </remarks>
 		public void AxisChange()
 		{
-			using ( Graphics g = Graphics.FromHwnd( IntPtr.Zero ) )
-				AxisChange( g );
+			using (var img = new Bitmap((int)this.Rect.Width, (int)this.Rect.Height))
+			using (Graphics g = Graphics.FromImage(img))
+				AxisChange(g);
 		}
 
 		/// <summary>
