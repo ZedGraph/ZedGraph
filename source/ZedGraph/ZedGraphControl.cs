@@ -118,7 +118,7 @@ namespace ZedGraph
 		/// </remarks>
 		private bool _isShowCopyMessage = true;
 
-		private SaveFileDialog _saveFileDialog = new SaveFileDialog();
+        private SaveFileDialog _saveFileDialog;
 
 		/// <summary>
 		/// private field that determines whether the settings of
