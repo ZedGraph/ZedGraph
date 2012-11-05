@@ -814,8 +814,11 @@ namespace ZedGraph
 				_graphObjList.Draw( g, this, scaleFactor, ZOrder.C_BehindChartBorder );
 			}
 
+		    var smode = g.SmoothingMode;
+            g.SmoothingMode = SmoothingMode.None;
 			// Border the axis itself
 			_chart.Border.Draw( g, this, scaleFactor, _chart._rect );
+		    g.SmoothingMode = smode;
 
 			if ( showGraf )
 			{
