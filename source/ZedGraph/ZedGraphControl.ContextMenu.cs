@@ -370,7 +370,7 @@ namespace ZedGraph
 		{
 			if ( _masterPane != null )
 			{
-				_saveFileDialog.Filter =
+				SaveFileDialog.Filter =
 					"Emf Format (*.emf)|*.emf|" +
 					"PNG Format (*.png)|*.png|" +
 					"Gif Format (*.gif)|*.gif|" +
@@ -383,36 +383,36 @@ namespace ZedGraph
 					String ext = System.IO.Path.GetExtension( DefaultFileName ).ToLower();
 					switch (ext)
 					{
-						case ".emf": _saveFileDialog.FilterIndex = 1; break;
-						case ".png": _saveFileDialog.FilterIndex = 2; break;
-						case ".gif": _saveFileDialog.FilterIndex = 3; break;
+						case ".emf": SaveFileDialog.FilterIndex = 1; break;
+						case ".png": SaveFileDialog.FilterIndex = 2; break;
+						case ".gif": SaveFileDialog.FilterIndex = 3; break;
 						case ".jpeg":
-						case ".jpg": _saveFileDialog.FilterIndex = 4; break;
+						case ".jpg": SaveFileDialog.FilterIndex = 4; break;
 						case ".tiff":
-						case ".tif": _saveFileDialog.FilterIndex = 5; break;
-						case ".bmp": _saveFileDialog.FilterIndex = 6; break;
+						case ".tif": SaveFileDialog.FilterIndex = 5; break;
+						case ".bmp": SaveFileDialog.FilterIndex = 6; break;
 					}
 					//If we were passed a file name, not just an extension, use it
 					if ( DefaultFileName.Length > ext.Length )
 					{
-						_saveFileDialog.FileName = DefaultFileName;
+						SaveFileDialog.FileName = DefaultFileName;
 					}
 				}
 
-				if ( _saveFileDialog.ShowDialog() == DialogResult.OK )
+				if ( SaveFileDialog.ShowDialog() == DialogResult.OK )
 				{
-					Stream myStream = _saveFileDialog.OpenFile();
+					Stream myStream = SaveFileDialog.OpenFile();
 					if ( myStream != null )
 					{
-						if ( _saveFileDialog.FilterIndex == 1 )
+						if ( SaveFileDialog.FilterIndex == 1 )
 						{
 							myStream.Close();
-							SaveEmfFile( _saveFileDialog.FileName );
+							SaveEmfFile( SaveFileDialog.FileName );
 						}
 						else
 						{
 							ImageFormat format = ImageFormat.Png;
-                            switch (_saveFileDialog.FilterIndex)
+                            switch (SaveFileDialog.FilterIndex)
 							{
 								case 2: format = ImageFormat.Png; break;
 								case 3: format = ImageFormat.Gif; break;
@@ -425,7 +425,7 @@ namespace ZedGraph
 							//_masterPane.GetImage().Save( myStream, format );
 							myStream.Close();
 						}
-                        return _saveFileDialog.FileName;
+                        return SaveFileDialog.FileName;
 					}
 				}
 			}
@@ -444,26 +444,26 @@ namespace ZedGraph
 		{
 			if ( _masterPane != null )
 			{
-				_saveFileDialog.Filter =
+				SaveFileDialog.Filter =
 					"PNG Format (*.png)|*.png|" +
 					"Gif Format (*.gif)|*.gif|" +
 					"Jpeg Format (*.jpg)|*.jpg|" +
 					"Tiff Format (*.tif)|*.tif|" +
 					"Bmp Format (*.bmp)|*.bmp";
 
-				if ( _saveFileDialog.ShowDialog() == DialogResult.OK )
+				if ( SaveFileDialog.ShowDialog() == DialogResult.OK )
 				{
 					ImageFormat format = ImageFormat.Png;
-					if ( _saveFileDialog.FilterIndex == 2 )
+					if ( SaveFileDialog.FilterIndex == 2 )
 						format = ImageFormat.Gif;
-					else if ( _saveFileDialog.FilterIndex == 3 )
+					else if ( SaveFileDialog.FilterIndex == 3 )
 						format = ImageFormat.Jpeg;
-					else if ( _saveFileDialog.FilterIndex == 4 )
+					else if ( SaveFileDialog.FilterIndex == 4 )
 						format = ImageFormat.Tiff;
-					else if ( _saveFileDialog.FilterIndex == 5 )
+					else if ( SaveFileDialog.FilterIndex == 5 )
 						format = ImageFormat.Bmp;
 
-					Stream myStream = _saveFileDialog.OpenFile();
+					Stream myStream = SaveFileDialog.OpenFile();
 					if ( myStream != null )
 					{
 						//_masterPane.GetImage().Save( myStream, format );
@@ -486,16 +486,16 @@ namespace ZedGraph
 		{
 			if ( _masterPane != null )
 			{
-				_saveFileDialog.Filter = "Emf Format (*.emf)|*.emf";
+				SaveFileDialog.Filter = "Emf Format (*.emf)|*.emf";
 
-				if ( _saveFileDialog.ShowDialog() == DialogResult.OK )
+				if ( SaveFileDialog.ShowDialog() == DialogResult.OK )
 				{
-					Stream myStream = _saveFileDialog.OpenFile();
+					Stream myStream = SaveFileDialog.OpenFile();
 					if ( myStream != null )
 					{
 						myStream.Close();
 						//_masterPane.GetMetafile().Save( _saveFileDialog.FileName );
-						SaveEmfFile(_saveFileDialog.FileName);
+						SaveEmfFile(SaveFileDialog.FileName);
 					}
 				}
 			}

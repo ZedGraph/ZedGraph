@@ -64,6 +64,7 @@ namespace ZedGraph.Demo
 			this.types = types;
 
 			control = new ZedGraphControl();
+		    control.IsAntiAlias = true;
 		}
 
 	#region ZedGraphDemo Members

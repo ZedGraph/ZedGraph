@@ -578,11 +578,13 @@ namespace ZedGraph
 			CompositingQuality sCompQual = g.CompositingQuality;
 			InterpolationMode sInterpMode = g.InterpolationMode;
 
-			SetAntiAliasMode( g, _isAntiAlias );
+            SetAntiAliasMode(g, _isAntiAlias);
 
 			// Draw the pane border & background fill, the title, and the GraphObj objects that lie at
 			// ZOrder.GBehindAll
 			base.Draw( g );
+
+
 
 			if ( _rect.Width <= 1 || _rect.Height <= 1 )
 				return;

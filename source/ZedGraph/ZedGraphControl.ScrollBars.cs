@@ -71,16 +71,17 @@ namespace ZedGraph
 
 		private void ApplyToAllPanes( GraphPane primaryPane )
 		{
-			foreach ( GraphPane pane in _masterPane._paneList )
-			{
-				if ( pane != primaryPane )
+			if (_isSynchronizeXAxes || _isSynchronizeYAxes)
+				foreach ( GraphPane pane in _masterPane._paneList )
 				{
-					if ( _isSynchronizeXAxes )
-						Synchronize( primaryPane.XAxis, pane.XAxis );
-					if ( _isSynchronizeYAxes )
-						Synchronize( primaryPane.YAxis, pane.YAxis );
+					if ( pane != primaryPane )
+					{
+						if ( _isSynchronizeXAxes )
+							Synchronize( primaryPane.XAxis, pane.XAxis );
+						if ( _isSynchronizeYAxes )
+							Synchronize( primaryPane.YAxis, pane.YAxis );
+					}
 				}
-			}
 		}
 
 		private void Synchronize( Axis source, Axis dest )

@@ -902,7 +902,7 @@ namespace ZedGraph
 			{
 				g.SmoothingMode = SmoothingMode.HighQuality;
 				//g.SmoothingMode = SmoothingMode.AntiAlias;
-				g.TextRenderingHint = TextRenderingHint.AntiAlias;
+				g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
 				g.CompositingQuality = CompositingQuality.HighQuality;
 				g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 			}

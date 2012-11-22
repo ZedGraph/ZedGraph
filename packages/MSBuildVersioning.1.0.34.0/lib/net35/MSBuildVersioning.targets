@@ -1,0 +1,5 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <UsingTask TaskName="HgVersionFile" AssemblyFile="MSBuildVersioning.dll" />
+    <UsingTask TaskName="GitVersionFile" AssemblyFile="MSBuildVersioning.dll" />
+    <UsingTask TaskName="SvnVersionFile" AssemblyFile="MSBuildVersioning.dll" />
+</Project>
