@@ -766,7 +766,10 @@ namespace ZedGraph
 
 			if ( _isVisible )
 			{
-				SetTransformMatrix( g, pane, scaleFactor );
+				var smode = g.SmoothingMode;
+				g.SmoothingMode = SmoothingMode.None;
+
+				SetTransformMatrix(g, pane, scaleFactor);
 
 				shiftPos = CalcTotalShift( pane, scaleFactor, shiftPos );
 
@@ -775,6 +778,7 @@ namespace ZedGraph
 				//DrawTitle( g, pane, scaleFactor );
 
 				g.Transform = saveMatrix;
+				g.SmoothingMode = smode;
 			}
 		}
 
