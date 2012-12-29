@@ -1,15 +1,36 @@
-<?xml version="1.0"?>
-<package >
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ZedGraph</id>
-    <version>$version$</version>
-    <authors>$author$</authors>
-    <owners>David Schmit</owners>
+    <version>5.1.6</version>
+    <title />
+    <authors>ZedGraph Project</authors>
+    <owners />
     <licenseUrl>http://www.gnu.org/licenses/lgpl-2.1.txt</licenseUrl>
     <projectUrl>http://sourceforge.net/projects/zedgraph/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>ZedGraph is a class library, user control, and web control for .net, written in C#, for drawing 2D Line, Bar, and Pie Charts. It features full, detailed customization capabilities, but most options have defaults for ease of use.</description>
     <releaseNotes>minor fixes for headless usage; enable nuget package restore</releaseNotes>
     <copyright>Copyright © 2003-2007 John Champion</copyright>
+    <language />
   </metadata>
+  <files>
+    <file src="lib\de\ZedGraph.resources.dll" target="lib\de\ZedGraph.resources.dll" />
+    <file src="lib\es\ZedGraph.resources.dll" target="lib\es\ZedGraph.resources.dll" />
+    <file src="lib\fr\ZedGraph.resources.dll" target="lib\fr\ZedGraph.resources.dll" />
+    <file src="lib\hu\ZedGraph.resources.dll" target="lib\hu\ZedGraph.resources.dll" />
+    <file src="lib\it\ZedGraph.resources.dll" target="lib\it\ZedGraph.resources.dll" />
+    <file src="lib\ja\ZedGraph.resources.dll" target="lib\ja\ZedGraph.resources.dll" />
+    <file src="lib\pt\ZedGraph.resources.dll" target="lib\pt\ZedGraph.resources.dll" />
+    <file src="lib\ru\ZedGraph.resources.dll" target="lib\ru\ZedGraph.resources.dll" />
+    <file src="lib\sk\ZedGraph.resources.dll" target="lib\sk\ZedGraph.resources.dll" />
+    <file src="lib\sv\ZedGraph.resources.dll" target="lib\sv\ZedGraph.resources.dll" />
+    <file src="lib\tr\ZedGraph.resources.dll" target="lib\tr\ZedGraph.resources.dll" />
+    <file src="lib\zh-cn\ZedGraph.resources.dll" target="lib\zh-cn\ZedGraph.resources.dll" />
+    <file src="lib\zh-tw\ZedGraph.resources.dll" target="lib\zh-tw\ZedGraph.resources.dll" />
+    <file src="lib\ZedGraph.dll" target="lib\ZedGraph.dll" />
+    <file src="lib\ZedGraph.XML" target="lib\ZedGraph.XML" />
+    <file src="License-LGPL.txt" target="License-LGPL.txt" />
+    <file src="readme.txt" target="readme.txt" />
+  </files>
 </package>
