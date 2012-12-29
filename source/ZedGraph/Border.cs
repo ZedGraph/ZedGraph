@@ -227,6 +227,9 @@ namespace ZedGraph
 			// not line up properly with the last tic mark
 			if ( _isVisible )
 			{
+				var smode = g.SmoothingMode;
+				g.SmoothingMode = SmoothingMode.None;
+
 				RectangleF tRect = rect;
 
 				float		scaledInflate = (float) ( _inflateFactor * scaleFactor );
@@ -234,6 +237,8 @@ namespace ZedGraph
 
 				using ( Pen pen = GetPen( pane, scaleFactor) )
 					g.DrawRectangle( pen, tRect.X, tRect.Y, tRect.Width, tRect.Height );
+
+				g.SmoothingMode = smode;
 			}
 		}
 

@@ -612,8 +612,13 @@ namespace ZedGraph
 		 Description( "Provides access to the SaveFileDialog for the 'Save As' menu item" )]
 		public SaveFileDialog SaveFileDialog
 		{
-			get { return _saveFileDialog; }
-			set { _saveFileDialog = value; }
+            get
+            {
+                if (_saveFileDialog == null)
+                    _saveFileDialog = new SaveFileDialog();
+                return _saveFileDialog;
+            }
+            set { _saveFileDialog = value; }
 		}
 
 		/// <summary>
