@@ -1,15 +1,35 @@
-<?xml version="1.0"?>
-<package >
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ZedGraph</id>
-    <version>$version$</version>
-    <authors>$author$</authors>
-    <owners>David Schmit</owners>
+    <version>5.1.6</version>
+    <title />
+    <authors>ZedGraph Project</authors>
+    <owners />
     <licenseUrl>http://www.gnu.org/licenses/lgpl-2.1.txt</licenseUrl>
     <projectUrl>http://sourceforge.net/projects/zedgraph/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>ZedGraph is a class library, user control, and web control for .net, written in C#, for drawing 2D Line, Bar, and Pie Charts. It features full, detailed customization capabilities, but most options have defaults for ease of use.</description>
     <releaseNotes>minor fixes for headless usage; enable nuget package restore</releaseNotes>
     <copyright>Copyright © 2003-2007 John Champion</copyright>
+    <language />
   </metadata>
+  <files>
+    <file src="bin\Release\de\ZedGraph.resources.dll" target="lib\net35-Client\de\ZedGraph.resources.dll" />
+    <file src="bin\Release\es\ZedGraph.resources.dll" target="lib\net35-Client\es\ZedGraph.resources.dll" />
+    <file src="bin\Release\fr\ZedGraph.resources.dll" target="lib\net35-Client\fr\ZedGraph.resources.dll" />
+    <file src="bin\Release\hu\ZedGraph.resources.dll" target="lib\net35-Client\hu\ZedGraph.resources.dll" />
+    <file src="bin\Release\it\ZedGraph.resources.dll" target="lib\net35-Client\it\ZedGraph.resources.dll" />
+    <file src="bin\Release\ja\ZedGraph.resources.dll" target="lib\net35-Client\ja\ZedGraph.resources.dll" />
+    <file src="bin\Release\pt\ZedGraph.resources.dll" target="lib\net35-Client\pt\ZedGraph.resources.dll" />
+    <file src="bin\Release\ru\ZedGraph.resources.dll" target="lib\net35-Client\ru\ZedGraph.resources.dll" />
+    <file src="bin\Release\sk\ZedGraph.resources.dll" target="lib\net35-Client\sk\ZedGraph.resources.dll" />
+    <file src="bin\Release\sv\ZedGraph.resources.dll" target="lib\net35-Client\sv\ZedGraph.resources.dll" />
+    <file src="bin\Release\tr\ZedGraph.resources.dll" target="lib\net35-Client\tr\ZedGraph.resources.dll" />
+    <file src="bin\Release\zh-cn\ZedGraph.resources.dll" target="lib\net35-Client\zh-cn\ZedGraph.resources.dll" />
+    <file src="bin\Release\zh-tw\ZedGraph.resources.dll" target="lib\net35-Client\zh-tw\ZedGraph.resources.dll" />
+    <file src="bin\Release\ZedGraph.dll" target="lib\net35-Client\ZedGraph.dll" />
+    <file src="bin\Release\ZedGraph.XML" target="lib\net35-Client\ZedGraph.XML" />
+    <file src="License-LGPL.txt" target="content\License-LGPL.txt" />
+  </files>
 </package>
