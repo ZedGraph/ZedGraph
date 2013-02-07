@@ -115,6 +115,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ScaleTests.cs" />
     <Compile Include="ZedGraph.UnitTest\ZGTest.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -27,6 +27,8 @@ using System.Drawing.Drawing2D;
 
 namespace ZedGraph
 {
+	using System.Globalization;
+
 	/// <summary>
 	/// The Scale class is an abstract base class that encompasses the properties
 	/// and methods associated with a scale of data.
@@ -2526,37 +2528,47 @@ namespace ZedGraph
 			return maxLabels;
 		}
 
-		internal void SetScaleMag( double min, double max, double step )
+		/// <summary>
+		/// Sets the Magnitude factor for the scale if the <see cref="_magAuto"/> is set to <c>true</c>.
+		/// </summary>
+		/// <remarks>
+		/// if <see cref="_formatAuto"/> is set to <c>true</c> then the label formatting will
+		/// be adjusted for the requried number of decimal places.
+		/// </remarks>
+		/// <param name="min">the minimum scale value.</param>
+		/// <param name="max">the maximum scale value.</param>
+		/// <param name="step">the scale stepping.</param>
+		internal void SetScaleMag(double min, double max, double step)
 		{
 			// set the scale magnitude if required
-			if ( _magAuto )
+			if (this._magAuto)
 			{
 				// Find the optimal scale display multiple
-				double mag = -100;
-				double mag2 = -100;
+				double minMag = Math.Floor(Math.Log10(Math.Abs(this._min)));
+				double maxMag = Math.Floor(Math.Log10(Math.Abs(this._max)));
 
-				if ( Math.Abs( _min ) > 1.0e-30 )
-					mag = Math.Floor( Math.Log10( Math.Abs( _min ) ) );
-				if ( Math.Abs( _max ) > 1.0e-30 )
-					mag2 = Math.Floor( Math.Log10( Math.Abs( _max ) ) );
-
-				mag = Math.Max( mag2, mag );
+				double mag = Math.Max(maxMag, minMag);
 
 				// Do not use scale multiples for magnitudes below 4
-				if ( mag == -100 || Math.Abs( mag ) <= 3 )
+				if (Math.Abs(mag) <= 3)
+				{
 					mag = 0;
+				}
 
 				// Use a power of 10 that is a multiple of 3 (engineering scale)
-				_mag = (int) ( Math.Floor( mag / 3.0 ) * 3.0 );
+				this._mag = (int)(Math.Floor(mag / 3.0) * 3.0);
 			}
 
 			// Calculate the appropriate number of dec places to display if required
-			if ( _formatAuto )
+			if (this._formatAuto)
 			{
-				int numDec = 0 - (int) ( Math.Floor( Math.Log10( _majorStep ) ) - _mag );
-				if ( numDec < 0 )
+				int numDec = 0 - (int)(Math.Floor(Math.Log10(this._majorStep)) - this._mag);
+				if (numDec < 0)
+				{
 					numDec = 0;
-				_format = "f" + numDec.ToString();
+				}
+
+				this._format = "f" + numDec.ToString(CultureInfo.InvariantCulture);
 			}
 		}
 
