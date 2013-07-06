@@ -27,8 +27,32 @@ namespace ZedGraph
 {
 	partial class ZedGraphControl
 	{
+		/// <summary>
+		/// The <see cref="UseExtendedPrintDialog"/> backing field.
+		/// </summary>
+		private bool useExtendedPrintDialog = true;
 
-	#region Printing
+		#region Printing
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the dialog should be shown in the Windows XP style for systems
+		/// running Windows XP Home Edition, Windows XP Professional, Windows Server 2003 or later. The default is <c>true</c>.
+		/// </summary>
+		/// <value>
+		///   <c>true</c> to indicate the dialog should be shown with the Windows XP style, otherwise <c>false</c>.
+		/// </value>
+		public bool UseExtendedPrintDialog
+		{
+			get
+			{
+				return this.useExtendedPrintDialog;
+			}
+
+			set
+			{
+				this.useExtendedPrintDialog = value;
+			}
+		}
 
 		/// <summary>
 		/// Handler for the "Page Setup..." context menu item.   Displays a
@@ -187,25 +211,28 @@ namespace ZedGraph
 		/// </summary>
 		public void DoPrint()
 		{
-			// Add a try/catch pair since the users of the control can't catch this one
 			try
 			{
-				PrintDocument pd = PrintDocument;
+				PrintDocument printDocument = this.PrintDocument;
 
-				if ( pd != null )
+				if (printDocument != null)
 				{
-					//pd.PrintPage += new PrintPageEventHandler( Graph_PrintPage );
-					PrintDialog pDlg = new PrintDialog();
-					pDlg.Document = pd;
-					if ( pDlg.ShowDialog() == DialogResult.OK )
-						pd.Print();
+					PrintDialog printDialog = new PrintDialog
+										   {
+											   UseEXDialog = this.UseExtendedPrintDialog,
+											   Document = printDocument
+										   };
+
+					if (printDialog.ShowDialog() == DialogResult.OK)
+					{
+						printDocument.Print();
+					}
 				}
 			}
-			catch ( Exception exception )
+			catch (Exception exception)
 			{
-				MessageBox.Show( exception.Message );
+				MessageBox.Show(exception.Message);
 			}
-
 		}
 
 		/// <summary>
