@@ -326,6 +326,11 @@ namespace ZedGraph
 //								GetMinStepSize( list, baseAxis );
 //				}
 //				else if ( curve is JapaneseCandleStickItem &&
+				if (curve is OHLCBarItem && (curve as OHLCBarItem).Bar.IsAutoSize)
+				{
+					(curve as OHLCBarItem).Bar._userScaleSize = GetMinStepSize(list, baseAxis);
+				}
+
 				if ( curve is JapaneseCandleStickItem &&
 						(curve as JapaneseCandleStickItem).Stick.IsAutoSize )
 				{
