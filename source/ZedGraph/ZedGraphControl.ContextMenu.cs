@@ -122,35 +122,35 @@ namespace ZedGraph
 					ToolStripMenuItem item = new ToolStripMenuItem();
 					item.Name = "copy";
 					item.Tag = "copy";
-					item.Text = _resourceManager.GetString( "copy" );
+					item.Text = ZedGraphLocale.copy;
 					item.Click += new System.EventHandler( this.MenuClick_Copy );
 					menuStrip.Items.Add( item );
 
 					item = new ToolStripMenuItem();
 					item.Name = "save_as";
 					item.Tag = "save_as";
-					item.Text = _resourceManager.GetString( "save_as" );
+					item.Text = ZedGraphLocale.save_as;
 					item.Click += new System.EventHandler( this.MenuClick_SaveAs );
 					menuStrip.Items.Add( item );
 
 					item = new ToolStripMenuItem();
 					item.Name = "page_setup";
 					item.Tag = "page_setup";
-					item.Text = _resourceManager.GetString( "page_setup" );
+					item.Text = ZedGraphLocale.page_setup;
 					item.Click += new System.EventHandler( this.MenuClick_PageSetup );
 					menuStrip.Items.Add( item );
 
 					item = new ToolStripMenuItem();
 					item.Name = "print";
 					item.Tag = "print";
-					item.Text = _resourceManager.GetString( "print" );
+					item.Text = ZedGraphLocale.print;
 					item.Click += new System.EventHandler( this.MenuClick_Print );
 					menuStrip.Items.Add( item );
 
 					item = new ToolStripMenuItem();
 					item.Name = "show_val";
 					item.Tag = "show_val";
-					item.Text = _resourceManager.GetString( "show_val" );
+					item.Text = ZedGraphLocale.show_val;
 					item.Click += new System.EventHandler( this.MenuClick_ShowValues );
 					item.Checked = this.IsShowPointValues;
 					menuStrip.Items.Add( item );
@@ -159,21 +159,23 @@ namespace ZedGraph
 					item.Name = "unzoom";
 					item.Tag = "unzoom";
 
-					if ( pane == null || pane.ZoomStack.IsEmpty )
-						menuStr = _resourceManager.GetString( "unzoom" );
+					if (pane == null || pane.ZoomStack.IsEmpty)
+					{
+					    menuStr = ZedGraphLocale.unzoom;
+					}
 					else
 					{
 						switch ( pane.ZoomStack.Top.Type )
 						{
 							case ZoomState.StateType.Zoom:
 							case ZoomState.StateType.WheelZoom:
-								menuStr = _resourceManager.GetString( "unzoom" );
+								menuStr = ZedGraphLocale.unzoom;
 								break;
 							case ZoomState.StateType.Pan:
-								menuStr = _resourceManager.GetString( "unpan" );
+								menuStr = ZedGraphLocale.unpan;
 								break;
 							case ZoomState.StateType.Scroll:
-								menuStr = _resourceManager.GetString( "unscroll" );
+								menuStr = ZedGraphLocale.unscroll;
 								break;
 						}
 					}
@@ -189,7 +191,7 @@ namespace ZedGraph
 					item = new ToolStripMenuItem();
 					item.Name = "undo_all";
 					item.Tag = "undo_all";
-					menuStr = _resourceManager.GetString( "undo_all" );
+					menuStr = ZedGraphLocale.undo_all;
 					item.Text = menuStr;
 					item.Click += new EventHandler( this.MenuClick_ZoomOutAll );
 					if ( pane == null || pane.ZoomStack.IsEmpty )
@@ -199,7 +201,7 @@ namespace ZedGraph
 					item = new ToolStripMenuItem();
 					item.Name = "set_default";
 					item.Tag = "set_default";
-					menuStr = _resourceManager.GetString( "set_default" );
+					menuStr = ZedGraphLocale.set_default;
 					item.Text = menuStr;
 					item.Click += new EventHandler( this.MenuClick_RestoreScale );
 					if ( pane == null )
@@ -251,7 +253,7 @@ namespace ZedGraph
 
 				if ( isShowMessage )
 				{
-					string str = _resourceManager.GetString( "copied_to_clip" );
+					string str = ZedGraphLocale.copied_to_clip;
 					//MessageBox.Show( "Image Copied to ClipBoard" );
 					MessageBox.Show( str );
 				}
@@ -298,7 +300,7 @@ namespace ZedGraph
 
 				if (isShowMessage)
 				{
-					string str = _resourceManager.GetString("copied_to_clip");
+					string str = ZedGraphLocale.copied_to_clip;
 					MessageBox.Show(str);
 				}
 			}

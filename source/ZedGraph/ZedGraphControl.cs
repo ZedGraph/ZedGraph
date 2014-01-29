@@ -243,8 +243,6 @@ namespace ZedGraph
 
 		private bool _isZoomOnMouseCenter = false;
 
-		private ResourceManager _resourceManager;
-
 		/// <summary>
 		/// private field that stores a <see cref="PrintDocument" /> instance, which maintains
 		/// a persistent selection of printer options.
@@ -517,17 +515,14 @@ namespace ZedGraph
 			SetStyle( ControlStyles.SupportsTransparentBackColor, true );
 			//this.BackColor = Color.Transparent;
 
-			_resourceManager = new ResourceManager( "ZedGraph.ZedGraph.ZedGraphLocale",
-				Assembly.GetExecutingAssembly() );
-
 			Rectangle rect = new Rectangle( 0, 0, this.Size.Width, this.Size.Height );
 			_masterPane = new MasterPane( "", rect );
 			_masterPane.Margin.All = 0;
 			_masterPane.Title.IsVisible = false;
 
-			string titleStr = _resourceManager.GetString( "title_def" );
-			string xStr = _resourceManager.GetString( "x_title_def" );
-			string yStr = _resourceManager.GetString( "y_title_def" );
+			string titleStr = ZedGraphLocale.title_def;
+			string xStr = ZedGraphLocale.x_title_def;
+			string yStr = ZedGraphLocale.y_title_def;
 
 			//GraphPane graphPane = new GraphPane( rect, "Title", "X Axis", "Y Axis" );
 			GraphPane graphPane = new GraphPane( rect, titleStr, xStr, yStr );

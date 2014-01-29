@@ -164,6 +164,11 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="ZedGraph\ZedGraphException.cs" />
+    <Compile Include="ZedGraph\ZedGraphLocale.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ZedGraphLocale.resx</DependentUpon>
+    </Compile>
     <Compile Include="ZedGraph\ZoomState.cs" />
     <Compile Include="ZedGraph\ZoomStateStack.cs" />
   </ItemGroup>
@@ -194,6 +199,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ZedGraph\ZedGraphLocale.resx">
       <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ZedGraphLocale.Designer.cs</LastGenOutput>
+      <CustomToolNamespace>ZedGraph</CustomToolNamespace>
     </EmbeddedResource>
     <EmbeddedResource Include="ZedGraph\ZedGraphLocale.ru.resx">
       <SubType>Designer</SubType>
