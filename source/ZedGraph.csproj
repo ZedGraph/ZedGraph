@@ -49,6 +49,7 @@
       <DependentUpon>VersionInfo.cs</DependentUpon>
     </Compile>
     <None Include="Properties\VersionInfo.cs" />
+    <Compile Include="ReversibleFrame.cs" />
     <Compile Include="ZedGraph\ArrowObj.cs" />
     <Compile Include="ZedGraph\Axis.cs" />
     <Compile Include="ZedGraph\AxisLabel.cs" />
