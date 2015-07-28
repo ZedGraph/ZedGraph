@@ -2,7 +2,6 @@ bin/
 obj/
 *.suo
 *.user
-/packages/NUnit.Runners.2.6.0.12051
-/packages/NUnit.2.6.0.12054
-/packages/MSBuildVersioning.1.0.34.0
-/packages/NuGetPowerTools.0.29
+
+**/packages/*
+!**/packages/build/
