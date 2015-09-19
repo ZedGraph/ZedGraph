@@ -720,7 +720,7 @@ namespace ZedGraph
 							string label = this.PointValueEvent( this, pane, curve, iPt );
 							if ( label != null && label.Length > 0 )
 							{
-								this.pointToolTip.SetToolTip( this, label );
+								this.SetToolTip(label);
 								this.EnableToolTip();
 							}
 							else
@@ -731,8 +731,7 @@ namespace ZedGraph
 
 							if ( curve is PieItem )
 							{
-								this.pointToolTip.SetToolTip( this,
-									( (PieItem)curve ).Value.ToString( _pointValueFormat ) );
+								this.SetToolTip(((PieItem)curve).Value.ToString(this._pointValueFormat));
 							}
 							//							else if ( curve is OHLCBarItem || curve is JapaneseCandleStickItem )
 							//							{
@@ -750,7 +749,7 @@ namespace ZedGraph
 								PointPair pt = curve.Points[iPt];
 
 								if ( pt.Tag is string )
-									this.pointToolTip.SetToolTip( this, (string)pt.Tag );
+									this.SetToolTip((string)pt.Tag);
 								else
 								{
 									double xVal, yVal, lowVal;
@@ -766,7 +765,7 @@ namespace ZedGraph
 									string yStr = MakeValueLabel( curve.GetYAxis( pane ), yVal, iPt,
 										curve.IsOverrideOrdinal );
 
-									this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + " )" );
+									this.SetToolTip("( " + xStr + ", " + yStr + " )");
 
 									//this.pointToolTip.SetToolTip( this,
 									//	curve.Points[iPt].ToString( this.pointValueFormat ) );
@@ -798,7 +797,7 @@ namespace ZedGraph
 					string label = this.CursorValueEvent( this, pane, mousePt );
 					if ( label != null && label.Length > 0 )
 					{
-						this.pointToolTip.SetToolTip( this, label );
+						this.SetToolTip(label);
 						this.EnableToolTip();
 					}
 					else
@@ -812,7 +811,7 @@ namespace ZedGraph
 					string yStr = MakeValueLabel( pane.YAxis, y, -1, true );
 					string y2Str = MakeValueLabel( pane.Y2Axis, y2, -1, true );
 
-					this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + ", " + y2Str + " )" );
+					this.SetToolTip("( " + xStr + ", " + yStr + ", " + y2Str + " )");
 					this.EnableToolTip();
 				}
 			}
