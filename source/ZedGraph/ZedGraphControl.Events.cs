@@ -720,7 +720,7 @@ namespace ZedGraph
 							string label = this.PointValueEvent( this, pane, curve, iPt );
 							if ( label != null && label.Length > 0 )
 							{
-								this.SetToolTip(label);
+								this.SetToolTip(label, mousePt);
 								this.EnableToolTip();
 							}
 							else
@@ -731,14 +731,14 @@ namespace ZedGraph
 
 							if ( curve is PieItem )
 							{
-								this.SetToolTip(((PieItem)curve).Value.ToString(this._pointValueFormat));
+								this.SetToolTip(((PieItem)curve).Value.ToString(this._pointValueFormat), mousePt);
 							}
 							else
 							{
 								PointPair pt = curve.Points[iPt];
 
 								if ( pt.Tag is string )
-									this.SetToolTip((string)pt.Tag);
+									this.SetToolTip((string)pt.Tag, mousePt);
 								else
 								{
 									double xVal, yVal, lowVal;
@@ -754,7 +754,7 @@ namespace ZedGraph
 									string yStr = MakeValueLabel( curve.GetYAxis( pane ), yVal, iPt,
 										curve.IsOverrideOrdinal );
 
-									this.SetToolTip("( " + xStr + ", " + yStr + " )");
+									this.SetToolTip("( " + xStr + ", " + yStr + " )", mousePt);
 								}
 							}
 
@@ -781,7 +781,7 @@ namespace ZedGraph
 					string label = this.CursorValueEvent( this, pane, mousePt );
 					if ( label != null && label.Length > 0 )
 					{
-						this.SetToolTip(label);
+						this.SetToolTip(label, mousePt);
 						this.EnableToolTip();
 					}
 					else
@@ -795,7 +795,7 @@ namespace ZedGraph
 					string yStr = MakeValueLabel( pane.YAxis, y, -1, true );
 					string y2Str = MakeValueLabel( pane.Y2Axis, y2, -1, true );
 
-					this.SetToolTip("( " + xStr + ", " + yStr + ", " + y2Str + " )");
+					this.SetToolTip("( " + xStr + ", " + yStr + ", " + y2Str + " )", mousePt);
 					this.EnableToolTip();
 				}
 			}

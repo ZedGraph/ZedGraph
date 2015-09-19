@@ -495,6 +495,7 @@ namespace ZedGraph
 		public ZedGraphControl()
 		{
 			InitializeComponent();
+			this.tooltip = ValuesToolTip.Create(this, this.pointToolTip);
 
 			// These commands do nothing, but they get rid of the compiler warnings for
 			// unused events
