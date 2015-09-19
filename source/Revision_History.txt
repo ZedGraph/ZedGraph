@@ -1,3 +1,10 @@
+Version 5.1.7
+-Updates to the cursor and point values tooltip.
+-Update zoom frame drawing to support HDPI display modes.
+-Updated the PrintDialog to use the UseEXDialog property, functionally controlled through UseExtendedPrintDialog property.
+-Fixed an issue with the OHLCBarItems where the width of the bars was incorrect on non-oridinal axis.
+-Fixed an issue with the scales that caused very small ranges to not display the scale with a magnitude.
+
 == Version 5.1 ==
 
 ;02-Dec-2008 (By rjosulli) v5.1.5 Release

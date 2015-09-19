@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ZedGraph</id>
-    <version>5.1.6</version>
+    <version>5.1.7</version>
     <title />
     <authors>ZedGraph Project</authors>
     <owners />
@@ -10,7 +10,11 @@
     <projectUrl>http://sourceforge.net/projects/zedgraph/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>ZedGraph is a class library, user control, and web control for .net, written in C#, for drawing 2D Line, Bar, and Pie Charts. It features full, detailed customization capabilities, but most options have defaults for ease of use.</description>
-    <releaseNotes>minor fixes for headless usage; enable nuget package restore</releaseNotes>
+    <releaseNotes>Updates to the cursor and point values tooltip.
+Update zoom frame drawing to support HDPI display modes.
+Updated the PrintDialog to use the UseEXDialog property, functionally controlled through UseExtendedPrintDialog property.
+Fixed an issue with the OHLCBarItems where the width of the bars was incorrect on non-oridinal axis.
+Fixed an issue with the scales that caused very small ranges to not display the scale with a magnitude.</releaseNotes>
     <copyright>Copyright © 2003-2007 John Champion</copyright>
     <language />
   </metadata>
