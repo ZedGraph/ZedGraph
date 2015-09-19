@@ -733,17 +733,6 @@ namespace ZedGraph
 							{
 								this.SetToolTip(((PieItem)curve).Value.ToString(this._pointValueFormat));
 							}
-							//							else if ( curve is OHLCBarItem || curve is JapaneseCandleStickItem )
-							//							{
-							//								StockPt spt = (StockPt)curve.Points[iPt];
-							//								this.pointToolTip.SetToolTip( this, ( (XDate) spt.Date ).ToString( "MM/dd/yyyy" ) + "\nOpen: $" +
-							//								spt.Open.ToString( "N2" ) +
-							//								"\nHigh: $" +
-							//								spt.High.ToString( "N2" ) + "\nLow: $" +
-							//								spt.Low.ToString( "N2" ) + "\nClose: $" +
-							//								spt.Close.ToString
-							//								( "N2" ) );
-							//							}
 							else
 							{
 								PointPair pt = curve.Points[iPt];
@@ -766,9 +755,6 @@ namespace ZedGraph
 										curve.IsOverrideOrdinal );
 
 									this.SetToolTip("( " + xStr + ", " + yStr + " )");
-
-									//this.pointToolTip.SetToolTip( this,
-									//	curve.Points[iPt].ToString( this.pointValueFormat ) );
 								}
 							}
 
@@ -780,8 +766,6 @@ namespace ZedGraph
 				}
 				else
 					this.DisableToolTip();
-
-				//g.Dispose();
 			}
 			return mousePt;
 		}
