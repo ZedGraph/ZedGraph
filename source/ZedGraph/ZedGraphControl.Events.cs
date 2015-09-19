@@ -721,10 +721,10 @@ namespace ZedGraph
 							if ( label != null && label.Length > 0 )
 							{
 								this.pointToolTip.SetToolTip( this, label );
-								this.pointToolTip.Active = true;
+								this.EnableToolTip();
 							}
 							else
-								this.pointToolTip.Active = false;
+								this.DisableToolTip();
 						}
 						else
 						{
@@ -773,14 +773,14 @@ namespace ZedGraph
 								}
 							}
 
-							this.pointToolTip.Active = true;
+							this.EnableToolTip();
 						}
 					}
 					else
-						this.pointToolTip.Active = false;
+						this.DisableToolTip();
 				}
 				else
-					this.pointToolTip.Active = false;
+					this.DisableToolTip();
 
 				//g.Dispose();
 			}
@@ -799,10 +799,10 @@ namespace ZedGraph
 					if ( label != null && label.Length > 0 )
 					{
 						this.pointToolTip.SetToolTip( this, label );
-						this.pointToolTip.Active = true;
+						this.EnableToolTip();
 					}
 					else
-						this.pointToolTip.Active = false;
+						this.DisableToolTip();
 				}
 				else
 				{
@@ -813,11 +813,11 @@ namespace ZedGraph
 					string y2Str = MakeValueLabel( pane.Y2Axis, y2, -1, true );
 
 					this.pointToolTip.SetToolTip( this, "( " + xStr + ", " + yStr + ", " + y2Str + " )" );
-					this.pointToolTip.Active = true;
+					this.EnableToolTip();
 				}
 			}
 			else
-				this.pointToolTip.Active = false;
+				this.DisableToolTip();
 
 			return mousePt;
 		}
