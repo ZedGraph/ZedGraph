@@ -958,31 +958,14 @@ namespace ZedGraph
 		{
 			if ( axis != null && zoomFraction > 0.0001 && zoomFraction < 1000.0 )
 			{
-				Scale scale = axis._scale;
-				/*
-								if ( axis.Scale.IsLog )
-								{
-									double ratio = Math.Sqrt( axis._scale._max / axis._scale._min * zoomFraction );
-
-									if ( !isZoomOnCenter )
-										centerVal = Math.Sqrt( axis._scale._max * axis._scale._min );
-
-									axis._scale._min = centerVal / ratio;
-									axis._scale._max = centerVal * ratio;
-								}
-								else
-								{
-				*/
 				double minLin = axis._scale._minLinearized;
 				double maxLin = axis._scale._maxLinearized;
-				double range = ( maxLin - minLin ) * zoomFraction / 2.0;
 
 				if ( !isZoomOnCenter )
 					centerVal = ( maxLin + minLin ) / 2.0;
 
-				axis._scale._minLinearized = centerVal - range;
-				axis._scale._maxLinearized = centerVal + range;
-				//				}
+				axis._scale._minLinearized = centerVal - ((centerVal - minLin) * zoomFraction);
+				axis._scale._maxLinearized = centerVal + ((maxLin - centerVal) * zoomFraction);
 
 				axis._scale._minAuto = false;
 				axis._scale._maxAuto = false;
