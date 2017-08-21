@@ -142,13 +142,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ValuesToolTipTests.cs" />
+    <Compile Include="AxisCustomization.cs" />
+    <Compile Include="AxisExtensions.cs" />
+    <Compile Include="AxisLabelCustomization.cs" />
+    <Compile Include="AxisRelay.cs" />
+    <Compile Include="DrawingCustomization.cs" />
     <Compile Include="OHLCBarItemTests.cs" />
     <Compile Include="PointBuilder.cs" />
     <Compile Include="ScaleTests.cs" />
+    <Compile Include="ValuesToolTipTests.cs" />
     <Compile Include="ZedGraph.UnitTest\ZGTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ZedGraphControlTests.cs" />
+    <Compile Include="ZedGraphCustomization.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\source\ZedGraph.csproj">
