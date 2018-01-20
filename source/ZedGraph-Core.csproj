@@ -1,0 +1,44 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>ZedGraph</AssemblyName>
+    <RootNamespace>ZedGraph</RootNamespace>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>zedgraphkey.snk</AssemblyOriginatorKeyFile>
+    <Product>ZedGraph Library</Product>
+    <Authors>John Champion, et al.</Authors>
+    <Copyright>Copyright © 2003-2018 John Champion</Copyright>
+    <Company>John Champion, et al.</Company>
+    <AssemblyVersion>5.1.7.0</AssemblyVersion>
+    <FileVersion>5.1.7.0</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="IValuesToolTip.cs" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="ValuesToolTip.cs" />
+    <Compile Remove="ZedGraphControl.cs" />
+    <Compile Remove="ZedGraph\DataSourcePointList.cs" />
+    <Compile Remove="ZedGraph\ZedGraphControl.ContextMenu.cs" />
+    <Compile Remove="ZedGraph\ZedGraphControl.cs" />
+    <Compile Remove="ZedGraph\ZedGraphControl.Designer.cs" />
+    <Compile Remove="ZedGraph\ZedGraphControl.Events.cs" />
+    <Compile Remove="ZedGraph\ZedGraphControl.Printing.cs" />
+    <Compile Remove="ZedGraph\ZedGraphControl.Properties.cs" />
+    <Compile Remove="ZedGraph\ZedGraphControl.ScrollBars.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="ZedGraph\ZedGraphControl.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CoreCompat.System.Drawing.v2" Version="5.2.0-preview1-r131" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+
+</Project>

@@ -22,7 +22,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Collections;
 using System.Drawing.Imaging;
+#if !NETSTANDARD2_0
 using System.Windows.Forms;
+#endif
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization;

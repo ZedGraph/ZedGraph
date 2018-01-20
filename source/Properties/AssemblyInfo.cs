@@ -13,7 +13,7 @@ using System;
 [assembly: AssemblyConfiguration( "" )]
 [assembly: AssemblyCompany( "John Champion, et al." )]
 [assembly: AssemblyProduct( "ZedGraph Library" )]
-[assembly: AssemblyCopyright( "Copyright © 2003-2007 John Champion" )]
+[assembly: AssemblyCopyright( "Copyright © 2003-2018 John Champion" )]
 [assembly: AssemblyTrademark( "" )]
 [assembly: AssemblyCulture( "" )]
 

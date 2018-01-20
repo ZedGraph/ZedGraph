@@ -60,6 +60,7 @@
     <Compile Include="ZedGraph\BasicArrayPointList.cs" />
     <Compile Include="ZedGraph\Border.cs" />
     <Compile Include="ZedGraph\BoxObj.cs" />
+    <Compile Include="ZedGraph\ColorTranslator.cs" />
     <Compile Include="ZedGraph\HiLowBarItem.cs">
       <SubType>Code</SubType>
     </Compile>

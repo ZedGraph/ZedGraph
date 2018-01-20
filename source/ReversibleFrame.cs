@@ -135,12 +135,20 @@
 
             try
             {
+#if NETSTANDARD2_0
+                IntPtr pen = CreatePen((int)PenStyle.Dot, 1, ZedGraph.ColorTranslator.ToWin32(backgroundColor));
+#else
                 IntPtr pen = CreatePen((int)PenStyle.Dot, 1, ColorTranslator.ToWin32(backgroundColor));
+#endif
 
                 int previousMode = SetROP2(new HandleRef(null, hdc), (int)mode);
                 IntPtr previousBrush = SelectObject(new HandleRef(null, hdc), new HandleRef(null, GetStockObject((int)StockObject.NullBrush)));
                 IntPtr previousPen = SelectObject(new HandleRef(null, hdc), new HandleRef(null, pen));
+#if NETSTANDARD2_0
+                SetBkColor(new HandleRef(null, hdc), ZedGraph.ColorTranslator.ToWin32(alternateColor));
+#else
                 SetBkColor(new HandleRef(null, hdc), ColorTranslator.ToWin32(alternateColor));
+#endif
 
                 Rectangle(new HandleRef(null, hdc), rectangle.X, rectangle.Y, rectangle.Right, rectangle.Bottom);
 
@@ -159,9 +167,9 @@
             }
         }
 
-        #endregion
+#endregion
 
-        #region Methods
+#region Methods
 
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern IntPtr CreatePen(int style, int width, int color);
@@ -184,6 +192,6 @@
         [DllImport("gdi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern int SetROP2(HandleRef dc, int drawMode);
 
-        #endregion
+#endregion
     }
 }
