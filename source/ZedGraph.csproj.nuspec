@@ -31,6 +31,5 @@ Add Net40, Net45, Net46, Net47 assemblies</releaseNotes>
   <files>
     <file src="bin\Release\**\*.dll" target="lib" />
     <file src="bin\Release\**\ZedGraph.XML" target="lib" />
-    <file src="License-LGPL.txt" target="content\License-LGPL.txt" />
   </files>
 </package>
