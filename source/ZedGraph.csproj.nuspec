@@ -7,7 +7,7 @@
     <authors>ZedGraph Project</authors>
     <owners />
     <licenseUrl>http://www.gnu.org/licenses/lgpl-2.1.txt</licenseUrl>
-    <projectUrl>http://sourceforge.net/projects/zedgraph/</projectUrl>
+    <projectUrl>https://github.com/zedgraph/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>ZedGraph is a class library, user control, and web control for .net, written in C#, for drawing 2D Line, Bar, and Pie Charts. It features full, detailed customization capabilities, but most options have defaults for ease of use.</description>
     <releaseNotes>Add initial .NET Standard support
