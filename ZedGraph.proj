@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Package" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+  <PropertyGroup>
+    <Solution>ZedGraph</Solution>
+    <NuSpec>source\ZedGraph.csproj.nuspec</NuSpec>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <RootDirectory Condition="'$(RootDirectory)' == ''">$(MSBuildProjectDirectory)</RootDirectory>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">$(RootDirectory)</SolutionDir>
+    <SolutionFile>$(Solution).sln</SolutionFile>
+    <BuildDirectory>$(RootDirectory)\build</BuildDirectory>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SolutionToBuild Include="$(SolutionFile)">
+      <AdditionalProperties>Configuration=Debug</AdditionalProperties>
+    </SolutionToBuild>
+    <SolutionToBuild Include="$(SolutionFile)">
+      <AdditionalProperties>Configuration=Release</AdditionalProperties>
+    </SolutionToBuild>
+  </ItemGroup>
+
+  <Target Name="Build">
+    <MsBuild BuildInParallel="True" Projects="@(SolutionToBuild)" StopOnFirstFailure="True" />
+  </Target>
+
+  <Target Name="NuGetPack" DependsOnTargets="Build;GetVersion">
+    <Exec Command='nuget pack $(NuSpec) -Version $(GitVersion_NuGetVersion) -OutputDirectory "$(BuildDirectory)"'/>
+  </Target>
+
+  <Target Name="Package" DependsOnTargets="NuGetPack" />
+
+  <PropertyGroup>
+    <UpdateAssemblyInfo>false</UpdateAssemblyInfo>
+  </PropertyGroup>
+  <Import Project="$(RootDirectory)\packages\GitVersionTask.3.6.5\build\dotnet\GitVersionTask.targets" />
+</Project>
