@@ -10,12 +10,17 @@
     <projectUrl>http://sourceforge.net/projects/zedgraph/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>ZedGraph is a class library, user control, and web control for .net, written in C#, for drawing 2D Line, Bar, and Pie Charts. It features full, detailed customization capabilities, but most options have defaults for ease of use.</description>
-    <releaseNotes>Add initial .NET Standard support</releaseNotes>
+    <releaseNotes>Add initial .NET Standard support
+Add Net40, Net45, Net46, Net47 assemblies</releaseNotes>
     <copyright>Copyright © 2003-2018 John Champion</copyright>
     <language />
 
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework="net35" />
+      <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework="net40" />
+      <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework="net45" />
+      <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework="net46" />
+      <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework="net47" />
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="netstandard2.0">
