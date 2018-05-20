@@ -5,7 +5,7 @@
     <AssemblyName>ZedGraph</AssemblyName>
 
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>zedgraphkey.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\zedgraphkey.snk</AssemblyOriginatorKeyFile>
 
     <Product>ZedGraph Library</Product>
     <Company>John Champion, et al.</Company>
@@ -51,21 +51,20 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <Compile Remove="IValuesToolTip.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
     <Compile Remove="ValuesToolTip.cs" />
+    <Compile Remove="ZedGraphControl.ToolTip.cs" />
+    <Compile Remove="DataSourcePointList.cs" />
+    <Compile Remove="ZedGraphControl.ContextMenu.cs" />
     <Compile Remove="ZedGraphControl.cs" />
-    <Compile Remove="ZedGraph\DataSourcePointList.cs" />
-    <Compile Remove="ZedGraph\ZedGraphControl.ContextMenu.cs" />
-    <Compile Remove="ZedGraph\ZedGraphControl.cs" />
-    <Compile Remove="ZedGraph\ZedGraphControl.Designer.cs" />
-    <Compile Remove="ZedGraph\ZedGraphControl.Events.cs" />
-    <Compile Remove="ZedGraph\ZedGraphControl.Printing.cs" />
-    <Compile Remove="ZedGraph\ZedGraphControl.Properties.cs" />
-    <Compile Remove="ZedGraph\ZedGraphControl.ScrollBars.cs" />
+    <Compile Remove="ZedGraphControl.Designer.cs" />
+    <Compile Remove="ZedGraphControl.Events.cs" />
+    <Compile Remove="ZedGraphControl.Printing.cs" />
+    <Compile Remove="ZedGraphControl.Properties.cs" />
+    <Compile Remove="ZedGraphControl.ScrollBars.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <EmbeddedResource Remove="ZedGraph\ZedGraphControl.resx" />
+    <EmbeddedResource Remove="ZedGraphControl.resx" />
   </ItemGroup>
 
 </Project>

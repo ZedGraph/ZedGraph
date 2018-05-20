@@ -151,14 +151,14 @@
     <Compile Include="PointBuilder.cs" />
     <Compile Include="ScaleTests.cs" />
     <Compile Include="ValuesToolTipTests.cs" />
-    <Compile Include="ZedGraph.UnitTest\ZGTest.cs">
+    <Compile Include="ZGTest.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ZedGraphControlTests.cs" />
     <Compile Include="ZedGraphCustomization.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\source\ZedGraph.csproj">
+    <ProjectReference Include="..\ZedGraph\ZedGraph.csproj">
       <Project>{B99650EE-AF46-47B4-A4A9-212ADE7809B7}</Project>
       <Name>ZedGraph</Name>
     </ProjectReference>

@@ -29,7 +29,7 @@ Add Net40, Net45, Net46, Net47 assemblies</releaseNotes>
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\Release\**\*.dll" target="lib" />
-    <file src="bin\Release\**\ZedGraph.XML" target="lib" />
+    <file src="ZedGraph\bin\Release\**\*.dll" target="lib" />
+    <file src="ZedGraph\bin\Release\**\ZedGraph.XML" target="lib" />
   </files>
 </package>

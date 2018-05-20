@@ -5,12 +5,12 @@
   </PropertyGroup>
 
   <Target Name="Nuget">
-    <Exec Command='nuget restore "$(Solution).sln"' />
-    <Exec Command='nuget restore packages.config -PackagesDirectory packages' />
+    <Exec Command='nuget restore "source\$(Solution).sln"' />
+    <Exec Command='nuget restore "source\packages.config" -PackagesDirectory source\packages' />
   </Target>
 
   <Target Name="Build" DependsOnTargets="Nuget">
-    <MsBuild BuildInParallel="True" Projects="$(Solution).proj" Properties="RootDirectory=$(MSBuildProjectDirectory)" StopOnFirstFailure="True" />
+    <MsBuild BuildInParallel="True" Projects="source\$(Solution).proj" Properties="RootDirectory=$(MSBuildProjectDirectory)" StopOnFirstFailure="True" />
   </Target>
 
 </Project>

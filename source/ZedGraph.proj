@@ -2,7 +2,7 @@
 <Project DefaultTargets="Package" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
     <Solution>ZedGraph</Solution>
-    <NuSpec>source\ZedGraph.csproj.nuspec</NuSpec>
+    <NuSpec>ZedGraph.csproj.nuspec</NuSpec>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -34,5 +34,5 @@
   <PropertyGroup>
     <UpdateAssemblyInfo>false</UpdateAssemblyInfo>
   </PropertyGroup>
-  <Import Project="$(RootDirectory)\packages\GitVersionTask.3.6.5\build\dotnet\GitVersionTask.targets" />
+  <Import Project="packages\GitVersionTask.3.6.5\build\dotnet\GitVersionTask.targets" />
 </Project>
