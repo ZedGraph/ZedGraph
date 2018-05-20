@@ -7,7 +7,7 @@
     /// <summary>
     /// The reversible frame draws a dashed rectangle
     /// </summary>
-    internal class ReversibleFrame
+    public class ReversibleFrame
     {
         #region Enums
 
