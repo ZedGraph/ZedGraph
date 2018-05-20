@@ -198,38 +198,8 @@ namespace ZedGraph
 				if ( reverse )
 					newValue = span - newValue;
 
-				Scale scale = axis.Scale;
+				axis.Scale.Scroll(newValue / (double) span, scrollMin, scrollMax);
 
-				double delta = scale._maxLinearized - scale._minLinearized;
-				double scrollMin2 = scale.Linearize( scrollMax ) - delta;
-				scrollMin = scale.Linearize( scrollMin );
-				//scrollMax = scale.Linearize( scrollMax );
-				double val = scrollMin + (double)newValue / (double)span *
-						( scrollMin2 - scrollMin );
-				scale._minLinearized = val;
-				scale._maxLinearized = val + delta;
-				/*
-								if ( axis.Scale.IsLog )
-								{
-									double ratio = axis._scale._max / axis._scale._min;
-									double scrollMin2 = scrollMax / ratio;
-
-									double val = scrollMin * Math.Exp( (double)newValue / (double)span *
-												( Math.Log( scrollMin2 ) - Math.Log( scrollMin ) ) );
-									axis._scale._min = val;
-									axis._scale._max = val * ratio;
-								}
-								else
-								{
-									double delta = axis._scale._max - axis._scale._min;
-									double scrollMin2 = scrollMax - delta;
-
-									double val = scrollMin + (double)newValue / (double)span *
-												( scrollMin2 - scrollMin );
-									axis._scale._min = val;
-									axis._scale._max = val + delta;
-								}
-				*/
 				this.Invalidate();
 			}
 		}
@@ -317,8 +287,8 @@ namespace ZedGraph
 				int val = 0;
 
 				Scale scale = axis.Scale;
-				double minLinearized = scale._minLinearized;
-				double maxLinearized = scale._maxLinearized;
+				var minLinearized = scale.Linearize(scale.Min);
+				var maxLinearized = scale.Linearize(scale.Max);
 				scrollMin = scale.Linearize( scrollMin );
 				scrollMax = scale.Linearize( scrollMax );
 

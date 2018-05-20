@@ -956,20 +956,7 @@ namespace ZedGraph
 		/// </param>
 		protected void ZoomScale( Axis axis, double zoomFraction, double centerVal, bool isZoomOnCenter )
 		{
-			if ( axis != null && zoomFraction > 0.0001 && zoomFraction < 1000.0 )
-			{
-				double minLin = axis.Scale._minLinearized;
-				double maxLin = axis.Scale._maxLinearized;
-
-				if ( !isZoomOnCenter )
-					centerVal = ( maxLin + minLin ) / 2.0;
-
-				axis.Scale._minLinearized = centerVal - ((centerVal - minLin) * zoomFraction);
-				axis.Scale._maxLinearized = centerVal + ((maxLin - centerVal) * zoomFraction);
-
-				axis.Scale.MinAuto = false;
-				axis.Scale.MaxAuto = false;
-			}
+			axis?.Scale.Zoom(zoomFraction, centerVal, isZoomOnCenter);
 		}
 
 	#endregion
@@ -1060,30 +1047,7 @@ namespace ZedGraph
 		/// </param>
 		protected void PanScale( Axis axis, double startVal, double endVal )
 		{
-			if ( axis != null )
-			{
-				Scale scale = axis.Scale;
-				double delta = scale.Linearize( startVal ) - scale.Linearize( endVal );
-
-				scale._minLinearized += delta;
-				scale._maxLinearized += delta;
-
-				scale.MinAuto = false;
-				scale.MaxAuto = false;
-
-				/*
-								if ( axis.Type == AxisType.Log )
-								{
-									axis._scale._min *= startVal / endVal;
-									axis._scale._max *= startVal / endVal;
-								}
-								else
-								{
-									axis._scale._min += startVal - endVal;
-									axis._scale._max += startVal - endVal;
-								}
-				*/
-			}
+			axis?.Scale.Pan(startVal, endVal);
 		}
 
 	#endregion

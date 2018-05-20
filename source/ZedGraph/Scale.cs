@@ -2937,6 +2937,73 @@ namespace ZedGraph
 
 	#endregion
 
+        /// <summary>
+        /// Zoom the scale by the specified fraction, around the center value.
+        /// </summary>
+        /// <param name="zoomFraction">The amount to scale/zoom the scale.</param>
+        /// <param name="centerVal">The value to center the zoom around.</param>
+        /// <param name="isZoomOnCenter">
+        /// if set to <c>true</c> the <see cref="centerVal"/> is used, otherwise
+        /// the current center of the scale is used.
+        /// </param>
+        /// <remarks>
+        /// When the fraction value is less than 0.0001 or greater than 1000.0
+        /// the scale will not be zoomed to avoid invalid scale values.
+        /// </remarks>
+        public void Zoom(double zoomFraction, double centerVal, bool isZoomOnCenter)
+        {
+            if (zoomFraction > 0.0001 && zoomFraction < 1000.0)
+            {
+                double minLin = _minLinearized;
+                double maxLin = _maxLinearized;
 
-	}
+                if (!isZoomOnCenter)
+                {
+                    centerVal = (maxLin + minLin) / 2.0;
+                }
+
+                _minLinearized = centerVal - (centerVal - minLin) * zoomFraction;
+                _maxLinearized = centerVal + (maxLin - centerVal) * zoomFraction;
+
+                MinAuto = false;
+                MaxAuto = false;
+            }
+        }
+
+        /// <summary>
+        /// Pan the scale given the current and destination values.
+        /// </summary>
+        /// <param name="value">The value to pan.</param>
+        /// <param name="toValue">The end value.</param>
+        public void Pan(double value, double toValue)
+        {
+            var delta = Linearize(value) - Linearize(toValue);
+
+            _minLinearized += delta;
+            _maxLinearized += delta;
+
+            MinAuto = false;
+            MaxAuto = false;
+        }
+
+        /// <summary>
+        /// Scrolls the scale to the specified position.
+        /// </summary>
+        /// <param name="position">
+        /// The position to srcoll within the window. 0..1.
+        /// </param>
+        /// <param name="scrollMin">The minimum value of the scroll window.</param>
+        /// <param name="scrollMax">The maximum value of the scroll window.</param>
+        public void Scroll(double position, double scrollMin, double scrollMax)
+        {
+            var delta = _maxLinearized - _minLinearized;
+
+            var scrollMin2 = Linearize(scrollMax) - delta;
+            scrollMin = Linearize(scrollMin);
+
+            var val = scrollMin + position * (scrollMin2 - scrollMin);
+            _minLinearized = val;
+            _maxLinearized = val + delta;
+        }
+    }
 }
