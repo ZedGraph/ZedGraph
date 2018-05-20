@@ -2,7 +2,6 @@
 <Project DefaultTargets="Package" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
   <PropertyGroup>
     <Solution>ZedGraph</Solution>
-    <NuSpec>ZedGraph.csproj.nuspec</NuSpec>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -26,7 +25,8 @@
   </Target>
 
   <Target Name="NuGetPack" DependsOnTargets="Build;GetVersion">
-    <Exec Command='nuget pack $(NuSpec) -Version $(GitVersion_NuGetVersion) -OutputDirectory "$(BuildDirectory)"'/>
+    <Exec Command='nuget pack ZedGraph.csproj.nuspec -Version $(GitVersion_NuGetVersion) -OutputDirectory "$(BuildDirectory)"'/>
+    <Exec Command='nuget pack ZedGraph.WinForms.nuspec -Version $(GitVersion_NuGetVersion) -OutputDirectory "$(BuildDirectory)"'/>
   </Target>
 
   <Target Name="Package" DependsOnTargets="NuGetPack" />

@@ -158,6 +158,10 @@
     <Compile Include="ZedGraphCustomization.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ZedGraph.WinForms\ZedGraph.WinForms.csproj">
+      <Project>{e656c1d4-95ad-4df5-810b-51a9228c5adc}</Project>
+      <Name>ZedGraph.WinForms</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ZedGraph\ZedGraph.csproj">
       <Project>{B99650EE-AF46-47B4-A4A9-212ADE7809B7}</Project>
       <Name>ZedGraph</Name>
