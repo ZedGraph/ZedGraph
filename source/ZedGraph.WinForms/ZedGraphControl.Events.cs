@@ -439,7 +439,7 @@ namespace ZedGraph
 						if ( curve != null )
 							url = link.MakeCurveItemUrl( pane, curve, index );
 						else
-							url = link._url;
+							url = link.Url;
 
 						if ( url != string.Empty )
 						{
@@ -634,14 +634,14 @@ namespace ZedGraph
 				{
 					return XDate.ToString( val, _pointDateFormat );
 				}
-				else if ( axis._scale.IsText && axis._scale._textLabels != null )
+				if (axis.Scale.IsText && axis.Scale.TextLabels != null)
 				{
 					int i = iPt;
 					if ( isOverrideOrdinal )
 						i = (int)( val - 0.5 );
 
-					if ( i >= 0 && i < axis._scale._textLabels.Length )
-						return axis._scale._textLabels[i];
+					if (i >= 0 && i < axis.Scale.TextLabels.Length)
+						return axis.Scale.TextLabels[i];
 					else
 						return ( i + 1 ).ToString();
 				}
@@ -773,7 +773,7 @@ namespace ZedGraph
 		private Point HandleCursorValues( Point mousePt )
 		{
 			GraphPane pane = _masterPane.FindPane( mousePt );
-			if ( pane != null && pane.Chart._rect.Contains( mousePt ) )
+			if (pane != null && pane.Chart.Rect.Contains(mousePt))
 			{
 				// Provide Callback for User to customize the tooltips
 				if ( this.CursorValueEvent != null )
@@ -837,7 +837,7 @@ namespace ZedGraph
 						// always AxisChange() the dragPane
 						pane.AxisChange( g );
 
-						foreach ( GraphPane tempPane in _masterPane._paneList )
+						foreach (var tempPane in _masterPane.PaneList)
 						{
 							if ( tempPane != pane && ( _isSynchronizeXAxes || _isSynchronizeYAxes ) )
 								tempPane.AxisChange( g );
@@ -958,17 +958,17 @@ namespace ZedGraph
 		{
 			if ( axis != null && zoomFraction > 0.0001 && zoomFraction < 1000.0 )
 			{
-				double minLin = axis._scale._minLinearized;
-				double maxLin = axis._scale._maxLinearized;
+				double minLin = axis.Scale._minLinearized;
+				double maxLin = axis.Scale._maxLinearized;
 
 				if ( !isZoomOnCenter )
 					centerVal = ( maxLin + minLin ) / 2.0;
 
-				axis._scale._minLinearized = centerVal - ((centerVal - minLin) * zoomFraction);
-				axis._scale._maxLinearized = centerVal + ((maxLin - centerVal) * zoomFraction);
+				axis.Scale._minLinearized = centerVal - ((centerVal - minLin) * zoomFraction);
+				axis.Scale._maxLinearized = centerVal + ((maxLin - centerVal) * zoomFraction);
 
-				axis._scale._minAuto = false;
-				axis._scale._maxAuto = false;
+				axis.Scale.MinAuto = false;
+				axis.Scale.MaxAuto = false;
 			}
 		}
 
@@ -1062,14 +1062,14 @@ namespace ZedGraph
 		{
 			if ( axis != null )
 			{
-				Scale scale = axis._scale;
+				Scale scale = axis.Scale;
 				double delta = scale.Linearize( startVal ) - scale.Linearize( endVal );
 
 				scale._minLinearized += delta;
 				scale._maxLinearized += delta;
 
-				scale._minAuto = false;
-				scale._maxAuto = false;
+				scale.MinAuto = false;
+				scale.MaxAuto = false;
 
 				/*
 								if ( axis.Type == AxisType.Log )
@@ -1103,12 +1103,12 @@ namespace ZedGraph
 			// calculate the new scale values for the point
 			PointPair newPt = new PointPair( _dragStartPair );
 
-			Scale xScale = _dragCurve.GetXAxis( _dragPane )._scale;
+			var xScale = _dragCurve.GetXAxis(_dragPane).Scale;
 			if ( _isEnableHEdit )
 				newPt.X = xScale.DeLinearize( xScale.Linearize( newPt.X ) +
 							xScale.Linearize( curX ) - xScale.Linearize( startX ) );
 
-			Scale yScale = _dragCurve.GetYAxis( _dragPane )._scale;
+			var yScale = _dragCurve.GetYAxis(_dragPane).Scale;
 			if ( _isEnableVEdit )
 				newPt.Y = yScale.DeLinearize( yScale.Linearize( newPt.Y ) +
 							yScale.Linearize( curY ) - yScale.Linearize( startY ) );
@@ -1154,7 +1154,7 @@ namespace ZedGraph
 				ReversibleFrame.Draw(g, this.BackColor, rect);
 
 				// Bound the zoom to the ChartRect
-				_dragEndPt = Point.Round(this.BoundPointToRect(mousePt, this._dragPane.Chart._rect));
+				_dragEndPt = Point.Round(this.BoundPointToRect(mousePt, this._dragPane.Chart.Rect));
 				rect = this.CalcZoomRect(this._dragStartPt, this._dragEndPt);
 
 				// Draw the new rectangle by calling DrawReversibleFrame again.
@@ -1166,7 +1166,7 @@ namespace ZedGraph
 
 		private void HandleZoomFinish( object sender, MouseEventArgs e )
 		{
-			PointF mousePtF = BoundPointToRect( new Point( e.X, e.Y ), _dragPane.Chart._rect );
+			var mousePtF = BoundPointToRect(new Point(e.X, e.Y), _dragPane.Chart.Rect);
 
 			// Only accept a drag if it covers at least 5 pixels in each direction
 			//Point curPt = ( (Control)sender ).PointToScreen( Point.Round( mousePt ) );
@@ -1228,32 +1228,32 @@ namespace ZedGraph
 
 					if ( _isEnableHZoom )
 					{
-						_dragPane.XAxis._scale._min = Math.Min( x1, x2 );
-						_dragPane.XAxis._scale._minAuto = false;
-						_dragPane.XAxis._scale._max = Math.Max( x1, x2 );
-						_dragPane.XAxis._scale._maxAuto = false;
+						_dragPane.XAxis.Scale.Min = Math.Min(x1, x2);
+						_dragPane.XAxis.Scale.MinAuto = false;
+						_dragPane.XAxis.Scale.Max = Math.Max(x1, x2);
+						_dragPane.XAxis.Scale.MaxAuto = false;
 
-						_dragPane.X2Axis._scale._min = Math.Min( xx1, xx2 );
-						_dragPane.X2Axis._scale._minAuto = false;
-						_dragPane.X2Axis._scale._max = Math.Max( xx1, xx2 );
-						_dragPane.X2Axis._scale._maxAuto = false;
+						_dragPane.X2Axis.Scale.Min = Math.Min(xx1, xx2);
+						_dragPane.X2Axis.Scale.MinAuto = false;
+						_dragPane.X2Axis.Scale.Max = Math.Max(xx1, xx2);
+						_dragPane.X2Axis.Scale.MaxAuto = false;
 					}
 
 					if ( _isEnableVZoom )
 					{
 						for ( int i = 0; i < y1.Length; i++ )
 						{
-							_dragPane.YAxisList[i]._scale._min = Math.Min( y1[i], y2[i] );
-							_dragPane.YAxisList[i]._scale._max = Math.Max( y1[i], y2[i] );
-							_dragPane.YAxisList[i]._scale._minAuto = false;
-							_dragPane.YAxisList[i]._scale._maxAuto = false;
+							_dragPane.YAxisList[i].Scale.Min = Math.Min(y1[i], y2[i]);
+							_dragPane.YAxisList[i].Scale.Max = Math.Max(y1[i], y2[i]);
+							_dragPane.YAxisList[i].Scale.MinAuto = false;
+							_dragPane.YAxisList[i].Scale.MaxAuto = false;
 						}
 						for ( int i = 0; i < yy1.Length; i++ )
 						{
-							_dragPane.Y2AxisList[i]._scale._min = Math.Min( yy1[i], yy2[i] );
-							_dragPane.Y2AxisList[i]._scale._max = Math.Max( yy1[i], yy2[i] );
-							_dragPane.Y2AxisList[i]._scale._minAuto = false;
-							_dragPane.Y2AxisList[i]._scale._maxAuto = false;
+							_dragPane.Y2AxisList[i].Scale.Min = Math.Min(yy1[i], yy2[i]);
+							_dragPane.Y2AxisList[i].Scale.Max = Math.Max(yy1[i], yy2[i]);
+							_dragPane.Y2AxisList[i].Scale.MinAuto = false;
+							_dragPane.Y2AxisList[i].Scale.MaxAuto = false;
 						}
 					}
 
@@ -1273,7 +1273,7 @@ namespace ZedGraph
 						// always AxisChange() the dragPane
 						_dragPane.AxisChange( g );
 
-						foreach ( GraphPane pane in _masterPane._paneList )
+						foreach (var pane in _masterPane.PaneList)
 						{
 							if ( pane != _dragPane && ( _isSynchronizeXAxes || _isSynchronizeYAxes ) )
 								pane.AxisChange( g );
@@ -1355,7 +1355,7 @@ namespace ZedGraph
 				return;
 			}
 
-			PointF mousePtF = BoundPointToRect( new Point( e.X, e.Y ), _dragPane.Chart._rect );
+			var mousePtF = BoundPointToRect(new Point(e.X, e.Y), _dragPane.Chart.Rect);
 
 			PointF mousePt = BoundPointToRect( new Point( e.X, e.Y ), _dragPane.Rect );
 
@@ -1457,7 +1457,7 @@ namespace ZedGraph
 				// always AxisChange() the dragPane
 				_dragPane.AxisChange( g );
 
-				foreach ( GraphPane pane in _masterPane._paneList )
+				foreach (var pane in _masterPane.PaneList)
 				{
 					if ( pane != _dragPane && ( _isSynchronizeXAxes || _isSynchronizeYAxes ) )
 						pane.AxisChange( g );

@@ -669,7 +669,7 @@ namespace ZedGraph
 				{
 					if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
 					{
-						foreach ( GraphPane pane in _masterPane._paneList )
+						foreach (var pane in _masterPane.PaneList)
 						{
 							pane.ZoomStack.Push( pane, ZoomState.StateType.Zoom );
 							ResetAutoScale( pane, g );
@@ -811,7 +811,7 @@ namespace ZedGraph
 				ZoomState newState = null;
 				if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
 				{
-					foreach ( GraphPane pane in _masterPane._paneList )
+					foreach (var pane in _masterPane.PaneList)
 					{
 						ZoomState state = pane.ZoomStack.Pop( pane );
 						if ( pane == primaryPane )
@@ -870,7 +870,7 @@ namespace ZedGraph
 				ZoomState newState = null;
 				if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
 				{
-					foreach ( GraphPane pane in _masterPane._paneList )
+					foreach (var pane in _masterPane.PaneList)
 					{
 						ZoomState state = pane.ZoomStack.PopAll( pane );
 						if ( pane == primaryPane )

@@ -753,7 +753,7 @@ namespace ZedGraph
 
 			if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
 			{
-				foreach ( GraphPane pane in _masterPane._paneList )
+				foreach (var pane in _masterPane.PaneList)
 				{
 					ZoomState state = new ZoomState( pane, type );
 					if ( pane == primaryPane )
@@ -781,10 +781,10 @@ namespace ZedGraph
 		{
 			if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
 			{
-				for ( int i = 0; i < _masterPane._paneList.Count; i++ )
+				for (int i = 0; i < _masterPane.PaneList.Count; i++)
 				{
 					if ( i < _zoomStateStack.Count )
-						_zoomStateStack[i].ApplyState( _masterPane._paneList[i] );
+						_zoomStateStack[i].ApplyState(_masterPane.PaneList[i]);
 				}
 			}
 			else if ( _zoomState != null )
@@ -810,10 +810,10 @@ namespace ZedGraph
 		{
 			if ( _isSynchronizeXAxes || _isSynchronizeYAxes )
 			{
-				for ( int i = 0; i < _masterPane._paneList.Count; i++ )
+				for (int i = 0; i < _masterPane.PaneList.Count; i++)
 				{
 					if ( i < _zoomStateStack.Count )
-						_masterPane._paneList[i].ZoomStack.Add( _zoomStateStack[i] );
+						_masterPane.PaneList[i].ZoomStack.Add(_zoomStateStack[i]);
 				}
 			}
 			else if ( _zoomState != null )
@@ -836,7 +836,7 @@ namespace ZedGraph
 		/// </summary>
 		private void ZoomStatePurge()
 		{
-			foreach ( GraphPane pane in _masterPane._paneList )
+			foreach (var pane in _masterPane.PaneList)
 				pane.ZoomStack.Clear();
 		}
 
