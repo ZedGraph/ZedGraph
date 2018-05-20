@@ -11,10 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph.UnitTest", "ZedGra
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FB765DB1-ECF3-4CFB-B94F-79108CE98B12}"
 	ProjectSection(SolutionItems) = preProject
+		..\CHANGELOG.md = ..\CHANGELOG.md
 		msbuild.proj = msbuild.proj
 		packages.config = packages.config
 		..\README.md = ..\README.md
+		ZedGraph.csproj.nuspec = ZedGraph.csproj.nuspec
 		ZedGraph.proj = ZedGraph.proj
+		ZedGraph.WinForms.nuspec = ZedGraph.WinForms.nuspec
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZedGraph.WinForms", "ZedGraph.WinForms\ZedGraph.WinForms.csproj", "{E656C1D4-95AD-4DF5-810B-51A9228C5ADC}"
