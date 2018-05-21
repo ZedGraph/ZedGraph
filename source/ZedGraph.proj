@@ -25,7 +25,7 @@
   </Target>
 
   <Target Name="NuGetPack" DependsOnTargets="Build;GetVersion">
-    <Exec Command='nuget pack ZedGraph.csproj.nuspec -Version $(GitVersion_NuGetVersion) -OutputDirectory "$(BuildDirectory)"'/>
+    <Exec Command='nuget pack ZedGraph.nuspec -Version $(GitVersion_NuGetVersion) -OutputDirectory "$(BuildDirectory)"'/>
     <Exec Command='nuget pack ZedGraph.WinForms.nuspec -Version $(GitVersion_NuGetVersion) -OutputDirectory "$(BuildDirectory)"'/>
   </Target>
 
