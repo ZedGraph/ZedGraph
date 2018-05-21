@@ -220,19 +220,12 @@ namespace ZedGraph
 		{
 			if ( this.GraphPane != null )
 			{
-				double grace = CalcScrollGrace( this.GraphPane.XAxis.Scale._rangeMin,
-							this.GraphPane.XAxis.Scale._rangeMax );
-
-				_xScrollRange.Min = this.GraphPane.XAxis.Scale._rangeMin - grace;
-				_xScrollRange.Max = this.GraphPane.XAxis.Scale._rangeMax + grace;
-				_xScrollRange.IsScrollable = true;
+				_xScrollRange = GraphPane.XAxis.Scale.CalculateScrollRange(_scrollGrace, true);
 
 				for ( int i = 0; i < this.GraphPane.YAxisList.Count; i++ )
 				{
 					Axis axis = this.GraphPane.YAxisList[i];
-					grace = CalcScrollGrace( axis.Scale._rangeMin, axis.Scale._rangeMax );
-					ScrollRange range = new ScrollRange( axis.Scale._rangeMin - grace,
-						axis.Scale._rangeMax + grace, _yScrollRangeList[i].IsScrollable );
+					var range = axis.Scale.CalculateScrollRange(_scrollGrace, _yScrollRangeList[i].IsScrollable);
 
 					if ( i >= _yScrollRangeList.Count )
 						_yScrollRangeList.Add( range );
@@ -243,9 +236,7 @@ namespace ZedGraph
 				for ( int i = 0; i < this.GraphPane.Y2AxisList.Count; i++ )
 				{
 					Axis axis = this.GraphPane.Y2AxisList[i];
-					grace = CalcScrollGrace( axis.Scale._rangeMin, axis.Scale._rangeMax );
-					ScrollRange range = new ScrollRange( axis.Scale._rangeMin - grace,
-							axis.Scale._rangeMax + grace, _y2ScrollRangeList[i].IsScrollable );
+					var range = axis.Scale.CalculateScrollRange(_scrollGrace, _y2ScrollRangeList[i].IsScrollable);
 
 					if ( i >= _y2ScrollRangeList.Count )
 						_y2ScrollRangeList.Add( range );
@@ -257,19 +248,6 @@ namespace ZedGraph
 				//		out scrollMinY, out scrollMaxY, out scrollMinY2, out scrollMaxY2, false, false,
 				//		this.GraphPane );
 			}
-		}
-
-		private double CalcScrollGrace( double min, double max )
-		{
-			if ( Math.Abs( max - min ) < 1e-30 )
-			{
-				if ( Math.Abs( max ) < 1e-30 )
-					return _scrollGrace;
-				else
-					return max * _scrollGrace;
-			}
-			else
-				return ( max - min ) * _scrollGrace;
 		}
 
 		private void SetScroll( ScrollBar scrollBar, Axis axis, double scrollMin, double scrollMax )

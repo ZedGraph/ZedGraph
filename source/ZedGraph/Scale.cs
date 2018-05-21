@@ -3005,5 +3005,37 @@ namespace ZedGraph
             _minLinearized = val;
             _maxLinearized = val + delta;
         }
+
+        /// <summary>
+        /// Calculates the scroll range with the specified grace value.
+        /// </summary>
+        /// <param name="grace">
+        /// The grace or margin percentage to apply to the scale's range.
+        /// </param>
+        /// <param name="isScrollable">
+        /// The desired <see cref="ScrollRange.IsScrollable"/> value.
+        /// </param>
+        /// <returns>The <see cref="ScrollRange"/> value.</returns>
+        public ScrollRange CalculateScrollRange(double grace, bool isScrollable)
+        {
+            var graceValue = CalculateRangeGrace(grace);
+
+            return new ScrollRange(_rangeMin - graceValue, _rangeMax + graceValue, isScrollable);
+        }
+
+        private double CalculateRangeGrace(double grace)
+        {
+            if (Math.Abs(_rangeMax - _rangeMin) < 1e-30)
+            {
+                if (Math.Abs(_rangeMax) < 1e-30)
+                {
+                    return grace;
+                }
+
+                return _rangeMax * grace;
+            }
+
+            return (_rangeMax - _rangeMin) * grace;
+        }
     }
 }
