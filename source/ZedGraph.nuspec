@@ -11,6 +11,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>ZedGraph is a class library, user control, and web control for .net, written in C#, for drawing 2D Line, Bar, and Pie Charts. It features full, detailed customization capabilities, but most options have defaults for ease of use.</description>
     <copyright>Copyright © 2003-2018 John Champion</copyright>
+    <iconUrl>https://raw.githubusercontent.com/ZedGraph/ZedGraph/master/logo-200x200.png</iconUrl>
     <language />
 
     <frameworkAssemblies>
