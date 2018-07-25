@@ -36,35 +36,14 @@
     <DocumentationFile>bin\Release\netstandard2.0\ZedGraph.xml</DocumentationFile>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard2.0'">
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="GitVersionTask" Version="3.6.5" />
   </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="CoreCompat.System.Drawing.v2">
-      <Version>5.2.0-preview1-r131</Version>
+    <PackageReference Include="System.Drawing.Common">
+      <Version>4.5.0</Version>
     </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <Compile Remove="IValuesToolTip.cs" />
-    <Compile Remove="ValuesToolTip.cs" />
-    <Compile Remove="ZedGraphControl.ToolTip.cs" />
-    <Compile Remove="DataSourcePointList.cs" />
-    <Compile Remove="ZedGraphControl.ContextMenu.cs" />
-    <Compile Remove="ZedGraphControl.cs" />
-    <Compile Remove="ZedGraphControl.Designer.cs" />
-    <Compile Remove="ZedGraphControl.Events.cs" />
-    <Compile Remove="ZedGraphControl.Printing.cs" />
-    <Compile Remove="ZedGraphControl.Properties.cs" />
-    <Compile Remove="ZedGraphControl.ScrollBars.cs" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <EmbeddedResource Remove="ZedGraphControl.resx" />
   </ItemGroup>
 
 </Project>
