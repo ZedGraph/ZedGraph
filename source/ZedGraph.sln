@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2024
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ZedGraph", "ZedGraph\ZedGraph.csproj", "{2541686B-1673-43BF-AF89-3163945DB009}"
 EndProject
@@ -12,11 +12,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FB765DB1-ECF3-4CFB-B94F-79108CE98B12}"
 	ProjectSection(SolutionItems) = preProject
 		..\CHANGELOG.md = ..\CHANGELOG.md
-		msbuild.proj = msbuild.proj
-		packages.config = packages.config
 		..\README.md = ..\README.md
 		ZedGraph.nuspec = ZedGraph.nuspec
-		ZedGraph.proj = ZedGraph.proj
 		ZedGraph.WinForms.nuspec = ZedGraph.WinForms.nuspec
 	EndProjectSection
 EndProject

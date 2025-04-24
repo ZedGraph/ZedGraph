@@ -1395,7 +1395,7 @@ namespace ZedGraph.UnitTest
 		Form form2;
 		GraphPane testee;
 
-		[TestFixtureSetUp]
+		[OneTimeSetUp]
 		public void SetUp()
 		{
 			TestUtils.SetUp();

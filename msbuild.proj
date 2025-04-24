@@ -4,12 +4,7 @@
     <Solution>ZedGraph</Solution>
   </PropertyGroup>
 
-  <Target Name="Nuget">
-    <Exec Command='nuget restore "source\$(Solution).sln"' />
-    <Exec Command='nuget restore "source\packages.config" -PackagesDirectory source\packages' />
-  </Target>
-
-  <Target Name="Build" DependsOnTargets="Nuget">
+  <Target Name="Build">
     <MsBuild BuildInParallel="True" Projects="source\$(Solution).proj" Properties="RootDirectory=$(MSBuildProjectDirectory)" StopOnFirstFailure="True" />
   </Target>
 

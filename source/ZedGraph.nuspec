@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ZedGraph</id>
@@ -23,7 +23,10 @@
     </frameworkAssemblies>
     <dependencies>
       <group targetFramework="netstandard2.0">
-        <dependency id="System.Drawing.Common" version="4.5.0" />
+        <dependency id="System.Drawing.Common" version="9.0.4" />
+      </group>
+      <group targetFramework="net8.0">
+        <dependency id="System.Drawing.Common" version="9.0.4" />
       </group>
     </dependencies>
   </metadata>
