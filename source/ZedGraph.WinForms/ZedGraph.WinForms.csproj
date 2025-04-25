@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net35;net40;net45;net46;net47;net8.0-windows</TargetFrameworks>
+    <TargetFrameworks>net35;net40;net45;net46;net47;net8.0-windows7.0</TargetFrameworks>
     <RootNamespace>ZedGraph</RootNamespace>
     <AssemblyName>ZedGraph.WinForms</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
@@ -34,7 +34,7 @@
     <DocumentationFile>bin\Release\net47\ZedGraph.WinForms.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-windows|AnyCPU'">
-    <DocumentationFile>bin\Release\net8.0-windows\ZedGraph.WinForms.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net8.0-windows7.0\ZedGraph.WinForms.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
