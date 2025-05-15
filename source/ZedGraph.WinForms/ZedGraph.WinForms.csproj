@@ -38,10 +38,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="GitVersion.MsBuild" Version="6.3.0">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
