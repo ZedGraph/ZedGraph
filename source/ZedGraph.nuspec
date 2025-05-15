@@ -19,6 +19,7 @@
       <group targetFramework="net45"></group>
       <group targetFramework="net46"></group>
       <group targetFramework="net47"></group>
+      <group targetFramework="net48"></group>
       <group targetFramework="netstandard2.0">
         <dependency id="System.Drawing.Common" version="9.0.4" />
       </group>

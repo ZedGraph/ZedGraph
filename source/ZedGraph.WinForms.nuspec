@@ -19,6 +19,7 @@
       <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework="net45" />
       <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework="net46" />
       <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework="net47" />
+      <frameworkAssembly assemblyName="System.Windows.Forms" targetFramework="net48" />
     </frameworkAssemblies>
 
     <dependencies>
@@ -35,6 +36,9 @@
         <dependency id="ZedGraph" version="6.0.0-alpha0002" />
       </group>
       <group targetFramework="net47">
+        <dependency id="ZedGraph" version="6.0.0-alpha0002" />
+      </group>
+      <group targetFramework="net48">
         <dependency id="ZedGraph" version="6.0.0-alpha0002" />
       </group>
       <group targetFramework="net8.0-windows7.0">
