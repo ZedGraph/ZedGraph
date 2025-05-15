@@ -1,7 +1,7 @@
 ﻿namespace ZedGraph
 {
-    using Ploeh.AutoFixture;
-    using Ploeh.AutoFixture.Kernel;
+    using AutoFixture;
+    using AutoFixture.Kernel;
 
     public class AxisLabelCustomization : ICustomization
     {

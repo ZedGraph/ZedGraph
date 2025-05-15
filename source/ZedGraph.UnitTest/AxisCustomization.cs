@@ -1,6 +1,6 @@
 ﻿namespace ZedGraph
 {
-    using Ploeh.AutoFixture;
+    using AutoFixture;
 
     public class AxisCustomization : ICustomization
     {

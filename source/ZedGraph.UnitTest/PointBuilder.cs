@@ -2,7 +2,7 @@ namespace ZedGraph
 {
     using System.Drawing;
 
-    using Ploeh.AutoFixture.Kernel;
+    using AutoFixture.Kernel;
 
     internal class PointBuilder : ISpecimenBuilder
     {

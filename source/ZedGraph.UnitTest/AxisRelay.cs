@@ -2,7 +2,7 @@
 {
     using System;
 
-    using Ploeh.AutoFixture.Kernel;
+    using AutoFixture.Kernel;
 
     public class AxisRelay : ISpecimenBuilder
     {

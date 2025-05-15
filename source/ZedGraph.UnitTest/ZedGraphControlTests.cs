@@ -6,7 +6,7 @@
 
     using NUnit.Framework;
 
-    using Ploeh.AutoFixture;
+    using AutoFixture;
 
     [TestFixture]
     public class ZedGraphControlTests

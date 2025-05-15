@@ -1,7 +1,7 @@
 namespace ZedGraph
 {
-    using Ploeh.AutoFixture;
-    using Ploeh.AutoFixture.AutoRhinoMock;
+    using AutoFixture;
+    using AutoFixture.AutoRhinoMock;
 
     public class ZedGraphCustomization : CompositeCustomization
     {

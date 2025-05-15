@@ -143,7 +143,7 @@ namespace ZedGraph.UnitTest
 		{
 			form.Show();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Is an empty graph visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Is an empty graph visible?" ) );
 		}
 		#endregion
 
@@ -220,7 +220,7 @@ namespace ZedGraph.UnitTest
 
 			form.Show();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Is a graph visible with 3 sets of data and text labels?" ) );
 		}
 		#endregion
@@ -373,12 +373,12 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Refresh();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Is a bar graph visible with 1 set of data and value labels?  <Next Step: Resize the Graph for 3 seconds>" ) );
 
 			TestUtils.DelaySeconds( 3000 );
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the graph resize ok?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did the graph resize ok?" ) );
 		}
 		#endregion
 
@@ -448,13 +448,13 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Refresh();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Is a clustered bar graph having the proper number of bars per x-Axis point visible ?  <Next Step: Resize the chart>" ) );
 
 
 			TestUtils.DelaySeconds( 3000 );
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the graph resize ok with all x-Axis labels visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did the graph resize ok with all x-Axis labels visible?" ) );
 		}
 		#endregion
 
@@ -501,12 +501,12 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Refresh();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Is a horizontal clustered bar graph having the proper number of bars per y-Axis point visible ? <Next Step: Resize the graph>" ) );
 
 			TestUtils.DelaySeconds( 3000 );
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the graph resize ok with all y-Axis labels visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did the graph resize ok with all y-Axis labels visible?" ) );
 		}
 		#endregion
 
@@ -555,12 +555,12 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Refresh();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Is a stack bar graph having three bars per x-Axis point visible ?  <Next Step: Maximize the display>" ) );
 
 			TestUtils.DelaySeconds( 3000 );
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the graph resize ok with all x-Axis labels visible?  <Next Step: Add a curve>" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did the graph resize ok with all x-Axis labels visible?  <Next Step: Add a curve>" ) );
 
 			LineItem curve = new LineItem( "Curve A", null, y4, Color.Black, SymbolType.TriangleDown );
 			testee.CurveList.Insert( 0, curve );
@@ -574,7 +574,7 @@ namespace ZedGraph.UnitTest
 
 			TestUtils.DelaySeconds( 3000 );
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Was a new curve displayed on top of the bars?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Was a new curve displayed on top of the bars?" ) );
 		}
 		#endregion
 
@@ -622,7 +622,7 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Refresh();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Is a stack bar graph having three bars per x-Axis point visible ?  <Next Step: Fill one bar segment with a Textured Brush>" ) );
 
 			Bitmap bm = new Bitmap( @"C:\WINDOWS\FeatherTexture.bmp" );
@@ -632,7 +632,7 @@ namespace ZedGraph.UnitTest
 			form2.Refresh();
 
 			TestUtils.DelaySeconds( 3000 );
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Was the red segment replaced with one having a bitmap fill?<Next: Disappearing segments" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Was the red segment replaced with one having a bitmap fill?<Next: Disappearing segments" ) );
 
 			for ( int iCurve = 0; iCurve < 2; iCurve++ )
 			{
@@ -651,7 +651,7 @@ namespace ZedGraph.UnitTest
 				}
 			}
 			TestUtils.DelaySeconds( 1000 );
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the segments disappear uniformly while the total height stayed at +/-100%?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did the segments disappear uniformly while the total height stayed at +/-100%?" ) );
 		}
 		#endregion
 
@@ -699,13 +699,13 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Refresh();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Is a stack bar graph having the proper number of bars per x-Axis point visible ?  <Next Step: Resize the graph>" ) );
 
 
 			TestUtils.DelaySeconds( 3000 );
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the graph resize ok with all x-Axis labels visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did the graph resize ok with all x-Axis labels visible?" ) );
 		}
 		#endregion
 
@@ -793,7 +793,7 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Refresh();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Is a Sorted Overlay Stack Bar displayed with the segments in increasing value order as indicated by the embedded values? " ) );
 
 		}
@@ -843,7 +843,7 @@ namespace ZedGraph.UnitTest
 			form2.WindowState = FormWindowState.Maximized;
 			form2.Refresh();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Is a horizontal stack bar graph having three bars per y-Axis point visible?  <Next Step: Re-orient the bar fill>" ) );
 
 			myCurve.Bar.Fill = new Fill( Color.White, Color.Red, 90 );
@@ -855,7 +855,7 @@ namespace ZedGraph.UnitTest
 
 			TestUtils.DelaySeconds( 3000 );
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the orientation of the fill shift from vertical to horizontal?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did the orientation of the fill shift from vertical to horizontal?" ) );
 		}
 		#endregion
 
@@ -913,7 +913,7 @@ namespace ZedGraph.UnitTest
 				//DelaySeconds(	50	);
 			}
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did you see points added one by one, then deleted one by one?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did you see points added one by one, then deleted one by one?" ) );
 		}
 		#endregion
 
@@ -941,7 +941,7 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Show();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Do you see a single value in the middle of the scale ranges?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Do you see a single value in the middle of the scale ranges?" ) );
 		}
 		#endregion
 
@@ -1054,7 +1054,7 @@ namespace ZedGraph.UnitTest
 				}
 			}
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did you see an initial graph, with points disappearing one by one?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did you see an initial graph, with points disappearing one by one?" ) );
 
 			//	Go	ahead	and refigure the	axes	with the	invalid data just to check
 			testee.AxisChange( form2.CreateGraphics() );
@@ -1106,7 +1106,7 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Show();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Do you see a dual Y graph?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Do you see a dual Y graph?" ) );
 		}
 		#endregion
 
@@ -1139,7 +1139,7 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Show();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Do you see a graph with all values missing (NaN's)?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Do you see a graph with all values missing (NaN's)?" ) );
 		}
 		#endregion
 
@@ -1174,12 +1174,12 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Show();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "If you see a date graph, resize it and make" +
+			Assert.That( TestUtils.promptIfTestWorked( "If you see a date graph, resize it and make" +
 									" sure the label count is reduced to avoid overlap" ) );
 
 			TestUtils.DelaySeconds( 3000 );
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the anti-overlap work?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did the anti-overlap work?" ) );
 		}
 		#endregion
 
@@ -1234,7 +1234,7 @@ namespace ZedGraph.UnitTest
 				TestUtils.DelaySeconds( 50 );
 			}
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did you see varying levels of smoothing?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did you see varying levels of smoothing?" ) );
 		}
 		#endregion
 
@@ -1283,7 +1283,7 @@ namespace ZedGraph.UnitTest
 			testee.AxisChange( form2.CreateGraphics() );
 
 			TestUtils.DelaySeconds( 3000 );
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Was a HiLow chart with a date X-Axis displayed?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Was a HiLow chart with a date X-Axis displayed?" ) );
 		}
 		#endregion
 
@@ -1327,7 +1327,7 @@ namespace ZedGraph.UnitTest
 			testee.AxisChange( form2.CreateGraphics() );
 
 			TestUtils.DelaySeconds( 3000 );
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Was the typical Error Bar chart with a date X-Axis displayed?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Was the typical Error Bar chart with a date X-Axis displayed?" ) );
 		}
 		#endregion
 
@@ -1362,7 +1362,7 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Show();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did you	get	an	X	Text axis?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did you	get	an	X	Text axis?" ) );
 
 			( myCurve.Points as PointPairList ).Clear();
 			for ( double i = 0; i < 100; i++ )
@@ -1371,11 +1371,11 @@ namespace ZedGraph.UnitTest
 			testee.AxisChange( form2.CreateGraphics() );
 			form2.Refresh();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the points fill in between the labels? (Next Resize the graph and check label overlap again)" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did the points fill in between the labels? (Next Resize the graph and check label overlap again)" ) );
 
 			TestUtils.DelaySeconds( 3000 );
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Did the graph resize ok?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Did the graph resize ok?" ) );
 		}
 		#endregion
 
@@ -1531,19 +1531,19 @@ namespace ZedGraph.UnitTest
 			SetSize();
 			form2.Show();
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Do you see a dual Y graph with no axes?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Do you see a dual Y graph with no axes?" ) );
 
 			testee.Border = new Border( true, Color.Red, 3.0F );
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Pane Frame Added?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Pane Frame Added?" ) );
 
 			testee.Border = new Border( Color.Black, 1.0F );
 
 			testee.Chart.Border = new Border( true, Color.Red, 3.0F );
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Axis Frame Added?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Axis Frame Added?" ) );
 
 			testee.Chart.Border = new Border( Color.Black, 1.0F );
 
@@ -1554,7 +1554,7 @@ namespace ZedGraph.UnitTest
 			testee.Margin.Right = 50.0F;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Pane Background Filled?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Pane Background Filled?" ) );
 
 			testee.Margin.Top = 20.0F;
 			testee.Margin.Bottom = 20.0F;
@@ -1564,7 +1564,7 @@ namespace ZedGraph.UnitTest
 			testee.Chart.Fill = new Fill( Color.White, Color.LightGoldenrodYellow );
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Axis Background Filled?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Axis Background Filled?" ) );
 
 			testee.Chart.Fill.IsVisible = false;
 
@@ -1573,7 +1573,7 @@ namespace ZedGraph.UnitTest
 			testee.Title.Text = "The Title";
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Title Added?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Title Added?" ) );
 
 			testee.Title.FontSpec.FontColor = Color.Black;
 
@@ -1581,14 +1581,14 @@ namespace ZedGraph.UnitTest
 			testee.Legend.FontSpec.FontColor = Color.Red;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Added?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Legend Added?" ) );
 
 			testee.Legend.FontSpec.FontColor = Color.Black;
 
 			testee.Legend.Border = new Border( true, Color.Red, 3.0F );
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Frame Added?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Legend Frame Added?" ) );
 
 			testee.Legend.Border = new Border( Color.Black, 1.0F );
 
@@ -1596,40 +1596,40 @@ namespace ZedGraph.UnitTest
 			testee.Legend.Fill.Color = Color.LightGoldenrodYellow;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Fill Added?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Legend Fill Added?" ) );
 
 			testee.Legend.Position = LegendPos.InsideBotLeft;
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Moved to Inside Bottom Left?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Legend Moved to Inside Bottom Left?" ) );
 
 			testee.Legend.Position = LegendPos.InsideBotRight;
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Moved to Inside Bottom Right?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Legend Moved to Inside Bottom Right?" ) );
 
 			testee.Legend.Position = LegendPos.InsideTopLeft;
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend Moved to Inside Top Left?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Legend Moved to Inside Top Left?" ) );
 
 			testee.Legend.Position = LegendPos.InsideTopRight;
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend	Moved to Inside	Top Right?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Legend	Moved to Inside	Top Right?" ) );
 
 			testee.Legend.Position = LegendPos.Left;
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend	Moved to Left?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Legend	Moved to Left?" ) );
 
 			testee.Legend.Position = LegendPos.Right;
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend	Moved to Right?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Legend	Moved to Right?" ) );
 
 			testee.Legend.Position = LegendPos.Top;
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend	Moved to Top?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Legend	Moved to Top?" ) );
 
 			testee.Legend.IsHStack = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Legend	Horizontal Stacked?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Legend	Horizontal Stacked?" ) );
 			testee.Legend.Fill.Type = FillType.None;
 
 			/////////	X	AXIS /////////////////////////////////////////////////////////////////////////
@@ -1638,70 +1638,70 @@ namespace ZedGraph.UnitTest
 			testee.XAxis.Color = Color.Red;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "X Axis Visible?" ) );
 
 			testee.XAxis.Title.Text = "X Axis Title";
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Title Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "X Axis Title Visible?" ) );
 
 			//testee.XAxis.TicPenWidth	= 3.0F;
 			testee.XAxis.MajorGrid.IsZeroLine = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis ZeroLine Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "X Axis ZeroLine Visible?" ) );
 
 			testee.XAxis.MajorGrid.IsZeroLine = false;
 			//testee.XAxis.TicPenWidth	= 1.0F;
 			testee.XAxis.MajorTic.IsOutside = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis major tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "X Axis major tics Visible?" ) );
 
 			testee.XAxis.MinorTic.IsOutside = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis minor tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "X Axis minor tics Visible?" ) );
 
 			testee.XAxis.MajorTic.IsInside = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Inside tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "X Axis Inside tics Visible?" ) );
 
 			testee.XAxis.MajorTic.IsOpposite = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Opposite tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "X Axis Opposite tics Visible?" ) );
 
 			testee.XAxis.MinorTic.IsInside = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Minor Inside tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "X Axis Minor Inside tics Visible?" ) );
 
 			testee.XAxis.MinorTic.IsOpposite = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Minor Opposite tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "X Axis Minor Opposite tics Visible?" ) );
 
 			testee.XAxis.MajorTic.PenWidth = 1.0F;
 			testee.XAxis.Color = Color.Black;
 			testee.XAxis.MajorGrid.IsVisible = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Grid Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "X Axis Grid Visible?" ) );
 
 			testee.XAxis.MajorGrid.PenWidth = 1.0F;
 			testee.XAxis.MajorGrid.Color = Color.Black;
 			testee.XAxis.Scale.IsReverse = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Reversed?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "X Axis Reversed?" ) );
 
 			testee.XAxis.Scale.IsReverse = false;
 			testee.XAxis.Type = AxisType.Log;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "X Axis Log?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "X Axis Log?" ) );
 
 			testee.XAxis.Type = AxisType.Linear;
 
@@ -1713,70 +1713,70 @@ namespace ZedGraph.UnitTest
 			testee.YAxis.Color = Color.Red;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y Axis Visible?" ) );
 
 			testee.YAxis.Title.Text = "Y Axis	Title";
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Title Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y Axis Title Visible?" ) );
 
 			//testee.YAxis.TicPenWidth	= 3.0F;
 			testee.YAxis.MajorGrid.IsZeroLine = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis ZeroLine Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y Axis ZeroLine Visible?" ) );
 
 			testee.YAxis.MajorGrid.IsZeroLine = false;
 			//testee.YAxis.TicPenWidth	= 1.0F;
 			testee.YAxis.MajorTic.IsOutside = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis major tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y Axis major tics Visible?" ) );
 
 			testee.YAxis.MinorTic.IsOutside = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis minor tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y Axis minor tics Visible?" ) );
 
 			testee.YAxis.MajorTic.IsInside = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Inside tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y Axis Inside tics Visible?" ) );
 
 			testee.YAxis.MajorTic.IsOpposite = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Opposite tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y Axis Opposite tics Visible?" ) );
 
 			testee.YAxis.MinorTic.IsInside = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Minor Inside tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y Axis Minor Inside tics Visible?" ) );
 
 			testee.YAxis.MinorTic.IsOpposite = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Minor Opposite tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y Axis Minor Opposite tics Visible?" ) );
 
 			testee.YAxis.MajorTic.PenWidth = 1.0F;
 			testee.YAxis.Color = Color.Black;
 			testee.YAxis.MajorGrid.IsVisible = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Grid Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y Axis Grid Visible?" ) );
 
 			testee.YAxis.MajorGrid.PenWidth = 1.0F;
 			testee.YAxis.MajorGrid.Color = Color.Black;
 			testee.YAxis.Scale.IsReverse = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Reversed?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y Axis Reversed?" ) );
 
 			testee.YAxis.Scale.IsReverse = false;
 			testee.YAxis.Type = AxisType.Log;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y Axis Log?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y Axis Log?" ) );
 
 			testee.YAxis.Type = AxisType.Linear;
 
@@ -1788,70 +1788,70 @@ namespace ZedGraph.UnitTest
 			testee.Y2Axis.Color = Color.Red;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y2 Axis Visible?" ) );
 
 			testee.Y2Axis.Title.Text = "Y2	Axis Title";
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Title Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y2 Axis Title Visible?" ) );
 
 			//testee.Y2Axis.TicPenWidth	=	3.0F;
 			testee.Y2Axis.MajorGrid.IsZeroLine = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis ZeroLine Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y2 Axis ZeroLine Visible?" ) );
 
 			testee.Y2Axis.MajorGrid.IsZeroLine = false;
 			//testee.Y2Axis.TicPenWidth	=	1.0F;
 			testee.Y2Axis.MajorTic.IsOutside = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis major tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y2 Axis major tics Visible?" ) );
 
 			testee.Y2Axis.MinorTic.IsOutside = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis minor tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y2 Axis minor tics Visible?" ) );
 
 			testee.Y2Axis.MajorTic.IsInside = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Inside tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y2 Axis Inside tics Visible?" ) );
 
 			testee.Y2Axis.MajorTic.IsOpposite = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Opposite tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y2 Axis Opposite tics Visible?" ) );
 
 			testee.Y2Axis.MinorTic.IsInside = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Minor Inside tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y2 Axis Minor Inside tics Visible?" ) );
 
 			testee.Y2Axis.MinorTic.IsOpposite = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Minor Opposite tics Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y2 Axis Minor Opposite tics Visible?" ) );
 
 			testee.Y2Axis.MajorTic.PenWidth = 1.0F;
 			testee.Y2Axis.Color = Color.Black;
 			testee.Y2Axis.MajorGrid.IsVisible = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Grid Visible?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y2 Axis Grid Visible?" ) );
 
 			testee.Y2Axis.MajorGrid.PenWidth = 1.0F;
 			testee.Y2Axis.MajorGrid.Color = Color.Black;
 			testee.Y2Axis.Scale.IsReverse = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Reversed?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y2 Axis Reversed?" ) );
 
 			testee.Y2Axis.Scale.IsReverse = false;
 			testee.Y2Axis.Type = AxisType.Log;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked( "Y2 Axis Log?" ) );
+			Assert.That( TestUtils.promptIfTestWorked( "Y2 Axis Log?" ) );
 
 			testee.Y2Axis.Type = AxisType.Linear;
 
@@ -1872,8 +1872,8 @@ namespace ZedGraph.UnitTest
 				TestUtils.DelaySeconds( 50 );
 			}
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
-				"Did Fonts Rotate & Axes Accomodate them?" ) );
+			Assert.That( TestUtils.promptIfTestWorked(
+				"Did Fonts Rotate & Axes Accommodate them?" ) );
 
 			testee.XAxis.Scale.FontSpec.Angle = 0;
 			testee.YAxis.Scale.FontSpec.Angle = 90.0F;
@@ -1891,7 +1891,7 @@ namespace ZedGraph.UnitTest
 				TestUtils.DelaySeconds( 50 );
 			}
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Did Axis Titles Rotate and the AxisRect adjust properly?" ) );
 
 			testee.XAxis.Scale.FontSpec.Angle = 0;
@@ -1917,14 +1917,14 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.FontColor = Color.Red;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Is TextObj Centered on Graph?" ) );
 
 			text.FontSpec.FontColor = Color.Black;
 			text.FontSpec.Border = new Border( true, Color.Red, 3.0F );
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Does TextObj have a Border?" ) );
 
 			text.FontSpec.Border = new Border( Color.Black, 1.0F );
@@ -1933,21 +1933,21 @@ namespace ZedGraph.UnitTest
 			text.FontSpec.Fill.Type = FillType.Brush;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Is TextObj background filled?" ) );
 
 			text.FontSpec.Size = 20.0F;
 			text.FontSpec.Family = "Garamond";
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Large Garamond Font?" ) );
 
 			text.FontSpec.IsUnderline = true;
 			text.FontSpec.IsItalic = true;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Text Underlined & italic?" ) );
 
 			text.FontSpec.IsItalic = false;
@@ -1958,21 +1958,21 @@ namespace ZedGraph.UnitTest
 			text.Location.CoordinateFrame = CoordType.AxisXYScale;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Centered at (75, 0.0)?" ) );
 
 			text.Location.AlignH = AlignH.Right;
 			text.Location.AlignV = AlignV.Top;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Top-Right	at (75, 0.0)?" ) );
 
 			text.Location.AlignH = AlignH.Left;
 			text.Location.AlignV = AlignV.Bottom;
 
 			form2.Refresh();
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Bottom-Left at (75, 0.0)?" ) );
 
 			for ( float angle = 0.0F; angle <= 360.0F; angle += 10.0F )
@@ -1983,7 +1983,7 @@ namespace ZedGraph.UnitTest
 				TestUtils.DelaySeconds( 50 );
 			}
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Text Rotate with Bottom-Left at (75, 0.5)?" ) );
 
 			testee.Fill.Type = FillType.Brush;
@@ -2005,7 +2005,7 @@ namespace ZedGraph.UnitTest
 
 			TestUtils.waitForUserOK = userOK;
 
-			Assert.IsTrue( TestUtils.promptIfTestWorked(
+			Assert.That( TestUtils.promptIfTestWorked(
 				"Did Everything look ok?" ) );
 		}
 		#endregion

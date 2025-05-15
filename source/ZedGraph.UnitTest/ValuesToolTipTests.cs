@@ -9,13 +9,13 @@
     using NUnit.Framework;
 
     using Albedo;
-    using Ploeh.AutoFixture;
-    using Ploeh.AutoFixture.AutoRhinoMock;
-    using Ploeh.AutoFixture.Idioms;
+    using AutoFixture;
+    using AutoFixture.AutoRhinoMock;
+    using AutoFixture.Idioms;
 
     using Rhino.Mocks;
 
-    [TestFixture]
+	[TestFixture]
     internal class ValuesToolTipTests
     {
         [Test]
@@ -65,7 +65,7 @@
             var fixture = new Fixture();
             fixture.Register(() => MockRepository.GenerateMock<Action<Control, string>>());
             fixture.Customize<Control>(c => c.OmitAutoProperties());
-            string caption = new Fixture().Create("Caption");
+            string caption = fixture.Create<string>();
             var sut = fixture.Create<ValuesToolTip>();
 
             sut.Set(caption);
@@ -79,7 +79,7 @@
             var fixture = new Fixture();
             fixture.Register(() => MockRepository.GenerateMock<Action<Control, string>>());
             fixture.Customize<Control>(c => c.OmitAutoProperties());
-            string caption = new Fixture().Create("Caption");
+            string caption = fixture.Create<string>();
             var sut = fixture.Create<ValuesToolTip>();
 
             sut.Set(caption);
@@ -96,7 +96,7 @@
             fixture.Customize<Control>(c => c.OmitAutoProperties());
             fixture.Customizations.Add(new PointBuilder());
             var point = fixture.Create<Point>();
-            string caption = new Fixture().Create("Caption");
+            string caption = fixture.Create<string>();
             var sut = fixture.Create<ValuesToolTip>();
 
             sut.Set(caption, point);
@@ -114,7 +114,7 @@
             fixture.Customizations.Add(new PointBuilder());
             var point1 = fixture.Create<Point>();
             var point2 = fixture.Create<Point>();
-            string caption = new Fixture().Create("Caption");
+            string caption = fixture.Create<string>();
             var sut = fixture.Create<ValuesToolTip>();
             Assert.That(point1, Is.Not.EqualTo(point2));
 
@@ -147,7 +147,7 @@
             fixture.Register(() => MockRepository.GenerateMock<Action<Control, string>>());
             fixture.Customize<Control>(c => c.OmitAutoProperties());
             fixture.Customizations.Add(new PointBuilder());
-            string caption = new Fixture().Create("Caption");
+            string caption = fixture.Create<string>();
             var sut = fixture.Create<ValuesToolTip>();
 
             sut.Set(caption, default(Point));
