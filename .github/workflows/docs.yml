@@ -17,15 +17,17 @@ jobs:
         name: Build Documentation
         with:
          args: docs/docfx.json
-          
-      - name: Checkout gh-pages
-        uses: actions/checkout@v2
+
+      - name: Checkout ZedGraph.github.io repo
+        uses: actions/checkout@v4
         with:
-          ref: gh-pages
-          path: gh-pages
+          repository: ZedGraph/ZedGraph.github.io
+          path: site
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Publish to github pages
         run: |
-          cd gh-pages
+          cd site
           rm -rf *
           touch .nojekyll
           cp -a ../docs/_site/. .
