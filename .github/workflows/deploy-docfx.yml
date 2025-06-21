@@ -3,6 +3,7 @@ name: Deploy DocFX Documentation
 on:
   push:
     branches:
+      - docfxtests
       - maintenance/v5.1
   workflow_dispatch:
 
