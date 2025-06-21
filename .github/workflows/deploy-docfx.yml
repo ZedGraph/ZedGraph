@@ -18,6 +18,9 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1
 
+      - name: Install .NET Framework 3.5 Developer Pack
+        run: choco install netfx-3.5-devpack -y
+  
       - name: Build ZedGraph solution (Release)
         run: msbuild ZedGraph.sln /p:Configuration=Release
 
