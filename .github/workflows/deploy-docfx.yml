@@ -1,0 +1,42 @@
+name: Deploy DocFX Documentation
+
+on:
+  push:
+    branches:
+      - maintenance/v5.1
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ZedGraph source code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '7.x'
+
+      - name: Install DocFX
+        run: dotnet tool install -g docfx
+
+      - name: Generate API Documentation
+        run: docfx docfx.json
+
+      - name: Clone ZedGraph.github.io repo
+        uses: actions/checkout@v4
+        with:
+          repository: ZedGraph/ZedGraph.github.io
+          path: site
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push updated docs
+        run: |
+          cd site
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add v5.1
+          git commit -m "Update v5.1 docs from maintenance/v5.1"
+          git push
