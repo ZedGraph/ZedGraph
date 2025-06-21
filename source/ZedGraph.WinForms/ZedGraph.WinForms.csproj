@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net35;net40;net45;net46;net47;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net35;net40;net45;net46;net47</TargetFrameworks>
     <RootNamespace>ZedGraph</RootNamespace>
-    <AssemblyName>ZedGraph</AssemblyName>
+    <AssemblyName>ZedGraph.WinForms</AssemblyName>
 
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\zedgraphkey.snk</AssemblyOriginatorKeyFile>
@@ -18,32 +18,31 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net35|AnyCPU'">
-    <DocumentationFile>bin\Release\net35\ZedGraph.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net35\ZedGraph.WinForms.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
-    <DocumentationFile>bin\Release\net40\ZedGraph.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net40\ZedGraph.WinForms.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
-    <DocumentationFile>bin\Release\net45\ZedGraph.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net45\ZedGraph.WinForms.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net46|AnyCPU'">
-    <DocumentationFile>bin\Release\net46\ZedGraph.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net46\ZedGraph.WinForms.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net47|AnyCPU'">
-    <DocumentationFile>bin\Release\net47\ZedGraph.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\net47\ZedGraph.WinForms.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard2.0\ZedGraph.xml</DocumentationFile>
-  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="GitVersionTask" Version="3.6.5" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-    <PackageReference Include="System.Drawing.Common">
-      <Version>4.5.0</Version>
-    </PackageReference>
+  <ItemGroup>
+    <ProjectReference Include="..\ZedGraph\ZedGraph.csproj" />
   </ItemGroup>
 
 </Project>

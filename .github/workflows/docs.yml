@@ -1,0 +1,36 @@
+# Builds and publishes the documentation website to gh-pages branch
+name: Build docs
+
+on:
+  push:
+    branches: [ docs ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # Build static site content using DocFX
+      - uses: nikeee/docfx-action@v1.0.0
+        name: Build Documentation
+        with:
+         args: docs/docfx.json
+          
+      - name: Checkout gh-pages
+        uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+          path: gh-pages
+      - name: Publish to github pages
+        run: |
+          cd gh-pages
+          rm -rf *
+          touch .nojekyll
+          cp -a ../docs/_site/. .
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit --reset-author --amend -m "Deploy docs website"
+          git push --force origin gh-pages
