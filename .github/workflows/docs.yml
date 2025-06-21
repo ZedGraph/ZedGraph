@@ -3,7 +3,7 @@ name: Build docs
 
 on:
   push:
-    branches: [ docs ]
+    branches: [ docfxtests ]
   workflow_dispatch:
 
 jobs:
