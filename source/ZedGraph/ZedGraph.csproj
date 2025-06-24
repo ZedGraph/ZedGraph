@@ -1,19 +1,91 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>net481;net6.0-windows;net8.0-windows</TargetFrameworks>
-    <OutputType>Library</OutputType>
-    <UseWindowsForms>true</UseWindowsForms>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyTitle>ZedGraph</AssemblyTitle>
-    <Description>ZedGraph Library</Description>
-    <Company>John Champion, et al.</Company>
-    <Product>ZedGraph Library</Product>
-	<Copyright>Copyright © 2003-2007 John Champion</Copyright>
-	<AssemblyVersion>5.2.0</AssemblyVersion>
-	<InformationalVersion>5.2.0</InformationalVersion>
-	<SignAssembly>True</SignAssembly>
-	<AssemblyOriginatorKeyFile>..\zedgraphkey.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net481;net6.0-windows;net8.0-windows</TargetFrameworks>
+		<OutputType>Library</OutputType>
+		<UseWindowsForms>true</UseWindowsForms>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup>
+		<AssemblyTitle>ZedGraph</AssemblyTitle>
+		<Description>ZedGraph Library</Description>
+		<Company>John Champion, et al.</Company>
+		<Product>ZedGraph Library</Product>
+		<Copyright>Copyright © 2003-2007 John Champion</Copyright>
+		<AssemblyVersion>5.2.0</AssemblyVersion>
+		<InformationalVersion>5.2.0</InformationalVersion>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>..\zedgraphkey.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Update="ZedGraphLocale.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="ZedGraphLocale.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>ZedGraphLocale.Designer.cs</LastGenOutput>
+			<LogicalName>ZedGraph.ZedGraph.ZedGraphLocale.resources</LogicalName>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.de.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.es.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.fr.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.hu.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.it.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.ja.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.pt.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.ru.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.sk.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.sv.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.tr.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.tw.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.zh-cn.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.zh-tw.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+	</ItemGroup>
 </Project>
