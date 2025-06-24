@@ -2,23 +2,27 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ZedGraph</id>
-    <version>5.1.7</version>
+    <version>5.2.0</version>
     <title />
     <authors>ZedGraph Project</authors>
     <owners />
     <licenseUrl>http://www.gnu.org/licenses/lgpl-2.1.txt</licenseUrl>
-    <projectUrl>http://sourceforge.net/projects/zedgraph/</projectUrl>
+    <projectUrl>https://github.com/ZedGraph/ZedGraph</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>ZedGraph is a class library, user control, and web control for .net, written in C#, for drawing 2D Line, Bar, and Pie Charts. It features full, detailed customization capabilities, but most options have defaults for ease of use.</description>
-    <releaseNotes>Updates to the cursor and point values tooltip.
-Update zoom frame drawing to support HDPI display modes.
-Updated the PrintDialog to use the UseEXDialog property, functionally controlled through UseExtendedPrintDialog property.
-Fixed an issue with the OHLCBarItems where the width of the bars was incorrect on non-oridinal axis.
-Fixed an issue with the scales that caused very small ranges to not display the scale with a magnitude.</releaseNotes>
+    <releaseNotes>Add support for .NET Framework 4.8.1, .NET 6 and .NET 8</releaseNotes>
     <copyright>Copyright © 2003-2007 John Champion</copyright>
     <language />
+    <dependencies>
+      <group targetFramework=".NETFramework3.5-Client" />
+      <group targetFramework=".NETFramework4.8.1" />
+      <group targetFramework="net6.0" />
+      <group targetFramework="net8.0" />
+    </dependencies>
   </metadata>
+
   <files>
+    <!-- .NET Framework 3.5 Client Profile -->
     <file src="bin\Release\de\ZedGraph.resources.dll" target="lib\net35-Client\de\ZedGraph.resources.dll" />
     <file src="bin\Release\es\ZedGraph.resources.dll" target="lib\net35-Client\es\ZedGraph.resources.dll" />
     <file src="bin\Release\fr\ZedGraph.resources.dll" target="lib\net35-Client\fr\ZedGraph.resources.dll" />
@@ -34,6 +38,59 @@ Fixed an issue with the scales that caused very small ranges to not display the 
     <file src="bin\Release\zh-tw\ZedGraph.resources.dll" target="lib\net35-Client\zh-tw\ZedGraph.resources.dll" />
     <file src="bin\Release\ZedGraph.dll" target="lib\net35-Client\ZedGraph.dll" />
     <file src="bin\Release\ZedGraph.XML" target="lib\net35-Client\ZedGraph.XML" />
+
+    <!-- .NET Framework 4.8.1 -->
+    <file src="ZedGraph\bin\Release\net481\de\ZedGraph.resources.dll" target="lib\net481\de\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\es\ZedGraph.resources.dll" target="lib\net481\es\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\fr\ZedGraph.resources.dll" target="lib\net481\fr\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\hu\ZedGraph.resources.dll" target="lib\net481\hu\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\it\ZedGraph.resources.dll" target="lib\net481\it\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\ja\ZedGraph.resources.dll" target="lib\net481\ja\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\pt\ZedGraph.resources.dll" target="lib\net481\pt\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\ru\ZedGraph.resources.dll" target="lib\net481\ru\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\sk\ZedGraph.resources.dll" target="lib\net481\sk\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\sv\ZedGraph.resources.dll" target="lib\net481\sv\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\tr\ZedGraph.resources.dll" target="lib\net481\tr\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\zh-cn\ZedGraph.resources.dll" target="lib\net481\zh-cn\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\zh-tw\ZedGraph.resources.dll" target="lib\net481\zh-tw\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net481\ZedGraph.dll" target="lib\net481\ZedGraph.dll" />
+    <file src="ZedGraph\bin\Release\net481\ZedGraph.XML" target="lib\net481\ZedGraph.XML" />
+
+    <!-- .NET 6 -->
+    <file src="ZedGraph\bin\Release\net6.0-windows\de\ZedGraph.resources.dll" target="lib\net6.0\de\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\es\ZedGraph.resources.dll" target="lib\net6.0\es\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\fr\ZedGraph.resources.dll" target="lib\net6.0\fr\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\hu\ZedGraph.resources.dll" target="lib\net6.0\hu\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\it\ZedGraph.resources.dll" target="lib\net6.0\it\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\ja\ZedGraph.resources.dll" target="lib\net6.0\ja\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\pt\ZedGraph.resources.dll" target="lib\net6.0\pt\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\ru\ZedGraph.resources.dll" target="lib\net6.0\ru\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\sk\ZedGraph.resources.dll" target="lib\net6.0\sk\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\sv\ZedGraph.resources.dll" target="lib\net6.0\sv\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\tr\ZedGraph.resources.dll" target="lib\net6.0\tr\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\zh-cn\ZedGraph.resources.dll" target="lib\net6.0\zh-cn\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\zh-tw\ZedGraph.resources.dll" target="lib\net6.0\zh-tw\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\ZedGraph.dll" target="lib\net6.0\ZedGraph.dll" />
+    <file src="ZedGraph\bin\Release\net6.0-windows\ZedGraph.XML" target="lib\net6.0\ZedGraph.XML" />
+
+    <!-- .NET 8 -->
+    <file src="ZedGraph\bin\Release\net8.0-windows\de\ZedGraph.resources.dll" target="lib\net8.0\de\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\es\ZedGraph.resources.dll" target="lib\net8.0\es\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\fr\ZedGraph.resources.dll" target="lib\net8.0\fr\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\hu\ZedGraph.resources.dll" target="lib\net8.0\hu\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\it\ZedGraph.resources.dll" target="lib\net8.0\it\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\ja\ZedGraph.resources.dll" target="lib\net8.0\ja\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\pt\ZedGraph.resources.dll" target="lib\net8.0\pt\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\ru\ZedGraph.resources.dll" target="lib\net8.0\ru\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\sk\ZedGraph.resources.dll" target="lib\net8.0\sk\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\sv\ZedGraph.resources.dll" target="lib\net8.0\sv\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\tr\ZedGraph.resources.dll" target="lib\net8.0\tr\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\zh-cn\ZedGraph.resources.dll" target="lib\net8.0\zh-cn\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\zh-tw\ZedGraph.resources.dll" target="lib\net8.0\zh-tw\ZedGraph.resources.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\ZedGraph.dll" target="lib\net8.0\ZedGraph.dll" />
+    <file src="ZedGraph\bin\Release\net8.0-windows\ZedGraph.XML" target="lib\net8.0\ZedGraph.XML" />
+
+    <!-- License -->
     <file src="License-LGPL.txt" target="content\License-LGPL.txt" />
   </files>
 </package>

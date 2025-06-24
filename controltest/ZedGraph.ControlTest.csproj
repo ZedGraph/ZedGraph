@@ -92,9 +92,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\source\ZedGraph.csproj">
+    <ProjectReference Include="..\source\ZedGraph.Net35.csproj">
       <Project>{2541686B-1673-43BF-AF89-3163945DB009}</Project>
-      <Name>ZedGraph</Name>
+      <Name>ZedGraph.Net35</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -151,9 +151,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\source\ZedGraph.csproj">
+    <ProjectReference Include="..\source\ZedGraph.Net35.csproj">
       <Project>{B99650EE-AF46-47B4-A4A9-212ADE7809B7}</Project>
-      <Name>ZedGraph</Name>
+      <Name>ZedGraph.Net35</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

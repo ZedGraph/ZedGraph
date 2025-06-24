@@ -1,61 +1,91 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B99650EE-AF46-47B4-A4A9-212ADE7809B7}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ZedGraph</RootNamespace>
-    <AssemblyName>ZedGraph</AssemblyName>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Class1.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ZedGraph\ZedGraphControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="ZedGraph\ZedGraphControl.Designer.cs">
-      <DependentUpon>ZedGraphControl.cs</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ZedGraph\ZedGraphControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>ZedGraphControl.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net481;net6.0-windows;net8.0-windows</TargetFrameworks>
+		<OutputType>Library</OutputType>
+		<UseWindowsForms>true</UseWindowsForms>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup>
+		<AssemblyTitle>ZedGraph</AssemblyTitle>
+		<Description>ZedGraph Library</Description>
+		<Company>John Champion, et al.</Company>
+		<Product>ZedGraph Library</Product>
+		<Copyright>Copyright © 2003-2007 John Champion</Copyright>
+		<AssemblyVersion>5.2.0</AssemblyVersion>
+		<InformationalVersion>5.2.0</InformationalVersion>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>..\zedgraphkey.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Update="ZedGraphLocale.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="ZedGraphLocale.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>ZedGraphLocale.Designer.cs</LastGenOutput>
+			<LogicalName>ZedGraph.ZedGraph.ZedGraphLocale.resources</LogicalName>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.de.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.es.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.fr.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.hu.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.it.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.ja.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.pt.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.ru.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.sk.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.sv.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.tr.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.tw.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.zh-cn.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+
+		<EmbeddedResource Update="ZedGraphLocale.zh-tw.resx">
+			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
+		</EmbeddedResource>
+	</ItemGroup>
 </Project>
