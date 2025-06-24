@@ -5,4 +5,15 @@
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyTitle>ZedGraph</AssemblyTitle>
+    <Description>ZedGraph Library</Description>
+    <Company>John Champion, et al.</Company>
+    <Product>ZedGraph Library</Product>
+	<Copyright>Copyright © 2003-2007 John Champion</Copyright>
+	<AssemblyVersion>5.2.0</AssemblyVersion>
+	<InformationalVersion>5.2.0</InformationalVersion>
+	<SignAssembly>True</SignAssembly>
+	<AssemblyOriginatorKeyFile>..\zedgraphkey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
 </Project>
