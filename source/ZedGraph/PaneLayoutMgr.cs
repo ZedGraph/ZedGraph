@@ -230,10 +230,10 @@ namespace ZedGraph
 		/// </remarks>
 		/// <param name="isColumnSpecified">Specifies whether the number of columns in each row, or
 		/// the number of rows in each column will be specified.  A value of true indicates the
-		/// number of columns in each row are specified in <see paramref="countList"/>.</param>
+		/// number of columns in each row are specified in <paramref name="countList"/>.</param>
 		/// <param name="countList">An integer array specifying either the number of columns in
 		/// each row or the number of rows in each column, depending on the value of
-		/// <see paramref="isColumnSpecified"/>.</param>
+		/// <paramref name="isColumnSpecified"/>.</param>
 		/// <seealso cref="SetLayout(PaneLayout)" />
 		/// <seealso cref="SetLayout(int,int)" />
 		/// <seealso cref="SetLayout(bool,int[],float[])" />
@@ -250,23 +250,23 @@ namespace ZedGraph
 		/// irregular layouts.</remarks>
 		/// <remarks>This method specifies the number of rows in each column, or the number of
 		/// columns in each row, allowing for irregular layouts.  Additionally, a
-		/// <see paramref="proportion" /> parameter is provided that allows varying column or
+		/// <paramref name="proportion" /> parameter is provided that allows varying column or
 		/// row sizes.  Overloads for SetLayout() are available that provide other layout options.
 		/// </remarks>
 		/// <param name="isColumnSpecified">Specifies whether the number of columns in each row, or
 		/// the number of rows in each column will be specified.  A value of true indicates the
-		/// number of columns in each row are specified in <see paramref="_countList"/>.</param>
+		/// number of columns in each row are specified in <paramref name="countList"/>.</param>
 		/// <param name="countList">An integer array specifying either the number of columns in
 		/// each row or the number of rows in each column, depending on the value of
-		/// <see paramref="isColumnSpecified"/>.</param>
+		/// <paramref name="isColumnSpecified"/>.</param>
 		/// <param name="proportion">An array of float values specifying proportional sizes for each
 		/// row or column.  Note that these proportions apply to the non-specified dimension -- that is,
-		/// if <see paramref="isColumnSpecified"/> is true, then these proportions apply to the row
-		/// heights, and if <see paramref="isColumnSpecified"/> is false, then these proportions apply
+		/// if <paramref name="isColumnSpecified"/> is true, then these proportions apply to the row
+		/// heights, and if <paramref name="isColumnSpecified"/> is false, then these proportions apply
 		/// to the column widths.  The values in this array are arbitrary floats -- the dimension of
 		/// any given row or column is that particular proportional value divided by the sum of all
-		/// the values.  For example, let <see paramref="isColumnSpecified"/> be true, and
-		/// <see paramref="proportion"/> is an array with values of { 1.0, 2.0, 3.0 }.  The sum of
+		/// the values.  For example, let <paramref name="isColumnSpecified"/> be true, and
+		/// <paramref name="proportion"/> is an array with values of { 1.0, 2.0, 3.0 }.  The sum of
 		/// those values is 6.0.  Therefore, the first row is 1/6th of the available height, the
 		/// second row is 2/6th's of the available height, and the third row is 3/6th's of the
 		/// available height.
