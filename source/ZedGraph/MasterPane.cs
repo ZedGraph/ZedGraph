@@ -641,7 +641,7 @@ namespace ZedGraph
 		/// This method first finds the <see cref="GraphPane"/> within the list that contains
 		/// the specified mouse point.  It then calls the <see cref="GraphPane.FindNearestObject"/>
 		/// method to determine which object, if any, was clicked.  With the exception of the
-		/// <see paramref="pane"/>, all the parameters in this method are identical to those
+		/// <paramref name="pane"/>, all the parameters in this method are identical to those
 		/// in the <see cref="GraphPane.FindNearestObject"/> method.
 		/// If the mouse point lies within the <see cref="PaneBase.Rect"/> of any 
 		/// <see cref="GraphPane"/> item, then that pane will be returned (otherwise it will be
@@ -651,7 +651,7 @@ namespace ZedGraph
 		/// <see cref="GraphPane.Default.NearestTol"/> pixels), then the object will be returned.
 		/// You must check the type of the object to determine what object was
 		/// selected (for example, "if ( object is Legend ) ...").  The
-		/// <see paramref="index"/> parameter returns the index number of the item
+		/// <paramref name="index"/> parameter returns the index number of the item
 		/// within the selected object (such as the point number within a
 		/// <see cref="CurveItem"/> object.
 		/// </remarks>
@@ -670,7 +670,7 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="index">The index number of the item within the selected object
 		/// (where applicable).  For example, for a <see cref="CurveItem"/> object,
-		/// <see paramref="index"/> will be the index number of the nearest data point,
+		/// <paramref name="index"/> will be the index number of the nearest data point,
 		/// accessible via <see cref="CurveItem.Points">CurveItem.Points[index]</see>.
 		/// index will be -1 if no data points are available.</param>
 		/// <returns>true if a <see cref="GraphPane"/> was found, false otherwise.</returns>
@@ -725,7 +725,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Find the <see cref="GraphPane"/> within the <see cref="PaneList"/> that contains the
-		/// <see paramref="mousePt"/> within its <see cref="PaneBase.Rect"/>.
+		/// <paramref name="mousePt"/> within its <see cref="PaneBase.Rect"/>.
 		/// </summary>
 		/// <param name="mousePt">The mouse point location where you want to search</param>
 		/// <returns>A <see cref="GraphPane"/> object that contains the mouse point, or
@@ -743,7 +743,7 @@ namespace ZedGraph
 
 		/// <summary>
 		/// Find the <see cref="GraphPane"/> within the <see cref="PaneList"/> that contains the
-		/// <see paramref="mousePt"/> within its <see cref="Chart.Rect"/>.
+		/// <paramref name="mousePt"/> within its <see cref="Chart.Rect"/>.
 		/// </summary>
 		/// <param name="mousePt">The mouse point location where you want to search</param>
 		/// <returns>A <see cref="GraphPane"/> object that contains the mouse point, or
@@ -849,10 +849,10 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="isColumnSpecified">Specifies whether the number of columns in each row, or
 		/// the number of rows in each column will be specified.  A value of true indicates the
-		/// number of columns in each row are specified in <see paramref="countList"/>.</param>
+		/// number of columns in each row are specified in <paramref name="countList"/>.</param>
 		/// <param name="countList">An integer array specifying either the number of columns in
 		/// each row or the number of rows in each column, depending on the value of
-		/// <see paramref="isColumnSpecified"/>.</param>
+		/// <paramref name="isColumnSpecified"/>.</param>
 		/// <seealso cref="SetLayout(Graphics,PaneLayout)" />
 		/// <seealso cref="SetLayout(Graphics,int,int)" />
 		/// <seealso cref="SetLayout(Graphics,bool,int[],float[])" />
@@ -869,7 +869,7 @@ namespace ZedGraph
 		/// irregular layouts.</remarks>
 		/// <remarks>This method specifies the number of rows in each column, or the number of
 		/// columns in each row, allowing for irregular layouts.  Additionally, a
-		/// <see paramref="proportion" /> parameter is provided that allows varying column or
+		/// <paramref name="proportion" /> parameter is provided that allows varying column or
 		/// row sizes.  Overloads for SetLayout() are available that provide other layout options.
 		/// </remarks>
 		/// <param name="g">
@@ -878,18 +878,18 @@ namespace ZedGraph
 		/// </param>
 		/// <param name="isColumnSpecified">Specifies whether the number of columns in each row, or
 		/// the number of rows in each column will be specified.  A value of true indicates the
-		/// number of columns in each row are specified in <see paramref="_countList"/>.</param>
+		/// number of columns in each row are specified in <paramref name="countList"/>.</param>
 		/// <param name="countList">An integer array specifying either the number of columns in
 		/// each row or the number of rows in each column, depending on the value of
-		/// <see paramref="isColumnSpecified"/>.</param>
+		/// <paramref name="isColumnSpecified"/>.</param>
 		/// <param name="proportion">An array of float values specifying proportional sizes for each
 		/// row or column.  Note that these proportions apply to the non-specified dimension -- that is,
-		/// if <see paramref="isColumnSpecified"/> is true, then these proportions apply to the row
-		/// heights, and if <see paramref="isColumnSpecified"/> is false, then these proportions apply
+		/// if <paramref name="isColumnSpecified"/> is true, then these proportions apply to the row
+		/// heights, and if <paramref name="isColumnSpecified"/> is false, then these proportions apply
 		/// to the column widths.  The values in this array are arbitrary floats -- the dimension of
 		/// any given row or column is that particular proportional value divided by the sum of all
-		/// the values.  For example, let <see paramref="isColumnSpecified"/> be true, and
-		/// <see paramref="proportion"/> is an array with values of { 1.0, 2.0, 3.0 }.  The sum of
+		/// the values.  For example, let <paramref name="isColumnSpecified"/> be true, and
+		/// <paramref name="proportion"/> is an array with values of { 1.0, 2.0, 3.0 }.  The sum of
 		/// those values is 6.0.  Therefore, the first row is 1/6th of the available height, the
 		/// second row is 2/6th's of the available height, and the third row is 3/6th's of the
 		/// available height.

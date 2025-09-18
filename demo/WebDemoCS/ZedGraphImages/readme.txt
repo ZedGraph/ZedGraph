@@ -1,0 +1,1 @@
+This folder is the default folder used for generated image in RenderTag mode.
