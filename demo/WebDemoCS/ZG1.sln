@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZG1", "http://localhost/WebDemoCS/ZG1.csproj", "{188E2860-205C-41C7-92FC-E5EA1BC956A4}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZedGraph", "..\..\source\ZedGraph.csproj", "{998CE547-E905-4931-91B6-5E0439177E7E}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{188E2860-205C-41C7-92FC-E5EA1BC956A4}.Debug.ActiveCfg = Debug|.NET
+		{188E2860-205C-41C7-92FC-E5EA1BC956A4}.Debug.Build.0 = Debug|.NET
+		{188E2860-205C-41C7-92FC-E5EA1BC956A4}.Release.ActiveCfg = Release|.NET
+		{188E2860-205C-41C7-92FC-E5EA1BC956A4}.Release.Build.0 = Release|.NET
+		{998CE547-E905-4931-91B6-5E0439177E7E}.Debug.ActiveCfg = Debug|.NET
+		{998CE547-E905-4931-91B6-5E0439177E7E}.Debug.Build.0 = Debug|.NET
+		{998CE547-E905-4931-91B6-5E0439177E7E}.Release.ActiveCfg = Release|.NET
+		{998CE547-E905-4931-91B6-5E0439177E7E}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

@@ -142,29 +142,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AxisCustomization.cs" />
-    <Compile Include="AxisExtensions.cs" />
-    <Compile Include="AxisLabelCustomization.cs" />
-    <Compile Include="AxisRelay.cs" />
-    <Compile Include="DrawingCustomization.cs" />
+    <Compile Include="ValuesToolTipTests.cs" />
     <Compile Include="OHLCBarItemTests.cs" />
     <Compile Include="PointBuilder.cs" />
     <Compile Include="ScaleTests.cs" />
-    <Compile Include="ValuesToolTipTests.cs" />
-    <Compile Include="ZGTest.cs">
+    <Compile Include="ZedGraph.UnitTest\ZGTest.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ZedGraphControlTests.cs" />
-    <Compile Include="ZedGraphCustomization.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ZedGraph.WinForms\ZedGraph.WinForms.csproj">
-      <Project>{e656c1d4-95ad-4df5-810b-51a9228c5adc}</Project>
-      <Name>ZedGraph.WinForms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ZedGraph\ZedGraph.csproj">
+    <ProjectReference Include="..\source\ZedGraph.Net35.csproj">
       <Project>{B99650EE-AF46-47B4-A4A9-212ADE7809B7}</Project>
-      <Name>ZedGraph</Name>
+      <Name>ZedGraph.Net35</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -204,4 +193,5 @@
     <PostBuildEvent>
     </PostBuildEvent>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>
