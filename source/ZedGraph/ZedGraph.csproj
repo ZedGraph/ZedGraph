@@ -80,12 +80,13 @@
 			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
 		</EmbeddedResource>
 
-		<EmbeddedResource Update="ZedGraphLocale.zh-cn.resx">
+		<EmbeddedResource Update="ZedGraphLocale.zh-CN.resx">
 			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
 		</EmbeddedResource>
 
-		<EmbeddedResource Update="ZedGraphLocale.zh-tw.resx">
+		<EmbeddedResource Update="ZedGraphLocale.zh-TW.resx">
 			<DependentUpon>ZedGraphLocale.resx</DependentUpon>
 		</EmbeddedResource>
 	</ItemGroup>
+
 </Project>
