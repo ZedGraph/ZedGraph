@@ -224,10 +224,10 @@
     <EmbeddedResource Include="ZedGraph\ZedGraphLocale.tw.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.zh-cn.resx">
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.zh-CN.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.zh-tw.resx">
+    <EmbeddedResource Include="ZedGraph\ZedGraphLocale.zh-TW.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
@@ -254,4 +254,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+
 </Project>
