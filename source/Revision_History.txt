@@ -1,3 +1,4 @@
+- Fix #49: Fixed resource file naming for proper localization (zh-CN, zh-TW).
 - Fix #36: Crash in GraphPane.AxisChange() when one or both GraphPane dimensions are zero.
 
 Version 5.2.0
