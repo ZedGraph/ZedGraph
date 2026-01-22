@@ -142,10 +142,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ValuesToolTipTests.cs" />
     <Compile Include="OHLCBarItemTests.cs" />
     <Compile Include="PointBuilder.cs" />
+    <Compile Include="RollingPointPairListTests.cs" />
     <Compile Include="ScaleTests.cs" />
+    <Compile Include="ValuesToolTipTests.cs" />
     <Compile Include="ZedGraph.UnitTest\ZGTest.cs">
       <SubType>Code</SubType>
     </Compile>

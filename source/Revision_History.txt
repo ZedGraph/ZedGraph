@@ -1,3 +1,5 @@
+- Fix #52: ZedGraph.RollingPointPairList.RemoveRange() was buggy.
+
 Version 5.2.1
 - Fix #49: Fixed resource file naming for proper localization (zh-CN, zh-TW).
 - Fix #36: Crash in GraphPane.AxisChange() when one or both GraphPane dimensions are zero.

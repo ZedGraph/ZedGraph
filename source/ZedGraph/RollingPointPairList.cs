@@ -334,12 +334,9 @@ namespace ZedGraph
 				throw new ArgumentOutOfRangeException();
 
 			// shift all the items that lie after index back by 1
-			for ( int i = index + _tailIdx; i < _tailIdx + count - 1; i++ )
-			{
-				i = ( i >= _mBuffer.Length ) ? 0 : i;
-				int j = i + 1;
-				j = ( j >= _mBuffer.Length ) ? 0 : j;
-				_mBuffer[i] = _mBuffer[j];
+			for ( int i = index; i < count - 1; i++ )
+            {
+                this[i] = this[i + 1];
 			}
 
 			// Remove the item from the head (it's been duplicated already)
@@ -364,7 +361,7 @@ namespace ZedGraph
 		{
 			int totalCount = this.Count;
 
-			if ( index >= totalCount || index < 0 || count < 0 || count > totalCount )
+			if ( index < 0 || count < 0 || index >= totalCount || index + count > totalCount )
 				throw new ArgumentOutOfRangeException();
 
 			for ( int i = 0; i < count; i++ )
@@ -383,8 +380,9 @@ namespace ZedGraph
 			}
 
 			PointPair o = _mBuffer[_headIdx];
+			_mBuffer[_headIdx] = null;
 
-			if ( _tailIdx == _headIdx )
+            if ( _tailIdx == _headIdx )
 			{	// The buffer is now empty.
 				_headIdx = _tailIdx = -1;
 				return o;
